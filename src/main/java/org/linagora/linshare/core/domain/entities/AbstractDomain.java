@@ -40,7 +40,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
-
+import org.linagora.linshare.webservice.dto.DomainDto;
 
 public abstract class AbstractDomain {
 	/**
@@ -65,9 +65,9 @@ public abstract class AbstractDomain {
 	protected MessagesConfiguration messagesConfiguration;
 
 	protected LdapUserProvider userProvider;
-	
+
 	protected DomainPolicy policy;
-	
+
 	protected Set<DomainAccessRule> domainAccessRules;
 
 	protected Set<Functionality> functionalities;
@@ -79,63 +79,81 @@ public abstract class AbstractDomain {
 	protected Set<AbstractDomain> subdomain;
 
 	protected List<ShareExpiryRule> shareExpiryRules;
-	
+
 	protected Long usedSpace;
-	
+
 	protected Long authShowOrder;
-	
+
 	protected AbstractDomain() {
 		this.identifier = null;
 	}
 
 	protected AbstractDomain(String identifier, String label) {
 		this.identifier = identifier;
-		this.label=label;
+		this.label = label;
 		this.description = null;
-		this.functionalities= new HashSet<Functionality>();
-		this.userList=new HashSet<User>();
-		this.domainAccessRules=new HashSet<DomainAccessRule>();
-		this.parentDomain=null;
+		this.functionalities = new HashSet<Functionality>();
+		this.userList = new HashSet<User>();
+		this.domainAccessRules = new HashSet<DomainAccessRule>();
+		this.parentDomain = null;
 		this.subdomain = new HashSet<AbstractDomain>();
-		this.defaultRole=Role.SIMPLE;
-		this.defaultLocale="en";
-		this.enable=true;
-		this.template=false;
-		this.usedSpace=new Long(0);
-		this.shareExpiryRules=new ArrayList<ShareExpiryRule>();
+		this.defaultRole = Role.SIMPLE;
+		this.defaultLocale = "en";
+		this.enable = true;
+		this.template = false;
+		this.usedSpace = new Long(0);
+		this.shareExpiryRules = new ArrayList<ShareExpiryRule>();
 		this.messagesConfiguration = new MessagesConfiguration();
-		this.policy=null;
-		this.authShowOrder=new Long(1);
+		this.policy = null;
+		this.authShowOrder = new Long(1);
 	}
-	
+
 	public AbstractDomain(AbstractDomainVo d) {
 		this.identifier = d.getIdentifier();
-		this.label=d.getLabel();
+		this.label = d.getLabel();
 		this.description = d.getDomainDescription();
-		this.functionalities= new HashSet<Functionality>();
+		this.functionalities = new HashSet<Functionality>();
 		this.messagesConfiguration = new MessagesConfiguration();
-		this.userList=new HashSet<User>();
-		this.domainAccessRules=new HashSet<DomainAccessRule>();
-		this.parentDomain=null;
+		this.userList = new HashSet<User>();
+		this.domainAccessRules = new HashSet<DomainAccessRule>();
+		this.parentDomain = null;
 		this.subdomain = new HashSet<AbstractDomain>();
-		this.defaultRole=d.getDefaultRole();
-		this.defaultLocale=d.getDefaultLocale();
-		this.enable=d.isEnable();
-		this.template=d.isTemplate();
-		this.usedSpace=d.getUsedSpace();
-		this.shareExpiryRules=new ArrayList<ShareExpiryRule>();
-		this.policy=null;
-		this.authShowOrder=new Long(1);
+		this.defaultRole = d.getDefaultRole();
+		this.defaultLocale = d.getDefaultLocale();
+		this.enable = d.isEnable();
+		this.template = d.isTemplate();
+		this.usedSpace = d.getUsedSpace();
+		this.shareExpiryRules = new ArrayList<ShareExpiryRule>();
+		this.policy = null;
+		this.authShowOrder = new Long(1);
 	}
-	
+
+	public AbstractDomain(DomainDto domainDto, AbstractDomain parent) {
+		this.identifier = domainDto.getIdentifier();
+		this.label = domainDto.getLabel();
+		this.description = domainDto.getDescription();
+		this.functionalities = new HashSet<Functionality>();
+		this.messagesConfiguration = new MessagesConfiguration();
+		this.userList = new HashSet<User>();
+		this.domainAccessRules = new HashSet<DomainAccessRule>();
+		this.parentDomain = parent;
+		this.enable = true;
+		this.template = false;
+		this.usedSpace = new Long(0);		
+		this.subdomain = new HashSet<AbstractDomain>();
+		this.defaultRole = Role.valueOf(domainDto.getUserRole());
+		this.defaultLocale = domainDto.getLocale();
+		this.policy = new DomainPolicy(domainDto.getPolicy());
+		this.authShowOrder = new Long(1);
+	}
 
 	public void updateDomainWith(AbstractDomain d) {
-		this.label=d.getLabel();
+		this.label = d.getLabel();
 		this.description = d.getDescription();
-		this.defaultRole=d.getDefaultRole();
-		this.defaultLocale=d.getDefaultLocale();
-		this.enable=d.isEnable();
-		this.template=d.isTemplate();
+		this.defaultRole = d.getDefaultRole();
+		this.defaultLocale = d.getDefaultLocale();
+		this.enable = d.isEnable();
+		this.template = d.isTemplate();
 	}
 
 	public String getDefaultLocale() {
@@ -208,7 +226,7 @@ public abstract class AbstractDomain {
 
 	@Override
 	public String toString() {
-		return "[Domain with id: "+identifier+"]";
+		return "[Domain with id: " + identifier + "]";
 	}
 
 	public AbstractDomain getParentDomain() {
@@ -230,7 +248,7 @@ public abstract class AbstractDomain {
 	public void addFunctionality(Functionality functionality) {
 		this.functionalities.add(functionality);
 	}
-	
+
 	public String getLabel() {
 		return label;
 	}
@@ -267,7 +285,8 @@ public abstract class AbstractDomain {
 		return messagesConfiguration;
 	}
 
-	public void setMessagesConfiguration(MessagesConfiguration messagesConfiguration) {
+	public void setMessagesConfiguration(
+			MessagesConfiguration messagesConfiguration) {
 		this.messagesConfiguration = messagesConfiguration;
 	}
 
@@ -286,13 +305,20 @@ public abstract class AbstractDomain {
 	public void setUsedSpace(Long usedSpace) {
 		this.usedSpace = usedSpace;
 	}
-	
-	public abstract DomainType getDomainType() ;
+
+	public abstract DomainType getDomainType();
 
 	@Override
 	public boolean equals(Object arg0) {
-		AbstractDomain d =(AbstractDomain)arg0;
+		if (arg0 == null)
+			return false;
+		AbstractDomain d = (AbstractDomain) arg0;
 		return this.getIdentifier().equals(d.getIdentifier());
+	}
+
+	@Override
+	public int hashCode() {
+		return this.getIdentifier().hashCode();
 	}
 
 	public Long getAuthShowOrder() {

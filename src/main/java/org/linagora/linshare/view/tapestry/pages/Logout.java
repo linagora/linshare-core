@@ -33,14 +33,11 @@
  */
 package org.linagora.linshare.view.tapestry.pages;
 
-import java.io.IOException;
-
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.Response;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.view.tapestry.pages.administration.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,16 +54,14 @@ public class Logout {
 	@Inject
 	private RequestGlobals requestGlobals;
 	
-	public void onActivate(){
-
+	public void onActivate() {
 		logger.info("logout user : " + userDetailsVo.getMail() + "(" + userDetailsVo.getLsUuid() + ")");
 		userDetailsVo=null;
-//		requestGlobals.getHTTPServletRequest().getSession().invalidate(); //already done by j_spring_security_logout
 		try {
+			response.disableCompression();
 			response.sendRedirect(requestGlobals.getHTTPServletRequest().getContextPath()+"/j_spring_security_logout");
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
 }

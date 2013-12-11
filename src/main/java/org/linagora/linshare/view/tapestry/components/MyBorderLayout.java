@@ -56,10 +56,13 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.view.tapestry.beans.MenuEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class MyBorderLayout {
 
+	private static final Logger logger = LoggerFactory.getLogger(MyBorderLayout.class);
 
  	/* ***********************************************************
 	 *                         Parameters
@@ -216,7 +219,8 @@ public class MyBorderLayout {
 	private static final String helpLabelKey = "components.myborderlayout.help.title";
 	private static final String groupsLabelKey = "components.myborderlayout.group.title";
 	
-	
+	@Property
+	private String logoLink;
 	
 	@SuppressWarnings("unused")
 	@Inject
@@ -238,6 +242,10 @@ public class MyBorderLayout {
 			if(domainFacade.isCustomLogoActive(userVo)) {
 				customLogoUrl = domainFacade.getCustomLogoUrl(userVo);
 			}
+			if(functionalityFacade.isEnableCustomLogoLink(userVo.getDomainIdentifier())) {
+				logoLink = domainFacade.getCustomLogoLink(userVo);
+			}
+			
 		} else if (domainFacade.isCustomLogoActiveInRootDomain()) {
 			customLogoUrl = domainFacade.getCustomLogoUrlInRootDomain();
 		}
@@ -266,11 +274,15 @@ public class MyBorderLayout {
 		MenuEntry homeMenu;
 		MenuEntry fileMenu;
 		MenuEntry userMenu;
+		MenuEntry threadAdminMenu;
 		MenuEntry threadMenu;
 		MenuEntry adminMenu;
 		MenuEntry domainMenu;
 		MenuEntry auditMenu;
 		MenuEntry helpMenu;
+		MenuEntry listMenu;
+		MenuEntry listAdminMenu;
+		
 		
 		// Menu : Home / File 
 		homeMenu = new MenuEntry(response.encodeURL("index"),messages.get("components.myborderlayout.home.title"),null,null,"home");
@@ -280,6 +292,8 @@ public class MyBorderLayout {
 		userMenu = new MenuEntry(response.encodeURL("user/index"),messages.get("components.myborderlayout.user.title"),null,null,"user");
 	
 		// Menu : Thread
+
+		threadAdminMenu = new MenuEntry(response.encodeURL("administration/thread/index"),messages.get("components.myborderlayout.thread.title"),null,null,"thread");
 		threadMenu = new MenuEntry(response.encodeURL("thread/index"),messages.get("components.myborderlayout.thread.title"),null,null,"thread");
 		
 		// Menu : Administration
@@ -294,6 +308,13 @@ public class MyBorderLayout {
 		} else {
 			auditMenu = new MenuEntry(response.encodeURL("history/index"),messages.get("components.myborderlayout.history.title"),null,null,"history");
 		}
+		
+		// Menu : ListsAdmin
+		listAdminMenu = new MenuEntry(response.encodeURL("administration/lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
+				
+		// Menu : Lists	
+		listMenu = new MenuEntry(response.encodeURL("lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
+				
 		
 		// Menu : Help
 		helpMenu = new MenuEntry(response.encodeURL("help/index"),messages.get("components.myborderlayout.help.title"),null,null,"help");
@@ -314,18 +335,31 @@ public class MyBorderLayout {
 		}
 		
 		if(userVoExists && !userExt) {
-			if (!superadmin) {
+			// users : Accueil / Fichiers / List / Threads / Users / History / help
+			// admin : Accueil / Fichiers / List / Threads / Users/ Admin /History / help
+			// root : Admin / Domain / Users / Threads / List / History / help
+			
+			if (superadmin) {
+				menu.addMenuEntry(adminMenu);
+				menu.addMenuEntry(domainMenu);
+				menu.addMenuEntry(userMenu);
+				if (showListTab())
+					menu.addMenuEntry(listAdminMenu);
+				if (showThreadTab())
+					menu.addMenuEntry(threadAdminMenu);
+				
+			} else {
 				menu.addMenuEntry(homeMenu);
 				menu.addMenuEntry(fileMenu);
+				if (showUserTab())
+					menu.addMenuEntry(userMenu);
+				if (showListTab())
+					menu.addMenuEntry(listMenu);
+				if (showThreadTab()) 
+					menu.addMenuEntry(threadMenu);
+				if (admin)
+					menu.addMenuEntry(adminMenu);
 			}
-			if (showUserTab())
-				menu.addMenuEntry(userMenu);
-			if (!superadmin && showThreadTab())
-				menu.addMenuEntry(threadMenu);
-			if (superadmin || admin)
-				menu.addMenuEntry(adminMenu);
-			if (superadmin)
-				menu.addMenuEntry(domainMenu);			
 			if (showAuditTab())
 				menu.addMenuEntry(auditMenu);
 			if (showHelpTab())
@@ -376,10 +410,22 @@ public class MyBorderLayout {
 		return false;
 	}
 	
-	public boolean getDisplayLogo() {
-		if(linshareLicenceTerm || linshareLogoVisible) {
-			return true;
+	boolean showListTab() {
+		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
+			return functionalityFacade.isEnableListTab(userVo.getDomainIdentifier());
 		}
 		return false;
 	}
+	
+	public boolean getDisplayLogo() {
+		return linshareLicenceTerm || linshareLogoVisible;
+	}
+	
+	public boolean getCustomLogoLink(){
+		if(userVoExists){
+			return functionalityFacade.isEnableCustomLogoLink(userVo.getDomainIdentifier());
+		}
+		return false;
+	}
+	
 }

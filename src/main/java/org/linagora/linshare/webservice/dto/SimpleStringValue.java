@@ -41,15 +41,14 @@ public class SimpleStringValue {
 	
 	private String value;
 
-	public SimpleStringValue() {
-		super();
-	}
-
 	public SimpleStringValue(String value) {
-		super();
 		this.value = value;
 	}
 
+	public SimpleStringValue() {
+		super();
+	}
+	
 	@XmlElement(name = "value")
 	public String getValue() {
 		return value;

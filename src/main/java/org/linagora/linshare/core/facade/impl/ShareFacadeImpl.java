@@ -68,13 +68,14 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.orm.jpa.support.SharedEntityManagerBean;
 
 public class ShareFacadeImpl implements ShareFacade {
 
@@ -98,21 +99,16 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	private final AbstractDomainService abstractDomainService;
 	
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 	
 	private final AnonymousShareEntryService anonymousShareEntryService;
 	
 	private final SignatureTransformer signatureTransformer;
-	
-	private final String urlBase;
-	
-	private final String urlInternal;
     
 	
 	public ShareFacadeImpl(ShareEntryTransformer shareEntryTransformer, UserRepository<User> userRepository, NotifierService notifierService,
 			MailContentBuildingService mailElementsFactory, UserService userService, ShareEntryService shareEntryService, DocumentEntryTransformer documentEntryTransformer,
-			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityService functionalityService, AnonymousShareEntryService anonymousShareEntryService,
-			String urlBase, String urlInternal, SignatureTransformer signatureTransformer) {
+			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityOldService functionalityService, AnonymousShareEntryService anonymousShareEntryService, SignatureTransformer signatureTransformer) {
 		super();
 		this.shareEntryTransformer = shareEntryTransformer;
 		this.userRepository = userRepository;
@@ -125,8 +121,6 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityService = functionalityService;
 		this.anonymousShareEntryService = anonymousShareEntryService;
-		this.urlBase = urlBase;
-		this.urlInternal = urlInternal;
 		this.signatureTransformer = signatureTransformer;
 	}
 	
@@ -186,9 +180,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		for(UserVo userVo : successfullRecipient){
 			logger.debug("Sending sharing notification to user " + userVo.getLogin());
 			User recipient = userRepository.findByLsUuid(userVo.getLogin());
-			String linshareUrl = userVo.isGuest() ? urlBase : urlInternal;
 			
-			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, recipient, documentNames, linshareUrl, "", null, isOneDocEncrypted));
+			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, recipient, documentNames, isOneDocEncrypted));
 
 		}
 		
@@ -379,8 +372,16 @@ public class ShareFacadeImpl implements ShareFacade {
     public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser) throws BusinessException {
 		
 		User user = userRepository.findByLsUuid(currentUser.getLogin());
-		ShareEntry shareEntry = shareEntryService.findByUuid(user, sharedDocument.getIdentifier());
-		notifierService.sendAllNotification(mailElementsFactory.buildMailRegisteredDownloadWithOneRecipient(shareEntry));
+		try {
+			//send a notification by mail to the owner
+			ShareEntry shareEntry = shareEntryService.findByUuid(user, sharedDocument.getIdentifier());
+			notifierService.sendAllNotification(mailElementsFactory.buildMailRegisteredDownloadWithOneRecipient(shareEntry));
+		} catch (BusinessException e) {
+			// TODO : FIXME : send the notification to the domain administration address. => a new functionality need to be add. 
+			if(e.getErrorCode().equals(BusinessErrorCode.RELAY_HOST_NOT_ENABLE)) {
+				logger.error("Can't send share downloaded notification (" + sharedDocument.getIdentifier() + ") to owner because : " + e.getMessage());
+			}
+		}
     }
     
 	

@@ -35,22 +35,27 @@ package org.linagora.linshare.view.tapestry.pages.files;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.tapestry5.ComponentEventCallback;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.TrackableComponentEventCallback;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PageRenderLinkSource;
@@ -58,7 +63,6 @@ import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -100,7 +104,7 @@ import org.slf4j.LoggerFactory;
 @Import(library = { "Index.js" })
 public class Index {
 
-	public final static Logger logger = LoggerFactory.getLogger(Index.class);
+	private static final Logger logger = LoggerFactory.getLogger(Index.class);
 
 	@SessionState
 	@Property
@@ -119,6 +123,11 @@ public class Index {
 	 * Injected services
 	 * ***********************************************************
 	 */
+	@Inject
+	private ComponentResources componentResources;
+	
+	@InjectPage
+	private Share share;
 
 	@Component(parameters = { "style=bluelighting", "show=false", "width=600", "height=250" })
 	private WindowWithEffects windowUpload;
@@ -183,9 +192,16 @@ public class Index {
 	 * ***********************************************************
 	 */
 	
-	public void onActivate() {
+	public Object onActivate() {
 		if (shareSessionObjects != null)
 			shareSessionObjects.checkDocumentsTypeIntegrity(DocumentVo.class);
+		if (flagFinishShare) {
+			flagFinishShare = false;
+			share.setSelectedDocuments(shareSessionObjects.getDocuments());
+			clearList();
+			return share;
+		}
+		return null;
 	}
 	
 	@SetupRender
@@ -202,7 +218,6 @@ public class Index {
 		if (fileMessage == null) {
 			fileMessage = "";
 		}
-		logger.debug("TIME UPLOAD : " + System.currentTimeMillis());
 	}
 
 	@CleanupRender
@@ -281,8 +296,8 @@ public class Index {
 	 */
 	@OnEvent(value = "eventDeleteFromListDocument")
 	public void deleteFromListDocument(Object[] object) {
-
 		boolean flagError = false;
+
 		for (Object currentObject : object) {
 			try {
 				documentFacade.removeDocument(userVo, ((DocumentVo) currentObject));
@@ -619,7 +634,7 @@ public class Index {
 		if (flagFinishShare) {
 
 			// show the share window popup
-			renderSupport.addScript(String.format("confirmWindow.showCenter(true)"));
+			//renderSupport.addScript(String.format("confirmWindow.showCenter(true)"));
 			flagFinishShare = false;
 		}
 
@@ -629,7 +644,7 @@ public class Index {
 		}
 
 	}
-
+	
 	private DocumentVo getDocumentByUUIDInList(String UUId) {
 		for (DocumentVo doc : listDocumentsVo) {
 			if ((doc.getIdentifier()).equals(UUId)) {

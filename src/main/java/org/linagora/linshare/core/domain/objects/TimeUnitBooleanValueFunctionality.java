@@ -53,7 +53,7 @@ public class TimeUnitBooleanValueFunctionality extends UnitBooleanValueFunctiona
 		setSystem(f.isSystem());
 		setUnit(f.getUnit());
 		setValue(f.getValue());
-		setBool(f.isBool());
+		setBool(f.getBool());
 	}
 	
 	public int toCalendarValue() {

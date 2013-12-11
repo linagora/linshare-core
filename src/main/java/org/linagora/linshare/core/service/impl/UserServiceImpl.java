@@ -63,7 +63,7 @@ import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.EntryService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -74,6 +74,7 @@ import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 /**
  * Services for User management.
@@ -85,33 +86,42 @@ public class UserServiceImpl implements UserService {
 	/** User repository. */
 	private final UserRepository<User> userRepository;
 
+    /** Notifier service. */
+    private final NotifierService notifierService;
+    
+    private final LogEntryService logEntryService;
+    
+    private final RecipientFavouriteService recipientFavouriteService;
+    
+    private final MailContentBuildingService mailElementsFactory;
+    
+    private final AbstractDomainService abstractDomainService;
+    
+    private final FunctionalityOldService functionalityService;
+    private final PasswordService passwordService;
+    
+    private final EntryService entryService;
+
 	/** User repository. */
 	private final GuestRepository guestRepository;
 
 	private final AllowedContactRepository allowedContactRepository;
 
-	/** Notifier service. */
-	private final NotifierService notifierService;
-
-	private final LogEntryService logEntryService;
-
-	private final RecipientFavouriteService recipientFavouriteService;
-
-	private final MailContentBuildingService mailElementsFactory;
-
-	private final AbstractDomainService abstractDomainService;
-
-	private final FunctionalityService functionalityService;
-	private final PasswordService passwordService;
-
-	private final EntryService entryService;
-
 	private final ThreadService threadService;
 
-	public UserServiceImpl(final UserRepository<User> userRepository, final NotifierService notifierService, final LogEntryService logEntryService, final GuestRepository guestRepository,
-			final RecipientFavouriteService recipientFavouriteService, final AllowedContactRepository allowedContactRepository, final MailContentBuildingService mailElementsFactory,
-			final FunctionalityService functionalityService, final AbstractDomainService abstractDomainService, final PasswordService passwordService, final EntryService entryService,
-			final ThreadService threadService) {
+    public UserServiceImpl(final UserRepository<User> userRepository,
+    		final NotifierService notifierService,
+    		final LogEntryService logEntryService,
+    		final GuestRepository guestRepository, 
+    		final RecipientFavouriteService recipientFavouriteService,
+    		final AllowedContactRepository allowedContactRepository,
+    		final MailContentBuildingService mailElementsFactory,
+    		final FunctionalityOldService functionalityService,
+    		final AbstractDomainService abstractDomainService,
+    		final PasswordService passwordService,
+    		final EntryService entryService,
+    		final ThreadService threadService) {
+    	
 		this.userRepository = userRepository;
 		this.notifierService = notifierService;
 		this.logEntryService = logEntryService;
@@ -154,11 +164,11 @@ public class UserServiceImpl implements UserService {
 		if (domain == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND, "Domain was not found");
 		}
-
-		User ownerUser = userRepository.findByLsUuid(ownerLogin);
-
-		if (ownerUser == null) {
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Owner was not found");
+		
+		User ownerUser = userRepository.findByLsUuid(ownerLogin); 
+		
+		if(ownerUser == null) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,"Owner was not found");
 		}
 
 		if (!abstractDomainService.userCanCreateGuest(ownerUser)) {
@@ -246,16 +256,15 @@ public class UserServiceImpl implements UserService {
 	 */
 	private Date calculateUserExpiryDate(AbstractDomain domain) {
 		Calendar expiryDate = Calendar.getInstance();
-
 		TimeUnitValueFunctionality func = functionalityService.getGuestAccountExpiryTimeFunctionality(domain);
 		expiryDate.add(func.toCalendarUnitValue(), func.getValue());
-
 		return expiryDate.getTime();
 	}
 
+
 	@Override
-	public void deleteUser(String login, Account actor) throws BusinessException {
-		User userToDelete = userRepository.findByLsUuid(login);
+	public void deleteUser(Account actor, String uuid) throws BusinessException {
+		User userToDelete = userRepository.findByLsUuid(uuid);
 
 		if (userToDelete != null) {
 			boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, userToDelete.getDomainId(), userToDelete.getMail());
@@ -263,28 +272,27 @@ public class UserServiceImpl implements UserService {
 			logger.debug("Has right ? : " + hasRightToDeleteThisUser);
 
 			if (!hasRightToDeleteThisUser) {
-				throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login + " cannot be deleted, he is not a guest, or " + actor.getAccountReprentation()
+				throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + uuid + " cannot be deleted, he is not a guest, or " + actor.getAccountReprentation()
 						+ " is not an admin");
 			} else {
-				doDeleteUser(actor, userToDelete);
+				setUserToDestroy(actor, userToDelete);
 			}
 		} else {
-			logger.debug("User not found in DB : " + login);
+			logger.debug("User not found in DB : " + uuid);
 		}
 	}
 
 	@Override
 	public void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException {
-		logger.debug("deleteAllUsersFromDomain: begin");
-
-		List<User> users = userRepository.findByDomain(domainIdentifier);
-
-		logger.info("Delete all user from domain " + domainIdentifier + ", count: " + users.size());
-
-		for (User user : users) {
-			doDeleteUser(actor, user);
+    	logger.debug("deleteAllUsersFromDomain: begin");
+    	
+    	List<User> users = userRepository.findByDomain(domainIdentifier);
+    	
+		logger.info("Delete all user from domain " + domainIdentifier + ", count: "+ users.size() );
+    	
+    	for (User user : users) {
+    		setUserToDestroy( actor, user);
 		}
-
 		logger.debug("deleteAllUsersFromDomain: end");
 	}
 
@@ -313,6 +321,23 @@ public class UserServiceImpl implements UserService {
 		return false;
 	}
 
+	private void setUserToDestroy(Account actor, User userToDelete) throws BusinessException {
+		try {
+			//clear all thread memberships
+			threadService.deleteAllUserMemberships(actor, userToDelete);
+			
+			userRepository.delete(userToDelete);
+			
+			UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_DELETE, "Deleting an user", userToDelete);
+			logEntryService.create(logEntry);
+
+		} catch (IllegalArgumentException e) {
+			logger.error("Couldn't find the user " + userToDelete.getAccountReprentation() + " to be deleted", e);
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't find the user "
+					+ userToDelete.getAccountReprentation() + " to be deleted");
+		}
+
+	}
 	private void doDeleteUser(Account actor, User userToDelete) throws BusinessException {
 		try {
 
@@ -358,7 +383,7 @@ public class UserServiceImpl implements UserService {
 		logger.info(guests.size() + " guest(s) have been found to be removed");
 		for (User guest : guests) {
 			try {
-				deleteUser(guest.getLsUuid(), systemAccount);
+				deleteUser(systemAccount, guest.getLsUuid());
 				logger.info("Removed expired user : " + guest.getAccountReprentation());
 			} catch (BusinessException ex) {
 				logger.warn("Unable to remove expired user : " + guest.getAccountReprentation() + "\n" + ex.toString());
@@ -378,31 +403,6 @@ public class UserServiceImpl implements UserService {
 		}
 		logger.debug("End searchUser(restricted guests)");
 
-		return users;
-	}
-
-	/**
-	 * @deprecated function used by completion and research method. Now it is
-	 *             only used by research method. Should be refactor.
-	 * @param mail
-	 * @param firstName
-	 * @param lastName
-	 * @param currentGuest
-	 * @return
-	 */
-	private List<User> completionSearchForRestrictedGuest(String mail, String firstName, String lastName, Guest currentGuest) {
-		List<User> users = new ArrayList<User>();
-		logger.debug("special search for restricted guest ");
-		List<AllowedContact> contacts = allowedContactRepository.searchContact(mail, firstName, lastName, currentGuest);
-		for (AllowedContact allowedContact : contacts) {
-			if (allowedContact.getContact().getAccountType().equals(AccountType.GUEST)) {
-				Guest guest = guestRepository.findByMail(allowedContact.getContact().getMail());
-				users.add(guest);
-			} else {
-				users.add(allowedContact.getContact());
-			}
-		}
-		logger.debug("End searchUser(restricted guests)");
 		return users;
 	}
 
@@ -596,7 +596,7 @@ public class UserServiceImpl implements UserService {
 																						// USERS
 			Guest currentGuest = guestRepository.findByMail(currentUser.getMail());
 			if (currentGuest.isRestricted()) {
-				return completionSearchForRestrictedGuest(mail, firstName, lastName, currentGuest);
+				return completionSearchForRestrictedGuest(currentGuest, mail, firstName, lastName);
 			}
 		}
 
@@ -1070,5 +1070,62 @@ public class UserServiceImpl implements UserService {
 			logger.error("Impossible to create an user entity from domain : " + domainIdentifier + ". The searchUserRecursivelyWithoutRestriction method returns null.");
 		}
 		return null;
+	}
+	
+	
+	
+	/**
+	 * 
+	 * New implementation created to not use old tapestry version.
+	 * Destined to be more clear and to replace the old implementation when tapestry will be destroy.
+	 * 
+	 * 
+	 */
+
+	
+	private User find(User tmpUser, String domainId) throws BusinessException {
+		User user = null;
+		if (tmpUser.getLsUuid() != null) {
+			user = userRepository.findByLsUuid(tmpUser.getLsUuid());
+		}
+		if (user == null) {
+			logger.debug("User " + tmpUser.getMail() + " was not found in the database. Searching in directories ...");
+			user = this.findOrCreateUser(tmpUser.getMail(), domainId);
+			if (user == null) {
+				throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user : " + tmpUser.getMail() + " in domain : " + tmpUser.getDomainId());
+			}
+		}
+		logger.debug("User " + tmpUser.getMail() + " found.");
+		return user;
+	}
+
+	@Override
+	public void updateUser(User actor, User updatedUser, String domainId)
+			throws BusinessException {
+		User user = find(updatedUser, domainId);
+		Assert.notNull(updatedUser.getRole());
+
+		user.setFirstName(updatedUser.getFirstName());
+		user.setLastName(updatedUser.getLastName());
+		user.setRole(updatedUser.getRole());
+		user.setCanCreateGuest(updatedUser.getCanCreateGuest());
+		user.setCanUpload(updatedUser.getCanUpload());
+		if (user.getAccountType() == AccountType.GUEST) {
+			Assert.notNull(updatedUser.getOwner());
+			Assert.notNull(updatedUser.getExpirationDate());
+			Assert.isTrue(updatedUser.getCanCreateGuest() == false);
+			Guest guest = (Guest) user;
+			Guest updatedGuest = (Guest) updatedUser;
+			guest.setExpirationDate(updatedGuest.getExpirationDate());
+			guest.setComment(updatedGuest.getComment());
+			guest.setRestricted(updatedGuest.isRestricted());
+			User owner = find((User) updatedGuest.getOwner(), updatedGuest
+					.getOwner().getDomainId());
+			guest.setOwner(owner);
+		}
+		userRepository.update(user);
+		UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_UPDATE,
+				"Update of a user:" + user.getMail(), user);
+		logEntryService.create(logEntry);
 	}
 }

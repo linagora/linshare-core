@@ -33,18 +33,19 @@
  */
 package org.linagora.linshare.core.exception;
 
+import javax.ws.rs.core.Response.Status;
+
 /** Exception error code.
  */
-public enum BusinessErrorCode implements ErrorCode{
-    UNKNOWN(1000),
+public enum BusinessErrorCode implements ErrorCode {
+    UNKNOWN(1000, Status.INTERNAL_SERVER_ERROR),
     AUTHENTICATION_ERROR(2000),
-    DATABASE_INCOHERENCE_NO_ROOT_DOMAIN(2001),
-    USER_CANNOT_UPLOAD(2100),
-    USER_NOT_FOUND(2200),
+    DATABASE_INCOHERENCE_NO_ROOT_DOMAIN(2001, Status.INTERNAL_SERVER_ERROR),
+    USER_NOT_FOUND(2200, Status.NOT_FOUND),
     DUPLICATE_USER_ENTRY(2201),
-    CANNOT_DELETE_USER(2203),
-    CANNOT_UPDATE_USER(2204),
-    USER_CANNOT_CREATE_GUEST(2205),
+    CANNOT_DELETE_USER(2203, Status.FORBIDDEN),
+    CANNOT_UPDATE_USER(2204, Status.FORBIDDEN),
+    USER_CANNOT_CREATE_GUEST(2205, Status.FORBIDDEN),
     MIME_NOT_FOUND(3000),
     FILE_TOO_LARGE(3001),
     FILE_MIME_NOT_ALLOWED(3002),
@@ -56,10 +57,10 @@ public enum BusinessErrorCode implements ErrorCode{
     FILE_TIMESTAMP_WRONG_TSA_URL(3008),
     FILE_UNREACHABLE(3009),
     INVALID_UUID(4000),
-    SHARED_DOCUMENT_NOT_FOUND(5000),
+    SHARED_DOCUMENT_NOT_FOUND(5000, Status.NOT_FOUND),
     CANNOT_SHARE_DOCUMENT(5001),
     CANNOT_DELETE_SHARED_DOCUMENT(5002),
-    NO_SUCH_ELEMENT(6000),
+    NO_SUCH_ELEMENT(6000, Status.NOT_FOUND),
     CANNOT_SIGN_DOCUMENT(9001),
     CANNOT_ENCRYPT_GENERATE_KEY(9002),
     CANNOT_ENCRYPT_DOCUMENT(9003),
@@ -81,33 +82,41 @@ public enum BusinessErrorCode implements ErrorCode{
     RELAY_HOST_NOT_ENABLE(15000),
     XSSFILTER_SCAN_FAILED(15666),
     DIRECTORY_UNAVAILABLE(16000),
-    NOT_AUTHORIZED(17000),
+    FORBIDDEN(17000, Status.FORBIDDEN),
     
-    WEBSERVICE_FAULT(20000),
-    WEBSERVICE_UNAUTHORIZED(20001),
-    WEBSERVICE_NOT_FOUND(20002)
+    WEBSERVICE_FAULT(20000, Status.INTERNAL_SERVER_ERROR),
+    WEBSERVICE_UNAUTHORIZED(20001, Status.FORBIDDEN),
+    WEBSERVICE_NOT_FOUND(20002, Status.NOT_FOUND),
+    
+    LIST_DO_NOT_EXIST(25000, Status.NOT_FOUND),
+    LIST_ALDREADY_EXISTS(25001),
+    CONTACT_LIST_DO_NOT_EXIST(25002, Status.NOT_FOUND),
+    
+    THREAD_NOT_FOUND(26000, Status.NOT_FOUND),
+    THREAD_MEMBER_NOT_FOUND(26001, Status.NOT_FOUND),
+    THREAD_ENTRY_NOT_FOUND(26002, Status.NOT_FOUND),
     ;
     
     
-    
-    
 	private final int code;
-
-	private String description;
 	
-	public String getDescription() {
-		return description;
+	private final Status status;
+	
+	private BusinessErrorCode(int code) {
+		this.code = code;
+		this.status = Status.BAD_REQUEST;
+	}
+	
+	private BusinessErrorCode(int code, Status status) {
+		this.code = code;
+		this.status = status;
 	}
 
 	public int getCode() {
 		return code;
 	}
-	
-	public void setDescription(String description) {
-		this.description = description;
-	}
 
-	private BusinessErrorCode(int code) {
-		this.code = code;
+	public Status getStatus() {
+		return status;
 	}
 }

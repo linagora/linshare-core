@@ -33,13 +33,34 @@
  */
 package org.linagora.linshare.view.tapestry.pages;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import org.apache.tapestry5.OptionGroupModel;
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.SelectModelVisitor;
 import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.corelib.components.Zone;
+import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.SelectModelFactory;
 import org.linagora.linshare.core.batches.DocumentManagementBatch;
 import org.linagora.linshare.core.batches.ShareManagementBatch;
 import org.linagora.linshare.core.batches.UserManagementBatch;
+import org.linagora.linshare.core.domain.vo.MailingListVo;
+import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.MailingListFacade;
+import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
+import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.service.UserService;
@@ -50,6 +71,8 @@ import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementSe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import se.unbound.tapestry.tagselect.LabelAwareValueEncoder;
+
 /**
  * Test showing how to use the PasswordPopup
  * @author ncharles
@@ -57,7 +80,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TestPopup {
 
-	private static final Logger logger = LoggerFactory.getLogger(UserAndDomainMultiServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(TestPopup.class);
 	
 	@Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
@@ -173,4 +196,141 @@ public class TestPopup {
     }
 	
 	
+	void onActionFromCleanOutDatedShares()
+	{
+		logger.debug("begin method onActionFromCleanOutDatedShares");
+		shareManagementBatch.cleanOutdatedShares();
+		logger.debug("endmethod onActionFromCleanOutDatedShares");
+	}
+	
+	void onActionFromRemoveMissingDocuments()
+	{
+		logger.debug("begin method onActionFromRemoveMissingDocuments");
+		documentManagementBatch.removeMissingDocuments();
+		logger.debug("endmethod onActionFromRemoveMissingDocuments");
+	}
+	
+	
+	/**
+	 * Testing tapestry-tagselect
+	 */
+	@SessionState
+	private UserVo userVo;
+
+	@Persist
+    @Property
+    private List<String> tags;
+
+	@Inject
+	private UserFacade userFacade;
+
+	@Inject
+	private RecipientFavouriteFacade recipientFavouriteFacade;
+
+	@Inject
+	private SelectModelFactory selectModelFactory;
+
+	@Inject
+	private MailingListFacade mailingListFacade;
+
+    public void onPrepare() {
+        if (this.tags == null) {
+            this.tags = new ArrayList<String>();
+        }
+    }
+    
+    SelectModel onProvideCompletionsFromTags(final String input) throws BusinessException {
+		List<MailingListVo> lists = mailingListFacade.completionForUploadForm(userVo, input);
+		SelectModel ret = selectModelFactory.create(lists, "identifier");
+
+		return ret;
+    }
+
+    private static class StringSelectModel implements SelectModel {
+        private final List<String> strings;
+
+        public StringSelectModel(final List<String> strings) {
+            this.strings = strings;
+        }
+
+        @Override
+        public List<OptionModel> getOptions() {
+            final List<OptionModel> options = new ArrayList<OptionModel>();
+
+            for (final String string : this.strings) {
+                options.add(new OptionModelImpl(string));
+            }
+            return options;
+        }
+
+        @Override
+        public List<OptionGroupModel> getOptionGroups() {
+            return null;
+        }
+
+        @Override
+        public void visit(final SelectModelVisitor visitor) {
+        }
+    }
+
+	public LabelAwareValueEncoder<MailingListVo> getEncoder() {
+		return new LabelAwareValueEncoder<MailingListVo>() {
+			@Override
+			public String toClient(MailingListVo value) {
+				return value.getUuid();
+			}
+
+			@Override
+			public MailingListVo toValue(String clientValue) {
+				MailingListVo ret = new MailingListVo();
+				ret.setUuid(clientValue);
+				return ret;
+			}
+
+			@Override
+			public String getLabel(MailingListVo arg0) {
+				return arg0.getIdentifier();
+			}
+		};
+	}
+	
+	/**
+	 * Perform a user search using the user search pattern.
+	 * 
+	 * @param input
+	 *            user search pattern.
+	 * @return list of users.
+	 */
+	private List<UserVo> performSearch(String input) {
+		Set<UserVo> userSet = new HashSet<UserVo>();
+		List<UserVo> res = new ArrayList<UserVo>();
+
+		String firstName_ = null;
+		String lastName_ = null;
+		String input_ = input != null ? input.trim() : null;
+
+		if (input_.length() > 0) {
+			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
+			if (stringTokenizer.hasMoreTokens()) {
+				firstName_ = stringTokenizer.nextToken();
+				if (stringTokenizer.hasMoreTokens()) {
+					lastName_ = stringTokenizer.nextToken();
+				}
+			}
+		}
+		try {
+			userSet.addAll(userFacade.searchUser(input_, null, null, userVo));
+			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,
+					userVo));
+			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,
+					userVo));
+			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(
+					input.trim(), userVo));
+			res.addAll(recipientFavouriteFacade.recipientsOrderedByWeightDesc(
+					new ArrayList<UserVo>(userSet), userVo));
+		} catch (BusinessException e) {
+			logger.error("Error while searching user in QuickSharePopup", e);
+		}
+		return res;
+	}
 }

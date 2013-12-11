@@ -4,56 +4,56 @@
         xmlns:p="tapestry:parameter">
 
     <!-- Main content -->
-
     <div id="content">
-
         <h1>${message:pages.thread.index.title}</h1>
 
-        <t:messagePanel />
-        <t:businessMessagesDisplayer />
-
-
-        <!-- Action bar -->
+		<t:messagePanel />
+		<t:businessMessagesDisplayer />
 
         <div id="actionBar">
             <h4>Actions</h4>
             <ul>
                 <li>
+                <t:if test="showCreateButton">
                     <t:pageLink page="thread/CreateThread" class="button" title="${message:pages.thread.index.addbutton}">
                         <span><img src="${asset:context:images/icons/create-group-mini.png}" alt="" /> ${message:pages.thread.index.addbutton}</span>
                     </t:pageLink>
+                </t:if>
+                </li>
+                <li>
+                    <t:actionlink t:id="latests" class="button" title="${message:pages.thread.index.latests}">
+                        <span><img src="${asset:context:images/icons/icon-refresh.png}" alt="" /> ${message:pages.thread.index.latests}</span>
+                    </t:actionlink>
                 </li>
             </ul>
-        </div><!-- id="actionBar" -->
-
-        <!-- Page content -->
-
-        <div id="pageContent">
-            <t:grid source="threads" row="currentThread" include="name, creationDate, modificationDate" add="countDocuments" rowsPerPage="10">
-            
-                <p:nameCell>
-                    <t:actionlink t:id="showThreadContent" context="currentThread.lsUuid"> ${currentThread.name}</t:actionlink>
-                </p:nameCell>
-                <p:modificationDateCell>
-                    <span class="modificationDate">${modificationDate}</span>
-                </p:modificationDateCell>
-                <p:creationDateCell>
-                    <span class="creationDate">${creationDate}</span>
-                </p:creationDateCell>
-                <p:countDocumentsCell>
-                    <span class="countDocuments" style="text-align : center;">${countDocuments}</span>
-                </p:countDocumentsCell>
-                <p:empty>
-                    ${message:pages.thread.empty}
-                </p:empty>
-            </t:grid>
         </div>
+        <!-- Page content -->
+        <div id="pageContent">
+            <div id="threads">
+                <t:searchBar t:id="threadSearch" t:value="pattern" t:placeholder="${message:pages.thread.index.placeholder}"/>
 
-    </div><!-- id="content" -->
-
-    <!-- Popups -->
-
-
-    <!-- Widgets -->
+                <t:if test="latest">
+                    <h2> ${message:pages.thread.index.chronoMessage}</h2>
+                </t:if>
+                <t:grid source="threads" row="current" include="name, creationDate, modificationDate" add="countDocuments" rowsPerPage="10">
+                    <p:nameCell>
+                        <t:actionlink t:id="showThreadContent" context="current.lsUuid"> ${current.name}</t:actionlink>
+                    </p:nameCell>
+                    <p:modificationDateCell>
+                        <span class="modificationDate">${modificationDate}</span>
+                    </p:modificationDateCell>
+                    <p:creationDateCell>
+                        <span class="creationDate">${creationDate}</span>
+                    </p:creationDateCell>
+                    <p:countDocumentsCell>
+                        <span class="countDocuments" style="text-align : center;">${count}</span>
+                    </p:countDocumentsCell>
+                    <p:empty>
+                        ${message:pages.thread.empty}
+                    </p:empty>
+                </t:grid>
+            </div>
+        </div>
+    </div>
 
 </t:MyBorderLayout>

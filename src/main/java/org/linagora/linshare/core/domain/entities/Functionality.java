@@ -33,8 +33,13 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.vo.FunctionalityVo;
+import org.linagora.linshare.webservice.dto.FunctionalityDto;
+import org.linagora.linshare.webservice.dto.ParameterDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,6 +91,10 @@ public class Functionality implements Cloneable {
 		return FunctionalityType.DEFAULT;
 	}
 
+	public List<ParameterDto> getParameters() {
+		return new ArrayList<ParameterDto>();
+	}
+	
 	public long getId() {
 		return persistenceId;
 	}
@@ -199,11 +208,23 @@ public class Functionality implements Cloneable {
 		return true;
 	}
 		
+	public boolean equalsIdentifier(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Functionality other = (Functionality) obj;
+		if (!this.identifier.equals(other.identifier))
+			return false;
+		return true;
+	}
+	
 	public void updateFunctionalityFrom(Functionality functionality) {
 		this.activationPolicy.updatePolicyFrom(functionality.getActivationPolicy());
 		this.configurationPolicy.updatePolicyFrom(functionality.getConfigurationPolicy());
 	}
-	
 	
 	public void updateFunctionalityValuesOnlyFrom(Functionality functionality) {
 		// no data in this class.
@@ -214,6 +235,7 @@ public class Functionality implements Cloneable {
 		// no data in this class.
 	}
 	
-	
-	
+	public void updateFunctionalityValuesOnlyFromDto(FunctionalityDto functionality) {
+		// no data in this class.
+	}
 }

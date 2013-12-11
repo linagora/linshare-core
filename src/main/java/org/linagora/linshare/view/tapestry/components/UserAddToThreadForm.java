@@ -115,18 +115,12 @@ public class UserAddToThreadForm {
      ************************************************************ */
     
     @SetupRender
-    public void init(){
+    public void init() throws BusinessException {
 		threadsAllowed = new ArrayList<ThreadVo>();
 		if (threads == null && newMemberList != null && newMemberList.size() > 0) {
-			try {
-				threadsAllowed.addAll(threadEntryFacade.getAllMyThreadWhereAdmin(userLoggedIn));
-				threadsAllowed.removeAll(threadEntryFacade.getAllMyThread(newMemberList.get(0)));
-			} catch (BusinessException e) {
-				logger.error("cannot retrieve user infos" + e.getMessage());
-				logger.debug(e.toString());
-			}
-		}
-		else {
+			threadsAllowed.addAll(threadEntryFacade.getAllMyThreadWhereAdmin(userLoggedIn));
+			threadsAllowed.removeAll(threadEntryFacade.getAllMyThread(newMemberList.get(0)));
+		} else {
 			threadsAllowed.addAll(threads);
 			if (newMemberList != null && newMemberList.size() > 0)
 				threadsAllowed.removeAll(threadEntryFacade.getAllMyThread(newMemberList.get(0)));
@@ -143,8 +137,7 @@ public class UserAddToThreadForm {
         }
         if (selected) {
         	selectedThreads.add(threadSelected);
-        }
-        else {
+        } else {
         	selectedThreads.remove(threadSelected);
         }
     }
@@ -165,7 +158,7 @@ public class UserAddToThreadForm {
 				}
 		    	if (threadsWhereUserWillBeAdded.size() > 0) {
 		    		for (ThreadVo threadVo : threadsWhereUserWillBeAdded) {
-						threadEntryFacade.addMember(threadVo, userLoggedIn, user, readOnly);
+						threadEntryFacade.addMember(userLoggedIn, threadVo, user, readOnly);
 						shareSessionObjects.setReloadThreadsNeeded(true);
 						shareSessionObjects.addMessage(messages.format("components.userAddToThread.success", user.getCompleteName(), threadVo.getName()));
 					}

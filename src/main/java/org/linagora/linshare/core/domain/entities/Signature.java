@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.io.Serializable;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
@@ -40,8 +41,10 @@ import java.util.Date;
 
 import org.linagora.linshare.core.utils.Base64Utils;
 
-public class Signature {
+public class Signature implements Serializable {
 	
+	private static final long serialVersionUID = -2226193317956985434L;
+
 	public static final String MIMETYPE = "text/xml";
 
 	private Long id;

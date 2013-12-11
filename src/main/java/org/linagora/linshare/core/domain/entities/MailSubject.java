@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.io.Serializable;
+
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailSubjectEnum;
 
@@ -43,8 +45,10 @@ import org.linagora.linshare.core.domain.constants.MailSubjectEnum;
  * @author sduprey
  *
  */
-public class MailSubject {
+public class MailSubject implements Serializable {
 	
+	private static final long serialVersionUID = -1070830078594412370L;
+
 	private MailSubjectEnum mailSubject;
 
 	private String content;

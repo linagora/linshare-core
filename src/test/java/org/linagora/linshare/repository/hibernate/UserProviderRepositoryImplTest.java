@@ -36,13 +36,14 @@ package org.linagora.linshare.repository.hibernate;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
@@ -154,8 +155,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		LdapUserProvider newProvider = ldapUserProviderRepository.findById(provider.getPersistenceId());
 		Assert.assertTrue(newProvider != null);
 		
-		Assert.assertTrue(newProvider instanceof LdapUserProvider);
-		LdapUserProvider ldapProvider = (LdapUserProvider)newProvider; 
+		LdapUserProvider ldapProvider = newProvider; 
 		
 		Assert.assertTrue(ldapProvider.getBaseDn().equals(baseDn));
 		Assert.assertTrue(ldapProvider.getPattern().getIdentifier().equals(identifierP));

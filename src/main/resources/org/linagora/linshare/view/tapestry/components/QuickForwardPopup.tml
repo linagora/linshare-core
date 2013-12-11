@@ -39,7 +39,7 @@
 			<div t:type="ck/SlidingPanel" t:id="panelRecipients" t:closed="false"
                 t:options="{duration:0.3}"
 				t:subject="${message:components.quickForwardPopup.panelRecipients.subject}">
-				<t:textarea t:id="recipientsPatternForwardPopup" t:value="recipientsSearch" validate="required"
+				<t:textarea t:id="recipientsPatternForwardPopup" t:value="recipientsSearch"
 					t:mixins="autocomplete" t:minChars="${autocompleteMin}" t:tokens=","
 					class="recipientsPattern" 
 					title="${message:components.quickForwardPopup.texarea.recipients.title}" />
@@ -51,6 +51,17 @@
                 </t:label>
                 <t:checkbox t:id="secureSharing" class="edit-form-field checkbox" />
 			</t:if>
+			<div class="clear"></div>
+            <t:if test="enableListTab">
+                <br></br>
+
+                <div class="description"><p>${message:components.quickSharePopup.listRecipients.description}</p></div>
+                <div t:type="ck/SlidingPanel" t:id="listRecipients" t:closed="true" t:subject="${message:components.quickSharePopup.listRecipients.subject}" t:options="{duration:0.3}">      
+                    <div t:type="tag/tagselect" t:id="mailingLists" t:value="mailingLists"
+                        t:encoder="encoder" t:dropdown="false" t:minChars="3"></div>
+                </div>
+            </t:if>
+			
 			<hr />
 
 			<div class="${cssClassNumber}"></div>

@@ -45,6 +45,7 @@
 		<constructor-arg ref="threadEntryTransformer" />
 		<constructor-arg ref="tagService" />
 		<constructor-arg ref="documentEntryService" />
+		<constructor-arg ref="userService" />
 	</bean>
 
 	<bean name="searchDocumentFacade" class="org.linagora.linshare.core.facade.impl.SearchDocumentFacadeImpl">
@@ -65,10 +66,8 @@
 		<constructor-arg ref="documentEntryTransformer" />
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="abstractDomainService" />
-		<constructor-arg ref="functionalityService" />
+		<constructor-arg ref="functionalityOldService" />
 		<constructor-arg ref="anonymousShareEntryService" />
-		<constructor-arg value="${linshare.info.url.base}" />
-		<constructor-arg value="${linshare.info.url.internal}" />
 		<constructor-arg ref="signatureTransformer" />
 	</bean>
 
@@ -125,7 +124,7 @@
 
 	<bean name="abstractDomainFacade" class="org.linagora.linshare.core.facade.impl.AbstractDomainFacadeImpl">
 		<constructor-arg ref="abstractDomainService" />
-		<constructor-arg ref="functionalityService" />
+		<constructor-arg ref="functionalityOldService" />
 		<constructor-arg ref="userAndDomainMultiService" />
 		<constructor-arg ref="userProviderService" />
 		<constructor-arg ref="domainPolicyService" />
@@ -133,10 +132,12 @@
 
 	<bean name="domainPolicyFacade" class="org.linagora.linshare.core.facade.impl.DomainPolicyFacadeImpl">
 		<constructor-arg ref="domainPolicyService" />
+		<constructor-arg ref="userService" />
+	    <constructor-arg ref="abstractDomainService" />
 	</bean>
 
 	<bean name="functionalityFacade" class="org.linagora.linshare.core.facade.impl.FunctionalityFacadeImpl">
-		<constructor-arg ref="functionalityService" />
+		<constructor-arg ref="functionalityOldService" />
 		<constructor-arg ref="abstractDomainService" />
 	</bean>
 
@@ -145,25 +146,86 @@
 		<constructor-arg value="classpath:antisamy-strict.xml" type="java.io.InputStream" />
 	</bean>
 	
-	<bean id="webServiceDocumentFacade" class="org.linagora.linshare.core.facade.impl.WebServiceDocumentFacadeImpl">
+	<bean id="mailingListFacade" class="org.linagora.linshare.core.facade.impl.MailingListFacadeImpl">
+		<constructor-arg ref="mailingListService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="accountService" />
+	</bean>
+	
+	
+	<!-- WEB SERVICES -->
+	
+	<bean id="wsDocumentFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.DocumentFacadeImpl">
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="accountService" />
 	</bean>
-	<bean id="webServiceShareFacade" class="org.linagora.linshare.core.facade.impl.WebServiceShareFacadeImpl">
+	<bean id="wsShareFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ShareFacadeImpl">
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="shareFacade" />
 		<constructor-arg ref="shareEntryService" />
 	</bean>
-	<bean id="webServiceThreadFacade" class="org.linagora.linshare.core.facade.impl.WebServiceThreadFacadeImpl">
+	<bean id="wsThreadFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ThreadFacadeImpl">
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
-		<constructor-arg ref="functionalityService" />
+		<constructor-arg ref="functionalityOldService" />
 	</bean>
-	<bean id="webServiceUserFacade" class="org.linagora.linshare.core.facade.impl.WebServiceUserFacadeImpl">
+	<bean id="wsThreadMemberFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ThreadMemberFacadeImpl">
+		<constructor-arg ref="threadService" />
+		<constructor-arg ref="accountService" />
+	</bean>
+	<bean id="wsThreadEntryFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ThreadEntryFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="threadService" />
+		<constructor-arg ref="threadEntryService" />
+		<constructor-arg ref="functionalityOldService" />
+	</bean>
+	<bean id="wsUserFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UserFacadeImpl">
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="accountService" />
-		<constructor-arg ref="functionalityService" />
+		<constructor-arg ref="functionalityOldService" />
 	</bean>
+
+	<bean id="wsAdminGenericFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl">
+		<constructor-arg ref="accountService" />
+	</bean>
+	<bean id="wsAdminDomainPatternFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.DomainPatternFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userProviderService" />
+	</bean>
+	<bean id="wsAdminLDAPConnectionFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.LDAPConnectionFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userProviderService" />
+	</bean>
+	<bean id="wsAdminDomainFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.DomainFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="userProviderService" />
+	</bean>
+	<bean id="wsAdminDomainPolicyFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.DomainPolicyFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="domainPolicyService" />
+	</bean>
+	<bean id="wsAdminThreadFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.ThreadFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="threadService" />
+	</bean>
+	<bean id="wsAdminThreadMemberFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.ThreadMemberFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="threadService" />
+	</bean>
+	<bean id="wsAdminUserRoleFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.UserRoleFacadeImpl">
+		<constructor-arg ref="accountService" />
+	</bean>
+	<bean id="wsAdminUserFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.UserFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userService" />
+	</bean>
+	<bean id="wsAdminFunctionalityFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.FunctionalityFacadeImpl">
+		<constructor-arg ref="accountService" />
+        <constructor-arg ref="abstractDomainService" />
+        <constructor-arg ref="functionalityService" />
+        <constructor-arg ref="functionalityOldService" />
+	</bean>		
 </beans>

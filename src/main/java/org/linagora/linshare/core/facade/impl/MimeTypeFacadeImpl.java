@@ -42,14 +42,9 @@ import org.linagora.linshare.core.domain.vo.AllowedMimeTypeVO;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MimeTypeFacade;
 import org.linagora.linshare.core.service.MimeTypeService;
-import org.linagora.linshare.core.service.impl.MimeTypeServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MimeTypeFacadeImpl implements MimeTypeFacade {
 	
-	private static final Logger logger = LoggerFactory.getLogger(MimeTypeFacadeImpl.class);
-
 	private MimeTypeService mimeTypeService;
 
 	private Transformer<AllowedMimeType, AllowedMimeTypeVO> allowedMimeTypeTransformer;

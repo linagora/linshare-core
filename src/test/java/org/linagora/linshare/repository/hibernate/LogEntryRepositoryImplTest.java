@@ -36,8 +36,6 @@ package org.linagora.linshare.repository.hibernate;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import junit.framework.Assert;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.exception.BusinessException;

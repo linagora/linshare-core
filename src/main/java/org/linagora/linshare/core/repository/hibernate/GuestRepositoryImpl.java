@@ -44,9 +44,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest>  implements GuestRepository {
+public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implements GuestRepository {
 
-	
 	public GuestRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
@@ -57,17 +56,23 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest>  imple
 		return det;
 	}
 
-	/** Search some guests.
-	 * If given agument is null, it's not considered.
-	 * @param mail user mail.
-	 * @param firstName user first name.
-	 * @param lastName user last name.
-	 * @param ownerLogin login of the user who creates the searched guest(s).
+	/**
+	 * Search some guests. If given agument is null, it's not considered.
+	 * 
+	 * @param mail
+	 *            user mail.
+	 * @param firstName
+	 *            user first name.
+	 * @param lastName
+	 *            user last name.
+	 * @param ownerLogin
+	 *            login of the user who creates the searched guest(s).
 	 * @return a list of matching users.
 	 */
 	public List<Guest> searchGuest(String mail, String firstName, String lastName, User owner) {
 
 		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
+		criteria.add(Restrictions.eq("destroyed", false));
 		if (mail != null) {
 			criteria.add(Restrictions.like("mail", mail, MatchMode.START).ignoreCase());
 		}
@@ -83,22 +88,25 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest>  imple
 		return findByCriteria(criteria);
 	}
 
-
-    /** Find outdated guest accounts.
-     * @return a list of outdated guests (null if no one found).
-     */
-    public List<Guest> findOutdatedGuests() {
-        DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
-        criteria.add(Restrictions.lt("expirationDate", new Date()));
-        return findByCriteria(criteria);
-    }
+	/**
+	 * Find outdated guest accounts.
+	 * 
+	 * @return a list of outdated guests (null if no one found).
+	 */
+	public List<Guest> findOutdatedGuests() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
+		criteria.add(Restrictions.lt("expirationDate", new Date()));
+		criteria.add(Restrictions.eq("destroyed", false));
+		return findByCriteria(criteria);
+	}
 
 	/**
 	 * @see GuestRepository#searchGuestAnyWhere(String, String, String, String)
 	 */
 	public List<Guest> searchGuestAnyWhere(String mail, String firstName, String lastName) {
-		
+
 		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
+		criteria.add(Restrictions.eq("destroyed", false));
 		if (mail != null) {
 			criteria.add(Restrictions.like("mail", mail, MatchMode.ANYWHERE).ignoreCase());
 		}

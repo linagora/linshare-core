@@ -33,47 +33,60 @@
  */
 package org.linagora.linshare.webservice.dto;
 
+import java.util.Calendar;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-
+import org.linagora.linshare.core.domain.entities.User;
 
 @XmlRootElement(name = "Document")
-public class DocumentDto extends EntryDto {
+public class DocumentDto {
 
-	private Boolean ciphered;
-	
-	private String type;
-	
-	private Long size;
+	protected String uuid;
+	protected String name;
+	protected String description;
+	protected Calendar creationDate;
+	protected Calendar modificationDate;
+	protected Calendar expirationDate;
+	protected Boolean ciphered;
+	protected String type;
+	protected Long size;
 
 	public DocumentDto(DocumentEntry de) {
-		super(de);
+		if (de == null)
+			return;
+		this.uuid = de.getUuid();
+		this.name = de.getName();
+		this.creationDate = de.getCreationDate();
+		this.modificationDate = de.getModificationDate();
+		this.expirationDate = de.getExpirationDate();
+		this.description = de.getComment();
 		this.ciphered = de.getCiphered();
 		this.type = de.getDocument().getType();
 		this.size = de.getDocument().getSize();
 	}
-	
+
 	public DocumentDto() {
 		super();
 	}
-	
+
 	public String getType() {
 		return type;
 	}
-	
+
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+
 	public Long getSize() {
 		return size;
 	}
-	
+
 	public void setSize(Long size) {
 		this.size = size;
 	}
-	
+
 	public Boolean getCiphered() {
 		return ciphered;
 	}
@@ -82,9 +95,57 @@ public class DocumentDto extends EntryDto {
 		this.ciphered = ciphered;
 	}
 
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Calendar getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Calendar creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Calendar getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Calendar modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	public Calendar getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Calendar expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+
 	@Override
 	public String toString() {
-		return "Document [id=" + uuid + ", name=" + name + ", creation=" + creationDate + "]";
+		return "Document [id=" + uuid + ", name=" + name + ", creation="
+				+ creationDate + "]";
 	}
-	
 }

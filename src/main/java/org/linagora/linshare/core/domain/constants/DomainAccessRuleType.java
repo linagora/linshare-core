@@ -39,6 +39,7 @@ public enum DomainAccessRuleType {
 
 	private int value;
 
+	
 	private DomainAccessRuleType(int value) {
 		this.value = value;
 	}

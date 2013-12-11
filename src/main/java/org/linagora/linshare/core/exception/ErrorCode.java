@@ -37,7 +37,5 @@ public interface ErrorCode {
 
 	int getCode();
 	
-	String getDescription();
-	
 	String name();
 }

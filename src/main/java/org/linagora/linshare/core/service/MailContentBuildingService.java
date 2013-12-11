@@ -62,8 +62,7 @@ public interface MailContentBuildingService {
 	/**
 	 * Notify a user that he received new sharing
 	 */
-	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor,MailContainer mailContainer, User recipient, List<String> docNames, String linShareUrl,
-			String linShareUrlParam, String password, boolean hasToDecrypt) throws BusinessException;
+	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor,MailContainer mailContainer, User recipient, List<String> docNames, boolean hasToDecrypt) throws BusinessException;
 	
 	
 	

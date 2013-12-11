@@ -65,12 +65,15 @@ import org.apache.tapestry5.upload.services.UploadedFile;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.MailingListContactVo;
+import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.DocumentFacade;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
+import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
@@ -129,6 +132,9 @@ public class QuickSharePopup{
 	@Property
 	private String recipientsSearch;
 	
+	@Property
+	private String listRecipientsSearch;
+	
 	@Persist("flash")
 	@Property
 	private boolean secureSharing;
@@ -148,7 +154,6 @@ public class QuickSharePopup{
 	
 	@Property
 	private UploadedFile file;
-    
     
 	private List<String> successFiles;
 	private Map<String,BusinessException> failFiles;
@@ -170,6 +175,9 @@ public class QuickSharePopup{
 	
 	@Inject
 	private DocumentFacade documentFacade;
+	
+	@Inject
+	private MailingListFacade mailingListFacade;
 	
 	@Inject
     private JavaScriptSupport renderSupport;
@@ -292,9 +300,15 @@ public class QuickSharePopup{
 		}
 		return new ArrayList<UserVo>();
 	}
-	
+
+	public List<String> onProvideCompletionsFromListRecipientsPatternQuickSharePopup(String input) throws BusinessException {
+		return mailingListFacade.completionsForShare(userVo, input);
+	}
+
 	
     public void onSuccessFromQuickShareForm() throws BusinessException {
+    	
+    	
     	filter = new XSSFilter(shareSessionObjects, quickShareForm, antiSamyPolicy, messages);
     	try {
     		textAreaSubjectValue = filter.clean(textAreaSubjectValue);
@@ -311,8 +325,23 @@ public class QuickSharePopup{
     	boolean sendErrors = false;
 		  	
     	try{
-	    	
-			List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
+    		List<String> recipients = new ArrayList<String>();
+    		if(recipientsSearch != null){
+        		recipients = MailCompletionService.parseEmails(recipientsSearch);
+    		} else {
+    			recipientsSearch = listRecipientsSearch;
+    		}
+    		
+			List<MailingListVo> mailingListSelected = mailingListFacade.getListsFromShare(listRecipientsSearch);
+			if(!(mailingListSelected.isEmpty())){
+			
+				for(MailingListVo current : mailingListSelected){
+					
+					for(MailingListContactVo currentContact : current.getContacts()){
+						recipients.add(currentContact.getMail());
+					}
+				}
+			}
 			String badFormatEmail =  "";
 			
 			for (String recipient : recipients) {
@@ -383,11 +412,17 @@ public class QuickSharePopup{
 				businessMessagesManagementService.notify(new BusinessUserMessage(
 	                BusinessUserMessageType.SHARE_WARNING_MAIL_ADDRESS, MessageSeverity.WARNING));				
 			} else {
-				recipientFavouriteFacade.increment(userVo, recipientsEmail);
-				businessMessagesManagementService.notify(new BusinessUserMessage(
-	                BusinessUserMessageType.QUICKSHARE_SUCCESS, MessageSeverity.INFO));
+				if(recipientsEmail.size() > 0){
+					recipientFavouriteFacade.increment(userVo, recipientsEmail);
+					businessMessagesManagementService.notify(new BusinessUserMessage(
+			                BusinessUserMessageType.QUICKSHARE_SUCCESS, MessageSeverity.INFO));
+				} else {
+					businessMessagesManagementService.notify(new BusinessUserMessage(
+			                BusinessUserMessageType.QUICKSHARE_NOMAIL, MessageSeverity.ERROR));
+				}
+					
 			}
-
+			
     	}catch (NullPointerException e3) {
     		logger.error("No Email in textarea", e3);
     		businessMessagesManagementService.notify(new BusinessUserMessage(

@@ -49,12 +49,9 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.linagora.linshare.core.domain.entities.ThreadEntry;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.DocumentFacade;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
@@ -172,7 +169,11 @@ public class ThreadEntryEditForm {
 		}
 		if(reset) return;
 
-        threadEntryFacade.updateFileProperties(userLoggedIn.getLsUuid(), threadEntryUuid, fileComment);
+        try {
+			threadEntryFacade.updateFileProperties(userLoggedIn.getLsUuid(), threadEntryUuid, fileComment);
+		} catch (BusinessException e) {
+			logger.error("Couldn't update thread entry.", e.getMessage());
+		}
         shareSessionObjects.addMessage(messages.get("component.fileEditForm.action.update.confirm"));
         componentResources.triggerEvent("resetListFiles", null, null);
 	}
@@ -218,8 +219,13 @@ public class ThreadEntryEditForm {
 	
     private void initFormToEdit() {
 		if(threadEntryUuid != null) {
-		    	ThreadEntryVo doc = threadEntryFacade.getThreadEntry(userLoggedIn.getLogin(), threadEntryUuid);
-		    	fileComment = doc.getFileComment();
+			ThreadEntryVo doc;
+			try {
+				doc = threadEntryFacade.getThreadEntry(userLoggedIn, threadEntryUuid);
+				fileComment = doc.getFileComment();
+			} catch (BusinessException e) {
+				logger.error("Could not get thread entry.", e.getMessage());
+			}
 		}
     }
 }

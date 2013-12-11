@@ -36,6 +36,8 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.vo.DomainAccessPolicyVo;
+
 public class DomainAccessPolicy {
 
 	/**
@@ -55,6 +57,28 @@ public class DomainAccessPolicy {
 
 	public DomainAccessPolicy() {
 		super();
+		this.rules=new ArrayList<DomainAccessRule>();
+	}
+	public DomainAccessPolicy(long persistenceId) {
+		super();
+		this.persistenceId=persistenceId;
+		this.rules=new ArrayList<DomainAccessRule>();
+	}
+	
+	public DomainAccessPolicy(DomainAccessPolicy policy) {
+		super();
+		this.persistenceId=policy.getPersistenceId();
+		this.rules=policy.getRules();
+	}
+	
+	public DomainAccessPolicy(DomainAccessPolicyVo policy) {
+		super();
+		this.persistenceId=policy.getId();
+		if(!policy.getRules().isEmpty()){
+			if(rules == null){
+				rules =new ArrayList<DomainAccessRule>();
+			}
+		}
 	}
 
 	public List<DomainAccessRule> getRules() {
@@ -71,4 +95,5 @@ public class DomainAccessPolicy {
 		}
 		this.rules.add(rule);
 	}
+
 }

@@ -1,0 +1,63 @@
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+    xmlns:p="tapestry:parameter">
+
+    <div id="listThreadMembers">
+        <fieldset>
+            <legend>${message:pages.thread.admin.members}${countMembers}</legend>
+            <t:searchBar t:id="memberSearch" t:value="pattern" t:placeholder="${message:pages.thread.admin.member.placeholder}"/>
+
+            <t:if test="show">
+                <t:zone t:id="reloadZone" update="show">
+                    <t:grid source="members" row="member" rowsPerPage="10" include="fullName,mail" add="type,edit,delete">
+                        <p:empty>
+                            ${message:pages.thread.admin.member.empty}
+                        </p:empty> 
+                        <p:typeCell>
+                            <t:threadmembericon member="member"/>
+                        </p:typeCell>
+                        <p:editCell>
+                            <t:actionLink t:id="editMember" t:context="${member.lsUuid}" t:zone="memberEditFormZone">
+                                <span onclick="memberEditWindow.showCenter(true)">
+                                    <img src="${asset:context:images/icons/edit-button.png}" alt="${message:global.button.edit}" title="${message:pages.thread.editUserType}" />
+                                </span>
+                            </t:actionLink>
+                        </p:editCell>
+                        <p:deleteCell>
+                            <t:if t:test="isDeletable">
+                                <t:actionLink t:id="deleteMember" t:context="${member.lsUuid}" t:zone="zoneConfirmDelete">
+                                    <span onclick="window_confirm.showCenter(true);">
+                                        <img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" title="${message:pages.thread.member.delete}" />
+                                    </span>
+                                </t:actionLink>
+                            </t:if>
+                        </p:deleteCell>
+                    </t:grid>
+                </t:zone>
+                <t:form class="form-horizontal">
+                    <div class="control-group">
+                        <t:label for="threadRole" class="control-label"/>
+                        <div class="controls">
+                            <t:select t:id="threadRole" t:zone="reloadZone"/>
+                        </div>
+                    </div>
+                </t:form>
+            </t:if>
+        </fieldset>
+
+	    <!-- Popups -->
+
+        <div style="display:none">
+            <t:zone t:id="memberEditTemplateZone">
+                <t:threadMemberEditForm members="members" editMemberId="selectedMemberId" currentThread="thread"/>
+            </t:zone>
+        </div>
+        <div t:id="memberEditWindow">
+            <t:zone id="memberEditFormZone" update="show"/>
+        </div>
+
+	    <!-- Delete member confirm popup -->
+        <t:zone t:id="zoneConfirmDelete"/>
+        <t:confirmPopup t:eventName="deleteMember" t:messageLabel="${message:pages.thread.admin.member.confirmDelete}"/>
+    </div>
+</t:container>

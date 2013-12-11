@@ -5,7 +5,7 @@
  *
  * Language: all
  * Encoding: UTF-8
- * 2013-03-19, LINAGORA Group
+ * 2013-08-30, LINAGORA
  */
 
 
@@ -22,6 +22,11 @@ body {
 	padding: 0em;
 	background: #FFF;
 	color: #222;
+}
+/* Overriding to fix Upload page */
+body#upload {
+	font-size: 13px;
+	line-height: 16px;
 }
 
 hr {
@@ -177,11 +182,13 @@ strong {
 #settings #configuration a {
 	color: #2989BD;
 }
-#settings #configuration a:link, #settings #configuration a:visited {
+#settings #configuration a:link,
+#settings #configuration a:visited {
 	color: #2989BD;
 	text-decoration: underline;
 }
-#settings #configuration a:hover, #settings #configuration a:active {
+#settings #configuration a:hover,
+#settings #configuration a:active {
 	text-decoration: none;
 }
 
@@ -255,14 +262,16 @@ strong {
 	text-decoration: none;
 	border: none;
 }
-#menuBar li a:hover, #menuBar li a:active {
+#menuBar li a:hover,
+#menuBar li a:active {
 	color: #FFF !important;
 }
 
 #menuBar li a.menu-labelhighlight {
 	color: #4E86A2 !important;
 }
-#menuBar li a.menu-labelhighlight:hover, #menuBar li a.menu-labelhighlight:active {
+#menuBar li a.menu-labelhighlight:hover,
+#menuBar li a.menu-labelhighlight:active {
 	color: #3D697F !important;
 }
 
@@ -285,7 +294,6 @@ strong {
 	text-shadow: 2px 2px 1px rgba(0,0,0,.10);
 	-o-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
 	-moz-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
-	-icab-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
 	-khtml-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
 	-webkit-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
 	font-size: 1.8em;
@@ -298,11 +306,15 @@ strong {
 #files #content h1 {
 	background-image: url("../images/theme0/icon-heading-files.png");
 }
+#upload #content h1 {
+	margin: 0px auto;
+	background-image: url("../images/theme0/icon-heading-files.png");
+}
 #users #content h1 {
 	background-image: url("../images/theme0/icon-heading-users.png");
 }
-#groups #content h1 {
-	background-image: url("../images/theme0/icon-heading-groups.png");
+#thread #content h1 {
+	background-image: url("../images/theme0/icon-heading-thread.png");
 }
 #history #content h1 {
 	background-image: url("../images/theme0/icon-heading-history.png");
@@ -326,7 +338,7 @@ strong {
 	background-image: url("../images/theme0/icon-heading-help.png");
 }
 #exception #content h1 {
-	background-image: url(../images/theme0/icon-heading-exception.png);
+	background-image: url("../images/theme0/icon-heading-exception.png");
 }
 #error #content h1 {
 	padding-left: 0px;
@@ -391,7 +403,6 @@ strong {
 	box-shadow: 3px 3px 3px rgba(0,0,0,.30);
 	-o-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
 	-moz-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
-	-icab-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
 	-khtml-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
 	-webkit-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
 }
@@ -404,12 +415,29 @@ strong {
 	font-weight: bold;
 	font-size: 1.1em;
 }
+/* Overriding to fix Upload page */
+#upload #sideBar .widget h4 {
+	line-height: 18px;
+}
 
 #sideBar .widget > div {
 	margin: 0em;
 	padding: .5em;
 	color: #222;
 }
+/* Overriding to fix Upload page */
+#upload #sideBar .widget > div ul li {
+	line-height: 16px;
+}
+#upload #sideBar .widget > div ul li strong,
+#upload #sideBar .widget > div ul li span {
+	line-height: 20px;
+}
+#upload #sideBar .widget #userTotalSpaceDiv span {
+	line-height: 14px;
+}
+
+
 
 #sideBar .widget .t-error li{
     margin-left: 5px;
@@ -449,23 +477,34 @@ strong {
 
 #settings #connection div.logout {
 	float: right;
-	width: 450px;
+	width: 500px;
 }
 
 #settings #connection .userName {
 	font-size: 18px;
 /*	font-weight: bold;	/**/
 }
+/* Overriding to fix Upload page */
+#upload #settings #connection .userName {
+	line-height: 22px;
+}
 
 #settings #connection a {
 	margin-left: 1.5em;
 	padding-left: 0em !important;
 }
-#settings #connection a:link, #settings #connection a:visited {
+#settings #connection a:link,
+#settings #connection a:visited {
 	color: inherit;
 }
-#settings #connection a:hover, #settings #connection a:active {
+#settings #connection a:hover,
+#settings #connection a:active {
 	color: #EE1139;
+}
+
+/* Overriding to fix Upload page */
+#upload #settings #connection .logout a {
+	text-decoration: underline;
 }
 
 #settings #connection form {
@@ -504,13 +543,16 @@ strong {
 #settings #connection input.loginSubmit:focus {
 	color: #C00D2D;
 }
-#settings #connection input[type="text"], #settings #connection input[type="password"] {
+#settings #connection input[type="text"],
+#settings #connection input[type="password"] {
 	padding: 1px 2px 1px 2px !important;
 	height: 16px;
 	background: #C8DCE6 url("../images/theme0/form-input-gradient.png") no-repeat;
 }
-#settings #connection input[type="text"]:hover, #settings #connection input[type="password"]:hover,
-#settings #connection input[type="text"]:focus, #settings #connection input[type="password"]:focus {
+#settings #connection input[type="text"]:hover,
+#settings #connection input[type="text"]:focus,
+#settings #connection input[type="password"]:hover,
+#settings #connection input[type="password"]:focus {
 	background-color: #FFF;
 }
 #settings #connection input#login {
@@ -555,7 +597,6 @@ strong {
 	border-radius: 3px;
 	-o-border-radius: 3px;
 	-moz-border-radius: 3px;
-	-icab-border-radius: 3px;
 	-khtml-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	background-color: #FCCFD7 !important;
@@ -580,7 +621,11 @@ div#rights {
   margin: 10px 0 0;
   padding: 5px 10px;
   text-align: center;
-  width: 430px;
+  width: 480px;
+}
+/* Overriding to fix Upload page */
+#upload div#rights {
+	line-height: 12px;
 }
 
 div#messagePanel div#rights {
@@ -608,7 +653,7 @@ div#rights a {
 	padding: 0em !important;
 }
 
-#home div#messagePanel div#rights p{
+#home div#messagePanel div#rights p {
 	margin: 1em auto;
 }
 
@@ -836,7 +881,6 @@ div#rights a {
 	border-radius: 12px;
 	-o-border-radius: 12px;
 	-moz-border-radius: 12px;
-	-icab-border-radius: 12px;
 	-khtml-border-radius: 12px;
 	-webkit-border-radius: 12px;
 	color: #3D697F;
@@ -1286,19 +1330,35 @@ div.dialog button img {
 * Objects > Button link 2  (gray squared)
 */
 
-.btn {
-	min-width: 22px;
-	min-height:22px;
-	margin : 3px;
-	padding: 3px;
-	background-color: rgb(243,242,235);
-	border-bottom: 1px solid #E6DFCF;
-	border-right: 1px solid #E6DFCF;
-	color: #A68C53;
-	text-align: center;
+/*
+ *.btn {
+ *    min-width: 22px;
+ *    min-height:22px;
+ *    margin : 3px;
+ *    padding: 3px;
+ *    background-color: rgb(243,242,235);
+ *    border-bottom: 1px solid #E6DFCF;
+ *    border-right: 1px solid #E6DFCF;
+ *    color: #A68C53;
+ *    text-align: center;
+ *    font-weight: bold;
+ *    font-size: 16px;
+ *    text-decoration: none;
+ *}
+ */
+
+.btn {		/* Keep without 'a' */
+	text-decoration: none !important;
+	-moz-user-select: none;
+}
+.btn-primary {		/* Keep without 'a' */
 	font-weight: bold;
-	font-size: 16px;
-	text-decoration: none;
+}
+a.btn-primary:hover,
+a.btn-primary:focus,
+a.btn-primary:active,
+a.btn-primary:visited {
+	color: #FFF !important;
 }
 
 
@@ -1375,14 +1435,29 @@ table.t-data-grid {
 }
 
 /* Page content */
-
-#pageContent h2 {
+#content h2,
+#content h2 {
 	margin: .75em auto;
 	color: #3D697F;
 	font-size: 1.20em;
 	margin-bottom: 10px;
 	padding-bottom: 3px;
 	border-bottom: solid #b0d6ee 1px;
+}
+
+#pageContent h2 {
+	margin: .75em auto;
+	margin-bottom: 10px;
+	padding-bottom: 3px;
+	border-bottom: 1px solid #0D6EE;
+	color: #3D697F;
+	font-size: 1.20em;
+}
+#upload #content h2 {
+	margin-top: .25em;
+	padding-bottom: 0px;
+	border-color: #E5E5E5;
+	font-size: 1.40em;
 }
 
 #pageContent h2 img {
@@ -1545,9 +1620,22 @@ table.t-data-grid {
 	text-align: center;
 }
 
-#thread .countDocuments {
+#thread table.t-data-grid .countDocuments {
 	text-align: center !important;
 }
+
+#thread table.t-data-grid .inList,
+#thread table.t-data-grid .addRemove
+{
+	text-align: center;
+}
+#thread table.t-data-grid .type,
+#thread table.t-data-grid .edit,
+#thread table.t-data-grid .delete 
+{
+	text-align: center;
+}
+
 
 /*--------------------------------------------------------------------------
 * Pages > Users
@@ -1903,7 +1991,9 @@ DIV.t-palette-controls BUTTON {
 
 #audit #pageContent {
 }
-
+#lists #content fieldset.title_criteria_zone,
+#domains #content fieldset.title_criteria_zone,
+#thread #content fieldset.title_criteria_zone,
 #history #pageContent fieldset.title_criteria_zone,
 #audit #pageContent fieldset.title_criteria_zone {
 	float: left;
@@ -2173,7 +2263,6 @@ div#blocDL ul li {
 	border-radius: .5em;
 	-o-border-radius: 3px;
 	-moz-border-radius: .3em;
-	-icab-border-radius: 3px;
 	-khtml-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	background-color: #EEE;
@@ -3271,6 +3360,12 @@ form#quickShareForm input.checkbox {
 	text-align: left !important;
 }
 
+/* Overriding to fix Upload page */
+#upload form#quickShareForm {
+	font-size: 15px;
+	line-height: 22px;
+}
+
 /* Form : textarea */
 
 #panelUpload_content {
@@ -3920,6 +4015,27 @@ input.ck-kaptcha {
     display: none !important;
 }
 
+
+.uiTokenizer {
+    font-size: 12px; !important;
+}
+
+/* Thread index search bar */
+#searchBar input[type="search"] {
+    height: 20px; /* 20px + 4px + 6px = 30px */
+    padding: 4px 6px !important;
+    -webkit-border-radius: 8px 0 0 8px;
+       -moz-border-radius: 8px 0 0 8px;
+            border-radius: 8px 0 0 8px;
+}
+
+#searchBar .btn {
+    height: 30px;
+    width: 80px;
+    -webkit-border-radius: 0 8px 8px 0;
+       -moz-border-radius: 0 8px 8px 0;
+            border-radius: 0 8px 8px 0;
+}
 
 /**
  * Fix auto complete position for IE 10

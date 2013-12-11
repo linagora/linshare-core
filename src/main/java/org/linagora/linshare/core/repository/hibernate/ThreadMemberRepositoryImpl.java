@@ -33,113 +33,91 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.sql.SQLException;
 import java.util.List;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
-import org.springframework.orm.hibernate3.HibernateCallback;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class ThreadMemberRepositoryImpl extends AbstractRepositoryImpl<ThreadMember> implements ThreadMemberRepository {
+public class ThreadMemberRepositoryImpl extends
+		AbstractRepositoryImpl<ThreadMember> implements ThreadMemberRepository {
 
 	public ThreadMemberRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
-	
+
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(ThreadMember entity) {
-		return DetachedCriteria.forClass(ThreadMember.class).add(Restrictions.eq("id", entity.getId()));
+		return DetachedCriteria.forClass(ThreadMember.class).add(
+				Restrictions.eq("id", entity.getId()));
 	}
 
 	@Override
 	public ThreadMember findById(long id) {
-		List<ThreadMember> entries = findByCriteria(Restrictions.eq("id", id));
-        if (entries == null || entries.isEmpty()) {
-            return null;
-        } else if (entries.size() == 1) {
-            return entries.get(0);
-        } else {
-            throw new IllegalStateException("Id must be unique");
-        }
-    }
+		DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
+
+		det.add(Restrictions.eq("id", id));
+		return DataAccessUtils.singleResult(findByCriteria(det));
+	}
 
 	@Override
-    public ThreadMember findUserThreadMember(Thread thread, User user) {
-		List<ThreadMember> entries = null;
-		DetachedCriteria criteria = DetachedCriteria.forClass(ThreadMember.class);
-		criteria.add(Restrictions.eq("thread", thread));
-		criteria.add(Restrictions.eq("user", user));
-		entries = findByCriteria(criteria);
-		
-		if (entries == null || entries.isEmpty()) {
-            return null;
-        } else if (entries.size() == 1) {
-            return entries.get(0);
-        } else {
-            throw new IllegalStateException("Thread member must be unique");
-        }
-    }
+	public ThreadMember findUserThreadMember(Thread thread, User user) {
+		DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
+
+		det.add(Restrictions.eq("thread", thread));
+		det.add(Restrictions.eq("user", user));
+		return DataAccessUtils.singleResult(findByCriteria(det));
+	}
+
 	@Override
 	public List<ThreadMember> findAllUserMemberships(User user) {
-		List<ThreadMember> entries = null;
-		DetachedCriteria criteria = DetachedCriteria.forClass(ThreadMember.class);
-		criteria.add(Restrictions.eq("user", user));
-		entries = findByCriteria(criteria);
-		return entries;
+		DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
+
+		det.add(Restrictions.eq("user", user));
+		return findByCriteria(det);
 	}
-	
+
 	@Override
 	public List<ThreadMember> findAllUserAdminMemberships(User user) {
-		List<ThreadMember> entries = null;
-		DetachedCriteria criteria = DetachedCriteria.forClass(ThreadMember.class);
-		criteria.add(Restrictions.eq("user", user));
-		criteria.add(Restrictions.eq("admin", true));
-		entries = findByCriteria(criteria);
-		return entries;
-	}
-	
-	@Override
-	public boolean isUserAdminOfAny(User user) {
-		List<ThreadMember> entries = null;
-		final DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
-		
-		// query
+		DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
+
 		det.add(Restrictions.eq("user", user));
 		det.add(Restrictions.eq("admin", true));
-		
-		// limiting to only one match, fetching all matches is unnecessary
-		entries = getHibernateTemplate().execute(
-				new HibernateCallback<List<ThreadMember>>() {
-					@SuppressWarnings("unchecked")
-					@Override
-					public List<ThreadMember> doInHibernate(final Session session)
-							throws HibernateException, SQLException {
-						return det.getExecutableCriteria(session).setCacheable(true)
-								.setMaxResults(1).list();
-					}
-				});
-		return entries != null && entries.size() > 0;
-		
+		return findByCriteria(det);
+	}
+
+	@Override
+	public boolean isUserAdminOfAny(User user) {
+		DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
+
+		det.add(Restrictions.eq("user", user));
+		det.add(Restrictions.eq("admin", true));
+		det.setProjection(Projections.rowCount());
+		return DataAccessUtils.singleResult(findByCriteria(det)) != null;
 	}
 
 	@Override
 	public boolean isUserAdmin(User user, Thread thread) {
-		List<ThreadMember> entries = null;
 		DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
-		
-		// query
+
 		det.add(Restrictions.eq("user", user));
 		det.add(Restrictions.eq("thread", thread));
 		det.add(Restrictions.eq("admin", true));
-		entries = findByCriteria(det);
-		return entries != null && entries.size() > 0;
+		return DataAccessUtils.singleResult(findByCriteria(det)) != null;
+	}
+
+	@Override
+	public int count(Thread thread) {
+		DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
+
+		det.add(Restrictions.eq("thread", thread));
+		det.setProjection(Projections.rowCount());
+		return DataAccessUtils.intResult(findByCriteria(det));
 	}
 }

@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.files.upload.title" t:identifier="share" t:currentHighlight="files"
+xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <script type="text/javascript" language="javascript">
+        var trySubmit = function() {
+            jQuery(".spinner").show();
+            jQuery("#formShareSubmit").hide();
+            jQuery("#submitShare").click();
+        }
+
+        jQuery(document).ready(function() {
+            // init
+            jQuery(".spinner").hide();
+        })
+    </script>
+
+
+    <!-- Main content -->
+    <div id="content">
+        <h1>${message:pages.files.upload.title}</h1>
+        <t:grid source="documents" include="fileName">
+        </t:grid>
+
+        <h2>${message:pages.files.upload.share.title}</h2>
+        <t:form t:id="shareForm" class="form-horizontal">
+            <fieldset>
+                <t:errors />
+
+                <div class="control-group">
+                    <t:label for="recipientsPattern" class="control-label required">
+                    ${message:pages.files.upload.recipients.title}</t:label>
+                    <div class="controls">
+                        <t:textarea t:id="recipientsPattern" t:value="recipientsSearch" t:mixins="autocomplete"
+                        t:minChars="${autocompleteMin}" t:tokens="," class="input-xxlarge"
+                        onchange="rm_errorclass();" />
+                        <p class="help-block">${message:pages.files.upload.recipients.description}</p>
+                    </div>
+                </div>
+                
+                <t:if test="enableListTab">
+                    <div class="control-group">
+                        <t:label for="mailingLists" class="control-label required">
+                        ${message:pages.files.upload.recipientsMailingList.title}</t:label>
+                        <div class="controls">
+                            <div t:type="tag/tagselect" t:id="mailingLists" t:value="mailingLists"
+                            t:encoder="encoder" t:dropdown="false" t:minChars="3" style="width: 535px;"></div>
+                            <p class="help-block">${message:pages.files.upload.recipientsMailingList.description}</p>
+                        </div>
+                    </div>
+                </t:if>
+
+                <div class="control-group">
+                    <t:if test="showSecureSharingCheckBox">
+                        <t:label for="secureSharing" class="control-label">
+                        ${message:pages.files.upload.secureSharing}</t:label>
+                        <div class="controls">
+                            <label class="checkbox">
+                                <t:checkbox t:id="secureSharing" />
+                                <span class="help-inline">
+                                ${message:pages.files.upload.secureSharing.description}</span>
+                            </label>
+                        </div>
+                    </t:if>
+                </div>
+
+                <div class="accordion" id="accordionMessage">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionMessage"
+                            href="#collapseOne">${message:pages.files.upload.message.custom}</a>
+                        </div>
+
+                        <div id="collapseOne" class="accordion-body collapse">
+                            <div class="accordion-inner">
+                                <div class="control-group">
+                                    <div class="controls">
+                                        <p class="help-block">${message:pages.files.upload.message.description}</p>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <t:label for="textAreaSubjectValue" class="control-label">
+                                    ${message:pages.files.upload.subject.title}</t:label>
+                                    <div class="controls">
+                                        <t:textfield t:id="textAreaSubjectValue" size="100" class="input-xxlarge"
+                                        onkeypress="if (event.keyCode == 13) return false;" />
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <t:label for="textAreaValue" class="control-label">
+                                    ${message:pages.files.upload.message.title}</t:label>
+                                    <div class="controls">
+                                        <t:textarea rows="8" t:id="textAreaValue" class="input-xxlarge" />
+                                    </div> <!--controls-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions" style="background-color: transparent">
+                    <t:pageLink page="files" class="btn" onlick="tryReturn()">
+                    ${message:pages.files.upload.cancelButton}</t:pageLink>
+                    ${message:global.space}
+                    <input name="submitShare" id="submitShare" type="submit" style="display:none" />
+                    <a id="formShareSubmit" class="btn btn-primary" onclick="trySubmit()">
+                        <span><img src="${asset:context:images/icons/share-on-small.png}"
+                        alt="" /> ${message:global.button.share.cap}</span>
+                    </a>
+                    <div class="spinner"></div>
+                </div> <!--form-actions-->
+
+            </fieldset>
+        </t:form>
+
+    </div>
+</t:MyBorderLayout>

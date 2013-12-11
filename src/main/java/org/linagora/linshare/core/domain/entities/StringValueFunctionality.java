@@ -33,9 +33,14 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.vo.FunctionalityVo;
 import org.linagora.linshare.core.domain.vo.StringValueFunctionalityVo;
+import org.linagora.linshare.webservice.dto.FunctionalityDto;
+import org.linagora.linshare.webservice.dto.ParameterDto;
 
 public class StringValueFunctionality extends OneValueFunctionality<String> {
 
@@ -43,9 +48,8 @@ public class StringValueFunctionality extends OneValueFunctionality<String> {
 		super();
 	}
 
-	public StringValueFunctionality(String identifier, boolean system,
-			Policy activationPolicy, Policy configurationPolicy,
-			AbstractDomain domain, String value) {
+	public StringValueFunctionality(String identifier, boolean system, Policy activationPolicy,
+			Policy configurationPolicy, AbstractDomain domain, String value) {
 		super(identifier, system, activationPolicy, configurationPolicy, domain, value);
 	}
 
@@ -53,35 +57,53 @@ public class StringValueFunctionality extends OneValueFunctionality<String> {
 	public FunctionalityType getType() {
 		return FunctionalityType.STRING;
 	}
-	
+
 	@Override
 	public boolean businessEquals(Functionality obj, boolean checkPolicies) {
-		if(super.businessEquals(obj, checkPolicies)) {
-			StringValueFunctionality o = (StringValueFunctionality)obj;
-			if(value.equals(o.getValue())) {
-				logger.debug("StringValueFunctionality : " + this.toString() + " is equal to StringValueFunctionality " + obj.toString());
+		if (super.businessEquals(obj, checkPolicies)) {
+			StringValueFunctionality o = (StringValueFunctionality) obj;
+			if (value.equals(o.getValue())) {
+				logger.debug("StringValueFunctionality : " + this.toString() + " is equal to StringValueFunctionality "
+						+ obj.toString());
 				return true;
 			}
 		}
-		logger.debug("StringValueFunctionality : " + this.toString() + " is not equal to StringValueFunctionality " + obj.toString());
+		logger.debug("StringValueFunctionality : " + this.toString() + " is not equal to StringValueFunctionality "
+				+ obj.toString());
 		return false;
 	}
-	
+
 	@Override
 	public void updateFunctionalityFrom(Functionality functionality) {
 		super.updateFunctionalityFrom(functionality);
 		this.updateFunctionalityValuesOnlyFrom(functionality);
 	}
-	
+
 	@Override
 	public void updateFunctionalityValuesOnlyFrom(Functionality functionality) {
-		StringValueFunctionality f = (StringValueFunctionality)functionality;
+		StringValueFunctionality f = (StringValueFunctionality) functionality;
 		this.value = f.getValue();
 	}
-	
+
 	@Override
 	public void updateFunctionalityValuesOnlyFromVo(FunctionalityVo functionality) {
-		StringValueFunctionalityVo f = (StringValueFunctionalityVo)functionality;
+		StringValueFunctionalityVo f = (StringValueFunctionalityVo) functionality;
 		this.value = f.getValue();
+	}
+
+	@Override
+	public void updateFunctionalityValuesOnlyFromDto(FunctionalityDto functionality) {
+		List<ParameterDto> parameters = functionality.getParameters();
+		if (parameters != null && !parameters.isEmpty()) {
+			ParameterDto parameterDto = parameters.get(0);
+			this.value = parameterDto.getString();
+		}
+	}
+
+	@Override
+	public List<ParameterDto> getParameters() {
+		List<ParameterDto> res = new ArrayList<ParameterDto>();
+		res.add(new ParameterDto(this.getValue()));
+		return res;
 	}
 }

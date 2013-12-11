@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.lists.index" t:identifier="thread" t:currentHighlight="lists"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+	
+	<!-- Main content -->
+	
+		<div id="content">
+
+		<h1>${message:components.myborderlayout.list.title}</h1>
+		<br></br><br></br>
+		<t:pageLink page="lists/ManageMailingList" class="button">
+			<span><img src="${asset:context:images/icons/icon-list-mini.png}" alt=""/>
+			${message:pages.lists.create}</span>
+		</t:pageLink>
+
+				  <div class="clear"></div>
+					<br></br>
+				<fieldset class="title_criteria_zone" id="searchCriterion">
+			<legend align="top" class="palette">${message:global.button.search}</legend>
+        		<table>
+					<tr>
+						<t:form id="form">
+						<td>
+							<t:textfield t:id="search" value="targetLists" t:validate="required" size="50" />
+						</td>
+                        <td>
+                            <t:select t:id="visibility"/>
+                        </td>
+						<td>
+						     <input type="submit" value="${message:global.button.search}"/>
+						</td>
+						</t:form>
+						<td>
+							<t:form t:type="form" t:id="resetForm">
+								<input type="submit" value="${message:global.button.reset}"/>
+							</t:form>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+				  <div class="clear"></div>
+		${message:pages.lists.notification}
+		<h2>${message:pages.administration.lists.index}</h2>
+		
+		<t:if t:test="emptyList">
+		${message:pages.lists.nothing}
+		<p:else>
+		<t:grid source="lists" rowsPerPage="10"  include="identifier, description, isPublic" add="ownership,edit,delete" row="list">
+			 <t:parameter name="identifierCell">
+			 <t:pageLink page="lists/DisplayMailingList" context="list.uuid"
+			 title="${message:pages.lists.link}">${list.identifier}</t:pageLink>
+			 </t:parameter>
+			 <t:parameter name="isPublicCell">
+			 	<t:if test="isPublic">
+			 	${message:pages.lists.radioGroupPub}
+			 	<p:else>
+			 	${message:pages.lists.radioGroupPriv}
+			 	</p:else>
+			 	</t:if>
+			 </t:parameter>
+			 <t:parameter name="ownershipCell">
+			 <t:if test="userIsOwner">
+				${message:pages.lists.userIsOwner}
+			 <p:else>
+			 	${list.owner.firstName} ${list.owner.lastName}
+			 </p:else>
+			 </t:if>
+			 </t:parameter>
+			 <t:parameter name="editCell">
+			 	<t:if test="listIsDeletable">
+			  		<t:pageLink page="lists/ManageMailingList" context="list.uuid"
+						title="${message:pages.lists.index.list.edit.button}">
+						<img src="${asset:context:images/icons/edit-button.png}" alt="${message:global.button.edit}" />
+			 		 </t:pageLink>
+			 	</t:if>
+			 </t:parameter>
+			 <t:parameter name="deleteCell">
+			  	<t:if test="listIsDeletable">
+			 	 		<t:actionLink t:id="deleteList" context="list.uuid" t:zone="zoneConfirmDelete"
+			 	 			title="${message:pages.lists.index.list.delete.button}">
+			 	 			<span onclick="window_confirm.showCenter(true)">
+							<img src="${asset:context:images/icons/delete-small.png}" alt="${message:global.button.delete}" />
+							</span>
+						</t:actionLink>
+					</t:if>
+			 </t:parameter>
+	    </t:grid>
+	    </p:else>
+		</t:if>
+	    
+		</div><!-- id="content" -->
+	
+	    <t:confirmPopup
+        t:messageLabel="${message:pages.lists.delete.ask}"
+        t:eventName="listDeleteEvent" t:windowId="confirm1" />
+	    <t:zone t:id="zoneConfirmDelete" />
+	
+	
+	</t:MyBorderLayout>

@@ -36,6 +36,7 @@ package org.linagora.linshare.auth;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.service.AccountService;
 import org.slf4j.Logger;
@@ -47,59 +48,59 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-
-
-/** Helps Managing guests and root administrator authentication.
- *
+/**
+ * Helps Managing guests and root administrator authentication.
+ * 
  */
 public class DaoAuthProvider implements UserDetailsService {
 
-    private final AccountService accountService;
-    private static Logger logger = LoggerFactory.getLogger(DaoAuthProvider.class);
+	private final AccountService accountService;
+	private static Logger logger = LoggerFactory
+			.getLogger(DaoAuthProvider.class);
 
-
-    public DaoAuthProvider(AccountService accountService) {
+	public DaoAuthProvider(AccountService accountService) {
 		super();
 		this.accountService = accountService;
 	}
 
-
 	/*
-     * In this method, we try to load user details from the database.
-     * We are four data types :
-     *  - LdapUser : Just a profile : first name, last name, role, domain_id.
-     *  - Guest : first name, last name, role, domain_id, user_owner, password, expiration date, ...
-     *  - System : useless, we can't login with this account.
-     *  - Root : super admin. His credential are stored in the database.
-     */
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+	 * In this method, we try to load user details from the database. We are
+	 * four data types : 
+	 * 		- LdapUser : Just a profile : first name, last name, role, domain_id. 
+	 * 		- Guest : first name, last name, role, domain_id, user_owner, password, expiration date, ... 
+	 * 		- System : useless, we can't login with this account. 
+	 * 		- Root : super admin. His credential are stored in the database.
+	 */
+	public UserDetails loadUserByUsername(String username)
+			throws UsernameNotFoundException, DataAccessException {
+		if (username == null || username.length() == 0)
+			throw new UsernameNotFoundException("username must not be null");
+		logger.debug("Trying to load '" + username + "' account detail ...");
 
-        if (username == null || username.length() == 0) {
-            throw new UsernameNotFoundException("username must not be null");
-        }
-        logger.debug("Trying to load '" + username +"' account detail ...");
+		// TODO manage domain for guest
+		Account account = accountService.findByLsUuid(username);
+		String password = null;
 
-        // TODO manage domain for guest 
-        org.linagora.linshare.core.domain.entities.Account account = accountService.findByLsUuid(username);
-        String password = null ;
-        if(account != null) {
-        	logger.debug("Account in database found : " + account.getLsUuid());
-        	password = account.getPassword();
-        
-        	// If the password field is not set (only Ldap user), we set it to an empty string.
-        	// XXX : code etrange, a verifier
-        	if (!AccountType.INTERNAL.equals(account) && password==null) password=""; 
-        }
-		
-        if (account == null || password == null || Role.SYSTEM.equals(account.getRole())) {
-        	logger.debug("throw UsernameNotFoundException: Account not found");
-            throw new UsernameNotFoundException("Account not found");
-        }
+		if (account != null) {
+			logger.debug("Account in database found : " + account.getLsUuid());
+			password = account.getPassword();
 
-        List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(account);
+			// If the password field is not set (only Ldap user), we set it to
+			// an empty string.
+			if (password == null)
+				password = "";
+		}
+		if (account == null || password == null
+				|| Role.SYSTEM.equals(account.getRole())) {
+			logger.debug("throw UsernameNotFoundException: Account not found");
+			throw new UsernameNotFoundException("Account not found");
+		}
 
-        return new User(account.getLsUuid(), password, true, true, true, true,
-            grantedAuthorities.toArray(new GrantedAuthority[0]));
-    }
+		List<GrantedAuthority> grantedAuthorities = RoleProvider
+				.getRoles(account);
+
+		return new User(account.getLsUuid(), password, true, true, true, true,
+				grantedAuthorities.toArray(new GrantedAuthority[0]));
+	}
 
 }

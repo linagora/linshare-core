@@ -247,7 +247,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 	@Override
 	public void updateFileProperties(ThreadEntry entry, String fileComment) throws BusinessException {
-		String uuid = entry.getDocument().getUuid();
 		entry.setComment(fileComment);
         threadEntryRepository.update(entry);
 	}
@@ -323,6 +322,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			logger.error("Could not delete docEntry " + documentEntry.getName()+ " (" + documentEntry.getUuid() + " own by " + documentEntry.getEntryOwner().getLsUuid() + ", reason : it is still shared. ");
 			throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_SHARED_DOCUMENT, "Can't delete a shared document. Delete all shares first.");
 		}
+		logger.debug("Deleting document entry: " + documentEntry.getUuid());
 		Account owner = documentEntry.getEntryOwner();
 		owner.getEntries().remove(documentEntry);
 		accountRepository.update(owner);
@@ -337,7 +337,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	@Override
 	public ThreadEntry createThreadEntry(Thread owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException {
-
 		// add an entry for the file in DB
 		ThreadEntry entity = null;
 		try {
@@ -376,6 +375,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names) {
 		return threadEntryRepository.findAllThreadEntriesTaggedWith(owner, names);
+	}
+	
+	@Override
+	public int countThreadEntries(Thread thread) {
+		return threadEntryRepository.count(thread);
 	}
 	
 	@Override
@@ -424,12 +428,23 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		String oldThumbUuid = document.getThmbUuid(); 
 		if (oldThumbUuid != null && oldThumbUuid.length() > 0) {
 			logger.debug("suppresion of Thumb, Uuid : " + oldThumbUuid);
-			fileSystemDao.removeFileByUUID(oldThumbUuid);
+			
+			try {
+				fileSystemDao.removeFileByUUID(oldThumbUuid);
+			} catch (org.springframework.dao.DataRetrievalFailureException e) {
+				logger.error("Can not suppress document {}", document.getUuid());
+				logger.debug(e.toString());
+			}
 		}
 		
 		// remove old document in JCR
 		logger.debug("suppresion of doc, Uuid : " + document.getUuid());
-		fileSystemDao.removeFileByUUID(document.getUuid());
+		try {
+			fileSystemDao.removeFileByUUID(document.getUuid());
+		} catch (org.springframework.dao.DataRetrievalFailureException e) {
+			logger.error("Can not suppress document {}", document.getUuid());
+			logger.debug(e.toString());
+		}
 		
 		//clean all signatures ...
 		Set<Signature> signatures = document.getSignatures();

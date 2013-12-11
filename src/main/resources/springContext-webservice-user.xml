@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cxf="http://cxf.apache.org/core"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+
+	<!-- cxf -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+
+
+	<!-- SOAP -->
+	<!-- SOAP Beans -->
+	<bean id="soapService" class="org.linagora.linshare.webservice.impl.SoapServiceImpl">
+		<constructor-arg ref="wsDocumentFacade" />
+		<constructor-arg ref="wsShareFacade" />
+		<constructor-arg ref="wsThreadFacade" />
+		<constructor-arg ref="wsUserFacade" />
+	</bean>
+	
+	<bean id="MTOMUploadSoapService" class="org.linagora.linshare.webservice.impl.MTOMUploadSoapServiceImpl">
+		<constructor-arg ref="wsDocumentFacade" />
+	</bean>
+
+	<jaxws:endpoint id="soapEndpoint" implementor="#soapService" address="/soap">
+		<jaxws:outFaultInterceptors>
+			<ref bean="soapExceptionInterceptor" />
+		</jaxws:outFaultInterceptors>
+	</jaxws:endpoint>
+
+	<!-- SOAP Endpoints -->
+	<jaxws:endpoint id="MTOMUploadEndpoint" implementor="#MTOMUploadSoapService" address="/upload">
+		<jaxws:properties>
+			<entry key="mtom-enabled" value="true" />
+			<entry key="attachment-directory" value="${webservice.attachment-directory}" />
+			<!-- data exceeding the memory threshold will be written to the directory specified in bytes -->
+			<entry key="attachment-memory-threshold" value="${webservice.attachment-memory-threshold}" />
+		</jaxws:properties>
+		<jaxws:outFaultInterceptors>
+			<ref bean="soapExceptionInterceptor" />
+		</jaxws:outFaultInterceptors>
+	</jaxws:endpoint>
+
+
+	<!-- REST  -->
+	
+	<!-- Compatibility thunderbird -->
+	<bean id="pluginCompatibilityRestService" class="org.linagora.linshare.webservice.impl.PluginCompatibilityRestServiceImpl">
+		<constructor-arg ref="wsShareFacade" />
+		<constructor-arg ref="wsDocumentFacade" />
+	</bean>
+	
+	<bean id="authenticationRestService" class="org.linagora.linshare.webservice.user.impl.AuthenticationRestServiceImpl">
+		<constructor-arg ref="wsUserFacade" />
+	</bean>
+
+	<bean id="documentRestService" class="org.linagora.linshare.webservice.user.impl.DocumentRestServiceImpl">
+		<constructor-arg ref="wsDocumentFacade" />
+	</bean>
+
+	<bean id="shareRestService" class="org.linagora.linshare.webservice.user.impl.ShareRestServiceImpl">
+		<constructor-arg ref="wsShareFacade" />
+	</bean>
+
+	<bean id="threadRestService" class="org.linagora.linshare.webservice.user.impl.ThreadRestServiceImpl">
+		<constructor-arg ref="wsThreadFacade" />
+	</bean>
+
+	<bean id="threadMemberRestService" class="org.linagora.linshare.webservice.user.impl.ThreadMemberRestServiceImpl">
+		<constructor-arg ref="wsThreadFacade" />
+		<constructor-arg ref="wsThreadMemberFacade" />
+	</bean>
+
+	<bean id="userRestService" class="org.linagora.linshare.webservice.user.impl.UserRestServiceImpl">
+		<constructor-arg ref="wsUserFacade" />
+	</bean>
+	
+	<jaxrs:server id="restContainer" address="/rest">
+		<jaxrs:serviceBeans>
+			<ref bean="authenticationRestService" />
+			<ref bean="documentRestService" />
+			<ref bean="shareRestService" />
+			<ref bean="pluginCompatibilityRestService" />
+			<ref bean="threadRestService" />
+			<ref bean="threadMemberRestService" />
+			<ref bean="userRestService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+			<entry key="xml" value="application/xml" />
+		</jaxrs:extensionMappings>
+		<jaxrs:providers>
+			<!--  ExceptionMappers. -->
+			<ref bean="businessExceptionMapper" />
+			<ref bean="genericExceptionMapper" />
+			<ref bean="webApplicationExceptionMapper" />
+			<!-- Json provider for serialisation -->
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>
+		<jaxrs:features>
+<!-- 			<cxf:logging /> -->
+		</jaxrs:features>
+		<jaxrs:inInterceptors>
+			<!-- For debug only : print input message -->
+<!-- 			<ref bean="logInbound" /> -->
+			<!-- This interceptor is designed to store some context properties in message exchange context for timingOutInterceptor -->
+			<ref bean="timingInInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<!-- For debug only : print output  message -->
+<!--             	<ref bean="logOutbound" /> -->
+			<!-- This interceptor is designed compute request execution time.-->
+			<ref bean="timingOutInterceptor" />
+		</jaxrs:outInterceptors>
+		<jaxrs:inFaultInterceptors>
+		</jaxrs:inFaultInterceptors>
+		<jaxrs:outFaultInterceptors>
+		</jaxrs:outFaultInterceptors>
+	</jaxrs:server>
+</beans>

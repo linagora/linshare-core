@@ -36,6 +36,8 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 import java.util.Set;
 
+import org.linagora.linshare.webservice.dto.UserDto;
+
 
 public abstract class User extends Account {
 	
@@ -64,7 +66,7 @@ public abstract class User extends Account {
 	protected TechnicalAccountPermission technicalAccountPermission;
 	
 	/** If the user is allowed to create guest */
-	protected Boolean canCreateGuest;
+	protected boolean canCreateGuest;
 
 	
 	public User() {
@@ -100,6 +102,15 @@ public abstract class User extends Account {
 		this.restricted = false;
 	}
 
+	public User(UserDto userDto) {
+		this.lsUuid = userDto.getUuid();
+		this.firstName = userDto.getFirstName();
+		this.lastName = userDto.getLastName();
+		this.mail = userDto.getMail();
+		this.role = Role.valueOf(userDto.getRole());
+		this.canUpload = userDto.getCanUpload();
+		this.canCreateGuest = userDto.isCanCreateGuest();
+	}
 	
 	public void setFirstName(String value) {
 		this.firstName = value;
@@ -201,7 +212,7 @@ public abstract class User extends Account {
 		this.myThreads = myThreads;
 	}
 	
-	public Boolean getCanCreateGuest() {
+	public boolean getCanCreateGuest() {
 		return canCreateGuest;
 	}
 	

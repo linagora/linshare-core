@@ -44,7 +44,9 @@
 			</t:parameter>
 
 			<t:parameter t:name="updateDocHeader">
+				<t:if test="ShowUpd">
 				<abbr title="${message:components.listDocument.grid.update}">${message:components.listDocument.grid.update.abbr}</abbr>
+				</t:if>
 			</t:parameter>
 
 			<t:parameter t:name="fileEditHeader">
@@ -101,15 +103,15 @@
 				<span class="creationDate">${message:components.listDocument.uploadOn} ${creationDate}</span>${message:global.space}
 			</div>
 			</t:parameter>
-
 			<t:parameter t:name="updateDocCell">
+						<t:if test="ShowUpd">
 				<t:actionLink t:id="updateDoc"  t:zone="zoneTest" context="${document.identifier}">
 					<span onclick="windowUpdateDocUpload.showCenter(true);">
 						<img src="${asset:context:images/icons/update.png}" alt="" title="${message:components.listDocument.picture.update.title}" />
 					</span>
 				</t:actionLink>
+				</t:if>
 			</t:parameter>
-
 			<t:parameter t:name="fileEditCell">
 				<t:actionLink t:id="fileEditProperties" t:zone="${fileEdit.zoneClientId}" context="${document.identifier}">
 					<span onclick="literal:${fileEdit.javascriptOpenPopup}">
