@@ -40,7 +40,8 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Calendar;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -61,7 +62,9 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.corelib.components.Grid;
 import org.apache.tapestry5.corelib.components.Zone;
+import org.apache.tapestry5.grid.ColumnSort;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
@@ -82,6 +85,8 @@ import org.linagora.linshare.view.tapestry.pages.thread.ThreadContent;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 
 @Import(library= { "ListThreadDocument.js"})
@@ -132,14 +137,16 @@ public class ListThreadDocument {
     private ThreadEntryVo threadEntry;
 
     @Property
-    private String login;
-
-    @Property
     private boolean valueCheck;
 
     @Property
     private String checkBoxGroupUuid;
+    
+    @Property
+    private boolean canUpload;
 
+    @Property
+    private boolean isAdmin;
 
     /***********************************
      * Service injection
@@ -156,10 +163,6 @@ public class ListThreadDocument {
 
     @Inject
     private BeanModelSource beanModelSource;
-
-    @Property
-    @Persist
-    private BeanModel<ThreadEntryVo> model;
 
     @Property
     @Persist
@@ -203,18 +206,34 @@ public class ListThreadDocument {
      * Phase render
      *********************************/
 
+    @InjectComponent
+    private Grid grid;
     /**
      * Initialization of the selected list and set the userLogin from the user ASO.
      * @throws BusinessException 
      */
-    @SuppressWarnings("unchecked")
     @SetupRender
     public void init() throws BusinessException {
+    	
+		isAdmin = threadEntryFacade.userIsAdmin(user, threadVo);
+		canUpload = threadEntryFacade.userCanUpload(user, threadVo);
+    	
         if (listThreadEntries == null)
             return;
-        Collections.sort(listThreadEntries);
-        login = user.getLogin();
-        initModel();
+        /*
+         * Default to descending order of creation date column
+         */
+		if (grid.getSortModel().getSortConstraints().isEmpty()) {
+			while (!grid.getSortModel().getColumnSort("creationDate")
+					.equals(ColumnSort.DESCENDING)) {
+				grid.getSortModel().updateSort("creationDate");
+			}
+		}
+    }
+
+    public BeanModel<ThreadEntryVo> getModel() {
+		return beanModelSource
+				.createDisplayModel(ThreadEntryVo.class, messages);
     }
 
     /***************************************************************************
@@ -245,7 +264,7 @@ public class ListThreadDocument {
             throw new BusinessException(BusinessErrorCode.INVALID_UUID,	"invalid uuid for this user");
         } else {
         	try {
-                InputStream stream = threadEntryFacade.retrieveFileStream(current, user);
+                InputStream stream = threadEntryFacade.retrieveFileStream(user, current);
                 return new FileStreamResponse(current, stream);
 			} catch (Exception e) {
 				logger.error("File don't exist anymore, please remove it");
@@ -287,16 +306,6 @@ public class ListThreadDocument {
      * Events
      **************************************************************************/
 
-    @SuppressWarnings("unchecked")
-    @OnEvent(value="eventReorderList")
-    public void reorderList(Object[] o1) {
-        if (o1 != null && o1.length > 0) {
-            this.entries = (List<ThreadEntryVo>)Arrays.copyOf(o1,1)[0];
-            this.sorterModel = new ThreadEntrySorterModel(this.entries);
-            refreshFlag = true;
-        }
-    }
-    
     @OnEvent(value="eventDelete")
     public void deleteEntry() {
     	componentResources.getPage().getComponentResources().triggerEvent("eventDeleteThreadEntry", null, null);
@@ -308,46 +317,6 @@ public class ListThreadDocument {
      **************************************************************************/
     
     
-    public boolean isDeletable() {
-    	try {
-    		return  null != threadEntryFacade.findById(user, threadEntry.getIdentifier());
-    	} catch(BusinessException e) {
-    		logger.debug(e.toString());
-    		return false;
-    	}
-    }
-    
-    
-    /**
-     * model for the datagrid we need it to switch off the signature and the
-     * encrypted column dynamically administration can desactivate the signature
-     * and encryption function
-     * 
-     * @return
-     * @throws BusinessException
-     */
-    public BeanModel<ThreadEntryVo> initModel() throws BusinessException {
-        //Initialize the sorter model for sorter component.
-        if (refreshFlag) {
-            listThreadEntries = entries;
-            refreshFlag = false;
-        }
-        sorterModel = new ThreadEntrySorterModel(listThreadEntries);
-        model = beanModelSource.createDisplayModel(ThreadEntryVo.class, componentResources.getMessages());
-        model.add("fileProperties", null);
-        if (admin) {
-        	model.add("fileDelete", null);
-        }
-        List<String> reorderlist = new ArrayList<String>();
-        reorderlist.add("fileProperties");
-        if (admin) {
-        	reorderlist.add("fileDelete");
-        }
-        model.reorder(reorderlist.toArray(new String[reorderlist.size()]));
-
-        return model;
-    }
-
     /**
      * Generate the css class in order to display the icon corresponding to the file mime type
      * 
@@ -392,31 +361,12 @@ public class ListThreadDocument {
         return result;
     }
 
-    public boolean getCanUpload(){
-    	try {
-    		logger.debug(String.valueOf(threadEntryFacade.userCanUpload(user, threadVo)));
-			return threadEntryFacade.userCanUpload(user, threadVo);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			return false;
-		}
-    }
-    
-    public boolean getIsAdmin(){
-    	try {
-			return threadEntryFacade.userIsAdmin(user, threadVo);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			return false;
-		}
-    }
-    
     public Link getThumbnailPath() {
         return componentResources.createEventLink("thumbnail", threadEntry.getIdentifier());
     }
 
     public boolean getThumbnailExists() {
-        return threadEntryFacade.documentHasThumbnail(login, threadEntry.getIdentifier());
+        return threadEntryFacade.documentHasThumbnail(user, threadEntry.getIdentifier());
     }
 
     public void onThumbnail(String docId) {
@@ -429,7 +379,7 @@ public class ListThreadDocument {
             }
         }
         try {
-        	stream = threadEntryFacade.getDocumentThumbnail(user.getLsUuid(), current.getIdentifier());
+        	stream = threadEntryFacade.getDocumentThumbnail(user, current.getIdentifier());
         } catch (Exception e) {
 			logger.error("Trying to get a thumbnail linked to a document which doesn't exist anymore");
 		}

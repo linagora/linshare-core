@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-
 import java.util.Date;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -45,21 +44,21 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class AccountRepositoryImpl extends GenericAccountRepositoryImpl<Account> implements AccountRepository<Account> {
 
-    public AccountRepositoryImpl(HibernateTemplate hibernateTemplate) {
-        super(hibernateTemplate);
-    }
+	public AccountRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
+	}
 
-    @Override
-    protected DetachedCriteria getNaturalKeyCriteria(Account account) {
-        DetachedCriteria det = DetachedCriteria.forClass(Account.class).add(Restrictions.eq("lsUuid", account.getLsUuid()));
-        return det;
-    }
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(Account account) {
+		DetachedCriteria det = DetachedCriteria.forClass(Account.class).add(
+				Restrictions.eq("lsUuid", account.getLsUuid()));
+		return det;
+	}
 
 	@Override
 	public Account update(Account entity) throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
-    
-    
-} 
+
+}

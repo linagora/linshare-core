@@ -11,6 +11,8 @@
 		</style>
     <![endif]-->
 	
+	
+	
 	<div t:id="confirmWindow" >
 	<div class="confirmPopup">
 
@@ -40,15 +42,25 @@
 			<div t:type="ck/SlidingPanel" t:id="panelRecipients" t:closed="false"
                 t:options="{duration:0.3}"
 				t:subject="${message:components.confirmSharePopup.panelRecipients.subject}">      
-				<t:textarea t:id="recipientsPatternSharePopup" t:value="recipientsSearch" validate="required"
+				<t:textarea t:id="recipientsPatternSharePopup" t:value="recipientsSearch"
 					t:mixins="autocomplete" t:minChars="${autocompleteMin}" t:tokens=","
 					class="recipientsPattern" 
-					title="${message:components.confirmSharePopup.texarea.recipients.title}" />
+					title="${message:components.confirmSharePopup.texarea.recipients.title}" 
+					onchange="rm_errorclass();"/>
 			</div>
 			<div class="clear"></div>
+            <t:if test="enableListTab">
+                <br></br>
+                <div class="description"><p>${message:components.quickSharePopup.listRecipients.description}</p></div>
+                <div t:type="ck/SlidingPanel" t:id="panelMailingLists" t:closed="false"
+                    t:options="{duration:0.3}"
+                    t:subject="${message:components.quickForwardPopup.panelRecipients.subject}">
+                    <div t:type="tag/tagselect" t:id="mailingLists" t:value="mailingLists"
+                        t:encoder="encoder" t:dropdown="false" t:minChars="3" style="width: 535px; height: 28px;" vertical="true"></div>
+                </div>
+            </t:if>
 
 			<hr />
-			
 			
 			<t:if test="showSecureSharingCheckBox">
 				<div class="${cssClassNumber}"></div>
@@ -104,9 +116,18 @@
 			<hr />
 
  			<div class="button">
-            	<t:linkSubmit class="button">
-            		<span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share}</span>
+            			
+            		<!--<input id="submitConfirmShare" type="submit" style="display:none"/>
+					
+				    <a id="confirmshare_send_link" href="#" class="button" onclick="sendFiles();">
+                   		<span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share}</span>
+               		</a>
+					-->
+
+            	<t:linkSubmit class="button" t:id="confirmshare_send_link" onclick="sendFiles();"> 
+                   		<span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share}</span>
             	</t:linkSubmit>
+
 				<a href="#" onclick='Windows.close("${JSONId}")' class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span></a>
 			</div>
 			

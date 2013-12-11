@@ -8,6 +8,7 @@ import java.util.StringTokenizer;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
@@ -18,14 +19,17 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.SelectModelFactory;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
+import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
@@ -40,6 +44,8 @@ import org.linagora.linshare.view.tapestry.utils.XSSFilter;
 import org.owasp.validator.html.Policy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import se.unbound.tapestry.tagselect.LabelAwareValueEncoder;
 
 public class QuickForwardPopup {
 	
@@ -81,6 +87,9 @@ public class QuickForwardPopup {
 	private String recipientsSearch;
 	
 	@Property
+	private List<MailingListVo> mailingLists;
+
+	@Property
 	private int autocompleteMin;
 
 	@Property
@@ -100,6 +109,9 @@ public class QuickForwardPopup {
 
 	@Inject
 	private UserFacade userFacade;
+	
+	@Inject
+	private MailingListFacade mailingListFacade;
 
 	@Inject
 	private Messages messages;
@@ -118,6 +130,9 @@ public class QuickForwardPopup {
 
 	@Inject
 	private FunctionalityFacade functionalityFacade;
+
+	@Inject
+	private SelectModelFactory selectModelFactory;
 
 	@Component(parameters = {"style=bluelighting", "show=false","width=650", "height=550", "closable=true"})
 	private WindowWithEffects quickForwardWindow;
@@ -147,8 +162,20 @@ public class QuickForwardPopup {
     	}
     	
     	boolean sendErrors = false;
-    	logger.debug("FOOBAR :" + recipientsSearch);
-		List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
+		List<String> recipients = new ArrayList<String>();
+
+		if (recipientsSearch != null) {
+			recipients = MailCompletionService.parseEmails(recipientsSearch);
+		}
+
+		for (MailingListVo ml : mailingLists) {
+			try {
+				recipients.addAll(mailingListFacade.getAllContactMails(ml));
+			} catch (BusinessException e) {
+				logger.error(e.getMessage());
+			}
+		}
+
 		String badFormatEmail =  "";
 		
 		for (String recipient : recipients) {
@@ -193,6 +220,10 @@ public class QuickForwardPopup {
 	        }
     	}
 
+    	for (MailingListVo ml : mailingLists) {
+    		recipientsEmail.addAll(mailingListFacade.getAllContactMails(ml));
+    	}
+
     	// Share the copied documents to recipients
     	SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
     	boolean errorOnAddress = false;
@@ -228,9 +259,15 @@ public class QuickForwardPopup {
 			businessMessagesManagementService.notify(new BusinessUserMessage(
                 BusinessUserMessageType.SHARE_WARNING_MAIL_ADDRESS, MessageSeverity.WARNING));				
 		} else {
+			if(recipientsEmail.size() > 0){
 			recipientFavouriteFacade.increment(userLoggedIn, recipientsEmail);
 			shareSessionObjects.addMessage(messages.get("components.confirmSharePopup.success"));
 			componentResources.triggerEvent("resetListFiles", null, null);
+			} else {
+				businessMessagesManagementService.notify(new BusinessUserMessage(
+		                BusinessUserMessageType.QUICKSHARE_NOMAIL, MessageSeverity.ERROR));
+				componentResources.triggerEvent("resetListFiles", null, null);
+			}
 		}
     }
     
@@ -248,9 +285,40 @@ public class QuickForwardPopup {
 		return elements;
 	}
 	
+	public SelectModel onProvideCompletionsFromMailingLists(String input)
+			throws BusinessException {
+		List<MailingListVo> lists = mailingListFacade.completionForUploadForm(
+				userLoggedIn, input);
+
+		return selectModelFactory.create(lists, "representation");
+	}
+
+    public boolean isEnableListTab() {
+    	return functionalityFacade.isEnableListTab(userLoggedIn.getDomainIdentifier());
+    }
+	
 	public String getCssClassNumber() {
 		cssClassNumberCpt += 1;
 		return "number" + Integer.toString(cssClassNumberCpt);
+	}
+
+	public LabelAwareValueEncoder<MailingListVo> getEncoder() {
+		return new LabelAwareValueEncoder<MailingListVo>() {
+			@Override
+			public String toClient(MailingListVo value) {
+				return value.getUuid();
+			}
+
+			@Override
+			public MailingListVo toValue(String clientValue) {
+				return mailingListFacade.findByUuid(clientValue);
+			}
+
+			@Override
+			public String getLabel(MailingListVo arg0) {
+				return arg0.toString();
+			}
+		};
 	}
 
 	/** Perform a user search using the user search pattern.

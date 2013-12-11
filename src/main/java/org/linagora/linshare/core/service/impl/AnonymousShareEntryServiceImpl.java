@@ -53,7 +53,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
 
 public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryService {
 
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 	
 	private final AnonymousShareEntryBusinessService anonymousShareEntryBusinessService;
 	
@@ -79,7 +79,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
     
     private static final Logger logger = LoggerFactory.getLogger(AnonymousShareEntryServiceImpl.class);
     
-	public AnonymousShareEntryServiceImpl(FunctionalityService functionalityService, AnonymousShareEntryBusinessService anonymousShareEntryBusinessService,
+	public AnonymousShareEntryServiceImpl(FunctionalityOldService functionalityService, AnonymousShareEntryBusinessService anonymousShareEntryBusinessService,
 			ShareExpiryDateService shareExpiryDateService, LogEntryService logEntryService, NotifierService notifierService, MailContentBuildingService mailElementsFactory,
 			DocumentEntryBusinessService documentEntryBusinessService) {
 		super();
@@ -104,7 +104,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 			return share;
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this share, it does not belong to you.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this share, it does not belong to you.");
 		}
 	}
 	
@@ -188,22 +188,31 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 	
 	@Override
 	public InputStream getAnonymousShareEntryStream(String shareUuid) throws BusinessException {
+		AnonymousShareEntry shareEntry;
 		try {
-			AnonymousShareEntry shareEntry = downloadAnonymousShareEntry(shareUuid);
-			//send a notification by mail to the owner
-			notifierService.sendAllNotification(mailContentBuildingService.buildMailAnonymousDownload(shareEntry));
-			return documentEntryBusinessService.getDocumentStream(shareEntry.getDocumentEntry());
+			shareEntry = downloadAnonymousShareEntry(shareUuid);
 		} catch (BusinessException e) {
 			logger.error("Can't find anonymous share : " + shareUuid + " : " + e.getMessage());
 			throw e;
 		}
+		try {
+			//send a notification by mail to the owner
+			notifierService.sendAllNotification(mailContentBuildingService.buildMailAnonymousDownload(shareEntry));
+		} catch (BusinessException e) {
+			// TODO : FIXME : send the notification to the domain administration address. => a new functionality need to be add. 
+			if(e.getErrorCode().equals(BusinessErrorCode.RELAY_HOST_NOT_ENABLE)) {
+				logger.error("Can't send notification to anonymous share (" + shareUuid + ") owner because : " + e.getMessage());
+			}
+		}
+		return documentEntryBusinessService.getDocumentStream(shareEntry.getDocumentEntry());
 	}
 
 	
 	private AnonymousShareEntry downloadAnonymousShareEntry(String shareUuid) throws BusinessException {
 		AnonymousShareEntry shareEntry = anonymousShareEntryBusinessService.findByUuidForDownload(shareUuid);
 		
-		ShareLogEntry logEntry = new ShareLogEntry(shareEntry.getEntryOwner(), shareEntry, LogAction.ANONYMOUS_SHARE_DOWNLOAD, "Anonymous download of a file");
+		ShareLogEntry logEntry = new ShareLogEntry(shareEntry.getEntryOwner(), shareEntry, LogAction.ANONYMOUS_SHARE_DOWNLOAD,
+				"Anonymous user " + shareEntry.getEntryOwner() +  " downloaded a file");
 		logEntryService.create(logEntry);
 		return shareEntry;
 	}

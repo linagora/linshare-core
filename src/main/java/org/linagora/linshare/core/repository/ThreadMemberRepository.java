@@ -90,4 +90,12 @@ public interface ThreadMemberRepository extends AbstractRepository<ThreadMember>
 	 * @return true if user is admin of the thread
 	 */
 	boolean isUserAdmin(User user, Thread thread);
+
+	/**
+	 * Count the amount of members in the thread
+	 * 
+	 * @param thread
+	 * @return the amount of members
+	 */
+	public int count(Thread thread);
 }

@@ -35,8 +35,12 @@ package org.linagora.linshare.core.domain.vo;
 
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.beaneditor.Validate;
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.Role;
+
+import com.google.common.base.Function;
 
 public class AbstractDomainVo {
 
@@ -55,8 +59,6 @@ public class AbstractDomainVo {
 	
 	@NonVisual
 	protected boolean enable = true;
-
-	protected String policyIdentifier;
 	
 	@NonVisual 
 	protected Long usedSpace = new Long(0);
@@ -69,10 +71,11 @@ public class AbstractDomainVo {
 	protected String patternIdentifier;
 	
 	protected String ldapIdentifier;
+	
+	protected String policyIdentifier;
 
 	public AbstractDomainVo() {
 	}
-	
 	
 	public AbstractDomainVo(AbstractDomain entity) {
 		this.setDefaultLocale(entity.getDefaultLocale());
@@ -105,8 +108,6 @@ public class AbstractDomainVo {
 	
 	public void setIdentifier(String identifier) {
 		this.identifier = identifier;
-		// Label temporary disable : no ihm use for now : to be done.   
-		this.label = identifier;
 	}
 
 	@Validate("required")
@@ -114,8 +115,7 @@ public class AbstractDomainVo {
 		return identifier;
 	}
 	
-//	@Validate("required")
-	@NonVisual 
+	@Validate("required")
 	public String getLabel() {
 		return label;
 	}
@@ -237,5 +237,5 @@ public class AbstractDomainVo {
 	public void setAuthShowOrder(Long authShowOrder) {
 		this.authShowOrder = authShowOrder;
 	}
-
+	
 }

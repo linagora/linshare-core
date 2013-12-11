@@ -41,7 +41,7 @@ import org.linagora.linshare.core.domain.constants.EntryType;
  * @author fred
  *
  */
-public class ShareEntry extends Entry{
+public class ShareEntry extends Entry {
 
 	protected User recipient;
 	
@@ -91,7 +91,7 @@ public class ShareEntry extends Entry{
 		this.downloaded = downloaded;
 	}
 
-	public void incrementDownload() {
+	public void incrementDownloaded() {
 		++downloaded;
 	}
 	

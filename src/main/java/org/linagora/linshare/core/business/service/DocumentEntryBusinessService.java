@@ -88,6 +88,8 @@ public interface DocumentEntryBusinessService {
 
 	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names);
 
+	public int countThreadEntries(Thread thread);
+
 	public InputStream getDocumentStream(ThreadEntry entry);
 
 	public InputStream getThreadEntryThumbnailStream(ThreadEntry entry);

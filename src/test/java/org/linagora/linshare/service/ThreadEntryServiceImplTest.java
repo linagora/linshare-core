@@ -33,15 +33,25 @@
  */
 package org.linagora.linshare.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.Policies;
+import org.linagora.linshare.core.domain.constants.TimeUnit;
+import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Policy;
+import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.TimeUnitClass;
+import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -97,15 +107,120 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	
 	private List<Thread> threads;
 	
+	private User jane;
+	private User john;
+	
+	
+	
 	@Before
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
 		datas = new LoadingServiceTestDatas(functionalityRepository, abstractDomainRepository, domainPolicyRepository, userRepository, userService);
 		datas.loadUsers();
+		john = datas.getUser1();
+		jane = datas.getUser2();
+		Integer value = 1;
+		
+		ArrayList<Functionality> functionalities = new ArrayList<Functionality>();
+		functionalities.add(
+			new UnitValueFunctionality("QUOTA_GLOBAL",
+				true,
+				new Policy(Policies.ALLOWED, false),
+				new Policy(Policies.ALLOWED, false),
+				john.getDomain(),
+				value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA)
+			)
+		);
+		
+		functionalities.add(
+			new UnitValueFunctionality("QUOTA_USER",
+				true,
+				new Policy(Policies.ALLOWED, false),
+				new Policy(Policies.ALLOWED, false),
+				john.getDomain(),
+				value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA)
+			)
+		);
+		
+		functionalities.add(
+				new Functionality("MIME_TYPE",
+					true,
+					new Policy(Policies.ALLOWED, false),
+					new Policy(Policies.ALLOWED, false),
+					john.getDomain()
+				)
+		);
+		
+		functionalities.add(
+				new Functionality("ANTIVIRUS",
+					true,
+					new Policy(Policies.ALLOWED, false),
+					new Policy(Policies.ALLOWED, false),
+					john.getDomain()
+				)
+		);
+		
+		functionalities.add(
+				new Functionality("ENCIPHERMENT",
+					true,
+					new Policy(Policies.ALLOWED, true),
+					new Policy(Policies.ALLOWED, true),
+					john.getDomain()
+				)
+		);
+		
+		functionalities.add(
+				new StringValueFunctionality("TIME_STAMPING",
+					true,
+					new Policy(Policies.ALLOWED, false),
+					new Policy(Policies.ALLOWED, false),
+					john.getDomain(),
+					""
+				)
+		);
+		
+		functionalities.add(
+				new UnitValueFunctionality("FILE_EXPIRATION",
+					true,
+					new Policy(Policies.ALLOWED, false),
+					new Policy(Policies.ALLOWED, false),
+					john.getDomain(),
+					value,
+					new TimeUnitClass(TimeUnit.DAY)
+				)
+		);
+		
+		functionalities.add(
+				new UnitValueFunctionality("FILESIZE_MAX",
+					true,
+					new Policy(Policies.ALLOWED, true),
+					new Policy(Policies.ALLOWED, true),
+					john.getDomain(),
+					5,
+					new FileSizeUnitClass(FileSizeUnit.GIGA)
+				)
+		);
+		
+		functionalities.add(
+				new Functionality("CREATE_THREAD_PERMISSION",
+					false,
+					new Policy(Policies.ALLOWED, true),
+					new Policy(Policies.ALLOWED, true),
+					john.getDomain()					
+				)
+		);
+		
+		for (Functionality functionality : functionalities) {
+			functionalityRepository.create(functionality);
+//			jane.getDomain().addFunctionality(functionality);
+			john.getDomain().addFunctionality(functionality);
+		}
+		
 		this.createAllThreads();
 		threads = threadService.findAll();
-		
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 	
@@ -125,8 +240,8 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	 */
 	
 	private void createAllThreads() throws BusinessException {
-		threadService.create(datas.getUser1(), ThreadEntryServiceImplTest.THREAD_1);
-		threadService.create(datas.getUser2(), ThreadEntryServiceImplTest.THREAD_2);
+		threadService.create(john, ThreadEntryServiceImplTest.THREAD_2);
+		threadService.create(jane, ThreadEntryServiceImplTest.THREAD_1);
 	}
 	
 	private void deleteAllThreads() throws BusinessException {
@@ -151,7 +266,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		int count;
 		Assert.assertEquals(threads.size(), 2);
 		for (count = threads.size(); count < 10; ++count) {
-			threadService.create(datas.getUser1(), ThreadEntryServiceImplTest.THREAD_1 + "_" + count);
+			threadService.create(john, ThreadEntryServiceImplTest.THREAD_1 + "_" + count);
 		}
 		threads = threadService.findAll();
 		Assert.assertEquals(threads.size(), count);
@@ -174,12 +289,25 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	public void testFindAdmin() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		Assert.assertTrue(threadService.hasAnyWhereAdmin(datas.getUser1()));
-		Assert.assertEquals(threadService.findAllWhereAdmin(datas.getUser1()).size(), 1);
+		Assert.assertTrue(threadService.hasAnyWhereAdmin(john));
+		Assert.assertEquals(threadService.findAllWhereAdmin(john).size(), 1);
 		threadService.create(datas.getUser1(), ThreadEntryServiceImplTest.THREAD_1 + "_" + 1);
-		Assert.assertEquals(threadService.findAllWhereAdmin(datas.getUser1()).size(), 2);
+		Assert.assertEquals(threadService.findAllWhereAdmin(john).size(), 2);
 
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void testFindLatest() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+
+		List<Thread> latests = threadService.findLatestWhereMember(john, 10);
+		Assert.assertFalse(latests.isEmpty());
+		logger.debug("Latests :");
+		for (Thread thread : latests) {
+			logger.debug('\t' + thread.getName());
+		}
+
+		logger.info(LinShareTestConstants.END_TEST);
+	}
 }

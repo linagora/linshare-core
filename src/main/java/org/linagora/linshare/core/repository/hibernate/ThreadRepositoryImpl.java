@@ -33,78 +33,135 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> implements ThreadRepository {
+public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
+		implements ThreadRepository {
+	
+	private static final MatchMode ANYWHERE = MatchMode.ANYWHERE;
 
-    public ThreadRepositoryImpl(HibernateTemplate hibernateTemplate) {
-        super(hibernateTemplate);
-    }
+	public ThreadRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
+	}
 
-    @Override
-    protected DetachedCriteria getNaturalKeyCriteria(Thread entity) {
-        DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
-        
-        // filter enabled thread only.
-        det.add(Restrictions.eq("enable", true));
-        // query
-        det.add(Restrictions.eq("lsUuid", entity.getLsUuid()));
-        return det;
-    }
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(Thread entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+
+		// filter enabled thread only.
+		det.add(Restrictions.eq("enable", true));
+		// query
+		det.add(Restrictions.eq("lsUuid", entity.getLsUuid()));
+		return det;
+	}
 
 	@Override
 	public List<Thread> findAll() {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
-		
+
 		// filter enabled thread only.
-        det.add(Restrictions.eq("enable", true));
-        //query
-		List<Thread> results = findByCriteria(det);
-		return results;
+		det.add(Restrictions.eq("enable", true));
+		// query
+		det.add(Restrictions.eq("destroyed", false));
+		return findByCriteria(det);
 	}
-	
+
 	@Override
 	public List<Thread> findAllWhereMember(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
-		
-        //query
-        det.createAlias("myMembers", "member");
-        det.add(Restrictions.eq("member.user", actor));
-		List<Thread> results = findByCriteria(det);
-		return results;
+		det.add(Restrictions.eq("destroyed", false));
+
+		// query
+		det.createAlias("myMembers", "member");
+		det.add(Restrictions.eq("member.user", actor));
+		return findByCriteria(det);
 	}
-	
-	
+
 	@Override
 	public List<Thread> findAllWhereAdmin(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
-		
-        //query
-        det.createAlias("myMembers", "member");
-        det.add(Restrictions.eq("member.user", actor));
-        det.add(Restrictions.eq("member.admin", true));
-		List<Thread> results = findByCriteria(det);
-		return results;
+		det.add(Restrictions.eq("destroyed", false));
+
+		// query
+		det.createAlias("myMembers", "member");
+		det.add(Restrictions.eq("member.user", actor));
+		det.add(Restrictions.eq("member.admin", true));
+		return findByCriteria(det);
 	}
-	
+
 	@Override
 	public List<Thread> findAllWhereCanUpload(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
-		
-        //query
-        det.createAlias("myMembers", "member");
-        det.add(Restrictions.eq("member.user", actor));
-        det.add(Restrictions.eq("member.canUpload", true));
-		List<Thread> results = findByCriteria(det);
-		return results;
+		det.add(Restrictions.eq("destroyed", false));
+
+		// query
+		det.createAlias("myMembers", "member");
+		det.add(Restrictions.eq("member.user", actor));
+		det.add(Restrictions.eq("member.canUpload", true));
+		return findByCriteria(det);
 	}
-	
+
+	@Override
+	public List<Thread> findLatestWhereMember(User actor, int limit) {
+		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+		det.add(Restrictions.eq("destroyed", false));
+
+		if (limit < 1)
+			 limit = 1;
+		// query
+		det.createAlias("myMembers", "member");
+		det.add(Restrictions.eq("member.user", actor));
+		det.addOrder(Order.desc("modificationDate"));
+		return findByCriteria(det, limit);
+	}
+
+	@Override
+	public List<Thread> searchByName(User actor, String pattern) {
+		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+		det.add(Restrictions.eq("destroyed", false));
+
+		// query
+		det.createAlias("myMembers", "member");
+		if (!actor.isSuperAdmin())
+			det.add(Restrictions.eq("member.user", actor));
+		det.addOrder(Order.desc("modificationDate"));
+		det.add(Restrictions.ilike("name", pattern, ANYWHERE));
+		return findByCriteria(det);
+	}
+
+	@Override
+	public List<Thread> searchAmongMembers(User actor, String pattern) {
+		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+		det.add(Restrictions.eq("destroyed", false));
+
+		Disjunction or = Restrictions.disjunction();
+
+		det.createAlias("myMembers", "member2");
+		det.createAlias("member2.user", "u");
+		or.add(Restrictions.ilike("u.firstName", pattern, ANYWHERE));
+		or.add(Restrictions.ilike("u.lastName", pattern, ANYWHERE));
+		det.add(or);
+
+		DetachedCriteria sub = DetachedCriteria.forClass(Thread.class);
+		sub.createAlias("myMembers", "member");
+		if (!actor.isSuperAdmin())
+			sub.add(Restrictions.eq("member.user", actor));
+		sub.setProjection(Projections.id());
+
+		det.add(Subqueries.propertyIn("id", sub));
+		return findByCriteria(det);
+	}
 }

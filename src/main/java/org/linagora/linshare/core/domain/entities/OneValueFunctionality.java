@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+
 public abstract class OneValueFunctionality<U> extends Functionality {
 	
 	protected U value;

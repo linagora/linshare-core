@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
@@ -45,8 +46,6 @@ import org.linagora.linshare.core.repository.AllowedMimeTypeRepository;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
 
 public class MimeTypeServiceImpl implements MimeTypeService {
 

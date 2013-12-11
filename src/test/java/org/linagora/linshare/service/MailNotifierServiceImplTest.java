@@ -131,7 +131,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
         	Assert.fail();
         }
         
-        mailNotifierService.sendNotification(fromDomain, fromUser, recipient, subject, "<span>htmlContent</span>", txtContent);
+        mailNotifierService.sendNotification(fromDomain, fromUser, recipient, subject, "<span>htmlContent</span>", txtContent,null,null);
         
         if (wiser.getMessages().size() > 0) {
             WiserMessage wMsg = wiser.getMessages().get(1);

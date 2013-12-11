@@ -39,7 +39,6 @@ import java.util.List;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
@@ -49,7 +48,6 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.SelectModelFactory;
@@ -58,7 +56,6 @@ import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
@@ -140,9 +137,10 @@ public class CopyInThreadPopup {
 	
 	/**
 	 * Initialization of the form.
+	 * @throws BusinessException 
 	 */
 	@SetupRender
-	public void init() {
+	public void init() throws BusinessException {
 		allMyThreadWhereCanUpload = threadEntryFacade.getAllMyThreadWhereCanUpload(userVo);
 //    	List<String> threadList = new ArrayList<String>();
 //    	for (ThreadVo threadVo : allMyThreadWhereCanUpload) {

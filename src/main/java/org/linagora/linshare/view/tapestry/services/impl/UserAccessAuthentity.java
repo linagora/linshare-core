@@ -78,11 +78,11 @@ public class UserAccessAuthentity  {
     			UserVo userVo = null;
     			try {
     				userVo = accountFacade.loadUserDetails(userDetails.getUsername().toLowerCase());
+    				generateAuthLogEntry(userVo);
+    				applicationStateManager.set(UserVo.class, userVo);
     			} catch (BusinessException e) {
     				logger.error("Error while trying to find user details", e);
     			}
-    			generateAuthLogEntry(userVo);
-    			applicationStateManager.set(UserVo.class, userVo);
     		} else {
     			// if the login doesn't match the session user email, change the user
     			if (!applicationStateManager.getIfExists(UserVo.class).getMail().equalsIgnoreCase(
@@ -92,11 +92,10 @@ public class UserAccessAuthentity  {
     				UserVo userVo = null;
     				try {
     					userVo = accountFacade.loadUserDetails(userDetails.getUsername().toLowerCase());
+    					applicationStateManager.set(UserVo.class, userVo);
     				} catch (BusinessException e) {
     					logger.error("Error while trying to find user details", e);
     				}
-    				//					generateAuthLogEntry(userVo);
-    				applicationStateManager.set(UserVo.class, userVo);
     			}
     		}
     	}

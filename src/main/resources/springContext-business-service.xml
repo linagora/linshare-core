@@ -56,5 +56,20 @@
 		<constructor-arg ref="threadEntryRepository" />
 		<constructor-arg ref="entryTagAssociationRepository"/>
 	</bean>
-
+	<bean id="domainAccessPolicyBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainAccessPolicyBusinessServiceImpl">
+		<constructor-arg ref="domainAccessRuleRepository" />
+	</bean>
+	
+	<bean id="domainPolicyBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainPolicyBusinessServiceImpl">
+		<constructor-arg ref="domainPolicyRepository" />
+		<constructor-arg ref="abstractDomainRepository" />
+	</bean>
+	<bean id="functionalityBusinessService" class="org.linagora.linshare.core.business.service.impl.FunctionalityBusinessServiceImpl">
+		<constructor-arg ref="functionalityRepository" />
+		<constructor-arg ref="abstractDomainRepository" />
+	</bean>
+	<bean id="mailingListBusinessService" class="org.linagora.linshare.core.business.service.impl.MailingListBusinessServiceImpl">
+		<constructor-arg ref="mailingListRepository" />
+		<constructor-arg ref="mailingListContactRepository" />
+	</bean>
 </beans>

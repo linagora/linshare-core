@@ -9,29 +9,37 @@
 	<t:zone t:id="zoneTest"/>
 
 	<div id="list">
-
-		<h3>${title}</h3>
+	
+			<h2> ${message:pages.thread.content.files}</h2>
 
         <t:form t:id="search">
 
-            <t:grid source="listThreadEntries" row="threadEntry" include="fileName, size, creationDate"
+            <t:grid t:id="grid" source="listThreadEntries" row="threadEntry" include="fileName, size, creationDate" model="model"
                 exclude="ownerLogin, identifier, type, shared, shareActive, fileComment, downloaded, actions, expirationDate" add="fileEdit, fileDelete"
                 rowsPerPage="10">
 
                 <!-- Header definition -->
-
+				
                 <p:empty>
                     ${message:components.listThreadDocument.grid.empty}
                 </p:empty>
 
+				
 				<p:encryptedHeader>
 					<abbr title="${message:components.listDocument.grid.encrypted}">${message:components.listDocument.grid.encrypted.abbr}</abbr>
 				</p:encryptedHeader>
-
-                <p:fileDeleteHeader>
-                    ${message:components.listThreadDocument.delete}
+				
+				<p:fileEditHeader>
+                	<t:if test="canUpload">
+                		${message:components.listThreadDocument.edit}
+                	</t:if>
+                </p:fileEditHeader>
+				
+                <p:fileDeleteHeader>    
+      	          <t:if test="isAdmin">
+         	           ${message:components.listThreadDocument.delete}
+       			  </t:if>
                 </p:fileDeleteHeader>
-
 
                 <!-- Selected cell definition -->
 			
@@ -61,17 +69,6 @@
                     </div>
                 </p:fileNameCell>
                 
-                <p:encryptedCell>
-					<t:if t:test="${threadEntry.encrypted}">
-						<img src="${asset:context:images/icons/encrypt-on.png}" alt=""
- 							title="${message:components.listDocument.picture.encrypton.title}" />
-						<t:parameter name="else">
-							<img src="${asset:context:images/icons/encrypt-off.png}" alt=""
-							title="${message:components.listDocument.picture.encryptoff.title}" />
-						</t:parameter>
-					</t:if>
-				</p:encryptedCell>
-				
 				<p:creationDateCell>
 					<span class="creationDate">${message:components.listDocument.uploadOn} ${creationDate}</span>${message:global.space}
 				</p:creationDateCell>
@@ -81,26 +78,23 @@
 				</p:sizeCell>
 
 				<p:fileEditCell>
-					<t:if t:test="${canUpload}">
+				<t:if t:test="canUpload">
 					<t:actionLink t:id="fileEditProperties" t:zone="${threadEntryEdit.zoneClientId}" context="${threadEntry.identifier}">
 						<span onclick="literal:${threadEntryEdit.javascriptOpenPopup}">
-							<img src="${asset:context:images/icons/edit.png}" alt="" title="${message:components.listDocument.picture.fileEdit.title}" />
+							<img src="${asset:context:images/icons/edit-button.png}" alt="" style="margin-left:50px" title="${message:components.listDocument.picture.fileEdit.title}" />
 						</span>
-	
 					</t:actionLink>
-					</t:if>
+				</t:if>
 				</p:fileEditCell>
 				
                 <p:fileDeleteCell>
-                	<t:if t:test="${isAdmin}">
-                    <t:if test="deletable">
+                	<t:if t:test="isAdmin">
                         <t:actionLink t:id="delete" context="${threadEntry.identifier}" t:zone="zoneConfirmDelete"
                             title="${message:components.listThreadDocument.delete.title}">
                             <span onclick="window_confirm.showCenter(true)">
-                                <img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+                                <img src="${asset:context:images/icons/delete-small.png}" alt="${message:global.button.delete}" />
                             </span>
                         </t:actionLink>
-                    </t:if>
                     </t:if>
                 </p:fileDeleteCell>
             </t:grid>

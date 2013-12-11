@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generic mail completion methods
@@ -48,7 +50,8 @@ public class MailCompletionService {
 	 * Regular expression to validate mails
 	 */
 	public static final Pattern MAILREGEXP = Pattern.compile("^[A-Z0-9'._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$");
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(MailCompletionService.class);
 	/**
 	 * Returns the formated label for a user, i.e. "Michael georges" <michael@yoursociety.com>
 	 * if the user name and firstname aren't null, michael@yoursociety.com otherwise
@@ -57,15 +60,24 @@ public class MailCompletionService {
 	 * @return
 	 */
 	public static String formatLabel(final UserVo user) {
+		return formatLabel(user, true);
+	}
+	
+	public static String formatLabel(final UserVo user, boolean virgule) {
+		return formatLabel(user.getMail(), user.getFirstName(), user.getLastName(), virgule);
+	}
+	
+	public static String formatLabel(String mail, String firstName, String lastName, boolean virgule) {
 		StringBuffer buf = new StringBuffer();
 		
-		if(user.getLastName()!=null&&user.getFirstName()!=null){
+		if(lastName != null && firstName != null){
 			//uservo from USER table or ldap
-			buf.append('"').append(user.getLastName().trim()).append(' ').append(user.getFirstName().trim()).append('"');
-			buf.append(" <").append(user.getMail()).append(">,");
+			buf.append('"').append(lastName.trim()).append(' ').append(firstName.trim()).append('"');
+			buf.append(" <").append(mail).append(">");
+			if(virgule)	buf.append(",");
 		} else {
 			//uservo from favorite table
-			buf.append(user.getMail()).append(',');
+			buf.append(mail).append(',');
 		}
 		return buf.toString();
 	}
@@ -126,4 +138,17 @@ public class MailCompletionService {
 			return str.substring(deb+1, end).trim();
 		}
 	}
+	
+	public static UserVo getUserFromDisplay(String display) {	
+		int index1 = display.indexOf("<");
+		String fullName  = display.substring(1, index1-2);
+	    int index2 = fullName.lastIndexOf(" ");
+		String lastName = fullName.substring(0,index2);
+		String firstName = fullName.substring(index2+1);
+		   
+		int index3 = display.indexOf(">");
+		String email  = display.substring(index1+1, index3);
+		   
+		return new UserVo(null, firstName, lastName,email,null);
+	   }
 }

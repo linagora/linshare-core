@@ -36,9 +36,8 @@ package org.linagora.linshare.repository.hibernate;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -209,7 +208,6 @@ public class AbstractDomainRepositoryImplTest extends AbstractJUnit4SpringContex
 		domainPatternRepository.create(domainPattern);
 		logger.debug("Current pattern object: " + domainPattern.toString());
 
-		
 		LdapUserProvider provider = new LdapUserProvider("",ldapconnexion,domainPattern);
 		userProviderRepository.create(provider);
 		

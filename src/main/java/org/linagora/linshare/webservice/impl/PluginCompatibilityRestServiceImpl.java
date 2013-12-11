@@ -34,7 +34,7 @@
 package org.linagora.linshare.webservice.impl;
 
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -46,116 +46,99 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
-import org.linagora.linshare.core.facade.WebServiceShareFacade;
+import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
+import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
+import org.linagora.linshare.core.utils.StringPredicates;
+import org.linagora.linshare.webservice.PluginCompatibilityRestService;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.SimpleStringValue;
-import org.linagora.linshare.webservice.PluginCompatibilityRestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PluginCompatibilityRestServiceImpl extends WebserviceBase implements PluginCompatibilityRestService {
 
-	private final WebServiceDocumentFacade webServiceDocumentFacade;
-	private final WebServiceShareFacade webServiceShareFacade;
+	private static final Logger logger = LoggerFactory.getLogger(PluginCompatibilityRestServiceImpl.class);
 
-	public PluginCompatibilityRestServiceImpl(final WebServiceDocumentFacade webServiceDocumentFacade, final WebServiceShareFacade facade){
+	private final DocumentFacade webServiceDocumentFacade;
+	private final ShareFacade webServiceShareFacade;
+
+	public PluginCompatibilityRestServiceImpl(final DocumentFacade webServiceDocumentFacade, final ShareFacade facade) {
 		this.webServiceDocumentFacade = webServiceDocumentFacade;
 		this.webServiceShareFacade = facade;
 	}
-	
+
 	@GET
-    @Path("/plugin/information")
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Path("/plugin/information")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public SimpleStringValue getInformation() {
-		return new SimpleStringValue("undefined");
+		return new SimpleStringValue("api-version-1");
 	}
-	
+
 	@POST
-    @Path("/share/multiplesharedocuments")
+	@Path("/share/multiplesharedocuments")
 	@Override
-	public void multiplesharedocuments(@FormParam("targetMail") String targetMail, @FormParam("file") List<String> uuid, @FormParam("securedShare") @DefaultValue("0") int securedShare, @FormParam("message")  @DefaultValue("") String message) {
-		
+	public void multiplesharedocuments(@FormParam("targetMail") String targetMail, @FormParam("file") List<String> uuid,
+			@FormParam("securedShare") @DefaultValue("0") int securedShare, @FormParam("message") @DefaultValue("") String message,
+			@FormParam("inReplyTo") @DefaultValue("") String inReplyTo, @FormParam("references") @DefaultValue("") String references)
+			throws BusinessException {
 		User actor;
-		
-		try {
-			actor = webServiceShareFacade.checkAuthentication();
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
-		} 
- 
-		if ((actor instanceof Guest  && !actor.getCanUpload())) {
-			throw giveRestException(HttpStatus.SC_FORBIDDEN,"You are not authorized to use this service");
-		}
-		
-		
-		//check not empty values
-		List<String> uuidValues = new ArrayList<String>();
-		for (String identifier : uuid) {
-			if(identifier!=null && !identifier.isEmpty()) uuidValues.add(identifier);
-		}
-		if(uuidValues.size()==0){
+
+		actor = webServiceShareFacade.checkAuthentication();
+		if ((actor instanceof Guest && !actor.getCanUpload()))
+			throw giveRestException(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
+		CollectionUtils.filter(uuid, StringPredicates.isNotBlank());
+		if (uuid.isEmpty())
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing parameter file");
-		}
-		
- 
-		try {
-			webServiceShareFacade.multiplesharedocuments(targetMail, uuidValues, securedShare, message);
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
-		}
+		webServiceShareFacade.multiplesharedocuments(targetMail, uuid, securedShare, message, inReplyTo, references);
 	}
-	
+
 	/**
-	 * upload a file in user's space.
-	 * send file inside a form 
+	 * upload a file in user's space. send file inside a form
 	 */
 	@POST
 	@Path("/document/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile, @Multipart(value = "description", required = false) String description, @Multipart(value = "filename",required = false) String givenFileName, MultipartBody body) {
-		
-		User actor = null;
+	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile,
+			@Multipart(value = "description", required = false) String description,
+			@Multipart(value = "filename", required = false) String givenFileName, MultipartBody body) throws BusinessException {
+		User actor = webServiceDocumentFacade.checkAuthentication();
+		String fileName;
+		String comment = (description == null) ? "" : description;
+
+		if ((actor instanceof Guest && !actor.getCanUpload())) {
+			throw giveRestException(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
+		}
+		if (theFile == null) {
+			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
+		}
+		if (givenFileName == null || givenFileName.isEmpty()) {
+			// parameter givenFileName is optional
+			// so need to search this information in the header of the
+			// attachement (with id file)
+			fileName = body.getAttachment("file").getContentDisposition().getParameter("filename");
+		} else {
+			fileName = givenFileName;
+		}
+
 		try {
-			actor = webServiceDocumentFacade.checkAuthentication();
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+			byte[] bytes = fileName.getBytes("ISO-8859-1");
+			fileName = new String(bytes, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			logger.error("Can not encode file name " + e1.getMessage());
 		}
-		
-		if ((actor instanceof Guest  && !actor.getCanUpload())) {
-			throw giveRestException(HttpStatus.SC_FORBIDDEN,"You are not authorized to use this service");
-		}
- 
-		if (theFile==null) {
-			throw giveRestException(HttpStatus.SC_BAD_REQUEST,"Missing file (check parameter file)");
-		}	
- 
-		
-		String filename;
-		
-		if(givenFileName==null || givenFileName.isEmpty()){
-			//parameter givenFileName is optional
-			//so need to search this information in the header of the attachement (with id file)
-			filename = body.getAttachment("file").getContentDisposition().getParameter("filename"); 
-		}  else {
-			filename = givenFileName;
-		}
-		
-		//comment can not be null ?
-		String comment = (description == null)? "":description;
-		
-		try {
-			return webServiceDocumentFacade.uploadfile(theFile, filename, comment);
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
-		}
+
+		// comment can not be null ?
+		return webServiceDocumentFacade.uploadfile(theFile, fileName, comment);
 	}
-	
 }

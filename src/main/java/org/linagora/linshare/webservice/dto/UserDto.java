@@ -33,26 +33,72 @@
  */
 package org.linagora.linshare.webservice.dto;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 
 @XmlRootElement(name = "User")
 public class UserDto extends AccountDto {
 
-	protected String firstName;
-	protected String lastName;
-	protected String mail;
-	
-	public UserDto(User u) {
+	private String firstName;
+	private String lastName;
+	private String mail;
+	private String role;
+	private Boolean canUpload;
+	private Boolean canCreateGuest;
+	private Date expirationDate;
+	private Boolean guest;
+	private Boolean restricted;
+	private List<String> restrictedContacts = new ArrayList<String>();
+	private String comment;
+
+	public UserDto() {
+		super();
+	}
+
+	protected UserDto(User u) {
 		super(u);
 		this.firstName = u.getFirstName();
 		this.lastName = u.getLastName();
 		this.mail = u.getMail();
+		this.setRole(u.getRole().toString());
+		this.canUpload = u.getCanUpload();
+		this.canCreateGuest = u.getCanCreateGuest();
+		this.expirationDate = u.getExpirationDate();
+		this.guest = u.getAccountType() == AccountType.GUEST;
+		if (this.guest) {
+			Guest g = (Guest) u;
+			this.owner = new UserDto((User) g.getOwner());
+			this.expirationDate = g.getExpirationDate();
+			this.restricted = g.isRestricted();
+			this.comment = g.getComment();
+		}
 	}
-	
-	public UserDto() {
-		super();
+
+	protected UserDto(String uuid, String domain, String firstName,
+			String lastName, String mail, String role, Boolean guest) {
+		super(uuid, null, null, null, domain, null);
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.mail = mail;
+		this.role = role;
+		this.guest = guest;
+	}
+
+	public static UserDto getSimple(User u) {
+		return new UserDto(u.getLsUuid(), u.getDomainId(), u.getFirstName(),
+				u.getLastName(), u.getMail(), null, u.getAccountType().equals(
+						AccountType.GUEST));
+	}
+
+	public static UserDto getFull(User u) {
+		return new UserDto(u);
 	}
 
 	public String getFirstName() {
@@ -78,4 +124,108 @@ public class UserDto extends AccountDto {
 	public void setMail(String mail) {
 		this.mail = mail;
 	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public Boolean getCanUpload() {
+		return canUpload;
+	}
+
+	public void setCanUpload(Boolean canUpload) {
+		this.canUpload = canUpload;
+	}
+
+	public Boolean isCanCreateGuest() {
+		return canCreateGuest;
+	}
+
+	public void setCanCreateGuest(Boolean canCreateGuest) {
+		this.canCreateGuest = canCreateGuest;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+
+	public Boolean isGuest() {
+		return guest;
+	}
+
+	public void setGuest(Boolean guest) {
+		this.guest = guest;
+	}
+
+	public Boolean isRestricted() {
+		return restricted;
+	}
+
+	public void setRestricted(Boolean restricted) {
+		this.restricted = restricted;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result
+				+ ((lastName == null) ? 0 : lastName.hashCode());
+		result = prime * result + ((mail == null) ? 0 : mail.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserDto other = (UserDto) obj;
+		if (firstName == null) {
+			if (other.firstName != null)
+				return false;
+		} else if (!firstName.equals(other.firstName))
+			return false;
+		if (lastName == null) {
+			if (other.lastName != null)
+				return false;
+		} else if (!lastName.equals(other.lastName))
+			return false;
+		if (mail == null) {
+			if (other.mail != null)
+				return false;
+		} else if (!mail.equals(other.mail))
+			return false;
+		return true;
+	}
+
+	public List<String> getRestrictedContacts() {
+		return restrictedContacts;
+	}
+
+	public void setRestrictedContacts(List<String> restrictedContacts) {
+		this.restrictedContacts = restrictedContacts;
+	}
+
 }

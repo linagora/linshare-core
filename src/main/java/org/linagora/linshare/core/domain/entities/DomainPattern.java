@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.linagora.linshare.core.domain.vo.DomainPatternVo;
+import org.linagora.linshare.webservice.dto.DomainPatternDto;
 
 public class DomainPattern {
     /**
@@ -76,6 +77,16 @@ public class DomainPattern {
         this.identifier = null;
     }
 
+    /**
+     * For tests only.
+     * @param identifier
+     * @param description
+     * @param getUserCommand
+     * @param getAllDomainUsersCommand
+     * @param authCommand
+     * @param searchUserCommand
+     * @param attributes
+     */
     public DomainPattern(String identifier, String description,
             String getUserCommand, String getAllDomainUsersCommand,
             String authCommand,
@@ -93,10 +104,10 @@ public class DomainPattern {
         this.description = domainPatternVo.getPatternDescription();
         this.authCommand = domainPatternVo.getAuthCommand();
         this.searchUserCommand = domainPatternVo.getSearchUserCommand();
-        this.autoCompleteCommandOnAllAttributes = domainPatternVo.getAutoCompleteCommandOnAllAttributes();
-        this.autoCompleteCommandOnFirstAndLastName = domainPatternVo.getAutoCompleteCommandOnFirstAndLastName();
         this.system = domainPatternVo.getSystem();
         
+        this.autoCompleteCommandOnAllAttributes = domainPatternVo.getAutoCompleteCommandOnAllAttributes();
+        this.autoCompleteCommandOnFirstAndLastName = domainPatternVo.getAutoCompleteCommandOnFirstAndLastName();
     	this.searchPageSize = domainPatternVo.getSearchPageSize();
 		this.searchSizeLimit = domainPatternVo.getSearchSizeLimit();
 		this.completionPageSize = domainPatternVo.getCompletionPageSize();
@@ -110,31 +121,55 @@ public class DomainPattern {
         this.attributes.put(USER_UID,			new LdapAttribute(USER_UID,			domainPatternVo.getLdapUid(), false));
     }
 
+    public DomainPattern(DomainPatternDto domainPatternDto) {
+        this.identifier = domainPatternDto.getIdentifier();
+        this.description = domainPatternDto.getDescription();
+        this.authCommand = domainPatternDto.getAuthCommand();
+        this.searchUserCommand = domainPatternDto.getSearchUserCommand();
+        this.system = false;
+        
+        this.autoCompleteCommandOnAllAttributes = domainPatternDto.getAutoCompleteCommandOnAllAttributes();
+        this.autoCompleteCommandOnFirstAndLastName = domainPatternDto.getAutoCompleteCommandOnFirstAndLastName();
+        this.searchPageSize = domainPatternDto.getSearchPageSize();
+		this.searchSizeLimit = domainPatternDto.getSearchSizeLimit();
+		this.completionPageSize = domainPatternDto.getCompletionPageSize();
+		this.completionSizeLimit = domainPatternDto.getCompletionSizeLimit();
+		
+        this.attributes = new HashMap<String, LdapAttribute>();
+        this.attributes.put(USER_MAIL, 			new LdapAttribute(USER_MAIL,		domainPatternDto.getUserMail(), true));
+        this.attributes.put(USER_FIRST_NAME,	new LdapAttribute(USER_FIRST_NAME,	domainPatternDto.getUserFirstName(), true));
+        this.attributes.put(USER_LAST_NAME,		new LdapAttribute(USER_LAST_NAME,	domainPatternDto.getUserLastName(), true));
+        this.attributes.put(USER_UID,			new LdapAttribute(USER_UID,			domainPatternDto.getLdapUid(), false));
+    }
 
-	public DomainPattern(String identifier, String description, String getUserCommand,
-            String getAllDomainUsersCommand, String authCommand, String searchUserCommand, Map<String, LdapAttribute> attributes,
-            String autoCompleteCommand, boolean system) {
-		super();
-		this.identifier = identifier;
-		this.description = description;
-		this.authCommand = authCommand;
-		this.searchUserCommand = searchUserCommand;
-        this.attributes = attributes;
-        this.autoCompleteCommandOnAllAttributes = autoCompleteCommand;
-        this.system = system;
-	}
-	
+    /**
+     * For tests only.
+     * @param identifier
+     * @param description
+     * @param getUserCommand
+     * @param getAllDomainUsersCommand
+     * @param authCommand
+     * @param searchUserCommand
+     * @param searchPageSize
+     * @param searchSizeLimit
+     * @param attributes
+     * @param autoCompleteCommandOnAllAttributes
+     * @param autoCompleteCommandOnFirstAndLastName
+     * @param completionPageSize
+     * @param completionSizeLimit
+     * @param system
+     */
 	public DomainPattern(String identifier, String description, String getUserCommand,
             String getAllDomainUsersCommand, String authCommand, String searchUserCommand, Integer searchPageSize, Integer searchSizeLimit, Map<String, LdapAttribute> attributes,
-            String autoCompleteCommand, String autoCompleteCommand2, Integer completionPageSize, Integer completionSizeLimit, boolean system) {
+            String autoCompleteCommandOnAllAttributes, String autoCompleteCommandOnFirstAndLastName, Integer completionPageSize, Integer completionSizeLimit, boolean system) {
 		super();
 		this.identifier = identifier;
 		this.description = description;
 		this.authCommand = authCommand;
 		this.searchUserCommand = searchUserCommand;
         this.attributes = attributes;
-        this.autoCompleteCommandOnAllAttributes = autoCompleteCommand;
-        this.autoCompleteCommandOnFirstAndLastName = autoCompleteCommand2;
+        this.autoCompleteCommandOnAllAttributes = autoCompleteCommandOnAllAttributes;
+        this.autoCompleteCommandOnFirstAndLastName = autoCompleteCommandOnFirstAndLastName;
         this.system = system;
         this.searchSizeLimit = searchSizeLimit;
         this.searchPageSize = searchPageSize;

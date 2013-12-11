@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.batches.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -53,41 +54,54 @@ import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.EntryService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.ThreadEntryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** 
+/**
  * Batch for document management.
  */
 public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentManagementBatchImpl.class);
 
-    private final DocumentRepository documentRepository;
-    
-    private final DocumentEntryRepository documentEntryRepository;
-    private final DocumentEntryService documentEntryService;
-    private final DocumentEntryBusinessService documentEntryBusinessService;
-    
-    private final AccountRepository<Account> accountRepository;
-    
-    private final FileSystemDao fileSystemDao;
-    private final boolean cronActivated;
-	private final NotifierService notifierService;
-	private final MailContentBuildingService mailBuilder;
-	private final FunctionalityService functionalityService;
-	private final EntryService entryService;
-	private final MimeTypeMagicNumberDao mimeTypeMagicNumberDao;
+	private final DocumentRepository documentRepository;
 
+	private final DocumentEntryRepository documentEntryRepository;
+	
+	private final DocumentEntryService documentEntryService;
+	
+	private final ThreadEntryService threadEntryService;
+	
+	private final DocumentEntryBusinessService documentEntryBusinessService;
+
+	private final AccountRepository<Account> accountRepository;
+
+	private final FileSystemDao fileSystemDao;
+	
+	private final boolean cronActivated;
+	
+	private final NotifierService notifierService;
+	
+	private final MailContentBuildingService mailBuilder;
+	
+	private final FunctionalityOldService functionalityService;
+	
+	private final EntryService entryService;
+	
+	private final MimeTypeMagicNumberDao mimeTypeMagicNumberDao;
 	
 	
-	public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentEntryRepository documentEntryRepository, DocumentEntryService documentEntryService,
-			AccountRepository<Account> accountRepository, FileSystemDao fileSystemDao, boolean cronActivated, NotifierService notifierService,
-			MailContentBuildingService mailBuilder, FunctionalityService functionalityService, EntryService entryService, DocumentEntryBusinessService documentEntryBusinessService,
-			MimeTypeMagicNumberDao mimeTypeMagicNumberDao) {
+
+	public DocumentManagementBatchImpl(DocumentRepository documentRepository,
+			DocumentEntryRepository documentEntryRepository, DocumentEntryService documentEntryService,
+			AccountRepository<Account> accountRepository, FileSystemDao fileSystemDao, boolean cronActivated,
+			NotifierService notifierService, MailContentBuildingService mailBuilder,
+			FunctionalityOldService functionalityService, EntryService entryService,
+			DocumentEntryBusinessService documentEntryBusinessService, MimeTypeMagicNumberDao mimeTypeMagicNumberDao, ThreadEntryService threadEntryService) {
 		super();
 		this.documentRepository = documentRepository;
 		this.documentEntryRepository = documentEntryRepository;
@@ -101,105 +115,138 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		this.entryService = entryService;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.mimeTypeMagicNumberDao = mimeTypeMagicNumberDao;
+		this.threadEntryService = threadEntryService;
 	}
 
-	//    public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentEntryService documentEntryService,
-//        FileSystemDao fileSystemDao, boolean securedStorageDisallowed, boolean cronActivated,
-//        NotifierService notifierService, MailContentBuildingService mailBuilder, FunctionalityService functionalityService) {
-//        this.documentRepository = documentRepository;
-//        this.documentEntryService = documentEntryService;
-//        this.fileSystemDao = fileSystemDao;
-//        this.securedStorageDisallowed = securedStorageDisallowed;
-//        this.cronActivated = cronActivated;
-//        this.notifierService = notifierService;
-//        this.mailBuilder = mailBuilder;
-//        this.functionalityService = functionalityService;
-//    }
+	private String getCpt(long curr, long total) {
+		return String.valueOf(curr) + "/" + String.valueOf(total) + ":";
+	}
 
-	
 	@Override
-    public void removeMissingDocuments() {
-    	SystemAccount systemAccount = accountRepository.getSystemAccount();
-    	
-        List<Document> documents = documentRepository.findAll();
+	public void removeMissingDocuments() {
+		SystemAccount systemAccount = accountRepository.getSystemAccount();
 
-        logger.info("Remove missing documents batch launched.");
+		List<Document> documents = documentRepository.findAll();
+		long totalDocument = documents.size();
+		logger.info("Remove missing documents batch launched : {}", totalDocument);
+		long cpt = 0;
 
-        for (Document document : documents) {
-            InputStream stream = fileSystemDao.getFileContentByUUID(document.getUuid());
+		for (Document document : documents) {
+			cpt++;
+			logger.debug(getCpt(cpt, totalDocument) + "processing current document : {}", document.getUuid());
 
-            if (stream == null) {
-                try {
-                    logger.info("Removing file with UID = {} because of inconsistency", document.getUuid());
-                    entryService.deleteAllInconsistentShareEntries(systemAccount, document.getDocumentEntry());
-                    documentEntryService.deleteInconsistentDocumentEntry(systemAccount, document.getDocumentEntry());
-                    
-                } catch (BusinessException ex) {
-                    logger.error("Error when processing cleaning of document whith UID = {} during consistency check " +
-                        "process", document.getUuid());
-                    logger.debug(ex.toString());
-                }
-            }
-        }
-        logger.info("Remove missing documents batch ended.");
-    }
-    
-	
+			InputStream stream = null;
+			try {
+				stream = fileSystemDao.getFileContentByUUID(document.getUuid());
+			} catch (org.springmodules.jcr.JcrSystemException e) {
+				// TODO : should never happen ! need to send a notification to
+				// admins.
+				logger.error("Document with UID = {} was not found in datastore.", document.getUuid());
+				logger.debug(e.toString());
+			}
+
+			if (stream == null) {
+				try {
+					if (document.getDocumentEntry() != null) {
+						logger.info("Removing document (document entry) with UID = {} because of inconsistency",
+								document.getUuid());
+						entryService.deleteAllInconsistentShareEntries(systemAccount, document.getDocumentEntry());
+						documentEntryService
+								.deleteInconsistentDocumentEntry(systemAccount, document.getDocumentEntry());
+					} else if (document.getThreadEntry() != null) {
+						logger.info("Removing document (thread entry) with UID = {} because of inconsistency",
+								document.getUuid());
+						threadEntryService.deleteInconsistentThreadEntry(systemAccount, document.getThreadEntry());
+					} else {
+						logger.warn("Removing a document unrelated to an entry with UID = {} because of inconsistency",
+								document.getUuid());
+					}
+				} catch (BusinessException ex) {
+					logger.error(
+							"Error when processing cleaning of document with UID = {} during consistency check process",
+							document.getUuid());
+					logger.debug(ex.toString());
+				}
+			} else {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					logger.error("Error when closing document stream '{}' during consistency check ",
+							document.getUuid());
+					logger.debug(e.getMessage());
+				}
+			}
+		}
+		logger.info("Remove missing documents batch ended.");
+	}
+
 	@Override
-    public void cleanOldDocuments() {
-    	logger.debug("cleanOldDocuments : begin");
-    	
-    	if (!cronActivated) {
-    		logger.info("Documents cleaner batch launched but was told to be unactivated (cf linshare.properties): stopping.");
-    		return;
-    	}
-    	cleanExpiredDocumentEntries();
-    	logger.info("Documents cleaner batch ended.");
-    }
+	public void cleanOldDocuments() {
+		logger.debug("cleanOldDocuments : begin");
 
-	
+		if (!cronActivated) {
+			logger.info("Documents cleaner batch launched but was told to be unactivated (cf linshare.properties): stopping.");
+			return;
+		}
+		cleanExpiredDocumentEntries();
+		logger.info("Documents cleaner batch ended.");
+	}
+
 	private void cleanExpiredDocumentEntries() {
 		logger.info("Document entries cleaner batch launched.");
-    	
-    	List<DocumentEntry> findAllExpiredEntries = documentEntryRepository.findAllExpiredEntries();
-    	SystemAccount systemAccount = accountRepository.getSystemAccount();
-    	Calendar now = GregorianCalendar.getInstance();
-    	
-    	for (DocumentEntry documentEntry : findAllExpiredEntries) {
-    		// we check if there is not related shares. Should not happen.
-    		if(documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
-    			
-    			TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(documentEntry.getEntryOwner().getDomain());
-    			if(fileExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
+
+		List<DocumentEntry> findAllExpiredEntries = documentEntryRepository.findAllExpiredEntries();
+		SystemAccount systemAccount = accountRepository.getSystemAccount();
+		Calendar now = GregorianCalendar.getInstance();
+
+		for (DocumentEntry documentEntry : findAllExpiredEntries) {
+			// we check if there is not related shares. Should not happen.
+			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
+
+				TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService
+						.getDefaultFileExpiryTimeFunctionality(documentEntry.getEntryOwner().getDomain());
+				if (fileExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
 					if (documentEntry.getExpirationDate().before(now)) {
 						try {
 							documentEntryService.deleteExpiredDocumentEntry(systemAccount, documentEntry);
 						} catch (BusinessException e) {
-							logger.error("Can't delete expired document entry : " + documentEntry.getUuid()  + " : " + e.getMessage() );
+							logger.error("Can't delete expired document entry : " + documentEntry.getUuid() + " : "
+									+ e.getMessage());
 							logger.debug(e.toString());
 						}
-    				}
-    			}
-    		} else {
-    			logger.warn("expired document with shares found : " + documentEntry.getUuid());
-    		}
+					}
+				}
+			} else {
+				logger.warn("expired document with shares found : " + documentEntry.getUuid());
+			}
 		}
 	}
-	
+
 	@Override
 	public void checkDocumentsMimeType() {
 		logger.info("checkDocumentEntriesMimeType : begin");
 		List<Document> docs = documentRepository.findAllMimeTypeCheckNeededDocuments();
-		
+
 		logger.info("Found " + docs.size() + " document(s) in need of a MIME type check.");
 		for (Document doc : docs) {
 			try {
 				logger.debug("retrieve from JackRabbit : " + doc.getUuid());
-				String type = mimeTypeMagicNumberDao.getMimeType(fileSystemDao.getFileContentByUUID(doc.getUuid()));
-				doc.setType(type);
-				doc.setCheckMimeType(false);
-				documentRepository.update(doc);
-				logger.info("Changing document : " + doc.getUuid() + " Mime Type to " + type);
+				InputStream stream = fileSystemDao.getFileContentByUUID(doc.getUuid());
+				if (stream != null) {
+					String type = mimeTypeMagicNumberDao.getMimeType(stream);
+					try {
+						stream.close();
+					} catch (IOException e) {
+						logger.error("Error when closing document stream '{}' during consistency check ", doc.getUuid());
+						logger.debug(e.getMessage());
+					}
+					doc.setType(type);
+					doc.setCheckMimeType(false);
+					documentRepository.update(doc);
+					logger.info("Changing document : " + doc.getUuid() + " Mime Type to " + type);
+				} else {
+					logger.warn("the file {} is missing in the content repository.", doc.getUuid());
+				}
 			} catch (BusinessException e) {
 				logger.error("Can't find file with uuid : " + doc.getUuid() + " : " + e.getMessage());
 				logger.debug(e.toString());
@@ -207,20 +254,24 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		}
 		logger.info("checkDocumentEntriesMimeType : batch ended");
 	}
-	
+
 	private void sendUpcomingDeletionNotification(DocumentEntry document, Integer days) {
 		final long MILISECOND_PER_DAY = 24 * 60 * 60 * 1000;
-//		int days = Math.round(Math.abs((deletionDate.getTimeInMillis()- now.getTimeInMillis())/MILISECOND_PER_DAY))+1;
-//		sendUpcomingDeletionNotification(document, days);
+		// int days = Math.round(Math.abs((deletionDate.getTimeInMillis()-
+		// now.getTimeInMillis())/MILISECOND_PER_DAY))+1;
+		// sendUpcomingDeletionNotification(document, days);
 
-//		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
-//		try {
-//						
-//			notifierService.sendAllNotifications(mailBuilder.buildMailUpcomingOutdatedDocumentWithOneRecipient((User)document.getEntryOwner(), mailContainer, document, days));
-//		} catch (BusinessException e) {
-//			logger.error("Can't create the email for "+ ((User)document.getEntryOwner()).getMail());
-//			e.printStackTrace();
-//		}
+		// MailContainer mailContainer = new MailContainer("", Language.FRENCH);
+		// try {
+		//
+		// TODO : FMA : TO BE FIX
+		// notifierService.sendAllNotifications(mailBuilder.buildMailUpcomingOutdatedDocumentWithOneRecipient((User)document.getEntryOwner(),
+		// mailContainer, document, days));
+		// } catch (BusinessException e) {
+		// logger.error("Can't create the email for "+
+		// ((User)document.getEntryOwner()).getMail());
+		// e.printStackTrace();
+		// }
 	}
-	 
+
 }

@@ -20,7 +20,7 @@
 		<constructor-arg ref="anonymousShareEntryRepository"/>
 		<constructor-arg ref="documentEntryRepository"/>
 		<constructor-arg ref="accountRepository"/>
-		<constructor-arg ref="functionalityService"/>
+		<constructor-arg ref="functionalityOldService"/>
 		<constructor-arg ref="documentEntryService"/>
 		<constructor-arg ref="anonymousUrlRepository"/>
     </bean>
@@ -34,10 +34,11 @@
         <constructor-arg value="${job.document.cleaner.activation}" />
         <constructor-arg ref="notifierService" />
         <constructor-arg ref="mailContentBuildingService" />
-        <constructor-arg ref="functionalityService" />
+        <constructor-arg ref="functionalityOldService" />
         <constructor-arg ref="entryService" />
         <constructor-arg ref="documentEntryBusinessService" />
         <constructor-arg ref="mimeTypeMagicNumberDao" />
+        <constructor-arg ref="threadEntryService" />
     </bean>
 
 	<!-- Don't use that with Jackrabbit 1.4 !! -->

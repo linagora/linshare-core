@@ -43,6 +43,7 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -67,6 +68,7 @@ import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.pages.files.Share;
 import org.linagora.linshare.view.tapestry.utils.WelcomeMessageUtils;
 import org.slf4j.Logger;
 
@@ -109,6 +111,8 @@ public class Index {
 	@Inject
 	private Logger logger;
 	
+	@InjectPage
+	private Share share;
 
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
@@ -154,6 +158,12 @@ public class Index {
 		if (userVoExists && userVo.isSuperAdmin()) {
 			return org.linagora.linshare.view.tapestry.pages.user.Index.class;
 		}
+    	if (finishForwarding) {
+			share.setSelectedDocuments(shareSessionObjects.getDocuments());
+			clearList();
+    		finishForwarding = false;
+    		return share;
+    	}
 		return null;
 	}
 	
@@ -195,7 +205,7 @@ public class Index {
     public void postInit() {
     	if (finishForwarding) {
     		//show the share window popup
-    		renderSupport.addScript(String.format("quickForwardWindow.showCenter(true)"));
+//    		renderSupport.addScript(String.format("quickForwardWindow.showCenter(true)"));
     		finishForwarding = false;
     	}
     }

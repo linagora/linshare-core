@@ -35,19 +35,23 @@ package org.linagora.linshare.view.tapestry.pages.administration.domains;
 
 import java.util.List;
 
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.corelib.components.Grid;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainPatternVo;
+import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.LDAPConnectionVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
+import org.linagora.linshare.core.facade.DomainPolicyFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,12 +64,18 @@ public class Index {
     @Property
     private ShareSessionObjects shareSessionObjects;
 
+    @InjectComponent
+    private Grid grid;
+    
     @Inject
     private Messages messages;
 
     @Inject
     private AbstractDomainFacade domainFacade;
-
+    
+    @Inject
+    private DomainPolicyFacade domainPolicyFacade;
+    
     @SessionState
     private UserVo loginUser;
 
@@ -80,6 +90,13 @@ public class Index {
     @Persist
     @Property
     private List<LDAPConnectionVo> ldapConnections;
+    
+    @Persist
+    @Property
+    private List<DomainPolicyVo> policies;
+    
+    @Property
+    private DomainPolicyVo domainPolicy;
 
     @Property
     private AbstractDomainVo domain;
@@ -109,12 +126,17 @@ public class Index {
     @Property
     @Persist(value="flash")
     private String connectionToDelete;
+    
+    @Property
+    @Persist(value="flash")
+    private String policyToDelete;
 
     @SetupRender
     public void init() throws BusinessException {
         domains = domainFacade.findAllTopDomain();
         domainPatterns = domainFacade.findAllUserDomainPatterns();
         ldapConnections = domainFacade.findAllLDAPConnections();
+        policies = domainPolicyFacade.findAllDomainPolicies();  
     }
 
     @OnEvent(value="domainDeleteEvent")
@@ -134,7 +156,13 @@ public class Index {
         domainFacade.deleteConnection(connectionToDelete, loginUser);
         ldapConnections = domainFacade.findAllLDAPConnections();
     }
-
+    
+    @OnEvent(value="policyDeleteEvent")
+    public void deletePolicy() throws BusinessException {
+    	domainPolicyFacade.deletePolicy(loginUser, policyToDelete);
+        policies = domainPolicyFacade.findAllDomainPolicies();
+    }
+    
     public boolean getConnectionIsDeletable() throws BusinessException {
         return domainFacade.connectionIsDeletable(ldapConnection.getIdentifier(), loginUser);
     }
@@ -143,6 +171,10 @@ public class Index {
         return domainFacade.patternIsDeletable(domainPattern.getIdentifier(), loginUser);
     }
 
+    public boolean getPolicyIsDeletable() throws BusinessException {
+    	return domainPolicyFacade.policyIsDeletable(loginUser, domainPolicy.getIdentifier());
+    }
+    
     public String getConnectionIdentifier() {
         return domain.getLdapIdentifier();
     }
@@ -150,7 +182,11 @@ public class Index {
     public String getPatternIdentifier() {
         return domain.getPatternIdentifier();
     }
-
+    
+    public String getPolicyIdentifier() {
+        return domain.getPolicyIdentifier();
+    }
+    
     public void onActionFromDeleteDomain(String domain) {
         this.domainToDelete = domain;
     }
@@ -161,6 +197,10 @@ public class Index {
 
     public void onActionFromDeleteConnection(String connection) {
         this.connectionToDelete = connection;
+    }
+    
+    public void onActionFromDeletePolicy(String policy) {
+        this.policyToDelete = policy;
     }
 
     Object onException(Throwable cause) {

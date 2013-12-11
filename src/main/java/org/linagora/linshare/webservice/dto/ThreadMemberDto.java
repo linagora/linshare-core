@@ -35,51 +35,40 @@ package org.linagora.linshare.webservice.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.ThreadRoles;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 
 @XmlRootElement(name = "ThreadMember")
 public class ThreadMemberDto {
-	
+
 	private Long id;
-	
-	private String role;
-	
-	private String firstName;
-	
-	private String lastName;
-	
-	private String userUuid;
-	
-	private String userMail;
-	
-	private String userDomainId;
-	
-	private String threadUuid;
-	
+	private boolean admin;
 	private boolean readonly;
-	
-	private static enum Roles {
-		NORMAL,
-		RESTRICTED,
-		ADMIN;
-	}
-	
-	public ThreadMemberDto() {
-		super();
-	}
-	
+	private String role;
+	private String firstName;
+	private String lastName;
+	private String userUuid;
+	private String userMail;
+	private String userDomainId;
+	private String threadUuid;
+
 	public ThreadMemberDto(ThreadMember member) {
-		super();
 		this.id = member.getId();
 		this.firstName = member.getUser().getFirstName();
 		this.lastName = member.getUser().getLastName();
-		this.role = (member.getAdmin() ? Roles.ADMIN : member.getCanUpload() ?
-				Roles.NORMAL : Roles.RESTRICTED).name().toLowerCase();
-		this.readonly = ! member.getCanUpload();
+		this.admin = member.getAdmin();
+		this.readonly = !member.getCanUpload();
+		this.role = (admin ? ThreadRoles.ADMIN
+				: readonly ? ThreadRoles.RESTRICTED : ThreadRoles.NORMAL)
+				.name().toLowerCase();
 		this.userUuid = member.getUser().getLsUuid();
 		this.threadUuid = member.getThread().getLsUuid();
 		this.userMail = member.getUser().getMail();
 		this.userDomainId = member.getUser().getDomainId();
+	}
+
+	public ThreadMemberDto() {
+		super();
 	}
 
 	public Long getId() {
@@ -152,5 +141,13 @@ public class ThreadMemberDto {
 
 	public void setReadonly(boolean readonly) {
 		this.readonly = readonly;
+	}
+
+	public boolean isAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
 	}
 }

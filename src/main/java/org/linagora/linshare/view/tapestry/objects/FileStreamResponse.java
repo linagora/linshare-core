@@ -48,7 +48,7 @@ import org.linagora.linshare.core.utils.ArchiveZipStream;
 public class FileStreamResponse implements StreamResponse{
 
 	private InputStream inputStream;
-	private int size;
+	private long size;
 	private String contentType;
 	private String fileName;
 	
@@ -57,7 +57,7 @@ public class FileStreamResponse implements StreamResponse{
 	
 	public FileStreamResponse(DocumentVo documentVo,InputStream stream){
 		this.inputStream=stream;
-		this.size = documentVo.getSize().intValue();
+		this.size = documentVo.getSize();
 		this.fileName=documentVo.getFileName();
 		
 		//this.contentType = BINARY_MIME_TYPE; //always save the doc before reading it ....
@@ -66,7 +66,7 @@ public class FileStreamResponse implements StreamResponse{
 	
 	public FileStreamResponse(SignatureVo signatureVo,InputStream stream){
 		this.inputStream=stream;
-		this.size = signatureVo.getSize().intValue();
+		this.size = signatureVo.getSize();
 		
 		//we want unicity of the name of file
 		//so we put this name signed_fileName.ext_idDatabase.xml
@@ -91,11 +91,11 @@ public class FileStreamResponse implements StreamResponse{
 	
 	// *** getters/setters
 
-	public int getSize() {
+	public long getSize() {
 		return size;
 	}
 
-	public void setSize(int size) {
+	public void setSize(long size) {
 		this.size = size;
 	}
 	public void setContentType(String contentType) {
@@ -126,7 +126,7 @@ public class FileStreamResponse implements StreamResponse{
         //This allows MS-IE to save the content as a temporary file in its local cache,
         //but in not general public cache servers, before handing it off the plugin, e.g. Adobe Acrobat, to handle it.
 		
-		response.setContentLength(this.size);
+		response.setHeader("Content-Length", String.valueOf(this.size));
         response.setHeader("Content-disposition", getContentDispositionHeader());
         response.setHeader("Content-Transfer-Encoding","none");
         

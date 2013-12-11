@@ -33,10 +33,11 @@
  */
 package org.linagora.linshare.view.tapestry.pages.thread;
 
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import org.apache.tapestry5.annotations.AfterRender;
+import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -44,6 +45,7 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -53,114 +55,143 @@ import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 public class Index {
 
-	private static final Logger logger = LoggerFactory.getLogger(Index.class);
-	
+	private static Logger logger = LoggerFactory.getLogger(Index.class);
 
-    @SessionState
-    @Property
-    private ShareSessionObjects shareSessionObjects;
+	/*
+	 * Tapestry properties
+	 */
 
-    @SessionState
+	@SessionState
+	@Property
+	private ShareSessionObjects shareSessionObjects;
+
+	@SessionState
+	@Property
+	private UserVo userVo;
+
+	@Persist
+	@Property
+	private List<ThreadVo> threads;
+
+	@Persist
+	@Property
+	private String pattern;
+
     @Property
-    private UserVo userVo;
-    
+    private ThreadVo current;
+ 
+    @Persist
+    @Property
+    private boolean latest;
+
+	/*
+	 * Injected beans
+	 */
+
     @InjectPage
     private ThreadContent threadContent;
 
-    @Property
-    @Persist
-    private List<ThreadVo> threads;
-    
-    @Property
-    private ThreadVo currentThread;
-    
-    @Property
-    private boolean showThreadTab;
-    
+	@Inject
+	private PersistentLocale persistentLocale;
 
-    /* ***********************************************************
-     *                      Injected services
-     ************************************************************ */
+	@Inject
+	private Messages messages;
 
-    @Inject
-    private Messages messages;
-    
-    @Inject
-    private ThreadEntryFacade threadEntryFacade;
-    
-    @Inject
-    private FunctionalityFacade functionalityFacade; 
+	@Inject
+	private FunctionalityFacade functionalityFacade;
 
+	@Inject
+	private ThreadEntryFacade threadEntryFacade;
 
-    @SetupRender
-    public void setupRender() {
-    	logger.debug("setupRender()");
-    	threads = threadEntryFacade.getAllMyThread(userVo);
-    	showThreadTab = functionalityFacade.isEnableThreadTab(userVo.getDomainIdentifier());
-    }
+	public Object onActivate() {
+		if (!functionalityFacade
+				.isEnableThreadTab(userVo.getDomainIdentifier()))
+			return org.linagora.linshare.view.tapestry.pages.Index.class;
+		return null;
+	}
+
+	@SetupRender
+	public void init() throws BusinessException {
+		if (!latest) {
+			updateThreadList();
+		}
+	}
+	
+	public void onSuccessFromThreadSearch() throws BusinessException {
+		StringUtils.trim(pattern);
+		updateThreadList();
+	}
 
     public Object onActionFromShowThreadContent(String lsUuid) {
-    	logger.debug("Debut onActionFromShowThreadContent");
-    	for (ThreadVo thread : threads) {
-			if (thread.getLsUuid().equals(lsUuid)) {
-		    	threadContent.setMySelectedThread(thread);
-		    	logger.debug("Projet " + thread.getName() + "recupere");
-		    	return threadContent;
-			}
-		}
+		threadContent.setMySelectedThread(Iterables.find(threads,
+				ThreadVo.equalTo(lsUuid)));
+		return threadContent;
+    }
+ 
+    public Object onActionFromLatests() {
+    	threads = null;
+    	pattern = null;
     	return null;
     }
-    
-    public Object onActionFromAddThread() {
-    	return null;
-    }
-    
-    @AfterRender
-    public void afterRender() {
-    }
-    
-    /**
-	 * Format the creation date for good displaying using DateFormatUtils of
-	 * apache commons lib.
-	 * 
-	 * @return creation date the date in localized format.
+
+	/*
+	 * Getters
 	 */
-	public String getCreationDate() {
-		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
-		return formatter.format(currentThread.getCreationDate().getTime());
+
+	public boolean isShowCreateButton() {
+		return functionalityFacade.isEnableCreateThread(userVo
+				.getDomainIdentifier());
 	}
-	
-    /**
-	 * Format the modification date for good displaying using DateFormatUtils of
-	 * apache commons lib.
-	 * 
-	 * @return creation date the date in localized format.
-	 */
-	public String getModificationDate() {
-		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
-		return formatter.format(currentThread.getModificationDate().getTime());
-	}
-	
-    /**
-	 * Retrieve the number of documents in the thread.
-	 * 
-	 * @return the number of documents
-	 */
-	public int getCountDocuments() {
+
+	public int getCount() {
 		try {
-			return threadEntryFacade.getAllThreadEntryVo(userVo, currentThread).size();
+			return threadEntryFacade.countEntries(current);
 		} catch (BusinessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return 0;
 	}
+
+	public String getCreationDate() {
+		return getFormatter().format(current.getCreationDate().getTime());
+	}
+
+	public String getModificationDate() {
+		return getFormatter().format(current.getModificationDate().getTime());
+	}
+
+	/*
+	 * Exception Handling
+	 */
+
+	public Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
+	}
 	
-    public Object onException(Throwable cause) {
-        shareSessionObjects.addError(messages.get("global.exception.message"));
-        logger.error(cause.getMessage());
-        cause.printStackTrace();
-        return this;
-    }
+	/*
+	 * Helpers
+	 */
+	
+	private void updateThreadList() throws BusinessException {
+		latest = threads == null;
+		if (latest) {
+			threads = threadEntryFacade.getLatestThreads(userVo, 10);
+		} else {
+			threads = StringUtils.isNotBlank(pattern) ?
+					threadEntryFacade.searchThread(userVo, pattern) :
+					threadEntryFacade.getAllMyThread(userVo);
+		}
+	}
+	
+	private Format getFormatter() {
+		return new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+	}
 }

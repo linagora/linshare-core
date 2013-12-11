@@ -9,39 +9,44 @@ INSERT INTO messages_configuration (messages_configuration_id) VALUES (1);
 -- Mail subjects
 -- Subject ANONYMOUS_DOWNLOAD
 -- LinShare: An unknown user has just downloaded a file you made available for sharing
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 0, 'LinShare: An unknown user has just downloaded a file you made available for sharing', 0);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 0, 'An unknown user ${actorRepresentation} has just downloaded a file you made available for sharing', 0);
 
 -- Subject REGISTERED_DOWNLOAD
 -- LinShare: A user has just downloaded a file you made available for sharing
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 1, 'LinShare: A user has just downloaded a file you made available for sharing', 0);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 1, 'A user ${actorRepresentation} has just downloaded a file you made available for sharing', 0);
 
 -- Subject NEW_GUEST
 -- LinShare: Your LinShare account has been successfully created
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 2, 'LinShare: Your LinShare account has been sucessfully created', 0);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 2, 'Your LinShare account has been sucessfully created', 0);
 
 -- Subject RESET_PASSWORD
 -- LinShare: Your password has been reset
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 3, 'LinShare: Your password has been reset', 0);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 3, 'Your password has been reset', 0);
 
 -- Subject NEW_SHARING
 -- LinShare: A user has just made a file available to you!
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'LinShare: A user has just made a file available to you!', 0);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'A user ${actorRepresentation} has just made a file available to you!', 0);
+
+-- Subject NEW_SHARING_WITH_ACTOR
+-- LinShare: sharing file with personal message.
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} from ${actorRepresentation}', 0);
+
 
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: A user has just modified a shared file you still have access to
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'LinShare: A user has just modified a shared file you still have access to', 0);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'A user ${actorRepresentation} has just modified a shared file you still have access to', 0);
 
 -- Subject SHARED_DOC_DELETED
 -- LinShare: A user has just deleted a shared file you had access to!
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 10, 'LinShare: A user has just deleted a shared file you had access to!', 0);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 10, 'A user ${actorRepresentation} has just deleted a shared file you had access to!', 0);
 
 -- Subject SHARED_DOC_UPCOMING_OUTDATED
 -- LinShare: A LinShare workspace is about to be deleted
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 11, 'LinShare: A LinShare workspace is about to be deleted', 0);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 11, 'A LinShare workspace is about to be deleted', 0);
 
 -- Subject DOC_UPCOMING_OUTDATED
 -- LinShare: A shared file is about to be deleted!
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 12, 'LinShare: A shared file is about to be deleted!', 0);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 12, 'A shared file is about to be deleted!', 0);
 
 -- Mail templates
 -- Template GREETINGS
@@ -102,45 +107,47 @@ INSERT INTO mail_templates (messages_configuration_id, template_id, content_html
 INSERT INTO welcome_texts (messages_configuration_id, welcome_text, language_id) VALUES (1, 'Welcome to LinShare, THE Secure, Open-Source File Sharing Tool.', 0);
 
 
-
-
 -- LOCALE fr
 -- Mail subjects
 -- Subject ANONYMOUS_DOWNLOAD
 -- LinShare: An anonymous user downloaded the file you shared
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 0, 'LinShare : Un utilisateur anonyme a téléchargé des fichiers en partage', 1);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 0, 'Un utilisateur anonyme ${actorRepresentation} a téléchargé des fichiers en partage', 1);
 
 -- Subject REGISTERED_DOWNLOAD
 -- LinShare: An user downloaded the file you shared
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 1, 'LinShare : Un utilisateur a téléchargé des fichiers en partage', 1);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 1, 'Un utilisateur ${actorRepresentation} a téléchargé des fichiers en partage', 1);
 
 -- Subject NEW_GUEST
 -- LinShare: Your account on LinShare has been created
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 2, 'LinShare : Votre compte LinShare a été créé', 1);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 2, 'Votre compte LinShare a été créé', 1);
 
 -- Subject RESET_PASSWORD
 -- LinShare: Your password was reset
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 3, 'LinShare : Votre nouveau mot de passe', 1);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 3, 'Votre nouveau mot de passe', 1);
 
 -- Subject NEW_SHARING
 -- LinShare: A user deposited files in sharing for you
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'LinShare : Un utilisateur vous a déposé des fichiers en partage', 1);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'Un utilisateur ${actorRepresentation} vous a déposé des fichiers en partage', 1);
+
+-- Subject NEW_SHARING_WITH_ACTOR
+-- LinShare: sharing file with personal message.
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} de la part de ${actorRepresentation}', 1);
 
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: An user has updated a shared file
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'LinShare : Un utilisateur a mis à jour un fichier partagé', 1);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'Un utilisateur ${actorRepresentation} a mis à jour un fichier partagé', 1);
 
 -- Subject SHARED_DOC_DELETED
 -- LinShare: An user has deleted a shared file
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 10, 'LinShare : Un utilisateur a supprimé un fichier partagé', 1);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 10, 'Un utilisateur ${actorRepresentation} a supprimé un fichier partagé', 1);
 
 -- Subject SHARED_DOC_UPCOMING_OUTDATED
 -- LinShare: A sharing will be soon deleted
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 11, 'LinShare : Un partage va bientôt expirer', 1);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 11, 'Un partage va bientôt expirer', 1);
 
 -- Subject DOC_UPCOMING_OUTDATED
 -- LinShare: A sharing will be soon deleted
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 12, 'LinShare : Un fichier va bientôt être supprimé', 1);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 12, 'Un fichier va bientôt être supprimé', 1);
 
 -- Mail templates
 -- Template GREETINGS
@@ -202,44 +209,48 @@ INSERT INTO welcome_texts (messages_configuration_id, welcome_text, language_id)
 
 
 
-
 -- LOCALE nl
 -- Mail subjects
 -- Subject ANONYMOUS_DOWNLOAD
 -- LinShare: An anonymous user downloaded the file you shared
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 0, 'LinShare : Een anonieme gebruiker heeft het door u gedeelde bestand gedownload', 2);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 0, 'Een anonieme gebruiker heeft het door u gedeelde bestand gedownload', 2);
 
 -- Subject REGISTERED_DOWNLOAD
 -- LinShare: An user downloaded the file you shared
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 1, 'LinShare : Een gebruiker heeft het door u gedeelde bestand gedownload', 2);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 1, 'Een gebruiker heeft het door u gedeelde bestand gedownload', 2);
 
 -- Subject NEW_GUEST
 -- LinShare: Your account on LinShare has been created
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 2, 'LinShare : Uw LinShare account werd aangemaakt.', 2);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 2, 'Uw LinShare account werd aangemaakt.', 2);
 
 -- Subject RESET_PASSWORD
 -- LinShare: Your password was reset
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 3, 'LinShare : Uw nieuwe wachtwoord', 2);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 3, 'Uw nieuwe wachtwoord', 2);
 
 -- Subject NEW_SHARING
 -- LinShare: A user deposited files in sharing for you
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'LinShare : Een gebruiker heeft te delen bestanden voor u klaargezet.', 2);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'Een gebruiker heeft te delen bestanden voor u klaargezet.', 2);
+
+-- Subject NEW_SHARING_WITH_ACTOR
+-- LinShare: sharing file with personal message.
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} from ${actorRepresentation}', 2);
 
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: An user has updated a shared file
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'LinShare : Een gebruiker heeft een gedeeld bestand bijgewerkt', 2);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'Een gebruiker heeft een gedeeld bestand bijgewerkt', 2);
 
 -- Subject SHARED_DOC_DELETED
 -- LinShare: An user has deleted a shared file
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 10, 'LinShare : Een gebruiker heeft een gedeeld bestand gewist', 2);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 10, 'Een gebruiker heeft een gedeeld bestand gewist', 2);
 
 -- Subject SHARED_DOC_UPCOMING_OUTDATED
 -- LinShare: A sharing will be soon deleted
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 11, 'LinShare : Een share zal binnenkort gewist worden.', 2);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 11, 'Een share zal binnenkort gewist worden.', 2);
 
 -- Subject DOC_UPCOMING_OUTDATED
 -- LinShare: A sharing will be soon deleted
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 12, 'LinShare : Een bestand zal binnenkort gewist worden.', 2);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 12, 'Een bestand zal binnenkort gewist worden.', 2);
+
 -- Mail templates
 -- Template GREETINGS
 INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 0, 'Hallo ${firstName} ${lastName},<br/><br/>', 'Hallo ${firstName} ${lastName},', 2);
@@ -466,7 +477,7 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (38, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (19, true, 'TAB_USER', 37, 38, 1);
 
 
--- Functionality : SECURE_URL
+-- Functionality : SECURE_ANONYMOUS_URL
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (41, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (42, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (21, true, 'SECURED_ANONYMOUS_URL', 41, 42, 1);
@@ -496,6 +507,33 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (50, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (25, false, 'DOMAIN_MAIL', 49, 50, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (25, 'linshare-noreply@linagora.com');
 
+-- Functionality : TAB_LIST
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (53, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (54, false, false, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (26, true, 'TAB_LIST', 53, 54, 1);
+
+-- Functionality : UPDATE_FILE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (55, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (56, false, false, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (27, true, 'UPDATE_FILE', 55, 56, 1);
+
+-- Functionality : CREATE_THREAD_PERMISSION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (57, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (58, false, false, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (28, true, 'CREATE_THREAD_PERMISSION', 57, 58, 1);
+
+-- Functionality : LINK_LOGO
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (59, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (60, false, false, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (29, false, 'LINK_LOGO', 59, 60, 1);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://localhost:8080/linshare/en');
+
+-- Functionality : NOTIFICATION_URL
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (61, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (62, false, false, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(30, false, 'NOTIFICATION_URL', 61, 62, 1); 
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'http://localhost:8080/linshare/');
+
 -- LinShare version
-INSERT INTO version (id,description) VALUES (1,'1.1.0');
+INSERT INTO version (id,description) VALUES (1,'1.4.0');
 

@@ -40,16 +40,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "return")
 public class SimpleLongValue {
 	
-	
-	public SimpleLongValue() {
-	}
-
 	private long value;
 
 	public SimpleLongValue(long val) {
-		setValue(val);
+		this.value = val;
 	}
 
+	public SimpleLongValue() {
+		super();
+	}
+	
 	@XmlElement(name = "value")
 	public long getValue() {
 		return value;

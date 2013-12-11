@@ -61,8 +61,9 @@ public class DomainAccessRuleRepositoryImpl extends AbstractRepositoryImpl<Domai
 	
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(DomainAccessRule entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(DomainAccessRule.class).add(
-				Restrictions.eq("id", entity.getPersistenceId()));
+		DetachedCriteria det = DetachedCriteria.forClass(DomainAccessRule.class);
+
+		det.add( Restrictions.eq("id", entity.getPersistenceId()));
 		return det;
 	}
 }

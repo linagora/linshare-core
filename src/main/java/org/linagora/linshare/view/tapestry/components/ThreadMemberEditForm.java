@@ -45,7 +45,9 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.ThreadMemberVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
+import org.linagora.linshare.core.facade.UserFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +71,9 @@ public class ThreadMemberEditForm {
     @Property
     private ThreadVo currentThread;
     
+    @Inject
+    private UserFacade userFacade;
+    
     @Property
     @Persist
     private ThreadMemberVo member;
@@ -89,7 +94,7 @@ public class ThreadMemberEditForm {
     public void init() {
     	member = null;
     	if (editMemberId == null) {
-    		logger.error("No member selected, identifier is null");
+    		logger.debug("No member selected, identifier is null");
     	}
     	else {
     		logger.info("editMemberId : " + editMemberId);
@@ -104,12 +109,12 @@ public class ThreadMemberEditForm {
     		}
     	}
     	if (member == null) {
-    		logger.error("Member doesn't existst. Can't find a user with this identifier in members list");
+    		logger.debug("Member doesn't exist. Can't find a user with this identifier in members list");
     		member = new ThreadMemberVo();
     	}
     }
     
-    public void onSuccessFromMemberForm() {
+    public void onSuccessFromMemberForm() throws BusinessException {
     	member.setAdmin(admin);
     	member.setCanUpload(canUpload);
     	threadEntryFacade.updateMember(userVo, member, currentThread);

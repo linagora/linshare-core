@@ -45,29 +45,28 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 @NoJSR250Annotations
 public class SoapExceptionInterceptor extends AbstractSoapInterceptor {
- 
+
 	public static final String NAME_SPACE_NS = "http://org/linagora/linshare/webservice/";
-	
+
 	public SoapExceptionInterceptor() {
 		super(Phase.PRE_LOGICAL);
 	}
- 
+
+	@Override
 	public void handleMessage(SoapMessage message) throws Fault {
 		Fault fault = (Fault) message.getContent(Exception.class);
 		Throwable ex = fault.getCause();
+
 		if (ex instanceof BusinessException) {
 			BusinessException e = (BusinessException) ex;
 			generateSoapFault(fault, e);
-		} 
+		}
 	}
- 
+
 	private void generateSoapFault(Fault fault, BusinessException e) {
-		
-		//we set the BusinessException code in the fault
 		fault.setFaultCode(createQName(e.getErrorCode().getCode()));
-		//we set the BusinessException
 		fault.setMessage(e.getMessage());
-		
+
 		switch (e.getErrorCode()) {
 		case WEBSERVICE_FAULT:
 			fault.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
@@ -75,7 +74,7 @@ public class SoapExceptionInterceptor extends AbstractSoapInterceptor {
 		case WEBSERVICE_UNAUTHORIZED:
 			fault.setStatusCode(HttpStatus.SC_FORBIDDEN);
 			break;
-		case NOT_AUTHORIZED:
+		case FORBIDDEN:
 			fault.setStatusCode(HttpStatus.SC_FORBIDDEN);
 			break;
 		case USER_NOT_FOUND:
@@ -88,7 +87,7 @@ public class SoapExceptionInterceptor extends AbstractSoapInterceptor {
 			fault.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
- 
+
 	private static QName createQName(int errorCode) {
 		return new QName(NAME_SPACE_NS, String.valueOf(errorCode));
 	}

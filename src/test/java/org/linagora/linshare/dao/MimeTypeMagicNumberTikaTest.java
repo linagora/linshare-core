@@ -36,8 +36,9 @@ package org.linagora.linshare.dao;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
-import org.junit.Assert;
+
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;

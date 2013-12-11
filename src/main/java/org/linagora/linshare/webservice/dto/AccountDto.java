@@ -43,29 +43,33 @@ import org.linagora.linshare.core.domain.entities.Account;
 public class AccountDto {
 
 	protected String uuid;
-	
 	protected Date creationDate;
-	
 	protected Date modificationDate;
-	
 	protected String locale;
-	
 	protected String domain;
-	
-	protected String owner;
+	protected UserDto owner = null;
 
 	public AccountDto() {
+		super();
 	}
-	
+
 	public AccountDto(Account a) {
 		this.uuid = a.getLsUuid();
 		this.creationDate = a.getCreationDate();
 		this.modificationDate = a.getModificationDate();
 		this.locale = a.getLocale();
 		this.domain = a.getDomainId();
-		if(a.getOwner() != null) {
-			this.owner = a.getOwner().getLsUuid();
-		}
+	}
+	
+	protected AccountDto(String uuid, Date creationDate, Date modificationDate,
+			String locale, String domain, UserDto owner) {
+		super();
+		this.uuid = uuid;
+		this.creationDate = creationDate;
+		this.modificationDate = modificationDate;
+		this.locale = locale;
+		this.domain = domain;
+		this.owner = owner;
 	}
 
 	public String getUuid() {
@@ -108,11 +112,11 @@ public class AccountDto {
 		this.domain = domain;
 	}
 
-	public String getOwner() {
+	public UserDto getOwner() {
 		return owner;
 	}
 
-	public void setOwner(String owner) {
+	public void setOwner(UserDto owner) {
 		this.owner = owner;
 	}
 }

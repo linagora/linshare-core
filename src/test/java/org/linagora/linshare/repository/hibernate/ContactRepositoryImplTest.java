@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 import org.linagora.linshare.core.domain.entities.Contact;

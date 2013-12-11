@@ -35,11 +35,58 @@ package org.linagora.linshare.core.facade;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
+import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
+import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
+import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DomainPolicyFacade {
 
-	public List<String> getAllDomainPolicyIdentifiers();
-	public List<DomainPolicy> getAllDomainPolicy();
+	public void createDomainPolicy(UserVo actorVo,DomainPolicyVo domainPolicyVo) throws BusinessException;
+
+	public void updateDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo)throws BusinessException;
+
+	public DomainPolicyVo retrieveDomainPolicy(String identifier)throws BusinessException;
+
+	public void deletePolicy(UserVo actorVo, String policyToDelete)throws BusinessException;
+
+	public boolean policyIsDeletable(UserVo actor, String policyToDelete)throws BusinessException;
+
+	public List<String> findAllDomainPoliciesIdentifiers();
+
+	public List<DomainPolicyVo> findAllDomainPolicies() throws BusinessException;
+
+	public void deleteDomainAccessRule(DomainPolicyVo domainPolicyVo,DomainAccessRuleVo ruleVo) throws BusinessException;
 	
+	public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId)	throws BusinessException ;
+	
+	/**
+	 * Use to insert a rule on top of rule list
+	 * @param policyVo
+	 * @param ruleVo
+	 */
+	public void insertRuleOnTopOfList(DomainPolicyVo policyVo, DomainAccessRuleVo ruleVo);
+	
+	/**
+	 * Set and sort a domain access rule list
+	 * @param rulesVo
+	 * @param tabPos
+	 */
+	public void setAndSortDomainAccessRuleList(DomainPolicyVo policyVo, String tabPos) throws BusinessException;
+	
+	/**
+	 * When create DP, check if identifier is unique , if not , return an available identifier
+	 * @param value
+	 * @return
+	 */
+	public String checkDomainPolicyIdentifier(String value);
+	
+	/**
+	 * set DomainAccessRuleVo according to select domainAccessRuleType
+	 * @param rule
+	 * @param domainSelection
+	 * @return
+	 */
+	public DomainAccessRuleVo getDomainAccessRuleVoFromSelect(DomainAccessRuleType rule, String domainSelection);
 }

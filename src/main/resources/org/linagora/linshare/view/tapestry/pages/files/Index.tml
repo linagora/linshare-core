@@ -18,12 +18,11 @@
 			<h4>Actions</h4>
 			<ul>
 				<t:if test="displayUploadButton">
-				<li>
-					<a href="#" class="button" onclick="windowUpload.showCenter(true);">
-						<span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/>
-							${message:pages.files.upload.addbutton}</span>
-					</a>
-				</li>
+                <li>
+                    <t:pageLink page="files/upload" class="button" title="${message:pages.files.upload.addbutton}">
+                        <span><img src="${asset:context:images/icons/icon-add-files.png}" alt="" /> ${message:pages.files.upload.addbutton}</span>
+                    </t:pageLink>
+                </li>
 				<t:parameter name="else"><t:linkit.Comment> * KEEP IT, XHTML validation * </t:linkit.Comment>
 				<li>&nbsp;</li>
 				</t:parameter>
@@ -49,9 +48,6 @@
 	<!-- Popups -->
 
 	<!-- Confirm share popup -->
-	<t:confirmSharePopup t:messageLabel="${message:pages.user.fileSearch.messageConfirm}"
-		t:eventName="sharePopupEvent" t:usersVo="prop:shareSessionObjects.users"
-		t:documentsVo="prop:shareSessionObjects.documents" />
 	<t:CopyInThreadPopup t:messageLabel="${message:components.listDocument.selectThreadPopup.title}"
 		t:documentsVo="prop:shareSessionObjects.documents" />
 	
