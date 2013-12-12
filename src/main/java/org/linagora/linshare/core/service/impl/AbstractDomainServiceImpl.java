@@ -444,7 +444,11 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		List<User> users = new ArrayList<User>();
 
 		try {
-			users.add(findUserWithoutRestriction(domain, mail));
+			// TODO FMA
+			User temp = findUserWithoutRestriction(domain, mail);
+			if (temp != null) {
+				users.add(temp);
+			}
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 		}
@@ -618,8 +622,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			return null;
 		}
 
-		List<User> users = new ArrayList<User>();
-		users.addAll(findUserRecursivelyWithoutRestriction(domain, mail));
+		List<User> users = findUserRecursivelyWithoutRestriction(domain, mail);
 		logger.debug("End searchUserRecursivelyWithoutRestriction");
 		return users;
 	}

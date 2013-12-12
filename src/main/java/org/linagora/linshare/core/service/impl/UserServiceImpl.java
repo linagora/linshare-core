@@ -208,7 +208,7 @@ public class UserServiceImpl implements UserService {
 
 			guest.setCreationDate(new Date());
 			guest.setLocale(guestDomain.getDefaultLocale());
-			guest.setExpirationDate(calculateUserExpiryDate(guestDomain));
+			guest.setExpirationDate(calculateUserExpiryDate(ownerUser));
 
 			guestRepository.create(guest);
 
@@ -254,9 +254,9 @@ public class UserServiceImpl implements UserService {
 	 * 
 	 * @return user expiry date.
 	 */
-	private Date calculateUserExpiryDate(AbstractDomain domain) {
+	private Date calculateUserExpiryDate(Account sender) {
 		Calendar expiryDate = Calendar.getInstance();
-		TimeUnitValueFunctionality func = functionalityService.getGuestAccountExpiryTimeFunctionality(domain);
+		TimeUnitValueFunctionality func = functionalityService.getGuestAccountExpiryTimeFunctionality(sender.getDomain());
 		expiryDate.add(func.toCalendarUnitValue(), func.getValue());
 		return expiryDate.getTime();
 	}
