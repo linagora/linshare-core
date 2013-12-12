@@ -41,17 +41,18 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
 	private static final Logger logger = LoggerFactory.getLogger(ShareExpiryDateServiceImpl.class);
-	private final FunctionalityOldService functionalityService;
+	
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	public ShareExpiryDateServiceImpl(FunctionalityOldService functionalityService) {
-		this.functionalityService = functionalityService;
+	public ShareExpiryDateServiceImpl(FunctionalityReadOnlyService functionalityService) {
+		this.functionalityReadOnlyService = functionalityService;
 	}
 	
 	
@@ -62,7 +63,7 @@ public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
      */
 	@Override
 	public Calendar computeShareExpiryDate(DocumentEntry document, Account owner) {
-		TimeUnitBooleanValueFunctionality shareExpirationTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(owner.getDomain());
+		TimeUnitBooleanValueFunctionality shareExpirationTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(owner.getDomain());
 		Calendar defaultExpiration = null;
     	
 		if(shareExpirationTimeFunctionality.getActivationPolicy().getStatus()) {

@@ -68,6 +68,7 @@ import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.utils.AESCrypt;
@@ -77,18 +78,18 @@ import org.slf4j.LoggerFactory;
 public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 
     private final AbstractDomainService abstractDomainService;
-    private final FunctionalityOldService functionalityService;
+    private final FunctionalityReadOnlyService functionalityReadOnlyService;
     private final UserAndDomainMultiService userAndDomainMultiService;
     private final UserProviderService userProviderService;
     private final DomainPolicyService domainPolicyService;
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractDomainFacadeImpl.class);
 
-    public AbstractDomainFacadeImpl(AbstractDomainService abstractDomainService, FunctionalityOldService functionalityService,
+    public AbstractDomainFacadeImpl(AbstractDomainService abstractDomainService, FunctionalityReadOnlyService functionalityReadOnlyService,
             UserProviderService userProviderService, DomainPolicyService domainPolicyService, UserAndDomainMultiService userAndDomainMultiService) {
         super();
         this.abstractDomainService = abstractDomainService;
-        this.functionalityService = functionalityService;
+        this.functionalityReadOnlyService = functionalityReadOnlyService;
         this.userProviderService = userProviderService;
         this.domainPolicyService = domainPolicyService;
         this.userAndDomainMultiService = userAndDomainMultiService;
@@ -298,7 +299,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         if(domainIdentifier != null) {
             AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
             logger.debug("domain found : " + domain.getIdentifier());
-            Functionality func = functionalityService.getGuestFunctionality(domain);
+            Functionality func = functionalityReadOnlyService.getGuestFunctionality(domain);
             if(func.getActivationPolicy().getStatus()) {
                 return true;
             }
@@ -510,34 +511,34 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     @Override
     public boolean isCustomLogoActive(UserVo actorVo) throws BusinessException {
         AbstractDomain domain = abstractDomainService.retrieveDomain(actorVo.getDomainIdentifier());
-        return functionalityService.getCustomLogoFunctionality(domain).getActivationPolicy().getStatus();
+        return functionalityReadOnlyService.getCustomLogoFunctionality(domain).getActivationPolicy().getStatus();
     }
 
     @Override
     public boolean isCustomLogoActiveInRootDomain() throws BusinessException {
-        return functionalityService.isCustomLogoActiveInRootDomain();
+        return functionalityReadOnlyService.isCustomLogoActiveInRootDomain();
     }
     
     @Override
     public String getCustomLogoUrl(UserVo actorVo) throws BusinessException {
         User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
-        return functionalityService.getCustomLogoFunctionality(actor.getDomain()).getValue();
+        return functionalityReadOnlyService.getCustomLogoFunctionality(actor.getDomain()).getValue();
     }
 
     @Override
     public String getCustomLogoUrlInRootDomain() throws BusinessException {
-        return functionalityService.getCustomLogoUrlInRootDomain();
+        return functionalityReadOnlyService.getCustomLogoUrlInRootDomain();
     }
     
     @Override
     public String getCustomLogoLink(UserVo actorVo) throws BusinessException {
         User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
-        return functionalityService.getCustomLinkLogoFunctionality(actor.getDomain()).getValue();
+        return functionalityReadOnlyService.getCustomLinkLogoFunctionality(actor.getDomain()).getValue();
     }
 
     @Override
     public String getCustomLogoLinkInRootDomain() throws BusinessException {
-        return functionalityService.getCustomLinkLogoInRootDomain();
+        return functionalityReadOnlyService.getCustomLinkLogoInRootDomain();
     }
     
     @Override
@@ -631,7 +632,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
                 try {
                     AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
                     if(domain!=null) {
-                        Functionality mimeTypeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
+                        Functionality mimeTypeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
                         if(mimeTypeFunctionality.getActivationPolicy().getStatus()){
                             return true;
                         }

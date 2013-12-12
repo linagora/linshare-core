@@ -67,7 +67,7 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.VirusScannerService;
@@ -82,18 +82,18 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 	private final LogEntryService logEntryService;
 	private final AbstractDomainService abstractDomainService;
-	private final FunctionalityOldService functionalityService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 	private final MimeTypeService mimeTypeService;
 	private final VirusScannerService virusScannerService;
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 
 	public DocumentEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityOldService functionalityService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService, MimeTypeMagicNumberDao mimeTypeIdentifier) {
+			FunctionalityReadOnlyService functionalityReadOnlyService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService, MimeTypeMagicNumberDao mimeTypeIdentifier) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 		this.abstractDomainService = abstractDomainService;
-		this.functionalityService = functionalityService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mimeTypeService = mimeTypeService;
 		this.virusScannerService = virusScannerService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
@@ -113,24 +113,24 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 			// check if the file MimeType is allowed
 			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
-			Functionality mimeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
+			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
 			if (mimeFunctionality.getActivationPolicy().getStatus()) {
 				mimeTypeService.checkFileMimeType(fileName, mimeType, actor);
 			}
 
-			Functionality antivirusFunctionality = functionalityService.getAntivirusFunctionality(domain);
+			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
 				checkVirus(fileName, actor, tempFile);
 			}
 
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
-			StringValueFunctionality timeStampingFunctionality = functionalityService.getTimeStampingFunctionality(domain);
+			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService.getTimeStampingFunctionality(domain);
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
 				timeStampingUrl = timeStampingFunctionality.getValue();
 			}
 
-			Functionality enciphermentFunctionality = functionalityService.getEnciphermentFunctionality(domain);
+			Functionality enciphermentFunctionality = functionalityReadOnlyService.getEnciphermentFunctionality(domain);
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
 
 			// We need to set an expiration date in case of file cleaner
@@ -174,24 +174,24 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			checkSpace(size, fileName, actor);
 
 			// check if the file MimeType is allowed
-			Functionality mimeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
+			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
 			if (mimeFunctionality.getActivationPolicy().getStatus()) {
 				mimeTypeService.checkFileMimeType(fileName, mimeType, actor);
 			}
 	
-			Functionality antivirusFunctionality = functionalityService.getAntivirusFunctionality(domain);
+			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
 				checkVirus(fileName, actor, tempFile);
 			}
 	
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
-			StringValueFunctionality timeStampingFunctionality = functionalityService.getTimeStampingFunctionality(domain);
+			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService.getTimeStampingFunctionality(domain);
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
 				timeStampingUrl = timeStampingFunctionality.getValue();
 			}
 	
-			Functionality enciphermentFunctionality = functionalityService.getEnciphermentFunctionality(domain);
+			Functionality enciphermentFunctionality = functionalityReadOnlyService.getEnciphermentFunctionality(domain);
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
 	
 			// We need to set an expiration date in case of file cleaner activation.
@@ -225,7 +225,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 	private Calendar getDocumentExpirationDate(AbstractDomain domain) {
 		Calendar expirationDate = Calendar.getInstance();
-		TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(domain);
+		TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityReadOnlyService.getDefaultFileExpiryTimeFunctionality(domain);
 		expirationDate.add(fileExpirationTimeFunctionality.toCalendarUnitValue(), fileExpirationTimeFunctionality.getValue());
 		return expirationDate;
 	}
@@ -247,7 +247,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 		// want a timestamp on doc ?
 		String timeStampingUrl = null;
-		StringValueFunctionality timeStampingFunctionality = functionalityService.getTimeStampingFunctionality(domain);
+		StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService.getTimeStampingFunctionality(domain);
 		if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
 			timeStampingUrl = timeStampingFunctionality.getValue();
 		}
@@ -337,7 +337,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	public long getUserMaxFileSize(Account account) throws BusinessException {
 		// if user is not in one domain = BOUM
 		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getIdentifier());
-		SizeUnitValueFunctionality userMaxFileSizeFunctionality = functionalityService.getUserMaxFileSizeFunctionality(domain);
+		SizeUnitValueFunctionality userMaxFileSizeFunctionality = functionalityReadOnlyService.getUserMaxFileSizeFunctionality(domain);
 
 		if (userMaxFileSizeFunctionality.getActivationPolicy().getStatus()) {
 
@@ -357,8 +357,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getIdentifier());
 
-		SizeUnitValueFunctionality globalQuotaFunctionality = functionalityService.getGlobalQuotaFunctionality(domain);
-		SizeUnitValueFunctionality userQuotaFunctionality = functionalityService.getUserQuotaFunctionality(domain);
+		SizeUnitValueFunctionality globalQuotaFunctionality = functionalityReadOnlyService.getGlobalQuotaFunctionality(domain);
+		SizeUnitValueFunctionality userQuotaFunctionality = functionalityReadOnlyService.getUserQuotaFunctionality(domain);
 
 		if (globalQuotaFunctionality.getActivationPolicy().getStatus()) {
 
@@ -389,8 +389,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getIdentifier());
 
-		SizeUnitValueFunctionality globalQuotaFunctionality = functionalityService.getGlobalQuotaFunctionality(domain);
-		SizeUnitValueFunctionality userQuotaFunctionality = functionalityService.getUserQuotaFunctionality(domain);
+		SizeUnitValueFunctionality globalQuotaFunctionality = functionalityReadOnlyService.getGlobalQuotaFunctionality(domain);
+		SizeUnitValueFunctionality userQuotaFunctionality = functionalityReadOnlyService.getUserQuotaFunctionality(domain);
 
 		if (globalQuotaFunctionality.getActivationPolicy().getStatus()) {
 			return globalQuotaFunctionality.getPlainSize();
@@ -442,27 +442,27 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 	@Override
 	public boolean isSignatureActive(Account account) {
-		return functionalityService.getSignatureFunctionality(account.getDomain()).getActivationPolicy().getStatus();
+		return functionalityReadOnlyService.getSignatureFunctionality(account.getDomain()).getActivationPolicy().getStatus();
 	}
 
 	@Override
 	public boolean isEnciphermentActive(Account account) {
-		return functionalityService.getEnciphermentFunctionality(account.getDomain()).getActivationPolicy().getStatus();
+		return functionalityReadOnlyService.getEnciphermentFunctionality(account.getDomain()).getActivationPolicy().getStatus();
 	}
 
 	@Override
 	public boolean isGlobalQuotaActive(Account account) throws BusinessException {
-		return functionalityService.getGlobalQuotaFunctionality(account.getDomain()).getActivationPolicy().getStatus();
+		return functionalityReadOnlyService.getGlobalQuotaFunctionality(account.getDomain()).getActivationPolicy().getStatus();
 	}
 
 	@Override
 	public boolean isUserQuotaActive(Account account) throws BusinessException {
-		return functionalityService.getUserQuotaFunctionality(account.getDomain()).getActivationPolicy().getStatus();
+		return functionalityReadOnlyService.getUserQuotaFunctionality(account.getDomain()).getActivationPolicy().getStatus();
 	}
 
 	@Override
 	public Long getGlobalQuota(Account account) throws BusinessException {
-		SizeUnitValueFunctionality globalQuotaFunctionality = functionalityService.getGlobalQuotaFunctionality(account.getDomain());
+		SizeUnitValueFunctionality globalQuotaFunctionality = functionalityReadOnlyService.getGlobalQuotaFunctionality(account.getDomain());
 		return globalQuotaFunctionality.getPlainSize();
 	}
 

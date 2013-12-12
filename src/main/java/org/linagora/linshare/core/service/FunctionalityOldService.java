@@ -37,11 +37,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
-import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
-import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
-import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
-import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface FunctionalityOldService {
@@ -62,13 +57,6 @@ public interface FunctionalityOldService {
 	 * @return
 	 */
 	public List<Functionality> getAllFunctionalities(AbstractDomain domain);
-	
-	/**
-	 * This method is designed to return a list of all existing functionalities from a domain.
-	 * @param domain identifier
-	 * @return
-	 */
-	public List<Functionality> getAllFunctionalities(String domainIdentifier);
 	
 	/**
 	 * This method returns an updatable functionality. Do not try to update a functionality whit other ways. 
@@ -125,117 +113,4 @@ public interface FunctionalityOldService {
 	 * @return
 	 */
 	public List<Functionality> getAllEditableFunctionalities(String domainIdentifier);
-
-	
-	/** 
-	 * Shortcuts to functionalities
-	 */
-
-	public SizeUnitValueFunctionality getGlobalQuotaFunctionality (AbstractDomain domain);
-    public SizeUnitValueFunctionality getUserQuotaFunctionality (AbstractDomain domain);
-    public SizeUnitValueFunctionality getUserMaxFileSizeFunctionality (AbstractDomain domain);
-	public TimeUnitBooleanValueFunctionality getDefaultShareExpiryTimeFunctionality (AbstractDomain domain);
-	public TimeUnitValueFunctionality getDefaultFileExpiryTimeFunctionality (AbstractDomain domain);
-	
-	public Functionality getGuestFunctionality (AbstractDomain domain);
-	public TimeUnitValueFunctionality getGuestAccountExpiryTimeFunctionality (AbstractDomain domain);
-	
-	
-	public StringValueFunctionality getTimeStampingFunctionality(AbstractDomain domain);
-	public StringValueFunctionality getDomainMailFunctionality(AbstractDomain domain);
-	public Functionality getMimeTypeFunctionality(AbstractDomain domain);
-	public Functionality getEnciphermentFunctionality(AbstractDomain domain);
-	public Functionality getAntivirusFunctionality(AbstractDomain domain);
-	public Functionality getAnonymousUrlFunctionality(AbstractDomain domain);
-	public Functionality getSecuredAnonymousUrlFunctionality(AbstractDomain domain);
-	public Functionality getRestrictedGuestFunctionality(AbstractDomain domain);
-	public Functionality getSignatureFunctionality(AbstractDomain domain);
-	public Functionality getThreadCreationPermissionFunctionality(AbstractDomain domain);
-	public Functionality getUpdateFilesFunctionality(AbstractDomain domain);
-	public Functionality getUserCanUploadFunctionality(AbstractDomain domain);
-	public StringValueFunctionality getCustomLogoFunctionality(AbstractDomain domain);
-	public StringValueFunctionality getCustomLinkLogoFunctionality(AbstractDomain domain);
-	public StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain);
-	public StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain);
-	
-	public IntegerValueFunctionality getCompletionFunctionality(AbstractDomain domain);
-	public Functionality getUserTabFunctionality(AbstractDomain domain);
-	public Functionality getAuditTabFunctionality(AbstractDomain domain);
-	public Functionality getThreadTabFunctionality(AbstractDomain domain);
-	public Functionality getHelpTabFunctionality(AbstractDomain domain);
-	public Functionality getListTabFunctionality(AbstractDomain domain);
-	
-	
-	/**
-	 * Check if SecuredAnonymousUrl (SAU) is mandatory
-	 * @param domain : the current domain identifier
-	 * @return 
-	 */
-	public boolean isSauMadatory(String domainIdentifier);
-	
-	/**
-	 * Check if SecuredAnonymousUrl (SAU) is allowed
-	 * @param domain : the current domain identifier
-	 * @return 
-	 */
-	public boolean isSauAllowed(String domainIdentifier);
-
-	/**
-	 * return the default value for SecuredAnonymousUrl (SAU)
-	 * @param domain : the current domain identifier
-	 * @return
-	 */
-	public boolean getDefaultSauValue(String domainIdentifier);
-	
-	/**
-	 * return the default value for RestrictedGuest
-	 * @param domain : the current domain identifier
-	 * @return
-	 */
-	public boolean getDefaultRestrictedGuestValue(String domainIdentifier);
-
-	/**
-	 * Check if RestrictedGuest is mandatory
-	 * @param domain : the current domain identifier
-	 * @return 
-	 */
-	public boolean isRestrictedGuestMadatory(String domainIdentifier);
-	
-	/**
-	 * Check if RestrictedGuest is allowed
-	 * @param domain : the current domain identifier
-	 * @return 
-	 */
-	public boolean isRestrictedGuestAllowed(String domainIdentifier);
-
-	/**
-	 * Return the status of the custom logo  in root domain
-	 * @return the status
-	 */
-	public boolean isCustomLogoActiveInRootDomain() throws BusinessException;
-	
-	/**
-	 * Return the status of the custom logo  in root domain
-	 * @return the status
-	 */
-	public String getCustomLogoUrlInRootDomain() throws BusinessException;
-	
-	/**
-	 * Return the status of the custom link logo  in root domain
-	 * @return the status
-	 */
-	public boolean isCustomLinkLogoActiveInRootDomain() throws BusinessException;
-	
-	/**
-	 * Return the status of the custom link logo  in root domain
-	 * @return the status
-	 */
-	public String getCustomLinkLogoInRootDomain() throws BusinessException;
-	
-	/**
-	 * Return the status of the custom Notification URL in root domain
-	 * @return the status
-	 */
-	public String getCustomNotificationURLInRootDomain() throws BusinessException;
-	
 }

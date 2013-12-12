@@ -45,8 +45,6 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
@@ -63,7 +61,7 @@ import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.ThreadEntryService;
@@ -79,7 +77,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 	private final LogEntryService logEntryService;
 	private final AbstractDomainService abstractDomainService;
-	private final FunctionalityOldService functionalityService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 	private final MimeTypeService mimeTypeService;
 	private final AccountService accountService;
 	private final VirusScannerService virusScannerService;
@@ -88,13 +86,13 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 
 	public ThreadEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityOldService functionalityService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService, TagBusinessService tagBusinessService,
+			FunctionalityReadOnlyService functionalityReadOnlyService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService, TagBusinessService tagBusinessService,
 			ThreadMemberRepository threadMemberRepository, MimeTypeMagicNumberDao mimeTypeIdentifier) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 		this.abstractDomainService = abstractDomainService;
-		this.functionalityService = functionalityService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mimeTypeService = mimeTypeService;
 		this.accountService = accountService;
 		this.virusScannerService = virusScannerService;
@@ -115,24 +113,24 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
 
 			// check if the file MimeType is allowed
-			Functionality mimeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
+			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
 			if (mimeFunctionality.getActivationPolicy().getStatus()) {
 				mimeTypeService.checkFileMimeType(filename, mimeType, actor);
 			}
 
-			Functionality antivirusFunctionality = functionalityService.getAntivirusFunctionality(domain);
+			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
 				 checkVirus(filename, actor, tempFile);
 			}
 
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
-			StringValueFunctionality timeStampingFunctionality = functionalityService.getTimeStampingFunctionality(domain);
+			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService.getTimeStampingFunctionality(domain);
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
 				timeStampingUrl = timeStampingFunctionality.getValue();
 			}
 
-			Functionality enciphermentFunctionality = functionalityService.getEnciphermentFunctionality(domain);
+			Functionality enciphermentFunctionality = functionalityReadOnlyService.getEnciphermentFunctionality(domain);
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
 
 			threadEntry = documentEntryBusinessService.createThreadEntry(thread, tempFile, size, filename, checkIfIsCiphered, timeStampingUrl, mimeType);

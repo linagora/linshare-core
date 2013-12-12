@@ -34,7 +34,7 @@
 		<constructor-arg ref="tagRepository" />
 		<constructor-arg ref="documentEntryBusinessService" />
         <constructor-arg ref="logEntryService" />
-        <constructor-arg ref="functionalityOldService" />
+        <constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">
@@ -45,7 +45,7 @@
 		<constructor-arg ref="recipientFavouriteService" />
 		<constructor-arg ref="allowedContactRepository" />
 		<constructor-arg ref="mailContentBuildingService" />
-		<constructor-arg ref="functionalityOldService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="passwordService" />
 		<constructor-arg ref="entryService" />
@@ -69,7 +69,7 @@
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="abstractDomainService" />
-		<constructor-arg ref="functionalityOldService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="mimeTypeService" />
 		<constructor-arg ref="clamavVirusScannerService" />
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
@@ -79,7 +79,7 @@
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="abstractDomainService" />
-		<constructor-arg ref="functionalityOldService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="mimeTypeService" />
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="clamavVirusScannerService" />
@@ -89,7 +89,7 @@
 	</bean>
 
 	<bean id="shareExpiryDateService" class="org.linagora.linshare.core.service.impl.ShareExpiryDateServiceImpl">
-		<constructor-arg ref="functionalityOldService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
 	<bean id="entryService" class="org.linagora.linshare.core.service.impl.EntryServiceImpl">
@@ -102,7 +102,7 @@
 
 	<bean id="shareEntryService" class="org.linagora.linshare.core.service.impl.ShareEntryServiceImpl">
 		<constructor-arg ref="guestRepository" />
-		<constructor-arg ref="functionalityOldService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="shareEntryBusinessService" />
 		<constructor-arg ref="shareExpiryDateService" />
 		<constructor-arg ref="logEntryService" />
@@ -113,7 +113,7 @@
 	</bean>
 
 	<bean id="anonymousShareEntryService" class="org.linagora.linshare.core.service.impl.AnonymousShareEntryServiceImpl">
-		<constructor-arg ref="functionalityOldService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="anonymousShareEntryBusinessService" />
 		<constructor-arg ref="shareExpiryDateService" />
 		<constructor-arg ref="logEntryService" />
@@ -165,7 +165,7 @@
 		<constructor-arg value="${linshare.mails.htmlwithoutlogo.container}" />
 		<constructor-arg value="${linshare.logo.mails.visible}" />
 		<constructor-arg ref="abstractDomainService" />
-		<constructor-arg ref="functionalityOldService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg value="${linshare.display.licenceTerm}" />
 		
 	</bean>
@@ -185,6 +185,11 @@
 		<constructor-arg ref="functionalityRepository" />
 		<constructor-arg ref="abstractDomainRepository" />
 	</bean>
+	
+	<bean name="functionalityReadOnlyService" class="org.linagora.linshare.core.service.impl.FunctionalityReadOnlyServiceImpl">
+		<constructor-arg ref="functionalityRepository" />
+		<constructor-arg ref="abstractDomainRepository" />
+	</bean>
 
 
 	<bean name="domainPolicyService" class="org.linagora.linshare.core.service.impl.DomainPolicyServiceImpl">
@@ -193,7 +198,7 @@
 	</bean>
 
 	<bean name="abstractDomainService" class="org.linagora.linshare.core.service.impl.AbstractDomainServiceImpl">
-		<constructor-arg ref="functionalityOldService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="abstractDomainRepository" />
 		<constructor-arg ref="domainPolicyService" />
 		<constructor-arg ref="userProviderService" />
