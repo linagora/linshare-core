@@ -651,10 +651,12 @@ public class ListSharedDocument {
     	} else if (activeSignature){
         	model.add("signed",null);
         	model.reorder("fileProperties","expirationDate","shareEdit","signed", "selectedValue");
-    	} else {
-    		model.add("encryptedAdd", null);
-        	model.reorder("fileProperties","expirationDate","shareEdit","encryptedAdd", "selectedValue");
-    	}
+		} else  if (activeEncypher){
+			model.add("encryptedAdd", null);
+	    	model.reorder("fileProperties","expirationDate","shareEdit","encryptedAdd", "selectedValue");
+		} else {
+			model.reorder("fileProperties","expirationDate","shareEdit","selectedValue");
+		}
         return model;
     }
 
