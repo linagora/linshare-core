@@ -47,6 +47,7 @@ import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.TimeUnitClass;
 import org.linagora.linshare.core.domain.entities.UnitBooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
+import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
 import org.linagora.linshare.core.domain.vo.FunctionalityVo;
 import org.linagora.linshare.core.domain.vo.IntegerValueFunctionalityVo;
 import org.linagora.linshare.core.domain.vo.PolicyVo;
@@ -138,7 +139,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 				} else {
 					logger.error("Unknown Unit Functionality Type for : " + functionality.getIdentifier());
 				}
-			} else if(functionality.getType().equals(FunctionalityType.UNIT_BOOLEAN)) {
+			} else if(functionality.getType().equals(FunctionalityType.UNIT_BOOLEAN_TIME)) {
 				UnitBooleanValueFunctionality f = (UnitBooleanValueFunctionality)functionality;
 				
 				if(f.getUnit().getUnitType().equals(UnitType.TIME)) {
