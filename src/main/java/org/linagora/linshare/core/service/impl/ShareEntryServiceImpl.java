@@ -44,7 +44,6 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -54,9 +53,8 @@ import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.GuestRepository;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -71,7 +69,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	
 	private final GuestRepository guestRepository;
 	
-	private final FunctionalityOldService functionalityService;
+	private final FunctionalityReadOnlyService functionalityService;
 	
 	private final ShareEntryBusinessService shareEntryBusinessService;
 	
@@ -88,12 +86,12 @@ public class ShareEntryServiceImpl implements ShareEntryService {
     private final MailContentBuildingService mailContentBuildingService;
 
 
-	public ShareEntryServiceImpl(GuestRepository guestRepository, FunctionalityOldService functionalityService, ShareEntryBusinessService shareEntryBusinessService,
+	public ShareEntryServiceImpl(GuestRepository guestRepository, FunctionalityReadOnlyService functionalityReadOnlyService, ShareEntryBusinessService shareEntryBusinessService,
 		ShareExpiryDateService shareExpiryDateService, LogEntryService logEntryService, DocumentEntryService documentEntryService, NotifierService notifierService,
 		MailContentBuildingService mailElementsFactory, DocumentEntryBusinessService documentEntryBusinessService) {
 	super();
 	this.guestRepository = guestRepository;
-	this.functionalityService = functionalityService;
+	this.functionalityService = functionalityReadOnlyService;
 	this.shareEntryBusinessService = shareEntryBusinessService;
 	this.shareExpiryDateService = shareExpiryDateService;
 	this.logEntryService = logEntryService;

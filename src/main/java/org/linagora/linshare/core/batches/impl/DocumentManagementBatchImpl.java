@@ -54,7 +54,7 @@ import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.EntryService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ThreadEntryService;
@@ -88,7 +88,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 	
 	private final MailContentBuildingService mailBuilder;
 	
-	private final FunctionalityOldService functionalityService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 	
 	private final EntryService entryService;
 	
@@ -100,7 +100,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 			DocumentEntryRepository documentEntryRepository, DocumentEntryService documentEntryService,
 			AccountRepository<Account> accountRepository, FileSystemDao fileSystemDao, boolean cronActivated,
 			NotifierService notifierService, MailContentBuildingService mailBuilder,
-			FunctionalityOldService functionalityService, EntryService entryService,
+			FunctionalityReadOnlyService functionalityService, EntryService entryService,
 			DocumentEntryBusinessService documentEntryBusinessService, MimeTypeMagicNumberDao mimeTypeMagicNumberDao, ThreadEntryService threadEntryService) {
 		super();
 		this.documentRepository = documentRepository;
@@ -111,7 +111,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		this.cronActivated = cronActivated;
 		this.notifierService = notifierService;
 		this.mailBuilder = mailBuilder;
-		this.functionalityService = functionalityService;
+		this.functionalityReadOnlyService = functionalityService;
 		this.entryService = entryService;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.mimeTypeMagicNumberDao = mimeTypeMagicNumberDao;
@@ -203,7 +203,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 			// we check if there is not related shares. Should not happen.
 			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
 
-				TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService
+				TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityReadOnlyService
 						.getDefaultFileExpiryTimeFunctionality(documentEntry.getEntryOwner().getDomain());
 				if (fileExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
 					if (documentEntry.getExpirationDate().before(now)) {

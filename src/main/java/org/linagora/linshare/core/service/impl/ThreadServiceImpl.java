@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -56,7 +55,7 @@ import org.linagora.linshare.core.repository.TagRepository;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.ThreadViewRepository;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.slf4j.Logger;
@@ -74,14 +73,14 @@ public class ThreadServiceImpl implements ThreadService {
 
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
-	private final FunctionalityOldService functionalityService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 	
 	private final TagRepository tagRepository;
 
 	private final LogEntryService logEntryService;
 
 	public ThreadServiceImpl(ThreadRepository threadRepository, ThreadViewRepository threadViewRepository, ThreadMemberRepository threadMemberRepository, TagRepository tagRepository,
-			DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService,FunctionalityOldService functionalityService) {
+			DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService,FunctionalityReadOnlyService functionalityService) {
 		super();
 		this.threadRepository = threadRepository;
 		this.threadViewRepository = threadViewRepository;
@@ -89,7 +88,7 @@ public class ThreadServiceImpl implements ThreadService {
 		this.tagRepository = tagRepository;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
-		this.functionalityService = functionalityService;
+		this.functionalityReadOnlyService = functionalityService;
 	}
 
 	@Override
@@ -110,7 +109,7 @@ public class ThreadServiceImpl implements ThreadService {
 	@Override
 	public Boolean create(Account actor, String name) throws BusinessException {
 		boolean isGuest = actor.getAccountType().equals(AccountType.GUEST);
-		Functionality creation = functionalityService.getThreadCreationPermissionFunctionality(actor.getDomain());
+		Functionality creation = functionalityReadOnlyService.getThreadCreationPermissionFunctionality(actor.getDomain());
 		
 		if (creation.getActivationPolicy().getStatus() && !isGuest){
 			Thread thread = null;

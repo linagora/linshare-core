@@ -42,7 +42,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.UserDto;
 import org.slf4j.Logger;
@@ -56,20 +56,20 @@ public class UserFacadeImpl extends GenericFacadeImpl
 
 	private final UserService userService;
 
-	private final FunctionalityOldService functionalityService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	public UserFacadeImpl(final UserService userService,
 			final AccountService accountService,
-			FunctionalityOldService functionalityService) {
+			FunctionalityReadOnlyService functionalityService) {
 		super(accountService);
 		this.userService = userService;
-		this.functionalityService = functionalityService;
+		this.functionalityReadOnlyService = functionalityService;
 	}
 
 	@Override
 	public User checkAuthentication() throws BusinessException {
 		User user = super.checkAuthentication();
-		Functionality functionality = functionalityService
+		Functionality functionality = functionalityReadOnlyService
 				.getUserTabFunctionality(user.getDomain());
 		if (!functionality.getActivationPolicy().getStatus()) {
 			throw new BusinessException(

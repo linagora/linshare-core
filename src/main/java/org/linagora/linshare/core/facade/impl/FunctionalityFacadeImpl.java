@@ -59,20 +59,28 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FunctionalityFacadeImpl implements FunctionalityFacade {
 
 	protected final Logger logger = LoggerFactory.getLogger(FunctionalityFacadeImpl.class);
+	
 	private final FunctionalityOldService functionalityService;
+	
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+	
 	private final AbstractDomainService abstractDomainService;
 	
 	
-	public FunctionalityFacadeImpl(FunctionalityOldService functionalityService, AbstractDomainService abstractDomainService) {
+	public FunctionalityFacadeImpl(FunctionalityOldService functionalityService,
+			AbstractDomainService abstractDomainService,
+			FunctionalityReadOnlyService functionalityReadOnlyService) {
 		super();
 		this.functionalityService = functionalityService;
 		this.abstractDomainService = abstractDomainService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 	
 
@@ -205,7 +213,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	public Integer completionThreshold(String domainIdentifier) {
 		try {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-			IntegerValueFunctionality completionFunctionality = functionalityService.getCompletionFunctionality(domain);
+			IntegerValueFunctionality completionFunctionality = functionalityReadOnlyService.getCompletionFunctionality(domain);
 			if(completionFunctionality.getActivationPolicy().getStatus()) {
 				return completionFunctionality.getValue();
 			}
@@ -221,7 +229,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	public boolean isEnableUserTab(String domainIdentifier) {
 		try {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-			Functionality userTabFunctionality = functionalityService.getUserTabFunctionality(domain);
+			Functionality userTabFunctionality = functionalityReadOnlyService.getUserTabFunctionality(domain);
 			return userTabFunctionality.getActivationPolicy().getStatus();
 		} catch (BusinessException e) {
 			logger.error("Can't find user tab functionality for domain : " + domainIdentifier);
@@ -235,7 +243,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	public boolean isEnableAuditTab(String domainIdentifier) {
 		try {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-			Functionality auditTabFunctionality = functionalityService.getAuditTabFunctionality(domain);
+			Functionality auditTabFunctionality = functionalityReadOnlyService.getAuditTabFunctionality(domain);
 			return auditTabFunctionality.getActivationPolicy().getStatus();
 		} catch (BusinessException e) {
 			logger.error("Can't find audit tab functionality for domain : " + domainIdentifier);
@@ -249,7 +257,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	public boolean isEnableThreadTab(String domainIdentifier) {
 		try {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-			Functionality threadTabFunctionality = functionalityService.getThreadTabFunctionality(domain);
+			Functionality threadTabFunctionality = functionalityReadOnlyService.getThreadTabFunctionality(domain);
 			return threadTabFunctionality.getActivationPolicy().getStatus();
 		} catch (BusinessException e) {
 			logger.error("Can't find help tab functionality for domain : " + domainIdentifier);
@@ -262,7 +270,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	public boolean isEnableUpdateFiles(String domainIdentifier){
 		try {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-			Functionality updateFilesFunctionality = functionalityService.getUpdateFilesFunctionality(domain);
+			Functionality updateFilesFunctionality = functionalityReadOnlyService.getUpdateFilesFunctionality(domain);
 			return updateFilesFunctionality.getActivationPolicy().getStatus();
 		} catch (BusinessException e) {
 			logger.error("Can't find update files functionality for domain : " + domainIdentifier);
@@ -275,7 +283,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	public boolean isEnableCustomLogoLink(String domainIdentifier){
 		try {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-			Functionality customLogoLinkFunctionality = functionalityService.getCustomLinkLogoFunctionality(domain);
+			Functionality customLogoLinkFunctionality = functionalityReadOnlyService.getCustomLinkLogoFunctionality(domain);
 			return customLogoLinkFunctionality.getActivationPolicy().getStatus();
 		} catch (BusinessException e) {
 			logger.error("Can't find custom logo link functionality for domain : " + domainIdentifier);
@@ -288,7 +296,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	public boolean isEnableCreateThread(String domainIdentifier){
 		try {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-			Functionality createThreadFunctionality = functionalityService.getThreadCreationPermissionFunctionality(domain);
+			Functionality createThreadFunctionality = functionalityReadOnlyService.getThreadCreationPermissionFunctionality(domain);
 			return createThreadFunctionality.getActivationPolicy().getStatus();
 		} catch (BusinessException e) {
 			logger.error("Can't find thread creation functionality for domain : " + domainIdentifier);
@@ -301,7 +309,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	public boolean isEnableHelpTab(String domainIdentifier) {
 		try {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-			Functionality helpTabFunctionality = functionalityService.getHelpTabFunctionality(domain);
+			Functionality helpTabFunctionality = functionalityReadOnlyService.getHelpTabFunctionality(domain);
 			return helpTabFunctionality.getActivationPolicy().getStatus();
 		} catch (BusinessException e) {
 			logger.error("Can't find help tab functionality for domain : " + domainIdentifier);
@@ -314,7 +322,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	public boolean isEnableListTab(String domainIdentifier) {
 		try {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-			Functionality listTabFunctionality = functionalityService.getListTabFunctionality(domain);
+			Functionality listTabFunctionality = functionalityReadOnlyService.getListTabFunctionality(domain);
 			return listTabFunctionality.getActivationPolicy().getStatus();
 		} catch (BusinessException e) {
 			logger.error("Can't find list tab functionality for domain : " + domainIdentifier);
@@ -327,7 +335,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	public boolean isEnableGuest(String domainIdentifier) {
 		try {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-			Functionality helpTabFunctionality = functionalityService.getGuestFunctionality(domain);
+			Functionality helpTabFunctionality = functionalityReadOnlyService.getGuestFunctionality(domain);
 			return helpTabFunctionality.getActivationPolicy().getStatus();
 		} catch (BusinessException e) {
 			logger.error("Can't find help tab functionality for domain : " + domainIdentifier);
@@ -338,12 +346,12 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 
 	@Override
 	public boolean getDefaultRestrictedGuestValue(String domainIdentifier) {
-		return functionalityService.getDefaultRestrictedGuestValue(domainIdentifier);
+		return functionalityReadOnlyService.getDefaultRestrictedGuestValue(domainIdentifier);
 	}
 
 
 	@Override
 	public boolean isRestrictedGuestEnabled(String domainIdentifier) {
-		return functionalityService.isRestrictedGuestAllowed(domainIdentifier);
+		return functionalityReadOnlyService.isRestrictedGuestAllowed(domainIdentifier);
 	}
 }

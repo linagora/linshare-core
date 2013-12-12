@@ -62,6 +62,7 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +74,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	private final AbstractDomainRepository abstractDomainRepository;
 	private final DomainPolicyService domainPolicyService;
-	private final FunctionalityOldService functionalityService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+	
 	private final UserProviderService userProviderService;
 	private final MessagesRepository messagesRepository;
 	private final UserRepository<User> userRepository;
@@ -81,18 +83,17 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	public AbstractDomainServiceImpl(
 			AbstractDomainRepository abstractDomainRepository,
 			DomainPolicyService domainPolicyService,
-			FunctionalityOldService functionalityService,
+			FunctionalityReadOnlyService functionalityReadOnlyService,
 			UserProviderService userProviderService,
 			MessagesRepository messagesRepository,
 			UserRepository<User> userRepository) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
-		this.functionalityService = functionalityService;
 		this.userProviderService = userProviderService;
 		this.messagesRepository = messagesRepository;
 		this.userRepository = userRepository;
-
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
 	@Override
@@ -738,7 +739,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 		AbstractDomain domain = sender.getDomain();
 		if (domain != null) {
-			Functionality func = functionalityService
+			Functionality func = functionalityReadOnlyService
 					.getAnonymousUrlFunctionality(domain);
 			return func.getActivationPolicy().getStatus();
 		}
@@ -754,7 +755,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 		AbstractDomain domain = user.getDomain();
 		if (domain != null) {
-			Functionality func = functionalityService
+			Functionality func = functionalityReadOnlyService
 					.getGuestFunctionality(domain);
 			if (func.getActivationPolicy().getStatus()) {
 				GuestDomain g = findGuestDomain(domain);
@@ -830,7 +831,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			logger.debug("No Domain found.");
 			return null;
 		}
-		return functionalityService.getDomainMailFunctionality(domain)
+		return functionalityReadOnlyService.getDomainMailFunctionality(domain)
 				.getValue();
 	}
 }

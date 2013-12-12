@@ -48,7 +48,6 @@ import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.MailSubject;
@@ -60,6 +59,7 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +81,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	
 	private final AbstractDomainService abstractDomainService;
 	
-	private final FunctionalityOldService functionalityService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 	
 	class ContactRepresentation {
 		private String mail;
@@ -142,19 +142,16 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 
 	public MailContentBuildingServiceImpl(final String mailContentTxt,
 			final String mailContentHTML, final String mailContentHTMLWithoutLogo,
-			final boolean displayLogo, AbstractDomainService abstractDomainService,FunctionalityOldService functionalityService, boolean insertLicenceTerm) throws BusinessException {
+			final boolean displayLogo, AbstractDomainService abstractDomainService,FunctionalityReadOnlyService functionalityReadOnlyService, boolean insertLicenceTerm) throws BusinessException {
         this.mailContentTxt = mailContentTxt;
         this.mailContentHTML = mailContentHTML;
         this.mailContentHTMLWithoutLogo = mailContentHTMLWithoutLogo;
         this.displayLogo = displayLogo;
         this.abstractDomainService = abstractDomainService;
         this.insertLicenceTerm = insertLicenceTerm;
-        this.functionalityService = functionalityService;
+        this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
-	
-	
-	
 	
 	
 	/**
@@ -163,7 +160,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * 
 	 */
 	private String getLinShareUrlForAUserRecipient(Account recipient) {
-			return functionalityService.getCustomNotificationUrlFunctionality(recipient.getDomain()).getValue();
+			return functionalityReadOnlyService.getCustomNotificationUrlFunctionality(recipient.getDomain()).getValue();
 		}
 	
 	private String getLinShareUrlForAContactRecipient(Account sender) {
@@ -172,7 +169,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		if(senderDomain == null) {
 			senderDomain = sender.getDomain();
 		}
-		return functionalityService.getCustomNotificationUrlFunctionality(senderDomain).getValue();
+		return functionalityReadOnlyService.getCustomNotificationUrlFunctionality(senderDomain).getValue();
 	}
 	
 	

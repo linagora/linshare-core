@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -57,6 +58,8 @@ import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+// TODO : to be rename as FunctionalityReadOnlyService
 public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 
 	protected final Logger logger = LoggerFactory.getLogger(FunctionalityOldServiceImpl.class);
@@ -83,6 +86,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		this.abstractDomainRepository = domainRepository;
 	}
 
+	@Deprecated
 	@Override
 	public Functionality findById(long id) {
 		Functionality func = functionalityRepository.findById(id);
@@ -101,6 +105,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 	 *            : list of functionality entities
 	 * @return
 	 */
+	@Deprecated
 	private List<String> getFunctionalityIdentifiers(Set<Functionality> set) {
 		List<String> allfunctionalityIdentifiers = new ArrayList<String>();
 
@@ -128,7 +133,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 			List<Functionality> allfunctionalities = new ArrayList<Functionality>(domain.getFunctionalities());
 			// Add all functionality identifiers from this domain
 			List<String> allfunctionalityIdentifiers = getFunctionalityIdentifiers(domain.getFunctionalities());
-
+			
 			if (domain.getParentDomain() != null) {
 				List<Functionality> parentFunctionalitites = getAllFunctionalities(domain.getParentDomain());
 				for (Functionality functionality : parentFunctionalitites) {
@@ -144,26 +149,13 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 	}
 
 	/**
-	 * This method return a list of functionality including all its
-	 * functionalities and its parent's functionalities
-	 * 
-	 * @param domainIdentifier
-	 *            domain entity identifier
-	 * @return functionality list
-	 */
-	@Override
-	public List<Functionality> getAllFunctionalities(String domainIdentifier) {
-		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
-		return getAllFunctionalities(domain);
-	}
-
-	/**
 	 * This method return the functionality by its IDENTIFIER
 	 * 
 	 * @param domainIdentifier
 	 *            domain entity identifier
 	 * @return functionality
 	 */
+	@Deprecated
 	@Override
 	public Functionality getFunctionalityByIdentifiers(String domainIdentifier, String functionalityIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
@@ -172,6 +164,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		return (Functionality)functionality.clone();
 	}
 
+	@Deprecated
 	private  Functionality getFunctionalityEntityByIdentifiers(AbstractDomain domain, String functionalityIdentifier) {
 		Functionality fonc = functionalityRepository.findById(domain, functionalityIdentifier);
 		if (fonc == null && domain.getParentDomain() != null) {
@@ -522,6 +515,10 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 
 			// Add all my functionality identifiers
 			List<String> allFunctionalityIdentifiers = getFunctionalityIdentifiers(domain.getFunctionalities());
+			boolean isGuestDomain = domain.getDomainType().equals(DomainType.GUESTDOMAIN);
+			if(isGuestDomain) {
+				allFunctionalityIdentifiers.add(FunctionalityNames.ACCOUNT_EXPIRATION);
+			}
 
 			if (domain.getParentDomain() != null) {
 				parentFunctionalitites = getAllFunctionalities(domain.getParentDomain());
@@ -542,7 +539,9 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 			// Add all my functionalities
 			for (Functionality functionality : domain.getFunctionalities()) {
 				if(checkCriteriaForMySelf(criteria, functionality, parentFunctionalitites)) {
-					allFunctionalities.add(functionality);
+					if(!(isGuestDomain && functionality.getIdentifier().equals(FunctionalityNames.ACCOUNT_EXPIRATION))) {
+						allFunctionalities.add(functionality);
+					}
 				}
 			}
 			
@@ -583,224 +582,5 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 	@Override
 	public List<Functionality> getAllEditableFunctionalities(AbstractDomain domain) {
 		return getAllFunctionality(domain, CST_FUNC_EDITABLES);
-	}
-
-	@Override
-	public TimeUnitBooleanValueFunctionality getDefaultShareExpiryTimeFunctionality(AbstractDomain domain) {
-		return new TimeUnitBooleanValueFunctionality((UnitBooleanValueFunctionality)getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.SHARE_EXPIRATION));
-	}
-
-	@Override
-	public TimeUnitValueFunctionality getDefaultFileExpiryTimeFunctionality(AbstractDomain domain) {
-		return new TimeUnitValueFunctionality((UnitValueFunctionality)getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.FILE_EXPIRATION));
-	}
-
-	@Override
-	public SizeUnitValueFunctionality getGlobalQuotaFunctionality(AbstractDomain domain) {
-		return new SizeUnitValueFunctionality((UnitValueFunctionality)getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.QUOTA_GLOBAL));
-	}
-
-	@Override
-	public SizeUnitValueFunctionality getUserQuotaFunctionality(AbstractDomain domain) {
-		return new SizeUnitValueFunctionality((UnitValueFunctionality)getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.QUOTA_USER));
-	}
-
-	@Override
-	public Functionality getGuestFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.GUESTS);
-	}
-
-	@Override
-	public TimeUnitValueFunctionality getGuestAccountExpiryTimeFunctionality(AbstractDomain domain) {
-		return new TimeUnitValueFunctionality((UnitValueFunctionality)getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.ACCOUNT_EXPIRATION));
-	}
-
-	@Override
-	public StringValueFunctionality getTimeStampingFunctionality(AbstractDomain domain) {
-		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TIME_STAMPING);
-	}
-	
-	@Override
-	public StringValueFunctionality getDomainMailFunctionality(AbstractDomain domain) {
-		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.DOMAIN_MAIL);
-	}
-
-	@Override
-	public Functionality getMimeTypeFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.MIME_TYPE);
-	}
-
-	@Override
-	public Functionality getEnciphermentFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.ENCIPHERMENT);
-	}
-
-	@Override
-	public Functionality getAntivirusFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.ANTIVIRUS);
-	}
-
-	@Override
-	public Functionality getAnonymousUrlFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.ANONYMOUS_URL);
-	}
-
-	@Override
-	public Functionality getSecuredAnonymousUrlFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.SECURED_ANONYMOUS_URL);
-	}
-
-	@Override
-	public Functionality getRestrictedGuestFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.RESTRICTED_GUEST);
-	}
-
-	@Override
-	public SizeUnitValueFunctionality getUserMaxFileSizeFunctionality(AbstractDomain domain) {
-		return new SizeUnitValueFunctionality((UnitValueFunctionality)getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.FILESIZE_MAX));
-	}
-
-	@Override
-	public Functionality getSignatureFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.SIGNATURE);
-	}
-
-	@Override
-	public StringValueFunctionality getCustomLogoFunctionality(AbstractDomain domain) {
-		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.CUSTOM_LOGO);
-	}
-
-	@Override
-	public StringValueFunctionality getCustomLinkLogoFunctionality(AbstractDomain domain) {
-		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.LINK_LOGO);
-	}
-	
-	@Override
-	public Functionality getUserCanUploadFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.USER_CAN_UPLOAD);
-	}
-
-	@Override
-	public IntegerValueFunctionality getCompletionFunctionality(AbstractDomain domain) {
-		return (IntegerValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.COMPLETION);
-	}
-
-	@Override
-	public Functionality getUserTabFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_USER);
-	}
-	
-	@Override
-	public Functionality getThreadCreationPermissionFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.CREATE_THREAD_PERMISSION);
-	}
-
-	@Override
-	public Functionality getUpdateFilesFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.UPDATE_FILE);
-	}
-	
-	@Override
-	public Functionality getAuditTabFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_AUDIT);
-	}
-
-	
-	@Override
-	public Functionality getThreadTabFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_THREAD);
-	}
-
-	@Override
-	public Functionality getHelpTabFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_HELP);
-	}
-	
-	@Override
-	public Functionality getListTabFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_LIST);
-	}
-	
-	@Override
-	public StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain) {
-		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.SHARE_NOTIFICATION_BEFORE_EXPIRATION);
-	}
-	
-	@Override
-	public StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain) {
-		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.NOTIFICATION_URL);
-	}
-
-	@Override
-	public boolean isSauAllowed(String domainIdentifier) {
-		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
-		Functionality funcAU = getAnonymousUrlFunctionality(domain);
-		// We check if Anonymous Url are activated.
-		if(funcAU.getActivationPolicy().getStatus()) {
-			Functionality funcSAU = getSecuredAnonymousUrlFunctionality(domain);
-			return funcSAU.getActivationPolicy().getPolicy().equals(Policies.ALLOWED);
-		}
-		return false;
-	}
-	
-	@Override
-	public boolean isSauMadatory(String domainIdentifier) {
-		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
-		Functionality func = getSecuredAnonymousUrlFunctionality(domain);
-		return func.getActivationPolicy().getPolicy().equals(Policies.MANDATORY);
-	}
-	
-	@Override
-	public boolean getDefaultSauValue(String domainIdentifier) {
-		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
-		Functionality func = getSecuredAnonymousUrlFunctionality(domain);
-		return func.getActivationPolicy().getStatus();
-	}
-	
-	
-	@Override
-	public boolean getDefaultRestrictedGuestValue(String domainIdentifier) {
-		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
-		Functionality func = getRestrictedGuestFunctionality(domain);
-		return func.getActivationPolicy().getStatus();
-	}
-	
-	@Override
-	public boolean isRestrictedGuestAllowed(String domainIdentifier) {
-		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
-		Functionality funcRG = getRestrictedGuestFunctionality(domain);
-		return funcRG.getActivationPolicy().getPolicy().equals(Policies.ALLOWED);
-	}
-	
-	@Override
-	public boolean isRestrictedGuestMadatory(String domainIdentifier) {
-		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
-		Functionality func = getRestrictedGuestFunctionality(domain);
-		return func.getActivationPolicy().getPolicy().equals(Policies.MANDATORY);
-	}
-	
-	@Override
-	public boolean isCustomLogoActiveInRootDomain() throws BusinessException {
-		return this.getCustomLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getActivationPolicy().getStatus();
-	}
-	
-	@Override
-	public String getCustomLogoUrlInRootDomain() throws BusinessException {
-		return this.getCustomLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();
-	}
-	
-	@Override
-	public boolean isCustomLinkLogoActiveInRootDomain() throws BusinessException {
-		return this.getCustomLinkLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getActivationPolicy().getStatus();
-	}
-	
-	@Override
-	public String getCustomLinkLogoInRootDomain() throws BusinessException {
-		return this.getCustomLinkLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();
-	}
-	
-	@Override
-	public String getCustomNotificationURLInRootDomain() throws BusinessException {
-		return this.getCustomNotificationUrlFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();
 	}
 }

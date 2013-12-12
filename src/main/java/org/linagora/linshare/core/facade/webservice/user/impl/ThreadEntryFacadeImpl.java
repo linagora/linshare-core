@@ -10,7 +10,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.webservice.dto.ThreadEntryDto;
@@ -24,19 +24,19 @@ public class ThreadEntryFacadeImpl extends GenericFacadeImpl implements ThreadEn
 	
 	private final ThreadEntryService threadEntryService;
 	private final ThreadService threadService;
-	private final FunctionalityOldService functionalityService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	public ThreadEntryFacadeImpl(AccountService accountService, ThreadService threadService, ThreadEntryService threadEntryService, FunctionalityOldService functionalityService) {
+	public ThreadEntryFacadeImpl(AccountService accountService, ThreadService threadService, ThreadEntryService threadEntryService, FunctionalityReadOnlyService functionalityService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.threadEntryService = threadEntryService;
-		this.functionalityService = functionalityService;
+		this.functionalityReadOnlyService = functionalityService;
 	}
 	
 	@Override
 	public User checkAuthentication() throws BusinessException {
 		User user = super.checkAuthentication();
-		Functionality functionality = functionalityService.getThreadTabFunctionality(user.getDomain());
+		Functionality functionality = functionalityReadOnlyService.getThreadTabFunctionality(user.getDomain());
 
 		if (!functionality.getActivationPolicy().getStatus()) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");

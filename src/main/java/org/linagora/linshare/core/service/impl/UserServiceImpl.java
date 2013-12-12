@@ -63,7 +63,7 @@ import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.EntryService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -97,7 +97,8 @@ public class UserServiceImpl implements UserService {
     
     private final AbstractDomainService abstractDomainService;
     
-    private final FunctionalityOldService functionalityService;
+    private final FunctionalityReadOnlyService functionalityReadOnlyService;
+    
     private final PasswordService passwordService;
     
     private final EntryService entryService;
@@ -116,7 +117,7 @@ public class UserServiceImpl implements UserService {
     		final RecipientFavouriteService recipientFavouriteService,
     		final AllowedContactRepository allowedContactRepository,
     		final MailContentBuildingService mailElementsFactory,
-    		final FunctionalityOldService functionalityService,
+    		final FunctionalityReadOnlyService functionalityService,
     		final AbstractDomainService abstractDomainService,
     		final PasswordService passwordService,
     		final EntryService entryService,
@@ -130,7 +131,7 @@ public class UserServiceImpl implements UserService {
 		this.allowedContactRepository = allowedContactRepository;
 		this.mailElementsFactory = mailElementsFactory;
 		this.abstractDomainService = abstractDomainService;
-		this.functionalityService = functionalityService;
+		this.functionalityReadOnlyService = functionalityService;
 		this.passwordService = passwordService;
 		this.entryService = entryService;
 		this.threadService = threadService;
@@ -203,7 +204,7 @@ public class UserServiceImpl implements UserService {
 			// Guest must not be able to create other guests.
 			guest.setCanCreateGuest(false);
 
-			Functionality userCanUploadFunc = functionalityService.getUserCanUploadFunctionality(guestDomain);
+			Functionality userCanUploadFunc = functionalityReadOnlyService.getUserCanUploadFunctionality(guestDomain);
 			guest.setCanUpload(userCanUploadFunc.getActivationPolicy().getStatus());
 
 			guest.setCreationDate(new Date());
@@ -256,7 +257,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	private Date calculateUserExpiryDate(Account sender) {
 		Calendar expiryDate = Calendar.getInstance();
-		TimeUnitValueFunctionality func = functionalityService.getGuestAccountExpiryTimeFunctionality(sender.getDomain());
+		TimeUnitValueFunctionality func = functionalityReadOnlyService.getGuestAccountExpiryTimeFunctionality(sender.getDomain());
 		expiryDate.add(func.toCalendarUnitValue(), func.getValue());
 		return expiryDate.getTime();
 	}
@@ -897,10 +898,10 @@ public class UserServiceImpl implements UserService {
 			} else {
 				logger.debug("userRepository.create(user)");
 				// create
-				Functionality guestfunc = functionalityService.getGuestFunctionality(user.getDomain());
+				Functionality guestfunc = functionalityReadOnlyService.getGuestFunctionality(user.getDomain());
 				user.setCanCreateGuest(guestfunc.getActivationPolicy().getStatus());
 
-				Functionality userCanUploadFunc = functionalityService.getUserCanUploadFunctionality(user.getDomain());
+				Functionality userCanUploadFunc = functionalityReadOnlyService.getUserCanUploadFunctionality(user.getDomain());
 				user.setCanUpload(userCanUploadFunc.getActivationPolicy().getStatus());
 
 				user.setCreationDate(new Date());
