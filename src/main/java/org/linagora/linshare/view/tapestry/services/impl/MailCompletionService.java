@@ -60,7 +60,7 @@ public class MailCompletionService {
 	 * @return
 	 */
 	public static String formatLabel(final UserVo user) {
-		return formatLabel(user, false);
+		return formatLabel(user, true);
 	}
 	
 	public static String formatLabel(final UserVo user, boolean virgule) {
