@@ -1,9 +1,14 @@
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
+import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
+import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -88,12 +93,18 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 	 * Helper : convert InnerFunctionality list to Functionality list.
 	 * 
 	 * @param functionalities
+	 * @param exclude TODO
 	 * @return innerFunctionalities
 	 */
-	private Set<Functionality> convertToFunctionality(Set<InnerFunctionality> functionalities) {
+	private Set<Functionality> convertToFunctionality(Set<InnerFunctionality> functionalities, List<String> exclude) {
 		Set<Functionality> res = new HashSet<Functionality>();
+		if (exclude == null) {
+			exclude = new ArrayList<String>();
+		}
 		for (InnerFunctionality f : functionalities) {
-			res.add(f.getFunctionality());
+			if(!exclude.contains(f.getFunctionality().getIdentifier())) {
+				res.add(f.getFunctionality());
+			}
 		}
 		return res;
 	}
@@ -155,7 +166,11 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 		// Check if the current argument is a real domain.
 		AbstractDomain abstractDomain = abstractDomainRepository.findById(domain.getIdentifier());
 		if (abstractDomain != null) {
-			return convertToFunctionality(this.getAllInnerFunctionalities(abstractDomain));
+			List<String> exclude = new ArrayList<String>();
+			if(domain.getDomainType().equals(DomainType.GUESTDOMAIN)) {
+				exclude.add(FunctionalityNames.ACCOUNT_EXPIRATION);
+			}
+			return convertToFunctionality(this.getAllInnerFunctionalities(abstractDomain), exclude);
 		}
 		return null;
 	}
@@ -220,7 +235,6 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 		}
 		return false;
 	}
-
 	
 	private  Functionality getFunctionalityEntityByIdentifiers(AbstractDomain domain, String functionalityId) {
 		Assert.notNull(domain);

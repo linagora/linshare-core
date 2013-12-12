@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -53,6 +54,7 @@ import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.GuestRepository;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -112,7 +114,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 		
 		ShareEntry createShare = shareEntryBusinessService.createShare(documentEntry, sender, recipient, expirationDate);
 		if (recipient.getAccountType().equals(AccountType.GUEST)) {
-			updateGuestExpirationDate(recipient);
+			updateGuestExpirationDate(recipient, sender);
 		}
 		
 	    logEntryService.create(new ShareLogEntry(sender, createShare, LogAction.FILE_SHARE, "Sharing of a file"));
@@ -122,15 +124,14 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 		return createShare;
 	}
 
-
-
-	private void updateGuestExpirationDate(User recipient) {
+	
+	private void updateGuestExpirationDate(User recipient, User sender) {
 		// update guest account expiry date
 		if (recipient.getAccountType().equals(AccountType.GUEST)) {
 			
 			// get new guest expiry date
 			Calendar guestExpiryDate = Calendar.getInstance();
-			TimeUnitValueFunctionality guestFunctionality = functionalityService.getGuestAccountExpiryTimeFunctionality(recipient.getDomain());
+			TimeUnitValueFunctionality guestFunctionality = functionalityService.getGuestAccountExpiryTimeFunctionality(sender.getDomain());
 	        guestExpiryDate.add(guestFunctionality.toCalendarUnitValue(), guestFunctionality.getValue());
 	        
 			Guest guest = guestRepository.findByMail(recipient.getLogin());
