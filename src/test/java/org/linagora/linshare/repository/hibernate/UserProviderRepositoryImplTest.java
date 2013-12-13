@@ -63,7 +63,8 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 	private static String baseDn = "dc=nodomain,dc=com";
 	private static String identifier= "ID_LDAP_DE_TEST3";
 	private static String identifierP= "ID_PARAM_DE_TEST3";
-	private static String providerUrl= "ldap://10.75.113.53:389";
+	private static String providerUrl= "ldap://localhost:33389";
+//	private static String providerUrl= "ldap://10.75.113.53:389";
 	private static String securityAuth= "simple";
 	
 	// Repositories

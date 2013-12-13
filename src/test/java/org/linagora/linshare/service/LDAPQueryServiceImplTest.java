@@ -44,7 +44,6 @@ import javax.naming.NamingException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
@@ -60,17 +59,19 @@ import org.springframework.ldap.NameNotFoundException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = { "classpath:springContext-test.xml", "classpath:springContext-ldap.xml"
-// "classpath:springContext-startopends.xml"
+@ContextConfiguration(locations = { "classpath:springContext-test.xml",
+		"classpath:springContext-ldap.xml", 
+		"classpath:springContext-startopends.xml"
 })
 public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 
 	protected Logger logger = LoggerFactory.getLogger(LDAPQueryServiceImplTest.class);
 
-	// private static String userMail1 = "bart.simpson@int1.linshare.dev";
-	private static String userMail1 = "aaliyah.alvarez@int5.linshare.dev";
+	private String userMail1;
 
-	private static String userPassword1 = "mdp";
+	private String userPassword1;
+	
+	private String strPattern;
 
 	@Autowired
 	private LDAPQueryService ldapQueryService;
@@ -94,39 +95,82 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		
+		ldapConn = new LDAPConnection("testldap", "ldap://localhost:33389", "anonymous");
+		baseDn = "ou=People,dc=linpki,dc=org";
+		
+		// auto complete command using first name, last name or mail attributes
+		String auto_complete_command_on_all_attributes = "ldap.search(domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*)(|(mail=\" + pattern + \")(sn=\" + pattern + \")(givenName=\" + pattern + \")))\");";
+		
+		// auto complete command using first name and last name attributes (association)
+		String auto_complete_command_on_first_and_last_name = "ldap.search(domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*)(|(&(sn=\" + first_name + \")(givenName=\" + last_name + \"))(&(sn=\" + last_name + \")(givenName=\" + first_name + \"))))\");";
+		
+		String search_command = "ldap.search(domain, \"(&(objectClass=*)(mail=\" + mail + \")(sn=\" + first_name + \")(givenName=\" + last_name + \"))\");";
 
-		ldapConn = new LDAPConnection("testldap", "	ldap://linshare-obm2.linagora.dc1:389", "anonymous");
+		String auth_command = "ldap.search(domain, \"(&(objectClass=*)(givenName=*)(sn=*)(|(mail=\" + login + \")(uid=\" + login + \")))\");";
+		
+		initDefault(auto_complete_command_on_all_attributes, auto_complete_command_on_first_and_last_name, search_command, auth_command, 0, 0);
+
+		this.userMail1 = "user1@linpki.org";
+		this.userPassword1 = "password1";
+		this.strPattern = "linpki";
+		
+		logger.debug(LinShareTestConstants.END_SETUP);
+	}
+	
+	private void initDefault(String auto_complete_command_on_all_attributes,
+			String auto_complete_command_on_first_and_last_name,
+			String search_command,
+			String auth_command, int searchPagination, int completePagination) {
+		
 		attributes = new HashMap<String, LdapAttribute>();
 		attributes.put(DomainPattern.USER_MAIL, new LdapAttribute(DomainPattern.USER_MAIL, "mail", true));
 		attributes.put(DomainPattern.USER_FIRST_NAME, new LdapAttribute(DomainPattern.USER_FIRST_NAME, "givenName", true));
 		attributes.put(DomainPattern.USER_LAST_NAME, new LdapAttribute(DomainPattern.USER_LAST_NAME, "sn", true));
 		attributes.put(DomainPattern.USER_UID, new LdapAttribute(DomainPattern.USER_UID, "uid", false));
+		
+		this.domainPattern = new DomainPattern("testPattern", "testPattern", 
+				auth_command, 
+				search_command, 
+				searchPagination,
+				2000,
+				attributes,
+				auto_complete_command_on_all_attributes,
+				auto_complete_command_on_first_and_last_name,
+				completePagination, 
+				5, 
+				false);
+	}
 
-		String autocomplete1 = "ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)" + "(|" + "(mail=\" + pattern + \")" + "(sn=\" + pattern + \")" + "(givenName=\" + pattern + \")"
-				+ "))\")";
-
-		String autocomplete2 = "ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)" + "(|" + "(&(sn=\" + first_name + \")(givenName=\" + last_name + \"))" + // "first_name last_name"
-				"(&(sn=\" + last_name + \")(cn=\" + first_name + \"))" + // "last_name first_name"
-				"))\")";
-
-		this.domainPattern = new DomainPattern("testPattern", "testPattern", " ", " ", "ldap.search(domain, \"(&(objectClass=obmUser)(givenName=*)(sn=*)(|(mail=\" + login + \")(uid=\" + login + \")))\");", // auth
-				// command
-				"ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=\" + mail + \")(sn=\" + first_name + \")(givenName=\" + last_name + \"))\");", // search
-				// command
-				500, 2000, attributes, autocomplete1, // auto complete command
-														// using first name,
-														// last name or mail
-														// attributes
-				autocomplete2, // auto complete command using first name and
-								// last name attributes (association)
-				5, 5, false);
-
+//	@Before
+	public void setUp2() throws Exception {
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		
 		baseDn = "ou=users,dc=int5.linshare.dev,dc=local";
 		baseDn = "dc=int5.linshare.dev,dc=local";
+		ldapConn = new LDAPConnection("testldap", "	ldap://linshare-obm2.linagora.dc1:389", "anonymous");
 
+		// auto complete command using first name, last name or mail attributes
+		String auto_complete_command_on_all_attributes = "ldap.search(domain, \"(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail=\" + pattern + \")(sn=\" + pattern + \")(givenName=\" + pattern + \")))\");";
+		
+		// auto complete command using first name and last name attributes (association)
+		String auto_complete_command_on_first_and_last_name = "ldap.search(domain, \"(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(&(sn=\" + first_name + \")(givenName=\" + last_name + \"))(&(sn=\" + last_name + \")(givenName=\" + first_name + \"))))\");";
+		
+		String search_command = "ldap.search(domain, \"(&(objectClass=obmUser)(mail=\" + mail + \")(sn=\" + first_name + \")(givenName=\" + last_name + \"))\");";
+
+		String auth_command = "ldap.search(domain, \"(&(objectClass=obmUser)(givenName=*)(sn=*)(|(mail=\" + login + \")(uid=\" + login + \")))\");";
+		
+		initDefault(auto_complete_command_on_all_attributes, auto_complete_command_on_first_and_last_name, search_command, auth_command, 500, 5);
+
+		this.userMail1 = "aaliyah.alvarez@int5.linshare.dev";
+		this.userPassword1 = "mdp";
+		this.strPattern = "abdel";
+		
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
+	
+	
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
@@ -137,7 +181,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	public void testAuth() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
-		User user = ldapQueryService.auth(ldapConn, baseDn, domainPattern, "abdel.alvarez@int5.linshare.dev", userPassword1);
+		User user = ldapQueryService.auth(ldapConn, baseDn, domainPattern, userMail1, userPassword1);
 		Date date_after = new Date();
 		Assert.assertNotNull(user);
 		logUser(user);
@@ -187,32 +231,11 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	@Ignore
-	@Test
-	public void testFred() throws BusinessException, NamingException, IOException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-
-		String mail = "homer";
-		String firstName = "homer";
-		String lastName = "";
-		List<User> searchUser = ldapQueryService.completeUser(ldapConn, baseDn, domainPattern, mail);
-		searchUser = ldapQueryService.completeUser(ldapConn, baseDn, domainPattern, firstName, lastName);
-		for (User user : searchUser) {
-			logger.debug(user.getAccountReprentation());
-			// logger.debug(user.getMail());
-			// logger.debug(user.getFirstName());
-			// logger.debug(user.getLastName());
-			// logger.debug(user.getLdapUid());
-		}
-		logger.debug("searchUser size : " + searchUser.size());
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
 	@Test
 	public void testSearchUser() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
-		List<User> user = ldapQueryService.searchUser(ldapConn, baseDn, domainPattern, "abdel.bleuse@int5.linshare.dev", null, null);
+		List<User> user = ldapQueryService.searchUser(ldapConn, baseDn, domainPattern, userMail1, null, null);
 		Date date_after = new Date();
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
 		logger.info("Result count : " + String.valueOf(user.size()));
@@ -223,7 +246,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	public void testCompleteUser() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
-		List<User> users = ldapQueryService.completeUser(ldapConn, baseDn, domainPattern, "abdel");
+		List<User> users = ldapQueryService.completeUser(ldapConn, baseDn, domainPattern, strPattern);
 		Date date_after = new Date();
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
 		logger.info("Result count : " + String.valueOf(users.size()));
@@ -234,7 +257,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	public void testGetUser() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
-		User user = ldapQueryService.getUser(ldapConn, baseDn, domainPattern, "abdel.bleuse@int5.linshare.dev");
+		User user = ldapQueryService.getUser(ldapConn, baseDn, domainPattern, userMail1);
 		Date date_after = new Date();
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
 		Assert.assertNotNull(user);
@@ -247,7 +270,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
 		domainPattern.getAttributes().put(DomainPattern.USER_FIRST_NAME, new LdapAttribute(DomainPattern.USER_FIRST_NAME, "plopName", true));
-		User user = ldapQueryService.getUser(ldapConn, baseDn, domainPattern, "abdel.bleuse@int5.linshare.dev");
+		User user = ldapQueryService.getUser(ldapConn, baseDn, domainPattern, userMail1);
 		Date date_after = new Date();
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
 		Assert.assertNull(user);

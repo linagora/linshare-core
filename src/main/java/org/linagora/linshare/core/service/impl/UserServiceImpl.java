@@ -1061,6 +1061,7 @@ public class UserServiceImpl implements UserService {
 		logger.debug("domainIdentifier : " + domainIdentifier);
 		logger.debug("mail : " + mail);
 		// search user mail in in specific directory and all its SubDomain
+		
 		User userFound = abstractDomainService.searchOneUserRecursivelyWithoutRestriction(domainIdentifier, mail);
 
 		if (userFound != null) {

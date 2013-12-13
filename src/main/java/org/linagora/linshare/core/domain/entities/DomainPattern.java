@@ -96,7 +96,13 @@ public class DomainPattern {
         this.authCommand = authCommand;
         this.searchUserCommand = searchUserCommand;
         this.attributes = attributes;
+        
         this.autoCompleteCommandOnAllAttributes = "";
+        this.autoCompleteCommandOnFirstAndLastName = "";
+    	this.searchPageSize = 0;
+		this.searchSizeLimit = 0;
+		this.completionPageSize = 0;
+		this.completionSizeLimit = 0;
     }
 
     public DomainPattern(DomainPatternVo domainPatternVo) {
@@ -146,8 +152,6 @@ public class DomainPattern {
      * For tests only.
      * @param identifier
      * @param description
-     * @param getUserCommand
-     * @param getAllDomainUsersCommand
      * @param authCommand
      * @param searchUserCommand
      * @param searchPageSize
@@ -159,9 +163,9 @@ public class DomainPattern {
      * @param completionSizeLimit
      * @param system
      */
-	public DomainPattern(String identifier, String description, String getUserCommand,
-            String getAllDomainUsersCommand, String authCommand, String searchUserCommand, Integer searchPageSize, Integer searchSizeLimit, Map<String, LdapAttribute> attributes,
-            String autoCompleteCommandOnAllAttributes, String autoCompleteCommandOnFirstAndLastName, Integer completionPageSize, Integer completionSizeLimit, boolean system) {
+	public DomainPattern(String identifier, String description, String authCommand,
+            String searchUserCommand, Integer searchPageSize, Integer searchSizeLimit, Map<String, LdapAttribute> attributes, String autoCompleteCommandOnAllAttributes, String autoCompleteCommandOnFirstAndLastName,
+            Integer completionPageSize, Integer completionSizeLimit, boolean system) {
 		super();
 		this.identifier = identifier;
 		this.description = description;

@@ -42,13 +42,6 @@ import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
-import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
-import org.linagora.linshare.core.domain.entities.UnitBooleanValueFunctionality;
-import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
-import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
-import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
-import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
@@ -58,8 +51,6 @@ import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-// TODO : to be rename as FunctionalityReadOnlyService
 public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 
 	protected final Logger logger = LoggerFactory.getLogger(FunctionalityOldServiceImpl.class);
@@ -77,7 +68,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 	//	Parameters modification
 	private static int CST_MODIFICATION_TYPE_P = 3;
 	
-	
+	@Deprecated
 	public FunctionalityOldServiceImpl(
 			FunctionalityRepository functionalityRepository,
 			AbstractDomainRepository domainRepository) {
@@ -125,6 +116,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 	 *            entity
 	 * @return functionality list
 	 */
+	@Deprecated
 	@Override
 	public List<Functionality> getAllFunctionalities(AbstractDomain domain) {
 
@@ -173,7 +165,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		return fonc;
 	}
 
-	
+	@Deprecated
 	private void updateActivationPolicyRecursivly(AbstractDomain domain, Functionality functionality) throws IllegalArgumentException, BusinessException {
 		if(domain != null ) {
 			
@@ -192,6 +184,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		}
 	}
 	
+	@Deprecated
 	private void updateConfigurationPolicyRecursivly(AbstractDomain domain, Functionality functionality,boolean copyContent) throws IllegalArgumentException, BusinessException {
 		if(domain != null ) {
 			
@@ -213,7 +206,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		}
 	}
 	
-	
+	@Deprecated
 	private void deleteFunctionalityRecursivly(AbstractDomain domain, String functionalityIdentifier) throws IllegalArgumentException, BusinessException {
 		if(domain != null ) {
 			
@@ -232,6 +225,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		}
 	}
 	
+	@Deprecated
 	private void permissionPropagationForActivationPolicy(Functionality functionalityEntity) throws IllegalArgumentException, BusinessException {
 		if(functionalityEntity.getActivationPolicy().getPolicy().equals(Policies.FORBIDDEN)) {
 			// We have to delete the activation policy of each functionality from all the sub  domains
@@ -243,6 +237,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		}
 	}
 	
+	@Deprecated
 	private void permissionPropagationForConfigurationPolicy(Functionality functionalityEntity) throws IllegalArgumentException, BusinessException {
 		if(functionalityEntity.getConfigurationPolicy().getPolicy().equals(Policies.FORBIDDEN)) {
 			// We have to update the configuration policy of each functionality from all the sub domains
@@ -255,7 +250,6 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		}
 	}
 	
-	
 	/**
 	 * this method is designed to check if we can or can not modify a
 	 * functionality. You can modify one element at the same time : activation
@@ -267,6 +261,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 	 * @param ancestorFunc : to check all the permissions
 	 * @throws BusinessException
 	 */
+	@Deprecated
 	private void checkAndUpdate(AbstractDomain currentDomain, Functionality functionalityDto, Functionality functionalityEntity, Functionality ancestorFunc) throws BusinessException {
 		
 		int cptCheck = 0;
@@ -351,12 +346,14 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		}
 	}
 
+	@Deprecated
 	@Override
 	public void update(String domainIdentifier, Functionality functionality) throws BusinessException {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		update(domain, functionality);
 	}
 
+	@Deprecated
 	@Override
 	public void update(AbstractDomain currentDomain, Functionality functionalityDto) throws BusinessException {
 
@@ -426,6 +423,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		logger.debug("End update");
 	}
 	
+	@Deprecated
 	private boolean checkCriteriaForAncestor(int criteria, Functionality functionality) {
 		
 		if (criteria == CST_FUNC_AVAILABLES) {
@@ -459,6 +457,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		return false;
 	}
 	
+	@Deprecated
 	private boolean checkCriteriaForMySelf(int criteria, Functionality functionality, List<Functionality> parentFunctionalitites ) {
 		if (criteria == CST_FUNC_AVAILABLES) {
 			// I have to check if I have the permission to modify the activation status of this functionality
@@ -507,6 +506,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		return false;
 	}
 	
+	@Deprecated
 	private List<Functionality> getAllFunctionality(AbstractDomain domain, int criteria) {
 		if (domain != null) {
 			
@@ -551,34 +551,40 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		return null;
 	}
 
+	@Deprecated
 	@Override
 	public List<Functionality> getAllAvailableFunctionalities(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		return getAllAvailableFunctionalities(domain);
 	}
 
+	@Deprecated
 	@Override
 	public List<Functionality> getAllAvailableFunctionalities(AbstractDomain domain) {
 		return getAllFunctionality(domain, CST_FUNC_AVAILABLES);
 	}
 
+	@Deprecated
 	@Override
 	public List<Functionality> getAllAlterableFunctionalities(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		return getAllAlterableFunctionalities(domain);
 	}
 
+	@Deprecated
 	@Override
 	public List<Functionality> getAllAlterableFunctionalities(AbstractDomain domain) {
 		return getAllFunctionality(domain, CST_FUNC_ALTERABLES);
 	}
-
+	
+	@Deprecated
 	@Override
 	public List<Functionality> getAllEditableFunctionalities(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		return getAllEditableFunctionalities(domain);
 	}
 
+	@Deprecated
 	@Override
 	public List<Functionality> getAllEditableFunctionalities(AbstractDomain domain) {
 		return getAllFunctionality(domain, CST_FUNC_EDITABLES);
