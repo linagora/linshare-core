@@ -63,6 +63,7 @@ import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
@@ -86,10 +87,11 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	private final TagBusinessService tagBusinessService;
 	private final ThreadMemberRepository threadMemberRepository;
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
+	private final AntiSamyService antiSamyService;
 
 	public ThreadEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
 			FunctionalityOldService functionalityService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService, TagBusinessService tagBusinessService,
-			ThreadMemberRepository threadMemberRepository, MimeTypeMagicNumberDao mimeTypeIdentifier) {
+			ThreadMemberRepository threadMemberRepository, MimeTypeMagicNumberDao mimeTypeIdentifier, AntiSamyService antiSamyService) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -101,10 +103,13 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		this.tagBusinessService = tagBusinessService;
 		this.threadMemberRepository = threadMemberRepository;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
+		this.antiSamyService = antiSamyService;
 	}
 
 	@Override
 	public ThreadEntry createThreadEntry(Account actor, Thread thread, InputStream stream, String filename) throws BusinessException {
+		filename = sanitizeFileName(filename); // throws
+
 		DocumentUtils util = new DocumentUtils();
 		File tempFile = util.getTempFile(stream, filename);
 		Long size = tempFile.length();
@@ -255,6 +260,17 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to update this document.");
 		}
 		documentEntryBusinessService.updateFileProperties(threadEntry, fileComment);
+	}
+
+	private String sanitizeFileName(String fileName) throws BusinessException {
+		fileName = fileName.replace("\\", "_");
+		fileName = fileName.replace(":", "_");
+		fileName = antiSamyService.clean(fileName);
+		if (fileName.isEmpty()) {
+			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME,
+					"fileName is empty after the xss filter");
+		}
+		return fileName;
 	}
 
 	private Boolean checkVirus(String fileName, Account actor, File file) throws BusinessException {
