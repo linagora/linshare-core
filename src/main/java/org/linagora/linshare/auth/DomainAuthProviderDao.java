@@ -269,10 +269,11 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 			throw new AuthenticationServiceException("Could not create user account: "+foundUser.getMail(), e);
 		}
 
-        List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
+		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
 
 		return new org.springframework.security.core.userdetails.User(user.getLsUuid(), "", true, true, true, true,
-		                grantedAuthorities.toArray(new GrantedAuthority[0]));
+				grantedAuthorities);
+
 	}
 	
 	
