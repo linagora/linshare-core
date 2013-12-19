@@ -45,26 +45,29 @@ import org.springframework.security.web.authentication.preauth.RequestHeaderAuth
 import org.springframework.util.Assert;
 
 /**
- * This Spring Security filter is designed to filter authentication
- * against a LemonLDAP::NG Web Single Sign On
+ * This Spring Security filter is designed to filter authentication against a
+ * LemonLDAP::NG Web Single Sign On
+ * 
  * @author Clement Oudot &lt;coudot@linagora.com&gt;
  */
 public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 
 	/** */
 	private String principalRequestHeader;
-	
+
 	/** List of IP / DNS hostname */
 	private List<String> authorizedAddresses;
-	
-	private static Logger logger = LoggerFactory.getLogger(PreAuthenticationHeader.class);
+
+	private static Logger logger = LoggerFactory
+			.getLogger(PreAuthenticationHeader.class);
 
 	public PreAuthenticationHeader(String authorizedAddressesList) {
 		super();
-		if( authorizedAddressesList!=null ) {
+		if (authorizedAddressesList != null) {
 			@SuppressWarnings("unchecked")
-			List<String> asList = Arrays.asList(authorizedAddressesList.split(","));
-			this.authorizedAddresses = asList;		
+			List<String> asList = Arrays.asList(authorizedAddressesList
+					.split(","));
+			this.authorizedAddresses = asList;
 		} else {
 			this.authorizedAddresses = new ArrayList<String>();
 		}
@@ -74,10 +77,12 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 	protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
 		// Do not throw exception if header is not set
 		String authenticationHeader = request.getHeader(principalRequestHeader);
-		if(authenticationHeader != null) {
-			if(!authorizedAddresses.contains(request.getRemoteAddr())) {
-				logger.error("SECURITY ALERT: Unauthorized header value '" + authenticationHeader 
-						+ "' from IP: " + request.getRemoteAddr() + ":" + request.getRemotePort());
+		if (authenticationHeader != null) {
+			if (!authorizedAddresses.contains(request.getRemoteAddr())) {
+				logger.error("SECURITY ALERT: Unauthorized header value '"
+						+ authenticationHeader + "' from IP: "
+						+ request.getRemoteAddr() + ":"
+						+ request.getRemotePort());
 				return null;
 			}
 		}
@@ -85,12 +90,14 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 	}
 
 	public void setPrincipalRequestHeader(String principalRequestHeader) {
-		Assert.hasText(principalRequestHeader, "principalRequestHeader must not be empty or null");
+		Assert.hasText(principalRequestHeader,
+				"principalRequestHeader must not be empty or null");
 		this.principalRequestHeader = principalRequestHeader;
 	}
 
 	public void setAuthorizedAddresses(List<String> authorizedAddresses) {
-		Assert.hasText(authorizedAddresses.toString(), "authorizedAddresses must not be empty or null");
+		Assert.hasText(authorizedAddresses.toString(),
+				"authorizedAddresses must not be empty or null");
 		this.authorizedAddresses = authorizedAddresses;
 	}
 }

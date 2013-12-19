@@ -45,9 +45,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class UserDetailsProvider {
-	
+
 	private UserService userService;
-	
+
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
@@ -55,21 +55,23 @@ public class UserDetailsProvider {
 	public UserDetails getUserDetails(String userName) {
 		org.linagora.linshare.core.domain.entities.User user;
 		try {
-			user = userService.searchAndCreateUserEntityFromUnkownDirectory(userName);
+			user = userService
+					.searchAndCreateUserEntityFromUnkownDirectory(userName);
 		} catch (TechnicalException e) {
-			throw new UsernameNotFoundException("Cannot load user in domains", e.getCause());
+			throw new UsernameNotFoundException("Cannot load user in domains",
+					e.getCause());
 		} catch (BusinessException e) {
-			throw new UsernameNotFoundException("Cannot load user in domains", e.getCause());
+			throw new UsernameNotFoundException("Cannot load user in domains",
+					e.getCause());
 		}
 
-        if (user == null ||  Role.SYSTEM.equals(user.getRole())) {
-            throw new UsernameNotFoundException("User not found");
-        }
+		if (user == null || Role.SYSTEM.equals(user.getRole())) {
+			throw new UsernameNotFoundException("User not found");
+		}
 
-        List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
-        
-        return new User(user.getLogin(), "", true, true, true, true,
-            grantedAuthorities.toArray(new GrantedAuthority[0]));
+		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
+		return new User(user.getLogin(), "", true, true, true, true,
+				grantedAuthorities);
 	}
 
 }

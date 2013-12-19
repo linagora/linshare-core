@@ -38,24 +38,26 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-/** Helps Managing guests and root administrator authentication.
- *
+/**
+ * Helps Managing guests and root administrator authentication.
+ * 
  */
 public class DaoCasAuthProvider implements UserDetailsService {
-	
+
 	private UserDetailsProvider userDetailsProvider;
-	
+
 	public void setUserDetailsProvider(UserDetailsProvider userDetailsProvider) {
 		this.userDetailsProvider = userDetailsProvider;
 	}
 
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+	public UserDetails loadUserByUsername(String username)
+			throws UsernameNotFoundException, DataAccessException {
 
-        if (username == null || username.length() == 0) {
-            throw new UsernameNotFoundException("username must not be null");
-        }
-        
-        return userDetailsProvider.getUserDetails(username);
-    }
+		if (username == null || username.length() == 0) {
+			throw new UsernameNotFoundException("username must not be null");
+		}
+
+		return userDetailsProvider.getUserDetails(username);
+	}
 
 }
