@@ -36,6 +36,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.webservice.dto.UserDto;
 
 
@@ -218,5 +219,13 @@ public abstract class User extends Account {
 	
 	public void setCanCreateGuest(Boolean canCreateGuest) {
 		this.canCreateGuest = canCreateGuest;
+	}
+
+	/*
+	 * Helpers
+	 */
+
+	public boolean isInternal() {
+		return this.getAccountType().equals(AccountType.INTERNAL);
 	}
 }

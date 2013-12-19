@@ -47,15 +47,15 @@ public class UserLogEntry extends LogEntry {
 	
 	private static final long serialVersionUID = -8388034589530890111L;
 
-	private final String targetMail;
+	protected final String targetMail;
 
-	private final String targetFirstname;
+	protected final String targetFirstname;
 	
-	private final String targetLastname;
+	protected final String targetLastname;
 	
-	private final String targetDomain;
+	protected final String targetDomain;
 	
-	private final Calendar expirationDate;
+	protected final Calendar expirationDate;
 
 	protected UserLogEntry() {
 		super();
@@ -65,8 +65,18 @@ public class UserLogEntry extends LogEntry {
 		this.targetDomain = null;
 		this.expirationDate = null;
 	}
-	
-	
+
+	public UserLogEntry(String login, String domain, String description) {
+		super(login, "", "", "", LogAction.USER_AUTH_FAILED, description);
+		this.actorDomain = domain;
+		this.targetDomain = "";
+		this.targetMail = "";
+		this.targetFirstname = "";
+		this.targetLastname = "";
+		this.expirationDate = null;
+	}
+
+
 	public UserLogEntry(UserVo userVo, LogAction logAction, String description) {
 		super(userVo, logAction, description);
 		this.targetMail = userVo.getMail();

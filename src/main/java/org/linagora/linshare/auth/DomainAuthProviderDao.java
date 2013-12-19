@@ -41,7 +41,6 @@ import javax.naming.NamingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linagora.linshare.auth.exceptions.BadDomainException;
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
@@ -128,13 +127,14 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 				
 				foundUser = userService.findUserInDB(domainIdentifier,login);
 				try {
-					if (foundUser != null && !foundUser.getAccountType().equals(AccountType.INTERNAL) && domainIdentifier.equals(foundUser.getDomainId())) {
+					if (foundUser != null && !foundUser.isInternal() && domainIdentifier.equals(foundUser.getDomainId())) {
 						logger.debug("User found in DB but authentification failed");
-						logEntryService.create(new UserLogEntry(foundUser, LogAction.USER_AUTH_FAILED, "Bad credentials", foundUser));
-						throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"), domainIdentifier);
+						String description = "Bad credentials";
+						logEntryService.create(new UserLogEntry(foundUser, LogAction.USER_AUTH_FAILED, description, foundUser));
+						throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", description), domainIdentifier);
 					} else {
 						logger.debug("Can't find the user in DB, BadDomainException for : " + domainIdentifier);
-						logEntryService.create(new UserLogEntry(foundUser, LogAction.USER_AUTH_FAILED, "Bad domain", foundUser));
+						logEntryService.create(new UserLogEntry(login, domainIdentifier, "Bad domain or bad login."));
 						throw new BadDomainException(e.getMessage(), domainIdentifier);
 					}
 				} catch (BusinessException be) {
@@ -147,7 +147,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 			
 			if(foundUser == null) {
 				try {
-					logEntryService.create(new UserLogEntry(foundUser, LogAction.USER_AUTH_FAILED, "Bad credentials", foundUser));
+					logEntryService.create(new UserLogEntry(login, domainIdentifier, "Bad credentials.(2)"));
 				} catch(BusinessException be) {
 					logger.error("Couldn't log an authentication failure");
 					logger.debug(be.getMessage());
