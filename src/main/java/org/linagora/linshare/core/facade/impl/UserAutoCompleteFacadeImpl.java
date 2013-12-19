@@ -49,6 +49,8 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 
 	final private static Logger logger = LoggerFactory.getLogger(UserAutoCompleteFacadeImpl.class);
 
+	final private static int AUTO_COMPLETE_LIMIT = 20;
+
 	private UserService userService;
 
 	public UserAutoCompleteFacadeImpl(UserService userService) {
@@ -76,7 +78,7 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 		// ArrayList<UserVo>(userSet), userVo);
 
 		// TODO : FMA : Use database configuration for auto complete limit
-		return getUserVoList(users, 15, true);
+		return getUserVoList(users, AUTO_COMPLETE_LIMIT, true);
 	}
 
 	@Override
@@ -84,7 +86,7 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 		List<User> users = userService.autoCompleteUser(currentUserVo.getLogin(), pattern);
 		logger.debug("nb result for completion : " + users.size());
 		// TODO : FMA : Use database configuration for auto complete limit
-		return getMailList(users, 15);
+		return getMailList(users, AUTO_COMPLETE_LIMIT);
 	}
 
 	/***********************/
