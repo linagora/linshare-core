@@ -62,7 +62,6 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration(locations = { "classpath:springContext-test.xml",
 		"classpath:springContext-ldap.xml", 
 		"classpath:springContext-startopends.xml"
->>>>>>> tata
 })
 public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 
