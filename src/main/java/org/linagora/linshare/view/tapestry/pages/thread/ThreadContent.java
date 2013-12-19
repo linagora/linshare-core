@@ -119,6 +119,18 @@ public class ThreadContent {
 	@Inject
 	private BusinessMessagesManagementService businessMessagesManagementService;
 
+	public Object onActivate(String uuid) {
+		try {
+			this.selectedThread = threadEntryFacade.getThread(uuid);
+		} catch (BusinessException e) {
+			businessMessagesManagementService.notify(new BusinessUserMessage(
+					BusinessUserMessageType.THREAD_NOT_FOUND,
+					MessageSeverity.ERROR));
+			return Index.class;
+		}
+		return null;
+	}
+
 	public Object onActivate() {
 		if (selectedThread == null) {
 			logger.info("No thread selected, abort");
@@ -138,6 +150,10 @@ public class ThreadContent {
 		}
 		contextPath = requestGlobals.getHTTPServletRequest().getContextPath();
 		return null;
+	}
+
+	public Object onPassivate() {
+		return selectedThread.getLsUuid();
 	}
 
 	@SetupRender

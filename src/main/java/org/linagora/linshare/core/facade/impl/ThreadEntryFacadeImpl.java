@@ -120,8 +120,6 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	public ThreadEntryVo insertFile(UserVo actorVo, ThreadVo threadVo,
 			InputStream stream, Long size, String fileName)
 			throws BusinessException {
-		fileName = fileName.replace("\\", "_");
-		fileName = fileName.replace(":", "_");
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(
 				findUser(actorVo), findThread(threadVo), stream, fileName);
 
@@ -137,6 +135,11 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 		insertFile(actorVo, threadVo, stream, documentVo.getSize(),
 				documentVo.getFileName());
+	}
+
+	@Override
+	public ThreadVo getThread(String uuid) throws BusinessException {
+		return new ThreadVo(findThread(new ThreadVo(uuid, "")));
 	}
 
 	@Override
