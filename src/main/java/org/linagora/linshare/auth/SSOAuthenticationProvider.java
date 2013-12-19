@@ -48,14 +48,17 @@ public class SSOAuthenticationProvider implements AuthenticationProvider {
 		this.userDetailsProvider = userDetailsProvider;
 	}
 
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+	public Authentication authenticate(Authentication authentication)
+			throws AuthenticationException {
 		final String userName = (String) authentication.getPrincipal();
 		UserDetails user = userDetailsProvider.getUserDetails(userName);
-		return new UsernamePasswordAuthenticationToken(user, authentication.getCredentials(), user.getAuthorities());
+		return new UsernamePasswordAuthenticationToken(user,
+				authentication.getCredentials(), user.getAuthorities());
 	}
 
 	@SuppressWarnings("rawtypes")
 	public boolean supports(Class authentication) {
-		return (PreAuthenticatedAuthenticationToken.class).isAssignableFrom(authentication);
+		return (PreAuthenticatedAuthenticationToken.class)
+				.isAssignableFrom(authentication);
 	}
 }
