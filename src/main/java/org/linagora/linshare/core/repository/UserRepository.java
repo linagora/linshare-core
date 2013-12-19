@@ -89,8 +89,11 @@ public interface UserRepository<T extends User> extends AccountRepository<T> {
 	List<T> findByCriteria(AccountOccupationCriteriaBean criteria);
 //
 //	List<T> findByDomain(String domain);
-	
-	
-     
-    
+
+	/** Find a user using its login  : ie mail or ldap uid.
+     * @param login
+     * @return  user, null if not found.
+     */
+	T findByLogin(String login);
+
 } 

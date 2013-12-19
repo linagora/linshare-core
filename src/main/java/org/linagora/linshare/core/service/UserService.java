@@ -246,6 +246,13 @@ public interface UserService {
     public User findUnkownUserInDB(String mail);
     
     public User findByLsUuid(String lsUuid);
+
+    /**
+     * Looking in database for a user.
+     * @param login : mail or ldap uuid
+     * @return a user, null if not found.
+     */
+    public User findByLogin(String login);
     
 	public User findUserInDB(String domain, String mail);
     public List<User> findUsersInDB(String domain);

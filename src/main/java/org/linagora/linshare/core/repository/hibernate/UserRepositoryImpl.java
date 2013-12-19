@@ -33,13 +33,16 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.List;
+
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class UserRepositoryImpl extends GenericUserRepositoryImpl<User> implements UserRepository<User> {
+public class UserRepositoryImpl extends GenericUserRepositoryImpl<User>
+		implements UserRepository<User> {
 
 	public UserRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
@@ -47,7 +50,34 @@ public class UserRepositoryImpl extends GenericUserRepositoryImpl<User> implemen
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(User user) {
-		DetachedCriteria det = DetachedCriteria.forClass(User.class).add(Restrictions.eq("lsUuid", user.getLsUuid()));
+		DetachedCriteria det = DetachedCriteria.forClass(User.class).add(
+				Restrictions.eq("lsUuid", user.getLsUuid()));
 		return det;
 	}
+
+	@Override
+	public User findByLogin(String login) {
+		User u = super.findByMail(login);
+		if (u == null) {
+			u = findByLdapUid(login);
+		}
+		return u;
+	}
+
+	private User findByLdapUid(String ldapUid) {
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("ldapUid", ldapUid).ignoreCase());
+		criteria.add(Restrictions.eq("destroyed", false));
+		List<User> users = findByCriteria(criteria);
+
+		if (users == null || users.isEmpty()) {
+			return null;
+		} else if (users.size() == 1) {
+			return users.get(0);
+		} else {
+			throw new IllegalStateException("Ldap uid must be unique");
+		}
+	}
+
 }

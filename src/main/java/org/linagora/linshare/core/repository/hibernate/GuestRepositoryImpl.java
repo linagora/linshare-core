@@ -119,4 +119,8 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		return findByCriteria(criteria);
 	}
 
+	@Override
+	public Guest findByLogin(String login) {
+		return super.findByMail(login);
+	}
 }

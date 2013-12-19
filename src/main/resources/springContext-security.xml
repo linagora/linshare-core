@@ -182,7 +182,7 @@
 	<bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
 		<property name="providers">
 			<list>
-				<ref bean="rememberMeAuthenticationProvider" />
+<!-- 				<ref bean="rememberMeAuthenticationProvider" /> -->
 				<ref bean="daoAuthenticationProvider" />
 				<ref bean="domainAuthenticationProvider" />
 			</list>
@@ -199,8 +199,9 @@
 		<constructor-arg value="SHA" />
 	</bean>
 
-	<bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
-		<property name="userDetailsService" ref="guestAuthProvider" />
+	<bean id="daoAuthenticationProvider" class="org.linagora.linshare.auth.dao.DaoAuthenticationProvider">
+		<property name="userService" ref="userService" />
+<!-- 		<property name="userDetailsService" ref="guestAuthProvider" /> -->
 		<property name="passwordEncoder">
 			<bean factory-bean="passwordEncoderFactory" factory-method="getInstance" />
 		</property>
