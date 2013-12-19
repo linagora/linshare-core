@@ -100,7 +100,7 @@ public class DaoAuthProvider implements UserDetailsService {
 				.getRoles(account);
 
 		return new User(account.getLsUuid(), password, true, true, true, true,
-				grantedAuthorities.toArray(new GrantedAuthority[0]));
+				grantedAuthorities);
 	}
 
 }
