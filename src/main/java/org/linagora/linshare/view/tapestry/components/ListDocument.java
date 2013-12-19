@@ -72,6 +72,7 @@ import org.apache.tapestry5.corelib.components.Grid;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
@@ -306,7 +307,13 @@ public class ListDocument {
     
     @Property
     private boolean showUpd;
-	
+
+	@Inject
+	@Symbol("linshare.tapestry.paging")
+	@Property
+	private int paging;
+
+   
 	/***************************************************************************
 	 * Phase render
 	 **************************************************************************/
