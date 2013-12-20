@@ -86,8 +86,6 @@ import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementSe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.emory.mathcs.backport.java.util.Collections;
-
 
 @Import(library= { "ListThreadDocument.js"})
 @SupportsInformalParameters
