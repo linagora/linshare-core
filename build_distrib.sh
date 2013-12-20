@@ -13,7 +13,8 @@ set -e
 # Argument : optional : build function name, ex: build_sso
 g_main_function=$1
 g_set_current_revision=0
-[ ! -z "${2}" ] && g_set_current_revision=1
+#[ -z "${2}" ] && g_set_current_revision=1
+g_branch_or_tag="${2:-HEAD}"
 
 
 
@@ -25,7 +26,6 @@ g_output_dir="./target"
 g_distribution_dir="./distrib"
 g_ressources="./src/main/resources"
 g_revision=""
-g_revision=$(svn info |grep "^Révision"|head -n1|cut -d' ' -f2)
 
 ############################################################
 # FUNCTIONS
@@ -88,12 +88,24 @@ function distribute_war ()
 
 function init_context () 
 {
+	if [ "${g_branch_or_tag}" != "HEAD" ] ; then
+		if [ $(git tag -l  ${g_branch_or_tag} |wc -l) -eq 0 ] ; then
+			echo "Wrong tag !"
+			exit 1
+		fi
+	fi
+
+	git checkout -b ${g_branch_or_tag}  ${g_branch_or_tag}  || true
+	git checkout ${g_branch_or_tag} ||true
+	g_revision=$(git log -n 1 |grep ^commit| cut -d' ' -f2)
+	g_version=`grep -E "<version>(.*)</version>" pom.xml -o|head -n1|sed -r 's/<version>(.*)<\/version>/\1/g'`
 	### Initialisation du workspace.
 	echo_linshare "Log file : ${g_logfile}"
 	echo_linshare "Current revision : ${g_revision}"
+	echo_linshare "Pom version ${g_version}"
 	echo_linshare "Building LinShare ${g_version} distribution"
 	echo_linshare "Creating distrib dir..."
-	cd $(dirname $0)
+	#cd $(dirname $0)
 	rm -rf ${g_distribution_dir}/
 	mkdir -p ${g_distribution_dir}
 }
@@ -152,32 +164,12 @@ function build_sso ()
 function build_source ()
 {
 	local linshare_soure=linshare-src
-	local linshare_archive=linshare-${g_version}-src.tar.bz2
-	set +e
-	svn info &> /dev/null
-	if [ $? -eq 0 ] ; then
-		set -e
-		# the current working directory is a svn checkout
-		local l_url=$(svn info|grep ^URL|cut -d' ' -f2)
-		rm -fr ${linshare_soure} 
-		echo_linshare "Exporting data ..."
-		svn export ${l_url} ${linshare_soure} &> /dev/null
-		echo_linshare "Done."
-	else
-		set -e
-		maven_clean
-		# the current directory is a svn export
-		rm -fr ${linshare_soure} 
-		mkdir -p ${linshare_soure}
-		cp -r * ${linshare_soure}/ ||true
-		rmdir ${linshare_soure}/${linshare_soure}
-		rm -fr ${linshare_soure}/target ${linshare_soure}/bin ${linshare_soure}/distrib
-	fi
+	local linshare_archive=linshare-${g_version}-src.tar
+
 	echo_linshare "Archive creation in progress : ${linshare_archive}"
-	tar cjf ${linshare_archive} ${linshare_soure}/
+	git archive --format=tar ${g_branch_or_tag} -o ${g_distribution_dir}/${linshare_archive}
+	bzip2 ${g_distribution_dir}/${linshare_archive}
 	echo_linshare "Done."
-	rm -fr ${linshare_soure}/
-	mv ${linshare_archive} ${g_distribution_dir}/
 }
 
 function test_linshare ()
@@ -189,14 +181,27 @@ function test_linshare ()
 	mvn test >> $g_logfile
 }
 
+usage()
+{
+	echo
+	echo "Usage : $g_main_function is not a valid function : possible choices are : classic , installer , cas , sso , source, all"
+	echo " command target [branch_or_tag]"
+	exit 0
+}
+
 ############################################################
 # MAIN
 ############################################################
 
-# Initialisation du workspace.
-init_context
 
-if [ -z $g_main_function ] ; then 
+if [ -z "$g_main_function" ] ; then
+	usage
+fi
+
+if [ "${g_main_function}" == "all" ] ; then
+	# Initialisation du workspace.
+	init_context
+
 	# Testing LinShare
 	test_linshare
 
@@ -216,10 +221,11 @@ if [ -z $g_main_function ] ; then
 	build_source
 else
 	if [ `declare -F "build_${g_main_function}"|wc -l` -eq 1 ] ; then 
+		# Initialisation du workspace.
+		init_context
 		"build_${g_main_function}"
 	else
-		echo "ERROR:$g_main_function is not a valid function : possible choices are : default , installer , cas , sso , source"
-		exit 1
+		usage
 	fi
 fi
 
