@@ -134,7 +134,7 @@ public class Index {
 		if (fromCreate == true) {
 			lists = mailingListFacade.getAllMyList(loginUser);
 			for (MailingListVo current : lists) {
-				if (current.isPublic() == true) {
+				if (current.getIsPublic() == true) {
 					targetLists = "";
 				}
 			}
@@ -196,7 +196,7 @@ public class Index {
 	}
 
 	public boolean getIsPublic() {
-		return list.isPublic();
+		return list.getIsPublic();
 	}
 
 	public boolean isEmptyList() {

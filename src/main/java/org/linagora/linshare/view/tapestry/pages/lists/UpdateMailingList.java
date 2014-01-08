@@ -35,29 +35,21 @@
 package org.linagora.linshare.view.tapestry.pages.lists;
 
 import org.apache.tapestry5.ValidationException;
-import org.apache.tapestry5.annotations.InjectPage;
-import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
-import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.PersistentLocale;
-import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
-import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
-import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ManageMailingList {
+public class UpdateMailingList {
 
-	private static Logger logger = LoggerFactory.getLogger(Index.class);
+	private static Logger logger = LoggerFactory.getLogger(UpdateMailingList.class);
 
 	@SessionState
 	@Property
@@ -66,106 +58,53 @@ public class ManageMailingList {
 	@Inject
 	private MailingListFacade mailingListFacade;
 
-	@SessionState(create = false)
-	@Property
-	private MailingListVo mailingList;
-
 	@SessionState
-	private UserVo loginUser;
+	private UserVo userVo;
 
-	@Property
-	private AbstractDomainVo domain;
-
-	@Inject
-	private AbstractDomainFacade domainFacade;
-
-	@Inject
-	private UserFacade userFacade;
-
-	@Persist
-	@Property
-	private boolean inModify;
-
-	@Persist
-	@Property
-	private String oldIdentifier;
-
-	@InjectPage
-	private Index index;
+	private MailingListVo selected;
 
 	@Inject
 	private Messages messages;
-
-	@Inject
-	private PersistentLocale persistentLocale;
-
-	@Property
-	private String newOwner;
-
-	@Property
-	private int autocompleteMin = 3;
-
-	@Inject
-	private RecipientFavouriteFacade recipientFavouriteFacade;
-
-	@SetupRender
-	public void init() {
-		if (mailingList == null) {
-			mailingList = new MailingListVo();
-			mailingList.setIdentifier("");
-			mailingList.setDescription("");
-		}
-	}
+	
+	private String identifier;
 
 	public void onActivate(String uuid) throws BusinessException {
-		if (uuid != null) {
-			inModify = true;
-			mailingList = mailingListFacade.findByUuid(uuid);
-			oldIdentifier = mailingList.getIdentifier();
-		} else {
-			inModify = false;
-			mailingList = null;
-		}
+		selected = mailingListFacade.findByUuid(uuid);
+	}
+	
+	public Object onActivate() {
+		if (selected == null)
+			return Index.class;
+		identifier = selected.getIdentifier();
+		return null;
 	}
 
-	public Object onActionFromCancel() {
-		mailingList = null;
-		inModify = false;
-		oldIdentifier = null;
-		index.setFromCreate(false);
-		return index;
+	public Object onPassivate() {
+		return selected.getUuid();
 	}
 
-	public String getCurrentVisibility() {
-		if (mailingList.getIsPublic()) {
-			return String.format((messages.get("pages.lists.visibility.public")));
-		} else {
-			return String.format((messages.get("pages.lists.visibility.private")));
-		}
-	}
-
-	void onValidateFromIdentifier(String value) throws ValidationException, BusinessException {
-		if (!value.equals(oldIdentifier)) {
-			if (!mailingListFacade.identifierIsAvailable(loginUser, value)) {
-				String copy = mailingListFacade.findAvailableIdentifier(loginUser, value);
+	public void onValidateFromIdentifier(String value)
+			throws ValidationException, BusinessException {
+		if (!value.equals(identifier)) {
+			if (!mailingListFacade.identifierIsAvailable(userVo, value)) {
 				throw new ValidationException(String.format(
 						messages.get("pages.lists.manageList.identifierExist"),
-						copy));
+						mailingListFacade.findAvailableIdentifier(userVo, value)));
 			}
 		}
 	}
 
 	public Object onSuccess() throws BusinessException {
-		if (inModify == true) {
-			mailingListFacade.updateList(loginUser, mailingList);
-			index.setFromCreate(false);
-		} else {
-			mailingListFacade.createList(loginUser, mailingList);
-			index.setFromCreate(true);
-		}
-		inModify = false;
-		mailingList = null;
-		return index;
+		mailingListFacade.updateList(userVo, selected);
+		return Index.class;
+	}
+
+	public void setSelected(MailingListVo selected) {
+		this.selected = selected;
+	}
+
+	public MailingListVo getSelected() {
+		return this.selected;
 	}
 
 	Object onException(Throwable cause) {

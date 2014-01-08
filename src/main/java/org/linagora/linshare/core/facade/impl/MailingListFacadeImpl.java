@@ -292,10 +292,9 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	private List<MailingListVo> ListToListVo(List<MailingList> list) {
 		List<MailingListVo> listVo = new ArrayList<MailingListVo>();
-		if (list != null) {
-			for (MailingList currentList : list) {
-				listVo.add(new MailingListVo(currentList));
-			}
+
+		for (MailingList currentList : list) {
+			listVo.add(new MailingListVo(currentList));
 		}
 		return listVo;
 	}
@@ -304,9 +303,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	public boolean getListIsDeletable(UserVo actorVo, MailingListVo listVo) throws BusinessException {
 		MailingList list = mailingListService.findByUuid(listVo.getUuid());
 		User actor = (User) userService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
-		if (list.getOwner().equals(actor) || actorVo.isSuperAdmin()) {
-			return true;
-		}
-		return false;
+
+		return list.getOwner().equals(actor) || actorVo.isSuperAdmin();
 	}
 }

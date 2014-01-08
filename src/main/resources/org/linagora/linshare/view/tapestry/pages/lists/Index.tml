@@ -8,7 +8,8 @@
 
 		<h1>${message:components.myborderlayout.list.title}</h1>
 		<br></br><br></br>
-		<t:pageLink page="lists/ManageMailingList" class="button">
+		<!--<t:pageLink page="lists/ManageMailingList" class="button">-->
+		<t:pageLink page="lists/CreateMailingList" class="button">
 			<span><img src="${asset:context:images/icons/icon-list-mini.png}" alt=""/>
 			${message:pages.lists.create}</span>
 		</t:pageLink>
@@ -68,7 +69,7 @@
 			 </t:parameter>
 			 <t:parameter name="editCell">
 			 	<t:if test="listIsDeletable">
-			  		<t:pageLink page="lists/ManageMailingList" context="list.uuid"
+			  		<t:pageLink page="lists/UpdateMailingList" context="list.uuid"
 						title="${message:pages.lists.index.list.edit.button}">
 						<img src="${asset:context:images/icons/edit-button.png}" alt="${message:global.button.edit}" />
 			 		 </t:pageLink>

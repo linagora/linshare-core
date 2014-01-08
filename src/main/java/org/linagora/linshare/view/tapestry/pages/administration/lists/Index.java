@@ -209,7 +209,7 @@ public class Index {
 	}
 
 	public boolean getIsPublic() {
-		return list.isPublic();
+		return list.getIsPublic();
 	}
 
 	public boolean isEmptyList() {

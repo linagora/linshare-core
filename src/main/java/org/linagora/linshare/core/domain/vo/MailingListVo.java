@@ -37,6 +37,8 @@ package org.linagora.linshare.core.domain.vo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.tapestry5.beaneditor.NonVisual;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 
@@ -46,15 +48,21 @@ public class MailingListVo {
 	private String description;
 	private boolean isPublic;
 	private UserVo owner;
-	private String domainId;
 	private List<MailingListContactVo> contacts = new ArrayList<MailingListContactVo>();
 	private String uuid;
+	private String domainId;
 
 	public MailingListVo() {
 	}
 
-	public MailingListVo(MailingList list) {
+	public MailingListVo(String identifier, String description, boolean isPublic) {
+		super();
+		this.identifier = identifier;
+		this.description = description;
+		this.isPublic = isPublic;
+	}
 
+	public MailingListVo(MailingList list) {
 		this.uuid = list.getUuid();
 		this.identifier = list.getIdentifier();
 		this.description = list.getDescription();
@@ -83,11 +91,11 @@ public class MailingListVo {
 		this.description = description;
 	}
 
-	public boolean isPublic() {
+	public boolean getIsPublic() {
 		return isPublic;
 	}
 
-	public void setPublic(boolean isPublic) {
+	public void setIsPublic(boolean isPublic) {
 		this.isPublic = isPublic;
 	}
 
