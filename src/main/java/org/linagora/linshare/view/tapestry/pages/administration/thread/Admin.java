@@ -57,6 +57,7 @@ public class Admin {
 	
 	public void onActionFromDelete() throws BusinessException {
 		threadEntryFacade.deleteThread(userVo, thread);
+		thread = null;
 	}
 
 	/*
