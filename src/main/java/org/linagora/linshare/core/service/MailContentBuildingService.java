@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 /**
@@ -62,7 +63,7 @@ public interface MailContentBuildingService {
 	/**
 	 * Notify a user that he received new sharing
 	 */
-	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor,MailContainer mailContainer, User recipient, List<String> docNames, boolean hasToDecrypt) throws BusinessException;
+	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor,MailContainer mailContainer, User recipient, List<DocumentVo> documents, boolean hasToDecrypt) throws BusinessException;
 	
 	
 	
