@@ -204,7 +204,7 @@
 	</bean>
 
 	<bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
-		<property name="userDetailsService" ref="guestAuthProvider" />
+		<property name="guestRepository" ref="guestRepository" />
 		<property name="passwordEncoder">
 			<bean factory-bean="passwordEncoderFactory" factory-method="getInstance" />
 		</property>
@@ -215,8 +215,10 @@
 
 	<bean id="domainAuthenticationProvider" class="org.linagora.linshare.auth.DomainAuthProviderDao">
 		<property name="userService" ref="userService" />
+		<property name="userRepository" ref="userRepository" />
 		<property name="abstractDomainService" ref="abstractDomainService" />
 		<property name="logEntryService" ref="logEntryService" />
+		<property name="userProviderService" ref="userProviderService" />
 	</bean>
 
 

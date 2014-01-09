@@ -66,9 +66,8 @@ public class UserLogEntry extends LogEntry {
 		this.expirationDate = null;
 	}
 
-	public UserLogEntry(String login, String domain, String description) {
-		super(login, "", "", "", LogAction.USER_AUTH_FAILED, description);
-		this.actorDomain = domain;
+	public UserLogEntry(String login, String domain, LogAction logAction, String description) {
+		super(login, "", "", domain, logAction, description);
 		this.targetDomain = "";
 		this.targetMail = "";
 		this.targetFirstname = "";

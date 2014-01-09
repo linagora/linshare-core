@@ -49,63 +49,63 @@ import org.linagora.linshare.core.exception.TechnicalException;
  */
 public interface UserService {
 
-    /** Create a guest.
-     * @param login login.
-     * @param firstName first name.
-     * @param lastName last name.
-     * @param mail guest email address.
-     * @param canUpload : if the user can upload file
-     * @param comment : the comment about the user
-     * @param ownerLogin login of the user who create the guest.
-     * @return persisted guest.
-     * @throws BusinessException in case of duplicated guest.
-     */
-    Guest createGuest(String login, String firstName, String lastName, String mail, Boolean canUpload, Boolean canCreateGuest, String comment, 
-    		String ownerLogin, String ownerDomain) throws BusinessException;
+	/** Create a guest.
+	 * @param login login.
+	 * @param firstName first name.
+	 * @param lastName last name.
+	 * @param mail guest email address.
+	 * @param canUpload : if the user can upload file
+	 * @param comment : the comment about the user
+	 * @param ownerLogin login of the user who create the guest.
+	 * @return persisted guest.
+	 * @throws BusinessException in case of duplicated guest.
+	 */
+	Guest createGuest(String login, String firstName, String lastName, String mail, Boolean canUpload, Boolean canCreateGuest, String comment, 
+			String ownerLogin, String ownerDomain) throws BusinessException;
 
-    /**
-     * Search a user on ldap and database for completion ONLY.
-     * Search a user using pattern as mail, or the concatenation of first name fragment and last name fragment. 
-     * The method is using space to split pattern in order to build first name and last name 
-     * @param currentActorUuid
-     * @param pattern
-     * @return
-     * @throws BusinessException
-     */
+	/**
+	 * Search a user on ldap and database for completion ONLY.
+	 * Search a user using pattern as mail, or the concatenation of first name fragment and last name fragment. 
+	 * The method is using space to split pattern in order to build first name and last name 
+	 * @param currentActorUuid
+	 * @param pattern
+	 * @return
+	 * @throws BusinessException
+	 */
 	public List<User> autoCompleteUser(String currentActorUuid, String pattern) throws BusinessException;
-    
-    /** Search a user.
-     * @param mail user email.
-     * @param firstName user first name.
-     * @param lastName user last name.
-     * @param userType type of user (internal/guest)
-     * @param currentUser the current user can be null, if not null and if user is a guest, the result includes the guests
-     * created by the current User
-     * @return a list of matching users.
-     */
-    List<User> searchUser(String mail, String firstName, String lastName,AccountType userType,User currentUser) throws BusinessException;
-    
-    /**
-     * Delete a User (and all the corresponding share )
-     * @param actor 
-     * @param uuid
-     * @param checkOwnership : if true, check that the owner is the creator of the user
-     * 			useful for the batch
-     * @throws BusinessException 
-     */
-    void deleteUser(Account actor, String uuid) throws BusinessException;
-    
-    /**
-     * Delete all users from domain (and all the related data )
-     * @param actor
-     * @param domainIdentifier
-     * @throws BusinessException
-     */
-    void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException;
+
+	/** Search a user.
+	 * @param mail user email.
+	 * @param firstName user first name.
+	 * @param lastName user last name.
+	 * @param userType type of user (internal/guest)
+	 * @param currentUser the current user can be null, if not null and if user is a guest, the result includes the guests
+	 * created by the current User
+	 * @return a list of matching users.
+	 */
+	List<User> searchUser(String mail, String firstName, String lastName,AccountType userType,User currentUser) throws BusinessException;
+
+	/**
+	 * Delete a User (and all the corresponding share )
+	 * @param actor 
+	 * @param uuid
+	 * @param checkOwnership : if true, check that the owner is the creator of the user
+	 * 			useful for the batch
+	 * @throws BusinessException 
+	 */
+	void deleteUser(Account actor, String uuid) throws BusinessException;
+
+	/**
+	 * Delete all users from domain (and all the related data )
+	 * @param actor
+	 * @param domainIdentifier
+	 * @throws BusinessException
+	 */
+	void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException;
 
 
-    /** Clean outdated guest accounts. */
-    void cleanExpiredGuestAcccounts(SystemAccount systemAccount);
+	/** Clean outdated guest accounts. */
+	void cleanExpiredGuestAcccounts(SystemAccount systemAccount);
 
 	/**
 	 * update a guest (edit mode)
@@ -117,8 +117,8 @@ public interface UserService {
 	 * @param owner
 	 * @throws BusinessException
 	 */
-    public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException;
-    
+	public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException;
+
 	/**
 	 * update the role of a user (admin, simple)
 	 * @param userUuid 
@@ -128,7 +128,7 @@ public interface UserService {
 	 * @throws BusinessException
 	 */
 	public void updateUserRole(String userUuid, String domain,String mail, Role role, UserVo owner) throws BusinessException;
-    
+
 	/**
 	 * Update a user locale
 	 * @param mail : the user email
@@ -136,7 +136,7 @@ public interface UserService {
 	 * @throws BusinessException 
 	 */
 	public void updateUserLocale(String domainId, String mail, String locale) throws BusinessException;
-	
+
 	/**
 	 * change a guest or superadmin password
 	 * @param mail
@@ -146,7 +146,7 @@ public interface UserService {
 	 * @throws BusinessException : AUTHENTICATION_ERROR if the password supplied is wrong
 	 */
 	public void changePassword(String uuid, String mail, String oldPassword, String newPassword) throws BusinessException;
-	
+
 	/**
 	 * Reset a guest password
 	 * @param mail
@@ -154,7 +154,7 @@ public interface UserService {
 	 * @throws BusinessException
 	 */
 	public void resetPassword(String uuid, String mail) throws BusinessException;
-	
+
 	/**
 	 * Update a guest as restricted and set his list of contacts
 	 * 
@@ -162,14 +162,14 @@ public interface UserService {
 	 * @param mailContacts
 	 */
 	public void setGuestContactRestriction(String uuid, List<String> mailContacts) throws BusinessException;
-	
+
 	/**
 	 * Set a guest as not restricted and remove his list of contacts
 	 * 
 	 * @param login
 	 */
 	public void removeGuestContactRestriction(String uuid) throws BusinessException;
-	
+
 	/**
 	 * Add one contact to a restricted guest
 	 * 
@@ -177,7 +177,7 @@ public interface UserService {
 	 * @param contactUuid
 	 */
 	public void addGuestContactRestriction(String ownerUuid, String contactUuid) throws BusinessException;
-	
+
 	/**
 	 * Retrieve the list of contacts of the guest
 	 * 
@@ -185,7 +185,7 @@ public interface UserService {
 	 * @return
 	 */
 	public List<User> fetchGuestContacts(String uuid) throws BusinessException;
-	
+
 	public List<String> getGuestEmailContacts(String uuid) throws BusinessException;
 
 	void updateUserDomain(String mail, String selectedDomain, UserVo actor) throws BusinessException;
@@ -206,58 +206,53 @@ public interface UserService {
 	public void saveOrUpdateUser(User user) throws TechnicalException ;
 	
 	/** Find a  user (based on mail address).
-     * Search first in database, then on ldap if not found.
-     * If the user isn't found on DB, then it is created from the ldap info.
-     * If the user isn't found in the ldap, an exception is raised.
-     * @param mail user mail.
-     * @param domainId domain identifier.
-     * @return founded user.
-     * @throws BusinessException if the user could not be found
-     * @throws TechnicalError if the user cannot be created
-     */
-    public User findOrCreateUser(String mail, String domainId) throws BusinessException ;
-    
-    
-	 /** Find a  user (based on mail address).
-     * Search first in database, then on ldap if not found, but only in authorized domains. The starting point of the research is domainId.
-     * If the user isn't found on DB, then it is created from the ldap info. 
-     * @param mail user mail.
-     * @param domainId domain identifier.
-     * @return founded user.
-     * @throws BusinessException if the user could not be found
-     * @throws TechnicalError if the user cannot be created
-     */
-    public User findOrCreateUserWithDomainPolicies(String mail, String domainId) throws BusinessException ;
-    
-    
-    /** Find a  user (based on mail address).
-     * Search first in database, then on ldap if not found, but only in authorized domains. The starting point of the research is domainId.
-     * If the user isn't found on DB, then it is created from the ldap info
-     * @param domainId domain identifier.
-     * @param mail user mail.
-     * @param actorDomainId domain identifier, it is useful to determine which domains we are authorized to search in. 
-     * if this parameter is null, domainId is used as starting point for the research.
-     * @return founded user.
-     * @throws BusinessException if the user could not be found
-     * @throws TechnicalError if the user cannot be created
-     */
-    public User findOrCreateUserWithDomainPolicies(String domainId, String mail, String actorDomainId) throws BusinessException ;
-	
-    public User findUnkownUserInDB(String mail);
-    
-    public User findByLsUuid(String lsUuid);
+	 * Search first in database, then on ldap if not found.
+	 * If the user isn't found on DB, then it is created from the ldap info.
+	 * If the user isn't found in the ldap, an exception is raised.
+	 * @param mail user mail.
+	 * @param domainId domain identifier.
+	 * @return founded user.
+	 * @throws BusinessException if the user could not be found
+	 * @throws TechnicalError if the user cannot be created
+	 */
+	public User findOrCreateUser(String mail, String domainId) throws BusinessException ;
 
-    /**
-     * Looking in database for a user.
-     * @param login : mail or ldap uuid
-     * @return a user, null if not found.
-     */
-    public User findByLogin(String login);
-    
+
+	 /** Find a  user (based on mail address).
+	 * Search first in database, then on ldap if not found, but only in authorized domains. The starting point of the research is domainId.
+	 * If the user isn't found on DB, then it is created from the ldap info. 
+	 * @param mail user mail.
+	 * @param domainId domain identifier.
+	 * @return founded user.
+	 * @throws BusinessException if the user could not be found
+	 * @throws TechnicalError if the user cannot be created
+	 */
+	public User findOrCreateUserWithDomainPolicies(String mail, String domainId) throws BusinessException ;
+
+
+	/** Find a  user (based on mail address).
+	 * Search first in database, then on ldap if not found, but only in authorized domains. The starting point of the research is domainId.
+	 * If the user isn't found on DB, then it is created from the ldap info
+	 * @param domainId domain identifier.
+	 * @param mail user mail.
+	 * @param actorDomainId domain identifier, it is useful to determine which domains we are authorized to search in. 
+	 * if this parameter is null, domainId is used as starting point for the research.
+	 * @return founded user.
+	 * @throws BusinessException if the user could not be found
+	 * @throws TechnicalError if the user cannot be created
+	 */
+	public User findOrCreateUserWithDomainPolicies(String domainId, String mail, String actorDomainId) throws BusinessException ;
+
+	@Deprecated
+	public User findUnkownUserInDB(String mail);
+
+	public User findByLsUuid(String lsUuid);
+
 	public User findUserInDB(String domain, String mail);
-    public List<User> findUsersInDB(String domain);
-    
-    /**
+
+	public List<User> findUsersInDB(String domain);
+
+	/**
 	 * This method is designed to search in all existing domains, and create an user entity in the database if it was a successful research(got one only hit).
 	 * This method is designed to be used by the authentication provider in order to find and/or create a user.
 	 * @param mail : this parameter should be unique in directories
@@ -272,7 +267,7 @@ public interface UserService {
 	 * @return User entity
 	 */
 	public User searchAndCreateUserEntityFromDirectory(String domainIdentifier, String mail) throws BusinessException;
-	
+
 	/**
 	 * Check if the actor is authorized to manage the second user (userToManage).
 	 * @param actor
@@ -289,7 +284,7 @@ public interface UserService {
 	 * Destined to be more clear and to replace the old implementation when tapestry will be destroy.
 	 * 
 	 */
-	
+
 	/**
 	 * Find the user matching updateUser and
 	 * update fields: first name, last name, role, create guest right and upload right

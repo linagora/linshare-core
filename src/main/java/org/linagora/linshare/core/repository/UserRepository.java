@@ -90,10 +90,16 @@ public interface UserRepository<T extends User> extends AccountRepository<T> {
 //
 //	List<T> findByDomain(String domain);
 
-	/** Find a user using its login  : ie mail or ldap uid.
-     * @param login
+	/** Find a user using its login.
+	 * @param login : ie mail or ldap uid.
      * @return  user, null if not found.
      */
 	T findByLogin(String login);
 
+	/** Find a user using its domain and login.
+     * @param domain : domain identifier
+     * @param login : ie mail or ldap uid.
+     * @return  user, null if not found.
+     */
+	T findByLoginAndDomain(String domain, String login);
 } 

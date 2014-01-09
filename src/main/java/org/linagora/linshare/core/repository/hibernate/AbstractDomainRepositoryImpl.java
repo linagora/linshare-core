@@ -64,6 +64,7 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 		return det;
 	}
 
+	@Override
 	public AbstractDomain findById(String identifier) {
 		List<AbstractDomain> abstractDomain = findByCriteria(Restrictions.eq("identifier", identifier));
 		

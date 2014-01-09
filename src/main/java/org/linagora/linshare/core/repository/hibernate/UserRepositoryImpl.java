@@ -57,9 +57,19 @@ public class UserRepositoryImpl extends GenericUserRepositoryImpl<User>
 
 	@Override
 	public User findByLogin(String login) {
-		User u = super.findByMail(login);
+		User u = null;
+		try {
+			u = super.findByMail(login);
+		} catch (IllegalStateException e) {
+			logger.error("you are looking for an account using mail as login : '" + login + "' but your login is not unique, same account logins in different domains.");;
+		}
+
 		if (u == null) {
-			u = findByLdapUid(login);
+			try {
+				u = findByLdapUid(login);
+			} catch (IllegalStateException e) {
+				logger.error("you are looking for an account using LDAP uid as login : '" + login + "' but your login is not unique, same account logins in different domains.");;
+			}
 		}
 		return u;
 	}
@@ -67,6 +77,33 @@ public class UserRepositoryImpl extends GenericUserRepositoryImpl<User>
 	private User findByLdapUid(String ldapUid) {
 		DetachedCriteria criteria = DetachedCriteria
 				.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("ldapUid", ldapUid).ignoreCase());
+		criteria.add(Restrictions.eq("destroyed", false));
+		List<User> users = findByCriteria(criteria);
+
+		if (users == null || users.isEmpty()) {
+			return null;
+		} else if (users.size() == 1) {
+			return users.get(0);
+		} else {
+			throw new IllegalStateException("Ldap uid must be unique");
+		}
+	}
+
+	@Override
+	public User findByLoginAndDomain(String domain, String login) {
+		User u = super.findByMailAndDomain(domain, login);
+		if (u == null) {
+			u = findByDomainAndLdapUid(domain, login);
+		}
+		return u;
+	}
+
+	private User findByDomainAndLdapUid(String domain, String ldapUid) {
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(getPersistentClass());
+		criteria.createAlias("domain", "domain");
+		criteria.add(Restrictions.eq("domain.identifier", domain));
 		criteria.add(Restrictions.eq("ldapUid", ldapUid).ignoreCase());
 		criteria.add(Restrictions.eq("destroyed", false));
 		List<User> users = findByCriteria(criteria);

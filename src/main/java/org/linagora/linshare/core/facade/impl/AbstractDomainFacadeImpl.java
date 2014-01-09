@@ -338,23 +338,14 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     public List<AbstractDomainVo> findAllSubDomainWithoutGuestDomain(String topDomainIdentifier) {
         List<AbstractDomainVo> res = new ArrayList<AbstractDomainVo>();
 
-        try {
-            AbstractDomain topDomain = abstractDomainService.retrieveDomain(topDomainIdentifier);
-            if(topDomain == null) {
-                logger.error("The top domain " + topDomainIdentifier + " was not found.");
-            } else {
-                for (AbstractDomain abstractDomain : topDomain.getSubdomain()) {
-                    if(!abstractDomain.getDomainType().equals(DomainType.GUESTDOMAIN)) {
-                        res.add(new AbstractDomainVo(abstractDomain));
-                    }
+        AbstractDomain topDomain = abstractDomainService.retrieveDomain(topDomainIdentifier);
+        if(topDomain == null) {
+            logger.error("The top domain " + topDomainIdentifier + " was not found.");
+        } else {
+            for (AbstractDomain abstractDomain : topDomain.getSubdomain()) {
+                if(!abstractDomain.getDomainType().equals(DomainType.GUESTDOMAIN)) {
+                    res.add(new AbstractDomainVo(abstractDomain));
                 }
-            }
-        } catch (BusinessException e) {
-            if(e.getErrorCode().equals(BusinessErrorCode.DOMAIN_ID_NOT_FOUND)) {
-                logger.error("The top domain " + topDomainIdentifier + " was not found.");
-            } else {
-                logger.error("The top domain " + topDomainIdentifier + " was not found. Unkown error.");
-                logger.error(e.toString());
             }
         }
         return res;
@@ -624,26 +615,24 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         }
     }
 
-    @Override
-    public boolean isMimeTypeFilterEnableFor(String domainIdentifier , UserVo actorVo) {
-        if(domainIdentifier != null && actorVo != null) {
-            if(actorVo.isSuperAdmin()) {
-                try {
-                    AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-                    if(domain!=null) {
-                        Functionality mimeTypeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
-                        if(mimeTypeFunctionality.getActivationPolicy().getStatus()){
-                            return true;
-                        }
-                    }
-                } catch (BusinessException e) {
-                    logger.error("domain not found : " + domainIdentifier);
-                    logger.debug(e.toString());
-                }
-            }
-        }
-        return false;
-    }
+	@Override
+	public boolean isMimeTypeFilterEnableFor(String domainIdentifier,
+			UserVo actorVo) {
+		if (domainIdentifier != null && actorVo != null) {
+			if (actorVo.isSuperAdmin()) {
+				AbstractDomain domain = abstractDomainService
+						.retrieveDomain(domainIdentifier);
+				if (domain != null) {
+					Functionality mimeTypeFunctionality = functionalityReadOnlyService
+							.getMimeTypeFunctionality(domain);
+					if (mimeTypeFunctionality.getActivationPolicy().getStatus()) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 
     @Override
     public List<String> getAllDomainIdentifiers(UserVo actorVo) throws BusinessException {

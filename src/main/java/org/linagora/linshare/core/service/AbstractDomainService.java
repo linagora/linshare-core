@@ -33,10 +33,7 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.io.IOException;
 import java.util.List;
-
-import javax.naming.NamingException;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
@@ -52,7 +49,7 @@ public interface AbstractDomainService {
 	public SubDomain createSubDomain(SubDomain subDomain) throws BusinessException;
 	public GuestDomain createGuestDomain(GuestDomain guestDomain) throws BusinessException;
 	
-	public AbstractDomain retrieveDomain(String identifier) throws BusinessException;
+	public AbstractDomain retrieveDomain(String identifier);
 	public void updateDomain(AbstractDomain domain) throws BusinessException;
 	public void deleteDomain(String identifier) throws BusinessException;
 	public List<String> getAllDomainIdentifiers();
@@ -152,8 +149,6 @@ public interface AbstractDomainService {
 	 * @throws BusinessException
 	 */
 	public User searchOneUserRecursivelyWithoutRestriction(String domainIdentifier, String mail) throws BusinessException;
-	
-	public User auth(AbstractDomain domain,	String login, String password) throws BusinessException, NamingException, IOException;
 	
 	public boolean userCanCreateGuest(User user);
 	public boolean canCreateGuestDomain(AbstractDomain domain) ;

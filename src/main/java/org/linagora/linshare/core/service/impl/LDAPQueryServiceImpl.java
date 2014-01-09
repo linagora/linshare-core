@@ -83,8 +83,11 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		}
 	}
 
+
 	@Override
-	public User auth(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String userLogin, String userPasswd) throws BusinessException, NamingException, IOException {
+	public User searchForAuth(LDAPConnection ldapConnection, String baseDn,
+			DomainPattern domainPattern, String userLogin)
+			throws NamingException, IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
 
 		Map<String, Object> vars = new HashMap<String, Object>();
@@ -95,8 +98,30 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		logger.debug("LDAPQueryServiceImpl.authUser: baseDn: '" + baseDn + "' , login : '" + userLogin + "'");
 		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
-		User user = query.auth(ldapConnection, userLogin, userPasswd);
+		User user = query.searchForAuth(ldapConnection, userLogin);
 		ldapContext.close();
+		return user;
+	}
+
+	@Override
+	public User auth(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String userLogin, String userPasswd) throws NamingException, IOException {
+		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
+
+		Map<String, Object> vars = new HashMap<String, Object>();
+		vars.put("domain", baseDn);
+
+		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
+		IDnList dnList = new LinShareDnList(domainPattern.getSearchPageSize(), domainPattern.getSearchSizeLimit());
+
+		logger.debug("LDAPQueryServiceImpl.authUser: baseDn: '" + baseDn + "' , login : '" + userLogin + "'");
+		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
+		User user = null;
+		try {
+			// this coulds throw BadCredentialsException.
+			user = query.auth(ldapConnection, userLogin, userPasswd);
+		} finally {
+			ldapContext.close();
+		}
 		return user;
 	}
 

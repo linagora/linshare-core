@@ -3,6 +3,7 @@ package org.linagora.linshare.auth.dao;
 import org.linagora.linshare.auth.RoleProvider;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.UserService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -25,7 +26,7 @@ public class DaoAuthenticationProvider extends
 
 	private PasswordEncoder passwordEncoder = new PlaintextPasswordEncoder();
 
-	private UserService userService;
+	private GuestRepository guestRepository;
 
 	// ~ Methods
 	// ========================================================================================================
@@ -56,7 +57,7 @@ public class DaoAuthenticationProvider extends
 	}
 
 	protected void doAfterPropertiesSet() throws Exception {
-		Assert.notNull(this.userService,
+		Assert.notNull(this.guestRepository,
 				"A userService must be set");
 	}
 
@@ -77,11 +78,11 @@ public class DaoAuthenticationProvider extends
 			Object details = authentication.getDetails();
 			String domain = (String) details;
 			if (domain == null) {
-				// looking into the database for a user with mail or ldap uid equals to username (login value)
-				account = userService.findByLogin(username);
+				// looking into the database for a user with his login ie username (could be a mail or a LDAP uid)
+				account = guestRepository.findByLogin(username);
 			} else {
-				// TODO FMA Auth multi domain
-				account = userService.findUserInDB(domain, username);
+				// TODO FMA Auth multi domain for guests
+				account = guestRepository.findByLoginAndDomain(domain, username);
 			}
 			
 			if (account != null) {
@@ -117,11 +118,11 @@ public class DaoAuthenticationProvider extends
 		return passwordEncoder;
 	}
 
-	public UserService getUserService() {
-		return userService;
+	public GuestRepository getGuestRepository() {
+		return guestRepository;
 	}
 
-	public void setUserService(UserService userService) {
-		this.userService = userService;
+	public void setGuestRepository(GuestRepository guestRepository) {
+		this.guestRepository = guestRepository;
 	}
 }

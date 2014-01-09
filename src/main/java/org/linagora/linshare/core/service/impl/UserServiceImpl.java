@@ -250,12 +250,6 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findByDomain(domain);
 	}
 
-	
-	@Override
-	public User findByLogin(String login) {
-		return userRepository.findByLogin(login);
-	}
-
 	/**
 	 * Calculate the user expiry date.
 	 * 

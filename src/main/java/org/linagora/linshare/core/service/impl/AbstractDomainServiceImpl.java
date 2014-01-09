@@ -712,28 +712,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	@Override
-	public User auth(AbstractDomain domain, String login, String password)
-			throws BusinessException, NamingException, IOException {
-		User user = null;
-		try {
-			user = userProviderService.auth(domain.getUserProvider(), login,
-					password);
-		} catch (NamingException e) {
-			logger.error("Error while authentificating a user in domain {}",
-					domain.getIdentifier());
-			logger.error(e.toString());
-		} catch (IOException e) {
-			logger.error("Error while authentificating a user in domain {}",
-					domain.getIdentifier());
-			logger.error(e.toString());
-		}
-		if (user != null) {
-			user.setDomain(domain);
-		}
-		return user;
-	}
-
-	@Override
 	public boolean hasRightsToShareWithExternals(User sender)
 			throws BusinessException {
 

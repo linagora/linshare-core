@@ -35,6 +35,7 @@ package org.linagora.linshare.auth;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -46,10 +47,11 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
-import org.springframework.ldap.NameNotFoundException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -61,20 +63,24 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
 
+public class DomainAuthProviderDao extends
+		AbstractUserDetailsAuthenticationProvider {
 
-public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProvider {
-	
 	private UserService userService;
+	private UserRepository<User> userRepository;
 	private AbstractDomainService abstractDomainService;
 	private LogEntryService logEntryService;
-	
-    private final static Log logger = LogFactory.getLog(DomainAuthProviderDao.class);
-    
+	private UserProviderService userProviderService;
+
+	private final static Log logger = LogFactory
+			.getLog(DomainAuthProviderDao.class);
+
 	public AbstractDomainService getAbstractDomainService() {
 		return abstractDomainService;
 	}
 
-	public void setAbstractDomainService(AbstractDomainService abstractDomainService) {
+	public void setAbstractDomainService(
+			AbstractDomainService abstractDomainService) {
 		this.abstractDomainService = abstractDomainService;
 	}
 
@@ -85,7 +91,15 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
-	
+
+	public UserRepository<User> getUserRepository() {
+		return userRepository;
+	}
+
+	public void setUserRepository(UserRepository<User> userRepository) {
+		this.userRepository = userRepository;
+	}
+
 	public LogEntryService getLogEntryService() {
 		return logEntryService;
 	}
@@ -93,247 +107,334 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 	public void setLogEntryService(LogEntryService logEntryService) {
 		this.logEntryService = logEntryService;
 	}
-	
+
+	public UserProviderService getUserProviderService() {
+		return userProviderService;
+	}
+
+	public void setUserProviderService(UserProviderService userProviderService) {
+		this.userProviderService = userProviderService;
+	}
+
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
 			UsernamePasswordAuthenticationToken authentication)
 			throws AuthenticationException {
 	}
 
-	protected UserDetails retrieveUser(String login, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-		logger.debug("Retrieving user detail for ldap authentication : " + login);
-		
-		String password = (String)authentication.getCredentials();
-		if (password.isEmpty()) {
-			logger.debug("User password is empty, authentification failed");
-			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
-		}
-		
-		
+	protected UserDetails retrieveUser(String login,
+			UsernamePasswordAuthenticationToken authentication)
+			throws AuthenticationException {
+		logger.debug("Retrieving user detail for ldap authentication with login : "
+				+ login);
+
+		User foundUser = null;
 		String domainIdentifier = null;
-		if (authentication.getDetails() != null && authentication.getDetails() instanceof String) {
-			domainIdentifier = (String)authentication.getDetails();
-		}
-		User user = null;
-		User foundUser = null;		
-		
-		// if domain was specified at the connection, we try to authenticate the user on this domain only
-		if (domainIdentifier != null) {
-			logger.debug("The domain was specified at the connection time : " + domainIdentifier);
-			try {
-				AbstractDomain domainObject = abstractDomainService.retrieveDomain(domainIdentifier);
-				foundUser = abstractDomainService.auth(domainObject, login, password);
-			} catch (NameNotFoundException e) {
-				logger.debug("Can't find the user in the directory. Search in DB.");
-				
-				foundUser = userService.findUserInDB(domainIdentifier,login);
-				try {
-					if (foundUser != null && !foundUser.isInternal() && domainIdentifier.equals(foundUser.getDomainId())) {
-						logger.debug("User found in DB but authentification failed");
-						String description = "Bad credentials";
-						logEntryService.create(new UserLogEntry(foundUser, LogAction.USER_AUTH_FAILED, description, foundUser));
-						throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", description), domainIdentifier);
-					} else {
-						logger.debug("Can't find the user in DB, BadDomainException for : " + domainIdentifier);
-						logEntryService.create(new UserLogEntry(login, domainIdentifier, "Bad domain or bad login."));
-						throw new BadDomainException(e.getMessage(), domainIdentifier);
-					}
-				} catch (BusinessException be) {
-					logger.error("Couldn't log an authentication failure");
-					logger.debug(be.getMessage());
-				}
-			} catch (Exception e) {
-				throw new AuthenticationServiceException("Could not authenticate user: "+login, e);
-			}
-			
-			if(foundUser == null) {
-				try {
-					logEntryService.create(new UserLogEntry(login, domainIdentifier, "Bad credentials.(2)"));
-				} catch(BusinessException be) {
-					logger.error("Couldn't log an authentication failure");
-					logger.debug(be.getMessage());
-				}
-				throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
-						"Bad credentials"), domainIdentifier);
-			} 
-		}
-		
-		/* 
-		 * if the domain is not specified (invisible domains), we try to
-		 * find the user in the DB to know its domain.
-		 * if we can't find it (first login), we search all the domains.
-		 * in the case of invisible domains, the user has to provide
-		 * its email address and not LDAP uid to log in. 
-		 */
-		
-		// TODO : To be check : Why do we test the presence of "@" ?
-		if (domainIdentifier == null && login.indexOf("@") != -1) {
-			try {
-				
-				foundUser = userService.findUnkownUserInDB(login);
-				if (foundUser == null) {
-					logger.debug("Can't find the user in DB. Searching user in all domains.");
-					List<AbstractDomain> domains = abstractDomainService.getAllDomains();
-					for (AbstractDomain loopedDomain : domains) {
-						try {
-							foundUser = abstractDomainService.auth(loopedDomain, login, password);
-							if (foundUser != null) {
-								domainIdentifier = loopedDomain.getIdentifier();
-								logger.debug("User found in domain "+domainIdentifier);
-								break;
-							}
-						} catch (NameNotFoundException e) {
-							// just not found in this domain
-							logger.error(e);
-						} catch (IOException e) {
-							//TLS negociation problem
-							logger.error(e);
-						} catch (NamingException e) {
-							logger.error(e);
-						}
-					}
-				} else {
-					logger.debug("User found in DB : " + foundUser.getMail());
-			
-					if(foundUser.getDomain() == null) {
-						try {
-							logEntryService.create(new UserLogEntry(foundUser, LogAction.USER_AUTH_FAILED, "Bad credentials", foundUser));
-						} catch(BusinessException be) {
-							logger.error("Couldn't log an authentication failure");
-							logger.debug(be.getMessage());
-						}
-						logger.error("The user found in the database contain a null domain reference.");
-						throw new BadCredentialsException("Could not retrieve user : "+login);
-					}
-					
-					domainIdentifier = foundUser.getDomain().getIdentifier();
-					try {
-						logger.debug("The user domain stored in DB was : " + domainIdentifier);
-						foundUser = abstractDomainService.auth(foundUser.getDomain(), login, password);
-					} catch (NameNotFoundException e) {
-						try {
-							logEntryService.create(new UserLogEntry(foundUser, LogAction.USER_AUTH_FAILED, "Bad domain", foundUser));
-						} catch(BusinessException be) {
-							logger.error("Couldn't log an authentication failure");
-							logger.debug(e.getMessage());
-						}
-						throw new BadDomainException("Could not retrieve user : "+login+" in domain : "+domainIdentifier, e);
-					} catch (IOException e) {
-						throw new AuthenticationServiceException("Could not retrieve user : "+login+" in domain : "+domainIdentifier, e);
-					} catch (NamingException e) {
-						try {
-							logEntryService.create(new UserLogEntry(foundUser, LogAction.USER_AUTH_FAILED, "Bad credentials", foundUser));
-						} catch(BusinessException be) {
-							logger.error("Couldn't log an authentication failure");
-							logger.debug(be.getMessage());
-						}
-						throw new BadCredentialsException("Could not retrieve user : "+login+" in domain : "+domainIdentifier, e);
-					}
-				}
-			} catch (BusinessException e) {
-				throw new AuthenticationServiceException("Could not retrieve user : "+login+" in domain : "+domainIdentifier, e);
-			}
-		}
-		
-		// invisible domain and user not found (uid login or found in no domain)
-		if (foundUser == null || domainIdentifier == null) {
-			try {
-				logEntryService.create(new UserLogEntry(login, LogAction.USER_AUTH_FAILED, "Bad credentials", login));
-			} catch(BusinessException be) {
-				logger.error("Couldn't log an authentication failure");
-				logger.debug(be.getMessage());
-			}
-			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
-					"Bad credentials, no domain specified and user found in no domain"), domainIdentifier);
+
+		// Getting password from context
+		String password = (String) authentication.getCredentials();
+		if (password.isEmpty()) {
+			String message = "User password is empty, authentification failed";
+			logAuthError(login, domainIdentifier, message);
+			logger.error(message);
+			throw new BadCredentialsException(messages.getMessage(
+					"AbstractUserDetailsAuthenticationProvider.badCredentials",
+					"Bad credentials"));
 		}
 
-		// invisible domain and user found or visible domain and user found
+		// Getting domain from context
+		if (authentication.getDetails() != null
+				&& authentication.getDetails() instanceof String) {
+			domainIdentifier = (String) authentication.getDetails();
+		}
+
+		// if domain was specified at the connection, we try to authenticate the
+		// user on this domain and its sub domains.
+		if (domainIdentifier != null) {
+			foundUser = findUserInDomainAndSubdomains(login, domainIdentifier);
+		} else {
+			// There is no constraints, we have to search the current user in
+			// all domains.
+			foundUser = findUserInAllDomain(login);
+		}
+
+		// Check if it is a guest. Should not happen.
+		if (!foundUser.isInternal()) {
+			logger.debug("Guest found during ldap authentification process.");
+			logAuthError(foundUser, domainIdentifier, "User not found.");
+			String message = "Guest found : "
+					+ foundUser.getAccountReprentation() + " in domain : '"
+					+ domainIdentifier + "'";
+			logAuthError(login, domainIdentifier, message);
+			throw new UsernameNotFoundException(message);
+		}
+
+		if (foundUser.getDomain() == null) {
+			String message = "Bad credentials";
+			logAuthError(foundUser, domainIdentifier, message);
+			logger.error("The user found in the database contain a null domain reference.");
+			throw new BadCredentialsException("Could not authenticate user: "
+					+ login);
+		}
+
 		try {
-			user = userService.findOrCreateUser(foundUser.getMail(), domainIdentifier);
-			
-			// if we already have a guest with the same mail, and then, a domain with
-			// this mail is added in linshare, when the domain user connects he should not
-			// retrieve the guest account. if the two user are in the same domain, we can't
-			// do anything I think...
-			if (!domainIdentifier.equals(user.getDomainId())) {
-				try {
-					logEntryService.create(new UserLogEntry(user, LogAction.USER_AUTH_FAILED, "Bad domain", user));
-				} catch(BusinessException be) {
-					logger.error("Couldn't log an authentication failure");
-					logger.debug(be.getMessage());
-				}
-				throw new BadDomainException("User "+user.getMail()+" was found but not in the domain referenced in DB (DB: "+user.getDomainId()+", found: "+domainIdentifier);
-			}
-			
+			userProviderService.auth(foundUser.getDomain().getUserProvider(),
+					foundUser.getMail(), password);
+		} catch (BadCredentialsException e1) {
+			String message = "Bad credentials.";
+			logAuthError(foundUser, foundUser.getDomainId(), message);
+			logger.error(message);
+			throw new BadCredentialsException("Could not authenticate user: "
+					+ login);
+		} catch (Exception e) {
+			logger.error(e);
+			throw new AuthenticationServiceException(
+					"Could not authenticate user : " + foundUser.getDomainId()
+							+ " : " + foundUser.getMail(), e);
+		}
+
+		User user = null;
+		try {
+			user = userService.findOrCreateUser(foundUser.getMail(),
+					foundUser.getDomainId());
 		} catch (BusinessException e) {
 			logger.error(e);
-			throw new AuthenticationServiceException("Could not create user account: "+foundUser.getMail(), e);
+			throw new AuthenticationServiceException(
+					"Could not create user account : "
+							+ foundUser.getDomainId() + " : "
+							+ foundUser.getMail(), e);
 		}
 
 		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
-
-		return new org.springframework.security.core.userdetails.User(user.getLsUuid(), "", true, true, true, true,
+		return new org.springframework.security.core.userdetails.User(
+				user.getLsUuid(), "", true, true, true, true,
 				grantedAuthorities);
-
 	}
-	
-	
-	 public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		 
-		 Assert.isInstanceOf(UsernamePasswordAuthenticationToken.class, authentication,
-		            messages.getMessage("AbstractUserDetailsAuthenticationProvider.onlySupports",
-		                "Only UsernamePasswordAuthenticationToken is supported"));
 
-		        // Determine username
-		        String username = (authentication.getPrincipal() == null) ? "NONE_PROVIDED" : authentication.getName();
+	private User findUserInDomainAndSubdomains(String login,
+			String domainIdentifier) {
+		User foundUser;
+		logger.debug("The domain was specified at the connection time : "
+				+ domainIdentifier);
+		// check if domain really exist.
+		AbstractDomain domain = retrieveDomain(login, domainIdentifier);
 
-		        boolean cacheWasUsed = true;
-		        UserDetails user = this.getUserCache().getUserFromCache(username);
+		// looking in database for a user.
+		foundUser = userRepository.findByLoginAndDomain(domainIdentifier, login);
+		if (foundUser == null) {
+			logger.debug("Can't find the user in the DB. Searching in LDAP.");
+			// searching in LDAP
+			try {
+				foundUser = userProviderService.searchForAuth(
+						domain.getUserProvider(), login);
+				if (foundUser != null) {
+					// if found we set the domain which belong the user.
+					foundUser.setDomain(domain);
+				} else {
+					Set<AbstractDomain> subdomains = domain.getSubdomain();
+					for (AbstractDomain subdomain : subdomains) {
+						foundUser = userProviderService.searchForAuth(
+								subdomain.getUserProvider(), login);
+						if (foundUser != null) {
+							// if found we set the domain which belong the user.
+							foundUser.setDomain(subdomain);
+							logger.debug("User found and authenticated in domain "
+									+ subdomain.getIdentifier());
+							break;
+						}
+					}
+				}
+			} catch (NamingException e) {
+				logger.error("Couldn't find user during authentication process : "
+						+ e.getMessage());
+				logAuthError(login, domainIdentifier, e.getMessage());
+				throw new AuthenticationServiceException(
+						"Could not authenticate user: " + login);
+			} catch (IOException e) {
+				logger.error("Couldn't find user during authentication process : "
+						+ e.getMessage());
+				logAuthError(login, domainIdentifier, e.getMessage());
+				throw new AuthenticationServiceException(
+						"Could not authenticate user: " + login);
+			}
+		}
 
-		        if (user == null) {
-		            cacheWasUsed = false;
+		if (foundUser == null) {
+			String message = "User not found ! Login : '" + login
+					+ "' in domain : '" + domainIdentifier + "'";
+			logAuthError(login, domainIdentifier, message);
+			throw new UsernameNotFoundException(message);
+		} else {
+			logger.debug("User found in ldap : "
+					+ foundUser.getAccountReprentation() + " (domain:"
+					+ foundUser.getDomainId() + ")");
+		}
+		return foundUser;
+	}
 
-		            try {
-		                user = retrieveUser(username, (UsernamePasswordAuthenticationToken) authentication);
-		            } catch (UsernameNotFoundException notFound) {
-		                if (hideUserNotFoundExceptions) {
-		                    throw new BadCredentialsException(messages.getMessage(
-		                            "AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
-		                } else {
-		                    throw notFound;
-		                }
-		            }
+	private User findUserInAllDomain(String login) {
+		User foundUser = userRepository.findByLogin(login);
+		if (foundUser != null) {
+			// The user was found in the database, we just need to auth against
+			// LDAP.
+			logger.debug("User found in DB : "
+					+ foundUser.getAccountReprentation());
+			logger.debug("The user domain stored in DB was : "
+					+ foundUser.getDomainId());
+		} else {
+			logger.debug("Can't find the user in DB. Searching user in all LDAP domains.");
+			List<AbstractDomain> domains = abstractDomainService
+					.getAllDomains();
+			for (AbstractDomain loopedDomain : domains) {
+				try {
+					foundUser = userProviderService.searchForAuth(
+							loopedDomain.getUserProvider(), login);
+				} catch (NamingException e) {
+					logger.error("Couldn't find user during authentication process : "
+							+ e.getMessage());
+					logAuthError(login, null, e.getMessage());
+					throw new AuthenticationServiceException(
+							"Could not authenticate user: " + login);
+				} catch (IOException e) {
+					logger.error("Couldn't find user during authentication process : "
+							+ e.getMessage());
+					logAuthError(login, null, e.getMessage());
+					throw new AuthenticationServiceException(
+							"Could not authenticate user: " + login);
+				}
+				if (foundUser != null) {
+					foundUser.setDomain(loopedDomain);
+					logger.debug("User found in domain "
+							+ loopedDomain.getIdentifier());
+					break;
+				}
+			}
+		}
 
-		            Assert.notNull(user, "retrieveUser returned null - a violation of the interface contract");
-		        }
+		if (foundUser == null) {
+			String message = "User not found ! Login : " + login;
+			logAuthError(login, null, message);
+			throw new UsernameNotFoundException("No user found for login: "
+					+ message);
+		} else {
+			logger.debug("User found in ldap : "
+					+ foundUser.getAccountReprentation() + " (domain:"
+					+ foundUser.getDomainId() + ")");
+		}
 
-		        this.getPreAuthenticationChecks().check(user);
-		        
-		        try {
-		            additionalAuthenticationChecks(user, (UsernamePasswordAuthenticationToken) authentication);
-		        } catch (AuthenticationException exception) {
-		            if (cacheWasUsed) {
-		                // There was a problem, so try again after checking
-		                // we're using latest data (ie not from the cache)
-		                cacheWasUsed = false;
-		                user = retrieveUser(username, (UsernamePasswordAuthenticationToken) authentication);
-		                additionalAuthenticationChecks(user, (UsernamePasswordAuthenticationToken) authentication);
-		            } else {
-		                throw exception;
-		            }
-		        }
+		return foundUser;
+	}
 
-		        this.getPostAuthenticationChecks().check(user);
+	private AbstractDomain retrieveDomain(String login, String domainIdentifier) {
+		AbstractDomain domain = abstractDomainService
+				.retrieveDomain(domainIdentifier);
+		if (domain == null) {
+			logger.error("Can't find the specified domain : "
+					+ domainIdentifier);
+			logAuthError(login, domainIdentifier, "Bad domain.");
+			throw new BadDomainException("Domain '" + domainIdentifier
+					+ "' not found", domainIdentifier);
+		}
+		return domain;
+	}
 
-		        if (!cacheWasUsed) {
-		            this.getUserCache().putUserInCache(user);
-		        }
+	private void logAuthError(String login, String domainIdentifier,
+			String message) {
+		try {
+			logEntryService.create(new UserLogEntry(login, domainIdentifier,
+					LogAction.USER_AUTH_FAILED, message));
+		} catch (IllegalArgumentException e) {
+			logger.error("Couldn't log an authentication failure : " + message);
+			logger.debug(e.getMessage());
+		} catch (BusinessException e1) {
+			logger.error("Couldn't log an authentication failure : " + message);
+			logger.debug(e1.getMessage());
+		}
+	}
 
-		        Object principalToReturn = user;
+	private void logAuthError(User user, String domainIdentifier, String message) {
+		try {
+			logEntryService.create(new UserLogEntry(user,
+					LogAction.USER_AUTH_FAILED, message, user));
+		} catch (IllegalArgumentException e) {
+			logger.error("Couldn't log an authentication failure : " + message);
+			logger.debug(e.getMessage());
+		} catch (BusinessException e1) {
+			logger.error("Couldn't log an authentication failure : " + message);
+			logger.debug(e1.getMessage());
+		}
+	}
 
-		        if (this.isForcePrincipalAsString()) {
-		            principalToReturn = user.getUsername();
-		        }
+	public Authentication authenticate(Authentication authentication)
+			throws AuthenticationException {
 
-		        return createSuccessAuthentication(principalToReturn, authentication, user);	 }
+		Assert.isInstanceOf(
+				UsernamePasswordAuthenticationToken.class,
+				authentication,
+				messages.getMessage(
+						"AbstractUserDetailsAuthenticationProvider.onlySupports",
+						"Only UsernamePasswordAuthenticationToken is supported"));
+
+		// Determine username
+		String username = (authentication.getPrincipal() == null) ? "NONE_PROVIDED"
+				: authentication.getName();
+
+		boolean cacheWasUsed = true;
+		UserDetails user = this.getUserCache().getUserFromCache(username);
+
+		if (user == null) {
+			cacheWasUsed = false;
+
+			try {
+				user = retrieveUser(username,
+						(UsernamePasswordAuthenticationToken) authentication);
+			} catch (UsernameNotFoundException notFound) {
+				if (hideUserNotFoundExceptions) {
+					throw new BadCredentialsException(
+							messages.getMessage(
+									"AbstractUserDetailsAuthenticationProvider.badCredentials",
+									"Bad credentials"));
+				} else {
+					throw notFound;
+				}
+			}
+
+			Assert.notNull(user,
+					"retrieveUser returned null - a violation of the interface contract");
+		}
+
+		this.getPreAuthenticationChecks().check(user);
+
+		try {
+			additionalAuthenticationChecks(user,
+					(UsernamePasswordAuthenticationToken) authentication);
+		} catch (AuthenticationException exception) {
+			if (cacheWasUsed) {
+				// There was a problem, so try again after checking
+				// we're using latest data (ie not from the cache)
+				cacheWasUsed = false;
+				user = retrieveUser(username,
+						(UsernamePasswordAuthenticationToken) authentication);
+				additionalAuthenticationChecks(user,
+						(UsernamePasswordAuthenticationToken) authentication);
+			} else {
+				throw exception;
+			}
+		}
+
+		this.getPostAuthenticationChecks().check(user);
+
+		if (!cacheWasUsed) {
+			this.getUserCache().putUserInCache(user);
+		}
+
+		Object principalToReturn = user;
+
+		if (this.isForcePrincipalAsString()) {
+			principalToReturn = user.getUsername();
+		}
+
+		return createSuccessAuthentication(principalToReturn, authentication,
+				user);
+	}
 
 }

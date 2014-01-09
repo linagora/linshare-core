@@ -570,7 +570,7 @@ public class JScriptLdapQuery {
 			authenticator.authenticate(authentication);
 		} catch (BadCredentialsException e) {
 			logger.debug("auth failed : BadCredentialsException(" + userDn + ")");
-			return null;
+			throw e;
 		} catch (Exception e) {
 			logger.error("auth failed for unexpected exception: " + e.getMessage());
 			return null;
@@ -578,6 +578,38 @@ public class JScriptLdapQuery {
 		return dnToUser(userDn, false);
 	}
 
+	/**
+	 * search an user for Ldap Authentification process.
+	 * 
+	 * @param login
+	 * @param userPasswd
+	 * @return
+	 * @throws NamingException
+	 */
+	public User searchForAuth(LDAPConnection ldapConnection, String login) throws NamingException {
+
+		String command = domainPattern.getAuthCommand();
+		Map<String, Object> vars = lqlctx.getVariables();
+		vars.put("login", login);
+		if (logger.isDebugEnabled())
+			logLqlQuery(command, login);
+
+		// searching ldap directory with pattern
+		// InvalidSearchFilterException
+		List<String> dnResultList = this.evaluate(command);
+
+		if (dnResultList == null || dnResultList.size() < 1) {
+			return null;
+		} else if (dnResultList.size() > 1) {
+			logger.error("The authentification query had returned more than one user !!!");
+			return null;
+		}
+
+		String userDn = dnResultList.get(0);
+		return dnToUser(userDn, false);
+	}
+	
+	
 	/**
 	 * This method is designed to add expansion characters to the input string.
 	 * 
