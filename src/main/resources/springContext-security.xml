@@ -71,9 +71,13 @@
 		<property name="key" value="springRocks" />
 	</bean>
 
+	<bean id="rememberMeAccountProvider" class="org.linagora.linshare.auth.rememberme.RememberMeAccountProvider">
+		<constructor-arg ref="accountService" />
+	</bean>
+
 	<bean id="rememberMeService" class="org.linagora.linshare.view.tapestry.services.impl.LinshareRememberMeServices">
 		<property name="key" value="springRocks" />
-		<property name="userDetailsService" ref="guestAuthProvider" />
+		<property name="userDetailsService" ref="rememberMeAccountProvider" />
 		<property name="tokenRepository" ref="cookieRepository" />
 		<property name="alwaysRemember" value="false" />
 		<constructor-arg ref="cookieRepository" />
@@ -182,7 +186,7 @@
 	<bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
 		<property name="providers">
 			<list>
-<!-- 				<ref bean="rememberMeAuthenticationProvider" /> -->
+				<ref bean="rememberMeAuthenticationProvider" />
 				<ref bean="daoAuthenticationProvider" />
 				<ref bean="domainAuthenticationProvider" />
 			</list>
@@ -190,25 +194,19 @@
 	</bean>
 
 	<!-- DAO Authentification -->
-	<!-- database accounts : guests, root, technical accounts, ... -->
-	<bean id="guestAuthProvider" class="org.linagora.linshare.auth.DaoAuthProvider">
-		<constructor-arg ref="accountService" />
-	</bean>
-
 	<bean id="passwordEncoderFactory" class="org.linagora.linshare.auth.PasswordEncoderFactory">
 		<constructor-arg value="SHA" />
 	</bean>
 
+	<!-- database accounts : guests, root, technical accounts, ... -->
 	<bean id="daoAuthenticationProvider" class="org.linagora.linshare.auth.dao.DaoAuthenticationProvider">
 		<property name="guestRepository" ref="guestRepository" />
-<!-- 		<property name="userDetailsService" ref="guestAuthProvider" /> -->
 		<property name="passwordEncoder">
 			<bean factory-bean="passwordEncoderFactory" factory-method="getInstance" />
 		</property>
 	</bean>
 
 	<!-- Domain Authentification -->
-
 	<bean id="domainAuthenticationProvider" class="org.linagora.linshare.auth.DomainAuthProviderDao">
 		<property name="userService" ref="userService" />
 		<property name="userRepository" ref="userRepository" />

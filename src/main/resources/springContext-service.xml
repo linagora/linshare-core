@@ -24,7 +24,6 @@
 
 	<bean name="accountService" class="org.linagora.linshare.core.service.impl.AccountServiceImpl">
 		<constructor-arg ref="accountRepository" />
-		<constructor-arg ref="userRepository" />
 	</bean>
 	
 	<bean name="threadService" class="org.linagora.linshare.core.service.impl.ThreadServiceImpl">

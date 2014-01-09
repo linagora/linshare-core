@@ -195,14 +195,11 @@
 	</bean>
 
 	<!-- DAO Authentification -->
-	<bean id="guestAuthProvider" class="org.linagora.linshare.auth.DaoAuthProvider">
-		<constructor-arg ref="accountService" />
-	</bean>
-
 	<bean id="passwordEncoderFactory" class="org.linagora.linshare.auth.PasswordEncoderFactory">
 		<constructor-arg value="SHA" />
 	</bean>
 
+	<!-- database accounts : guests, root, technical accounts, ... -->
 	<bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
 		<property name="guestRepository" ref="guestRepository" />
 		<property name="passwordEncoder">
