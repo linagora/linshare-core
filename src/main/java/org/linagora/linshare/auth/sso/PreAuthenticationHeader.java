@@ -92,7 +92,6 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 		String domainIdentifier = request.getParameter("domain");
 		if (domainIdentifier == null)	domainIdentifier = request.getHeader(domainRequestHeader);
 
-		// TODO FMA support domain injection.
 		if (authenticationHeader != null) {
 			if (!authorizedAddresses.contains(request.getRemoteAddr())) {
 				logger.error("SECURITY ALERT: Unauthorized header value '"

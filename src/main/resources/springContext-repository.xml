@@ -29,6 +29,7 @@
 
 	<bean name="internalRepository" class="org.linagora.linshare.core.repository.hibernate.InternalRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
+		<constructor-arg value="${linshare.multidomain.enable}" />
 	</bean>
 
 	<bean name="rootUserRepository" class="org.linagora.linshare.core.repository.hibernate.RootUserRepositoryImpl">

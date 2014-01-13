@@ -10,8 +10,11 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class InternalRepositoryImpl extends GenericUserRepositoryImpl<Internal> implements InternalRepository {
 
-	public InternalRepositoryImpl(HibernateTemplate hibernateTemplate) {
+	private final boolean multidomain;
+
+	public InternalRepositoryImpl(HibernateTemplate hibernateTemplate, boolean multidomain) {
 		super(hibernateTemplate);
+		this.multidomain = multidomain;
 	}
 
 	@Override
@@ -27,7 +30,7 @@ public class InternalRepositoryImpl extends GenericUserRepositoryImpl<Internal> 
 			throw e;
 		}
 
-		if (u == null) {
+		if (u == null && multidomain) {
 			try {
 				u = findByLdapUid(login);
 			} catch (IllegalStateException e) {
@@ -59,7 +62,7 @@ public class InternalRepositoryImpl extends GenericUserRepositoryImpl<Internal> 
 	@Override
 	public Internal findByLoginAndDomain(String domain, String login) {
 		Internal u = super.findByMailAndDomain(domain, login);
-		if (u == null) {
+		if (u == null && multidomain) {
 			u = findByDomainAndLdapUid(domain, login);
 		}
 		return u;

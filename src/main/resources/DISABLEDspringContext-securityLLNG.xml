@@ -96,7 +96,7 @@
 
 
 	<bean id="authenticationProcessingFilter" class="org.linagora.linshare.auth.DomainAuthenticationProcessingFilter">
-
+		<property name="domainRequestHeader" value="${sso.header.domain}" />
 		<property name="authenticationFailureHandler" ref="failureHandler" />
 		<property name="authenticationSuccessHandler" ref="successHandler" />
 		<property name="filterProcessesUrl" value="/j_security_check" />
