@@ -102,7 +102,7 @@
     <!-- Main content -->
 
     <div id="content">
-        <h1>${message:pages.thread.tree.title} : ${threadName}</h1>
+        <h1 title="${threadName}"><span class="truncate">${threadName}</span></h1>
 
         <t:messagePanel />
         <t:businessMessagesDisplayer />

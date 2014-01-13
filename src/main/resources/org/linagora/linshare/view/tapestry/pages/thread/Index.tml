@@ -37,7 +37,11 @@
                 </t:if>
                 <t:grid source="threads" row="current" include="name, creationDate, modificationDate" add="countDocuments" rowsPerPage="10">
                     <p:nameCell>
-                        <t:actionlink t:id="showThreadContent" context="current.lsUuid"> ${current.name}</t:actionlink>
+		        <span class="truncate">
+                            <t:actionlink t:id="showThreadContent" context="current.lsUuid" title="${current.name}">
+			        ${current.name}
+			    </t:actionlink>
+			</span>
                     </p:nameCell>
                     <p:modificationDateCell>
                         <span class="modificationDate">${modificationDate}</span>

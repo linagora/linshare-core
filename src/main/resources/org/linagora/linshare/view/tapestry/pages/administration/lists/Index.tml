@@ -45,7 +45,9 @@
             <p:else>
                 <t:grid source="lists" rowsPerPage="10" include="identifier, description , isPublic" add="ownership,edit,delete" row="list">
                     <t:parameter name="identifierCell">
-                        <t:pageLink page="lists/DisplayMailingList" context="list.uuid">${list.identifier}</t:pageLink>
+		        <span class="truncate">
+                            <t:pageLink page="lists/DisplayMailingList" context="list.uuid" title="${list.identifier}">${list.identifier}</t:pageLink>
+		        </span>
                     </t:parameter>
                     <t:parameter name="ownershipCell">
                         ${list.owner.firstName} ${list.owner.lastName}
