@@ -157,7 +157,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		logger.debug("createSharingWithMail:Begin");
 		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,documents,recipients, expirationDate);
 		
-		//Sending the mails
+		// Sending the mails
 		List<UserVo> successfullRecipient = new ArrayList<UserVo>();
 		for (ShareDocumentVo successfullSharing : result.getSuccessesItem()) {
 			logger.debug("share:result:" + result);
@@ -168,15 +168,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		
 		User owner_ = userRepository.findByLsUuid(owner.getLogin());
-		
-		
 		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
-		
-		List<String> documentNames = new ArrayList<String>();
-		for (DocumentVo documentVo : documents) {
-			documentNames.add(documentVo.getFileName());
-		}
-		
+
 		for(UserVo userVo : successfullRecipient){
 			logger.debug("Sending sharing notification to user " + userVo.getLogin());
 			User recipient = userRepository.findByLsUuid(userVo.getLogin());
