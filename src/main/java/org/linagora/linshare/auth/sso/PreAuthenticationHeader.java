@@ -66,6 +66,8 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 
 	private String principalRequestHeader;
 
+	private String domainRequestHeader;
+
 	/** List of IP / DNS hostname */
 	private List<String> authorizedAddresses;
 
@@ -88,7 +90,7 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 		// Do not throw exception if header is not set
 		String authenticationHeader = request.getHeader(principalRequestHeader);
 		String domainIdentifier = request.getParameter("domain");
-//		domainIdentifier = request.getHeader("Auth-Domain");
+		if (domainIdentifier == null)	domainIdentifier = request.getHeader(domainRequestHeader);
 
 		// TODO FMA support domain injection.
 		if (authenticationHeader != null) {
@@ -139,6 +141,12 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 		Assert.hasText(principalRequestHeader,
 				"principalRequestHeader must not be empty or null");
 		this.principalRequestHeader = principalRequestHeader;
+	}
+
+	public void setDomainRequestHeader(String domainRequestHeader) {
+		Assert.hasText(domainRequestHeader,
+				"domainRequestHeader must not be empty or null");
+		this.domainRequestHeader = domainRequestHeader;
 	}
 
 	public void setAuthorizedAddresses(List<String> authorizedAddresses) {
