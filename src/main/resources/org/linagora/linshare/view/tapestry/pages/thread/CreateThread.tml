@@ -22,7 +22,7 @@
                 <br/>
                 <div id="thread_creation_form">
                     <t:label for="name">${message:pages.thread.form.name} : </t:label>
-                    <t:textfield t:id="name" value="name" t:size="50" validate="required"/>
+                    <t:textfield t:id="name" value="name" t:size="50" validate="required,maxlength=255"/>
                 </div>
 
                 <br/>
