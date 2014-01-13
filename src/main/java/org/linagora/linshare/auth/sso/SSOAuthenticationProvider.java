@@ -31,18 +31,16 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.auth;
+package org.linagora.linshare.auth.sso;
 
-import org.springframework.dao.DataAccessException;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
-/**
- * Helps Managing guests and root administrator authentication.
- * 
- */
-public class DaoCasAuthProvider implements UserDetailsService {
+public class SSOAuthenticationProvider implements AuthenticationProvider {
 
 	private UserDetailsProvider userDetailsProvider;
 
@@ -50,14 +48,17 @@ public class DaoCasAuthProvider implements UserDetailsService {
 		this.userDetailsProvider = userDetailsProvider;
 	}
 
-	public UserDetails loadUserByUsername(String username)
-			throws UsernameNotFoundException, DataAccessException {
-
-		if (username == null || username.length() == 0) {
-			throw new UsernameNotFoundException("username must not be null");
-		}
-
-		return userDetailsProvider.getUserDetails(username);
+	public Authentication authenticate(Authentication authentication)
+			throws AuthenticationException {
+		final String userName = (String) authentication.getPrincipal();
+		UserDetails user = userDetailsProvider.getUserDetails(userName);
+		return new UsernamePasswordAuthenticationToken(user,
+				authentication.getCredentials(), user.getAuthorities());
 	}
 
+	@SuppressWarnings("rawtypes")
+	public boolean supports(Class authentication) {
+		return (PreAuthenticatedAuthenticationToken.class)
+				.isAssignableFrom(authentication);
+	}
 }

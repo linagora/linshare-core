@@ -34,29 +34,37 @@
 package org.linagora.linshare.core.facade.impl;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AccountFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.UserService;
 
 public class AccountFacadeImpl implements AccountFacade {
 	
 	private final AccountService accountService;
 
-	public AccountFacadeImpl(AccountService accountService) {
+	private final UserService userService;
+
+	public AccountFacadeImpl(AccountService accountService, UserService userService) {
 		super();
 		this.accountService = accountService;
+		this.userService = userService;
 	}
 
 	@Override
-	public UserVo loadUserDetails(String uid) throws BusinessException {
-//		Account account = userService.searchAndCreateUserEntityFromUnkownDirectory(mail);
-		Account account = accountService.findByLsUuid(uid);
+	public UserVo loadUserDetails(String uuid) throws BusinessException {
+		Account account = accountService.findByLsUuid(uuid);
     	if (account != null) {
     		return new UserVo(account);
     	}
     	return null;
 	}
 	
-
+	@Override
+	public User findOrCreateUser(String domainIdentifier, String mail)
+			throws BusinessException {
+		return userService.findOrCreateUser(mail, domainIdentifier);
+	}
 }

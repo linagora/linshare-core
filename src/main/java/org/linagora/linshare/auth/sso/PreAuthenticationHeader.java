@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.auth;
+package org.linagora.linshare.auth.sso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +64,6 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 	public PreAuthenticationHeader(String authorizedAddressesList) {
 		super();
 		if (authorizedAddressesList != null) {
-			@SuppressWarnings("unchecked")
 			List<String> asList = Arrays.asList(authorizedAddressesList
 					.split(","));
 			this.authorizedAddresses = asList;
@@ -77,6 +76,7 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 	protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
 		// Do not throw exception if header is not set
 		String authenticationHeader = request.getHeader(principalRequestHeader);
+		// TODO FMA support domain injection.
 		if (authenticationHeader != null) {
 			if (!authorizedAddresses.contains(request.getRemoteAddr())) {
 				logger.error("SECURITY ALERT: Unauthorized header value '"

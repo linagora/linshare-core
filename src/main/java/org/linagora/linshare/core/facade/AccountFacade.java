@@ -33,12 +33,14 @@
  */
 package org.linagora.linshare.core.facade;
 
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
-
 public interface AccountFacade {
 
-    UserVo loadUserDetails(String uid) throws BusinessException;
-	
+	UserVo loadUserDetails(String uuid) throws BusinessException;
+
+	User findOrCreateUser(String domainIdentifier, String mail)
+			throws BusinessException;
 }

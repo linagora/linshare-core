@@ -31,47 +31,34 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.auth;
+package org.linagora.linshare.auth.cas;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.entities.Role;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.service.UserService;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.linagora.linshare.auth.sso.UserDetailsProvider;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public class UserDetailsProvider {
+/**
+ * Helps Managing guests and root administrator authentication.
+ * 
+ */
+public class DaoCasAuthProvider implements UserDetailsService {
 
-	private UserService userService;
+	private UserDetailsProvider userDetailsProvider;
 
-	public void setUserService(UserService userService) {
-		this.userService = userService;
+	public void setUserDetailsProvider(UserDetailsProvider userDetailsProvider) {
+		this.userDetailsProvider = userDetailsProvider;
 	}
 
-	public UserDetails getUserDetails(String userName) {
-		org.linagora.linshare.core.domain.entities.User user;
-		try {
-			user = userService
-					.searchAndCreateUserEntityFromUnkownDirectory(userName);
-		} catch (TechnicalException e) {
-			throw new UsernameNotFoundException("Cannot load user in domains",
-					e.getCause());
-		} catch (BusinessException e) {
-			throw new UsernameNotFoundException("Cannot load user in domains",
-					e.getCause());
+	public UserDetails loadUserByUsername(String username)
+			throws UsernameNotFoundException, DataAccessException {
+
+		if (username == null || username.length() == 0) {
+			throw new UsernameNotFoundException("username must not be null");
 		}
 
-		if (user == null || Role.SYSTEM.equals(user.getRole())) {
-			throw new UsernameNotFoundException("User not found");
-		}
-
-		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
-		return new User(user.getLogin(), "", true, true, true, true,
-				grantedAuthorities);
+		return userDetailsProvider.getUserDetails(username);
 	}
 
 }

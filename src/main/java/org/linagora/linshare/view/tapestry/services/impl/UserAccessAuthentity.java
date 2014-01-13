@@ -52,54 +52,58 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 public class UserAccessAuthentity  {
 
-    private final AccountFacade accountFacade;
-    private final ApplicationStateManager applicationStateManager;
-    private final LogEntryService logEntryService;
-    
+	private final AccountFacade accountFacade;
+
+	private final ApplicationStateManager applicationStateManager;
+
+	private final LogEntryService logEntryService;
+
 	private static final Logger logger = LoggerFactory.getLogger(UserAccessAuthentity.class);
 
-    public UserAccessAuthentity(AccountFacade accountFacade, ApplicationStateManager applicationStateManager,
-    		LogEntryService logEntryService) {
-        this.accountFacade = accountFacade;
-        this.applicationStateManager = applicationStateManager;
-        this.logEntryService = logEntryService;
-    }
+	public UserAccessAuthentity(AccountFacade accountFacade, ApplicationStateManager applicationStateManager,
+			LogEntryService logEntryService) {
+		this.accountFacade = accountFacade;
+		this.applicationStateManager = applicationStateManager;
+		this.logEntryService = logEntryService;
+	}
 
-    public void processAuth() {
-    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	public void processAuth() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    	if (authentication != null) {
-    		// If we are logged
-    		
-    		if (applicationStateManager.getIfExists(UserVo.class) == null) {
-    			// fetch user if not existing
-    			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-    			logger.debug("processAuth with " + userDetails.getUsername());
-    			UserVo userVo = null;
-    			try {
-    				userVo = accountFacade.loadUserDetails(userDetails.getUsername().toLowerCase());
-    				generateAuthLogEntry(userVo);
-    				applicationStateManager.set(UserVo.class, userVo);
-    			} catch (BusinessException e) {
-    				logger.error("Error while trying to find user details", e);
-    			}
-    		} else {
-    			// if the login doesn't match the session user email, change the user
-    			if (!applicationStateManager.getIfExists(UserVo.class).getMail().equalsIgnoreCase(
-    					((UserDetails)(authentication.getPrincipal())).getUsername())) {
-    				// fetch user 
-    				UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-    				UserVo userVo = null;
-    				try {
-    					userVo = accountFacade.loadUserDetails(userDetails.getUsername().toLowerCase());
-    					applicationStateManager.set(UserVo.class, userVo);
-    				} catch (BusinessException e) {
-    					logger.error("Error while trying to find user details", e);
-    				}
-    			}
-    		}
-    	}
-    }
+		if (authentication != null) {
+			// If we are logged
+
+			if (applicationStateManager.getIfExists(UserVo.class) == null) {
+				// fetch user if not existing
+				UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+				String username = userDetails.getUsername();
+				logger.debug("processAuth with " + username);
+				UserVo userVo = null;
+				try {
+					userVo = accountFacade.loadUserDetails(username.toLowerCase());
+					generateAuthLogEntry(userVo);
+					applicationStateManager.set(UserVo.class, userVo);
+				} catch (BusinessException e) {
+					logger.error("Error while trying to find user details", e);
+				}
+			} else {
+				// if the login doesn't match the session user email, change the user
+				String lsUuid = applicationStateManager.getIfExists(UserVo.class).getLsUuid();
+				UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+				String username = userDetails.getUsername();
+				if (!lsUuid.equalsIgnoreCase(username)) {
+					// fetch user 
+					UserVo userVo = null;
+					try {
+						userVo = accountFacade.loadUserDetails(username.toLowerCase());
+						applicationStateManager.set(UserVo.class, userVo);
+					} catch (BusinessException e) {
+						logger.error("Error while trying to find user details", e);
+					}
+				}
+			}
+		}
+	}
 
 	private void generateAuthLogEntry(UserVo userVo) {
 		UserLogEntry logEntry = new UserLogEntry(userVo, LogAction.USER_AUTH, "Successfull authentification");
@@ -111,5 +115,4 @@ public class UserAccessAuthentity  {
 			logger.error("Error while trying to log user successfull auth", e);
 		}
 	}
-
 }

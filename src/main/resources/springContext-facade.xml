@@ -10,6 +10,7 @@
 
 	<bean name="accountFacade" class="org.linagora.linshare.core.facade.impl.AccountFacadeImpl">
 		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userService" />
 	</bean>
 	
 	

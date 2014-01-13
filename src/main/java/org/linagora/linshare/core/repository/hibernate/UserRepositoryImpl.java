@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.List;
-
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.User;
@@ -57,64 +55,17 @@ public class UserRepositoryImpl extends GenericUserRepositoryImpl<User>
 
 	@Override
 	public User findByLogin(String login) {
-		User u = null;
 		try {
-			u = super.findByMail(login);
+			return super.findByMail(login);
 		} catch (IllegalStateException e) {
-			logger.error("you are looking for an account using mail as login : '" + login + "' but your login is not unique, same account logins in different domains.");;
-		}
-
-		if (u == null) {
-			try {
-				u = findByLdapUid(login);
-			} catch (IllegalStateException e) {
-				logger.error("you are looking for an account using LDAP uid as login : '" + login + "' but your login is not unique, same account logins in different domains.");;
-			}
-		}
-		return u;
-	}
-
-	private User findByLdapUid(String ldapUid) {
-		DetachedCriteria criteria = DetachedCriteria
-				.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("ldapUid", ldapUid).ignoreCase());
-		criteria.add(Restrictions.eq("destroyed", false));
-		List<User> users = findByCriteria(criteria);
-
-		if (users == null || users.isEmpty()) {
-			return null;
-		} else if (users.size() == 1) {
-			return users.get(0);
-		} else {
-			throw new IllegalStateException("Ldap uid must be unique");
+			logger.error("you are looking for account using login '" + login + "' but your login is not unique, same account logins in different domains.");;
+			logger.debug("error: " + e.getMessage());
+			throw e;
 		}
 	}
 
 	@Override
 	public User findByLoginAndDomain(String domain, String login) {
-		User u = super.findByMailAndDomain(domain, login);
-		if (u == null) {
-			u = findByDomainAndLdapUid(domain, login);
-		}
-		return u;
+		return super.findByMailAndDomain(domain, login);
 	}
-
-	private User findByDomainAndLdapUid(String domain, String ldapUid) {
-		DetachedCriteria criteria = DetachedCriteria
-				.forClass(getPersistentClass());
-		criteria.createAlias("domain", "domain");
-		criteria.add(Restrictions.eq("domain.identifier", domain));
-		criteria.add(Restrictions.eq("ldapUid", ldapUid).ignoreCase());
-		criteria.add(Restrictions.eq("destroyed", false));
-		List<User> users = findByCriteria(criteria);
-
-		if (users == null || users.isEmpty()) {
-			return null;
-		} else if (users.size() == 1) {
-			return users.get(0);
-		} else {
-			throw new IllegalStateException("Ldap uid must be unique");
-		}
-	}
-
 }

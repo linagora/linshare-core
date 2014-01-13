@@ -64,5 +64,4 @@ public class AccountServiceImpl implements AccountService {
 	public Account update(Account account) throws BusinessException {
 		return accountRepository.update(account);
 	}
-
 }

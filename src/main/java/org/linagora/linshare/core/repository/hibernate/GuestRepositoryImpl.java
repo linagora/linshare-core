@@ -124,9 +124,12 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		try {
 			return super.findByMail(login);
 		} catch (IllegalStateException e) {
-			logger.error("you are looking for account using login '" + login + "' but your login is not unique, same account logins in different domains.");;
+			logger.error("you are looking for account using login '"
+					+ login
+					+ "' but your login is not unique, same account logins in different domains.");;
+			logger.debug("error: " + e.getMessage());
+			throw e;
 		}
-		return null;
 	}
 
 	@Override

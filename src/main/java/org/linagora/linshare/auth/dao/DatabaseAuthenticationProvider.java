@@ -18,7 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
 
-public class DaoAuthenticationProvider extends
+public class DatabaseAuthenticationProvider extends
 		AbstractUserDetailsAuthenticationProvider {
 
 	// ~ Instance fields
@@ -79,7 +79,12 @@ public class DaoAuthenticationProvider extends
 			String domain = (String) details;
 			if (domain == null) {
 				// looking into the database for a user with his login ie username (could be a mail or a LDAP uid)
-				account = guestRepository.findByLogin(username);
+				try {
+					account = guestRepository.findByLogin(username);
+				} catch (IllegalStateException e) {
+					throw new AuthenticationServiceException(
+							"Could not authenticate user: " + username);
+				}
 			} else {
 				// TODO FMA Auth multi domain for guests
 				account = guestRepository.findByLoginAndDomain(domain, username);

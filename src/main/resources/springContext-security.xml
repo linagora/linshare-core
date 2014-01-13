@@ -187,8 +187,8 @@
 		<property name="providers">
 			<list>
 				<ref bean="rememberMeAuthenticationProvider" />
-				<ref bean="daoAuthenticationProvider" />
-				<ref bean="domainAuthenticationProvider" />
+				<ref bean="databaseAuthenticationProvider" />
+				<ref bean="ldapAuthenticationProvider" />
 			</list>
 		</property>
 	</bean>
@@ -199,7 +199,7 @@
 	</bean>
 
 	<!-- database accounts : guests, root, technical accounts, ... -->
-	<bean id="daoAuthenticationProvider" class="org.linagora.linshare.auth.dao.DaoAuthenticationProvider">
+	<bean id="databaseAuthenticationProvider" class="org.linagora.linshare.auth.dao.DatabaseAuthenticationProvider">
 		<property name="guestRepository" ref="guestRepository" />
 		<property name="passwordEncoder">
 			<bean factory-bean="passwordEncoderFactory" factory-method="getInstance" />
@@ -207,9 +207,14 @@
 	</bean>
 
 	<!-- Domain Authentification -->
-	<bean id="domainAuthenticationProvider" class="org.linagora.linshare.auth.DomainAuthProviderDao">
-		<property name="userService" ref="userService" />
-		<property name="userRepository" ref="userRepository" />
+	<bean id="ldapAuthenticationProvider" class="org.linagora.linshare.auth.dao.LdapAuthenticationProvider">
+		<property name="accountFacade" ref="accountFacade" />
+		<property name="userProviderService" ref="userProviderService" />
+		<property name="userDetailsProvider" ref="ldapUserDetailsProvider" />
+	</bean>
+
+	<bean id="ldapUserDetailsProvider" class="org.linagora.linshare.auth.dao.UserDetailsProvider">
+		<property name="userRepository" ref="internalRepository" />
 		<property name="abstractDomainService" ref="abstractDomainService" />
 		<property name="logEntryService" ref="logEntryService" />
 		<property name="userProviderService" ref="userProviderService" />
