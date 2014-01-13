@@ -1024,7 +1024,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	private String getDirectDownloadLink(User recipient, DocumentVo doc) {
 		final String path = getLinShareUrlForAUserRecipient(recipient);
 		final String sep = path.endsWith("/") ? "" : "/";
-		final String dl = path + sep + "files/index.listdocument.download/";
+		final String dl = path + sep + "index.listsharedocument.download/";
 		return dl + doc.getIdentifier();
 	}
 	
