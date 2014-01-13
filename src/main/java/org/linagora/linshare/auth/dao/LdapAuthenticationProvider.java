@@ -63,7 +63,7 @@ public class LdapAuthenticationProvider extends
 
 	private UserProviderService userProviderService;
 	
-	private UserDetailsProvider userDetailsProvider;
+	private LdapUserDetailsProvider ldapUserDetailsProvider;
 
 	public AccountFacade getAccountFacade() {
 		return accountFacade;
@@ -73,20 +73,12 @@ public class LdapAuthenticationProvider extends
 		this.accountFacade = accountFacade;
 	}
 
-	public UserProviderService getUserProviderService() {
-		return userProviderService;
-	}
-
 	public void setUserProviderService(UserProviderService userProviderService) {
 		this.userProviderService = userProviderService;
 	}
 
-	public UserDetailsProvider getUserDetailsProvider() {
-		return userDetailsProvider;
-	}
-
-	public void setUserDetailsProvider(UserDetailsProvider userDetailsProvider) {
-		this.userDetailsProvider = userDetailsProvider;
+	public void setLdapUserDetailsProvider(LdapUserDetailsProvider userDetailsProvider) {
+		this.ldapUserDetailsProvider = userDetailsProvider;
 	}
 
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
@@ -107,7 +99,7 @@ public class LdapAuthenticationProvider extends
 		String password = (String) authentication.getCredentials();
 		if (password.isEmpty()) {
 			String message = "User password is empty, authentification failed";
-			userDetailsProvider.logAuthError(login, domainIdentifier, message);
+			ldapUserDetailsProvider.logAuthError(login, domainIdentifier, message);
 			logger.error(message);
 			throw new BadCredentialsException(messages.getMessage(
 					"AbstractUserDetailsAuthenticationProvider.badCredentials",
@@ -120,38 +112,19 @@ public class LdapAuthenticationProvider extends
 			domainIdentifier = (String) authentication.getDetails();
 		}
 
-		foundUser = userDetailsProvider.retrieveUser(domainIdentifier, login);
-
-		// Check if it is a guest. Should not happen.
-		if (!foundUser.isInternal()) {
-			logger.debug("Guest found during ldap authentification process.");
-			userDetailsProvider.logAuthError(foundUser, domainIdentifier, "User not found.");
-			String message = "Guest found : "
-					+ foundUser.getAccountReprentation() + " in domain : '"
-					+ domainIdentifier + "'";
-			userDetailsProvider.logAuthError(login, domainIdentifier, message);
-			throw new UsernameNotFoundException(message);
-		}
-
-		if (foundUser.getDomain() == null) {
-			String message = "Bad credentials";
-			userDetailsProvider.logAuthError(foundUser, domainIdentifier, message);
-			logger.error("The user found in the database contain a null domain reference.");
-			throw new BadCredentialsException("Could not authenticate user: "
-					+ login);
-		}
+		foundUser = ldapUserDetailsProvider.retrieveUser(domainIdentifier, login);
 
 		try {
 			userProviderService.auth(foundUser.getDomain().getUserProvider(),
 					foundUser.getMail(), password);
 		} catch (BadCredentialsException e1) {
 			String message = "Bad credentials.";
-			userDetailsProvider.logAuthError(foundUser, foundUser.getDomainId(), message);
+			ldapUserDetailsProvider.logAuthError(foundUser, foundUser.getDomainId(), message);
 			logger.error(message);
 			throw new BadCredentialsException("Could not authenticate user: "
 					+ login);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 			throw new AuthenticationServiceException(
 					"Could not authenticate user : " + foundUser.getDomainId()
 							+ " : " + foundUser.getMail(), e);

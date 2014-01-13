@@ -1,10 +1,11 @@
 package org.linagora.linshare.auth.dao;
 
+import java.util.List;
+
 import org.linagora.linshare.auth.RoleProvider;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Role;
-import org.linagora.linshare.core.repository.GuestRepository;
-import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,7 +14,7 @@ import org.springframework.security.authentication.dao.AbstractUserDetailsAuthen
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.authentication.encoding.PlaintextPasswordEncoder;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
@@ -26,7 +27,7 @@ public class DatabaseAuthenticationProvider extends
 
 	private PasswordEncoder passwordEncoder = new PlaintextPasswordEncoder();
 
-	private GuestRepository guestRepository;
+	private UserRepository<User> userRepository;
 
 	// ~ Methods
 	// ========================================================================================================
@@ -57,7 +58,7 @@ public class DatabaseAuthenticationProvider extends
 	}
 
 	protected void doAfterPropertiesSet() throws Exception {
-		Assert.notNull(this.guestRepository,
+		Assert.notNull(this.userRepository,
 				"A userService must be set");
 	}
 
@@ -73,23 +74,23 @@ public class DatabaseAuthenticationProvider extends
 
 		try {
 			String password = null;
-			Account account = null;
+			User account = null;
 			
 			Object details = authentication.getDetails();
 			String domain = (String) details;
 			if (domain == null) {
 				// looking into the database for a user with his login ie username (could be a mail or a LDAP uid)
 				try {
-					account = guestRepository.findByLogin(username);
+					account = userRepository.findByLogin(username);
 				} catch (IllegalStateException e) {
 					throw new AuthenticationServiceException(
 							"Could not authenticate user: " + username);
 				}
 			} else {
 				// TODO FMA Auth multi domain for guests
-				account = guestRepository.findByLoginAndDomain(domain, username);
+				account = userRepository.findByLoginAndDomain(domain, username);
 			}
-			
+
 			if (account != null) {
 				logger.debug("Account in database found : " + account.getAccountReprentation());
 				password = account.getPassword();
@@ -105,8 +106,10 @@ public class DatabaseAuthenticationProvider extends
 				throw new UsernameNotFoundException("Account not found");
 			}
 
-			loadedUser = new User(account.getLsUuid(), password, true, true, true, true,
-					RoleProvider.getRoles(account));
+			List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(account);
+			loadedUser = new org.springframework.security.core.userdetails.User(
+					account.getLsUuid(), password, true, true, true, true,
+					grantedAuthorities);
 
 		} catch (DataAccessException repositoryProblem) {
 			throw new AuthenticationServiceException(
@@ -123,11 +126,7 @@ public class DatabaseAuthenticationProvider extends
 		return passwordEncoder;
 	}
 
-	public GuestRepository getGuestRepository() {
-		return guestRepository;
-	}
-
-	public void setGuestRepository(GuestRepository guestRepository) {
-		this.guestRepository = guestRepository;
+	public void setUserRepository(UserRepository<User> userRepository) {
+		this.userRepository = userRepository;
 	}
 }

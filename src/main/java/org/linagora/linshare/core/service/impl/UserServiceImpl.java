@@ -1019,43 +1019,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User searchAndCreateUserEntityFromUnkownDirectory(String mail) throws BusinessException {
-
-		User userDB = userRepository.findByMail(mail);
-		if (userDB == null) {
-			// search user mail in all directories
-			List<User> users = abstractDomainService.searchUserRecursivelyWithoutRestriction(mail);
-
-			if (users != null) {
-				if (users.size() == 1) {
-					User userFound = users.get(0);
-					logger.debug("User '" + mail + "'found in domain : " + userFound.getDomainId());
-					saveOrUpdateUser(userFound);
-					return userFound;
-
-				} else if (users.size() > 1) {
-					logger.error("Impossible to create an user entity from unknown domain. Multiple results with mail : " + mail);
-				} else if (logger.isDebugEnabled()) {
-					logger.debug("Impossible to create an user entity from unknown domain. No result with mail : " + mail);
-				}
-			} else if (logger.isDebugEnabled()) {
-				logger.error("Impossible to create an user entity from unknown domain. The searchUserRecursivelyWithoutRestriction method returns null.");
-			}
-			return null;
-		} else {
-			// The user was found in the database, but we have to check if this
-			// user is still in the ldap.
-			logger.debug("User '" + userDB.getMail() + "'found in database. Checking if he is still in the ldap");
-			if (abstractDomainService.isUserExist(userDB.getDomain(), userDB.getMail())) {
-				// the user still exists in the ldap, it is ok.
-				return userDB;
-			}
-			logger.warn("PreAuthenticationHeader (SSO) is looking for someone who does not belong to the ldap domain anymore.");
-			return null;
-		}
-	}
-
-	@Override
 	public User searchAndCreateUserEntityFromDirectory(String domainIdentifier, String mail) throws BusinessException {
 
 		logger.debug("domainIdentifier : " + domainIdentifier);
@@ -1072,9 +1035,7 @@ public class UserServiceImpl implements UserService {
 		}
 		return null;
 	}
-	
-	
-	
+
 	/**
 	 * 
 	 * New implementation created to not use old tapestry version.
@@ -1082,7 +1043,6 @@ public class UserServiceImpl implements UserService {
 	 * 
 	 * 
 	 */
-
 	
 	private User find(User tmpUser, String domainId) throws BusinessException {
 		User user = null;

@@ -791,24 +791,6 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
-	
-	@Test
-	public void testSearchAndCreateUserEntityFromUnkownDirectory() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
-		user1.setDomain(rootDomain);
-		
-		Assert.assertNull(userService.findUnkownUserInDB("user1@linpki.org"));
-		
-		userService.searchAndCreateUserEntityFromUnkownDirectory("user1@linpki.org");
-		
-		Assert.assertNotNull(userService.findUnkownUserInDB("user1@linpki.org"));
-		
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	
 	@Test 
 	public void testSearchAndCreateUserEntityFromDirectory() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);

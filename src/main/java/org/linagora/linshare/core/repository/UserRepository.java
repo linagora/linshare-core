@@ -62,33 +62,7 @@ public interface UserRepository<T extends User> extends AccountRepository<T> {
      */
     List<String> findMails(String beginWith);
     
-//    /**
-//     * Remove the document represented by its uuid for the user 
-//     * @param login of user
-//     * @param uuid of document
-//     */
-//    public void removeOwnerDocumentForUser(String login,String uuid) throws BusinessException;
-//    
-//    /**
-//     * Remove a file sent by the user matches by his login.
-//     * @param login the login of the user.
-//     * @param uuid the uuid of the document.
-//     */
-//    public void removeSentDocument(String login,String uuid) throws BusinessException;
-//    
-//    /**
-//     * Remove a file received by the user matches by his login.
-//     * @param login the login of the user.
-//     * @param uuid the uuid of the document.
-//     */
-//    public void removeReceivedDocument(String login,String uuid) throws BusinessException;
-//
-//    /**
-//     * Find account occupation by criteria on the user
-//     */
 	List<T> findByCriteria(AccountOccupationCriteriaBean criteria);
-//
-//	List<T> findByDomain(String domain);
 
 	/** Find a user using its login.
 	 * @param login : ie mail or ldap uid.

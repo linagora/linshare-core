@@ -31,6 +31,10 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
+	<bean name="rootUserRepository" class="org.linagora.linshare.core.repository.hibernate.RootUserRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
 	<bean name="documentRepository" class="org.linagora.linshare.core.repository.hibernate.DocumentRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>

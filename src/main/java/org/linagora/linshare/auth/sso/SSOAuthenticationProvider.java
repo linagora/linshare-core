@@ -33,27 +33,62 @@
  */
 package org.linagora.linshare.auth.sso;
 
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.linagora.linshare.auth.RoleProvider;
+import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.AccountFacade;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 public class SSOAuthenticationProvider implements AuthenticationProvider {
 
-	private UserDetailsProvider userDetailsProvider;
+	private final static Log logger = LogFactory
+			.getLog(SSOAuthenticationProvider.class);
 
-	public void setUserDetailsProvider(UserDetailsProvider userDetailsProvider) {
-		this.userDetailsProvider = userDetailsProvider;
+	private AccountFacade accountFacade;
+
+	public void setAccountFacade(AccountFacade accountFacade) {
+		this.accountFacade = accountFacade;
 	}
 
 	public Authentication authenticate(Authentication authentication)
 			throws AuthenticationException {
+
+		// Getting user name from context
 		final String userName = (String) authentication.getPrincipal();
-		UserDetails user = userDetailsProvider.getUserDetails(userName);
-		return new UsernamePasswordAuthenticationToken(user,
-				authentication.getCredentials(), user.getAuthorities());
+		logger.debug("Retrieving user detail for sso authentication with login : "
+				+ userName);
+
+		UserVo foundUser = null;
+		try {
+			foundUser = accountFacade.loadUserDetails(userName);
+		} catch (BusinessException e) {
+			logger.error(e);
+			throw new AuthenticationServiceException(
+					"Could not find user account : " + userName, e);
+		}
+
+		if (foundUser == null) {
+			return null;
+		}
+
+		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(foundUser);
+		UserDetails userDetail = new org.springframework.security.core.userdetails.User(
+				foundUser.getLsUuid(), "", true, true, true, true,
+				grantedAuthorities);
+
+		return new UsernamePasswordAuthenticationToken(userDetail,
+				authentication.getCredentials(), grantedAuthorities);
 	}
 
 	@SuppressWarnings("rawtypes")

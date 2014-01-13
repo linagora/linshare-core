@@ -53,22 +53,23 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	public GenericUserRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
-	
 
+	/* TODO : check call hierarchy to remove research by mail only. too dangerous. */
 	@Override
 	public U findByMail(String mail) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("mail",mail).ignoreCase());
-		criteria.add(Restrictions.eq("destroyed",false));
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("mail", mail).ignoreCase());
+		criteria.add(Restrictions.eq("destroyed", false));
 		List<U> users = findByCriteria(criteria);
-		
-	        if (users == null || users.isEmpty()) {
-	            return null;
-	        } else if (users.size() == 1) {
-	            return users.get(0);
-	        } else {
-	            throw new IllegalStateException("Mail must be unique");
-	        }
+
+		if (users == null || users.isEmpty()) {
+			return null;
+		} else if (users.size() == 1) {
+			return users.get(0);
+		} else {
+			throw new IllegalStateException("Mail must be unique");
+		}
 	}
 	
 	@Override
@@ -129,62 +130,6 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 		
 		return getHibernateTemplate().findByCriteria(criteria);
 	}
-	
-	
-//
-//	public void removeOwnerDocumentForUser(String login, String uuid)
-//			throws BusinessException {
-//		U user=findByLogin(login);
-//		
-//		Set<Document> documents=user.getDocuments();
-//				
-//		Document documentTemp=null;
-//		for(Document document:documents){
-//			if(document.getIdentifier().equals(uuid)){
-//				documentTemp=document;
-//				break;
-//			}
-//		}
-//		user.deleteDocument(documentTemp);
-//		
-//		update(user);
-//
-//	}
-//
-//	public void removeReceivedDocument(String login, String uuid)
-//			throws BusinessException {
-//		U user=findByLogin(login);
-//		
-//		List<Share> shares=new ArrayList<Share>(user.getReceivedShares());
-//				
-//		for(Share currentShare:shares){
-//			if(currentShare.getDocument().getIdentifier().equals(uuid)){
-//				user.deleteReceivedShare(currentShare);
-//				break;
-//			}
-//		}
-//		
-//		update(user);
-//
-//	}
-//
-//	public void removeSentDocument(String login, String uuid)
-//			throws BusinessException {
-//		
-//		U user=findByLogin(login);
-//		
-//		List<Share> shares=new ArrayList<Share>(user.getShares());
-//				
-//		for(Share currentShare:shares){
-//			if(currentShare.getDocument().getIdentifier().equals(uuid)){
-//				user.deleteShare(currentShare);
-//			}
-//		}
-//		
-//		update(user);
-//
-//	}
-	
 	
 	@SuppressWarnings("unchecked")
 	@Override

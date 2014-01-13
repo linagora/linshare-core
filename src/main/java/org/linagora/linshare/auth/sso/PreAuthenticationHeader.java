@@ -39,8 +39,14 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.linagora.linshare.auth.dao.LdapUserDetailsProvider;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.AccountFacade;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
 import org.springframework.util.Assert;
 
@@ -52,7 +58,12 @@ import org.springframework.util.Assert;
  */
 public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 
-	/** */
+	private UserRepository<User> userRepository;
+
+	private AccountFacade accountFacade;
+
+	private LdapUserDetailsProvider ldapUserDetailsProvider;
+
 	private String principalRequestHeader;
 
 	/** List of IP / DNS hostname */
@@ -76,6 +87,9 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 	protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
 		// Do not throw exception if header is not set
 		String authenticationHeader = request.getHeader(principalRequestHeader);
+		String domainIdentifier = request.getParameter("domain");
+//		domainIdentifier = request.getHeader("Auth-Domain");
+
 		// TODO FMA support domain injection.
 		if (authenticationHeader != null) {
 			if (!authorizedAddresses.contains(request.getRemoteAddr())) {
@@ -84,9 +98,41 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 						+ request.getRemoteAddr() + ":"
 						+ request.getRemotePort());
 				return null;
+			} else {
+				User foundUser = getPreAuthenticatedUser(authenticationHeader, domainIdentifier);
+				if (foundUser == null) {
+					logger.debug("No user was found with : " + authenticationHeader);
+					logger.warn("PreAuthenticationHeader (SSO) is looking for someone who does not belong to the ldap domain anymore.");
+					return null;
+				}
+				authenticationHeader = foundUser.getLsUuid();
 			}
 		}
 		return authenticationHeader;
+	}
+
+	private User getPreAuthenticatedUser(String authenticationHeader,
+			String domainIdentifier) {
+		// Looking for a root user no matter the domain.
+		User foundUser = userRepository.findByLogin(authenticationHeader);
+
+		if (foundUser == null) {
+			logger.debug("looking into ldap.");
+			foundUser = ldapUserDetailsProvider.retrieveUser(domainIdentifier,
+					authenticationHeader);
+		}
+		if (foundUser != null) {
+			try {
+				foundUser = accountFacade.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
+			} catch (BusinessException e) {
+				logger.error(e.getMessage());
+				throw new AuthenticationServiceException(
+						"Could not create user account : "
+								+ foundUser.getDomainId() + " : "
+								+ foundUser.getMail(), e);
+			}
+		}
+		return foundUser;
 	}
 
 	public void setPrincipalRequestHeader(String principalRequestHeader) {
@@ -99,5 +145,18 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 		Assert.hasText(authorizedAddresses.toString(),
 				"authorizedAddresses must not be empty or null");
 		this.authorizedAddresses = authorizedAddresses;
+	}
+
+	public void setAccountFacade(AccountFacade accountFacade) {
+		this.accountFacade = accountFacade;
+	}
+
+	public void setLdapUserDetailsProvider(
+			LdapUserDetailsProvider userDetailsProvider) {
+		this.ldapUserDetailsProvider = userDetailsProvider;
+	}
+
+	public void setUserRepository(UserRepository<User> userRepository) {
+		this.userRepository = userRepository;
 	}
 }

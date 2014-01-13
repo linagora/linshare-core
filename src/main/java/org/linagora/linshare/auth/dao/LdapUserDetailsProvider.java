@@ -14,19 +14,20 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.repository.InternalRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public class UserDetailsProvider {
+public class LdapUserDetailsProvider {
 
 	private final static Log logger = LogFactory
-			.getLog(UserDetailsProvider.class);
+			.getLog(LdapUserDetailsProvider.class);
 	
-	private UserRepository<User> userRepository;
+	private InternalRepository internalRepository;
 	
 	private AbstractDomainService abstractDomainService;
 	
@@ -34,6 +35,12 @@ public class UserDetailsProvider {
 	
 	private UserProviderService userProviderService;
 	
+	/**
+	 * Looking for an user in the database and then into the LDAP directory.
+	 * @param domainIdentifier : could be null.
+	 * @param login
+	 * @return User account.
+	 */
 	public User retrieveUser(String domainIdentifier, String login) {
 		User foundUser = null;
 		// if domain was specified at the connection, we try to search the
@@ -44,6 +51,24 @@ public class UserDetailsProvider {
 			// There is no constraints, we have to search the current user in
 			// all domains.
 			foundUser = findUserInAllDomain(login);
+		}
+		// Check if it is a guest. Should not happen.
+		if (!foundUser.isInternal()) {
+			logger.debug("Guest found during ldap authentification process.");
+			logAuthError(foundUser, domainIdentifier, "User not found.");
+			String message = "Guest found : "
+					+ foundUser.getAccountReprentation() + " in domain : '"
+					+ domainIdentifier + "'";
+			logAuthError(login, domainIdentifier, message);
+			throw new UsernameNotFoundException(message);
+		}
+
+		if (foundUser.getDomain() == null) {
+			String message = "Bad credentials";
+			logAuthError(foundUser, domainIdentifier, message);
+			logger.error("The user found in the database contain a null domain reference.");
+			throw new BadCredentialsException("Could not authenticate user: "
+					+ login);
 		}
 		return foundUser;
 	}
@@ -58,7 +83,7 @@ public class UserDetailsProvider {
 		AbstractDomain domain = retrieveDomain(login, domainIdentifier);
 
 		// looking in database for a user.
-		foundUser = userRepository.findByLoginAndDomain(domainIdentifier, login);
+		foundUser = internalRepository.findByLoginAndDomain(domainIdentifier, login);
 		if (foundUser == null) {
 			logger.debug("Can't find the user in the DB. Searching in LDAP.");
 			// searching in LDAP
@@ -113,7 +138,7 @@ public class UserDetailsProvider {
 	private User findUserInAllDomain(String login) {
 		User foundUser = null;
 		try {
-			foundUser = userRepository.findByLogin(login);
+			foundUser = internalRepository.findByLogin(login);
 		} catch (IllegalStateException e) {
 			throw new AuthenticationServiceException(
 					"Could not authenticate user: " + login);
@@ -210,32 +235,16 @@ public class UserDetailsProvider {
 		}
 	}
 
-	public UserRepository<User> getUserRepository() {
-		return userRepository;
-	}
-
-	public void setUserRepository(UserRepository<User> userRepository) {
-		this.userRepository = userRepository;
-	}
-
-	public AbstractDomainService getAbstractDomainService() {
-		return abstractDomainService;
+	public void setInternalRepository(InternalRepository userRepository) {
+		this.internalRepository = userRepository;
 	}
 
 	public void setAbstractDomainService(AbstractDomainService abstractDomainService) {
 		this.abstractDomainService = abstractDomainService;
 	}
 
-	public LogEntryService getLogEntryService() {
-		return logEntryService;
-	}
-
 	public void setLogEntryService(LogEntryService logEntryService) {
 		this.logEntryService = logEntryService;
-	}
-
-	public UserProviderService getUserProviderService() {
-		return userProviderService;
 	}
 
 	public void setUserProviderService(UserProviderService userProviderService) {
