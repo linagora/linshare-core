@@ -42,12 +42,13 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserService;
 
 public class AccountFacadeImpl implements AccountFacade {
-	
+
 	private final AccountService accountService;
 
 	private final UserService userService;
 
-	public AccountFacadeImpl(AccountService accountService, UserService userService) {
+	public AccountFacadeImpl(AccountService accountService,
+			UserService userService) {
 		super();
 		this.accountService = accountService;
 		this.userService = userService;
@@ -56,12 +57,12 @@ public class AccountFacadeImpl implements AccountFacade {
 	@Override
 	public UserVo loadUserDetails(String uuid) throws BusinessException {
 		Account account = accountService.findByLsUuid(uuid);
-    	if (account != null) {
-    		return new UserVo(account);
-    	}
-    	return null;
+		if (account != null) {
+			return new UserVo(account);
+		}
+		return null;
 	}
-	
+
 	@Override
 	public User findOrCreateUser(String domainIdentifier, String mail)
 			throws BusinessException {
