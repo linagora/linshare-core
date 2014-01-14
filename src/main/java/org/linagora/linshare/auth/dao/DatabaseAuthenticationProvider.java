@@ -1,11 +1,15 @@
 package org.linagora.linshare.auth.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.auth.RoleProvider;
+import org.linagora.linshare.auth.exceptions.BadDomainException;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,6 +32,8 @@ public class DatabaseAuthenticationProvider extends
 	private PasswordEncoder passwordEncoder = new PlaintextPasswordEncoder();
 
 	private UserRepository<User> userRepository;
+
+	private AbstractDomainService abstractDomainService;
 
 	// ~ Methods
 	// ========================================================================================================
@@ -75,10 +81,15 @@ public class DatabaseAuthenticationProvider extends
 		try {
 			String password = null;
 			User account = null;
-			
-			Object details = authentication.getDetails();
-			String domain = (String) details;
-			if (domain == null) {
+			String domainIdentifier = null;
+
+			// Getting domain from context
+			if (authentication.getDetails() != null
+					&& authentication.getDetails() instanceof String) {
+				domainIdentifier = (String) authentication.getDetails();
+			}
+
+			if (domainIdentifier == null) {
 				// looking into the database for a user with his login ie username (could be a mail or a LDAP uid)
 				try {
 					account = userRepository.findByLogin(username);
@@ -87,8 +98,22 @@ public class DatabaseAuthenticationProvider extends
 							"Could not authenticate user: " + username);
 				}
 			} else {
-				// TODO FMA Auth multi domain for guests
-				account = userRepository.findByLoginAndDomain(domain, username);
+				// check if domain really exist.
+				AbstractDomain domain = retrieveDomain(username, domainIdentifier);
+
+				// looking in database for a user.
+				account = userRepository.findByLoginAndDomain(domainIdentifier, username);
+				if (account == null) {
+					Set<AbstractDomain> subdomains = domain.getSubdomain();
+					for (AbstractDomain subdomain : subdomains) {
+						account = userRepository.findByLoginAndDomain(subdomain.getIdentifier(), username);
+						if (account != null) {
+							logger.debug("User found and authenticated in domain "
+									+ subdomain.getIdentifier());
+							break;
+						}
+					}
+				}
 			}
 
 			if (account != null) {
@@ -118,12 +143,25 @@ public class DatabaseAuthenticationProvider extends
 		return loadedUser;
 	}
 
-	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-		this.passwordEncoder = passwordEncoder;
+	private AbstractDomain retrieveDomain(String login, String domainIdentifier) {
+		AbstractDomain domain = abstractDomainService
+				.retrieveDomain(domainIdentifier);
+		if (domain == null) {
+			logger.error("Can't find the specified domain : "
+					+ domainIdentifier);
+//			logAuthError(login, domainIdentifier, "Bad domain.");
+			throw new BadDomainException("Domain '" + domainIdentifier
+					+ "' not found", domainIdentifier);
+		}
+		return domain;
 	}
 
-	protected PasswordEncoder getPasswordEncoder() {
-		return passwordEncoder;
+	public void setAbstractDomainService(AbstractDomainService abstractDomainService) {
+		this.abstractDomainService = abstractDomainService;
+	}
+
+	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	public void setUserRepository(UserRepository<User> userRepository) {

@@ -61,7 +61,6 @@ import org.linagora.linshare.core.repository.MessagesRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.slf4j.Logger;

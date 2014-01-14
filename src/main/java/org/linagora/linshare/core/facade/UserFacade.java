@@ -101,10 +101,10 @@ public interface UserFacade {
     List<UserVo> searchUser(String mail, String firstName, String lastName,AccountType userType, UserVo currentUser) throws BusinessException;
 
     /** Get all guests created by a user.
-     * @param mail owner mail.
+     * @param actorVo owner mail.
      * @return the list of guests created by their owner.
      */
-    List<UserVo> searchGuest(String mail);
+    List<UserVo> searchGuest(UserVo actorVo);
     
     /** Delete a guest, purge an internal user.
      * @param login login of the user to delete.

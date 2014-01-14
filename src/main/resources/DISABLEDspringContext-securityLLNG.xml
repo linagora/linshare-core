@@ -207,6 +207,7 @@
 	<bean id="databaseAuthenticationProvider" class="org.linagora.linshare.auth.dao.DatabaseAuthenticationProvider">
 		<property name="userRepository" ref="userRepository" />
 		<property name="passwordEncoder">
+		<property name="abstractDomainService" ref="abstractDomainService" />
 			<bean factory-bean="passwordEncoderFactory" factory-method="getInstance" />
 		</property>
 	</bean>

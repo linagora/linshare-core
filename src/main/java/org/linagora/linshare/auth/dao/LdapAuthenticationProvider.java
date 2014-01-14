@@ -121,13 +121,13 @@ public class LdapAuthenticationProvider extends
 			String message = "Bad credentials.";
 			ldapUserDetailsProvider.logAuthError(foundUser, foundUser.getDomainId(), message);
 			logger.error(message);
-			throw new BadCredentialsException("Could not authenticate user: "
-					+ login);
+			throw new BadCredentialsException("Could not authenticate user: " + login);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new AuthenticationServiceException(
-					"Could not authenticate user : " + foundUser.getDomainId()
-							+ " : " + foundUser.getMail(), e);
+				"Could not authenticate user : "
+				+ foundUser.getDomainId()
+				+ " : " + foundUser.getMail(), e);
 		}
 
 		User user = null;
@@ -137,8 +137,8 @@ public class LdapAuthenticationProvider extends
 			logger.error(e);
 			throw new AuthenticationServiceException(
 					"Could not create user account : "
-							+ foundUser.getDomainId() + " : "
-							+ foundUser.getMail(), e);
+					+ foundUser.getDomainId() + " : "
+					+ foundUser.getMail(), e);
 		}
 
 		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
