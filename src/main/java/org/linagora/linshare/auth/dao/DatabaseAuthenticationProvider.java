@@ -5,11 +5,14 @@ import java.util.Set;
 
 import org.linagora.linshare.auth.RoleProvider;
 import org.linagora.linshare.auth.exceptions.BadDomainException;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.UserLogEntry;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.LogEntryService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -35,6 +38,8 @@ public class DatabaseAuthenticationProvider extends
 
 	private AbstractDomainService abstractDomainService;
 
+	private LogEntryService logEntryService;
+
 	// ~ Methods
 	// ========================================================================================================
 
@@ -45,7 +50,7 @@ public class DatabaseAuthenticationProvider extends
 
 		if (authentication.getCredentials() == null) {
 			logger.debug("Authentication failed: no credentials provided");
-
+			logAuthError(userDetails.getUsername(), null, "Bad credentials.");
 			throw new BadCredentialsException(messages.getMessage(
 					"AbstractUserDetailsAuthenticationProvider.badCredentials",
 					"Bad credentials"), userDetails);
@@ -56,7 +61,7 @@ public class DatabaseAuthenticationProvider extends
 		if (!passwordEncoder.isPasswordValid(userDetails.getPassword(),
 				presentedPassword, null)) {
 			logger.debug("Authentication failed: password does not match stored value");
-
+			logAuthError(userDetails.getUsername(), null, "Bad credentials.");
 			throw new BadCredentialsException(messages.getMessage(
 					"AbstractUserDetailsAuthenticationProvider.badCredentials",
 					"Bad credentials"), userDetails);
@@ -66,6 +71,10 @@ public class DatabaseAuthenticationProvider extends
 	protected void doAfterPropertiesSet() throws Exception {
 		Assert.notNull(this.userRepository,
 				"A userService must be set");
+		Assert.notNull(this.abstractDomainService,
+				"A abstractDomainService must be set");
+		Assert.notNull(this.logEntryService,
+				"A logEntryService must be set");
 	}
 
 	@Override
@@ -119,14 +128,12 @@ public class DatabaseAuthenticationProvider extends
 			if (account != null) {
 				logger.debug("Account in database found : " + account.getAccountReprentation());
 				password = account.getPassword();
-
-				// If the password field is not set (only Ldap user), we set it to
-				// an empty string.
-				if (password == null)
-					password = "";
+				if (password.equals(""))	password = null;
 			}
-			if (account == null || password == null
-					|| Role.SYSTEM.equals(account.getRole())) {
+			if (account == null
+					|| password == null
+					|| account.isInternal() // this provider do not manage authentication for internal users.
+					|| account.isSystempAccount()) {
 				logger.debug("throw UsernameNotFoundException: Account not found");
 				throw new UsernameNotFoundException("Account not found");
 			}
@@ -149,11 +156,25 @@ public class DatabaseAuthenticationProvider extends
 		if (domain == null) {
 			logger.error("Can't find the specified domain : "
 					+ domainIdentifier);
-//			logAuthError(login, domainIdentifier, "Bad domain.");
+			logAuthError(login, domainIdentifier, "Bad domain.");
 			throw new BadDomainException("Domain '" + domainIdentifier
 					+ "' not found", domainIdentifier);
 		}
 		return domain;
+	}
+
+	private void logAuthError(String login, String domainIdentifier,
+			String message) {
+		try {
+			logEntryService.create(new UserLogEntry(login, domainIdentifier,
+					LogAction.USER_AUTH_FAILED, message));
+		} catch (IllegalArgumentException e) {
+			logger.error("Couldn't log an authentication failure : " + message);
+			logger.debug(e.getMessage());
+		} catch (BusinessException e1) {
+			logger.error("Couldn't log an authentication failure : " + message);
+			logger.debug(e1.getMessage());
+		}
 	}
 
 	public void setAbstractDomainService(AbstractDomainService abstractDomainService) {
@@ -166,5 +187,9 @@ public class DatabaseAuthenticationProvider extends
 
 	public void setUserRepository(UserRepository<User> userRepository) {
 		this.userRepository = userRepository;
+	}
+
+	public void setLogEntryService(LogEntryService logEntryService) {
+		this.logEntryService = logEntryService;
 	}
 }

@@ -118,10 +118,13 @@ public class LdapAuthenticationProvider extends
 			userProviderService.auth(foundUser.getDomain().getUserProvider(),
 					foundUser.getMail(), password);
 		} catch (BadCredentialsException e1) {
+			logger.debug("Authentication failed: password does not match stored value");
 			String message = "Bad credentials.";
 			ldapUserDetailsProvider.logAuthError(foundUser, foundUser.getDomainId(), message);
 			logger.error(message);
-			throw new BadCredentialsException("Could not authenticate user: " + login);
+			throw new BadCredentialsException(messages.getMessage(
+					"AbstractUserDetailsAuthenticationProvider.badCredentials",
+					"Bad credentials"), foundUser);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			throw new AuthenticationServiceException(
