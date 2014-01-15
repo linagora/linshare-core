@@ -90,7 +90,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	private final AntiSamyService antiSamyService;
 
 	public DocumentEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityOldService functionalityService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService, MimeTypeMagicNumberDao mimeTypeIdentifier,
+			FunctionalityReadOnlyService functionalityReadOnlyService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService, MimeTypeMagicNumberDao mimeTypeIdentifier,
 			AntiSamyService antiSamyService) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
