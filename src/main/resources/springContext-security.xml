@@ -198,7 +198,12 @@
 
 	<bean id="databaseUserDetailsProvider" class="org.linagora.linshare.auth.dao.DatabaseUserDetailsProvider">
 		<constructor-arg ref="authentificationFacade" />
-		<constructor-arg ref="userRepository" />
+		<property name="userRepositories">
+			<list>
+				<ref bean="guestRepository" />
+				<ref bean="rootUserRepository" />
+			</list>
+		</property>
 	</bean>
 
 	<!-- database accounts : guests, root, technical accounts, ... -->

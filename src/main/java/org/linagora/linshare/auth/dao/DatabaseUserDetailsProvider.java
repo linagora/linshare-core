@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.auth.dao;
 
+import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -47,12 +48,14 @@ public class DatabaseUserDetailsProvider extends UserDetailsProvider {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserDetailsProvider.class);
 
-	private final UserRepository<User> userRepository;
+	private List<UserRepository<User>> userRepositories;
 
-	public DatabaseUserDetailsProvider(AuthentificationFacade authentificationFacade,
-			UserRepository<User> userRepository) {
+	public DatabaseUserDetailsProvider(AuthentificationFacade authentificationFacade) {
 		super(authentificationFacade);
-		this.userRepository = userRepository;
+	}
+
+	public void setUserRepositories(List<UserRepository<User>> userRepositories) {
+		this.userRepositories = userRepositories;
 	}
 
 	@Override
@@ -61,7 +64,12 @@ public class DatabaseUserDetailsProvider extends UserDetailsProvider {
 		if (domainIdentifier == null) {
 			// looking into the database for a user with his login ie username (could be a mail or a LDAP uid)
 			try {
-				account = userRepository.findByLogin(login);
+				for (UserRepository<User> repository : userRepositories) {
+					account = repository.findByLogin(login);
+					if (account != null) {
+						break;
+					}
+				}
 			} catch (IllegalStateException e) {
 				throw new AuthenticationServiceException(
 						"Could not authenticate user: " + login);
@@ -71,17 +79,29 @@ public class DatabaseUserDetailsProvider extends UserDetailsProvider {
 			AbstractDomain domain = retrieveDomain(login, domainIdentifier);
 
 			// looking in database for a user.
-			account = userRepository.findByLoginAndDomain(domainIdentifier, login);
+			account = findByLoginAndDomain(domainIdentifier, login);
+
 			if (account == null) {
 				Set<AbstractDomain> subdomains = domain.getSubdomain();
 				for (AbstractDomain subdomain : subdomains) {
-					account = userRepository.findByLoginAndDomain(subdomain.getIdentifier(), login);
+					account = findByLoginAndDomain(subdomain.getIdentifier(), login);
 					if (account != null) {
-						logger.debug("User found and authenticated in domain "
+						logger.debug("User found and authenticated in sub domain "
 								+ subdomain.getIdentifier());
 						break;
 					}
 				}
+			}
+		}
+		return account;
+	}
+
+	private User findByLoginAndDomain(String domainIdentifier, String login) {
+		User account = null;
+		for (UserRepository<User> repository : userRepositories) {
+			account = repository.findByLoginAndDomain(domainIdentifier, login);
+			if (account != null) {
+				break;
 			}
 		}
 		return account;
