@@ -39,6 +39,22 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
         var sizeAvailable = ${maxFileSize};
 
+        var updateSizeAvailable = function(callback) {
+            jQuery.ajax({
+                url: '${contextPath}/webservice/rest/documents/userAvailableSize',
+                type: 'GET',
+                crossDomain: true,
+                dataType: 'json',
+                xhrFields: {
+                    withCredentials: true
+                }
+            }).fail(function() {
+                console.log("Error when updating available size");
+            }).done(function(data) {
+                callback(data.value);
+            });
+        }
+
         var fixDropzoneInit = function(element) {
             element.attr("qq-hide-dropzone", "true");
             element.hide();
@@ -80,6 +96,11 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
             jQuery("#is_submit").attr("checked", false);
             jQuery(".spinner").hide();
 
+            var updateCallback = function(value) {
+                uploader._options.validation.sizeLimit = value;
+                console.log("New validation size is " + value);
+            };
+
             var uploader = new qq.FineUploader({
                 element: jQuery('#uploader')[0],
                 debug: true,
@@ -99,7 +120,11 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                     },
                     onDelete: function(id) {
                         // remove item from list of uploaded items to share
+                        console.log(name + "delete sucesssful");
                         uuids.splice(uuids.indexOf(uploader.getUuid(id)), 1);
+
+                        // update validation size
+                        updateSizeAvailable(updateCallback);
                     },
                     onProgess: function(id) {
                         jQuery("#progress").attr("value", uploader.getInProgress());
@@ -108,12 +133,13 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                         if (responseJSON.success) {
                             console.log(name + "upload sucesssful");
                             uuids.push(uploader.getUuid(id));
-                            sizeAvailable -= uploader.getSize(id);
-                            uploader._options.validation.sizeLimit = sizeAvailable;
+
+                            // update validation size
+                            updateSizeAvailable(updateCallback);
                         }
                         jQuery("#progress").attr("value", uploader.getInProgress());
                         if (uploader.getInProgress() == 0) {
-                            console.log("All upload are completed");
+                            console.log("All upload are completed: " + uuids.length);
                             jQuery("#uuids").attr("value", uuids.join());
                         }
                         trySubmit();

@@ -66,6 +66,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -86,9 +87,11 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	private final MimeTypeService mimeTypeService;
 	private final VirusScannerService virusScannerService;
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
+	private final AntiSamyService antiSamyService;
 
 	public DocumentEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityReadOnlyService functionalityReadOnlyService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService, MimeTypeMagicNumberDao mimeTypeIdentifier) {
+			FunctionalityOldService functionalityService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService, MimeTypeMagicNumberDao mimeTypeIdentifier,
+			AntiSamyService antiSamyService) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -97,10 +100,12 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		this.mimeTypeService = mimeTypeService;
 		this.virusScannerService = virusScannerService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
+		this.antiSamyService = antiSamyService;
 	}
 
 	@Override
 	public DocumentEntry createDocumentEntry(Account actor, InputStream stream, String fileName) throws BusinessException {
+		fileName = sanitizeFileName(fileName); // throws
 
 		DocumentUtils util = new DocumentUtils();
 		File tempFile = util.getTempFile(stream, fileName);
@@ -159,6 +164,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		if (!originalEntry.getEntryOwner().equals(actor)) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to update this document.");
 		}
+
+		fileName = sanitizeFileName(fileName); // throws
 
 		DocumentUtils util = new DocumentUtils();
 		File tempFile = util.getTempFile(stream, fileName);
@@ -522,6 +529,17 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			String[] extras = { fileName };
 			throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE, "The file is too large to fit in user's space.", extras);
 		}
+	}
+
+	private String sanitizeFileName(String fileName) throws BusinessException {
+		fileName = fileName.replace("\\", "_");
+		fileName = fileName.replace(":", "_");
+		fileName = antiSamyService.clean(fileName);
+		if (fileName.isEmpty()) {
+			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME,
+					"fileName is empty after the xss filter");
+		}
+		return fileName;
 	}
 
 	private Boolean checkVirus(String fileName, Account owner, File file) throws BusinessException {

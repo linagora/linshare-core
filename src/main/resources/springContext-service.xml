@@ -51,6 +51,10 @@
 		<constructor-arg ref="threadService" />
 	</bean>
 
+	<bean id="antiSamyService" class="org.linagora.linshare.core.service.impl.AntiSamyServiceImpl">
+		<constructor-arg ref="antiSamyPolicy" />
+	</bean>
+
 	<bean id="clamavVirusScannerService" class="org.linagora.linshare.core.service.impl.ClamavVirusScannerServiceImpl">
 		<constructor-arg index="0" value="${virusscanner.clamav.host}" />
 		<constructor-arg index="1" value="${virusscanner.clamav.port}" />
@@ -72,6 +76,7 @@
 		<constructor-arg ref="mimeTypeService" />
 		<constructor-arg ref="clamavVirusScannerService" />
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
+		<constructor-arg ref="antiSamyService" />
 	</bean>
 	
 	<bean id="threadEntryService" class="org.linagora.linshare.core.service.impl.ThreadEntryServiceImpl">
@@ -85,6 +90,7 @@
 		<constructor-arg ref="tagBusinessService" />
 		<constructor-arg ref="threadMemberRepository" />
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
+		<constructor-arg ref="antiSamyService" />
 	</bean>
 
 	<bean id="shareExpiryDateService" class="org.linagora.linshare.core.service.impl.ShareExpiryDateServiceImpl">

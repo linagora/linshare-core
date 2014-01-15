@@ -63,9 +63,6 @@
                     onComplete: function(id, name, responseJSON) {
                         if (responseJSON.success) {
                             console.log(name + "upload sucesssful");
-                            //uuids.push(uploader.getUuid(id));
-                            //sizeAvailable -= uploader.getSize(id);
-                            //uploader._options.validation.sizeLimit = sizeAvailable;
                         }
                         jQuery("#progress").attr("value", uploader.getInProgress());
                         if (uploader.getInProgress() == 0) {

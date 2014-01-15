@@ -184,4 +184,16 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		return new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
 	}
 
+	@GET
+	@Path("/userAvailableSize")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public SimpleLongValue getUserAvailableSize() throws BusinessException {
+		webServiceDocumentFacade.checkAuthentication();
+
+		return new SimpleLongValue(Math.min(
+				webServiceDocumentFacade.getUserMaxFileSize(),
+				webServiceDocumentFacade.getAvailableSize()));
+	}
+
 }

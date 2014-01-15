@@ -1,4 +1,4 @@
-/target
 /bin
-.classpath
-.settings
+/target
+/.classpath
+/.settings

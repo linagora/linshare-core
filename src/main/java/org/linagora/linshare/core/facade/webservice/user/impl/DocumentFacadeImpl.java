@@ -94,8 +94,6 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 	public DocumentDto uploadfile(InputStream fi, String fileName,
 			String description) throws BusinessException {
 		User actor = getAuthentication();
-		fileName = fileName.replace("\\", "_");
-		fileName = fileName.replace(":", "_");
 		DocumentEntry res = documentEntryService.createDocumentEntry(actor, fi,
 				fileName);
 
@@ -112,9 +110,6 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 			DataHandler dh = doca.getDocument();
 			InputStream in = dh.getInputStream();
 			String fileName = doca.getFilename();
-			fileName = fileName.replace("\\", "_");
-			fileName = fileName.replace(":", "_");
-			
 			DocumentEntry res = documentEntryService.createDocumentEntry(actor,
 					in, fileName);
 			// mandatory ?
