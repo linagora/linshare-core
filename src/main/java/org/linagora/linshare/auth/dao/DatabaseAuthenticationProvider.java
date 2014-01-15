@@ -1,18 +1,42 @@
+/*
+ * LinShare is an open source filesharing software, part of the LinPKI software
+ * suite, developed by Linagora.
+ * 
+ * Copyright (C) 2013 LINAGORA
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version, provided you comply with the Additional Terms applicable for
+ * LinShare software by Linagora pursuant to Section 7 of the GNU Affero General
+ * Public License, subsections (b), (c), and (e), pursuant to which you must
+ * notably (i) retain the display of the “LinShare™” trademark/logo at the top
+ * of the interface window, the display of the “You are using the Open Source
+ * and free version of LinShare™, powered by Linagora © 2009–2013. Contribute to
+ * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
+ * e-mails sent with the Program, (ii) retain all hypertext links between
+ * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
+ * refrain from infringing Linagora intellectual property rights over its
+ * trademarks and commercial brands. Other Additional Terms apply, see
+ * <http://www.linagora.com/licenses/> for more details.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License and
+ * its applicable Additional Terms for LinShare along with this program. If not,
+ * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
+ * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
+ * applicable to LinShare software.
+ */
 package org.linagora.linshare.auth.dao;
 
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.auth.RoleProvider;
-import org.linagora.linshare.auth.exceptions.BadDomainException;
-import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.UserLogEntry;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.LogEntryService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -34,11 +58,12 @@ public class DatabaseAuthenticationProvider extends
 
 	private PasswordEncoder passwordEncoder = new PlaintextPasswordEncoder();
 
-	private UserRepository<User> userRepository;
+	private DatabaseUserDetailsProvider userDetailsProvider;
 
-	private AbstractDomainService abstractDomainService;
-
-	private LogEntryService logEntryService;
+	public DatabaseAuthenticationProvider(DatabaseUserDetailsProvider userDetailsProvider) {
+		super();
+		this.userDetailsProvider = userDetailsProvider;
+	}
 
 	// ~ Methods
 	// ========================================================================================================
@@ -47,34 +72,12 @@ public class DatabaseAuthenticationProvider extends
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
 			UsernamePasswordAuthenticationToken authentication)
 			throws AuthenticationException {
-
-		if (authentication.getCredentials() == null) {
-			logger.debug("Authentication failed: no credentials provided");
-			logAuthError(userDetails.getUsername(), null, "Bad credentials.");
-			throw new BadCredentialsException(messages.getMessage(
-					"AbstractUserDetailsAuthenticationProvider.badCredentials",
-					"Bad credentials"), userDetails);
-		}
-
-		String presentedPassword = authentication.getCredentials().toString();
-
-		if (!passwordEncoder.isPasswordValid(userDetails.getPassword(),
-				presentedPassword, null)) {
-			logger.debug("Authentication failed: password does not match stored value");
-			logAuthError(userDetails.getUsername(), null, "Bad credentials.");
-			throw new BadCredentialsException(messages.getMessage(
-					"AbstractUserDetailsAuthenticationProvider.badCredentials",
-					"Bad credentials"), userDetails);
-		}
+		userDetailsProvider.logAuthSuccess(userDetails.getUsername());
 	}
 
 	protected void doAfterPropertiesSet() throws Exception {
-		Assert.notNull(this.userRepository,
-				"A userService must be set");
-		Assert.notNull(this.abstractDomainService,
-				"A abstractDomainService must be set");
-		Assert.notNull(this.logEntryService,
-				"A logEntryService must be set");
+		Assert.notNull(this.userDetailsProvider,
+				"A userDetailsProvider must be set");
 	}
 
 	@Override
@@ -87,6 +90,13 @@ public class DatabaseAuthenticationProvider extends
 			throw new UsernameNotFoundException("username must not be null");
 		logger.debug("Trying to load '" + username + "' account detail ...");
 
+		if (authentication.getCredentials() == null) {
+			logger.debug("Authentication failed: no credentials provided");
+			throw new BadCredentialsException(messages.getMessage(
+					"AbstractUserDetailsAuthenticationProvider.badCredentials",
+					"Bad credentials"));
+		}
+
 		try {
 			String password = null;
 			User account = null;
@@ -98,49 +108,42 @@ public class DatabaseAuthenticationProvider extends
 				domainIdentifier = (String) authentication.getDetails();
 			}
 
-			if (domainIdentifier == null) {
-				// looking into the database for a user with his login ie username (could be a mail or a LDAP uid)
-				try {
-					account = userRepository.findByLogin(username);
-				} catch (IllegalStateException e) {
-					throw new AuthenticationServiceException(
-							"Could not authenticate user: " + username);
-				}
-			} else {
-				// check if domain really exist.
-				AbstractDomain domain = retrieveDomain(username, domainIdentifier);
-
-				// looking in database for a user.
-				account = userRepository.findByLoginAndDomain(domainIdentifier, username);
-				if (account == null) {
-					Set<AbstractDomain> subdomains = domain.getSubdomain();
-					for (AbstractDomain subdomain : subdomains) {
-						account = userRepository.findByLoginAndDomain(subdomain.getIdentifier(), username);
-						if (account != null) {
-							logger.debug("User found and authenticated in domain "
-									+ subdomain.getIdentifier());
-							break;
-						}
-					}
-				}
-			}
+			account = userDetailsProvider.retrieveUser(domainIdentifier, username);
 
 			if (account != null) {
 				logger.debug("Account in database found : " + account.getAccountReprentation());
 				password = account.getPassword();
-				if (password.equals(""))	password = null;
+				if (password != null && password.equals(""))	password = null;
+
+				// this provider do not manage authentication for internal users.
+				if (account.isInternal()) {
+					logger.debug("Can not authenticate this user with the current provider : Internal user found");
+					throw new UsernameNotFoundException("Account not found");
+				}
 			}
+
 			if (account == null
 					|| password == null
-					|| account.isInternal() // this provider do not manage authentication for internal users.
 					|| account.isSystempAccount()) {
 				logger.debug("throw UsernameNotFoundException: Account not found");
 				throw new UsernameNotFoundException("Account not found");
 			}
 
+			// auth
+			String presentedPassword = authentication.getCredentials().toString();
+
+			if (!passwordEncoder.isPasswordValid(password,
+					presentedPassword, null)) {
+				logger.debug("Authentication failed: password does not match stored value");
+				userDetailsProvider.logAuthError(account, account.getDomainId(), "Bad credentials.");
+				throw new BadCredentialsException(messages.getMessage(
+						"AbstractUserDetailsAuthenticationProvider.badCredentials",
+						"Bad credentials"), account);
+			}
+
 			List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(account);
 			loadedUser = new org.springframework.security.core.userdetails.User(
-					account.getLsUuid(), password, true, true, true, true,
+					account.getLsUuid(), "", true, true, true, true,
 					grantedAuthorities);
 
 		} catch (DataAccessException repositoryProblem) {
@@ -150,46 +153,7 @@ public class DatabaseAuthenticationProvider extends
 		return loadedUser;
 	}
 
-	private AbstractDomain retrieveDomain(String login, String domainIdentifier) {
-		AbstractDomain domain = abstractDomainService
-				.retrieveDomain(domainIdentifier);
-		if (domain == null) {
-			logger.error("Can't find the specified domain : "
-					+ domainIdentifier);
-			logAuthError(login, domainIdentifier, "Bad domain.");
-			throw new BadDomainException("Domain '" + domainIdentifier
-					+ "' not found", domainIdentifier);
-		}
-		return domain;
-	}
-
-	private void logAuthError(String login, String domainIdentifier,
-			String message) {
-		try {
-			logEntryService.create(new UserLogEntry(login, domainIdentifier,
-					LogAction.USER_AUTH_FAILED, message));
-		} catch (IllegalArgumentException e) {
-			logger.error("Couldn't log an authentication failure : " + message);
-			logger.debug(e.getMessage());
-		} catch (BusinessException e1) {
-			logger.error("Couldn't log an authentication failure : " + message);
-			logger.debug(e1.getMessage());
-		}
-	}
-
-	public void setAbstractDomainService(AbstractDomainService abstractDomainService) {
-		this.abstractDomainService = abstractDomainService;
-	}
-
 	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
 		this.passwordEncoder = passwordEncoder;
-	}
-
-	public void setUserRepository(UserRepository<User> userRepository) {
-		this.userRepository = userRepository;
-	}
-
-	public void setLogEntryService(LogEntryService logEntryService) {
-		this.logEntryService = logEntryService;
 	}
 }

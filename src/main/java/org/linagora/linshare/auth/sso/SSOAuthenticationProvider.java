@@ -38,9 +38,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linagora.linshare.auth.RoleProvider;
-import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.AccountFacade;
+import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -55,10 +55,11 @@ public class SSOAuthenticationProvider implements AuthenticationProvider {
 	private final static Log logger = LogFactory
 			.getLog(SSOAuthenticationProvider.class);
 
-	private AccountFacade accountFacade;
+	private AuthentificationFacade authentificationFacade;
 
-	public void setAccountFacade(AccountFacade accountFacade) {
-		this.accountFacade = accountFacade;
+	public void setAuthentificationFacade(
+			AuthentificationFacade authentificationFacade) {
+		this.authentificationFacade = authentificationFacade;
 	}
 
 	public Authentication authenticate(Authentication authentication)
@@ -69,9 +70,9 @@ public class SSOAuthenticationProvider implements AuthenticationProvider {
 		logger.debug("Retrieving user detail for sso authentication with login : "
 				+ userName);
 
-		UserVo foundUser = null;
+		User foundUser = null;
 		try {
-			foundUser = accountFacade.loadUserDetails(userName);
+			foundUser = authentificationFacade.loadUserDetails(userName);
 		} catch (BusinessException e) {
 			logger.error(e);
 			throw new AuthenticationServiceException(
@@ -80,6 +81,13 @@ public class SSOAuthenticationProvider implements AuthenticationProvider {
 
 		if (foundUser == null) {
 			return null;
+		}
+
+		try {
+			authentificationFacade.logAuthSuccess(foundUser);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.getStackTrace());
 		}
 
 		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(foundUser);

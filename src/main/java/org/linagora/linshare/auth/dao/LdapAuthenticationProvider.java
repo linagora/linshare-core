@@ -40,55 +40,41 @@ import org.apache.commons.logging.LogFactory;
 import org.linagora.linshare.auth.RoleProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.AccountFacade;
-import org.linagora.linshare.core.service.UserProviderService;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.util.Assert;
 
 public class LdapAuthenticationProvider extends
 		AbstractUserDetailsAuthenticationProvider {
 
 	private final static Log logger = LogFactory
 			.getLog(LdapAuthenticationProvider.class);
-	
-	private AccountFacade accountFacade;
 
-	private UserProviderService userProviderService;
-	
 	private LdapUserDetailsProvider ldapUserDetailsProvider;
 
-	public AccountFacade getAccountFacade() {
-		return accountFacade;
+	public LdapAuthenticationProvider(LdapUserDetailsProvider ldapUserDetailsProvider) {
+		super();
+		this.ldapUserDetailsProvider = ldapUserDetailsProvider;
 	}
 
-	public void setAccountFacade(AccountFacade accountFacade) {
-		this.accountFacade = accountFacade;
-	}
-
-	public void setUserProviderService(UserProviderService userProviderService) {
-		this.userProviderService = userProviderService;
-	}
-
-	public void setLdapUserDetailsProvider(LdapUserDetailsProvider userDetailsProvider) {
-		this.ldapUserDetailsProvider = userDetailsProvider;
-	}
-
+	@Override
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
 			UsernamePasswordAuthenticationToken authentication)
 			throws AuthenticationException {
+		ldapUserDetailsProvider.logAuthSuccess(userDetails.getUsername());
 	}
 
+	@Override
 	protected UserDetails retrieveUser(String login,
 			UsernamePasswordAuthenticationToken authentication)
 			throws AuthenticationException {
+
+		UserDetails loadedUser;
 		logger.debug("Retrieving user detail for ldap authentication with login : "
 				+ login);
 
@@ -106,121 +92,54 @@ public class LdapAuthenticationProvider extends
 					"Bad credentials"));
 		}
 
-		// Getting domain from context
-		if (authentication.getDetails() != null
-				&& authentication.getDetails() instanceof String) {
-			domainIdentifier = (String) authentication.getDetails();
-		}
-
-		foundUser = ldapUserDetailsProvider.retrieveUser(domainIdentifier, login);
-
 		try {
-			userProviderService.auth(foundUser.getDomain().getUserProvider(),
-					foundUser.getMail(), password);
-		} catch (BadCredentialsException e1) {
-			logger.debug("Authentication failed: password does not match stored value");
-			String message = "Bad credentials.";
-			ldapUserDetailsProvider.logAuthError(foundUser, foundUser.getDomainId(), message);
-			logger.error(message);
-			throw new BadCredentialsException(messages.getMessage(
-					"AbstractUserDetailsAuthenticationProvider.badCredentials",
-					"Bad credentials"), foundUser);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			throw new AuthenticationServiceException(
-				"Could not authenticate user : "
-				+ foundUser.getDomainId()
-				+ " : " + foundUser.getMail(), e);
-		}
 
-		User user = null;
-		try {
-			user = accountFacade.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
-		} catch (BusinessException e) {
-			logger.error(e);
-			throw new AuthenticationServiceException(
-					"Could not create user account : "
-					+ foundUser.getDomainId() + " : "
-					+ foundUser.getMail(), e);
-		}
+			// Getting domain from context
+			if (authentication.getDetails() != null
+					&& authentication.getDetails() instanceof String) {
+				domainIdentifier = (String) authentication.getDetails();
+			}
 
-		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
-		return new org.springframework.security.core.userdetails.User(
-				user.getLsUuid(), "", true, true, true, true,
-				grantedAuthorities);
-	}
-
-	public Authentication authenticate(Authentication authentication)
-			throws AuthenticationException {
-
-		Assert.isInstanceOf(
-				UsernamePasswordAuthenticationToken.class,
-				authentication,
-				messages.getMessage(
-						"AbstractUserDetailsAuthenticationProvider.onlySupports",
-						"Only UsernamePasswordAuthenticationToken is supported"));
-
-		// Determine username
-		String username = (authentication.getPrincipal() == null) ? "NONE_PROVIDED"
-				: authentication.getName();
-
-		boolean cacheWasUsed = true;
-		UserDetails user = this.getUserCache().getUserFromCache(username);
-
-		if (user == null) {
-			cacheWasUsed = false;
+			foundUser = ldapUserDetailsProvider.retrieveUser(domainIdentifier, login);
 
 			try {
-				user = retrieveUser(username,
-						(UsernamePasswordAuthenticationToken) authentication);
-			} catch (UsernameNotFoundException notFound) {
-				if (hideUserNotFoundExceptions) {
-					throw new BadCredentialsException(
-							messages.getMessage(
-									"AbstractUserDetailsAuthenticationProvider.badCredentials",
-									"Bad credentials"));
-				} else {
-					throw notFound;
-				}
+				ldapUserDetailsProvider.auth(foundUser.getDomain().getUserProvider(),
+						foundUser.getMail(), password);
+			} catch (BadCredentialsException e1) {
+				logger.debug("Authentication failed: password does not match stored value");
+				String message = "Bad credentials.";
+				ldapUserDetailsProvider.logAuthError(foundUser, foundUser.getDomainId(), message);
+				logger.error(message);
+				throw new BadCredentialsException(messages.getMessage(
+						"AbstractUserDetailsAuthenticationProvider.badCredentials",
+						"Bad credentials"), foundUser);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+				throw new AuthenticationServiceException(
+					"Could not authenticate user : "
+					+ foundUser.getDomainId()
+					+ " : " + foundUser.getMail(), e);
 			}
 
-			Assert.notNull(user,
-					"retrieveUser returned null - a violation of the interface contract");
-		}
-
-		this.getPreAuthenticationChecks().check(user);
-
-		try {
-			additionalAuthenticationChecks(user,
-					(UsernamePasswordAuthenticationToken) authentication);
-		} catch (AuthenticationException exception) {
-			if (cacheWasUsed) {
-				// There was a problem, so try again after checking
-				// we're using latest data (ie not from the cache)
-				cacheWasUsed = false;
-				user = retrieveUser(username,
-						(UsernamePasswordAuthenticationToken) authentication);
-				additionalAuthenticationChecks(user,
-						(UsernamePasswordAuthenticationToken) authentication);
-			} else {
-				throw exception;
+			User user = null;
+			try {
+				user = ldapUserDetailsProvider.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
+			} catch (BusinessException e) {
+				logger.error(e);
+				throw new AuthenticationServiceException(
+						"Could not create user account : "
+						+ foundUser.getDomainId() + " : "
+						+ foundUser.getMail(), e);
 			}
+
+			List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
+			loadedUser = new org.springframework.security.core.userdetails.User(
+					user.getLsUuid(), "", true, true, true, true,
+					grantedAuthorities);
+		} catch (DataAccessException repositoryProblem) {
+			throw new AuthenticationServiceException(
+					repositoryProblem.getMessage(), repositoryProblem);
 		}
-
-		this.getPostAuthenticationChecks().check(user);
-
-		if (!cacheWasUsed) {
-			this.getUserCache().putUserInCache(user);
-		}
-
-		Object principalToReturn = user;
-
-		if (this.isForcePrincipalAsString()) {
-			principalToReturn = user.getUsername();
-		}
-
-		return createSuccessAuthentication(principalToReturn, authentication,
-				user);
+		return loadedUser;
 	}
-
 }

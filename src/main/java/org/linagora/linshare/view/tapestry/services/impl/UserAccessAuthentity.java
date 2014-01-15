@@ -34,12 +34,9 @@
 package org.linagora.linshare.view.tapestry.services.impl;
 
 import org.apache.tapestry5.services.ApplicationStateManager;
-import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.AccountFacade;
-import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -52,19 +49,15 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 public class UserAccessAuthentity  {
 
-	private final AccountFacade accountFacade;
+	private final AuthentificationFacade authentificationFacade;
 
 	private final ApplicationStateManager applicationStateManager;
 
-	private final LogEntryService logEntryService;
-
 	private static final Logger logger = LoggerFactory.getLogger(UserAccessAuthentity.class);
 
-	public UserAccessAuthentity(AccountFacade accountFacade, ApplicationStateManager applicationStateManager,
-			LogEntryService logEntryService) {
-		this.accountFacade = accountFacade;
+	public UserAccessAuthentity(AuthentificationFacade accountFacade, ApplicationStateManager applicationStateManager) {
+		this.authentificationFacade = accountFacade;
 		this.applicationStateManager = applicationStateManager;
-		this.logEntryService = logEntryService;
 	}
 
 	public void processAuth() {
@@ -80,8 +73,7 @@ public class UserAccessAuthentity  {
 				logger.debug("processAuth with " + username);
 				UserVo userVo = null;
 				try {
-					userVo = accountFacade.loadUserDetails(username.toLowerCase());
-					generateAuthLogEntry(userVo);
+					userVo = new UserVo(authentificationFacade.loadUserDetails(username.toLowerCase()));
 					applicationStateManager.set(UserVo.class, userVo);
 				} catch (BusinessException e) {
 					logger.error("Error while trying to find user details", e);
@@ -95,24 +87,13 @@ public class UserAccessAuthentity  {
 					// fetch user 
 					UserVo userVo = null;
 					try {
-						userVo = accountFacade.loadUserDetails(username.toLowerCase());
+						userVo = new UserVo(authentificationFacade.loadUserDetails(username.toLowerCase()));
 						applicationStateManager.set(UserVo.class, userVo);
 					} catch (BusinessException e) {
 						logger.error("Error while trying to find user details", e);
 					}
 				}
 			}
-		}
-	}
-
-	private void generateAuthLogEntry(UserVo userVo) {
-		UserLogEntry logEntry = new UserLogEntry(userVo, LogAction.USER_AUTH, "Successfull authentification");
-		try {
-			logEntryService.create(logEntry);
-		} catch (IllegalArgumentException e) {
-			logger.error("Error while trying to log user successfull auth", e);
-		} catch (BusinessException e) {
-			logger.error("Error while trying to log user successfull auth", e);
 		}
 	}
 }

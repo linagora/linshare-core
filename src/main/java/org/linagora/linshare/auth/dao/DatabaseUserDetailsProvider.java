@@ -31,16 +31,59 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade;
+package org.linagora.linshare.auth.dao;
 
+import java.util.Set;
+
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
+import org.linagora.linshare.core.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationServiceException;
 
-public interface AccountFacade {
+public class DatabaseUserDetailsProvider extends UserDetailsProvider {
 
-	UserVo loadUserDetails(String uuid) throws BusinessException;
+	private static final Logger logger = LoggerFactory.getLogger(UserDetailsProvider.class);
 
-	User findOrCreateUser(String domainIdentifier, String mail)
-			throws BusinessException;
+	private final UserRepository<User> userRepository;
+
+	public DatabaseUserDetailsProvider(AuthentificationFacade authentificationFacade,
+			UserRepository<User> userRepository) {
+		super(authentificationFacade);
+		this.userRepository = userRepository;
+	}
+
+	@Override
+	public User retrieveUser(String domainIdentifier, String login) {
+		User account = null;
+		if (domainIdentifier == null) {
+			// looking into the database for a user with his login ie username (could be a mail or a LDAP uid)
+			try {
+				account = userRepository.findByLogin(login);
+			} catch (IllegalStateException e) {
+				throw new AuthenticationServiceException(
+						"Could not authenticate user: " + login);
+			}
+		} else {
+			// check if domain really exist.
+			AbstractDomain domain = retrieveDomain(login, domainIdentifier);
+
+			// looking in database for a user.
+			account = userRepository.findByLoginAndDomain(domainIdentifier, login);
+			if (account == null) {
+				Set<AbstractDomain> subdomains = domain.getSubdomain();
+				for (AbstractDomain subdomain : subdomains) {
+					account = userRepository.findByLoginAndDomain(subdomain.getIdentifier(), login);
+					if (account != null) {
+						logger.debug("User found and authenticated in domain "
+								+ subdomain.getIdentifier());
+						break;
+					}
+				}
+			}
+		}
+		return account;
+	}
 }

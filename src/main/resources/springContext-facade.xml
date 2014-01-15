@@ -7,17 +7,15 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
 	default-autowire="no">
 
-
-	<bean name="accountFacade" class="org.linagora.linshare.core.facade.impl.AccountFacadeImpl">
-		<constructor-arg ref="accountService" />
+	<bean name="authentificationFacade" class="org.linagora.linshare.core.facade.auth.impl.AuthentificationFacadeImpl">
 		<constructor-arg ref="userService" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="abstractDomainService" />
 	</bean>
-	
-	
+
 	<bean name="userAutoCompleteFacade" class="org.linagora.linshare.core.facade.impl.UserAutoCompleteFacadeImpl">
 		<constructor-arg ref="userService" />
 	</bean>
-
 
 	<bean name="userFacade" class="org.linagora.linshare.core.facade.impl.UserFacadeImpl">
 		<constructor-arg ref="userRepository" />
@@ -38,7 +36,7 @@
 		<constructor-arg ref="signatureService" />
 		<constructor-arg ref="entryService" />
 	</bean>
-	
+
 	<bean name="threadEntryFacade" class="org.linagora.linshare.core.facade.impl.ThreadEntryFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="threadService" />
@@ -103,7 +101,7 @@
 	<bean name="documentEntryTransformer" class="org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer">
 		<constructor-arg ref="documentEntryRepository" />
 	</bean>
-	
+
 	<bean name="threadEntryTransformer" class="org.linagora.linshare.core.domain.transformers.impl.ThreadEntryTransformer">
 		<constructor-arg ref="threadEntryRepository" />
 	</bean>
@@ -134,7 +132,7 @@
 	<bean name="domainPolicyFacade" class="org.linagora.linshare.core.facade.impl.DomainPolicyFacadeImpl">
 		<constructor-arg ref="domainPolicyService" />
 		<constructor-arg ref="userService" />
-	    <constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="abstractDomainService" />
 	</bean>
 
 	<bean name="functionalityFacade" class="org.linagora.linshare.core.facade.impl.FunctionalityFacadeImpl">
@@ -147,16 +145,15 @@
 		<!-- type needed because there is also a getInstance(String) method -->
 		<constructor-arg value="classpath:antisamy-strict.xml" type="java.io.InputStream" />
 	</bean>
-	
+
 	<bean id="mailingListFacade" class="org.linagora.linshare.core.facade.impl.MailingListFacadeImpl">
 		<constructor-arg ref="mailingListService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="accountService" />
 	</bean>
-	
-	
+
+
 	<!-- WEB SERVICES -->
-	
 	<bean id="wsDocumentFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.DocumentFacadeImpl">
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="accountService" />
@@ -226,8 +223,8 @@
 	</bean>
 	<bean id="wsAdminFunctionalityFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.FunctionalityFacadeImpl">
 		<constructor-arg ref="accountService" />
-        <constructor-arg ref="abstractDomainService" />
-        <constructor-arg ref="functionalityService" />
-        <constructor-arg ref="functionalityOldService" />
-	</bean>		
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="functionalityService" />
+		<constructor-arg ref="functionalityOldService" />
+	</bean>
 </beans>

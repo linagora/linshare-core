@@ -1018,6 +1018,7 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
+	@Deprecated
 	@Override
 	public User searchAndCreateUserEntityFromDirectory(String domainIdentifier, String mail) throws BusinessException {
 

@@ -138,7 +138,6 @@
 		</constructor-arg>
 	</bean>
 
-
 	<bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
 		<property name="authenticationManager" ref="authenticationManager" />
 		<property name="accessDecisionManager" ref="accessDecisionManager" />
@@ -156,7 +155,6 @@
 			</sec:filter-security-metadata-source>
 		</property>
 	</bean>
-
 
 
 	<!-- REST part / Magic lies there -->
@@ -198,28 +196,28 @@
 		<constructor-arg value="SHA" />
 	</bean>
 
+	<bean id="databaseUserDetailsProvider" class="org.linagora.linshare.auth.dao.DatabaseUserDetailsProvider">
+		<constructor-arg ref="authentificationFacade" />
+		<constructor-arg ref="userRepository" />
+	</bean>
+
 	<!-- database accounts : guests, root, technical accounts, ... -->
 	<bean id="databaseAuthenticationProvider" class="org.linagora.linshare.auth.dao.DatabaseAuthenticationProvider">
-		<property name="userRepository" ref="userRepository" />
-		<property name="abstractDomainService" ref="abstractDomainService" />
-		<property name="logEntryService" ref="logEntryService" />
+		<constructor-arg ref="databaseUserDetailsProvider" />
 		<property name="passwordEncoder">
 			<bean factory-bean="passwordEncoderFactory" factory-method="getInstance" />
 		</property>
 	</bean>
 
 	<!-- Domain Authentification -->
-	<bean id="ldapAuthenticationProvider" class="org.linagora.linshare.auth.dao.LdapAuthenticationProvider">
-		<property name="accountFacade" ref="accountFacade" />
-		<property name="userProviderService" ref="userProviderService" />
-		<property name="ldapUserDetailsProvider" ref="ldapUserDetailsProvider" />
+	<bean id="ldapUserDetailsProvider" class="org.linagora.linshare.auth.dao.LdapUserDetailsProvider">
+		<constructor-arg ref="authentificationFacade" />
+		<constructor-arg ref="internalRepository" />
+		<constructor-arg ref="userProviderService" />
 	</bean>
 
-	<bean id="ldapUserDetailsProvider" class="org.linagora.linshare.auth.dao.LdapUserDetailsProvider">
-		<property name="internalRepository" ref="internalRepository" />
-		<property name="abstractDomainService" ref="abstractDomainService" />
-		<property name="logEntryService" ref="logEntryService" />
-		<property name="userProviderService" ref="userProviderService" />
+	<bean id="ldapAuthenticationProvider" class="org.linagora.linshare.auth.dao.LdapAuthenticationProvider">
+		<constructor-arg ref="ldapUserDetailsProvider" />
 	</bean>
 
 	<!-- AUTHORIZATIONS MANAGEMENT -->

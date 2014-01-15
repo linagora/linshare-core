@@ -1,3 +1,36 @@
+/*
+ * LinShare is an open source filesharing software, part of the LinPKI software
+ * suite, developed by Linagora.
+ * 
+ * Copyright (C) 2013 LINAGORA
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version, provided you comply with the Additional Terms applicable for
+ * LinShare software by Linagora pursuant to Section 7 of the GNU Affero General
+ * Public License, subsections (b), (c), and (e), pursuant to which you must
+ * notably (i) retain the display of the “LinShare™” trademark/logo at the top
+ * of the interface window, the display of the “You are using the Open Source
+ * and free version of LinShare™, powered by Linagora © 2009–2013. Contribute to
+ * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
+ * e-mails sent with the Program, (ii) retain all hypertext links between
+ * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
+ * refrain from infringing Linagora intellectual property rights over its
+ * trademarks and commercial brands. Other Additional Terms apply, see
+ * <http://www.linagora.com/licenses/> for more details.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License and
+ * its applicable Additional Terms for LinShare along with this program. If not,
+ * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
+ * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
+ * applicable to LinShare software.
+ */
 package org.linagora.linshare.auth.dao;
 
 import java.io.IOException;
@@ -6,41 +39,42 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.linagora.linshare.auth.exceptions.BadDomainException;
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.repository.InternalRepository;
-import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public class LdapUserDetailsProvider {
+public class LdapUserDetailsProvider extends UserDetailsProvider {
 
-	private final static Log logger = LogFactory
-			.getLog(LdapUserDetailsProvider.class);
-	
+	private static final Logger logger = LoggerFactory.getLogger(LdapUserDetailsProvider.class);
+
 	private InternalRepository internalRepository;
-	
-	private AbstractDomainService abstractDomainService;
-	
-	private LogEntryService logEntryService;
-	
+
 	private UserProviderService userProviderService;
-	
+
+	public LdapUserDetailsProvider(AuthentificationFacade authentificationFacade,
+			InternalRepository internalRepository,
+			UserProviderService userProviderService) {
+		super(authentificationFacade);
+		this.internalRepository = internalRepository;
+		this.userProviderService = userProviderService;
+	}
+
 	/**
 	 * Looking for an user in the database and then into the LDAP directory.
 	 * @param domainIdentifier : could be null.
 	 * @param login
 	 * @return User account.
 	 */
+	@Override
 	public User retrieveUser(String domainIdentifier, String login) {
 		User foundUser = null;
 		// if domain was specified at the connection, we try to search the
@@ -72,8 +106,7 @@ public class LdapUserDetailsProvider {
 		}
 		return foundUser;
 	}
-	
-	
+
 	private User findUserInDomainAndSubdomains(String login,
 			String domainIdentifier) {
 		User foundUser;
@@ -152,7 +185,7 @@ public class LdapUserDetailsProvider {
 					+ foundUser.getDomainId());
 		} else {
 			logger.debug("Can't find the user in DB. Searching user in all LDAP domains.");
-			List<AbstractDomain> domains = abstractDomainService
+			List<AbstractDomain> domains = authentificationFacade
 					.getAllDomains();
 			for (AbstractDomain loopedDomain : domains) {
 				try {
@@ -193,61 +226,12 @@ public class LdapUserDetailsProvider {
 
 		return foundUser;
 	}
-
-	private AbstractDomain retrieveDomain(String login, String domainIdentifier) {
-		AbstractDomain domain = abstractDomainService
-				.retrieveDomain(domainIdentifier);
-		if (domain == null) {
-			logger.error("Can't find the specified domain : "
-					+ domainIdentifier);
-			logAuthError(login, domainIdentifier, "Bad domain.");
-			throw new BadDomainException("Domain '" + domainIdentifier
-					+ "' not found", domainIdentifier);
-		}
-		return domain;
-	}
 	
-
-	public void logAuthError(String login, String domainIdentifier,
-			String message) {
-		try {
-			logEntryService.create(new UserLogEntry(login, domainIdentifier,
-					LogAction.USER_AUTH_FAILED, message));
-		} catch (IllegalArgumentException e) {
-			logger.error("Couldn't log an authentication failure : " + message);
-			logger.debug(e.getMessage());
-		} catch (BusinessException e1) {
-			logger.error("Couldn't log an authentication failure : " + message);
-			logger.debug(e1.getMessage());
-		}
+	public User auth(LdapUserProvider userProvider, String login,
+			String userPasswd) throws NamingException, IOException {
+		return userProviderService.auth(userProvider, login, userPasswd);
 	}
-
-	public void logAuthError(User user, String domainIdentifier, String message) {
-		try {
-			logEntryService.create(new UserLogEntry(user,
-					LogAction.USER_AUTH_FAILED, message, user));
-		} catch (IllegalArgumentException e) {
-			logger.error("Couldn't log an authentication failure : " + message);
-			logger.debug(e.getMessage());
-		} catch (BusinessException e1) {
-			logger.error("Couldn't log an authentication failure : " + message);
-			logger.debug(e1.getMessage());
-		}
-	}
-
-	public void setInternalRepository(InternalRepository userRepository) {
-		this.internalRepository = userRepository;
-	}
-
-	public void setAbstractDomainService(AbstractDomainService abstractDomainService) {
-		this.abstractDomainService = abstractDomainService;
-	}
-
-	public void setLogEntryService(LogEntryService logEntryService) {
-		this.logEntryService = logEntryService;
-	}
-
-	public void setUserProviderService(UserProviderService userProviderService) {
-		this.userProviderService = userProviderService;
+	public User findOrCreateUser(String domainIdentifier, String mail) throws BusinessException {
+		return authentificationFacade.findOrCreateUser(domainIdentifier, mail);
 	}
 }

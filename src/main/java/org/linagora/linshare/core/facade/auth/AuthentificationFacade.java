@@ -31,41 +31,27 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.impl;
+package org.linagora.linshare.core.facade.auth;
 
-import org.linagora.linshare.core.domain.entities.Account;
+import java.util.List;
+
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.AccountFacade;
-import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.UserService;
 
-public class AccountFacadeImpl implements AccountFacade {
+public interface AuthentificationFacade {
 
-	private final AccountService accountService;
+	User loadUserDetails(String uuid) throws BusinessException;
 
-	private final UserService userService;
+	User findOrCreateUser(String domainIdentifier, String mail) throws BusinessException;
 
-	public AccountFacadeImpl(AccountService accountService,
-			UserService userService) {
-		super();
-		this.accountService = accountService;
-		this.userService = userService;
-	}
+	public void logAuthError(String login, String domainIdentifier, String message) throws BusinessException;
 
-	@Override
-	public UserVo loadUserDetails(String uuid) throws BusinessException {
-		Account account = accountService.findByLsUuid(uuid);
-		if (account != null) {
-			return new UserVo(account);
-		}
-		return null;
-	}
+	public void logAuthError(User user, String domainIdentifier, String message) throws BusinessException;
 
-	@Override
-	public User findOrCreateUser(String domainIdentifier, String mail)
-			throws BusinessException {
-		return userService.findOrCreateUser(mail, domainIdentifier);
-	}
+	public void logAuthSuccess(User user) throws BusinessException;
+
+	public AbstractDomain retrieveDomain(String domainIdentifier);
+
+	public List<AbstractDomain> getAllDomains();
 }

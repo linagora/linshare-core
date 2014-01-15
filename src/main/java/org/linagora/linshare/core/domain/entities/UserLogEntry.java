@@ -84,7 +84,16 @@ public class UserLogEntry extends LogEntry {
 		this.targetDomain = userVo.getDomainIdentifier();
 		this.expirationDate = null;
 	}
-	
+
+	public UserLogEntry(User user, LogAction logAction, String description) {
+		super(user, logAction, description);
+		this.targetMail = user.getMail();
+		this.targetFirstname = user.getFirstName();
+		this.targetLastname = user.getLastName();
+		this.targetDomain = user.getDomainId();
+		this.expirationDate = null;
+	}
+
 	public UserLogEntry(Account actor, LogAction logAction, String description, Account target, Calendar expirationDate) {
 		super(actor, logAction, description);
 

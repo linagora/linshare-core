@@ -42,8 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.linagora.linshare.auth.dao.LdapUserDetailsProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.AccountFacade;
-import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.repository.RootUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -58,11 +57,12 @@ import org.springframework.util.Assert;
  */
 public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 
-	private UserRepository<User> userRepository;
+	private static Logger logger = LoggerFactory
+			.getLogger(PreAuthenticationHeader.class);
 
-	private AccountFacade accountFacade;
+	private RootUserRepository rootUserRepository;
 
-	private LdapUserDetailsProvider ldapUserDetailsProvider;
+	private LdapUserDetailsProvider userDetailsProvider;
 
 	private String principalRequestHeader;
 
@@ -70,9 +70,6 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 
 	/** List of IP / DNS hostname */
 	private List<String> authorizedAddresses;
-
-	private static Logger logger = LoggerFactory
-			.getLogger(PreAuthenticationHeader.class);
 
 	public PreAuthenticationHeader(String authorizedAddressesList) {
 		super();
@@ -115,16 +112,16 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 	private User getPreAuthenticatedUser(String authenticationHeader,
 			String domainIdentifier) {
 		// Looking for a root user no matter the domain.
-		User foundUser = userRepository.findByLogin(authenticationHeader);
+		User foundUser = rootUserRepository.findByLogin(authenticationHeader);
 
 		if (foundUser == null) {
 			logger.debug("looking into ldap.");
-			foundUser = ldapUserDetailsProvider.retrieveUser(domainIdentifier,
+			foundUser = userDetailsProvider.retrieveUser(domainIdentifier,
 					authenticationHeader);
 		}
 		if (foundUser != null) {
 			try {
-				foundUser = accountFacade.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
+				foundUser = userDetailsProvider.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
 			} catch (BusinessException e) {
 				logger.error(e.getMessage());
 				throw new AuthenticationServiceException(
@@ -148,22 +145,11 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 		this.domainRequestHeader = domainRequestHeader;
 	}
 
-	public void setAuthorizedAddresses(List<String> authorizedAddresses) {
-		Assert.hasText(authorizedAddresses.toString(),
-				"authorizedAddresses must not be empty or null");
-		this.authorizedAddresses = authorizedAddresses;
+	public void setRootUserRepository(RootUserRepository rootUserRepository) {
+		this.rootUserRepository = rootUserRepository;
 	}
 
-	public void setAccountFacade(AccountFacade accountFacade) {
-		this.accountFacade = accountFacade;
-	}
-
-	public void setLdapUserDetailsProvider(
-			LdapUserDetailsProvider userDetailsProvider) {
-		this.ldapUserDetailsProvider = userDetailsProvider;
-	}
-
-	public void setUserRepository(UserRepository<User> userRepository) {
-		this.userRepository = userRepository;
+	public void setUserDetailsProvider(LdapUserDetailsProvider userDetailsProvider) {
+		this.userDetailsProvider = userDetailsProvider;
 	}
 }
