@@ -33,10 +33,7 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.io.IOException;
 import java.util.List;
-
-import javax.naming.NamingException;
 
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
@@ -46,38 +43,39 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UserProviderService {
 
-    public List<String> findAllDomainPatternIdentifiers();
-    public List<String> findAllUserDomainPatternIdentifiers();
-    public List<String> findAllSystemDomainPatternIdentifiers();
-    public List<DomainPattern> findAllDomainPattern() throws BusinessException;
-    public List<DomainPattern> findAllUserDomainPattern() throws BusinessException;
-    public List<DomainPattern> findAllSystemDomainPattern() throws BusinessException;
-    public DomainPattern createDomainPattern(DomainPattern domainPattern) throws BusinessException;
-    public DomainPattern retrieveDomainPattern(String identifier) throws BusinessException;
-    public void updateDomainPattern(DomainPattern domainPattern) throws BusinessException;
-    public void deletePattern(String patternToDelete) throws BusinessException;
+	public List<String> findAllDomainPatternIdentifiers();
+	public List<String> findAllUserDomainPatternIdentifiers();
+	public List<String> findAllSystemDomainPatternIdentifiers();
+	public List<DomainPattern> findAllDomainPattern() throws BusinessException;
+	public List<DomainPattern> findAllUserDomainPattern() throws BusinessException;
+	public List<DomainPattern> findAllSystemDomainPattern() throws BusinessException;
+	public DomainPattern createDomainPattern(DomainPattern domainPattern) throws BusinessException;
+	public DomainPattern retrieveDomainPattern(String identifier) throws BusinessException;
+	public void updateDomainPattern(DomainPattern domainPattern) throws BusinessException;
+	public void deletePattern(String patternToDelete) throws BusinessException;
 
-    public List<String> findAllLDAPConnectionIdentifiers();
-    public List<LDAPConnection> findAllLDAPConnections() throws BusinessException;
-    public LDAPConnection createLDAPConnection(LDAPConnection ldapConnection) throws BusinessException;
-    public LDAPConnection retrieveLDAPConnection(String identifier) throws BusinessException;
-    public void updateLDAPConnection(LDAPConnection ldapConnection) throws BusinessException;
-    public void deleteConnection(String connectionToDelete) throws BusinessException;
+	public List<String> findAllLDAPConnectionIdentifiers();
+	public List<LDAPConnection> findAllLDAPConnections() throws BusinessException;
+	public LDAPConnection createLDAPConnection(LDAPConnection ldapConnection) throws BusinessException;
+	public LDAPConnection retrieveLDAPConnection(String identifier) throws BusinessException;
+	public void updateLDAPConnection(LDAPConnection ldapConnection) throws BusinessException;
+	public void deleteConnection(String connectionToDelete) throws BusinessException;
 
-    public void create(LdapUserProvider userProvider) throws BusinessException;
-    public void delete(LdapUserProvider userProvider) throws BusinessException;
-    public void update(LdapUserProvider userProvider) throws BusinessException;
+	public void create(LdapUserProvider userProvider) throws BusinessException;
+	public void delete(LdapUserProvider userProvider) throws BusinessException;
+	public void update(LdapUserProvider userProvider) throws BusinessException;
 
-    public User findUser(LdapUserProvider userProvider, String mail) throws BusinessException, NamingException, IOException;
-    public Boolean isUserExist(LdapUserProvider userProvider, String mail) throws BusinessException, NamingException, IOException;
-    public List<User> searchUser(LdapUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException, NamingException, IOException;
-    
-    public List<User> autoCompleteUser(LdapUserProvider userProvider, String pattern) throws BusinessException, NamingException, IOException;
-    public List<User> autoCompleteUser(LdapUserProvider userProvider, String firstName, String lastName) throws BusinessException, NamingException, IOException;
-    
-    public User auth(LdapUserProvider userProvider,	String login, String userPasswd) throws NamingException, IOException;
-    public User searchForAuth(LdapUserProvider userProvider, String login) throws NamingException, IOException;
+	public User findUser(LdapUserProvider userProvider, String mail) throws BusinessException;
+	public Boolean isUserExist(LdapUserProvider userProvider, String mail) throws BusinessException;
 
-    public boolean patternIsDeletable(String patternToDelete);
-    public boolean connectionIsDeletable(String connectionToDelete);
+	public List<User> searchUser(LdapUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException;
+
+	public List<User> autoCompleteUser(LdapUserProvider userProvider, String pattern) throws BusinessException;
+	public List<User> autoCompleteUser(LdapUserProvider userProvider, String firstName, String lastName) throws BusinessException;
+
+	public User auth(LdapUserProvider userProvider,	String login, String userPasswd) throws BusinessException;
+	public User searchForAuth(LdapUserProvider userProvider, String login) throws BusinessException;
+
+	public boolean patternIsDeletable(String patternToDelete);
+	public boolean connectionIsDeletable(String connectionToDelete);
 }

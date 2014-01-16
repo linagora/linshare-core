@@ -125,7 +125,7 @@ public class DatabaseAuthenticationProvider extends
 			if (account == null
 					|| password == null
 					|| account.isSystempAccount()) {
-				logger.debug("throw UsernameNotFoundException: Account not found");
+				logger.debug("Account not found");
 				throw new UsernameNotFoundException("Account not found");
 			}
 

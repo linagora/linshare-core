@@ -33,12 +33,9 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.naming.NamingException;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.DomainType;
@@ -380,27 +377,11 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throws BusinessException {
 		User user = null;
 		if (domain.getUserProvider() != null) {
-			try {
-				user = userProviderService.findUser(domain.getUserProvider(),
+			user = userProviderService.findUser(domain.getUserProvider(),
 						mail);
-				if (user != null) {
-					user.setDomain(domain);
-					user.setRole(user.getDomain().getDefaultRole());
-				}
-			} catch (NamingException e) {
-				logger.error("Error while searching for a user in domain {}",
-						domain.getIdentifier());
-				logger.error(e.toString());
-				throw new BusinessException(
-						BusinessErrorCode.DIRECTORY_UNAVAILABLE,
-						"Couldn't connect to the directory.");
-			} catch (IOException e) {
-				logger.error("Error while searching for a user in domain {}",
-						domain.getIdentifier());
-				logger.error(e.toString());
-				throw new BusinessException(
-						BusinessErrorCode.DIRECTORY_UNAVAILABLE,
-						"Couldn't connect to the directory.");
+			if (user != null) {
+				user.setDomain(domain);
+				user.setRole(user.getDomain().getDefaultRole());
 			}
 		} else {
 			logger.debug("UserProvider is null for domain : "
@@ -414,27 +395,9 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	public Boolean isUserExist(AbstractDomain domain, String mail)
 			throws BusinessException {
 		if (domain.getUserProvider() != null) {
-			try {
-				return userProviderService.isUserExist(
-						domain.getUserProvider(), mail);
-			} catch (NamingException e) {
-				logger.error("Error while searching for a user in domain {}",
-						domain.getIdentifier());
-				logger.error(e.toString());
-				throw new BusinessException(
-						BusinessErrorCode.DIRECTORY_UNAVAILABLE,
-						"Couldn't connect to the directory.");
-			} catch (IOException e) {
-				logger.error("Error while searching for a user in domain {}",
-						domain.getIdentifier());
-				logger.error(e.toString());
-				throw new BusinessException(
-						BusinessErrorCode.DIRECTORY_UNAVAILABLE,
-						"Couldn't connect to the directory.");
-			}
+			return userProviderService.isUserExist( domain.getUserProvider(), mail);
 		} else {
-			logger.debug("UserProvider is null for domain : "
-					+ domain.getIdentifier());
+			logger.debug("UserProvider is null for domain : " + domain.getIdentifier());
 		}
 		return false;
 	}
@@ -507,20 +470,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			// if the current domain is linked to a UserProvider, we perform a
 			// search.
 			if (d.getUserProvider() != null) {
-				try {
-					users.addAll(userProviderService.autoCompleteUser(
+				users.addAll(userProviderService.autoCompleteUser(
 							d.getUserProvider(), pattern));
-				} catch (NamingException e) {
-					logger.error(
-							"Error while searching for a user in domain {}",
-							d.getIdentifier());
-					logger.error(e.toString());
-				} catch (IOException e) {
-					logger.error(
-							"Error while searching for a user in domain {}",
-							d.getIdentifier());
-					logger.error(e.toString());
-				}
 			} else {
 				logger.debug("UserProvider is null for domain : "
 						+ domain.getIdentifier());
@@ -541,20 +492,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			// if the current domain is linked to a UserProvider, we perform a
 			// search.
 			if (d.getUserProvider() != null) {
-				try {
-					users.addAll(userProviderService.autoCompleteUser(
-							d.getUserProvider(), firstName, lastName));
-				} catch (NamingException e) {
-					logger.error(
-							"Error while searching for a user in domain {}",
-							d.getIdentifier());
-					logger.error(e.toString());
-				} catch (IOException e) {
-					logger.error(
-							"Error while searching for a user in domain {}",
-							d.getIdentifier());
-					logger.error(e.toString());
-				}
+				users.addAll(userProviderService.autoCompleteUser(
+						d.getUserProvider(), firstName, lastName));
 			} else {
 				logger.debug("UserProvider is null for domain : "
 						+ domain.getIdentifier());
@@ -656,35 +595,29 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		for (AbstractDomain d : allAuthorizedDomain) {
 
 			if (d.getUserProvider() != null) {
+				List<User> ldapUserList = new ArrayList<User>();
 				try {
-					List<User> ldapUserList = userProviderService.searchUser(
-							d.getUserProvider(), mail, firstName, lastName);
-					// For each user, we set the domain which he came from.
-					for (User ldapUser : ldapUserList) {
-						User userDb = userRepository.findByMailAndDomain(
-								d.getIdentifier(), ldapUser.getMail());
-						if (userDb != null) {
-							users.add(userDb);
-						} else {
-							// this two attributes must be set in order to let
-							// ihm (tapestry) find
-							// - if user is admin or not (in the result list)
-							// - the domain who came from the user.
-							ldapUser.setDomain(d);
-							ldapUser.setRole(d.getDefaultRole());
-							users.add(ldapUser);
-						}
+					ldapUserList = userProviderService.searchUser(
+						d.getUserProvider(), mail, firstName, lastName);
+				} catch (BusinessException e) {
+					logger.error("can not search users from domain:" + d.getIdentifier());
+				}
+
+				// For each user, we set the domain which he came from.
+				for (User ldapUser : ldapUserList) {
+					User userDb = userRepository.findByMailAndDomain(
+							d.getIdentifier(), ldapUser.getMail());
+					if (userDb != null) {
+						users.add(userDb);
+					} else {
+						// this two attributes must be set in order to let
+						// ihm (tapestry) find
+						// - if user is admin or not (in the result list)
+						// - the domain who came from the user.
+						ldapUser.setDomain(d);
+						ldapUser.setRole(d.getDefaultRole());
+						users.add(ldapUser);
 					}
-				} catch (NamingException e) {
-					logger.error(
-							"Error while searching for a user in domain {}",
-							d.getIdentifier());
-					logger.error(e.toString());
-				} catch (IOException e) {
-					logger.error(
-							"Error while searching for a user in domain {}",
-							d.getIdentifier());
-					logger.error(e.toString());
 				}
 			} else {
 				logger.debug("UserProvider is null for domain : "

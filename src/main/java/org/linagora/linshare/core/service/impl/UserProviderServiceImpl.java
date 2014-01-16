@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
 import org.linagora.linshare.core.repository.LDAPConnectionRepository;
@@ -251,64 +252,146 @@ public class UserProviderServiceImpl implements UserProviderService {
 
 	@Override
 	public User findUser(LdapUserProvider userProvider, String mail)
-			throws BusinessException, NamingException, IOException {
-		return ldapQueryService.getUser(userProvider.getLdapconnexion(),
-				userProvider.getBaseDn(), userProvider.getPattern(), mail);
+			throws BusinessException {
+		LdapUserProvider p = userProvider;
+		if (p == null) {
+			return null;
+		}
+		User user = null;
+		try {
+			user = ldapQueryService.getUser(userProvider.getLdapconnexion(),
+					userProvider.getBaseDn(), userProvider.getPattern(), mail);
+		} catch (NamingException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		} catch (IOException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		} catch (org.springframework.ldap.CommunicationException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		}
+		return user;
 	}
 
 	@Override
 	public List<User> searchUser(LdapUserProvider userProvider, String mail,
-			String firstName, String lastName) throws BusinessException,
-			NamingException, IOException {
-		return ldapQueryService.searchUser(userProvider.getLdapconnexion(),
-				userProvider.getBaseDn(), userProvider.getPattern(), mail,
-				firstName, lastName);
+			String firstName, String lastName) throws BusinessException {
+		List<User> users = new ArrayList<User>();
+		try {
+			users = ldapQueryService.searchUser(userProvider.getLdapconnexion(),
+					userProvider.getBaseDn(), userProvider.getPattern(), mail,
+					firstName, lastName);
+		} catch (NamingException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		} catch (IOException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		} catch (org.springframework.ldap.CommunicationException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		}
+		return users;
 	}
 
 	@Override
 	public List<User> autoCompleteUser(LdapUserProvider userProvider,
-			String pattern) throws BusinessException, NamingException,
-			IOException {
-		return ldapQueryService.completeUser(userProvider.getLdapconnexion(),
-				userProvider.getBaseDn(), userProvider.getPattern(), pattern);
+			String pattern) throws BusinessException {
+		List<User> users = new ArrayList<User>();
+		try {
+			users = ldapQueryService.completeUser(userProvider.getLdapconnexion(),
+					userProvider.getBaseDn(), userProvider.getPattern(), pattern);
+		} catch (NamingException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		} catch (IOException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		} catch (org.springframework.ldap.CommunicationException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		}
+		return users;
 	}
 
 	@Override
 	public List<User> autoCompleteUser(LdapUserProvider userProvider,
-			String firstName, String lastName) throws BusinessException,
-			NamingException, IOException {
-		return ldapQueryService.completeUser(userProvider.getLdapconnexion(),
+			String firstName, String lastName) throws BusinessException {
+		List<User> users = new ArrayList<User>();
+		try {
+			users = ldapQueryService.completeUser(userProvider.getLdapconnexion(),
 				userProvider.getBaseDn(), userProvider.getPattern(), firstName,
 				lastName);
+		} catch (NamingException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		} catch (IOException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		} catch (org.springframework.ldap.CommunicationException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		}
+		return users;
 	}
 
 	@Override
 	public Boolean isUserExist(LdapUserProvider userProvider, String mail)
-			throws BusinessException, NamingException, IOException {
-		return ldapQueryService.isUserExist(userProvider.getLdapconnexion(),
-				userProvider.getBaseDn(), userProvider.getPattern(), mail);
+			throws BusinessException {
+		Boolean result = false;
+		try {
+			result = ldapQueryService.isUserExist(userProvider.getLdapconnexion(),
+					userProvider.getBaseDn(), userProvider.getPattern(), mail);
+		} catch (NamingException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		} catch (IOException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		} catch (org.springframework.ldap.CommunicationException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		}
+		return result;
 	}
 
 	@Override
 	public User auth(LdapUserProvider userProvider, String login,
-			String userPasswd) throws NamingException, IOException {
+			String userPasswd) throws BusinessException {
 		LdapUserProvider p = userProvider;
 		if (p == null) {
 			return null;
 		}
-		return ldapQueryService.auth(p.getLdapconnexion(), p.getBaseDn(),
-				p.getPattern(), login, userPasswd);
+		User user = null;
+		try {
+			user = ldapQueryService.auth(p.getLdapconnexion(), p.getBaseDn(),
+					p.getPattern(), login, userPasswd);
+		} catch (NamingException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		} catch (IOException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		} catch (org.springframework.ldap.CommunicationException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		}
+		return user;
 	}
 
 	@Override
 	public User searchForAuth(LdapUserProvider userProvider, String login)
-			throws NamingException, IOException {
+			throws BusinessException {
 		LdapUserProvider p = userProvider;
 		if (p == null) {
 			return null;
 		}
-		return ldapQueryService.searchForAuth(p.getLdapconnexion(),
-				p.getBaseDn(), p.getPattern(), login);
+		User user = null;
+		try {
+			user = ldapQueryService.searchForAuth(p.getLdapconnexion(),
+					p.getBaseDn(), p.getPattern(), login);
+		} catch (NamingException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		} catch (IOException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		} catch (org.springframework.ldap.CommunicationException e) {
+			throwError(userProvider.getLdapconnexion(), e);
+		}
+		return user;
+	}
+
+	private void throwError(LDAPConnection ldap, Exception e) throws BusinessException {
+		logger.error(
+				"Error while searching for a user with ldap connection {}",
+				ldap.getIdentifier());
+		logger.error(e.getMessage());
+		logger.debug(e.toString());
+		throw new BusinessException(
+				BusinessErrorCode.DIRECTORY_UNAVAILABLE,
+				"Couldn't connect to the directory.");
 	}
 
 	@Override

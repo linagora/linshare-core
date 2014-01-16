@@ -79,36 +79,45 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 		User foundUser = null;
 		// if domain was specified at the connection, we try to search the
 		// user on this domain and its sub domains.
-		if (domainIdentifier != null) {
-			foundUser = findUserInDomainAndSubdomains(login, domainIdentifier);
-		} else {
-			// There is no constraints, we have to search the current user in
-			// all domains.
-			foundUser = findUserInAllDomain(login);
-		}
-		// Check if it is a guest. Should not happen.
-		if (!foundUser.isInternal()) {
-			logger.debug("Guest found during ldap authentification process.");
-			logAuthError(foundUser, domainIdentifier, "User not found.");
-			String message = "Guest found : "
-					+ foundUser.getAccountReprentation() + " in domain : '"
-					+ domainIdentifier + "'";
-			logAuthError(login, domainIdentifier, message);
-			throw new UsernameNotFoundException(message);
-		}
+		try {
 
-		if (foundUser.getDomain() == null) {
-			String message = "Bad credentials";
-			logAuthError(foundUser, domainIdentifier, message);
-			logger.error("The user found in the database contain a null domain reference.");
-			throw new BadCredentialsException("Could not authenticate user: "
-					+ login);
+			if (domainIdentifier != null) {
+				foundUser = findUserInDomainAndSubdomains(login, domainIdentifier);
+			} else {
+				// There is no constraints, we have to search the current user in
+				// all domains.
+				foundUser = findUserInAllDomain(login);
+			}
+			// Check if it is a guest. Should not happen.
+			if (!foundUser.isInternal()) {
+				logger.debug("Guest found during ldap authentification process.");
+				logAuthError(foundUser, domainIdentifier, "User not found.");
+				String message = "Guest found : "
+						+ foundUser.getAccountReprentation() + " in domain : '"
+						+ domainIdentifier + "'";
+				logAuthError(login, domainIdentifier, message);
+				throw new UsernameNotFoundException(message);
+			}
+
+			if (foundUser.getDomain() == null) {
+				String message = "Bad credentials";
+				logAuthError(foundUser, domainIdentifier, message);
+				logger.error("The user found in the database contain a null domain reference.");
+				throw new BadCredentialsException("Could not authenticate user: "
+						+ login);
+			}
+		} catch (BusinessException e) {
+			logger.error("Couldn't find user during authentication process : "
+					+ e.getMessage());
+			logAuthError(login, null, e.getMessage());
+			throw new AuthenticationServiceException(
+					"Could not authenticate user: " + login);
 		}
 		return foundUser;
 	}
 
 	private User findUserInDomainAndSubdomains(String login,
-			String domainIdentifier) {
+			String domainIdentifier) throws BusinessException {
 		User foundUser;
 		logger.debug("The domain was specified at the connection time : "
 				+ domainIdentifier);
@@ -120,38 +129,24 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 		if (foundUser == null) {
 			logger.debug("Can't find the user in the DB. Searching in LDAP.");
 			// searching in LDAP
-			try {
-				foundUser = userProviderService.searchForAuth(
-						domain.getUserProvider(), login);
-				if (foundUser != null) {
-					// if found we set the domain which belong the user.
-					foundUser.setDomain(domain);
-				} else {
-					Set<AbstractDomain> subdomains = domain.getSubdomain();
-					for (AbstractDomain subdomain : subdomains) {
-						foundUser = userProviderService.searchForAuth(
-								subdomain.getUserProvider(), login);
-						if (foundUser != null) {
-							// if found we set the domain which belong the user.
-							foundUser.setDomain(subdomain);
-							logger.debug("User found and authenticated in domain "
-									+ subdomain.getIdentifier());
-							break;
-						}
+			foundUser = userProviderService.searchForAuth(
+					domain.getUserProvider(), login);
+			if (foundUser != null) {
+				// if found we set the domain which belong the user.
+				foundUser.setDomain(domain);
+			} else {
+				Set<AbstractDomain> subdomains = domain.getSubdomain();
+				for (AbstractDomain subdomain : subdomains) {
+					foundUser = userProviderService.searchForAuth(
+							subdomain.getUserProvider(), login);
+					if (foundUser != null) {
+						// if found we set the domain which belong the user.
+						foundUser.setDomain(subdomain);
+						logger.debug("User found and authenticated in domain "
+								+ subdomain.getIdentifier());
+						break;
 					}
 				}
-			} catch (NamingException e) {
-				logger.error("Couldn't find user during authentication process : "
-						+ e.getMessage());
-				logAuthError(login, domainIdentifier, e.getMessage());
-				throw new AuthenticationServiceException(
-						"Could not authenticate user: " + login);
-			} catch (IOException e) {
-				logger.error("Couldn't find user during authentication process : "
-						+ e.getMessage());
-				logAuthError(login, domainIdentifier, e.getMessage());
-				throw new AuthenticationServiceException(
-						"Could not authenticate user: " + login);
 			}
 		}
 
@@ -168,7 +163,7 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 		return foundUser;
 	}
 
-	private User findUserInAllDomain(String login) {
+	private User findUserInAllDomain(String login) throws BusinessException {
 		User foundUser = null;
 		try {
 			foundUser = internalRepository.findByLogin(login);
@@ -188,22 +183,8 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 			List<AbstractDomain> domains = authentificationFacade
 					.getAllDomains();
 			for (AbstractDomain loopedDomain : domains) {
-				try {
-					foundUser = userProviderService.searchForAuth(
+				foundUser = userProviderService.searchForAuth(
 							loopedDomain.getUserProvider(), login);
-				} catch (NamingException e) {
-					logger.error("Couldn't find user during authentication process : "
-							+ e.getMessage());
-					logAuthError(login, null, e.getMessage());
-					throw new AuthenticationServiceException(
-							"Could not authenticate user: " + login);
-				} catch (IOException e) {
-					logger.error("Couldn't find user during authentication process : "
-							+ e.getMessage());
-					logAuthError(login, null, e.getMessage());
-					throw new AuthenticationServiceException(
-							"Could not authenticate user: " + login);
-				}
 				if (foundUser != null) {
 					foundUser.setDomain(loopedDomain);
 					logger.debug("User found in domain "
@@ -226,11 +207,12 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 
 		return foundUser;
 	}
-	
+
 	public User auth(LdapUserProvider userProvider, String login,
-			String userPasswd) throws NamingException, IOException {
+			String userPasswd) throws NamingException, IOException , BusinessException {
 		return userProviderService.auth(userProvider, login, userPasswd);
 	}
+
 	public User findOrCreateUser(String domainIdentifier, String mail) throws BusinessException {
 		return authentificationFacade.findOrCreateUser(domainIdentifier, mail);
 	}
