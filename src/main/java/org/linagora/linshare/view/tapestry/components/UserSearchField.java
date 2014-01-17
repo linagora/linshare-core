@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
@@ -68,7 +67,6 @@ public class UserSearchField {
 	 * Parameters***********************************************************
 	 */
 
-	@SuppressWarnings("unused")
 	@Parameter(required = true, defaultPrefix = BindingConstants.PROP)
 	@Property
 	private List<UserVo> users;
