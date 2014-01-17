@@ -2,7 +2,7 @@
 SET NAMES UTF8 COLLATE utf8_general_ci;
 SET CHARACTER SET UTF8;
 
-SET AUTOCOMMIT=0
+SET AUTOCOMMIT=0;
 START TRANSACTION;
 -- update mail subjects
 
@@ -52,14 +52,14 @@ call copy_domain_abstract2mail_subjects();
 DROP PROCEDURE IF EXISTS copy_domain_abstract2mail_subjects;
 
 
-ALTER TABLE `domain_pattern` DROP `description` ;
-ALTER TABLE `domain_pattern`  ADD `description` TEXT AFTER `identifier` NOT NULL;
+ALTER TABLE domain_pattern DROP description;
+ALTER TABLE domain_pattern  ADD description TEXT DEFAULT '' NOT NULL AFTER identifier ;
 
 ALTER TABLE ldap_attribute ADD COLUMN completion bool DEFAULT true NOT NULL;
 UPDATE ldap_attribute SET completion=false  WHERE field = 'user_uid';
 
-ALTER TABLE domain_pattern ADD COLUMN auto_complete_command_on_first_and_last_name text DEFAULT 'To be define' NOT NULL;
-ALTER TABLE domain_pattern ADD COLUMN auto_complete_command_on_all_attributes text DEFAULT 'To be define' NOT NULL;
+ALTER TABLE domain_pattern ADD COLUMN auto_complete_command_on_first_and_last_name text NOT NULL;
+ALTER TABLE domain_pattern ADD COLUMN auto_complete_command_on_all_attributes text NOT NULL;
 
 ALTER TABLE domain_pattern DROP COLUMN auto_complete_command;
 
