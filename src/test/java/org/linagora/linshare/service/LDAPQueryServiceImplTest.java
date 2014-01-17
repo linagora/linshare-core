@@ -56,6 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
@@ -191,7 +192,12 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	public void testAuthWrongPassword() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
-		User user = ldapQueryService.auth(ldapConn, baseDn, domainPattern, userMail1, "eeee");
+		User user = null;
+		try {
+			user = ldapQueryService.auth(ldapConn, baseDn, domainPattern, userMail1, "eeee");
+		} catch (BadCredentialsException e) {
+
+		}
 		Date date_after = new Date();
 		Assert.assertNull(user);
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
