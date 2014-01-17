@@ -109,8 +109,6 @@ CREATE TABLE domain_pattern (
   CONSTRAINT linshare_domain_pattern_pkey
     PRIMARY KEY (domain_pattern_id));
 CREATE TABLE domain_policy (
-
-CREATE TABLE domain_policy (
   id                       int8 NOT NULL, 
   description             text, 
   identifier              varchar(255), 
