@@ -8,7 +8,7 @@ SET client_encoding = 'UTF8';
 SET client_min_messages = warning;
 SET default_with_oids = false;
 
-DROP EXTENSION IF EXISTS plpgsql
+DROP EXTENSION IF EXISTS plpgsql;
 DROP LANGUAGE IF EXISTS plpgsql;
 DROP FUNCTION IF EXISTS plpgsql_call_handler();
 
@@ -27,8 +27,8 @@ DECLARE
 BEGIN
         FOR rec IN SELECT DISTINCT(messages_configuration_id) from domain_abstract LOOP
                 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (rec.messages_configuration_id, 13, '${actorSubject} from ${actorRepresentation}', 0);
--               INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (rec.messages_configuration_id, 13, '${actorSubject} de la part de ${actorRepresentation}', 1);
--               INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (rec.messages_configuration_id, 13, '${actorSubject} from ${actorRepresentation}', 2);
+                INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (rec.messages_configuration_id, 13, '${actorSubject} de la part de ${actorRepresentation}', 1);
+                INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (rec.messages_configuration_id, 13, '${actorSubject} from ${actorRepresentation}', 2);
         END LOOP;
 END;
 $$ language 'plpgsql';
@@ -48,7 +48,6 @@ UPDATE ldap_attribute SET completion=false  WHERE field = 'user_uid';
 ALTER TABLE domain_pattern ADD COLUMN auto_complete_command_on_first_and_last_name text DEFAULT 'To be define' NOT NULL;
 ALTER TABLE domain_pattern ADD COLUMN auto_complete_command_on_all_attributes text DEFAULT 'To be define' NOT NULL;
 
-UPDATE domain_pattern SET auto_complete_command_on_all_attributes = auto_complete_command;
 ALTER TABLE domain_pattern DROP COLUMN auto_complete_command;
 
 ALTER TABLE domain_pattern ADD COLUMN search_page_size int4 DEFAULT 100 NOT NULL;
