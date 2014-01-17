@@ -83,7 +83,6 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		}
 	}
 
-
 	@Override
 	public User searchForAuth(LDAPConnection ldapConnection, String baseDn,
 			DomainPattern domainPattern, String userLogin)
@@ -97,9 +96,13 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		IDnList dnList = new LinShareDnList(domainPattern.getSearchPageSize(), domainPattern.getSearchSizeLimit());
 
 		logger.debug("LDAPQueryServiceImpl.authUser: baseDn: '" + baseDn + "' , login : '" + userLogin + "'");
-		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
-		User user = query.searchForAuth(ldapConnection, userLogin);
-		ldapContext.close();
+		User user = null;
+		try {
+			JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
+			user = query.searchForAuth(ldapConnection, userLogin);
+		} finally {
+			ldapContext.close();
+		}
 		return user;
 	}
 
@@ -114,9 +117,9 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		IDnList dnList = new LinShareDnList(domainPattern.getSearchPageSize(), domainPattern.getSearchSizeLimit());
 
 		logger.debug("LDAPQueryServiceImpl.authUser: baseDn: '" + baseDn + "' , login : '" + userLogin + "'");
-		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
 		User user = null;
 		try {
+			JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
 			// this coulds throw BadCredentialsException.
 			user = query.auth(ldapConnection, userLogin, userPasswd);
 		} finally {
@@ -136,9 +139,13 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		IDnList dnList = new LinShareDnList(domainPattern.getSearchPageSize(), domainPattern.getSearchSizeLimit());
 
 		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDn + "' , motif (mail) : '" + mail + "'");
-		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
-		User user = query.findUser(mail);
-		ldapContext.close();
+		User user = null;
+		try {
+			JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
+			user = query.findUser(mail);
+		} finally {
+			ldapContext.close();
+		}
 		return user;
 	}
 
@@ -155,9 +162,13 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		IDnList dnList = new LinShareDnList(domainPattern.getSearchPageSize(), domainPattern.getSearchSizeLimit());
 
 		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDn + "' , motif (mail) : '" + mail + "'");
-		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
-		List<User> list = query.searchUser(mail, first_name, last_name);
-		ldapContext.close();
+		List<User> list = null;
+		try {
+			JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
+			list = query.searchUser(mail, first_name, last_name);
+		} finally {
+			ldapContext.close();
+		}
 		return list;
 	}
 
@@ -172,9 +183,13 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		IDnList dnList = new LinShareDnList(domainPattern.getCompletionPageSize(), domainPattern.getCompletionSizeLimit());
 
 		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDn + "' , motif (pattern) : '" + pattern + "'");
-		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
-		List<User> list = query.complete(pattern); 
-		ldapContext.close();
+		List<User> list = null;
+		try {
+			JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
+			list = query.complete(pattern);
+		} finally {
+			ldapContext.close();
+		}
 		return list;
 	}
 
@@ -190,9 +205,13 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		IDnList dnList = new LinShareDnList(domainPattern.getCompletionPageSize(), domainPattern.getCompletionSizeLimit());
 
 		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDn + "' , motif (firstName lastName) : '" + first_name + "' et '" + last_name + "'");
-		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
-		List<User> list = query.complete(first_name, last_name); 
-		ldapContext.close();
+		List<User> list = null;
+		try {
+			JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
+			list = query.complete(first_name, last_name);
+		} finally {
+			ldapContext.close();
+		}
 		return list;
 	}
 
@@ -207,9 +226,13 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		IDnList dnList = new LinShareDnList(domainPattern.getCompletionPageSize(), domainPattern.getCompletionSizeLimit());
 
 		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDn + "' , motif (mail) : '" + mail + "'");
-		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
-		Boolean userExist = query.isUserExist(mail);
-		ldapContext.close();
+		Boolean userExist = null;
+		try {
+			JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
+			userExist = query.isUserExist(mail);
+		} finally {
+			ldapContext.close();
+		}
 		return userExist;
 	}
 }
