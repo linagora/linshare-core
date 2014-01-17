@@ -31,14 +31,35 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade;
+package org.linagora.linshare.core.domain.entities.temp;
 
-import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessException;
+public abstract class AbstractDomainPattern {
+	/**
+	 * Database persistence identifier
+	 */
+	private long persistenceId;
 
+	protected String identifier;
 
-public interface AccountFacade {
+	public AbstractDomainPattern(String identifier) {
+		super();
+		this.identifier = identifier;
+	}
 
-    UserVo loadUserDetails(String uid) throws BusinessException;
-	
+	public long getPersistenceId() {
+		return persistenceId;
+	}
+
+	@SuppressWarnings("unused")
+	private void setPersistenceId(long persistenceId) {
+		this.persistenceId = persistenceId;
+	}
+
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
 }

@@ -52,6 +52,12 @@ public class DomainPatternDto {
 	private String userFirstName;
 	private String userLastName;
 	private String ldapUid;
+	private String autoCompleteCommandOnAllAttributes;
+    private String autoCompleteCommandOnFirstAndLastName;
+    private Integer searchPageSize;
+    private Integer searchSizeLimit;
+    private Integer completionPageSize;
+    private Integer completionSizeLimit;
 
 	public DomainPatternDto(DomainPattern domainPattern) {
 		this.identifier = domainPattern.getIdentifier();
@@ -67,6 +73,15 @@ public class DomainPatternDto {
 		this.userLastName = attributes.get(DomainPattern.USER_LAST_NAME)
 				.getAttribute();
 		this.ldapUid = attributes.get(DomainPattern.USER_UID).getAttribute();
+		
+        this.autoCompleteCommandOnAllAttributes = domainPattern.getAutoCompleteCommandOnAllAttributes();
+		this.autoCompleteCommandOnFirstAndLastName = domainPattern.getAutoCompleteCommandOnFirstAndLastName();
+		this.searchPageSize = domainPattern.getSearchPageSize();
+		this.searchSizeLimit = domainPattern.getSearchSizeLimit();
+		this.completionPageSize = domainPattern.getCompletionPageSize();
+		this.completionSizeLimit = domainPattern.getCompletionSizeLimit();
+		
+		
 
 	}
 
@@ -144,5 +159,55 @@ public class DomainPatternDto {
 
 	public void setLdapUid(String ldapUid) {
 		this.ldapUid = ldapUid;
+	}
+
+	public Integer getSearchPageSize() {
+		return searchPageSize;
+	}
+
+	public void setSearchPageSize(Integer searchPageSize) {
+		this.searchPageSize = searchPageSize;
+	}
+
+	public Integer getSearchSizeLimit() {
+		return searchSizeLimit;
+	}
+
+	public void setSearchSizeLimit(Integer searchSizeLimit) {
+		this.searchSizeLimit = searchSizeLimit;
+	}
+
+	public Integer getCompletionPageSize() {
+		return completionPageSize;
+	}
+
+	public void setCompletionPageSize(Integer completionPageSize) {
+		this.completionPageSize = completionPageSize;
+	}
+
+	public Integer getCompletionSizeLimit() {
+		return completionSizeLimit;
+	}
+
+	public void setCompletionSizeLimit(Integer completionSizeLimit) {
+		this.completionSizeLimit = completionSizeLimit;
+	}
+
+	public String getAutoCompleteCommandOnAllAttributes() {
+		return autoCompleteCommandOnAllAttributes;
+	}
+
+	public void setAutoCompleteCommandOnAllAttributes(
+			String autoCompleteCommandOnAllAttributes) {
+		this.autoCompleteCommandOnAllAttributes = autoCompleteCommandOnAllAttributes;
+	}
+
+	public String getAutoCompleteCommandOnFirstAndLastName() {
+		return autoCompleteCommandOnFirstAndLastName;
+	}
+
+	public void setAutoCompleteCommandOnFirstAndLastName(
+			String autoCompleteCommandOnFirstAndLastName) {
+		this.autoCompleteCommandOnFirstAndLastName = autoCompleteCommandOnFirstAndLastName;
 	}
 }

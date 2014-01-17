@@ -31,31 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.auth;
+package org.linagora.linshare.core.domain.entities.temp;
 
-import org.springframework.dao.DataAccessException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-/** Helps Managing guests and root administrator authentication.
- *
- */
-public class DaoCasAuthProvider implements UserDetailsService {
-	
-	private UserDetailsProvider userDetailsProvider;
-	
-	public void setUserDetailsProvider(UserDetailsProvider userDetailsProvider) {
-		this.userDetailsProvider = userDetailsProvider;
-	}
-
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-
-        if (username == null || username.length() == 0) {
-            throw new UsernameNotFoundException("username must not be null");
-        }
-        
-        return userDetailsProvider.getUserDetails(username);
-    }
-
+public abstract class ContactProvider extends AbstractProvider {
 }

@@ -15,37 +15,37 @@
 			<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
 			
 			<t:beanEditForm t:object="domain" submitlabel="message:global.button.validate" >
-				
-				<p:identifier>                
+
+				<p:identifier>
 					<t:label for="identifier"/>
-                	<t:textfield t:id="identifier" value="domain.identifier" disabled="inModify"/>
+					<t:textfield t:id="identifier" value="domain.identifier" disabled="inModify" validate="regexp=^[A-Za-z1-9_-]+$" />
 				</p:identifier>
-				
-				<p:defaultLocale>              
+
+				<p:defaultLocale>
 					<t:label for="defaultLocale"/>
 					<t:select t:model="model" t:id="defaultLocale" t:value="domain.defaultLocale" blankoption="never"/>
 				</p:defaultLocale>
-				
+
 			 	<p:defaultRole>
 					<t:label for="role" class="edit-form-label">${message:pages.user.edit.role}</t:label>
-		            <t:select t:id="role" t:blankoption="never" class="edit-form-select"/>
+					<t:select t:id="role" t:blankoption="never" class="edit-form-select"/>
 				</p:defaultRole>
-				
-				<p:patternIdentifier>                
+
+				<p:patternIdentifier>
 					<t:label for="patternIdentifier"/>
-                	<t:select t:id="patternIdentifier" t:value="domain.patternIdentifier" t:model="patterns" />
+					<t:select t:id="patternIdentifier" t:value="domain.patternIdentifier" t:model="patterns" />
 				</p:patternIdentifier>
-				
-				<p:ldapIdentifier>                
+
+				<p:ldapIdentifier>
 					<t:label for="ldapIdentifier"/>
-                	<t:select t:id="ldapIdentifier" t:value="domain.ldapIdentifier" t:model="connections" />
+					<t:select t:id="ldapIdentifier" t:value="domain.ldapIdentifier" t:model="connections" />
 				</p:ldapIdentifier>
-			
-				<p:policyIdentifier>                
+
+				<p:policyIdentifier>
 					<t:label for="policyIdentifier"/>
-                	<t:select t:id="policyIdentifier" t:value="domain.policyIdentifier" t:model="policies" blankOption="never" />
+					<t:select t:id="policyIdentifier" t:value="domain.policyIdentifier" t:model="policies" blankOption="never" />
 				</p:policyIdentifier>
-				
+
 			</t:beanEditForm>
 
 		</div>

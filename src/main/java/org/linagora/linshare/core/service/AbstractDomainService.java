@@ -33,10 +33,7 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.io.IOException;
 import java.util.List;
-
-import javax.naming.NamingException;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
@@ -52,7 +49,7 @@ public interface AbstractDomainService {
 	public SubDomain createSubDomain(SubDomain subDomain) throws BusinessException;
 	public GuestDomain createGuestDomain(GuestDomain guestDomain) throws BusinessException;
 	
-	public AbstractDomain retrieveDomain(String identifier) throws BusinessException;
+	public AbstractDomain retrieveDomain(String identifier);
 	public void updateDomain(AbstractDomain domain) throws BusinessException;
 	public void deleteDomain(String identifier) throws BusinessException;
 	public List<String> getAllDomainIdentifiers();
@@ -81,23 +78,6 @@ public interface AbstractDomainService {
 	 * @return List of domains.
 	 */
 	public List<AbstractDomain> getAllAuthorizedDomains(String domainIdentifier);
-	/**
-	 * This method is designed to search in a particular domain and its SubDomain.
-	 * @param domainIdentifier
-	 * @param mail
-	 * @return An user object List (Ldap entry) containing directory informations. (mail, first name and last name). It is not an entity !
-	 * @throws BusinessException
-	 */
-	public List<User> searchUserWithDomainPolicies(String domainIdentifier, String mail, String firstName, String lastName) throws BusinessException;
-	/**
-	 * This method is designed to search in all existing domains.
-	 * @param mail
-	 * @param firstName
-	 * @param lastName
-	 * @return An user object (Ldap entry) containing directory informations. (mail, first name and last name). It is not an entity !
-	 * @throws BusinessException
-	 */
-	public List<User> searchUserRecursivelyWithoutRestriction(String mail, String firstName, String lastName) throws BusinessException;
 	
 	/**
 	 * This method is designed to search in a particular domain and its SubDomain.
@@ -106,7 +86,41 @@ public interface AbstractDomainService {
 	 * @return An user object List (Ldap entry) containing directory informations. (mail, first name and last name). It is not an entity !
 	 * @throws BusinessException
 	 */
-	public List<User> searchUserRecursivelyWithoutRestriction(String domainIdentifier, String mail, String firstName, String lastName) throws BusinessException;
+	public List<User> searchUserWithDomainPolicies(String domainIdentifier, String mail, String firstName, String lastName) throws BusinessException;
+	
+	/**
+	 * This method is designed to search a user in all authorized Domain and SubDomain. Use ONLY for completion
+	 * @param domainIdentifier
+	 * @param pattern : first name, last name or mail fragment
+	 * @return An user object List (Ldap entry) containing directory informations. (mail, first name and last name). It is not an entity !
+	 * @throws BusinessException
+	 */
+	public List<User> autoCompleteUserWithDomainPolicies(String domainIdentifier, String pattern) throws BusinessException;
+	/**
+	 * This method is designed to search a user in all authorized Domain and SubDomain. Use ONLY for completion
+	 * @param domainIdentifier
+	 * @param firstName
+	 * @param lastName
+	 * @return
+	 * @throws BusinessException
+	 */
+	public List<User> autoCompleteUserWithDomainPolicies(String domainIdentifier, String firstName, String lastName) throws BusinessException;
+	/**
+	 * This method is designed to search in all existing domains.
+	 * @param mail
+	 * @return An user object (Ldap entry) containing directory informations. (mail, first name and last name). It is not an entity !
+	 * @throws BusinessException
+	 */
+	public List<User> searchUserRecursivelyWithoutRestriction(String mail) throws BusinessException;
+	
+	/**
+	 * This method is designed to search in a particular domain and its SubDomain.
+	 * @param domainIdentifier
+	 * @param mail
+	 * @return An user object List (Ldap entry) containing directory informations. (mail, first name and last name). It is not an entity !
+	 * @throws BusinessException
+	 */
+	public List<User> searchUserRecursivelyWithoutRestriction(String domainIdentifier, String mail) throws BusinessException;
 	
 	
 	/**
@@ -116,9 +130,16 @@ public interface AbstractDomainService {
 	 * @return An user object List (Ldap entry) containing directory informations. (mail, first name, last name, domain and default role). It is not an entity !
 	 * @throws BusinessException
 	 */
-	public List<User> searchUserWithoutRestriction(AbstractDomain domain, String mail, String firstName, String lastName) throws BusinessException;
+	public User findUserWithoutRestriction(AbstractDomain domain, String mail) throws BusinessException;
 	
-	
+	/**
+	 * Test if a user exists or not in ldap. This method does not test domain policies.
+	 * @param domain
+	 * @param mail
+	 * @return true if a user exists
+	 * @throws BusinessException
+	 */
+	public Boolean isUserExist(AbstractDomain domain, String mail) throws BusinessException;
 	
 	/**
 	 * This method is designed to search in a particular domain and its SubDomain.
@@ -128,8 +149,6 @@ public interface AbstractDomainService {
 	 * @throws BusinessException
 	 */
 	public User searchOneUserRecursivelyWithoutRestriction(String domainIdentifier, String mail) throws BusinessException;
-	
-	public User auth(AbstractDomain domain,	String login, String password) throws BusinessException, NamingException, IOException;
 	
 	public boolean userCanCreateGuest(User user);
 	public boolean canCreateGuestDomain(AbstractDomain domain) ;

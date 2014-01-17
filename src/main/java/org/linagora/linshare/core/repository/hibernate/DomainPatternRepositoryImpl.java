@@ -78,13 +78,12 @@ public class DomainPatternRepositoryImpl extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DomainPattern> findAllSystemDomainPattern() {
-		return getHibernateTemplate().executeFind(new HibernateCallback() {
-			public Object doInHibernate(final Session session)
-					throws HibernateException, SQLException {
-				final Query query = session
-						.createQuery("select d from DomainPattern d where d.system = true");
-				return query.setCacheable(true).list();
-
+		return getHibernateTemplate().executeFind(
+				new HibernateCallback() {
+					public Object doInHibernate(final Session session)
+							throws HibernateException, SQLException {
+						final Query query = session.createQuery("select d from DomainPattern d where d.system = true");
+						return query.setCacheable(true).list();
 			}
 		});
 	}
@@ -92,13 +91,12 @@ public class DomainPatternRepositoryImpl extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DomainPattern> findAllUserDomainPattern() {
-		return getHibernateTemplate().executeFind(new HibernateCallback() {
-			public Object doInHibernate(final Session session)
-					throws HibernateException, SQLException {
-				final Query query = session
-						.createQuery("select d from DomainPattern d where d.system = false");
-				return query.setCacheable(true).list();
-
+		return getHibernateTemplate().executeFind(
+				new HibernateCallback() {
+					public Object doInHibernate(final Session session)
+							throws HibernateException, SQLException {
+						final Query query = session.createQuery("select d from DomainPattern d where d.system = false");
+						return query.setCacheable(true).list();
 			}
 		});
 	}

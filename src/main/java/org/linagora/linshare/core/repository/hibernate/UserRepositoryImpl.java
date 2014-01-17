@@ -39,7 +39,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class UserRepositoryImpl extends GenericUserRepositoryImpl<User> implements UserRepository<User> {
+public class UserRepositoryImpl extends GenericUserRepositoryImpl<User>
+		implements UserRepository<User> {
 
 	public UserRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
@@ -47,7 +48,24 @@ public class UserRepositoryImpl extends GenericUserRepositoryImpl<User> implemen
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(User user) {
-		DetachedCriteria det = DetachedCriteria.forClass(User.class).add(Restrictions.eq("lsUuid", user.getLsUuid()));
+		DetachedCriteria det = DetachedCriteria.forClass(User.class).add(
+				Restrictions.eq("lsUuid", user.getLsUuid()));
 		return det;
+	}
+
+	@Override
+	public User findByLogin(String login) {
+		try {
+			return super.findByMail(login);
+		} catch (IllegalStateException e) {
+			logger.error("you are looking for account using login '" + login + "' but your login is not unique, same account logins in different domains.");;
+			logger.debug("error: " + e.getMessage());
+			throw e;
+		}
+	}
+
+	@Override
+	public User findByLoginAndDomain(String domain, String login) {
+		return super.findByMailAndDomain(domain, login);
 	}
 }

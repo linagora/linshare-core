@@ -31,32 +31,69 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.impl;
+package org.linagora.linshare.core.domain.entities.temp;
 
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.AccountFacade;
-import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.LDAPConnection;
 
-public class AccountFacadeImpl implements AccountFacade {
+public class LdapUserProvider extends UserProvider {
+
+	private LDAPConnection primaryLdapConnection;
 	
-	private final AccountService accountService;
+	private LDAPConnection secondaryLdapConnection;
+	
+	private DomainPattern domainPattern;
 
-	public AccountFacadeImpl(AccountService accountService) {
+	private String baseDn;
+	
+	public LdapUserProvider(LDAPConnection primaryLdapConnection, LDAPConnection secondaryLdapConnection, DomainPattern domainPattern, String baseDn) {
 		super();
-		this.accountService = accountService;
-	}
-
-	@Override
-	public UserVo loadUserDetails(String uid) throws BusinessException {
-//		Account account = userService.searchAndCreateUserEntityFromUnkownDirectory(mail);
-		Account account = accountService.findByLsUuid(uid);
-    	if (account != null) {
-    		return new UserVo(account);
-    	}
-    	return null;
+		this.primaryLdapConnection = primaryLdapConnection;
+		this.secondaryLdapConnection = secondaryLdapConnection;
+		this.domainPattern = domainPattern;
+		this.baseDn = baseDn;
 	}
 	
+	public LdapUserProvider(LDAPConnection ldapConnection, DomainPattern domainPattern, String baseDn) {
+		super();
+		this.primaryLdapConnection = ldapConnection;
+		this.secondaryLdapConnection = null;
+		this.domainPattern = domainPattern;
+		this.baseDn = baseDn;
+	}
 
+
+	public LDAPConnection getPrimaryLdapConnection() {
+		return primaryLdapConnection;
+	}
+
+	public void setPrimaryLdapConnection(LDAPConnection primaryLdapConnection) {
+		this.primaryLdapConnection = primaryLdapConnection;
+	}
+
+	public LDAPConnection getSecondaryLdapConnection() {
+		return secondaryLdapConnection;
+	}
+
+	public void setSecondaryLdapConnection(LDAPConnection secondaryLdapConnection) {
+		this.secondaryLdapConnection = secondaryLdapConnection;
+	}
+
+	public DomainPattern getDomainPattern() {
+		return domainPattern;
+	}
+
+	public void setDomainPattern(DomainPattern domainPattern) {
+		this.domainPattern = domainPattern;
+	}
+
+	public String getBaseDn() {
+		return baseDn;
+	}
+
+	public void setBaseDn(String baseDn) {
+		this.baseDn = baseDn;
+	}
+
+	
 }

@@ -47,26 +47,29 @@ public class LdapAttribute {
 	
 	private Boolean enable;
 	
+	private Boolean completion;
 	
 	public LdapAttribute() {
 	}
 	
-	public LdapAttribute(String field, String attribute, Boolean sync, Boolean system, Boolean enable) {
+	public LdapAttribute(String field, String attribute, Boolean sync, Boolean system, Boolean enable, Boolean completion) {
 		super();
 		this.field = field;
 		this.attribute = attribute;
 		this.sync = sync;
 		this.system = system;
 		this.enable = enable;
+		this.completion = completion;
 	}
 	
-	public LdapAttribute(String field, String attribute) {
+	public LdapAttribute(String field, String attribute, boolean completion) {
 		super();
 		this.field = field;
 		this.attribute = attribute;
 		this.sync = false;
 		this.system = true;
 		this.enable = true;
+		this.completion = completion;
 	}
 
 	@SuppressWarnings("unused")
@@ -129,5 +132,12 @@ public class LdapAttribute {
 	public Boolean getEnable() {
 		return enable;
 	}
-	
+
+	public Boolean getCompletion() {
+		return completion;
+	}
+
+	public void setCompletion(Boolean completion) {
+		this.completion = completion;
+	}
 }

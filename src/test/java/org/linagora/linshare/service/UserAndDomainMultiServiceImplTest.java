@@ -244,13 +244,9 @@ public class UserAndDomainMultiServiceImplTest extends AbstractTransactionalJUni
 			logger.error(e.toString());
 		}
 		
-		try {
-			Assert.assertNull(abstractDomainService.retrieveDomain(LoadingServiceTestDatas.topDomainName));
-			Assert.assertNull(abstractDomainService.retrieveDomain(LoadingServiceTestDatas.subDomainName1));
-			Assert.assertNull(abstractDomainService.retrieveDomain(LoadingServiceTestDatas.guestDomainName1));
-		} catch (BusinessException e) {
-			logger.error("Test success top and sub domain don't exist");
-		}
+		Assert.assertNull(abstractDomainService.retrieveDomain(LoadingServiceTestDatas.topDomainName));
+		Assert.assertNull(abstractDomainService.retrieveDomain(LoadingServiceTestDatas.subDomainName1));
+		Assert.assertNull(abstractDomainService.retrieveDomain(LoadingServiceTestDatas.guestDomainName1));
 		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

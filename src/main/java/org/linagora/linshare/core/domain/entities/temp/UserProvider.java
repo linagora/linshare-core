@@ -31,31 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.auth;
+package org.linagora.linshare.core.domain.entities.temp;
 
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-
-public class SSOAuthenticationProvider implements AuthenticationProvider {
-
-	private UserDetailsProvider userDetailsProvider;
-
-	public void setUserDetailsProvider(UserDetailsProvider userDetailsProvider) {
-		this.userDetailsProvider = userDetailsProvider;
-	}
-
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		final String userName = (String) authentication.getPrincipal();
-		UserDetails user = userDetailsProvider.getUserDetails(userName);
-		return new UsernamePasswordAuthenticationToken(user, authentication.getCredentials(), user.getAuthorities());
-	}
-
-	@SuppressWarnings("rawtypes")
-	public boolean supports(Class authentication) {
-		return (PreAuthenticatedAuthenticationToken.class).isAssignableFrom(authentication);
-	}
+public abstract class UserProvider extends AbstractProvider{
 }

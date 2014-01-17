@@ -233,7 +233,7 @@ public class UserSearchResults {
                 if (showAll || userLoggedIn.isRestricted()) {
                     users = userFacade.searchUser("", "", "", userLoggedIn);
                 } else {
-                    users = userFacade.searchGuest(userLoggedIn.getMail());
+                    users = userFacade.searchGuest(userLoggedIn);
                 }
             }
         }

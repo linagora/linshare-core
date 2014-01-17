@@ -44,7 +44,7 @@ public class Root extends User {
 
 	@Override
 	public String getAccountReprentation() {
-		return this.firstName + " " + this.lastName;
+		return this.firstName + " " + this.lastName + "(" + lsUuid + ")";
 	}
 
 }

@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
+
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.linagora.linshare.core.domain.constants.DomainType;
@@ -42,7 +44,9 @@ import org.linagora.linshare.core.domain.entities.Role;
 
 import com.google.common.base.Function;
 
-public class AbstractDomainVo {
+public class AbstractDomainVo implements Serializable {
+
+	private static final long serialVersionUID = -7310335993606576958L;
 
 	protected String identifier;
 

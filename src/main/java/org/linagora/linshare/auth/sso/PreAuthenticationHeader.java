@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.auth;
+package org.linagora.linshare.auth.sso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,32 +39,44 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.linagora.linshare.auth.dao.LdapUserDetailsProvider;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.RootUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
 import org.springframework.util.Assert;
 
 /**
- * This Spring Security filter is designed to filter authentication
- * against a LemonLDAP::NG Web Single Sign On
+ * This Spring Security filter is designed to filter authentication against a
+ * LemonLDAP::NG Web Single Sign On
+ * 
  * @author Clement Oudot &lt;coudot@linagora.com&gt;
  */
 public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 
-	/** */
+	private static Logger logger = LoggerFactory
+			.getLogger(PreAuthenticationHeader.class);
+
+	private RootUserRepository rootUserRepository;
+
+	private LdapUserDetailsProvider userDetailsProvider;
+
 	private String principalRequestHeader;
-	
+
+	private String domainRequestHeader;
+
 	/** List of IP / DNS hostname */
 	private List<String> authorizedAddresses;
-	
-	private static Logger logger = LoggerFactory.getLogger(PreAuthenticationHeader.class);
 
 	public PreAuthenticationHeader(String authorizedAddressesList) {
 		super();
-		if( authorizedAddressesList!=null ) {
-			@SuppressWarnings("unchecked")
-			List<String> asList = Arrays.asList(authorizedAddressesList.split(","));
-			this.authorizedAddresses = asList;		
+		if (authorizedAddressesList != null) {
+			List<String> asList = Arrays.asList(authorizedAddressesList
+					.split(","));
+			this.authorizedAddresses = asList;
 		} else {
 			this.authorizedAddresses = new ArrayList<String>();
 		}
@@ -74,23 +86,70 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 	protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
 		// Do not throw exception if header is not set
 		String authenticationHeader = request.getHeader(principalRequestHeader);
-		if(authenticationHeader != null) {
-			if(!authorizedAddresses.contains(request.getRemoteAddr())) {
-				logger.error("SECURITY ALERT: Unauthorized header value '" + authenticationHeader 
-						+ "' from IP: " + request.getRemoteAddr() + ":" + request.getRemotePort());
+		String domainIdentifier = request.getParameter("domain");
+		if (domainIdentifier == null)	domainIdentifier = request.getHeader(domainRequestHeader);
+
+		if (authenticationHeader != null) {
+			if (!authorizedAddresses.contains(request.getRemoteAddr())) {
+				logger.error("SECURITY ALERT: Unauthorized header value '"
+						+ authenticationHeader + "' from IP: "
+						+ request.getRemoteAddr() + ":"
+						+ request.getRemotePort());
 				return null;
+			} else {
+				User foundUser = getPreAuthenticatedUser(authenticationHeader, domainIdentifier);
+				if (foundUser == null) {
+					logger.debug("No user was found with : " + authenticationHeader);
+					logger.warn("PreAuthenticationHeader (SSO) is looking for someone who does not belong to the ldap domain anymore.");
+					return null;
+				}
+				authenticationHeader = foundUser.getLsUuid();
 			}
 		}
 		return authenticationHeader;
 	}
 
+	private User getPreAuthenticatedUser(String authenticationHeader,
+			String domainIdentifier) {
+		// Looking for a root user no matter the domain.
+		User foundUser = rootUserRepository.findByLogin(authenticationHeader);
+
+		if (foundUser == null) {
+			logger.debug("looking into ldap.");
+			foundUser = userDetailsProvider.retrieveUser(domainIdentifier,
+					authenticationHeader);
+		}
+		if (foundUser != null) {
+			try {
+				foundUser = userDetailsProvider.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
+			} catch (BusinessException e) {
+				logger.error(e.getMessage());
+				throw new AuthenticationServiceException(
+						"Could not create user account : "
+								+ foundUser.getDomainId() + " : "
+								+ foundUser.getMail(), e);
+			}
+		}
+		return foundUser;
+	}
+
 	public void setPrincipalRequestHeader(String principalRequestHeader) {
-		Assert.hasText(principalRequestHeader, "principalRequestHeader must not be empty or null");
+		Assert.hasText(principalRequestHeader,
+				"principalRequestHeader must not be empty or null");
 		this.principalRequestHeader = principalRequestHeader;
 	}
 
-	public void setAuthorizedAddresses(List<String> authorizedAddresses) {
-		Assert.hasText(authorizedAddresses.toString(), "authorizedAddresses must not be empty or null");
-		this.authorizedAddresses = authorizedAddresses;
+	public void setDomainRequestHeader(String domainRequestHeader) {
+		Assert.hasText(domainRequestHeader,
+				"domainRequestHeader must not be empty or null");
+		this.domainRequestHeader = domainRequestHeader;
+	}
+
+	public void setRootUserRepository(RootUserRepository rootUserRepository) {
+		this.rootUserRepository = rootUserRepository;
+	}
+
+	public void setUserDetailsProvider(LdapUserDetailsProvider userDetailsProvider) {
+		this.userDetailsProvider = userDetailsProvider;
 	}
 }

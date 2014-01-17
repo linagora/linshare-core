@@ -67,7 +67,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.utils.AESCrypt;
@@ -77,18 +77,18 @@ import org.slf4j.LoggerFactory;
 public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 
     private final AbstractDomainService abstractDomainService;
-    private final FunctionalityOldService functionalityService;
+    private final FunctionalityReadOnlyService functionalityReadOnlyService;
     private final UserAndDomainMultiService userAndDomainMultiService;
     private final UserProviderService userProviderService;
     private final DomainPolicyService domainPolicyService;
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractDomainFacadeImpl.class);
 
-    public AbstractDomainFacadeImpl(AbstractDomainService abstractDomainService, FunctionalityOldService functionalityService,
+    public AbstractDomainFacadeImpl(AbstractDomainService abstractDomainService, FunctionalityReadOnlyService functionalityReadOnlyService,
             UserProviderService userProviderService, DomainPolicyService domainPolicyService, UserAndDomainMultiService userAndDomainMultiService) {
         super();
         this.abstractDomainService = abstractDomainService;
-        this.functionalityService = functionalityService;
+        this.functionalityReadOnlyService = functionalityReadOnlyService;
         this.userProviderService = userProviderService;
         this.domainPolicyService = domainPolicyService;
         this.userAndDomainMultiService = userAndDomainMultiService;
@@ -298,7 +298,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         if(domainIdentifier != null) {
             AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
             logger.debug("domain found : " + domain.getIdentifier());
-            Functionality func = functionalityService.getGuestFunctionality(domain);
+            Functionality func = functionalityReadOnlyService.getGuestFunctionality(domain);
             if(func.getActivationPolicy().getStatus()) {
                 return true;
             }
@@ -338,23 +338,14 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     public List<AbstractDomainVo> findAllSubDomainWithoutGuestDomain(String topDomainIdentifier) {
         List<AbstractDomainVo> res = new ArrayList<AbstractDomainVo>();
 
-        try {
-            AbstractDomain topDomain = abstractDomainService.retrieveDomain(topDomainIdentifier);
-            if(topDomain == null) {
-                logger.error("The top domain " + topDomainIdentifier + " was not found.");
-            } else {
-                for (AbstractDomain abstractDomain : topDomain.getSubdomain()) {
-                    if(!abstractDomain.getDomainType().equals(DomainType.GUESTDOMAIN)) {
-                        res.add(new AbstractDomainVo(abstractDomain));
-                    }
+        AbstractDomain topDomain = abstractDomainService.retrieveDomain(topDomainIdentifier);
+        if(topDomain == null) {
+            logger.error("The top domain " + topDomainIdentifier + " was not found.");
+        } else {
+            for (AbstractDomain abstractDomain : topDomain.getSubdomain()) {
+                if(!abstractDomain.getDomainType().equals(DomainType.GUESTDOMAIN)) {
+                    res.add(new AbstractDomainVo(abstractDomain));
                 }
-            }
-        } catch (BusinessException e) {
-            if(e.getErrorCode().equals(BusinessErrorCode.DOMAIN_ID_NOT_FOUND)) {
-                logger.error("The top domain " + topDomainIdentifier + " was not found.");
-            } else {
-                logger.error("The top domain " + topDomainIdentifier + " was not found. Unkown error.");
-                logger.error(e.toString());
             }
         }
         return res;
@@ -510,34 +501,34 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     @Override
     public boolean isCustomLogoActive(UserVo actorVo) throws BusinessException {
         AbstractDomain domain = abstractDomainService.retrieveDomain(actorVo.getDomainIdentifier());
-        return functionalityService.getCustomLogoFunctionality(domain).getActivationPolicy().getStatus();
+        return functionalityReadOnlyService.getCustomLogoFunctionality(domain).getActivationPolicy().getStatus();
     }
 
     @Override
     public boolean isCustomLogoActiveInRootDomain() throws BusinessException {
-        return functionalityService.isCustomLogoActiveInRootDomain();
+        return functionalityReadOnlyService.isCustomLogoActiveInRootDomain();
     }
     
     @Override
     public String getCustomLogoUrl(UserVo actorVo) throws BusinessException {
         User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
-        return functionalityService.getCustomLogoFunctionality(actor.getDomain()).getValue();
+        return functionalityReadOnlyService.getCustomLogoFunctionality(actor.getDomain()).getValue();
     }
 
     @Override
     public String getCustomLogoUrlInRootDomain() throws BusinessException {
-        return functionalityService.getCustomLogoUrlInRootDomain();
+        return functionalityReadOnlyService.getCustomLogoUrlInRootDomain();
     }
     
     @Override
     public String getCustomLogoLink(UserVo actorVo) throws BusinessException {
         User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
-        return functionalityService.getCustomLinkLogoFunctionality(actor.getDomain()).getValue();
+        return functionalityReadOnlyService.getCustomLinkLogoFunctionality(actor.getDomain()).getValue();
     }
 
     @Override
     public String getCustomLogoLinkInRootDomain() throws BusinessException {
-        return functionalityService.getCustomLinkLogoInRootDomain();
+        return functionalityReadOnlyService.getCustomLinkLogoInRootDomain();
     }
     
     @Override
@@ -624,26 +615,24 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         }
     }
 
-    @Override
-    public boolean isMimeTypeFilterEnableFor(String domainIdentifier , UserVo actorVo) {
-        if(domainIdentifier != null && actorVo != null) {
-            if(actorVo.isSuperAdmin()) {
-                try {
-                    AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-                    if(domain!=null) {
-                        Functionality mimeTypeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
-                        if(mimeTypeFunctionality.getActivationPolicy().getStatus()){
-                            return true;
-                        }
-                    }
-                } catch (BusinessException e) {
-                    logger.error("domain not found : " + domainIdentifier);
-                    logger.debug(e.toString());
-                }
-            }
-        }
-        return false;
-    }
+	@Override
+	public boolean isMimeTypeFilterEnableFor(String domainIdentifier,
+			UserVo actorVo) {
+		if (domainIdentifier != null && actorVo != null) {
+			if (actorVo.isSuperAdmin()) {
+				AbstractDomain domain = abstractDomainService
+						.retrieveDomain(domainIdentifier);
+				if (domain != null) {
+					Functionality mimeTypeFunctionality = functionalityReadOnlyService
+							.getMimeTypeFunctionality(domain);
+					if (mimeTypeFunctionality.getActivationPolicy().getStatus()) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 
     @Override
     public List<String> getAllDomainIdentifiers(UserVo actorVo) throws BusinessException {

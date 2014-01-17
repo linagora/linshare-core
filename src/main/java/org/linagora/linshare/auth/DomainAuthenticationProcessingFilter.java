@@ -36,14 +36,25 @@ package org.linagora.linshare.auth;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.web.authentication.AuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+public class DomainAuthenticationProcessingFilter extends
+		UsernamePasswordAuthenticationFilter {
 
-public class DomainAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
-	
-	@Override
-	protected void setDetails(HttpServletRequest request, UsernamePasswordAuthenticationToken authRequest) {
-		authRequest.setDetails(request.getParameter("domain"));
+	private String domainRequestHeader;
+
+	public void setDomainRequestHeader(String domainRequestHeader) {
+		this.domainRequestHeader = domainRequestHeader;
 	}
 
+	@Override
+	protected void setDetails(HttpServletRequest request,
+			UsernamePasswordAuthenticationToken authRequest) {
+		String domainIdentifier = request.getParameter("domain");
+
+		if (domainRequestHeader != null && domainIdentifier == null)
+			domainIdentifier = request.getHeader(domainRequestHeader);
+
+		authRequest.setDetails(domainIdentifier);
+	}
 }

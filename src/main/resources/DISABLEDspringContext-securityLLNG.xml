@@ -30,9 +30,9 @@
 			<sec:filter-chain pattern="/**/*.swf" filters="none" />
 
 
-			<sec:filter-chain pattern="/**/en" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
-			<sec:filter-chain pattern="/**/fr" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
-			<sec:filter-chain pattern="/**/nl" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
+			<sec:filter-chain pattern="/**/en" filters="httpSessionIntegrationFilter,lemonLDAPFilter,rememberMeProcessingFilter" />
+			<sec:filter-chain pattern="/**/fr" filters="httpSessionIntegrationFilter,lemonLDAPFilter,rememberMeProcessingFilter" />
+			<sec:filter-chain pattern="/**/nl" filters="httpSessionIntegrationFilter,lemonLDAPFilter,rememberMeProcessingFilter" />
 
 			<sec:filter-chain pattern="/download/**" filters="none" />
 			<sec:filter-chain pattern="/**/download.passwordpopup.formpassword" filters="none" />
@@ -74,9 +74,13 @@
 		<property name="key" value="springRocks" />
 	</bean>
 
+	<bean id="rememberMeAccountProvider" class="org.linagora.linshare.auth.rememberme.RememberMeAccountProvider">
+		<constructor-arg ref="accountService" />
+	</bean>
+
 	<bean id="rememberMeService" class="org.linagora.linshare.view.tapestry.services.impl.LinshareRememberMeServices">
 		<property name="key" value="springRocks" />
-		<property name="userDetailsService" ref="guestAuthProvider" />
+		<property name="userDetailsService" ref="rememberMeAccountProvider" />
 		<property name="tokenRepository" ref="cookieRepository" />
 		<property name="alwaysRemember" value="false" />
 		<constructor-arg ref="cookieRepository" />
@@ -92,7 +96,7 @@
 
 
 	<bean id="authenticationProcessingFilter" class="org.linagora.linshare.auth.DomainAuthenticationProcessingFilter">
-
+		<property name="domainRequestHeader" value="${sso.header.domain}" />
 		<property name="authenticationFailureHandler" ref="failureHandler" />
 		<property name="authenticationSuccessHandler" ref="successHandler" />
 		<property name="filterProcessesUrl" value="/j_security_check" />
@@ -188,44 +192,49 @@
 			<list>
 				<ref bean="ssoAuthenticationProvider" />
 				<ref bean="rememberMeAuthenticationProvider" />
-				<ref bean="daoAuthenticationProvider" />
-				<ref bean="domainAuthenticationProvider" />
+				<ref bean="databaseAuthenticationProvider" />
+				<ref bean="ldapAuthenticationProvider" />
 			</list>
 		</property>
 	</bean>
 
 	<!-- DAO Authentification -->
-	<bean id="guestAuthProvider" class="org.linagora.linshare.auth.DaoAuthProvider">
-		<constructor-arg ref="accountService" />
-	</bean>
-
 	<bean id="passwordEncoderFactory" class="org.linagora.linshare.auth.PasswordEncoderFactory">
 		<constructor-arg value="SHA" />
 	</bean>
 
-	<bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
-		<property name="userDetailsService" ref="guestAuthProvider" />
+	<bean id="databaseUserDetailsProvider" class="org.linagora.linshare.auth.dao.DatabaseUserDetailsProvider">
+		<constructor-arg ref="authentificationFacade" />
+		<property name="userRepositories">
+			<list>
+				<ref bean="guestRepository" />
+				<ref bean="rootUserRepository" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- database accounts : guests, root, technical accounts, ... -->
+	<bean id="databaseAuthenticationProvider" class="org.linagora.linshare.auth.dao.DatabaseAuthenticationProvider">
+		<constructor-arg ref="databaseUserDetailsProvider" />
 		<property name="passwordEncoder">
 			<bean factory-bean="passwordEncoderFactory" factory-method="getInstance" />
 		</property>
 	</bean>
 
-
 	<!-- Domain Authentification -->
-
-	<bean id="domainAuthenticationProvider" class="org.linagora.linshare.auth.DomainAuthProviderDao">
-		<property name="userService" ref="userService" />
-		<property name="abstractDomainService" ref="abstractDomainService" />
-		<property name="logEntryService" ref="logEntryService" />
+	<bean id="ldapUserDetailsProvider" class="org.linagora.linshare.auth.dao.LdapUserDetailsProvider">
+		<constructor-arg ref="authentificationFacade" />
+		<constructor-arg ref="internalRepository" />
+		<constructor-arg ref="userProviderService" />
 	</bean>
 
+	<bean id="ldapAuthenticationProvider" class="org.linagora.linshare.auth.dao.LdapAuthenticationProvider">
+		<constructor-arg ref="ldapUserDetailsProvider" />
+	</bean>
 
 	<!-- SSO PreAuthentification -->
-	<bean id="ssoAuthenticationProvider" class="org.linagora.linshare.auth.SSOAuthenticationProvider">
-		<property name="userDetailsProvider" ref="userDetailsProvider" />
-	</bean>
-	<bean id="userDetailsProvider" class="org.linagora.linshare.auth.UserDetailsProvider">
-		<property name="userService" ref="userService" />
+	<bean id="ssoAuthenticationProvider" class="org.linagora.linshare.auth.sso.SSOAuthenticationProvider">
+		<property name="authentificationFacade" ref="authentificationFacade" />
 	</bean>
 
 	<!-- AUTHORIZATIONS MANAGEMENT -->
@@ -239,9 +248,12 @@
 
 	<bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter" />
 
-	<bean id="lemonLDAPFilter" class="org.linagora.linshare.auth.PreAuthenticationHeader">
+	<bean id="lemonLDAPFilter" class="org.linagora.linshare.auth.sso.PreAuthenticationHeader">
 		<constructor-arg value="${sso.header.allowfrom}" />
 		<property name="principalRequestHeader" value="${sso.header.user}" />
+		<property name="domainRequestHeader" value="${sso.header.domain}" />
 		<property name="authenticationManager" ref="authenticationManager" />
+		<property name="rootUserRepository" ref="rootUserRepository" />
+		<property name="userDetailsProvider" ref="ldapUserDetailsProvider" />
 	</bean>
 </beans>

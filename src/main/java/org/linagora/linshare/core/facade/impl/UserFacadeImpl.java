@@ -129,14 +129,14 @@ public class UserFacadeImpl implements UserFacade {
 	}
     
 
-    /** Search a user.
+	/** Search a user.
      * @param mail user email.
      * @param firstName user first name.
      * @param lastName user last name.
      * @return a list of matching users.
      */
     public List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser) throws BusinessException {
-    	User owner =  (User)accountService.findByLsUuid(currentUser.getLogin());
+		User owner =  (User)accountService.findByLsUuid(currentUser.getLsUuid());
     	
     	List<User> users = userService.searchUser(mail, firstName, lastName, null, owner);
         return getUserVoList(users);
@@ -147,26 +147,19 @@ public class UserFacadeImpl implements UserFacade {
 		return getUserVoList(userService.searchUser(mail, firstName, lastName, userType, owner));
 	}
 
+	/**
+	 * Get all guests created by a user.
+	 * @param actorVo
+	 * @return the list of guests created by the actor.
+	 */
+	@Override
+	public List<UserVo> searchGuest(UserVo actorVo) {
+		User owner = (User) accountService.findByLsUuid(actorVo.getLsUuid());
 
-    @Override
-	public List<UserVo> searchUserForRestrictedGuestEditionForm(String mail, String firstName, String lastName, String currentGuestEmail) throws BusinessException {
-    	User guest = userRepository.findByMail(currentGuestEmail);
-    	List<User> users = userService.searchUserForRestrictedGuestEditionForm(mail, firstName, lastName, guest);
-        return getUserVoList(users);
+		List<Guest> users = guestRepository
+				.searchGuest(null, null, null, owner);
+		return getUserVoListFromGuest(users);
 	}
-
-	/** Get all guests created by a user.
-     * @param mail owner mail.
-     * @return the list of guests created by their owner.
-     */
-    public List<UserVo> searchGuest(String mail) {
-        User owner = userRepository.findByMail(mail);
-        if (owner == null) { // owner is not an internal -> probably a guest
-            owner = guestRepository.findByMail(mail);
-        }
-        List<Guest> users = guestRepository.searchGuest(null, null, null, owner);
-        return getUserVoListFromGuest(users);
-    }
 
 
     /** Convert a list of Users to a list of UserVo.
@@ -194,6 +187,7 @@ public class UserFacadeImpl implements UserFacade {
     }
     
     
+    //TODO FMA
     @Override
     public void deleteUser(String login, UserVo actorVo) {
     	User actor = userRepository.findByLsUuid(actorVo.getLogin());

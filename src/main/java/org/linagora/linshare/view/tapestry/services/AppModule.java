@@ -69,8 +69,7 @@ import org.chenillekit.image.ChenilleKitImageConstants;
 import org.linagora.linkit.flexRenderer.services.FlexRendererConfigService;
 import org.linagora.linkit.flexUpload.services.FlexUploadConfigService;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.facade.AccountFacade;
-import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.utils.PropertyPlaceholderConfigurer;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.objects.BusinessInformativeContentBundle;
@@ -254,10 +253,9 @@ public class AppModule
 
     /** This service that loads user informations in session. */
     public static UserAccessAuthentity buildUserAccessAuthentity(
-        @InjectService("AccountFacade") AccountFacade accountFacade,
-        @InjectService("LogEntryService") LogEntryService logEntryService,
+        @InjectService("authentificationFacade") AuthentificationFacade authentificationFacade,
         ApplicationStateManager applicationStateManager) {
-        return new UserAccessAuthentity(accountFacade, applicationStateManager, logEntryService);
+        return new UserAccessAuthentity(authentificationFacade, applicationStateManager);
     }
 
     public static RequestFilter buildUserAccessAuthentityFilter(

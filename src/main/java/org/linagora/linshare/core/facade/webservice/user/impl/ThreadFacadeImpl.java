@@ -44,7 +44,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.ThreadDto;
@@ -60,19 +60,19 @@ public class ThreadFacadeImpl extends GenericFacadeImpl implements ThreadFacade 
 
 	private final UserService userService;
 
-	private final FunctionalityOldService functionalityService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	public ThreadFacadeImpl(ThreadService threadService, AccountService accountService, UserService userService, FunctionalityOldService functionalityService) {
+	public ThreadFacadeImpl(ThreadService threadService, AccountService accountService, UserService userService, FunctionalityReadOnlyService functionalityService) {
 		super(accountService);
 		this.threadService = threadService;
-		this.functionalityService = functionalityService;
+		this.functionalityReadOnlyService = functionalityService;
 		this.userService = userService;
 	}
 
 	@Override
 	public User checkAuthentication() throws BusinessException {
 		User user = super.checkAuthentication();
-		Functionality functionality = functionalityService.getThreadTabFunctionality(user.getDomain());
+		Functionality functionality = functionalityReadOnlyService.getThreadTabFunctionality(user.getDomain());
 
 		if (!functionality.getActivationPolicy().getStatus()) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");

@@ -31,45 +31,10 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.auth;
+package org.linagora.linshare.core.domain.entities.temp;
 
-import java.util.List;
+public class LdapContactProvider extends ContactProvider{
 
-import org.linagora.linshare.core.domain.entities.Role;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.service.UserService;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-public class UserDetailsProvider {
-	
-	private UserService userService;
-	
-	public void setUserService(UserService userService) {
-		this.userService = userService;
+	public LdapContactProvider() {
 	}
-
-	public UserDetails getUserDetails(String userName) {
-		org.linagora.linshare.core.domain.entities.User user;
-		try {
-			user = userService.searchAndCreateUserEntityFromUnkownDirectory(userName);
-		} catch (TechnicalException e) {
-			throw new UsernameNotFoundException("Cannot load user in domains", e.getCause());
-		} catch (BusinessException e) {
-			throw new UsernameNotFoundException("Cannot load user in domains", e.getCause());
-		}
-
-        if (user == null ||  Role.SYSTEM.equals(user.getRole())) {
-            throw new UsernameNotFoundException("User not found");
-        }
-
-        List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
-        
-        return new User(user.getLogin(), "", true, true, true, true,
-            grantedAuthorities.toArray(new GrantedAuthority[0]));
-	}
-
 }
