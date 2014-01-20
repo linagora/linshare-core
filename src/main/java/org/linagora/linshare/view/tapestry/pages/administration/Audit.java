@@ -37,6 +37,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -73,6 +75,8 @@ import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.enums.CriterionMatchMode;
 import org.linagora.linshare.view.tapestry.streams.CsvStreamResponse;
 import org.slf4j.Logger;
+
+import com.google.common.collect.Lists;
 
 
 
@@ -324,8 +328,15 @@ public class Audit {
 	protected StringBuilder generateCsvData(List<DisplayableLogEntryVo> listLogEntry) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		StringBuilder csv = new StringBuilder();
-	
 		
+		List<DisplayableLogEntryVo> sorted = Lists.newArrayList(listLogEntry);
+		Collections.sort(sorted, new Comparator<DisplayableLogEntryVo>() {
+			@Override
+			public int compare(DisplayableLogEntryVo o1,
+					DisplayableLogEntryVo o2) {
+				return o2.getActionDate().compareTo(o1.getActionDate());
+			}
+		});
 		csv
 			.append(messages.get("pages.administration.audit.result.actionDate")).append(',')
 			.append(messages.get("pages.administration.audit.result.actorMail")).append(',')
@@ -338,7 +349,7 @@ public class Audit {
 			.append(messages.get("pages.administration.audit.result.fileName")).append(',')
 			.append(messages.get("pages.administration.audit.result.fileSize")).append(',')
 			.append(messages.get("pages.administration.audit.result.fileType")).append('\n');
-		for (DisplayableLogEntryVo logEntry : listLogEntry) {
+		for (DisplayableLogEntryVo logEntry : sorted) {
 			csv
 			.append(dateFormat.format(logEntry.getActionDate())).append(',')
 			.append(logEntry.getActorMail()).append(',')
