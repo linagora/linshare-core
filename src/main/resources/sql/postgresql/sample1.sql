@@ -1,16 +1,48 @@
+BEGIN;
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET client_min_messages = warning;
+SET default_with_oids = false;
+
+
 -- Jeu de données de tests
 
-INSERT INTO ldap_connection(ldap_connection_id, identifier, provider_url, security_auth, security_principal, security_credentials) VALUES (1, 'linshare-obm', 'ldap://linshare-obm.linagora.dc1:389', 'simple', '', '');
-
-INSERT INTO domain_pattern(domain_pattern_id, identifier, description, auth_command, search_user_command, auto_complete_command, system) VALUES (2, 'linshare-obm', '', 'ldap.list(domain, "(&(objectClass=obmUser)(mail="+login+")(givenName=*)(sn=*))");', 'ldap.list(domain, "(&(objectClass=obmUser)(mail="+mail+")(givenName="+firstName+")(sn="+lastName+"))");', 'Not Yet Implemented', false);
-
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id) VALUES (5, 'user_mail', 'mail', false, true, true, 2);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id) VALUES (6, 'user_firstname', 'givenName', false, true, true, 2);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id) VALUES (7, 'user_lastname', 'sn', false, true, true, 2);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id) VALUES (8, 'user_uid', 'uid', false, true, true, 2);
+INSERT INTO ldap_connection(ldap_connection_id, identifier, provider_url, security_auth, security_principal, security_credentials) VALUES (1, 'linshare-obm', 'ldap://linshare-obm2.linagora.dc1:389', 'simple', '', '');
 
 
+-- system domain pattern
+INSERT INTO domain_pattern(
+ domain_pattern_id,
+ identifier,
+ description,
+ auth_command,
+ search_user_command,
+ system,
+ auto_complete_command_on_first_and_last_name,
+ auto_complete_command_on_all_attributes,
+ search_page_size,
+ search_size_limit,
+ completion_page_size,
+ completion_size_limit)
+VALUES (
+ 2,
+ 'linshare-obm',
+ 'This is pattern the default pattern for the ldap obm structure.',
+ 'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");',
+ 'ldap.search(domain, "(&(objectClass=obmUser)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
+ true,
+ 'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");',
+ 'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");',
+ 100,
+ 100,
+ 10,
+ 10
+ );
 
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (5, 'user_mail', 'mail', false, true, true, 2, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (6, 'user_firstname', 'givenName', false, true, true, 2, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (7, 'user_lastname', 'sn', false, true, true, 2, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (8, 'user_uid', 'uid', false, true, true, 2, false);
 
 
 
@@ -213,3 +245,6 @@ INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (8, 6, 4
 INSERT INTO thread_view (id, thread_account_id, name) VALUES (5, 54, 'cc_default'); 
 UPDATE thread set thread_view_id=5 where account_id=54;
 
+
+
+COMMIT;
