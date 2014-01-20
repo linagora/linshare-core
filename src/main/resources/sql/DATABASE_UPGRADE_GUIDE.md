@@ -32,22 +32,24 @@ In order to upgrade LinShare from 1.1 to 1.4 you ALWAYS need to run all scripts 
 
 ## How To
 
-1. Stop LinShare
+### Stop LinShare
 
 > service tomcat7 stop
 
-2. Backup your database
+### Backup your database
 
 	* postgresql	: pg_dump
 
 	* mysql		: mysqldump
 
-3. upgrade database
+### upgrade database
 
 	* postgresql :
 
 > psql -U linshare -d linshare
+
 > \i Migration_1.1.0_to_1.2.0.sql
+
 > \i ...
 
 	* mysql	:
