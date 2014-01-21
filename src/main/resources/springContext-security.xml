@@ -44,16 +44,20 @@
 			<sec:filter-chain pattern="/webservice/upload?wsdl" filters="none" />
 			<sec:filter-chain pattern="/webservice/upload?wsdl=MTOMUploadSoapService.wsdl" filters="none" />
 
-			<sec:filter-chain pattern="/webservice/?_wadl" filters="none" />
+			<!-- allow rest wadl to be public with these rule -->
+			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/?_wadl" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/admin?_wadl" filters="none" />
+			<sec:filter-chain pattern="/webservice/fineuploader?_wadl" filters="none" />
+
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/**"
 				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
-				
+
 			<sec:filter-chain pattern="/webservice/fineuploader/**"
 				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
-				
-			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
+
 
 			<sec:filter-chain pattern="/webservice/**"
 				filters="httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
