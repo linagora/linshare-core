@@ -47,7 +47,6 @@ public class DomainPatternDto {
 	private String description;
 	private String authCommand;
 	private String searchUserCommand;
-	private String autoCompleteCommand;
 	private String userMail;
 	private String userFirstName;
 	private String userLastName;
@@ -64,7 +63,6 @@ public class DomainPatternDto {
 		this.description = domainPattern.getDescription();
 		this.authCommand = domainPattern.getAuthCommand();
 		this.searchUserCommand = domainPattern.getSearchUserCommand();
-		this.autoCompleteCommand = "Not implemented yet";
 
 		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
 		this.userMail = attributes.get(DomainPattern.USER_MAIL).getAttribute();
@@ -80,9 +78,6 @@ public class DomainPatternDto {
 		this.searchSizeLimit = domainPattern.getSearchSizeLimit();
 		this.completionPageSize = domainPattern.getCompletionPageSize();
 		this.completionSizeLimit = domainPattern.getCompletionSizeLimit();
-		
-		
-
 	}
 
 	public DomainPatternDto() {
@@ -119,14 +114,6 @@ public class DomainPatternDto {
 
 	public void setSearchUserCommand(String searchUserCommand) {
 		this.searchUserCommand = searchUserCommand;
-	}
-
-	public String getAutoCompleteCommand() {
-		return autoCompleteCommand;
-	}
-
-	public void setAutoCompleteCommand(String autoCompleteCommand) {
-		this.autoCompleteCommand = autoCompleteCommand;
 	}
 
 	public String getUserMail() {
