@@ -173,7 +173,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			logger.debug("Sending sharing notification to user " + userVo.getLogin());
 			User recipient = userRepository.findByLsUuid(userVo.getLogin());
 			
-			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, recipient, documents, isOneDocEncrypted));
+			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, recipient, result.getSuccessesItem(), isOneDocEncrypted));
 
 		}
 		
