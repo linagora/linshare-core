@@ -624,6 +624,14 @@
 			<artifactId>je</artifactId>
 			<version>4.0.92</version>
 			<scope>test</scope>
+			<optional>false</optional>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.sleepycat</groupId>
+			<artifactId>je</artifactId>
+			<version>4.0.92</version>
+			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
