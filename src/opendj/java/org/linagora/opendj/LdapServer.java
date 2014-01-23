@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.opends;
+package org.linagora.opendj;
 
 import org.opends.server.api.Backend;
 import org.opends.server.core.DirectoryServer;
@@ -53,21 +53,21 @@ public class LdapServer {
 	
 	public void start() throws Exception {
 		LOGGER.info("Starting embedded OpenDS directory");
-		EmbeddedOpenDS.startServer();
-		EmbeddedOpenDS.initializeTestBackend(false, DIRECTORY_REAL_ROOT );
+		EmbeddedOpenDJ.startServer();
+		EmbeddedOpenDJ.initializeTestBackend(false, DIRECTORY_REAL_ROOT );
 		Backend backend = DirectoryServer.getBackend(DN.decode(DIRECTORY_REAL_ROOT));
 		backend.addEntry(StaticUtils.createEntry(DN.decode(DIRECTORY_REAL_ROOT)), null);
-		if(EmbeddedOpenDS.class.getResource("test.ldif") == null || EmbeddedOpenDS.class.getResource("test.ldif").toURI().getPath() == null) {
+		if(EmbeddedOpenDJ.class.getResource("test.ldif") == null || EmbeddedOpenDJ.class.getResource("test.ldif").toURI().getPath() == null) {
 			LOGGER.error("Unable to load LDIF sample content !");
 		} else {
-			EmbeddedOpenDS.importLdif(EmbeddedOpenDS.class.getResource("test.ldif").toURI().getPath());
+			EmbeddedOpenDJ.importLdif(EmbeddedOpenDJ.class.getResource("test.ldif").toURI().getPath());
 			LOGGER.info("LDIF sample content loaded successfully");
 		}
 		LOGGER.info("Embedded OpenDS directory started");
 	}
 	
 	public void stop() {
-		EmbeddedOpenDS.shutdownServer("Normal stop process");
+		EmbeddedOpenDJ.shutdownServer("Normal stop process");
 	}
 
 }

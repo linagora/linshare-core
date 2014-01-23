@@ -1904,13 +1904,6 @@ objectClass: top
 objectClass: ds-cfg-branch
 cn: Syntaxes
 
-dn: cn=Absolute Subtree Specification,cn=Syntaxes,cn=config
-objectClass: ds-cfg-attribute-syntax
-objectClass: top
-ds-cfg-enabled: true
-ds-cfg-java-class: org.opends.server.schema.AbsoluteSubtreeSpecificationSyntax
-cn: Absolute Subtree Specification
-
 dn: cn=Attribute Type Description,cn=Syntaxes,cn=config
 objectClass: ds-cfg-attribute-type-description-attribute-syntax
 objectClass: ds-cfg-attribute-syntax
@@ -2185,7 +2178,7 @@ dn: cn=Subtree Specification,cn=Syntaxes,cn=config
 objectClass: ds-cfg-attribute-syntax
 objectClass: top
 ds-cfg-enabled: true
-ds-cfg-java-class: org.opends.server.schema.RFC3672SubtreeSpecificationSyntax
+ds-cfg-java-class: org.opends.server.schema.SubtreeSpecificationSyntax
 cn: Subtree Specification
 
 dn: cn=Sun-defined Access Control Information,cn=Syntaxes,cn=config
@@ -2384,7 +2377,6 @@ objectClass: ds-cfg-work-queue
 objectClass: ds-cfg-traditional-work-queue
 objectClass: top
 ds-cfg-java-class: org.opends.server.extensions.TraditionalWorkQueue
-ds-cfg-max-work-queue-capacity: 0
 cn: Work Queue
 
 dn: cn=Workflow Elements,cn=config
@@ -2396,4 +2388,3 @@ dn: cn=Workflows,cn=config
 objectClass: top
 objectClass: ds-cfg-branch
 cn: Workflows
-

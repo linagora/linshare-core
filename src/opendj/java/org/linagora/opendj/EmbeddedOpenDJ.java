@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.opends;
+package org.linagora.opendj;
 
 import static org.opends.server.util.ServerConstants.EOL;
 import static org.opends.server.util.StaticUtils.createEntry;
@@ -67,18 +67,18 @@ import org.opends.server.util.LDIFReader;
 /**
  * Embedded OpenDS directory
  */
-public final class EmbeddedOpenDS {
+public final class EmbeddedOpenDJ {
 
     /** Tool class */
-    private EmbeddedOpenDS() {}
+    private EmbeddedOpenDJ() {}
 
     /**
      * A logger for the class
      */
-    private static Log logger = LogFactory.getLog(EmbeddedOpenDS.class);
+    private static Log logger = LogFactory.getLog(EmbeddedOpenDJ.class);
 
     /**
-     * The of the system property that specifies the target working directory, where OpenDS do its business (db datas,
+     * The of the system property that specifies the target working directory, where OpenDJ do its business (db datas,
      * locks, logs, etc)
      */
     public static final String PROPERTY_WORKING_DIR = "org.opends.server.workingDir";
@@ -110,7 +110,7 @@ public final class EmbeddedOpenDS {
 
         String configClass = "org.opends.server.extensions.ConfigFileHandler";
 
-        URL configUrl = EmbeddedOpenDS.class.getResource(CONFIG_DIR);
+        URL configUrl = EmbeddedOpenDJ.class.getResource(CONFIG_DIR);
         String conf = null;
         if (configUrl != null) {
             conf = configUrl.toURI().getPath();

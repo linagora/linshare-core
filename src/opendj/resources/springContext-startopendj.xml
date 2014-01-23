@@ -5,8 +5,8 @@
 	default-autowire="no">
 
 	<!-- **************************************************************** -->
-	<!--Start Open DS -->
+	<!--Start OpenDJ -->
 	<!-- **************************************************************** -->
-	<bean id="opends" class="org.linagora.opends.LdapServer" init-method="start"/>
+	<bean id="opends" class="org.linagora.opendj.LdapServer" init-method="start"/>
 
 </beans>
