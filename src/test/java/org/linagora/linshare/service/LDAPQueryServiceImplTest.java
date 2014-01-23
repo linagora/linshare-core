@@ -180,7 +180,9 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	public void testAuth() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
-		User user = ldapQueryService.auth(ldapConn, baseDn, domainPattern, userMail1, userPassword1);
+		User user = ldapQueryService.auth(ldapConn, baseDn, domainPattern, userMail1, "eeee");
+		// test
+		//User user = ldapQueryService.auth(ldapConn, baseDn, domainPattern, userMail1, userPassword1);
 		Date date_after = new Date();
 		Assert.assertNotNull(user);
 		logUser(user);
