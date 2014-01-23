@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
@@ -53,6 +52,7 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
+import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.enums.UserTypes;
 import org.slf4j.Logger;
@@ -64,31 +64,32 @@ import org.slf4j.LoggerFactory;
 public class UserSearchField {
 	private static final Logger logger = LoggerFactory.getLogger(UserSearchField.class);
 	/* ***********************************************************
-	 *                         Parameters
-	 ************************************************************ */
+	 * Parameters***********************************************************
+	 */
 
-	@SuppressWarnings("unused")
 	@Parameter(required = true, defaultPrefix = BindingConstants.PROP)
 	@Property
 	private List<UserVo> users;
 
 	/* ***********************************************************
-	 *                      Injected services
-	 ************************************************************ */
+	 * Injected services
+	 * ***********************************************************
+	 */
 	@Inject
 	private UserFacade userFacade;
 
 	@Inject
 	private Messages messages;
-	
+
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
 	/* ***********************************************************
-	 *                Properties & injected symbol, ASO, etc
-	 ************************************************************ */
+	 * Properties & injected symbol, ASO, etc
+	 * ***********************************************************
+	 */
 	@SessionState
 	private UserVo userVo;
-	
+
 	@Property
 	private String userSearchPattern;
 
@@ -111,53 +112,59 @@ public class UserSearchField {
 	@Property
 	@Persist
 	private boolean advancedSearch;
-	
+
 	@Persist
 	private boolean reset;
-	
+
 	@Persist
 	private boolean resetSimple;
 
-    @Inject
-    private ComponentResources componentResources;
-    
-    @Property
+	@Inject
+	private ComponentResources componentResources;
+
+	@Property
 	private int autocompleteMin;
-	
+
 	@Inject
 	private FunctionalityFacade functionalityFacade;
-	
-	
+
+	@Inject
+	private UserAutoCompleteFacade userAutoCompleteFacade;
 
 	/* ***********************************************************
-	 *                   Event handlers&processing
-	 ************************************************************ */
+	 * Event handlers&processing
+	 * ***********************************************************
+	 */
 	@SetupRender
-	public void initValues(){
+	public void initValues() {
 		autocompleteMin = functionalityFacade.completionThreshold(userVo.getDomainIdentifier());
-		
-		if(userType==null) userType=UserTypes.ALL;
-		
-		if(lastName==null) lastName=messages.get("components.userSearch.slidingField.lastName");
-		
-		if(firstName==null) firstName=messages.get("components.userSearch.slidingField.firstName");
-		
-		if(mail==null) mail=messages.get("components.userSearch.slidingField.mail");
-		
+
+		if (userType == null)
+			userType = UserTypes.ALL;
+
+		if (lastName == null)
+			lastName = messages.get("components.userSearch.slidingField.lastName");
+
+		if (firstName == null)
+			firstName = messages.get("components.userSearch.slidingField.firstName");
+
+		if (mail == null)
+			mail = messages.get("components.userSearch.slidingField.mail");
+
 	}
-	
+
 	public List<String> onProvideCompletionsFromUserSearchPattern(String input) {
 		List<UserVo> searchResults;
 
 		List<String> elements = new ArrayList<String>();
 		try {
-			searchResults = recipientFavouriteFacade.recipientsOrderedByWeightDesc(performSearch(input),userVo);
+			searchResults = recipientFavouriteFacade.recipientsOrderedByWeightDesc(performSearch(input), userVo);
 
 			for (UserVo user : searchResults) {
-	            String completeName = user.getFirstName().trim() + " " + user.getLastName().trim();
-	            if (!elements.contains(completeName)) {
-	                elements.add(completeName);
-	            }
+				String completeName = user.getFirstName().trim() + " " + user.getLastName().trim();
+				if (!elements.contains(completeName)) {
+					elements.add(completeName);
+				}
 			}
 
 			return elements;
@@ -167,20 +174,17 @@ public class UserSearchField {
 		return elements;
 	}
 
+	public void onActionFromToggleSearch() {
+		advancedSearch = !advancedSearch;
 
-	public void onActionFromToggleSearch(){
-		advancedSearch=!advancedSearch;
-	
 	}
-	
-	
+
 	public void onSuccessFromUserSearchForm() {
 		if (resetSimple) {
 			this.userSearchPattern = null;
 			this.resetSimple = false;
 			componentResources.triggerEvent("resetListUsers", null, null);
-		}
-		else {
+		} else {
 			componentResources.triggerEvent("inUserSearch", null, null);
 			users = performSearch(userSearchPattern);
 		}
@@ -188,109 +192,105 @@ public class UserSearchField {
 
 	public void onSuccessFromAdvancedSearchForm() {
 		if (reset) {
-			this.userType=UserTypes.ALL;
+			this.userType = UserTypes.ALL;
 			this.lastName = null;
 			this.firstName = null;
 			this.mail = null;
 			this.reset = false;
 			componentResources.triggerEvent("resetListUsers", null, null);
-		}
-		else {
+		} else {
 			componentResources.triggerEvent("inUserSearch", null, null);
-			users=performAnyWhereSearch();
+			users = performAnyWhereSearch();
 		}
 	}
-	
+
 	void onSelectedFromReset() {
 		reset = true;
 	}
-	
+
 	void onSelectedFromResetSimple() {
 		resetSimple = true;
 	}
-	
-	/** Perform a user search using the user search pattern.
-	 * @param input user search pattern.
+
+	/**
+	 * Perform a user search using the user search pattern.
+	 * 
+	 * @param input
+	 *            user search pattern.
 	 * @return list of users.
 	 */
 	private List<UserVo> performSearch(String input) {
-		Set<UserVo> userSet = new HashSet<UserVo>();
-
-		String firstName_ = null;
-		String lastName_ = null;
-
-		if (input != null && input.length() > 0) {
-			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
-			if (stringTokenizer.hasMoreTokens()) {
-				firstName_ = stringTokenizer.nextToken();
-				if (stringTokenizer.hasMoreTokens()) {
-					lastName_ = stringTokenizer.nextToken();
-				}
-			}
-		}
-		
 		try {
-	        if (input != null) {
-	            userSet.addAll(userFacade.searchUser(input.trim(), null, null, null, userVo));
-	            userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, null, userVo));
-	            userSet.addAll(userFacade.searchUser(null, lastName_, firstName_, null, userVo));
-	        } else {
-	        	userSet.addAll(userFacade.searchUser(null, null, null, null, userVo));
-	        }
+			if (input != null) {
+				return userAutoCompleteFacade.autoCompleteUserSortedByFavorites(userVo, input);
+			} else {
+				logger.debug("empty research ?");
+				return userFacade.searchUser(null, null, null, null, userVo);
+			}
+
 		} catch (BusinessException e) {
 			logger.error("Error while trying to autocomplete", e);
 		}
-		return new ArrayList<UserVo>(userSet);
+		return new ArrayList<UserVo>();
 	}
-
 
 	public List<UserVo> performAnyWhereSearch() {
 		Set<UserVo> userSet = new HashSet<UserVo>();
-		AccountType type=null;
-		
+		AccountType type = null;
+
 		switch (userType) {
 		case GUEST:
-			type=AccountType.GUEST;
+			type = AccountType.GUEST;
 			break;
 		case INTERNAL:
-			type=AccountType.INTERNAL;
+			type = AccountType.INTERNAL;
 			break;
 		default:
-			break; //null => ALL
+			break; // null => ALL
 		}
-		lastName=(messages.get("components.userSearch.slidingField.lastName").equals(lastName))?null:lastName;
-		firstName=(messages.get("components.userSearch.slidingField.firstName").equals(firstName))?null:firstName;
-		mail=(messages.get("components.userSearch.slidingField.mail").equals(mail))?null:mail;	
-		
+		lastName = (messages.get("components.userSearch.slidingField.lastName").equals(lastName)) ? null : lastName;
+		firstName = (messages.get("components.userSearch.slidingField.firstName").equals(firstName)) ? null : firstName;
+		mail = (messages.get("components.userSearch.slidingField.mail").equals(mail)) ? null : mail;
+
 		try {
-			userSet.addAll(userFacade.searchUser(this.mail, this.firstName,this.lastName,type,userVo));
+			userSet.addAll(userFacade.searchUser(this.mail, this.firstName, this.lastName, type, userVo));
 		} catch (BusinessException e) {
 			logger.error("Error while trying to search user", e);
 		}
 		return new ArrayList<UserVo>(userSet);
 	}
+
 	/**
 	 * Getter & setters
 	 * 
 	 */
 	/**
 	 * internal radio button
+	 * 
 	 * @return type internal
 	 */
-	public UserTypes getInternal() { return UserTypes.INTERNAL; }
+	public UserTypes getInternal() {
+		return UserTypes.INTERNAL;
+	}
 
 	/**
 	 * guest radio button
+	 * 
 	 * @return type guest
 	 */
-	public UserTypes getGuest() { return UserTypes.GUEST; }
+	public UserTypes getGuest() {
+		return UserTypes.GUEST;
+	}
 
 	/**
 	 * both radio button
+	 * 
 	 * @return type all
 	 */
-	public UserTypes getAll() { return UserTypes.ALL; }
-	
+	public UserTypes getAll() {
+		return UserTypes.ALL;
+	}
+
 	public boolean getNotRestrictedUser() {
 		return !userVo.isRestricted();
 	}

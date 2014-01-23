@@ -66,6 +66,7 @@ import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
+import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
@@ -163,6 +164,9 @@ public class Share {
 
 	@Inject
 	private Policy antiSamyPolicy;
+	
+	@Inject
+	private UserAutoCompleteFacade userAutoCompleteFacade;
 
 	private XSSFilter filter;
 
@@ -366,7 +370,7 @@ public class Share {
 		}
 		return elements;
 	}
-
+	
 	public SelectModel onProvideCompletionsFromMailingLists(String input)
 			throws BusinessException {
 		List<MailingListVo> lists = mailingListFacade.completionForUploadForm(
@@ -402,48 +406,18 @@ public class Share {
 		this.documents = documents;
 	}
 
-	/*
-	 * Helpers
-	 */
-
-	/**
-	 * Perform a user search using the user search pattern.
-	 * 
-	 * @param input
-	 *            user search pattern.
+	
+	/** Perform a user search using the user search pattern.
+	 * @param input user search pattern.
 	 * @return list of users.
 	 */
 	private List<UserVo> performSearch(String input) {
-		Set<UserVo> userSet = new HashSet<UserVo>();
-		List<UserVo> res = new ArrayList<UserVo>();
-
-		String firstName_ = null;
-		String lastName_ = null;
-		String input_ = input != null ? input.trim() : null;
-
-		if (input_.length() > 0) {
-			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
-			if (stringTokenizer.hasMoreTokens()) {
-				firstName_ = stringTokenizer.nextToken();
-				if (stringTokenizer.hasMoreTokens()) {
-					lastName_ = stringTokenizer.nextToken();
-				}
-			}
-		}
 		try {
-			userSet.addAll(userFacade.searchUser(input_, null, null, userVo));
-			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,
-					userVo));
-			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,
-					userVo));
-			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(
-					input.trim(), userVo));
-			res.addAll(recipientFavouriteFacade.recipientsOrderedByWeightDesc(
-					new ArrayList<UserVo>(userSet), userVo));
+			return userAutoCompleteFacade.autoCompleteUserSortedByFavorites(userVo, input);
 		} catch (BusinessException e) {
-			logger.error("Error while searching user in QuickSharePopup", e);
+			logger.error("Failed to autocomplete user on ConfirmSharePopup", e);
 		}
-		return res;
+		return new ArrayList<UserVo>();
 	}
 }
 

@@ -4,7 +4,7 @@
 
     <!-- Main content -->
     <div id="content">
-        <h1>${selected.identifier}</h1>
+        <h1 title="${selected.identifier}"><span class="truncate">${selected.identifier}</span></h1>
 
         <div id="pageContent">
             <t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>

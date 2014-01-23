@@ -94,14 +94,19 @@ CREATE TABLE domain_access_rule (
   CONSTRAINT linshare_domain_access_rule_pkey 
     PRIMARY KEY (id));
 CREATE TABLE domain_pattern (
-  domain_pattern_id      int8 NOT NULL, 
-  identifier            varchar(255) NOT NULL, 
-  description           text NOT NULL, 
-  auth_command          text NOT NULL, 
-  search_user_command   text NOT NULL, 
-  system                bool NOT NULL, 
-  auto_complete_command text NOT NULL, 
-  CONSTRAINT linshare_domain_pattern_pkey 
+  domain_pattern_id                             BIGSERIAL NOT NULL,
+  identifier                                   varchar(255) NOT NULL,
+  description                                  text NOT NULL,
+  auth_command                                 text NOT NULL,
+  search_user_command                          text NOT NULL,
+  system                                       bool NOT NULL,
+  auto_complete_command_on_first_and_last_name text NOT NULL,
+  auto_complete_command_on_all_attributes      text NOT NULL,
+  search_page_size                             int4 NOT NULL,
+  search_size_limit                            int4 NOT NULL,
+  completion_page_size                         int4 NOT NULL,
+  completion_size_limit                        int4 NOT NULL,
+  CONSTRAINT linshare_domain_pattern_pkey
     PRIMARY KEY (domain_pattern_id));
 CREATE TABLE domain_policy (
   id                       int8 NOT NULL, 
@@ -268,6 +273,7 @@ CREATE TABLE ldap_attribute (
   sync              bool NOT NULL, 
   system            bool NOT NULL, 
   enable            bool NOT NULL, 
+  completion        bool NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE tag (
   id          int8 NOT NULL, 

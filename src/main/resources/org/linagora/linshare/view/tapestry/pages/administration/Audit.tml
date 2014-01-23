@@ -204,6 +204,7 @@
 	                    <span><img src="${asset:context:images/icons/update-small.png}" alt=""/>${message:global.button.generate}</span>
 	                </t:linkSubmit>
 					<t:actionLink class="button" t:id="reset" style="margin-right:40px"><span><img src="${asset:context:images/icons/reset-small.png}" alt=""/>${message:global.button.reset}</span></t:actionLink>
+					<t:actionLink class="button button_wide" t:id="generateCsv"><span><img src="${asset:context:images/icons/edit-redo.png}" alt=""/>${message:global.button.generateCsv}</span></t:actionLink>
 					<br />				
 				</div>
 				<div class="clear"></div>

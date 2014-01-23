@@ -33,11 +33,14 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
+
 import org.apache.tapestry5.beaneditor.Validate;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 
-public class DomainPolicyVo {
+public class DomainPolicyVo implements Serializable {
 
+	private static final long serialVersionUID = 7427538327433681513L;
 	private String identifier;
 	private String policyDescription;
 	private DomainAccessPolicyVo domainAccessPolicy;

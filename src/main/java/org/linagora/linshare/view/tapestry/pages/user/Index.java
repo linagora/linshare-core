@@ -215,7 +215,7 @@ public class Index {
 			users = userFacade.searchUser("", "", "", null, userVo);
 		}
 		else {
-			users = userFacade.searchGuest(userVo.getMail());
+			users = userFacade.searchGuest(userVo);
 		}
     }
     

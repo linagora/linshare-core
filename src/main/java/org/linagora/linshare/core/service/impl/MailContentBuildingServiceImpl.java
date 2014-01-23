@@ -48,7 +48,6 @@ import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.MailSubject;
@@ -56,11 +55,12 @@ import org.linagora.linshare.core.domain.entities.MailTemplate;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +82,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	
 	private final AbstractDomainService abstractDomainService;
 	
-	private final FunctionalityOldService functionalityService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 	
 	class ContactRepresentation {
 		private String mail;
@@ -143,19 +143,16 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 
 	public MailContentBuildingServiceImpl(final String mailContentTxt,
 			final String mailContentHTML, final String mailContentHTMLWithoutLogo,
-			final boolean displayLogo, AbstractDomainService abstractDomainService,FunctionalityOldService functionalityService, boolean insertLicenceTerm) throws BusinessException {
+			final boolean displayLogo, AbstractDomainService abstractDomainService,FunctionalityReadOnlyService functionalityReadOnlyService, boolean insertLicenceTerm) throws BusinessException {
         this.mailContentTxt = mailContentTxt;
         this.mailContentHTML = mailContentHTML;
         this.mailContentHTMLWithoutLogo = mailContentHTMLWithoutLogo;
         this.displayLogo = displayLogo;
         this.abstractDomainService = abstractDomainService;
         this.insertLicenceTerm = insertLicenceTerm;
-        this.functionalityService = functionalityService;
+        this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
-	
-	
-	
 	
 	
 	/**
@@ -164,7 +161,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * 
 	 */
 	private String getLinShareUrlForAUserRecipient(Account recipient) {
-			return functionalityService.getCustomNotificationUrlFunctionality(recipient.getDomain()).getValue();
+			return functionalityReadOnlyService.getCustomNotificationUrlFunctionality(recipient.getDomain()).getValue();
 		}
 	
 	private String getLinShareUrlForAContactRecipient(Account sender) {
@@ -173,7 +170,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		if(senderDomain == null) {
 			senderDomain = sender.getDomain();
 		}
-		return functionalityService.getCustomNotificationUrlFunctionality(senderDomain).getValue();
+		return functionalityReadOnlyService.getCustomNotificationUrlFunctionality(senderDomain).getValue();
 	}
 	
 	
@@ -490,13 +487,13 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 */
 	@Override
 	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User sender, MailContainer inputMailContainer, User recipient, 
-			List<DocumentVo> documents, boolean hasToDecrypt) throws BusinessException {
+			List<ShareDocumentVo> shares, boolean hasToDecrypt) throws BusinessException {
 		
 		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(sender.getExternalMailLocale());
 		String linShareRootUrl = getLinShareUrlForAUserRecipient(recipient);
 
 		// share notification
-		mailContainer.appendTemplate(buildTemplateShareNotification(sender, recipient, mailContainer.getLanguage(), documents));
+		mailContainer.appendTemplate(buildTemplateShareNotification(sender, recipient, mailContainer.getLanguage(), shares));
 		
 		// LinShare URL
 		mailContainer.appendTemplate(buildTemplateFileDownloadURL(sender, mailContainer.getLanguage(), linShareRootUrl));
@@ -1022,14 +1019,16 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	}
 	
 	private String getDirectDownloadLink(User recipient, DocumentVo doc) {
-		final String dl = getLinShareUrlForAUserRecipient(recipient) + "/files/index.listdocument.download/";
+		final String path = getLinShareUrlForAUserRecipient(recipient);
+		final String sep = path.endsWith("/") ? "" : "/";
+		final String dl = path + sep + "index.listshareddocument.download/";
 		return dl + doc.getIdentifier();
 	}
 	
 	/**
 	 * Template SHARE_NOTIFICATION
 	 */
-	private MailTemplate buildTemplateShareNotification(User actor, User recipient, Language language, List<DocumentVo> documents)
+	private MailTemplate buildTemplateShareNotification(User actor, User recipient, Language language, List<ShareDocumentVo> shares)
 			throws BusinessException {
 		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.SHARE_NOTIFICATION);
 		String contentTXT = template.getContentTXT();
@@ -1037,12 +1036,12 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 
 		StringBuffer names = new StringBuffer();
 		StringBuffer namesTxt = new StringBuffer();
-		for (DocumentVo doc : documents) {
-			names.append("<li><a href='" + getDirectDownloadLink(recipient, doc) + "'>" + doc.getFileName() +"</a></li>");
-			namesTxt.append(doc.getFileName() + " <" + getDirectDownloadLink(recipient, doc) + ">\n");
+		for (DocumentVo share : shares) {
+			names.append("<li><a href='" + getDirectDownloadLink(recipient, share) + "'>" + share.getFileName() +"</a></li>");
+			namesTxt.append(share.getFileName() + " <" + getDirectDownloadLink(recipient, share) + ">\n");
 		}
 
-		String number = "" + documents.size();
+		String number = "" + shares.size();
 
 		contentTXT = StringUtils.replace(contentTXT, "${firstName}", actor.getFirstName());
 		contentTXT = StringUtils.replace(contentTXT, "${lastName}", actor.getLastName());

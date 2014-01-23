@@ -31,14 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade;
+package org.linagora.linshare.core.domain.entities.temp;
 
-import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessException;
-
-
-public interface AccountFacade {
-
-    UserVo loadUserDetails(String uid) throws BusinessException;
-	
+public abstract class ContactProvider extends AbstractProvider {
 }

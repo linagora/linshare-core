@@ -44,7 +44,7 @@ public class Internal extends User {
 
     /** Default constructor for hibernate. */
     @SuppressWarnings("unused")
-	private Internal() {
+	public Internal() {
         super();
     }
 

@@ -89,13 +89,18 @@ CREATE TABLE domain_access_rule (
   CONSTRAINT linshare_domain_access_rule_pkey
     PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE domain_pattern (
-  domain_pattern_id     bigint(8) NOT NULL AUTO_INCREMENT,
-  identifier            varchar(255) NOT NULL,
-  description           varchar(255) NOT NULL,
-  auth_command          text NOT NULL,
-  search_user_command   text NOT NULL,
-  system                bit NOT NULL,
-  auto_complete_command text NOT NULL,
+  domain_pattern_id                            bigint(8) NOT NULL AUTO_INCREMENT,
+  identifier                                   varchar(255) NOT NULL,
+  description                                  text NOT NULL,
+  auth_command                                 text NOT NULL,
+  search_user_command                          text NOT NULL,
+  system                                       bit NOT NULL,
+  auto_complete_command_on_first_and_last_name text NOT NULL,
+  auto_complete_command_on_all_attributes      text NOT NULL,
+  search_page_size                             int(4) NOT NULL,
+  search_size_limit                            int(4) NOT NULL,
+  completion_page_size                         int(4) NOT NULL,
+  completion_size_limit                        int(4) NOT NULL,
   CONSTRAINT linshare_domain_pattern_pkey
     PRIMARY KEY (domain_pattern_id)) CHARACTER SET UTF8;
 CREATE TABLE domain_policy (
@@ -269,6 +274,7 @@ CREATE TABLE ldap_attribute (
   sync              bit NOT NULL,
   system            bit NOT NULL,
   enable            bit NOT NULL,
+  completion        bit NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE tag (
   id         bigint(8) NOT NULL AUTO_INCREMENT,
@@ -441,8 +447,8 @@ CREATE TABLE mailing_list (
   identifier         varchar(255) NOT NULL,
   description        text,
   uuid               varchar(255) NOT NULL,
-  creation_date      timestamp(6) NOT NULL,
-  modification_date  timestamp(6) NOT NULL,
+  creation_date      timestamp NOT NULL,
+  modification_date  timestamp NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mailing_list_contact (
   id                 bigint(8) NOT NULL,
@@ -451,8 +457,8 @@ CREATE TABLE mailing_list_contact (
   first_name         varchar(255),
   last_name          varchar(255),
   uuid               varchar(255) NOT NULL,
-  creation_date      timestamp(6) NOT NULL,
-  modification_date  timestamp(6) NOT NULL,
+  creation_date      timestamp NOT NULL,
+  modification_date  timestamp NOT NULL,
   mailing_list_contact_index int4,
   PRIMARY KEY (id));
 

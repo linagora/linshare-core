@@ -49,8 +49,13 @@ public class DomainPattern {
     private String description;
     private String authCommand;
     private String searchUserCommand;
-    private String autoCompleteCommand;
+    private String autoCompleteCommandOnAllAttributes;
+    private String autoCompleteCommandOnFirstAndLastName;
     private Boolean system;
+    private Integer searchPageSize;
+    private Integer searchSizeLimit;
+    private Integer completionPageSize;
+    private Integer completionSizeLimit;
 
     private Map<String, LdapAttribute> attributes;
     
@@ -58,21 +63,45 @@ public class DomainPattern {
     public static final String USER_FIRST_NAME = "user_firstname";
     public static final String USER_LAST_NAME = "user_lastname";
     public static final String USER_UID = "user_uid";
-
+    
+    public static final Map<String , String> USER_METHOD_MAPPING = new HashMap<String , String>();
+    
+    static {
+    	USER_METHOD_MAPPING.put(DomainPattern.USER_LAST_NAME, "setLastName");
+    	USER_METHOD_MAPPING.put(DomainPattern.USER_FIRST_NAME, "setFirstName");
+    	USER_METHOD_MAPPING.put(DomainPattern.USER_MAIL, "setMail");
+    	USER_METHOD_MAPPING.put(DomainPattern.USER_UID, "setLdapUid");
+    };
+    
     protected DomainPattern() {
         this.identifier = null;
     }
 
+    /**
+     * For tests only.
+     * @param identifier
+     * @param description
+     * @param getUserCommand
+     * @param getAllDomainUsersCommand
+     * @param authCommand
+     * @param searchUserCommand
+     * @param attributes
+     */
     public DomainPattern(String identifier, String description,
             String getUserCommand, String getAllDomainUsersCommand,
             String authCommand,
             String searchUserCommand, Map<String, LdapAttribute> attributes) {
-        this.identifier = identifier;
-        this.description = description;
-        this.authCommand = authCommand;
-        this.searchUserCommand = searchUserCommand;
-        this.attributes = attributes;
-        this.autoCompleteCommand = "";
+	this.identifier = identifier;
+	this.description = description;
+	this.authCommand = authCommand;
+	this.searchUserCommand = searchUserCommand;
+	this.attributes = attributes;
+	this.autoCompleteCommandOnAllAttributes = "";
+	this.autoCompleteCommandOnFirstAndLastName = "";
+	this.searchPageSize = 0;
+	this.searchSizeLimit = 0;
+	this.completionPageSize = 0;
+	this.completionSizeLimit = 0;
     }
 
     public DomainPattern(DomainPatternVo domainPatternVo) {
@@ -80,14 +109,21 @@ public class DomainPattern {
         this.description = domainPatternVo.getPatternDescription();
         this.authCommand = domainPatternVo.getAuthCommand();
         this.searchUserCommand = domainPatternVo.getSearchUserCommand();
-        this.autoCompleteCommand = domainPatternVo.getAutoCompleteCommand();
         this.system = domainPatternVo.getSystem();
         
+        this.autoCompleteCommandOnAllAttributes = domainPatternVo.getAutoCompleteCommandOnAllAttributes();
+        this.autoCompleteCommandOnFirstAndLastName = domainPatternVo.getAutoCompleteCommandOnFirstAndLastName();
+    	this.searchPageSize = domainPatternVo.getSearchPageSize();
+		this.searchSizeLimit = domainPatternVo.getSearchSizeLimit();
+		this.completionPageSize = domainPatternVo.getCompletionPageSize();
+		this.completionSizeLimit = domainPatternVo.getCompletionSizeLimit();
+		
+        
         this.attributes = new HashMap<String, LdapAttribute>();
-        this.attributes.put(USER_MAIL, 			new LdapAttribute(USER_MAIL,		domainPatternVo.getUserMail()));
-        this.attributes.put(USER_FIRST_NAME,	new LdapAttribute(USER_FIRST_NAME,	domainPatternVo.getUserFirstName()));
-        this.attributes.put(USER_LAST_NAME,		new LdapAttribute(USER_LAST_NAME,	domainPatternVo.getUserLastName()));
-        this.attributes.put(USER_UID,			new LdapAttribute(USER_UID,			domainPatternVo.getLdapUid()));
+        this.attributes.put(USER_MAIL, 			new LdapAttribute(USER_MAIL,		domainPatternVo.getUserMail(), true));
+        this.attributes.put(USER_FIRST_NAME,	new LdapAttribute(USER_FIRST_NAME,	domainPatternVo.getUserFirstName(), true));
+        this.attributes.put(USER_LAST_NAME,		new LdapAttribute(USER_LAST_NAME,	domainPatternVo.getUserLastName(), true));
+        this.attributes.put(USER_UID,			new LdapAttribute(USER_UID,			domainPatternVo.getLdapUid(), false));
     }
 
     public DomainPattern(DomainPatternDto domainPatternDto) {
@@ -95,27 +131,53 @@ public class DomainPattern {
         this.description = domainPatternDto.getDescription();
         this.authCommand = domainPatternDto.getAuthCommand();
         this.searchUserCommand = domainPatternDto.getSearchUserCommand();
-        this.autoCompleteCommand = "Not implemented yet";
         this.system = false;
         
+        this.autoCompleteCommandOnAllAttributes = domainPatternDto.getAutoCompleteCommandOnAllAttributes();
+        this.autoCompleteCommandOnFirstAndLastName = domainPatternDto.getAutoCompleteCommandOnFirstAndLastName();
+        this.searchPageSize = domainPatternDto.getSearchPageSize();
+		this.searchSizeLimit = domainPatternDto.getSearchSizeLimit();
+		this.completionPageSize = domainPatternDto.getCompletionPageSize();
+		this.completionSizeLimit = domainPatternDto.getCompletionSizeLimit();
+		
         this.attributes = new HashMap<String, LdapAttribute>();
-        this.attributes.put(USER_MAIL, 			new LdapAttribute(USER_MAIL,		domainPatternDto.getUserMail()));
-        this.attributes.put(USER_FIRST_NAME,	new LdapAttribute(USER_FIRST_NAME,	domainPatternDto.getUserFirstName()));
-        this.attributes.put(USER_LAST_NAME,		new LdapAttribute(USER_LAST_NAME,	domainPatternDto.getUserLastName()));
-        this.attributes.put(USER_UID,			new LdapAttribute(USER_UID,			domainPatternDto.getLdapUid()));
+        this.attributes.put(USER_MAIL, 			new LdapAttribute(USER_MAIL,		domainPatternDto.getUserMail(), true));
+        this.attributes.put(USER_FIRST_NAME,	new LdapAttribute(USER_FIRST_NAME,	domainPatternDto.getUserFirstName(), true));
+        this.attributes.put(USER_LAST_NAME,		new LdapAttribute(USER_LAST_NAME,	domainPatternDto.getUserLastName(), true));
+        this.attributes.put(USER_UID,			new LdapAttribute(USER_UID,			domainPatternDto.getLdapUid(), false));
     }
 
-	public DomainPattern(String identifier, String description, String getUserCommand,
-            String getAllDomainUsersCommand, String authCommand, String searchUserCommand, Map<String, LdapAttribute> attributes,
-            String autoCompleteCommand, boolean system) {
+    /**
+     * For tests only.
+     * @param identifier
+     * @param description
+     * @param authCommand
+     * @param searchUserCommand
+     * @param searchPageSize
+     * @param searchSizeLimit
+     * @param attributes
+     * @param autoCompleteCommandOnAllAttributes
+     * @param autoCompleteCommandOnFirstAndLastName
+     * @param completionPageSize
+     * @param completionSizeLimit
+     * @param system
+     */
+	public DomainPattern(String identifier, String description, String authCommand,
+            String searchUserCommand, Integer searchPageSize, Integer searchSizeLimit, Map<String, LdapAttribute> attributes, String autoCompleteCommandOnAllAttributes, String autoCompleteCommandOnFirstAndLastName,
+            Integer completionPageSize, Integer completionSizeLimit, boolean system) {
 		super();
 		this.identifier = identifier;
 		this.description = description;
 		this.authCommand = authCommand;
 		this.searchUserCommand = searchUserCommand;
         this.attributes = attributes;
-        this.autoCompleteCommand = autoCompleteCommand;
+        this.autoCompleteCommandOnAllAttributes = autoCompleteCommandOnAllAttributes;
+        this.autoCompleteCommandOnFirstAndLastName = autoCompleteCommandOnFirstAndLastName;
         this.system = system;
+        this.searchSizeLimit = searchSizeLimit;
+        this.searchPageSize = searchPageSize;
+        this.completionSizeLimit = completionSizeLimit;
+        this.completionPageSize = completionPageSize;
 	}
 
 
@@ -168,14 +230,6 @@ public class DomainPattern {
 		this.attributes = attributes;
 	}
 	
-	public String getAutoCompleteCommand() {
-		return this.autoCompleteCommand;
-	}
-
-	public void setAutoCompleteCommand(String autoCompleteCommand) {
-		this.autoCompleteCommand = autoCompleteCommand;
-	}
-
 	public Boolean getSystem() {
 		return system;
 	}
@@ -185,7 +239,55 @@ public class DomainPattern {
 	}
 	
 	public String getAttribute(String field) {
-		return attributes.get(field).getAttribute();
+		return attributes.get(field).getAttribute().trim().toLowerCase();
 	}
 
+	public Integer getCompletionPageSize() {
+		return completionPageSize;
+	}
+
+	public void setCompletionPageSize(Integer completionPageSize) {
+		this.completionPageSize = completionPageSize;
+	}
+
+	public Integer getSearchPageSize() {
+		return searchPageSize;
+	}
+
+	public void setSearchPageSize(Integer searchPageSize) {
+		this.searchPageSize = searchPageSize;
+	}
+
+	public Integer getCompletionSizeLimit() {
+		return completionSizeLimit;
+	}
+
+	public void setCompletionSizeLimit(Integer completionSizeLimit) {
+		this.completionSizeLimit = completionSizeLimit;
+	}
+
+	public Integer getSearchSizeLimit() {
+		return searchSizeLimit;
+	}
+
+	public void setSearchSizeLimit(Integer searchSizeLimit) {
+		this.searchSizeLimit = searchSizeLimit;
+	}
+
+	public String getAutoCompleteCommandOnAllAttributes() {
+		return autoCompleteCommandOnAllAttributes;
+	}
+
+	public void setAutoCompleteCommandOnAllAttributes(String autoCompleteCommandOnAllAttributes) {
+		this.autoCompleteCommandOnAllAttributes = autoCompleteCommandOnAllAttributes;
+	}
+
+	public String getAutoCompleteCommandOnFirstAndLastName() {
+		return autoCompleteCommandOnFirstAndLastName;
+	}
+
+	public void setAutoCompleteCommandOnFirstAndLastName(String autoCompleteCommandOnFirstAndLastName) {
+		this.autoCompleteCommandOnFirstAndLastName = autoCompleteCommandOnFirstAndLastName;
+	}
+	
 }

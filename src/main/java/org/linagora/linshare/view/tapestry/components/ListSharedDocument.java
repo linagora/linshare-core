@@ -278,7 +278,10 @@ public class ListSharedDocument {
 		ShareDocumentVo currentSharedDocumentVo=searchDocumentVoByUUid(componentdocuments, uuid);
 		
 		if (null == currentSharedDocumentVo) {
-			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
+			businessMessagesManagementService.notify(new BusinessException(
+					BusinessErrorCode.INVALID_UUID,
+					"invalid uuid for this user"));
+			return null;
 		} else {
 			boolean alreadyDownloaded = currentSharedDocumentVo.getDownloaded();
 			InputStream stream = shareFacade.getShareStream(user, currentSharedDocumentVo.getIdentifier());

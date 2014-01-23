@@ -484,8 +484,10 @@ public class ListDocument {
 
 		DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents, uuid);
 		if (null == currentDocumentVo) {
-			throw new BusinessException(BusinessErrorCode.INVALID_UUID,
-					"invalid uuid for this user");
+			businessMessagesManagementService.notify(new BusinessException(
+					BusinessErrorCode.INVALID_UUID,
+					"invalid uuid for this user"));
+			return null;
 		} else {
 				InputStream stream = documentFacade.retrieveFileStream(currentDocumentVo, user);
 				return new FileStreamResponse(currentDocumentVo, stream);

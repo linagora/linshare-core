@@ -60,6 +60,7 @@ import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
+import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.beans.SelectableRole;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
@@ -185,6 +186,8 @@ public class UserEditForm {
 	@Inject
 	private FunctionalityFacade functionalityFacade;
 	
+	@Inject
+	private UserAutoCompleteFacade userAutoCompleteFacade;
 	
 	
 	private XSSFilter filter;
@@ -274,35 +277,12 @@ public class UserEditForm {
 	 * @return list of users.
 	 */
 	private List<UserVo> performSearch(String input) {
-
-
-		Set<UserVo> userSet = new HashSet<UserVo>();
-
-		String firstName_ = null;
-		String lastName_ = null;
-
-		if (input != null && input.length() > 0) {
-			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
-			if (stringTokenizer.hasMoreTokens()) {
-				firstName_ = stringTokenizer.nextToken();
-				if (stringTokenizer.hasMoreTokens()) {
-					lastName_ = stringTokenizer.nextToken();
-				}
-			}
-		}
-		
 		try {
-
-	        if (input != null) {
-	            userSet.addAll(userFacade.searchUser(input.trim(), null, null,userLoggedIn));
-	        }
-			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, userLoggedIn));
-			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,  userLoggedIn));
+			return userAutoCompleteFacade.autoCompleteUserSortedByFavorites(userLoggedIn, input);
 		} catch (BusinessException e) {
-			logger.error("Error while trying to perform user search", e);
+			logger.error("Failed to autocomplete user on ConfirmSharePopup", e);
 		}
-		
-		return new ArrayList<UserVo>(userSet);
+		return new ArrayList<UserVo>();
 	}
     
     

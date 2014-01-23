@@ -119,4 +119,21 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		return findByCriteria(criteria);
 	}
 
+	@Override
+	public Guest findByLogin(String login) {
+		try {
+			return super.findByMail(login);
+		} catch (IllegalStateException e) {
+			logger.error("you are looking for account using login '"
+					+ login
+					+ "' but your login is not unique, same account logins in different domains.");;
+			logger.debug("error: " + e.getMessage());
+			throw e;
+		}
+	}
+
+	@Override
+	public Guest findByLoginAndDomain(String domain, String login) {
+		return super.findByMailAndDomain(domain, login);
+	}
 }

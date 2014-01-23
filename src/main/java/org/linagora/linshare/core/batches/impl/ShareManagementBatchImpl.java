@@ -56,7 +56,7 @@ import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.ShareEntryRepository;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +79,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 
     private final AccountRepository<Account> accountRepository;
     
-    private final FunctionalityOldService functionalityService;
+    private final FunctionalityReadOnlyService functionalityReadOnlyService;
     
     private final DocumentEntryService documentEntryService;
     
@@ -88,7 +88,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 
 	public ShareManagementBatchImpl(ShareEntryService shareEntryService, AnonymousShareEntryService anonymousShareEntryService, ShareEntryRepository shareEntryRepository,
 			AnonymousShareEntryRepository anonymousShareEntryRepository, DocumentEntryRepository documentEntryRepository, AccountRepository<Account> accountRepository,
-			FunctionalityOldService functionalityService, DocumentEntryService documentEntryService, AnonymousUrlRepository anonymousUrlRepository) {
+			FunctionalityReadOnlyService functionalityService, DocumentEntryService documentEntryService, AnonymousUrlRepository anonymousUrlRepository) {
 		super();
 		this.shareEntryService = shareEntryService;
 		this.anonymousShareEntryService = anonymousShareEntryService;
@@ -96,7 +96,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		this.anonymousShareEntryRepository = anonymousShareEntryRepository;
 		this.documentEntryRepository = documentEntryRepository;
 		this.accountRepository = accountRepository;
-		this.functionalityService = functionalityService;
+		this.functionalityReadOnlyService = functionalityService;
 		this.documentEntryService = documentEntryService;
 		this.anonymousUrlRepository = anonymousUrlRepository;
 	}
@@ -120,7 +120,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		for (AnonymousShareEntry shareEntry : expiredEntries) {
 			AbstractDomain domain = shareEntry.getEntryOwner().getDomain();
 			
-			TimeUnitBooleanValueFunctionality shareExpiryTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(domain);
+			TimeUnitBooleanValueFunctionality shareExpiryTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(domain);
 			// test if this functionality is enable for the current domain.
 			if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
 				try {
@@ -146,7 +146,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		boolean doDeleteDoc = false;
 		AbstractDomain domain = documentEntry.getEntryOwner().getDomain();
 		long sum = documentEntryRepository.getRelatedEntriesCount(documentEntry);
-		TimeUnitBooleanValueFunctionality shareExpiryTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(domain);
+		TimeUnitBooleanValueFunctionality shareExpiryTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(domain);
 
 		if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
 			// we check if the current share is the last related entry to the document
@@ -157,7 +157,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 					logger.debug("current document " + documentEntry.getUuid() + " need to be deleted.");
 				} else {
 					
-					TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(domain);
+					TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityReadOnlyService.getDefaultFileExpiryTimeFunctionality(domain);
 					
 					Calendar deletionDate = Calendar.getInstance();
 					deletionDate.add(fileExpirationTimeFunctionality.toCalendarUnitValue(), fileExpirationTimeFunctionality.getValue());
@@ -189,7 +189,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		for (ShareEntry shareEntry : expiredEntries) {
 			AbstractDomain domain = shareEntry.getEntryOwner().getDomain();
 			
-			TimeUnitBooleanValueFunctionality shareExpiryTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(domain);
+			TimeUnitBooleanValueFunctionality shareExpiryTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(domain);
 			// test if this functionality is enable for the current domain.
 			if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
 				try {
@@ -232,7 +232,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		
 		SystemAccount systemAccount = accountRepository.getSystemAccount();
 		
-		StringValueFunctionality notificationBeforeExpirationFunctionality = functionalityService.getShareNotificationBeforeExpirationFunctionality(systemAccount.getDomain());
+		StringValueFunctionality notificationBeforeExpirationFunctionality = functionalityReadOnlyService.getShareNotificationBeforeExpirationFunctionality(systemAccount.getDomain());
 		
 		List<Integer> datesForNotifyUpcomingOutdatedShares = new ArrayList<Integer>();
 		

@@ -6,7 +6,8 @@
 			
 		<div id="content">
 		
-		<h1>${message:pages.lists.index}: ${mailingListVo.identifier} - ${mailingListVo.owner.firstName} ${mailingListVo.owner.lastName} </h1>
+		<h1 title="${mailingListVo.identifier}"><span class="truncate">${mailingListVo.identifier}</span> - ${mailingListVo.owner.firstName} ${mailingListVo.owner.lastName}</h1>
+
 		<br></br>
 		<h2> ${message:pages.administration.lists.displayLists.index}</h2>
 

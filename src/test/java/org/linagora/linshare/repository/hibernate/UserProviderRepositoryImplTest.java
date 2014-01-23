@@ -63,7 +63,8 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 	private static String baseDn = "dc=nodomain,dc=com";
 	private static String identifier= "ID_LDAP_DE_TEST3";
 	private static String identifierP= "ID_PARAM_DE_TEST3";
-	private static String providerUrl= "ldap://10.75.113.53:389";
+	private static String providerUrl= "ldap://localhost:33389";
+//	private static String providerUrl= "ldap://10.75.113.53:389";
 	private static String securityAuth= "simple";
 	
 	// Repositories
@@ -109,8 +110,8 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void toto() throws BusinessException {
 		Map<String, LdapAttribute> a = new HashMap<String, LdapAttribute>();
-		a.put("ldapUid", new LdapAttribute("ldapUid" , "uid"));
-		a.put("toto", new LdapAttribute("ldapUid" , "uid"));
+		a.put("ldapUid", new LdapAttribute("ldapUid" , "uid", false));
+		a.put("toto", new LdapAttribute("ldapUid" , "uid", false));
 		DomainPattern p = new DomainPattern("identifierP2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", a);
 		
 		domainPatternRepository.create(p);
@@ -120,7 +121,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		Assert.assertEquals(2, aa.getAttributes().size());
 
 		
-		aa.getAttributes().put("nom", new LdapAttribute("nom" , "sn"));
+		aa.getAttributes().put("nom", new LdapAttribute("nom" , "sn", true));
 		domainPatternRepository.update(aa);
 		
 		aa = domainPatternRepository.findById("identifierP2");

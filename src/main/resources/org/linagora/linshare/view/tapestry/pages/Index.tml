@@ -49,11 +49,6 @@
 				<!-- List : Shared files -->
 				<t:ListSharedDocument t:shareDocuments="shares" t:user="userVo" inSearch="prop:flag" />
 
-				<!-- Quick share popup -->
-				<t:quickSharePopup t:eventName="sharePopupEvent" />
-
-                <!-- Quick forward popup -->
-                <t:quickForwardPopup t:documentsVo="prop:shareSessionObjects.documents" />
 			</div>
 		</t:if>
 

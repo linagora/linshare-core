@@ -31,31 +31,35 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.auth;
+package org.linagora.linshare.core.domain.entities.temp;
 
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+public abstract class AbstractDomainPattern {
+	/**
+	 * Database persistence identifier
+	 */
+	private long persistenceId;
 
-public class SSOAuthenticationProvider implements AuthenticationProvider {
+	protected String identifier;
 
-	private UserDetailsProvider userDetailsProvider;
-
-	public void setUserDetailsProvider(UserDetailsProvider userDetailsProvider) {
-		this.userDetailsProvider = userDetailsProvider;
+	public AbstractDomainPattern(String identifier) {
+		super();
+		this.identifier = identifier;
 	}
 
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		final String userName = (String) authentication.getPrincipal();
-		UserDetails user = userDetailsProvider.getUserDetails(userName);
-		return new UsernamePasswordAuthenticationToken(user, authentication.getCredentials(), user.getAuthorities());
+	public long getPersistenceId() {
+		return persistenceId;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public boolean supports(Class authentication) {
-		return (PreAuthenticatedAuthenticationToken.class).isAssignableFrom(authentication);
+	@SuppressWarnings("unused")
+	private void setPersistenceId(long persistenceId) {
+		this.persistenceId = persistenceId;
+	}
+
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
 	}
 }

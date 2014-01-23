@@ -53,7 +53,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
 
 public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryService {
 
-	private final FunctionalityOldService functionalityService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 	
 	private final AnonymousShareEntryBusinessService anonymousShareEntryBusinessService;
 	
@@ -79,11 +79,11 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
     
     private static final Logger logger = LoggerFactory.getLogger(AnonymousShareEntryServiceImpl.class);
     
-	public AnonymousShareEntryServiceImpl(FunctionalityOldService functionalityService, AnonymousShareEntryBusinessService anonymousShareEntryBusinessService,
+	public AnonymousShareEntryServiceImpl(FunctionalityReadOnlyService functionalityService, AnonymousShareEntryBusinessService anonymousShareEntryBusinessService,
 			ShareExpiryDateService shareExpiryDateService, LogEntryService logEntryService, NotifierService notifierService, MailContentBuildingService mailElementsFactory,
 			DocumentEntryBusinessService documentEntryBusinessService) {
 		super();
-		this.functionalityService = functionalityService;
+		this.functionalityReadOnlyService = functionalityService;
 		this.anonymousShareEntryBusinessService = anonymousShareEntryBusinessService;
 		this.shareExpiryDateService = shareExpiryDateService;
 		this.logEntryService = logEntryService;
@@ -112,9 +112,9 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 	@Override
 	public List<AnonymousShareEntry> createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, MailContainer mailContainer) throws BusinessException {
 		
-		if(functionalityService.isSauMadatory(sender.getDomain().getIdentifier())) {
+		if(functionalityReadOnlyService.isSauMadatory(sender.getDomain().getIdentifier())) {
 			passwordProtected = true;
-		} else if(!functionalityService.isSauAllowed(sender.getDomain().getIdentifier())) {
+		} else if(!functionalityReadOnlyService.isSauAllowed(sender.getDomain().getIdentifier())) {
 			// if it is not mandatory an not allowed, it must be forbidden
 			passwordProtected = false;
 		}

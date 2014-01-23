@@ -4076,5 +4076,16 @@ input.ck-kaptcha {
 	left:451px !important;
 }
 
+
+/* Misc */
+.truncate {
+	display: inline-block;
+	width: 20em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: bottom;
+}
+
 /***************************************************************************/
 /* EOF */

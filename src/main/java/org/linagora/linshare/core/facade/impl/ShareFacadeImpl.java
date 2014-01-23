@@ -68,14 +68,13 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.jpa.support.SharedEntityManagerBean;
 
 public class ShareFacadeImpl implements ShareFacade {
 
@@ -99,7 +98,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	private final AbstractDomainService abstractDomainService;
 	
-	private final FunctionalityOldService functionalityService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 	
 	private final AnonymousShareEntryService anonymousShareEntryService;
 	
@@ -108,7 +107,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	public ShareFacadeImpl(ShareEntryTransformer shareEntryTransformer, UserRepository<User> userRepository, NotifierService notifierService,
 			MailContentBuildingService mailElementsFactory, UserService userService, ShareEntryService shareEntryService, DocumentEntryTransformer documentEntryTransformer,
-			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityOldService functionalityService, AnonymousShareEntryService anonymousShareEntryService, SignatureTransformer signatureTransformer) {
+			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityReadOnlyService functionalityService, AnonymousShareEntryService anonymousShareEntryService, SignatureTransformer signatureTransformer) {
 		super();
 		this.shareEntryTransformer = shareEntryTransformer;
 		this.userRepository = userRepository;
@@ -119,7 +118,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.documentEntryTransformer = documentEntryTransformer;
 		this.documentEntryService = documentEntryService;
 		this.abstractDomainService = abstractDomainService;
-		this.functionalityService = functionalityService;
+		this.functionalityReadOnlyService = functionalityService;
 		this.anonymousShareEntryService = anonymousShareEntryService;
 		this.signatureTransformer = signatureTransformer;
 	}
@@ -157,7 +156,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		logger.debug("createSharingWithMail:Begin");
 		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,documents,recipients, expirationDate);
 		
-		//Sending the mails
+		// Sending the mails
 		List<UserVo> successfullRecipient = new ArrayList<UserVo>();
 		for (ShareDocumentVo successfullSharing : result.getSuccessesItem()) {
 			logger.debug("share:result:" + result);
@@ -168,20 +167,13 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		
 		User owner_ = userRepository.findByLsUuid(owner.getLogin());
-		
-		
 		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
-		
-		List<String> documentNames = new ArrayList<String>();
-		for (DocumentVo documentVo : documents) {
-			documentNames.add(documentVo.getFileName());
-		}
-		
+
 		for(UserVo userVo : successfullRecipient){
 			logger.debug("Sending sharing notification to user " + userVo.getLogin());
 			User recipient = userRepository.findByLsUuid(userVo.getLogin());
 			
-			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, recipient, documents, isOneDocEncrypted));
+			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, recipient, result.getSuccessesItem(), isOneDocEncrypted));
 
 		}
 		
@@ -405,13 +397,13 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	@Override
 	public boolean isVisibleSecuredAnonymousUrlCheckBox(String domainIdentifier) {
-		return functionalityService.isSauAllowed(domainIdentifier);
+		return functionalityReadOnlyService.isSauAllowed(domainIdentifier);
 	}
 
 	
 	@Override
 	public boolean getDefaultSecuredAnonymousUrlCheckBoxValue(String domainIdentifier) {
-		return functionalityService.getDefaultSauValue(domainIdentifier);
+		return functionalityReadOnlyService.getDefaultSauValue(domainIdentifier);
 	}
 
 	

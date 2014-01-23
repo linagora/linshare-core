@@ -47,15 +47,15 @@ public class UserLogEntry extends LogEntry {
 	
 	private static final long serialVersionUID = -8388034589530890111L;
 
-	private final String targetMail;
+	protected final String targetMail;
 
-	private final String targetFirstname;
+	protected final String targetFirstname;
 	
-	private final String targetLastname;
+	protected final String targetLastname;
 	
-	private final String targetDomain;
+	protected final String targetDomain;
 	
-	private final Calendar expirationDate;
+	protected final Calendar expirationDate;
 
 	protected UserLogEntry() {
 		super();
@@ -65,8 +65,17 @@ public class UserLogEntry extends LogEntry {
 		this.targetDomain = null;
 		this.expirationDate = null;
 	}
-	
-	
+
+	public UserLogEntry(String login, String domain, LogAction logAction, String description) {
+		super(login, "", "", domain, logAction, description);
+		this.targetDomain = "";
+		this.targetMail = "";
+		this.targetFirstname = "";
+		this.targetLastname = "";
+		this.expirationDate = null;
+	}
+
+
 	public UserLogEntry(UserVo userVo, LogAction logAction, String description) {
 		super(userVo, logAction, description);
 		this.targetMail = userVo.getMail();
@@ -75,7 +84,16 @@ public class UserLogEntry extends LogEntry {
 		this.targetDomain = userVo.getDomainIdentifier();
 		this.expirationDate = null;
 	}
-	
+
+	public UserLogEntry(User user, LogAction logAction, String description) {
+		super(user, logAction, description);
+		this.targetMail = user.getMail();
+		this.targetFirstname = user.getFirstName();
+		this.targetLastname = user.getLastName();
+		this.targetDomain = user.getDomainId();
+		this.expirationDate = null;
+	}
+
 	public UserLogEntry(Account actor, LogAction logAction, String description, Account target, Calendar expirationDate) {
 		super(actor, logAction, description);
 

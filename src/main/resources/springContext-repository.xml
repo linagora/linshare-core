@@ -10,7 +10,7 @@
 	<bean name="threadRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-	
+
 	<bean name="threadViewRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadViewRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
@@ -27,6 +27,15 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
+	<bean name="internalRepository" class="org.linagora.linshare.core.repository.hibernate.InternalRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+		<constructor-arg value="${linshare.multidomain.enable}" />
+	</bean>
+
+	<bean name="rootUserRepository" class="org.linagora.linshare.core.repository.hibernate.RootUserRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
 	<bean name="documentRepository" class="org.linagora.linshare.core.repository.hibernate.DocumentRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
@@ -38,7 +47,7 @@
 	<bean name="documentEntryRepository" class="org.linagora.linshare.core.repository.hibernate.DocumentEntryRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-	
+
 	<bean name="threadEntryRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadEntryRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
@@ -113,21 +122,20 @@
 	<bean name="contactRepository" class="org.linagora.linshare.core.repository.hibernate.ContactRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-	
+
 	<bean name="tagRepository" class="org.linagora.linshare.core.repository.hibernate.TagRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-	
+
 	<bean name="entryTagAssociationRepository" class="org.linagora.linshare.core.repository.hibernate.EntryTagAssociationRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-	
+
 	<bean name="mailingListRepository" class="org.linagora.linshare.core.repository.hibernate.MailingListRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-	
+
 	<bean name="mailingListContactRepository" class="org.linagora.linshare.core.repository.hibernate.MailingListContactRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-	
 </beans>

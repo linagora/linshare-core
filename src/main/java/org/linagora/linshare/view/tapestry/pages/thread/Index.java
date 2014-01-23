@@ -85,7 +85,6 @@ public class Index {
     @Property
     private ThreadVo current;
  
-    @Persist
     @Property
     private boolean latest;
 
