@@ -1036,9 +1036,12 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 
 		StringBuffer names = new StringBuffer();
 		StringBuffer namesTxt = new StringBuffer();
-		for (DocumentVo share : shares) {
-			names.append("<li><a href='" + getDirectDownloadLink(recipient, share) + "'>" + share.getFileName() +"</a></li>");
-			namesTxt.append(share.getFileName() + " <" + getDirectDownloadLink(recipient, share) + ">\n");
+		for (ShareDocumentVo share : shares) {
+			logger.error("FOOBAR: " + share.getReceiver());
+			if (recipient.getLsUuid().equals(share.getReceiver().getLsUuid())) {
+				names.append("<li><a href='" + getDirectDownloadLink(recipient, share) + "'>" + share.getFileName() +"</a></li>");
+				namesTxt.append(share.getFileName() + " <" + getDirectDownloadLink(recipient, share) + ">\n");
+			}
 		}
 
 		String number = "" + shares.size();
