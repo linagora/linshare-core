@@ -60,6 +60,11 @@ import org.linagora.linshare.webservice.user.FineUploaderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+
+@Api(value = "/upload", description = "Upload service used by Fine Uploader.")
+@Produces({"application/json", "application/xml"})
 public class FineUploaderServiceImpl extends WebserviceBase implements
 		FineUploaderService {
 
@@ -81,6 +86,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/receiver")
+	@ApiOperation(value = "Upload a file", notes = "More notes about this method", response = FineUploaderDto.class)
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.TEXT_PLAIN)

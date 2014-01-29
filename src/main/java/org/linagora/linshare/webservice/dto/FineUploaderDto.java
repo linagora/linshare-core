@@ -34,11 +34,18 @@
 
 package org.linagora.linshare.webservice.dto;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value = "A proper response for FineUploader")
 @XmlRootElement(name = "FineUploader")
 public class FineUploaderDto {
 
+	@XmlElement(name = "success")
+	@ApiModelProperty(value = "Flag to notify FineUploader of the success of the upload")
 	private boolean success;
 
 	private String newUuid;
@@ -56,7 +63,7 @@ public class FineUploaderDto {
 	public boolean isSuccess() {
 		return success;
 	}
-
+	
 	public void setSuccess(boolean success) {
 		this.success = success;
 	}
