@@ -62,8 +62,10 @@ import org.slf4j.LoggerFactory;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
-@Api(value = "/upload", description = "Upload service used by Fine Uploader.")
+@Path("/upload")
+@Api(value = "/fineuploader/upload", description = "Upload service used by Fine Uploader.")
 @Produces({"application/json", "application/xml"})
 public class FineUploaderServiceImpl extends WebserviceBase implements
 		FineUploaderService {
@@ -86,12 +88,15 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/receiver")
-	@ApiOperation(value = "Upload a file", notes = "More notes about this method", response = FineUploaderDto.class)
+	@ApiOperation(value = "Upload a file in the user space.", response = FineUploaderDto.class)
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.TEXT_PLAIN)
 	@Override
-	public FineUploaderDto upload(@Multipart(value = FILE) InputStream file,
+	public FineUploaderDto upload(
+			@ApiParam(value = "File stream", required = true)
+			@Multipart(value = FILE) InputStream file,
+			@ApiParam(value = "File name")
 			@Multipart(value = FILE_NAME, required = false) String fileName,
 			MultipartBody body) throws BusinessException {
 		User actor = null;
@@ -127,10 +132,13 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/receiver/{uuid}")
+	@ApiOperation(value = "Remove a previously uploaded file by uuid", response = FineUploaderDto.class)
 	@DELETE
 	@Produces(MediaType.TEXT_PLAIN)
 	@Override
-	public FineUploaderDto delete(@PathParam("uuid") String uuid)
+	public FineUploaderDto delete(
+			@ApiParam(value = "File uuid", required = true)
+			@PathParam("uuid") String uuid)
 			throws BusinessException {
 		User actor = null;
 
@@ -153,13 +161,17 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/threadentry/{threadUuid}")
+	@ApiOperation(value = "Upload a file in a thread by uuid.", response = FineUploaderDto.class)
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.TEXT_PLAIN)
 	@Override
 	public FineUploaderDto uploadThreadEntry(
+			@ApiParam(value = "Thread uuid", required = true)
 			@PathParam("threadUuid") String threadUuid,
+			@ApiParam(value = "File stream", required = true)
 			@Multipart(value = FILE) InputStream file,
+			@ApiParam(value = "File name")
 			@Multipart(value = FILE_NAME, required = false) String fileName,
 			MultipartBody body) throws BusinessException {
 		User actor = null;
