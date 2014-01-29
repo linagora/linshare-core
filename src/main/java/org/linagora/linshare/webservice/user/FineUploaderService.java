@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.user;
 import java.io.InputStream;
 
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;

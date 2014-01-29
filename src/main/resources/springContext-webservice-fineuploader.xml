@@ -20,10 +20,11 @@
 		<constructor-arg ref="wsDocumentFacade" />
 		<constructor-arg ref="wsThreadEntryFacade" />
 	</bean>
-	
+
 	<jaxrs:server id="fineuploaderContainer" address="/fineuploader">
 		<jaxrs:serviceBeans>
 			<ref bean="fineUploaderService" />
+			<ref bean="swaggerResourceJSON" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="text/plain" />
@@ -36,6 +37,9 @@
 			<ref bean="webApplicationExceptionMapper" />
 			<!-- Json provider for serialisation -->
 			<ref bean="textPlainJsonProvider" />
+			<!-- Swagger providers -->
+			<ref bean="resourceWriter" />
+			<ref bean="apiWriter" />
 		</jaxrs:providers>
 		<jaxrs:features>
 <!-- 			<cxf:logging /> -->
