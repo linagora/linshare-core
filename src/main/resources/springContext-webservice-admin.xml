@@ -63,7 +63,6 @@
 			<ref bean="adminThreadMemberRestService" />
 			<ref bean="adminUserRoleRestService" />
 			<ref bean="adminUserRestService" />
-			<ref bean="swaggerResourceJSON" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
@@ -76,9 +75,6 @@
 			<ref bean="webApplicationExceptionMapper" />
 			<!-- Json provider for serialisation -->
 			<ref bean="jsonProvider" />
-			<!-- Swagger providers -->
-			<ref bean="resourceWriter" />
-			<ref bean="apiWriter" />
 		</jaxrs:providers>
 		<jaxrs:features>
 			<cxf:logging />
