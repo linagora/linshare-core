@@ -169,48 +169,35 @@ public class TestPopup {
 	@Inject
 	private DocumentManagementBatch documentManagementBatch;
 	
-	
-	
-	void onActionFromTest1()
-    {
-		logger.debug("begin method onActionFromTest1");
-		shareManagementBatch.cleanOutdatedShares();
-		documentManagementBatch.checkDocumentsMimeType();
-		logger.debug("endmethod onActionFromTest1");
-    }
-	
-	
-	void onActionFromTest2()
-    {
-		logger.debug("begin method onActionFromTest2");
-//		shareManagementBatch.notifyUpcomingOutdatedShares();
-		
-		userManagementBatch.cleanExpiredGuestAccounts();
-		
-//		List<DocumentEntry> findAllExpiredEntries = documentEntryRepository.findAllExpiredEntries();
-//		logger.debug("findAllExpiredEntries size : " + findAllExpiredEntries.size());
-//		for (DocumentEntry documentEntry : findAllExpiredEntries) {
-//			logger.debug("documentEntry found : " + documentEntry.getId() + ':' + documentEntry.getUuid());
-//		}
-//		logger.debug("endmethod onActionFromTest2");
-    }
-	
-	
 	void onActionFromCleanOutDatedShares()
 	{
 		logger.debug("begin method onActionFromCleanOutDatedShares");
 		shareManagementBatch.cleanOutdatedShares();
 		logger.debug("endmethod onActionFromCleanOutDatedShares");
 	}
-	
+
 	void onActionFromRemoveMissingDocuments()
 	{
 		logger.debug("begin method onActionFromRemoveMissingDocuments");
 		documentManagementBatch.removeMissingDocuments();
 		logger.debug("endmethod onActionFromRemoveMissingDocuments");
 	}
-	
-	
+
+	void onActionFromRemoveOldDocuments()
+	{
+		logger.debug("begin method onActionFromRemoveOldDocuments");
+		documentManagementBatch.cleanOldDocuments();
+		logger.debug("endmethod onActionFromRemoveOldDocuments");
+	}
+
+	void onActionFromCheckDocumentsMimeType()
+	{
+		logger.debug("begin method onActionFromCheckDocumentsMimeType");
+		documentManagementBatch.checkDocumentsMimeType();
+		logger.debug("endmethod onActionFromCheckDocumentsMimeType");
+	}
+
+
 	/**
 	 * Testing tapestry-tagselect
 	 */
