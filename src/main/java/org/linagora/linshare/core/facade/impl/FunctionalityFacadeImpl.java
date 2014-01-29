@@ -130,7 +130,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 				} else {
 					logger.error("Unknown Unit Functionality Type for : " + functionality.getIdentifier());
 				}
-			} else if(functionality.getType().equals(FunctionalityType.UNIT_BOOLEAN)) {
+			} else if(functionality.getType().equals(FunctionalityType.UNIT_BOOLEAN_TIME)) {
 				UnitBooleanValueFunctionality f = (UnitBooleanValueFunctionality)functionality;
 				
 				if(f.getUnit().getUnitType().equals(UnitType.TIME)) {
@@ -143,10 +143,8 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 				logger.error("Unknown Functionality Type for : " + functionality.getIdentifier() + " : " + functionality.getType().toString());
 			}
 		}
-		
 		return res;
 	}
-
 	
 	@Override
 	public void updateActivationPolicies(UserVo actorVo, List<PolicyVo> policies) throws BusinessException {

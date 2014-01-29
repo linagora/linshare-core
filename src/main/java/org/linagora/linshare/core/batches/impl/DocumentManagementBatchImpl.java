@@ -196,12 +196,13 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		logger.info("Document entries cleaner batch launched.");
 
 		List<DocumentEntry> findAllExpiredEntries = documentEntryRepository.findAllExpiredEntries();
+		logger.info("Expired documents found : " + findAllExpiredEntries.size());
 		SystemAccount systemAccount = accountRepository.getSystemAccount();
 		Calendar now = GregorianCalendar.getInstance();
 
 		for (DocumentEntry documentEntry : findAllExpiredEntries) {
 			// we check if there is not related shares. Should not happen.
-			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
+			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) <= 0) {
 
 				TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService
 						.getDefaultFileExpiryTimeFunctionality(documentEntry.getEntryOwner().getDomain());
