@@ -103,14 +103,14 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
   <br/>
   <br/>
   
-      <t:actionlink t:id="test1">clean old share entries</t:actionlink>
-      <br/>
-      <t:actionlink t:id="test2">test Action Link</t:actionlink>
-        
 	<t:actionlink t:id="cleanOutDatedShares">clean old share entries : cleanOutDatedShares</t:actionlink>
-	
+	<br/>
 	<t:actionlink t:id="removeMissingDocuments">removeMissingDocuments</t:actionlink>
-	
+	<br/>
+	<t:actionlink t:id="removeOldDocuments">Remove old documents</t:actionlink>
+	<br/>
+	<t:actionlink t:id="checkDocumentsMimeType">checkDocumentsMimeType</t:actionlink>
+	<br/>
 	
         
 
