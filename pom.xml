@@ -24,11 +24,13 @@
 		<system>Hudson</system>
 		<url>http://build.linid.org/hudson/view/LinPKI/</url>
 	</ciManagement>
+
 	<scm>
-		<developerConnection>scm:svn:https://svn.linid.org/svn/linshare/tags/linshare-0.7</developerConnection>
-		<connection>scm:svn:http://svn.linid.org/svn/linshare/tags/linshare-0.7</connection>
-		<url>http://linpki.org/repositories/show/linshare/tags/linshare-0.7</url>
+		<connection>scm:git:git://github.com/linagora/linshare-core.git</connection>
+		<developerConnection>scm:git:git@github.com:linagora/linshare-core.git</developerConnection>
+		<url>http://github.com/linagora/linshare-core/tree/master/</url>
 	</scm>
+
 	<organization>
 		<name>LINAGORA</name>
 		<url>http://www.linagora.com/</url>
@@ -802,6 +804,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.2</version>
 				<configuration>
 					<buildNumberPropertyName>sources.version</buildNumberPropertyName>
 					<timestampPropertyName>build.timestamp</timestampPropertyName>
