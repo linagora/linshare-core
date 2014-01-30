@@ -37,9 +37,6 @@
 		<jaxrs:serviceBeans>
 			<ref bean="swaggerResourceJSON" />
 		</jaxrs:serviceBeans>
-		<jaxrs:extensionMappings>
-			<entry key="json" value="text/plain" />
-		</jaxrs:extensionMappings>
 		<jaxrs:providers>
 			<!-- Swagger providers -->
 			<ref bean="resourceWriter" />
