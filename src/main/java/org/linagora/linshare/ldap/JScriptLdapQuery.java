@@ -312,7 +312,6 @@ public class JScriptLdapQuery {
 			for (String dbAttrKey : ldapDbAttributes.keySet()) {
 				LdapAttribute dbAttr = ldapDbAttributes.get(dbAttrKey);
 				String ldapAttrName = dbAttr.getAttribute();
-
 				Attribute ldapAttr = entry.getAttributes().get(ldapAttrName);
 				if (logger.isDebugEnabled()) {
 					logger.debug("field = " + dbAttrKey + ", ldap attribute = " + ldapAttrName);
