@@ -312,7 +312,7 @@ public class JScriptLdapQuery {
 			for (String dbAttrKey : ldapDbAttributes.keySet()) {
 				LdapAttribute dbAttr = ldapDbAttributes.get(dbAttrKey);
 				String ldapAttrName = dbAttr.getAttribute();
-				logger.debug("dbAttrKey = " + dbAttrKey + ", ldap attr = " + ldapAttrName);
+				logger.debug("field = " + dbAttrKey + ", ldap attribute = " + ldapAttrName);
 
 				Attribute ldapAttr = entry.getAttributes().get(ldapAttrName);
 				boolean isNull = false;
@@ -330,17 +330,19 @@ public class JScriptLdapQuery {
 
 				if (isNull) {
 					if (dbAttr.getSystem()) {
-						logger.error("Attribute : '" + ldapAttrName + "' can not be null, it is required by the system.");
+						logger.error("Can not convert dn : '" + dn +"' to an user object.");
+						logger.error("The field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') must exit in your ldap directory, it is required by the system.");
 						return null;
 					} else {
-						logger.debug("Attribute : '" + ldapAttrName + "' is null.");
+						logger.debug("The field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') is null.");
 						continue;
 					}
 				} else {
 					logger.debug("value : " + value);
 					// updating user property with current attribute value
 					if (!setUserAttribute(user, dbAttrKey, value)) {
-						logger.error("Can not set attribute : " + dbAttrKey + " with value : " + value);
+						logger.error("Can not convert dn : '" + dn +"' to an user object.");
+						logger.error("Can not set the field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') with value : " + value);
 						return null;
 					}
 				}
