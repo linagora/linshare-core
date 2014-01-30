@@ -312,9 +312,12 @@ public class JScriptLdapQuery {
 			for (String dbAttrKey : ldapDbAttributes.keySet()) {
 				LdapAttribute dbAttr = ldapDbAttributes.get(dbAttrKey);
 				String ldapAttrName = dbAttr.getAttribute();
-				logger.debug("field = " + dbAttrKey + ", ldap attribute = " + ldapAttrName);
 
 				Attribute ldapAttr = entry.getAttributes().get(ldapAttrName);
+				if (logger.isDebugEnabled()) {
+					logger.debug("field = " + dbAttrKey + ", ldap attribute = " + ldapAttrName);
+					logger.debug("count of attribute values for : '" + ldapAttrName + "' :" + ldapAttr.size());
+				}
 				boolean isNull = false;
 				String value = null;
 				try {
@@ -334,7 +337,8 @@ public class JScriptLdapQuery {
 						logger.error("The field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') must exit in your ldap directory, it is required by the system.");
 						return null;
 					} else {
-						logger.debug("The field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') is null.");
+						if (logger.isDebugEnabled())
+							logger.debug("The field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') is null.");
 						continue;
 					}
 				} else {
