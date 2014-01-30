@@ -37,9 +37,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
@@ -68,7 +66,6 @@ import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.enums.SharedType;
-import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -354,7 +351,6 @@ public class SearchFile {
 			shared = SharedType.SHARED_ONLY;
 		}
 		
-		
 		SearchDocumentCriterion searchDocumentCriterion=new SearchDocumentCriterion(userlogin,value,null,null,null,isShared(this.shared),null,null,null,null, DocumentType.BOTH);
 		
 		if (!forceFilterOnSharedFile) {
@@ -396,32 +392,13 @@ public class SearchFile {
 	 * @return
 	 */
 	public List<String> onProvideCompletionsFromSharedFrom(String input) {
-		List<UserVo> searchResults = performSearch(input);
-
-		List<String> elements = new ArrayList<String>();
-		for (UserVo user : searchResults) {
-			 String completeName = MailCompletionService.formatLabel(user);
-            if (!elements.contains(completeName)) {
-                elements.add(completeName);
-            }
-		}
-
-		return elements;
-	}
-	
-	/** Perform a user search using the user search pattern.
-	 * @param input user search pattern.
-	 * @return list of users.
-	 */
-	private List<UserVo> performSearch(String input) {
 		try {
-			return userAutoCompleteFacade.autoCompleteUserSortedByFavorites(userlogin, input);
+			return userAutoCompleteFacade.autoCompleteMail(userlogin, input);
 		} catch (BusinessException e) {
 			logger.error("Failed to autocomplete user on ConfirmSharePopup", e);
 		}
-		return new ArrayList<UserVo>();
+		return new ArrayList<String>();
 	}
-	
 	
 
 	public Object onSuccessFromAdvancedSearchForm(){
