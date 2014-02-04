@@ -35,7 +35,6 @@ package org.linagora.linshare.view.tapestry.pages.history;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -45,7 +44,6 @@ import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -65,6 +63,7 @@ import org.linagora.linshare.core.facade.LogEntryFacade;
 import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.core.utils.FileUtils;
+import org.linagora.linshare.core.utils.StringJoiner;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.enums.CriterionMatchMode;
@@ -104,10 +103,7 @@ public class Index {
 	
 	@Component
 	private Form formReport;
-
-    @InjectPage
-    private org.linagora.linshare.view.tapestry.pages.administration.Audit auditPage;
-    
+ 
     @Inject
     private Logger logger;
 
@@ -131,29 +127,24 @@ public class Index {
 	/**
 	 * the list of traces matching the request
 	 */
-	@Persist("flash") 
+	@Persist
 	@Property
 	private List<DisplayableLogEntryVo> logEntries;
 	
 	@Property //used in the tml for the grid
 	private DisplayableLogEntryVo logEntry;
 	
-	
 	@Persist 
 	@Property(write=false) //used in tml
 	private boolean displayGrid;
 	
 	@Property
-	@Persist("flash")
 	private LogCriteriaBean criteria;
 	
 	@SessionState
 	@Property
 	private UserVo userVo;
 
-	
-	private boolean reset;
-	
 	@Property
 	private int autocompleteMin;
 	
@@ -177,27 +168,29 @@ public class Index {
 	public void onActivate() {
 		logActionEncoder = new EnumValueEncoder<LogAction>(LogAction.class);
 		logActionModel = new EnumSelectModel(LogAction.class, messages);
-		if(null == criteria) {
+
+		if (null == criteria) {
 			criteria = new LogCriteriaBean();
 		} else {
-			
-			//actor is FIXED
+			// actor is FIXED
 			actorListMails = userVo.getMail();
-			
-			if ((criteria.getTargetMails()!=null) && (criteria.getTargetMails().size()>0)) {
-				targetListMails = "";
-				for (String mail : criteria.getTargetMails()) {
-					targetListMails += mail + ",";
-				}
+
+			if ((criteria.getTargetMails() != null)
+					&& (criteria.getTargetMails().size() > 0)) {
+				targetListMails = StringJoiner.join(criteria.getTargetMails(), ",");
 			}
 		}
 	}
 	
 	
-	Object onActionFromReset() { reset = true; return onSuccessFromFormReport();}
+	public Object onActionFromReset() {
+		criteria = new LogCriteriaBean();
+		logEntries = null;
+		displayGrid = false;
+		return null;
+	}
 	
 	public void onValidateFormFromFormReport() {
-		
 		if(null!=criteria.getBeforeDate() 
 				&& null !=criteria.getAfterDate() 
 				&& criteria.getAfterDate().before(criteria.getBeforeDate())){
@@ -206,24 +199,15 @@ public class Index {
 	}
 	
 	public Object onSuccessFromFormReport()  {
-		
-		if (reset){
-			criteria = new LogCriteriaBean();
-			logEntries = null;
-			return null;
+		if ((actorListMails != null) && (actorListMails.length() > 0)) {
+			criteria.setActorMails(StringJoiner.split(actorListMails, ","));
 		}
-		
-		if ((actorListMails != null) &&(actorListMails.length()>0)) {
-			criteria.setActorMails(Arrays.asList(actorListMails.split(",")));
+		if ((targetListMails != null) && (targetListMails.length() > 0)) {
+			criteria.setTargetMails(StringJoiner.split(targetListMails, ","));
 		}
-		if ((targetListMails != null) &&(targetListMails.length()>0)) {
-			criteria.setTargetMails(Arrays.asList(targetListMails.split(",")));
-		}
-
 		logEntries = logEntryFacade.findByCriteria(criteria, userVo);
 		displayGrid = true;
 
-		// we stay on the same page, so we don't return anything
 		return null;
 	}
 	
@@ -287,15 +271,11 @@ public class Index {
 
 
 	public String getFilesize() {
-		if (logEntry.getFileSize()==null)
+		if (logEntry.getFileSize() == null)
 			return "";
 		return FileUtils.getFriendlySize(logEntry.getFileSize(), messages);
 	}
 	
-    public Object onActionFromApplicationAudit() {
-        return auditPage;
-    }
-    
 	public String getActionDate() {
 		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
 		return formatter.format(logEntry.getActionDate().getTime());
