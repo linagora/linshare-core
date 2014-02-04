@@ -279,7 +279,7 @@ public class ListSharedDocument {
 		
 		if (null == currentSharedDocumentVo) {
 			businessMessagesManagementService.notify(new BusinessException(
-					BusinessErrorCode.INVALID_UUID,
+					BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND,
 					"invalid uuid for this user"));
 			return null;
 		} else {
