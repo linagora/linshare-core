@@ -127,8 +127,8 @@ public class DomainPatternVo {
 	}
 
 	public void setPatternDescription(String description) {
-		if(patternDescription != null)
-			this.patternDescription = patternDescription.trim();
+		if(description != null)
+			this.patternDescription = description.trim();
 		else
 			this.patternDescription = description;
 	}
