@@ -43,9 +43,9 @@ import org.linagora.linshare.webservice.dto.UserDto;
 public class Internal extends User {
 
     /** Default constructor for hibernate. */
-    @SuppressWarnings("unused")
 	public Internal() {
         super();
+        lsUuid= UUID.randomUUID().toString();
     }
 
     /** Constructor.
