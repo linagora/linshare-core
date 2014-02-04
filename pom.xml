@@ -693,6 +693,18 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- Database drivers -->
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.1-901-1.jdbc4</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.24</version>
+		</dependency>
+		<!-- Ldap integration -->
 		<dependency>
 			<groupId>rhino</groupId>
 			<artifactId>js</artifactId>
@@ -1066,20 +1078,7 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>postgresql</groupId>
-					<artifactId>postgresql</artifactId>
-					<version>9.1-901-1.jdbc4</version>
-				</dependency>
-				<dependency>
-					<groupId>mysql</groupId>
-					<artifactId>mysql-connector-java</artifactId>
-					<version>5.1.24</version>
-				</dependency>
-			</dependencies>
-			</profile>
-
+		</profile>
 		<profile>
 			<id>CAS</id>
 			<build>
@@ -1538,7 +1537,6 @@
 			</snapshots>
 		</repository>
 	</repositories>
-
 
 	<distributionManagement>
 		<repository>
