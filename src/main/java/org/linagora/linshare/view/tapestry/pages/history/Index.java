@@ -69,6 +69,8 @@ import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.enums.CriterionMatchMode;
 import org.slf4j.Logger;
 
+import com.google.common.collect.Lists;
+
 
 /**
  * display the timeline of all action of the current user
@@ -199,9 +201,14 @@ public class Index {
 	}
 	
 	public Object onSuccessFromFormReport()  {
-		if ((actorListMails != null) && (actorListMails.length() > 0)) {
-			criteria.setActorMails(StringJoiner.split(actorListMails, ","));
-		}
+		/*
+		 * XXX: fugly fix
+		 */
+		criteria.setActorMails(Lists.newArrayList(userVo.getMail()));
+		criteria.setActorDomain(userVo.getMail());
+		criteria.setActorFirstname(null);
+		criteria.setActorLastname(null);
+
 		if ((targetListMails != null) && (targetListMails.length() > 0)) {
 			criteria.setTargetMails(StringJoiner.split(targetListMails, ","));
 		}
