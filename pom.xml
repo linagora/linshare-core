@@ -1176,31 +1176,11 @@
 			</build>
 		</profile>
 
+		<!--  swagger -->
 		<profile>
 			<id>swagger</id>
 			<build>
 				<plugins>
-					<!--  swagger -->
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.7</version>
-						<executions>
-							<execution>
-								<phase>compile</phase>
-								<configuration>
-									<target name="get markdown.mustache">
-										<!-- Need to download markdown.mustache first to use strapdown.html.mustache -->
-										<get dest=".">
-											<url url="https://raw.github.com/kongchen/api-doc-template/master/v2.0/markdown.mustache" />
-										</get>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
 					<plugin>
 						<groupId>com.github.kongchen</groupId>
 						<artifactId>swagger-maven-plugin</artifactId>
@@ -1212,10 +1192,11 @@
 									<apiVersion>v1</apiVersion>
 									<basePath>http://localhost:8080/linshare/webservice</basePath>
 									<outputTemplate>
-										https://raw.github.com/kongchen/api-doc-template/master/v1.1/strapdown.html.mustache
+											${basedir}/src/docs/resources/strapdown.html.mustache
 									</outputTemplate>
 									<outputPath>generated/strapdown.html</outputPath>
 									<swaggerDirectory>generated/apidocs</swaggerDirectory>
+									<mustacheFileRoot>${basedir}/src/docs/resources/mustache/</mustacheFileRoot>
 								</apiSource>
 							</apiSources>
 						</configuration>
