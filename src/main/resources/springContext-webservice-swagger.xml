@@ -13,29 +13,34 @@
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
+	<!-- Swagger API listing resource -->
+	<bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON" />
 
-	<!-- REST  -->
-	
-	<bean id="fineUploaderService" class="org.linagora.linshare.webservice.user.impl.FineUploaderServiceImpl">
-		<constructor-arg ref="wsDocumentFacade" />
-		<constructor-arg ref="wsThreadEntryFacade" />
+	<!-- Swagger writers -->
+	<bean id="resourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider" />
+	<bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" />
+
+	<!-- this scans the classes for resources -->
+	<bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
+		<property name="resourcePackage" value="org.linagora.linshare.webservice"/>
+		<property name="version" value="${Implementation-Version}"/>
+		<property name="basePath" value="http://localhost:8080/linshare/webservice"/>
+		<property name="title" value="Swagger"/>
+		<property name="description" value="LinShare's API documentation"/>
+		<property name="contact" value="linshare-dev@list.linpki.com"/>
+		<property name="license" value="AGPLv3"/>
+		<property name="licenseUrl" value="http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3_en.pdf"/>
+		<property name="scan" value="true"/>
 	</bean>
 
-	<jaxrs:server id="fineuploaderContainer" address="/fineuploader">
+	<jaxrs:server id="swaggerContainer" address="/">
 		<jaxrs:serviceBeans>
-			<ref bean="fineUploaderService" />
+			<ref bean="swaggerResourceJSON" />
 		</jaxrs:serviceBeans>
-		<jaxrs:extensionMappings>
-			<entry key="json" value="text/plain" />
-			<entry key="xml" value="application/xml" />
-		</jaxrs:extensionMappings>
 		<jaxrs:providers>
-			<!--  ExceptionMappers. -->
-			<ref bean="businessExceptionMapper" />
-			<ref bean="genericExceptionMapper" />
-			<ref bean="webApplicationExceptionMapper" />
-			<!-- Json provider for serialisation -->
-			<ref bean="textPlainJsonProvider" />
+			<!-- Swagger providers -->
+			<ref bean="resourceWriter" />
+			<ref bean="apiWriter" />
 		</jaxrs:providers>
 		<jaxrs:features>
 <!-- 			<cxf:logging /> -->

@@ -35,13 +35,10 @@ package org.linagora.linshare.webservice.user;
 
 import java.io.InputStream;
 
-import javax.ws.rs.Path;
-
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.FineUploaderDto;
 
-@Path("/upload")
 public interface FineUploaderService {
 
 	/**
