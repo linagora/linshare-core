@@ -325,7 +325,7 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
 			<version>${spring-security-release-version}
-            </version>
+			</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -368,7 +368,7 @@
 			<version>${slf4j-release-version}</version>
 		</dependency>
 
-		<!-- bridje logs from commons loggings to slf4j -->
+		<!-- bridge logs from commons loggings to slf4j -->
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
@@ -452,7 +452,7 @@
 			<groupId>org.apache.jackrabbit</groupId>
 			<artifactId>jackrabbit-ocm</artifactId>
 			<version>${jackrabbit-release-version}
-            </version>
+			</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>commons-logging</artifactId>
@@ -1041,54 +1041,54 @@
 
 
 			<!--  swagger -->
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <configuration>
-                            <target name="get markdown.mustache">
-                            <!-- Need to download markdown.mustache first to use strapdown.html.mustache -->
-                            <get dest=".">
-				<url url="https://raw.github.com/kongchen/api-doc-template/master/v2.0/markdown.mustache"/>
-                            </get>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.github.kongchen</groupId>
-                <artifactId>swagger-maven-plugin</artifactId>
-                <version>2.0-SNAPSHOT</version>
-                <configuration>
-                    <apiSources>
-                        <apiSource>
-                            <locations>org.linagora.linshare.webservice.dto;org.linagora.linshare.webservice</locations>
-                            <apiVersion>v1</apiVersion>
-                            <basePath>http://localhost:8080/linshare/webservice</basePath>
-                            <outputTemplate>
-                                https://raw.github.com/kongchen/api-doc-template/master/v1.1/strapdown.html.mustache
-                            </outputTemplate>
-                            <outputPath>generated/strapdown.html</outputPath>
-                            <swaggerDirectory>generated/apidocs</swaggerDirectory>
-                        </apiSource>
-                    </apiSources>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<configuration>
+							<target name="get markdown.mustache">
+								<!-- Need to download markdown.mustache first to use strapdown.html.mustache -->
+								<get dest=".">
+									<url url="https://raw.github.com/kongchen/api-doc-template/master/v2.0/markdown.mustache" />
+								</get>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>com.github.kongchen</groupId>
+				<artifactId>swagger-maven-plugin</artifactId>
+				<version>2.0-SNAPSHOT</version>
+				<configuration>
+					<apiSources>
+						<apiSource>
+							<locations>org.linagora.linshare.webservice.dto;org.linagora.linshare.webservice</locations>
+							<apiVersion>v1</apiVersion>
+							<basePath>http://localhost:8080/linshare/webservice</basePath>
+							<outputTemplate>
+								https://raw.github.com/kongchen/api-doc-template/master/v1.1/strapdown.html.mustache
+							</outputTemplate>
+							<outputPath>generated/strapdown.html</outputPath>
+							<swaggerDirectory>generated/apidocs</swaggerDirectory>
+						</apiSource>
+					</apiSources>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<resources>
 			<resource>
@@ -1227,7 +1227,6 @@
 			</build>
 		</profile>
 
-		
 		<profile>
 			<id>test-integration</id>
 			<build>
