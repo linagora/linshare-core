@@ -170,6 +170,8 @@ public class UserSearchField {
 			return elements;
 		} catch (BusinessException e) {
 			logger.error("Error while trying to autocomplete", e);
+		} catch (NullPointerException e) {
+			logger.error("Error while trying to autocomplete", e);
 		}
 		return elements;
 	}
