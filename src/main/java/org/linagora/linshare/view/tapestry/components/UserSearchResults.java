@@ -64,6 +64,7 @@ import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
+import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
@@ -197,22 +198,26 @@ public class UserSearchResults {
     @Property
     private List<AbstractDomainVo> domains;
 
-    @Persist
-    @Property
-    private AbstractDomainVo selectedDomain;
-    @Inject
-    private AbstractDomainFacade domainFacade;
+	@Persist
+	@Property
+	private AbstractDomainVo selectedDomain;
 
-    @Inject
-    private ThreadEntryFacade threadEntryFacade;
+	@Inject
+	private AbstractDomainFacade domainFacade;
+
+	@Inject
+	private FunctionalityFacade functionalityFacade;
+
+	@Inject
+	private ThreadEntryFacade threadEntryFacade;
 
 	@Persist
 	@Property
 	private List<ThreadVo> threads;
 
-    @Property
-    @Persist
-    private boolean showBreakedUsers;
+	@Property
+	@Persist
+	private boolean showBreakedUsers;
 
     /* ***********************************************************
      *                   Event handlers&processing
@@ -430,21 +435,24 @@ public class UserSearchResults {
      *                     HELPERS
      ************************************************************ */
 
-    /**
-     * only a user that have the admin role in a thread can add new users in it
-     * @return true if the logged in user is admin in a thread
-     * @throws BusinessException 
-     */
-    public boolean isUserAbleToAddToThread() {
-        try {
-            return threadEntryFacade.isUserAdminOfAnyThread(userLoggedIn);
+	/**
+	 * only a user that have the admin role in a thread can add new users in it
+	 * And of course, if the thread tab is enable.
+	 *
+	 * @return true if the logged in user is admin in a thread
+	 * @throws BusinessException
+	 */
+	public boolean isUserAbleToAddToThread() {
+		try {
+			return threadEntryFacade.isUserAdminOfAnyThread(userLoggedIn)
+					&& functionalityFacade.isEnableThreadTab(userLoggedIn.getDomainIdentifier());
 		} catch (BusinessException e) {
 			logger.error(e.getErrorCode().toString());
 			logger.error(e.getMessage());
 			e.printStackTrace();
 			return false;
 		}
-    }
+	}
 
     /**
      * an admin can edit any user
