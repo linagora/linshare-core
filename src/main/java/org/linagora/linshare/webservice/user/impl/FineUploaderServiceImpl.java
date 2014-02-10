@@ -169,9 +169,9 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 	public FineUploaderDto uploadThreadEntry(
 			@ApiParam(value = "Thread uuid", required = true)
 			@PathParam("threadUuid") String threadUuid,
-			@ApiParam(value = "File stream", required = true)
+			@ApiParam(value = FILE, required = true)
 			@Multipart(value = FILE) InputStream file,
-			@ApiParam(value = "File name")
+			@ApiParam(value = FILE_NAME)
 			@Multipart(value = FILE_NAME, required = false) String fileName,
 			MultipartBody body) throws BusinessException {
 		User actor = null;
