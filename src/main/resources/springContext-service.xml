@@ -16,7 +16,8 @@
 	</bean>
 
 	<bean id="logEntryService" class="org.linagora.linshare.core.service.impl.LogEntryServiceImpl">
-		<constructor-arg index="0" ref="logEntryRepository" />
+		<constructor-arg ref="logEntryRepository" />
+		<constructor-arg ref="abstractDomainService" />
 	</bean>
 
 	<bean name="passwordService" class="org.linagora.linshare.core.service.impl.PasswordServiceImpl">

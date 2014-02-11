@@ -85,10 +85,10 @@
 	</bean>
 
 	<bean name="logEntryFacade" class="org.linagora.linshare.core.facade.impl.LogEntryFacadeImpl">
-		<constructor-arg ref="logEntryRepository" />
+		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="logEntryTransformer" />
 		<constructor-arg ref="displayableLogEntryTransformer" />
-		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="userService" />
 	</bean>
 
 	<bean name="recipientFavouriteFacade" class="org.linagora.linshare.core.facade.impl.RecipientFavouriteFacadeImpl">
@@ -154,6 +154,10 @@
 
 
 	<!-- WEB SERVICES -->
+	<bean name="wsLogEntryFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.LogEntryFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="logEntryService" />
+	</bean>
 	<bean id="wsDocumentFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.DocumentFacadeImpl">
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="accountService" />
