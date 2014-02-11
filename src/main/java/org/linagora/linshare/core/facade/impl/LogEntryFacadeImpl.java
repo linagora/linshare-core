@@ -33,59 +33,58 @@
  */
 package org.linagora.linshare.core.facade.impl;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.LogEntry;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.impl.DisplayableLogEntryTransformer;
 import org.linagora.linshare.core.domain.transformers.impl.LogEntryTransformer;
 import org.linagora.linshare.core.domain.vo.DisplayableLogEntryVo;
 import org.linagora.linshare.core.domain.vo.LogEntryVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.facade.LogEntryFacade;
-import org.linagora.linshare.core.repository.LogEntryRepository;
-import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 
 public class LogEntryFacadeImpl implements LogEntryFacade {
 
-	private final LogEntryRepository logEntryRepository;
-	
+	private final LogEntryService logEntryService;
+
 	private final LogEntryTransformer logEntryTransformer;
-	
+
 	private final DisplayableLogEntryTransformer displayableLogEntryTransformer;
-	
-	private final AbstractDomainService abstractDomainService;
-	
-	
-	public LogEntryFacadeImpl(final LogEntryRepository logEntryRepository,
+
+	private final UserService userService;
+
+	public LogEntryFacadeImpl(
+			final LogEntryService logEntryService,
 			final LogEntryTransformer logEntryTransformer,
-			final DisplayableLogEntryTransformer displayableLogEntryTransformer, AbstractDomainService abstractDomainService) {
-		this.logEntryRepository = logEntryRepository;
+			final DisplayableLogEntryTransformer displayableLogEntryTransformer,
+			final UserService userService) {
+		this.logEntryService = logEntryService;
 		this.logEntryTransformer = logEntryTransformer;
 		this.displayableLogEntryTransformer = displayableLogEntryTransformer;
-		this.abstractDomainService = abstractDomainService;
+		this.userService = userService;
 	}
 
 	public List<LogEntryVo> findByDate(String mail, Calendar beginDate,
 			Calendar endDate) {
-		return logEntryTransformer.disassembleList(logEntryRepository.findByDate(mail, beginDate, endDate));
+		return logEntryTransformer.disassembleList(logEntryService.findByDate(
+				mail, beginDate, endDate));
 	}
 
 	public List<LogEntryVo> findByUser(String mail) {
-		return logEntryTransformer.disassembleList(logEntryRepository.findByUser(mail));
+		return logEntryTransformer.disassembleList(logEntryService
+				.findByUser(mail));
 	}
 
-	public List<DisplayableLogEntryVo> findByCriteria(LogCriteriaBean criteria, UserVo actorVo) {
-		List<LogEntry> list = new ArrayList<LogEntry>();
-		
-		List<String> allMyDomainIdentifiers = abstractDomainService.getAllMyDomainIdentifiers(actorVo.getDomainIdentifier());
-		for (String domainIdentifier: allMyDomainIdentifiers) {
-			list.addAll(logEntryRepository.findByCriteria(criteria, domainIdentifier));
-		}
-		
-		return displayableLogEntryTransformer.disassembleList(list);
+	public List<DisplayableLogEntryVo> findByCriteria(LogCriteriaBean criteria,
+			UserVo actorVo) {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+
+		return displayableLogEntryTransformer.disassembleList(logEntryService
+				.findByCriteria(actor, criteria));
 	}
 
 }

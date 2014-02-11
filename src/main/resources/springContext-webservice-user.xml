@@ -68,6 +68,10 @@
 		<constructor-arg ref="wsShareFacade" />
 	</bean>
 
+	<bean id="logRestService" class="org.linagora.linshare.webservice.user.impl.LogRestServiceImpl">
+		<constructor-arg ref="wsLogEntryFacade" />
+	</bean>
+
 	<bean id="threadRestService" class="org.linagora.linshare.webservice.user.impl.ThreadRestServiceImpl">
 		<constructor-arg ref="wsThreadFacade" />
 	</bean>
@@ -90,6 +94,7 @@
 			<ref bean="threadRestService" />
 			<ref bean="threadMemberRestService" />
 			<ref bean="userRestService" />
+			<ref bean="logRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
