@@ -39,11 +39,11 @@
 	<bean id="adminThreadRestService" class="org.linagora.linshare.webservice.admin.impl.ThreadRestServiceImpl">
 		<constructor-arg ref="wsAdminThreadFacade" />
 	</bean>
-	
+
 	<bean id="adminThreadMemberRestService" class="org.linagora.linshare.webservice.admin.impl.ThreadMemberRestServiceImpl">
 		<constructor-arg ref="wsAdminThreadMemberFacade" />
 	</bean>
-	
+
 	<bean id="adminUserRoleRestService" class="org.linagora.linshare.webservice.admin.impl.UserRoleRestServiceImpl">
 		<constructor-arg ref="wsAdminUserRoleFacade" />
 	</bean>
@@ -51,7 +51,11 @@
 	<bean id="adminUserRestService" class="org.linagora.linshare.webservice.admin.impl.UserRestServiceImpl">
 		<constructor-arg ref="wsAdminUserFacade" />
 	</bean>
-	
+
+	<bean id="adminLogRestService" class="org.linagora.linshare.webservice.admin.impl.LogRestServiceImpl">
+		<constructor-arg ref="wsAdminLogEntryFacade" />
+	</bean>
+
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">
 		<jaxrs:serviceBeans>
 			<ref bean="adminAuthenticationRestService" />
@@ -63,6 +67,7 @@
 			<ref bean="adminThreadMemberRestService" />
 			<ref bean="adminUserRoleRestService" />
 			<ref bean="adminUserRestService" />
+			<ref bean="adminLogRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

@@ -1,4 +1,4 @@
-package org.linagora.linshare.core.facade.webservice.user.impl;
+package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
-import org.linagora.linshare.core.facade.webservice.user.LogEntryFacade;
+import org.linagora.linshare.core.facade.webservice.admin.LogEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
@@ -18,7 +18,7 @@ import org.linagora.linshare.webservice.dto.LogDto;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-public class LogEntryFacadeImpl extends GenericFacadeImpl implements
+public class LogEntryFacadeImpl extends AdminGenericFacadeImpl implements
 		LogEntryFacade {
 
 	private final LogEntryService logEntryService;
@@ -31,13 +31,12 @@ public class LogEntryFacadeImpl extends GenericFacadeImpl implements
 
 	@Override
 	public List<LogDto> query(User actor, LogCriteriaDto criteria) {
-		LogCriteriaBean crit = new LogCriteriaBean(Lists.newArrayList(actor
-				.getMail()), criteria.getActorFirstname(),
-				criteria.getActorLastname(), criteria.getActorDomain(),
-				criteria.getTargetMails(), criteria.getTargetFirstname(),
-				criteria.getTargetLastname(), criteria.getTargetDomain(),
-				criteria.getBeforeDate(), criteria.getAfterDate(),
-				criteria.getLogActions());
+		LogCriteriaBean crit = new LogCriteriaBean(criteria.getActorMails(),
+				criteria.getActorFirstname(), criteria.getActorLastname(),
+				criteria.getActorDomain(), criteria.getTargetMails(),
+				criteria.getTargetFirstname(), criteria.getTargetLastname(),
+				criteria.getTargetDomain(), criteria.getBeforeDate(),
+				criteria.getAfterDate(), criteria.getLogActions());
 
 		return Lists.transform(logEntryService.findByCriteria(actor, crit),
 				new Function<LogEntry, LogDto>() {
