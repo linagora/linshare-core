@@ -81,6 +81,37 @@ public class MailTemplate implements Serializable {
 		this.language = language;
 	}
 
+	/*
+	 * XXX: ugly adapters
+	 */
+	public MailTemplate(MailContent content) {
+		super();
+		this.mailTemplate = MailTemplateEnum.adapt(MailContentType
+				.fromInt(content.getMailContentType()));
+		boolean greetings = MailTemplateEnum.GREETINGS.toInt() == content
+				.getMailContentType();
+		if (content.getPlaintext()) {
+			this.contentHTML = "";
+			this.contentTXT = greetings ? content.getGreetings() : content.getBody();
+		} else {
+			this.contentHTML = greetings ? content.getGreetings() : content.getBody();
+			this.contentTXT = "";
+		}
+		
+	}
+
+	public MailTemplate(MailFooter footer) {
+		super();
+		if (footer.getPlaintext()) {
+			this.contentHTML = "";
+			this.contentTXT = footer.getFooter();
+		} else {
+			this.contentHTML = footer.getFooter();
+			this.contentTXT = "";
+		}
+		this.mailTemplate = MailTemplateEnum.FOOTER;
+	}
+
 	public MailTemplateEnum getMailTemplate() {
 		return mailTemplate;
 	}

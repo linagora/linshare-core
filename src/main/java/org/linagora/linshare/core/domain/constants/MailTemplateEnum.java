@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.constants;
 
+import org.linagora.linshare.core.domain.entities.MailContentType;
+
 /**
  * Enumerate the available mail templates
  * 
@@ -79,5 +81,9 @@ public enum MailTemplateEnum {
 			}
 		}
 		throw new IllegalArgumentException("Doesn't match an existing MailTemplates");
+	}
+
+	public static MailTemplateEnum adapt(MailContentType old) {
+		return MailTemplateEnum.valueOf(old.name());
 	}
 }

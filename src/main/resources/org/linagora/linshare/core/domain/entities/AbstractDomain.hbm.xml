@@ -49,6 +49,28 @@
 			<key column="domain_id" />
 			<one-to-many class="DomainAccessRule"  />
 		</set>
+
+
+		<many-to-one name="currentMailConfiguration" cascade="lock" column="mailconfig_id" class="org.linagora.linshare.core.domain.entities.MailConfig" not-null="false" lazy="no-proxy"></many-to-one>
+
+		<set name="mailLayouts" lazy="true" cascade="save-update,lock" inverse="false">
+			<key column="domain_abstract_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.MailLayout"/>
+		</set>
+		<set name="mailFooters" lazy="true" cascade="save-update,lock" inverse="false">
+			<key column="domain_abstract_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.MailFooter"/>
+		</set>
+		<set name="mailContents" lazy="true" cascade="save-update,lock" inverse="false">
+			<key column="domain_abstract_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.MailContent"/>
+		</set>
+		<set name="mailConfigs" lazy="true" cascade="save-update,lock" inverse="true">
+			<key column="domain_abstract_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.MailConfig"/>
+		</set>
+
+
 	
 		<many-to-one cascade="save-update" lazy="false" access="field" class="org.linagora.linshare.core.domain.entities.MessagesConfiguration" 
 			name="messagesConfiguration" column="messages_configuration_id" not-null="false" />

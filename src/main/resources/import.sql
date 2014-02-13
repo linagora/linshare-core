@@ -23,6 +23,10 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- LinShare: A user has just made a file available to you!
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'LinShare: A user has just made a file available to you!', 0);
 
+-- Subject NEW_SHARING_WITH_ACTOR
+-- LinShare: sharing file with personal message.
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, E'${actorSubject} from ${actorRepresentation}', 0);
+
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: A user has just modified a shared file you still have access to
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'LinShare: A user has just modified a shared file you still have access to', 0);
@@ -122,6 +126,10 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- LinShare: A user deposited files in sharing for you
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'LinShare : Un utilisateur vous a déposé des fichiers en partage', 1);
 
+-- Subject NEW_SHARING_WITH_ACTOR
+-- LinShare: sharing file with personal message.
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, E'${actorSubject} de la part de ${actorRepresentation}', 1);
+
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: An user has updated a shared file
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'LinShare : Un utilisateur a mis à jour un fichier partagé', 1);
@@ -220,6 +228,10 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- LinShare: A user deposited files in sharing for you
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'LinShare : Een gebruiker heeft te delen bestanden voor u klaargezet.', 2);
 
+-- Subject NEW_SHARING_WITH_ACTOR
+-- LinShare: sharing file with personal message.
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, E'${actorSubject} from ${actorRepresentation}', 2);
+
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: An user has updated a shared file
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'LinShare : Een gebruiker heeft een gedeeld bestand bijgewerkt', 2);
@@ -303,9 +315,7 @@ INSERT INTO domain_policy(id, identifier, domain_access_policy_id) VALUES (1, 'D
 
 
 -- Root domain (application domain)
-INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, messages_configuration_id) VALUES (1, 0, 'LinShareRootDomain', 'LinShareRootDomain', true, false, 'The root application domain', 3, 'en', 0, null, 1, null, 1);
-
-
+INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, messages_configuration_id, mailconfig_id) VALUES (1, 0, 'LinShareRootDomain', 'LinShareRootDomain', true, false, 'The root application domain', 3, 'en', 0, null, 1, null, 1, null);
 
 INSERT INTO ldap_connection(ldap_connection_id, identifier, provider_url, security_auth, security_principal, security_credentials) VALUES (1, 'baseLDAP', 'ldap://localhost:33389', 'simple', '', '');
 
@@ -326,13 +336,66 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pa
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (7, 'user_lastname', 'sn', false, true, true, 2, true);
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (8, 'user_uid', 'uid', false, true, true, 2, false);
 
+
+------------------------------------   MAIL
+
+-- %{image}    <img src="cid:image.part.1@linshare.org" /><br/><br/>
+
+INSERT INTO mail_layout (id, name,domain_abstract_id,visible,plaintext,modification_date,creation_date,uuid,layout) VALUES (1, 'html', 1,true,false,now(),now(),'15044750-89d1-11e3-8d50-5404a683a462',E'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml">\n<head>\n<title>%{mailSubject}</title>\n<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />\n<meta http-equiv="Content-Style-Type" content="text/css" />\n<style type="text/css">\npre { margin-top: .25em; font-family: Verdana, Arial, Helvetica, sans-serif; color: blue; }\nul { margin-top: .25em; padding-left: 1.5em; }\n</style>\n</head>\n<body>\n%{image}\n%{personalMessage}\n%{greetings}\n%{body}\n <hr/>\n%{footer}\n</body>\n</html>');
+INSERT INTO mail_layout (id, name,domain_abstract_id,visible,plaintext,modification_date,creation_date,uuid,layout) VALUES (2, 'text', 1,true,true,now(),now(),'db044da6-89d1-11e3-b6a9-5404a683a462', E'%{personalMessage}\n\n%{greetings}\n\n%{body}\n-- \n%{footer}\n');
+
+-- language 0 is english
+-- Template GUEST_INVITATION
+-- Subject NEW_GUEST
+INSERT INTO mail_content (id, name, language, domain_abstract_id, visible, plaintext, mail_content_type,subject,greetings,body,uuid) VALUES (1, 'GUEST_INVITATION', 0,1, true, false,12, E'Your LinShare account has been successfully created',E'Hello ${firstName} ${lastName},<br/><br/>',E'<strong>${ownerFirstName} ${ownerLastName}</strong> invites you to use and enjoy LinShare!<br/>','c7b41d62-8cf1-11e3-bbe6-5404a683a462');
+INSERT INTO mail_content (id, name, language, domain_abstract_id, visible, plaintext, mail_content_type,subject,greetings,body,uuid) VALUES (2, 'GUEST_INVITATION', 1,1, true, false,12, E'Votre compte LinShare a été créé',E'Bonjour ${firstName} ${lastName},<br/><br/>',E'<strong>${ownerFirstName} ${ownerLastName}</strong> vous invite à utiliser LinShare.<br/>','df47481e-8cf1-11e3-b022-5404a683a462');
+
+-- Template LINSHARE_URL
+INSERT INTO mail_content (id, name, language, domain_abstract_id, visible, plaintext, mail_content_type,subject,greetings,body,uuid) VALUES (3, 'LINSHARE_URL', 0,1, true, false,13, E'',E'Hello ${firstName} ${lastName},<br/><br/>',E'To login, please go to: <a href="${url}">${url}</a><br/>','c7b41d62-8cf1-11e3-bbe6-5404a683a462');
+INSERT INTO mail_content (id, name, language, domain_abstract_id, visible, plaintext, mail_content_type,subject,greetings,body,uuid) VALUES (4, 'LINSHARE_URL', 1,1, true, false,13, E'',E'Bonjour ${firstName} ${lastName},<br/><br/>',E'Vous pouvez vous connecter à cette adresse : ${url}','df47481e-8cf1-11e3-b022-5404a683a462');
+
+-- Template  ACCOUNT_DESCRIPTION
+
+INSERT INTO mail_content (id, name, language, domain_abstract_id, visible, plaintext, mail_content_type,subject,greetings,body,uuid) VALUES (5, 'ACCOUNT_DESCRIPTION', 0,1, true, false,0, E'',E'Hello ${firstName} ${lastName},<br/><br/>',E'Your LinShare account:<ul><li>Login: <code>${mail}</code> &nbsp;(your e-mail address)</li><li>Password: <code>${password}</code></li></ul>','c7b41d62-8cf1-11e3-bbe6-5404a683a462');
+INSERT INTO mail_content (id, name, language, domain_abstract_id, visible, plaintext, mail_content_type,subject,greetings,body,uuid) VALUES (6, 'ACCOUNT_DESCRIPTION', 1,1, true, false,0, E'',E'Bonjour ${firstName} ${lastName},<br/><br/>',E'Votre compte LinShare&nbsp;:<ul><li>Identifiant&nbsp;: <code>${mail}</code> &nbsp;(votre adresse électronique)</li><li>Mot de passe&nbsp;: <code>${password}</code></li></ul>','df47481e-8cf1-11e3-b022-5404a683a462');
+
+
+
+
+
+INSERT INTO mail_footer (id, name, language, domain_abstract_id, visible, plaintext, footer,uuid,modification_date,creation_date) VALUES (1, 'FOOTER_HTML', 0,1, true, false, E'<a href="http://linshare.org/" title="LinShare"><strong>LinShare</strong></a> - THE Secure, Open-Source File Sharing Tool','e85f4a22-8cf2-11e3-8a7a-5404a683a462',now(),now());
+INSERT INTO mail_footer (id, name, language, domain_abstract_id, visible, plaintext, footer,uuid,modification_date,creation_date) VALUES (2, 'FOOTER_HTML', 1,1, true, false, E'<a href="http://linshare.org/" title="LinShare"><strong>LinShare</strong></a> - Logiciel libre de partage de fichiers sécurisé','c9e8e482-8daa-11e3-9d04-5404a683a462',now(),now());
+
+
+-- INSERT INTO mail_footer (id, name, language, domain_abstract_id, visible, plaintext, footer,uuid,modification_date,creation_date) VALUES (3, 'FOOTER_TXT', 0,1, true, true, E'LinShare - http://linshare.org - THE Secure, Open-Source File Sharing Tool','83e756e8-8cf7-11e3-b493-5404a683a462',now(),now());
+-- INSERT INTO mail_footer (id, name, language, domain_abstract_id, visible, plaintext, footer,uuid,modification_date,creation_date) VALUES (4, 'FOOTER_TXT', 1,1, true, true, E'LinShare - http://www.linshare.org/ - Logiciel libre de partage de fichiers sécurisé','d56a8f54-8daa-11e3-9cc2-5404a683a462',now(),now());
+
+
+
+
+-- mail config
+-- seb1
+
+INSERT INTO mail_config (id, name, domain_abstract_id, visible, mail_layout_html_id, mail_layout_text_id,uuid) VALUES (1,'config 1',1,true,1,2,'42cf9cf6-8da6-11e3-b6aa-5404a683a462');
+UPDATE domain_abstract set mailconfig_id = 1 where id =1; 
+
+-- GUEST_INVITATION
+INSERT INTO mail_content_lang(id,mail_config_id,language,mail_content_id,mail_content_type) VALUES (1,1,0,1,8);
+INSERT INTO mail_content_lang(id,mail_config_id,language,mail_content_id,mail_content_type) VALUES (2,1,1,2,8);
+
+
+INSERT INTO mail_footer_lang(id,mail_config_id,language,mail_footer_id) VALUES (1,1,0,1);
+INSERT INTO mail_footer_lang(id,mail_config_id,language,mail_footer_id) VALUES (2,1,1,2);
+
+
+
 INSERT INTO user_provider_ldap(id, differential_key, domain_pattern_id, ldap_connection_id) VALUES (1, 'dc=linpki,dc=org', 1, 1);
 -- Top domain (example domain)
-INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, messages_configuration_id, auth_show_order) VALUES (2, 1, 'MyDomain', 'MyDomain', true, false, 'a simple description', 0, 'en', 0, null, 1, 1, 1, 2);
+INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, messages_configuration_id, auth_show_order, mailconfig_id) VALUES (2, 1, 'MyDomain', 'MyDomain', true, false, 'a simple description', 0, 'en', 0, null, 1, 1, 1, 2, 1);
 -- Sub domain (example domain)
-INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, messages_configuration_id, auth_show_order) VALUES (3, 2, 'MySubDomain', 'MySubDomain', true, false, 'a simple description', 0, 'en', 0, 1, 1, 2, 1 , 3);
+INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, messages_configuration_id, auth_show_order, mailconfig_id) VALUES (3, 2, 'MySubDomain', 'MySubDomain', true, false, 'a simple description', 0, 'en', 0, 1, 1, 2, 1 , 3, 1);
 -- Guest domain (example domain)
-INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, messages_configuration_id, auth_show_order) VALUES (4, 3, 'GuestDomain', 'GuestDomain', true, false, 'a simple description', 0, 'en', 0, null, 1, 2, 1, 4);
+INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, messages_configuration_id, auth_show_order, mailconfig_id) VALUES (4, 3, 'GuestDomain', 'GuestDomain', true, false, 'a simple description', 0, 'en', 0, null, 1, 2, 1, 4, 1);
 
 
 
@@ -342,6 +405,7 @@ INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date,
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (1, 'Administrator', 'LinShare', 'root@localhost.localdomain', false, '', false, false);
 
 -- system account :
+
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (2, 7, 'system', current_date(), current_date(), 3, 'en', 'en', true, false, 1);
 
 
@@ -531,4 +595,10 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (61, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (62, false, false, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(30, false, 'NOTIFICATION_URL', 61, 62, 1); 
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'http://localhost:8080/linshare/');
+
+
+
+
+
+
 
