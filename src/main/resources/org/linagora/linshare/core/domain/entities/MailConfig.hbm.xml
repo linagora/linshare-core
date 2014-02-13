@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Licensee: MAUDET Michel-Marie (LINAGORA)
+License Type: Purchased
+-->
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.linagora.linshare.core.domain.entities.MailConfig" table="mail_config" lazy="false">
+		<id name="id" column="Id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<many-to-one name="mailLayoutHtml" cascade="lock" column="mail_layout_html_id" class="org.linagora.linshare.core.domain.entities.MailLayout" not-null="true" lazy="no-proxy">
+		</many-to-one>
+		<many-to-one name="domain" cascade="lock" column="domain_abstract_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true" lazy="no-proxy">
+		</many-to-one>
+		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="visible" column="visible" type="boolean" not-null="true" lazy="false"/>
+		<many-to-one name="mailLayoutText" cascade="lock" column="mail_layout_text_id" class="org.linagora.linshare.core.domain.entities.MailLayout" not-null="true" lazy="no-proxy">
+		</many-to-one>
+		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
+		<map name="mailFooters" lazy="false" cascade="all" inverse="false">
+			<key column="mail_config_id" not-null="true"/>
+			<map-key  column="language" type="integer"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.MailFooterLang"/>
+		</map>
+		
+		<set name="mailContents" lazy="true" cascade="save-update,lock" inverse="false">
+			<key column="mail_config_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.MailContentLang"/>
+		</set>		
+		
+	</class>
+</hibernate-mapping>

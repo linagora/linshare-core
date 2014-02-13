@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Licensee: MAUDET Michel-Marie (LINAGORA)
+License Type: Purchased
+-->
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.linagora.linshare.core.domain.entities.MailFooterLang" table="mail_footer_lang" lazy="false">
+		<id name="id" column="Id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<property name="language" column="language" type="integer" not-null="true" lazy="false" insert="false" update="false"/>
+		<many-to-one name="footer" cascade="lock" column="mail_footer_id" class="org.linagora.linshare.core.domain.entities.MailFooter" not-null="true" lazy="no-proxy">
+		</many-to-one>
+	</class>
+</hibernate-mapping>
