@@ -33,16 +33,30 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.MailContent;
+import org.linagora.linshare.core.domain.entities.MailContentLang;
+import org.linagora.linshare.core.domain.entities.MailContentType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailConfigRepository;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class MailConfigRepositoryImpl extends
@@ -93,4 +107,45 @@ public class MailConfigRepositoryImpl extends
 		return findByCriteria(Restrictions.eq("domain", domain));
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public MailContent getMailContent(AbstractDomain domain, Language lang,
+			MailContentType mailContentType) {
+		
+		DetachedCriteria crit = DetachedCriteria
+				.forClass(MailContentLang.class);
+
+		crit.add(Restrictions.eq("mailContentType", mailContentType.toInt()));
+		crit.add(Restrictions.eq("language", lang.toInt()));
+		crit.add(Restrictions.eq("mailConfig", domain.getCurrentMailConfiguration()));
+	
+		List<MailContentLang> l = listByCriteria(crit);
+		MailContentLang mcl = DataAccessUtils.singleResult(l);
+
+		return mcl == null ? null : mcl.getMailContent();
+		
+		
+		
+//		DetachedCriteria crit = DetachedCriteria
+//				.forClass(MailContentLang.class);
+//		Conjunction and = Restrictions.conjunction();
+//
+//		and.add(Restrictions.eq("mailContentType", mailContentType.toInt()));
+//		and.add(Restrictions.eq("language", lang.toInt()));
+//
+//		crit.add(and);
+//		crit.add(Subqueries.propertyIn(
+//				"id",
+//				DetachedCriteria.forClass(MailConfig.class)
+//						.add(Restrictions.eq("id", domain
+//								.getCurrentMailConfiguration().getId()))
+//						.createAlias("mailContents", "mcl")
+//						.setProjection(Property.forName("mcl.id"))));
+//
+//		List<MailContentLang> l = listByCriteria(crit);
+//		MailContentLang mcl = DataAccessUtils.singleResult(l);
+//
+//		return mcl == null ? null : mcl.getMailContent();
+		
+	}
 }

@@ -35,7 +35,6 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -53,7 +52,6 @@ import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.MailContent;
-import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.domain.entities.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
@@ -63,10 +61,10 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.repository.MailConfigRepository;
 import org.linagora.linshare.core.repository.MailContentRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -87,7 +85,7 @@ public class MailBuildingServiceImpl implements MailContentBuildingService {
 	
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	private final MailContentRepository mailContentRepository;
+	private final MailConfigRepository mailConfigRepository;
 	
 	class ContactRepresentation {
 		private String mail;
@@ -149,14 +147,14 @@ public class MailBuildingServiceImpl implements MailContentBuildingService {
 	public MailBuildingServiceImpl(boolean displayLogo,
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
-			final MailContentRepository mailContentRepository,
+			final MailConfigRepository mailConfigRepository,
 			boolean insertLicenceTerm) throws BusinessException {
         
         this.displayLogo = displayLogo;
         this.abstractDomainService = abstractDomainService;
         this.insertLicenceTerm = insertLicenceTerm;
         this.functionalityReadOnlyService = functionalityReadOnlyService;
-        this.mailContentRepository = mailContentRepository;
+        this.mailConfigRepository = mailConfigRepository;
 	}
 
 	
@@ -310,7 +308,7 @@ public class MailBuildingServiceImpl implements MailContentBuildingService {
 		MailContent content;
 		AbstractDomain domain = actor.getDomain();
 
-		content = mailContentRepository.getMailContent(domain, language,
+		content = mailConfigRepository.getMailContent(domain, language,
 				mailContentType);
 
 		if (content == null)
@@ -1297,9 +1295,9 @@ public class MailBuildingServiceImpl implements MailContentBuildingService {
 	}
 	
 	private MailContainerWithRecipient buildMailContainerSetProperties(User sender, MailContainerWithRecipient mailContainer, User recipient) throws BusinessException {
-		MailTemplate greetings = buildTemplateGreetings(sender, mailContainer.getLanguage(), recipient);
+//		MailTemplate greetings = buildTemplateGreetings(sender, mailContainer.getLanguage(), recipient);
 		// no personal message.
-		return buildMailContainerSetProperties(sender, mailContainer, "", greetings); 
+		return buildMailContainerSetProperties(sender, mailContainer, "", null); 
 	}
 	
 	
@@ -1346,11 +1344,13 @@ public class MailBuildingServiceImpl implements MailContentBuildingService {
 		}
 		
 		
-        mailLayoutTxt = StringUtils.replace(mailLayoutTxt, "${greetings}", greetings.getContentTXT());
+//        mailLayoutTxt = StringUtils.replace(mailLayoutTxt, "${greetings}", greetings.getContentTXT());
+		mailLayoutTxt = StringUtils.replace(mailLayoutTxt, "${greetings}", "Coucou");
         mailLayoutTxt = StringUtils.replace(mailLayoutTxt, "${footer}", footer.getContentTXT());
         mailLayoutTxt = StringUtils.replace(mailLayoutTxt, "${body}", inputMailContainer.getContentTXT());
         
-        mailLayoutTxt = StringUtils.replace(mailLayoutTxt, "%{greetings}", greetings.getContentTXT());
+//        mailLayoutTxt = StringUtils.replace(mailLayoutTxt, "%{greetings}", greetings.getContentTXT());
+        mailLayoutTxt = StringUtils.replace(mailLayoutTxt, "%{greetings}", "Coucou");
         mailLayoutTxt = StringUtils.replace(mailLayoutTxt, "%{footer}", footer.getContentTXT());
         mailLayoutTxt = StringUtils.replace(mailLayoutTxt, "%{body}", inputMailContainer.getContentTXT());
         

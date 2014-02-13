@@ -180,7 +180,7 @@
 		<constructor-arg value="${linshare.logo.mails.visible}" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
-		<constructor-arg ref="mailContentRepository" />
+		<constructor-arg ref="mailConfigRepository" />
 		<constructor-arg value="${linshare.display.licenceTerm}" />	
 	</bean>
 	

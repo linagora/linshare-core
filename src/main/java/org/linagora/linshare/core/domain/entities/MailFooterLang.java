@@ -54,5 +54,4 @@ public class MailFooterLang {
 	public String toString() {
 		return String.valueOf(getId());
 	}
-	
 }

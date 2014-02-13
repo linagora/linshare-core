@@ -25,6 +25,8 @@ public class MailContentLang {
 	
 	private int mailContentType;
 	
+	private MailConfig mailConfig;
+	
 	private void setId(long value) {
 		this.id = value;
 	}
@@ -63,6 +65,14 @@ public class MailContentLang {
 	
 	public String toString() {
 		return String.valueOf(getId());
+	}
+
+	public MailConfig getMailConfig() {
+		return mailConfig;
+	}
+
+	public void setMailConfig(MailConfig mailConfig) {
+		this.mailConfig = mailConfig;
 	}
 	
 }

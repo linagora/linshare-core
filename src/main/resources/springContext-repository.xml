@@ -139,6 +139,10 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
+	<bean name="mailConfigRepository" class="org.linagora.linshare.core.repository.hibernate.MailConfigRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
 	<bean name="mailContentRepository" class="org.linagora.linshare.core.repository.hibernate.MailContentRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
