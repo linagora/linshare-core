@@ -297,8 +297,11 @@ public class JScriptLdapQuery {
 		// returned value
 		User user = new Internal();
 		NamingEnumeration<SearchResult> results = lqlctx.getLdapCtx().search(dn, "(objectclass=*)", scs);
+		Integer cpt = new Integer(0);
 		while (results != null && results.hasMore()) {
+			cpt += 1;
 			SearchResult entry = (SearchResult) results.next();
+			logger.debug("processing result : " + cpt);
 
 			// Handle the entry's response controls (if any)
 			if (entry instanceof HasControls) {
@@ -315,7 +318,6 @@ public class JScriptLdapQuery {
 				Attribute ldapAttr = entry.getAttributes().get(ldapAttrName);
 				if (logger.isDebugEnabled()) {
 					logger.debug("field = " + dbAttrKey + ", ldap attribute = " + ldapAttrName);
-					logger.debug("count of attribute values for : '" + ldapAttrName + "' :" + ldapAttr.size());
 				}
 				boolean isNull = false;
 				String value = null;
@@ -323,6 +325,11 @@ public class JScriptLdapQuery {
 					// ldapAttr and value can be null. ldapAttr.get() can raise
 					// NPE.
 					value = (String) ldapAttr.get();
+					if (logger.isDebugEnabled()) {
+						String size = null;
+						if(ldapAttr != null)	size = String.valueOf(ldapAttr.size());
+						logger.debug("count of attribute values for : '" + ldapAttrName + "' :" + size);
+					}
 				} catch (NullPointerException e) {
 					isNull = true;
 				}
