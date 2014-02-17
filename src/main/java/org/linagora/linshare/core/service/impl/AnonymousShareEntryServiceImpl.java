@@ -212,7 +212,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		AnonymousShareEntry shareEntry = anonymousShareEntryBusinessService.findByUuidForDownload(shareUuid);
 		
 		ShareLogEntry logEntry = new ShareLogEntry(shareEntry.getEntryOwner(), shareEntry, LogAction.ANONYMOUS_SHARE_DOWNLOAD,
-				"Anonymous user " + shareEntry.getEntryOwner() +  " downloaded a file");
+				"Anonymous user " + shareEntry.getEntryOwner().getAccountReprentation() +  " downloaded a file");
 		logEntryService.create(logEntry);
 		return shareEntry;
 	}

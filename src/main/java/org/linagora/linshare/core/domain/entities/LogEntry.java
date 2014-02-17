@@ -135,7 +135,7 @@ public abstract class LogEntry implements Serializable {
 		this.description = description;
 	}
 
-	public boolean isUser(Account actor) {
+	public static boolean isUser(Account actor) {
 		if (actor.getAccountType().equals(AccountType.GUEST)
 				|| actor.getAccountType().equals(AccountType.INTERNAL)
 				|| actor.getAccountType().equals(AccountType.ROOT))

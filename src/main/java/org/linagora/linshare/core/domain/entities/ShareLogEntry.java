@@ -41,13 +41,13 @@ public class ShareLogEntry extends FileLogEntry {
 
 	private static final long serialVersionUID = -2189443188392440017L;
 
-	private final String targetMail;
+	private String targetMail;
 
-	private final String targetFirstname;
+	private String targetFirstname;
 	
-	private final String targetLastname;
+	private String targetLastname;
 	
-	private final String targetDomain;
+	private String targetDomain;
 
 	private final Calendar expirationDate;
 	
@@ -137,9 +137,11 @@ public class ShareLogEntry extends FileLogEntry {
 	 * This constructor is used for Share Download logging
 	 */
 	public ShareLogEntry(Account actor, LogAction logAction, String description, ShareEntry shareEntry, Account target) {
-		this(actor, logAction, "Download of a sharing", shareEntry.getDocumentEntry().getName(),
-				shareEntry.getDocumentEntry().getSize(), shareEntry.getDocumentEntry().getType(),
-				shareEntry.getEntryOwner(), shareEntry.getExpirationDate());
+		this(actor, logAction, description, shareEntry.getDocumentEntry().getName(),
+				shareEntry.getDocumentEntry().getSize(),
+				shareEntry.getDocumentEntry().getType(),
+				target,
+				shareEntry.getExpirationDate());
 	}
 	
 	public String getTargetMail() {
@@ -161,4 +163,50 @@ public class ShareLogEntry extends FileLogEntry {
 		return targetDomain;
 	}
 
+	public ShareLogEntry(Account actor, LogAction logAction, String description, ShareEntry share) {
+		super(actor, logAction, description, share.getName(), share.getSize(), share.getType());
+		this.expirationDate = share.getExpirationDate();
+		this.targetMail = "";
+		this.targetFirstname = "";
+		this.targetLastname = "";
+		this.targetDomain = "";
+	}
+
+	public static ShareLogEntry hasCopiedAShare(Account actor, ShareEntry share) {
+		ShareLogEntry res = new ShareLogEntry(actor, LogAction.SHARE_COPY, "Copy of a sharing", share);
+		return res;
+	}
+
+	public static ShareLogEntry hasDownloadedAShare(Account actor, ShareEntry share) {
+		Account target = share.getEntryOwner();
+		ShareLogEntry res = new ShareLogEntry(actor, LogAction.SHARE_DOWNLOAD, "Download of a sharing, shared by " + target.getAccountReprentation(), share);
+		res.targetDomain = target.getDomainId();
+		if(isUser(target)) {
+			User user = (User)target;
+			res.targetMail = user.getMail();
+			res.targetFirstname = user.getFirstName();
+			res.targetLastname = user.getLastName();
+		} else {
+			res.targetMail = target.getLsUuid();
+			res.targetFirstname = "";
+			res.targetLastname = "";
+		}
+		return res;
+	}
+
+	public static ShareLogEntry aShareWasDownloaded(Account actor, ShareEntry share) {
+		ShareLogEntry res = new ShareLogEntry(share.getEntryOwner(), LogAction.SHARE_DOWNLOADED, "Share was downloaded by " + actor.getAccountReprentation(), share);
+		res.targetDomain = actor.getDomainId();
+		if(isUser(actor)) {
+			User user = (User)actor;
+			res.targetMail = user.getMail();
+			res.targetFirstname = user.getFirstName();
+			res.targetLastname = user.getLastName();
+		} else {
+			res.targetMail = actor.getLsUuid();
+			res.targetFirstname = "";
+			res.targetLastname = "";
+		}
+		return res;
+	}
 }
