@@ -16,7 +16,16 @@ import org.linagora.linshare.webservice.admin.LogRestService;
 import org.linagora.linshare.webservice.dto.LogCriteriaDto;
 import org.linagora.linshare.webservice.dto.LogDto;
 
-public class LogRestServiceImpl extends WebserviceBase implements LogRestService {
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
+@Path("/logs")
+@Api(value = "/admin/logs", description = "Admin application audit service.")
+public class LogRestServiceImpl extends WebserviceBase implements
+		LogRestService {
 
 	private LogEntryFacade logEntryFacade;
 
@@ -25,11 +34,15 @@ public class LogRestServiceImpl extends WebserviceBase implements LogRestService
 	}
 
 	@Path("/")
+	@ApiOperation(value = "Search the user history with specified criteria.", response = LogDto.class, responseContainer = "List")
+	@ApiResponses({ @ApiResponse(code = 401, message = "User isn't admin.") })
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<LogDto> query(LogCriteriaDto criteria) throws BusinessException {
+	public List<LogDto> query(
+			@ApiParam(value = "Criteria to search for.", required = true) LogCriteriaDto criteria)
+			throws BusinessException {
 		User actor = logEntryFacade.checkAuthentication();
 
 		return logEntryFacade.query(actor, criteria);

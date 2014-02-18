@@ -37,34 +37,68 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.constants.LogAction;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
+@XmlRootElement(name = "LogCriteria")
+@ApiModel(value = "LogCriteria", description = "Criteria used to search the history")
 public class LogCriteriaDto {
 
+	@XmlElement(name = "actorMails")
+	@ApiModelProperty(value = "List of actor's mail")
 	private List<String> actorMails; // The selected user
 
+	@XmlElement(name = "actorFirstname")
+	@ApiModelProperty(value = "First name of the actor")
 	private String actorFirstname;
 
+	@XmlElement(name = "actorLastname")
+	@ApiModelProperty(value = "Last name of the actor")
 	private String actorLastname;
 
+	@XmlElement(name = "actorDomain")
+	@ApiModelProperty(value = "Domain of the actor")
 	private String actorDomain;
 
+	@XmlElement(name = "targetMails")
+	@ApiModelProperty(value = "List of target's mail")
 	private List<String> targetMails; // The list of the selected users
 
+	@XmlElement(name = "targetFirstname")
+	@ApiModelProperty(value = "First name of the target")
 	private String targetFirstname;
 
+	@XmlElement(name = "targetLastname")
+	@ApiModelProperty(value = "Last name of the target")
 	private String targetLastname;
 
+	@XmlElement(name = "targetDomain")
+	@ApiModelProperty(value = "Domain of the target")
 	private String targetDomain;
 
+	@XmlElement(name = "beforeDate")
+	@ApiModelProperty(value = "The starting date")
 	private Calendar beforeDate; // The begin date for the search
 
+	@XmlElement(name = "beforeDate")
+	@ApiModelProperty(value = "The ending date")
 	private Calendar afterDate; // The end date for the search
 
+	@XmlElement(name = "logActions")
+	@ApiModelProperty(value = "A list of actions")
 	private List<LogAction> logActions; // The list of Actions to retrieve
 
+	@XmlElement(name = "fileName")
+	@ApiModelProperty(value = "The file name")
 	private String fileName; // file name to find
 
+	@XmlElement(name = "fileExtension")
+	@ApiModelProperty(value = "The file extension")
 	private String fileExtension;
 
 	public LogCriteriaDto() {
