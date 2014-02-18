@@ -41,7 +41,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement(name = "FineUploader")
-@ApiModel(value = "A response for FineUploader")
+@ApiModel(value = "FineUploader", description = "A response for FineUploader")
 public class FineUploaderDto {
 
 	@XmlElement(name = "success")
