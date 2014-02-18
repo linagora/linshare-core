@@ -56,6 +56,7 @@ import org.linagora.linshare.core.domain.entities.MailTemplate;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
@@ -490,13 +491,13 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 */
 	@Override
 	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User sender, MailContainer inputMailContainer, User recipient, 
-			List<DocumentVo> documents, boolean hasToDecrypt) throws BusinessException {
+			List<ShareDocumentVo> shares, boolean hasToDecrypt) throws BusinessException {
 		
 		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(sender.getExternalMailLocale());
 		String linShareRootUrl = getLinShareUrlForAUserRecipient(recipient);
 
 		// share notification
-		mailContainer.appendTemplate(buildTemplateShareNotification(sender, recipient, mailContainer.getLanguage(), documents));
+		mailContainer.appendTemplate(buildTemplateShareNotification(sender, recipient, mailContainer.getLanguage(), shares));
 		
 		// LinShare URL
 		mailContainer.appendTemplate(buildTemplateFileDownloadURL(sender, mailContainer.getLanguage(), linShareRootUrl));
@@ -1024,14 +1025,14 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	private String getDirectDownloadLink(User recipient, DocumentVo doc) {
 		final String path = getLinShareUrlForAUserRecipient(recipient);
 		final String sep = path.endsWith("/") ? "" : "/";
-		final String dl = path + sep + "index.listsharedocument.download/";
+		final String dl = path + sep + "index.listshareddocument.download/";
 		return dl + doc.getIdentifier();
 	}
 	
 	/**
 	 * Template SHARE_NOTIFICATION
 	 */
-	private MailTemplate buildTemplateShareNotification(User actor, User recipient, Language language, List<DocumentVo> documents)
+	private MailTemplate buildTemplateShareNotification(User actor, User recipient, Language language, List<ShareDocumentVo> shares)
 			throws BusinessException {
 		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.SHARE_NOTIFICATION);
 		String contentTXT = template.getContentTXT();
@@ -1039,12 +1040,16 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 
 		StringBuffer names = new StringBuffer();
 		StringBuffer namesTxt = new StringBuffer();
-		for (DocumentVo doc : documents) {
-			names.append("<li><a href='" + getDirectDownloadLink(recipient, doc) + "'>" + doc.getFileName() +"</a></li>");
-			namesTxt.append(doc.getFileName() + " <" + getDirectDownloadLink(recipient, doc) + ">\n");
+		long shareSize = 0;
+		for (ShareDocumentVo share : shares) {
+			if (recipient.getLsUuid().equals(share.getReceiver().getLsUuid())) {
+				shareSize += 1;
+				names.append("<li><a href='" + getDirectDownloadLink(recipient, share) + "'>" + share.getFileName() +"</a></li>");
+				namesTxt.append(share.getFileName() + " <" + getDirectDownloadLink(recipient, share) + ">\n");
+			}
 		}
 
-		String number = "" + documents.size();
+		String number = "" + shareSize;
 
 		contentTXT = StringUtils.replace(contentTXT, "${firstName}", actor.getFirstName());
 		contentTXT = StringUtils.replace(contentTXT, "${lastName}", actor.getLastName());
