@@ -172,12 +172,13 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 					"Could not authenticate user: " + login);
 		}
 		if (foundUser != null) {
-			// The user was found in the database, we just need to auth against
-			// LDAP.
+			// The user was found in the database, we just need to test if he still exists in the LDAP directory
 			logger.debug("User found in DB : "
 					+ foundUser.getAccountReprentation());
 			logger.debug("The user domain stored in DB was : "
 					+ foundUser.getDomainId());
+			foundUser = userProviderService.searchForAuth(
+					foundUser.getDomain().getUserProvider(), login);
 		} else {
 			logger.debug("Can't find the user in DB. Searching user in all LDAP domains.");
 			List<AbstractDomain> domains = authentificationFacade
