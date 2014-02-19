@@ -34,7 +34,7 @@
 package org.linagora.linshare.webservice.dto;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -83,11 +83,11 @@ public class LogCriteriaDto {
 
 	@XmlElement(name = "beforeDate")
 	@ApiModelProperty(value = "The starting date")
-	private Calendar beforeDate; // The begin date for the search
+	private Date beforeDate; // The begin date for the search
 
 	@XmlElement(name = "beforeDate")
 	@ApiModelProperty(value = "The ending date")
-	private Calendar afterDate; // The end date for the search
+	private Date afterDate; // The end date for the search
 
 	@XmlElement(name = "logActions")
 	@ApiModelProperty(value = "A list of actions")
@@ -108,7 +108,7 @@ public class LogCriteriaDto {
 	public LogCriteriaDto(List<String> actorMails, String actorFirstname,
 			String actorLastname, String actorDomain, List<String> targetMails,
 			String targetFirstname, String targetLastname, String targetDomain,
-			Calendar beforeDate, Calendar afterDate, List<LogAction> logActions) {
+			Date beforeDate, Date afterDate, List<LogAction> logActions) {
 		this.actorMails = actorMails;
 		this.actorFirstname = actorFirstname;
 		this.actorLastname = actorLastname;
@@ -130,19 +130,19 @@ public class LogCriteriaDto {
 		this.actorMails = mails;
 	}
 
-	public Calendar getBeforeDate() {
+	public Date getBeforeDate() {
 		return beforeDate;
 	}
 
-	public void setBeforeDate(Calendar beforeDate) {
+	public void setBeforeDate(Date beforeDate) {
 		this.beforeDate = beforeDate;
 	}
 
-	public Calendar getAfterDate() {
+	public Date getAfterDate() {
 		return afterDate;
 	}
 
-	public void setAfterDate(Calendar afterDate) {
+	public void setAfterDate(Date afterDate) {
 		this.afterDate = afterDate;
 	}
 
