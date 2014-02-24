@@ -367,10 +367,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 			throws BusinessException {
 		LdapUserProvider p = userProvider;
 		if (p == null) {
-			logger.error("userProvider is null, can not search an user with login : " + login);
-			throw new BusinessException(
-					BusinessErrorCode.USER_NOT_FOUND,
-					"userProvider is null, can not search an user with login : " + login);
+			return null;
 		}
 		User user = null;
 		try {
