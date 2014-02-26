@@ -44,72 +44,73 @@ import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DomainPolicyBusinessServiceImpl implements DomainPolicyBusinessService{
+public class DomainPolicyBusinessServiceImpl implements
+		DomainPolicyBusinessService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DomainPolicyBusinessServiceImpl.class);
-	
+	private static final Logger logger = LoggerFactory
+			.getLogger(DomainPolicyBusinessServiceImpl.class);
+
 	private final DomainPolicyRepository domainPolicyRepository;
 	private final AbstractDomainRepository abstractDomainRepository;
-	
-	public DomainPolicyBusinessServiceImpl(DomainPolicyRepository domainPolicyRepository,AbstractDomainRepository abstractDomainRepository)
-	{
+
+	public DomainPolicyBusinessServiceImpl(
+			DomainPolicyRepository domainPolicyRepository,
+			AbstractDomainRepository abstractDomainRepository) {
 		super();
-		this.domainPolicyRepository=domainPolicyRepository;
-		this.abstractDomainRepository=abstractDomainRepository;
+		this.domainPolicyRepository = domainPolicyRepository;
+		this.abstractDomainRepository = abstractDomainRepository;
 	}
-	
-    @Override
-    public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException{
-        return domainPolicyRepository.create(domainPolicy);
-    }
-	
-    @Override
-    public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException {
-    	DomainPolicy policy = domainPolicyRepository.findById(domainPolicy.getIdentifier());
-        domainPolicyRepository.update(policy);
-    }
-    
-    
-    @Override
-    public void deletePolicy(String policyToDelete) throws BusinessException {
-        if (!policyIsDeletable(policyToDelete)) {
-            throw new BusinessException("Cannot delete policy because still used by domains");
-        }
-        DomainPolicy policy = retrieveDomainPolicy(policyToDelete);
-        if(policy == null) {
-        	logger.error("Policy not found: " + policyToDelete);
-        } else {
-            logger.debug("delete policy: " + policyToDelete);
-            domainPolicyRepository.delete(policy);
-        }
-    }
-    
-    @Override
-    public boolean policyIsDeletable(String policyToDelete) {
-    	List<AbstractDomain> list = abstractDomainRepository.findAll();
-        boolean used = false;
-        for (AbstractDomain domain : list) {
-            if (domain.getPolicy().getIdentifier().equals(policyToDelete)) {
-                used = true;
-                break;
-            }
-        }
-        return (!used);
-    }
-    
+
 	@Override
-	public DomainPolicy retrieveDomainPolicy(String identifier){
+	public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy)
+			throws BusinessException {
+		return domainPolicyRepository.create(domainPolicy);
+	}
+
+	@Override
+	public void updateDomainPolicy(DomainPolicy domainPolicy)
+			throws BusinessException {
+		domainPolicyRepository.update(domainPolicy);
+	}
+
+	@Override
+	public void deletePolicy(String identifier) throws BusinessException {
+		if (!policyIsDeletable(identifier)) {
+			throw new BusinessException(
+					"Cannot delete policy because still used by domains");
+		}
+		DomainPolicy policy = retrieveDomainPolicy(identifier);
+		if (policy == null) {
+			logger.error("Policy not found: " + identifier);
+		} else {
+			logger.debug("delete policy: " + identifier);
+			domainPolicyRepository.delete(policy);
+		}
+	}
+
+	@Override
+	public boolean policyIsDeletable(String identifier) {
+		for (AbstractDomain domain : abstractDomainRepository.findAll()) {
+			if (domain.getPolicy().getIdentifier().equals(identifier)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public DomainPolicy retrieveDomainPolicy(String identifier) {
 		return domainPolicyRepository.findById(identifier);
 	}
-	
+
 	@Override
-	public List<DomainPolicy> findAllDomainPolicy()  {
+	public List<DomainPolicy> findAllDomainPolicy() {
 		return domainPolicyRepository.findAll();
 	}
-	
+
 	@Override
 	public List<String> findAllIdentifiers() {
 		return domainPolicyRepository.findAllIdentifiers();
 	}
-	
+
 }

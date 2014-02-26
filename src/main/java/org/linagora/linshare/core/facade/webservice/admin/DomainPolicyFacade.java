@@ -40,5 +40,13 @@ import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
 public interface DomainPolicyFacade extends AdminGenericFacade {
 
-	List<DomainPolicyDto> getDomainPolicies() throws BusinessException;
+	List<DomainPolicyDto> getAll() throws BusinessException;
+
+	DomainPolicyDto get(String identifier) throws BusinessException;
+
+	void create(DomainPolicyDto policy) throws BusinessException;
+
+	void update(DomainPolicyDto policy) throws BusinessException;
+
+	void delete(String identifier) throws BusinessException;
 }

@@ -39,12 +39,15 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
 public interface DomainPolicyService {
 
+    public DomainPolicy transform(DomainPolicyDto dto);
+
 	public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException ;
-	
-    public DomainPolicy retrieveDomainPolicy(String identifier) throws BusinessException;
+
+	public DomainPolicy retrieveDomainPolicy(String identifier);
     
     public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException;
     

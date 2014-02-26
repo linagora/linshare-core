@@ -37,20 +37,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.DomainPattern;
-import org.linagora.linshare.core.domain.entities.DomainPolicy;
-import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.GuestDomain;
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
-import org.linagora.linshare.core.domain.entities.LdapUserProvider;
-import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
-import org.linagora.linshare.core.domain.entities.RootDomain;
-import org.linagora.linshare.core.domain.entities.SubDomain;
-import org.linagora.linshare.core.domain.entities.TopDomain;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.*;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -75,6 +65,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final UserProviderService userProviderService;
 	private final MessagesRepository messagesRepository;
 	private final UserRepository<User> userRepository;
+    private final DomainBusinessService domainBusinessService;
 
 	public AbstractDomainServiceImpl(
 			AbstractDomainRepository abstractDomainRepository,
@@ -82,7 +73,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			UserProviderService userProviderService,
 			MessagesRepository messagesRepository,
-			UserRepository<User> userRepository) {
+			UserRepository<User> userRepository,
+            DomainBusinessService domainBusinessService) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
@@ -90,6 +82,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.messagesRepository = messagesRepository;
 		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
+        this.domainBusinessService = domainBusinessService;
 	}
 
 	@Override
@@ -105,7 +98,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					"This new domain has no identifier.");
 		}
 
-		if (abstractDomainRepository.findById(domain.getIdentifier()) != null) {
+		if (retrieveDomain(domain.getIdentifier()) != null) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_ID_ALREADY_EXISTS,
 					"This new domain identifier already exists.");
@@ -219,7 +212,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	@Override
 	public AbstractDomain retrieveDomain(String identifier) {
-		return abstractDomainRepository.findById(identifier);
+		return domainBusinessService.findById(identifier);
 	}
 
 	@Override
@@ -298,8 +291,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
 					"This domain has no current identifier.");
 		}
-		AbstractDomain entity = abstractDomainRepository.findById(domain
-				.getIdentifier());
+		AbstractDomain entity = retrieveDomain(domain.getIdentifier());
 		if (entity == null) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_DO_NOT_ALREADY_EXISTS,

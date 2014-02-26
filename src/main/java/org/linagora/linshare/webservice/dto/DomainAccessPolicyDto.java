@@ -33,61 +33,51 @@
  */
 package org.linagora.linshare.webservice.dto;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
+import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 
+import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name = "DomainPolicy")
-@ApiModel(value = "DomainPolicy", description = "Policy of a domain, defining the access policy of the domain")
-public class DomainPolicyDto {
+@XmlRootElement(name = "DomainAccessPolicy")
+@ApiModel(value = "DomainAccessPolicy", description = "Access policy of a domain, defining it's communication rules")
+public class DomainAccessPolicyDto {
 
-	@XmlElement(name = "identifier")
-	@ApiModelProperty(value = "Identifier")
-	private String identifier;
+	@XmlElement(name = "id")
+	@ApiModelProperty(value = "Persistence id")
+	private Long id;
 
-	@XmlElement(name = "description")
-	@ApiModelProperty(value = "Description")
-	private String description;
+	@XmlElement(name = "rules")
+	@ApiModelProperty(value = "Communication rules")
+	private List<DomainAccessRuleDto> rules;
 
-	@XmlElement(name = "accessPolicy")
-	@ApiModelProperty(value = "Access policy of the domain")
-	private DomainAccessPolicyDto accessPolicy;
-
-	public DomainPolicyDto(final DomainPolicy p) {
-		this.identifier = p.getIdentifier();
-		this.description = p.getDescription();
-		this.accessPolicy = new DomainAccessPolicyDto(p.getDomainAccessPolicy());
+	public DomainAccessPolicyDto(DomainAccessPolicy dap) {
+		this.id = dap.getPersistenceId();
+		this.rules = Lists.newArrayList();
+		for (DomainAccessRule rule : dap.getRules()) {
+			this.rules.add(new DomainAccessRuleDto(rule));
+		}
 	}
 
-	public DomainPolicyDto() {
-		super();
+	public Long getId() {
+		return id;
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public List<DomainAccessRuleDto> getRules() {
+		return rules;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public DomainAccessPolicyDto getAccessPolicy() {
-		return accessPolicy;
-	}
-
-	public void setAccessPolicy(DomainAccessPolicyDto domainAccessPolicy) {
-		this.accessPolicy = domainAccessPolicy;
+	public void setRules(List<DomainAccessRuleDto> rules) {
+		this.rules = rules;
 	}
 }

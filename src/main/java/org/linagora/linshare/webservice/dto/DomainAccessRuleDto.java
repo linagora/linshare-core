@@ -36,58 +36,55 @@ package org.linagora.linshare.webservice.dto;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
+import org.linagora.linshare.core.domain.entities.AllowDomain;
+import org.linagora.linshare.core.domain.entities.DenyDomain;
+import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 
+import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name = "DomainPolicy")
-@ApiModel(value = "DomainPolicy", description = "Policy of a domain, defining the access policy of the domain")
-public class DomainPolicyDto {
+@XmlRootElement(name = "DomainAccessRule")
+@ApiModel(value = "DomainAccessRule", description = "Access rule of a domain")
+public class DomainAccessRuleDto {
 
-	@XmlElement(name = "identifier")
-	@ApiModelProperty(value = "Identifier")
-	private String identifier;
+	@XmlElement(name = "type")
+	@ApiModelProperty(value = "Access rule type")
+	private DomainAccessRuleType type;
 
-	@XmlElement(name = "description")
-	@ApiModelProperty(value = "Description")
-	private String description;
+	@XmlElement(name = "domain")
+	@ApiModelProperty(value = "Domain being allowed / dened")
+	private DomainDto domain;
 
-	@XmlElement(name = "accessPolicy")
-	@ApiModelProperty(value = "Access policy of the domain")
-	private DomainAccessPolicyDto accessPolicy;
-
-	public DomainPolicyDto(final DomainPolicy p) {
-		this.identifier = p.getIdentifier();
-		this.description = p.getDescription();
-		this.accessPolicy = new DomainAccessPolicyDto(p.getDomainAccessPolicy());
+	public DomainAccessRuleDto() {
 	}
 
-	public DomainPolicyDto() {
-		super();
+	public DomainAccessRuleDto(DomainAccessRule rule) {
+		this.type = rule.getDomainAccessRuleType();
+		switch (type) {
+		case ALLOW:
+			this.domain = new DomainDto(((AllowDomain) rule).getDomain());
+			break;
+		case DENY:
+			this.domain = new DomainDto(((DenyDomain) rule).getDomain());
+			break;
+		}
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public DomainAccessRuleType getType() {
+		return type;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setType(DomainAccessRuleType type) {
+		this.type = type;
 	}
 
-	public String getDescription() {
-		return description;
+	public DomainDto getDomain() {
+		return domain;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public DomainAccessPolicyDto getAccessPolicy() {
-		return accessPolicy;
-	}
-
-	public void setAccessPolicy(DomainAccessPolicyDto domainAccessPolicy) {
-		this.accessPolicy = domainAccessPolicy;
+	public void setDomain(DomainDto domain) {
+		this.domain = domain;
 	}
 }

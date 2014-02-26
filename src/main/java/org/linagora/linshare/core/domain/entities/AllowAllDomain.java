@@ -34,13 +34,14 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
+import org.linagora.linshare.webservice.dto.DomainAccessRuleDto;
 
 public class AllowAllDomain extends DomainAccessRule {
 
 	public AllowAllDomain() {
 	}
 
-	@Override
+    @Override
 	public DomainAccessRuleType getDomainAccessRuleType() {
 		return DomainAccessRuleType.ALLOW_ALL;
 	}
