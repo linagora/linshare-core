@@ -36,25 +36,59 @@ package org.linagora.linshare.webservice.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 // we need to ignore route property. It was added my Restangular (Javascript IHM)
 @JsonIgnoreProperties({"route"})
 @XmlRootElement(name = "Domain")
+@ApiModel(value = "Domain", description = "A domain contains ")
 public class DomainDto {
 
+	@XmlElement(name = "identifier")
+	@ApiModelProperty(value = "Identifier")
 	private String identifier;
+
+	@XmlElement(name = "label")
+	@ApiModelProperty(value = "Label")
 	private String label;
+
+	@XmlElement(name = "description")
+	@ApiModelProperty(value = "Description")
 	private String description = "";
+
+	@XmlElement(name = "type")
+	@ApiModelProperty(value = "Type")
 	private String type;
+
+	@XmlElement(name = "userRole")
+	@ApiModelProperty(value = "UserRole")
 	private String userRole;
+
+	@XmlElement(name = "locale")
+	@ApiModelProperty(value = "Locale")
 	private String locale;
+
+	@XmlElement(name = "policy")
+	@ApiModelProperty(value = "Policy")
 	private DomainPolicyDto policy;
+
+	@XmlElement(name = "providers")
+	@ApiModelProperty(value = "Providers")
 	private List<LDAPUserProviderDto> providers = new ArrayList<LDAPUserProviderDto>();
+
+	@XmlElement(name = "children")
+	@ApiModelProperty(value = "Children")
 	private List<DomainDto> children = new ArrayList<DomainDto>();
+
+	@XmlElement(name = "parent")
+	@ApiModelProperty(value = "Parent")
 	private String parent = "";
 
 	public DomainDto(final AbstractDomain domain) {

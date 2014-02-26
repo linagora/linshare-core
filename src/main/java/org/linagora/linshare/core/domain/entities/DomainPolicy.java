@@ -57,11 +57,6 @@ public class DomainPolicy {
 		this.identifier = identifier;
 		this.domainAccessPolicy = policy;
 	}
-
-	public DomainPolicy(DomainPolicyDto policy) {
-		this.identifier = policy.getIdentifier();
-		this.description = policy.getDescription();
-	}
 	
 	public DomainPolicy(String identifier,String description,DomainAccessPolicy domainAccessPolicy) {
         this.identifier = identifier;

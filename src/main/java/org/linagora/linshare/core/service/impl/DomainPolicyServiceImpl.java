@@ -39,16 +39,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import org.linagora.linshare.core.business.service.DomainAccessPolicyBusinessService;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPolicyBusinessService;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.AllowDomain;
-import org.linagora.linshare.core.domain.entities.DenyDomain;
-import org.linagora.linshare.core.domain.entities.DomainAccessRule;
-import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.entities.*;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.DomainPolicyService;
+import org.linagora.linshare.webservice.dto.DomainAccessPolicyDto;
+import org.linagora.linshare.webservice.dto.DomainAccessRuleDto;
+import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,14 +58,73 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	private static final Logger logger = LoggerFactory.getLogger(DomainPolicyServiceImpl.class);
 	private final DomainPolicyBusinessService domainPolicyBusinessService;
 	private final DomainAccessPolicyBusinessService domainAccessPolicyBusinessService;
+    private final DomainBusinessService domainBusinessService;
 
-	public DomainPolicyServiceImpl(DomainPolicyBusinessService domainPolicyBusinessService,DomainAccessPolicyBusinessService domainAccessPolicyBusinessService) {
-		super();
-		this.domainPolicyBusinessService = domainPolicyBusinessService;
-		this.domainAccessPolicyBusinessService = domainAccessPolicyBusinessService;
-	}
+    public DomainPolicyServiceImpl(DomainPolicyBusinessService domainPolicyBusinessService,
+                                   DomainAccessPolicyBusinessService domainAccessPolicyBusinessService,
+                                   DomainBusinessService domainBusinessService) {
+        super();
+        this.domainPolicyBusinessService = domainPolicyBusinessService;
+        this.domainAccessPolicyBusinessService = domainAccessPolicyBusinessService;
+        this.domainBusinessService = domainBusinessService;
+    }
 
-	@Override
+    /*
+     * XXX: ugly
+     */
+    @Override
+    public DomainPolicy transform(DomainPolicyDto dto) {
+        if (dto.getIdentifier() == null)
+            return null;
+
+        DomainPolicy policy = retrieveDomainPolicy(dto.getIdentifier());
+
+        if (policy == null) {
+            policy = new DomainPolicy();
+            policy.setIdentifier(dto.getIdentifier());
+        }
+        if (dto.getDescription() != null)
+            policy.setDescription(dto.getDescription());
+
+        DomainAccessPolicyDto dapDto = dto.getAccessPolicy();
+
+        if (dapDto == null)
+            return policy;
+
+        DomainAccessPolicy dap = new DomainAccessPolicy();
+        List<DomainAccessRule> rules = Lists.newArrayList();
+
+        for (DomainAccessRuleDto ruleDto : dapDto.getRules()) {
+            DomainAccessRule rule;
+            AbstractDomain domain;
+
+            switch (ruleDto.getType()) {
+                case ALLOW_ALL:
+                    rule = new AllowAllDomain();
+                    break;
+                case DENY_ALL:
+                    rule = new DenyAllDomain();
+                    break;
+                case ALLOW:
+                    domain = domainBusinessService.findById(ruleDto.getDomain().getIdentifier());
+                    rule = new AllowDomain(domain);
+                    break;
+                case DENY:
+                    domain = domainBusinessService.findById(ruleDto.getDomain().getIdentifier());
+                    rule = new DenyDomain(domain);
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+            }
+            rules.add(rule);
+        }
+        dap.setPersistenceId(dapDto.getId());
+        dap.setRules(rules);
+
+        return policy;
+    }
+
+    @Override
 	public void deletePolicy(String policyToDelete) throws BusinessException {
 		domainPolicyBusinessService.deletePolicy(policyToDelete);
 	}
@@ -76,7 +136,9 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 
 	@Override
 	public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException {
-		return domainPolicyBusinessService.createDomainPolicy(domainPolicy);
+        if (domainPolicy == null || domainPolicy.getDomainAccessPolicy() == null)
+            throw new BusinessException("Creating a domain policy without an associated access policy is impossible");
+        return domainPolicyBusinessService.createDomainPolicy(domainPolicy);
 	}
 
 	@Override
@@ -85,7 +147,7 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	}
 
 	@Override
-	public DomainPolicy retrieveDomainPolicy(String identifier)	throws BusinessException {
+	public DomainPolicy retrieveDomainPolicy(String identifier) {
 		return domainPolicyBusinessService.retrieveDomainPolicy(identifier);
 	}
 
@@ -107,18 +169,17 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	@Override
 	public void deleteDomainAccessRule(DomainPolicy policy, long persistenceID)	throws BusinessException {
 		Iterator<DomainAccessRule> it = policy.getDomainAccessPolicy().getRules().iterator();
-		boolean next = true;
-		while (it.hasNext() && next == true) {
+		while (it.hasNext()) {
 			DomainAccessRule rule = it.next();
 			if (rule.getPersistenceId() == persistenceID) {
 				it.remove();
-				next = false;
+				break;
 			}
 		}
 		domainAccessPolicyBusinessService.deleteDomainAccessRule(persistenceID);
 	}
 
-	private List<AbstractDomain> getAuthorizedDomain(AbstractDomain domain,List<DomainAccessRule> rules) {
+	private List<AbstractDomain> getAuthorizedDomain(AbstractDomain domain, List<DomainAccessRule> rules) {
 		Set<AbstractDomain> set = new HashSet<AbstractDomain>();
 		set.add(domain);
 		return getAuthorizedDomain(set, rules);
