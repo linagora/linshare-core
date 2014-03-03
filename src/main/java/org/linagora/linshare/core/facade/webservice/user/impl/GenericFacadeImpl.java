@@ -76,7 +76,7 @@ public class GenericFacadeImpl implements GenericFacade {
 
 		if (actor == null)
 			throw new BusinessException(
-					BusinessErrorCode.WEBSERVICE_UNAUTHORIZED,
+					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		return actor;
 	}

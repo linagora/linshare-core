@@ -71,7 +71,7 @@ public class SoapExceptionInterceptor extends AbstractSoapInterceptor {
 		case WEBSERVICE_FAULT:
 			fault.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
 			break;
-		case WEBSERVICE_UNAUTHORIZED:
+		case WEBSERVICE_FORBIDDEN:
 			fault.setStatusCode(HttpStatus.SC_FORBIDDEN);
 			break;
 		case FORBIDDEN:
