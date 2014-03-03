@@ -143,7 +143,6 @@ public abstract class AbstractDomain {
 		this.subdomain = new HashSet<AbstractDomain>();
 		this.defaultRole = Role.valueOf(domainDto.getUserRole());
 		this.defaultLocale = domainDto.getLocale();
-		this.policy = new DomainPolicy(domainDto.getPolicy());
 		this.authShowOrder = new Long(1);
 	}
 
