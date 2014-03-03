@@ -48,6 +48,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.webservice.dto.DomainDto;
 
@@ -58,12 +59,16 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 	
 	private final UserProviderService userProviderService;
 
+	private final DomainPolicyService domainPolicyService;
+
 	public DomainFacadeImpl(final AccountService accountService,
 			final AbstractDomainService abstractDomainService,
-			final UserProviderService userProviderService) {
+			final UserProviderService userProviderService,
+			final DomainPolicyService domainPolicyService) {
 		super(accountService);
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
+		this.domainPolicyService = domainPolicyService;
 	}
 
 	@Override
@@ -110,6 +115,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 		DomainType domainType = DomainType.valueOf(domainDto.getType());
 		AbstractDomain parent = abstractDomainService.retrieveDomain(domainDto.getParent());
 		AbstractDomain domain = domainType.getDomain(domainDto, parent);
+		domain.setPolicy(domainPolicyService.transform(domainDto.getPolicy()));
 		if (!domainDto.getProviders().isEmpty()) {
 			String baseDn = domainDto.getProviders().get(0).getBaseDn();
 			String domainPatternId = domainDto.getProviders().get(0).getDomainPatternId();
