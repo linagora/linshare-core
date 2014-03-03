@@ -112,7 +112,7 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 
 		if ((actor instanceof Guest && !actor.getCanUpload()))
 			throw new BusinessException(
-					BusinessErrorCode.WEBSERVICE_UNAUTHORIZED,
+					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		try {
 			documentEntry = documentEntryService.findById(actor, uuid);

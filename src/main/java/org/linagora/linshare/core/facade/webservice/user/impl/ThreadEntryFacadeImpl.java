@@ -73,7 +73,7 @@ public class ThreadEntryFacadeImpl extends GenericFacadeImpl implements ThreadEn
 		Functionality functionality = functionalityReadOnlyService.getThreadTabFunctionality(user.getDomain());
 
 		if (!functionality.getActivationPolicy().getStatus()) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN, "You are not authorized to use this service");
 		}
 		return user;
 	}

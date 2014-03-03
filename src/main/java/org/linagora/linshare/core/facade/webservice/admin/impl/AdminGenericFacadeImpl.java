@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -66,7 +65,7 @@ public class AdminGenericFacadeImpl extends GenericFacadeImpl implements
 		// user as at least admin role 
 		if (user.getRole().toInt() < role.toInt())
 			throw new BusinessException(
-					BusinessErrorCode.WEBSERVICE_UNAUTHORIZED,
+					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		return user;
 	}
