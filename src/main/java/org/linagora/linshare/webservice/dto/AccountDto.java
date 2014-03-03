@@ -39,14 +39,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.Account;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @XmlRootElement(name = "Account")
+@ApiModel(value = "Account", description = "")
 public class AccountDto {
 
+    @ApiModelProperty(value = "Uuid")
 	protected String uuid;
+
+    @ApiModelProperty(value = "CreationDate")
 	protected Date creationDate;
+
+    @ApiModelProperty(value = "ModificationDate")
 	protected Date modificationDate;
+
+    @ApiModelProperty(value = "Locale")
 	protected String locale;
+
+    @ApiModelProperty(value = "Domain")
 	protected String domain;
+
+    @ApiModelProperty(value = "Owner")
 	protected UserDto owner = null;
 
 	public AccountDto() {
@@ -60,7 +75,7 @@ public class AccountDto {
 		this.locale = a.getLocale();
 		this.domain = a.getDomainId();
 	}
-	
+
 	protected AccountDto(String uuid, Date creationDate, Date modificationDate,
 			String locale, String domain, UserDto owner) {
 		super();

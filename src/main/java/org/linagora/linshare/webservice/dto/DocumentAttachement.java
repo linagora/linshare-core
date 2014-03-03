@@ -44,9 +44,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER) //default
 @XmlType(name = "DocumentAttachement")
 public class DocumentAttachement {
-	
+
 	private DataHandler documentDataHandler;
+
 	private String filename;
+
 	private String comment;
 
 	public String getFilename() {
@@ -65,7 +67,6 @@ public class DocumentAttachement {
 		this.comment = comment;
 	}
 
-	
 	@XmlMimeType("application/octet-stream")
 	public DataHandler getDocument() {
 		return documentDataHandler;

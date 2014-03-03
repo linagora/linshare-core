@@ -43,19 +43,44 @@ import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @XmlRootElement(name = "User")
+@ApiModel(value = "User", description = "A user")
 public class UserDto extends AccountDto {
 
+    @ApiModelProperty(value = "FirstName")
 	private String firstName;
+
+    @ApiModelProperty(value = "LastName")
 	private String lastName;
+
+    @ApiModelProperty(value = "Mail")
 	private String mail;
+
+    @ApiModelProperty(value = "Role")
 	private String role;
+
+    @ApiModelProperty(value = "CanUpload")
 	private Boolean canUpload;
+
+    @ApiModelProperty(value = "CanCreateGuest")
 	private Boolean canCreateGuest;
+
+    @ApiModelProperty(value = "ExpirationDate")
 	private Date expirationDate;
+
+    @ApiModelProperty(value = "Guest")
 	private Boolean guest;
+
+    @ApiModelProperty(value = "Restricted")
 	private Boolean restricted;
+
+    @ApiModelProperty(value = "RestrictedContacts")
 	private List<String> restrictedContacts = new ArrayList<String>();
+
+    @ApiModelProperty(value = "Comment")
 	private String comment;
 
 	public UserDto() {

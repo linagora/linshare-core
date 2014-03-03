@@ -35,17 +35,24 @@ package org.linagora.linshare.webservice.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @XmlRootElement(name = "Error")
+@ApiModel(value = "Error", description = "An error")
 public class ErrorDto {
 
+    @ApiModelProperty(value = "Message")
 	protected String message;
+
+    @ApiModelProperty(value = "ErrCode")
 	protected int errCode;
 
 	public ErrorDto(int errCode, String message) {
 		this.message = message;
 		this.errCode = errCode;
 	}
-	
+
 	public ErrorDto() {
 		super();
 	}

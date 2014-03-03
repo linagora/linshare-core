@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.webservice.dto;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
@@ -49,12 +48,10 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "DomainAccessRule", description = "Access rule of a domain")
 public class DomainAccessRuleDto {
 
-	@XmlElement(name = "type")
 	@ApiModelProperty(value = "Access rule type")
 	private DomainAccessRuleType type;
 
-	@XmlElement(name = "domain")
-	@ApiModelProperty(value = "Domain being allowed / dened")
+	@ApiModelProperty(value = "Domain being allowed / denied")
 	private DomainDto domain;
 
 	public DomainAccessRuleDto() {

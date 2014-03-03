@@ -37,13 +37,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @XmlRootElement(name = "LDAPConnection")
+@ApiModel(value = "LDAPConnection", description = "An LDAP directory connection descriptor")
 public class LDAPConnectionDto {
 
+    @ApiModelProperty(value = "Identifier")
 	private String identifier;
+
+    @ApiModelProperty(value = "ProviderUrl")
 	private String providerUrl;
+
+    @ApiModelProperty(value = "SecurityAuth")
 	private String securityAuth;
+
+    @ApiModelProperty(value = "SecurityPrincipal")
 	private String securityPrincipal;
+
+    @ApiModelProperty(value = "SecurityCredentials")
 	private String securityCredentials;
 
 	public LDAPConnectionDto(LDAPConnection ldapConnection) {

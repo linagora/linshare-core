@@ -40,22 +40,53 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @XmlRootElement(name = "DomainPattern")
+@ApiModel(value = "DomainPattern", description = "A domain pattern is used by domains to search users in an LDAP directory")
 public class DomainPatternDto {
 
+    @ApiModelProperty(value = "Identifier")
 	private String identifier;
+
+    @ApiModelProperty(value = "Description")
 	private String description;
+
+    @ApiModelProperty(value = "AuthCommand")
 	private String authCommand;
+
+    @ApiModelProperty(value = "SearchUserCommand")
 	private String searchUserCommand;
+
+    @ApiModelProperty(value = "UserMail")
 	private String userMail;
+
+    @ApiModelProperty(value = "UserFirstName")
 	private String userFirstName;
+
+    @ApiModelProperty(value = "UserLastName")
 	private String userLastName;
+
+    @ApiModelProperty(value = "LdapUid")
 	private String ldapUid;
+
+    @ApiModelProperty(value = "AutoCompleteCommandOnAllAttributes")
 	private String autoCompleteCommandOnAllAttributes;
+
+    @ApiModelProperty(value = "AutoCompleteCommandOnFirstAndLastName")
     private String autoCompleteCommandOnFirstAndLastName;
+
+    @ApiModelProperty(value = "SearchPageSize")
     private Integer searchPageSize;
+
+    @ApiModelProperty(value = "SearchSizeLimit")
     private Integer searchSizeLimit;
+
+    @ApiModelProperty(value = "CompletionPageSize")
     private Integer completionPageSize;
+
+    @ApiModelProperty(value = "CompletionSizeLimit")
     private Integer completionSizeLimit;
 
 	public DomainPatternDto(DomainPattern domainPattern) {
