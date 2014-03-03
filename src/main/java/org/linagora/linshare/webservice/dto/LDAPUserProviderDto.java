@@ -37,11 +37,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @XmlRootElement(name = "LDAPUserProvider")
+@ApiModel(value = "LDAPUserProvider", description = "Used to provide users from an LDAP directory")
 public class LDAPUserProviderDto {
 
+    @ApiModelProperty(value = "LdapConnectionId")
 	private String ldapConnectionId = "";
+
+    @ApiModelProperty(value = "DomainPatternId")
 	private String domainPatternId = "";
+
+    @ApiModelProperty(value = "BaseDn")
 	private String baseDn = "";
 
 	public LDAPUserProviderDto(final LdapUserProvider ldapUserProvider) {

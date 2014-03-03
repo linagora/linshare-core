@@ -40,37 +40,65 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @XmlRootElement(name = "Share")
+@ApiModel(value = "Share", description = "A document can be shared between users.")
 public class ShareDto {
 
 	/**
 	 * Share
 	 */
+    @ApiModelProperty(value = "Uuid")
 	protected String uuid;
+
+    @ApiModelProperty(value = "Name")
 	protected String name;
+
+    @ApiModelProperty(value = "CreationDate")
 	protected Calendar creationDate;
+
+    @ApiModelProperty(value = "ModificationDate")
 	protected Calendar modificationDate;
+
+    @ApiModelProperty(value = "ExpirationDate")
 	protected Calendar expirationDate;
+
+    @ApiModelProperty(value = "Downloaded")
 	protected Long downloaded;
 
 	/**
 	 * SentShare
 	 */
+    @ApiModelProperty(value = "DocumentDto")
 	protected DocumentDto documentDto;
+
+    @ApiModelProperty(value = "Recipient")
 	protected UserDto recipient;
 
 	/**
 	 * Received Share.
 	 */
+    @ApiModelProperty(value = "Description")
 	protected String description;
+
+    @ApiModelProperty(value = "Sender")
 	protected UserDto sender;
+
+    @ApiModelProperty(value = "Size")
 	protected Long size;
+
+    @ApiModelProperty(value = "Type")
 	protected String type;
+
+    @ApiModelProperty(value = "Ciphered")
 	protected Boolean ciphered;
 
 	/**
 	 * ???
 	 */
+    @ApiModelProperty(value = "Message")
 	protected String message;
 
 	/**

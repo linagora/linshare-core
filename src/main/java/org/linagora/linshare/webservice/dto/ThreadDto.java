@@ -42,17 +42,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @XmlRootElement(name = "Thread")
+@ApiModel(value = "Thread", description = "A thread is a shared space for users to deposit files.")
 public class ThreadDto extends AccountDto {
 
+    @ApiModelProperty(value = "Name")
 	protected String name;
+
+    @ApiModelProperty(value = "Members")
 	protected List<ThreadMemberDto> members;
 
 	public ThreadDto(Thread thread) {
 		super(thread);
 		this.name = thread.getName();
 	}
-	
+
 	public ThreadDto(Thread thread, Set<ThreadMember> members) {
 		super(thread);
 		this.name = thread.getName();
@@ -61,7 +68,7 @@ public class ThreadDto extends AccountDto {
 			this.members.add(new ThreadMemberDto(member));
 		}
 	}
-	
+
 	public ThreadDto() {
 		super();
 	}

@@ -38,18 +38,41 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.constants.ThreadRoles;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @XmlRootElement(name = "ThreadMember")
+@ApiModel(value = "ThreadMember", description = "A thread member")
 public class ThreadMemberDto {
 
+    @ApiModelProperty(value = "Id")
 	private Long id;
+
+    @ApiModelProperty(value = "Admin")
 	private boolean admin;
+
+    @ApiModelProperty(value = "Readonly")
 	private boolean readonly;
+
+    @ApiModelProperty(value = "Role")
 	private String role;
+
+    @ApiModelProperty(value = "FirstName")
 	private String firstName;
+
+    @ApiModelProperty(value = "LastName")
 	private String lastName;
+
+    @ApiModelProperty(value = "UserUuid")
 	private String userUuid;
+
+    @ApiModelProperty(value = "UserMail")
 	private String userMail;
+
+    @ApiModelProperty(value = "UserDomainId")
 	private String userDomainId;
+
+    @ApiModelProperty(value = "ThreadUuid")
 	private String threadUuid;
 
 	public ThreadMemberDto(ThreadMember member) {

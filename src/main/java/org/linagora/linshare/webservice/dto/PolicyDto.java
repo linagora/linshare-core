@@ -38,22 +38,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.entities.Policy;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @JsonIgnoreProperties({"previousPolicy"})
 @XmlRootElement(name = "Policy")
+@ApiModel(value = "Policy", description = "Theses are policies of activation or configuration for functionalities.")
 public class PolicyDto {
-	
+
+    @ApiModelProperty(value = "Policy")
 	protected String policy;
-	
+
 	// Current status of the policy
+    @ApiModelProperty(value = "Status")
 	protected boolean status;
 
 	// Default value for the field status when the policy is reset (ex changing policy from FORBIDEN to ALLOWED.
+    @ApiModelProperty(value = "DefaultStatus")
 	protected boolean defaultStatus;
-	
+
 	// This field is designed to indicate if the parent functionality allow you to update the policy.
+    @ApiModelProperty(value = "ParentAllowUpdate")
 	protected boolean parentAllowUpdate;
 
-	
 	public PolicyDto() {
 		super();
 	}
@@ -65,7 +72,7 @@ public class PolicyDto {
 		this.defaultStatus = defaultStatus;
 		this.parentAllowUpdate = false;
 	}
-	
+
 	public PolicyDto(Policy policy) {
 		super();
 		this.policy = policy.getPolicy().toString();
