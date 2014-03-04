@@ -127,25 +127,20 @@ CREATE TABLE entry (
   PRIMARY KEY (id));
 CREATE TABLE functionality (
   id                       int8 NOT NULL, 
+  functionality_id        int8, 
   system                  bool NOT NULL, 
   identifier              varchar(255) NOT NULL, 
-  policy_activation_id    int8, 
-  policy_configuration_id int8, 
+  policy_activation_id    int8 NOT NULL, 
+  policy_configuration_id int8 NOT NULL, 
+  policy_delegation_id    int8, 
   domain_id               int8 NOT NULL, 
+  param                   bool DEFAULT 'false' NOT NULL, 
   CONSTRAINT linshare_functionality_pkey 
     PRIMARY KEY (id));
 CREATE TABLE functionality_integer (
   functionality_id int8 NOT NULL, 
   integer_value    int4, 
   CONSTRAINT linshare_functionality_integer_pkey 
-    PRIMARY KEY (functionality_id));
-CREATE TABLE functionality_range_unit (
-  functionality_id int8 NOT NULL, 
-  min              int4 NOT NULL, 
-  max              int4 NOT NULL, 
-  unit_min_id      int8 NOT NULL, 
-  unit_max_id      int8 NOT NULL, 
-  CONSTRAINT linshare_functionality_range_unit_pkey 
     PRIMARY KEY (functionality_id));
 CREATE TABLE functionality_string (
   functionality_id int8 NOT NULL, 
@@ -439,6 +434,11 @@ CREATE TABLE thread_view_asso (
   thread_view_id int8 NOT NULL, 
   depth          int4 NOT NULL, 
   PRIMARY KEY (id));
+CREATE TABLE functionality_boolean (
+  id                SERIAL NOT NULL, 
+  functionality_id int8 NOT NULL, 
+  boolean_value    bool NOT NULL, 
+  PRIMARY KEY (id));
 CREATE TABLE mailing_list (
   id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
@@ -461,7 +461,6 @@ CREATE TABLE mailing_list_contact (
   modification_date          timestamp(6) NOT NULL, 
   mailing_list_contact_index int4 NOT NULL, 
   PRIMARY KEY (id));
-  PRIMARY KEY (id));
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
@@ -473,9 +472,6 @@ ALTER TABLE functionality ADD CONSTRAINT fk7430c53a58fe5398 FOREIGN KEY (policy_
 ALTER TABLE functionality ADD CONSTRAINT fk7430c53a71796372 FOREIGN KEY (policy_configuration_id) REFERENCES policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE functionality ADD CONSTRAINT fk7430c53a3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE functionality_integer ADD CONSTRAINT fk8662133910439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality_range_unit ADD CONSTRAINT fk55007f6b10439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality_range_unit ADD CONSTRAINT fk55007f6b4bd76056 FOREIGN KEY (unit_min_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality_range_unit ADD CONSTRAINT fk55007f6b4b6b3004 FOREIGN KEY (unit_max_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE functionality_string ADD CONSTRAINT fkb2a122b610439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE functionality_unit ADD CONSTRAINT fk3ced016910439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE functionality_unit ADD CONSTRAINT fk3ced0169f329e0c9 FOREIGN KEY (unit_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
@@ -536,6 +532,9 @@ ALTER TABLE thread_view ADD CONSTRAINT FKthread_vie68184 FOREIGN KEY (thread_acc
 ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie285846 FOREIGN KEY (thread_view_id) REFERENCES thread_view (id);
 ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie896171 FOREIGN KEY (tag_id) REFERENCES tag (id);
 ALTER TABLE thread_view ADD CONSTRAINT FKthread_vie557698 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE functionality ADD CONSTRAINT FKfunctional766137 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
+ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
+ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingLis595962 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
@@ -583,12 +582,6 @@ CREATE UNIQUE INDEX functionality_i3
   ON functionality (policy_configuration_id);
 CREATE INDEX functionality_integer_index 
   ON functionality_integer (functionality_id);
-CREATE UNIQUE INDEX functionality_range_unit_index 
-  ON functionality_range_unit (unit_max_id);
-CREATE UNIQUE INDEX functionality_range_unit_i 
-  ON functionality_range_unit (unit_min_id);
-CREATE INDEX functionality_range_unit_i2 
-  ON functionality_range_unit (functionality_id);
 CREATE INDEX functionality_string_index 
   ON functionality_string (functionality_id);
 CREATE UNIQUE INDEX functionality_unit_index 
