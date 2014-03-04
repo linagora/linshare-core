@@ -8,10 +8,17 @@
     </id>
     <property access="field" column="system" name="system" not-null="true"/>
     <property access="field" column="identifier" name="identifier" not-null="true"  unique-key="functionality_unicity_key"/>
+	<property name="param" type="boolean" not-null="true" lazy="false">
+		<column name="param" default="false"/>
+	</property>
     <many-to-one name="activationPolicy" class="Policy" column="policy_activation_id" unique="true" cascade="all" lazy="false" />
     <many-to-one name="configurationPolicy" class="Policy" column="policy_configuration_id" unique="true" cascade="all" lazy="false" />
+    <many-to-one name="delegationPolicy" class="Policy" column="policy_delegation_id" unique="true" cascade="all" lazy="false" />
 
 	<many-to-one name="domain" column="domain_id" not-null="true" lazy="false"  unique-key="functionality_unicity_key" />
+
+	<many-to-one name="parent" cascade="lock" column="functionality_id" class="org.linagora.linshare.core.domain.entities.Functionality"
+		not-null="false" lazy="no-proxy" />
 
 	<joined-subclass name="StringValueFunctionality" table="functionality_string">
 		<key>
@@ -26,7 +33,6 @@
     	</key>
         <property name="value" column="integer_value" type="integer"/>
     </joined-subclass>
-    
     
     <joined-subclass name="UnitValueFunctionality" table="functionality_unit">
     	<key>
@@ -44,16 +50,5 @@
         <property name="bool" column="boolean_value" type="boolean"/>
         <many-to-one name="unit" class="org.linagora.linshare.core.domain.entities.Unit" column="unit_id" unique="true" cascade="all" lazy="false" />
     </joined-subclass>
-    
-    <joined-subclass name="UnitRangeFunctionality" table="functionality_range_unit">
-    	<key>
-     		<column name="functionality_id" not-null="true" index="index_functionality_unit_range_id"/>
-    	</key>
-        <property name="min" column="min" type="integer"/>
-        <property name="max" column="max" type="integer"/>
-        <many-to-one name="minUnit" class="org.linagora.linshare.core.domain.entities.Unit" column="unit_min_id" unique="true" cascade="all" lazy="false" />
-        <many-to-one name="maxUnit" class="org.linagora.linshare.core.domain.entities.Unit" column="unit_max_id" unique="true" cascade="all" lazy="false" />
-    </joined-subclass>
-    
   </class>
  </hibernate-mapping>

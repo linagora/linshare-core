@@ -64,9 +64,21 @@ public class Functionality implements Cloneable {
 	private Policy activationPolicy;
 
 	private Policy configurationPolicy;
-	
+
+	private Policy delegationPolicy;
+
 	private AbstractDomain domain;
-	
+
+	/**
+	 * True if the current entity is a parameter
+	 */
+	private boolean param;
+
+	/**
+	 * If the current entity is a parameter, it must have a parent.
+	 */
+	private Functionality parent;
+
 	/**
 	 * Logger available to subclasses.
 	 */
@@ -237,5 +249,29 @@ public class Functionality implements Cloneable {
 	
 	public void updateFunctionalityValuesOnlyFromDto(FunctionalityDto functionality) {
 		// no data in this class.
+	}
+
+	public Functionality getParent() {
+		return parent;
+	}
+
+	public void setParent(Functionality parent) {
+		this.parent = parent;
+	}
+
+	public Policy getDelegationPolicy() {
+		return delegationPolicy;
+	}
+
+	public void setDelegationPolicy(Policy delegationPolicy) {
+		this.delegationPolicy = delegationPolicy;
+	}
+
+	public boolean isParam() {
+		return param;
+	}
+
+	public void setParam(boolean param) {
+		this.param = param;
 	}
 }

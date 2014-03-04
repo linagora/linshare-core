@@ -35,9 +35,8 @@ package org.linagora.linshare.repository.hibernate;
 
 import java.util.List;
 
-import org.junit.Assert;
-
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -55,7 +54,6 @@ import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.TimeUnitClass;
-import org.linagora.linshare.core.domain.entities.UnitRangeFunctionality;
 import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -249,72 +247,7 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 	}
 	
 	
-	@Test
-	public void testCreateFileSizeRangeValueFunctionality() throws BusinessException{
-		
-		Integer min = 5;
-		Integer max = 10;
-		
-		Functionality fonc = new UnitRangeFunctionality(ID_FONC_1,
-						false,
-						new Policy(Policies.ALLOWED, true),
-						new Policy(Policies.ALLOWED, true),
-						currentDomain,
-						min,
-						max,
-						new FileSizeUnitClass(FileSizeUnit.GIGA),
-						new FileSizeUnitClass(FileSizeUnit.GIGA));
-		
-		functionalityRepository.create(fonc);
-
-		logger.debug("Current object: " + fonc.toString());
-
-		UnitRangeFunctionality entityFonc = (UnitRangeFunctionality)functionalityRepository.findById(currentDomain,ID_FONC_1);
-		Assert.assertTrue(entityFonc.getActivationPolicy().getStatus());
-		Assert.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getIdentifier());
-		
-		Assert.assertEquals(FileSizeUnit.GIGA,entityFonc.getMaxUnit().getUnitValue());
-		Assert.assertEquals(min,entityFonc.getMin());
-		Assert.assertEquals(max,entityFonc.getMax());
-		
-		functionalityRepository.delete(fonc);
-	}
 	
-	@Test
-	public void testCreateTimeRangeValueFunctionality() throws BusinessException{
-		
-		Integer min = 5;
-		Integer max = 10;
-		
-		Functionality fonc = new UnitRangeFunctionality(ID_FONC_1,
-				false,
-				new Policy(Policies.ALLOWED, true),
-				new Policy(Policies.ALLOWED, true),
-				currentDomain,
-				min,
-				max,
-				new TimeUnitClass(TimeUnit.WEEK),
-				new TimeUnitClass(TimeUnit.MONTH));
-		
-		functionalityRepository.create(fonc);
-		
-		logger.debug("Current object: " + fonc.toString());
-		
-		UnitRangeFunctionality entityFonc = (UnitRangeFunctionality)functionalityRepository.findById(currentDomain,ID_FONC_1);
-		Assert.assertTrue(entityFonc.getActivationPolicy().getStatus());
-		Assert.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getIdentifier());
-		
-		Assert.assertEquals(UnitType.TIME,entityFonc.getMinUnit().getUnitType());
-		Assert.assertEquals(TimeUnit.WEEK,entityFonc.getMinUnit().getUnitValue());
-		Assert.assertEquals(UnitType.TIME,entityFonc.getMaxUnit().getUnitType());
-		Assert.assertEquals(TimeUnit.MONTH,entityFonc.getMaxUnit().getUnitValue());
-		Assert.assertEquals(min,entityFonc.getMin());
-		Assert.assertEquals(max,entityFonc.getMax());
-		
-		functionalityRepository.delete(fonc);
-	}
 	
 	
 	@Test
@@ -550,43 +483,6 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 		Assert.assertFalse(fonc2.businessEquals(fonc3, true));
 	}
 	
-	@Test
-	public void testEqualUnitRangeFunctionality() throws BusinessException{
-		
-		Integer min = 5;
-		Integer max = 10;
-		
-		UnitRangeFunctionality fonc = new UnitRangeFunctionality(ID_FONC_1,
-						false,
-						new Policy(Policies.ALLOWED, true),
-						new Policy(Policies.ALLOWED, true),
-						currentDomain,
-						min,
-						max,
-						new FileSizeUnitClass(FileSizeUnit.GIGA),
-						new FileSizeUnitClass(FileSizeUnit.GIGA));
-		
-		
-		UnitRangeFunctionality fonc2 = new UnitRangeFunctionality(ID_FONC_1,
-						false,
-						new Policy(Policies.ALLOWED, true),
-						new Policy(Policies.ALLOWED, true),
-						currentDomain,
-						min,
-						max,
-						new FileSizeUnitClass(FileSizeUnit.GIGA),
-						new FileSizeUnitClass(FileSizeUnit.GIGA));
-		
-		Assert.assertTrue(fonc.businessEquals(fonc2, true));
-		fonc.setMin(30);
-		Assert.assertFalse(fonc.businessEquals(fonc2, true));
-		fonc2.setMin(30);
-		Assert.assertTrue(fonc.businessEquals(fonc2, true));
-		if(fonc2.getMinUnit().getUnitType().equals(UnitType.SIZE)) {
-			((FileSizeUnitClass) fonc2.getMinUnit()).setUnitValue(FileSizeUnit.KILO);
-		}
-		Assert.assertFalse(fonc.businessEquals(fonc2, true));
-	}
 
 	@Test
 	public void testCloneFunctionality() throws BusinessException{
@@ -688,53 +584,4 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 		abstractDomainRepository.delete(otherDomain);
 		domainPolicyRepository.delete(policy);
 	}
-	
-	
-	@Test
-	public void testCloneFileSizeRangeValueFunctionality() throws BusinessException{
-		AbstractDomain otherDomain= new RootDomain(rootDomaineName+"_other","My root domain");
-		DomainPolicy policy = new DomainPolicy(domainePolicyName1, new DomainAccessPolicy());
-		domainPolicyRepository.create(policy);
-		otherDomain.setPolicy(policy);
-		
-		abstractDomainRepository.create(otherDomain);
-		logger.debug("otherDomain object: " + otherDomain.toString());
-		
-		Integer min = 5;
-		Integer max = 10;
-		
-		UnitRangeFunctionality func = new UnitRangeFunctionality(ID_FONC_1,
-						false,
-						new Policy(Policies.ALLOWED, true),
-						new Policy(Policies.ALLOWED, true),
-						currentDomain,
-						min,
-						max,
-						new FileSizeUnitClass(FileSizeUnit.GIGA),
-						new FileSizeUnitClass(FileSizeUnit.GIGA));
-		
-		functionalityRepository.create(func);
-
-		logger.debug("Current object func : " + func.toString());
-
-	
-		Functionality newFunc = (Functionality) func.clone();
-		newFunc.setDomain(otherDomain);
-		
-		functionalityRepository.create(newFunc);
-		logger.debug("Current object newFunc : " + newFunc.toString());
-		
-		
-		Assert.assertTrue(newFunc.businessEquals(func, true));
-		Assert.assertNotNull(newFunc.getDomain());
-		
-		func.setMax(42);
-		Assert.assertFalse(newFunc.businessEquals(func, true));
-		Assert.assertTrue(newFunc instanceof UnitRangeFunctionality);
-		
-		
-		abstractDomainRepository.delete(otherDomain);
-		domainPolicyRepository.delete(policy);
-		
-	}	
 }
