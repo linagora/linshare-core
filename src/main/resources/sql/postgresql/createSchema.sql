@@ -94,19 +94,19 @@ CREATE TABLE domain_access_rule (
   CONSTRAINT linshare_domain_access_rule_pkey 
     PRIMARY KEY (id));
 CREATE TABLE domain_pattern (
-  domain_pattern_id                             BIGSERIAL NOT NULL,
-  identifier                                   varchar(255) NOT NULL,
-  description                                  text NOT NULL,
-  auth_command                                 text NOT NULL,
-  search_user_command                          text NOT NULL,
-  system                                       bool NOT NULL,
-  auto_complete_command_on_first_and_last_name text NOT NULL,
-  auto_complete_command_on_all_attributes      text NOT NULL,
-  search_page_size                             int4 NOT NULL,
-  search_size_limit                            int4 NOT NULL,
-  completion_page_size                         int4 NOT NULL,
-  completion_size_limit                        int4 NOT NULL,
-  CONSTRAINT linshare_domain_pattern_pkey
+  domain_pattern_id                             int8 NOT NULL, 
+  identifier                                   varchar(255) NOT NULL, 
+  description                                  text NOT NULL, 
+  auth_command                                 text NOT NULL, 
+  search_user_command                          text NOT NULL, 
+  system                                       bool NOT NULL, 
+  auto_complete_command_on_first_and_last_name text NOT NULL, 
+  auto_complete_command_on_all_attributes      text NOT NULL, 
+  search_page_size                             int4 NOT NULL, 
+  search_size_limit                            int4 NOT NULL, 
+  completion_page_size                         int4 NOT NULL, 
+  completion_size_limit                        int4 NOT NULL, 
+  CONSTRAINT linshare_domain_pattern_pkey 
     PRIMARY KEY (domain_pattern_id));
 CREATE TABLE domain_policy (
   id                       int8 NOT NULL, 
@@ -451,15 +451,16 @@ CREATE TABLE mailing_list (
   modification_date  timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mailing_list_contact (
-  id                 int8 NOT NULL, 
-  mailing_list_id    int8 NOT NULL, 
-  mail               varchar(255) NOT NULL, 
-  first_name			 varchar(255),
-  last_name			 varchar(255),
-  uuid               varchar(255) NOT NULL, 
-  creation_date      timestamp(6) NOT NULL, 
-  modification_date  timestamp(6) NOT NULL, 
-  mailing_list_contact_index int4, 
+  id                          int8 NOT NULL, 
+  mailing_list_id            int8 NOT NULL, 
+  mail                       varchar(255) NOT NULL, 
+  first_name                 varchar(255), 
+  last_name                  varchar(255), 
+  uuid                       varchar(255) NOT NULL, 
+  creation_date              timestamp(6) NOT NULL, 
+  modification_date          timestamp(6) NOT NULL, 
+  mailing_list_contact_index int4 NOT NULL, 
+  PRIMARY KEY (id));
   PRIMARY KEY (id));
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
