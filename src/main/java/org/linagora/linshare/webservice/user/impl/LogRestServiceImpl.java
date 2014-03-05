@@ -21,7 +21,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
 @Path("/logs")
-@Api(value = "/logs", description = "User history service.")
+@Api(value = "/rest/logs", description = "User history service.")
 public class LogRestServiceImpl extends WebserviceBase implements
 		LogRestService {
 

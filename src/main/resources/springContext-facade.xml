@@ -219,6 +219,10 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="threadService" />
 	</bean>
+	<bean id="wsAdminMailingListFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.MailingListFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="mailingListService" />
+	</bean>
 	<bean id="wsAdminThreadMemberFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.ThreadMemberFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="threadService" />

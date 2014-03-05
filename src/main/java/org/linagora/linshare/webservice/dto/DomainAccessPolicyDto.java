@@ -35,7 +35,6 @@ package org.linagora.linshare.webservice.dto;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
@@ -49,11 +48,9 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "DomainAccessPolicy", description = "Access policy of a domain, defining it's communication rules")
 public class DomainAccessPolicyDto {
 
-	@XmlElement(name = "id")
 	@ApiModelProperty(value = "Persistence id")
 	private Long id;
 
-	@XmlElement(name = "rules")
 	@ApiModelProperty(value = "Communication rules")
 	private List<DomainAccessRuleDto> rules;
 

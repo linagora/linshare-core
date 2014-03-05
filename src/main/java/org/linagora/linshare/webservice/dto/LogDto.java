@@ -36,7 +36,6 @@ package org.linagora.linshare.webservice.dto;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -53,55 +52,42 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "Log", description = "Criteria used to search the history")
 public class LogDto {
 
-	@XmlElement(name = "actionDate")
 	@ApiModelProperty(value = "Date of the action")
 	private final Date actionDate;
 
-	@XmlElement(name = "actorMail")
 	@ApiModelProperty(value = "Mail of the actor")
 	private final String actorMail;
 
-	@XmlElement(name = "actorFirstname")
 	@ApiModelProperty(value = "First name of the actor")
 	private final String actorFirstname;
 
-	@XmlElement(name = "actorLastname")
 	@ApiModelProperty(value = "Last name of the actor")
 	private final String actorLastname;
 
-	@XmlElement(name = "logAction")
 	@ApiModelProperty(value = "The action")
 	private final LogAction logAction;
 
-	@XmlElement(name = "description")
 	@ApiModelProperty(value = "A description of the action")
 	private final String description;
 
-	@XmlElement(name = "targetMail")
 	@ApiModelProperty(value = "Mail of the target")
 	private final String targetMail;
 
-	@XmlElement(name = "targetFirstname")
 	@ApiModelProperty(value = "First name of the target")
 	private final String targetFirstname;
 
-	@XmlElement(name = "targetLastname")
 	@ApiModelProperty(value = "Last name of the target")
 	private final String targetLastname;
 
-	@XmlElement(name = "fileName")
 	@ApiModelProperty(value = "The file name")
 	private final String fileName;
 
-	@XmlElement(name = "fileSize")
 	@ApiModelProperty(value = "The file size")
 	private final Long fileSize;
 
-	@XmlElement(name = "fileType")
 	@ApiModelProperty(value = "The file MIME type")
 	private final String fileType;
 
-	@XmlElement(name = "expirationDate")
 	@ApiModelProperty(value = "The expiration date")
 	private final Date expirationDate;
 
