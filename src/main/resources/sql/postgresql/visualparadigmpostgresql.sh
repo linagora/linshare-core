@@ -27,3 +27,7 @@ sed -i -e 's/BIGSERIAL/int8/g' output.sql
 # cleanup
 #sed -i -e 's/ $//g' output.sql
 sed -i -e 's///g' output.sql
+
+# sed -i -e 's/ $//g' output.sql
+
+echo "Done : output.sql"
