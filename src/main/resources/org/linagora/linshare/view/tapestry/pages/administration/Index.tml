@@ -22,21 +22,6 @@
 					<br/>
 				</div>
 				<p>
-					<t:pagelink t:id="activationPolicy" t:page="administration/ActivationPolicy" context="selectedDomain">
-						<span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/>${message:pages.administration.index.link.activationpolicy}</span>
-					</t:pagelink>
-				</p>
-				<p>
-					<t:pagelink t:id="configurationPolicy" t:page="administration/ConfigurationPolicy"  context="selectedDomain">
-						<span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/>${message:pages.administration.index.link.configurationpolicy}</span>
-					</t:pagelink>
-				</p>
-				<p>
-					<t:pagelink t:id="parameters" t:page="administration/Parameters"  context="selectedDomain">
-						<span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/>${message:pages.administration.index.link.parameters}</span>
-					</t:pagelink>
-				</p>
-				<p>
 					<t:pagelink t:id="personalization" t:page="administration/Personalization"  context="selectedDomain">
 						<span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/>${message:pages.administration.index.link.personalization}</span>
 					</t:pagelink>

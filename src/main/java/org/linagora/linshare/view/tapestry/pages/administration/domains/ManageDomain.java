@@ -48,7 +48,6 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.pages.administration.ActivationPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +62,7 @@ import org.slf4j.LoggerFactory;
 public class ManageDomain {
 
 	private static Logger logger = LoggerFactory
-			.getLogger(ActivationPolicy.class);
+			.getLogger(ManageDomain.class);
 
 	@SessionState
 	private UserVo loginUser;
