@@ -23,7 +23,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/logs")
-@Api(value = "/admin/logs", description = "Admin application audit service.")
+@Api(value = "/rest/admin/logs", description = "Admin application audit service.")
 public class LogRestServiceImpl extends WebserviceBase implements
 		LogRestService {
 
@@ -35,7 +35,7 @@ public class LogRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@ApiOperation(value = "Search the user history with specified criteria.", response = LogDto.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 401, message = "User isn't admin.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

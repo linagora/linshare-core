@@ -37,6 +37,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 
 import org.linagora.linshare.core.domain.vo.MailingListContactVo;
+import org.linagora.linshare.webservice.dto.MailingListContactDto;
 
 public class MailingListContact {
 
@@ -73,6 +74,13 @@ public class MailingListContact {
 	}
 	
 	public MailingListContact(MailingListContactVo mailingListContact)  {
+		this.mail = mailingListContact.getMail();
+		this.uuid = mailingListContact.getUuid();
+		this.setLastName(mailingListContact.getLastName());
+		this.setFirstName(mailingListContact.getFirstName());
+	}
+
+	public MailingListContact(MailingListContactDto mailingListContact)  {
 		this.mail = mailingListContact.getMail();
 		this.uuid = mailingListContact.getUuid();
 		this.setLastName(mailingListContact.getLastName());

@@ -40,6 +40,8 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
+import org.linagora.linshare.webservice.dto.MailingListContactDto;
+import org.linagora.linshare.webservice.dto.MailingListDto;
 
 public class MailingList {
 
@@ -99,6 +101,16 @@ public class MailingList {
 		this.description = list.getDescription();
 		this.isPublic = list.getIsPublic();
 		for (MailingListContactVo current : list.getContacts()) {
+			mailingListContact.add(new MailingListContact(current));
+		}
+	}
+
+	public MailingList(MailingListDto list) {
+		this.uuid = list.getUuid();
+		this.identifier = list.getIdentifier();
+		this.description = list.getDescription();
+		this.isPublic = list.isPublic();
+		for (MailingListContactDto current : list.getContacts()) {
 			mailingListContact.add(new MailingListContact(current));
 		}
 	}

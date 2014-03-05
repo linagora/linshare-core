@@ -40,6 +40,10 @@
 		<constructor-arg ref="wsAdminThreadFacade" />
 	</bean>
 
+	<bean id="adminMailingListRestService" class="org.linagora.linshare.webservice.admin.impl.MailingListRestServiceImpl">
+		<constructor-arg ref="wsAdminMailingListFacade" />
+	</bean>
+
 	<bean id="adminThreadMemberRestService" class="org.linagora.linshare.webservice.admin.impl.ThreadMemberRestServiceImpl">
 		<constructor-arg ref="wsAdminThreadMemberFacade" />
 	</bean>
@@ -64,6 +68,7 @@
 			<ref bean="adminDomainRestService" />
 			<ref bean="adminDomainPolicyRestService" />
 			<ref bean="adminThreadRestService" />
+			<ref bean="adminMailingListRestService" />
 			<ref bean="adminThreadMemberRestService" />
 			<ref bean="adminUserRoleRestService" />
 			<ref bean="adminUserRestService" />

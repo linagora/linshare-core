@@ -33,16 +33,20 @@
  */
 package org.linagora.linshare.webservice.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.MailingListContact;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name = "DomainPolicy")
-@ApiModel(value = "DomainPolicy", description = "Policy of a domain, defining the access policy of the domain")
-public class DomainPolicyDto {
+@XmlRootElement(name = "MailingList")
+@ApiModel(value = "MailingList", description = "Mailing list")
+public class MailingListDto {
 
 	@ApiModelProperty(value = "Identifier")
 	private String identifier;
@@ -50,17 +54,36 @@ public class DomainPolicyDto {
 	@ApiModelProperty(value = "Description")
 	private String description;
 
-	@ApiModelProperty(value = "Access policy of the domain")
-	private DomainAccessPolicyDto accessPolicy;
+	@ApiModelProperty(value = "IsPublic")
+	private boolean isPublic;
 
-	public DomainPolicyDto(final DomainPolicy p) {
-		this.identifier = p.getIdentifier();
-		this.description = p.getDescription();
-		this.accessPolicy = new DomainAccessPolicyDto(p.getDomainAccessPolicy());
+	@ApiModelProperty(value = "Owner")
+	private UserDto owner;
+
+	@ApiModelProperty(value = "Contacts")
+	private List<MailingListContactDto> contacts = new ArrayList<MailingListContactDto>();
+
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
+
+	@ApiModelProperty(value = "DomainId")
+	private String domainId;
+
+	public MailingListDto() {
+		super();
 	}
 
-	public DomainPolicyDto() {
-		super();
+	public MailingListDto(MailingList list) {
+		this.uuid = list.getUuid();
+		this.identifier = list.getIdentifier();
+		this.description = list.getDescription();
+		this.isPublic = list.isPublic();
+		this.owner = new UserDto(list.getOwner());
+		this.domainId = list.getDomain().getIdentifier();
+
+		for (MailingListContact current : list.getMailingListContact()) {
+			contacts.add(new MailingListContactDto(current));
+		}
 	}
 
 	public String getIdentifier() {
@@ -79,11 +102,44 @@ public class DomainPolicyDto {
 		this.description = description;
 	}
 
-	public DomainAccessPolicyDto getAccessPolicy() {
-		return accessPolicy;
+	public boolean isPublic() {
+		return isPublic;
 	}
 
-	public void setAccessPolicy(DomainAccessPolicyDto domainAccessPolicy) {
-		this.accessPolicy = domainAccessPolicy;
+	public void setPublic(boolean isPublic) {
+		this.isPublic = isPublic;
 	}
+
+	public UserDto getOwner() {
+		return owner;
+	}
+
+	public void setOwner(UserDto owner) {
+		this.owner = owner;
+	}
+
+	public List<MailingListContactDto> getContacts() {
+		return contacts;
+	}
+
+	public void setContacts(List<MailingListContactDto> contacts) {
+		this.contacts = contacts;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getDomainId() {
+		return domainId;
+	}
+
+	public void setDomainId(String domainId) {
+		this.domainId = domainId;
+	}
+
 }
