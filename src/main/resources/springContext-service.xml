@@ -52,6 +52,11 @@
 		<constructor-arg ref="threadService" />
 	</bean>
 
+	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">
+		<constructor-arg ref="internalRepository" />
+		<constructor-arg ref="abstractDomainService" />
+	</bean>
+
 	<bean id="antiSamyService" class="org.linagora.linshare.core.service.impl.AntiSamyServiceImpl">
 		<constructor-arg ref="antiSamyPolicy" />
 	</bean>
