@@ -42,11 +42,13 @@ import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.repository.InternalRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class InternalRepositoryImpl extends GenericUserRepositoryImpl<Internal> implements InternalRepository {
+public class InternalRepositoryImpl extends GenericUserRepositoryImpl<Internal>
+		implements InternalRepository {
 
 	private final boolean multidomain;
 
-	public InternalRepositoryImpl(HibernateTemplate hibernateTemplate, boolean multidomain) {
+	public InternalRepositoryImpl(HibernateTemplate hibernateTemplate,
+			boolean multidomain) {
 		super(hibernateTemplate);
 		this.multidomain = multidomain;
 	}
@@ -59,7 +61,7 @@ public class InternalRepositoryImpl extends GenericUserRepositoryImpl<Internal> 
 		} catch (IllegalStateException e) {
 			logger.error("you are looking for an account using mail as login : '"
 					+ login
-					+ "' but your login is not unique, same account logins in different domains.");;
+					+ "' but your login is not unique, same account logins in different domains.");
 			logger.debug("error: " + e.getMessage());
 			throw e;
 		}
@@ -70,8 +72,8 @@ public class InternalRepositoryImpl extends GenericUserRepositoryImpl<Internal> 
 			} catch (IllegalStateException e) {
 				logger.error("you are looking for an account using LDAP uid as login : '"
 						+ login
-						+ "' but your login is not unique, same account logins in different domains.");;
-						throw e;
+						+ "' but your login is not unique, same account logins in different domains.");
+				throw e;
 			}
 		}
 		return u;

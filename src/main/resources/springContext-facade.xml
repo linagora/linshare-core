@@ -233,6 +233,7 @@
 	<bean id="wsAdminUserFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.UserFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
+		<constructor-arg ref="inconsistentUserService" />
 	</bean>
 	<bean id="wsAdminFunctionalityFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.FunctionalityFacadeImpl">
 		<constructor-arg ref="accountService" />

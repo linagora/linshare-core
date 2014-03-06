@@ -31,28 +31,35 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.admin;
+package org.linagora.linshare.core.service;
 
+import java.util.List;
 
-import java.util.Set;
-
+import org.linagora.linshare.core.domain.entities.Internal;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.UserDto;
 
-public interface UserFacade extends AdminGenericFacade {
+public interface InconsistentUserService {
 
-	Set<UserDto> completionUser(String pattern) throws BusinessException;
+	/**
+	 * Search for users that are internals and in the DB but not in any valid
+	 * domain (=removed from ldap).
+	 * 
+	 * @param actor the actor must be superadmin
+	 * @return a list of inconsistent users
+	 * @throws BusinessException TODO
+	 */
+	List<Internal> findAll(User actor) throws BusinessException;
 
-	Set<UserDto> getInternals(String pattern) throws BusinessException;
-	
-	Set<UserDto> getGuests(String pattern) throws BusinessException;
-	
-	void updateUser(UserDto userDto) throws BusinessException;
-
-	void deleteUser(UserDto userDto) throws BusinessException;
-
-	Set<UserDto> getAllInconsistent() throws BusinessException;
-
-	void updateInconsistentUser(UserDto userDto) throws BusinessException;
-
+	/**
+	 * Update an inconsistent user's domain.
+	 * 
+	 * @param actor the actor must be superadmin
+	 * @param uuid the inconsistent user uuid
+	 * @param domain the domain identifier
+	 * 
+	 * @throws BusinessException
+	 */
+	void updateDomain(User actor, String uuid, String domain)
+			throws BusinessException;
 }
