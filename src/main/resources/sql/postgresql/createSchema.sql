@@ -127,14 +127,14 @@ CREATE TABLE entry (
   PRIMARY KEY (id));
 CREATE TABLE functionality (
   id                       int8 NOT NULL, 
-  functionality_id        int8, 
   system                  bool NOT NULL, 
   identifier              varchar(255) NOT NULL, 
   policy_activation_id    int8 NOT NULL, 
   policy_configuration_id int8 NOT NULL, 
   policy_delegation_id    int8, 
   domain_id               int8 NOT NULL, 
-  param                   bool DEFAULT 'false' NOT NULL, 
+  param                   bool DEFAULT 'false' NOT NULL,
+  parent_identifier       varchar(255), 
   CONSTRAINT linshare_functionality_pkey 
     PRIMARY KEY (id));
 CREATE TABLE functionality_integer (
@@ -532,7 +532,6 @@ ALTER TABLE thread_view ADD CONSTRAINT FKthread_vie68184 FOREIGN KEY (thread_acc
 ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie285846 FOREIGN KEY (thread_view_id) REFERENCES thread_view (id);
 ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie896171 FOREIGN KEY (tag_id) REFERENCES tag (id);
 ALTER TABLE thread_view ADD CONSTRAINT FKthread_vie557698 FOREIGN KEY (account_id) REFERENCES account (id);
-ALTER TABLE functionality ADD CONSTRAINT FKfunctional766137 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);

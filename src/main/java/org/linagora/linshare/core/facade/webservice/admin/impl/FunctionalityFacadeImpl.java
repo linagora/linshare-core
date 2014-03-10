@@ -35,7 +35,9 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Policies;
@@ -79,16 +81,36 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 	public List<FunctionalityDto> getAll(String domain) throws BusinessException {
 		Set<Functionality> entities = functionalityService.getAllFunctionalities(domain);
 
-		List<FunctionalityDto> ret = new ArrayList<FunctionalityDto>();
+		Map<String, FunctionalityDto> ret = new HashMap<String, FunctionalityDto>();
+		List<FunctionalityDto> subs = new ArrayList<FunctionalityDto>();
+
 		for (Functionality f : entities) {
 			boolean parentAllowAPUpdate = functionalityService.activationPolicyIsMutable(f, domain);
 			boolean parentAllowCPUpdate = functionalityService.configurationPolicyIsMutable(f, domain);
 			FunctionalityDto func = new FunctionalityDto(f, parentAllowAPUpdate, parentAllowCPUpdate);
 			// We force the domain id to be coherent to the argument.
 			func.setDomain(domain);
-			ret.add(func);
+			// We check if this a sub functionality (a parameter)
+			if(f.isParam()) {
+				if (ret.containsKey(func.getParentIdentifier())) {
+					ret.get(func.getParentIdentifier()).addFunctionalities(func);
+				} else {
+					subs.add(func);
+					// HACK : To be removed.
+					ret.put(f.getIdentifier(), func);
+				}
+			} else {
+				ret.put(f.getIdentifier(), func);
+			}
 		}
-		return ret;
+		for (FunctionalityDto func : subs) {
+			if (ret.containsKey(func.getParentIdentifier())) {
+				ret.get(func.getParentIdentifier()).addFunctionalities(func);
+			}
+		}
+		// HOOK
+		List<FunctionalityDto> a = new ArrayList<FunctionalityDto>(ret.values());
+		return a;
 	}
 
 	@Override

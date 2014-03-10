@@ -11,14 +11,12 @@
 	<property name="param" type="boolean" not-null="true" lazy="false">
 		<column name="param" default="false"/>
 	</property>
+    <property column="parent_identifier" name="parentIdentifier" not-null="true"/>
     <many-to-one name="activationPolicy" class="Policy" column="policy_activation_id" unique="true" cascade="all" lazy="false" />
     <many-to-one name="configurationPolicy" class="Policy" column="policy_configuration_id" unique="true" cascade="all" lazy="false" />
     <many-to-one name="delegationPolicy" class="Policy" column="policy_delegation_id" unique="true" cascade="all" lazy="false" />
 
 	<many-to-one name="domain" column="domain_id" not-null="true" lazy="false"  unique-key="functionality_unicity_key" />
-
-	<many-to-one name="parent" cascade="lock" column="functionality_id" class="org.linagora.linshare.core.domain.entities.Functionality"
-		not-null="false" lazy="no-proxy" />
 
 	<joined-subclass name="StringValueFunctionality" table="functionality_string">
 		<key>

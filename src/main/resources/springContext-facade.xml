@@ -136,7 +136,6 @@
 	</bean>
 
 	<bean name="functionalityFacade" class="org.linagora.linshare.core.facade.impl.FunctionalityFacadeImpl">
-		<constructor-arg ref="functionalityOldService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>

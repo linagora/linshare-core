@@ -194,6 +194,7 @@
 	
 	<bean name="functionalityOldService" class="org.linagora.linshare.core.service.impl.FunctionalityOldServiceImpl">
 		<constructor-arg ref="functionalityRepository" />
+		<constructor-arg ref="functionalityBusinessService" />
 		<constructor-arg ref="abstractDomainRepository" />
 	</bean>
 	

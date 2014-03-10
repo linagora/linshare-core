@@ -33,9 +33,10 @@
  */
 package org.linagora.linshare.webservice.dto;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -51,27 +52,33 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "Functionality", description = "Functionalities are used to configure the application")
 public class FunctionalityDto {
 
-    @ApiModelProperty(value = "Identifier")
+	@ApiModelProperty(value = "Identifier")
 	protected String identifier;
 
 	@XmlTransient
-    @ApiModelProperty(value = "Name")
-    private String name;
+	@ApiModelProperty(value = "Name")
+	private String name;
 
-    @ApiModelProperty(value = "Domain")
+	@ApiModelProperty(value = "Domain")
 	protected String domain;
 
-    @ApiModelProperty(value = "Type")
+	@ApiModelProperty(value = "Type")
 	protected String type;
 
-    @ApiModelProperty(value = "ActivationPolicy")
+	@ApiModelProperty(value = "ActivationPolicy")
 	protected PolicyDto activationPolicy;
 
-    @ApiModelProperty(value = "ConfigurationPolicy")
+@ApiModelProperty(value = "ConfigurationPolicy")
 	protected PolicyDto configurationPolicy;
 
-    @ApiModelProperty(value = "Parameters")
+	@ApiModelProperty(value = "Parameters")
 	protected List<ParameterDto> parameters;
+
+	@ApiModelProperty(value = "parentIdentifier")
+	protected String parentIdentifier;
+
+	@ApiModelProperty(value = "functionalities")
+	protected Set<FunctionalityDto> functionalities;
 
 	public FunctionalityDto() {
 		super();
@@ -85,6 +92,8 @@ public class FunctionalityDto {
 		this.domain = f.getDomain().getIdentifier();
 		this.parameters = f.getParameters();
 		this.type = f.getType().toString();
+		this.parentIdentifier = f.getParentIdentifier();
+		functionalities = new HashSet<FunctionalityDto>();
 	}
 	
 	public FunctionalityDto(Functionality f, boolean parentAllowAPUpdate, boolean parentAllowCPUpdate) {
@@ -99,6 +108,8 @@ public class FunctionalityDto {
 		this.configurationPolicy.setParentAllowUpdate(parentAllowCPUpdate);
 		this.parameters = f.getParameters();
 		this.type = f.getType().toString();
+		this.parentIdentifier = f.getParentIdentifier();
+		functionalities = new HashSet<FunctionalityDto>();
 	}
 	
 	public String getIdentifier() {
@@ -155,5 +166,27 @@ public class FunctionalityDto {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getParentIdentifier() {
+		return parentIdentifier;
+	}
+
+	public void setParentIdentifier(String parentIdentifier) {
+		this.parentIdentifier = parentIdentifier;
+	}
+
+	public Set<FunctionalityDto> getFunctionalities() {
+		return functionalities;
+	}
+
+	public void setFunctionalities(Set<FunctionalityDto> functionalities) {
+		this.functionalities = functionalities;
+	}
+
+	public void addFunctionalities(FunctionalityDto functionality) {
+		if (functionality != null) {
+			this.functionalities.add(functionality);
+		}
 	}
 }

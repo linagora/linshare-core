@@ -50,32 +50,16 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	protected final Logger logger = LoggerFactory
 			.getLogger(FunctionalityFacadeImpl.class);
 
-	private final FunctionalityOldService functionalityService;
-
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	private final AbstractDomainService abstractDomainService;
 
 	public FunctionalityFacadeImpl(
-			FunctionalityOldService functionalityService,
 			AbstractDomainService abstractDomainService,
 			FunctionalityReadOnlyService functionalityReadOnlyService) {
 		super();
-		this.functionalityService = functionalityService;
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
-	}
-
-	private boolean isAuthorized(UserVo actorVo) {
-		if (actorVo != null) {
-			if (actorVo.isSuperAdmin() || actorVo.isAdministrator()) {
-				return true;
-			}
-			logger.error("you are not authorised.");
-		} else {
-			logger.error("isAuthorized:actorVo object is null.");
-		}
-		return false;
 	}
 
 	@Override

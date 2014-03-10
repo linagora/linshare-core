@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.Policies;
@@ -56,6 +57,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 	protected final Logger logger = LoggerFactory.getLogger(FunctionalityOldServiceImpl.class);
 	private final FunctionalityRepository functionalityRepository;
 	private final AbstractDomainRepository abstractDomainRepository;
+	private final FunctionalityBusinessService functionalityBusinessService;
 
 	private static int CST_FUNC_AVAILABLES = 0;
 	private static int CST_FUNC_ALTERABLES = 1;
@@ -71,22 +73,12 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 	@Deprecated
 	public FunctionalityOldServiceImpl(
 			FunctionalityRepository functionalityRepository,
+			FunctionalityBusinessService functionalityBusinessService,
 			AbstractDomainRepository domainRepository) {
 		super();
 		this.functionalityRepository = functionalityRepository;
 		this.abstractDomainRepository = domainRepository;
-	}
-
-	@Deprecated
-	@Override
-	public Functionality findById(long id) {
-		Functionality func = functionalityRepository.findById(id);
-		if (func == null) {
-			throw new TechnicalException(
-					TechnicalErrorCode.FUNCTIONALITY_ENTITY_NOT_FOUND,
-					"error with entity Functionality, it does not exists !!");
-		}
-		return func;
+		this.functionalityBusinessService = functionalityBusinessService;
 	}
 
 	/**
@@ -106,63 +98,6 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 			}
 		}
 		return allfunctionalityIdentifiers;
-	}
-
-	/**
-	 * This method return a list of functionality including all its
-	 * functionalities and its parent's functionalities
-	 * 
-	 * @param domain
-	 *            entity
-	 * @return functionality list
-	 */
-	@Deprecated
-	@Override
-	public List<Functionality> getAllFunctionalities(AbstractDomain domain) {
-
-		if (domain != null) {
-			// Add all functionalities from this domain
-			List<Functionality> allfunctionalities = new ArrayList<Functionality>(domain.getFunctionalities());
-			// Add all functionality identifiers from this domain
-			List<String> allfunctionalityIdentifiers = getFunctionalityIdentifiers(domain.getFunctionalities());
-			
-			if (domain.getParentDomain() != null) {
-				List<Functionality> parentFunctionalitites = getAllFunctionalities(domain.getParentDomain());
-				for (Functionality functionality : parentFunctionalitites) {
-					if (!allfunctionalityIdentifiers.contains(functionality.getIdentifier())) {
-						allfunctionalities.add(functionality);
-						allfunctionalityIdentifiers.add(functionality.getIdentifier());
-					}
-				}
-			}
-			return allfunctionalities;
-		}
-		return null;
-	}
-
-	/**
-	 * This method return the functionality by its IDENTIFIER
-	 * 
-	 * @param domainIdentifier
-	 *            domain entity identifier
-	 * @return functionality
-	 */
-	@Deprecated
-	@Override
-	public Functionality getFunctionalityByIdentifiers(String domainIdentifier, String functionalityIdentifier) {
-		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
-		Functionality functionality = getFunctionalityEntityByIdentifiers(domain, functionalityIdentifier);
-		// Never returns the entity when we try to modify the functionality.
-		return (Functionality)functionality.clone();
-	}
-
-	@Deprecated
-	private  Functionality getFunctionalityEntityByIdentifiers(AbstractDomain domain, String functionalityIdentifier) {
-		Functionality fonc = functionalityRepository.findById(domain, functionalityIdentifier);
-		if (fonc == null && domain.getParentDomain() != null) {
-			fonc = getFunctionalityEntityByIdentifiers(domain.getParentDomain(), functionalityIdentifier);
-		}
-		return fonc;
 	}
 
 	@Deprecated
@@ -353,6 +288,14 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		update(domain, functionality);
 	}
 
+	private Functionality getFunctionalityEntityByIdentifiers(AbstractDomain domain, String functionalityIdentifier) {
+		Functionality fonc = functionalityRepository.findById(domain, functionalityIdentifier);
+		if (fonc == null && domain.getParentDomain() != null) {
+			fonc = getFunctionalityEntityByIdentifiers(domain.getParentDomain(), functionalityIdentifier);
+		}
+		return fonc;
+	}
+	
 	@Deprecated
 	@Override
 	public void update(AbstractDomain currentDomain, Functionality functionalityDto) throws BusinessException {
@@ -504,89 +447,5 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 			}
 		}
 		return false;
-	}
-	
-	@Deprecated
-	private List<Functionality> getAllFunctionality(AbstractDomain domain, int criteria) {
-		if (domain != null) {
-			
-			List<Functionality> allFunctionalities = new ArrayList<Functionality>();
-			List<Functionality> parentFunctionalitites = new ArrayList<Functionality>();
-
-			// Add all my functionality identifiers
-			List<String> allFunctionalityIdentifiers = getFunctionalityIdentifiers(domain.getFunctionalities());
-			boolean isGuestDomain = domain.getDomainType().equals(DomainType.GUESTDOMAIN);
-			if(isGuestDomain) {
-				allFunctionalityIdentifiers.add(FunctionalityNames.ACCOUNT_EXPIRATION);
-			}
-
-			if (domain.getParentDomain() != null) {
-				parentFunctionalitites = getAllFunctionalities(domain.getParentDomain());
-				for (Functionality functionality : parentFunctionalitites) {
-					if (!allFunctionalityIdentifiers.contains(functionality.getIdentifier())) {
-						// this functionality is not in the allfunctionalityIdentifiers list
-						allFunctionalityIdentifiers.add(functionality.getIdentifier());
-
-						if (functionality.getDomain().getPersistenceId() != domain.getPersistenceId()) {
-							if(checkCriteriaForAncestor(criteria, functionality)) {
-								allFunctionalities.add(functionality);
-							}
-						}
-					}
-				}
-			}
-			
-			// Add all my functionalities
-			for (Functionality functionality : domain.getFunctionalities()) {
-				if(checkCriteriaForMySelf(criteria, functionality, parentFunctionalitites)) {
-					if(!(isGuestDomain && functionality.getIdentifier().equals(FunctionalityNames.ACCOUNT_EXPIRATION))) {
-						allFunctionalities.add(functionality);
-					}
-				}
-			}
-			
-			
-			return allFunctionalities;
-		}
-		return null;
-	}
-
-	@Deprecated
-	@Override
-	public List<Functionality> getAllAvailableFunctionalities(String domainIdentifier) {
-		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
-		return getAllAvailableFunctionalities(domain);
-	}
-
-	@Deprecated
-	@Override
-	public List<Functionality> getAllAvailableFunctionalities(AbstractDomain domain) {
-		return getAllFunctionality(domain, CST_FUNC_AVAILABLES);
-	}
-
-	@Deprecated
-	@Override
-	public List<Functionality> getAllAlterableFunctionalities(String domainIdentifier) {
-		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
-		return getAllAlterableFunctionalities(domain);
-	}
-
-	@Deprecated
-	@Override
-	public List<Functionality> getAllAlterableFunctionalities(AbstractDomain domain) {
-		return getAllFunctionality(domain, CST_FUNC_ALTERABLES);
-	}
-
-	@Deprecated
-	@Override
-	public List<Functionality> getAllEditableFunctionalities(String domainIdentifier) {
-		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
-		return getAllEditableFunctionalities(domain);
-	}
-
-	@Deprecated
-	@Override
-	public List<Functionality> getAllEditableFunctionalities(AbstractDomain domain) {
-		return getAllFunctionality(domain, CST_FUNC_EDITABLES);
 	}
 }

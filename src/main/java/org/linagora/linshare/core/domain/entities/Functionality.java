@@ -77,7 +77,7 @@ public class Functionality implements Cloneable {
 	/**
 	 * If the current entity is a parameter, it must have a parent.
 	 */
-	private Functionality parent;
+	private String parentIdentifier;
 
 	/**
 	 * Logger available to subclasses.
@@ -251,12 +251,12 @@ public class Functionality implements Cloneable {
 		// no data in this class.
 	}
 
-	public Functionality getParent() {
-		return parent;
+	public String getParentIdentifier() {
+		return parentIdentifier;
 	}
 
-	public void setParent(Functionality parent) {
-		this.parent = parent;
+	public void setParentIdentifier(String parentIdentifier) {
+		this.parentIdentifier = parentIdentifier;
 	}
 
 	public Policy getDelegationPolicy() {
