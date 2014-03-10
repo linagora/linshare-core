@@ -45,6 +45,11 @@
 			<one-to-many class="Functionality"  />
 		</set>
 		
+		<set name="domainAccessRules" inverse="true" cascade="delete-orphan">
+			<key column="domain_id" />
+			<one-to-many class="DomainAccessRule"  />
+		</set>
+	
 		<many-to-one cascade="save-update" lazy="false" access="field" class="org.linagora.linshare.core.domain.entities.MessagesConfiguration" 
 			name="messagesConfiguration" column="messages_configuration_id" not-null="false" />
 
