@@ -160,6 +160,7 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 		AbstractDomain currentDomain = createATestRootDomain(1);
 		DomainAccessRule rule = new DenyDomain(currentDomain);
 		policy.addRule(rule);
+		currentDomain.getDomainAccessRules().add(rule);
 		
 		domainAccessPolicyRepository.update(policy);
 		abstractDomainRepository.update(currentDomain);
@@ -191,6 +192,7 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 
 		AllowDomain rule = new AllowDomain(currentDomain);
 		policy.addRule(rule);
+		currentDomain.getDomainAccessRules().add(rule);
 		
 		domainAccessPolicyRepository.update(policy);
 		abstractDomainRepository.update(currentDomain);
@@ -203,6 +205,7 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 
 		Assert.assertTrue(entityRule instanceof AllowDomain );
 		
+		logger.debug("currentDomain.getDomainAccessRules().size() : " + currentDomain.getDomainAccessRules().size());
 		
 		
 		logger.debug("policy.getRules().size() : " + policy.getRules().size());
@@ -223,9 +226,11 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 		
 		AllowDomain rule = new AllowDomain(currentDomain);
 		policy.addRule(rule);
+		currentDomain.getDomainAccessRules().add(rule);
 		
 		DomainAccessRule endRule = new DenyAllDomain();
 		policy.addRule(endRule);
+		currentDomain.getDomainAccessRules().add(endRule);
 		
 		domainAccessPolicyRepository.update(policy);
 		abstractDomainRepository.update(currentDomain);
@@ -238,6 +243,8 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 		
 		Assert.assertTrue(entityRule instanceof AllowDomain );
 		
+		logger.debug("currentDomain.getDomainAccessRules().size() : " + currentDomain.getDomainAccessRules().size());
+		Assert.assertEquals(2, currentDomain.getDomainAccessRules().size());
 		
 		logger.debug("policy.getRules().size() : " + policy.getRules().size());
 		deleteTestRootDomain(currentDomain);
