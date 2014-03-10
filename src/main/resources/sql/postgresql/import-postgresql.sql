@@ -541,7 +541,7 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (55, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (56, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (27, true, 'UPDATE_FILE', 55, 56, 1);
 
---Functionality : CREATE_THREAD_PERMISSION
+-- Functionality : CREATE_THREAD_PERMISSION
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (57, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (58, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (28, true, 'CREATE_THREAD_PERMISSION', 57, 58, 1);
@@ -552,11 +552,27 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (60, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (29, false, 'LINK_LOGO', 59, 60, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://localhost:8080/linshare/en');
 
---Functionality : NOTIFICATION_URL
+-- Functionality : NOTIFICATION_URL
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (61, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (62, false, false, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(30, false, 'NOTIFICATION_URL', 61, 62, 1); 
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'http://localhost:8080/linshare/');
+
+
+-- Functionality : UPLOAD_REQUEST
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (63, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (64, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(31, false, 'UPLOAD_REQUEST', 63, 64, 1);
+
+-- Functionality : UPLOAD_REQUEST__NOTIFICATION_LANGUAGE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (65, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (66, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES(32, false, 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE', 65, 66, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (32, 'fr');
+
+
+
+
 
 -- LinShare version
 INSERT INTO version (id, description) VALUES (1, '1.5.0');
