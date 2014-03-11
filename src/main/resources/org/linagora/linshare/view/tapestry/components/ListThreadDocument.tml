@@ -49,11 +49,15 @@
                         <t:actionLink t:id="download" t:context="${threadEntry.identifier}" t:type="${threadEntry.type}" class="fileName ${typeCSSClass}">
                             <t:if t:test="${thumbnailExists}">
                                 <div t:type="chenillekit/Tooltip" title="${threadEntry.fileName}" value="&lt;img src=&quot;${thumbnailPath}&quot; /&gt;">
-                                    ${threadEntry.fileName}
+				    <span class="truncate">
+					${threadEntry.fileName}
+				    </span>
                                 </div>
                                 <t:parameter name="else">
                                     <div t:type="chenillekit/Tooltip" title="${threadEntry.fileName}" value="${message:components.listDocument.noThumb}">
-                                        ${threadEntry.fileName}
+					<span class="truncate">
+					    ${threadEntry.fileName}
+					</span>
                                     </div>
                                 </t:parameter>
                             </t:if>
@@ -70,18 +74,18 @@
                 </p:fileNameCell>
                 
 				<p:creationDateCell>
-					<span class="creationDate">${message:components.listDocument.uploadOn} ${creationDate}</span>${message:global.space}
+					<span class="creationDate">&nbsp;${creationDate}&nbsp;</span>${message:global.space}
 				</p:creationDateCell>
 				
 				<p:sizeCell>
-					<span class="friendlySize">${friendlySize},</span>${message:global.space}
+					<span class="friendlySize">${friendlySize}</span>${message:global.space}
 				</p:sizeCell>
 
 				<p:fileEditCell>
 				<t:if t:test="canUpload">
 					<t:actionLink t:id="fileEditProperties" t:zone="${threadEntryEdit.zoneClientId}" context="${threadEntry.identifier}">
 						<span onclick="literal:${threadEntryEdit.javascriptOpenPopup}">
-							<img src="${asset:context:images/icons/edit-button.png}" alt="" style="margin-left:50px" title="${message:components.listDocument.picture.fileEdit.title}" />
+							<img src="${asset:context:images/icons/edit-button.png}" alt="" title="${message:components.listDocument.picture.fileEdit.title}" />
 						</span>
 					</t:actionLink>
 				</t:if>

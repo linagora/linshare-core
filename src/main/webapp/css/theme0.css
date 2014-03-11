@@ -1614,6 +1614,8 @@ table.t-data-grid {
 	white-space: nowrap;
 }
 
+#thread #list .creationDate,
+#thread #list .fileEdit,
 #thread #list .fileDelete {
 	width: 7%;
 	min-width: 100px;	/* 37px = 42px - 5px */
