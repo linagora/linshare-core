@@ -72,6 +72,15 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 		return domainFacade.getDomains();
 	}
 
+	@Path("/{domain}")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public DomainDto getDomainAndChildren(@PathParam(value = "domain") String domain) throws BusinessException {
+		domainFacade.checkAuthentication();
+		return domainFacade.getDomainAndChildren(domain);
+	}
+
 	@Path("/")
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

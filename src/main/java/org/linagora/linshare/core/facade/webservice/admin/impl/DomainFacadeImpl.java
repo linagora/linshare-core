@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
@@ -75,7 +76,17 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 	public DomainDto getDomains() throws BusinessException {
 		checkAuthentication(Role.ADMIN);
 		RootDomain rootDomain = abstractDomainService.getUniqueRootDomain();
-		return new DomainDto(rootDomain);
+		return DomainDto.getFull(rootDomain);
+	}
+
+	@Override
+	public DomainDto getDomainAndChildren(String domain) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
+		AbstractDomain entity = abstractDomainService.retrieveDomain(domain);
+		if(entity == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "the curent domain was not found : " + domain);
+		}
+		return DomainDto.getFull(entity);
 	}
 
 	@Override
@@ -109,7 +120,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 		checkAuthentication(Role.SUPERADMIN);
 		abstractDomainService.deleteDomain(domainDto.getIdentifier());
 	}
-	
+
 	private AbstractDomain getDomain(DomainDto domainDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		DomainType domainType = DomainType.valueOf(domainDto.getType());
