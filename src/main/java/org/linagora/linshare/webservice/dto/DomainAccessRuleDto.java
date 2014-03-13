@@ -40,7 +40,6 @@ import org.linagora.linshare.core.domain.entities.AllowDomain;
 import org.linagora.linshare.core.domain.entities.DenyDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 
-import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -61,10 +60,10 @@ public class DomainAccessRuleDto {
 		this.type = rule.getDomainAccessRuleType();
 		switch (type) {
 		case ALLOW:
-			this.domain = new DomainDto(((AllowDomain) rule).getDomain());
+			this.domain = DomainDto.getFull(((AllowDomain) rule).getDomain());
 			break;
 		case DENY:
-			this.domain = new DomainDto(((DenyDomain) rule).getDomain());
+			this.domain = DomainDto.getFull(((DenyDomain) rule).getDomain());
 			break;
 		}
 	}
