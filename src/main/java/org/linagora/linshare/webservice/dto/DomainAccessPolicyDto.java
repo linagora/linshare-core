@@ -54,6 +54,9 @@ public class DomainAccessPolicyDto {
 	@ApiModelProperty(value = "Communication rules")
 	private List<DomainAccessRuleDto> rules;
 
+	public DomainAccessPolicyDto() {
+	}
+	
 	public DomainAccessPolicyDto(DomainAccessPolicy dap) {
 		this.id = dap.getPersistenceId();
 		this.rules = Lists.newArrayList();
