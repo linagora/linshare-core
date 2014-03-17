@@ -86,7 +86,7 @@ public abstract class AbstractDomain {
 	
 	
 	//mail configurations
-	private org.linagora.linshare.core.domain.entities.MailConfig currentMailConfiguration;
+	private MailConfig currentMailConfiguration;
 	private Set<MailLayout> mailLayouts;
 	private Set<MailFooter> mailFooters;
 	private Set<MailConfig> mailConfigs;
@@ -345,12 +345,11 @@ public abstract class AbstractDomain {
 		this.authShowOrder = authShowOrder;
 	}
 
-	public org.linagora.linshare.core.domain.entities.MailConfig getCurrentMailConfiguration() {
+	public MailConfig getCurrentMailConfiguration() {
 		return currentMailConfiguration;
 	}
 
-	public void setCurrentMailConfiguration(
-			org.linagora.linshare.core.domain.entities.MailConfig currentMailConfiguration) {
+	public void setCurrentMailConfiguration(MailConfig currentMailConfiguration) {
 		this.currentMailConfiguration = currentMailConfiguration;
 	}
 

@@ -33,19 +33,12 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.List;
 import java.util.UUID;
 
-import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.constants.MailTemplateEnum;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
-import org.linagora.linshare.core.domain.entities.MailContentType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailContentRepository;
 import org.springframework.dao.support.DataAccessUtils;
@@ -65,12 +58,6 @@ public class MailContentRepositoryImpl extends
 		return det;
 	}
 
-	/**
-	 * Find a MailConfig using its uuid.
-	 * 
-	 * @param uuid
-	 * @return found MailConfig (null if no MailConfig found).
-	 */
 	@Override
 	public MailContent findByUuid(String uuid) {
 		DetachedCriteria det = DetachedCriteria.forClass(MailContent.class);
@@ -83,32 +70,4 @@ public class MailContentRepositoryImpl extends
 		entity.setUuid(UUID.randomUUID().toString());
 		return super.create(entity);
 	}
-
-	@Override
-	public MailContent update(MailContent entity) throws BusinessException {
-		return super.update(entity);
-	}
-
-	@Override
-	public List<MailContent> findAllMailContent() {
-		return super.findAll();
-	}
-
-	@Override
-	public List<MailContent> findMailContent(AbstractDomain domain) {
-		return findByCriteria(Restrictions.eq("domain", domain));
-	}
-
-	@Override
-	public MailContent getMailContent(AbstractDomain domain, Language lang,
-			MailContentType mailContentType) {
-		Conjunction and = Restrictions.conjunction();
-
-		and.add(Restrictions.eq("domain", domain));
-		and.add(Restrictions.eq("mailContentType", mailContentType.toInt()));
-		and.add(Restrictions.eq("language", lang.toInt()));
-
-		return DataAccessUtils.singleResult(findByCriteria(and));
-	}
-
 }

@@ -1,7 +1,5 @@
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.domain.constants.MailSubjectEnum;
-import org.linagora.linshare.core.domain.constants.MailTemplateEnum;
 
 public enum MailContentType {
 	ACCOUNT_DESCRIPTION(0),
@@ -33,7 +31,7 @@ public enum MailContentType {
 	SHARE_NOTIFICATION(26);
 
 	private int value;
-	
+
 	private MailContentType(int value) {
 		this.value = value;
 	}
@@ -42,23 +40,13 @@ public enum MailContentType {
 		return this.value;
 	}
 
-	/*
-	 * XXX: ugly adapters
-	 */
-	public static MailContentType adapt(MailTemplateEnum old) {
-		return MailContentType.valueOf(old.name());
-	}
-
-	public static MailContentType adapt(MailSubjectEnum old) {
-		return MailContentType.valueOf(old.name());
-	}
-
 	public static MailContentType fromInt(int value) {
 		for (MailContentType template : values()) {
 			if (template.value == value) {
 				return template;
 			}
 		}
-		throw new IllegalArgumentException("Doesn't match an existing MailContentType");
+		throw new IllegalArgumentException(
+				"Doesn't match an existing MailContentType");
 	}
 }

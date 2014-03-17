@@ -1,7 +1,12 @@
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET client_min_messages = warning;
+SET default_with_oids = false;
+
 
 
 CREATE TABLE mail_notification (
-  Id                  BIGSERIAL NOT NULL, 
+  Id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
   policy_id          int8 NOT NULL, 
   identifier         varchar(255) NOT NULL, 
@@ -11,7 +16,7 @@ CREATE TABLE mail_notification (
   uuid               varchar(255) NOT NULL, 
   PRIMARY KEY (Id));
 CREATE TABLE mail_config (
-  Id                   BIGSERIAL NOT NULL, 
+  Id                   int8 NOT NULL, 
   mail_layout_html_id int8 NOT NULL, 
   domain_abstract_id  int8 NOT NULL, 
   name                varchar(255) NOT NULL, 
@@ -20,7 +25,7 @@ CREATE TABLE mail_config (
   uuid                varchar(255) NOT NULL, 
   PRIMARY KEY (Id));
 CREATE TABLE mail_layout (
-  Id                  BIGSERIAL NOT NULL, 
+  Id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
   name               varchar(255) NOT NULL, 
   visible            bool NOT NULL, 
@@ -31,7 +36,7 @@ CREATE TABLE mail_layout (
   plaintext          bool NOT NULL, 
   PRIMARY KEY (Id));
 CREATE TABLE mail_footer (
-  Id                  BIGSERIAL NOT NULL, 
+  Id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
   name               varchar(255) NOT NULL, 
   visible            bool NOT NULL, 
@@ -43,14 +48,13 @@ CREATE TABLE mail_footer (
   plaintext          bool NOT NULL, 
   PRIMARY KEY (Id));
 CREATE TABLE mail_footer_lang (
-  Id                BIGSERIAL NOT NULL, 
+  Id                int8 NOT NULL, 
   language         int4 NOT NULL, 
   mail_config_id   int8 NOT NULL, 
   mail_footer_id   int8 NOT NULL, 
-  mail_configIndex int4, 
   PRIMARY KEY (Id));
 CREATE TABLE mail_content (
-  Id                  BIGSERIAL NOT NULL, 
+  Id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
   name               varchar(255) NOT NULL, 
   visible            bool NOT NULL, 
@@ -63,11 +67,11 @@ CREATE TABLE mail_content (
   plaintext          bool NOT NULL, 
   PRIMARY KEY (Id));
 CREATE TABLE mail_content_lang (
-  Id                BIGSERIAL NOT NULL, 
+  Id                int8 NOT NULL, 
   language         int4 NOT NULL, 
   mail_content_id  int8 NOT NULL, 
   mail_config_id   int8 NOT NULL, 
-  mail_configIndex int4, 
+  mail_content_type int4 NOT NULL, 
   PRIMARY KEY (Id));
 
 
@@ -118,8 +122,8 @@ INSERT INTO mail_footer (id, name, language, domain_abstract_id, visible, plaint
 
 INSERT INTO mail_config (id, name, domain_abstract_id, visible, mail_layout_html_id, mail_layout_text_id,uuid) VALUES (1,'config 1',1,true,1,2,'42cf9cf6-8da6-11e3-b6aa-5404a683a462');
 
-INSERT INTO mail_content_lang(id,mail_config_id,language,mail_content_id) VALUES (1,1,0,1);
-INSERT INTO mail_content_lang(id,mail_config_id,language,mail_content_id) VALUES (2,1,1,2);
+INSERT INTO mail_content_lang(id,mail_config_id,language,mail_content_id,mail_content_type) VALUES (1,1,0,1,8);
+INSERT INTO mail_content_lang(id,mail_config_id,language,mail_content_id,mail_content_type) VALUES (2,1,1,2,8);
 
 INSERT INTO mail_footer_lang(id,mail_config_id,language,mail_footer_id) VALUES (1,1,0,1);
 INSERT INTO mail_footer_lang(id,mail_config_id,language,mail_footer_id) VALUES (2,1,1,2);

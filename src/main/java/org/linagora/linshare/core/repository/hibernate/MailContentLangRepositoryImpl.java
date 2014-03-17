@@ -31,55 +31,43 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.repository.hibernate;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.MailContent;
+import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.domain.entities.MailContentType;
+import org.linagora.linshare.core.repository.MailContentLangRepository;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 
-/**
- * Enumerate the available mail templates
- * 
- * @author sduprey
- *
- */
-public enum MailTemplateEnum {
-	GREETINGS(0),
-	FOOTER(1),
-	CONFIRM_DOWNLOAD_ANONYMOUS(2),
-	CONFIRM_DOWNLOAD_REGISTERED(3),
-	LINSHARE_URL(4),
-	FILE_DOWNLOAD_URL(5),
-	DECRYPT_URL(6),
-	PERSONAL_MESSAGE(7),
-	GUEST_INVITATION(8),
-	ACCOUNT_DESCRIPTION(9),
-	SHARE_NOTIFICATION(10),
-	PASSWORD_GIVING(11),
-	FILE_UPDATED(12),
-	GROUP_SHARE_NOTIFICATION(13),
-	GROUP_NEW_MEMBER(14),
-	GROUP_MEMBERSHIP_STATUS(15),
-	GROUP_SHARE_DELETED(16),
-	SHARED_FILE_DELETED(17),
-	SECURED_URL_UPCOMING_OUTDATED(18),
-	SHARED_DOC_UPCOMING_OUTDATED(19), 
-	DOC_UPCOMING_OUTDATED(20);
+public class MailContentLangRepositoryImpl extends
+		AbstractRepositoryImpl<MailContentLang> implements
+		MailContentLangRepository {
 
-	private int value;
-
-	private MailTemplateEnum(final int value) {
-		this.value = value;
+	public MailContentLangRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
 	}
 
-	public int toInt() {
-		return value;
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(MailContentLang entity) {
+		return DetachedCriteria.forClass(getPersistentClass()).add(
+				Restrictions.eq("id", entity.getId()));
 	}
 
-	public static MailTemplateEnum fromInt(final int value) {
-		for (MailTemplateEnum template : values()) {
-			if (template.value == value) {
-				return template;
-			}
-		}
-		throw new IllegalArgumentException("Doesn't match an existing MailTemplates");
+	@Override
+	public MailContent findMailContent(MailConfig cfg, Language lang,
+			MailContentType type) {
+		Disjunction and = Restrictions.disjunction();
+
+		and.add(Restrictions.eq("mailConfig", cfg));
+		and.add(Restrictions.eq("mailContentType", type));
+		and.add(Restrictions.eq("language", lang));
+		return DataAccessUtils.singleResult(findByCriteria(and))
+				.getMailContent();
 	}
 }

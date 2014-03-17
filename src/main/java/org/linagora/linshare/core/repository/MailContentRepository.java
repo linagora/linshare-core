@@ -43,12 +43,5 @@ import org.linagora.linshare.core.domain.entities.MailContentType;
 
 public interface MailContentRepository extends AbstractRepository<MailContent> {
 
-	public List<MailContent> findAllMailContent();
-
 	public MailContent findByUuid(String uuid);
-
-	public List<MailContent> findMailContent(AbstractDomain domain);
-
-	public MailContent getMailContent(AbstractDomain domain, Language lang,
-			MailContentType mailContentType);
 }

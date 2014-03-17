@@ -233,4 +233,5 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
     protected Session getCurrentSession() {
     	return hibernateTemplate.getSessionFactory().getCurrentSession();
     }
+
 }
