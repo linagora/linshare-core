@@ -31,35 +31,53 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities.temp;
+package org.linagora.linshare.webservice.dto;
 
-public abstract class AbstractDomainPattern {
-	/**
-	 * Database persistence identifier
-	 */
-	private long persistenceId;
+import java.util.List;
 
-	protected String identifier;
+import javax.xml.bind.annotation.XmlRootElement;
 
-	public AbstractDomainPattern(String identifier) {
-		super();
-		this.identifier = identifier;
+import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
+import org.linagora.linshare.core.domain.entities.DomainAccessRule;
+
+import com.google.common.collect.Lists;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
+@XmlRootElement(name = "DomainAccessPolicy")
+@ApiModel(value = "DomainAccessPolicy", description = "Access policy of a domain, defining it's communication rules")
+public class DomainAccessPolicyDto {
+
+	@ApiModelProperty(value = "Persistence id")
+	private Long id;
+
+	@ApiModelProperty(value = "Communication rules")
+	private List<DomainAccessRuleDto> rules;
+
+	public DomainAccessPolicyDto() {
+	}
+	
+	public DomainAccessPolicyDto(DomainAccessPolicy dap) {
+		this.id = dap.getPersistenceId();
+		this.rules = Lists.newArrayList();
+		for (DomainAccessRule rule : dap.getRules()) {
+			this.rules.add(new DomainAccessRuleDto(rule));
+		}
 	}
 
-	public long getPersistenceId() {
-		return persistenceId;
+	public Long getId() {
+		return id;
 	}
 
-	@SuppressWarnings("unused")
-	private void setPersistenceId(long persistenceId) {
-		this.persistenceId = persistenceId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public List<DomainAccessRuleDto> getRules() {
+		return rules;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setRules(List<DomainAccessRuleDto> rules) {
+		this.rules = rules;
 	}
 }

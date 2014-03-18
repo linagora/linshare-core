@@ -31,69 +31,83 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities.temp;
+package org.linagora.linshare.webservice.dto;
 
-import org.linagora.linshare.core.domain.entities.DomainPattern;
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public class LdapUserProvider extends UserProvider {
+import org.linagora.linshare.core.domain.entities.MailingListContact;
 
-	private LDAPConnection primaryLdapConnection;
-	
-	private LDAPConnection secondaryLdapConnection;
-	
-	private DomainPattern domainPattern;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-	private String baseDn;
-	
-	public LdapUserProvider(LDAPConnection primaryLdapConnection, LDAPConnection secondaryLdapConnection, DomainPattern domainPattern, String baseDn) {
-		super();
-		this.primaryLdapConnection = primaryLdapConnection;
-		this.secondaryLdapConnection = secondaryLdapConnection;
-		this.domainPattern = domainPattern;
-		this.baseDn = baseDn;
-	}
-	
-	public LdapUserProvider(LDAPConnection ldapConnection, DomainPattern domainPattern, String baseDn) {
-		super();
-		this.primaryLdapConnection = ldapConnection;
-		this.secondaryLdapConnection = null;
-		this.domainPattern = domainPattern;
-		this.baseDn = baseDn;
-	}
+@XmlRootElement(name = "MailingListContact")
+@ApiModel(value = "MailingListContact", description = "Mailing list contact")
+public class MailingListContactDto {
 
+	@ApiModelProperty(value = "Mail")
+	private String mail;
 
-	public LDAPConnection getPrimaryLdapConnection() {
-		return primaryLdapConnection;
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
+
+	@ApiModelProperty(value = "FirstName")
+	private String firstName;
+
+	@ApiModelProperty(value = "LastName")
+	private String lastName;
+
+	@ApiModelProperty(value = "MailingListUuid")
+	private String mailingListUuid;
+
+	public MailingListContactDto() {
 	}
 
-	public void setPrimaryLdapConnection(LDAPConnection primaryLdapConnection) {
-		this.primaryLdapConnection = primaryLdapConnection;
+	public MailingListContactDto(MailingListContact contact) {
+		this.mail = contact.getMail();
+		this.uuid = contact.getUuid();
+		this.lastName = contact.getLastName();
+		this.firstName = contact.getFirstName();
+		this.mailingListUuid = contact.getUuid();
 	}
 
-	public LDAPConnection getSecondaryLdapConnection() {
-		return secondaryLdapConnection;
+	public String getMail() {
+		return mail;
 	}
 
-	public void setSecondaryLdapConnection(LDAPConnection secondaryLdapConnection) {
-		this.secondaryLdapConnection = secondaryLdapConnection;
+	public void setMail(String mail) {
+		this.mail = mail;
 	}
 
-	public DomainPattern getDomainPattern() {
-		return domainPattern;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setDomainPattern(DomainPattern domainPattern) {
-		this.domainPattern = domainPattern;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
-	public String getBaseDn() {
-		return baseDn;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setBaseDn(String baseDn) {
-		this.baseDn = baseDn;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getMailingListUuid() {
+		return mailingListUuid;
+	}
+
+	public void setMailingListUuid(String mailingListUuid) {
+		this.mailingListUuid = mailingListUuid;
+	}
+
 }

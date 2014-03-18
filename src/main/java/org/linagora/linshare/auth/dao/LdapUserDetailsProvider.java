@@ -126,7 +126,10 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 
 		// looking in database for a user.
 		foundUser = internalRepository.findByLoginAndDomain(domainIdentifier, login);
-		if (foundUser == null) {
+		if (foundUser != null) {
+			foundUser = checkStillInLdap(login, foundUser);
+		}
+		else {
 			logger.debug("Can't find the user in the DB. Searching in LDAP.");
 			// searching in LDAP
 			foundUser = userProviderService.searchForAuth(
@@ -172,12 +175,7 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 					"Could not authenticate user: " + login);
 		}
 		if (foundUser != null) {
-			// The user was found in the database, we just need to auth against
-			// LDAP.
-			logger.debug("User found in DB : "
-					+ foundUser.getAccountReprentation());
-			logger.debug("The user domain stored in DB was : "
-					+ foundUser.getDomainId());
+			foundUser = checkStillInLdap(login, foundUser);
 		} else {
 			logger.debug("Can't find the user in DB. Searching user in all LDAP domains.");
 			List<AbstractDomain> domains = authentificationFacade
@@ -205,6 +203,22 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 					+ foundUser.getDomainId() + ")");
 		}
 
+		return foundUser;
+	}
+
+	private User checkStillInLdap(String login, User foundUser) throws BusinessException {
+		// The user was found in the database, we just need to test if he still exists in the LDAP directory
+		logger.debug("User found in DB : "
+				+ foundUser.getAccountReprentation());
+		logger.debug("The user domain stored in DB was : "
+				+ foundUser.getDomainId());
+		if(userProviderService.searchForAuth(
+				foundUser.getDomain().getUserProvider(), login) == null) {
+			// The previous user found into the database does not exists anymore into the LDAP directory.
+			// We must not use him.
+			logger.warn("authentication process : the current user does not exist anymore into the LDAP directory : " + foundUser.getAccountReprentation());
+			foundUser = null;
+		}
 		return foundUser;
 	}
 

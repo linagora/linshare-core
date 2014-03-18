@@ -31,10 +31,28 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities.temp;
 
-public class LdapContactProvider extends ContactProvider{
+package org.linagora.linshare.core.facade.webservice.admin;
 
-	public LdapContactProvider() {
-	}
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.MailingListContactDto;
+import org.linagora.linshare.webservice.dto.MailingListDto;
+import org.linagora.linshare.webservice.dto.ThreadMemberDto;
+
+import java.util.List;
+
+public interface MailingListFacade extends AdminGenericFacade {
+
+	public List<MailingListDto> getAll();
+
+	public MailingListDto get(String uuid) throws BusinessException;
+
+	public void create(MailingListDto dto) throws BusinessException;
+
+	public void delete(String uuid) throws BusinessException;
+
+	public void addContact(String listUuid, MailingListContactDto dto)
+			throws BusinessException;
+
+	public void deleteContact(String uuid) throws BusinessException;
 }

@@ -37,17 +37,28 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @XmlRootElement(name = "DomainPolicy")
+@ApiModel(value = "DomainPolicy", description = "Policy of a domain, defining the access policy of the domain")
 public class DomainPolicyDto {
 
+	@ApiModelProperty(value = "Identifier")
 	private String identifier;
+
+	@ApiModelProperty(value = "Description")
 	private String description;
-	
-	public DomainPolicyDto(final DomainPolicy domainPolicy) {
-		this.identifier = domainPolicy.getIdentifier();
-		this.description = domainPolicy.getDescription();
+
+	@ApiModelProperty(value = "Access policy of the domain")
+	private DomainAccessPolicyDto accessPolicy;
+
+	public DomainPolicyDto(final DomainPolicy p) {
+		this.identifier = p.getIdentifier();
+		this.description = p.getDescription();
+		this.accessPolicy = new DomainAccessPolicyDto(p.getDomainAccessPolicy());
 	}
-	
+
 	public DomainPolicyDto() {
 		super();
 	}
@@ -66,5 +77,13 @@ public class DomainPolicyDto {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public DomainAccessPolicyDto getAccessPolicy() {
+		return accessPolicy;
+	}
+
+	public void setAccessPolicy(DomainAccessPolicyDto domainAccessPolicy) {
+		this.accessPolicy = domainAccessPolicy;
 	}
 }

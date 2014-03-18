@@ -46,6 +46,7 @@ import org.linagora.linshare.core.repository.RootUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
 import org.springframework.util.Assert;
 
@@ -116,8 +117,13 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 
 		if (foundUser == null) {
 			logger.debug("looking into ldap.");
-			foundUser = userDetailsProvider.retrieveUser(domainIdentifier,
-					authenticationHeader);
+			try {
+				foundUser = userDetailsProvider.retrieveUser(domainIdentifier,
+						authenticationHeader);
+			} catch (UsernameNotFoundException e) {
+				logger.error(e.getMessage());
+				foundUser = null;
+			}
 		}
 		if (foundUser != null) {
 			try {

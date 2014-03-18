@@ -33,12 +33,20 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Calendar;
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.LogEntry;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.LogEntryRepository;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 public class LogEntryServiceImpl implements LogEntryService {
 
@@ -46,9 +54,13 @@ public class LogEntryServiceImpl implements LogEntryService {
 
 	private final LogEntryRepository logEntryRepository;
 
-	public LogEntryServiceImpl(LogEntryRepository logEntryRepository) {
+	private final AbstractDomainService abstractDomainService;
+
+	public LogEntryServiceImpl(final LogEntryRepository logEntryRepository,
+			final AbstractDomainService abstractDomainService) {
 		super();
 		this.logEntryRepository = logEntryRepository;
+		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
@@ -76,5 +88,27 @@ public class LogEntryServiceImpl implements LogEntryService {
 	public LogEntry create(LogEntry entity) throws IllegalArgumentException,
 			BusinessException {
 		return create(INFO, entity);
+	}
+
+	@Override
+	public List<LogEntry> findByCriteria(User actor, LogCriteriaBean criteria) {
+		List<LogEntry> list = Lists.newArrayList();
+
+		List<String> allMyDomainIdentifiers = abstractDomainService
+				.getAllMyDomainIdentifiers(actor.getDomain().getIdentifier());
+		for (String domain : allMyDomainIdentifiers) {
+			list.addAll(logEntryRepository.findByCriteria(criteria, domain));
+		}
+		return list;
+	}
+
+	@Override
+	public List<LogEntry> findByUser(String mail) {
+		return logEntryRepository.findByUser(mail);
+	}
+
+	@Override
+	public List<LogEntry> findByDate(String mail, Calendar begin, Calendar end) {
+		return logEntryRepository.findByDate(mail, begin, end);
 	}
 }

@@ -150,6 +150,7 @@ public class DomainPatternVo {
 		return identifier;
 	}
 
+	@Validate("required")
 	public String getPatternDescription() {
 		return patternDescription;
 	}

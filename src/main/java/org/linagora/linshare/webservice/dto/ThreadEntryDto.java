@@ -40,17 +40,37 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @XmlRootElement(name = "ThreadEntry")
+@ApiModel(value = "ThreadEntry", description = "A file in a thread.")
 public class ThreadEntryDto {
 
+    @ApiModelProperty(value = "Uuid")
 	protected String uuid;
+
+    @ApiModelProperty(value = "Name")
 	protected String name;
+
+    @ApiModelProperty(value = "Description")
 	protected String description;
+
+    @ApiModelProperty(value = "CreationDate")
 	protected Calendar creationDate;
+
+    @ApiModelProperty(value = "ModificationDate")
 	protected Calendar modificationDate;
+
+    @ApiModelProperty(value = "Ciphered")
 	protected Boolean ciphered;
+
+    @ApiModelProperty(value = "Type")
 	protected String type;
+
+    @ApiModelProperty(value = "Size")
 	protected Long size;
+
 
 	public ThreadEntryDto(ThreadEntry te) {
 		super();

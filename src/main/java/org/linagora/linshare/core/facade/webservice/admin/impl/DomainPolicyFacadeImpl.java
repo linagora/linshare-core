@@ -44,23 +44,50 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
-public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements DomainPolicyFacade {
+public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
+		DomainPolicyFacade {
 
 	private final DomainPolicyService domainPolicyService;
-	
 
-	public DomainPolicyFacadeImpl(final AccountService accountService, final DomainPolicyService domainPolicyService) {
+	public DomainPolicyFacadeImpl(final AccountService accountService,
+			final DomainPolicyService domainPolicyService) {
 		super(accountService);
 		this.domainPolicyService = domainPolicyService;
 	}
 
 	@Override
-	public List<DomainPolicyDto> getDomainPolicies() throws BusinessException {
+	public DomainPolicyDto get(String identifier) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		ArrayList<DomainPolicyDto> domainPolicies = new ArrayList<DomainPolicyDto>();
-		for (DomainPolicy domainPolicy : domainPolicyService.findAllDomainPolicy()) {
-			domainPolicies.add(new DomainPolicyDto(domainPolicy));
-		}
-		return domainPolicies;
+		return new DomainPolicyDto(domainPolicyService.retrieveDomainPolicy(identifier));
+	}
+
+	@Override
+	public List<DomainPolicyDto> getAll() throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+        ArrayList<DomainPolicyDto> domainPolicies = new ArrayList<DomainPolicyDto>();
+        for (DomainPolicy domainPolicy : domainPolicyService.findAllDomainPolicy()) {
+            domainPolicies.add(new DomainPolicyDto(domainPolicy));
+        }
+        return domainPolicies;
+    }
+
+	@Override
+	public void create(DomainPolicyDto policy) throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+		domainPolicyService.createDomainPolicy(domainPolicyService.transform(policy));
+	}
+
+	@Override
+	public void update(DomainPolicyDto policy)
+			throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+		domainPolicyService.updateDomainPolicy(domainPolicyService.transform(policy));
+	}
+
+	@Override
+	public void delete(String identifier)
+			throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+		domainPolicyService.deletePolicy(identifier);
 	}
 }

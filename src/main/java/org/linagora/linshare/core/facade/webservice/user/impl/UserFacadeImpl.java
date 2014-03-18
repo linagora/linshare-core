@@ -73,7 +73,7 @@ public class UserFacadeImpl extends GenericFacadeImpl
 				.getUserTabFunctionality(user.getDomain());
 		if (!functionality.getActivationPolicy().getStatus()) {
 			throw new BusinessException(
-					BusinessErrorCode.WEBSERVICE_UNAUTHORIZED,
+					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		}
 		return user;

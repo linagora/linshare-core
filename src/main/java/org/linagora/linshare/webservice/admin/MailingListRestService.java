@@ -31,7 +31,30 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities.temp;
 
-public abstract class ContactProvider extends AbstractProvider {
+package org.linagora.linshare.webservice.admin;
+
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.MailingListContactDto;
+import org.linagora.linshare.webservice.dto.MailingListDto;
+import org.linagora.linshare.webservice.dto.ThreadMemberDto;
+
+import javax.ws.rs.Path;
+
+import java.util.List;
+
+public interface MailingListRestService {
+
+	public List<MailingListDto> getAll() throws BusinessException;
+
+	public MailingListDto get(String uuid) throws BusinessException;
+
+	public void create(MailingListDto dto) throws BusinessException;
+
+	public void delete(String uuid) throws BusinessException;
+
+	public void createContact(String uuid, MailingListContactDto dto)
+			throws BusinessException;
+
+	public void deleteContact(String uuid) throws BusinessException;
 }

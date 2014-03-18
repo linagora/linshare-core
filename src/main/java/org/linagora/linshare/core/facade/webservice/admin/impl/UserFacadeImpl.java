@@ -46,10 +46,13 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		UserFacade {
@@ -59,10 +62,14 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final UserService userService;
 
+	private final InconsistentUserService inconsistentUserService;
+
 	public UserFacadeImpl(final AccountService accountService,
-			final UserService userService) {
+			final UserService userService,
+			final InconsistentUserService inconsistentUserService) {
 		super(accountService);
 		this.userService = userService;
+		this.inconsistentUserService = inconsistentUserService;
 	}
 
 	@Override
@@ -128,5 +135,25 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		} else {
 			return new Internal(userDto);
 		}
+	}
+
+	@Override
+	public Set<UserDto> getAllInconsistent() throws BusinessException {
+		User actor = super.checkAuthentication();
+		Set<UserDto> ret = Sets.newHashSet();
+
+		for (User user : inconsistentUserService.findAll(actor)) {
+			ret.add(UserDto.getFull(user));
+		}
+		return ret;
+	}
+
+	@Override
+	public void updateInconsistentUser(UserDto userDto)
+			throws BusinessException {
+		User actor = super.checkAuthentication();
+
+		inconsistentUserService.updateDomain(actor, userDto.getUuid(),
+				userDto.getDomain());
 	}
 }

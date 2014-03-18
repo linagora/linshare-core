@@ -14,7 +14,7 @@ set -e
 g_main_function=$1
 g_set_current_revision=0
 #[ -z "${2}" ] && g_set_current_revision=1
-g_branch_or_tag="${2:-HEAD}"
+g_branch_or_tag="$(git rev-parse --abbrev-ref HEAD)"
 
 
 
@@ -88,15 +88,6 @@ function distribute_war ()
 
 function init_context () 
 {
-	if [ "${g_branch_or_tag}" != "HEAD" ] ; then
-		if [ $(git tag -l  ${g_branch_or_tag} |wc -l) -eq 0 ] ; then
-			echo "Wrong tag !"
-			exit 1
-		fi
-	fi
-
-	git checkout -b ${g_branch_or_tag}  ${g_branch_or_tag}  || true
-	git checkout ${g_branch_or_tag} ||true
 	g_revision=$(git log -n 1 |grep ^commit| cut -d' ' -f2)
 	g_version=`grep -E "<version>(.*)</version>" pom.xml -o|head -n1|sed -r 's/<version>(.*)<\/version>/\1/g'`
 	### Initialisation du workspace.
@@ -185,7 +176,7 @@ usage()
 {
 	echo
 	echo "Usage : $g_main_function is not a valid function : possible choices are : classic , installer , cas , sso , source, all"
-	echo " command target [branch_or_tag]"
+	echo " command target"
 	exit 0
 }
 

@@ -43,11 +43,13 @@ import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.webservice.dto.DomainDto;
 
@@ -58,19 +60,33 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 	
 	private final UserProviderService userProviderService;
 
+	private final DomainPolicyService domainPolicyService;
+
 	public DomainFacadeImpl(final AccountService accountService,
 			final AbstractDomainService abstractDomainService,
-			final UserProviderService userProviderService) {
+			final UserProviderService userProviderService,
+			final DomainPolicyService domainPolicyService) {
 		super(accountService);
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
+		this.domainPolicyService = domainPolicyService;
 	}
 
 	@Override
 	public DomainDto getDomains() throws BusinessException {
 		checkAuthentication(Role.ADMIN);
 		RootDomain rootDomain = abstractDomainService.getUniqueRootDomain();
-		return new DomainDto(rootDomain);
+		return DomainDto.getFull(rootDomain);
+	}
+
+	@Override
+	public DomainDto getDomainAndChildren(String domain) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
+		AbstractDomain entity = abstractDomainService.retrieveDomain(domain);
+		if(entity == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "the curent domain was not found : " + domain);
+		}
+		return DomainDto.getFull(entity);
 	}
 
 	@Override
@@ -104,12 +120,13 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 		checkAuthentication(Role.SUPERADMIN);
 		abstractDomainService.deleteDomain(domainDto.getIdentifier());
 	}
-	
+
 	private AbstractDomain getDomain(DomainDto domainDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		DomainType domainType = DomainType.valueOf(domainDto.getType());
 		AbstractDomain parent = abstractDomainService.retrieveDomain(domainDto.getParent());
 		AbstractDomain domain = domainType.getDomain(domainDto, parent);
+		domain.setPolicy(domainPolicyService.transform(domainDto.getPolicy()));
 		if (!domainDto.getProviders().isEmpty()) {
 			String baseDn = domainDto.getProviders().get(0).getBaseDn();
 			String domainPatternId = domainDto.getProviders().get(0).getDomainPatternId();

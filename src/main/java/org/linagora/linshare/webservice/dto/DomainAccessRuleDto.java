@@ -31,11 +31,56 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.webservice.dto;
 
-package org.linagora.linshare.core.domain.entities.temp;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public class LdapThreadProvider extends ThreadProvider {
+import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
+import org.linagora.linshare.core.domain.entities.AllowDomain;
+import org.linagora.linshare.core.domain.entities.DenyDomain;
+import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 
-	public LdapThreadProvider() {
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
+@XmlRootElement(name = "DomainAccessRule")
+@ApiModel(value = "DomainAccessRule", description = "Access rule of a domain")
+public class DomainAccessRuleDto {
+
+	@ApiModelProperty(value = "Access rule type")
+	private DomainAccessRuleType type;
+
+	@ApiModelProperty(value = "Domain being allowed / denied")
+	private DomainDto domain;
+
+	public DomainAccessRuleDto() {
+	}
+
+	public DomainAccessRuleDto(DomainAccessRule rule) {
+		this.type = rule.getDomainAccessRuleType();
+		switch (type) {
+		case ALLOW:
+			this.domain = DomainDto.getFull(((AllowDomain) rule).getDomain());
+			break;
+		case DENY:
+			this.domain = DomainDto.getFull(((DenyDomain) rule).getDomain());
+			break;
+		}
+	}
+
+	public DomainAccessRuleType getType() {
+		return type;
+	}
+
+	public void setType(DomainAccessRuleType type) {
+		this.type = type;
+	}
+
+	public DomainDto getDomain() {
+		return domain;
+	}
+
+	public void setDomain(DomainDto domain) {
+		this.domain = domain;
 	}
 }

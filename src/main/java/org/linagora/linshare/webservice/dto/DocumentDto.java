@@ -40,18 +40,40 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @XmlRootElement(name = "Document")
+@ApiModel(value = "Domain", description = "A Document")
 public class DocumentDto {
 
+    @ApiModelProperty(value = "Uuid")
 	protected String uuid;
+
+    @ApiModelProperty(value = "Name")
 	protected String name;
+
+    @ApiModelProperty(value = "Description")
 	protected String description;
+
+    @ApiModelProperty(value = "CreationDate")
 	protected Calendar creationDate;
+
+    @ApiModelProperty(value = "ModificationDate")
 	protected Calendar modificationDate;
+
+    @ApiModelProperty(value = "ExpirationDate")
 	protected Calendar expirationDate;
+
+    @ApiModelProperty(value = "Ciphered")
 	protected Boolean ciphered;
+
+    @ApiModelProperty(value = "Type")
 	protected String type;
+
+    @ApiModelProperty(value = "Size")
 	protected Long size;
+
 
 	public DocumentDto(DocumentEntry de) {
 		if (de == null)

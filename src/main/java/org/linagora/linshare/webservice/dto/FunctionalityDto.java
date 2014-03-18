@@ -42,20 +42,35 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.entities.Functionality;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 // This field is added to the JSON object by the angular interface for internationalization. 
 @JsonIgnoreProperties({"name"})
 @XmlRootElement(name = "Functionality")
+@ApiModel(value = "Functionality", description = "Functionalities are used to configure the application")
 public class FunctionalityDto {
 
+    @ApiModelProperty(value = "Identifier")
 	protected String identifier;
-	@XmlTransient private String name;
-	
+
+	@XmlTransient
+    @ApiModelProperty(value = "Name")
+    private String name;
+
+    @ApiModelProperty(value = "Domain")
 	protected String domain;
+
+    @ApiModelProperty(value = "Type")
 	protected String type;
 
+    @ApiModelProperty(value = "ActivationPolicy")
 	protected PolicyDto activationPolicy;
+
+    @ApiModelProperty(value = "ConfigurationPolicy")
 	protected PolicyDto configurationPolicy;
-	
+
+    @ApiModelProperty(value = "Parameters")
 	protected List<ParameterDto> parameters;
 
 	public FunctionalityDto() {

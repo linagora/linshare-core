@@ -101,8 +101,6 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	this.documentEntryBusinessService = documentEntryBusinessService;
 }
 
-
-
 	@Override
 	public ShareEntry createShare(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate) throws BusinessException {
 		
@@ -115,10 +113,9 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			updateGuestExpirationDate(recipient, sender);
 		}
 		
-	    logEntryService.create(new ShareLogEntry(sender, createShare, LogAction.FILE_SHARE, "Sharing of a file"));
-	    logEntryService.create(new ShareLogEntry(
-	    		recipient, LogAction.SHARE_RECEIVED, "Reveicing a shared file", createShare, sender));
-	    
+		logEntryService.create(new ShareLogEntry(sender, createShare, LogAction.FILE_SHARE, "Sharing of a file"));
+		logEntryService.create(new ShareLogEntry(
+				recipient, LogAction.SHARE_RECEIVED, "Receiving a shared file", createShare, sender));
 		return createShare;
 	}
 
@@ -203,11 +200,9 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	public void deleteShare(SystemAccount actor, ShareEntry share) throws BusinessException {
 		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin() || actor.isTechnicalAccount()) {
 			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Delete a sharing");
-	        logEntryService.create(logEntry);
-	        
-	        logger.info("delete share : " + share.getUuid());
-	        shareEntryBusinessService.deleteShare(share);
-	        
+			logEntryService.create(logEntry);
+			logger.info("delete share : " + share.getUuid());
+			shareEntryBusinessService.deleteShare(share);
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + share.getUuid());
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this share, it does not belong to you.");
@@ -228,31 +223,30 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	
 	@Override
 	public DocumentEntry copyDocumentFromShare(String shareUuid, User actor) throws BusinessException {
-		
+
 		ShareEntry share = shareEntryBusinessService.findByUuid(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
 		}
-		
+
 		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor)) {
 			 //log the copy
-			ShareLogEntry logEntryShare = new ShareLogEntry(actor, share, LogAction.SHARE_COPY, "Copy of a sharing");
+			ShareLogEntry logEntryShare = ShareLogEntry.hasCopiedAShare(actor, share);
 			logEntryService.create(logEntryShare);
-			
+
 			DocumentEntry newDocumentEntry = documentEntryService.duplicateDocumentEntry(actor, share.getDocumentEntry().getUuid());
-			
+
 			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Remove a received sharing (Copy of a sharing)"); 
-	        logEntryService.create(logEntry);
-	        
-	        logger.info("delete share : " + share.getUuid());
-	        
-	        if (share.getDownloaded() < 1) {
-	        	notifierService.sendAllNotification(mailContentBuildingService.buildMailRegisteredDownloadWithOneRecipient(share));
-	        }
-	        shareEntryBusinessService.deleteShare(share);
-	        
-	        return newDocumentEntry;
+			logEntryService.create(logEntry);
+			logger.info("delete share : " + share.getUuid());
+
+			if (share.getDownloaded() < 1) {
+				notifierService.sendAllNotification(mailContentBuildingService.buildMailRegisteredDownloadWithOneRecipient(share));
+			}
+			shareEntryBusinessService.deleteShare(share);
+
+			return newDocumentEntry;
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to copy this share, it does not belong to you.");
@@ -333,8 +327,8 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			if (!shareEntry.getRecipient().equals(actor)) {
 				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this share.");
 			}
-			ShareLogEntry logEntryActor = new ShareLogEntry(actor, LogAction.SHARE_DOWNLOAD, "Download of a sharing", shareEntry, shareEntry.getEntryOwner());
-			ShareLogEntry logEntryTarget = new ShareLogEntry(shareEntry.getEntryOwner(), LogAction.SHARE_DOWNLOADED, "Sharing donwloaded by " + actor.getMail(), shareEntry, actor);
+			ShareLogEntry logEntryActor = ShareLogEntry.hasDownloadedAShare(actor, shareEntry);
+			ShareLogEntry logEntryTarget = ShareLogEntry.aShareWasDownloaded(actor, shareEntry);
 			logEntryService.create(logEntryActor);
 			logEntryService.create(logEntryTarget);
 			shareEntryBusinessService.addDownload(shareEntry);

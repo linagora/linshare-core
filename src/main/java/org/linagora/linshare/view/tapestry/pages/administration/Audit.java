@@ -147,7 +147,7 @@ public class Audit {
 	/**
 	 * the list of traces matching the request
 	 */
-	@Persist("flash")
+	@Persist
 	@Property
 	private List<DisplayableLogEntryVo> logEntries;
 	

@@ -23,8 +23,8 @@
 		<constructor-arg ref="wsThreadFacade" />
 		<constructor-arg ref="wsUserFacade" />
 	</bean>
-	
-	<bean id="MTOMUploadSoapService" class="org.linagora.linshare.webservice.impl.MTOMUploadSoapServiceImpl">
+
+    <bean id="MTOMUploadSoapService" class="org.linagora.linshare.webservice.impl.MTOMUploadSoapServiceImpl">
 		<constructor-arg ref="wsDocumentFacade" />
 	</bean>
 
@@ -49,13 +49,13 @@
 
 
 	<!-- REST  -->
-	
+
 	<!-- Compatibility thunderbird -->
 	<bean id="pluginCompatibilityRestService" class="org.linagora.linshare.webservice.impl.PluginCompatibilityRestServiceImpl">
 		<constructor-arg ref="wsShareFacade" />
 		<constructor-arg ref="wsDocumentFacade" />
 	</bean>
-	
+
 	<bean id="authenticationRestService" class="org.linagora.linshare.webservice.user.impl.AuthenticationRestServiceImpl">
 		<constructor-arg ref="wsUserFacade" />
 	</bean>
@@ -80,7 +80,11 @@
 	<bean id="userRestService" class="org.linagora.linshare.webservice.user.impl.UserRestServiceImpl">
 		<constructor-arg ref="wsUserFacade" />
 	</bean>
-	
+
+	<bean id="logRestService" class="org.linagora.linshare.webservice.user.impl.LogRestServiceImpl">
+		<constructor-arg ref="wsLogEntryFacade" />
+	</bean>
+
 	<jaxrs:server id="restContainer" address="/rest">
 		<jaxrs:serviceBeans>
 			<ref bean="authenticationRestService" />
@@ -90,6 +94,7 @@
 			<ref bean="threadRestService" />
 			<ref bean="threadMemberRestService" />
 			<ref bean="userRestService" />
+			<ref bean="logRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

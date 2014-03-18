@@ -38,40 +38,50 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @XmlRootElement(name = "Parameter")
+@ApiModel(value = "Parameter", description = "Parameters used by functionalities")
 public class ParameterDto {
-	
+
+    @ApiModelProperty(value = "Integer")
 	private int integer;
-	
+
+    @ApiModelProperty(value = "String")
 	private String string;
-	
+
+    @ApiModelProperty(value = "Type")
 	private String type;
-	
+
+    @ApiModelProperty(value = "Bool")
 	private boolean bool;
-	
+
+    @ApiModelProperty(value = "Select")
 	private List<String> select;
-	
+
+
 	public ParameterDto() {
 		super();
 	}
-	
+
 	public ParameterDto(String s) {
 		this.string = s;
 		this.type = "STRING";
 	}
-	
+
 	public ParameterDto(int i) {
 		this.integer = i;
 		this.type = "INTEGER";
 	}
-	
+
 	public ParameterDto(String type, List<String> listUnit, String unit, int integer) {
 		this.string = unit;
 		this.integer = integer;
 		this.type = type;
 		this.select = new ArrayList<String>(listUnit);
 	}
-	
+
 	public ParameterDto(boolean bool) {
 		this.type = "BOOLEAN";
 		this.bool = bool;

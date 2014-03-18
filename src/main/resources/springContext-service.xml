@@ -16,7 +16,8 @@
 	</bean>
 
 	<bean id="logEntryService" class="org.linagora.linshare.core.service.impl.LogEntryServiceImpl">
-		<constructor-arg index="0" ref="logEntryRepository" />
+		<constructor-arg ref="logEntryRepository" />
+		<constructor-arg ref="abstractDomainService" />
 	</bean>
 
 	<bean name="passwordService" class="org.linagora.linshare.core.service.impl.PasswordServiceImpl">
@@ -49,6 +50,11 @@
 		<constructor-arg ref="passwordService" />
 		<constructor-arg ref="entryService" />
 		<constructor-arg ref="threadService" />
+	</bean>
+
+	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">
+		<constructor-arg ref="internalRepository" />
+		<constructor-arg ref="abstractDomainService" />
 	</bean>
 
 	<bean id="antiSamyService" class="org.linagora.linshare.core.service.impl.AntiSamyServiceImpl">
@@ -207,6 +213,7 @@
 	<bean name="domainPolicyService" class="org.linagora.linshare.core.service.impl.DomainPolicyServiceImpl">
 		<constructor-arg ref="domainPolicyBusinessService" />
 		<constructor-arg ref="domainAccessPolicyBusinessService" />
+		<constructor-arg ref="domainBusinessService" />
 	</bean>
 
 	<bean name="abstractDomainService" class="org.linagora.linshare.core.service.impl.AbstractDomainServiceImpl">
@@ -216,6 +223,7 @@
 		<constructor-arg ref="userProviderService" />
 		<constructor-arg ref="messagesRepository" />
 		<constructor-arg ref="userRepository" />
+		<constructor-arg ref="domainBusinessService" />
 	</bean>
 
 	<bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">

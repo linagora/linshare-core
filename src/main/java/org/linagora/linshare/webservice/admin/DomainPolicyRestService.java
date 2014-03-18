@@ -40,8 +40,15 @@ import javax.ws.rs.Path;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
-@Path("/domain_policies")
 public interface DomainPolicyRestService {
 
-	List<DomainPolicyDto> getDomainPolicies() throws BusinessException;
+	List<DomainPolicyDto> getAll() throws BusinessException;
+
+	DomainPolicyDto get(String identifier) throws BusinessException;
+
+	void create(DomainPolicyDto policy) throws BusinessException;
+
+	void update(DomainPolicyDto policy) throws BusinessException;
+
+	void delete(String identifier) throws BusinessException;
 }

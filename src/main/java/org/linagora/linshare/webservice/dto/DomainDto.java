@@ -40,37 +40,63 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.User;
+
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 // we need to ignore route property. It was added my Restangular (Javascript IHM)
 @JsonIgnoreProperties({"route"})
 @XmlRootElement(name = "Domain")
+@ApiModel(value = "Domain", description = "A domain contains ")
 public class DomainDto {
 
+	@ApiModelProperty(value = "Identifier")
 	private String identifier;
+
+	@ApiModelProperty(value = "Label")
 	private String label;
+
+	@ApiModelProperty(value = "Description")
 	private String description = "";
+
+	@ApiModelProperty(value = "Type")
 	private String type;
+
+	@ApiModelProperty(value = "UserRole")
 	private String userRole;
+
+	@ApiModelProperty(value = "Locale")
 	private String locale;
+
+	@ApiModelProperty(value = "Policy")
 	private DomainPolicyDto policy;
+
+	@ApiModelProperty(value = "Providers")
 	private List<LDAPUserProviderDto> providers = new ArrayList<LDAPUserProviderDto>();
+
+	@ApiModelProperty(value = "Children")
 	private List<DomainDto> children = new ArrayList<DomainDto>();
+
+	@ApiModelProperty(value = "Parent")
 	private String parent = "";
 
-	public DomainDto(final AbstractDomain domain) {
+	protected DomainDto(final AbstractDomain domain, boolean light) {
 		this.identifier = domain.getIdentifier();
 		this.label = domain.getLabel();
 		this.description = domain.getDescription();
 		this.locale = domain.getDefaultLocale();
 		this.type = domain.getDomainType().toString();
 		this.userRole = domain.getDefaultRole().toString();
-		this.policy = new DomainPolicyDto(domain.getPolicy());
-		if (domain.getUserProvider() != null) {
-			this.providers
-					.add(new LDAPUserProviderDto(domain.getUserProvider()));
+		if (!light) {
+			this.policy = new DomainPolicyDto(domain.getPolicy());
+			if (domain.getUserProvider() != null) {
+				this.providers
+				.add(new LDAPUserProviderDto(domain.getUserProvider()));
+			}
 		}
 		for (AbstractDomain child : domain.getSubdomain()) {
-			DomainDto childDto = new DomainDto(child);
+			DomainDto childDto = new DomainDto(child, light);
 			this.children.add(childDto);
 			childDto.parent = this.identifier;
 		}
@@ -78,6 +104,14 @@ public class DomainDto {
 
 	public DomainDto() {
 		super();
+	}
+
+	public static DomainDto getSimple(final AbstractDomain domain) {
+		return new DomainDto(domain, true);
+	}
+
+	public static DomainDto getFull(final AbstractDomain domain) {
+		return new DomainDto(domain, false);
 	}
 
 	public String getIdentifier() {

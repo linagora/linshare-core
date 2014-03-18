@@ -9,6 +9,10 @@
 	default-autowire="no">
 
 
+	<bean id="domainBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainBusinessServiceImpl">
+		<constructor-arg ref="abstractDomainRepository" />
+    </bean>
+
 	<bean id="documentEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.DocumentEntryBusinessServiceImpl">
 		<constructor-arg ref="jackRabbitRepository" />
 		<constructor-arg ref="timeStampingService" />
