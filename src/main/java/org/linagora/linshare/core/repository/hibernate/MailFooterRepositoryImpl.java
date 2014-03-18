@@ -84,12 +84,6 @@ public class MailFooterRepositoryImpl extends
 	}
 
 	@Override
-	public MailFooter update(MailFooter entity) throws BusinessException {
-		entity.setModificationDate(new Date());
-		return super.update(entity);
-	}
-
-	@Override
 	public List<MailFooter> findAllMailFooter() {
 		return super.findAll();
 	}

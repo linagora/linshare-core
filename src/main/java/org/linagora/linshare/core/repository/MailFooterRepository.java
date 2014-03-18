@@ -39,7 +39,6 @@ import org.linagora.linshare.core.domain.entities.MailFooter;
 
 public interface MailFooterRepository extends AbstractRepository<MailFooter> {
 
-
 	public List<MailFooter> findAllMailFooter();
 
 	public MailFooter findByUuid(String uuid);

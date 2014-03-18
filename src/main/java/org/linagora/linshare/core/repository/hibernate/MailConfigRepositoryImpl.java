@@ -75,10 +75,4 @@ public class MailConfigRepositoryImpl extends
 		entity.setUuid(UUID.randomUUID().toString());
 		return super.create(entity);
 	}
-
-	@Override
-	public MailConfig update(MailConfig entity) throws BusinessException {
-		return super.update(entity);
-	}
-
 }
