@@ -285,7 +285,7 @@ public class JScriptLdapQuery {
 
 		// ldapContext ldapCtx, String base, String filter, int scope)
 		SearchControls scs = new SearchControls();
-		scs.setSearchScope(SearchControls.SUBTREE_SCOPE);
+		scs.setSearchScope(SearchControls.OBJECT_SCOPE);
 
 		// Attributes to retrieve from ldap.
 		logger.debug("ldap attributes to retrieve : " + ldapAttrList.toString());
