@@ -52,7 +52,7 @@ public class LdapServer {
 	private static String DIRECTORY_REAL_ROOT = "dc=linpki,dc=org";
 	
 	public void start() throws Exception {
-		LOGGER.info("Starting embedded OpenDS directory");
+		LOGGER.info("Starting embedded OpenDJ directory");
 		EmbeddedOpenDJ.startServer();
 		EmbeddedOpenDJ.initializeTestBackend(false, DIRECTORY_REAL_ROOT );
 		Backend backend = DirectoryServer.getBackend(DN.decode(DIRECTORY_REAL_ROOT));
@@ -63,7 +63,7 @@ public class LdapServer {
 			EmbeddedOpenDJ.importLdif(EmbeddedOpenDJ.class.getResource("test.ldif").toURI().getPath());
 			LOGGER.info("LDIF sample content loaded successfully");
 		}
-		LOGGER.info("Embedded OpenDS directory started");
+		LOGGER.info("Embedded OpenDJ directory started");
 	}
 	
 	public void stop() {
