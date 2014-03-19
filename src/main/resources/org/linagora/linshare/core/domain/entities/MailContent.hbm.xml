@@ -19,6 +19,8 @@ License Type: Purchased
 		<property name="subject" column="subject" type="text" not-null="true" lazy="false"/>
 		<property name="greetings" column="greetings" type="text" not-null="true" lazy="false"/>
 		<property name="body" column="body" type="text" not-null="true" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="date" not-null="true" lazy="false"/>
+		<property name="modificationDate" column="modification_date" type="date" not-null="true" lazy="false"/>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="plaintext" column="plaintext" type="boolean" not-null="true" lazy="false"/>
 		<set name="mailConfiguration" lazy="true" cascade="save-update,lock" inverse="true">

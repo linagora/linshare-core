@@ -33,11 +33,11 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailContentRepository;
@@ -53,21 +53,28 @@ public class MailContentRepositoryImpl extends
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(MailContent entry) {
-		DetachedCriteria det = DetachedCriteria.forClass(MailConfig.class);
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.eq("uuid", entry.getUuid()));
 		return det;
 	}
 
 	@Override
 	public MailContent findByUuid(String uuid) {
-		DetachedCriteria det = DetachedCriteria.forClass(MailContent.class);
-		det.add(Restrictions.eq("uuid", uuid));
-		return DataAccessUtils.singleResult(findByCriteria(det));
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"uuid", uuid)));
 	}
 
 	@Override
 	public MailContent create(MailContent entity) throws BusinessException {
 		entity.setUuid(UUID.randomUUID().toString());
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
 		return super.create(entity);
+	}
+
+	@Override
+	public MailContent update(MailContent entity) throws BusinessException {
+		entity.setModificationDate(new Date());
+		return super.update(entity);
 	}
 }

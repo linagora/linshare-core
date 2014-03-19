@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -56,6 +57,10 @@ public class MailContent {
 	private String greetings;
 
 	private String body;
+
+	private Date creationDate;
+
+	private Date modificationDate;
 
 	private String uuid;
 
@@ -136,6 +141,22 @@ public class MailContent {
 
 	public String getBody() {
 		return body;
+	}
+
+	public void setCreationDate(Date value) {
+		this.creationDate = value;
+	}
+
+	public java.util.Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setModificationDate(Date value) {
+		this.modificationDate = value;
+	}
+
+	public java.util.Date getModificationDate() {
+		return modificationDate;
 	}
 
 	public void setUuid(String value) {

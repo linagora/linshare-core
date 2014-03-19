@@ -13,9 +13,9 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+
 public class MailFooter {
-	public MailFooter() {
-	}
 
 	private long id;
 
@@ -29,13 +29,16 @@ public class MailFooter {
 
 	private String footer;
 
-	private java.util.Date creationDate;
+	private Date creationDate;
 
-	private java.util.Date modificationDate;
+	private Date modificationDate;
 
 	private String uuid;
 
 	private boolean plaintext;
+
+	public MailFooter() {
+	}
 
 	private void setId(long value) {
 		this.id = value;
@@ -43,10 +46,6 @@ public class MailFooter {
 
 	public long getId() {
 		return id;
-	}
-
-	public long getORMID() {
-		return getId();
 	}
 
 	public void setName(String value) {
@@ -89,7 +88,7 @@ public class MailFooter {
 		return footer;
 	}
 
-	public void setCreationDate(java.util.Date value) {
+	public void setCreationDate(Date value) {
 		this.creationDate = value;
 	}
 
@@ -97,7 +96,7 @@ public class MailFooter {
 		return creationDate;
 	}
 
-	public void setModificationDate(java.util.Date value) {
+	public void setModificationDate(Date value) {
 		this.modificationDate = value;
 	}
 

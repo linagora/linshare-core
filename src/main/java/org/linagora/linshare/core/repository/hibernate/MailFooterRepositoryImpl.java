@@ -55,7 +55,7 @@ public class MailFooterRepositoryImpl extends
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(MailFooter entry) {
-		DetachedCriteria det = DetachedCriteria.forClass(MailFooter.class);
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 
 		det.add(Restrictions.eq("uuid", entry.getUuid()));
 		return det;
@@ -69,23 +69,21 @@ public class MailFooterRepositoryImpl extends
 	 */
 	@Override
 	public MailFooter findByUuid(String uuid) {
-		DetachedCriteria det = DetachedCriteria.forClass(MailLayout.class);
-
-		det.add(Restrictions.eq("uuid", uuid));
-		return DataAccessUtils.singleResult(findByCriteria(det));
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"uuid", uuid)));
 	}
 
 	@Override
 	public MailFooter create(MailFooter entity) throws BusinessException {
+		entity.setUuid(UUID.randomUUID().toString());
 		entity.setCreationDate(new Date());
 		entity.setModificationDate(new Date());
-		entity.setUuid(UUID.randomUUID().toString());
 		return super.create(entity);
 	}
 
 	@Override
-	public List<MailFooter> findAllMailFooter() {
-		return super.findAll();
+	public MailFooter update(MailFooter entity) throws BusinessException {
+		entity.setModificationDate(new Date());
+		return super.update(entity);
 	}
-
 }

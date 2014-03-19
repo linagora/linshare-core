@@ -22,6 +22,8 @@ CREATE TABLE mail_config (
   name                varchar(255) NOT NULL, 
   visible             bool NOT NULL, 
   mail_layout_text_id int8 NOT NULL, 
+  creation_date       date NOT NULL, 
+  modification_date   date NOT NULL, 
   uuid                varchar(255) NOT NULL, 
   PRIMARY KEY (Id));
 CREATE TABLE mail_layout (
@@ -63,6 +65,8 @@ CREATE TABLE mail_content (
   subject            text NOT NULL, 
   greetings          text NOT NULL, 
   body               text NOT NULL, 
+  creation_date      date NOT NULL, 
+  modification_date  date NOT NULL, 
   uuid               varchar(255) NOT NULL, 
   plaintext          bool NOT NULL, 
   PRIMARY KEY (Id));
@@ -107,8 +111,8 @@ INSERT INTO mail_layout (id, name,domain_abstract_id,visible,plaintext,modificat
 
 -- Template GUEST_INVITATION
 -- Subject NEW_GUEST
-INSERT INTO mail_content (id, name, language, domain_abstract_id, visible, plaintext, mail_content_type,subject,greetings,body,uuid) VALUES (1, 'GUEST_INVITATION', 0,1, true, false,8, E'Your LinShare account has been successfully created',E'Hello ${firstName} ${lastName},<br/><br/>',E'<strong>${ownerFirstName} ${ownerLastName}</strong> invites you to use and enjoy LinShare!<br/>','c7b41d62-8cf1-11e3-bbe6-5404a683a462');
-INSERT INTO mail_content (id, name, language, domain_abstract_id, visible, plaintext, mail_content_type,subject,greetings,body,uuid) VALUES (2, 'GUEST_INVITATION', 1,1, true, false,8, E'Votre compte LinShare a été créé',E'Bonjour ${firstName} ${lastName},<br/><br/>',E'<strong>${ownerFirstName} ${ownerLastName}</strong> vous invite à utiliser LinShare.<br/>','df47481e-8cf1-11e3-b022-5404a683a462');
+INSERT INTO mail_content (id, name, language, domain_abstract_id, visible, plaintext, mail_content_type,subject,greetings,body,modification_date,creation_date,uuid) VALUES (1, 'GUEST_INVITATION', 0,1, true, false,8, E'Your LinShare account has been successfully created',E'Hello ${firstName} ${lastName},<br/><br/>',E'<strong>${ownerFirstName} ${ownerLastName}</strong> invites you to use and enjoy LinShare!<br/>',now(),now(),'c7b41d62-8cf1-11e3-bbe6-5404a683a462');
+INSERT INTO mail_content (id, name, language, domain_abstract_id, visible, plaintext, mail_content_type,subject,greetings,body,modification_date,creation_date,uuid) VALUES (2, 'GUEST_INVITATION', 1,1, true, false,8, E'Votre compte LinShare a été créé',E'Bonjour ${firstName} ${lastName},<br/><br/>',E'<strong>${ownerFirstName} ${ownerLastName}</strong> vous invite à utiliser LinShare.<br/>',now(),now(),'df47481e-8cf1-11e3-b022-5404a683a462');
 
 
 INSERT INTO mail_footer (id, name, language, domain_abstract_id, visible, plaintext, footer,uuid,modification_date,creation_date) VALUES (1, 'FOOTER_HTML', 0,1, true, false, E'<a href="http://linshare.org/" title="LinShare"><strong>LinShare</strong></a> - THE Secure, Open-Source File Sharing Tool','e85f4a22-8cf2-11e3-8a7a-5404a683a462',now(),now());
@@ -120,7 +124,7 @@ INSERT INTO mail_footer (id, name, language, domain_abstract_id, visible, plaint
 
 
 
-INSERT INTO mail_config (id, name, domain_abstract_id, visible, mail_layout_html_id, mail_layout_text_id,uuid) VALUES (1,'config 1',1,true,1,2,'42cf9cf6-8da6-11e3-b6aa-5404a683a462');
+INSERT INTO mail_config (id, name, domain_abstract_id, visible, mail_layout_html_id, mail_layout_text_id,modification_date,creation_date,uuid) VALUES (1,'config 1',1,true,1,2,now(),now(),'42cf9cf6-8da6-11e3-b6aa-5404a683a462');
 
 INSERT INTO mail_content_lang(id,mail_config_id,language,mail_content_id,mail_content_type) VALUES (1,1,0,1,8);
 INSERT INTO mail_content_lang(id,mail_config_id,language,mail_content_id,mail_content_type) VALUES (2,1,1,2,8);

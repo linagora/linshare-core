@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -52,7 +53,7 @@ public class MailConfigRepositoryImpl extends
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(MailConfig entry) {
-		DetachedCriteria det = DetachedCriteria.forClass(MailConfig.class);
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.eq("uuid", entry.getUuid()));
 		return det;
 	}
@@ -65,14 +66,21 @@ public class MailConfigRepositoryImpl extends
 	 */
 	@Override
 	public MailConfig findByUuid(String uuid) {
-		DetachedCriteria det = DetachedCriteria.forClass(MailConfig.class);
-		det.add(Restrictions.eq("uuid", uuid));
-		return DataAccessUtils.singleResult(findByCriteria(det));
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"uuid", uuid)));
 	}
 
 	@Override
 	public MailConfig create(MailConfig entity) throws BusinessException {
 		entity.setUuid(UUID.randomUUID().toString());
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
 		return super.create(entity);
+	}
+
+	@Override
+	public MailConfig update(MailConfig entity) throws BusinessException {
+		entity.setModificationDate(new Date());
+		return super.update(entity);
 	}
 }

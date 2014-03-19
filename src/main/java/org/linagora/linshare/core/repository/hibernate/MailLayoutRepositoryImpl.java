@@ -54,7 +54,7 @@ public class MailLayoutRepositoryImpl extends
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(MailLayout entry) {
-		DetachedCriteria det = DetachedCriteria.forClass(MailLayout.class);
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 
 		det.add(Restrictions.eq("uuid", entry.getUuid()));
 		return det;
@@ -68,17 +68,15 @@ public class MailLayoutRepositoryImpl extends
 	 */
 	@Override
 	public MailLayout findByUuid(String uuid) {
-		DetachedCriteria det = DetachedCriteria.forClass(MailLayout.class);
-
-		det.add(Restrictions.eq("uuid", uuid));
-		return DataAccessUtils.singleResult(findByCriteria(det));
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"uuid", uuid)));
 	}
 
 	@Override
 	public MailLayout create(MailLayout entity) throws BusinessException {
+		entity.setUuid(UUID.randomUUID().toString());
 		entity.setCreationDate(new Date());
 		entity.setModificationDate(new Date());
-		entity.setUuid(UUID.randomUUID().toString());
 		return super.create(entity);
 	}
 
@@ -87,10 +85,4 @@ public class MailLayoutRepositoryImpl extends
 		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
-
-	@Override
-	public List<MailLayout> findAllMailLayout() {
-		return super.findAll();
-	}
-
 }

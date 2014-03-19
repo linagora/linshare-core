@@ -39,9 +39,6 @@ import org.linagora.linshare.core.domain.entities.MailLayout;
 
 public interface MailLayoutRepository extends AbstractRepository<MailLayout> {
 
-
-	public List<MailLayout> findAllMailLayout();
-
 	public MailLayout findByUuid(String uuid);
 
 }
