@@ -93,7 +93,6 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 		if (actor.isSuperAdmin()) {
 			return DomainDto.getFull(entity);
 		}
-		// TODO Check admin right
 		if (entity.isManagedBy(actor)) {
 			return DomainDto.getSimple(entity);
 		}
