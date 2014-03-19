@@ -40,7 +40,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.User;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -58,7 +57,7 @@ public class DomainDto {
 	private String label;
 
 	@ApiModelProperty(value = "Description")
-	private String description = "";
+	private String description;
 
 	@ApiModelProperty(value = "Type")
 	private String type;
@@ -79,16 +78,16 @@ public class DomainDto {
 	private List<DomainDto> children = new ArrayList<DomainDto>();
 
 	@ApiModelProperty(value = "Parent")
-	private String parent = "";
+	private String parent;
 
 	protected DomainDto(final AbstractDomain domain, boolean light) {
 		this.identifier = domain.getIdentifier();
 		this.label = domain.getLabel();
-		this.description = domain.getDescription();
-		this.locale = domain.getDefaultLocale();
 		this.type = domain.getDomainType().toString();
-		this.userRole = domain.getDefaultRole().toString();
 		if (!light) {
+			this.description = domain.getDescription();
+			this.locale = domain.getDefaultLocale();
+			this.userRole = domain.getDefaultRole().toString();
 			this.policy = new DomainPolicyDto(domain.getPolicy());
 			if (domain.getUserProvider() != null) {
 				this.providers
