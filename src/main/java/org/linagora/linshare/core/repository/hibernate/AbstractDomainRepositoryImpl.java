@@ -41,6 +41,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
@@ -102,6 +103,11 @@ public class AbstractDomainRepositoryImpl extends
 	@Override
 	public List<AbstractDomain> findAllSubDomain() {
 		return findByCriteria(Restrictions.eq("class", SubDomain.class));
+	}
+
+	@Override
+	public List<AbstractDomain> findByCurrentMailConfig(MailConfig cfg) {
+		return findByCriteria(Restrictions.eq("currentMailConfiguration", cfg));
 	}
 
 	@Override
