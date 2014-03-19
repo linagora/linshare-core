@@ -327,4 +327,26 @@ public abstract class AbstractDomain {
 	public void setAuthShowOrder(Long authShowOrder) {
 		this.authShowOrder = authShowOrder;
 	}
+
+	public boolean isManagedBy(Account account) {
+		if (this.identifier.equals(account.getDomainId())) {
+			// You have the right to manage your own domain
+			return true;
+		} else {
+			// Checking parents.
+			return checkIfManagedByParent(this, account.getDomainId());
+		}
+	}
+
+	private boolean checkIfManagedByParent(AbstractDomain domain, String accountDomainId) {
+		AbstractDomain d = domain.getParentDomain();
+		if (d != null) {
+			if (d .getIdentifier().equals(accountDomainId)) {
+				return true;
+			} else {
+				checkIfManagedByParent(d, accountDomainId);
+			}
+		}
+		return false;
+	}
 }

@@ -40,7 +40,6 @@ import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.Role;
-import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
@@ -75,8 +74,13 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 	@Override
 	public DomainDto getDomains() throws BusinessException {
 		checkAuthentication(Role.ADMIN);
-		RootDomain rootDomain = abstractDomainService.getUniqueRootDomain();
-		return DomainDto.getFull(rootDomain);
+		User actor = checkAuthentication(Role.ADMIN);
+		AbstractDomain entity = abstractDomainService.retrieveDomain(actor.getDomainId());
+
+		if (actor.isSuperAdmin()) {
+			return DomainDto.getFull(entity);
+		}
+		return DomainDto.getSimple(entity);
 	}
 
 	@Override
@@ -86,7 +90,14 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 		if(entity == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "the curent domain was not found : " + domain);
 		}
-		return DomainDto.getFull(entity);
+		if (actor.isSuperAdmin()) {
+			return DomainDto.getFull(entity);
+		}
+		// TODO Check admin right
+		if (entity.isManagedBy(actor)) {
+			return DomainDto.getSimple(entity);
+		}
+		throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "the curent domain was not found : " + domain);
 	}
 
 	@Override
