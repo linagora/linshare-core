@@ -1,5 +1,9 @@
 # In order to use an external configuration file for linshare, use this key for JAVA_OPS
+# JAVA_OPTS="${JAVA_OPTS} -XX:MaxPermSize=256m -Djava.awt.headless=true -Xms512m -Xmx1538m -XX:-UseSplitVerifier"
 # JAVA_OPTS="${JAVA_OPTS} -Dlinshare.config.path=file:/etc/linshare/"
+# JAVA_OPTS="${JAVA_OPTS} -Dlog4j.configuration=file:/etc/linshare/log4j.properties
+
+
 
 #******************** MAIL CONFIGURATION TO SEND MAIL INFORMATION TO USER
 
