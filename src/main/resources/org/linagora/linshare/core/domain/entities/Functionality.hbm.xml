@@ -11,7 +11,7 @@
 	<property name="param" type="boolean" not-null="true" lazy="false">
 		<column name="param" default="false"/>
 	</property>
-    <property column="parent_identifier" name="parentIdentifier" not-null="true"/>
+    <property column="parent_identifier" name="parentIdentifier"/>
     <many-to-one name="activationPolicy" class="Policy" column="policy_activation_id" unique="true" cascade="all" lazy="false" />
     <many-to-one name="configurationPolicy" class="Policy" column="policy_configuration_id" unique="true" cascade="all" lazy="false" />
     <many-to-one name="delegationPolicy" class="Policy" column="policy_delegation_id" unique="true" cascade="all" lazy="false" />
