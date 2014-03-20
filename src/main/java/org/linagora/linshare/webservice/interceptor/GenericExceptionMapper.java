@@ -46,7 +46,7 @@ import org.linagora.linshare.webservice.dto.ErrorDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Produces(MediaType.APPLICATION_JSON)
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class GenericExceptionMapper implements ExceptionMapper<Exception> {
 
 	private static final Logger logger = LoggerFactory.getLogger(GenericExceptionMapper.class);

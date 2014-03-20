@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.admin.impl;
 
 import java.util.Set;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -55,6 +56,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
 @Api(value = "/rest/admin/users", description = "User administration service.")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UserRestServiceImpl extends WebserviceBase implements
 		UserRestService {
 
@@ -67,7 +69,6 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@Path("/search/{pattern}")
 	@ApiOperation(value = "Provide user autocompletion.", response = UserDto.class, responseContainer = "Set")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public Set<UserDto> completionUser(
 			@ApiParam(value = "Pattern to complete.", required = true) @PathParam("pattern") String pattern)
@@ -79,7 +80,6 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@Path("/search/internals/{pattern}")
 	@ApiOperation(value = "Search among internal users.", response = UserDto.class, responseContainer = "Set")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public Set<UserDto> getInternals(
 			@ApiParam(value = "Internal users to search for.", required = true) @PathParam("pattern") String pattern)
@@ -91,7 +91,6 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@Path("/search/guests/{pattern}")
 	@ApiOperation(value = "Search among guests.", response = UserDto.class, responseContainer = "Set")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public Set<UserDto> getGuests(
 			@ApiParam(value = "Guests to search for.", required = true) @PathParam("pattern") String pattern)
@@ -103,7 +102,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@Path("/")
 	@ApiOperation(value = "Update an user.")
 	@PUT
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void updateUser(
 			@ApiParam(value = "User to update", required = true) UserDto userDto)
@@ -115,7 +114,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@Path("/")
 	@ApiOperation(value = "Delete an user.")
 	@DELETE
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void deleteUser(
 			@ApiParam(value = "User to delete.", required = true) UserDto userDto)
@@ -127,7 +126,6 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@Path("/inconstitent")
 	@ApiOperation(value = "Find all inconsistent users.")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void getAllInconsistent() throws BusinessException {
 		userFacade.checkAuthentication();
@@ -137,7 +135,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@Path("/inconstitent")
 	@ApiOperation(value = "Update an inconsistent user's domain.")
 	@POST
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void updateInconsistentUser(
 			@ApiParam(value = "Inconsistent user to update.", required = true) UserDto userDto)

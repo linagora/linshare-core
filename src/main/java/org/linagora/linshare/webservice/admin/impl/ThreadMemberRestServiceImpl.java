@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.webservice.admin.impl;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -47,6 +48,7 @@ import org.linagora.linshare.core.facade.webservice.admin.ThreadMemberFacade;
 import org.linagora.linshare.webservice.admin.ThreadMemberRestService;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 
 	private ThreadMemberFacade threadMemberFacade;
@@ -59,7 +61,6 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 
 	@Path("/{id}")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public ThreadMemberDto get(@PathParam("id") Long id)
 			throws BusinessException {
@@ -69,7 +70,7 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 
 	@Path("/{id}")
 	@PUT
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void update(@PathParam("id") Long id, ThreadMemberDto dto)
 			throws BusinessException {
@@ -79,7 +80,7 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 
 	@Path("/{id}")
 	@DELETE
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void delete(@PathParam("id") Long id, ThreadMemberDto dto)
 			throws BusinessException {

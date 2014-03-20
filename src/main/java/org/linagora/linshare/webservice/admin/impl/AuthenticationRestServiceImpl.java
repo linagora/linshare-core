@@ -45,6 +45,7 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.AuthenticationRestService;
 import org.linagora.linshare.webservice.dto.UserDto;
 
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
 
 	private final AdminGenericFacade webServiceAdminFacade;
@@ -55,7 +56,6 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/authorized")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
 		return UserDto.getFull(webServiceAdminFacade.checkAuthentication(Role.ADMIN));

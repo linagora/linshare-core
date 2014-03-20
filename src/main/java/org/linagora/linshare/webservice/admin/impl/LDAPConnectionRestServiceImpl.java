@@ -51,6 +51,7 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.LDAPConnectionRestService;
 import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
 
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class LDAPConnectionRestServiceImpl extends WebserviceBase implements LDAPConnectionRestService {
 
 	private final LDAPConnectionFacade ldapConnectionFacade;
@@ -61,7 +62,6 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements LDA
 
 	@Path("/")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<LDAPConnectionDto> getLDAPConnections() throws BusinessException {
 		ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);

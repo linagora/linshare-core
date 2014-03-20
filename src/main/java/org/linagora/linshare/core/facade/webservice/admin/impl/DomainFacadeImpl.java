@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
@@ -73,10 +74,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 
 	@Override
 	public DomainDto getDomains() throws BusinessException {
-		checkAuthentication(Role.ADMIN);
 		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain entity = abstractDomainService.retrieveDomain(actor.getDomainId());
-
 		if (actor.isSuperAdmin()) {
 			return DomainDto.getFull(entity);
 		}
@@ -121,6 +120,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 	@Override
 	public void updateDomain(DomainDto domainDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
+		Validate.notEmpty(domainDto.getIdentifier(), "domain identifier must be set.");
 		AbstractDomain domain = getDomain(domainDto);
 		abstractDomainService.updateDomain(domain);
 	}
@@ -128,19 +128,27 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 	@Override
 	public void deleteDomain(DomainDto domainDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
+		Validate.notEmpty(domainDto.getIdentifier(), "domain identifier must be set.");
 		abstractDomainService.deleteDomain(domainDto.getIdentifier());
 	}
 
 	private AbstractDomain getDomain(DomainDto domainDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
+
 		DomainType domainType = DomainType.valueOf(domainDto.getType());
 		AbstractDomain parent = abstractDomainService.retrieveDomain(domainDto.getParent());
 		AbstractDomain domain = domainType.getDomain(domainDto, parent);
 		domain.setPolicy(domainPolicyService.transform(domainDto.getPolicy()));
 		if (!domainDto.getProviders().isEmpty()) {
 			String baseDn = domainDto.getProviders().get(0).getBaseDn();
+			Validate.notEmpty(baseDn, "ldap base dn must be set.");
+
 			String domainPatternId = domainDto.getProviders().get(0).getDomainPatternId();
+			Validate.notEmpty(domainPatternId, "domain pattern identifier must be set.");
+
 			String ldapConnectionId = domainDto.getProviders().get(0).getLdapConnectionId();
+			Validate.notEmpty(ldapConnectionId,"ldap connection identifier must be set.");
+
 			LDAPConnection ldapConnection = userProviderService.retrieveLDAPConnection(ldapConnectionId);
 			DomainPattern domainPattern = userProviderService.retrieveDomainPattern(domainPatternId);	
 			domain.setUserProvider(new LdapUserProvider(baseDn, ldapConnection, domainPattern));

@@ -294,7 +294,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		AbstractDomain entity = retrieveDomain(domain.getIdentifier());
 		if (entity == null) {
 			throw new BusinessException(
-					BusinessErrorCode.DOMAIN_DO_NOT_ALREADY_EXISTS,
+					BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,
 					"This domain identifier does not exist.");
 		}
 

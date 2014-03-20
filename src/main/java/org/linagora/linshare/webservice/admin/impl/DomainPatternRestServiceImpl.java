@@ -50,6 +50,7 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.DomainPatternRestService;
 import org.linagora.linshare.webservice.dto.DomainPatternDto;
 
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class DomainPatternRestServiceImpl extends WebserviceBase implements DomainPatternRestService {
 
 	private final DomainPatternFacade webServiceDomainPatternFacade;
@@ -60,7 +61,6 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements Doma
 
 	@Path("/")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<DomainPatternDto> getDomainPatterns() throws BusinessException {
 		webServiceDomainPatternFacade.checkAuthentication();
@@ -69,7 +69,6 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements Doma
 
 	@Path("/models")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<DomainPatternDto> getModels() throws BusinessException {
 		webServiceDomainPatternFacade.checkAuthentication();

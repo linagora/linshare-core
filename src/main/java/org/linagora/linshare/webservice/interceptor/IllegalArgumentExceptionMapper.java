@@ -32,77 +32,34 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.admin.impl;
+package org.linagora.linshare.webservice.interceptor;
 
-import java.util.List;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.ext.ExceptionMapper;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.ThreadFacade;
-import org.linagora.linshare.webservice.admin.ThreadRestService;
-import org.linagora.linshare.webservice.dto.ThreadDto;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
+import org.apache.commons.httpclient.HttpStatus;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.webservice.dto.ErrorDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class ThreadRestServiceImpl implements ThreadRestService {
+public class IllegalArgumentExceptionMapper implements ExceptionMapper<IllegalArgumentException> {
 
-	private ThreadFacade threadFacade;
+	private static final Logger logger = LoggerFactory.getLogger(IllegalArgumentExceptionMapper.class);
 
-	public ThreadRestServiceImpl(final ThreadFacade threadFacade) {
-		super();
-		this.threadFacade = threadFacade;
-	}
-
-	@Path("/")
-	@GET
 	@Override
-	public List<ThreadDto> getAll() throws BusinessException {
-		threadFacade.checkAuthentication();
-		return threadFacade.getAll();
-	}
+	public Response toResponse(IllegalArgumentException exception) {
+		logger.error("A IllegalArgumentException was caught : "
+				+ exception.getLocalizedMessage());
+		logger.debug("Stacktrace: ", exception);
 
-	@Path("/{uuid}")
-	@GET
-	@Override
-	public ThreadDto get(@PathParam("uuid") String uuid)
-			throws BusinessException {
-		threadFacade.checkAuthentication();
-		return threadFacade.get(uuid);
-	}
-
-	@Path("/{uuid}/members")
-	@GET
-	@Override
-	public List<ThreadMemberDto> getMembers(@PathParam("uuid") String uuid)
-			throws BusinessException {
-		threadFacade.checkAuthentication();
-		return threadFacade.getMembers(uuid);
-	}
-
-	@Path("/{uuid}/members")
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public void addMember(@PathParam("uuid") String uuid, ThreadMemberDto member)
-			throws BusinessException {
-		threadFacade.checkAuthentication();
-		threadFacade.addMember(uuid, member);
-	}
-
-	@Path("/")
-	@DELETE
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public void delete(ThreadDto thread) throws BusinessException {
-		threadFacade.checkAuthentication();
-		threadFacade.delete(thread.getUuid());
+		ErrorDto errorDto = new ErrorDto(BusinessErrorCode.WEBSERVICE_FAULT.getCode()," : " +exception.getMessage());
+		ResponseBuilder response = Response.status(HttpStatus.SC_BAD_REQUEST);
+		response.entity(errorDto);
+		return response.build();
 	}
 }

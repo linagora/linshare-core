@@ -44,6 +44,7 @@ import org.linagora.linshare.core.facade.webservice.admin.UserRoleFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UserRoleRestService;
 
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UserRoleRestServiceImpl extends WebserviceBase implements UserRoleRestService {
 
 	private final UserRoleFacade userRoleFacade;
@@ -54,7 +55,6 @@ public class UserRoleRestServiceImpl extends WebserviceBase implements UserRoleR
 	
 	@Path("/")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<String> getUserRoles() {
 		return userRoleFacade.getUserRoles();

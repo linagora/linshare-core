@@ -24,6 +24,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/logs")
 @Api(value = "/rest/admin/logs", description = "Admin application audit service.")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class LogRestServiceImpl extends WebserviceBase implements
 		LogRestService {
 
@@ -37,8 +38,7 @@ public class LogRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Search the user history with specified criteria.", response = LogDto.class, responseContainer = "List")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<LogDto> query(
 			@ApiParam(value = "Criteria to search for.", required = true) LogCriteriaDto criteria)

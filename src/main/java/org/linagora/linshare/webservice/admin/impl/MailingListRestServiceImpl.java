@@ -60,6 +60,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/lists")
 @Api(value = "/rest/admin/lists", description = "Mailing lists administration")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MailingListRestServiceImpl implements MailingListRestService {
 
 	private MailingListFacade mailingListFacade;
@@ -73,7 +74,6 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	@ApiOperation(value = "Find all mailing lists.", response = MailingListDto.class, responseContainer = "List")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<MailingListDto> getAll() throws BusinessException {
 		mailingListFacade.checkAuthentication(Role.ADMIN);
@@ -84,7 +84,6 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	@ApiOperation(value = "Find a mailing list.", response = MailingListDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public MailingListDto get(
 			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid)
@@ -98,7 +97,6 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void create(
 			@ApiParam(value = "Mailing list to create.", required = true) MailingListDto dto)
@@ -111,7 +109,6 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	@ApiOperation(value = "Delete a mailing list.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@DELETE
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void delete(
 			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid)
@@ -125,7 +122,6 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void createContact(
 			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,

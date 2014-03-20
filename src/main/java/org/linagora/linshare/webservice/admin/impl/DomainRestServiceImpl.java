@@ -53,6 +53,7 @@ import org.linagora.linshare.webservice.admin.DomainRestService;
 import org.linagora.linshare.webservice.dto.DomainDto;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class DomainRestServiceImpl extends WebserviceBase implements DomainRestService {
 
 	private final DomainFacade domainFacade;
@@ -65,7 +66,6 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 
 	@Path("/")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public DomainDto getDomains() throws BusinessException {
 		domainFacade.checkAuthentication();
@@ -74,7 +74,6 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 
 	@Path("/{domain}")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public DomainDto getDomainAndChildren(@PathParam(value = "domain") String domain) throws BusinessException {
 		domainFacade.checkAuthentication();
@@ -114,7 +113,6 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 
 	@Path("/{domain}/functionalities")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<FunctionalityDto> getDomainFunctionalities(@PathParam(value = "domain") String domain) throws BusinessException {
 		functionalityFacade.checkAuthentication();
@@ -123,10 +121,11 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 
 	@Path("/{domain}/functionalities/{identifier}")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public FunctionalityDto getDomainFunctionality(@PathParam(value = "domain") String domain, @PathParam(value = "identifier") String identifier)
-			throws BusinessException {
+	public FunctionalityDto getDomainFunctionality(
+			@PathParam(value = "domain") String domain,
+			@PathParam(value = "identifier") String identifier)
+					throws BusinessException {
 		functionalityFacade.checkAuthentication();
 		return functionalityFacade.get(domain, identifier);
 	}

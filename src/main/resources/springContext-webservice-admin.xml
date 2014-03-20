@@ -80,6 +80,7 @@
 		</jaxrs:extensionMappings>
 		<jaxrs:providers>
 			<!--  ExceptionMappers. -->
+			<ref bean="illegalArgumentExceptionMapper" />
 			<ref bean="businessExceptionMapper" />
 			<ref bean="genericExceptionMapper" />
 			<ref bean="webApplicationExceptionMapper" />
