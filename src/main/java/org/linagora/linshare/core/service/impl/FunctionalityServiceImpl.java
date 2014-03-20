@@ -36,59 +36,82 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.FunctionalityService;
-import org.springframework.util.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FunctionalityServiceImpl implements FunctionalityService {
 
+	protected final Logger logger = LoggerFactory.getLogger(FunctionalityServiceImpl.class);
+
 	private FunctionalityBusinessService functionalityBusinessService;
 
-	public FunctionalityServiceImpl(FunctionalityBusinessService functionalityBusinessService) {
+	private DomainBusinessService domainBusinessService;
+
+	public FunctionalityServiceImpl(FunctionalityBusinessService functionalityBusinessService,
+			DomainBusinessService domainBusinessService) {
 		super();
 		this.functionalityBusinessService = functionalityBusinessService;
+		this.domainBusinessService = domainBusinessService;
 	}
 
 	@Override
-	public Set<Functionality> getAllFunctionalities(AbstractDomain domain) {
+	public Set<Functionality> getAllFunctionalities(Account actor, AbstractDomain domain) throws BusinessException {
+		Validate.notNull(domain);
+		Validate.notEmpty(domain.getIdentifier());
+		checkDomainRights(actor, domain.getIdentifier());
 		return functionalityBusinessService.getAllFunctionalities(domain);
 	}
 
 	@Override
-	public Set<Functionality> getAllFunctionalities(String domain) {
+	public Set<Functionality> getAllFunctionalities(Account actor, String domain) throws BusinessException {
+		Validate.notEmpty(domain);
+		checkDomainRights(actor, domain);
 		return functionalityBusinessService.getAllFunctionalities(domain);
 	}
 
 	@Override
 	public boolean activationPolicyIsMutable(Functionality f, String domain) {
-		Assert.notNull(f);
-		Assert.notNull(domain);
+		Validate.notNull(f);
+		Validate.notNull(domain);
 		return functionalityBusinessService.activationPolicyIsMutable(f, domain);
 	}
 
 	@Override
 	public boolean configurationPolicyIsMutable(Functionality f, String domain) {
-		Assert.notNull(f);
-		Assert.notNull(domain);
+		Validate.notNull(f);
+		Validate.notNull(domain);
 		return functionalityBusinessService.configurationPolicyIsMutable(f, domain);
 	}
 
 	@Override
-	public Functionality getFunctionality(String domainId, String functionalityId) {
-		Assert.notNull(domainId);
-		Assert.notNull(functionalityId);
+	public Functionality getFunctionality(Account actor, String domainId, String functionalityId) throws BusinessException {
+		Validate.notNull(domainId);
+		Validate.notNull(functionalityId);
+		checkDomainRights(actor, domainId);
 		return functionalityBusinessService.getFunctionality(domainId, functionalityId);
 	}
 
 	@Override
 	public void deleteFunctionality(Account actor, String domainId, String functionalityId) throws IllegalArgumentException, BusinessException {
-		Assert.notNull(domainId);
-		Assert.notNull(functionalityId);
-		// TODO : FMA check if we are authorized to delete the functionality.
+		checkDomainRights(actor, domainId);
 		functionalityBusinessService.delete(domainId, functionalityId);
 	}
+
+	private void checkDomainRights(Account actor, String domainId) throws BusinessException {
+		AbstractDomain domain = domainBusinessService.findById(domainId);
+		if (!domain.isManagedBy(actor)) {
+			logger.error("You do not have the right to access to this domain : " + domainId);
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,"The current domain does not exist : domainId");
+		}
+	}
+
 }

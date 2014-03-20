@@ -43,14 +43,14 @@ import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
 public interface DomainPolicyService {
 
-    public DomainPolicy transform(DomainPolicyDto dto);
+	public DomainPolicy transform(DomainPolicyDto dto) throws BusinessException;
 
-	public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException ;
+	public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException;
 
 	public DomainPolicy retrieveDomainPolicy(String identifier);
-    
-    public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException;
-    
+
+	public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException;
+
 	public List<DomainPolicy> findAllDomainPolicy() throws BusinessException;
 	
 	public List<String> getAllDomainPolicyIdentifiers();

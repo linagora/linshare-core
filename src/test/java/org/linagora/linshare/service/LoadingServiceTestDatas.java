@@ -99,8 +99,9 @@ public class LoadingServiceTestDatas {
 	
 	public static int TOTAL_COUNT_FUNC=10;
 	public static String timeStampingUrl = "http://server/service";
-	
+
 	private RootDomain rootDomain;
+	private User root;
 
 
 	private DomainPolicy defaultPolicy;
@@ -130,6 +131,10 @@ public class LoadingServiceTestDatas {
 	public RootDomain getRootDomain() {
 		return rootDomain;
 	}
+
+	public User getRootUser() {
+		return root;
+	}
 	
 	public  void deleteDatas() throws BusinessException {
 		abstractDomainRepository.delete(getRootDomain());
@@ -138,8 +143,6 @@ public class LoadingServiceTestDatas {
 	
 	
 	public  void deleteUsers() throws BusinessException {
-		User root = userService.findOrCreateUser("root@localhost.localdomain", LinShareConstants.rootDomainIdentifier);
-		
 		userService.deleteUser(root, getUser1().getLsUuid());
 		userService.deleteUser(root, getUser2().getLsUuid());
 		userService.deleteUser(root, getUser3().getLsUuid());
@@ -151,7 +154,8 @@ public class LoadingServiceTestDatas {
 		
 		
 	public  void loadDatas() throws BusinessException {
-		
+		root = userService.findOrCreateUser("root@localhost.localdomain", LinShareConstants.rootDomainIdentifier);
+
 		defaultPolicy = new DomainPolicy(domainePolicyName0, new DomainAccessPolicy());
 		domainPolicyRepository.create(defaultPolicy);
 		

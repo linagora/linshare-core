@@ -112,6 +112,10 @@ public abstract class Account {
 	public boolean isSuperAdmin() {
 		return this.getRole().equals(Role.SUPERADMIN);
 	}
+	
+	public boolean isAdmin() {
+		return this.getRole().equals(Role.ADMIN);
+	}
 
 	public boolean isSystempAccount() {
 		 return this.getRole().equals(Role.SYSTEM);

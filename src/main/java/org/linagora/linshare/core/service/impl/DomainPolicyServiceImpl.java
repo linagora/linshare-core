@@ -73,7 +73,7 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
      * XXX: ugly
      */
     @Override
-    public DomainPolicy transform(DomainPolicyDto dto) {
+    public DomainPolicy transform(DomainPolicyDto dto) throws BusinessException {
         if (dto.getIdentifier() == null)
             return null;
 

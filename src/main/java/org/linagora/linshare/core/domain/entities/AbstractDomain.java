@@ -329,13 +329,16 @@ public abstract class AbstractDomain {
 	}
 
 	public boolean isManagedBy(Account account) {
-		if (this.identifier.equals(account.getDomainId())) {
-			// You have the right to manage your own domain
-			return true;
-		} else {
-			// Checking parents.
-			return checkIfManagedByParent(this, account.getDomainId());
+		if (account.isAdmin() || account.isSuperAdmin()) {
+			if (this.identifier.equals(account.getDomainId())) {
+				// You have the right to manage your own domain
+				return true;
+			} else {
+				// Checking parents.
+				return checkIfManagedByParent(this, account.getDomainId());
+			}
 		}
+		return false;
 	}
 
 	private boolean checkIfManagedByParent(AbstractDomain domain, String accountDomainId) {

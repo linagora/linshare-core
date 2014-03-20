@@ -47,7 +47,7 @@ public interface FunctionalityFacade extends AdminGenericFacade {
 	List<FunctionalityDto> getAll(String domain) throws BusinessException;
 
 	void update(String domain, FunctionalityDto func) throws BusinessException;
-	
+
 	void delete(String domain, FunctionalityDto func) throws BusinessException;
 
 }

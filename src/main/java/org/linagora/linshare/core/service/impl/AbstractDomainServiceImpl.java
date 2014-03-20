@@ -212,7 +212,12 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	@Override
 	public AbstractDomain retrieveDomain(String identifier) {
-		return domainBusinessService.findById(identifier);
+		// HACK
+		try {
+			return domainBusinessService.findById(identifier);
+		} catch (BusinessException e) {
+			return null;
+		}
 	}
 
 	@Override

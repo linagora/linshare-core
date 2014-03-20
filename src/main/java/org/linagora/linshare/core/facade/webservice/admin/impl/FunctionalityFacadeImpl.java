@@ -40,13 +40,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Policies;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.FunctionalityService;
@@ -54,22 +54,23 @@ import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
 public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements FunctionalityFacade {
 
-	private AbstractDomainService abstractDomainService;
 	private FunctionalityService functionalityService;
 	private FunctionalityOldService functionalityOldService;
 
 	public FunctionalityFacadeImpl(final AccountService accountService,
-			final AbstractDomainService abstractDomainService, final FunctionalityService functionalityService,
-			FunctionalityOldService functionalityOldService) {
+			final FunctionalityService functionalityService,
+			final FunctionalityOldService functionalityOldService) {
 		super(accountService);
-		this.abstractDomainService = abstractDomainService;
 		this.functionalityService = functionalityService;
 		this.functionalityOldService = functionalityOldService;
 	}
 
 	@Override
 	public FunctionalityDto get(String domain, String identifier) throws BusinessException {
-		Functionality f = functionalityService.getFunctionality(domain, identifier);
+		Validate.notEmpty(domain, "domain identifier must be set.");
+		Validate.notEmpty(identifier, "functionality identifier must be set.");
+		User actor = this.getAuthentication();
+		Functionality f = functionalityService.getFunctionality(actor, domain, identifier);
 		boolean parentAllowAPUpdate = functionalityService.activationPolicyIsMutable(f, domain);
 		boolean parentAllowCPUpdate = functionalityService.configurationPolicyIsMutable(f, domain);
 		FunctionalityDto func = new FunctionalityDto(f, parentAllowAPUpdate, parentAllowCPUpdate);
@@ -79,7 +80,9 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 
 	@Override
 	public List<FunctionalityDto> getAll(String domain) throws BusinessException {
-		Set<Functionality> entities = functionalityService.getAllFunctionalities(domain);
+		Validate.notEmpty(domain, "domain identifier must be set.");
+		Account actor = this.getAuthentication();
+		Set<Functionality> entities = functionalityService.getAllFunctionalities(actor, domain);
 
 		Map<String, FunctionalityDto> ret = new HashMap<String, FunctionalityDto>();
 		List<FunctionalityDto> subs = new ArrayList<FunctionalityDto>();
@@ -108,16 +111,19 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 				ret.get(func.getParentIdentifier()).addFunctionalities(func);
 			}
 		}
-		// HOOK
+		// HOOK : To be removed.
 		List<FunctionalityDto> a = new ArrayList<FunctionalityDto>(ret.values());
 		return a;
 	}
 
 	@Override
 	public void update(String domain, FunctionalityDto func) throws BusinessException {
-		checkAuthentication(Role.ADMIN);
-		Functionality f = functionalityService.getFunctionality(domain, func.getIdentifier());
-		
+		Validate.notEmpty(domain, "domain identifier must be set.");
+		Validate.notEmpty(func.getIdentifier(), "functionality identifier must be set.");
+
+		User actor = this.getAuthentication();
+		Functionality f = functionalityService.getFunctionality(actor, domain, func.getIdentifier());
+
 		// copy of activation policy.
 		String ap = func.getActivationPolicy().getPolicy().trim().toUpperCase();
 		f.getActivationPolicy().setPolicy(Policies.valueOf(ap));
@@ -135,7 +141,9 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 
 	@Override
 	public void delete(String domain, FunctionalityDto func) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User actor = getAuthentication();
+		Validate.notEmpty(domain, "domain identifier must be set.");
+		Validate.notEmpty(func.getIdentifier(), "functionality identifier must be set.");
 		functionalityService.deleteFunctionality(actor, domain, func.getIdentifier());
 	}
 }

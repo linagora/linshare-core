@@ -38,8 +38,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
-import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
