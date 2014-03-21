@@ -53,6 +53,7 @@ import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
+import org.linagora.linshare.core.repository.RootUserRepository;
 import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.slf4j.Logger;
@@ -94,12 +95,16 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	
 	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
+	
+	@Autowired
+	private RootUserRepository rootUserRepository;
 
 	private User actor;
 
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		actor = rootUserRepository.findByLsUuid("root@localhost.localdomain@test");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
