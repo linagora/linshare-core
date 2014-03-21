@@ -22,11 +22,6 @@
                 <prop key="hibernate.hbm2ddl.auto">${linshare.db.hbm2ddl.auto}</prop>
             </props>
         </property>
-        <!-- 
-        <property name="namingStrategy">
-			<bean id="namingStrategy" class="org.linagora.linshare.core.repository.hibernate.LinShareNamingStrategy"/>
-		</property>
-         -->
     </bean>
 
     

@@ -37,6 +37,7 @@ import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
+import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -87,6 +88,8 @@ public class LoadingServiceTestDatas {
 	public static int TOTAL_COUNT_FUNC=10;
 	public static String timeStampingUrl = "http://server/service";
 
+	private RootDomain rootDomain;
+
 	private User user1;  /* John Doe */
 	private User user2;	 /* Jane Smith */
 	private User user3;	 /* Foo Bar */
@@ -113,7 +116,6 @@ public class LoadingServiceTestDatas {
 		userService.deleteUser(root, getUser1().getLsUuid());
 		userService.deleteUser(root, getUser2().getLsUuid());
 		userService.deleteUser(root, getUser3().getLsUuid());
-	
 	}
 
 	public  void loadUsers() throws BusinessException {

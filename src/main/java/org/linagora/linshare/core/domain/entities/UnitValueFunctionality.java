@@ -39,9 +39,6 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.constants.TimeUnit;
-import org.linagora.linshare.core.domain.vo.FunctionalityVo;
-import org.linagora.linshare.core.domain.vo.SizeValueFunctionalityVo;
-import org.linagora.linshare.core.domain.vo.TimeValueFunctionalityVo;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 import org.linagora.linshare.webservice.dto.ParameterDto;
 
@@ -107,27 +104,6 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		UnitValueFunctionality f = (UnitValueFunctionality) functionality;
 		this.value = f.getValue();
 		this.unit.updateUnitFrom(f.getUnit());
-	}
-
-	@Override
-	public void updateFunctionalityValuesOnlyFromVo(FunctionalityVo functionality) {
-
-		if (functionality.getType().equals(FunctionalityType.UNIT_SIZE)) {
-			SizeValueFunctionalityVo f = (SizeValueFunctionalityVo) functionality;
-			if (f.getSize() != null) {
-				this.value = f.getSize();
-				FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
-				sizeUnit.setUnitValue(f.getUnit());
-			}
-
-		} else if (functionality.getType().equals(FunctionalityType.UNIT_TIME)) {
-			TimeValueFunctionalityVo f = (TimeValueFunctionalityVo) functionality;
-			if (f.getTime() != null) {
-				this.value = f.getTime();
-				TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
-				timeUnit.setUnitValue(f.getUnit());
-			}
-		}
 	}
 
 	@Override

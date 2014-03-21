@@ -96,6 +96,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	public Functionality getFunctionality(Account actor, String domainId, String functionalityId) throws BusinessException {
 		Validate.notNull(domainId);
 		Validate.notNull(functionalityId);
+		logger.debug("looking for functionality : " + functionalityId + " in domain "+ domainId);
 		checkDomainRights(actor, domainId);
 		return functionalityBusinessService.getFunctionality(domainId, functionalityId);
 	}
@@ -106,11 +107,67 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		functionalityBusinessService.delete(domainId, functionalityId);
 	}
 
+	@Override
+	public void update(Account actor, String domain, Functionality functionality) throws BusinessException {
+		Validate.notNull(domain);
+		Validate.notNull(functionality.getIdentifier());
+		checkDomainRights(actor, domain);
+
+		if (checkUpdateRights(actor, domain, functionality)) {
+			functionalityBusinessService.update(domain, functionality);
+		}
+	}
+
+	/**
+	 * Return true if you need to update the input functionality.
+	 * @param actor
+	 * @param domain
+	 * @param functionality : new functionality.
+	 * @param entity : original functionality. 
+	 * @return
+	 * @throws BusinessException
+	 */
+	private boolean checkUpdateRights(Account actor, String domain, Functionality functionality)
+			throws BusinessException {
+		Functionality entity = this.getFunctionality(actor, domain, functionality.getIdentifier());
+		
+		// we check if the parent functionality allow modifications of the activation policy (AP).
+		boolean parentAllowAPUpdate = activationPolicyIsMutable(entity, domain);
+		if(!parentAllowAPUpdate) {
+			// Modifications are not allowed.
+			if (!entity.getActivationPolicy().businessEquals(functionality.getActivationPolicy())) {
+				// AP entity is different of the input AP functionality  => FORBIDDEN
+				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (AP) '" + functionality +"' in domain '" + domain +"'");
+				throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
+			}
+		}
+
+		// we check if the parent functionality allow modifications of the configuration policy (CP).
+		boolean parentAllowCPUpdate = configurationPolicyIsMutable(entity, domain);
+		if(!parentAllowCPUpdate) {
+			// Modifications are not allowed.
+			if (!entity.getConfigurationPolicy().businessEquals(functionality.getConfigurationPolicy())) {
+				// AP entity is different of the input AP functionality  => FORBIDDEN
+				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (CP) '" + functionality +"' in domain '" + domain +"'");
+				throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
+			}
+		}
+		
+		// we check if there is any modifications
+		if (functionality.businessEquals(entity, true)) {
+			logger.debug("functionality " + functionality.toString() + " was not modified.");
+			return false;
+		}
+		return true;
+	}
+
 	private void checkDomainRights(Account actor, String domainId) throws BusinessException {
 		AbstractDomain domain = domainBusinessService.findById(domainId);
-		if (!domain.isManagedBy(actor)) {
-			logger.error("You do not have the right to access to this domain : " + domainId);
-			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,"The current domain does not exist : domainId");
+		if(!actor.isSuperAdmin()) {
+			if (!domain.isManagedBy(actor)) {
+				logger.error("You do not have the right to access to this domain : " + domainId);
+				throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,"The current domain does not exist : domainId");
+			}
 		}
 	}
 

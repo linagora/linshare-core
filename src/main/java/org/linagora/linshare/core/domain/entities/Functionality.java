@@ -157,7 +157,7 @@ public class Functionality implements Cloneable {
 
 	@Override
 	public String toString() {
-		return "Functionality identifier is : " + identifier + "(" + persistenceId + ")";
+		return "Functionality : " + identifier + "(" + domain.getIdentifier() + ")";
 	}
 
 	
@@ -239,11 +239,6 @@ public class Functionality implements Cloneable {
 	}
 	
 	public void updateFunctionalityValuesOnlyFrom(Functionality functionality) {
-		// no data in this class.
-	}
-	
-	public void updateFunctionalityValuesOnlyFromVo(FunctionalityVo functionality) {
-		logger.debug("Functionality:updateFunctionalityValuesOnlyFromVo : " + identifier + " : ");
 		// no data in this class.
 	}
 	

@@ -295,6 +295,31 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 	}
 
 	@Override
+	public void update(String domainId, Functionality functionality) throws BusinessException {
+
+		AbstractDomain domain = abstractDomainRepository.findById(domainId);
+		Functionality entity = getFunctionalityEntityByIdentifiers(domain, functionality.getIdentifier());
+		
+		
+		if (entity.getDomain().getIdentifier().equals(functionality.getDomain().getIdentifier())) {
+			logger.debug("this functionality belongs to the current domain");
+			
+		} else {
+//			logger.debug("this functionality does not belong to the current domain");
+//			// This functionality does not belong to the current domain.
+//			if (!functionalityDto.businessEquals(functionalityEntity, true)) {
+//				// This functionality is different, it needs to be persist.
+//				functionalityDto.setDomain(currentDomain);
+//
+//				functionalityRepository.create(functionalityDto);
+//				logger.info("Update by creation of a new functionality for : " + functionalityDto.getIdentifier() + " link to domain : " + currentDomain.getIdentifier());
+//			} else { // no differences
+//				logger.debug("functionality " + functionalityDto.getIdentifier()+ " was not modified.");
+//			}
+		}
+	}
+
+	@Override
 	public void delete(String domainId, String functionalityId) throws IllegalArgumentException, BusinessException {
 		Assert.notNull(domainId);
 		Assert.notNull(functionalityId);

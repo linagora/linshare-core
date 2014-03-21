@@ -54,6 +54,6 @@ public interface FunctionalityBusinessService {
 
 	void delete(String domainId, String functionalityId) throws IllegalArgumentException, BusinessException;
 	
-//	void update(String domain, FunctionalityDto func) throws BusinessException;
+	void update(String domain, Functionality functionality) throws BusinessException;
 	
 }

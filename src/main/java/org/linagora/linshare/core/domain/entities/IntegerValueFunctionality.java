@@ -37,8 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
-import org.linagora.linshare.core.domain.vo.FunctionalityVo;
-import org.linagora.linshare.core.domain.vo.IntegerValueFunctionalityVo;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 import org.linagora.linshare.webservice.dto.ParameterDto;
 
@@ -81,12 +79,6 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	@Override
 	public void updateFunctionalityValuesOnlyFrom(Functionality functionality) {
 		IntegerValueFunctionality f = (IntegerValueFunctionality)functionality;
-		this.value = f.getValue();
-	}
-	
-	@Override
-	public void updateFunctionalityValuesOnlyFromVo(FunctionalityVo functionality) {
-		IntegerValueFunctionalityVo f = (IntegerValueFunctionalityVo)functionality;
 		this.value = f.getValue();
 	}
 
