@@ -98,14 +98,14 @@ public class LoadingServiceTestDatasTest extends AbstractTransactionalJUnit4Spri
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
-	@Test
-	public  void test() throws BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
-		datas.loadDatas();
-		datas.deleteDatas();
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
+//	@Test
+//	public  void test() throws BusinessException {
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
+//		datas.loadDatas();
+//		datas.deleteDatas();
+//		logger.debug(LinShareTestConstants.END_TEST);
+//	}
 	
 	
 	@Test

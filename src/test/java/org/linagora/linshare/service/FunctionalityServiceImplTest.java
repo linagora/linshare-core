@@ -58,6 +58,7 @@ import org.linagora.linshare.core.service.FunctionalityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
@@ -76,8 +77,6 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	
 	
 	private static Logger logger = LoggerFactory.getLogger(FunctionalityServiceImplTest.class);
-	
-	private LoadingServiceTestDatas datas;
 	
 	private int TOTAL_COUNT_FUNC=LoadingServiceTestDatas.TOTAL_COUNT_FUNC;
 	
@@ -101,22 +100,19 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,null, null);
-		datas.loadDatas();
-		actor = datas.getRootUser();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		datas.deleteDatas();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
 	
 
 	@Test
+	@DirtiesContext
 	public void testGetAllFunctionalityForRootDomain() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
@@ -133,6 +129,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	}
 	
 	@Test
+	@DirtiesContext
 	public void testGetAllFunctionalityForTopDomain() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.topDomainName);
@@ -148,6 +145,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	}
 	
 	@Test
+	@DirtiesContext
 	public void testGetAllFunctionalityForSubDomain() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
@@ -161,6 +159,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	}
 	
 	@Test
+	@DirtiesContext
 	public void testgetFunctionality() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
@@ -188,6 +187,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	}
 	
 	@Test
+	@DirtiesContext
 	public void testUpdateUnitValueFunctionality1() throws BusinessException {
 		// This test is designed to check a simple functionality modification.
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -211,6 +211,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	
 	
 	@Test
+	@DirtiesContext
 	public void testUpdateUnitValueFunctionality2() throws BusinessException {
 		// This test is designed to check a simple update without modification.
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -232,6 +233,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	}
 	
 	@Test
+	@DirtiesContext
 	public void testUpdateUnitValueFunctionality2bis() throws BusinessException {
 		// This test is designed to check a simple update without modification.
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -249,6 +251,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	}
 	
 	@Test
+	@DirtiesContext
 	public void testUpdateActivationPolicyFunctionality1() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
@@ -282,6 +285,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	}
 	
 	@Test
+	@DirtiesContext
 	public void testUpdateActivationPolicyFunctionality2() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
@@ -310,6 +314,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	}
 	
 	@Test
+	@DirtiesContext
 	public void testUpdateRootDomainFunctionality() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
@@ -356,6 +361,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	
 	
 	@Test
+	@DirtiesContext
 	public void testUpdateActivationPolicyFunctionality3() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		String rootDomainId = LoadingServiceTestDatas.rootDomainName;
@@ -393,6 +399,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	}
 	
 	@Test
+	@DirtiesContext
 	public void testUpdateConfigurationPolicyFunctionality1() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		String rootDomainId = LoadingServiceTestDatas.rootDomainName;
@@ -435,6 +442,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	
 	
 	@Test
+	@DirtiesContext
 	public void testUpdateConfigurationPolicyFunctionality2() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		String rootDomainId = LoadingServiceTestDatas.rootDomainName;
@@ -484,6 +492,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	}
 	
 	@Test
+	@DirtiesContext
 	public void testUpdateConfigurationPolicyFunctionality3() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		String rootDomainId = LoadingServiceTestDatas.rootDomainName;
@@ -523,6 +532,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	}
 	
 	@Test
+	@DirtiesContext
 	public void testCheckAndUpdate() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 

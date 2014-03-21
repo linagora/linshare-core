@@ -236,11 +236,8 @@ public class AbstractDomainRepositoryImplTest extends AbstractJUnit4SpringContex
 	@Test
 	public void testFindAllTopDomain() throws BusinessException{
 		List<AbstractDomain> list = abstractDomainRepository.findAllTopDomain();
-		Assert.assertEquals(1, list.size());
-		for (AbstractDomain abstractDomain : list) {
-			logger.debug("Top domain found : " + abstractDomain.toString());
-			Assert.assertEquals("MyDomain", abstractDomain.getIdentifier());
-		}
+		// one by default + 2 topdomain for tests.
+		Assert.assertEquals(3, list.size());
 	}
 
 	@Test
