@@ -36,6 +36,8 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
     <script type="text/javascript" language="javascript">
         var uuids = new Array();
+	
+	var uploader;
 
         var sizeAvailable = ${maxFileSize};
 
@@ -75,10 +77,10 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
         }
 
         var trySubmit = function() {
-            if (uuids.length != 0) {
+            if (uuids.length + uploader.getInProgress()) {
                 if (jQuery("#is_submit").is(":checked")) {
                     startSpinner();
-                    if (jQuery("#progress").val() == 0) {
+                    if (uploader.getInProgress() == 0) {
                         jQuery("#submitShare").click();
                     }
                 }
@@ -86,9 +88,10 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
         }
 
         var requestSubmit = function() {
-            if (uuids.length + jQuery("#progress").val() != 0)
+            if (uuids.length + uploader.getInProgress()) {
                 jQuery("#is_submit").attr("checked", true);
-            trySubmit();
+                trySubmit();
+	    }
         }
 
         jQuery(document).ready(function() {
@@ -101,7 +104,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                 console.log("New validation size is " + value);
             };
 
-            var uploader = new qq.FineUploader({
+            uploader = new qq.FineUploader({
                 element: jQuery('#uploader')[0],
                 debug: true,
                 maxConnections: 1,
