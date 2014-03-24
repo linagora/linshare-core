@@ -31,40 +31,61 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.webservice.dto;
 
-public class MailLayout {
-	public MailLayout() {
-	}
+import java.util.Date;
 
-	private long id;
+import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.entities.MailContent;
+
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
+@XmlRootElement(name = "MailContent")
+@ApiModel(value = "MailContent", description = "")
+public class MailContentDto {
+
+	@ApiModelProperty(value = "Name")
 	private String name;
 
-	private AbstractDomain domain;
+	@ApiModelProperty(value = "Domain")
+	private DomainDto domain;
 
+	@ApiModelProperty(value = "Visible")
 	private boolean visible;
 
-	private String layout;
+	@ApiModelProperty(value = "MailContentType")
+	private int mailContentType;
 
-	private java.util.Date creationDate;
+	@ApiModelProperty(value = "Language")
+	private int language;
 
-	private java.util.Date modificationDate;
+	@ApiModelProperty(value = "Subject")
+	private String subject;
 
+	@ApiModelProperty(value = "Greetings")
+	private String greetings;
+
+	@ApiModelProperty(value = "Body")
+	private String body;
+
+	@ApiModelProperty(value = "CreationDate")
+	private Date creationDate;
+
+	@ApiModelProperty(value = "ModificationDate")
+	private Date modificationDate;
+
+	@ApiModelProperty(value = "Uuid")
 	private String uuid;
 
+	@ApiModelProperty(value = "Plaintext")
 	private boolean plaintext;
 
-	private void setId(long value) {
-		this.id = value;
+	public MailContentDto() {
 	}
 
-	public long getId() {
-		return id;
-	}
-
-	public long getORMID() {
-		return getId();
+	public MailContentDto(MailContent content) {
 	}
 
 	public void setName(String value) {
@@ -75,11 +96,11 @@ public class MailLayout {
 		return name;
 	}
 
-	public AbstractDomain getDomain() {
+	public DomainDto getDomain() {
 		return domain;
 	}
 
-	public void setDomain(AbstractDomain domain) {
+	public void setDomain(DomainDto domain) {
 		this.domain = domain;
 	}
 
@@ -91,27 +112,59 @@ public class MailLayout {
 		return visible;
 	}
 
-	public void setLayout(String value) {
-		this.layout = value;
+	public void setMailContentType(int value) {
+		this.mailContentType = value;
 	}
 
-	public String getLayout() {
-		return layout;
+	public int getMailContentType() {
+		return mailContentType;
 	}
 
-	public void setCreationDate(java.util.Date value) {
+	public void setLanguage(int value) {
+		this.language = value;
+	}
+
+	public int getLanguage() {
+		return language;
+	}
+
+	public void setSubject(String value) {
+		this.subject = value;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setGreetings(String value) {
+		this.greetings = value;
+	}
+
+	public String getGreetings() {
+		return greetings;
+	}
+
+	public void setBody(String value) {
+		this.body = value;
+	}
+
+	public String getBody() {
+		return body;
+	}
+
+	public void setCreationDate(Date value) {
 		this.creationDate = value;
 	}
 
-	public java.util.Date getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setModificationDate(java.util.Date value) {
+	public void setModificationDate(Date value) {
 		this.modificationDate = value;
 	}
 
-	public java.util.Date getModificationDate() {
+	public Date getModificationDate() {
 		return modificationDate;
 	}
 
@@ -130,9 +183,4 @@ public class MailLayout {
 	public boolean getPlaintext() {
 		return plaintext;
 	}
-
-	public String toString() {
-		return String.valueOf(getId());
-	}
-
 }

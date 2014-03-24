@@ -66,8 +66,6 @@ public class MailContent {
 
 	private boolean plaintext;
 
-	private Set<MailContentLang> mailConfiguration = Sets.newHashSet();
-
 	public MailContent() {
 	}
 
@@ -147,7 +145,7 @@ public class MailContent {
 		this.creationDate = value;
 	}
 
-	public java.util.Date getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
@@ -155,7 +153,7 @@ public class MailContent {
 		this.modificationDate = value;
 	}
 
-	public java.util.Date getModificationDate() {
+	public Date getModificationDate() {
 		return modificationDate;
 	}
 
@@ -173,14 +171,6 @@ public class MailContent {
 
 	public boolean getPlaintext() {
 		return plaintext;
-	}
-
-	public void setMailConfiguration(Set<MailContentLang> value) {
-		this.mailConfiguration = value;
-	}
-
-	public Set<MailContentLang> getMailConfiguration() {
-		return mailConfiguration;
 	}
 
 	public String toString() {

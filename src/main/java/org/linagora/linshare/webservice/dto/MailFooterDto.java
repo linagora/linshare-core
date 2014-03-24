@@ -31,29 +31,76 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.webservice.dto;
 
-public class MailContentLang {
+import java.util.Date;
 
-	private long id;
+import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.entities.MailFooter;
+
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
+@XmlRootElement(name = "MailFooter")
+@ApiModel(value = "MailFooter", description = "")
+public class MailFooterDto {
+
+	@ApiModelProperty(value = "Name")
+	private String name;
+
+	@ApiModelProperty(value = "Domain")
+	private DomainDto domain;
+
+	@ApiModelProperty(value = "Visible")
+	private boolean visible;
+
+	@ApiModelProperty(value = "Language")
 	private int language;
 
-	private MailContent mailContent;
+	@ApiModelProperty(value = "Footer")
+	private String footer;
 
-	private int mailContentType;
+	@ApiModelProperty(value = "CreationDate")
+	private Date creationDate;
 
-	private MailConfig mailConfig;
+	@ApiModelProperty(value = "ModificationDate")
+	private Date modificationDate;
 
-	public MailContentLang() {
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
+
+	@ApiModelProperty(value = "Plaintext")
+	private boolean plaintext;
+
+	public MailFooterDto() {
 	}
 
-	public long getId() {
-		return id;
+	public MailFooterDto(MailFooter footer) {
 	}
 
-	private void setId(long id) {
-		this.id = id;
+	public void setName(String value) {
+		this.name = value;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public DomainDto getDomain() {
+		return domain;
+	}
+
+	public void setDomain(DomainDto domain) {
+		this.domain = domain;
+	}
+
+	public void setVisible(boolean value) {
+		this.visible = value;
+	}
+
+	public boolean getVisible() {
+		return visible;
 	}
 
 	public void setLanguage(int value) {
@@ -64,28 +111,43 @@ public class MailContentLang {
 		return language;
 	}
 
-	public void setMailContentType(int value) {
-		this.mailContentType = value;
+	public void setFooter(String value) {
+		this.footer = value;
 	}
 
-	public int getMailContentType() {
-		return mailContentType;
+	public String getFooter() {
+		return footer;
 	}
 
-	public void setMailContent(MailContent value) {
-		this.mailContent = value;
+	public void setCreationDate(Date value) {
+		this.creationDate = value;
 	}
 
-	public MailContent getMailContent() {
-		return mailContent;
+	public Date getCreationDate() {
+		return creationDate;
 	}
 
-	public MailConfig getMailConfig() {
-		return mailConfig;
+	public void setModificationDate(Date value) {
+		this.modificationDate = value;
 	}
 
-	public void setMailConfig(MailConfig mailConfig) {
-		this.mailConfig = mailConfig;
+	public Date getModificationDate() {
+		return modificationDate;
 	}
 
+	public void setUuid(String value) {
+		this.uuid = value;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setPlaintext(boolean value) {
+		this.plaintext = value;
+	}
+
+	public boolean getPlaintext() {
+		return plaintext;
+	}
 }

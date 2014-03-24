@@ -31,22 +31,15 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service.impl;
+package org.linagora.linshare.webservice.admin;
 
-import org.linagora.linshare.core.business.service.DomainBusinessService;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.MailConfigDto;
 
-public class DomainBusinessServiceImpl implements DomainBusinessService {
+public interface MailConfigRestService {
+	MailConfigDto find(String uuid) throws BusinessException;
+	void create(MailConfigDto dto) throws BusinessException;
+	void update(MailConfigDto dto) throws BusinessException;
+	void delete(String uuid) throws BusinessException;
 
-    private AbstractDomainRepository repository;
-
-    public DomainBusinessServiceImpl(AbstractDomainRepository repository) {
-        this.repository = repository;
-    }
-
-    @Override
-    public AbstractDomain findById(String identifier) {
-        return repository.findById(identifier);
-    }
 }

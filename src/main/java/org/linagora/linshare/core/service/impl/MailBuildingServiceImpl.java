@@ -113,4 +113,5 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mailConfigRepository = mailConfigRepository;
 	}
+
 }

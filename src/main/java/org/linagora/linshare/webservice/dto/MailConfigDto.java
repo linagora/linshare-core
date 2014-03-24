@@ -31,22 +31,17 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service.impl;
+package org.linagora.linshare.webservice.dto;
 
-import org.linagora.linshare.core.business.service.DomainBusinessService;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public class DomainBusinessServiceImpl implements DomainBusinessService {
+import org.linagora.linshare.core.domain.entities.MailConfig;
 
-    private AbstractDomainRepository repository;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-    public DomainBusinessServiceImpl(AbstractDomainRepository repository) {
-        this.repository = repository;
-    }
+@XmlRootElement(name = "MailConfig")
+@ApiModel(value = "MailConfig", description = "")
+public class MailConfigDto {
 
-    @Override
-    public AbstractDomain findById(String identifier) {
-        return repository.findById(identifier);
-    }
 }

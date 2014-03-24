@@ -31,22 +31,42 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service.impl;
+package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import org.linagora.linshare.core.business.service.DomainBusinessService;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.MailConfigFacade;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.webservice.dto.MailConfigDto;
 
-public class DomainBusinessServiceImpl implements DomainBusinessService {
+public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements MailConfigFacade {
 
-    private AbstractDomainRepository repository;
+	public MailConfigFacadeImpl(final AccountService accountService) {
+		super(accountService);
+		// TODO Auto-generated constructor stub
+	}
 
-    public DomainBusinessServiceImpl(AbstractDomainRepository repository) {
-        this.repository = repository;
-    }
+	@Override
+	public MailConfigDto get(String uuid) throws BusinessException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public AbstractDomain findById(String identifier) {
-        return repository.findById(identifier);
-    }
+	@Override
+	public void create(MailConfigDto dto) throws BusinessException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update(MailConfigDto dto) throws BusinessException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void delete(String uuid) throws BusinessException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
