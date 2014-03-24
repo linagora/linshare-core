@@ -222,8 +222,8 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 		Assert.notNull(domain);
 
 		// Check if the current functionality belong to the current domain.
-		if (!functionality.getDomain().getIdentifier().equals(domain)) {
-			// The current functionality belong to a parent domain.
+		if (functionality.getDomain().getIdentifier().equals(domain)) {
+			// The current functionality belong to the current domain.
 			AbstractDomain abstractDomain = abstractDomainRepository.findById(domain);
 			Functionality ancestorFunc = getParentFunctionality(abstractDomain, functionality.getIdentifier());
 			// We check if the parent domain allow the current domain to
@@ -232,8 +232,7 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 				return true;
 			}
 		} else {
-			// The current functionality belong to the current domain.
-			if (!functionality.getActivationPolicy().isSystem()) {
+			if (functionality.getActivationPolicy().isMutable()) {
 				return true;
 			}
 		}
@@ -297,25 +296,28 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 	@Override
 	public void update(String domainId, Functionality functionality) throws BusinessException {
 
-		AbstractDomain domain = abstractDomainRepository.findById(domainId);
-		Functionality entity = getFunctionalityEntityByIdentifiers(domain, functionality.getIdentifier());
-		
-		
+		AbstractDomain currentDomain = abstractDomainRepository.findById(domainId);
+		Functionality entity = getFunctionalityEntityByIdentifiers(currentDomain, functionality.getIdentifier());
+
 		if (entity.getDomain().getIdentifier().equals(functionality.getDomain().getIdentifier())) {
+			// This functionality belongs to the current domain.
 			logger.debug("this functionality belongs to the current domain");
+			// We check if it has an identical ancestor.
+//			functionalityRepository.update(functionality);
+			if (entity.getDomain().getParentDomain() != null) {
+			}
 			
 		} else {
-//			logger.debug("this functionality does not belong to the current domain");
-//			// This functionality does not belong to the current domain.
-//			if (!functionalityDto.businessEquals(functionalityEntity, true)) {
-//				// This functionality is different, it needs to be persist.
-//				functionalityDto.setDomain(currentDomain);
-//
-//				functionalityRepository.create(functionalityDto);
-//				logger.info("Update by creation of a new functionality for : " + functionalityDto.getIdentifier() + " link to domain : " + currentDomain.getIdentifier());
-//			} else { // no differences
-//				logger.debug("functionality " + functionalityDto.getIdentifier()+ " was not modified.");
-//			}
+			// This functionality does not belong to the current domain.
+			logger.debug("this functionality does not belong to the current domain");
+			if (!functionality.businessEquals(entity, true)) {
+				// This functionality is different, it needs to be persist.
+				functionality.setDomain(currentDomain);
+				functionalityRepository.create(functionality);
+				logger.info("Update by creation of a new functionality for : " + functionality.getIdentifier() + " link to domain : " + currentDomain.getIdentifier());
+			} else { // no differences
+				logger.debug("functionality " + functionality.getIdentifier()+ " was not modified.");
+			}
 		}
 	}
 

@@ -67,11 +67,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
-		"classpath:springContext-business-service.xml",
-		"classpath:springContext-facade.xml",
-		"classpath:springContext-startopendj.xml",
-		"classpath:springContext-jackRabbit.xml",
+		"classpath:springContext-service-test-funcs.xml",
 		"classpath:springContext-test.xml"
 		})
 public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTests{
@@ -203,7 +199,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		
 		Assert.assertEquals(50,func.getValue().intValue());
 		func.setValue(25);
-		functionalityOldService.update(domain, func);
+		functionalityOldService.update(actor, domain, func);
 		
 		domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertEquals(1, domain.getFunctionalities().size());
@@ -226,7 +222,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		UnitValueFunctionality func = (UnitValueFunctionality)functionalityService.getFunctionality(actor, domain.getIdentifier(), LoadingServiceTestDatas.FILESIZE_MAX);
 		
 		Assert.assertEquals(50,func.getValue().intValue());
-		functionalityOldService.update(domain, func);
+		functionalityOldService.update(actor, domain, func);
 		
 		domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertEquals(1, domain.getFunctionalities().size());
@@ -248,7 +244,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		StringValueFunctionality func = (StringValueFunctionality)functionalityService.getFunctionality(actor, domain.getIdentifier(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		
 		Assert.assertTrue(func.getValue().equals(LoadingServiceTestDatas.timeStampingUrl));
-		functionalityOldService.update(domain, func);
+		functionalityOldService.update(actor, domain, func);
 		
 		domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertEquals(1, domain.getFunctionalities().size());
@@ -268,7 +264,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality
 		func.setValue("plop");
-		functionalityOldService.update(domain, func);
+		functionalityOldService.update(actor, domain, func);
 		
 		// updating this new functionality without reloading it: should failed
 		func.setValue("plop2");
@@ -276,7 +272,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		
 		try {
 			
-			functionalityOldService.update(domain, func);
+			functionalityOldService.update(actor, domain, func);
 			Assert.fail("This message should not be seen. An BusinessException was expected.");
 		} catch (TechnicalException e) {
 			if(!e.getErrorCode().equals(TechnicalErrorCode.FUNCTIONALITY_ENTITY_MODIFICATION_NOT_ALLOW)) {
@@ -301,14 +297,14 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality
 		func.setValue("plop");
-		functionalityOldService.update(domain, func);
+		functionalityOldService.update(actor, domain, func);
 		
 		func = (StringValueFunctionality)functionalityService.getFunctionality(actor, domain.getIdentifier(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func.setValue("plop2");
 		func.getActivationPolicy().setPolicy(Policies.FORBIDDEN);
 		
 		try {
-			functionalityOldService.update(domain, func);
+			functionalityOldService.update(actor, domain, func);
 			Assert.fail("This message should not be seen. An technicalException was expected.");
 		} catch (TechnicalException e) {
 //			e.printStackTrace();
@@ -330,7 +326,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		
 		func.setValue("plop");
 		func.getActivationPolicy().setPolicy(Policies.FORBIDDEN);
-		functionalityOldService.update(domain, func);
+		functionalityOldService.update(actor, domain, func);
 		
 		logger.debug(LinShareTestConstants.END_TEST);
 
@@ -379,7 +375,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		
 		func.getActivationPolicy().setStatus(false);
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality for top domain
-		functionalityOldService.update(LoadingServiceTestDatas.topDomainName, func);
+		functionalityOldService.update(actor, LoadingServiceTestDatas.topDomainName, func);
 		Assert.assertEquals(2, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 		
 		
@@ -387,7 +383,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		StringValueFunctionality func2 = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func2.getActivationPolicy().setPolicy(Policies.FORBIDDEN);
 		// modification of a functionality which belong to the top domain. This will lead to the creation of a new functionality for sub domain
-		functionalityOldService.update(LoadingServiceTestDatas.subDomainName1, func2);
+		functionalityOldService.update(actor, LoadingServiceTestDatas.subDomainName1, func2);
 		Assert.assertEquals(3, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 		
 		
@@ -395,7 +391,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		StringValueFunctionality func3 = (StringValueFunctionality)functionalityService.getFunctionality(actor, rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func3.getActivationPolicy().setPolicy(Policies.FORBIDDEN);
 		// root domain functionality is set with a forbidden policy, this should lead to the suppression of all functionalities above rootDomain
-		functionalityOldService.update(rootDomainId, func3);
+		functionalityOldService.update(actor, rootDomainId, func3);
 		Assert.assertEquals(1, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 	
 		
@@ -417,7 +413,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		
 		func.getConfigurationPolicy().setStatus(false);
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality for top domain
-		functionalityOldService.update(LoadingServiceTestDatas.topDomainName, func);
+		functionalityOldService.update(actor, LoadingServiceTestDatas.topDomainName, func);
 		Assert.assertEquals(2, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 		
 		
@@ -425,7 +421,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		StringValueFunctionality func2 = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func2.getConfigurationPolicy().setPolicy(Policies.FORBIDDEN);
 		// modification of a functionality which belong to the top domain. This will lead to the creation of a new functionality for sub domain
-		functionalityOldService.update(LoadingServiceTestDatas.subDomainName1, func2);
+		functionalityOldService.update(actor, LoadingServiceTestDatas.subDomainName1, func2);
 		Assert.assertEquals(3, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 		
 		
@@ -433,7 +429,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		StringValueFunctionality func3 = (StringValueFunctionality)functionalityService.getFunctionality(actor, rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func3.getConfigurationPolicy().setPolicy(Policies.MANDATORY);
 		// root domain functionality is set with a mandatory policy, this should lead to the modification of all functionalities above rootDomain
-		functionalityOldService.update(rootDomainId, func3);
+		functionalityOldService.update(actor, rootDomainId, func3);
 		Assert.assertEquals(3, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 		
 	
@@ -463,7 +459,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		func.getConfigurationPolicy().setStatus(false);
 		func.setValue(valueFromTop);
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality for top domain
-		functionalityOldService.update(LoadingServiceTestDatas.topDomainName, func);
+		functionalityOldService.update(actor, LoadingServiceTestDatas.topDomainName, func);
 		Assert.assertEquals(2, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 		
 		
@@ -472,7 +468,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		func2.getConfigurationPolicy().setPolicy(Policies.MANDATORY);
 		func2.setValue(valueFromSub);
 		// modification of a functionality which belong to the top domain. This will lead to the creation of a new functionality for sub domain
-		functionalityOldService.update(LoadingServiceTestDatas.subDomainName1, func2);
+		functionalityOldService.update(actor, LoadingServiceTestDatas.subDomainName1, func2);
 		Assert.assertEquals(3, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 		
 		
@@ -482,7 +478,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		func3.getConfigurationPolicy().setPolicy(Policies.FORBIDDEN);
 
 		// root domain functionality is set with a forbidden policy, this should lead to the modification of all functionalities above rootDomain
-		functionalityOldService.update(rootDomainId, func3);
+		functionalityOldService.update(actor, rootDomainId, func3);
 		Assert.assertEquals(3, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 	
 		
@@ -510,7 +506,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		
 		func.getConfigurationPolicy().setStatus(false);
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality for top domain
-		functionalityOldService.update(LoadingServiceTestDatas.topDomainName, func);
+		functionalityOldService.update(actor, LoadingServiceTestDatas.topDomainName, func);
 		Assert.assertEquals(2, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 		
 		
@@ -518,7 +514,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		StringValueFunctionality func2 = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func2.getConfigurationPolicy().setPolicy(Policies.FORBIDDEN);
 		// modification of a functionality which belong to the top domain. This will lead to the creation of a new functionality for sub domain
-		functionalityOldService.update(LoadingServiceTestDatas.subDomainName1, func2);
+		functionalityOldService.update(actor, LoadingServiceTestDatas.subDomainName1, func2);
 		Assert.assertEquals(3, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 		
 		
@@ -526,7 +522,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		StringValueFunctionality func3 = (StringValueFunctionality)functionalityService.getFunctionality(actor, rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func3.getConfigurationPolicy().setPolicy(Policies.MANDATORY);
 		// root domain functionality is set with a forbidden policy, this should lead to the suppression of all functionalities above rootDomain
-		functionalityOldService.update(rootDomainId, func3);
+		functionalityOldService.update(actor, rootDomainId, func3);
 		Assert.assertEquals(3, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 		
 	
@@ -561,7 +557,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 			configurationPolicy.setPolicy(Policies.FORBIDDEN);
 			funcAncestor.setConfigurationPolicy(configurationPolicy);
 			
-			functionalityOldService.update(LoadingServiceTestDatas.rootDomainName,funcAncestor);
+			functionalityOldService.update(actor,LoadingServiceTestDatas.rootDomainName, funcAncestor);
 			
 			// Set the functionality entity
 			StringValueFunctionality funcEntity = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
@@ -578,7 +574,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 			configurationPolicy.setPolicy(Policies.FORBIDDEN);
 			funcEntity.setConfigurationPolicy(configurationPolicy);
 			
-			functionalityOldService.update(LoadingServiceTestDatas.topDomainName,funcEntity);
+			functionalityOldService.update(actor,LoadingServiceTestDatas.topDomainName, funcEntity);
 			
 			// Set the functionality DTO
 			StringValueFunctionality funcDto = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
@@ -595,7 +591,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 			configurationPolicy.setPolicy(Policies.FORBIDDEN);
 			funcDto.setConfigurationPolicy(configurationPolicy);
 			
-			functionalityOldService.update(LoadingServiceTestDatas.topDomainName, funcDto);
+			functionalityOldService.update(actor, LoadingServiceTestDatas.topDomainName, funcDto);
 		} catch (TechnicalException e){
 			Assert.fail();
 		}

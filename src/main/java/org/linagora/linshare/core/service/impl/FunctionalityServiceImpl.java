@@ -118,6 +118,11 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		}
 	}
 
+	@Override
+	public void update(Account actor, AbstractDomain domain, Functionality functionality) throws BusinessException {
+		this.update(actor, domain.getIdentifier(), functionality);
+	}
+
 	/**
 	 * Return true if you need to update the input functionality.
 	 * @param actor
@@ -130,7 +135,16 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	private boolean checkUpdateRights(Account actor, String domain, Functionality functionality)
 			throws BusinessException {
 		Functionality entity = this.getFunctionality(actor, domain, functionality.getIdentifier());
+
+		// consistency checks
+		if (!entity.getType().equals(functionality.getType())) {
+			String message = entity.getType().toString() + " != " + entity.getType().toString();
+			throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "Same identifier, different functionality types : " + message);
+		}
 		
+		functionality.getActivationPolicy().applyConsistency();
+		functionality.getConfigurationPolicy().applyConsistency();
+
 		// we check if the parent functionality allow modifications of the activation policy (AP).
 		boolean parentAllowAPUpdate = activationPolicyIsMutable(entity, domain);
 		if(!parentAllowAPUpdate) {

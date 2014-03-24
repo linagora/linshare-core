@@ -40,6 +40,7 @@ import java.util.Set;
 import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -281,9 +282,9 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 
 	@Deprecated
 	@Override
-	public void update(String domainIdentifier, Functionality functionality) throws BusinessException {
+	public void update(Account actor, String domainIdentifier, Functionality functionality) throws BusinessException {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
-		update(domain, functionality);
+		update(actor, domain, functionality);
 	}
 
 	private Functionality getFunctionalityEntityByIdentifiers(AbstractDomain domain, String functionalityIdentifier) {
@@ -296,7 +297,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 	
 	@Deprecated
 	@Override
-	public void update(AbstractDomain currentDomain, Functionality functionalityDto) throws BusinessException {
+	public void update(Account actor, AbstractDomain currentDomain, Functionality functionalityDto) throws BusinessException {
 
 		logger.debug("Begin update");
 		

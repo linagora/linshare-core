@@ -136,7 +136,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 
 		// copy of parameters.
 		f.updateFunctionalityValuesOnlyFromDto(func);
-		functionalityOldService.update(domain, f);
+		functionalityOldService.update(actor, domain, f);
 	}
 
 	@Override

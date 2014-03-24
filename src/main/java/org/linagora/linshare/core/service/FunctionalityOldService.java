@@ -34,12 +34,13 @@
 package org.linagora.linshare.core.service;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface FunctionalityOldService {
 	
-	public void update(AbstractDomain domain, Functionality functionality) throws BusinessException;
+	public void update(Account actor, AbstractDomain domain, Functionality functionality) throws BusinessException;
 	
-	public void update(String domainIdentifier, Functionality functionality) throws BusinessException;
+	public void update(Account actor, String domainIdentifier, Functionality functionality) throws BusinessException;
 }
