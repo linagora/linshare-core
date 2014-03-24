@@ -245,8 +245,8 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 		Assert.notNull(domain);
 		
 		// Check if the current functionality belong to the current domain.
-		if (!functionality.getDomain().getIdentifier().equals(domain)) {
-			// The current functionality belong to a parent domain.
+		if (functionality.getDomain().getIdentifier().equals(domain)) {
+			// we have to check if we have the permission to modify the configuration status of this functionality
 			AbstractDomain abstractDomain = abstractDomainRepository.findById(domain);
 			Functionality ancestorFunc = getParentFunctionality(abstractDomain, functionality.getIdentifier());
 			// We check if the parent domain allow the current domain to
@@ -260,9 +260,9 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 				}
 			}
 		} else {
-			// I have to check if I have the permission to modify the configuration status of this functionality
+			// The current functionality belong to a parent domain.
 			if (functionality.getActivationPolicy().getStatus()) {
-				if (!functionality.getConfigurationPolicy().isSystem()) {
+				if (functionality.getConfigurationPolicy().isMutable()) {
 					return true;
 				}
 			}
