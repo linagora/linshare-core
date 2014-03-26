@@ -39,6 +39,7 @@ import java.util.UUID;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.MailLayout;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailConfigRepository;
 import org.springframework.dao.support.DataAccessUtils;
@@ -82,5 +83,14 @@ public class MailConfigRepositoryImpl extends
 	public MailConfig update(MailConfig entity) throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
+	}
+
+	@Override
+	public boolean isMailLayoutReferenced(MailLayout layout) {
+		return !findByCriteria(
+				Restrictions.disjunction()
+						.add(Restrictions.eq("mailLayoutHtml", layout))
+						.add(Restrictions.eq("mailLayoutText", layout)))
+				.isEmpty();
 	}
 }

@@ -11,4 +11,6 @@ public interface MailContentLangRepository extends
 
 	MailContent findMailContent(MailConfig cfg, Language lang,
 			MailContentType type);
+
+	boolean isMailContentReferenced(MailContent content);
 }

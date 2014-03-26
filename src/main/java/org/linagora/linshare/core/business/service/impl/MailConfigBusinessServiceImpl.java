@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -62,7 +63,8 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 	}
 
 	@Override
-	public void create(MailConfig cfg) throws BusinessException {
+	public void create(AbstractDomain domain, MailConfig cfg)
+			throws BusinessException {
 		MailConfig rootCfg = abstractDomainRepository.getUniqueRootDomain()
 				.getCurrentMailConfiguration();
 
@@ -86,21 +88,19 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 	}
 
 	@Override
-	public void delete(String uuid) throws BusinessException {
-		this.delete(findByUuid(uuid));
-	}
-
-	@Override
 	public void delete(MailConfig cfg) throws BusinessException {
 		/*
 		 * abort if this mailconfig is still in use by some domains
 		 */
 		if (!abstractDomainRepository.findByCurrentMailConfig(cfg).isEmpty()) {
-			throw new BusinessException(
-					BusinessErrorCode.MAILCONFIG_IN_USE,
+			throw new BusinessException(BusinessErrorCode.MAILCONFIG_IN_USE,
 					"Cannot delete mailconfig " + cfg);
 		}
 		try {
+			AbstractDomain domain = cfg.getDomain();
+
+			domain.getMailConfigs().remove(cfg);
+			abstractDomainRepository.update(domain);
 			mailConfigRepository.delete(cfg);
 		} catch (IllegalArgumentException iae) {
 			throw new BusinessException(BusinessErrorCode.MAILCONFIG_NOT_FOUND,

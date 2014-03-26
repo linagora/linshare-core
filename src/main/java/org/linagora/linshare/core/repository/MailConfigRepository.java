@@ -34,8 +34,11 @@
 package org.linagora.linshare.core.repository;
 
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.MailLayout;
 
 public interface MailConfigRepository extends AbstractRepository<MailConfig> {
 
 	public MailConfig findByUuid(String uuid);
+
+	boolean isMailLayoutReferenced(MailLayout layout);
 }

@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+
 public class MailLayout {
 	public MailLayout() {
 	}
@@ -47,9 +49,9 @@ public class MailLayout {
 
 	private String layout;
 
-	private java.util.Date creationDate;
+	private Date creationDate;
 
-	private java.util.Date modificationDate;
+	private Date modificationDate;
 
 	private String uuid;
 
@@ -99,19 +101,19 @@ public class MailLayout {
 		return layout;
 	}
 
-	public void setCreationDate(java.util.Date value) {
+	public void setCreationDate(Date value) {
 		this.creationDate = value;
 	}
 
-	public java.util.Date getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setModificationDate(java.util.Date value) {
+	public void setModificationDate(Date value) {
 		this.modificationDate = value;
 	}
 
-	public java.util.Date getModificationDate() {
+	public Date getModificationDate() {
 		return modificationDate;
 	}
 

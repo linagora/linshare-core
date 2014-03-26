@@ -41,11 +41,18 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailContentBusinessService {
 
+	MailContent findByUuid(String uuid);
+
 	MailContent find(String domainId, Language lang, MailContentType type) throws BusinessException;
+
 	MailContent find(AbstractDomain domain, Language lang, MailContentType type) throws BusinessException;
 
 	void create(String domainId, MailContent content) throws BusinessException;
+
 	void create(AbstractDomain domain, MailContent content) throws BusinessException;
 
 	void update(MailContent content) throws BusinessException;
+
+	void delete(MailContent content)
+			throws BusinessException;
 }

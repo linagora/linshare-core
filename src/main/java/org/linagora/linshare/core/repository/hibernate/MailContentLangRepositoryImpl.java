@@ -35,6 +35,8 @@ package org.linagora.linshare.core.repository.hibernate;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.MailConfig;
@@ -69,5 +71,11 @@ public class MailContentLangRepositoryImpl extends
 		and.add(Restrictions.eq("language", lang));
 		return DataAccessUtils.singleResult(findByCriteria(and))
 				.getMailContent();
+	}
+
+	@Override
+	public boolean isMailContentReferenced(MailContent content) {
+		return !findByCriteria(Restrictions.eq("mailContent", content))
+				.isEmpty();
 	}
 }

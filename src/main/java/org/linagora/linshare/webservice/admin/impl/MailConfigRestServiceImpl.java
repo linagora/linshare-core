@@ -43,6 +43,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.MailConfigFacade;
 import org.linagora.linshare.webservice.admin.MailConfigRestService;
 import org.linagora.linshare.webservice.dto.MailConfigDto;
 
@@ -57,14 +58,20 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MailConfigRestServiceImpl implements MailConfigRestService {
 
+	private final MailConfigFacade mailConfigFacade;
+
+	public MailConfigRestServiceImpl(final MailConfigFacade mailConfigFacade) {
+		super();
+		this.mailConfigFacade = mailConfigFacade;
+	}
+
 	@Override
 	@Path("/{uuid}")
 	@ApiOperation(value = "Find a mail configuration.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
 	public MailConfigDto find(String uuid) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return mailConfigFacade.find(uuid);
 	}
 
 	@Override
@@ -76,8 +83,7 @@ public class MailConfigRestServiceImpl implements MailConfigRestService {
 	public void create(
 			@ApiParam(value = "Mail configuration to create.", required = true) MailConfigDto dto)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-
+		mailConfigFacade.create(dto);
 	}
 
 	@Override
@@ -89,8 +95,7 @@ public class MailConfigRestServiceImpl implements MailConfigRestService {
 	public void update(
 			@ApiParam(value = "Mail configuration to update.", required = true) MailConfigDto dto)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-
+		mailConfigFacade.update(dto);
 	}
 
 	@Override
@@ -101,8 +106,7 @@ public class MailConfigRestServiceImpl implements MailConfigRestService {
 	public void delete(
 			@ApiParam(value = "Mail config uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-
+		mailConfigFacade.delete(uuid);
 	}
 
 }

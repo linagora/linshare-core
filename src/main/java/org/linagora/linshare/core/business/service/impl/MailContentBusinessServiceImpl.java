@@ -65,6 +65,11 @@ public class MailContentBusinessServiceImpl implements
 	}
 
 	@Override
+	public MailContent findByUuid(String uuid) {
+		return mailContentRepository.findByUuid(uuid);
+	}
+
+	@Override
 	public MailContent find(String domainId, Language lang, MailContentType type)
 			throws BusinessException {
 		return this.find(findDomain(domainId), lang, type);
@@ -87,6 +92,7 @@ public class MailContentBusinessServiceImpl implements
 	@Override
 	public void create(AbstractDomain domain, MailContent content)
 			throws BusinessException {
+		content = mailContentRepository.create(content);
 		domain.getMailContents().add(content);
 		abstractDomainRepository.update(domain);
 	}
@@ -94,6 +100,19 @@ public class MailContentBusinessServiceImpl implements
 	@Override
 	public void update(MailContent content) throws BusinessException {
 		mailContentRepository.update(content);
+	}
+
+	@Override
+	public void delete(MailContent content) throws BusinessException {
+		AbstractDomain domain = content.getDomain();
+
+		if (mailContentLangRepository.isMailContentReferenced(content)) {
+			throw new BusinessException(BusinessErrorCode.MAILCONTENT_IN_USE,
+					"Cannot delete mail content as it's still in use.");
+		}
+		domain.getMailContents().remove(content);
+		abstractDomainRepository.update(domain);
+		mailContentRepository.delete(content);
 	}
 
 	private AbstractDomain findDomain(String domainId) throws BusinessException {

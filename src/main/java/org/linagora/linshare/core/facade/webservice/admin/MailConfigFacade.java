@@ -37,7 +37,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.MailConfigDto;
 
 public interface MailConfigFacade extends AdminGenericFacade {
-	MailConfigDto get(String uuid) throws BusinessException;
+	MailConfigDto find(String uuid) throws BusinessException;
 	void create(MailConfigDto dto) throws BusinessException;
 	void update(MailConfigDto dto) throws BusinessException;
 	void delete(String uuid) throws BusinessException;

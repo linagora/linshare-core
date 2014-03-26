@@ -36,17 +36,22 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailConfigFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.MailConfigService;
 import org.linagora.linshare.webservice.dto.MailConfigDto;
 
-public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements MailConfigFacade {
+public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
+		MailConfigFacade {
 
-	public MailConfigFacadeImpl(final AccountService accountService) {
+	private final MailConfigService mailConfigService;
+
+	public MailConfigFacadeImpl(final AccountService accountService,
+			final MailConfigService mailConfigService) {
 		super(accountService);
-		// TODO Auto-generated constructor stub
+		this.mailConfigService = mailConfigService;
 	}
 
 	@Override
-	public MailConfigDto get(String uuid) throws BusinessException {
+	public MailConfigDto find(String uuid) throws BusinessException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -54,19 +59,16 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements Mail
 	@Override
 	public void create(MailConfigDto dto) throws BusinessException {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void update(MailConfigDto dto) throws BusinessException {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
 		// TODO Auto-generated method stub
-		
 	}
 
 }

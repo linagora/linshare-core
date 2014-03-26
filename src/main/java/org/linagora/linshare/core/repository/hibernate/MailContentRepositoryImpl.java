@@ -39,6 +39,7 @@ import java.util.UUID;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.MailContent;
+import org.linagora.linshare.core.domain.entities.MailLayout;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailContentRepository;
 import org.springframework.dao.support.DataAccessUtils;

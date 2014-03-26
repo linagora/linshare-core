@@ -33,13 +33,8 @@
  */
 package org.linagora.linshare.core.repository;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.constants.MailTemplateEnum;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailContent;
-import org.linagora.linshare.core.domain.entities.MailContentType;
+import org.linagora.linshare.core.domain.entities.MailLayout;
 
 public interface MailContentRepository extends AbstractRepository<MailContent> {
 
