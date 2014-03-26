@@ -44,7 +44,7 @@ public interface ThreadMemberRestService {
 
 	public ThreadMemberDto get(Long id) throws BusinessException;
 
-	public void update(Long id, ThreadMemberDto dto) throws BusinessException;
+	public void update(ThreadMemberDto dto) throws BusinessException;
 
-	public void delete(Long id, ThreadMemberDto dto) throws BusinessException;
+	public void delete(ThreadMemberDto dto) throws BusinessException;
 }

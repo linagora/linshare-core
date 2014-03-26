@@ -68,21 +68,21 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 		return threadMemberFacade.get(id);
 	}
 
-	@Path("/{id}")
+	@Path("/")
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void update(@PathParam("id") Long id, ThreadMemberDto dto)
+	public void update(ThreadMemberDto dto)
 			throws BusinessException {
 		threadMemberFacade.checkAuthentication();
 		threadMemberFacade.update(dto);
 	}
 
-	@Path("/{id}")
+	@Path("/")
 	@DELETE
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void delete(@PathParam("id") Long id, ThreadMemberDto dto)
+	public void delete(ThreadMemberDto dto)
 			throws BusinessException {
 		threadMemberFacade.checkAuthentication();
 		threadMemberFacade.delete(dto);
