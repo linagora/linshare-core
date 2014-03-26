@@ -337,7 +337,7 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 			domain.getFunctionalities().remove(rawFunc);
 			abstractDomainRepository.update(domain);
 		} else {
-			logger.warn("You are try to delete the functionality "  + domainId + " : " + functionalityId + " which does not belong to the current domain : " + f.getDomain().getIdentifier());
+			logger.warn("You are trying to delete the functionality "  + domainId + " : " + functionalityId + " which does not belong to the current domain : " + f.getDomain().getIdentifier());
 		}	
 	}
 }
