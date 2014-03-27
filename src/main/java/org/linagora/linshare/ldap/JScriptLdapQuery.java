@@ -341,7 +341,7 @@ public class JScriptLdapQuery {
 				if (isNull) {
 					if (dbAttr.getSystem()) {
 						logger.error("Can not convert dn : '" + dn +"' to an user object.");
-						logger.error("The field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') must exit in your ldap directory, it is required by the system.");
+						logger.error("The field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') must exist in your ldap directory, it is required by the system.");
 						return null;
 					} else {
 						if (logger.isDebugEnabled())
