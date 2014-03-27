@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2013 LINAGORA
+ * Copyright (C) 2014 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -809,11 +809,11 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
         	StringBuilder contentTXT = new StringBuilder(template.getContentTXT());
         	StringBuilder contentHTML = new StringBuilder(template.getContentHTML());
     		if (language.equals(Language.FRENCH)) {
-    			contentTXT.append("\r\nVous utilisez la version libre et gratuite de LinShare™ http://www.linshare.org,™, développée par Linagora © 2009-2013. Contribuez à la R&D du produit en souscrivant à une offre entreprise.\n\r");
-    			contentHTML.append("<br/>Vous utilisez la version libre et gratuite de <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, développée par Linagora © 2009-2013. Contribuez à la R&D du produit en souscrivant à une offre entreprise.<br/>");
+    			contentTXT.append("\r\nVous utilisez la version libre et gratuite de LinShare™ http://www.linshare.org,™, développée par Linagora © 2009-2014. Contribuez à la R&D du produit en souscrivant à une offre entreprise.\n\r");
+    			contentHTML.append("<br/>Vous utilisez la version libre et gratuite de <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, développée par Linagora © 2009-2014. Contribuez à la R&D du produit en souscrivant à une offre entreprise.<br/>");
     		} else {
-    			contentTXT.append("\r\nYou are using the Open Source and free version of LinShare™, powered by Linagora © 2009-2013. Contribute to Linshare R&D by subscribing to an Enterprise offer.\n\r");
-    			contentHTML.append("<br/>You are using the Open Source and free version of <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, powered by Linagora © 2009-2013. Contribute to Linshare R&D by subscribing to an Enterprise offer.<br/>");
+    			contentTXT.append("\r\nYou are using the Open Source and free version of LinShare™, powered by Linagora © 2009-2014. Contribute to Linshare R&D by subscribing to an Enterprise offer.\n\r");
+    			contentHTML.append("<br/>You are using the Open Source and free version of <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, powered by Linagora © 2009-2014. Contribute to Linshare R&D by subscribing to an Enterprise offer.<br/>");
     		}
     		template.setContentTXT(contentTXT.toString());
     	    template.setContentHTML(contentHTML.toString());    		
