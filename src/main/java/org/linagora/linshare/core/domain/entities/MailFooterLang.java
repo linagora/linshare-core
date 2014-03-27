@@ -34,44 +34,41 @@
 package org.linagora.linshare.core.domain.entities;
 
 public class MailFooterLang {
+
+	private long id;
+
+	private int language;
+
+	private MailFooter footer;
+
 	public MailFooterLang() {
 	}
-	
-	private long id;
-	
-	private int language;
-	
-	private org.linagora.linshare.core.domain.entities.MailFooter footer;
-	
+
 	private void setId(long value) {
 		this.id = value;
 	}
-	
+
 	public long getId() {
 		return id;
 	}
-	
+
 	public long getORMID() {
 		return getId();
 	}
-	
+
 	public void setLanguage(int value) {
 		this.language = value;
 	}
-	
+
 	public int getLanguage() {
 		return language;
 	}
-	
-	public void setFooter(org.linagora.linshare.core.domain.entities.MailFooter value) {
+
+	public void setFooter(MailFooter value) {
 		this.footer = value;
 	}
-	
-	public org.linagora.linshare.core.domain.entities.MailFooter getFooter() {
+
+	public MailFooter getFooter() {
 		return footer;
-	}
-	
-	public String toString() {
-		return String.valueOf(getId());
 	}
 }
