@@ -35,7 +35,64 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import org.linagora.linshare.core.business.service.MailLayoutBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.MailLayout;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.repository.MailConfigRepository;
+import org.linagora.linshare.core.repository.MailLayoutRepository;
 
 public class MailLayoutBusinessServiceImpl implements MailLayoutBusinessService {
 
+	private final AbstractDomainRepository abstractDomainRepository;
+
+	private final MailLayoutRepository mailLayoutRepository;
+
+	private final MailConfigRepository mailConfigRepository;
+
+	public MailLayoutBusinessServiceImpl(
+			final AbstractDomainRepository abstractDomainRepository,
+			final MailLayoutRepository mailLayoutRepository,
+			final MailConfigRepository mailConfigRepository) {
+		super();
+		this.abstractDomainRepository = abstractDomainRepository;
+		this.mailLayoutRepository = mailLayoutRepository;
+		this.mailConfigRepository = mailConfigRepository;
+	}
+
+	@Override
+	public MailLayout findByUuid(String uuid) {
+		return mailLayoutRepository.findByUuid(uuid);
+	}
+
+	@Override
+	public void create(AbstractDomain domain, MailLayout footer) throws BusinessException {
+		footer = mailLayoutRepository.create(footer);
+		domain.getMailLayouts().add(footer);
+		abstractDomainRepository.update(domain);
+	}
+
+	@Override
+	public void update(MailLayout footer) throws BusinessException {
+		try {
+			mailLayoutRepository.update(footer);
+		} catch (IllegalArgumentException iae) {
+			throw new BusinessException(BusinessErrorCode.MAILLAYOUT_NOT_FOUND,
+					"Cannot update footer " + footer);
+		}
+	}
+
+	@Override
+	public void delete(MailLayout val) throws BusinessException {
+		AbstractDomain domain = val.getDomain();
+
+		if (mailConfigRepository.isMailLayoutReferenced(val)) {
+			throw new BusinessException(BusinessErrorCode.MAILCONTENT_IN_USE,
+					"Cannot delete mail footer as it's still in use.");
+		}
+		domain.getMailContents().remove(val);
+		abstractDomainRepository.update(domain);
+		mailLayoutRepository.delete(val);
+	}
 }

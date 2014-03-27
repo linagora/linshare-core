@@ -36,15 +36,16 @@ package org.linagora.linshare.core.business.service;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailLayout;
+import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailLayoutBusinessService {
 
 	MailLayout findByUuid(String uuid);
 
-	void create(AbstractDomain domain, MailLayout layout);
+	void create(AbstractDomain domain, MailLayout layout) throws BusinessException;
 
-	void update(MailLayout layout);
+	void update(MailLayout layout) throws BusinessException;
 
-	void delete(MailLayout val);
+	void delete(MailLayout val) throws BusinessException;
 
 }
