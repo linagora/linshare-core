@@ -1108,6 +1108,9 @@
 			<build>
 				<finalName>linshare-${project.version}-${maven.build.timestamp}-${sources.version}</finalName>
 			</build>
+			<properties>
+				<project.version>${project.version}-${maven.build.timestamp}-${sources.version}</project.version>
+			</properties>
 		</profile>
 		<profile>
 			<id>CAS</id>
