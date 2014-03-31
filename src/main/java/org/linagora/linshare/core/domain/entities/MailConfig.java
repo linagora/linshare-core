@@ -98,7 +98,7 @@ public class MailConfig {
 		this.creationDate = value;
 	}
 
-	public java.util.Date getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
@@ -106,7 +106,7 @@ public class MailConfig {
 		this.modificationDate = value;
 	}
 
-	public java.util.Date getModificationDate() {
+	public Date getModificationDate() {
 		return modificationDate;
 	}
 
@@ -148,10 +148,6 @@ public class MailConfig {
 
 	public MailLayout getMailLayoutText() {
 		return mailLayoutText;
-	}
-
-	public String toString() {
-		return String.valueOf(getId());
 	}
 
 	public Set<MailContentLang> getMailContents() {

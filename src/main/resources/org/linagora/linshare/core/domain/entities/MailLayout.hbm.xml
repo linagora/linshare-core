@@ -6,7 +6,7 @@ License Type: Purchased
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 	<class name="org.linagora.linshare.core.domain.entities.MailLayout" table="mail_layout" lazy="false">
-		<id name="id" column="Id" type="long" unsaved-value="0">
+		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>
 		</id>

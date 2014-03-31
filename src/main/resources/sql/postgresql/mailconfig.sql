@@ -6,7 +6,7 @@ SET default_with_oids = false;
 
 
 CREATE TABLE mail_notification (
-  Id                  int8 NOT NULL, 
+  id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
   policy_id          int8 NOT NULL, 
   identifier         varchar(255) NOT NULL, 
@@ -14,9 +14,9 @@ CREATE TABLE mail_notification (
   creation_date      date NOT NULL, 
   modification_date  date NOT NULL, 
   uuid               varchar(255) NOT NULL, 
-  PRIMARY KEY (Id));
+  PRIMARY KEY (id));
 CREATE TABLE mail_config (
-  Id                   int8 NOT NULL, 
+  id                   int8 NOT NULL, 
   mail_layout_html_id int8 NOT NULL, 
   domain_abstract_id  int8 NOT NULL, 
   name                varchar(255) NOT NULL, 
@@ -25,9 +25,9 @@ CREATE TABLE mail_config (
   creation_date       date NOT NULL, 
   modification_date   date NOT NULL, 
   uuid                varchar(255) NOT NULL, 
-  PRIMARY KEY (Id));
+  PRIMARY KEY (id));
 CREATE TABLE mail_layout (
-  Id                  int8 NOT NULL, 
+  id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
   name               varchar(255) NOT NULL, 
   visible            bool NOT NULL, 
@@ -36,9 +36,9 @@ CREATE TABLE mail_layout (
   modification_date  date NOT NULL, 
   uuid               varchar(255) NOT NULL, 
   plaintext          bool NOT NULL, 
-  PRIMARY KEY (Id));
+  PRIMARY KEY (id));
 CREATE TABLE mail_footer (
-  Id                  int8 NOT NULL, 
+  id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
   name               varchar(255) NOT NULL, 
   visible            bool NOT NULL, 
@@ -48,15 +48,15 @@ CREATE TABLE mail_footer (
   modification_date  date NOT NULL, 
   uuid               varchar(255) NOT NULL, 
   plaintext          bool NOT NULL, 
-  PRIMARY KEY (Id));
+  PRIMARY KEY (id));
 CREATE TABLE mail_footer_lang (
-  Id                int8 NOT NULL, 
+  id                int8 NOT NULL, 
   language         int4 NOT NULL, 
   mail_config_id   int8 NOT NULL, 
   mail_footer_id   int8 NOT NULL, 
-  PRIMARY KEY (Id));
+  PRIMARY KEY (id));
 CREATE TABLE mail_content (
-  Id                  int8 NOT NULL, 
+  id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
   name               varchar(255) NOT NULL, 
   visible            bool NOT NULL, 
@@ -69,14 +69,14 @@ CREATE TABLE mail_content (
   modification_date  date NOT NULL, 
   uuid               varchar(255) NOT NULL, 
   plaintext          bool NOT NULL, 
-  PRIMARY KEY (Id));
+  PRIMARY KEY (id));
 CREATE TABLE mail_content_lang (
-  Id                int8 NOT NULL, 
+  id                int8 NOT NULL, 
   language         int4 NOT NULL, 
   mail_content_id  int8 NOT NULL, 
   mail_config_id   int8 NOT NULL, 
   mail_content_type int4 NOT NULL, 
-  PRIMARY KEY (Id));
+  PRIMARY KEY (id));
 
 
 
@@ -89,15 +89,15 @@ ALTER TABLE mail_notification ADD CONSTRAINT FKmail_notif460924 FOREIGN KEY (pol
 ALTER TABLE mail_notification ADD CONSTRAINT FKmail_notif777760 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mail_layout ADD CONSTRAINT FKmail_layou627738 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mail_footer ADD CONSTRAINT FKmail_foote767112 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mail_footer_lang ADD CONSTRAINT FKmail_foote800257 FOREIGN KEY (mail_footer_id) REFERENCES mail_footer (Id);
-ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs159146 FOREIGN KEY (mailconfig_id) REFERENCES mail_config (Id);
+ALTER TABLE mail_footer_lang ADD CONSTRAINT FKmail_foote800257 FOREIGN KEY (mail_footer_id) REFERENCES mail_footer (id);
+ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs159146 FOREIGN KEY (mailconfig_id) REFERENCES mail_config (id);
 ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi697783 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mail_footer_lang ADD CONSTRAINT FKmail_foote320110 FOREIGN KEY (mail_config_id) REFERENCES mail_config (Id);
+ALTER TABLE mail_footer_lang ADD CONSTRAINT FKmail_foote320110 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
 ALTER TABLE mail_content ADD CONSTRAINT FKmail_conte385227 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte911191 FOREIGN KEY (mail_config_id) REFERENCES mail_config (Id);
-ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte32960 FOREIGN KEY (mail_content_id) REFERENCES mail_content (Id);
-ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi540307 FOREIGN KEY (mail_layout_html_id) REFERENCES mail_layout (Id);
-ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi611322 FOREIGN KEY (mail_layout_text_id) REFERENCES mail_layout (Id);
+ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte911191 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
+ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte32960 FOREIGN KEY (mail_content_id) REFERENCES mail_content (id);
+ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi540307 FOREIGN KEY (mail_layout_html_id) REFERENCES mail_layout (id);
+ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi611322 FOREIGN KEY (mail_layout_text_id) REFERENCES mail_layout (id);
 
 
 
