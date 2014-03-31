@@ -6,6 +6,7 @@
 			<generator class="native">
 			</generator>
 		</id>
+		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="language" column="language" type="integer" not-null="true" lazy="false" insert="false" update="false"/>
 		<many-to-one name="footer" cascade="lock" column="mail_footer_id" class="org.linagora.linshare.core.domain.entities.MailFooter" not-null="true" lazy="no-proxy">
 		</many-to-one>

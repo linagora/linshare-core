@@ -54,6 +54,7 @@ CREATE TABLE mail_footer_lang (
   language         int4 NOT NULL, 
   mail_config_id   int8 NOT NULL, 
   mail_footer_id   int8 NOT NULL, 
+  uuid               varchar(255) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mail_content (
   id                  int8 NOT NULL, 
@@ -76,6 +77,7 @@ CREATE TABLE mail_content_lang (
   mail_content_id  int8 NOT NULL, 
   mail_config_id   int8 NOT NULL, 
   mail_content_type int4 NOT NULL, 
+  uuid               varchar(255) NOT NULL, 
   PRIMARY KEY (id));
 
 
@@ -126,11 +128,12 @@ INSERT INTO mail_footer (id, name, language, domain_abstract_id, visible, plaint
 
 INSERT INTO mail_config (id, name, domain_abstract_id, visible, mail_layout_html_id, mail_layout_text_id,modification_date,creation_date,uuid) VALUES (1,'config 1',1,true,1,2,now(),now(),'42cf9cf6-8da6-11e3-b6aa-5404a683a462');
 
-INSERT INTO mail_content_lang(id,mail_config_id,language,mail_content_id,mail_content_type) VALUES (1,1,0,1,8);
-INSERT INTO mail_content_lang(id,mail_config_id,language,mail_content_id,mail_content_type) VALUES (2,1,1,2,8);
+INSERT INTO mail_content_lang(id,mail_config_id,language,mail_content_id,mail_content_type,uuid) VALUES (1,1,0,1,8,'7b2949ed-9f3c-42ed-99fc-51e0157ca029');
+INSERT INTO mail_content_lang(id,mail_config_id,language,mail_content_id,mail_content_type,uuid) VALUES (2,1,1,2,8,'decdc0a7-89d8-4b7e-a8b0-ca2813a58006');
 
-INSERT INTO mail_footer_lang(id,mail_config_id,language,mail_footer_id) VALUES (1,1,0,1);
-INSERT INTO mail_footer_lang(id,mail_config_id,language,mail_footer_id) VALUES (2,1,1,2);
+INSERT INTO mail_footer_lang(id,mail_config_id,language,mail_footer_id,uuid) VALUES (1,1,0,1,'158952c2-1b04-4fd7-825b-4f210574848e');
+
+INSERT INTO mail_footer_lang(id,mail_config_id,language,mail_footer_id,uuid) VALUES (2,1,1,2,'f7c1a443-7f99-4558-9761-c7bac7f54aa1');
 
 
 

@@ -41,6 +41,8 @@ public class MailFooterLang {
 
 	private MailFooter footer;
 
+	private String uuid;
+
 	public MailFooterLang() {
 	}
 
@@ -70,5 +72,13 @@ public class MailFooterLang {
 
 	public MailFooter getFooter() {
 		return footer;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 }

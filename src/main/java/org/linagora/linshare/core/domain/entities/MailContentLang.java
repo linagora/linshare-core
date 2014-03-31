@@ -45,6 +45,8 @@ public class MailContentLang {
 
 	private MailConfig mailConfig;
 
+	private String uuid;
+
 	public MailContentLang() {
 	}
 
@@ -88,4 +90,11 @@ public class MailContentLang {
 		this.mailConfig = mailConfig;
 	}
 
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 }
