@@ -245,4 +245,11 @@
 		<constructor-arg ref="userService" />
 	</bean>
 
+	<bean name="mailConfigService" class="org.linagora.linshare.core.service.impl.MailConfigServiceImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="mailConfigBusinessService" />
+		<constructor-arg ref="mailContentBusinessService" />
+		<constructor-arg ref="mailFooterBusinessService" />
+		<constructor-arg ref="mailLayoutBusinessService" />
+	</bean>
 </beans>

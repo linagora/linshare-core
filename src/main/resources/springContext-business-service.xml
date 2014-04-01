@@ -76,9 +76,21 @@
 		<constructor-arg ref="mailingListRepository" />
 		<constructor-arg ref="mailingListContactRepository" />
 	</bean>
+
+	<bean id="mailConfigBusinessService" class="org.linagora.linshare.core.business.service.impl.MailConfigBusinessServiceImpl">
+		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="mailConfigRepository" />
+	</bean>
+
 	<bean id="mailContentBusinessService" class="org.linagora.linshare.core.business.service.impl.MailContentBusinessServiceImpl">
 		<constructor-arg ref="abstractDomainRepository" />
 		<constructor-arg ref="mailContentRepository" />
 		<constructor-arg ref="mailContentLangRepository" />
+	</bean>
+
+	<bean id="mailFooterBusinessService" class="org.linagora.linshare.core.business.service.impl.MailFooterBusinessServiceImpl">
+		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="mailFooterRepository" />
+		<constructor-arg ref="mailFooterLangRepository" />
 	</bean>
 </beans>
