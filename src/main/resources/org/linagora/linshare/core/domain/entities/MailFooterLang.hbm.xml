@@ -10,5 +10,7 @@
 		<property name="language" column="language" type="integer" not-null="true" lazy="false" insert="false" update="false"/>
 		<many-to-one name="footer" cascade="lock" column="mail_footer_id" class="org.linagora.linshare.core.domain.entities.MailFooter" not-null="true" lazy="no-proxy">
 		</many-to-one>
+		<many-to-one name="config" cascade="lock" column="mail_config_id" class="org.linagora.linshare.core.domain.entities.MailConfig" not-null="true" lazy="no-proxy">
+		</many-to-one>
 	</class>
 </hibernate-mapping>

@@ -43,6 +43,8 @@ import org.linagora.linshare.core.domain.entities.MailContentType;
 public interface MailContentLangRepository extends
 		AbstractRepository<MailContentLang> {
 
+	MailContentLang findByUuid(String uuid);
+
 	MailContent findMailContent(MailConfig cfg, Language lang,
 			MailContentType type);
 

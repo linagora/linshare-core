@@ -50,7 +50,7 @@ public class MailFooterDto {
 	private String name;
 
 	@ApiModelProperty(value = "Domain")
-	private DomainDto domain;
+	private String domain;
 
 	@ApiModelProperty(value = "Visible")
 	private boolean visible;
@@ -77,6 +77,15 @@ public class MailFooterDto {
 	}
 
 	public MailFooterDto(MailFooter footer) {
+		this.uuid = footer.getUuid();
+		this.domain = footer.getDomain().getIdentifier();
+		this.name = footer.getName();
+		this.footer = footer.getFooter();
+		this.language = footer.getLanguage();
+		this.plaintext = footer.getPlaintext();
+		this.visible = footer.getVisible();
+		this.creationDate = new Date(footer.getCreationDate().getTime());
+		this.modificationDate = new Date(footer.getModificationDate().getTime());
 	}
 
 	public void setName(String value) {
@@ -87,11 +96,11 @@ public class MailFooterDto {
 		return name;
 	}
 
-	public DomainDto getDomain() {
+	public String getDomain() {
 		return domain;
 	}
 
-	public void setDomain(DomainDto domain) {
+	public void setDomain(String domain) {
 		this.domain = domain;
 	}
 
@@ -99,7 +108,7 @@ public class MailFooterDto {
 		this.visible = value;
 	}
 
-	public boolean getVisible() {
+	public boolean isVisible() {
 		return visible;
 	}
 
@@ -147,7 +156,7 @@ public class MailFooterDto {
 		this.plaintext = value;
 	}
 
-	public boolean getPlaintext() {
+	public boolean isPlaintext() {
 		return plaintext;
 	}
 }

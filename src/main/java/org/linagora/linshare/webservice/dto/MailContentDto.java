@@ -50,7 +50,7 @@ public class MailContentDto {
 	private String name;
 
 	@ApiModelProperty(value = "Domain")
-	private DomainDto domain;
+	private String domain;
 
 	@ApiModelProperty(value = "Visible")
 	private boolean visible;
@@ -85,102 +85,114 @@ public class MailContentDto {
 	public MailContentDto() {
 	}
 
-	public MailContentDto(MailContent content) {
-	}
-
-	public void setName(String value) {
-		this.name = value;
+	public MailContentDto(MailContent cont) {
+		this.uuid = cont.getUuid();
+		this.domain = cont.getDomain().getIdentifier();
+		this.name = cont.getName();
+		this.body = cont.getBody();
+		this.subject = cont.getSubject();
+		this.greetings = cont.getGreetings();
+		this.language = cont.getLanguage();
+		this.plaintext = cont.getPlaintext();
+		this.visible = cont.getVisible();
+		this.mailContentType = cont.getMailContentType();
+		this.creationDate = new Date(cont.getCreationDate().getTime());
+		this.modificationDate = new Date(cont.getModificationDate().getTime());
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public DomainDto getDomain() {
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDomain() {
 		return domain;
 	}
 
-	public void setDomain(DomainDto domain) {
+	public void setDomain(String domain) {
 		this.domain = domain;
 	}
 
-	public void setVisible(boolean value) {
-		this.visible = value;
-	}
-
-	public boolean getVisible() {
+	public boolean isVisible() {
 		return visible;
 	}
 
-	public void setMailContentType(int value) {
-		this.mailContentType = value;
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 
 	public int getMailContentType() {
 		return mailContentType;
 	}
 
-	public void setLanguage(int value) {
-		this.language = value;
+	public void setMailContentType(int mailContentType) {
+		this.mailContentType = mailContentType;
 	}
 
 	public int getLanguage() {
 		return language;
 	}
 
-	public void setSubject(String value) {
-		this.subject = value;
+	public void setLanguage(int language) {
+		this.language = language;
 	}
 
 	public String getSubject() {
 		return subject;
 	}
 
-	public void setGreetings(String value) {
-		this.greetings = value;
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
 	public String getGreetings() {
 		return greetings;
 	}
 
-	public void setBody(String value) {
-		this.body = value;
+	public void setGreetings(String greetings) {
+		this.greetings = greetings;
 	}
 
 	public String getBody() {
 		return body;
 	}
 
-	public void setCreationDate(Date value) {
-		this.creationDate = value;
+	public void setBody(String body) {
+		this.body = body;
 	}
 
 	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setModificationDate(Date value) {
-		this.modificationDate = value;
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	public Date getModificationDate() {
 		return modificationDate;
 	}
 
-	public void setUuid(String value) {
-		this.uuid = value;
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 
 	public String getUuid() {
 		return uuid;
 	}
 
-	public void setPlaintext(boolean value) {
-		this.plaintext = value;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
-	public boolean getPlaintext() {
+	public boolean isPlaintext() {
 		return plaintext;
+	}
+
+	public void setPlaintext(boolean plaintext) {
+		this.plaintext = plaintext;
 	}
 }

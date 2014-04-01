@@ -34,25 +34,24 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailLayout;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.MailConfigFacade;
+import org.linagora.linshare.core.facade.webservice.admin.MailLayoutFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
-import org.linagora.linshare.webservice.dto.MailConfigDto;
+import org.linagora.linshare.webservice.dto.MailLayoutDto;
 
-public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
-		MailConfigFacade {
+public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
+		MailLayoutFacade {
 
 	private final MailConfigService mailConfigService;
 
 	private final AbstractDomainService abstractDomainService;
 
-	public MailConfigFacadeImpl(final AccountService accountService,
+	public MailLayoutFacadeImpl(final AccountService accountService,
 			final MailConfigService mailConfigService,
 			final AbstractDomainService abstractDomainService) {
 		super(accountService);
@@ -61,59 +60,48 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public MailConfigDto find(String uuid) throws BusinessException {
+	public MailLayoutDto find(String uuid) throws BusinessException {
 		User actor = super.getAuthentication();
 
-		return new MailConfigDto(findConfig(actor, uuid));
+		return new MailLayoutDto(findLayout(actor, uuid));
 	}
 
 	@Override
-	public void create(MailConfigDto dto) throws BusinessException {
+	public void create(MailLayoutDto dto) throws BusinessException {
 		User actor = super.getAuthentication();
-		MailConfig config = new MailConfig();
+		MailLayout layout = new MailLayout();
 
-		this.transform(config, dto);
-		mailConfigService.createConfig(actor, config);
+		this.transform(layout, dto);
+		mailConfigService.createLayout(actor, layout);
 	}
 
 	@Override
-	public void update(MailConfigDto dto) throws BusinessException {
+	public void update(MailLayoutDto dto) throws BusinessException {
 		User actor = super.getAuthentication();
-		MailConfig config = findConfig(actor, dto.getUuid());
+		MailLayout layout = findLayout(actor, dto.getUuid());
 
-		transform(config, dto);
-		config.setMailLayoutHtml(findLayout(actor, dto.getMailLayoutHtml()));
-		config.setMailLayoutText(findLayout(actor, dto.getMailLayoutText()));
-		mailConfigService.updateConfig(actor, config);
+		transform(layout, dto);
+		mailConfigService.updateLayout(actor, layout);
 	}
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
 		User actor = super.getAuthentication();
 
-		mailConfigService.deleteConfig(actor, uuid);
+		mailConfigService.deleteLayout(actor, uuid);
 	}
 
 	/*
 	 * Helpers
 	 */
 
-	private void transform(MailConfig config, MailConfigDto dto)
+	private void transform(MailLayout layout, MailLayoutDto dto)
 			throws BusinessException {
-		config.setDomain(findDomain(dto.getDomain()));
-		config.setName(dto.getName());
-		config.setVisible(dto.isVisible());
-	}
-
-	private MailConfig findConfig(User actor, String uuid)
-			throws BusinessException {
-		MailConfig config = mailConfigService.findConfigByUuid(actor, uuid);
-
-		if (config == null) {
-			throw new BusinessException(BusinessErrorCode.MAILCONFIG_NOT_FOUND,
-					"Mail config " + uuid + " doesn't exist.");
-		}
-		return config;
+		layout.setDomain(findDomain(dto.getDomain()));
+		layout.setName(dto.getName());
+		layout.setVisible(dto.isVisible());
+		layout.setLayout(dto.getLayout());
+		layout.setPlaintext(dto.isPlaintext());
 	}
 
 	private MailLayout findLayout(User actor, String uuid)

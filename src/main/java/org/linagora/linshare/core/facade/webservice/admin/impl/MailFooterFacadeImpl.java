@@ -34,25 +34,24 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.MailLayout;
+import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.MailConfigFacade;
+import org.linagora.linshare.core.facade.webservice.admin.MailFooterFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
-import org.linagora.linshare.webservice.dto.MailConfigDto;
+import org.linagora.linshare.webservice.dto.MailFooterDto;
 
-public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
-		MailConfigFacade {
+public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
+		MailFooterFacade {
 
 	private final MailConfigService mailConfigService;
 
 	private final AbstractDomainService abstractDomainService;
 
-	public MailConfigFacadeImpl(final AccountService accountService,
+	public MailFooterFacadeImpl(final AccountService accountService,
 			final MailConfigService mailConfigService,
 			final AbstractDomainService abstractDomainService) {
 		super(accountService);
@@ -61,69 +60,59 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public MailConfigDto find(String uuid) throws BusinessException {
+	public MailFooterDto find(String uuid) throws BusinessException {
 		User actor = super.getAuthentication();
 
-		return new MailConfigDto(findConfig(actor, uuid));
+		return new MailFooterDto(findFooter(actor, uuid));
 	}
 
 	@Override
-	public void create(MailConfigDto dto) throws BusinessException {
+	public void create(MailFooterDto dto) throws BusinessException {
 		User actor = super.getAuthentication();
-		MailConfig config = new MailConfig();
+		MailFooter footer = new MailFooter();
 
-		this.transform(config, dto);
-		mailConfigService.createConfig(actor, config);
+		this.transform(footer, dto);
+		mailConfigService.createFooter(actor, footer);
 	}
 
 	@Override
-	public void update(MailConfigDto dto) throws BusinessException {
+	public void update(MailFooterDto dto) throws BusinessException {
 		User actor = super.getAuthentication();
-		MailConfig config = findConfig(actor, dto.getUuid());
+		MailFooter footer = findFooter(actor, dto.getUuid());
 
-		transform(config, dto);
-		config.setMailLayoutHtml(findLayout(actor, dto.getMailLayoutHtml()));
-		config.setMailLayoutText(findLayout(actor, dto.getMailLayoutText()));
-		mailConfigService.updateConfig(actor, config);
+		transform(footer, dto);
+		mailConfigService.updateFooter(actor, footer);
 	}
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
 		User actor = super.getAuthentication();
 
-		mailConfigService.deleteConfig(actor, uuid);
+		mailConfigService.deleteFooter(actor, uuid);
 	}
 
 	/*
 	 * Helpers
 	 */
 
-	private void transform(MailConfig config, MailConfigDto dto)
+	private void transform(MailFooter footer, MailFooterDto dto)
 			throws BusinessException {
-		config.setDomain(findDomain(dto.getDomain()));
-		config.setName(dto.getName());
-		config.setVisible(dto.isVisible());
+		footer.setDomain(findDomain(dto.getDomain()));
+		footer.setName(dto.getName());
+		footer.setVisible(dto.isVisible());
+		footer.setPlaintext(dto.isPlaintext());
+		footer.setLanguage(dto.getLanguage());
+		footer.setFooter(dto.getFooter());
 	}
 
-	private MailConfig findConfig(User actor, String uuid)
+	private MailFooter findFooter(User actor, String uuid)
 			throws BusinessException {
-		MailConfig config = mailConfigService.findConfigByUuid(actor, uuid);
+		MailFooter mailFooter = mailConfigService.findFooterByUuid(actor, uuid);
 
-		if (config == null) {
-			throw new BusinessException(BusinessErrorCode.MAILCONFIG_NOT_FOUND,
-					"Mail config " + uuid + " doesn't exist.");
-		}
-		return config;
-	}
-
-	private MailLayout findLayout(User actor, String uuid)
-			throws BusinessException {
-		MailLayout mailLayout = mailConfigService.findLayoutByUuid(actor, uuid);
-
-		if (mailLayout == null)
-			throw new BusinessException(BusinessErrorCode.MAILLAYOUT_NOT_FOUND,
+		if (mailFooter == null)
+			throw new BusinessException(BusinessErrorCode.MAILFOOTER_NOT_FOUND,
 					uuid + " not found.");
-		return mailLayout;
+		return mailFooter;
 	}
 
 	private AbstractDomain findDomain(String id) throws BusinessException {

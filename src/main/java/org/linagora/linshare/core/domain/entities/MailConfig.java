@@ -39,6 +39,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailLayout;
+import org.linagora.linshare.webservice.dto.MailConfigDto;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -157,5 +158,4 @@ public class MailConfig {
 	public void setMailContents(Set<MailContentLang> mailContents) {
 		this.mailContents = mailContents;
 	}
-
 }

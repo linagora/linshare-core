@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.UUID;
+
 public class MailContentLang {
 
 	private long id;
@@ -43,18 +45,25 @@ public class MailContentLang {
 
 	private int mailContentType;
 
-	private MailConfig mailConfig;
-
 	private String uuid;
 
+	private MailConfig mailConfig;
+
 	public MailContentLang() {
+	}
+
+	public MailContentLang(MailContentLang copied) {
+		this.language = copied.language;
+		this.mailContent = copied.mailContent;
+		this.mailContentType = copied.mailContentType;
+		this.uuid = UUID.randomUUID().toString();
 	}
 
 	public long getId() {
 		return id;
 	}
 
-	private void setId(long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -82,19 +91,19 @@ public class MailContentLang {
 		return mailContent;
 	}
 
-	public MailConfig getMailConfig() {
-		return mailConfig;
-	}
-
-	public void setMailConfig(MailConfig mailConfig) {
-		this.mailConfig = mailConfig;
-	}
-
 	public String getUuid() {
 		return uuid;
 	}
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public MailConfig getMailConfig() {
+		return mailConfig;
+	}
+
+	public void setMailConfig(MailConfig mailConfig) {
+		this.mailConfig = mailConfig;
 	}
 }

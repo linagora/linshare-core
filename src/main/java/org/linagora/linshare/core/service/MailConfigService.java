@@ -39,8 +39,10 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
+import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.domain.entities.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailFooter;
+import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.domain.entities.MailLayout;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -83,6 +85,24 @@ public interface MailConfigService {
 	 * @throws BusinessException
 	 */
 	void updateConfig(User actor, MailConfig config) throws BusinessException;
+
+	/**
+	 * Find a mail content lang.
+	 * 
+	 * @param uuid
+	 * @return
+	 * @throws BusinessException TODO
+	 */
+	MailContentLang findContentLangByUuid(User actor, String uuid) throws BusinessException;
+
+	/**
+	 * Find a mail footer lang.
+	 * 
+	 * @param uuid
+	 * @return
+	 * @throws BusinessException TODO
+	 */
+	MailFooterLang findFooterLangByUuid(User actor, String uuid) throws BusinessException;
 
 	/**
 	 * Delete an existing mail configuration if it's not currently in use.

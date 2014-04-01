@@ -34,24 +34,17 @@
 package org.linagora.linshare.webservice.dto;
 
 import java.util.Date;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.MailContentLang;
-import org.linagora.linshare.core.domain.entities.MailFooterLang;
+import org.linagora.linshare.core.domain.entities.MailLayout;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name = "MailConfig")
-@ApiModel(value = "MailConfig", description = "")
-public class MailConfigDto {
+@XmlRootElement(name = "MailLayout")
+@ApiModel(value = "MailLayout", description = "")
+public class MailLayoutDto {
 
 	@ApiModelProperty(value = "Uuid")
 	private String uuid;
@@ -62,6 +55,12 @@ public class MailConfigDto {
 	@ApiModelProperty(value = "Name")
 	private String name;
 
+	@ApiModelProperty(value = "Layout")
+	private String layout;
+
+	@ApiModelProperty(value = "Plaintext")
+	private boolean plaintext;
+
 	@ApiModelProperty(value = "Visible")
 	private boolean visible;
 
@@ -71,41 +70,18 @@ public class MailConfigDto {
 	@ApiModelProperty(value = "ModificationDate")
 	private Date modificationDate;
 
-	@ApiModelProperty(value = "MailLayoutHtml")
-	private String mailLayoutHtml;
-
-	@ApiModelProperty(value = "MailLayoutText")
-	private String mailLayoutText;
-
-	@ApiModelProperty(value = "MailFooters")
-	private Map<Integer, String> mailFooterLangs = Maps.newHashMap();
-
-	@ApiModelProperty(value = "MailContents")
-	private Set<String> mailContentLangs = Sets.newHashSet();
-
-	public MailConfigDto() {
+	public MailLayoutDto() {
 	}
 
-	public MailConfigDto(MailConfig config) {
-		super();
-		this.uuid = config.getUuid();
-		this.domain = config.getDomain().getIdentifier();
-		this.name = config.getName();
-		this.visible = config.getVisible();
-		this.creationDate = new Date(config.getCreationDate().getTime());
-		this.modificationDate = new Date(config.getModificationDate().getTime());
-		this.mailLayoutHtml = config.getMailLayoutHtml().getUuid();
-		this.mailLayoutText = config.getMailLayoutText().getUuid();
-
-		Set<MailContentLang> mcls = config.getMailContents();
-		Map<Integer, MailFooterLang> mfls = config.getMailFooters();
-
-		for (MailContentLang mcl : mcls) {
-			this.mailContentLangs.add(mcl.getUuid());
-		}
-		for (Entry<Integer, MailFooterLang> e : mfls.entrySet()) {
-			this.mailFooterLangs.put(e.getKey(), e.getValue().getUuid());
-		}
+	public MailLayoutDto(MailLayout ml) {
+		this.uuid = ml.getUuid();
+		this.domain = ml.getDomain().getIdentifier();
+		this.name = ml.getName();
+		this.layout = ml.getLayout();
+		this.plaintext = ml.getPlaintext();
+		this.visible = ml.getVisible();
+		this.creationDate = new Date(ml.getCreationDate().getTime());
+		this.modificationDate = new Date(ml.getModificationDate().getTime());
 	}
 
 	public String getUuid() {
@@ -132,6 +108,22 @@ public class MailConfigDto {
 		this.name = name;
 	}
 
+	public String getLayout() {
+		return layout;
+	}
+
+	public void setLayout(String layout) {
+		this.layout = layout;
+	}
+
+	public boolean isPlaintext() {
+		return plaintext;
+	}
+
+	public void setPlaintext(boolean plaintext) {
+		this.plaintext = plaintext;
+	}
+
 	public boolean isVisible() {
 		return visible;
 	}
@@ -154,37 +146,5 @@ public class MailConfigDto {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
-	}
-
-	public String getMailLayoutHtml() {
-		return mailLayoutHtml;
-	}
-
-	public void setMailLayoutHtml(String mailLayoutHtml) {
-		this.mailLayoutHtml = mailLayoutHtml;
-	}
-
-	public String getMailLayoutText() {
-		return mailLayoutText;
-	}
-
-	public void setMailLayoutText(String mailLayoutText) {
-		this.mailLayoutText = mailLayoutText;
-	}
-
-	public Map<Integer, String> getMailFooters() {
-		return mailFooterLangs;
-	}
-
-	public void setMailFooters(Map<Integer, String> mailFooterLangs) {
-		this.mailFooterLangs = mailFooterLangs;
-	}
-
-	public Set<String> getMailContentLangs() {
-		return mailContentLangs;
-	}
-
-	public void setMailContentLangs(Set<String> mailContentLangs) {
-		this.mailContentLangs = mailContentLangs;
 	}
 }

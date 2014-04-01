@@ -40,5 +40,7 @@ import org.linagora.linshare.core.domain.entities.MailFooterLang;
 public interface MailFooterLangRepository extends
 		AbstractRepository<MailFooterLang> {
 
+	MailFooterLang findByUuid(String uuid);
+
 	boolean isMailFooterReferenced(MailFooter footer);
 }

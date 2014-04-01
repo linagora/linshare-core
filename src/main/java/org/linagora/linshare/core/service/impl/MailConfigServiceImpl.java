@@ -43,8 +43,10 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
+import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.domain.entities.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailFooter;
+import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.domain.entities.MailLayout;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -142,6 +144,33 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
+	public MailContentLang findContentLangByUuid(User actor, String uuid)
+			throws BusinessException {
+		MailContentLang ret = mailConfigBusinessService
+				.findContentLangByUuid(uuid);
+
+		if (ret != null && !hasRights(actor, ret.getMailConfig())) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+					+ actor + " cannot see this mail config : "
+					+ ret.getMailConfig().getUuid());
+		}
+		return ret;
+	}
+
+	@Override
+	public MailFooterLang findFooterLangByUuid(User actor, String uuid) throws BusinessException {
+		MailFooterLang ret = mailConfigBusinessService
+				.findFooterLangByUuid(uuid);
+
+		if (ret != null && !hasRights(actor, ret.getMailConfig())) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+					+ actor + " cannot see this mail config : "
+					+ ret.getMailConfig().getUuid());
+		}
+		return ret;
+	}
+
+	@Override
 	public List<MailContent> findAllContents(User actor, String domainId)
 			throws BusinessException {
 		List<MailContent> contents = Lists.newArrayList();
@@ -173,8 +202,8 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public MailContent findContentFromDomain(User actor, String domainId, Language lang,
-			MailContentType type) throws BusinessException {
+	public MailContent findContentFromDomain(User actor, String domainId,
+			Language lang, MailContentType type) throws BusinessException {
 		MailContent ret = mailContentBusinessService.find(domainId, lang, type);
 
 		if (ret != null && !hasRights(actor, ret))
@@ -372,6 +401,10 @@ public class MailConfigServiceImpl implements MailConfigService {
 			return actor.getDomain().equals(layout.getDomain());
 		}
 	}
+
+	/*
+	 * Helpers
+	 */
 
 	private List<AbstractDomain> getParentDomains(String id)
 			throws BusinessException {

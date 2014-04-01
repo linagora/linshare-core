@@ -36,8 +36,6 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 
 public class MailLayout {
-	public MailLayout() {
-	}
 
 	private long id;
 
@@ -56,6 +54,9 @@ public class MailLayout {
 	private String uuid;
 
 	private boolean plaintext;
+
+	public MailLayout() {
+	}
 
 	private void setId(long value) {
 		this.id = value;

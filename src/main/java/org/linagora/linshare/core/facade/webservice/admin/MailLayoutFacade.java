@@ -31,26 +31,19 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.facade.webservice.admin;
 
-package org.linagora.linshare.core.business.service;
-
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.MailContentLang;
-import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.MailLayoutDto;
 
-public interface MailConfigBusinessService {
+public interface MailLayoutFacade {
 
-	MailConfig findByUuid(String uuid);
+	MailLayoutDto find(String uuid) throws BusinessException;
 
-	void create(AbstractDomain domain, MailConfig cfg) throws BusinessException;
+	void create(MailLayoutDto dto) throws BusinessException;
 
-	void update(MailConfig cfg) throws BusinessException;
+	void update(MailLayoutDto dto) throws BusinessException;
 
-	void delete(MailConfig cfg) throws BusinessException;
+	void delete(String uuid) throws BusinessException;
 
-	MailContentLang findContentLangByUuid(String uuid);
-
-	MailFooterLang findFooterLangByUuid(String uuid);
 }

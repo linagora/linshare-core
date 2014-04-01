@@ -33,28 +33,39 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.MailContentLang;
+import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.MailConfigRepository;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import org.linagora.linshare.core.repository.MailContentLangRepository;
+import org.linagora.linshare.core.repository.MailFooterLangRepository;
 
 public class MailConfigBusinessServiceImpl implements MailConfigBusinessService {
 
 	private final MailConfigRepository mailConfigRepository;
 	private final AbstractDomainRepository abstractDomainRepository;
+	private final MailContentLangRepository mailContentLangRepository;
+	private final MailFooterLangRepository mailFooterLangRepository;
 
 	public MailConfigBusinessServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
-			final MailConfigRepository mailConfigRepository) {
+			final MailConfigRepository mailConfigRepository,
+			final MailContentLangRepository mailContentLangRepository,
+			final MailFooterLangRepository mailFooterLangRepository) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.mailConfigRepository = mailConfigRepository;
+		this.mailContentLangRepository = mailContentLangRepository;
+		this.mailFooterLangRepository = mailFooterLangRepository;
 	}
 
 	@Override
@@ -68,11 +79,20 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 		MailConfig rootCfg = abstractDomainRepository.getUniqueRootDomain()
 				.getCurrentMailConfiguration();
 
+		Set<MailContentLang> rootMcl = rootCfg.getMailContents();
+		Map<Integer, MailFooterLang> rootMfl = rootCfg.getMailFooters();
+
 		// copy root domain's mailconfig
-		cfg.setMailContents(Sets.newHashSet(rootCfg.getMailContents()));
-		cfg.setMailFooters(Maps.newHashMap(rootCfg.getMailFooters()));
 		cfg.setMailLayoutHtml(rootCfg.getMailLayoutHtml());
 		cfg.setMailLayoutText(rootCfg.getMailLayoutText());
+
+		for (MailContentLang mcl : rootMcl) {
+			cfg.getMailContents().add(new MailContentLang(mcl));
+		}
+		for (Entry<Integer, MailFooterLang> e : rootMfl.entrySet()) {
+			cfg.getMailFooters().put(e.getKey(),
+					new MailFooterLang(e.getValue()));
+		}
 
 		mailConfigRepository.create(cfg);
 	}
@@ -106,5 +126,15 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 			throw new BusinessException(BusinessErrorCode.MAILCONFIG_NOT_FOUND,
 					"Cannot delete mailconfig " + cfg);
 		}
+	}
+
+	@Override
+	public MailContentLang findContentLangByUuid(String uuid) {
+		return mailContentLangRepository.findByUuid(uuid);
+	}
+
+	@Override
+	public MailFooterLang findFooterLangByUuid(String uuid) {
+		return mailFooterLangRepository.findByUuid(uuid);
 	}
 }

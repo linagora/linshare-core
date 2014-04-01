@@ -31,26 +31,43 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.webservice.dto;
 
-package org.linagora.linshare.core.business.service;
+import java.util.Date;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.MailContentLang;
-import org.linagora.linshare.core.domain.entities.MailFooterLang;
-import org.linagora.linshare.core.exception.BusinessException;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public interface MailConfigBusinessService {
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-	MailConfig findByUuid(String uuid);
+@XmlRootElement(name = "MailContentLang")
+@ApiModel(value = "MailContentLang", description = "")
+public class MailContentLangDto {
 
-	void create(AbstractDomain domain, MailConfig cfg) throws BusinessException;
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
 
-	void update(MailConfig cfg) throws BusinessException;
+	@ApiModelProperty(value = "Domain")
+	private String domain;
 
-	void delete(MailConfig cfg) throws BusinessException;
+	@ApiModelProperty(value = "Name")
+	private String name;
 
-	MailContentLang findContentLangByUuid(String uuid);
+	@ApiModelProperty(value = "ContentLang")
+	private String layout;
 
-	MailFooterLang findFooterLangByUuid(String uuid);
+	@ApiModelProperty(value = "Plaintext")
+	private boolean plaintext;
+
+	@ApiModelProperty(value = "Visible")
+	private boolean visible;
+
+	@ApiModelProperty(value = "CreationDate")
+	private Date creationDate;
+
+	@ApiModelProperty(value = "ModificationDate")
+	private Date modificationDate;
+
+	public MailContentLangDto() {
+	}
 }

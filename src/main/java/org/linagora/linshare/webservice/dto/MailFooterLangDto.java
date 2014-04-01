@@ -31,26 +31,71 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.webservice.dto;
 
-package org.linagora.linshare.core.business.service;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
-import org.linagora.linshare.core.exception.BusinessException;
 
-public interface MailConfigBusinessService {
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-	MailConfig findByUuid(String uuid);
+@XmlRootElement(name = "MailFooterLang")
+@ApiModel(value = "MailFooterLang", description = "")
+public class MailFooterLangDto {
 
-	void create(AbstractDomain domain, MailConfig cfg) throws BusinessException;
+	@ApiModelProperty(value = "Language")
+	private int language;
 
-	void update(MailConfig cfg) throws BusinessException;
+	@ApiModelProperty(value = "Footer")
+	private String footer;
 
-	void delete(MailConfig cfg) throws BusinessException;
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
 
-	MailContentLang findContentLangByUuid(String uuid);
+	@ApiModelProperty(value = "MailConfig")
+	private String mailConfig;
 
-	MailFooterLang findFooterLangByUuid(String uuid);
+	public MailFooterLangDto() {
+	}
+
+	public MailFooterLangDto(MailConfig config, MailFooterLang footerLang) {
+		mailConfig = config.getUuid();
+		language = footerLang.getLanguage();
+		uuid = footerLang.getUuid();
+		footer = footerLang.getFooter().getUuid();
+	}
+
+	public int getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(int language) {
+		this.language = language;
+	}
+
+	public String getFooter() {
+		return footer;
+	}
+
+	public void setFooter(String footer) {
+		this.footer = footer;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getMailConfig() {
+		return mailConfig;
+	}
+
+	public void setMailConfig(String mailConfig) {
+		this.mailConfig = mailConfig;
+	}
 }
