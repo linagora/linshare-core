@@ -425,7 +425,7 @@ public class UserServiceImpl implements UserService {
 		List<User> result = new ArrayList<User>();
 		logger.debug("adding guests to the return list");
 
-		// TODO : FIXME : OPTIMISATION NEEDED : This method should be refactor
+		// TODO : FIXME : OPTIMISATION NEEDED : This method should be refactored
 		// to search guests domain by domain
 		List<Guest> list = guestRepository.searchGuestAnyWhere(mail, firstName, lastName);
 		logger.debug("Guest found : size : " + list.size());
@@ -570,16 +570,45 @@ public class UserServiceImpl implements UserService {
 
 		// completion on LDAP directory for internals
 		if (lastName == null) {
-			logger.debug("FRED: all");
+			logger.debug("completionSearchOnInternal: mail");
 			users.addAll(completionSearchOnInternal(currentActor, mail));
 		} else {
-			logger.debug("FRED:first name and lastname");
+			logger.debug("completionSearchOnInternal: first name and last name");
 			users.addAll(completionSearchOnInternal(currentActor, firstName, lastName));
 		}
 
 		logger.debug("End autoCompleteUser");
 		return users;
 
+	}
+
+	@Override
+	public List<User> searchUserV2(String currentActorUuid, String mail, String firstName, String lastName, AccountType userType) throws BusinessException {
+		logger.debug("Begin searchUserV2");
+		List<User> users = new ArrayList<User>();
+
+		User actor = this.findUser(currentActorUuid);
+		if (actor != null && actor.isGuest()) {
+			// Restricted guests must not see all users.
+			if (actor.isRestricted()) {
+				return completionSearchForRestrictedGuest((Guest)actor, mail, firstName, lastName);
+			}
+		}
+
+		if (null == userType || userType.equals(AccountType.GUEST)) {
+			List<User> guests = completionSearchForGuest(mail, firstName, lastName, actor);
+			logger.debug("result guests list : size : " + guests.size());
+			users.addAll(guests);
+		}
+
+		if (null == userType || userType.equals(AccountType.INTERNAL)) {
+			List<User> internals = abstractDomainService.searchUserWithDomainPolicies(actor.getDomain().getIdentifier(), mail, firstName, lastName);
+			logger.debug("result internals list : size : " + internals.size());
+			users.addAll(internals);
+		}
+
+		logger.debug("End searchUserV2");
+		return users;
 	}
 
 	@Override

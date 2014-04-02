@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -126,10 +127,13 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public void deleteUser(UserDto userDto) throws BusinessException {
 		User actor = super.checkAuthentication();
-		userService.deleteUser(actor, userDto.getUuid());
+		String uuid = userDto.getUuid();
+		Validate.notEmpty(uuid, "user unique identifier must be set.");
+		userService.deleteUser(actor, uuid);
 	}
 	
 	private User getUser(UserDto userDto) {
+		Validate.notEmpty(userDto.getUuid(), "user unique identifier must be set.");
 		if (userDto.isGuest()) {
 			return new Guest(userDto);
 		} else {

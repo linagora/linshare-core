@@ -85,6 +85,12 @@ public class FunctionalityDto {
 	@ApiModelProperty(value = "functionalities")
 	protected Set<FunctionalityDto> functionalities;
 
+	@ApiModelProperty(value = "displayable")
+	protected boolean displayable;
+
+	// HOOK : To be removed. For debug.
+	protected boolean system;
+
 	public FunctionalityDto() {
 		super();
 	}
@@ -103,15 +109,31 @@ public class FunctionalityDto {
 		this.type = f.getType().toString();
 		this.parentIdentifier = f.getParentIdentifier();
 		functionalities = new HashSet<FunctionalityDto>();
+		this.displayable = true;
+		this.system = f.isSystem();
+
+		if (!parentAllowAPUpdate && f.getActivationPolicy().isForbidden()) {
+			// No modification allowed, functionality is forbidden.
+			// You will never be able to perform any modification on the functionality
+			this.displayable = false;
+		}
+		if (!parentAllowAPUpdate && f.getActivationPolicy().isMandatory()) {
+			// No modification allowed for AP, functionality is mandatory.
+			if(!parentAllowCPUpdate && f.getConfigurationPolicy().isForbidden()) {
+				// No modification allowed for CP, functionality configuration is forbidden.
+				// You will never be able to perform any modification on the functionality
+				this.displayable = false;
+			}
+		}
 
 		this.parentAllowParametersUpdate = false;
 		if(parentAllowCPUpdate) {
 			this.parentAllowParametersUpdate = true;
 		} else {
 			// the CP can not be updated, so this means this is the CP of the parent domain
-			if(f.getConfigurationPolicy().getPolicy().equals(Policies.FORBIDDEN)) {
+			if(f.getConfigurationPolicy().isForbidden()) {
 				this.parentAllowParametersUpdate = false;
-			} else if(f.getConfigurationPolicy().getPolicy().equals(Policies.MANDATORY)) {
+			} else if(f.getConfigurationPolicy().isMandatory()) {
 				this.parentAllowParametersUpdate = true;
 			} else if(f.getConfigurationPolicy().getStatus()) {
 				this.parentAllowParametersUpdate = true;
@@ -119,6 +141,10 @@ public class FunctionalityDto {
 		}
 		if(parameters.size() == 0)
 			this.parentAllowParametersUpdate = false;
+
+		if (!parentAllowAPUpdate && !parentAllowCPUpdate && !parentAllowParametersUpdate) {
+			this.displayable = false;
+		}
 	}
 	
 	public String getIdentifier() {
@@ -204,6 +230,17 @@ public class FunctionalityDto {
 	public void addFunctionalities(FunctionalityDto functionality) {
 		if (functionality != null) {
 			this.functionalities.add(functionality);
+			if(functionality.isDisplayable()) {
+				this.displayable = true;
+			}
 		}
+	}
+
+	public boolean isDisplayable() {
+		return displayable;
+	}
+
+	public boolean isSystem() {
+		return system;
 	}
 }

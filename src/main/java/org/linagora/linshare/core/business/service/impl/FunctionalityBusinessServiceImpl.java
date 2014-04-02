@@ -42,7 +42,6 @@ import java.util.Set;
 import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
-import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -228,10 +227,16 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 			Functionality ancestorFunc = getParentFunctionality(abstractDomain, functionality.getIdentifier());
 			// We check if the parent domain allow the current domain to
 			// modify/override activation policy configuration.
-			if (ancestorFunc == null || ancestorFunc.getActivationPolicy().isMutable()) {
+			if (ancestorFunc == null) {
+				if (functionality.getActivationPolicy().isSystem()) {
+					return false;
+				}
+				return true;
+			} else if (ancestorFunc.getActivationPolicy().isMutable()) {
 				return true;
 			}
 		} else {
+			// the current functionality belongs to the parent functionality, so it could be considered as an ancestor.
 			if (functionality.getActivationPolicy().isMutable()) {
 				return true;
 			}
@@ -252,19 +257,17 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 			// We check if the parent domain allow the current domain to
 			// modify/override activation policy configuration.
 			if (ancestorFunc == null) {
-				return true;
-			}
-			if (ancestorFunc.getActivationPolicy().getStatus()) {
-				if (ancestorFunc.getConfigurationPolicy().isMutable()) {
-					return true;
+				if (functionality.getConfigurationPolicy().isSystem()) {
+					return false;
 				}
+				return true;
+			} else if (ancestorFunc.getConfigurationPolicy().isMutable()) {
+				return true;
 			}
 		} else {
 			// The current functionality belong to a parent domain.
-			if (functionality.getActivationPolicy().getStatus()) {
-				if (functionality.getConfigurationPolicy().isMutable()) {
-					return true;
-				}
+			if (functionality.getConfigurationPolicy().isMutable()) {
+				return true;
 			}
 		}
 		return false;
