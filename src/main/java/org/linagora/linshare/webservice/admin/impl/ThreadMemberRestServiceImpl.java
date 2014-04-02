@@ -37,17 +37,20 @@ package org.linagora.linshare.webservice.admin.impl;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ThreadMemberFacade;
 import org.linagora.linshare.webservice.admin.ThreadMemberRestService;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
+@Path("/thread_members")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 
@@ -64,8 +67,18 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 	@Override
 	public ThreadMemberDto get(@PathParam("id") Long id)
 			throws BusinessException {
-		threadMemberFacade.checkAuthentication();
+		threadMemberFacade.checkAuthentication(Role.SUPERADMIN);
 		return threadMemberFacade.get(id);
+	}
+
+	@Path("/")
+	@POST
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public void create(ThreadMemberDto dto)
+			throws BusinessException {
+		threadMemberFacade.checkAuthentication(Role.SUPERADMIN);
+		threadMemberFacade.create(dto);
 	}
 
 	@Path("/")
@@ -74,7 +87,7 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 	@Override
 	public void update(ThreadMemberDto dto)
 			throws BusinessException {
-		threadMemberFacade.checkAuthentication();
+		threadMemberFacade.checkAuthentication(Role.SUPERADMIN);
 		threadMemberFacade.update(dto);
 	}
 
@@ -84,7 +97,7 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 	@Override
 	public void delete(ThreadMemberDto dto)
 			throws BusinessException {
-		threadMemberFacade.checkAuthentication();
+		threadMemberFacade.checkAuthentication(Role.SUPERADMIN);
 		threadMemberFacade.delete(dto);
 	}
 }

@@ -75,7 +75,7 @@ public interface ThreadService {
 
 	public int countEntries(Thread thread);
 
-	public void addMember(Account actor, Thread thread, User user, boolean readOnly) throws BusinessException;
+	public void addMember(Account actor, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException;
 
 	public void updateMember(Account actor, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException;
 

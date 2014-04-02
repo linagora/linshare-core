@@ -204,7 +204,7 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public void addMember(Account actor, Thread thread, User user, boolean readOnly) throws BusinessException {
+	public void addMember(Account actor, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, thread);
 		
@@ -218,7 +218,7 @@ public class ThreadServiceImpl implements ThreadService {
 					"You are not authorized to add member to this thread. Already exists.");
 		}
 
-		member = new ThreadMember(!readOnly, false, user, thread);
+		member = new ThreadMember(canUpload, admin, user, thread);
 		thread.getMyMembers().add(member);
 		threadRepository.update(thread);
 

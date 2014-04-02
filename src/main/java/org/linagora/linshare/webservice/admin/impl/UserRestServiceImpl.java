@@ -45,7 +45,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UserRestService;
@@ -61,42 +63,56 @@ public class UserRestServiceImpl extends WebserviceBase implements
 		UserRestService {
 
 	private final UserFacade userFacade;
+	
+	private final AutocompleteFacade autocompleteFacade;
 
-	public UserRestServiceImpl(final UserFacade userFacade) {
+	public UserRestServiceImpl(final UserFacade userFacade, final AutocompleteFacade autocompleteFacade) {
 		this.userFacade = userFacade;
+		this.autocompleteFacade = autocompleteFacade;
 	}
 
 	@Path("/search/{pattern}")
 	@ApiOperation(value = "Provide user autocompletion.", response = UserDto.class, responseContainer = "Set")
 	@GET
 	@Override
-	public Set<UserDto> completionUser(
+	public Set<UserDto> search(
 			@ApiParam(value = "Pattern to complete.", required = true) @PathParam("pattern") String pattern)
 			throws BusinessException {
 		userFacade.checkAuthentication();
-		return userFacade.completionUser(pattern);
+		return userFacade.search(pattern);
 	}
 
 	@Path("/search/internals/{pattern}")
 	@ApiOperation(value = "Search among internal users.", response = UserDto.class, responseContainer = "Set")
 	@GET
 	@Override
-	public Set<UserDto> getInternals(
+	public Set<UserDto> searchInternals(
 			@ApiParam(value = "Internal users to search for.", required = true) @PathParam("pattern") String pattern)
 			throws BusinessException {
 		userFacade.checkAuthentication();
-		return userFacade.getInternals(pattern);
+		return userFacade.searchInternals(pattern);
 	}
 
 	@Path("/search/guests/{pattern}")
 	@ApiOperation(value = "Search among guests.", response = UserDto.class, responseContainer = "Set")
 	@GET
 	@Override
-	public Set<UserDto> getGuests(
+	public Set<UserDto> searchGuests(
 			@ApiParam(value = "Guests to search for.", required = true) @PathParam("pattern") String pattern)
 			throws BusinessException {
 		userFacade.checkAuthentication();
-		return userFacade.getGuests(pattern);
+		return userFacade.searchGuests(pattern);
+	}
+
+	@Path("/autocomplete/{pattern}")
+	@ApiOperation(value = "Provide user autocompletion.", response = UserDto.class, responseContainer = "Set")
+	@GET
+	@Override
+	public Set<UserDto> autocomplete(
+			@ApiParam(value = "Pattern to complete.", required = true) @PathParam("pattern") String pattern)
+			throws BusinessException {
+		User actor = userFacade.checkAuthentication();
+		return autocompleteFacade.getUser(actor, pattern);
 	}
 
 	@Path("/")
@@ -104,11 +120,11 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void updateUser(
+	public void update(
 			@ApiParam(value = "User to update", required = true) UserDto userDto)
 			throws BusinessException {
 		userFacade.checkAuthentication();
-		userFacade.updateUser(userDto);
+		userFacade.update(userDto);
 	}
 
 	@Path("/")
@@ -116,11 +132,11 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@DELETE
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void deleteUser(
+	public void delete(
 			@ApiParam(value = "User to delete.", required = true) UserDto userDto)
 			throws BusinessException {
 		userFacade.checkAuthentication();
-		userFacade.deleteUser(userDto);
+		userFacade.delete(userDto);
 	}
 
 	@Path("/inconstitent")
@@ -137,10 +153,10 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void updateInconsistentUser(
+	public void updateInconsistent(
 			@ApiParam(value = "Inconsistent user to update.", required = true) UserDto userDto)
 			throws BusinessException {
 		userFacade.checkAuthentication();
-		userFacade.updateInconsistentUser(userDto);
+		userFacade.updateInconsistent(userDto);
 	}
 }

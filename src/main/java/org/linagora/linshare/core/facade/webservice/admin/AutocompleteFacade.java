@@ -31,24 +31,23 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
 package org.linagora.linshare.core.facade.webservice.admin;
 
-import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.ThreadDto;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
+import org.linagora.linshare.webservice.dto.UserDto;
 
-public interface ThreadFacade extends AdminGenericFacade {
 
-	public List<ThreadDto> getAll();
+public interface AutocompleteFacade {
 
-	public ThreadDto get(String uuid);
+	Set<UserDto> getUser(User actor, String pattern)
+			throws BusinessException;
 
-	public List<ThreadMemberDto> getMembers(String uuid);
+	Set<UserDto> getUserSortedByFavorites(User actor, String pattern)
+			throws BusinessException;
 
-	public void update(ThreadDto threadDto) throws BusinessException;
-
-	public void delete(String uuid) throws BusinessException;
+	Set<String> getMail(User actor, String pattern)
+			throws BusinessException;
 }

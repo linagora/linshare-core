@@ -258,7 +258,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	public void addMember(UserVo actorVo, ThreadVo threadVo, UserVo newMember,
 			boolean readOnly) throws BusinessException {
 		threadService.addMember(findUser(actorVo), findThread(threadVo),
-				findOrCreateUser(newMember), readOnly);
+				findOrCreateUser(newMember), false, !readOnly);
 	}
 
 	@Override
@@ -333,7 +333,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			String domain, String mail) throws BusinessException {
 		User user = userService.findOrCreateUser(mail, domain);
 
-		threadService.addMember(findUser(actorVo), findThread(threadVo), user, true);
+		threadService.addMember(findUser(actorVo), findThread(threadVo), user, false, true);
 	}
 
 	@Override

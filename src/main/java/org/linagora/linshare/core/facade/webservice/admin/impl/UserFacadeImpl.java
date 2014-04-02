@@ -34,12 +34,9 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
@@ -73,17 +70,17 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<UserDto> completionUser(String pattern) throws BusinessException {
+	public Set<UserDto> search(String pattern) throws BusinessException {
 		return searchUsers(pattern, null);
 	}
 	
 	@Override
-	public Set<UserDto> getInternals(String pattern) throws BusinessException {
+	public Set<UserDto> searchInternals(String pattern) throws BusinessException {
 		return searchUsers(pattern, AccountType.INTERNAL);
 	}
 
 	@Override
-	public Set<UserDto> getGuests(String pattern) throws BusinessException {
+	public Set<UserDto> searchGuests(String pattern) throws BusinessException {
 		return searchUsers(pattern, AccountType.GUEST);
 	}
 	
@@ -114,7 +111,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void updateUser(UserDto userDto) throws BusinessException {
+	public void update(UserDto userDto) throws BusinessException {
 		User actor = super.checkAuthentication();
 		User user = getUser(userDto);
 		userService.updateUser(actor, user, userDto.getDomain());
@@ -124,7 +121,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void deleteUser(UserDto userDto) throws BusinessException {
+	public void delete(UserDto userDto) throws BusinessException {
 		User actor = super.checkAuthentication();
 		userService.deleteUser(actor, userDto.getUuid());
 	}
@@ -149,7 +146,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void updateInconsistentUser(UserDto userDto)
+	public void updateInconsistent(UserDto userDto)
 			throws BusinessException {
 		User actor = super.checkAuthentication();
 

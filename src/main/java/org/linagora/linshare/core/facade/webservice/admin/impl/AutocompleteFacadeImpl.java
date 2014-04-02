@@ -31,44 +31,47 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.impl;
+package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.AccountType;
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
+import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.webservice.dto.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
+public class AutocompleteFacadeImpl implements AutocompleteFacade {
 
-	final private static Logger logger = LoggerFactory.getLogger(UserAutoCompleteFacadeImpl.class);
+	final private static Logger logger = LoggerFactory.getLogger(AutocompleteFacadeImpl.class);
 
 	final private static int AUTO_COMPLETE_LIMIT = 20;
 
 	private UserService userService;
 
-	public UserAutoCompleteFacadeImpl(UserService userService) {
+	public AutocompleteFacadeImpl(UserService userService) {
 		super();
 		this.userService = userService;
 	}
 
 	@Override
-	public List<UserVo> autoCompleteUser(UserVo currentUserVo, String pattern) throws BusinessException {
-		List<User> users = userService.autoCompleteUser(currentUserVo.getLogin(), pattern);
+	public Set<UserDto> getUser(User actor, String pattern) throws BusinessException {
+		Validate.notNull(actor, "actor must be set.");
+		List<User> users = userService.autoCompleteUser(actor.getLogin(), pattern);
 		logger.debug("nb result for completion : " + users.size());
 		// TODO : FMA : Use database configuration for auto complete limit
-		return getUserVoList(users, AUTO_COMPLETE_LIMIT, true);
+		return getUserDtoList(users);
 	}
 
 	@Override
-	public List<UserVo> autoCompleteUserSortedByFavorites(UserVo currentUserVo, String pattern) throws BusinessException {
-		List<User> users = userService.autoCompleteUser(currentUserVo.getLogin(), pattern);
+	public Set<UserDto> getUserSortedByFavorites(User actor, String pattern) throws BusinessException {
+		Validate.notNull(actor, "actor must be set.");
+		List<User> users = userService.autoCompleteUser(actor.getLogin(), pattern);
 		logger.debug("nb result for completion : " + users.size());
 
 		// TODO : FIXME : FMA : add favorite sort.
@@ -78,65 +81,30 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 		// ArrayList<UserVo>(userSet), userVo);
 
 		// TODO : FMA : Use database configuration for auto complete limit
-		return getUserVoList(users, AUTO_COMPLETE_LIMIT, true);
+		return getUserDtoList(users);
 	}
 
 	@Override
-	public List<String> autoCompleteMail(UserVo currentUserVo, String pattern) throws BusinessException {
-		List<User> users = userService.autoCompleteUser(currentUserVo.getLogin(), pattern);
+	public Set<String> getMail(User actor, String pattern) throws BusinessException {
+		List<User> users = userService.autoCompleteUser(actor.getLogin(), pattern);
 		logger.debug("nb result for completion : " + users.size());
 		// TODO : FMA : Use database configuration for auto complete limit
 		return getMailList(users, AUTO_COMPLETE_LIMIT);
 	}
-
-	/***********************/
-	/** Utility functions **/
-	/***********************/
-
-	class EmptyUserVo extends UserVo {
-		private static final long serialVersionUID = 1188489032838386296L;
-
-		public EmptyUserVo() {
-			super(null, null, null, "...", AccountType.INTERNAL);
+	
+	private Set<UserDto> getUserDtoList(List<User> users) {
+		HashSet<UserDto> hashSet = new HashSet<UserDto>();
+		int range = (users.size() < AUTO_COMPLETE_LIMIT ? users.size() : AUTO_COMPLETE_LIMIT);
+		for (User user : users.subList(0, range)) {
+			hashSet.add(UserDto.getSimple(user));
 		}
-	}
-
-	/**
-	 * Convert a list of Users to a list of UserVo.
-	 * 
-	 * @param users
-	 *            a list of users.
-	 * @param limit
-	 * 			set the max element to be return
-	 * @param addEmptyUser
-	 *            TODO
-	 * @return a list of UserVo.
-	 */
-	private List<UserVo> getUserVoList(List<User> users, int limit, boolean addEmptyUser) {
-		List<UserVo> userVos = new ArrayList<UserVo>();
-		int count = 0;
-		for (User user : users) {
-			userVos.add(new UserVo(user));
-			count++;
-			if (count == limit) {
-				if (addEmptyUser)
-					userVos.add(new EmptyUserVo());
-				break;
-			}
-		}
-		return userVos;
+		return hashSet;
 	}
 	
-	private List<String> getMailList(List<User> users, int limit) {
-		int count = 0;
-		List<String> res = new ArrayList<String>();
+	private Set<String> getMailList(List<User> users, int limit) {
+		Set<String> res = new HashSet<String>();
 		for (User user : users) {
 			res.add(user.getMail());
-			count++;
-			if (count == limit) {
-				res.add("...");
-				break;
-			}
 		}
 		return res;
 	}

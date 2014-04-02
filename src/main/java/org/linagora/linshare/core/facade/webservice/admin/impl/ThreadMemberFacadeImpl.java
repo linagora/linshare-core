@@ -34,32 +34,66 @@
 
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ThreadMemberFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
 public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		ThreadMemberFacade {
-	
+
 	private ThreadService threadService;
+	private UserService userService;
 
 	public ThreadMemberFacadeImpl(final AccountService accountService,
-			final ThreadService threadService) {
+			final ThreadService threadService, final UserService userService) {
 		super(accountService);
 		this.threadService = threadService;
+		this.userService = userService;
 	}
 
 	@Override
 	public ThreadMemberDto get(Long id) throws BusinessException {
+		Validate.notNull(id, "id must be set.");
 		return new ThreadMemberDto(threadService.getThreadMemberById(id));
 	}
 
 	@Override
+	public void create(ThreadMemberDto dto) throws BusinessException {
+		Validate.notNull(dto, "thread member must be set.");
+		Validate.notEmpty(dto.getThreadUuid(), "thread member thread id must be set.");
+		Validate.notEmpty(dto.getUserDomainId(), "thread member domain id must be set.");
+		Validate.notEmpty(dto.getUserMail(), "thread member mail must be set.");
+
+		User actor = super.getAuthentication();
+		Thread thread = threadService.findByLsUuid(dto.getThreadUuid());
+		User user = (User) accountService.findByLsUuid(dto.getUserUuid());
+		if (user == null) {
+			user = userService.findOrCreateUser(dto.getUserMail(),
+					dto.getUserDomainId());
+			if (user == null) {
+				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
+						"Cannot find user with mail :" + dto.getUserMail()
+								+ " in domain :" + dto.getUserDomainId());
+			}
+		}
+		boolean admin = dto.isAdmin();
+		boolean canUpload = !dto.isReadonly();
+
+		threadService.addMember(actor, thread, user, admin, canUpload);
+	}
+
+	@Override
 	public void update(ThreadMemberDto dto) throws BusinessException {
+		Validate.notNull(dto, "thread member must be set.");
+		Validate.notNull(dto.getId(), "thread member id must be set.");
 		User actor = super.getAuthentication();
 		ThreadMember member = threadService.getThreadMemberById(dto.getId());
 		boolean admin = dto.isAdmin();
@@ -70,6 +104,8 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public void delete(ThreadMemberDto dto) throws BusinessException {
+		Validate.notNull(dto, "thread member must be set.");
+		Validate.notNull(dto.getId(), "thread member id must be set.");
 		User actor = super.getAuthentication();
 		ThreadMember member = threadService.getThreadMemberById(dto.getId());
 

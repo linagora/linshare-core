@@ -37,7 +37,7 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Role;
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
@@ -70,11 +70,13 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public ThreadDto get(String uuid) {
+		Validate.notEmpty(uuid, "uuid must be set.");
 		return new ThreadDto(threadService.findByLsUuid(uuid));
 	}
 
 	@Override
 	public List<ThreadMemberDto> getMembers(String uuid) {
+		Validate.notEmpty(uuid, "uuid must be set.");
 		List<ThreadMemberDto> ret = new ArrayList<ThreadMemberDto>();
 
 		for (ThreadMember m : threadService.findByLsUuid(uuid).getMyMembers())
@@ -83,17 +85,17 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void addMember(String uuid, ThreadMemberDto member) throws BusinessException {
+	public void update(ThreadDto threadDto) throws BusinessException {
+		Validate.notNull(threadDto, "thread must be set.");
 		User actor = super.getAuthentication();
-		Thread thread = threadService.findByLsUuid(member.getThreadUuid());
-		User user = (User) accountService.findByLsUuid(member.getUserUuid());
-		boolean readOnly = member.isReadonly();
+		Thread thread = threadService.findByLsUuid(threadDto.getUuid());
 
-		threadService.addMember(actor, thread, user, readOnly);
+		threadService.rename(actor, thread, threadDto.getName());
 	}
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "uuid must be set.");
 		User actor = super.getAuthentication();
 		Thread thread = threadService.findByLsUuid(uuid);
 
