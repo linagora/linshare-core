@@ -37,7 +37,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <script type="text/javascript" language="javascript">
         var uuids = new Array();
 	
-	var uploader;
+        var uploader;
 
         var sizeAvailable = ${maxFileSize};
 
@@ -77,10 +77,12 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
         }
 
         var trySubmit = function() {
+            console.log("Trying to submit");
             if (uuids.length + uploader.getInProgress()) {
                 if (jQuery("#is_submit").is(":checked")) {
                     startSpinner();
                     if (uploader.getInProgress() == 0) {
+                        console.log("Submit sent");
                         jQuery("#submitShare").click();
                     }
                 }
@@ -88,15 +90,16 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
         }
 
         var requestSubmit = function() {
+            console.log("Submit requested");
             if (uuids.length + uploader.getInProgress()) {
-                jQuery("#is_submit").attr("checked", true);
+                jQuery("#is_submit").prop("checked", true);
                 trySubmit();
-	    }
+            }
         }
 
         jQuery(document).ready(function() {
             // init
-            jQuery("#is_submit").attr("checked", false);
+            jQuery("#is_submit").prop("checked", false);
             jQuery(".spinner").hide();
 
             var updateCallback = function(value) {
