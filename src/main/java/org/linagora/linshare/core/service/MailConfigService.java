@@ -165,7 +165,7 @@ public interface MailConfigService {
 	 * @param actor
 	 * @param uuid
 	 * @return
-	 * @throws BusinessException TODO
+	 * @throws BusinessException
 	 */
 	MailContentLang findContentLangByUuid(User actor, String uuid) throws BusinessException;
 
@@ -174,7 +174,6 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param content
-	 * @throws BusinessException TODO
 	 * @throws BusinessException
 	 */
 	void createContentLang(User actor, MailContentLang contentLang) throws BusinessException;
@@ -184,7 +183,6 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param content
-	 * @throws BusinessException TODO
 	 * @throws BusinessException
 	 */
 	void updateContentLang(User actor, MailContentLang contentLang) throws BusinessException;
@@ -194,7 +192,6 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
-	 * @throws BusinessException TODO
 	 * @throws BusinessException
 	 */
 	void deleteContentLang(User actor, String uuid) throws BusinessException;
@@ -252,7 +249,7 @@ public interface MailConfigService {
 	 * @param actor
 	 * @param uuid
 	 * @return
-	 * @throws BusinessException TODO
+	 * @throws BusinessException
 	 */
 	MailFooterLang findFooterLangByUuid(User actor, String uuid) throws BusinessException;
 
@@ -261,7 +258,6 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param footer
-	 * @throws BusinessException TODO
 	 * @throws BusinessException
 	 */
 	void createFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;
@@ -271,7 +267,6 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param footer
-	 * @throws BusinessException TODO
 	 * @throws BusinessException
 	 */
 	void updateFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;
@@ -281,7 +276,6 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
-	 * @throws BusinessException TODO
 	 * @throws BusinessException
 	 */
 	void deleteFooterLang(User actor, String uuid) throws BusinessException;

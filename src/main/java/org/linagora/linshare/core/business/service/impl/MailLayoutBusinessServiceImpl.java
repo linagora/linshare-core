@@ -31,7 +31,6 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
 package org.linagora.linshare.core.business.service.impl;
 
 import org.linagora.linshare.core.business.service.MailLayoutBusinessService;

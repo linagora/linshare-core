@@ -60,6 +60,30 @@
 		<constructor-arg ref="wsAdminLogEntryFacade" />
 	</bean>
 
+	<bean id="adminMailConfigRestService" class="org.linagora.linshare.webservice.admin.impl.MailConfigRestServiceImpl">
+		<constructor-arg ref="wsAdminMailConfigFacade" />
+	</bean>
+
+	<bean id="adminMailContentLangRestService" class="org.linagora.linshare.webservice.admin.impl.MailContentLangRestServiceImpl">
+		<constructor-arg ref="wsAdminMailContentLangFacade" />
+	</bean>
+
+	<bean id="adminMailContentRestService" class="org.linagora.linshare.webservice.admin.impl.MailContentRestServiceImpl">
+		<constructor-arg ref="wsAdminMailContentFacade" />
+	</bean>
+
+	<bean id="adminMailFooterLangRestService" class="org.linagora.linshare.webservice.admin.impl.MailFooterLangRestServiceImpl">
+		<constructor-arg ref="wsAdminMailFooterLangFacade" />
+	</bean>
+
+	<bean id="adminMailFooterRestService" class="org.linagora.linshare.webservice.admin.impl.MailFooterRestServiceImpl">
+		<constructor-arg ref="wsAdminMailFooterFacade" />
+	</bean>
+
+	<bean id="adminMailLayoutRestService" class="org.linagora.linshare.webservice.admin.impl.MailLayoutRestServiceImpl">
+		<constructor-arg ref="wsAdminMailLayoutFacade" />
+	</bean>
+
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">
 		<jaxrs:serviceBeans>
 			<ref bean="adminAuthenticationRestService" />

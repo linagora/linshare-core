@@ -241,4 +241,33 @@
 		<constructor-arg ref="functionalityService" />
 		<constructor-arg ref="functionalityOldService" />
 	</bean>
+
+	<bean id="wsAdminMailConfigFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.MailConfigFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="mailConfigService" />
+		<constructor-arg ref="abstractDomainService" />
+	</bean>
+	<bean id="wsAdminMailContentLangFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.MailContentLangFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="mailConfigService" />
+	</bean>
+	<bean id="wsAdminMailContentFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.MailContentFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="mailConfigService" />
+		<constructor-arg ref="abstractDomainService" />
+	</bean>
+	<bean id="wsAdminMailFooterLangFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.MailFooterLangFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="mailConfigService" />
+	</bean>
+	<bean id="wsAdminMailFooterFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.MailFooterFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="mailConfigService" />
+		<constructor-arg ref="abstractDomainService" />
+	</bean>
+	<bean id="wsAdminMailLayoutFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.MailLayoutFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="mailConfigService" />
+		<constructor-arg ref="abstractDomainService" />
+	</bean>
 </beans>
