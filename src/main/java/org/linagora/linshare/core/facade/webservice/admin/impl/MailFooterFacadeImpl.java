@@ -71,7 +71,7 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = super.getAuthentication();
 		MailFooter footer = new MailFooter();
 
-		this.transform(footer, dto);
+		transform(footer, dto);
 		mailConfigService.createFooter(actor, footer);
 	}
 

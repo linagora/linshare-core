@@ -73,6 +73,7 @@ public interface MailConfigService {
 	/**
 	 * Create a new mail configuration.
 	 * 
+	 * @param actor
 	 * @param config
 	 * @throws BusinessException
 	 */
@@ -81,32 +82,16 @@ public interface MailConfigService {
 	/**
 	 * Update an existing mail configuration.
 	 * 
+	 * @param actor
 	 * @param config
 	 * @throws BusinessException
 	 */
 	void updateConfig(User actor, MailConfig config) throws BusinessException;
 
 	/**
-	 * Find a mail content lang.
-	 * 
-	 * @param uuid
-	 * @return
-	 * @throws BusinessException TODO
-	 */
-	MailContentLang findContentLangByUuid(User actor, String uuid) throws BusinessException;
-
-	/**
-	 * Find a mail footer lang.
-	 * 
-	 * @param uuid
-	 * @return
-	 * @throws BusinessException TODO
-	 */
-	MailFooterLang findFooterLangByUuid(User actor, String uuid) throws BusinessException;
-
-	/**
 	 * Delete an existing mail configuration if it's not currently in use.
 	 * 
+	 * @param actor
 	 * @param uuid
 	 * @throws BusinessException
 	 */
@@ -115,6 +100,7 @@ public interface MailConfigService {
 	/**
 	 * Find all mail contents visible by this domain.
 	 * 
+	 * @param actor
 	 * @param domainId
 	 * @return
 	 */
@@ -124,6 +110,7 @@ public interface MailConfigService {
 	/**
 	 * Find a mail content.
 	 * 
+	 * @param actor
 	 * @param uuid
 	 * @return
 	 */
@@ -134,6 +121,7 @@ public interface MailConfigService {
 	 * Find a mail content used by a mail configuration by its language and
 	 * type.
 	 * 
+	 * @param actor
 	 * @param config
 	 * @param lang
 	 * @param type
@@ -145,6 +133,7 @@ public interface MailConfigService {
 	/**
 	 * Create a new mail content.
 	 * 
+	 * @param actor
 	 * @param content
 	 * @throws BusinessException
 	 */
@@ -154,6 +143,7 @@ public interface MailConfigService {
 	/**
 	 * Update an existing mail content.
 	 * 
+	 * @param actor
 	 * @param content
 	 * @throws BusinessException
 	 */
@@ -163,14 +153,56 @@ public interface MailConfigService {
 	/**
 	 * Delete an existing mail content.
 	 * 
+	 * @param actor
 	 * @param uuid
 	 * @throws BusinessException
 	 */
 	void deleteContent(User actor, String uuid) throws BusinessException;
 
 	/**
+	 * Find a mail content lang.
+	 * 
+	 * @param actor
+	 * @param uuid
+	 * @return
+	 * @throws BusinessException TODO
+	 */
+	MailContentLang findContentLangByUuid(User actor, String uuid) throws BusinessException;
+
+	/**
+	 * Create a new mail content lang and add it to a mail configuration.
+	 * 
+	 * @param actor
+	 * @param content
+	 * @throws BusinessException TODO
+	 * @throws BusinessException
+	 */
+	void createContentLang(User actor, MailContentLang contentLang) throws BusinessException;
+
+	/**
+	 * Update an existing mail content lang.
+	 * 
+	 * @param actor
+	 * @param content
+	 * @throws BusinessException TODO
+	 * @throws BusinessException
+	 */
+	void updateContentLang(User actor, MailContentLang contentLang) throws BusinessException;
+
+	/**
+	 * Delete an existing mail content lang and remove it from its mail configuration.
+	 * 
+	 * @param actor
+	 * @param uuid
+	 * @throws BusinessException TODO
+	 * @throws BusinessException
+	 */
+	void deleteContentLang(User actor, String uuid) throws BusinessException;
+
+	/**
 	 * Find all mail footers visible by this domain.
 	 * 
+	 * @param actor
 	 * @param domainId
 	 * @return
 	 */
@@ -180,6 +212,7 @@ public interface MailConfigService {
 	/**
 	 * Find a mail footer.
 	 * 
+	 * @param actor
 	 * @param uuid
 	 * @return
 	 */
@@ -189,6 +222,7 @@ public interface MailConfigService {
 	/**
 	 * Create a new mail footer.
 	 * 
+	 * @param actor
 	 * @param footer
 	 * @throws BusinessException
 	 */
@@ -197,6 +231,7 @@ public interface MailConfigService {
 	/**
 	 * Update an existing mail footer.
 	 * 
+	 * @param actor
 	 * @param footer
 	 * @throws BusinessException
 	 */
@@ -205,14 +240,56 @@ public interface MailConfigService {
 	/**
 	 * Delete an existing mail footer.
 	 * 
+	 * @param actor
 	 * @param uuid
 	 * @throws BusinessException
 	 */
 	void deleteFooter(User actor, String uuid) throws BusinessException;
 
 	/**
+	 * Find a mail footer lang.
+	 * 
+	 * @param actor
+	 * @param uuid
+	 * @return
+	 * @throws BusinessException TODO
+	 */
+	MailFooterLang findFooterLangByUuid(User actor, String uuid) throws BusinessException;
+
+	/**
+	 * Create a new mail footer lang and add it to a mail configuration.
+	 * 
+	 * @param actor
+	 * @param footer
+	 * @throws BusinessException TODO
+	 * @throws BusinessException
+	 */
+	void createFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;
+
+	/**
+	 * Update an existing mail footer lang.
+	 * 
+	 * @param actor
+	 * @param footer
+	 * @throws BusinessException TODO
+	 * @throws BusinessException
+	 */
+	void updateFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;
+
+	/**
+	 * Delete an existing mail footer lang and remove it from its mail configuration.
+	 * 
+	 * @param actor
+	 * @param uuid
+	 * @throws BusinessException TODO
+	 * @throws BusinessException
+	 */
+	void deleteFooterLang(User actor, String uuid) throws BusinessException;
+
+	/**
 	 * Find all mail layouts visible by this domain.
 	 * 
+	 * @param actor
 	 * @param domainId
 	 * @return
 	 */
@@ -222,6 +299,7 @@ public interface MailConfigService {
 	/**
 	 * Find a mail layout.
 	 * 
+	 * @param actor
 	 * @param uuid
 	 * @return
 	 */
@@ -231,6 +309,7 @@ public interface MailConfigService {
 	/**
 	 * Create a new mail layout.
 	 * 
+	 * @param actor
 	 * @param layout
 	 * @throws BusinessException
 	 */
@@ -239,6 +318,7 @@ public interface MailConfigService {
 	/**
 	 * Update an existing mail layout.
 	 * 
+	 * @param actor
 	 * @param layout
 	 * @throws BusinessException
 	 */
@@ -247,6 +327,7 @@ public interface MailConfigService {
 	/**
 	 * Delete an existing mail layout.
 	 * 
+	 * @param actor
 	 * @param uuid
 	 * @throws BusinessException
 	 */

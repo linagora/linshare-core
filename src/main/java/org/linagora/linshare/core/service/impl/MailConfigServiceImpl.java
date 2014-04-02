@@ -92,7 +92,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 				configs.addAll(d.getMailConfigs());
 			} else {
 				for (MailConfig c : d.getMailConfigs()) {
-					if (c.getVisible()) {
+					if (c.isVisible()) {
 						configs.add(c);
 					}
 				}
@@ -144,33 +144,6 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public MailContentLang findContentLangByUuid(User actor, String uuid)
-			throws BusinessException {
-		MailContentLang ret = mailConfigBusinessService
-				.findContentLangByUuid(uuid);
-
-		if (ret != null && !hasRights(actor, ret.getMailConfig())) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
-					+ actor + " cannot see this mail config : "
-					+ ret.getMailConfig().getUuid());
-		}
-		return ret;
-	}
-
-	@Override
-	public MailFooterLang findFooterLangByUuid(User actor, String uuid) throws BusinessException {
-		MailFooterLang ret = mailConfigBusinessService
-				.findFooterLangByUuid(uuid);
-
-		if (ret != null && !hasRights(actor, ret.getMailConfig())) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
-					+ actor + " cannot see this mail config : "
-					+ ret.getMailConfig().getUuid());
-		}
-		return ret;
-	}
-
-	@Override
 	public List<MailContent> findAllContents(User actor, String domainId)
 			throws BusinessException {
 		List<MailContent> contents = Lists.newArrayList();
@@ -180,7 +153,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 				contents.addAll(d.getMailContents());
 			} else {
 				for (MailContent c : d.getMailContents()) {
-					if (c.getVisible()) {
+					if (c.isVisible()) {
 						contents.add(c);
 					}
 				}
@@ -245,6 +218,57 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
+	public MailContentLang findContentLangByUuid(User actor, String uuid)
+			throws BusinessException {
+		MailContentLang ret = mailConfigBusinessService
+				.findContentLangByUuid(uuid);
+
+		if (ret != null && !hasRights(actor, ret.getMailConfig())) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+					+ actor + " cannot see this mail config : "
+					+ ret.getMailConfig().getUuid());
+		}
+		return ret;
+	}
+
+	@Override
+	public void createContentLang(User actor, MailContentLang contentLang)
+			throws BusinessException {
+		MailConfig config = contentLang.getMailConfig();
+
+		if (!actor.getDomain().equals(config.getDomain()))
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+					+ actor + " cannot update a mail config in this domain "
+					+ actor.getDomainId());
+		mailConfigBusinessService.createContentLang(contentLang);
+	}
+
+	@Override
+	public void updateContentLang(User actor, MailContentLang contentLang)
+			throws BusinessException {
+		MailConfig config = contentLang.getMailConfig();
+
+		if (!actor.getDomain().equals(config.getDomain()))
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+					+ actor + " cannot update a mail config in this domain "
+					+ actor.getDomainId());
+		mailConfigBusinessService.updateContentLang(contentLang);
+	}
+
+	@Override
+	public void deleteContentLang(User actor, String uuid)
+			throws BusinessException {
+		try {
+			MailContentLang contentLang = findContentLangByUuid(actor, uuid);
+			mailConfigBusinessService.deleteContentLang(contentLang);
+		} catch (BusinessException e) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+					+ actor + " cannot update a mail config in this domain "
+					+ actor.getDomainId());
+		}
+	}
+
+	@Override
 	public List<MailFooter> findAllFooters(User actor, String domainId)
 			throws BusinessException {
 		List<MailFooter> footers = Lists.newArrayList();
@@ -306,6 +330,54 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
+	public MailFooterLang findFooterLangByUuid(User actor, String uuid)
+			throws BusinessException {
+		MailFooterLang ret = mailConfigBusinessService
+				.findFooterLangByUuid(uuid);
+
+		if (ret != null && !hasRights(actor, ret.getMailConfig())) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+					+ actor + " cannot see this mail config : "
+					+ ret.getMailConfig().getUuid());
+		}
+		return ret;
+	}
+
+	@Override
+	public void createFooterLang(User actor, MailFooterLang footerLang) throws BusinessException {
+		MailConfig config = footerLang.getMailConfig();
+
+		if (!actor.getDomain().equals(config.getDomain()))
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+					+ actor + " cannot update a mail config in this domain "
+					+ actor.getDomainId());
+		mailConfigBusinessService.createFooterLang(footerLang);
+	}
+
+	@Override
+	public void updateFooterLang(User actor, MailFooterLang footerLang) throws BusinessException {
+		MailConfig config = footerLang.getMailConfig();
+
+		if (!actor.getDomain().equals(config.getDomain()))
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+					+ actor + " cannot update a mail config in this domain "
+					+ actor.getDomainId());
+		mailConfigBusinessService.updateFooterLang(footerLang);
+	}
+
+	@Override
+	public void deleteFooterLang(User actor, String uuid) throws BusinessException {
+		try {
+			MailFooterLang footerLang = findFooterLangByUuid(actor, uuid);
+			mailConfigBusinessService.deleteFooterLang(footerLang);
+		} catch (BusinessException e) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+					+ actor + " cannot update a mail config in this domain "
+					+ actor.getDomainId());
+		}
+	}
+
+	@Override
 	public List<MailLayout> findAllLayouts(User actor, String domainId)
 			throws BusinessException {
 		List<MailLayout> layouts = Lists.newArrayList();
@@ -315,7 +387,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 				layouts.addAll(d.getMailLayouts());
 			} else {
 				for (MailLayout c : d.getMailLayouts()) {
-					if (c.getVisible()) {
+					if (c.isVisible()) {
 						layouts.add(c);
 					}
 				}
@@ -368,7 +440,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 
 	@Override
 	public boolean hasRights(User actor, MailConfig config) {
-		if (config.getVisible()) {
+		if (config.isVisible()) {
 			return isInParentDomains(actor.getDomain(), config.getDomain());
 		} else {
 			return actor.getDomain().equals(config.getDomain());
@@ -377,7 +449,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 
 	@Override
 	public boolean hasRights(User actor, MailContent content) {
-		if (content.getVisible()) {
+		if (content.isVisible()) {
 			return isInParentDomains(actor.getDomain(), content.getDomain());
 		} else {
 			return actor.getDomain().equals(content.getDomain());
@@ -395,7 +467,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 
 	@Override
 	public boolean hasRights(User actor, MailLayout layout) {
-		if (layout.getVisible()) {
+		if (layout.isVisible()) {
 			return isInParentDomains(actor.getDomain(), layout.getDomain());
 		} else {
 			return actor.getDomain().equals(layout.getDomain());

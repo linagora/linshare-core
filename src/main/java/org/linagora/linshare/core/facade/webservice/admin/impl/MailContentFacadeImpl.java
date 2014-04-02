@@ -71,7 +71,7 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = super.getAuthentication();
 		MailContent content = new MailContent();
 
-		this.transform(content, dto);
+		transform(content, dto);
 		mailConfigService.createContent(actor, content);
 	}
 

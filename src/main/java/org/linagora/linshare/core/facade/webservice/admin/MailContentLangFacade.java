@@ -31,55 +31,19 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository.hibernate;
+package org.linagora.linshare.core.facade.webservice.admin;
 
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.MailContent;
-import org.linagora.linshare.core.domain.entities.MailContentLang;
-import org.linagora.linshare.core.domain.entities.MailContentType;
-import org.linagora.linshare.core.repository.MailContentLangRepository;
-import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.MailContentLangDto;
 
-public class MailContentLangRepositoryImpl extends
-		AbstractRepositoryImpl<MailContentLang> implements
-		MailContentLangRepository {
+public interface MailContentLangFacade {
 
-	public MailContentLangRepositoryImpl(HibernateTemplate hibernateTemplate) {
-		super(hibernateTemplate);
-	}
+	MailContentLangDto find(String uuid) throws BusinessException;
 
-	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(MailContentLang entity) {
-		return DetachedCriteria.forClass(getPersistentClass()).add(
-				Restrictions.eq("id", entity.getId()));
-	}
+	void create(MailContentLangDto dto) throws BusinessException;
 
-	@Override
-	public MailContentLang findByUuid(String uuid) {
-		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
-				"uuid", uuid)));
-	}
+	void update(MailContentLangDto dto) throws BusinessException;
 
-	@Override
-	public MailContent findMailContent(MailConfig cfg, Language lang,
-			MailContentType type) {
-		Disjunction and = Restrictions.disjunction();
+	void delete(String uuid) throws BusinessException;
 
-		and.add(Restrictions.eq("mailConfig", cfg));
-		and.add(Restrictions.eq("mailContentType", type));
-		and.add(Restrictions.eq("language", lang));
-		return DataAccessUtils.singleResult(findByCriteria(and))
-				.getMailContent();
-	}
-
-	@Override
-	public boolean isMailContentReferenced(MailContent content) {
-		return !findByCriteria(Restrictions.eq("mailContent", content))
-				.isEmpty();
-	}
 }

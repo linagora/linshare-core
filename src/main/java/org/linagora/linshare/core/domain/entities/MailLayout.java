@@ -58,24 +58,20 @@ public class MailLayout {
 	public MailLayout() {
 	}
 
-	private void setId(long value) {
-		this.id = value;
-	}
-
 	public long getId() {
 		return id;
 	}
 
-	public long getORMID() {
-		return getId();
-	}
-
-	public void setName(String value) {
-		this.name = value;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public AbstractDomain getDomain() {
@@ -86,56 +82,51 @@ public class MailLayout {
 		this.domain = domain;
 	}
 
-	public void setVisible(boolean value) {
-		this.visible = value;
-	}
-
-	public boolean getVisible() {
+	public boolean isVisible() {
 		return visible;
 	}
 
-	public void setLayout(String value) {
-		this.layout = value;
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 
 	public String getLayout() {
 		return layout;
 	}
 
-	public void setCreationDate(Date value) {
-		this.creationDate = value;
+	public void setLayout(String layout) {
+		this.layout = layout;
 	}
 
 	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setModificationDate(Date value) {
-		this.modificationDate = value;
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	public Date getModificationDate() {
 		return modificationDate;
 	}
 
-	public void setUuid(String value) {
-		this.uuid = value;
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 
 	public String getUuid() {
 		return uuid;
 	}
 
-	public void setPlaintext(boolean value) {
-		this.plaintext = value;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
-	public boolean getPlaintext() {
+	public boolean isPlaintext() {
 		return plaintext;
 	}
 
-	public String toString() {
-		return String.valueOf(getId());
+	public void setPlaintext(boolean plaintext) {
+		this.plaintext = plaintext;
 	}
-
 }

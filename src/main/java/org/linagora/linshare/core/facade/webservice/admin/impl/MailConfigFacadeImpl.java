@@ -72,7 +72,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = super.getAuthentication();
 		MailConfig config = new MailConfig();
 
-		this.transform(config, dto);
+		transform(config, dto);
 		mailConfigService.createConfig(actor, config);
 	}
 

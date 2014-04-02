@@ -39,6 +39,7 @@ import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.repository.MailFooterLangRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class MailFooterLangRepositoryImpl extends
@@ -53,6 +54,12 @@ public class MailFooterLangRepositoryImpl extends
 	protected DetachedCriteria getNaturalKeyCriteria(MailFooterLang entity) {
 		return DetachedCriteria.forClass(getPersistentClass()).add(
 				Restrictions.eq("id", entity.getId()));
+	}
+
+	@Override
+	public MailFooterLang findByUuid(String uuid) {
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"uuid", uuid)));
 	}
 
 	@Override

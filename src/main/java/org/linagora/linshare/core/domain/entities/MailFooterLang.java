@@ -41,7 +41,7 @@ public class MailFooterLang {
 
 	private int language;
 
-	private MailFooter footer;
+	private MailFooter mailFooter;
 
 	private String uuid;
 
@@ -52,36 +52,32 @@ public class MailFooterLang {
 
 	public MailFooterLang(MailFooterLang copied) {
 		this.language = copied.language;
-		this.footer = copied.footer;
+		this.mailFooter = copied.mailFooter;
 		this.uuid = UUID.randomUUID().toString();
-	}
-
-	public void setId(long value) {
-		this.id = value;
 	}
 
 	public long getId() {
 		return id;
 	}
 
-	public long getORMID() {
-		return getId();
-	}
-
-	public void setLanguage(int value) {
-		this.language = value;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public int getLanguage() {
 		return language;
 	}
 
-	public void setFooter(MailFooter value) {
-		this.footer = value;
+	public void setLanguage(int language) {
+		this.language = language;
 	}
 
-	public MailFooter getFooter() {
-		return footer;
+	public MailFooter getMailFooter() {
+		return mailFooter;
+	}
+
+	public void setMailFooter(MailFooter mailFooter) {
+		this.mailFooter = mailFooter;
 	}
 
 	public String getUuid() {

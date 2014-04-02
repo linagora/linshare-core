@@ -35,7 +35,6 @@ package org.linagora.linshare.webservice.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -45,14 +44,14 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "MailFooterLang", description = "")
 public class MailFooterLangDto {
 
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
+
 	@ApiModelProperty(value = "Language")
 	private int language;
 
-	@ApiModelProperty(value = "Footer")
-	private String footer;
-
-	@ApiModelProperty(value = "Uuid")
-	private String uuid;
+	@ApiModelProperty(value = "MailFooter")
+	private String mailFooter;
 
 	@ApiModelProperty(value = "MailConfig")
 	private String mailConfig;
@@ -60,11 +59,19 @@ public class MailFooterLangDto {
 	public MailFooterLangDto() {
 	}
 
-	public MailFooterLangDto(MailConfig config, MailFooterLang footerLang) {
-		mailConfig = config.getUuid();
+	public MailFooterLangDto(MailFooterLang footerLang) {
+		mailConfig = footerLang.getMailConfig().getUuid();
 		language = footerLang.getLanguage();
 		uuid = footerLang.getUuid();
-		footer = footerLang.getFooter().getUuid();
+		mailFooter = footerLang.getMailFooter().getUuid();
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public int getLanguage() {
@@ -75,20 +82,12 @@ public class MailFooterLangDto {
 		this.language = language;
 	}
 
-	public String getFooter() {
-		return footer;
+	public String getMailFooter() {
+		return mailFooter;
 	}
 
-	public void setFooter(String footer) {
-		this.footer = footer;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public void setMailFooter(String mailFooter) {
+		this.mailFooter = mailFooter;
 	}
 
 	public String getMailConfig() {

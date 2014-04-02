@@ -33,9 +33,9 @@
  */
 package org.linagora.linshare.webservice.dto;
 
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.linagora.linshare.core.domain.entities.MailContentLang;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -47,27 +47,54 @@ public class MailContentLangDto {
 	@ApiModelProperty(value = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Domain")
-	private String domain;
+	@ApiModelProperty(value = "Language")
+	private int language;
 
-	@ApiModelProperty(value = "Name")
-	private String name;
+	@ApiModelProperty(value = "MailContent")
+	private String mailContent;
 
-	@ApiModelProperty(value = "ContentLang")
-	private String layout;
-
-	@ApiModelProperty(value = "Plaintext")
-	private boolean plaintext;
-
-	@ApiModelProperty(value = "Visible")
-	private boolean visible;
-
-	@ApiModelProperty(value = "CreationDate")
-	private Date creationDate;
-
-	@ApiModelProperty(value = "ModificationDate")
-	private Date modificationDate;
+	@ApiModelProperty(value = "MailConfig")
+	private String mailConfig;
 
 	public MailContentLangDto() {
+	}
+
+	public MailContentLangDto(MailContentLang contentLang) {
+		mailConfig = contentLang.getMailConfig().getUuid();
+		language = contentLang.getLanguage();
+		uuid = contentLang.getUuid();
+		mailContent = contentLang.getMailContent().getUuid();
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public int getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(int language) {
+		this.language = language;
+	}
+
+	public String getMailContent() {
+		return mailContent;
+	}
+
+	public void setMailContent(String mailContent) {
+		this.mailContent = mailContent;
+	}
+
+	public String getMailConfig() {
+		return mailConfig;
+	}
+
+	public void setMailConfig(String mailConfig) {
+		this.mailConfig = mailConfig;
 	}
 }

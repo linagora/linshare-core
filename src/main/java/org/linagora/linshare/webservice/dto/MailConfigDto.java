@@ -91,7 +91,7 @@ public class MailConfigDto {
 		this.uuid = config.getUuid();
 		this.domain = config.getDomain().getIdentifier();
 		this.name = config.getName();
-		this.visible = config.getVisible();
+		this.visible = config.isVisible();
 		this.creationDate = new Date(config.getCreationDate().getTime());
 		this.modificationDate = new Date(config.getModificationDate().getTime());
 		this.mailLayoutHtml = config.getMailLayoutHtml().getUuid();

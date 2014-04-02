@@ -93,8 +93,8 @@ public class MailContentDto {
 		this.subject = cont.getSubject();
 		this.greetings = cont.getGreetings();
 		this.language = cont.getLanguage();
-		this.plaintext = cont.getPlaintext();
-		this.visible = cont.getVisible();
+		this.plaintext = cont.isPlaintext();
+		this.visible = cont.isVisible();
 		this.mailContentType = cont.getMailContentType();
 		this.creationDate = new Date(cont.getCreationDate().getTime());
 		this.modificationDate = new Date(cont.getModificationDate().getTime());

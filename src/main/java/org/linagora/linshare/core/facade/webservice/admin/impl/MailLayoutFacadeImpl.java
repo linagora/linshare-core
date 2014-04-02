@@ -71,7 +71,7 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = super.getAuthentication();
 		MailLayout layout = new MailLayout();
 
-		this.transform(layout, dto);
+		transform(layout, dto);
 		mailConfigService.createLayout(actor, layout);
 	}
 

@@ -38,9 +38,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContentLang;
+import org.linagora.linshare.core.domain.entities.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -134,7 +136,88 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 	}
 
 	@Override
+	public void createContentLang(MailContentLang contentLang)
+			throws BusinessException {
+		MailConfig config = contentLang.getMailConfig();
+        Language lang = Language.fromInt(contentLang.getLanguage());
+        MailContentType type = MailContentType.fromInt(contentLang.getMailContentType());
+
+		if (mailContentLangRepository.findMailContent(config, lang, type) != null) {
+			throw new BusinessException(
+					BusinessErrorCode.MAILCONTENTLANG_DUPLICATE,
+					"Cannot create mail footer lang with language " + lang);
+		}
+		contentLang = mailContentLangRepository.create(contentLang);
+		config.getMailContents().add(contentLang);
+		mailConfigRepository.update(config);
+	}
+
+	@Override
+	public void updateContentLang(MailContentLang contentLang)
+			throws BusinessException {
+		try {
+			mailContentLangRepository.update(contentLang);
+		} catch (IllegalArgumentException iae) {
+			throw new BusinessException(
+					BusinessErrorCode.MAILCONTENTLANG_NOT_FOUND,
+					"Cannot update mailconfig " + contentLang);
+		}
+	}
+
+	@Override
+	public void deleteContentLang(MailContentLang contentLang)
+			throws BusinessException {
+		try {
+			mailContentLangRepository.delete(contentLang);
+		} catch (IllegalArgumentException iae) {
+			throw new BusinessException(
+					BusinessErrorCode.MAILCONTENTLANG_NOT_FOUND,
+					"Cannot delete mailconfig " + contentLang);
+		}
+	}
+
+	@Override
 	public MailFooterLang findFooterLangByUuid(String uuid) {
 		return mailFooterLangRepository.findByUuid(uuid);
+	}
+
+	@Override
+	public void createFooterLang(MailFooterLang footerLang)
+			throws BusinessException {
+		MailConfig config = footerLang.getMailConfig();
+
+		if (config.getMailFooters().containsKey(footerLang.getLanguage())) {
+			throw new BusinessException(
+					BusinessErrorCode.MAILCONTENTLANG_DUPLICATE,
+					"Cannot create mail footer lang with language "
+							+ Language.fromInt(footerLang.getLanguage()));
+		}
+		footerLang = mailFooterLangRepository.create(footerLang);
+		config.getMailFooters().put(footerLang.getLanguage(), footerLang);
+		mailConfigRepository.update(config);
+	}
+
+	@Override
+	public void updateFooterLang(MailFooterLang footerLang)
+			throws BusinessException {
+		try {
+			mailFooterLangRepository.update(footerLang);
+		} catch (IllegalArgumentException iae) {
+			throw new BusinessException(
+					BusinessErrorCode.MAILFOOTERLANG_NOT_FOUND,
+					"Cannot update mailconfig " + footerLang);
+		}
+	}
+
+	@Override
+	public void deleteFooterLang(MailFooterLang footerLang)
+			throws BusinessException {
+		try {
+			mailFooterLangRepository.delete(footerLang);
+		} catch (IllegalArgumentException iae) {
+			throw new BusinessException(
+					BusinessErrorCode.MAILFOOTERLANG_NOT_FOUND,
+					"Cannot delete mailconfig " + footerLang);
+		}
 	}
 }

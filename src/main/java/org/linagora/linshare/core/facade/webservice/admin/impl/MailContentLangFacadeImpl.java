@@ -34,69 +34,64 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.MailFooter;
-import org.linagora.linshare.core.domain.entities.MailFooterLang;
+import org.linagora.linshare.core.domain.entities.MailContent;
+import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.MailFooterLangFacade;
+import org.linagora.linshare.core.facade.webservice.admin.MailContentLangFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
-import org.linagora.linshare.webservice.dto.MailFooterLangDto;
+import org.linagora.linshare.webservice.dto.MailContentLangDto;
 
-public class MailFooterLangFacadeImpl extends AdminGenericFacadeImpl implements
-		MailFooterLangFacade {
+public class MailContentLangFacadeImpl extends AdminGenericFacadeImpl implements
+		MailContentLangFacade {
 
 	private final MailConfigService mailConfigService;
 
-	public MailFooterLangFacadeImpl(final AccountService accountService,
+	public MailContentLangFacadeImpl(final AccountService accountService,
 			final MailConfigService mailConfigService) {
 		super(accountService);
 		this.mailConfigService = mailConfigService;
 	}
 
 	@Override
-	public MailFooterLangDto find(String uuid) throws BusinessException {
+	public MailContentLangDto find(String uuid) throws BusinessException {
 		User actor = super.getAuthentication();
 
-		return new MailFooterLangDto(findFooterLang(actor, uuid));
+		return new MailContentLangDto(findContentLang(actor, uuid));
 	}
 
 	@Override
-	public void create(MailFooterLangDto dto) throws BusinessException {
+	public void create(MailContentLangDto dto) throws BusinessException {
 		User actor = super.getAuthentication();
-		MailFooterLang footerLang = new MailFooterLang();
+		MailContentLang contentLang = new MailContentLang();
 
-		transform(actor, footerLang, dto);
-		mailConfigService.createFooterLang(actor, footerLang);
+		contentLang.setLanguage(dto.getLanguage());
+		contentLang.setMailConfig(findConfig(actor, dto.getMailConfig()));
+		contentLang.setMailContent(findContent(actor, dto.getMailContent()));
+		mailConfigService.createContentLang(actor, contentLang);
 	}
 
 	@Override
-	public void update(MailFooterLangDto dto) throws BusinessException {
+	public void update(MailContentLangDto dto) throws BusinessException {
 		User actor = super.getAuthentication();
-		MailFooterLang footerLang = findFooterLang(actor, dto.getUuid());
+		MailContentLang contentLang = findContentLang(actor, dto.getUuid());
 
-		transform(actor, footerLang, dto);
-		mailConfigService.updateFooterLang(actor, footerLang);
+		contentLang.setMailContent(findContent(actor, dto.getMailContent()));
+		mailConfigService.updateContentLang(actor, contentLang);
 	}
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
 		User actor = super.getAuthentication();
 
-		mailConfigService.deleteFooterLang(actor, uuid);
+		mailConfigService.deleteContentLang(actor, uuid);
 	}
 
 	/*
 	 * Helpers
 	 */
-
-	private void transform(User actor, MailFooterLang footerLang,
-			MailFooterLangDto dto) throws BusinessException {
-		footerLang.setLanguage(dto.getLanguage());
-		footerLang.setMailConfig(findConfig(actor, dto.getMailConfig()));
-		footerLang.setMailFooter(findFooter(actor, dto.getMailFooter()));
-	}
 
 	private MailConfig findConfig(User actor, String uuid)
 			throws BusinessException {
@@ -108,25 +103,25 @@ public class MailFooterLangFacadeImpl extends AdminGenericFacadeImpl implements
 		return mailConfig;
 	}
 
-	private MailFooter findFooter(User actor, String uuid)
+	private MailContent findContent(User actor, String uuid)
 			throws BusinessException {
-		MailFooter mailFooter = mailConfigService.findFooterByUuid(actor, uuid);
+		MailContent mailContent = mailConfigService.findContentByUuid(actor, uuid);
 
-		if (mailFooter == null)
-			throw new BusinessException(BusinessErrorCode.MAILFOOTER_NOT_FOUND,
+		if (mailContent == null)
+			throw new BusinessException(BusinessErrorCode.MAILCONTENT_NOT_FOUND,
 					uuid + " not found.");
-		return mailFooter;
+		return mailContent;
 	}
 
-	private MailFooterLang findFooterLang(User actor, String uuid)
+	private MailContentLang findContentLang(User actor, String uuid)
 			throws BusinessException {
-		MailFooterLang mailFooterLang = mailConfigService.findFooterLangByUuid(
+		MailContentLang mailContentLang = mailConfigService.findContentLangByUuid(
 				actor, uuid);
 
-		if (mailFooterLang == null)
+		if (mailContentLang == null)
 			throw new BusinessException(
-					BusinessErrorCode.MAILFOOTERLANG_NOT_FOUND, uuid
+					BusinessErrorCode.MAILCONTENTLANG_NOT_FOUND, uuid
 							+ " not found.");
-		return mailFooterLang;
+		return mailContentLang;
 	}
 }

@@ -75,80 +75,80 @@ public class MailConfig {
 		return id;
 	}
 
-	private void setId(long id) {
+	public void setId(long id) {
 		this.id = id;
-	}
-
-	public void setName(String value) {
-		this.name = value;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setVisible(boolean value) {
-		this.visible = value;
-	}
-
-	public boolean getVisible() {
-		return visible;
-	}
-
-	public void setCreationDate(Date value) {
-		this.creationDate = value;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setModificationDate(Date value) {
-		this.modificationDate = value;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setUuid(String value) {
-		this.uuid = value;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setDomain(AbstractDomain value) {
-		this.domain = value;
-	}
-
-	public AbstractDomain getDomain() {
-		return domain;
-	}
-
-	public void setMailFooters(Map<Integer, MailFooterLang> value) {
-		this.mailFooters = value;
-	}
-
-	public Map<Integer, MailFooterLang> getMailFooters() {
-		return mailFooters;
-	}
-
-	public void setMailLayoutHtml(MailLayout value) {
-		this.mailLayoutHtml = value;
 	}
 
 	public MailLayout getMailLayoutHtml() {
 		return mailLayoutHtml;
 	}
 
-	public void setMailLayoutText(MailLayout value) {
-		this.mailLayoutText = value;
+	public void setMailLayoutHtml(MailLayout mailLayoutHtml) {
+		this.mailLayoutHtml = mailLayoutHtml;
+	}
+
+	public AbstractDomain getDomain() {
+		return domain;
+	}
+
+	public void setDomain(AbstractDomain domain) {
+		this.domain = domain;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 
 	public MailLayout getMailLayoutText() {
 		return mailLayoutText;
+	}
+
+	public void setMailLayoutText(MailLayout mailLayoutText) {
+		this.mailLayoutText = mailLayoutText;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public Map<Integer, MailFooterLang> getMailFooters() {
+		return mailFooters;
+	}
+
+	public void setMailFooters(Map<Integer, MailFooterLang> mailFooters) {
+		this.mailFooters = mailFooters;
 	}
 
 	public Set<MailContentLang> getMailContents() {

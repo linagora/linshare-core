@@ -78,8 +78,8 @@ public class MailLayoutDto {
 		this.domain = ml.getDomain().getIdentifier();
 		this.name = ml.getName();
 		this.layout = ml.getLayout();
-		this.plaintext = ml.getPlaintext();
-		this.visible = ml.getVisible();
+		this.plaintext = ml.isPlaintext();
+		this.visible = ml.isVisible();
 		this.creationDate = new Date(ml.getCreationDate().getTime());
 		this.modificationDate = new Date(ml.getModificationDate().getTime());
 	}
