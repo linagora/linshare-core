@@ -34,15 +34,15 @@
 package org.linagora.linshare.webservice.admin;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.MailConfigDto;
+import org.linagora.linshare.webservice.dto.MailLayoutDto;
 
-public interface MailConfigRestService {
+public interface MailLayoutRestService {
 
-	MailConfigDto find(String uuid) throws BusinessException;
+	MailLayoutDto find(String uuid) throws BusinessException;
 
-	void create(MailConfigDto dto) throws BusinessException;
+	void create(MailLayoutDto dto) throws BusinessException;
 
-	void update(MailConfigDto dto) throws BusinessException;
+	void update(MailLayoutDto dto) throws BusinessException;
 
 	void delete(String uuid) throws BusinessException;
 }

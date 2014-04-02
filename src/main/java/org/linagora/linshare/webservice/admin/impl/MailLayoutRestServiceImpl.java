@@ -43,9 +43,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.MailConfigFacade;
-import org.linagora.linshare.webservice.admin.MailConfigRestService;
-import org.linagora.linshare.webservice.dto.MailConfigDto;
+import org.linagora.linshare.core.facade.webservice.admin.MailLayoutFacade;
+import org.linagora.linshare.webservice.admin.MailLayoutRestService;
+import org.linagora.linshare.webservice.dto.MailLayoutDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -53,59 +53,59 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/mail_configs")
-@Api(value = "/rest/admin/mail_configs", description = "Mail configurations used by domains")
+@Path("/mail_layouts")
+@Api(value = "/rest/admin/mail_layouts", description = "Mail layouts used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailConfigRestServiceImpl implements MailConfigRestService {
+public class MailLayoutRestServiceImpl implements MailLayoutRestService {
 
-	private final MailConfigFacade mailConfigFacade;
+	private final MailLayoutFacade mailLayoutFacade;
 
-	public MailConfigRestServiceImpl(final MailConfigFacade mailConfigFacade) {
+	public MailLayoutRestServiceImpl(final MailLayoutFacade mailLayoutFacade) {
 		super();
-		this.mailConfigFacade = mailConfigFacade;
+		this.mailLayoutFacade = mailLayoutFacade;
 	}
 
 	@Override
 	@Path("/{uuid}")
-	@ApiOperation(value = "Find a mail configuration.")
+	@ApiOperation(value = "Find a mail layout.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
-	public MailConfigDto find(String uuid) throws BusinessException {
-		return mailConfigFacade.find(uuid);
+	public MailLayoutDto find(String uuid) throws BusinessException {
+		return mailLayoutFacade.find(uuid);
 	}
 
 	@Override
 	@Path("/")
-	@ApiOperation(value = "Update a mail configuration.")
+	@ApiOperation(value = "Update a mail layout.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public void create(
-			@ApiParam(value = "Mail configuration to create.", required = true) MailConfigDto dto)
+			@ApiParam(value = "Mail layout to create.", required = true) MailLayoutDto dto)
 			throws BusinessException {
-		mailConfigFacade.create(dto);
+		mailLayoutFacade.create(dto);
 	}
 
 	@Override
 	@Path("/")
-	@ApiOperation(value = "Update a mail configuration.")
+	@ApiOperation(value = "Update a mail layout.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public void update(
-			@ApiParam(value = "Mail configuration to update.", required = true) MailConfigDto dto)
+			@ApiParam(value = "Mail layout to update.", required = true) MailLayoutDto dto)
 			throws BusinessException {
-		mailConfigFacade.update(dto);
+		mailLayoutFacade.update(dto);
 	}
 
 	@Override
 	@Path("/{uuid}")
-	@ApiOperation(value = "Delete an unused mail configuration.")
+	@ApiOperation(value = "Delete an unused mail layout.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
 	public void delete(
-			@ApiParam(value = "Mail config uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "Mail layout uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		mailConfigFacade.delete(uuid);
+		mailLayoutFacade.delete(uuid);
 	}
 }

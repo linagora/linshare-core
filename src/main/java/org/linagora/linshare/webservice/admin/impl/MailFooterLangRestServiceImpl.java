@@ -43,9 +43,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.MailConfigFacade;
-import org.linagora.linshare.webservice.admin.MailConfigRestService;
-import org.linagora.linshare.webservice.dto.MailConfigDto;
+import org.linagora.linshare.core.facade.webservice.admin.MailFooterLangFacade;
+import org.linagora.linshare.webservice.admin.MailFooterLangRestService;
+import org.linagora.linshare.webservice.dto.MailFooterLangDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -53,59 +53,59 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/mail_configs")
-@Api(value = "/rest/admin/mail_configs", description = "Mail configurations used by domains")
+@Path("/mail_footer_langs")
+@Api(value = "/rest/admin/mail_footer_langs", description = "Mail footer langs used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailConfigRestServiceImpl implements MailConfigRestService {
+public class MailFooterLangRestServiceImpl implements MailFooterLangRestService {
 
-	private final MailConfigFacade mailConfigFacade;
+	private final MailFooterLangFacade mailFooterLangFacade;
 
-	public MailConfigRestServiceImpl(final MailConfigFacade mailConfigFacade) {
+	public MailFooterLangRestServiceImpl(final MailFooterLangFacade mailFooterLangFacade) {
 		super();
-		this.mailConfigFacade = mailConfigFacade;
+		this.mailFooterLangFacade = mailFooterLangFacade;
 	}
 
 	@Override
 	@Path("/{uuid}")
-	@ApiOperation(value = "Find a mail configuration.")
+	@ApiOperation(value = "Find a mail footer lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
-	public MailConfigDto find(String uuid) throws BusinessException {
-		return mailConfigFacade.find(uuid);
+	public MailFooterLangDto find(String uuid) throws BusinessException {
+		return mailFooterLangFacade.find(uuid);
 	}
 
 	@Override
 	@Path("/")
-	@ApiOperation(value = "Update a mail configuration.")
+	@ApiOperation(value = "Update a mail footer lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public void create(
-			@ApiParam(value = "Mail configuration to create.", required = true) MailConfigDto dto)
+			@ApiParam(value = "Mail footer lang to create.", required = true) MailFooterLangDto dto)
 			throws BusinessException {
-		mailConfigFacade.create(dto);
+		mailFooterLangFacade.create(dto);
 	}
 
 	@Override
 	@Path("/")
-	@ApiOperation(value = "Update a mail configuration.")
+	@ApiOperation(value = "Update a mail footer lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public void update(
-			@ApiParam(value = "Mail configuration to update.", required = true) MailConfigDto dto)
+			@ApiParam(value = "Mail footer lang to update.", required = true) MailFooterLangDto dto)
 			throws BusinessException {
-		mailConfigFacade.update(dto);
+		mailFooterLangFacade.update(dto);
 	}
 
 	@Override
 	@Path("/{uuid}")
-	@ApiOperation(value = "Delete an unused mail configuration.")
+	@ApiOperation(value = "Delete an unused mail footer lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
 	public void delete(
-			@ApiParam(value = "Mail config uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "Mail footer lang uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		mailConfigFacade.delete(uuid);
+		mailFooterLangFacade.delete(uuid);
 	}
 }
