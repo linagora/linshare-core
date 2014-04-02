@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.core.repository;
 
-import java.util.List;
-
 import org.linagora.linshare.core.domain.entities.MailLayout;
 
 public interface MailLayoutRepository extends AbstractRepository<MailLayout> {

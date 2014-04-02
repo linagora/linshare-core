@@ -102,7 +102,8 @@ public class MailContentBusinessServiceImpl implements
 		try {
 			mailContentRepository.update(content);
 		} catch (IllegalArgumentException iae) {
-			throw new BusinessException(BusinessErrorCode.MAILCONTENT_NOT_FOUND,
+			throw new BusinessException(
+					BusinessErrorCode.MAILCONTENT_NOT_FOUND,
 					"Cannot update mailcontent " + content);
 		}
 	}

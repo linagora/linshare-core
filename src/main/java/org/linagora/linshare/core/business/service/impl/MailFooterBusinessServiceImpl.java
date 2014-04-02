@@ -66,7 +66,8 @@ public class MailFooterBusinessServiceImpl implements MailFooterBusinessService 
 	}
 
 	@Override
-	public void create(AbstractDomain domain, MailFooter footer) throws BusinessException {
+	public void create(AbstractDomain domain, MailFooter footer)
+			throws BusinessException {
 		footer = mailFooterRepository.create(footer);
 		domain.getMailFooters().add(footer);
 		abstractDomainRepository.update(domain);

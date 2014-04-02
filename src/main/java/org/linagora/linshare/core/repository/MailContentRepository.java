@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.repository;
 
 import org.linagora.linshare.core.domain.entities.MailContent;
-import org.linagora.linshare.core.domain.entities.MailLayout;
 
 public interface MailContentRepository extends AbstractRepository<MailContent> {
 

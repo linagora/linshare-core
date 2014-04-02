@@ -344,7 +344,8 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void createFooterLang(User actor, MailFooterLang footerLang) throws BusinessException {
+	public void createFooterLang(User actor, MailFooterLang footerLang)
+			throws BusinessException {
 		MailConfig config = footerLang.getMailConfig();
 
 		if (!actor.getDomain().equals(config.getDomain()))
@@ -355,7 +356,8 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void updateFooterLang(User actor, MailFooterLang footerLang) throws BusinessException {
+	public void updateFooterLang(User actor, MailFooterLang footerLang)
+			throws BusinessException {
 		MailConfig config = footerLang.getMailConfig();
 
 		if (!actor.getDomain().equals(config.getDomain()))
@@ -366,7 +368,8 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void deleteFooterLang(User actor, String uuid) throws BusinessException {
+	public void deleteFooterLang(User actor, String uuid)
+			throws BusinessException {
 		try {
 			MailFooterLang footerLang = findFooterLangByUuid(actor, uuid);
 			mailConfigBusinessService.deleteFooterLang(footerLang);

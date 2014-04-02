@@ -52,11 +52,14 @@ public interface MailConfigBusinessService {
 
 	MailContentLang findContentLangByUuid(String uuid);
 
-	void createContentLang(MailContentLang contentLang) throws BusinessException;
+	void createContentLang(MailContentLang contentLang)
+			throws BusinessException;
 
-	void updateContentLang(MailContentLang contentLang) throws BusinessException;
+	void updateContentLang(MailContentLang contentLang)
+			throws BusinessException;
 
-	void deleteContentLang(MailContentLang contentLang) throws BusinessException;
+	void deleteContentLang(MailContentLang contentLang)
+			throws BusinessException;
 
 	MailFooterLang findFooterLangByUuid(String uuid);
 

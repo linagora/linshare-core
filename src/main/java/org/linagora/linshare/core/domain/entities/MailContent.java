@@ -34,9 +34,6 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
-import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 public class MailContent {
 

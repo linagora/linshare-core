@@ -67,7 +67,8 @@ public class MailLayoutBusinessServiceImpl implements MailLayoutBusinessService 
 	}
 
 	@Override
-	public void create(AbstractDomain domain, MailLayout footer) throws BusinessException {
+	public void create(AbstractDomain domain, MailLayout footer)
+			throws BusinessException {
 		footer = mailLayoutRepository.create(footer);
 		domain.getMailLayouts().add(footer);
 		abstractDomainRepository.update(domain);

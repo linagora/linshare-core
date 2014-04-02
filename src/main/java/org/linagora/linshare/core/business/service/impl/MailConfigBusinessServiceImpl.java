@@ -139,8 +139,9 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 	public void createContentLang(MailContentLang contentLang)
 			throws BusinessException {
 		MailConfig config = contentLang.getMailConfig();
-        Language lang = Language.fromInt(contentLang.getLanguage());
-        MailContentType type = MailContentType.fromInt(contentLang.getMailContentType());
+		Language lang = Language.fromInt(contentLang.getLanguage());
+		MailContentType type = MailContentType.fromInt(contentLang
+				.getMailContentType());
 
 		if (mailContentLangRepository.findMailContent(config, lang, type) != null) {
 			throw new BusinessException(
