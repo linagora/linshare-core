@@ -111,7 +111,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		List<ParameterDto> parameters = functionalityDto.getParameters();
 		if (parameters != null && !parameters.isEmpty()) {
 			ParameterDto parameterDto = parameters.get(0);
-			updateFunctionality(functionalityDto.getType(), parameterDto);
+			updateFunctionality(parameterDto.getType(), parameterDto);
 		}
 	}
 
