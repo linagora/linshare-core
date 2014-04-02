@@ -204,4 +204,15 @@ public class Policy implements Cloneable {
 			return false;
 		return true;
 	}
+
+	/**
+	 * Helpers
+	 */
+	public boolean isForbidden() {
+		return this.getPolicy().equals(Policies.FORBIDDEN);
+	}
+
+	public boolean isMandatory() {
+		return this.getPolicy().equals(Policies.MANDATORY);
+	}
 }

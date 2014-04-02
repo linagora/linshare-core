@@ -228,4 +228,8 @@ public abstract class User extends Account {
 	public boolean isInternal() {
 		return this.getAccountType().equals(AccountType.INTERNAL);
 	}
+
+	public boolean isGuest() {
+		return this.getAccountType().equals(AccountType.GUEST);
+	}
 }

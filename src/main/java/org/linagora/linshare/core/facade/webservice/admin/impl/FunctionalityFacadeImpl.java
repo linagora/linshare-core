@@ -54,8 +54,8 @@ import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
 public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements FunctionalityFacade {
 
-	private FunctionalityService functionalityService;
 	private FunctionalityOldService functionalityOldService;
+	private FunctionalityService functionalityService;
 
 	public FunctionalityFacadeImpl(final AccountService accountService,
 			final FunctionalityService functionalityService,
@@ -93,14 +93,13 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 			FunctionalityDto func = new FunctionalityDto(f, parentAllowAPUpdate, parentAllowCPUpdate);
 			// We force the domain id to be coherent to the argument.
 			func.setDomain(domain);
+
 			// We check if this a sub functionality (a parameter)
 			if(f.isParam()) {
 				if (ret.containsKey(func.getParentIdentifier())) {
 					ret.get(func.getParentIdentifier()).addFunctionalities(func);
 				} else {
 					subs.add(func);
-					// HACK : To be removed.
-					ret.put(f.getIdentifier(), func);
 				}
 			} else {
 				ret.put(f.getIdentifier(), func);
@@ -111,9 +110,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 				ret.get(func.getParentIdentifier()).addFunctionalities(func);
 			}
 		}
-		// HOOK : To be removed.
-		List<FunctionalityDto> a = new ArrayList<FunctionalityDto>(ret.values());
-		return a;
+		return new ArrayList<FunctionalityDto>(ret.values());
 	}
 
 	@Override
