@@ -31,28 +31,59 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.admin;
+package org.linagora.linshare.webservice.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
 
-import java.util.Set;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.UserDto;
-import org.linagora.linshare.webservice.dto.UserSearchDto;
+@XmlRootElement(name = "Search")
+@ApiModel(value = "Search", description = "Theses are patterns to search a user.")
+public class UserSearchDto {
 
-public interface UserFacade extends AdminGenericFacade {
+	@ApiModelProperty(value = "FirstName")
+	protected String firstName;
 
-	Set<UserDto> search(UserSearchDto userSearchDto) throws BusinessException;
+	@ApiModelProperty(value = "LastName")
+	protected String lastName;
 
-	Set<UserDto> searchInternals(String pattern) throws BusinessException;
+	@ApiModelProperty(value = "Mail")
+	protected String mail;
+
+	public UserSearchDto() {
+		super();
+	}
+
+	public UserSearchDto(String firstName, String lastName, String mail) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.mail = mail;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
 	
-	Set<UserDto> searchGuests(String pattern) throws BusinessException;
-	
-	void update(UserDto userDto) throws BusinessException;
-
-	void delete(UserDto userDto) throws BusinessException;
-
-	Set<UserDto> getAllInconsistent() throws BusinessException;
-
-	void updateInconsistent(UserDto userDto) throws BusinessException;
 }

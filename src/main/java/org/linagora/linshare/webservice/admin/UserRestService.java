@@ -39,11 +39,12 @@ import javax.ws.rs.Path;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.webservice.dto.UserSearchDto;
 
 @Path("/users")
 public interface UserRestService {
 
-	Set<UserDto> search(String pattern) throws BusinessException;
+	Set<UserDto> search(UserSearchDto userSearchDto) throws BusinessException;
 	
 	Set<UserDto> searchInternals(String pattern) throws BusinessException;
 

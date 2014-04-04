@@ -52,6 +52,7 @@ import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UserRestService;
 import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.webservice.dto.UserSearchDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -71,15 +72,16 @@ public class UserRestServiceImpl extends WebserviceBase implements
 		this.autocompleteFacade = autocompleteFacade;
 	}
 
-	@Path("/search/{pattern}")
-	@ApiOperation(value = "Provide user autocompletion.", response = UserDto.class, responseContainer = "Set")
-	@GET
+	@Path("/search")
+	@ApiOperation(value = "Provide all users who match with patterns.", response = UserDto.class, responseContainer = "Set")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@POST
 	@Override
 	public Set<UserDto> search(
-			@ApiParam(value = "Pattern to complete.", required = true) @PathParam("pattern") String pattern)
+			@ApiParam(value = "Patterns to search.", required = true) UserSearchDto userSearchDto)
 			throws BusinessException {
 		userFacade.checkAuthentication();
-		return userFacade.search(pattern);
+		return userFacade.search(userSearchDto);
 	}
 
 	@Path("/search/internals/{pattern}")

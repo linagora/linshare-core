@@ -47,6 +47,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.webservice.dto.UserSearchDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,8 +72,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<UserDto> search(String pattern) throws BusinessException {
-		return searchUsers(pattern, null);
+	public Set<UserDto> search(UserSearchDto userSearchDto) throws BusinessException {
+		return searchUsers(userSearchDto.getFirstName(), userSearchDto.getLastName(), userSearchDto.getMail(), null);
 	}
 	
 	@Override
@@ -85,16 +86,23 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		return searchUsers(pattern, AccountType.GUEST);
 	}
 	
-	private Set<UserDto> searchUsers(String pattern, AccountType type) throws BusinessException {
+	/**
+	 * Search users using firstname, lastname and mail as search criteria.
+	 * Each param can be null. If all parameters are null, return all.
+	 * 
+	 * @param firstName
+	 * @param lastName
+	 * @param mail
+	 * @param type
+	 * @return
+	 * @throws BusinessException
+	 */
+	private Set<UserDto> searchUsers(String firstName, String lastName, String mail, AccountType type) throws BusinessException {
 		User currentUser = super.checkAuthentication();
 
 		Set<UserDto> usersDto = new HashSet<UserDto>();
 		Set<User> users = new HashSet<User>();
-		users.addAll(userService.searchUser(pattern, null, null, type,
-				currentUser));
-		users.addAll(userService.searchUser(null, pattern, null, type,
-				currentUser));
-		users.addAll(userService.searchUser(null, null, pattern, type,
+		users.addAll(userService.searchUser(mail, firstName, lastName, type,
 				currentUser));
 		for (User user : users) {
 			UserDto userDto = UserDto.getFull(user);
@@ -108,6 +116,14 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			}
 			usersDto.add(userDto);
 		}		
+		return usersDto;
+	}
+
+	private Set<UserDto> searchUsers(String pattern, AccountType type) throws BusinessException {
+		Set<UserDto> usersDto = new HashSet<UserDto>();
+		usersDto.addAll(searchUsers(pattern, null, null, type));
+		usersDto.addAll(searchUsers(null, pattern, null, type));
+		usersDto.addAll(searchUsers(null, null, pattern, type));
 		return usersDto;
 	}
 
