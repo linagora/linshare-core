@@ -48,21 +48,17 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
 public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements FunctionalityFacade {
 
-	private FunctionalityOldService functionalityOldService;
 	private FunctionalityService functionalityService;
 
 	public FunctionalityFacadeImpl(final AccountService accountService,
-			final FunctionalityService functionalityService,
-			final FunctionalityOldService functionalityOldService) {
+			final FunctionalityService functionalityService) {
 		super(accountService);
 		this.functionalityService = functionalityService;
-		this.functionalityOldService = functionalityOldService;
 	}
 
 	@Override
@@ -133,7 +129,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 
 		// copy of parameters.
 		f.updateFunctionalityValuesOnlyFromDto(func);
-		functionalityOldService.update(actor, domain, f);
+		functionalityService.update(actor, domain, f);
 	}
 
 	@Override

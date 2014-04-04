@@ -42,8 +42,10 @@ import java.util.Set;
 import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
+import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
@@ -106,6 +108,12 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 				return false;
 			return true;
 		}
+
+		@Override
+		public String toString() {
+			return "InnerFunctionality : " + identifier + "(" + functionality.getDomain().getIdentifier() + ")";
+		}
+
 	}
 
 	/**
@@ -124,19 +132,26 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 
 	/**
 	 * Helper : convert InnerFunctionality list to Functionality list.
-	 * 
 	 * @param functionalities
-	 * @param exclude TODO
-	 * @return innerFunctionalities
+	 * @param exclude
+	 * @param clone
+	 * @param domain
+	 * @return
 	 */
-	private Set<Functionality> convertToFunctionality(Set<InnerFunctionality> functionalities, List<String> exclude) {
+	private Set<Functionality> convertToFunctionality(Set<InnerFunctionality> functionalities, List<String> exclude, boolean clone, AbstractDomain domain) {
 		Set<Functionality> res = new HashSet<Functionality>();
 		if (exclude == null) {
 			exclude = new ArrayList<String>();
 		}
 		for (InnerFunctionality f : functionalities) {
 			if(!exclude.contains(f.getFunctionality().getIdentifier())) {
-				res.add(f.getFunctionality());
+				if (clone) {
+					Functionality functionality = (Functionality) f.getFunctionality().clone();
+					functionality.setDomain(domain);
+					res.add(functionality);
+				} else {
+					res.add(f.getFunctionality());
+				}
 			}
 		}
 		return res;
@@ -204,7 +219,7 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 				// A guest user can not create a guest, so account expiration for guests is useless.
 				exclude.add(FunctionalityNames.ACCOUNT_EXPIRATION);
 			}
-			return convertToFunctionality(this.getAllInnerFunctionalities(abstractDomain), exclude);
+			return convertToFunctionality(this.getAllInnerFunctionalities(abstractDomain), exclude, true, abstractDomain);
 		}
 		return null;
 	}
@@ -248,7 +263,7 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 	public boolean configurationPolicyIsMutable(Functionality functionality, String domain) {
 		Assert.notNull(functionality);
 		Assert.notNull(domain);
-		
+
 		// Check if the current functionality belong to the current domain.
 		if (functionality.getDomain().getIdentifier().equals(domain)) {
 			// we have to check if we have the permission to modify the configuration status of this functionality
@@ -272,7 +287,7 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 		}
 		return false;
 	}
-	
+
 	private  Functionality getFunctionalityEntityByIdentifiers(AbstractDomain domain, String functionalityId) {
 		Assert.notNull(domain);
 		Assert.notNull(functionalityId);
@@ -282,18 +297,21 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 		}
 		return fonc;
 	}
-	
+
 	@Override
 	public Functionality getFunctionality(String domainId, String functionalityId) {
 		Assert.notNull(domainId);
 		Assert.notNull(functionalityId);
-		
+
 		AbstractDomain domain = abstractDomainRepository.findById(domainId);
 		Functionality functionality = getFunctionalityEntityByIdentifiers(domain, functionalityId);
 		// Never returns the entity when we try to modify the functionality.
 		// The current functionality returned could belong to a parent domain. 
-		// In this case, the functionality will be clone, linked to the current domain and the updated by the FonctionalityBusiness update method.
-		return (Functionality)functionality.clone();
+		// In this case, the functionality will be clone, linked to the input domain.
+		Functionality clone = (Functionality)functionality.clone();
+		// Wet set the input domain to fake the out side world.
+		clone.setDomain(domain);
+		return clone;
 	}
 
 	@Override
@@ -305,19 +323,24 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 		if (entity.getDomain().getIdentifier().equals(functionality.getDomain().getIdentifier())) {
 			// This functionality belongs to the current domain.
 			logger.debug("this functionality belongs to the current domain");
-			// We check if it has an identical ancestor.
-//			functionalityRepository.update(functionality);
-			if (entity.getDomain().getParentDomain() != null) {
-			}
-			
+			entity.updateFunctionalityFrom(functionality);
+			functionalityRepository.update(entity);
+			permissionPropagationForActivationPolicy(entity);
+			permissionPropagationForConfigurationPolicy(entity);
 		} else {
 			// This functionality does not belong to the current domain.
 			logger.debug("this functionality does not belong to the current domain");
 			if (!functionality.businessEquals(entity, true)) {
 				// This functionality is different, it needs to be persist.
 				functionality.setDomain(currentDomain);
-				functionalityRepository.create(functionality);
-				logger.info("Update by creation of a new functionality for : " + functionality.getIdentifier() + " link to domain : " + currentDomain.getIdentifier());
+				if (functionalityRepository.findById(currentDomain, functionality.getIdentifier()) == null) {
+					functionalityRepository.create(functionality);
+					logger.info("Update by creation of a new functionality for : " + functionality.getIdentifier() + " link to domain : " + currentDomain.getIdentifier());
+				} else {
+					// TODO : to be check : This could really happen ? odd !
+					logger.error("This should not happen ! You does not have the right to update the functionnality (All) '" + functionality +"' in domain '" + currentDomain +"'");
+					throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
+				}
 			} else { // no differences
 				logger.debug("functionality " + functionality.getIdentifier()+ " was not modified.");
 			}
@@ -328,19 +351,91 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 	public void delete(String domainId, String functionalityId) throws IllegalArgumentException, BusinessException {
 		Assert.notNull(domainId);
 		Assert.notNull(functionalityId);
-		
-		Functionality f = getFunctionality(domainId, functionalityId);
+
+		AbstractDomain domain = abstractDomainRepository.findById(domainId);
+		Functionality functionality = getFunctionalityEntityByIdentifiers(domain, functionalityId);
 
 		// The functionality belong to the current domain. We can delete it.
-		if (f.getDomain().getIdentifier().equals(domainId)){
+		if (functionality.getDomain().getIdentifier().equals(domainId)){
 			logger.debug("suppression of the functionality : " + domainId + " : " + functionalityId);
-			AbstractDomain domain = abstractDomainRepository.findById(domainId);
 			Functionality rawFunc = functionalityRepository.findById(domain, functionalityId);
 			functionalityRepository.delete(rawFunc);
 			domain.getFunctionalities().remove(rawFunc);
 			abstractDomainRepository.update(domain);
 		} else {
-			logger.warn("You are trying to delete the functionality "  + domainId + " : " + functionalityId + " which does not belong to the current domain : " + f.getDomain().getIdentifier());
+			logger.warn("You are trying to delete the functionality "  + domainId + " : " + functionalityId + " which does not belong to the current domain : " + functionality.getDomain().getIdentifier());
 		}	
+	}
+
+	private void deleteFunctionalityRecursivly(AbstractDomain domain, String functionalityIdentifier) throws IllegalArgumentException, BusinessException {
+		if(domain != null ) {
+			for (AbstractDomain subDomain : domain.getSubdomain()) {
+				Set<Functionality> functionalities = subDomain.getFunctionalities();
+				for (Functionality functionality : functionalities) {
+					if(functionality.getIdentifier().equals(functionalityIdentifier)) {
+						functionalityRepository.delete(functionality);
+						functionalities.remove(functionality);
+						break;
+					}
+				}
+				deleteFunctionalityRecursivly(subDomain, functionalityIdentifier);
+			}
+		}
+	}
+
+	private void updateActivationPolicyRecursivly(AbstractDomain domain, Functionality functionality) throws IllegalArgumentException, BusinessException {
+		if(domain != null ) {
+			for (AbstractDomain subDomain : domain.getSubdomain()) {
+				Set<Functionality> functionalities = subDomain.getFunctionalities();
+				for (Functionality f : functionalities) {
+					if(f.getIdentifier().equals(functionality.getIdentifier())) {
+						f.getActivationPolicy().updatePolicyFrom(functionality.getActivationPolicy());
+						functionalityRepository.update(f);
+						break;
+					}
+				}
+				updateActivationPolicyRecursivly(subDomain, functionality);
+			}
+		}
+	}
+
+	private void updateConfigurationPolicyRecursivly(AbstractDomain domain, Functionality functionality, boolean copyContent) throws IllegalArgumentException, BusinessException {
+		if(domain != null ) {
+			for (AbstractDomain subDomain : domain.getSubdomain()) {
+				Set<Functionality> functionalities = subDomain.getFunctionalities();
+				for (Functionality f : functionalities) {
+					if(f.getIdentifier().equals(functionality.getIdentifier())) {
+						f.getConfigurationPolicy().updatePolicyFrom(functionality.getConfigurationPolicy());
+						if(copyContent) {
+							f.updateFunctionalityValuesOnlyFrom(functionality);
+						}
+						functionalityRepository.update(f);
+						break;
+					}
+				}
+				updateConfigurationPolicyRecursivly(subDomain, functionality, copyContent);
+			}
+		}
+	}
+
+	private void permissionPropagationForActivationPolicy(Functionality functionalityEntity) throws IllegalArgumentException, BusinessException {
+		if(functionalityEntity.getActivationPolicy().getPolicy().equals(Policies.FORBIDDEN)) {
+			// We have to delete the activation policy of each functionality from all the sub  domains
+			deleteFunctionalityRecursivly(functionalityEntity.getDomain(), functionalityEntity.getIdentifier());
+		} else if(functionalityEntity.getActivationPolicy().getPolicy().equals(Policies.MANDATORY)) {
+			// TODO : We have to update the activation policy of each functionality from all the sub domains
+			updateActivationPolicyRecursivly(functionalityEntity.getDomain(), functionalityEntity);
+		}
+	}
+
+	private void permissionPropagationForConfigurationPolicy(Functionality functionalityEntity) throws IllegalArgumentException, BusinessException {
+		if(functionalityEntity.getConfigurationPolicy().getPolicy().equals(Policies.FORBIDDEN)) {
+			// We have to update the configuration policy of each functionality from all the sub domains
+			// The parameters of the current functionality are propagated to all sub functionalities
+			updateConfigurationPolicyRecursivly(functionalityEntity.getDomain(), functionalityEntity, true);
+		} else if(functionalityEntity.getConfigurationPolicy().getPolicy().equals(Policies.MANDATORY)) {
+			// We have to update the configuration policy of each functionality from all the sub domains
+			updateConfigurationPolicyRecursivly(functionalityEntity.getDomain(), functionalityEntity, false);
+		}
 	}
 }

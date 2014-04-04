@@ -186,24 +186,23 @@ public class Functionality implements Cloneable {
 	public Object clone() {
 		// Every properties are clones, except domain.
 		Functionality func = null;
-		    try {
-		      	func = (Functionality) super.clone();
-		    } catch(CloneNotSupportedException cnse) {
-		      	cnse.printStackTrace(System.err);
-		    }
-		    
-		    func.activationPolicy = (Policy) activationPolicy.clone();
-		    func.configurationPolicy = (Policy) configurationPolicy.clone();
-		    func.persistenceId=0;
-		    return func;
-  	}
+		try {
+			func = (Functionality) super.clone();
+		} catch (CloneNotSupportedException cnse) {
+			cnse.printStackTrace(System.err);
+		}
+		func.activationPolicy = (Policy) activationPolicy.clone();
+		func.configurationPolicy = (Policy) configurationPolicy.clone();
+		func.persistenceId = 0;
+		return func;
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ (int) (persistenceId ^ (persistenceId >>> 32));
+				+ ((identifier == null) ? 0 : identifier.hashCode());
 		return result;
 	}
 
@@ -216,11 +215,14 @@ public class Functionality implements Cloneable {
 		if (getClass() != obj.getClass())
 			return false;
 		Functionality other = (Functionality) obj;
-		if (persistenceId != other.persistenceId)
+		if (identifier == null) {
+			if (other.identifier != null)
+				return false;
+		} else if (!identifier.equals(other.identifier))
 			return false;
 		return true;
 	}
-		
+
 	public boolean equalsIdentifier(Object obj) {
 		if (this == obj)
 			return true;

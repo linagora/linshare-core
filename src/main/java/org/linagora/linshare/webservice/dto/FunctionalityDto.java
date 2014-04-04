@@ -41,7 +41,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.Functionality;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -73,9 +72,9 @@ public class FunctionalityDto {
 	protected PolicyDto configurationPolicy;
 
 	// This field is designed to indicate if the parent functionality allow you to update the parameters.
-    @ApiModelProperty(value = "ParentAllowParametersUpdate")
+	@ApiModelProperty(value = "ParentAllowParametersUpdate")
 	protected boolean parentAllowParametersUpdate;
-    
+
 	@ApiModelProperty(value = "Parameters")
 	protected List<ParameterDto> parameters;
 
@@ -94,7 +93,7 @@ public class FunctionalityDto {
 	public FunctionalityDto() {
 		super();
 	}
-	
+
 	public FunctionalityDto(Functionality f, boolean parentAllowAPUpdate, boolean parentAllowCPUpdate) {
 		super();
 		this.domain = f.getDomain().getIdentifier();

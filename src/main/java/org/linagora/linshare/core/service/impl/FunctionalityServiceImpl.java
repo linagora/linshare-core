@@ -141,8 +141,9 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 			String message = entity.getType().toString() + " != " + entity.getType().toString();
 			throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "Same identifier, different functionality types : " + message);
 		}
-		
+
 		functionality.getActivationPolicy().applyConsistency();
+
 		functionality.getConfigurationPolicy().applyConsistency();
 
 		// we check if the parent functionality allow modifications of the activation policy (AP).
@@ -154,6 +155,12 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (AP) '" + functionality +"' in domain '" + domain +"'");
 				throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
 			}
+			if(entity.getActivationPolicy().isForbidden()) {
+				if (!functionality.businessEquals(entity, true)) {
+					logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (All) '" + functionality +"' in domain '" + domain +"'");
+					throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
+				}
+			}
 		}
 
 		// we check if the parent functionality allow modifications of the configuration policy (CP).
@@ -161,17 +168,20 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		if(!parentAllowCPUpdate) {
 			// Modifications are not allowed.
 			if (!entity.getConfigurationPolicy().businessEquals(functionality.getConfigurationPolicy())) {
-				// AP entity is different of the input AP functionality  => FORBIDDEN
+				// AP entity is different of the input CP functionality  => FORBIDDEN
 				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (CP) '" + functionality +"' in domain '" + domain +"'");
 				throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
 			}
 		}
-		
+
 		// we check if there is any modifications
 		if (functionality.businessEquals(entity, true)) {
 			logger.debug("functionality " + functionality.toString() + " was not modified.");
 			return false;
 		}
+
+		// TODO :if ap is forbidden ? check status ?
+		// TODO: func.isSystem ??
 		return true;
 	}
 
