@@ -51,10 +51,11 @@ public interface MailingListRestService {
 
 	public void create(MailingListDto dto) throws BusinessException;
 
-	public void delete(String uuid) throws BusinessException;
+	public void delete(MailingListDto dto) throws BusinessException;
 
 	public void createContact(String uuid, MailingListContactDto dto)
 			throws BusinessException;
 
-	public void deleteContact(String uuid) throws BusinessException;
+	public void deleteContact(String uuid, MailingListContactDto dto)
+			throws BusinessException;
 }
