@@ -86,6 +86,11 @@ public class CreateMailingList {
 		}
 	}
 
+	public Object onActionFromCancel() throws BusinessException {
+		this.mailingList = null;
+		return Index.class;
+	}
+
 	public Object onSuccess() throws BusinessException {
 		mailingListFacade.createList(userVo, mailingList);
 		index.setFromCreate(true); // XXX: ugly hack ...

@@ -94,6 +94,11 @@ public class UpdateMailingList {
 		}
 	}
 
+	public Object onActionFromCancel() throws BusinessException {
+		this.selected = null;
+		return Index.class;
+	}
+
 	public Object onSuccess() throws BusinessException {
 		mailingListFacade.updateList(userVo, selected);
 		return Index.class;
