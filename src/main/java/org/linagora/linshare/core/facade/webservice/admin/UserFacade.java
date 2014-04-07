@@ -45,14 +45,14 @@ public interface UserFacade extends AdminGenericFacade {
 	Set<UserDto> search(UserSearchDto userSearchDto) throws BusinessException;
 
 	Set<UserDto> searchInternals(String pattern) throws BusinessException;
-	
+
 	Set<UserDto> searchGuests(String pattern) throws BusinessException;
-	
+
 	void update(UserDto userDto) throws BusinessException;
 
 	void delete(UserDto userDto) throws BusinessException;
 
 	Set<UserDto> getAllInconsistent() throws BusinessException;
 
-	void updateInconsistent(UserDto userDto) throws BusinessException;
+	void updateInconsistentUser(UserDto userDto) throws BusinessException;
 }

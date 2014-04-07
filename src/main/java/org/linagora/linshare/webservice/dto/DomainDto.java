@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-
+import org.linagora.linshare.core.domain.entities.User;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 

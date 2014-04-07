@@ -39,7 +39,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import com.wordnik.swagger.annotations.*;
-
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPolicyFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
@@ -48,7 +47,6 @@ import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
 @Path("/domain_policies")
 @Api(value = "/rest/admin/domain_policies", description = "Domain policies service.")
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 		DomainPolicyRestService {
 
@@ -61,6 +59,7 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	
 	@Path("/")
 	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Find all the domain policies.", response = DomainPolicyDto.class, responseContainer = "List")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
 	@Override
@@ -74,12 +73,12 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Create a new domain policy.")
 	@ApiResponses({
-		@ApiResponse(code = 403, message = "User isn't superadmin."),
-		@ApiResponse(code = 400, message = "Invalid domain policy.")})
+			@ApiResponse(code = 403, message = "User isn't superadmin."),
+			@ApiResponse(code = 400, message = "Invalid domain policy.")})
 	@Override
 	public void create(
-			@ApiParam(value = "Policy to update.", required = true) DomainPolicyDto policy)
-			throws BusinessException {
+			@ApiParam(value = "Policy to update.", required = true)
+			DomainPolicyDto policy) throws BusinessException {
 		domainPolicyFacade.checkAuthentication();
 		domainPolicyFacade.create(policy);
 	}
@@ -91,8 +90,8 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
 	@Override
 	public void update(
-			@ApiParam(value = "Policy to delete.", required = true) DomainPolicyDto policy)
-			throws BusinessException {
+			@ApiParam(value = "Policy to delete.", required = true)
+			DomainPolicyDto policy) throws BusinessException {
 		domainPolicyFacade.checkAuthentication();
 		domainPolicyFacade.update(policy);
 	}
@@ -100,11 +99,14 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	@Path("/{identifier}")
 	@GET
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Find a domain policiy.", response = DomainPolicyDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
 	@Override
 	public DomainPolicyDto get(
-			@ApiParam(value = "Identifier of the domain policy to search for.", required = true) @PathParam("identifier") String identifier)
+			@ApiParam(value = "Identifier of the domain policy to search for.", required = true)
+			@PathParam("identifier")
+			String identifier)
 			throws BusinessException {
 		domainPolicyFacade.checkAuthentication();
 		return domainPolicyFacade.get(identifier);
@@ -117,7 +119,9 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
 	@Override
 	public void delete(
-			@ApiParam(value = "Identifier of the domain policy to delete.", required = true) @PathParam("identifier") String identifier)
+			@ApiParam(value = "Identifier of the domain policy to delete.", required = true)
+			@PathParam("identifier")
+			String identifier)
 			throws BusinessException {
 		domainPolicyFacade.checkAuthentication();
 		domainPolicyFacade.delete(identifier);

@@ -166,7 +166,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void updateInconsistent(UserDto userDto)
+	public void updateInconsistentUser(UserDto userDto)
 			throws BusinessException {
 		User actor = super.checkAuthentication();
 

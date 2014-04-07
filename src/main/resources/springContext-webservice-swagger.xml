@@ -32,7 +32,6 @@
 		<property name="licenseUrl" value="http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3_en.pdf"/>
 		<property name="scan" value="true"/>
 	</bean>
-	
 	<jaxrs:server id="swaggerContainer" address="/">
 		<jaxrs:serviceBeans>
 			<ref bean="swaggerResourceJSON" />
