@@ -36,18 +36,17 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserService;
-import org.semanticdesktop.aperture.outlook.OutlookResource.Mail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -249,7 +248,11 @@ public class MailingListServiceImpl implements MailingListService {
 		mailingListBusinessService.deleteContact(mailingList, contactUuid);
 	}
 
-	private void checkRights(User actor, MailingList list, String msg) throws BusinessException {
+	private void checkRights(User actor, MailingList list, String msg)
+			throws BusinessException {
+		if (actor.getRole().equals(Role.SUPERADMIN)
+				|| actor.getRole().equals(Role.SYSTEM))
+			return;
 		MailingList entityList = findByUuid(list.getUuid());
 		if (!actor.equals(entityList.getOwner()))
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
