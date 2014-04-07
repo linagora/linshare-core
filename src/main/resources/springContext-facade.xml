@@ -153,10 +153,6 @@
 
 
 	<!-- WEB SERVICES -->
-	<bean name="wsLogEntryFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.LogEntryFacadeImpl">
-		<constructor-arg ref="accountService" />
-		<constructor-arg ref="logEntryService" />
-	</bean>
 	<bean id="wsDocumentFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.DocumentFacadeImpl">
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="accountService" />
