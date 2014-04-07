@@ -50,6 +50,7 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
+import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,9 @@ public class DisplayMailingList {
 
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
+
+	@Inject
+	private UserAutoCompleteFacade userAutoCompleteFacade;
 
 	@Persist
 	@Property
@@ -203,7 +207,7 @@ public class DisplayMailingList {
 	}
 
 	public void onSuccessFromSearchUserForm() throws BusinessException {
-		results = mailingListFacade.searchAmongUsers(loginUser, recipientsSearch);
+		results = userAutoCompleteFacade.autoCompleteUser(loginUser, recipientsSearch);
 		displayGrid = true;
 	}
 
@@ -222,8 +226,13 @@ public class DisplayMailingList {
 	}
 
 	public void onActionFromAddUser(String lsUuid) throws BusinessException {
-		mailingListFacade.addUserToList(loginUser, mailingListVo, lsUuid);
-		mailingListVo = mailingListFacade.findByUuid(mailingListVo.getUuid());
+		for (UserVo user: results) {
+			if (user.getLsUuid().equals(lsUuid)) {
+				mailingListFacade.addUserToList(loginUser, mailingListVo, user.getDomainIdentifier(), user.getMail());
+				mailingListVo = mailingListFacade.findByUuid(mailingListVo.getUuid());
+				return;
+			}
+		}
 	}
 
 	public void onActionFromDeleteUser(String mail) throws BusinessException {
@@ -258,5 +267,4 @@ public class DisplayMailingList {
 	public boolean isInModify() {
 		return inModify;
 	}
-
 }

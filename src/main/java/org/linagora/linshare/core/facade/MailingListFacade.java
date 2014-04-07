@@ -72,15 +72,17 @@ public interface MailingListFacade {
 
 	/**
 	 * Add user to mailing list
-	 * 
 	 * @param mailingListVo
+	 * @param domainId TODO
+	 * @param mail TODO
 	 * @param domain
 	 * @param mail
+	 * 
 	 * @throws BusinessException
 	 *             list doesn't exist or user doesn't have rights to create
 	 *             contact
 	 */
-	void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String uuid) throws BusinessException;
+	void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String domainId, String mail) throws BusinessException;
 
 	/**
 	 * Add contact to mailing list
@@ -118,17 +120,6 @@ public interface MailingListFacade {
 	 *             user not find
 	 */
 	List<UserVo> completionOnUsers(UserVo actorVo, String pattern) throws BusinessException;
-
-	/**
-	 * Search among userq
-	 * 
-	 * @param userVo
-	 * @param input
-	 * @return
-	 * @throws BusinessException
-	 *             user not find
-	 */
-	List<UserVo> searchAmongUsers(UserVo userVo, String input) throws BusinessException;
 
 	boolean getListIsDeletable(UserVo actorVo, MailingListVo listVo) throws BusinessException;
 

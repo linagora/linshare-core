@@ -149,8 +149,8 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String uuid) throws BusinessException {
-		User selectedUser = userService.findByLsUuid(uuid);
+	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String domainId, String mail) throws BusinessException {
+		User selectedUser = userService.findOrCreateUserWithDomainPolicies(mail, domainId);
 		if (selectedUser != null) {
 			MailingListContact contact = new MailingListContact(selectedUser.getMail(), selectedUser.getFirstName(),
 					selectedUser.getLastName());
@@ -271,23 +271,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 			userSet.addAll(userService.searchUser(null, firstName_, lastName_, null, loginUser));
 		}
 		return new ArrayList<User>(userSet);
-	}
-
-	@Override
-	public List<UserVo> searchAmongUsers(UserVo userVo, String input) throws BusinessException {
-		List<User> results = new ArrayList<User>();
-		List<UserVo> finalResults = new ArrayList<UserVo>();
-		User owner = (User) accountService.findByLsUuid(userVo.getLogin());
-		if (input != null) {
-			results = performSearchUser(owner, input);
-
-			for (User currentUser : results) {
-				if (!(currentUser.equals(owner))) {
-					finalResults.add(new UserVo(currentUser));
-				}
-			}
-		}
-		return finalResults;
 	}
 
 	private List<MailingListVo> ListToListVo(List<MailingList> list) {
