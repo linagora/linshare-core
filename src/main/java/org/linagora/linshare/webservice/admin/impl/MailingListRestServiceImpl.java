@@ -111,10 +111,10 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	@DELETE
 	@Override
 	public void delete(
-			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "Mailing list to delete.", required = true) MailingListDto dto)
 			throws BusinessException {
 		mailingListFacade.checkAuthentication(Role.ADMIN);
-		mailingListFacade.delete(uuid);
+		mailingListFacade.delete(dto.getUuid());
 	}
 
 	@Path("/{uuid}/contacts")
@@ -138,9 +138,10 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void deleteContact(
-			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
+			@ApiParam(value = "Contact uuid.", required = true) MailingListContactDto dto)
 			throws BusinessException {
 		mailingListFacade.checkAuthentication(Role.ADMIN);
-		mailingListFacade.deleteContact(uuid);
+		mailingListFacade.deleteContact(dto.getUuid());
 	}
 }
