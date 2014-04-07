@@ -47,6 +47,7 @@ import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
 @Path("/domain_policies")
 @Api(value = "/rest/admin/domain_policies", description = "Domain policies service.")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 		DomainPolicyRestService {
 
@@ -59,7 +60,6 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	
 	@Path("/")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Find all the domain policies.", response = DomainPolicyDto.class, responseContainer = "List")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
 	@Override
@@ -99,7 +99,6 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	@Path("/{identifier}")
 	@GET
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Find a domain policiy.", response = DomainPolicyDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
 	@Override

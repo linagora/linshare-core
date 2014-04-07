@@ -153,6 +153,10 @@
 
 
 	<!-- WEB SERVICES -->
+	<bean name="wsLogEntryFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.LogEntryFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="logEntryService" />
+	</bean>
 	<bean id="wsDocumentFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.DocumentFacadeImpl">
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="accountService" />
@@ -221,13 +225,13 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userProviderService" />
 	</bean>
-	<bean id="wsAdminMailingListFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.MailingListFacadeImpl">
-		<constructor-arg ref="accountService" />
-		<constructor-arg ref="mailingListService" />
-	</bean>
 	<bean id="wsAdminThreadFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.ThreadFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="threadService" />
+	</bean>
+	<bean id="wsAdminMailingListFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.MailingListFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="mailingListService" />
 	</bean>
 	<bean id="wsAdminThreadMemberFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.ThreadMemberFacadeImpl">
 		<constructor-arg ref="accountService" />

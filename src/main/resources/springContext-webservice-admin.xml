@@ -68,9 +68,9 @@
 			<ref bean="adminDomainPatternRestService" />
 			<ref bean="adminDomainPolicyRestService" />
 			<ref bean="adminDomainRestService" />
+			<ref bean="adminThreadRestService" />
 			<ref bean="adminMailingListRestService" />
 			<ref bean="adminThreadMemberRestService" />
-			<ref bean="adminThreadRestService" />
 			<ref bean="adminUserRestService" />
 			<ref bean="adminUserRoleRestService" />
 			<ref bean="adminLogRestService" />
