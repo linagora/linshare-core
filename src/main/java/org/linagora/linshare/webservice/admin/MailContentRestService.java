@@ -44,5 +44,5 @@ public interface MailContentRestService {
 
 	void update(MailContentDto dto) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	void delete(MailContentDto dto) throws BusinessException;
 }

@@ -67,10 +67,12 @@ public class MailConfigRestServiceImpl implements MailConfigRestService {
 
 	@Override
 	@Path("/{uuid}")
-	@ApiOperation(value = "Find a mail configuration.")
+	@ApiOperation(value = "Find a mail configuration.", response = MailConfigDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
-	public MailConfigDto find(String uuid) throws BusinessException {
+	public MailConfigDto find(
+			@ApiParam(value = "Mail configuration's uuid.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
 		return mailConfigFacade.find(uuid);
 	}
 
@@ -99,13 +101,13 @@ public class MailConfigRestServiceImpl implements MailConfigRestService {
 	}
 
 	@Override
-	@Path("/{uuid}")
+	@Path("/")
 	@ApiOperation(value = "Delete an unused mail configuration.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
 	public void delete(
-			@ApiParam(value = "Mail config uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "Mail configuration to delete.", required = true) MailConfigDto dto)
 			throws BusinessException {
-		mailConfigFacade.delete(uuid);
+		mailConfigFacade.delete(dto.getUuid());
 	}
 }

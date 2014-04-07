@@ -67,10 +67,12 @@ public class MailFooterRestServiceImpl implements MailFooterRestService {
 
 	@Override
 	@Path("/{uuid}")
-	@ApiOperation(value = "Find a mail footer.")
+	@ApiOperation(value = "Find a mail footer.", response = MailFooterDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
-	public MailFooterDto find(String uuid) throws BusinessException {
+	public MailFooterDto find(
+			@ApiParam(value = "Mail footer's uuid.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
 		return mailFooterFacade.find(uuid);
 	}
 
@@ -99,13 +101,13 @@ public class MailFooterRestServiceImpl implements MailFooterRestService {
 	}
 
 	@Override
-	@Path("/{uuid}")
+	@Path("/")
 	@ApiOperation(value = "Delete an unused mail footer.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
 	public void delete(
-			@ApiParam(value = "Mail footer uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "Mail footer to delete.", required = true) MailFooterDto dto)
 			throws BusinessException {
-		mailFooterFacade.delete(uuid);
+		mailFooterFacade.delete(dto.getUuid());
 	}
 }

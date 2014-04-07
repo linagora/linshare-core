@@ -56,11 +56,13 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/mail_content_langs")
 @Api(value = "/rest/admin/mail_content_langs", description = "Mail content langs used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailContentLangRestServiceImpl implements MailContentLangRestService {
+public class MailContentLangRestServiceImpl implements
+		MailContentLangRestService {
 
 	private final MailContentLangFacade mailContentLangFacade;
 
-	public MailContentLangRestServiceImpl(final MailContentLangFacade mailContentLangFacade) {
+	public MailContentLangRestServiceImpl(
+			final MailContentLangFacade mailContentLangFacade) {
 		super();
 		this.mailContentLangFacade = mailContentLangFacade;
 	}
@@ -70,7 +72,9 @@ public class MailContentLangRestServiceImpl implements MailContentLangRestServic
 	@ApiOperation(value = "Find a mail content lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
-	public MailContentLangDto find(String uuid) throws BusinessException {
+	public MailContentLangDto find(
+			@ApiParam(value = "Mail content lang's uuid.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
 		return mailContentLangFacade.find(uuid);
 	}
 
@@ -99,13 +103,13 @@ public class MailContentLangRestServiceImpl implements MailContentLangRestServic
 	}
 
 	@Override
-	@Path("/{uuid}")
+	@Path("/")
 	@ApiOperation(value = "Delete an unused mail content lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
 	public void delete(
-			@ApiParam(value = "Mail content lang uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "Mail content lang to delete.", required = true) MailContentLangDto dto)
 			throws BusinessException {
-		mailContentLangFacade.delete(uuid);
+		mailContentLangFacade.delete(dto.getUuid());
 	}
 }

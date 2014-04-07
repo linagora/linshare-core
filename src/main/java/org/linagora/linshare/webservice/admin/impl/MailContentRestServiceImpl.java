@@ -70,7 +70,9 @@ public class MailContentRestServiceImpl implements MailContentRestService {
 	@ApiOperation(value = "Find a mail content.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
-	public MailContentDto find(String uuid) throws BusinessException {
+	public MailContentDto find(
+			@ApiParam(value = "Mail content's uuid.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
 		return mailContentFacade.find(uuid);
 	}
 
@@ -99,13 +101,13 @@ public class MailContentRestServiceImpl implements MailContentRestService {
 	}
 
 	@Override
-	@Path("/{uuid}")
+	@Path("/")
 	@ApiOperation(value = "Delete an unused mail content.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
 	public void delete(
-			@ApiParam(value = "Mail content uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "Mail content to delete.", required = true) MailContentDto dto)
 			throws BusinessException {
-		mailContentFacade.delete(uuid);
+		mailContentFacade.delete(dto.getUuid());
 	}
 }

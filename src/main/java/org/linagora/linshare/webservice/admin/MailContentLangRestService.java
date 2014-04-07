@@ -44,5 +44,5 @@ public interface MailContentLangRestService {
 
 	void update(MailContentLangDto dto) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	void delete(MailContentLangDto dto) throws BusinessException;
 }

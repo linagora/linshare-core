@@ -60,7 +60,8 @@ public class MailFooterLangRestServiceImpl implements MailFooterLangRestService 
 
 	private final MailFooterLangFacade mailFooterLangFacade;
 
-	public MailFooterLangRestServiceImpl(final MailFooterLangFacade mailFooterLangFacade) {
+	public MailFooterLangRestServiceImpl(
+			final MailFooterLangFacade mailFooterLangFacade) {
 		super();
 		this.mailFooterLangFacade = mailFooterLangFacade;
 	}
@@ -70,7 +71,9 @@ public class MailFooterLangRestServiceImpl implements MailFooterLangRestService 
 	@ApiOperation(value = "Find a mail footer lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
-	public MailFooterLangDto find(String uuid) throws BusinessException {
+	public MailFooterLangDto find(
+			@ApiParam(value = "Mail footer lang's uuid.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
 		return mailFooterLangFacade.find(uuid);
 	}
 
@@ -99,13 +102,13 @@ public class MailFooterLangRestServiceImpl implements MailFooterLangRestService 
 	}
 
 	@Override
-	@Path("/{uuid}")
+	@Path("/")
 	@ApiOperation(value = "Delete an unused mail footer lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
 	public void delete(
-			@ApiParam(value = "Mail footer lang uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "Mail footer lang to delete.", required = true) MailFooterLangDto dto)
 			throws BusinessException {
-		mailFooterLangFacade.delete(uuid);
+		mailFooterLangFacade.delete(dto.getUuid());
 	}
 }

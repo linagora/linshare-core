@@ -44,5 +44,5 @@ public interface MailFooterRestService {
 
 	void update(MailFooterDto dto) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	void delete(MailFooterDto dto) throws BusinessException;
 }

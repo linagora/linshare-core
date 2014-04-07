@@ -44,5 +44,5 @@ public interface MailLayoutRestService {
 
 	void update(MailLayoutDto dto) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	void delete(MailLayoutDto dto) throws BusinessException;
 }

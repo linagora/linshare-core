@@ -70,7 +70,9 @@ public class MailLayoutRestServiceImpl implements MailLayoutRestService {
 	@ApiOperation(value = "Find a mail layout.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
-	public MailLayoutDto find(String uuid) throws BusinessException {
+	public MailLayoutDto find(
+			@ApiParam(value = "Mail layout uuid.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
 		return mailLayoutFacade.find(uuid);
 	}
 
@@ -99,13 +101,13 @@ public class MailLayoutRestServiceImpl implements MailLayoutRestService {
 	}
 
 	@Override
-	@Path("/{uuid}")
+	@Path("/")
 	@ApiOperation(value = "Delete an unused mail layout.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
 	public void delete(
-			@ApiParam(value = "Mail layout uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "Mail layout to delete.", required = true) MailLayoutDto dto)
 			throws BusinessException {
-		mailLayoutFacade.delete(uuid);
+		mailLayoutFacade.delete(dto.getUuid());
 	}
 }
