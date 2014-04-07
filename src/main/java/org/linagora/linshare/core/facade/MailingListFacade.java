@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2013 LINAGORA
+ * Copyright (C) 2014 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2013. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2014. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -72,15 +72,17 @@ public interface MailingListFacade {
 
 	/**
 	 * Add user to mailing list
-	 * 
 	 * @param mailingListVo
+	 * @param domainId TODO
+	 * @param mail TODO
 	 * @param domain
 	 * @param mail
+	 * 
 	 * @throws BusinessException
 	 *             list doesn't exist or user doesn't have rights to create
 	 *             contact
 	 */
-	void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String uuid) throws BusinessException;
+	void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String domainId, String mail) throws BusinessException;
 
 	/**
 	 * Add contact to mailing list
@@ -118,17 +120,6 @@ public interface MailingListFacade {
 	 *             user not find
 	 */
 	List<UserVo> completionOnUsers(UserVo actorVo, String pattern) throws BusinessException;
-
-	/**
-	 * Search among userq
-	 * 
-	 * @param userVo
-	 * @param input
-	 * @return
-	 * @throws BusinessException
-	 *             user not find
-	 */
-	List<UserVo> searchAmongUsers(UserVo userVo, String input) throws BusinessException;
 
 	boolean getListIsDeletable(UserVo actorVo, MailingListVo listVo) throws BusinessException;
 

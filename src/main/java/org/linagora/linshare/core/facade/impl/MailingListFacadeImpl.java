@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2013 LINAGORA
+ * Copyright (C) 2014 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2013. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2014. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -149,8 +149,8 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String uuid) throws BusinessException {
-		User selectedUser = userService.findByLsUuid(uuid);
+	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String domainId, String mail) throws BusinessException {
+		User selectedUser = userService.findOrCreateUserWithDomainPolicies(mail, domainId);
 		if (selectedUser != null) {
 			MailingListContact contact = new MailingListContact(selectedUser.getMail(), selectedUser.getFirstName(),
 					selectedUser.getLastName());
@@ -271,23 +271,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 			userSet.addAll(userService.searchUser(null, firstName_, lastName_, null, loginUser));
 		}
 		return new ArrayList<User>(userSet);
-	}
-
-	@Override
-	public List<UserVo> searchAmongUsers(UserVo userVo, String input) throws BusinessException {
-		List<User> results = new ArrayList<User>();
-		List<UserVo> finalResults = new ArrayList<UserVo>();
-		User owner = (User) accountService.findByLsUuid(userVo.getLogin());
-		if (input != null) {
-			results = performSearchUser(owner, input);
-
-			for (User currentUser : results) {
-				if (!(currentUser.equals(owner))) {
-					finalResults.add(new UserVo(currentUser));
-				}
-			}
-		}
-		return finalResults;
 	}
 
 	private List<MailingListVo> ListToListVo(List<MailingList> list) {

@@ -1247,6 +1247,15 @@
 		</profile>
 
 		<profile>
+			<id>dev</id>
+			<build>
+				<finalName>linshare-${project.version}-${maven.build.timestamp}-${sources.version}</finalName>
+			</build>
+			<properties>
+				<project.version>${project.version}-${maven.build.timestamp}-${sources.version}</project.version>
+			</properties>
+		</profile>
+		<profile>
 			<id>CAS</id>
 			<build>
 				<plugins>
@@ -1763,5 +1772,6 @@
 		<slf4j-release-version>1.7.3</slf4j-release-version>
 		<cxf.version>2.7.10</cxf.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
 	</properties>
 </project>

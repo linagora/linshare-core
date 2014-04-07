@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2013 LINAGORA
+ * Copyright (C) 2014 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2013. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2014. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -50,6 +50,7 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
+import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,9 @@ public class DisplayMailingList {
 
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
+
+	@Inject
+	private UserAutoCompleteFacade userAutoCompleteFacade;
 
 	@Persist
 	@Property
@@ -203,7 +207,7 @@ public class DisplayMailingList {
 	}
 
 	public void onSuccessFromSearchUserForm() throws BusinessException {
-		results = mailingListFacade.searchAmongUsers(loginUser, recipientsSearch);
+		results = userAutoCompleteFacade.autoCompleteUser(loginUser, recipientsSearch);
 		displayGrid = true;
 	}
 
@@ -222,8 +226,13 @@ public class DisplayMailingList {
 	}
 
 	public void onActionFromAddUser(String lsUuid) throws BusinessException {
-		mailingListFacade.addUserToList(loginUser, mailingListVo, lsUuid);
-		mailingListVo = mailingListFacade.findByUuid(mailingListVo.getUuid());
+		for (UserVo user: results) {
+			if (user.getLsUuid().equals(lsUuid)) {
+				mailingListFacade.addUserToList(loginUser, mailingListVo, user.getDomainIdentifier(), user.getMail());
+				mailingListVo = mailingListFacade.findByUuid(mailingListVo.getUuid());
+				return;
+			}
+		}
 	}
 
 	public void onActionFromDeleteUser(String mail) throws BusinessException {
@@ -258,5 +267,4 @@ public class DisplayMailingList {
 	public boolean isInModify() {
 		return inModify;
 	}
-
 }
