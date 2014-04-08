@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
+import org.linagora.linshare.core.business.service.AbstractFunctionalityBusinessService;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -56,7 +56,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 	protected final Logger logger = LoggerFactory.getLogger(FunctionalityOldServiceImpl.class);
 	private final FunctionalityRepository functionalityRepository;
 	private final AbstractDomainRepository abstractDomainRepository;
-	private final FunctionalityBusinessService functionalityBusinessService;
+	private final AbstractFunctionalityBusinessService functionalityBusinessService;
 
 	private static int CST_FUNC_AVAILABLES = 0;
 	private static int CST_FUNC_ALTERABLES = 1;
@@ -72,7 +72,7 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 	@Deprecated
 	public FunctionalityOldServiceImpl(
 			FunctionalityRepository functionalityRepository,
-			FunctionalityBusinessService functionalityBusinessService,
+			AbstractFunctionalityBusinessService functionalityBusinessService,
 			AbstractDomainRepository domainRepository) {
 		super();
 		this.functionalityRepository = functionalityRepository;

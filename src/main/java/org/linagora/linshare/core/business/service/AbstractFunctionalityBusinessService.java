@@ -31,65 +31,29 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.HashSet;
-import java.util.List;
+package org.linagora.linshare.core.business.service;
+
 import java.util.Set;
 
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.repository.FunctionalityRepository;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.linagora.linshare.core.exception.BusinessException;
 
-public class FunctionalityRepositoryImpl extends AbstractRepositoryImpl<Functionality> implements FunctionalityRepository {
+public interface AbstractFunctionalityBusinessService <T> {
 
-	public FunctionalityRepositoryImpl(HibernateTemplate hibernateTemplate) {
-		super(hibernateTemplate);
-	}
+	Set<T> getAllFunctionalities(AbstractDomain domain);
 
-	@Override
-	public Functionality findById(long id) {
-		List<Functionality> fonc = findByCriteria(Restrictions.eq("id", id));
-		if (fonc == null || fonc.isEmpty()) {
-			return null;
-		} else if (fonc.size() == 1) {
-			return fonc.get(0);
-		} else {
-			throw new IllegalStateException("Id must be unique");
-		}
-	}
-	
-	@Override
-	public Functionality findById(AbstractDomain domain, String identifier) {
-		
-		List<Functionality> fonc = findByCriteria(Restrictions.and(Restrictions.eq("domain", domain), Restrictions.eq("identifier", identifier)));
-		
-		if (fonc == null || fonc.isEmpty()) {
-			return null;
-		} else if (fonc.size() == 1) {
-			return fonc.get(0);
-		} else {
-			throw new IllegalStateException("the Identifier and domain couple must be unique");
-		}
-	}
+	Set<T> getAllFunctionalities(String domain);
 
-	@Override
-	public Set<Functionality> findAll(AbstractDomain domain) {
-		List<Functionality> fonc = findByCriteria(Restrictions.eq("domain", domain));
-		Set<Functionality> ret= new HashSet<Functionality>();
-		if (fonc != null) {
-			 ret.addAll(fonc);
-		}
-		return ret;
-	}
+	boolean activationPolicyIsMutable(T f, String domain);
 
-	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(Functionality entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(Functionality.class).add(
-				Restrictions.eq("id", entity.getId()));
-		return det;
-	}
+	boolean configurationPolicyIsMutable(T f, String domain);
+
+	T getFunctionality(String domainId, String functionalityId);
+
+	void delete(String domainId, String functionalityId)
+			throws IllegalArgumentException, BusinessException;
+
+	void update(String domain, T functionality) throws BusinessException;
+
 }

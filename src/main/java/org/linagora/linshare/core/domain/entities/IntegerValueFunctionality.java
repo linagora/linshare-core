@@ -58,7 +58,7 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 	
 	@Override
-	public boolean businessEquals(Functionality obj, boolean checkPolicies) {
+	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if(super.businessEquals(obj, checkPolicies)) {
 			IntegerValueFunctionality o = (IntegerValueFunctionality)obj;
 			if(value.equals(o.getValue())) {
@@ -71,13 +71,13 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 	
 	@Override
-	public void updateFunctionalityFrom(Functionality functionality) {
+	public void updateFunctionalityFrom(AbstractFunctionality functionality) {
 		super.updateFunctionalityFrom(functionality);
 		this.updateFunctionalityValuesOnlyFrom(functionality);
 	}
 	
 	@Override
-	public void updateFunctionalityValuesOnlyFrom(Functionality functionality) {
+	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		IntegerValueFunctionality f = (IntegerValueFunctionality)functionality;
 		this.value = f.getValue();
 	}

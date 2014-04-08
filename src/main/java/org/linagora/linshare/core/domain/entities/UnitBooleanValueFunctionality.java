@@ -61,7 +61,7 @@ public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 	}
 	
 	@Override
-	public boolean businessEquals(Functionality obj, boolean checkPolicies) {
+	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if(super.businessEquals(obj, checkPolicies)) {
 			UnitBooleanValueFunctionality o = (UnitBooleanValueFunctionality)obj;
 			if(bool == o.getBool()) {
@@ -80,7 +80,7 @@ public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 	}
 	
 	@Override
-	public void updateFunctionalityValuesOnlyFrom(Functionality functionality) {
+	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		super.updateFunctionalityValuesOnlyFrom(functionality);
 		UnitBooleanValueFunctionality f = (UnitBooleanValueFunctionality)functionality;
 		this.bool = f.getBool();

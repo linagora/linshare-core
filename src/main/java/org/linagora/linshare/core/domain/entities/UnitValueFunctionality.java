@@ -70,7 +70,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	public boolean businessEquals(Functionality obj, boolean checkPolicies) {
+	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if (super.businessEquals(obj, checkPolicies)) {
 			UnitValueFunctionality o = (UnitValueFunctionality) obj;
 			if (value.equals(o.getValue())) {
@@ -94,13 +94,13 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	public void updateFunctionalityFrom(Functionality functionality) {
+	public void updateFunctionalityFrom(AbstractFunctionality functionality) {
 		super.updateFunctionalityFrom(functionality);
 		this.updateFunctionalityValuesOnlyFrom(functionality);
 	}
 
 	@Override
-	public void updateFunctionalityValuesOnlyFrom(Functionality functionality) {
+	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		UnitValueFunctionality f = (UnitValueFunctionality) functionality;
 		this.value = f.getValue();
 		this.unit.updateUnitFrom(f.getUnit());
