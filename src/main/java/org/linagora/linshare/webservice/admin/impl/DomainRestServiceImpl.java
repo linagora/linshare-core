@@ -67,17 +67,25 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 	@Path("/")
 	@GET
 	@Override
-	public DomainDto getDomains() throws BusinessException {
+	public List<DomainDto> getDomains() throws BusinessException {
 		domainFacade.checkAuthentication();
 		return domainFacade.getDomains();
 	}
 
-	@Path("/{domain}")
+	@Path("/tree/")
 	@GET
 	@Override
-	public DomainDto getDomainAndChildren(@PathParam(value = "domain") String domain) throws BusinessException {
+	public DomainDto getDomainTree() throws BusinessException {
 		domainFacade.checkAuthentication();
-		return domainFacade.getDomainAndChildren(domain);
+		return domainFacade.getDomainTree();
+	}
+
+	@Path("/tree/{domain}")
+	@GET
+	@Override
+	public DomainDto getDomainTree(@PathParam(value = "domain") String domain) throws BusinessException {
+		domainFacade.checkAuthentication();
+		return domainFacade.getDomainTree(domain);
 	}
 
 	@Path("/")

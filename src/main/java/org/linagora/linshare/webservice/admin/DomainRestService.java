@@ -44,7 +44,9 @@ import org.linagora.linshare.webservice.dto.FunctionalityDto;
 @Path("/domains")
 public interface DomainRestService {
 
-	DomainDto getDomains() throws BusinessException;
+	List<DomainDto> getDomains() throws BusinessException;
+
+	DomainDto getDomainTree() throws BusinessException;
 
 	void updateDomain(DomainDto domain) throws BusinessException;
 
@@ -52,7 +54,7 @@ public interface DomainRestService {
 
 	void deleteDomain(DomainDto domain) throws BusinessException;
 
-	DomainDto getDomainAndChildren(String domain) throws BusinessException;
+	DomainDto getDomainTree(String domain) throws BusinessException;
 
 	/*
 	 * Functionalities

@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -73,7 +76,18 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 	}
 
 	@Override
-	public DomainDto getDomains() throws BusinessException {
+	public List<DomainDto> getDomains() throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+		List<AbstractDomain> entities = abstractDomainService.getAllDomains();
+		List<DomainDto> domainDtoList = new ArrayList<DomainDto>();
+		for (AbstractDomain abstractDomain : entities) {
+			domainDtoList.add(DomainDto.getSimple(abstractDomain));
+		}
+		return domainDtoList;
+	}
+
+	@Override
+	public DomainDto getDomainTree() throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain entity = abstractDomainService.retrieveDomain(actor.getDomainId());
 		if (actor.isSuperAdmin()) {
@@ -83,7 +97,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 	}
 
 	@Override
-	public DomainDto getDomainAndChildren(String domain) throws BusinessException {
+	public DomainDto getDomainTree(String domain) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain entity = abstractDomainService.retrieveDomain(domain);
 		if(entity == null) {
