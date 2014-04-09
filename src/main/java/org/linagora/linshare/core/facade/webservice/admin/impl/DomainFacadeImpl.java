@@ -91,9 +91,9 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain entity = abstractDomainService.retrieveDomain(actor.getDomainId());
 		if (actor.isSuperAdmin()) {
-			return DomainDto.getFull(entity);
+			return DomainDto.getFullTree(entity);
 		}
-		return DomainDto.getSimple(entity);
+		return DomainDto.getSimpleTree(entity);
 	}
 
 	@Override
@@ -104,10 +104,10 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "the curent domain was not found : " + domain);
 		}
 		if (actor.isSuperAdmin()) {
-			return DomainDto.getFull(entity);
+			return DomainDto.getFullTree(entity);
 		}
 		if (entity.isManagedBy(actor)) {
-			return DomainDto.getSimple(entity);
+			return DomainDto.getSimpleTree(entity);
 		}
 		throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "the curent domain was not found : " + domain);
 	}

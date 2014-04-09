@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.User;
+
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -80,7 +80,7 @@ public class DomainDto {
 	@ApiModelProperty(value = "Parent")
 	private String parent;
 
-	protected DomainDto(final AbstractDomain domain, boolean light) {
+	protected DomainDto(final AbstractDomain domain, boolean light, boolean recursive) {
 		this.identifier = domain.getIdentifier();
 		this.label = domain.getLabel();
 		this.type = domain.getDomainType().toString();
@@ -94,10 +94,12 @@ public class DomainDto {
 				.add(new LDAPUserProviderDto(domain.getUserProvider()));
 			}
 		}
-		for (AbstractDomain child : domain.getSubdomain()) {
-			DomainDto childDto = new DomainDto(child, light);
-			this.children.add(childDto);
-			childDto.parent = this.identifier;
+		if(recursive) {
+			for (AbstractDomain child : domain.getSubdomain()) {
+				DomainDto childDto = new DomainDto(child, light, recursive);
+				this.children.add(childDto);
+				childDto.parent = this.identifier;
+			}
 		}
 	}
 
@@ -106,11 +108,15 @@ public class DomainDto {
 	}
 
 	public static DomainDto getSimple(final AbstractDomain domain) {
-		return new DomainDto(domain, true);
+		return new DomainDto(domain, true, false);
 	}
 
-	public static DomainDto getFull(final AbstractDomain domain) {
-		return new DomainDto(domain, false);
+	public static DomainDto getSimpleTree(final AbstractDomain domain) {
+		return new DomainDto(domain, true, true);
+	}
+
+	public static DomainDto getFullTree(final AbstractDomain domain) {
+		return new DomainDto(domain, false, true);
 	}
 
 	public String getIdentifier() {
