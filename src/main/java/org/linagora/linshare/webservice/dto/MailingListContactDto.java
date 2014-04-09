@@ -67,7 +67,7 @@ public class MailingListContactDto {
 		this.uuid = contact.getUuid();
 		this.lastName = contact.getLastName();
 		this.firstName = contact.getFirstName();
-		this.mailingListUuid = contact.getUuid();
+		this.mailingListUuid = contact.getMailingList().getUuid();
 	}
 
 	public String getMail() {
