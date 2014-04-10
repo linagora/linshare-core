@@ -1,6 +1,7 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
@@ -37,11 +38,11 @@ public class LogEntryFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public List<LogDto> query(User actor, LogCriteriaDto criteria) {
-		Calendar before = Calendar.getInstance();
-		Calendar after = Calendar.getInstance();
+		Calendar before = null;
+		Calendar after = null;
 
-		before.setTime(criteria.getBeforeDate());
-		after.setTime(criteria.getAfterDate());
+		setTime(before, criteria.getBeforeDate());
+		setTime(after, criteria.getAfterDate());
 
 		LogCriteriaBean crit = new LogCriteriaBean(criteria.getActorMails(),
 				criteria.getActorFirstname(), criteria.getActorLastname(),
@@ -64,4 +65,10 @@ public class LogEntryFacadeImpl extends AdminGenericFacadeImpl implements
 				});
 	}
 
+	private void setTime(Calendar cal, Date date) {
+		if (date == null)
+			return;
+		cal = Calendar.getInstance();
+		cal.setTime(date);
+	}
 }
