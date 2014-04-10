@@ -8,6 +8,7 @@ import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
+import org.linagora.linshare.core.domain.entities.ThreadLogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.facade.webservice.admin.LogEntryFacade;
@@ -55,6 +56,8 @@ public class LogEntryFacadeImpl extends AdminGenericFacadeImpl implements
 							return new LogDto((FileLogEntry) input);
 						if (input instanceof UserLogEntry)
 							return new LogDto((UserLogEntry) input);
+						if (input instanceof ThreadLogEntry)
+							return new LogDto((ThreadLogEntry) input);
 						return new LogDto((AntivirusLogEntry) input);
 					}
 				});
