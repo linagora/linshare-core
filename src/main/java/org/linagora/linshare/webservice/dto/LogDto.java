@@ -53,43 +53,46 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 public class LogDto {
 
 	@ApiModelProperty(value = "Date of the action")
-	private final Date actionDate;
+	private Date actionDate;
 
 	@ApiModelProperty(value = "Mail of the actor")
-	private final String actorMail;
+	private String actorMail;
 
 	@ApiModelProperty(value = "First name of the actor")
-	private final String actorFirstname;
+	private String actorFirstname;
 
 	@ApiModelProperty(value = "Last name of the actor")
-	private final String actorLastname;
+	private String actorLastname;
 
 	@ApiModelProperty(value = "The action")
-	private final LogAction logAction;
+	private LogAction logAction;
 
 	@ApiModelProperty(value = "A description of the action")
-	private final String description;
+	private String description;
 
 	@ApiModelProperty(value = "Mail of the target")
-	private final String targetMail;
+	private String targetMail;
 
 	@ApiModelProperty(value = "First name of the target")
-	private final String targetFirstname;
+	private String targetFirstname;
 
 	@ApiModelProperty(value = "Last name of the target")
-	private final String targetLastname;
+	private String targetLastname;
 
 	@ApiModelProperty(value = "The file name")
-	private final String fileName;
+	private String fileName;
 
 	@ApiModelProperty(value = "The file size")
-	private final Long fileSize;
+	private Long fileSize;
 
 	@ApiModelProperty(value = "The file MIME type")
-	private final String fileType;
+	private String fileType;
 
 	@ApiModelProperty(value = "The expiration date")
-	private final Date expirationDate;
+	private Date expirationDate;
+
+	public LogDto() {
+	}
 
 	public LogDto(final Date actionDate, String actorMail,
 				  String actorFirstname, String actorLastname, LogAction logAction,
