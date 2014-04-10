@@ -46,7 +46,7 @@ public class LogEntryFacadeImpl extends AdminGenericFacadeImpl implements
 		setTime(after, criteria.getAfterDate());
 
 		LogCriteriaBean crit = new LogCriteriaBean(criteria.getActorMails(),
-				criteria.getActorFirstname(), criteria.getActorLastname(),
+				criteria.getActorFirstName(), criteria.getActorLastName(),
 				criteria.getActorDomain(), criteria.getTargetMails(),
 				criteria.getTargetFirstname(), criteria.getTargetLastname(),
 				criteria.getTargetDomain(), before, after,

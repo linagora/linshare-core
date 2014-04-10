@@ -52,10 +52,10 @@ public class LogCriteriaDto {
 	private List<String> actorMails; // The selected user
 
 	@ApiModelProperty(value = "First name of the actor")
-	private String actorFirstname;
+	private String actorFirstName;
 
 	@ApiModelProperty(value = "Last name of the actor")
-	private String actorLastname;
+	private String actorLastName;
 
 	@ApiModelProperty(value = "Domain of the actor")
 	private String actorDomain;
@@ -91,13 +91,13 @@ public class LogCriteriaDto {
 		targetMails = new ArrayList<String>();
 	}
 
-	public LogCriteriaDto(List<String> actorMails, String actorFirstname,
-			String actorLastname, String actorDomain, List<String> targetMails,
+	public LogCriteriaDto(List<String> actorMails, String actorFirstName,
+			String actorLastName, String actorDomain, List<String> targetMails,
 			String targetFirstname, String targetLastname, String targetDomain,
 			Date beforeDate, Date afterDate, List<LogAction> logActions) {
 		this.actorMails = actorMails;
-		this.actorFirstname = actorFirstname;
-		this.actorLastname = actorLastname;
+		this.actorFirstName = actorFirstName;
+		this.actorLastName = actorLastName;
 		this.actorDomain = actorDomain;
 		this.targetMails = targetMails;
 		this.targetFirstname = targetFirstname;
@@ -140,20 +140,20 @@ public class LogCriteriaDto {
 		this.logActions = logActions;
 	}
 
-	public String getActorFirstname() {
-		return actorFirstname;
+	public String getActorFirstName() {
+		return actorFirstName;
 	}
 
-	public void setActorFirstname(String firstname) {
-		this.actorFirstname = firstname;
+	public void setActorFirstName(String firstname) {
+		this.actorFirstName = firstname;
 	}
 
-	public String getActorLastname() {
-		return actorLastname;
+	public String getActorLastName() {
+		return actorLastName;
 	}
 
-	public void setActorLastname(String lastname) {
-		this.actorLastname = lastname;
+	public void setActorLastName(String lastname) {
+		this.actorLastName = lastname;
 	}
 
 	public List<String> getTargetMails() {
