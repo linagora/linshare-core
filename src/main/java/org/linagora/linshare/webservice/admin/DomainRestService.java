@@ -46,6 +46,8 @@ public interface DomainRestService {
 
 	List<DomainDto> getDomains() throws BusinessException;
 
+	DomainDto getDomain(String domain) throws BusinessException;
+
 	DomainDto getDomainTree() throws BusinessException;
 
 	void updateDomain(DomainDto domain) throws BusinessException;

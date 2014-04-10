@@ -60,7 +60,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 		implements DomainFacade {
 
 	private final AbstractDomainService abstractDomainService;
-	
+
 	private final UserProviderService userProviderService;
 
 	private final DomainPolicyService domainPolicyService;
@@ -87,6 +87,17 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 	}
 
 	@Override
+	public DomainDto getDomain(String domain) throws BusinessException {
+		Validate.notEmpty(domain, "domain identifier must be set.");
+		User actor = checkAuthentication(Role.ADMIN);
+		AbstractDomain entity = abstractDomainService.retrieveDomain(domain);
+		if (entity.isManagedBy(actor)) {
+			return DomainDto.getSimple(entity);
+		}
+		throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "the curent domain was not found : " + domain);
+	}
+
+	@Override
 	public DomainDto getDomainTree() throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain entity = abstractDomainService.retrieveDomain(actor.getDomainId());
@@ -98,6 +109,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 
 	@Override
 	public DomainDto getDomainTree(String domain) throws BusinessException {
+		Validate.notEmpty(domain, "domain identifier must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain entity = abstractDomainService.retrieveDomain(domain);
 		if(entity == null) {

@@ -42,6 +42,8 @@ public interface DomainFacade extends AdminGenericFacade {
 
 	List<DomainDto> getDomains() throws BusinessException;
 
+	DomainDto getDomain(String domain) throws BusinessException;
+
 	DomainDto getDomainTree() throws BusinessException;
 
 	DomainDto getDomainTree(String domain) throws BusinessException;
