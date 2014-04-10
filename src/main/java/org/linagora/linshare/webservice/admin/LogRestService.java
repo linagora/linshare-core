@@ -41,5 +41,8 @@ import org.linagora.linshare.webservice.dto.LogCriteriaDto;
 import org.linagora.linshare.webservice.dto.LogDto;
 
 public interface LogRestService {
+
+	List<String> getAllLogActions() throws BusinessException;
+
 	List<LogDto> query(LogCriteriaDto criteria) throws BusinessException;
 }

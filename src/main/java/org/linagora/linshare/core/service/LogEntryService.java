@@ -74,4 +74,6 @@ public interface LogEntryService {
 	public List<LogEntry> findByUser(String mail);
 
 	public List<LogEntry> findByDate(String mail, Calendar begin, Calendar end);
+
+	public List<String> getAllActions();
 }

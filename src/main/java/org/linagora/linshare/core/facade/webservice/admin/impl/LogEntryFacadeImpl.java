@@ -31,6 +31,11 @@ public class LogEntryFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
+	public List<String> getAllLogActions() {
+		return logEntryService.getAllActions();
+	}
+
+	@Override
 	public List<LogDto> query(User actor, LogCriteriaDto criteria) {
 		Calendar before = Calendar.getInstance();
 		Calendar after = Calendar.getInstance();
