@@ -80,6 +80,9 @@ public class DomainDto {
 	@ApiModelProperty(value = "Parent")
 	private String parent;
 
+	@ApiModelProperty(value = "authShowOrder")
+	private Long authShowOrder;
+
 	protected DomainDto(final AbstractDomain domain, boolean light, boolean recursive) {
 		this.identifier = domain.getIdentifier();
 		this.label = domain.getLabel();
@@ -89,6 +92,7 @@ public class DomainDto {
 			this.locale = domain.getDefaultLocale();
 			this.userRole = domain.getDefaultRole().toString();
 			this.policy = new DomainPolicyDto(domain.getPolicy());
+			this.authShowOrder = domain.getAuthShowOrder();
 			if (domain.getUserProvider() != null) {
 				this.providers
 				.add(new LDAPUserProviderDto(domain.getUserProvider()));
@@ -197,5 +201,13 @@ public class DomainDto {
 
 	public void setParent(String parent) {
 		this.parent = parent;
+	}
+
+	public Long getAuthShowOrder() {
+		return authShowOrder;
+	}
+
+	public void setAuthShowOrder(Long authShowOrder) {
+		this.authShowOrder = authShowOrder;
 	}
 }

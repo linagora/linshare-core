@@ -148,6 +148,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			userProviderService.create(domain.getUserProvider());
 		}
 
+		domain.setAuthShowOrder(new Long(1));
 		// Object creation
 		abstractDomainRepository.create(domain);
 

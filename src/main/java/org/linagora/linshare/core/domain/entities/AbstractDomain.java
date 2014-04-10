@@ -125,7 +125,7 @@ public abstract class AbstractDomain {
 		this.usedSpace = d.getUsedSpace();
 		this.shareExpiryRules = new ArrayList<ShareExpiryRule>();
 		this.policy = null;
-		this.authShowOrder = new Long(1);
+		this.authShowOrder = d.getAuthShowOrder();
 	}
 
 	public AbstractDomain(DomainDto domainDto, AbstractDomain parent) {
@@ -143,7 +143,7 @@ public abstract class AbstractDomain {
 		this.subdomain = new HashSet<AbstractDomain>();
 		this.defaultRole = Role.valueOf(domainDto.getUserRole());
 		this.defaultLocale = domainDto.getLocale();
-		this.authShowOrder = new Long(1);
+		this.authShowOrder = domainDto.getAuthShowOrder();
 	}
 
 	public void updateDomainWith(AbstractDomain d) {
@@ -152,7 +152,7 @@ public abstract class AbstractDomain {
 		this.defaultRole = d.getDefaultRole();
 		this.defaultLocale = d.getDefaultLocale();
 		this.enable = d.isEnable();
-		this.template = d.isTemplate();
+		this.authShowOrder = d.getAuthShowOrder();
 	}
 
 	public String getDefaultLocale() {
