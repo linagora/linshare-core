@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
+import org.linagora.linshare.core.domain.entities.ThreadLogEntry;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
 
 import com.google.common.base.Strings;
@@ -146,6 +147,14 @@ public class LogDto {
 			 .getActorFirstname(), log.getActorLastname(), log
 			 .getLogAction(), log.getDescription(), null, null, null, null,
 			 null, null, null);
+	}
+
+	public LogDto(final ThreadLogEntry log) {
+		this(log.getActionDate().getTime(), log.getActorMail(), log
+			 .getActorFirstname(), log.getActorLastname(), log
+			 .getLogAction(), log.getDescription(), null, log
+			 .getThreadName(), log.getUuid(), log
+			 .getFileName(), log.getFileSize(), log.getFileType(), null);
 	}
 
 	public Date getActionDate() {
