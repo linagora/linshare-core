@@ -108,11 +108,11 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> imp
 		}
 		
 		if ((logCriteria.getActorFirstname()!=null) && (logCriteria.getActorFirstname().length()>0)) {
-			criteria.add(Restrictions.like("actorFirstname", logCriteria.getActorFirstname(), MatchMode.START).ignoreCase());
+			criteria.add(Restrictions.like("actorFirstname", logCriteria.getActorFirstname(), MatchMode.ANYWHERE).ignoreCase());
 		}
 		
 		if ((logCriteria.getActorLastname()!=null) && (logCriteria.getActorLastname().length()>0)) {
-			criteria.add(Restrictions.like("actorLastname", logCriteria.getActorLastname(), MatchMode.START).ignoreCase());
+			criteria.add(Restrictions.like("actorLastname", logCriteria.getActorLastname(), MatchMode.ANYWHERE).ignoreCase());
 		}
 		
 		if (domainId != null && domainId.length() > 0) {
@@ -122,11 +122,11 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> imp
 		}
 		
 		if ((logCriteria.getTargetFirstname()!=null) && (logCriteria.getTargetFirstname().length()>0)) {
-			criteria.add(Restrictions.like("targetFirstname", logCriteria.getTargetFirstname(), MatchMode.START).ignoreCase());
+			criteria.add(Restrictions.like("targetFirstname", logCriteria.getTargetFirstname(), MatchMode.ANYWHERE).ignoreCase());
 		}
 		
 		if ((logCriteria.getTargetLastname()!=null) && (logCriteria.getTargetLastname().length()>0)) {
-			criteria.add(Restrictions.like("targetLastname", logCriteria.getTargetLastname(), MatchMode.START).ignoreCase());
+			criteria.add(Restrictions.like("targetLastname", logCriteria.getTargetLastname(), MatchMode.ANYWHERE).ignoreCase());
 		}
 		
 		if (logCriteria.getTargetDomain() != null && logCriteria.getTargetDomain().length() > 0) {
@@ -146,8 +146,8 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> imp
 		
 		if (logCriteria.getFileName() != null) {
 			
-			if(logCriteria.getFileNameMatchMode().equals(CriterionMatchMode.START)){
-				criteria.add(Restrictions.like("fileName", logCriteria.getFileName(), MatchMode.START).ignoreCase());
+			if(logCriteria.getFileNameMatchMode().equals(CriterionMatchMode.ANYWHERE)){
+				criteria.add(Restrictions.like("fileName", logCriteria.getFileName(), MatchMode.ANYWHERE).ignoreCase());
 			} else {
 				criteria.add(Restrictions.like("fileName", logCriteria.getFileName(), MatchMode.ANYWHERE).ignoreCase());
 			}
