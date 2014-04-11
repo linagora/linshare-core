@@ -40,6 +40,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
@@ -160,11 +161,16 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 
 	private AbstractDomain getDomain(DomainDto domainDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
+		Validate.notEmpty(domainDto.getIdentifier(), "domain identifier must be set.");
+		Validate.notNull(domainDto.getPolicy(), "domain policy must be set.");
+		Validate.notEmpty(domainDto.getPolicy().getIdentifier(), "domain policy identifier must be set.");
 
 		DomainType domainType = DomainType.valueOf(domainDto.getType());
 		AbstractDomain parent = abstractDomainService.retrieveDomain(domainDto.getParent());
 		AbstractDomain domain = domainType.getDomain(domainDto, parent);
-		domain.setPolicy(domainPolicyService.transform(domainDto.getPolicy()));
+		DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(domainDto.getPolicy().getIdentifier());
+		domain.setPolicy(policy);
+
 		if (!domainDto.getProviders().isEmpty()) {
 			String baseDn = domainDto.getProviders().get(0).getBaseDn();
 			Validate.notEmpty(baseDn, "ldap base dn must be set.");

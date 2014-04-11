@@ -33,23 +33,22 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.webservice.dto.DomainPolicyDto;
-
 public class DomainPolicy {
-	
+
 	/**
 	 * Database persistence identifier
 	 */
 	private long persistenceId;
-	
+
 	private String identifier;
-	
+
 	private DomainAccessPolicy domainAccessPolicy;
-	
+
 	private String description;
 
 	public DomainPolicy() {
 		super();
+		domainAccessPolicy = new DomainAccessPolicy();
 	}
 
 	public DomainPolicy(String identifier, DomainAccessPolicy policy) {
@@ -57,11 +56,12 @@ public class DomainPolicy {
 		this.identifier = identifier;
 		this.domainAccessPolicy = policy;
 	}
-	
-	public DomainPolicy(String identifier,String description,DomainAccessPolicy domainAccessPolicy) {
-        this.identifier = identifier;
-        this.description = description;
-        this.domainAccessPolicy=domainAccessPolicy;
+
+	public DomainPolicy(String identifier, String description,
+			DomainAccessPolicy domainAccessPolicy) {
+		this.identifier = identifier;
+		this.description = description;
+		this.domainAccessPolicy = domainAccessPolicy;
 	}
 
 	public String getIdentifier() {

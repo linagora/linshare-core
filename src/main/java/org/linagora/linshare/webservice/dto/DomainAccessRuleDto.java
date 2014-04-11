@@ -60,10 +60,10 @@ public class DomainAccessRuleDto {
 		this.type = rule.getDomainAccessRuleType();
 		switch (type) {
 		case ALLOW:
-			this.domain = DomainDto.getFullTree(((AllowDomain) rule).getDomain());
+			this.domain = DomainDto.getSimple(((AllowDomain) rule).getDomain());
 			break;
 		case DENY:
-			this.domain = DomainDto.getFullTree(((DenyDomain) rule).getDomain());
+			this.domain = DomainDto.getSimple(((DenyDomain) rule).getDomain());
 			break;
 		}
 	}

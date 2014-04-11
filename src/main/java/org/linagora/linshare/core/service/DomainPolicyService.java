@@ -43,6 +43,8 @@ import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
 public interface DomainPolicyService {
 
+	public DomainPolicy transformCreate(DomainPolicyDto dto) throws BusinessException;
+
 	public DomainPolicy transform(DomainPolicyDto dto) throws BusinessException;
 
 	public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException;
@@ -52,24 +54,24 @@ public interface DomainPolicyService {
 	public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException;
 
 	public List<DomainPolicy> findAllDomainPolicy() throws BusinessException;
-	
+
 	public List<String> getAllDomainPolicyIdentifiers();
-	
+
 	public void deletePolicy(String policyToDelete) throws BusinessException;
-	
+
 	public boolean policyIsDeletable(String policyToDelete);
-	
+
 	public DomainAccessRule retrieveDomainAccessRule(long id);
-	
+
 	public void deleteDomainAccessRule(DomainPolicy policy,long persistenceID) throws BusinessException;
-	
+
 	/**
 	 * This method returns true if we have the right to communicate with itself.
 	 * @param domain
 	 * @return
 	 */
 	public boolean isAuthorizedToCommunicateWithItSelf(AbstractDomain domain);
-	
+
 	/**
 	 * This method returns true if we have the right to communicate with its parent.
 	 * @param domain

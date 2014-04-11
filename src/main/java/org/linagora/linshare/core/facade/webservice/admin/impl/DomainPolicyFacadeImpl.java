@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -74,7 +75,9 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public void create(DomainPolicyDto policy) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		domainPolicyService.createDomainPolicy(domainPolicyService.transform(policy));
+		Validate.notEmpty(policy.getIdentifier(), "policy identifier must be set.");
+
+		domainPolicyService.createDomainPolicy(domainPolicyService.transformCreate(policy));
 	}
 
 	@Override

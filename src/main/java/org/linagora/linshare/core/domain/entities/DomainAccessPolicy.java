@@ -36,10 +36,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import org.linagora.linshare.core.domain.vo.DomainAccessPolicyVo;
-import org.linagora.linshare.webservice.dto.DomainAccessPolicyDto;
-import org.linagora.linshare.webservice.dto.DomainAccessRuleDto;
 
 public class DomainAccessPolicy {
 
@@ -50,7 +47,7 @@ public class DomainAccessPolicy {
 
 	private List<DomainAccessRule> rules;
 
-    public long getPersistenceId() {
+	public long getPersistenceId() {
 		return persistenceId;
 	}
 
@@ -60,27 +57,28 @@ public class DomainAccessPolicy {
 
 	public DomainAccessPolicy() {
 		super();
-		this.rules=new ArrayList<DomainAccessRule>();
+		this.rules = new ArrayList<DomainAccessRule>();
 	}
+
 	public DomainAccessPolicy(long persistenceId) {
 		super();
-		this.persistenceId=persistenceId;
-		this.rules=new ArrayList<DomainAccessRule>();
+		this.persistenceId = persistenceId;
+		this.rules = new ArrayList<DomainAccessRule>();
 	}
 
 	public DomainAccessPolicy(DomainAccessPolicy policy) {
 		super();
-		this.persistenceId=policy.getPersistenceId();
-		this.rules=policy.getRules();
+		this.persistenceId = policy.getPersistenceId();
+		this.rules = policy.getRules();
 	}
 
 	public DomainAccessPolicy(DomainAccessPolicyVo policy) {
-        super();
-        this.persistenceId = policy.getId();
-        this.rules = new ArrayList<DomainAccessRule>();
-    }
+		super();
+		this.persistenceId = policy.getId();
+		this.rules = new ArrayList<DomainAccessRule>();
+	}
 
-    public List<DomainAccessRule> getRules() {
+	public List<DomainAccessRule> getRules() {
 		return rules;
 	}
 
@@ -89,7 +87,7 @@ public class DomainAccessPolicy {
 	}
 
 	public void addRule(DomainAccessRule rule) {
-		if(this.rules == null) {
+		if (this.rules == null) {
 			this.rules = new ArrayList<DomainAccessRule>();
 		}
 		this.rules.add(rule);

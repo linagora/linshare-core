@@ -69,60 +69,108 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
         this.domainBusinessService = domainBusinessService;
     }
 
-    /*
-     * XXX: ugly
-     */
-    @Override
-    public DomainPolicy transform(DomainPolicyDto dto) throws BusinessException {
-        if (dto.getIdentifier() == null)
-            return null;
+	/*
+	 * XXX: ugly
+	 */
+	@Override
+	public DomainPolicy transform(DomainPolicyDto dto) throws BusinessException {
+		if (dto.getIdentifier() == null)
+			return null;
 
-        DomainPolicy policy = retrieveDomainPolicy(dto.getIdentifier());
+		DomainPolicy policy = retrieveDomainPolicy(dto.getIdentifier());
 
-        if (policy == null) {
-            policy = new DomainPolicy();
-            policy.setIdentifier(dto.getIdentifier());
-        }
-        if (dto.getDescription() != null)
-            policy.setDescription(dto.getDescription());
+		if (policy == null) {
+			policy = new DomainPolicy();
+			policy.setIdentifier(dto.getIdentifier());
+		}
+		if (dto.getDescription() != null)
+			policy.setDescription(dto.getDescription());
 
-        DomainAccessPolicyDto dapDto = dto.getAccessPolicy();
+		DomainAccessPolicyDto dapDto = dto.getAccessPolicy();
 
-        if (dapDto == null)
-            return policy;
+		if (dapDto == null)
+			return policy;
 
-        DomainAccessPolicy dap = new DomainAccessPolicy();
-        List<DomainAccessRule> rules = Lists.newArrayList();
+		DomainAccessPolicy dap = new DomainAccessPolicy();
+		List<DomainAccessRule> rules = Lists.newArrayList();
 
-        for (DomainAccessRuleDto ruleDto : dapDto.getRules()) {
-            DomainAccessRule rule;
-            AbstractDomain domain;
+		for (DomainAccessRuleDto ruleDto : dapDto.getRules()) {
+			DomainAccessRule rule;
+			AbstractDomain domain;
 
-            switch (ruleDto.getType()) {
-                case ALLOW_ALL:
-                    rule = new AllowAllDomain();
-                    break;
-                case DENY_ALL:
-                    rule = new DenyAllDomain();
-                    break;
-                case ALLOW:
-                    domain = domainBusinessService.findById(ruleDto.getDomain().getIdentifier());
-                    rule = new AllowDomain(domain);
-                    break;
-                case DENY:
-                    domain = domainBusinessService.findById(ruleDto.getDomain().getIdentifier());
-                    rule = new DenyDomain(domain);
-                    break;
-                default:
-                    throw new IllegalArgumentException();
-            }
-            rules.add(rule);
-        }
-        dap.setPersistenceId(dapDto.getId());
-        dap.setRules(rules);
+			switch (ruleDto.getType()) {
+			case ALLOW_ALL:
+				rule = new AllowAllDomain();
+				break;
+			case DENY_ALL:
+				rule = new DenyAllDomain();
+				break;
+			case ALLOW:
+				domain = domainBusinessService.findById(ruleDto.getDomain()
+						.getIdentifier());
+				rule = new AllowDomain(domain);
+				break;
+			case DENY:
+				domain = domainBusinessService.findById(ruleDto.getDomain()
+						.getIdentifier());
+				rule = new DenyDomain(domain);
+				break;
+			default:
+				throw new IllegalArgumentException();
+			}
+			rules.add(rule);
+		}
+		dap.setRules(rules);
 
-        return policy;
-    }
+		return policy;
+	}
+
+	@Override
+	public DomainPolicy transformCreate(DomainPolicyDto dto)
+			throws BusinessException {
+		if (dto.getIdentifier() == null)
+			return null;
+
+		DomainPolicy policy = new DomainPolicy();
+		policy.setIdentifier(dto.getIdentifier());
+
+		if (dto.getDescription() != null)
+			policy.setDescription(dto.getDescription());
+
+		DomainAccessPolicyDto dapDto = dto.getAccessPolicy();
+		if (dapDto == null)
+			return policy;
+		List<DomainAccessRule> rules = Lists.newArrayList();
+
+		for (DomainAccessRuleDto ruleDto : dapDto.getRules()) {
+			DomainAccessRule rule;
+			AbstractDomain domain;
+
+			switch (ruleDto.getType()) {
+			case ALLOW_ALL:
+				rule = new AllowAllDomain();
+				break;
+			case DENY_ALL:
+				rule = new DenyAllDomain();
+				break;
+			case ALLOW:
+				domain = domainBusinessService.findById(ruleDto.getDomain()
+						.getIdentifier());
+				rule = new AllowDomain(domain);
+				break;
+			case DENY:
+				domain = domainBusinessService.findById(ruleDto.getDomain()
+						.getIdentifier());
+				rule = new DenyDomain(domain);
+				break;
+			default:
+				throw new IllegalArgumentException();
+			}
+			rules.add(rule);
+		}
+		policy.getDomainAccessPolicy().setRules(rules);
+		return policy;
+	}
 
     @Override
 	public void deletePolicy(String policyToDelete) throws BusinessException {
@@ -189,12 +237,6 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 
 		List<AbstractDomain> includes = new ArrayList<AbstractDomain>();
 		List<AbstractDomain> excludes = new ArrayList<AbstractDomain>();
-
-		String debug = "";
-		for (AbstractDomain d : domains) {
-			debug += d.getIdentifier() + ", ";
-
-		}
 
 		for (AbstractDomain domain : domains) {
 			logger.debug("check:domain : " + domain.toString());
