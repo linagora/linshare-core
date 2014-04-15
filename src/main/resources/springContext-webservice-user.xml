@@ -85,6 +85,9 @@
 		<constructor-arg ref="wsLogEntryFacade" />
 	</bean>
 
+	<bean id="enumRestService" class="org.linagora.linshare.webservice.user.impl.EnumRestServiceImpl">
+	</bean>
+
 	<jaxrs:server id="restContainer" address="/rest">
 		<jaxrs:serviceBeans>
 			<ref bean="authenticationRestService" />
@@ -95,6 +98,7 @@
 			<ref bean="threadMemberRestService" />
 			<ref bean="userRestService" />
 			<ref bean="logRestService" />
+			<ref bean="enumRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
