@@ -47,7 +47,6 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
-import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
@@ -756,11 +755,5 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 		return functionalityReadOnlyService.getDomainMailFunctionality(domain)
 				.getValue();
-	}
-
-	@Override
-	public MailConfig getCurrentMailConfiguration(AbstractDomain domain) {
-		// TODO Auto-generated method stub
-		return domain.getCurrentMailConfiguration();
 	}
 }

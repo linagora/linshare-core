@@ -83,6 +83,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
+@Ignore
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",

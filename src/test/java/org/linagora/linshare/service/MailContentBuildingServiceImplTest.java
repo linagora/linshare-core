@@ -44,6 +44,7 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
 import org.linagora.linshare.core.dao.FileSystemDao;
@@ -82,6 +83,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
+@Ignore
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",

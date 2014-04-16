@@ -161,9 +161,4 @@ public interface AbstractDomainService {
 	 * @return the mail
 	 */
 	public String getDomainMail(AbstractDomain domain);
-	
-	
-	
-	public MailConfig getCurrentMailConfiguration(AbstractDomain domain);
-	
 }
