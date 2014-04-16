@@ -40,7 +40,19 @@ import java.util.List;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.entities.*;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.GuestDomain;
+import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapUserProvider;
+import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
+import org.linagora.linshare.core.domain.entities.RootDomain;
+import org.linagora.linshare.core.domain.entities.SubDomain;
+import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -744,5 +756,11 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 		return functionalityReadOnlyService.getDomainMailFunctionality(domain)
 				.getValue();
+	}
+
+	@Override
+	public MailConfig getCurrentMailConfiguration(AbstractDomain domain) {
+		// TODO Auto-generated method stub
+		return domain.getCurrentMailConfiguration();
 	}
 }

@@ -60,6 +60,16 @@
     <mapping resource="org/linagora/linshare/core/domain/entities/ThreadViewAsso.hbm.xml"/>
         
     <mapping resource="org/linagora/linshare/core/domain/entities/AllowedMimeType.hbm.xml"/>
+
+
+
+    
+    <mapping resource="org/linagora/linshare/core/domain/entities/MailLayout.hbm.xml"/>
+    <mapping resource="org/linagora/linshare/core/domain/entities/MailFooterLang.hbm.xml"/>
+    <mapping resource="org/linagora/linshare/core/domain/entities/MailFooter.hbm.xml"/>
+    <mapping resource="org/linagora/linshare/core/domain/entities/MailContentLang.hbm.xml"/>
+    <mapping resource="org/linagora/linshare/core/domain/entities/MailContent.hbm.xml"/>
+    <mapping resource="org/linagora/linshare/core/domain/entities/MailConfig.hbm.xml"/>
     
   </session-factory>
 </hibernate-configuration>

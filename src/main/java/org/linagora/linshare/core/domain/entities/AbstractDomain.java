@@ -84,6 +84,13 @@ public abstract class AbstractDomain {
 
 	protected Long authShowOrder;
 
+	//mail configurations
+	private MailConfig currentMailConfiguration;
+	private Set<MailLayout> mailLayouts;
+	private Set<MailFooter> mailFooters;
+	private Set<MailConfig> mailConfigs;
+	private Set<MailContent> mailContents;
+
 	protected AbstractDomain() {
 		this.identifier = null;
 	}
@@ -106,6 +113,10 @@ public abstract class AbstractDomain {
 		this.messagesConfiguration = new MessagesConfiguration();
 		this.policy = null;
 		this.authShowOrder = new Long(1);
+		this.mailLayouts = new HashSet<MailLayout>();
+		this.mailFooters = new HashSet<MailFooter>();
+		this.mailContents = new HashSet<MailContent>();
+		this.mailConfigs = new HashSet<MailConfig>();
 	}
 
 	public AbstractDomain(AbstractDomainVo d) {
@@ -139,7 +150,7 @@ public abstract class AbstractDomain {
 		this.parentDomain = parent;
 		this.enable = true;
 		this.template = false;
-		this.usedSpace = new Long(0);		
+		this.usedSpace = new Long(0);
 		this.subdomain = new HashSet<AbstractDomain>();
 		this.defaultRole = Role.valueOf(domainDto.getUserRole());
 		this.defaultLocale = domainDto.getLocale();
@@ -351,5 +362,45 @@ public abstract class AbstractDomain {
 			}
 		}
 		return false;
+	}
+
+	public MailConfig getCurrentMailConfiguration() {
+		return currentMailConfiguration;
+	}
+
+	public void setCurrentMailConfiguration(MailConfig currentMailConfiguration) {
+		this.currentMailConfiguration = currentMailConfiguration;
+	}
+
+	public Set<MailLayout> getMailLayouts() {
+		return mailLayouts;
+	}
+
+	public void setMailLayouts(Set<MailLayout> mailLayouts) {
+		this.mailLayouts = mailLayouts;
+	}
+
+	public Set<MailFooter> getMailFooters() {
+		return mailFooters;
+	}
+
+	public void setMailFooters(Set<MailFooter> mailFooters) {
+		this.mailFooters = mailFooters;
+	}
+
+	public Set<MailConfig> getMailConfigs() {
+		return mailConfigs;
+	}
+
+	public void setMailConfigs(Set<MailConfig> mailConfigs) {
+		this.mailConfigs = mailConfigs;
+	}
+
+	public Set<MailContent> getMailContents() {
+		return mailContents;
+	}
+
+	public void setMailContents(Set<MailContent> mailContents) {
+		this.mailContents = mailContents;
 	}
 }

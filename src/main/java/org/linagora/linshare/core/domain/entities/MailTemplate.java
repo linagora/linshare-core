@@ -81,6 +81,18 @@ public class MailTemplate implements Serializable {
 		this.language = language;
 	}
 
+	public MailTemplate(MailFooter footer) {
+		super();
+		if (footer.getPlaintext()) {
+			this.contentHTML = "";
+			this.contentTXT = footer.getFooter();
+		} else {
+			this.contentHTML = footer.getFooter();
+			this.contentTXT = "";
+		}
+		this.mailTemplate = MailTemplateEnum.FOOTER;
+	}
+
 	public MailTemplateEnum getMailTemplate() {
 		return mailTemplate;
 	}

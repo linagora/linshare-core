@@ -138,4 +138,28 @@
 	<bean name="mailingListContactRepository" class="org.linagora.linshare.core.repository.hibernate.MailingListContactRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
+	<bean name="mailConfigRepository" class="org.linagora.linshare.core.repository.hibernate.MailConfigRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="mailContentLangRepository" class="org.linagora.linshare.core.repository.hibernate.MailContentLangRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="mailContentRepository" class="org.linagora.linshare.core.repository.hibernate.MailContentRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="mailFooterLangRepository" class="org.linagora.linshare.core.repository.hibernate.MailFooterLangRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="mailFooterRepository" class="org.linagora.linshare.core.repository.hibernate.MailFooterRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="mailLayoutRepository" class="org.linagora.linshare.core.repository.hibernate.MailLayoutRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.repository;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -78,5 +79,12 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 	 * @return
 	 */
 	public RootDomain getUniqueRootDomain() throws BusinessException;
+
+	/**
+	 * return all domains using cfg as their current mail configuration
+	 * @param cfg
+	 * @return
+	 */
+	List<AbstractDomain> findByCurrentMailConfig(MailConfig cfg);
 	
 }

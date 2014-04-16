@@ -35,6 +35,7 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.MailLayout;
 import org.linagora.linshare.core.exception.BusinessException;
 
 /** This abstract repository provides common methods for repository management.

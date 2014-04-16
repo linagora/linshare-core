@@ -34,14 +34,11 @@
 
 package org.linagora.linshare.webservice.admin;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.MailingListContactDto;
 import org.linagora.linshare.webservice.dto.MailingListDto;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
-
-import javax.ws.rs.Path;
-
-import java.util.List;
 
 public interface MailingListRestService {
 
