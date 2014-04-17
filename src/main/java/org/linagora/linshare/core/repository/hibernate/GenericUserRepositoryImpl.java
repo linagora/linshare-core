@@ -33,19 +33,15 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.sql.SQLException;
 import java.util.List;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
-import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountRepositoryImpl<U> implements UserRepository<U> {
@@ -134,15 +130,11 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findMails(final String beginWith) {
-		
-		return getHibernateTemplate().executeFind(new HibernateCallback() {
-			public Object doInHibernate(final Session session)
-			throws HibernateException, SQLException {
-				final Query query = session.createQuery("select u.mail from User u where lower(u.mail) like :mail and destroyed=false");
-				query.setParameter("mail", "%" + beginWith + "%");
-				return query.setCacheable(true).list();
-			}
-		});
-				
+		DetachedCriteria crit = DetachedCriteria.forClass(User.class)
+				.add(Restrictions.ilike("mail", beginWith, MatchMode.ANYWHERE))
+				.add(Restrictions.eq("destroyed", false))
+				.setProjection(Projections.property("mail"));
+
+		return listByCriteria(crit);
 	}
 }

@@ -44,7 +44,4 @@ public interface DomainPatternRepository extends AbstractRepository<DomainPatter
 	List<DomainPattern> findAllUserDomainPattern();
 
 	List<DomainPattern> findAllSystemDomainPattern();
-
-	List<DomainPattern> findAllDomainPattern();
-
 }

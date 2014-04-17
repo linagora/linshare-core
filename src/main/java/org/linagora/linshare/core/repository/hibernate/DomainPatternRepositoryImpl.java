@@ -33,17 +33,13 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.sql.SQLException;
 import java.util.List;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
-import org.springframework.orm.hibernate3.HibernateCallback;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class DomainPatternRepositoryImpl extends
@@ -63,56 +59,17 @@ public class DomainPatternRepositoryImpl extends
 
 	@Override
 	public DomainPattern findById(String identifier) {
-		List<DomainPattern> patterns = findByCriteria(Restrictions.eq(
-				"identifier", identifier));
-
-		if (patterns == null || patterns.isEmpty()) {
-			return null;
-		} else if (patterns.size() == 1) {
-			return patterns.get(0);
-		} else {
-			throw new IllegalStateException("Id must be unique");
-		}
+		return DataAccessUtils.singleResult(findByCriteria(
+				Restrictions.eq("identifier", identifier)));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<DomainPattern> findAllSystemDomainPattern() {
-		return getHibernateTemplate().executeFind(
-				new HibernateCallback() {
-					public Object doInHibernate(final Session session)
-							throws HibernateException, SQLException {
-						final Query query = session.createQuery("select d from DomainPattern d where d.system = true");
-						return query.setCacheable(true).list();
-			}
-		});
+		return findByCriteria(Restrictions.eq("system", true));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<DomainPattern> findAllUserDomainPattern() {
-		return getHibernateTemplate().executeFind(
-				new HibernateCallback() {
-					public Object doInHibernate(final Session session)
-							throws HibernateException, SQLException {
-						final Query query = session.createQuery("select d from DomainPattern d where d.system = false");
-						return query.setCacheable(true).list();
-			}
-		});
+		return findByCriteria(Restrictions.eq("system", false));
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<DomainPattern> findAllDomainPattern() {
-		return getHibernateTemplate().executeFind(new HibernateCallback() {
-			public Object doInHibernate(final Session session)
-					throws HibernateException, SQLException {
-				final Query query = session
-						.createQuery("select d from DomainPattern d");
-				return query.setCacheable(true).list();
-
-			}
-		});
-	}
-
 }
