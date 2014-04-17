@@ -69,6 +69,9 @@ public class AllowedContactRepositoryImpl extends AbstractRepositoryImpl<Allowed
 		return contacts;
 	}
 	
+	// TODO
+	// FIXME
+	// XXX
 	@SuppressWarnings("unchecked")
 	public List<AllowedContact> searchContact(final String mail, final String firstName, final String lastName, final Guest guest) {
 		return getHibernateTemplate().executeFind(new HibernateCallback() {

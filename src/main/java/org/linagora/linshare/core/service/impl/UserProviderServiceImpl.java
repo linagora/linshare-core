@@ -161,7 +161,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 
 	@Override
 	public List<DomainPattern> findAllDomainPattern() {
-		return domainPatternRepository.findAllDomainPattern();
+		return domainPatternRepository.findAll();
 	}
 
 	@Override
