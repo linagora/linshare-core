@@ -83,7 +83,8 @@ public class DomainDto {
 	@ApiModelProperty(value = "authShowOrder")
 	private Long authShowOrder;
 
-	protected DomainDto(final AbstractDomain domain, boolean light, boolean recursive) {
+	protected DomainDto(final AbstractDomain domain, boolean light,
+			boolean recursive) {
 		this.identifier = domain.getIdentifier();
 		this.label = domain.getLabel();
 		this.type = domain.getDomainType().toString();
@@ -94,11 +95,11 @@ public class DomainDto {
 			this.policy = new DomainPolicyDto(domain.getPolicy());
 			this.authShowOrder = domain.getAuthShowOrder();
 			if (domain.getUserProvider() != null) {
-				this.providers
-				.add(new LDAPUserProviderDto(domain.getUserProvider()));
+				this.providers.add(new LDAPUserProviderDto(domain
+						.getUserProvider()));
 			}
 		}
-		if(recursive) {
+		if (recursive) {
 			for (AbstractDomain child : domain.getSubdomain()) {
 				DomainDto childDto = new DomainDto(child, light, recursive);
 				this.children.add(childDto);
@@ -113,6 +114,10 @@ public class DomainDto {
 
 	public static DomainDto getSimple(final AbstractDomain domain) {
 		return new DomainDto(domain, true, false);
+	}
+
+	public static DomainDto getFull(final AbstractDomain domain) {
+		return new DomainDto(domain, false, false);
 	}
 
 	public static DomainDto getSimpleTree(final AbstractDomain domain) {

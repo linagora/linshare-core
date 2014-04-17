@@ -82,7 +82,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 		List<AbstractDomain> entities = abstractDomainService.getAllDomains();
 		List<DomainDto> domainDtoList = new ArrayList<DomainDto>();
 		for (AbstractDomain abstractDomain : entities) {
-			domainDtoList.add(DomainDto.getSimple(abstractDomain));
+			domainDtoList.add(DomainDto.getFull(abstractDomain));
 		}
 		return domainDtoList;
 	}

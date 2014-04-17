@@ -57,10 +57,6 @@
 		<constructor-arg ref="wsAdminAutocompleteFacade" />
 	</bean>
 
-	<bean id="adminUserRoleRestService" class="org.linagora.linshare.webservice.admin.impl.UserRoleRestServiceImpl">
-		<constructor-arg ref="wsAdminUserRoleFacade" />
-	</bean>
-
 	<bean id="adminEnumRestService" class="org.linagora.linshare.webservice.user.impl.EnumRestServiceImpl">
 	</bean>
 
@@ -99,7 +95,6 @@
 			<ref bean="adminMailingListRestService" />
 			<ref bean="adminThreadMemberRestService" />
 			<ref bean="adminUserRestService" />
-			<ref bean="adminUserRoleRestService" />
 			<ref bean="adminLogRestService" />
 			<ref bean="adminEnumRestService" />
 		</jaxrs:serviceBeans>

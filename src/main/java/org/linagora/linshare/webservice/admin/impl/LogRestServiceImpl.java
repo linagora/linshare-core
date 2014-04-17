@@ -69,18 +69,6 @@ public class LogRestServiceImpl extends WebserviceBase implements
 		this.logEntryFacade = logEntryFacade;
 	}
 
-	@Path("/actions")
-	@ApiOperation(value = "Find all log actions.", response = LogDto.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@GET
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public List<String> getAllLogActions() throws BusinessException {
-		User actor = logEntryFacade.checkAuthentication();
-
-		return logEntryFacade.getAllLogActions();
-	}
-
 	@Path("/")
 	@ApiOperation(value = "Search the user history with specified criteria.", response = LogDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })

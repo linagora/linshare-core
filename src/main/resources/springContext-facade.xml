@@ -235,9 +235,6 @@
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="userService" />
 	</bean>
-	<bean id="wsAdminUserRoleFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.UserRoleFacadeImpl">
-		<constructor-arg ref="accountService" />
-	</bean>
 	<bean id="wsAdminUserFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.UserFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />

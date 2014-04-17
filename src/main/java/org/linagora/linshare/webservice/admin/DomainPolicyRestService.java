@@ -35,8 +35,6 @@ package org.linagora.linshare.webservice.admin;
 
 import java.util.List;
 
-import javax.ws.rs.Path;
-
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
@@ -51,4 +49,6 @@ public interface DomainPolicyRestService {
 	void update(DomainPolicyDto policy) throws BusinessException;
 
 	void delete(String identifier) throws BusinessException;
+
+	void delete(DomainPolicyDto policy) throws BusinessException;
 }

@@ -57,7 +57,7 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 			final DomainPolicyFacade domainPolicyFacade) {
 		this.domainPolicyFacade = domainPolicyFacade;
 	}
-	
+
 	@Path("/")
 	@GET
 	@ApiOperation(value = "Find all the domain policies.", response = DomainPolicyDto.class, responseContainer = "List")
@@ -74,11 +74,11 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Create a new domain policy.")
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "User isn't superadmin."),
-			@ApiResponse(code = 400, message = "Invalid domain policy.")})
+			@ApiResponse(code = 400, message = "Invalid domain policy.") })
 	@Override
 	public void create(
-			@ApiParam(value = "Policy to update.", required = true)
-			DomainPolicyDto policy) throws BusinessException {
+			@ApiParam(value = "Policy to create.", required = true) DomainPolicyDto policy)
+			throws BusinessException {
 		domainPolicyFacade.checkAuthentication();
 		domainPolicyFacade.create(policy);
 	}
@@ -90,8 +90,8 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
 	@Override
 	public void update(
-			@ApiParam(value = "Policy to delete.", required = true)
-			DomainPolicyDto policy) throws BusinessException {
+			@ApiParam(value = "Policy to update.", required = true) DomainPolicyDto policy)
+			throws BusinessException {
 		domainPolicyFacade.checkAuthentication();
 		domainPolicyFacade.update(policy);
 	}
@@ -103,9 +103,7 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
 	@Override
 	public DomainPolicyDto get(
-			@ApiParam(value = "Identifier of the domain policy to search for.", required = true)
-			@PathParam("identifier")
-			String identifier)
+			@ApiParam(value = "Identifier of the domain policy to search for.", required = true) @PathParam("identifier") String identifier)
 			throws BusinessException {
 		domainPolicyFacade.checkAuthentication();
 		return domainPolicyFacade.get(identifier);
@@ -118,11 +116,22 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
 	@Override
 	public void delete(
-			@ApiParam(value = "Identifier of the domain policy to delete.", required = true)
-			@PathParam("identifier")
-			String identifier)
+			@ApiParam(value = "Identifier of the domain policy to delete.", required = true) @PathParam("identifier") String identifier)
 			throws BusinessException {
 		domainPolicyFacade.checkAuthentication();
 		domainPolicyFacade.delete(identifier);
+	}
+
+	@Path("/")
+	@DELETE
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Delete an existing domain policy.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
+	@Override
+	public void delete(
+			@ApiParam(value = "Policy to delete.", required = true) DomainPolicyDto policy)
+			throws BusinessException {
+		domainPolicyFacade.checkAuthentication();
+		domainPolicyFacade.delete(policy.getIdentifier());
 	}
 }

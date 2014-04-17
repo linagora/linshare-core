@@ -8,6 +8,4 @@ import org.linagora.linshare.webservice.dto.LogDto;
 
 public interface LogEntryFacade extends AdminGenericFacade {
 	List<LogDto> query(User actor, LogCriteriaDto criteria);
-
-	List<String> getAllLogActions();
 }

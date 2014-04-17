@@ -33,11 +33,9 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -112,14 +110,5 @@ public class LogEntryServiceImpl implements LogEntryService {
 	@Override
 	public List<LogEntry> findByDate(String mail, Calendar begin, Calendar end) {
 		return logEntryRepository.findByDate(mail, begin, end);
-	}
-
-	@Override
-	public List<String> getAllActions() {
-		ArrayList<String> list = new ArrayList<String>();
-		for (LogAction action : LogAction.values()) {
-			list.add(action.name());
-		}
-		return list;
 	}
 }
