@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import org.linagora.linshare.webservice.dto.DomainPolicyDto;
+
 public class DomainPolicy {
 
 	/**
@@ -48,6 +50,13 @@ public class DomainPolicy {
 
 	public DomainPolicy() {
 		super();
+		domainAccessPolicy = new DomainAccessPolicy();
+	}
+
+	public DomainPolicy(DomainPolicyDto dto) {
+		super();
+		this.identifier = dto.getIdentifier();
+		this.description = dto.getDescription();
 		domainAccessPolicy = new DomainAccessPolicy();
 	}
 

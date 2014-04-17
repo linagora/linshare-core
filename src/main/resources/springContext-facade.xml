@@ -209,6 +209,7 @@
 	<bean id="wsAdminDomainPolicyFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.DomainPolicyFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="domainPolicyService" />
+		<constructor-arg ref="domainBusinessService" />
 	</bean>
 	<bean id="wsAdminFunctionalityFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.FunctionalityFacadeImpl">
 		<constructor-arg ref="accountService" />

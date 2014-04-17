@@ -70,7 +70,9 @@ public class DomainPolicyBusinessServiceImpl implements
 	@Override
 	public void updateDomainPolicy(DomainPolicy domainPolicy)
 			throws BusinessException {
-		domainPolicyRepository.update(domainPolicy);
+		DomainPolicy entity = domainPolicyRepository.findById(domainPolicy.getIdentifier());
+		entity.getDomainAccessPolicy().setRules(domainPolicy.getDomainAccessPolicy().getRules());
+		domainPolicyRepository.update(entity);
 	}
 
 	@Override

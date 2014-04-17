@@ -39,13 +39,8 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
 public interface DomainPolicyService {
-
-	public DomainPolicy transformCreate(DomainPolicyDto dto) throws BusinessException;
-
-	public DomainPolicy transform(DomainPolicyDto dto) throws BusinessException;
 
 	public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException;
 

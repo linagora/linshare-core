@@ -37,12 +37,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.AllowAllDomain;
+import org.linagora.linshare.core.domain.entities.AllowDomain;
+import org.linagora.linshare.core.domain.entities.DenyAllDomain;
+import org.linagora.linshare.core.domain.entities.DenyDomain;
+import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
+import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPolicyFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
+import org.linagora.linshare.webservice.dto.DomainAccessPolicyDto;
+import org.linagora.linshare.webservice.dto.DomainAccessRuleDto;
 import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
 public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
@@ -50,15 +60,21 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final DomainPolicyService domainPolicyService;
 
+	private final DomainBusinessService domainBusinessService;
+
+
 	public DomainPolicyFacadeImpl(final AccountService accountService,
-			final DomainPolicyService domainPolicyService) {
+			final DomainPolicyService domainPolicyService,
+			DomainBusinessService domainBusinessService) {
 		super(accountService);
 		this.domainPolicyService = domainPolicyService;
+		this.domainBusinessService = domainBusinessService;
 	}
 
 	@Override
 	public DomainPolicyDto get(String identifier) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
+		Validate.notEmpty(identifier, "domain policy identifier must be set.");
 		return new DomainPolicyDto(domainPolicyService.retrieveDomainPolicy(identifier));
 	}
 
@@ -73,18 +89,60 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
     }
 
 	@Override
-	public void create(DomainPolicyDto policy) throws BusinessException {
+	public void create(DomainPolicyDto dto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(policy.getIdentifier(), "policy identifier must be set.");
-
-		domainPolicyService.createDomainPolicy(domainPolicyService.transformCreate(policy));
+		Validate.notNull(dto, "policy dto must be set.");
+		Validate.notEmpty(dto.getIdentifier(), "policy identifier must be set.");
+		DomainPolicy policy = new DomainPolicy(dto);
+		policy.setDomainAccessPolicy(transformToDomainAccessPolicy(dto.getAccessPolicy()));
+		domainPolicyService.createDomainPolicy(policy);
 	}
 
 	@Override
-	public void update(DomainPolicyDto policy)
+	public void update(DomainPolicyDto dto)
 			throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		domainPolicyService.updateDomainPolicy(domainPolicyService.transform(policy));
+		Validate.notNull(dto, "policy dto must be set.");
+		Validate.notEmpty(dto.getIdentifier(), "policy identifier must be set.");
+		DomainPolicy policy = new DomainPolicy(dto);
+		policy.setDomainAccessPolicy(transformToDomainAccessPolicy(dto.getAccessPolicy()));
+		domainPolicyService.updateDomainPolicy(policy);
+	}
+
+	private DomainAccessPolicy transformToDomainAccessPolicy(DomainAccessPolicyDto dapDto) throws BusinessException {
+		Validate.notNull(dapDto, "DomainAccessPolicyDto can not be null.");
+		DomainAccessPolicy dap = new DomainAccessPolicy();
+		List<DomainAccessRule> rules = dap.getRules();
+		for (DomainAccessRuleDto ruleDto : dapDto.getRules()) {
+			Validate.notNull(ruleDto.getType(), "Rule type dto must be set.");
+			Validate.notNull(ruleDto.getDomain(), "Domain dto must be set.");
+			Validate.notEmpty(ruleDto.getDomain().getIdentifier(), "Domain identifier must be set.");
+
+			DomainAccessRule rule;
+			AbstractDomain domain;
+			switch (ruleDto.getType()) {
+			case ALLOW_ALL:
+				rule = new AllowAllDomain();
+				break;
+			case DENY_ALL:
+				rule = new DenyAllDomain();
+				break;
+			case ALLOW:
+				domain = domainBusinessService.findById(ruleDto.getDomain()
+						.getIdentifier());
+				rule = new AllowDomain(domain);
+				break;
+			case DENY:
+				domain = domainBusinessService.findById(ruleDto.getDomain()
+						.getIdentifier());
+				rule = new DenyDomain(domain);
+				break;
+			default:
+				throw new IllegalArgumentException();
+			}
+			rules.add(rule);
+		}
+		return dap;
 	}
 
 	@Override

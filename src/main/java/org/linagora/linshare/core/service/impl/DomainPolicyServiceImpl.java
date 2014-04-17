@@ -39,17 +39,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
 import org.linagora.linshare.core.business.service.DomainAccessPolicyBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPolicyBusinessService;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
-import org.linagora.linshare.core.domain.entities.*;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.AllowDomain;
+import org.linagora.linshare.core.domain.entities.DenyDomain;
+import org.linagora.linshare.core.domain.entities.DomainAccessRule;
+import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.DomainPolicyService;
-import org.linagora.linshare.webservice.dto.DomainAccessPolicyDto;
-import org.linagora.linshare.webservice.dto.DomainAccessRuleDto;
-import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,109 +68,6 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
         this.domainAccessPolicyBusinessService = domainAccessPolicyBusinessService;
         this.domainBusinessService = domainBusinessService;
     }
-
-	/*
-	 * XXX: ugly
-	 */
-	@Override
-	public DomainPolicy transform(DomainPolicyDto dto) throws BusinessException {
-		if (dto.getIdentifier() == null)
-			return null;
-
-		DomainPolicy policy = retrieveDomainPolicy(dto.getIdentifier());
-
-		if (policy == null) {
-			policy = new DomainPolicy();
-			policy.setIdentifier(dto.getIdentifier());
-		}
-		if (dto.getDescription() != null)
-			policy.setDescription(dto.getDescription());
-
-		DomainAccessPolicyDto dapDto = dto.getAccessPolicy();
-
-		if (dapDto == null)
-			return policy;
-
-		DomainAccessPolicy dap = new DomainAccessPolicy();
-		List<DomainAccessRule> rules = Lists.newArrayList();
-
-		for (DomainAccessRuleDto ruleDto : dapDto.getRules()) {
-			DomainAccessRule rule;
-			AbstractDomain domain;
-
-			switch (ruleDto.getType()) {
-			case ALLOW_ALL:
-				rule = new AllowAllDomain();
-				break;
-			case DENY_ALL:
-				rule = new DenyAllDomain();
-				break;
-			case ALLOW:
-				domain = domainBusinessService.findById(ruleDto.getDomain()
-						.getIdentifier());
-				rule = new AllowDomain(domain);
-				break;
-			case DENY:
-				domain = domainBusinessService.findById(ruleDto.getDomain()
-						.getIdentifier());
-				rule = new DenyDomain(domain);
-				break;
-			default:
-				throw new IllegalArgumentException();
-			}
-			rules.add(rule);
-		}
-		dap.setRules(rules);
-
-		return policy;
-	}
-
-	@Override
-	public DomainPolicy transformCreate(DomainPolicyDto dto)
-			throws BusinessException {
-		if (dto.getIdentifier() == null)
-			return null;
-
-		DomainPolicy policy = new DomainPolicy();
-		policy.setIdentifier(dto.getIdentifier());
-
-		if (dto.getDescription() != null)
-			policy.setDescription(dto.getDescription());
-
-		DomainAccessPolicyDto dapDto = dto.getAccessPolicy();
-		if (dapDto == null)
-			return policy;
-		List<DomainAccessRule> rules = Lists.newArrayList();
-
-		for (DomainAccessRuleDto ruleDto : dapDto.getRules()) {
-			DomainAccessRule rule;
-			AbstractDomain domain;
-
-			switch (ruleDto.getType()) {
-			case ALLOW_ALL:
-				rule = new AllowAllDomain();
-				break;
-			case DENY_ALL:
-				rule = new DenyAllDomain();
-				break;
-			case ALLOW:
-				domain = domainBusinessService.findById(ruleDto.getDomain()
-						.getIdentifier());
-				rule = new AllowDomain(domain);
-				break;
-			case DENY:
-				domain = domainBusinessService.findById(ruleDto.getDomain()
-						.getIdentifier());
-				rule = new DenyDomain(domain);
-				break;
-			default:
-				throw new IllegalArgumentException();
-			}
-			rules.add(rule);
-		}
-		policy.getDomainAccessPolicy().setRules(rules);
-		return policy;
-	}
 
     @Override
 	public void deletePolicy(String policyToDelete) throws BusinessException {
