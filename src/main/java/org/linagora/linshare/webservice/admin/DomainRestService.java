@@ -46,17 +46,13 @@ public interface DomainRestService {
 
 	List<DomainDto> getDomains() throws BusinessException;
 
-	DomainDto getDomain(String domain) throws BusinessException;
-
-	DomainDto getDomainTree() throws BusinessException;
+	DomainDto getDomain(String domain, boolean tree) throws BusinessException;
 
 	void updateDomain(DomainDto domain) throws BusinessException;
 
 	void createDomain(DomainDto domain) throws BusinessException;
 
 	void deleteDomain(DomainDto domain) throws BusinessException;
-
-	DomainDto getDomainTree(String domain) throws BusinessException;
 
 	/*
 	 * Functionalities

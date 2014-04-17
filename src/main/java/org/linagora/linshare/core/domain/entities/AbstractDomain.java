@@ -340,7 +340,10 @@ public abstract class AbstractDomain {
 	}
 
 	public boolean isManagedBy(Account account) {
-		if (account.isAdmin() || account.isSuperAdmin()) {
+		if(account.isSuperAdmin()) {
+			return true;
+		}
+		if (account.isAdmin()) {
 			if (this.identifier.equals(account.getDomainId())) {
 				// You have the right to manage your own domain
 				return true;

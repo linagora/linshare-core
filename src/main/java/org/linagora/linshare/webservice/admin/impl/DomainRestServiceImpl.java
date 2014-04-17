@@ -37,12 +37,14 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -75,25 +77,9 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 	@Path("/{domain}")
 	@GET
 	@Override
-	public DomainDto getDomain(@PathParam(value = "domain") String domain) throws BusinessException {
+	public DomainDto getDomain(@PathParam(value = "domain") String domain, @QueryParam("tree") @DefaultValue("false") boolean tree) throws BusinessException {
 		domainFacade.checkAuthentication();
-		return domainFacade.getDomain(domain);
-	}
-
-	@Path("/tree/")
-	@GET
-	@Override
-	public DomainDto getDomainTree() throws BusinessException {
-		domainFacade.checkAuthentication();
-		return domainFacade.getDomainTree();
-	}
-
-	@Path("/tree/{domain}")
-	@GET
-	@Override
-	public DomainDto getDomainTree(@PathParam(value = "domain") String domain) throws BusinessException {
-		domainFacade.checkAuthentication();
-		return domainFacade.getDomainTree(domain);
+		return domainFacade.getDomain(domain, tree);
 	}
 
 	@Path("/")

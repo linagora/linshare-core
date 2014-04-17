@@ -42,7 +42,7 @@ public interface DomainFacade extends AdminGenericFacade {
 
 	List<DomainDto> getDomains() throws BusinessException;
 
-	DomainDto getDomain(String domain) throws BusinessException;
+	DomainDto getDomain(String domain, boolean tree) throws BusinessException;
 
 	DomainDto getDomainTree() throws BusinessException;
 

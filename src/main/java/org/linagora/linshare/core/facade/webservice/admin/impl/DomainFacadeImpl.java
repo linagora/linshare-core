@@ -88,16 +88,29 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 	}
 
 	@Override
-	public DomainDto getDomain(String domain) throws BusinessException {
+	public DomainDto getDomain(String domain, boolean tree) throws BusinessException {
 		Validate.notEmpty(domain, "domain identifier must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain entity = abstractDomainService.retrieveDomain(domain);
-		if (entity.isManagedBy(actor)) {
-			return DomainDto.getSimple(entity);
+		if(entity == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "the curent domain was not found : " + domain);
+		}
+		if(tree) {
+			if (actor.isSuperAdmin()) {
+				return DomainDto.getFullTree(entity);
+			}
+			if (entity.isManagedBy(actor)) {
+				return DomainDto.getSimpleTree(entity);
+			}
+		} else {
+			if (entity.isManagedBy(actor)) {
+				return DomainDto.getSimple(entity);
+			}
 		}
 		throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "the curent domain was not found : " + domain);
 	}
 
+	@Deprecated
 	@Override
 	public DomainDto getDomainTree() throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
@@ -108,6 +121,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 		return DomainDto.getSimpleTree(entity);
 	}
 
+	@Deprecated
 	@Override
 	public DomainDto getDomainTree(String domain) throws BusinessException {
 		Validate.notEmpty(domain, "domain identifier must be set.");
