@@ -9,6 +9,12 @@ import org.reflections.Reflections;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Lists;
 
+/**
+ * Provides informations about the application enum constants using Java
+ * reflection capabilities.
+ * 
+ * @author nbertrand
+ */
 public class EnumResourceUtils {
 
 	private final static String ENUMS_PATH = "org.linagora.linshare.core.domain.constants.";
@@ -17,6 +23,13 @@ public class EnumResourceUtils {
 		super();
 	}
 
+	/**
+	 * List all enums name under the {@link EnumResourceUtils#ENUMS_PATH}
+	 * package.
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
 	public List<String> getAllEnumsName() {
 		List<String> res = Lists.newArrayList();
 
@@ -28,6 +41,14 @@ public class EnumResourceUtils {
 		return res;
 	}
 
+	/**
+	 * List enum constants from the enum class name.
+	 * 
+	 * @param enumName
+	 *            in lower_underscore_format.
+	 * @return
+	 * @throws BusinessException
+	 */
 	public List<String> findEnumConstants(String enumName)
 			throws BusinessException {
 		String className = ENUMS_PATH + toCamelCase(enumName);
