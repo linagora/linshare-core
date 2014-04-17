@@ -37,7 +37,7 @@ import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
+import org.linagora.linshare.core.domain.constants.MimeTypeStatus;
 import org.linagora.linshare.core.domain.vo.DisplayableAccountOccupationEntryVo;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.SignatureVo;

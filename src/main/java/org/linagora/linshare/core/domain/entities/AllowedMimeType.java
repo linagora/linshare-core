@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import org.linagora.linshare.core.domain.constants.MimeTypeStatus;
+
 public class AllowedMimeType implements Comparable<AllowedMimeType>{
 
 	private long id;

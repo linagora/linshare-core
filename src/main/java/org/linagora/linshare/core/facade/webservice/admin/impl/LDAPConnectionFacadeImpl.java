@@ -36,8 +36,8 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
-import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.LDAPConnectionFacade;
 import org.linagora.linshare.core.service.AccountService;

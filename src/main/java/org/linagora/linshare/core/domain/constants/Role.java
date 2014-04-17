@@ -31,28 +31,29 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.domain.constants;
 
-public enum MimeTypeStatus {
+/**
+ */
+public enum Role {
+    SIMPLE(0), ADMIN(1), SYSTEM(2), SUPERADMIN(3);
 
-	AUTHORISED(0), DENIED(1), WARN(2);
+    private int value;
 
-	private int value;
+    private Role(int value) {
+        this.value = value;
+    }
 
-	private MimeTypeStatus(int value) {
-		this.value = value;
-	}
+    public int toInt() {
+        return value;
+    }
 
-	public int toInt() {
-		return value;
-	}
-
-	public static MimeTypeStatus fromInt(int value) {
-		for (MimeTypeStatus status : values()) {
-			if (status.value == value) {
-				return status;
-			}
+    public static Role fromInt(int value) {
+    	for (Role role : values()) {
+    		if (role.value == value) {
+    			return role;
+    		}
 		}
-		throw new IllegalArgumentException("Doesn't match an existing MimeTypeStatus");
-	}
+    	throw new IllegalArgumentException("Doesn't match an existing Role");
+    }
 }

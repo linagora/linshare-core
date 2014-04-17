@@ -35,7 +35,7 @@ package org.linagora.linshare.core.domain.vo;
 
 import java.io.Serializable;
 
-import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
+import org.linagora.linshare.core.domain.constants.MimeTypeStatus;
 
 public class AllowedMimeTypeVO implements Serializable{
 

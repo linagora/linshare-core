@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.webservice.dto.UserDto;
 
 

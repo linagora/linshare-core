@@ -38,7 +38,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
 import org.linagora.linshare.webservice.WebserviceBase;

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.webservice.dto.DomainDto;
 

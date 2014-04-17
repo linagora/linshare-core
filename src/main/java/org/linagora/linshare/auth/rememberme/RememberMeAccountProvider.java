@@ -36,8 +36,8 @@ package org.linagora.linshare.auth.rememberme;
 import java.util.List;
 
 import org.linagora.linshare.auth.RoleProvider;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.service.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

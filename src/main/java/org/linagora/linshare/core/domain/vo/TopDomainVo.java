@@ -36,8 +36,8 @@ package org.linagora.linshare.core.domain.vo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Role;
 
 public class TopDomainVo extends AbstractDomainVo {
 	

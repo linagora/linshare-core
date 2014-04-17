@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.constants.Role;
 
 public class RootDomain extends AbstractDomain {
 

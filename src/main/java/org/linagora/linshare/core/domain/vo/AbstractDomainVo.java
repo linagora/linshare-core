@@ -38,9 +38,9 @@ import java.io.Serializable;
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
-import org.linagora.linshare.core.domain.entities.Role;
 
 import com.google.common.base.Function;
 

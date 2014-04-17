@@ -40,7 +40,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;

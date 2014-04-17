@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AllowAllDomain;
 import org.linagora.linshare.core.domain.entities.AllowDomain;
@@ -46,7 +47,6 @@ import org.linagora.linshare.core.domain.entities.DenyDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
-import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.AllowAllDomainVo;
 import org.linagora.linshare.core.domain.vo.AllowDomainVo;

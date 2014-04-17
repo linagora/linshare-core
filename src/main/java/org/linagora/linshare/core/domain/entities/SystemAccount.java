@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Role;
 
 public class SystemAccount extends Account {
 

@@ -48,7 +48,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.upload.services.UploadedFile;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
-import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
+import org.linagora.linshare.core.domain.constants.MimeTypeStatus;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;

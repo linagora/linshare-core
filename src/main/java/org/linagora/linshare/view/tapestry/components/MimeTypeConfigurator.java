@@ -44,7 +44,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
+import org.linagora.linshare.core.domain.constants.MimeTypeStatus;
 import org.linagora.linshare.core.domain.vo.AllowedMimeTypeVO;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MimeTypeFacade;

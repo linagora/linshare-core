@@ -37,9 +37,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
+import org.linagora.linshare.core.domain.constants.MimeTypeStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedMimeType;
-import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AllowedMimeTypeRepository;

@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Role;
 
 public abstract class Account {
 

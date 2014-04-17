@@ -40,10 +40,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.EntryType;
+import org.linagora.linshare.core.domain.constants.MimeTypeStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
-import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;

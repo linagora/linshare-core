@@ -33,8 +33,8 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Role;
 
 public class GuestDomainVo extends AbstractDomainVo {
 	
