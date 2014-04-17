@@ -728,11 +728,11 @@ INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES 
 -- mailconfig
 -- seb1
 
-INSERT INTO mail_config (id, name, domain_abstract_id, visible, mail_layout_html_id, mail_layout_text_id,uuid) VALUES (1,'config 1',1,true,1,2,'42cf9cf6-8da6-11e3-b6aa-5404a683a462');
-UPDATE domain_abstract set mailconfig_id = 1 where id =1; 
-UPDATE domain_abstract set mailconfig_id = 1 where id =2; 
-UPDATE domain_abstract set mailconfig_id = 1 where id =3; 
-UPDATE domain_abstract set mailconfig_id = 1 where id =4; 
+INSERT INTO mail_config (id, name, domain_abstract_id, visible, mail_layout_html_id, mail_layout_text_id, uuid, creation_date, modification_date) VALUES (1,'config 1',1,true,1,2,'42cf9cf6-8da6-11e3-b6aa-5404a683a462',now(),now());
+UPDATE domain_abstract set mailconfig_id = 1 where id =1;
+UPDATE domain_abstract set mailconfig_id = 1 where id =2;
+UPDATE domain_abstract set mailconfig_id = 1 where id =3;
+UPDATE domain_abstract set mailconfig_id = 1 where id =4;
 
 -- GUEST_INVITATION
 INSERT INTO mail_content_lang(id,mail_config_id,language,mail_content_id,mail_content_type) VALUES (1,1,0,1,12);
