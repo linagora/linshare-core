@@ -72,7 +72,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final AbstractDomainRepository abstractDomainRepository;
 	private final DomainPolicyService domainPolicyService;
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-	
+
 	private final UserProviderService userProviderService;
 	private final MessagesRepository messagesRepository;
 	private final UserRepository<User> userRepository;
@@ -342,41 +342,44 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					"This new domain has a wrong domain policy identifier.");
 		}
 		entity.updateDomainWith(domain);
-		entity.setPolicy(policy);
-
-		LdapUserProvider provider = entity.getUserProvider();
-		DomainPattern domainPattern = null;
-		LDAPConnection ldapConn = null;
-		String baseDn = null;
-		if (domain.getUserProvider() != null) {
-			domainPattern = domain.getUserProvider().getPattern();
-			ldapConn = domain.getUserProvider().getLdapconnexion();
-			baseDn = domain.getUserProvider().getBaseDn();
-		}
-		if (baseDn != null && domainPattern != null && ldapConn != null) {
-			logger.debug("Update domain with provider");
-			if (provider == null) {
-				logger.debug("Update domain with provider creation ");
-				provider = new LdapUserProvider(baseDn, ldapConn, domainPattern);
-				userProviderService.create(provider);
-				entity.setUserProvider(provider);
-			} else {
-				logger.debug("Update domain with provider update ");
-				provider.setBaseDn(baseDn);
-				provider.setLdapconnexion(ldapConn);
-				provider.setPattern(domainPattern);
-				userProviderService.update(provider);
-			}
+		if (entity.getDomainType().equals(DomainType.ROOTDOMAIN)) {
 			abstractDomainRepository.update(entity);
 		} else {
-			logger.debug("Update domain without provider");
-			if (provider != null) {
-				logger.debug("delete old provider.");
-				entity.setUserProvider(null);
+			entity.setPolicy(policy);
+			LdapUserProvider provider = entity.getUserProvider();
+			DomainPattern domainPattern = null;
+			LDAPConnection ldapConn = null;
+			String baseDn = null;
+			if (domain.getUserProvider() != null) {
+				domainPattern = domain.getUserProvider().getPattern();
+				ldapConn = domain.getUserProvider().getLdapconnexion();
+				baseDn = domain.getUserProvider().getBaseDn();
+			}
+			if (baseDn != null && domainPattern != null && ldapConn != null) {
+				logger.debug("Update domain with provider");
+				if (provider == null) {
+					logger.debug("Update domain with provider creation ");
+					provider = new LdapUserProvider(baseDn, ldapConn, domainPattern);
+					userProviderService.create(provider);
+					entity.setUserProvider(provider);
+				} else {
+					logger.debug("Update domain with provider update ");
+					provider.setBaseDn(baseDn);
+					provider.setLdapconnexion(ldapConn);
+					provider.setPattern(domainPattern);
+					userProviderService.update(provider);
+				}
 				abstractDomainRepository.update(entity);
-				userProviderService.delete(provider);
 			} else {
-				abstractDomainRepository.update(entity);
+				logger.debug("Update domain without provider");
+				if (provider != null) {
+					logger.debug("delete old provider.");
+					entity.setUserProvider(null);
+					abstractDomainRepository.update(entity);
+					userProviderService.delete(provider);
+				} else {
+					abstractDomainRepository.update(entity);
+				}
 			}
 		}
 	}

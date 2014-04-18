@@ -35,6 +35,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.webservice.dto.DomainDto;
 
 public class RootDomain extends AbstractDomain {
 
@@ -47,8 +48,21 @@ public class RootDomain extends AbstractDomain {
 		this.defaultLocale="en";
 	}
 
+	public RootDomain(DomainDto domainDto) {
+		super(domainDto, null);
+	}
+
 	@Override
 	public DomainType getDomainType() {
 		return DomainType.ROOTDOMAIN;
 	}
+
+	@Override
+	public void updateDomainWith(AbstractDomain d) {
+		this.label = d.getLabel();
+		this.description = d.getDescription();
+		this.defaultLocale = d.getDefaultLocale();
+		this.authShowOrder = d.getAuthShowOrder();
+	}
+
 }
