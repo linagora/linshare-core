@@ -141,7 +141,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 		userFacade.delete(userDto);
 	}
 
-	@Path("/inconstitent")
+	@Path("/inconsistent")
 	@ApiOperation(value = "Find all inconsistent users.")
 	@GET
 	@Override
@@ -150,7 +150,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 		userFacade.getAllInconsistent();
 	}
 
-	@Path("/inconstitent")
+	@Path("/inconsistent")
 	@ApiOperation(value = "Update an inconsistent user's domain.")
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
