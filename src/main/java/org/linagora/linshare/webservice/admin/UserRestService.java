@@ -56,7 +56,7 @@ public interface UserRestService {
 
 	void delete(UserDto userDto) throws BusinessException;
 
-	void getAllInconsistentUser() throws BusinessException;
+	Set<UserDto> getAllInconsistentUser() throws BusinessException;
 
 	void updateInconsistentUser(UserDto userDto) throws BusinessException;
 }

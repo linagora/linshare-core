@@ -145,14 +145,14 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Find all inconsistent users.")
 	@GET
 	@Override
-	public void getAllInconsistentUser() throws BusinessException {
+	public Set<UserDto> getAllInconsistentUser() throws BusinessException {
 		userFacade.checkAuthentication();
-		userFacade.getAllInconsistent();
+		return userFacade.getAllInconsistent();
 	}
 
 	@Path("/inconsistent")
 	@ApiOperation(value = "Update an inconsistent user's domain.")
-	@POST
+	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void updateInconsistentUser(
