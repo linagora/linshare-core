@@ -12,6 +12,11 @@
         <div id="actionBar">
             <ul>
                 <li>
+                    <t:actionLink t:id="showRename" class="button" title="${message:pages.thread.admin.renameButton}">
+                        <span><img src="${asset:context:images/icons/edit-small.png}" alt="" /> ${message:pages.thread.admin.renameButton}</span>
+                    </t:actionLink>
+                </li>
+                <li>
                     <t:actionLink t:id="delete" class="button" title="${message:pages.thread.admin.deleteButton}">
                         <span><img src="${asset:context:images/icons/remove-small.png}" alt="" /> ${message:pages.thread.admin.deleteButton}</span>
                     </t:actionLink>

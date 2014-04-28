@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.thread.index.title" t:identifier="thread" t:currentHighlight="thread"
+        xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+        xmlns:p="tapestry:parameter">
+
+    <div id="content">
+        <h1>${message:pages.thread.index.title} : ${thread.name}</h1>
+        <t:messagePanel/>
+        <t:businessMessagesDisplayer/>
+        
+        <fieldset>
+            <t:form class="form-horizontal">
+            	<table>
+            		<tr>
+            			<td>
+            				<input t:type="TextField" t:id="threadName" t:validate="required"/>
+            			</td>
+            		</tr>
+            		<tr>
+            			<td>
+                        	<t:linkSubmit class="button">
+                           		<span><img src="${asset:context:images/icons/edit.png}" alt=""/> ${message:global.button.validate}</span>
+                            </t:linkSubmit>
+                        </td>
+                    </tr>
+            	</table>
+        	</t:form>
+        </fieldset>
+
+    </div>
+</t:MyBorderLayout>

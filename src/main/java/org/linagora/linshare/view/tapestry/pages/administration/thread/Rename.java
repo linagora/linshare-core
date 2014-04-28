@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.view.tapestry.pages.administration.thread;
 
-import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -48,9 +47,9 @@ import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Admin {
+public class Rename {
 
-	private static final Logger logger = LoggerFactory.getLogger(Admin.class);
+	private static final Logger logger = LoggerFactory.getLogger(Rename.class);
 
 	/*
 	 * Tapestry properties
@@ -67,13 +66,13 @@ public class Admin {
 	@Persist
 	@Property
 	private ThreadVo thread;
+	
+	@Property
+	private String threadName;
 
 	/*
 	 * Injected beans
 	 */
-	
-	@InjectPage
-	private Rename rename;
 
 	@Inject
 	private ThreadEntryFacade threadEntryFacade;
@@ -81,6 +80,10 @@ public class Admin {
 	@Inject
 	private Messages messages;
 
+	public void onPrepare() {
+		threadName = thread.getName();
+	}
+	
 	public Object onActivate() {
 		if (thread == null) {
 			logger.info("No thread selected, abort");
@@ -93,14 +96,9 @@ public class Admin {
 		this.thread = thread;
 	}
 	
-	public void onActionFromDelete() throws BusinessException {
-		threadEntryFacade.deleteThread(userVo, thread);
+	public void onSuccess() throws BusinessException {
+		threadEntryFacade.renameThread(userVo, thread, threadName);
 		thread = null;
-	}
-
-    public Object onActionFromShowRename() {
-		rename.setSelectedThread(thread);
-		return rename;
 	}
 
 	/*
