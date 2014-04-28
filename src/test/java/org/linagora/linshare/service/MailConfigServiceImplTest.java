@@ -6,6 +6,7 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -35,6 +36,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-test.xml"
 		})
+@Ignore
 public class MailConfigServiceImplTest extends AbstractJUnit4SpringContextTests {
 
 	private static Logger logger = LoggerFactory
