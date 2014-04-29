@@ -34,25 +34,26 @@
 
 package org.linagora.linshare.core.facade.webservice.admin;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.MailingListContactDto;
 import org.linagora.linshare.webservice.dto.MailingListDto;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
-
-import java.util.List;
 
 public interface MailingListFacade extends AdminGenericFacade {
 
-	public List<MailingListDto> getAll();
+	List<MailingListDto> getAll();
 
-	public MailingListDto get(String uuid) throws BusinessException;
+	MailingListDto get(String uuid) throws BusinessException;
 
-	public void create(MailingListDto dto) throws BusinessException;
+	void create(MailingListDto dto) throws BusinessException;
 
-	public void delete(String uuid) throws BusinessException;
+	void update(MailingListDto dto) throws BusinessException;
 
-	public void addContact(String listUuid, MailingListContactDto dto)
+	void delete(String uuid) throws BusinessException;
+
+	void addContact(String listUuid, MailingListContactDto dto)
 			throws BusinessException;
 
-	public void deleteContact(String uuid) throws BusinessException;
+	void deleteContact(String uuid) throws BusinessException;
 }

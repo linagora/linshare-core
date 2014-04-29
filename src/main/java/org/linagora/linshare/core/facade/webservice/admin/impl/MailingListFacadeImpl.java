@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
@@ -90,6 +91,15 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 
 		mailingListService.createList(actor.getLsUuid(), actor.getLsUuid(),
 				list);
+	}
+
+	@Override
+	public void update(MailingListDto dto) throws BusinessException {
+		Validate.notNull(dto.getUuid(), "uuid dto must be set.");
+		User actor = super.getAuthentication();
+		MailingList list = mailingListService.findByUuid(dto.getUuid());
+
+		mailingListService.updateList(actor.getLsUuid(), list);
 	}
 
 	@Override

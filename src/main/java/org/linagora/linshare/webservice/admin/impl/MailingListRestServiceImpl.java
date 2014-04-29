@@ -40,6 +40,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -103,6 +104,19 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 			throws BusinessException {
 		mailingListFacade.checkAuthentication(Role.ADMIN);
 		mailingListFacade.create(dto);
+	}
+
+	@Path("/")
+	@ApiOperation(value = "Update a mailing list.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@PUT
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public void update(
+			@ApiParam(value = "Mailing list to update.", required = true) MailingListDto dto)
+			throws BusinessException {
+		mailingListFacade.checkAuthentication(Role.ADMIN);
+		mailingListFacade.update(dto);
 	}
 
 	@Path("/{uuid}")
