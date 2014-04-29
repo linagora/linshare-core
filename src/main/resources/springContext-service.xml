@@ -29,9 +29,7 @@
 	
 	<bean name="threadService" class="org.linagora.linshare.core.service.impl.ThreadServiceImpl">
 		<constructor-arg ref="threadRepository" />
-		<constructor-arg ref="threadViewRepository" />
 		<constructor-arg ref="threadMemberRepository" />
-		<constructor-arg ref="tagRepository" />
 		<constructor-arg ref="documentEntryBusinessService" />
         <constructor-arg ref="logEntryService" />
         <constructor-arg ref="functionalityReadOnlyService" />
@@ -93,7 +91,6 @@
 		<constructor-arg ref="mimeTypeService" />
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="clamavVirusScannerService" />
-		<constructor-arg ref="tagBusinessService" />
 		<constructor-arg ref="threadMemberRepository" />
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
 		<constructor-arg ref="antiSamyService" />
@@ -238,10 +235,6 @@
 		<constructor-arg ref="logEntryService" />
 	</bean>
 
-	<bean name="tagService" class="org.linagora.linshare.core.service.impl.TagServiceImpl">
-		<constructor-arg ref="tagBusinessService" />
-	</bean>
-	
     <bean name="mailingListService" class="org.linagora.linshare.core.service.impl.MailingListServiceImpl">
 		<constructor-arg ref="mailingListBusinessService" />
 		<constructor-arg ref="userService" />

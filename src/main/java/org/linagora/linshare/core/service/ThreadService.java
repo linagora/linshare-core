@@ -37,11 +37,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Tag;
-import org.linagora.linshare.core.domain.entities.TagFilter;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
-import org.linagora.linshare.core.domain.entities.ThreadView;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -86,16 +83,6 @@ public interface ThreadService {
 	public void deleteAllUserMemberships(Account actor, User user) throws BusinessException;
 
 	public void deleteThread(User actor, Thread thread) throws BusinessException;
-
-	public void deleteThreadView(User user, Thread thread, ThreadView threadView) throws BusinessException;
-	
-	public void deleteAllThreadViews(User user, Thread thread) throws BusinessException;
-
-	public void deleteTagFilter(User user, Thread thread, TagFilter filter) throws BusinessException;
-
-	public void deleteTag(User user, Thread thread, Tag tag) throws BusinessException;
-
-	public void deleteAllTags(User user, Thread thread) throws BusinessException;
 
 	public void rename(User actor, Thread thread, String threadName) throws BusinessException;
 

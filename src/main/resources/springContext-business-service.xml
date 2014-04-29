@@ -21,7 +21,6 @@
 		<constructor-arg ref="signatureBusinessService" />
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="threadEntryRepository" />
-		<constructor-arg ref="tagBusinessService" />
 	</bean>
 
 
@@ -55,11 +54,6 @@
 		<constructor-arg ref="accountRepository" />
 	</bean>
 	
-	<bean id="tagBusinessService" class="org.linagora.linshare.core.business.service.impl.TagBusinessServiceImpl">
-		<constructor-arg ref="tagRepository" />
-		<constructor-arg ref="threadEntryRepository" />
-		<constructor-arg ref="entryTagAssociationRepository"/>
-	</bean>
 	<bean id="domainAccessPolicyBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainAccessPolicyBusinessServiceImpl">
 		<constructor-arg ref="domainAccessRuleRepository" />
 	</bean>

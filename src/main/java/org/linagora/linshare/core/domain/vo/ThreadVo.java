@@ -48,9 +48,6 @@ public class ThreadVo extends AccountVo {
 
 	protected String name;
 	
-	@NonVisual
-	protected ThreadViewVo view;
-
 	// constructor just for test
 	public ThreadVo(String uuid, String name) {
 		super(uuid);
@@ -65,7 +62,6 @@ public class ThreadVo extends AccountVo {
 	public ThreadVo(Thread thread) {
 		super(thread);
 		this.name = thread.getName();
-		this.view = new ThreadViewVo(thread.getCurrentThreadView());
 	}
 
 	public String getName() {
@@ -75,14 +71,6 @@ public class ThreadVo extends AccountVo {
 	@Validate("required")
 	public void setName(String name) {
 		this.name = name;
-	}
-	
-	public ThreadViewVo getView() {
-		return view;
-	}
-
-	public void setView(ThreadViewVo view) {
-		this.view = view;
 	}
 	
 	@Override

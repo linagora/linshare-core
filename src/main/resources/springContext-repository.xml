@@ -11,10 +11,6 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
-	<bean name="threadViewRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadViewRepositoryImpl">
-		<constructor-arg ref="hibernateTemplate" />
-	</bean>
-
 	<bean name="threadMemberRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadMemberRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
@@ -120,14 +116,6 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 	<bean name="contactRepository" class="org.linagora.linshare.core.repository.hibernate.ContactRepositoryImpl">
-		<constructor-arg ref="hibernateTemplate" />
-	</bean>
-
-	<bean name="tagRepository" class="org.linagora.linshare.core.repository.hibernate.TagRepositoryImpl">
-		<constructor-arg ref="hibernateTemplate" />
-	</bean>
-
-	<bean name="entryTagAssociationRepository" class="org.linagora.linshare.core.repository.hibernate.EntryTagAssociationRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 

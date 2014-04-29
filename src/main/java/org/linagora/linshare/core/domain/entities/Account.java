@@ -72,12 +72,6 @@ public abstract class Account {
 	
 	protected Set<Signature> signatures = new  HashSet<Signature>();
 	
-	protected Set<Tag> tags = new  HashSet<Tag>();
-	
-	protected Set<TagFilter> tagFilters = new  HashSet<TagFilter>();
-	
-	protected Set<View> views = new  HashSet<View>();
-	
 	public Account() {
 		setCreationDate(new Date());
 		setModificationDate(new Date());
@@ -242,23 +236,6 @@ public abstract class Account {
 		this.signatures = signatures;
 	}
 
-	public Set<Tag> getTags() {
-		return tags;
-	}
-
-	public void setTags(Set<Tag> tags) {
-		this.tags = tags;
-	}
-
-	public Set<TagFilter> getTagFilters() {
-		return tagFilters;
-	}
-
-	public void setTagFilters(Set<TagFilter> tagFilters) {
-		this.tagFilters = tagFilters;
-	}
-
-	
 	public abstract AccountType getAccountType();
 
 	
@@ -271,17 +248,7 @@ public abstract class Account {
 		return locale;
 	}
 
-
 	public void setExternalMailLocale(String externalMailLocale) {
 		this.externalMailLocale = externalMailLocale;
 	}
-
-	public Set<View> getViews() {
-		return views;
-	}
-
-	public void setViews(Set<View> views) {
-		this.views = views;
-	}
-	
 }

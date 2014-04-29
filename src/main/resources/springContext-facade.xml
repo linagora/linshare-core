@@ -42,7 +42,6 @@
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="threadEntryService" />
 		<constructor-arg ref="threadEntryTransformer" />
-		<constructor-arg ref="tagService" />
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="userService" />
 	</bean>
