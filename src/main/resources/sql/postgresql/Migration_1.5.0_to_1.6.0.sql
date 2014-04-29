@@ -1,3 +1,7 @@
+-- Postgresql migration script : 1.5.0 to 1.6.0
+
+BEGIN;
+
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
 SET client_min_messages = warning;
@@ -101,4 +105,25 @@ ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte32960 FOREIGN KEY (mail
 ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi540307 FOREIGN KEY (mail_layout_html_id) REFERENCES mail_layout (id);
 ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi611322 FOREIGN KEY (mail_layout_text_id) REFERENCES mail_layout (id);
 
+DROP TABLE thread_view CASCADE;
+DROP TABLE thread_view_asso CASCADE;
+DROP TABLE view_context CASCADE;
+DROP TABLE views CASCADE;
+DROP TABLE view_tag_asso  CASCADE;
+DROP TABLE default_view  CASCADE;
+DROP TABLE entry_tag_association CASCADE;
+DROP TABLE tag CASCADE;
+DROP TABLE tag_enum_value CASCADE;
+DROP TABLE tag_filter CASCADE;
+DROP TABLE tag_filter_rule CASCADE;
+DROP TABLE tag_filter_rule_tag_association CASCADE;
 
+ALTER TABLE version RENAME description TO version;
+ALTER TABLE account DROP COLUMN account_id;
+
+
+
+-- LinShare version
+INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence')),'1.6.0');
+
+COMMIT;
