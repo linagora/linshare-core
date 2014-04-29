@@ -38,6 +38,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
@@ -46,6 +47,7 @@ import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.webservice.dto.PasswordDto;
 import org.linagora.linshare.webservice.dto.UserDto;
 import org.linagora.linshare.webservice.dto.UserSearchDto;
 import org.slf4j.Logger;
@@ -72,12 +74,15 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<UserDto> search(UserSearchDto userSearchDto) throws BusinessException {
-		return searchUsers(userSearchDto.getFirstName(), userSearchDto.getLastName(), userSearchDto.getMail(), null);
+	public Set<UserDto> search(UserSearchDto userSearchDto)
+			throws BusinessException {
+		return searchUsers(userSearchDto.getFirstName(),
+				userSearchDto.getLastName(), userSearchDto.getMail(), null);
 	}
-	
+
 	@Override
-	public Set<UserDto> searchInternals(String pattern) throws BusinessException {
+	public Set<UserDto> searchInternals(String pattern)
+			throws BusinessException {
 		return searchUsers(pattern, AccountType.INTERNAL);
 	}
 
@@ -85,10 +90,10 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	public Set<UserDto> searchGuests(String pattern) throws BusinessException {
 		return searchUsers(pattern, AccountType.GUEST);
 	}
-	
+
 	/**
-	 * Search users using firstname, lastname and mail as search criteria.
-	 * Each param can be null. If all parameters are null, return all.
+	 * Search users using firstname, lastname and mail as search criteria. Each
+	 * param can be null. If all parameters are null, return all.
 	 * 
 	 * @param firstName
 	 * @param lastName
@@ -97,7 +102,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	 * @return
 	 * @throws BusinessException
 	 */
-	private Set<UserDto> searchUsers(String firstName, String lastName, String mail, AccountType type) throws BusinessException {
+	private Set<UserDto> searchUsers(String firstName, String lastName,
+			String mail, AccountType type) throws BusinessException {
 		User currentUser = super.checkAuthentication();
 
 		Set<UserDto> usersDto = new HashSet<UserDto>();
@@ -109,17 +115,19 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 			if (userDto.isGuest()) {
 				if (user.isRestricted()) {
-					for (User contact : userService.fetchGuestContacts(user.getLsUuid())) {
+					for (User contact : userService.fetchGuestContacts(user
+							.getLsUuid())) {
 						userDto.getRestrictedContacts().add(contact.getMail());
 					}
 				}
 			}
 			usersDto.add(userDto);
-		}		
+		}
 		return usersDto;
 	}
 
-	private Set<UserDto> searchUsers(String pattern, AccountType type) throws BusinessException {
+	private Set<UserDto> searchUsers(String pattern, AccountType type)
+			throws BusinessException {
 		Set<UserDto> usersDto = new HashSet<UserDto>();
 		usersDto.addAll(searchUsers(pattern, null, null, type));
 		usersDto.addAll(searchUsers(null, pattern, null, type));
@@ -133,7 +141,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		User user = getUser(userDto);
 		userService.updateUser(actor, user, userDto.getDomain());
 		if (userDto.isGuest() && user.isRestricted()) {
-			userService.setGuestContactRestriction(userDto.getUuid(), userDto.getRestrictedContacts());
+			userService.setGuestContactRestriction(userDto.getUuid(),
+					userDto.getRestrictedContacts());
 		}
 	}
 
@@ -144,9 +153,10 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(uuid, "user unique identifier must be set.");
 		userService.deleteUser(actor, uuid);
 	}
-	
+
 	private User getUser(UserDto userDto) {
-		Validate.notEmpty(userDto.getUuid(), "user unique identifier must be set.");
+		Validate.notEmpty(userDto.getUuid(),
+				"user unique identifier must be set.");
 		if (userDto.isGuest()) {
 			return new Guest(userDto);
 		} else {
@@ -172,5 +182,12 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 		inconsistentUserService.updateDomain(actor, userDto.getUuid(),
 				userDto.getDomain());
+	}
+
+	@Override
+	public void changePassword(PasswordDto password) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
+		userService.changePassword(actor.getLsUuid(), actor.getMail(),
+				password.getOldPwd(), password.getNewPwd());
 	}
 }

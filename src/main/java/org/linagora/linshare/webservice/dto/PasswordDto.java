@@ -31,15 +31,47 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin;
+package org.linagora.linshare.webservice.dto;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.PasswordDto;
-import org.linagora.linshare.webservice.dto.UserDto;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public interface AuthenticationRestService {
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-	UserDto isAuthorized() throws BusinessException;
+@XmlRootElement(name = "Password")
+@ApiModel(value = "Password", description = "")
+public class PasswordDto {
 
-	void changePassword(PasswordDto password) throws BusinessException;
+	@ApiModelProperty(value = "Old")
+	protected String oldPwd;
+
+	@ApiModelProperty(value = "new")
+	protected String newPwd;
+
+	public PasswordDto() {
+		super();
+	}
+
+	protected PasswordDto(String oldPwd, String newPwd) {
+		super();
+		this.oldPwd = oldPwd;
+		this.newPwd = newPwd;
+	}
+
+	public String getOldPwd() {
+		return oldPwd;
+	}
+
+	public void setOldPwd(String oldPwd) {
+		this.oldPwd = oldPwd;
+	}
+
+	public String getNewPwd() {
+		return newPwd;
+	}
+
+	public void setNewPwd(String newPwd) {
+		this.newPwd = newPwd;
+	}
+
 }

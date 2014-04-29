@@ -33,7 +33,9 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -41,23 +43,45 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
+import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.AuthenticationRestService;
+import org.linagora.linshare.webservice.dto.PasswordDto;
 import org.linagora.linshare.webservice.dto.UserDto;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
+@Path("/authentication")
+@Api(value = "/rest/admin/authentication", description = "Authentication administration")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
 
-	private final AdminGenericFacade webServiceAdminFacade;
+	private final AdminGenericFacade adminFacade;
+	
+	private final UserFacade userFacade;
 
-	public AuthenticationRestServiceImpl(final AdminGenericFacade webServiceAdminFacade) {
-		this.webServiceAdminFacade = webServiceAdminFacade;
+	public AuthenticationRestServiceImpl(final AdminGenericFacade adminFacade, final UserFacade userFacade) {
+		this.adminFacade = adminFacade;
+		this.userFacade = userFacade;
 	}
 
 	@Path("/authorized")
 	@GET
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
-		return UserDto.getFull(webServiceAdminFacade.checkAuthentication(Role.ADMIN));
+		return UserDto.getFull(adminFacade.checkAuthentication(Role.ADMIN));
+	}
+
+	@Path("/change_password")
+	@ApiOperation(value = "Change the password of the current user.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@POST
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public void changePassword(PasswordDto password) throws BusinessException {
+		userFacade.changePassword(password);
 	}
 }
