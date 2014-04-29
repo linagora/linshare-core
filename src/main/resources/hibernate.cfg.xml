@@ -42,26 +42,7 @@
     <mapping resource="org/linagora/linshare/core/domain/entities/Signature.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/Cookie.hbm.xml"/>
      
-    
-    <mapping resource="org/linagora/linshare/core/domain/entities/Tag.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/TagEnumValue.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/EntryTagAssociation.hbm.xml"/>
-    
-    <mapping resource="org/linagora/linshare/core/domain/entities/TagFilter.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/TagFilterRule.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/TagFilterRuleTagAssociation.hbm.xml"/>
-    
-    <mapping resource="org/linagora/linshare/core/domain/entities/ViewContext.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/DefaultView.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/View.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/ViewTagAsso.hbm.xml"/>
-    
-    <mapping resource="org/linagora/linshare/core/domain/entities/ThreadView.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/ThreadViewAsso.hbm.xml"/>
-        
     <mapping resource="org/linagora/linshare/core/domain/entities/AllowedMimeType.hbm.xml"/>
-
-
 
     
     <mapping resource="org/linagora/linshare/core/domain/entities/MailLayout.hbm.xml"/>
