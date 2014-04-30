@@ -115,8 +115,7 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		List<DomainAccessRule> rules = dap.getRules();
 		for (DomainAccessRuleDto ruleDto : dapDto.getRules()) {
 			Validate.notNull(ruleDto.getType(), "Rule type dto must be set.");
-			Validate.notNull(ruleDto.getDomain(), "Domain dto must be set.");
-			Validate.notEmpty(ruleDto.getDomain().getIdentifier(), "Domain identifier must be set.");
+
 
 			DomainAccessRule rule;
 			AbstractDomain domain;
@@ -128,11 +127,15 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 				rule = new DenyAllDomain();
 				break;
 			case ALLOW:
+				Validate.notNull(ruleDto.getDomain(), "Domain dto must be set.");
+				Validate.notEmpty(ruleDto.getDomain().getIdentifier(), "Domain identifier must be set.");
 				domain = domainBusinessService.findById(ruleDto.getDomain()
 						.getIdentifier());
 				rule = new AllowDomain(domain);
 				break;
 			case DENY:
+				Validate.notNull(ruleDto.getDomain(), "Domain dto must be set.");
+				Validate.notEmpty(ruleDto.getDomain().getIdentifier(), "Domain identifier must be set.");
 				domain = domainBusinessService.findById(ruleDto.getDomain()
 						.getIdentifier());
 				rule = new DenyDomain(domain);
