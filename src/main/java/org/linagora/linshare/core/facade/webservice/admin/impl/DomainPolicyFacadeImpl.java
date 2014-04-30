@@ -62,7 +62,6 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final DomainBusinessService domainBusinessService;
 
-
 	public DomainPolicyFacadeImpl(final AccountService accountService,
 			final DomainPolicyService domainPolicyService,
 			DomainBusinessService domainBusinessService) {

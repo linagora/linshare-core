@@ -63,7 +63,6 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements Doma
 	@GET
 	@Override
 	public List<DomainPatternDto> getDomainPatterns() throws BusinessException {
-		domainPatternFacade.checkAuthentication();
 		return domainPatternFacade.getDomainPatterns();
 	}
 
@@ -71,16 +70,14 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements Doma
 	@GET
 	@Override
 	public List<DomainPatternDto> getModels() throws BusinessException {
-		domainPatternFacade.checkAuthentication();
 		return domainPatternFacade.getModels();
 	}
-	
+
 	@Path("/")
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void createDomainPattern(DomainPatternDto domainPattern) throws BusinessException {
-		domainPatternFacade.checkAuthentication();
 		domainPatternFacade.createDomainPattern(domainPattern);
 	}
 
@@ -89,7 +86,6 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements Doma
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void updateDomainPattern(DomainPatternDto domainPattern) throws BusinessException {
-		domainPatternFacade.checkAuthentication();
 		domainPatternFacade.updateDomainPattern(domainPattern);
 	}
 
@@ -98,7 +94,6 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements Doma
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void deleteDomainPattern(DomainPatternDto domainPattern) throws BusinessException {
-		domainPatternFacade.checkAuthentication();
 		domainPatternFacade.deleteDomainPattern(domainPattern);
 	}
 }

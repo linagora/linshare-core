@@ -45,7 +45,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ThreadFacade;
 import org.linagora.linshare.webservice.admin.ThreadRestService;
@@ -67,7 +66,6 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 	@GET
 	@Override
 	public List<ThreadDto> getAll() throws BusinessException {
-		threadFacade.checkAuthentication(Role.SUPERADMIN);
 		return threadFacade.getAll();
 	}
 
@@ -76,7 +74,6 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 	@Override
 	public ThreadDto get(@PathParam("uuid") String uuid)
 			throws BusinessException {
-		threadFacade.checkAuthentication(Role.SUPERADMIN);
 		return threadFacade.get(uuid);
 	}
 
@@ -85,7 +82,6 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 	@Override
 	public List<ThreadMemberDto> getMembers(@PathParam("uuid") String uuid)
 			throws BusinessException {
-		threadFacade.checkAuthentication(Role.SUPERADMIN);
 		return threadFacade.getMembers(uuid);
 	}
 
@@ -94,7 +90,6 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void update(ThreadDto thread) throws BusinessException {
-		threadFacade.checkAuthentication(Role.SUPERADMIN);
 		threadFacade.update(thread);
 	}
 
@@ -103,7 +98,6 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void delete(ThreadDto thread) throws BusinessException {
-		threadFacade.checkAuthentication(Role.SUPERADMIN);
 		threadFacade.delete(thread.getUuid());
 	}
 }

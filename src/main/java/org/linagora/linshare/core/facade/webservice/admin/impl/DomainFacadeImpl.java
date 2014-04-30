@@ -89,8 +89,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 
 	@Override
 	public DomainDto getDomain(String domain, boolean tree) throws BusinessException {
-		Validate.notEmpty(domain, "domain identifier must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domain, "domain identifier must be set.");
 		AbstractDomain entity = abstractDomainService.retrieveDomain(domain);
 		if(entity == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "the curent domain was not found : " + domain);

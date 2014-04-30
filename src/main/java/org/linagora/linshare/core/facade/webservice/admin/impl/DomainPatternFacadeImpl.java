@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPatternFacade;
 import org.linagora.linshare.core.service.AccountService;
@@ -49,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements DomainPatternFacade {
 
 	private static final Logger logger = LoggerFactory.getLogger(DomainPatternFacadeImpl.class);
-	
+
 	private final UserProviderService userProviderService;
 
 	public DomainPatternFacadeImpl(final AccountService accountService, final UserProviderService userProviderService) {
@@ -67,9 +68,10 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 		}
 		return res;
 	}
-	
+
 	@Override
 	public List<DomainPatternDto> getModels() throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
 		List<DomainPattern> domainPatterns = userProviderService.findAllDomainPattern();
 		List<DomainPatternDto> res = new ArrayList<DomainPatternDto>();
 		for (DomainPattern domainPattern : domainPatterns) {

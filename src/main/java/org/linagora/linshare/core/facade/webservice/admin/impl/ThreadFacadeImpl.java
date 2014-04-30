@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
@@ -60,7 +61,8 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<ThreadDto> getAll() {
+	public List<ThreadDto> getAll() throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		List<ThreadDto> ret = new ArrayList<ThreadDto>();
 
 		for (Thread t : threadService.findAll())
@@ -69,13 +71,15 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public ThreadDto get(String uuid) {
+	public ThreadDto get(String uuid) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
 		return new ThreadDto(threadService.findByLsUuid(uuid));
 	}
 
 	@Override
-	public List<ThreadMemberDto> getMembers(String uuid) {
+	public List<ThreadMemberDto> getMembers(String uuid) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
 		List<ThreadMemberDto> ret = new ArrayList<ThreadMemberDto>();
 
@@ -86,8 +90,8 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public void update(ThreadDto threadDto) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(threadDto, "thread must be set.");
-		User actor = super.getAuthentication();
 		Thread thread = threadService.findByLsUuid(threadDto.getUuid());
 
 		threadService.rename(actor, thread, threadDto.getName());
@@ -95,8 +99,8 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
-		User actor = super.getAuthentication();
 		Thread thread = threadService.findByLsUuid(uuid);
 
 		threadService.deleteThread(actor, thread);

@@ -64,7 +64,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 		UserRestService {
 
 	private final UserFacade userFacade;
-	
+
 	private final AutocompleteFacade autocompleteFacade;
 
 	public UserRestServiceImpl(final UserFacade userFacade, final AutocompleteFacade autocompleteFacade) {
@@ -80,7 +80,6 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public Set<UserDto> search(
 			@ApiParam(value = "Patterns to search.", required = true) UserSearchDto userSearchDto)
 			throws BusinessException {
-		userFacade.checkAuthentication();
 		return userFacade.search(userSearchDto);
 	}
 
@@ -91,7 +90,6 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public Set<UserDto> searchInternals(
 			@ApiParam(value = "Internal users to search for.", required = true) @PathParam("pattern") String pattern)
 			throws BusinessException {
-		userFacade.checkAuthentication();
 		return userFacade.searchInternals(pattern);
 	}
 
@@ -102,7 +100,6 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public Set<UserDto> searchGuests(
 			@ApiParam(value = "Guests to search for.", required = true) @PathParam("pattern") String pattern)
 			throws BusinessException {
-		userFacade.checkAuthentication();
 		return userFacade.searchGuests(pattern);
 	}
 
@@ -113,8 +110,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public Set<UserDto> autocomplete(
 			@ApiParam(value = "Pattern to complete.", required = true) @PathParam("pattern") String pattern)
 			throws BusinessException {
-		User actor = userFacade.checkAuthentication();
-		return autocompleteFacade.getUser(actor, pattern);
+		return autocompleteFacade.getUser(pattern);
 	}
 
 	@Path("/")
@@ -125,7 +121,6 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public void update(
 			@ApiParam(value = "User to update", required = true) UserDto userDto)
 			throws BusinessException {
-		userFacade.checkAuthentication();
 		userFacade.update(userDto);
 	}
 
@@ -137,7 +132,6 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public void delete(
 			@ApiParam(value = "User to delete.", required = true) UserDto userDto)
 			throws BusinessException {
-		userFacade.checkAuthentication();
 		userFacade.delete(userDto);
 	}
 
@@ -146,7 +140,6 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@GET
 	@Override
 	public Set<UserDto> getAllInconsistentUser() throws BusinessException {
-		userFacade.checkAuthentication();
 		return userFacade.getAllInconsistent();
 	}
 
@@ -158,7 +151,6 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public void updateInconsistentUser(
 			@ApiParam(value = "Inconsistent user to update.", required = true) UserDto userDto)
 			throws BusinessException {
-		userFacade.checkAuthentication();
 		userFacade.updateInconsistentUser(userDto);
 	}
 }

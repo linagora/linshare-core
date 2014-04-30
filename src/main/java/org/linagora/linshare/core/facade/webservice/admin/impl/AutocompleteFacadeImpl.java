@@ -38,15 +38,17 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
+import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AutocompleteFacadeImpl implements AutocompleteFacade {
+public class AutocompleteFacadeImpl extends AdminGenericFacadeImpl implements AutocompleteFacade {
 
 	final private static Logger logger = LoggerFactory.getLogger(AutocompleteFacadeImpl.class);
 
@@ -54,14 +56,14 @@ public class AutocompleteFacadeImpl implements AutocompleteFacade {
 
 	private UserService userService;
 
-	public AutocompleteFacadeImpl(UserService userService) {
-		super();
+	public AutocompleteFacadeImpl(final AccountService accountService, final UserService userService) {
+		super(accountService);
 		this.userService = userService;
 	}
 
 	@Override
-	public Set<UserDto> getUser(User actor, String pattern) throws BusinessException {
-		Validate.notNull(actor, "actor must be set.");
+	public Set<UserDto> getUser(String pattern) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
 		List<User> users = userService.autoCompleteUser(actor.getLogin(), pattern);
 		logger.debug("nb result for completion : " + users.size());
 		// TODO : FMA : Use database configuration for auto complete limit
@@ -69,8 +71,9 @@ public class AutocompleteFacadeImpl implements AutocompleteFacade {
 	}
 
 	@Override
-	public Set<UserDto> getUserSortedByFavorites(User actor, String pattern) throws BusinessException {
-		Validate.notNull(actor, "actor must be set.");
+	public Set<UserDto> getUserSortedByFavorites(String pattern) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(pattern, "pattern must be set.");
 		List<User> users = userService.autoCompleteUser(actor.getLogin(), pattern);
 		logger.debug("nb result for completion : " + users.size());
 
@@ -85,13 +88,15 @@ public class AutocompleteFacadeImpl implements AutocompleteFacade {
 	}
 
 	@Override
-	public Set<String> getMail(User actor, String pattern) throws BusinessException {
+	public Set<String> getMail(String pattern) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(pattern, "pattern must be set.");
 		List<User> users = userService.autoCompleteUser(actor.getLogin(), pattern);
 		logger.debug("nb result for completion : " + users.size());
 		// TODO : FMA : Use database configuration for auto complete limit
 		return getMailList(users, AUTO_COMPLETE_LIMIT);
 	}
-	
+
 	private Set<UserDto> getUserDtoList(List<User> users) {
 		HashSet<UserDto> hashSet = new HashSet<UserDto>();
 		int range = (users.size() < AUTO_COMPLETE_LIMIT ? users.size() : AUTO_COMPLETE_LIMIT);
@@ -100,7 +105,7 @@ public class AutocompleteFacadeImpl implements AutocompleteFacade {
 		}
 		return hashSet;
 	}
-	
+
 	private Set<String> getMailList(List<User> users, int limit) {
 		Set<String> res = new HashSet<String>();
 		for (User user : users) {

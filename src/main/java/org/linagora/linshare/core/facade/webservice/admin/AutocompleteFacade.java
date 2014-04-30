@@ -35,19 +35,18 @@ package org.linagora.linshare.core.facade.webservice.admin;
 
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.UserDto;
 
 
 public interface AutocompleteFacade {
 
-	Set<UserDto> getUser(User actor, String pattern)
+	Set<UserDto> getUser(String pattern)
 			throws BusinessException;
 
-	Set<UserDto> getUserSortedByFavorites(User actor, String pattern)
+	Set<UserDto> getUserSortedByFavorites(String pattern)
 			throws BusinessException;
 
-	Set<String> getMail(User actor, String pattern)
+	Set<String> getMail(String pattern)
 			throws BusinessException;
 }

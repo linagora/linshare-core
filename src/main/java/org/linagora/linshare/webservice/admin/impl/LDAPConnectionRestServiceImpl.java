@@ -44,7 +44,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.LDAPConnectionFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
@@ -64,7 +63,6 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements LDA
 	@GET
 	@Override
 	public List<LDAPConnectionDto> getLDAPConnections() throws BusinessException {
-		ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
 		return ldapConnectionFacade.getLDAPConnections();
 	}
 
@@ -73,7 +71,6 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements LDA
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void createLDAPConnection(LDAPConnectionDto LDAPConnection) throws BusinessException {
-		ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
 		ldapConnectionFacade.createLDAPConnection(LDAPConnection);
 	}
 
@@ -82,7 +79,6 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements LDA
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void updateLDAPConnection(LDAPConnectionDto LDAPConnection) throws BusinessException {
-		ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
 		ldapConnectionFacade.updateLDAPConnection(LDAPConnection);
 	}
 
@@ -91,7 +87,6 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements LDA
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void deleteLDAPConnection(LDAPConnectionDto LDAPConnection) throws BusinessException {
-		ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
 		ldapConnectionFacade.deleteLDAPConnection(LDAPConnection);
 	}
 }

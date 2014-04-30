@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
@@ -61,18 +62,19 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public ThreadMemberDto get(Long id) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(id, "id must be set.");
 		return new ThreadMemberDto(threadService.getThreadMemberById(id));
 	}
 
 	@Override
 	public void create(ThreadMemberDto dto) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notEmpty(dto.getThreadUuid(), "thread member thread id must be set.");
 		Validate.notEmpty(dto.getUserDomainId(), "thread member domain id must be set.");
 		Validate.notEmpty(dto.getUserMail(), "thread member mail must be set.");
 
-		User actor = super.getAuthentication();
 		Thread thread = threadService.findByLsUuid(dto.getThreadUuid());
 		User user = (User) accountService.findByLsUuid(dto.getUserUuid());
 		if (user == null) {
@@ -92,9 +94,9 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public void update(ThreadMemberDto dto) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notNull(dto.getId(), "thread member id must be set.");
-		User actor = super.getAuthentication();
 		ThreadMember member = threadService.getThreadMemberById(dto.getId());
 		boolean admin = dto.isAdmin();
 		boolean readonly = dto.isReadonly();
@@ -104,9 +106,9 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public void delete(ThreadMemberDto dto) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notNull(dto.getId(), "thread member id must be set.");
-		User actor = super.getAuthentication();
 		ThreadMember member = threadService.getThreadMemberById(dto.getId());
 
 		this.threadService.deleteMember(actor, member.getThread(), member);

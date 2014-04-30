@@ -76,6 +76,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public Set<UserDto> search(UserSearchDto userSearchDto)
 			throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
 		return searchUsers(userSearchDto.getFirstName(),
 				userSearchDto.getLastName(), userSearchDto.getMail(), null);
 	}
@@ -83,11 +84,13 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public Set<UserDto> searchInternals(String pattern)
 			throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
 		return searchUsers(pattern, AccountType.INTERNAL);
 	}
 
 	@Override
 	public Set<UserDto> searchGuests(String pattern) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
 		return searchUsers(pattern, AccountType.GUEST);
 	}
 
@@ -137,7 +140,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public void update(UserDto userDto) throws BusinessException {
-		User actor = super.checkAuthentication();
+		User actor = checkAuthentication(Role.ADMIN);
 		User user = getUser(userDto);
 		userService.updateUser(actor, user, userDto.getDomain());
 		if (userDto.isGuest() && user.isRestricted()) {
@@ -148,7 +151,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public void delete(UserDto userDto) throws BusinessException {
-		User actor = super.checkAuthentication();
+		User actor = checkAuthentication(Role.ADMIN);
 		String uuid = userDto.getUuid();
 		Validate.notEmpty(uuid, "user unique identifier must be set.");
 		userService.deleteUser(actor, uuid);
@@ -166,7 +169,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public Set<UserDto> getAllInconsistent() throws BusinessException {
-		User actor = super.checkAuthentication();
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Set<UserDto> ret = Sets.newHashSet();
 
 		for (User user : inconsistentUserService.findAll(actor)) {
@@ -178,8 +181,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public void updateInconsistentUser(UserDto userDto)
 			throws BusinessException {
-		User actor = super.checkAuthentication();
-
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		inconsistentUserService.updateDomain(actor, userDto.getUuid(),
 				userDto.getDomain());
 	}

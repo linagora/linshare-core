@@ -42,11 +42,11 @@ import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
 public interface ThreadFacade extends AdminGenericFacade {
 
-	public List<ThreadDto> getAll();
+	public List<ThreadDto> getAll() throws BusinessException;
 
-	public ThreadDto get(String uuid);
+	public ThreadDto get(String uuid) throws BusinessException;
 
-	public List<ThreadMemberDto> getMembers(String uuid);
+	public List<ThreadMemberDto> getMembers(String uuid) throws BusinessException;
 
 	public void update(ThreadDto threadDto) throws BusinessException;
 

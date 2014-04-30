@@ -70,7 +70,6 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 	@GET
 	@Override
 	public List<DomainDto> getDomains() throws BusinessException {
-		domainFacade.checkAuthentication();
 		return domainFacade.getDomains();
 	}
 
@@ -78,7 +77,6 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 	@GET
 	@Override
 	public DomainDto getDomain(@PathParam(value = "domain") String domain, @QueryParam("tree") @DefaultValue("false") boolean tree) throws BusinessException {
-		domainFacade.checkAuthentication();
 		return domainFacade.getDomain(domain, tree);
 	}
 
@@ -87,7 +85,6 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void createDomain(DomainDto domain) throws BusinessException {
-		domainFacade.checkAuthentication();
 		domainFacade.createDomain(domain);
 	}
 
@@ -96,7 +93,6 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void updateDomain(DomainDto domain) throws BusinessException {
-		domainFacade.checkAuthentication();
 		domainFacade.updateDomain(domain);
 	}
 
@@ -105,7 +101,6 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void deleteDomain(DomainDto domain) throws BusinessException {
-		domainFacade.checkAuthentication();
 		domainFacade.deleteDomain(domain);
 	}
 
@@ -117,7 +112,6 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 	@GET
 	@Override
 	public List<FunctionalityDto> getDomainFunctionalities(@PathParam(value = "domain") String domain) throws BusinessException {
-		functionalityFacade.checkAuthentication();
 		return functionalityFacade.getAll(domain);
 	}
 
@@ -128,7 +122,6 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 			@PathParam(value = "domain") String domain,
 			@PathParam(value = "identifier") String identifier)
 					throws BusinessException {
-		functionalityFacade.checkAuthentication();
 		return functionalityFacade.get(domain, identifier);
 	}
 
@@ -137,7 +130,6 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void updateDomainFunctionality(@PathParam(value = "domain") String domain, FunctionalityDto func) throws BusinessException {
-		functionalityFacade.checkAuthentication();
 		functionalityFacade.update(domain, func);
 	}
 
@@ -146,7 +138,6 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void deleteDomainFunctionality(@PathParam(value = "domain") String domain, FunctionalityDto func) throws BusinessException {
-		functionalityFacade.checkAuthentication();
 		functionalityFacade.delete(domain, func);
 	}
 }

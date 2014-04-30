@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.User;
@@ -61,23 +62,21 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MailContentDto find(String uuid) throws BusinessException {
-		User actor = super.getAuthentication();
-
+		User actor = checkAuthentication(Role.ADMIN);
 		return new MailContentDto(findContent(actor, uuid));
 	}
 
 	@Override
 	public void create(MailContentDto dto) throws BusinessException {
-		User actor = super.getAuthentication();
+		User actor = checkAuthentication(Role.ADMIN);
 		MailContent content = new MailContent();
-
 		transform(content, dto);
 		mailConfigService.createContent(actor, content);
 	}
 
 	@Override
 	public void update(MailContentDto dto) throws BusinessException {
-		User actor = super.getAuthentication();
+		User actor = checkAuthentication(Role.ADMIN);
 		MailContent content = findContent(actor, dto.getUuid());
 
 		transform(content, dto);
@@ -86,8 +85,7 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
-		User actor = super.getAuthentication();
-
+		User actor = checkAuthentication(Role.ADMIN);
 		mailConfigService.deleteContent(actor, uuid);
 	}
 

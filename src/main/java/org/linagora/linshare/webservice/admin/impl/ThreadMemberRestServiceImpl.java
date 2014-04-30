@@ -44,7 +44,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ThreadMemberFacade;
 import org.linagora.linshare.webservice.admin.ThreadMemberRestService;
@@ -67,7 +66,6 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 	@Override
 	public ThreadMemberDto get(@PathParam("id") Long id)
 			throws BusinessException {
-		threadMemberFacade.checkAuthentication(Role.SUPERADMIN);
 		return threadMemberFacade.get(id);
 	}
 
@@ -77,7 +75,6 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 	@Override
 	public void create(ThreadMemberDto dto)
 			throws BusinessException {
-		threadMemberFacade.checkAuthentication(Role.SUPERADMIN);
 		threadMemberFacade.create(dto);
 	}
 
@@ -87,7 +84,6 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 	@Override
 	public void update(ThreadMemberDto dto)
 			throws BusinessException {
-		threadMemberFacade.checkAuthentication(Role.SUPERADMIN);
 		threadMemberFacade.update(dto);
 	}
 
@@ -97,7 +93,6 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 	@Override
 	public void delete(ThreadMemberDto dto)
 			throws BusinessException {
-		threadMemberFacade.checkAuthentication(Role.SUPERADMIN);
 		threadMemberFacade.delete(dto);
 	}
 }

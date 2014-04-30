@@ -64,7 +64,6 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
 	@Override
 	public List<DomainPolicyDto> getAll() throws BusinessException {
-		domainPolicyFacade.checkAuthentication();
 		return domainPolicyFacade.getAll();
 	}
 
@@ -79,7 +78,6 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	public void create(
 			@ApiParam(value = "Policy to create.", required = true) DomainPolicyDto policy)
 			throws BusinessException {
-		domainPolicyFacade.checkAuthentication();
 		domainPolicyFacade.create(policy);
 	}
 
@@ -92,7 +90,6 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	public void update(
 			@ApiParam(value = "Policy to update.", required = true) DomainPolicyDto policy)
 			throws BusinessException {
-		domainPolicyFacade.checkAuthentication();
 		domainPolicyFacade.update(policy);
 	}
 
@@ -105,7 +102,6 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	public DomainPolicyDto get(
 			@ApiParam(value = "Identifier of the domain policy to search for.", required = true) @PathParam("identifier") String identifier)
 			throws BusinessException {
-		domainPolicyFacade.checkAuthentication();
 		return domainPolicyFacade.get(identifier);
 	}
 
@@ -118,7 +114,6 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	public void delete(
 			@ApiParam(value = "Identifier of the domain policy to delete.", required = true) @PathParam("identifier") String identifier)
 			throws BusinessException {
-		domainPolicyFacade.checkAuthentication();
 		domainPolicyFacade.delete(identifier);
 	}
 
@@ -131,7 +126,6 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	public void delete(
 			@ApiParam(value = "Policy to delete.", required = true) DomainPolicyDto policy)
 			throws BusinessException {
-		domainPolicyFacade.checkAuthentication();
 		domainPolicyFacade.delete(policy.getIdentifier());
 	}
 }

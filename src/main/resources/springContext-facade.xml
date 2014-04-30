@@ -189,6 +189,7 @@
 	</bean>
 
 	<bean id="wsAdminAutocompleteFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.AutocompleteFacadeImpl">
+		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
 	</bean>
 	<bean id="wsAdminLogEntryFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.LogEntryFacadeImpl">
