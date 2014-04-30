@@ -46,7 +46,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailingListFacade;
 import org.linagora.linshare.webservice.admin.MailingListRestService;
@@ -77,7 +76,6 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	@GET
 	@Override
 	public List<MailingListDto> getAll() throws BusinessException {
-		mailingListFacade.checkAuthentication(Role.ADMIN);
 		return mailingListFacade.getAll();
 	}
 
@@ -89,7 +87,6 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	public MailingListDto get(
 			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		mailingListFacade.checkAuthentication(Role.ADMIN);
 		return mailingListFacade.get(uuid);
 	}
 
@@ -102,7 +99,6 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	public void create(
 			@ApiParam(value = "Mailing list to create.", required = true) MailingListDto dto)
 			throws BusinessException {
-		mailingListFacade.checkAuthentication(Role.ADMIN);
 		mailingListFacade.create(dto);
 	}
 
@@ -115,7 +111,6 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	public void update(
 			@ApiParam(value = "Mailing list to update.", required = true) MailingListDto dto)
 			throws BusinessException {
-		mailingListFacade.checkAuthentication(Role.ADMIN);
 		mailingListFacade.update(dto);
 	}
 
@@ -127,7 +122,6 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	public void delete(
 			@ApiParam(value = "Mailing list to delete.", required = true) MailingListDto dto)
 			throws BusinessException {
-		mailingListFacade.checkAuthentication(Role.ADMIN);
 		mailingListFacade.delete(dto.getUuid());
 	}
 
@@ -141,7 +135,6 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "Contact to create.", required = true) MailingListContactDto dto)
 			throws BusinessException {
-		mailingListFacade.checkAuthentication(Role.ADMIN);
 		mailingListFacade.addContact(uuid, dto);
 	}
 
@@ -155,7 +148,6 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "Contact uuid.", required = true) MailingListContactDto dto)
 			throws BusinessException {
-		mailingListFacade.checkAuthentication(Role.ADMIN);
 		mailingListFacade.deleteContact(dto.getUuid());
 	}
 }

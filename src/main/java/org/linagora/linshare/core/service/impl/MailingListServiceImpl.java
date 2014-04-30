@@ -83,11 +83,10 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public MailingList findByUuid(String uuid) throws BusinessException {
+	public MailingList findByUuid(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid);
 
 		MailingList list = mailingListBusinessService.findByUuid(uuid);
-
 		if (list == null)
 			throw new BusinessException(BusinessErrorCode.LIST_DO_NOT_EXIST, "List does not exist : " + uuid);
 		return list;
@@ -98,24 +97,22 @@ public class MailingListServiceImpl implements MailingListService {
 		Validate.notEmpty(ownerUuid);
 
 		User owner = userService.findByLsUuid(ownerUuid);
-
 		return mailingListBusinessService.findByIdentifier(owner, identifier);
 	}
 
 	@Override
-	public List<String> getAllContactMails(String uuid) throws BusinessException {
+	public List<String> getAllContactMails(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid);
 
-		return mailingListBusinessService.getAllContactMails(findByUuid(uuid));
+		return mailingListBusinessService.getAllContactMails(findByUuid(actorUuid, uuid));
 	}
 
 	@Override
-	public List<MailingList> findAllListByUser(String actorUuid) {
+	public List<MailingList> findAllListByUser(String actorUuid, String userUuid) {
 		Validate.notEmpty(actorUuid);
 
-		User actor = userService.findByLsUuid(actorUuid);
-
-		return mailingListBusinessService.findAllListByUser(actor);
+		User user = userService.findByLsUuid(userUuid);
+		return mailingListBusinessService.findAllListByUser(user);
 	}
 
 	@Override
@@ -150,7 +147,7 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public List<MailingList> findAllListByOwner(String ownerUuid) {
+	public List<MailingList> findAllListByOwner(String actorUuid, String ownerUuid) {
 		Validate.notEmpty(ownerUuid);
 
 		User owner = userService.findByLsUuid(ownerUuid);
@@ -163,7 +160,7 @@ public class MailingListServiceImpl implements MailingListService {
 		Validate.notEmpty(mailingListUuid);
 		Validate.notEmpty(actorUuid);
 
-		MailingList list = findByUuid(mailingListUuid);
+		MailingList list = findByUuid(actorUuid, mailingListUuid);
 		User actor = userService.findByLsUuid(actorUuid);
 
 		if (!actor.isSuperAdmin())
@@ -175,9 +172,9 @@ public class MailingListServiceImpl implements MailingListService {
 	public void updateList(String actorUuid, MailingList listToUpdate) throws BusinessException {
 		Validate.notEmpty(actorUuid);
 		Validate.notNull(listToUpdate);
+		Validate.notEmpty(listToUpdate.getUuid());
 
 		User actor = userService.findByLsUuid(actorUuid);
-
 		if (!actor.isSuperAdmin()) {
 			checkRights(actor, listToUpdate, "You are not authorized to update this list.");
 		}
@@ -211,14 +208,14 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public MailingListContact searchContact(String uuid) throws BusinessException {
+	public MailingListContact searchContact(String actorUuid, String uuid) throws BusinessException {
 		Validate.notNull(uuid);
 
 		return mailingListBusinessService.findContact(uuid);
 	}
 
 	@Override
-	public MailingListContact findContactWithMail(String listUuid, String mail) throws BusinessException {
+	public MailingListContact findContactWithMail(String actorUuid, String listUuid, String mail) throws BusinessException {
 		return mailingListBusinessService.findContactWithMail(listUuid, mail);
 	}
 
@@ -253,7 +250,7 @@ public class MailingListServiceImpl implements MailingListService {
 		if (actor.getRole().equals(Role.SUPERADMIN)
 				|| actor.getRole().equals(Role.SYSTEM))
 			return;
-		MailingList entityList = findByUuid(list.getUuid());
+		MailingList entityList = findByUuid(actor.getLsUuid(), list.getUuid());
 		if (!actor.equals(entityList.getOwner()))
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 	}

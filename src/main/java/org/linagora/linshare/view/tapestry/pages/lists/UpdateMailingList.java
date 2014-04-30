@@ -69,7 +69,7 @@ public class UpdateMailingList {
 	private String identifier;
 
 	public void onActivate(String uuid) throws BusinessException {
-		selected = mailingListFacade.findByUuid(uuid);
+		selected = mailingListFacade.findByUuid(userVo, uuid);
 	}
 	
 	public Object onActivate() {

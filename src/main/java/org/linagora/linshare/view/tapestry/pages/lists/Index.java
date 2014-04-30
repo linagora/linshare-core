@@ -129,10 +129,10 @@ public class Index {
 			targetLists = "*";
 		}
 		if (inSearch == false && fromCreate == false) {
-			lists = mailingListFacade.getAllMyList(loginUser);
+			lists = mailingListFacade.getAllMyList(loginUser, loginUser);
 		}
 		if (fromCreate == true) {
-			lists = mailingListFacade.getAllMyList(loginUser);
+			lists = mailingListFacade.getAllMyList(loginUser, loginUser);
 			for (MailingListVo current : lists) {
 				if (current.getIsPublic() == true) {
 					targetLists = "";
@@ -177,7 +177,7 @@ public class Index {
 
 	private void refreshList(List<MailingListVo> list) throws BusinessException {
 		for (MailingListVo l : list) {
-			l = mailingListFacade.findByUuid(l.getUuid());
+			l = mailingListFacade.findByUuid(loginUser, l.getUuid());
 		}
 	}
 

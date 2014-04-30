@@ -42,7 +42,7 @@ import org.linagora.linshare.webservice.dto.MailingListDto;
 
 public interface MailingListFacade extends AdminGenericFacade {
 
-	List<MailingListDto> getAll();
+	List<MailingListDto> getAll() throws BusinessException;
 
 	MailingListDto get(String uuid) throws BusinessException;
 

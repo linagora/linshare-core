@@ -181,7 +181,7 @@ public class Index {
 
 	private void refreshList(List<MailingListVo> list) throws BusinessException {
 		for (MailingListVo l : list) {
-			l = mailingListFacade.findByUuid(l.getUuid());
+			l = mailingListFacade.findByUuid(userVo, l.getUuid());
 		}
 	}
 
