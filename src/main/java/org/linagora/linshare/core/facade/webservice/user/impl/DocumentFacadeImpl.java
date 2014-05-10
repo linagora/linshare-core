@@ -152,12 +152,13 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 	}
 
 	@Override
-	public void deleteFile(String uuid) throws BusinessException {
+	public DocumentDto deleteFile(String uuid) throws BusinessException {
 		try {
 			User actor = getAuthentication();
 			DocumentEntry doc = documentEntryService.findById(actor, uuid);
 		
 			documentEntryService.deleteDocumentEntry(actor, doc);
+			return new DocumentDto(doc);
 		} catch (BusinessException e) {
 			throw e;
 		}
