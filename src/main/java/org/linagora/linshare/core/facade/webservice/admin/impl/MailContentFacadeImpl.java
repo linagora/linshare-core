@@ -33,6 +33,11 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailContent;
@@ -44,6 +49,8 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
 import org.linagora.linshare.webservice.dto.MailContentDto;
+
+import com.google.common.collect.Lists;
 
 public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		MailContentFacade {
@@ -87,6 +94,22 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 	public void delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		mailConfigService.deleteContent(actor, uuid);
+	}
+
+	@Override
+	public List<MailContentDto> getMailContents(String domainIdentifier)
+			throws BusinessException {
+		User user = checkAuthentication();
+		Validate.notEmpty(domainIdentifier, "domain identifier must be set.");
+
+		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+		// TODO : check if the current user has the right to get MailContent of this domain
+
+		ArrayList<MailContentDto> mailContentsDto = Lists.newArrayList();
+		for (MailContent mailContent : domain.getMailContents()) {
+			mailContentsDto.add(new MailContentDto(mailContent));
+		}
+		return mailContentsDto;
 	}
 
 	/*

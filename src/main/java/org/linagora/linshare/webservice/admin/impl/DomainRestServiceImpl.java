@@ -50,20 +50,40 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
 import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
+import org.linagora.linshare.core.facade.webservice.admin.MailContentFacade;
+import org.linagora.linshare.core.facade.webservice.admin.MailFooterFacade;
+import org.linagora.linshare.core.facade.webservice.admin.MailLayoutFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.DomainRestService;
 import org.linagora.linshare.webservice.dto.DomainDto;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
+import org.linagora.linshare.webservice.dto.MailContentDto;
+import org.linagora.linshare.webservice.dto.MailFooterDto;
+import org.linagora.linshare.webservice.dto.MailLayoutDto;
 
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class DomainRestServiceImpl extends WebserviceBase implements DomainRestService {
 
 	private final DomainFacade domainFacade;
+
 	private final FunctionalityFacade functionalityFacade;
 
-	public DomainRestServiceImpl(final DomainFacade webServiceDomainFacade, final FunctionalityFacade webServiceFunctionalityFacade) {
+	private final MailContentFacade mailContentFacade;
+
+	private final MailFooterFacade mailFooterFacade;
+
+	private final MailLayoutFacade mailLayoutFacade;
+
+	public DomainRestServiceImpl(final DomainFacade webServiceDomainFacade,
+			final FunctionalityFacade webServiceFunctionalityFacade,
+			final MailContentFacade mailContentFacade,
+			final MailLayoutFacade mailLayoutFacade,
+			final MailFooterFacade mailFooterFacade) {
 		this.domainFacade = webServiceDomainFacade;
 		this.functionalityFacade = webServiceFunctionalityFacade;
+		this.mailContentFacade = mailContentFacade;
+		this.mailLayoutFacade = mailLayoutFacade;
+		this.mailFooterFacade = mailFooterFacade;
 	}
 
 	@Path("/")
@@ -139,5 +159,32 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 	@Override
 	public void deleteDomainFunctionality(@PathParam(value = "domain") String domain, FunctionalityDto func) throws BusinessException {
 		functionalityFacade.delete(domain, func);
+	}
+
+	@Path("/{domain}/mailcontents/")
+	@GET
+	@Override
+	public List<MailContentDto> getMailContents(
+			@PathParam(value = "domain") String domain)
+			throws BusinessException {
+		return mailContentFacade.getMailContents(domain);
+	}
+
+	@Path("/{domain}/mailfooters/")
+	@GET
+	@Override
+	public List<MailFooterDto> getMailFooters(
+			@PathParam(value = "domain") String domain)
+			throws BusinessException {
+		return mailFooterFacade.getMailFooters(domain);
+	}
+
+	@Path("/{domain}/maillayouts/")
+	@GET
+	@Override
+	public List<MailLayoutDto> getMailLayouts(
+			@PathParam(value = "domain") String domain)
+			throws BusinessException {
+		return mailLayoutFacade.getMailLayouts(domain);
 	}
 }

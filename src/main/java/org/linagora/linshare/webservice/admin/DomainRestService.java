@@ -40,6 +40,9 @@ import javax.ws.rs.Path;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DomainDto;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
+import org.linagora.linshare.webservice.dto.MailContentDto;
+import org.linagora.linshare.webservice.dto.MailFooterDto;
+import org.linagora.linshare.webservice.dto.MailLayoutDto;
 
 @Path("/domains")
 public interface DomainRestService {
@@ -68,4 +71,15 @@ public interface DomainRestService {
 
 	void deleteDomainFunctionality(String domain, FunctionalityDto func)
 			throws BusinessException;
+
+
+	/**
+	 * MailContent
+	 */
+
+	List<MailContentDto> getMailContents(String domain) throws BusinessException;
+
+	List<MailFooterDto> getMailFooters(String domain) throws BusinessException;
+
+	List<MailLayoutDto> getMailLayouts(String domain) throws BusinessException;
 }

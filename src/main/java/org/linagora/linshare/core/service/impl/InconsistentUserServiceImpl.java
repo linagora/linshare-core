@@ -35,7 +35,6 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;

@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.MailContentDto;
 
@@ -46,4 +48,5 @@ public interface MailContentFacade {
 
 	void delete(String uuid) throws BusinessException;
 
+	List<MailContentDto> getMailContents(String domainIdentifier) throws BusinessException;
 }

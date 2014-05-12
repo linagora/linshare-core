@@ -31,6 +31,9 @@
 	<bean id="adminDomainRestService" class="org.linagora.linshare.webservice.admin.impl.DomainRestServiceImpl">
 		<constructor-arg ref="wsAdminDomainFacade" />
 		<constructor-arg ref="wsAdminFunctionalityFacade" />
+		<constructor-arg ref="wsAdminMailContentFacade" />
+		<constructor-arg ref="wsAdminMailLayoutFacade" />
+		<constructor-arg ref="wsAdminMailFooterFacade" />
 	</bean>
 
 	<bean id="adminLdapConnectionRestService" class="org.linagora.linshare.webservice.admin.impl.LDAPConnectionRestServiceImpl">
