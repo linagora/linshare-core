@@ -29,16 +29,6 @@
 			</t:if>
 		</div>
 
-		<t:if test="superadmin" negate="true">
-
-			</t:if>
-		<t:if test="ShowMimeTypeView">
-			<div id="edit-administration-mime">
-				<t:MimeTypeConfigurator	/>
-			</div>
-		</t:if>
-
-
 	</div><!-- id="content" -->
 
 	<!-- Actions widget -->

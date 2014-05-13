@@ -615,25 +615,6 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         }
     }
 
-	@Override
-	public boolean isMimeTypeFilterEnableFor(String domainIdentifier,
-			UserVo actorVo) {
-		if (domainIdentifier != null && actorVo != null) {
-			if (actorVo.isSuperAdmin()) {
-				AbstractDomain domain = abstractDomainService
-						.retrieveDomain(domainIdentifier);
-				if (domain != null) {
-					Functionality mimeTypeFunctionality = functionalityReadOnlyService
-							.getMimeTypeFunctionality(domain);
-					if (mimeTypeFunctionality.getActivationPolicy().getStatus()) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-
     @Override
     public List<String> getAllDomainIdentifiers(UserVo actorVo) throws BusinessException {
         return abstractDomainService.getAllMyDomainIdentifiers(actorVo.getDomainIdentifier());

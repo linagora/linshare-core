@@ -79,10 +79,6 @@
 		<constructor-arg ref="anonymousUrlService" />
 	</bean>
 
-	<bean name="mimeTypeFacade" class="org.linagora.linshare.core.facade.impl.MimeTypeFacadeImpl">
-		<constructor-arg ref="mimeTypeService" />
-	</bean>
-
 	<bean name="logEntryFacade" class="org.linagora.linshare.core.facade.impl.LogEntryFacadeImpl">
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="logEntryTransformer" />

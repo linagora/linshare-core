@@ -118,11 +118,4 @@ public interface AbstractDomainFacade {
      */
     public boolean checkPlatformEncryptSupportedAlgo() ;
 
-    /**
-     * This method return true if the current domain support type Mime type filter.
-     * @param domainIdentifier
-     * @return
-     */
-    public boolean isMimeTypeFilterEnableFor(String domainIdentifier, UserVo actorVo);
-
 }
