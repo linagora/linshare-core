@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2014 LINAGORA
+ * Copyright (C) 2013 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,31 +31,60 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.dao;
+package org.linagora.linshare.core.business.service.impl;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.entities.AllowedMimeType;
+import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
+import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
+import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.MimePolicyRepository;
+import org.linagora.linshare.core.repository.MimeTypeRepository;
 
+public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService {
 
-public interface MimeTypeMagicNumberDao {
-	/**
-	 * get all supported mimetype by the provider implementation
-	 * the provider may put the configuration of the magic numbers in a file
-	 * @return a list of all AllowedMimeType
-	 */
-	@Deprecated
-	public List<AllowedMimeType> getAllSupportedMimeType();
+	private MimePolicyRepository mimePolicyRepository;
 	
-	public String getMimeType(InputStream theFileInputStream) throws BusinessException;
+	private MimeTypeRepository mimeTypeRepository;
 	
-	public String getMimeType(File file) throws BusinessException;
+	private MimeTypeMagicNumberDao mimeTypeMagicNumberDao;
 
-	public Set<MimeType> getAllMimeType();
+	public MimePolicyBusinessServiceImpl(MimePolicyRepository mimePolicyRepository,
+			MimeTypeRepository mimeTypeRepository,
+			MimeTypeMagicNumberDao mimeTypeMagicNumberDao) {
+		this.mimePolicyRepository = mimePolicyRepository;
+		this.mimeTypeRepository = mimeTypeRepository;
+		this.mimeTypeMagicNumberDao = mimeTypeMagicNumberDao;
+	}
+
+	@Override
+	public MimePolicy findByUuid(String uuid) {
+		return mimePolicyRepository.findByUuid(uuid);
+	}
+
+	@Override
+	public void create(MimePolicy mimePolicy) throws BusinessException {
+		Set<MimeType> mimeTypes = mimeTypeMagicNumberDao.getAllMimeType();
+		for (MimeType mimeType : mimeTypes) {
+			mimeTypeRepository.create(mimeType);
+		}
+		mimePolicy.setMimeTypes(mimeTypes);
+		mimePolicyRepository.create(mimePolicy);
+	}
+
+	@Override
+	public void update(MimePolicy mimePolicy) throws BusinessException {
+		MimePolicy entity = mimePolicyRepository.findByUuid(mimePolicy.getUuid());
+		entity.setDisplayable(mimePolicy.getDisplayable());
+		entity.setMode(mimePolicy.getMode());
+		entity.setName(mimePolicy.getName());
+		mimePolicyRepository.update(entity);
+	}
+
+	@Override
+	public void delete(MimePolicy mimePolicy) throws BusinessException {
+		mimePolicyRepository.delete(mimePolicy);		
+	}
 }
-

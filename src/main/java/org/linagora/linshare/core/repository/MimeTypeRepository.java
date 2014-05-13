@@ -31,31 +31,15 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.dao;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Set;
+package org.linagora.linshare.core.repository;
 
-import org.linagora.linshare.core.domain.entities.AllowedMimeType;
 import org.linagora.linshare.core.domain.entities.MimeType;
-import org.linagora.linshare.core.exception.BusinessException;
 
+public interface MimeTypeRepository extends AbstractRepository<MimeType> {
 
-public interface MimeTypeMagicNumberDao {
-	/**
-	 * get all supported mimetype by the provider implementation
-	 * the provider may put the configuration of the magic numbers in a file
-	 * @return a list of all AllowedMimeType
-	 */
-	@Deprecated
-	public List<AllowedMimeType> getAllSupportedMimeType();
-	
-	public String getMimeType(InputStream theFileInputStream) throws BusinessException;
-	
-	public String getMimeType(File file) throws BusinessException;
+	MimeType findByUuid(String uuid);
 
-	public Set<MimeType> getAllMimeType();
+	public MimeType findByMimeType(String mimeType);
+
 }
-

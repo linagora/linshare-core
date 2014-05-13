@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2014 LINAGORA
+ * Copyright (C) 2013 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,31 +31,42 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.dao;
+package org.linagora.linshare.core.business.service.impl;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Set;
-
-import org.linagora.linshare.core.domain.entities.AllowedMimeType;
+import org.linagora.linshare.core.business.service.MimeTypeBusinessService;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.MimeTypeRepository;
 
+public class MimeTypeBusinessServiceImpl implements MimeTypeBusinessService {
 
-public interface MimeTypeMagicNumberDao {
-	/**
-	 * get all supported mimetype by the provider implementation
-	 * the provider may put the configuration of the magic numbers in a file
-	 * @return a list of all AllowedMimeType
-	 */
-	@Deprecated
-	public List<AllowedMimeType> getAllSupportedMimeType();
+	private MimeTypeRepository mimeTypeRepository;
 	
-	public String getMimeType(InputStream theFileInputStream) throws BusinessException;
-	
-	public String getMimeType(File file) throws BusinessException;
+	public MimeTypeBusinessServiceImpl(MimeTypeRepository mimeTypeRepository) {
+		this.mimeTypeRepository = mimeTypeRepository;
+	}
 
-	public Set<MimeType> getAllMimeType();
+	@Override
+	public MimeType findByUuid(String uuid) {
+		return mimeTypeRepository.findByUuid(uuid);
+	}
+
+	@Override
+	public void create(MimeType mimeType) throws BusinessException {
+		mimeTypeRepository.create(mimeType);
+	}
+
+	@Override
+	public void update(MimeType mimeType) throws BusinessException {
+		MimeType entity = mimeTypeRepository.findByUuid(mimeType.getUuid());
+		entity.setDisplayable(mimeType.getDisplayable());
+		entity.setEnable(mimeType.getEnable());
+		entity.setExtensions(mimeType.getExtensions());
+		mimeTypeRepository.update(entity);
+	}
+
+	@Override
+	public void delete(MimeType mimeType) throws BusinessException {
+		mimeTypeRepository.delete(mimeType);		
+	}
 }
-

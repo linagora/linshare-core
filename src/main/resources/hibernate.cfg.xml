@@ -51,7 +51,10 @@
     <mapping resource="org/linagora/linshare/core/domain/entities/MailContentLang.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/MailContent.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/MailConfig.hbm.xml"/>
-    
+
+    <mapping resource="org/linagora/linshare/core/domain/entities/MimeType.hbm.xml"/>
+    <mapping resource="org/linagora/linshare/core/domain/entities/MimePolicy.hbm.xml"/>
+
   </session-factory>
 </hibernate-configuration>
 

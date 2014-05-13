@@ -95,4 +95,14 @@
 		<constructor-arg ref="mailLayoutRepository" />
 		<constructor-arg ref="mailConfigRepository" />
 	</bean>
+
+	<bean id="mimeTypeBusinessService" class="org.linagora.linshare.core.business.service.impl.MimeTypeBusinessServiceImpl">
+		<constructor-arg ref="mimeTypeRepository" />
+	</bean>
+
+	<bean id="mimePolicyBusinessService" class="org.linagora.linshare.core.business.service.impl.MimePolicyBusinessServiceImpl">
+		<constructor-arg ref="mimePolicyRepository" />
+		<constructor-arg ref="mimeTypeRepository" />
+		<constructor-arg ref="mimeTypeMagicNumberDao" />
+	</bean>
 </beans>

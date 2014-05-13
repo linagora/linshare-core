@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2014 LINAGORA
+ * Copyright (C) 2013 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,31 +31,57 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.dao;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Set;
+package org.linagora.linshare.core.repository.hibernate;
 
-import org.linagora.linshare.core.domain.entities.AllowedMimeType;
+import java.util.Date;
+import java.util.UUID;
+
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.MimeTypeRepository;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 
+public class MimeTypeRepositoryImpl extends
+		AbstractRepositoryImpl<MimeType> implements
+		MimeTypeRepository {
 
-public interface MimeTypeMagicNumberDao {
-	/**
-	 * get all supported mimetype by the provider implementation
-	 * the provider may put the configuration of the magic numbers in a file
-	 * @return a list of all AllowedMimeType
-	 */
-	@Deprecated
-	public List<AllowedMimeType> getAllSupportedMimeType();
-	
-	public String getMimeType(InputStream theFileInputStream) throws BusinessException;
-	
-	public String getMimeType(File file) throws BusinessException;
+	public MimeTypeRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
+	}
 
-	public Set<MimeType> getAllMimeType();
+	@Override
+	public MimeType findByUuid(String uuid) {
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"uuid", uuid)));
+	}
+
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(MimeType entity) {
+		return DetachedCriteria.forClass(getPersistentClass()).add(
+				Restrictions.eq("id", entity.getId()));
+	}
+
+	@Override
+	public MimeType findByMimeType(String mimeType) {
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"mimeType", mimeType)));
+	}
+
+	@Override
+	public MimeType create(MimeType entity) throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setUuid(UUID.randomUUID().toString());
+		return super.create(entity);
+	}
+
+	@Override
+	public MimeType update(MimeType entity) throws BusinessException {
+		entity.setModificationDate(new Date());
+		return super.update(entity);
+	}
 }
-

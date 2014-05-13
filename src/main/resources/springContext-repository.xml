@@ -150,4 +150,12 @@
 	<bean name="mailLayoutRepository" class="org.linagora.linshare.core.repository.hibernate.MailLayoutRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
+	<bean name="mimePolicyRepository" class="org.linagora.linshare.core.repository.hibernate.MimePolicyRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="mimeTypeRepository" class="org.linagora.linshare.core.repository.hibernate.MimeTypeRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>

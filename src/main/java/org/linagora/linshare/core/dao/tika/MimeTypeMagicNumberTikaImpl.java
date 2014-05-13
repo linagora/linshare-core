@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 
 import org.apache.tika.metadata.Metadata;
@@ -53,11 +54,14 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.MimeTypeStatus;
 import org.linagora.linshare.core.domain.entities.AllowedMimeType;
+import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
+
+import com.google.common.collect.Sets;
 
 /**
  * This class is designed to detect mime type an extension from a file.
@@ -154,6 +158,24 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 		}
 		logger.debug("Mime type found : " + mimeType);
 		return mimeType;
+	}
+
+	@Override
+	public Set<MimeType> getAllMimeType() {
+		Set<MimeType> mimeTypes = Sets.newHashSet();
+		MimeTypes defaultMimeTypes = MimeTypes.getDefaultMimeTypes();
+		SortedSet<MediaType> types = defaultMimeTypes.getMediaTypeRegistry().getTypes();
+		for (MediaType mediaType : types) {
+			String strMimeType = mediaType.toString();
+			try {
+				String extension = defaultMimeTypes.forName(strMimeType).getExtension();
+				mimeTypes.add(new MimeType(strMimeType, extension, true, false));
+			} catch (MimeTypeException e) {
+				logger.error("Can not find extension(s) for mime type : " + strMimeType);
+				logger.debug(e.getMessage());
+			}
+		}
+		return mimeTypes;
 	}
 
 }
