@@ -42,4 +42,6 @@ public interface AuthenticationRestService {
 	UserDto isAuthorized() throws BusinessException;
 
 	void changePassword(PasswordDto password) throws BusinessException;
+	
+	void logout();
 }

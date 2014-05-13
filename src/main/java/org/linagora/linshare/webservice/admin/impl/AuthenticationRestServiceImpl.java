@@ -84,4 +84,12 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	public void changePassword(PasswordDto password) throws BusinessException {
 		userFacade.changePassword(password);
 	}
+
+	@Path("/logout")
+	@GET
+	@Override
+	public void logout() {
+		// This code is never reach because the URL will be catch by spring security before.
+		// This function was created just to show the logout URL into WADL.
+	}
 }
