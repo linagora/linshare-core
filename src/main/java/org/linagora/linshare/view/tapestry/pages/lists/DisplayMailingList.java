@@ -133,7 +133,7 @@ public class DisplayMailingList {
 	private boolean fromReset;
 
 	@InjectPage
-	private org.linagora.linshare.view.tapestry.pages.administration.lists.Index indexAdmin;
+	private org.linagora.linshare.view.tapestry.pages.administration.Index indexAdmin;
 
 	@InjectPage
 	private org.linagora.linshare.view.tapestry.pages.lists.Index index;

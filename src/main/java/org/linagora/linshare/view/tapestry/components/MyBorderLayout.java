@@ -274,14 +274,12 @@ public class MyBorderLayout {
 		MenuEntry homeMenu;
 		MenuEntry fileMenu;
 		MenuEntry userMenu;
-		MenuEntry threadAdminMenu;
 		MenuEntry threadMenu;
 		MenuEntry adminMenu;
 		MenuEntry domainMenu;
 		MenuEntry auditMenu;
 		MenuEntry helpMenu;
 		MenuEntry listMenu;
-		MenuEntry listAdminMenu;
 		
 		
 		// Menu : Home / File 
@@ -292,8 +290,6 @@ public class MyBorderLayout {
 		userMenu = new MenuEntry(response.encodeURL("user/index"),messages.get("components.myborderlayout.user.title"),null,null,"user");
 	
 		// Menu : Thread
-
-		threadAdminMenu = new MenuEntry(response.encodeURL("administration/thread/index"),messages.get("components.myborderlayout.thread.title"),null,null,"thread");
 		threadMenu = new MenuEntry(response.encodeURL("thread/index"),messages.get("components.myborderlayout.thread.title"),null,null,"thread");
 		
 		// Menu : Administration
@@ -309,9 +305,6 @@ public class MyBorderLayout {
 			auditMenu = new MenuEntry(response.encodeURL("history/index"),messages.get("components.myborderlayout.history.title"),null,null,"history");
 		}
 		
-		// Menu : ListsAdmin
-		listAdminMenu = new MenuEntry(response.encodeURL("administration/lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
-				
 		// Menu : Lists	
 		listMenu = new MenuEntry(response.encodeURL("lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
 				
@@ -337,17 +330,13 @@ public class MyBorderLayout {
 		if(userVoExists && !userExt) {
 			// users : Accueil / Fichiers / List / Threads / Users / History / help
 			// admin : Accueil / Fichiers / List / Threads / Users/ Admin /History / help
-			// root : Admin / Domain / Users / Threads / List / History / help
+			// root : Admin / Domain / Users / History / help
 			
 			if (superadmin) {
 				menu.addMenuEntry(adminMenu);
 				menu.addMenuEntry(domainMenu);
-				menu.addMenuEntry(userMenu);
-				if (showListTab())
-					menu.addMenuEntry(listAdminMenu);
-				if (showThreadTab())
-					menu.addMenuEntry(threadAdminMenu);
-				
+				if (showAuditTab())
+					menu.addMenuEntry(auditMenu);
 			} else {
 				menu.addMenuEntry(homeMenu);
 				menu.addMenuEntry(fileMenu);
@@ -359,11 +348,11 @@ public class MyBorderLayout {
 					menu.addMenuEntry(threadMenu);
 				if (admin)
 					menu.addMenuEntry(adminMenu);
+				if (showAuditTab())
+					menu.addMenuEntry(auditMenu);
+				if (showHelpTab())
+					menu.addMenuEntry(helpMenu);
 			}
-			if (showAuditTab())
-				menu.addMenuEntry(auditMenu);
-			if (showHelpTab())
-				menu.addMenuEntry(helpMenu);
 		} else {
 			menu.addMenuEntry(homeMenu);
 			if (showHelpTab())
