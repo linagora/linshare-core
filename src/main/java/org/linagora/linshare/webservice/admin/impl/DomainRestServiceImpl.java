@@ -161,7 +161,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 		functionalityFacade.delete(domain, func);
 	}
 
-	@Path("/{domain}/mailcontents/")
+	@Path("/{domain}/mail_contents/")
 	@GET
 	@Override
 	public List<MailContentDto> getMailContents(
@@ -170,7 +170,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 		return mailContentFacade.getMailContents(domain);
 	}
 
-	@Path("/{domain}/mailfooters/")
+	@Path("/{domain}/mail_footers/")
 	@GET
 	@Override
 	public List<MailFooterDto> getMailFooters(
@@ -179,7 +179,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 		return mailFooterFacade.getMailFooters(domain);
 	}
 
-	@Path("/{domain}/maillayouts/")
+	@Path("/{domain}/mail_layouts/")
 	@GET
 	@Override
 	public List<MailLayoutDto> getMailLayouts(
