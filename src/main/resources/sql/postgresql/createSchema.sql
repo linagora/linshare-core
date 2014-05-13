@@ -19,8 +19,6 @@ CREATE TABLE account (
   account_type                    int4 NOT NULL, 
   password                        varchar(255), 
   destroyed                       bool NOT NULL, 
-  thread_view_id                  int8, 
-  account_id                      int8, 
   CONSTRAINT account_pkey 
     PRIMARY KEY (id));
 CREATE TABLE allowed_mimetype (
@@ -133,7 +131,7 @@ CREATE TABLE functionality (
   policy_configuration_id int8 NOT NULL, 
   policy_delegation_id    int8, 
   domain_id               int8 NOT NULL, 
-  param                   bool DEFAULT 'false' NOT NULL,
+  param                   bool DEFAULT 'false' NOT NULL, 
   parent_identifier       varchar(255), 
   CONSTRAINT linshare_functionality_pkey 
     PRIMARY KEY (id));
@@ -270,33 +268,6 @@ CREATE TABLE ldap_attribute (
   enable            bool NOT NULL, 
   completion        bool NOT NULL,
   PRIMARY KEY (id));
-CREATE TABLE tag (
-  id          int8 NOT NULL, 
-  account_id int8 NOT NULL, 
-  name       varchar(255) NOT NULL, 
-  system     bool DEFAULT 'false' NOT NULL, 
-  visible    bool DEFAULT 'true' NOT NULL, 
-  not_null   bool, 
-  tag_type   int4 NOT NULL, 
-  PRIMARY KEY (id));
-CREATE TABLE tag_enum_value (
-  id      int8 NOT NULL, 
-  tag_id int8, 
-  value  varchar(255) NOT NULL, 
-  PRIMARY KEY (id));
-CREATE TABLE tag_filter (
-  id          int8 NOT NULL, 
-  account_id int8, 
-  name       varchar(255) NOT NULL, 
-  PRIMARY KEY (id), 
-  CONSTRAINT unique_rulename_by_account 
-    UNIQUE (name, account_id));
-CREATE TABLE tag_filter_rule (
-  id             int8 NOT NULL, 
-  tag_filter_id int8, 
-  regexp        text, 
-  tag_rule_type int4 NOT NULL, 
-  PRIMARY KEY (id));
 CREATE TABLE thread (
   account_id     int8 NOT NULL, 
   name           varchar(255) NOT NULL, 
@@ -348,24 +319,10 @@ CREATE TABLE user_provider_ldap (
   CONSTRAINT linshare_user_provider_ldap_pkey 
     PRIMARY KEY (id));
 CREATE TABLE version (
-  id           int8 NOT NULL, 
-  description text NOT NULL UNIQUE, 
+  id       int8 NOT NULL, 
+  version text NOT NULL UNIQUE, 
   CONSTRAINT linshare_version_pkey 
     PRIMARY KEY (id));
-CREATE TABLE views (
-  id               int8 NOT NULL, 
-  account_id      int8 NOT NULL, 
-  view_context_id int8 NOT NULL, 
-  name            varchar(255) NOT NULL, 
-  _public         bool NOT NULL, 
-  PRIMARY KEY (id), 
-  CONSTRAINT unique_viewname_by_account_and_context 
-    UNIQUE (view_context_id, name, account_id));
-CREATE TABLE view_context (
-  id           int8 NOT NULL, 
-  name        varchar(255) NOT NULL, 
-  description text NOT NULL, 
-  PRIMARY KEY (id));
 CREATE TABLE welcome_texts (
   messages_configuration_id int8 NOT NULL, 
   welcome_text              text, 
@@ -385,22 +342,6 @@ CREATE TABLE technical_account_permission (
   write           bool NOT NULL, 
   all_permissions bool NOT NULL, 
   PRIMARY KEY (id));
-CREATE TABLE entry_tag_association (
-  id             int8 NOT NULL, 
-  entry_id      int8 NOT NULL, 
-  tag_id        int8 NOT NULL, 
-  enum_value_id int8, 
-  PRIMARY KEY (id), 
-  CONSTRAINT "unique relation" 
-    UNIQUE (entry_id, tag_id));
-CREATE TABLE tag_filter_rule_tag_association (
-  id                  int8 NOT NULL, 
-  tag_filter_rule_id int8, 
-  tag_id             int8 NOT NULL, 
-  enum_value_id      int8, 
-  PRIMARY KEY (id), 
-  CONSTRAINT "tag filter rules unique constraint" 
-    UNIQUE (tag_id, tag_filter_rule_id));
 CREATE TABLE contact (
   id    int8 NOT NULL, 
   mail varchar(255) NOT NULL UNIQUE, 
@@ -410,30 +351,6 @@ CREATE TABLE technical_account_permission_account (
   account_id                      int8 NOT NULL, 
   PRIMARY KEY (technical_account_permission_id, 
   account_id));
-CREATE TABLE default_view (
-  id               int8 NOT NULL, 
-  identifier      varchar(255) NOT NULL UNIQUE, 
-  view_id         int8 NOT NULL, 
-  view_context_id int8 NOT NULL, 
-  PRIMARY KEY (id));
-CREATE TABLE view_tag_asso (
-  id        int8 NOT NULL, 
-  tag_id   int8 NOT NULL, 
-  views_id int8 NOT NULL, 
-  depth    int4 NOT NULL, 
-  PRIMARY KEY (id));
-CREATE TABLE thread_view (
-  id                 int8 NOT NULL, 
-  thread_account_id int8 NOT NULL, 
-  name              varchar(255) NOT NULL, 
-  account_id        int8, 
-  PRIMARY KEY (id));
-CREATE TABLE thread_view_asso (
-  id              int8 NOT NULL, 
-  tag_id         int8 NOT NULL, 
-  thread_view_id int8 NOT NULL, 
-  depth          int4 NOT NULL, 
-  PRIMARY KEY (id));
 CREATE TABLE functionality_boolean (
   id                SERIAL NOT NULL, 
   functionality_id int8 NOT NULL, 
@@ -490,12 +407,7 @@ ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr708932 FOREIGN KEY (document_
 ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_138106 FOREIGN KEY (document_entry_id) REFERENCES document_entry (entry_id);
 ALTER TABLE recipient_favourite ADD CONSTRAINT FKrecipient_90791 FOREIGN KEY (user_id) REFERENCES users (account_id);
 ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_732508 FOREIGN KEY (anonymous_url_id) REFERENCES anonymous_url (id);
-ALTER TABLE tag ADD CONSTRAINT FKtag535917 FOREIGN KEY (account_id) REFERENCES account (id);
-ALTER TABLE tag_enum_value ADD CONSTRAINT FKtag_enum_v488575 FOREIGN KEY (tag_id) REFERENCES tag (id);
 ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr87036 FOREIGN KEY (recipient_id) REFERENCES account (id);
-ALTER TABLE views ADD CONSTRAINT FKviews640843 FOREIGN KEY (view_context_id) REFERENCES view_context (id);
-ALTER TABLE views ADD CONSTRAINT FKviews445993 FOREIGN KEY (account_id) REFERENCES account (id);
-ALTER TABLE tag_filter_rule ADD CONSTRAINT FKtag_filter70274 FOREIGN KEY (tag_filter_id) REFERENCES tag_filter (id);
 ALTER TABLE account ADD CONSTRAINT FKaccount400616 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
 ALTER TABLE ldap_attribute ADD CONSTRAINT FKldap_attri687153 FOREIGN KEY (domain_pattern_id) REFERENCES domain_pattern (domain_pattern_id);
 ALTER TABLE allowed_contact ADD CONSTRAINT FKallowed_co409962 FOREIGN KEY (account_id) REFERENCES users (account_id);
@@ -511,27 +423,12 @@ ALTER TABLE document_entry ADD CONSTRAINT FKdocument_e19140 FOREIGN KEY (entry_i
 ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr50652 FOREIGN KEY (entry_id) REFERENCES entry (id);
 ALTER TABLE thread_entry ADD CONSTRAINT FKthread_ent715634 FOREIGN KEY (entry_id) REFERENCES entry (id);
 ALTER TABLE entry ADD CONSTRAINT FKentry500391 FOREIGN KEY (owner_id) REFERENCES account (id);
-ALTER TABLE entry_tag_association ADD CONSTRAINT FKentry_tag_900675 FOREIGN KEY (entry_id) REFERENCES entry (id);
-ALTER TABLE entry_tag_association ADD CONSTRAINT FKentry_tag_30632 FOREIGN KEY (tag_id) REFERENCES tag (id);
-ALTER TABLE tag_filter ADD CONSTRAINT FKtag_filter987269 FOREIGN KEY (account_id) REFERENCES account (id);
-ALTER TABLE tag_filter_rule_tag_association ADD CONSTRAINT FKtag_filter901563 FOREIGN KEY (tag_id) REFERENCES tag (id);
-ALTER TABLE tag_filter_rule_tag_association ADD CONSTRAINT FKtag_filter565646 FOREIGN KEY (enum_value_id) REFERENCES tag_enum_value (id);
-ALTER TABLE entry_tag_association ADD CONSTRAINT FKentry_tag_305285 FOREIGN KEY (enum_value_id) REFERENCES tag_enum_value (id);
-ALTER TABLE tag_filter_rule_tag_association ADD CONSTRAINT FKtag_filter766081 FOREIGN KEY (tag_filter_rule_id) REFERENCES tag_filter_rule (id);
 ALTER TABLE anonymous_url ADD CONSTRAINT FKanonymous_877695 FOREIGN KEY (contact_id) REFERENCES contact (id);
 ALTER TABLE signature ADD CONSTRAINT FKsignature417918 FOREIGN KEY (owner_id) REFERENCES account (id);
 ALTER TABLE technical_account_permission_account ADD CONSTRAINT FKtechnical_69967 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
 ALTER TABLE technical_account_permission_account ADD CONSTRAINT FKtechnical_622557 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE account ADD CONSTRAINT FKaccount693567 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
-ALTER TABLE default_view ADD CONSTRAINT FKdefault_vi37393 FOREIGN KEY (view_context_id) REFERENCES view_context (id);
-ALTER TABLE default_view ADD CONSTRAINT FKdefault_vi755506 FOREIGN KEY (view_id) REFERENCES views (id);
 ALTER TABLE thread_entry ADD CONSTRAINT FKthread_ent140657 FOREIGN KEY (document_id) REFERENCES document (id);
-ALTER TABLE view_tag_asso ADD CONSTRAINT FKview_tag_a660721 FOREIGN KEY (views_id) REFERENCES views (id);
-ALTER TABLE view_tag_asso ADD CONSTRAINT FKview_tag_a218567 FOREIGN KEY (tag_id) REFERENCES tag (id);
-ALTER TABLE thread_view ADD CONSTRAINT FKthread_vie68184 FOREIGN KEY (thread_account_id) REFERENCES thread (account_id);
-ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie285846 FOREIGN KEY (thread_view_id) REFERENCES thread_view (id);
-ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie896171 FOREIGN KEY (tag_id) REFERENCES tag (id);
-ALTER TABLE thread_view ADD CONSTRAINT FKthread_vie557698 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
