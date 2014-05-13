@@ -62,6 +62,8 @@ CREATE TABLE document_entry (
     UNIQUE (entry_id, document_id));
 CREATE TABLE domain_abstract (
   id                         int8 NOT NULL, 
+  mime_policy_id            int8, 
+  mailconfig_id             int8, 
   type                      int4 NOT NULL, 
   identifier                varchar(255) NOT NULL, 
   label                     varchar(255) NOT NULL, 
@@ -266,12 +268,11 @@ CREATE TABLE ldap_attribute (
   sync              bool NOT NULL, 
   system            bool NOT NULL, 
   enable            bool NOT NULL, 
-  completion        bool NOT NULL,
+  completion        bool NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE thread (
-  account_id     int8 NOT NULL, 
-  name           varchar(255) NOT NULL, 
-  thread_view_id int8, 
+  account_id int8 NOT NULL, 
+  name       varchar(255) NOT NULL, 
   PRIMARY KEY (account_id));
 CREATE TABLE thread_entry (
   entry_id    int8 NOT NULL, 
@@ -351,6 +352,81 @@ CREATE TABLE technical_account_permission_account (
   account_id                      int8 NOT NULL, 
   PRIMARY KEY (technical_account_permission_id, 
   account_id));
+CREATE TABLE mail_notification (
+  id                       int8 NOT NULL, 
+  configuration_policy_id int8 NOT NULL, 
+  domain_abstract_id      int8 NOT NULL, 
+  activation_policy_id    int8 NOT NULL, 
+  identifier              varchar(255) NOT NULL, 
+  system                  bool NOT NULL, 
+  creation_date           date NOT NULL, 
+  modification_date       date NOT NULL, 
+  uuid                    varchar(255) NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE mail_config (
+  id                   int8 NOT NULL, 
+  mail_layout_html_id int8 NOT NULL, 
+  domain_abstract_id  int8 NOT NULL, 
+  name                varchar(255) NOT NULL, 
+  visible             bool NOT NULL, 
+  mail_layout_text_id int8 NOT NULL, 
+  uuid                varchar(255) NOT NULL, 
+  creation_date       date NOT NULL, 
+  modification_date   date NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE mail_layout (
+  id                  int8 NOT NULL, 
+  domain_abstract_id int8 NOT NULL, 
+  name               varchar(255) NOT NULL, 
+  visible            bool NOT NULL, 
+  layout             text NOT NULL, 
+  creation_date      date NOT NULL, 
+  modification_date  date NOT NULL, 
+  uuid               varchar(255) NOT NULL, 
+  plaintext          bool NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE mail_footer (
+  id                  int8 NOT NULL, 
+  domain_abstract_id int8 NOT NULL, 
+  name               varchar(255) NOT NULL, 
+  visible            bool NOT NULL, 
+  language           int4 NOT NULL, 
+  footer             text NOT NULL, 
+  creation_date      date NOT NULL, 
+  modification_date  date NOT NULL, 
+  uuid               varchar(255) NOT NULL, 
+  plaintext          bool NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE mail_footer_lang (
+  id              int8 NOT NULL, 
+  mail_config_id int8 NOT NULL, 
+  mail_footer_id int8 NOT NULL, 
+  language       int4 NOT NULL, 
+  uuid           varchar(255) NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE mail_content (
+  id                  int8 NOT NULL, 
+  domain_abstract_id int8 NOT NULL, 
+  name               varchar(255) NOT NULL, 
+  visible            bool NOT NULL, 
+  mail_content_type  int4 NOT NULL, 
+  language           int4 NOT NULL, 
+  subject            text NOT NULL, 
+  greetings          text NOT NULL, 
+  body               text NOT NULL, 
+  uuid               varchar(255) NOT NULL, 
+  plaintext          bool NOT NULL, 
+  creation_date      date NOT NULL, 
+  modification_date  date NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE mail_content_lang (
+  id                 int8 NOT NULL, 
+  language          int4 NOT NULL, 
+  mail_content_id   int8 NOT NULL, 
+  mail_config_id    int8 NOT NULL, 
+  mail_content_type int4 NOT NULL, 
+  uuid              varchar(255) NOT NULL, 
+  PRIMARY KEY (id));
 CREATE TABLE functionality_boolean (
   id                SERIAL NOT NULL, 
   functionality_id int8 NOT NULL, 
@@ -377,6 +453,27 @@ CREATE TABLE mailing_list_contact (
   creation_date              timestamp(6) NOT NULL, 
   modification_date          timestamp(6) NOT NULL, 
   mailing_list_contact_index int4 NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE mime_policy (
+  id                 int8 NOT NULL, 
+  domain_id         int8 NOT NULL, 
+  uuid              varchar(255) NOT NULL, 
+  name              varchar(255) NOT NULL, 
+  mode              int4 NOT NULL, 
+  displayable       int4 NOT NULL, 
+  creation_date     date NOT NULL, 
+  modification_date date NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE mime_type (
+  id                 int8 NOT NULL, 
+  mime_policy_id    int8 NOT NULL, 
+  uuid              varchar(255) NOT NULL, 
+  mime_type         text NOT NULL, 
+  extensions        text NOT NULL, 
+  enable            bool NOT NULL, 
+  displayable       bool NOT NULL, 
+  creation_date     date NOT NULL, 
+  modification_date date NOT NULL, 
   PRIMARY KEY (id));
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
@@ -429,11 +526,28 @@ ALTER TABLE technical_account_permission_account ADD CONSTRAINT FKtechnical_6996
 ALTER TABLE technical_account_permission_account ADD CONSTRAINT FKtechnical_622557 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE account ADD CONSTRAINT FKaccount693567 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
 ALTER TABLE thread_entry ADD CONSTRAINT FKthread_ent140657 FOREIGN KEY (document_id) REFERENCES document (id);
+ALTER TABLE mail_notification ADD CONSTRAINT FKmail_notif244118 FOREIGN KEY (activation_policy_id) REFERENCES policy (id);
+ALTER TABLE mail_notification ADD CONSTRAINT FKmail_notif777760 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_layout ADD CONSTRAINT FKmail_layou627738 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_footer ADD CONSTRAINT FKmail_foote767112 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_footer_lang ADD CONSTRAINT FKmail_foote801249 FOREIGN KEY (mail_footer_id) REFERENCES mail_footer (id);
+ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs160138 FOREIGN KEY (mailconfig_id) REFERENCES mail_config (id);
+ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi697783 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_footer_lang ADD CONSTRAINT FKmail_foote321102 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
+ALTER TABLE mail_content ADD CONSTRAINT FKmail_conte385227 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte910199 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
+ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte33952 FOREIGN KEY (mail_content_id) REFERENCES mail_content (id);
+ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi541299 FOREIGN KEY (mail_layout_html_id) REFERENCES mail_layout (id);
+ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi612314 FOREIGN KEY (mail_layout_text_id) REFERENCES mail_layout (id);
 ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingLis595962 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
+ALTER TABLE mail_notification ADD CONSTRAINT FKmail_notif791766 FOREIGN KEY (configuration_policy_id) REFERENCES policy (id);
+ALTER TABLE mime_type ADD CONSTRAINT FKmime_type145742 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
+ALTER TABLE mime_policy ADD CONSTRAINT FKmime_polic613419 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
+ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs809928 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
 CREATE UNIQUE INDEX account_lsuid_index 
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid 
