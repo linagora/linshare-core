@@ -101,6 +101,12 @@
 			<ref bean="adminUserRestService" />
 			<ref bean="adminLogRestService" />
 			<ref bean="adminEnumRestService" />
+			<ref bean="adminMailConfigRestService" />
+			<ref bean="adminMailLayoutRestService" />
+			<ref bean="adminMailFooterRestService" />
+			<ref bean="adminMailFooterLangRestService" />
+			<ref bean="adminMailContentRestService" />
+			<ref bean="adminMailContentLangRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
