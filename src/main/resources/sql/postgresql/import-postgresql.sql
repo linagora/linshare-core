@@ -575,7 +575,7 @@ INSERT INTO functionality_string(functionality_id, string_value) VALUES (32, 'fr
 
 
 -- LinShare version
-INSERT INTO version (id, description) VALUES (1, '1.5.0');
+INSERT INTO version (id, version) VALUES (1, '1.5.0');
 
 -- Sequence for hibernate
 SELECT setval('hibernate_sequence', 100);
