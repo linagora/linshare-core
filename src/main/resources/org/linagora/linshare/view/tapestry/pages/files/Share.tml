@@ -106,7 +106,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                     ${message:pages.files.upload.cancelButton}</t:pageLink>
                     ${message:global.space}
                     <input name="submitShare" id="submitShare" type="submit" style="display:none" />
-                    <a id="formShareSubmit" class="btn btn-primary" onclick="trySubmit()">
+                    <a id="formShareSubmit" class="btn btn-primary">
                         <span><img src="${asset:context:images/icons/share-on-small.png}"
                         alt="" /> ${message:global.button.share.cap}</span>
                     </a>

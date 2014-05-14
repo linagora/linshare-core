@@ -67,4 +67,6 @@ public interface DocumentRestService {
 	Response getDocumentStream(String uuid) throws BusinessException;
 
 	Response getThumbnailStream(String uuid) throws BusinessException;
+
+	DocumentDto delete(String uuid) throws BusinessException;
 }

@@ -38,6 +38,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -141,13 +142,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			fileName = givenFileName;
 		}
 
-		try {
-			byte[] bytes = fileName.getBytes("ISO-8859-1");
-			fileName = new String(bytes, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			logger.error("Can not encode file name " + e1.getMessage());
-		}
-
 		return webServiceDocumentFacade.uploadfile(theFile, fileName, comment);
 	}
 
@@ -194,6 +188,15 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		return new SimpleLongValue(Math.min(
 				webServiceDocumentFacade.getUserMaxFileSize(),
 				webServiceDocumentFacade.getAvailableSize()));
+	}
+
+	@DELETE
+	@Path("/{uuid}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public DocumentDto delete(@PathParam("uuid") String uuid) throws BusinessException {
+		webServiceDocumentFacade.checkAuthentication();
+		return webServiceDocumentFacade.deleteFile(uuid);
 	}
 
 }

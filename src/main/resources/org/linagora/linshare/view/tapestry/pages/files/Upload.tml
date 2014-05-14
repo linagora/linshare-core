@@ -35,7 +35,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     </script>
 
     <script type="text/javascript" language="javascript">
-        var uuids = new Array();
+        var uuids = [];
 	
 	var uploader;
 
@@ -79,7 +79,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
         var trySubmit = function() {
             console.log("Trying to submit");
             if (uuids.length + uploader.getInProgress()) {
-                if (jQuery("#is_submit").is(":checked")) {
+                if (jQuery("#is_submit").val() == 1) {
                     startSpinner();
                     if (uploader.getInProgress() == 0) {
                         console.log("Submit sent");
@@ -91,15 +91,17 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
         var requestSubmit = function() {
             console.log("Submit requested");
-            if (uuids.length + uploader.getInProgress()) {
-                jQuery("#is_submit").prop("checked", true);
+            console.log("DEBUG: " + uuids.length);
+            console.log("DEBUG: " + uploader.getInProgress());
+            if (uuids.length + uploader.getInProgress() != 0) {
+                jQuery("#is_submit").val(1);
                 trySubmit();
             }
         }
 
         jQuery(document).ready(function() {
             // init
-            jQuery("#is_submit").prop("checked", false);
+            jQuery("#is_submit").val(0);
             jQuery(".spinner").hide();
 
             var updateCallback = function(value) {
@@ -136,6 +138,8 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                         jQuery("#progress").attr("value", uploader.getInProgress());
                     },
                     onComplete: function(id, name, responseJSON) {
+	console.log(responseJSON);
+	console.log(responseJSON.success);
                         if (responseJSON.success) {
                             console.log(name + "upload sucesssful");
                             uuids.push(uploader.getUuid(id));
@@ -199,7 +203,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
                 <!--upload and share client logic-->
                 <t:textfield t:id='uuids' name="uuids" style="display:none" />
-                <t:checkbox t:id='is_submit' name="is_submit" style="display:none" />
+                <t:textfield t:id='is_submit' name="is_submit" style="display:none" />
                 <t:textfield t:id='progress' name="progress" style="display:none" />
 
                 <div class="control-group">

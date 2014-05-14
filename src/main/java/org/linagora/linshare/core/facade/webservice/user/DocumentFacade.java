@@ -51,5 +51,5 @@ public interface DocumentFacade extends GenericFacade {
 	public DocumentDto uploadfile(InputStream fi, String fileName, String description) throws BusinessException;
 	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException;
 	public InputStream getThumbnailStream(String docEntryUuid) throws BusinessException;
-	public void deleteFile(String uuid) throws BusinessException;
+	public DocumentDto deleteFile(String uuid) throws BusinessException;
 }

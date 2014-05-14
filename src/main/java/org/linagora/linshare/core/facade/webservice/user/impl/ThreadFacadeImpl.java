@@ -82,9 +82,10 @@ public class ThreadFacadeImpl extends GenericFacadeImpl implements ThreadFacade 
 
 	@Override
 	public List<ThreadDto> getAllMyThread() throws BusinessException {
+		User actor = super.checkAuthentication();
 		List<ThreadDto> res = new ArrayList<ThreadDto>();
 
-		for (Thread thread : threadService.findAll()) {
+		for (Thread thread : threadService.findAllWhereMember(actor)) {
 			res.add(new ThreadDto(thread));
 		}
 		return res;
