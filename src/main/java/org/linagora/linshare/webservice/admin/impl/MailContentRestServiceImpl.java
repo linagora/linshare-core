@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2013 LINAGORA
+ * Copyright (C) 2014 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -78,7 +78,7 @@ public class MailContentRestServiceImpl implements MailContentRestService {
 
 	@Override
 	@Path("/")
-	@ApiOperation(value = "Update a mail content.")
+	@ApiOperation(value = "Create a mail content.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -104,7 +104,7 @@ public class MailContentRestServiceImpl implements MailContentRestService {
 	@Path("/")
 	@ApiOperation(value = "Delete an unused mail content.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@GET
+    @DELETE
 	public void delete(
 			@ApiParam(value = "Mail content to delete.", required = true) MailContentDto dto)
 			throws BusinessException {
