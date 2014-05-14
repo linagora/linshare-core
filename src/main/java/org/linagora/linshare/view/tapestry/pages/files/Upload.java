@@ -121,7 +121,7 @@ public class Upload {
 
 	@Persist(PersistenceConstants.FLASH)
 	@Property
-	private boolean is_submit;
+	private String is_submit;
 
 	@Persist(PersistenceConstants.FLASH)
 	@Property
@@ -226,7 +226,7 @@ public class Upload {
 	}
 
 	void onValidateFromUploaderForm() {
-		is_submit = true;
+		is_submit = "1";
 
 		if (progress > 0) {
 			return; // some uploads are still in progress
