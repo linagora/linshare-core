@@ -71,15 +71,4 @@ public interface DomainRestService {
 
 	void deleteDomainFunctionality(String domain, FunctionalityDto func)
 			throws BusinessException;
-
-
-	/**
-	 * MailContent
-	 */
-
-	List<MailContentDto> getMailContents(String domain) throws BusinessException;
-
-	List<MailFooterDto> getMailFooters(String domain) throws BusinessException;
-
-	List<MailLayoutDto> getMailLayouts(String domain) throws BusinessException;
 }

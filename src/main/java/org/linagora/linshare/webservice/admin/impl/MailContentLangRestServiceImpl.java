@@ -45,6 +45,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailContentLangFacade;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailContentLangRestService;
 import org.linagora.linshare.webservice.dto.MailContentLangDto;
 
@@ -57,7 +58,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/mail_content_langs")
 @Api(value = "/rest/admin/mail_content_langs", description = "Mail content langs used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailContentLangRestServiceImpl implements
+public class MailContentLangRestServiceImpl extends WebserviceBase implements
 		MailContentLangRestService {
 
 	private final MailContentLangFacade mailContentLangFacade;

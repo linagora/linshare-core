@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -41,10 +43,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailLayoutFacade;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailLayoutRestService;
 import org.linagora.linshare.webservice.dto.MailLayoutDto;
 
@@ -57,13 +61,23 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/mail_layouts")
 @Api(value = "/rest/admin/mail_layouts", description = "Mail layouts used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailLayoutRestServiceImpl implements MailLayoutRestService {
+public class MailLayoutRestServiceImpl extends WebserviceBase implements
+		MailLayoutRestService {
 
 	private final MailLayoutFacade mailLayoutFacade;
 
 	public MailLayoutRestServiceImpl(final MailLayoutFacade mailLayoutFacade) {
 		super();
 		this.mailLayoutFacade = mailLayoutFacade;
+	}
+
+	@Path("/")
+	@GET
+	@Override
+	public List<MailLayoutDto> findAll(
+			@QueryParam(value = "domainId") String domainId)
+			throws BusinessException {
+		return mailLayoutFacade.getMailLayouts(domainId);
 	}
 
 	@Override

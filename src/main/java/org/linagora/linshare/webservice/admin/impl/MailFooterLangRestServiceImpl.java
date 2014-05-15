@@ -45,6 +45,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailFooterLangFacade;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailFooterLangRestService;
 import org.linagora.linshare.webservice.dto.MailFooterLangDto;
 
@@ -57,7 +58,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/mail_footer_langs")
 @Api(value = "/rest/admin/mail_footer_langs", description = "Mail footer langs used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailFooterLangRestServiceImpl implements MailFooterLangRestService {
+public class MailFooterLangRestServiceImpl extends WebserviceBase implements MailFooterLangRestService {
 
 	private final MailFooterLangFacade mailFooterLangFacade;
 

@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -41,10 +43,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailFooterFacade;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailFooterRestService;
 import org.linagora.linshare.webservice.dto.MailFooterDto;
 
@@ -57,13 +61,22 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/mail_footers")
 @Api(value = "/rest/admin/mail_footers", description = "Mail footers used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailFooterRestServiceImpl implements MailFooterRestService {
+public class MailFooterRestServiceImpl extends WebserviceBase implements MailFooterRestService {
 
 	private final MailFooterFacade mailFooterFacade;
 
 	public MailFooterRestServiceImpl(final MailFooterFacade mailFooterFacade) {
 		super();
 		this.mailFooterFacade = mailFooterFacade;
+	}
+
+	@Path("/")
+	@GET
+	@Override
+	public List<MailFooterDto> findAll(
+			@QueryParam(value = "domainId") String domainId)
+			throws BusinessException {
+		return mailFooterFacade.getMailFooters(domainId);
 	}
 
 	@Override

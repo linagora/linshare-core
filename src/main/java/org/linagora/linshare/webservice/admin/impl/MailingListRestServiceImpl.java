@@ -48,6 +48,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailingListFacade;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailingListRestService;
 import org.linagora.linshare.webservice.dto.MailingListContactDto;
 import org.linagora.linshare.webservice.dto.MailingListDto;
@@ -61,7 +62,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/lists")
 @Api(value = "/rest/admin/lists", description = "Mailing lists administration")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailingListRestServiceImpl implements MailingListRestService {
+public class MailingListRestServiceImpl extends WebserviceBase implements MailingListRestService {
 
 	private MailingListFacade mailingListFacade;
 

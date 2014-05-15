@@ -45,6 +45,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailConfigFacade;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailConfigRestService;
 import org.linagora.linshare.webservice.dto.MailConfigDto;
 
@@ -57,7 +58,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/mail_configs")
 @Api(value = "/rest/admin/mail_configs", description = "Mail configurations used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailConfigRestServiceImpl implements MailConfigRestService {
+public class MailConfigRestServiceImpl extends WebserviceBase implements MailConfigRestService {
 
 	private final MailConfigFacade mailConfigFacade;
 

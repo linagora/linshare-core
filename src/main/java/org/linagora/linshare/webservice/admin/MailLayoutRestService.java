@@ -33,10 +33,14 @@
  */
 package org.linagora.linshare.webservice.admin;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.MailLayoutDto;
 
 public interface MailLayoutRestService {
+
+	List<MailLayoutDto> findAll(String domainId) throws BusinessException;
 
 	MailLayoutDto find(String uuid) throws BusinessException;
 

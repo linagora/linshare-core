@@ -35,9 +35,7 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailContent;
@@ -100,7 +98,9 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 	public List<MailContentDto> getMailContents(String domainIdentifier)
 			throws BusinessException {
 		User user = checkAuthentication();
-		Validate.notEmpty(domainIdentifier, "domain identifier must be set.");
+		if (domainIdentifier == null) {
+			domainIdentifier = user.getDomainId();
+		}
 
 		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
 		// TODO : check if the current user has the right to get MailContent of this domain
