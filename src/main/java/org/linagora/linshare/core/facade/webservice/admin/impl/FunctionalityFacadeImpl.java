@@ -64,42 +64,43 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public FunctionalityDto get(String domain, String identifier)
+	public FunctionalityDto find(String domainId, String funcId)
 			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		Validate.notEmpty(domain, "domain identifier must be set.");
-		Validate.notEmpty(identifier, "functionality identifier must be set.");
-		Functionality f = functionalityService.getFunctionality(actor, domain,
-				identifier);
+		Validate.notEmpty(domainId, "domain identifier must be set.");
+		Validate.notEmpty(funcId, "functionality identifier must be set.");
+		Functionality f = functionalityService.getFunctionality(actor,
+				domainId, funcId);
 		boolean parentAllowAPUpdate = functionalityService
-				.activationPolicyIsMutable(f, domain);
+				.activationPolicyIsMutable(f, domainId);
 		boolean parentAllowCPUpdate = functionalityService
-				.configurationPolicyIsMutable(f, domain);
+				.configurationPolicyIsMutable(f, domainId);
 		FunctionalityDto func = new FunctionalityDto(f, parentAllowAPUpdate,
 				parentAllowCPUpdate);
-		func.setDomain(domain);
+		func.setDomain(domainId);
 		return func;
 	}
 
 	@Override
-	public Set<FunctionalityDto> findAll(String domain) throws BusinessException {
+	public Set<FunctionalityDto> findAll(String domainId)
+			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		Validate.notEmpty(domain, "domain identifier must be set.");
+		Validate.notEmpty(domainId, "domain identifier must be set.");
 		Set<Functionality> entities = functionalityService
-				.getAllFunctionalities(actor, domain);
+				.getAllFunctionalities(actor, domainId);
 
 		Map<String, FunctionalityDto> ret = new HashMap<String, FunctionalityDto>();
 		List<FunctionalityDto> subs = new ArrayList<FunctionalityDto>();
 
 		for (Functionality f : entities) {
 			boolean parentAllowAPUpdate = functionalityService
-					.activationPolicyIsMutable(f, domain);
+					.activationPolicyIsMutable(f, domainId);
 			boolean parentAllowCPUpdate = functionalityService
-					.configurationPolicyIsMutable(f, domain);
+					.configurationPolicyIsMutable(f, domainId);
 			FunctionalityDto func = new FunctionalityDto(f,
 					parentAllowAPUpdate, parentAllowCPUpdate);
 			// We force the domain id to be coherent to the argument.
-			func.setDomain(domain);
+			func.setDomain(domainId);
 
 			// We check if this a sub functionality (a parameter)
 			if (f.isParam()) {
@@ -122,14 +123,13 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void update(String domain, FunctionalityDto func)
-			throws BusinessException {
+	public void update(FunctionalityDto func) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 
-		Validate.notEmpty(domain, "domain identifier must be set.");
+		Validate.notEmpty(func.getDomain(), "domain identifier must be set.");
 		Validate.notEmpty(func.getIdentifier(),
 				"functionality identifier must be set.");
-		Functionality f = functionalityService.getFunctionality(actor, domain,
+		Functionality f = functionalityService.getFunctionality(actor, func.getDomain(),
 				func.getIdentifier());
 
 		// copy of activation policy.
@@ -147,17 +147,17 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 
 		// copy of parameters.
 		f.updateFunctionalityValuesOnlyFromDto(func);
-		functionalityService.update(actor, domain, f);
+		functionalityService.update(actor, func.getDomain(), f);
 	}
 
 	@Override
-	public void delete(String domain, FunctionalityDto func)
+	public void delete(FunctionalityDto func)
 			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		Validate.notEmpty(domain, "domain identifier must be set.");
+		Validate.notEmpty(func.getDomain(), "domain identifier must be set.");
 		Validate.notEmpty(func.getIdentifier(),
 				"functionality identifier must be set.");
-		functionalityService.deleteFunctionality(actor, domain,
+		functionalityService.deleteFunctionality(actor, func.getDomain(),
 				func.getIdentifier());
 	}
 }

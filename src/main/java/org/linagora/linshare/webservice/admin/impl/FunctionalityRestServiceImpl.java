@@ -35,7 +35,7 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 		this.functionalityFacade = functionalityFacade;
 	}
 
-	@Path("/functionalities")
+	@Path("/")
 	@GET
 	@ApiOperation(value = "Find all domain's functionalities.", response = FunctionalityDto.class, responseContainer = "Set")
 	@Override
@@ -45,7 +45,7 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 		return functionalityFacade.findAll(domainId);
 	}
 
-	@Path("/functionalities/{funcId}")
+	@Path("/{funcId}")
 	@GET
 	@ApiOperation(value = "Find a domain's functionality.", response = FunctionalityDto.class)
 	@Override
@@ -53,24 +53,22 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 			@QueryParam(value = "domainId") String domainId,
 			@PathParam(value = "funcId") String funcId)
 			throws BusinessException {
-		return functionalityFacade.get(domainId, funcId);
+		return functionalityFacade.find(domainId, funcId);
 	}
 
-	@Path("/functionalities")
+	@Path("/")
 	@PUT
 	@ApiOperation(value = "Update a domain's functionality.")
 	@Override
-	public void update(@PathParam(value = "domainId") String domainId,
-			FunctionalityDto func) throws BusinessException {
-		functionalityFacade.update(domainId, func);
+	public void update(FunctionalityDto func) throws BusinessException {
+		functionalityFacade.update(func);
 	}
 
-	@Path("/functionalities")
+	@Path("/")
 	@DELETE
 	@ApiOperation(value = "Delete a domain's functionality.")
 	@Override
-	public void delete(@PathParam(value = "domainId") String domainId,
-			FunctionalityDto func) throws BusinessException {
-		functionalityFacade.delete(domainId, func);
+	public void delete(FunctionalityDto func) throws BusinessException {
+		functionalityFacade.delete(func);
 	}
 }
