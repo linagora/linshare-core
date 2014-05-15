@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -51,11 +51,18 @@ import org.linagora.linshare.webservice.admin.ThreadRestService;
 import org.linagora.linshare.webservice.dto.ThreadDto;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
 @Path("/threads")
+@Api(value = "/rest/admin/threads", description = "Threads service")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class ThreadRestServiceImpl implements ThreadRestService {
 
-	private ThreadFacade threadFacade;
+	private final ThreadFacade threadFacade;
 
 	public ThreadRestServiceImpl(final ThreadFacade threadFacade) {
 		super();
@@ -64,30 +71,37 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 
 	@Path("/")
 	@GET
+	@ApiOperation(value = "Find all threads.", response = ThreadDto.class, responseContainer = "Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public List<ThreadDto> getAll() throws BusinessException {
-		return threadFacade.getAll();
+	public Set<ThreadDto> findAll() throws BusinessException {
+		return threadFacade.findAll();
 	}
 
 	@Path("/{uuid}")
 	@GET
+	@ApiOperation(value = "Find a thread", response = ThreadDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public ThreadDto get(@PathParam("uuid") String uuid)
+	public ThreadDto find(@PathParam("uuid") String uuid)
 			throws BusinessException {
-		return threadFacade.get(uuid);
+		return threadFacade.find(uuid);
 	}
 
 	@Path("/{uuid}/members")
 	@GET
+	@ApiOperation(value = "Find all thread members.", response = ThreadDto.class, responseContainer = "Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public List<ThreadMemberDto> getMembers(@PathParam("uuid") String uuid)
+	public Set<ThreadMemberDto> members(@PathParam("uuid") String uuid)
 			throws BusinessException {
-		return threadFacade.getMembers(uuid);
+		return threadFacade.members(uuid);
 	}
 
 	@Path("/")
 	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Update a thread.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public void update(ThreadDto thread) throws BusinessException {
 		threadFacade.update(thread);
@@ -95,7 +109,8 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 
 	@Path("/")
 	@DELETE
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Delete a thread.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public void delete(ThreadDto thread) throws BusinessException {
 		threadFacade.delete(thread.getUuid());

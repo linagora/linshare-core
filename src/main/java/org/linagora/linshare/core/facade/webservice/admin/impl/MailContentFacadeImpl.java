@@ -34,7 +34,9 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -95,17 +97,19 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<MailContentDto> getMailContents(String domainIdentifier)
+	public Set<MailContentDto> findAll(String domainIdentifier)
 			throws BusinessException {
 		User user = checkAuthentication();
 		if (domainIdentifier == null) {
 			domainIdentifier = user.getDomainId();
 		}
 
-		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-		// TODO : check if the current user has the right to get MailContent of this domain
+		AbstractDomain domain = abstractDomainService
+				.retrieveDomain(domainIdentifier);
+		// TODO : check if the current user has the right to get MailContent of
+		// this domain
 
-		ArrayList<MailContentDto> mailContentsDto = Lists.newArrayList();
+		Set<MailContentDto> mailContentsDto = new HashSet<MailContentDto>();
 		for (MailContent mailContent : domain.getMailContents()) {
 			mailContentsDto.add(new MailContentDto(mailContent));
 		}
@@ -130,11 +134,13 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private MailContent findContent(User actor, String uuid)
 			throws BusinessException {
-		MailContent mailContent = mailConfigService.findContentByUuid(actor, uuid);
+		MailContent mailContent = mailConfigService.findContentByUuid(actor,
+				uuid);
 
 		if (mailContent == null)
-			throw new BusinessException(BusinessErrorCode.MAILCONTENT_NOT_FOUND,
-					uuid + " not found.");
+			throw new BusinessException(
+					BusinessErrorCode.MAILCONTENT_NOT_FOUND, uuid
+							+ " not found.");
 		return mailContent;
 	}
 

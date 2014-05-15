@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -50,50 +50,70 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.DomainPatternRestService;
 import org.linagora.linshare.webservice.dto.DomainPatternDto;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
+@Path("/domain_patterns")
+@Api(value = "/rest/admin/domain_patterns", description = "Domain patterns service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class DomainPatternRestServiceImpl extends WebserviceBase implements DomainPatternRestService {
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class DomainPatternRestServiceImpl extends WebserviceBase implements
+		DomainPatternRestService {
 
 	private final DomainPatternFacade domainPatternFacade;
 
-	public DomainPatternRestServiceImpl(final DomainPatternFacade domainPatternFacade) {
+	public DomainPatternRestServiceImpl(
+			final DomainPatternFacade domainPatternFacade) {
 		this.domainPatternFacade = domainPatternFacade;
 	}
 
 	@Path("/")
 	@GET
+	@ApiOperation(value = "Find all domain patterns.", response = DomainPatternDto.class, responseContainer = "Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public List<DomainPatternDto> getDomainPatterns() throws BusinessException {
-		return domainPatternFacade.getDomainPatterns();
+	public Set<DomainPatternDto> findAll() throws BusinessException {
+		return domainPatternFacade.findAll();
 	}
 
 	@Path("/models")
 	@GET
+	@ApiOperation(value = "Find all domain pattern's models.", response = DomainPatternDto.class, responseContainer = "Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public List<DomainPatternDto> getModels() throws BusinessException {
-		return domainPatternFacade.getModels();
+	public Set<DomainPatternDto> findAllModels() throws BusinessException {
+		return domainPatternFacade.findAllModels();
 	}
 
 	@Path("/")
 	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Create a domain pattern.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void createDomainPattern(DomainPatternDto domainPattern) throws BusinessException {
-		domainPatternFacade.createDomainPattern(domainPattern);
+	public void create(DomainPatternDto domainPattern)
+			throws BusinessException {
+		domainPatternFacade.create(domainPattern);
 	}
 
 	@Path("/")
 	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Update a domain pattern.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void updateDomainPattern(DomainPatternDto domainPattern) throws BusinessException {
-		domainPatternFacade.updateDomainPattern(domainPattern);
+	public void update(DomainPatternDto domainPattern)
+			throws BusinessException {
+		domainPatternFacade.update(domainPattern);
 	}
 
 	@Path("/")
 	@DELETE
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Delete a domain pattern.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void deleteDomainPattern(DomainPatternDto domainPattern) throws BusinessException {
-		domainPatternFacade.deleteDomainPattern(domainPattern);
+	public void delete(DomainPatternDto domainPattern)
+			throws BusinessException {
+		domainPatternFacade.delete(domainPattern);
 	}
 }

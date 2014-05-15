@@ -33,42 +33,36 @@
  */
 package org.linagora.linshare.webservice.admin;
 
-import java.util.List;
-
-import javax.ws.rs.Path;
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DomainDto;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
-import org.linagora.linshare.webservice.dto.MailContentDto;
-import org.linagora.linshare.webservice.dto.MailFooterDto;
-import org.linagora.linshare.webservice.dto.MailLayoutDto;
 
-@Path("/domains")
 public interface DomainRestService {
 
-	List<DomainDto> getDomains() throws BusinessException;
+	Set<DomainDto> findAll() throws BusinessException;
 
-	DomainDto getDomain(String domain, boolean tree) throws BusinessException;
+	DomainDto find(String domainId, boolean tree) throws BusinessException;
 
-	void updateDomain(DomainDto domain) throws BusinessException;
+	void update(DomainDto domain) throws BusinessException;
 
-	void createDomain(DomainDto domain) throws BusinessException;
+	void create(DomainDto domain) throws BusinessException;
 
-	void deleteDomain(DomainDto domain) throws BusinessException;
+	void delete(DomainDto domain) throws BusinessException;
 
 	/*
 	 * Functionalities
 	 */
-	List<FunctionalityDto> getDomainFunctionalities(String domain)
+	Set<FunctionalityDto> findAllFunctionalities(String domain)
 			throws BusinessException;
 
-	void updateDomainFunctionality(String domain, FunctionalityDto func)
+	void updateFunctionality(String domainId, FunctionalityDto func)
 			throws BusinessException;
 
-	FunctionalityDto getDomainFunctionality(String domain,
-			String identifier) throws BusinessException;
+	FunctionalityDto findFunctionality(String domainId, String funcId)
+			throws BusinessException;
 
-	void deleteDomainFunctionality(String domain, FunctionalityDto func)
+	void deleteFunctionality(String domainId, FunctionalityDto func)
 			throws BusinessException;
 }

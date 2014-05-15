@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -62,9 +62,11 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/lists")
 @Api(value = "/rest/admin/lists", description = "Mailing lists administration")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailingListRestServiceImpl extends WebserviceBase implements MailingListRestService {
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class MailingListRestServiceImpl extends WebserviceBase implements
+		MailingListRestService {
 
-	private MailingListFacade mailingListFacade;
+	private final MailingListFacade mailingListFacade;
 
 	public MailingListRestServiceImpl(final MailingListFacade mailingListFacade) {
 		super();
@@ -72,30 +74,29 @@ public class MailingListRestServiceImpl extends WebserviceBase implements Mailin
 	}
 
 	@Path("/")
-	@ApiOperation(value = "Find all mailing lists.", response = MailingListDto.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
+	@ApiOperation(value = "Find all mailing lists.", response = MailingListDto.class, responseContainer = "Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public List<MailingListDto> getAll() throws BusinessException {
-		return mailingListFacade.getAll();
+	public Set<MailingListDto> findAll() throws BusinessException {
+		return mailingListFacade.findAll();
 	}
 
 	@Path("/{uuid}")
+	@GET
 	@ApiOperation(value = "Find a mailing list.", response = MailingListDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@GET
 	@Override
-	public MailingListDto get(
+	public MailingListDto find(
 			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return mailingListFacade.get(uuid);
+		return mailingListFacade.find(uuid);
 	}
 
 	@Path("/")
+	@POST
 	@ApiOperation(value = "Create a mailing list.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void create(
 			@ApiParam(value = "Mailing list to create.", required = true) MailingListDto dto)
@@ -104,10 +105,9 @@ public class MailingListRestServiceImpl extends WebserviceBase implements Mailin
 	}
 
 	@Path("/")
+	@PUT
 	@ApiOperation(value = "Update a mailing list.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void update(
 			@ApiParam(value = "Mailing list to update.", required = true) MailingListDto dto)
@@ -116,9 +116,9 @@ public class MailingListRestServiceImpl extends WebserviceBase implements Mailin
 	}
 
 	@Path("/{uuid}")
+	@DELETE
 	@ApiOperation(value = "Delete a mailing list.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@DELETE
 	@Override
 	public void delete(
 			@ApiParam(value = "Mailing list to delete.", required = true) MailingListDto dto)
@@ -127,10 +127,9 @@ public class MailingListRestServiceImpl extends WebserviceBase implements Mailin
 	}
 
 	@Path("/{uuid}/contacts")
+	@POST
 	@ApiOperation(value = "Create a contact in a mailing list.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void createContact(
 			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
@@ -140,10 +139,9 @@ public class MailingListRestServiceImpl extends WebserviceBase implements Mailin
 	}
 
 	@Path("/{uuid}/contacts")
+	@DELETE
 	@ApiOperation(value = "Delete a contact from a mailing list.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@DELETE
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void deleteContact(
 			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,

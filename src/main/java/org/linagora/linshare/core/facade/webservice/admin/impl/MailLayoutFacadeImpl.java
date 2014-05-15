@@ -33,8 +33,8 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -47,8 +47,6 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
 import org.linagora.linshare.webservice.dto.MailLayoutDto;
-
-import com.google.common.collect.Lists;
 
 public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 		MailLayoutFacade {
@@ -94,17 +92,19 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<MailLayoutDto> getMailLayouts(String domainIdentifier)
+	public Set<MailLayoutDto> findAll(String domainIdentifier)
 			throws BusinessException {
 		User user = checkAuthentication();
 		if (domainIdentifier == null) {
 			domainIdentifier = user.getDomainId();
 		}
 
-		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-		// TODO : check if the current user has the right to get MailContent of this domain
+		AbstractDomain domain = abstractDomainService
+				.retrieveDomain(domainIdentifier);
+		// TODO : check if the current user has the right to get MailContent of
+		// this domain
 
-		ArrayList<MailLayoutDto> mailLayoutsDto = Lists.newArrayList();
+		Set<MailLayoutDto> mailLayoutsDto = new HashSet<MailLayoutDto>();
 		for (MailLayout mailContent : domain.getMailLayouts()) {
 			mailLayoutsDto.add(new MailLayoutDto(mailContent));
 		}

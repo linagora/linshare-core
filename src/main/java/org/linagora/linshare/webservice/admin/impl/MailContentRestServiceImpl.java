@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -61,7 +61,9 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/mail_contents")
 @Api(value = "/rest/admin/mail_contents", description = "Mail contents used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailContentRestServiceImpl extends WebserviceBase implements MailContentRestService {
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class MailContentRestServiceImpl extends WebserviceBase implements
+		MailContentRestService {
 
 	private final MailContentFacade mailContentFacade;
 
@@ -72,53 +74,52 @@ public class MailContentRestServiceImpl extends WebserviceBase implements MailCo
 
 	@Path("/")
 	@GET
+	@ApiOperation(value = "Find all mail contents.", response = MailContentDto.class, responseContainer = "Set")
 	@Override
-	public List<MailContentDto> findAll(
+	public Set<MailContentDto> findAll(
 			@QueryParam(value = "domainId") String domainId)
 			throws BusinessException {
-		return mailContentFacade.getMailContents(domainId);
+		return mailContentFacade.findAll(domainId);
 	}
 
-	@Override
 	@Path("/{uuid}")
-	@ApiOperation(value = "Find a mail content.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
+	@ApiOperation(value = "Find a mail content.", response = MailContentDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
 	public MailContentDto find(
 			@ApiParam(value = "Mail content's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mailContentFacade.find(uuid);
 	}
 
-	@Override
 	@Path("/")
+	@POST
 	@ApiOperation(value = "Create a mail content.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
 	public void create(
 			@ApiParam(value = "Mail content to create.", required = true) MailContentDto dto)
 			throws BusinessException {
 		mailContentFacade.create(dto);
 	}
 
-	@Override
 	@Path("/")
+	@PUT
 	@ApiOperation(value = "Update a mail content.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
 	public void update(
 			@ApiParam(value = "Mail content to update.", required = true) MailContentDto dto)
 			throws BusinessException {
 		mailContentFacade.update(dto);
 	}
 
-	@Override
 	@Path("/")
+	@DELETE
 	@ApiOperation(value = "Delete an unused mail content.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-    @DELETE
+	@Override
 	public void delete(
 			@ApiParam(value = "Mail content to delete.", required = true) MailContentDto dto)
 			throws BusinessException {

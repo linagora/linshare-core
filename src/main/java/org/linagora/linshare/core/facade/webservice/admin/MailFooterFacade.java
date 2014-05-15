@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin;
 
-import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.MailFooterDto;
@@ -48,5 +48,5 @@ public interface MailFooterFacade {
 
 	void delete(String uuid) throws BusinessException;
 
-	List<MailFooterDto> getMailFooters(String domainIdentifier) throws BusinessException;
+	Set<MailFooterDto> findAll(String domainIdentifier) throws BusinessException;
 }

@@ -35,7 +35,6 @@ package org.linagora.linshare.webservice.admin;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.MailConfigDto;
-import org.linagora.linshare.webservice.dto.MailingListDto;
 
 public interface MailConfigRestService {
 

@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -55,90 +55,117 @@ import org.linagora.linshare.webservice.admin.DomainRestService;
 import org.linagora.linshare.webservice.dto.DomainDto;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
+@Path("/domains")
+@Api(value = "/rest/admin/domains", description = "Domains service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class DomainRestServiceImpl extends WebserviceBase implements DomainRestService {
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class DomainRestServiceImpl extends WebserviceBase implements
+		DomainRestService {
 
 	private final DomainFacade domainFacade;
 
 	private final FunctionalityFacade functionalityFacade;
-	public DomainRestServiceImpl(final DomainFacade webServiceDomainFacade,
-			final FunctionalityFacade webServiceFunctionalityFacade) {
-		this.domainFacade = webServiceDomainFacade;
-		this.functionalityFacade = webServiceFunctionalityFacade;
+
+	public DomainRestServiceImpl(final DomainFacade domainFacade,
+			final FunctionalityFacade functionalityFacade) {
+		this.domainFacade = domainFacade;
+		this.functionalityFacade = functionalityFacade;
 	}
 
 	@Path("/")
 	@GET
+	@ApiOperation(value = "Find all domains.", response = DomainDto.class, responseContainer = "Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public List<DomainDto> getDomains() throws BusinessException {
-		return domainFacade.getDomains();
+	public Set<DomainDto> findAll() throws BusinessException {
+		return domainFacade.findAll();
 	}
 
-	@Path("/{domain}")
+	@Path("/{id}")
 	@GET
+	@ApiOperation(value = "Find a domain.", response = DomainDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public DomainDto getDomain(@PathParam(value = "domain") String domain, @QueryParam("tree") @DefaultValue("false") boolean tree) throws BusinessException {
-		return domainFacade.getDomain(domain, tree);
+	public DomainDto find(@PathParam(value = "id") String domainId,
+			@QueryParam("tree") @DefaultValue("false") boolean tree)
+			throws BusinessException {
+		return domainFacade.find(domainId, tree);
 	}
 
 	@Path("/")
 	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Create a domain.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void createDomain(DomainDto domain) throws BusinessException {
-		domainFacade.createDomain(domain);
+	public void create(DomainDto domain) throws BusinessException {
+		domainFacade.create(domain);
 	}
 
 	@Path("/")
 	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Update a domain.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void updateDomain(DomainDto domain) throws BusinessException {
-		domainFacade.updateDomain(domain);
+	public void update(DomainDto domain) throws BusinessException {
+		domainFacade.update(domain);
 	}
 
 	@Path("/")
 	@DELETE
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Delete a domain.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void deleteDomain(DomainDto domain) throws BusinessException {
-		domainFacade.deleteDomain(domain);
+	public void delete(DomainDto domain) throws BusinessException {
+		domainFacade.delete(domain);
 	}
 
 	/*
 	 * Functionalities
 	 */
 
-	@Path("/{domain}/functionalities")
+	@Path("/{domainId}/functionalities")
 	@GET
+	@ApiOperation(value = "Find all domain's functionalities.")
 	@Override
-	public List<FunctionalityDto> getDomainFunctionalities(@PathParam(value = "domain") String domain) throws BusinessException {
-		return functionalityFacade.getAll(domain);
+	public Set<FunctionalityDto> findAllFunctionalities(
+			@PathParam(value = "domainId") String domainId)
+			throws BusinessException {
+		return functionalityFacade.findAll(domainId);
 	}
 
-	@Path("/{domain}/functionalities/{identifier}")
+	@Path("/{domainId}/functionalities/{funcId}")
 	@GET
+	@ApiOperation(value = "Find a domain's functionality.")
 	@Override
-	public FunctionalityDto getDomainFunctionality(
-			@PathParam(value = "domain") String domain,
-			@PathParam(value = "identifier") String identifier)
-					throws BusinessException {
-		return functionalityFacade.get(domain, identifier);
+	public FunctionalityDto findFunctionality(
+			@PathParam(value = "domainId") String domainId,
+			@PathParam(value = "funcId") String funcId)
+			throws BusinessException {
+		return functionalityFacade.get(domainId, funcId);
 	}
 
-	@Path("/{domain}/functionalities")
+	@Path("/{domainId}/functionalities")
 	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Update a domain's functionality.")
 	@Override
-	public void updateDomainFunctionality(@PathParam(value = "domain") String domain, FunctionalityDto func) throws BusinessException {
-		functionalityFacade.update(domain, func);
+	public void updateFunctionality(
+			@PathParam(value = "domainId") String domainId, FunctionalityDto func)
+			throws BusinessException {
+		functionalityFacade.update(domainId, func);
 	}
 
-	@Path("/{domain}/functionalities")
+	@Path("/{domainId}/functionalities")
 	@DELETE
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Delete a domain's functionality.")
 	@Override
-	public void deleteDomainFunctionality(@PathParam(value = "domain") String domain, FunctionalityDto func) throws BusinessException {
-		functionalityFacade.delete(domain, func);
+	public void deleteFunctionality(
+			@PathParam(value = "domainId") String domainId, FunctionalityDto func)
+			throws BusinessException {
+		functionalityFacade.delete(domainId, func);
 	}
 }

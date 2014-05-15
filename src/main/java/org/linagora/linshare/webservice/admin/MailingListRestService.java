@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.webservice.admin;
 
-import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.MailingListContactDto;
@@ -42,9 +42,9 @@ import org.linagora.linshare.webservice.dto.MailingListDto;
 
 public interface MailingListRestService {
 
-	List<MailingListDto> getAll() throws BusinessException;
+	Set<MailingListDto> findAll() throws BusinessException;
 
-	MailingListDto get(String uuid) throws BusinessException;
+	MailingListDto find(String uuid) throws BusinessException;
 
 	void create(MailingListDto dto) throws BusinessException;
 

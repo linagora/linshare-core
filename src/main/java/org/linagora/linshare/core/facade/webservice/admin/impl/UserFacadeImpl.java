@@ -168,7 +168,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<UserDto> getAllInconsistent() throws BusinessException {
+	public Set<UserDto> findAllInconsistent() throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Set<UserDto> ret = Sets.newHashSet();
 
@@ -179,7 +179,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void updateInconsistentUser(UserDto userDto)
+	public void updateInconsistent(UserDto userDto)
 			throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		inconsistentUserService.updateDomain(actor, userDto.getUuid(),

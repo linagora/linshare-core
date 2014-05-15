@@ -33,12 +33,12 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.LDAPConnectionFacade;
 import org.linagora.linshare.core.service.AccountService;
@@ -55,9 +55,9 @@ public class LDAPConnectionFacadeImpl extends AdminGenericFacadeImpl implements 
 	}
 
 	@Override
-	public List<LDAPConnectionDto> getLDAPConnections() throws BusinessException {
+	public Set<LDAPConnectionDto> findAll() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		List<LDAPConnectionDto> ldapConnectionsDto = new ArrayList<LDAPConnectionDto>();
+		Set<LDAPConnectionDto> ldapConnectionsDto = new HashSet<LDAPConnectionDto>();
 		List<LDAPConnection> ldapConnections = userProviderService.findAllLDAPConnections();
 		for (LDAPConnection ldapConnection : ldapConnections) {
 			ldapConnectionsDto.add(new LDAPConnectionDto(ldapConnection));
@@ -66,19 +66,19 @@ public class LDAPConnectionFacadeImpl extends AdminGenericFacadeImpl implements 
 	}
 
 	@Override
-	public void updateLDAPConnection(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
+	public void update(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		userProviderService.updateLDAPConnection(new LDAPConnection(ldapConnectionDto));
 	}
 
 	@Override
-	public void createLDAPConnection(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
+	public void create(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		userProviderService.createLDAPConnection(new LDAPConnection(ldapConnectionDto));
 	}
 
 	@Override
-	public void deleteLDAPConnection(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
+	public void delete(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		userProviderService.deleteConnection(ldapConnectionDto.getIdentifier());
 	}

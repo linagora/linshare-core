@@ -34,7 +34,9 @@
 
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -49,8 +51,6 @@ import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.webservice.dto.MailingListContactDto;
 import org.linagora.linshare.webservice.dto.MailingListDto;
 
-import com.google.common.collect.Lists;
-
 public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 		MailingListFacade {
 
@@ -63,17 +63,16 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	/*
-	 * TODO:
-	 * 		Handle mailing list update (ownership changes, ...)
-	 *  	Problem : cascade on contacts
+	 * TODO: Handle mailing list update (ownership changes, ...) Problem :
+	 * cascade on contacts
 	 */
 
 	@Override
-	public List<MailingListDto> getAll() throws BusinessException {
+	public Set<MailingListDto> findAll() throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		List<MailingList> lists = mailingListService.findAllListByUser(actor
-				.getLsUuid(), actor.getLsUuid());
-		List<MailingListDto> ret = Lists.newArrayList();
+		List<MailingList> lists = mailingListService.findAllListByUser(
+				actor.getLsUuid(), actor.getLsUuid());
+		Set<MailingListDto> ret = new HashSet<MailingListDto>();
 
 		for (MailingList list : lists) {
 			ret.add(new MailingListDto(list));
@@ -82,11 +81,13 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public MailingListDto get(String uuid) throws BusinessException {
+	public MailingListDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		MailingList list = mailingListService.findByUuid(actor.getLsUuid(), uuid);
+		MailingList list = mailingListService.findByUuid(actor.getLsUuid(),
+				uuid);
 		if (list == null) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Cannot found mailling list : " + uuid);
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
+					"Cannot found mailling list : " + uuid);
 		}
 		return new MailingListDto(list);
 	}
@@ -95,8 +96,8 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	public void create(MailingListDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		MailingList list = new MailingList(dto);
-		mailingListService.createList(
-				actor.getLsUuid(), actor.getLsUuid(), list);
+		mailingListService.createList(actor.getLsUuid(), actor.getLsUuid(),
+				list);
 	}
 
 	@Override

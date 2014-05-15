@@ -33,8 +33,9 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
@@ -71,16 +72,16 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public DomainPolicyDto get(String identifier) throws BusinessException {
+	public DomainPolicyDto find(String identifier) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(identifier, "domain policy identifier must be set.");
 		return new DomainPolicyDto(domainPolicyService.retrieveDomainPolicy(identifier));
 	}
 
 	@Override
-	public List<DomainPolicyDto> getAll() throws BusinessException {
+	public Set<DomainPolicyDto> findAll() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-        ArrayList<DomainPolicyDto> domainPolicies = new ArrayList<DomainPolicyDto>();
+        Set<DomainPolicyDto> domainPolicies = new HashSet<DomainPolicyDto>();
         for (DomainPolicy domainPolicy : domainPolicyService.findAllDomainPolicy()) {
             domainPolicies.add(new DomainPolicyDto(domainPolicy));
         }

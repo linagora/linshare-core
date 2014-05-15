@@ -33,18 +33,18 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin;
 
-import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
 
 public interface LDAPConnectionFacade extends AdminGenericFacade {
 
-	List<LDAPConnectionDto> getLDAPConnections() throws BusinessException;
+	Set<LDAPConnectionDto> findAll() throws BusinessException;
 
-	void updateLDAPConnection(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
+	void update(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
 
-	void createLDAPConnection(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
+	void create(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
 
-	void deleteLDAPConnection(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
+	void delete(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
 }

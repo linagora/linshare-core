@@ -57,6 +57,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/authentication")
 @Api(value = "/rest/admin/authentication", description = "Authentication administration")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
 
 	private final AdminGenericFacade adminFacade;
@@ -70,16 +71,16 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/authorized")
 	@GET
+	@ApiOperation(value = "Check if user is authorized.", response = UserDto.class)
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
 		return UserDto.getFull(adminFacade.checkAuthentication(Role.ADMIN));
 	}
 
 	@Path("/change_password")
+	@POST
 	@ApiOperation(value = "Change the password of the current user.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void changePassword(PasswordDto password) throws BusinessException {
 		userFacade.changePassword(password);
@@ -87,6 +88,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/logout")
 	@GET
+	@ApiOperation(value = "Logout the current user.")
 	@Override
 	public void logout() {
 		// This code is never reach because the URL will be catch by spring security before.

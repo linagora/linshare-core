@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -61,6 +61,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/mail_layouts")
 @Api(value = "/rest/admin/mail_layouts", description = "Mail layouts used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MailLayoutRestServiceImpl extends WebserviceBase implements
 		MailLayoutRestService {
 
@@ -73,53 +74,52 @@ public class MailLayoutRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
+	@ApiOperation(value = "Find all mail layouts.", response = MailLayoutDto.class, responseContainer = "Set")
 	@Override
-	public List<MailLayoutDto> findAll(
+	public Set<MailLayoutDto> findAll(
 			@QueryParam(value = "domainId") String domainId)
 			throws BusinessException {
-		return mailLayoutFacade.getMailLayouts(domainId);
+		return mailLayoutFacade.findAll(domainId);
 	}
 
-	@Override
 	@Path("/{uuid}")
-	@ApiOperation(value = "Find a mail layout.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
+	@ApiOperation(value = "Find a mail layout.", response = MailLayoutDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
 	public MailLayoutDto find(
 			@ApiParam(value = "Mail layout uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mailLayoutFacade.find(uuid);
 	}
 
-	@Override
 	@Path("/")
+	@POST
 	@ApiOperation(value = "Create a mail layout.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
 	public void create(
 			@ApiParam(value = "Mail layout to create.", required = true) MailLayoutDto dto)
 			throws BusinessException {
 		mailLayoutFacade.create(dto);
 	}
 
-	@Override
 	@Path("/")
+	@PUT
 	@ApiOperation(value = "Update a mail layout.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
 	public void update(
 			@ApiParam(value = "Mail layout to update.", required = true) MailLayoutDto dto)
 			throws BusinessException {
 		mailLayoutFacade.update(dto);
 	}
 
-	@Override
 	@Path("/")
+	@DELETE
 	@ApiOperation(value = "Delete an unused mail layout.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@DELETE
+	@Override
 	public void delete(
 			@ApiParam(value = "Mail layout to delete.", required = true) MailLayoutDto dto)
 			throws BusinessException {

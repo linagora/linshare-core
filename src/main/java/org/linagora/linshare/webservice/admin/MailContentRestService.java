@@ -33,14 +33,14 @@
  */
 package org.linagora.linshare.webservice.admin;
 
-import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.MailContentDto;
 
 public interface MailContentRestService {
 
-	List<MailContentDto> findAll(String domain) throws BusinessException;
+	Set<MailContentDto> findAll(String domain) throws BusinessException;
 
 	MailContentDto find(String uuid) throws BusinessException;
 

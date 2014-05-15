@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.webservice.admin;
 
-import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.ThreadDto;
@@ -42,11 +42,11 @@ import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
 public interface ThreadRestService {
 
-	public List<ThreadDto> getAll() throws BusinessException;
+	public Set<ThreadDto> findAll() throws BusinessException;
 
-	public ThreadDto get(String uuid) throws BusinessException;
+	public ThreadDto find(String uuid) throws BusinessException;
 
-	public List<ThreadMemberDto> getMembers(String uuid)
+	public Set<ThreadMemberDto> members(String uuid)
 			throws BusinessException;
 
 	public void update(ThreadDto thread) throws BusinessException;

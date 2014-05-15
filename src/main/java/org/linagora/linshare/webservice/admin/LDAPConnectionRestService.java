@@ -33,21 +33,18 @@
  */
 package org.linagora.linshare.webservice.admin;
 
-import java.util.List;
-
-import javax.ws.rs.Path;
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
 
-@Path("/ldap_connections")
 public interface LDAPConnectionRestService {
 
-	List<LDAPConnectionDto> getLDAPConnections() throws BusinessException;
+	Set<LDAPConnectionDto> findAll() throws BusinessException;
 
-	void updateLDAPConnection(LDAPConnectionDto ldapConnection) throws BusinessException;
+	void update(LDAPConnectionDto ldapConnection) throws BusinessException;
 
-	void createLDAPConnection(LDAPConnectionDto ldapConnection) throws BusinessException;
+	void create(LDAPConnectionDto ldapConnection) throws BusinessException;
 
-	void deleteLDAPConnection(LDAPConnectionDto ldapConnection) throws BusinessException;
+	void delete(LDAPConnectionDto ldapConnection) throws BusinessException;
 }

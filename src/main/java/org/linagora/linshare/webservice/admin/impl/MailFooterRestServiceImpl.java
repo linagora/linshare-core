@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -61,7 +61,9 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/mail_footers")
 @Api(value = "/rest/admin/mail_footers", description = "Mail footers used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailFooterRestServiceImpl extends WebserviceBase implements MailFooterRestService {
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class MailFooterRestServiceImpl extends WebserviceBase implements
+		MailFooterRestService {
 
 	private final MailFooterFacade mailFooterFacade;
 
@@ -72,53 +74,52 @@ public class MailFooterRestServiceImpl extends WebserviceBase implements MailFoo
 
 	@Path("/")
 	@GET
+	@ApiOperation(value = "Find all mail footers.", response = MailFooterDto.class, responseContainer = "Set")
 	@Override
-	public List<MailFooterDto> findAll(
+	public Set<MailFooterDto> findAll(
 			@QueryParam(value = "domainId") String domainId)
 			throws BusinessException {
-		return mailFooterFacade.getMailFooters(domainId);
+		return mailFooterFacade.findAll(domainId);
 	}
 
-	@Override
 	@Path("/{uuid}")
+	@GET
 	@ApiOperation(value = "Find a mail footer.", response = MailFooterDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@GET
+	@Override
 	public MailFooterDto find(
 			@ApiParam(value = "Mail footer's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mailFooterFacade.find(uuid);
 	}
 
-	@Override
 	@Path("/")
+	@POST
 	@ApiOperation(value = "Create a mail footer.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
 	public void create(
 			@ApiParam(value = "Mail footer to create.", required = true) MailFooterDto dto)
 			throws BusinessException {
 		mailFooterFacade.create(dto);
 	}
 
-	@Override
 	@Path("/")
+	@PUT
 	@ApiOperation(value = "Update a mail footer.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
 	public void update(
 			@ApiParam(value = "Mail footer to update.", required = true) MailFooterDto dto)
 			throws BusinessException {
 		mailFooterFacade.update(dto);
 	}
 
-	@Override
 	@Path("/")
+	@DELETE
 	@ApiOperation(value = "Delete an unused mail footer.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-    @DELETE
+	@Override
 	public void delete(
 			@ApiParam(value = "Mail footer to delete.", required = true) MailFooterDto dto)
 			throws BusinessException {

@@ -33,8 +33,9 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.DomainType;
@@ -57,8 +58,8 @@ import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.webservice.dto.DomainDto;
 
-public class DomainFacadeImpl extends AdminGenericFacadeImpl
-		implements DomainFacade {
+public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
+		DomainFacade {
 
 	private final AbstractDomainService abstractDomainService;
 
@@ -77,10 +78,10 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 	}
 
 	@Override
-	public List<DomainDto> getDomains() throws BusinessException {
+	public Set<DomainDto> findAll() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		List<AbstractDomain> entities = abstractDomainService.getAllDomains();
-		List<DomainDto> domainDtoList = new ArrayList<DomainDto>();
+		Set<DomainDto> domainDtoList = new HashSet<DomainDto>();
 		for (AbstractDomain abstractDomain : entities) {
 			domainDtoList.add(DomainDto.getFull(abstractDomain));
 		}
@@ -88,14 +89,16 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 	}
 
 	@Override
-	public DomainDto getDomain(String domain, boolean tree) throws BusinessException {
+	public DomainDto find(String domain, boolean tree)
+			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domain, "domain identifier must be set.");
 		AbstractDomain entity = abstractDomainService.retrieveDomain(domain);
-		if(entity == null) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "the curent domain was not found : " + domain);
+		if (entity == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
+					"the curent domain was not found : " + domain);
 		}
-		if(tree) {
+		if (tree) {
 			if (actor.isSuperAdmin()) {
 				return DomainDto.getFullTree(entity);
 			}
@@ -107,40 +110,12 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 				return DomainDto.getSimple(entity);
 			}
 		}
-		throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "the curent domain was not found : " + domain);
-	}
-
-	@Deprecated
-	@Override
-	public DomainDto getDomainTree() throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		AbstractDomain entity = abstractDomainService.retrieveDomain(actor.getDomainId());
-		if (actor.isSuperAdmin()) {
-			return DomainDto.getFullTree(entity);
-		}
-		return DomainDto.getSimpleTree(entity);
-	}
-
-	@Deprecated
-	@Override
-	public DomainDto getDomainTree(String domain) throws BusinessException {
-		Validate.notEmpty(domain, "domain identifier must be set.");
-		User actor = checkAuthentication(Role.ADMIN);
-		AbstractDomain entity = abstractDomainService.retrieveDomain(domain);
-		if(entity == null) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "the curent domain was not found : " + domain);
-		}
-		if (actor.isSuperAdmin()) {
-			return DomainDto.getFullTree(entity);
-		}
-		if (entity.isManagedBy(actor)) {
-			return DomainDto.getSimpleTree(entity);
-		}
-		throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "the curent domain was not found : " + domain);
+		throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
+				"the curent domain was not found : " + domain);
 	}
 
 	@Override
-	public void createDomain(DomainDto domainDto) throws BusinessException {
+	public void create(DomainDto domainDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		AbstractDomain domain = getDomain(domainDto);
 		switch (domain.getDomainType()) {
@@ -154,50 +129,65 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 			abstractDomainService.createGuestDomain((GuestDomain) domain);
 			break;
 		default:
-			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE, "Try to create a root domain");
+			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,
+					"Try to create a root domain");
 		}
 	}
 
 	@Override
-	public void updateDomain(DomainDto domainDto) throws BusinessException {
+	public void update(DomainDto domainDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(domainDto.getIdentifier(), "domain identifier must be set.");
+		Validate.notEmpty(domainDto.getIdentifier(),
+				"domain identifier must be set.");
 		AbstractDomain domain = getDomain(domainDto);
 		abstractDomainService.updateDomain(domain);
 	}
 
 	@Override
-	public void deleteDomain(DomainDto domainDto) throws BusinessException {
+	public void delete(DomainDto domainDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(domainDto.getIdentifier(), "domain identifier must be set.");
+		Validate.notEmpty(domainDto.getIdentifier(),
+				"domain identifier must be set.");
 		abstractDomainService.deleteDomain(domainDto.getIdentifier());
 	}
 
-	private AbstractDomain getDomain(DomainDto domainDto) throws BusinessException {
+	private AbstractDomain getDomain(DomainDto domainDto)
+			throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(domainDto.getIdentifier(), "domain identifier must be set.");
+		Validate.notEmpty(domainDto.getIdentifier(),
+				"domain identifier must be set.");
 		Validate.notNull(domainDto.getPolicy(), "domain policy must be set.");
-		Validate.notEmpty(domainDto.getPolicy().getIdentifier(), "domain policy identifier must be set.");
+		Validate.notEmpty(domainDto.getPolicy().getIdentifier(),
+				"domain policy identifier must be set.");
 
 		DomainType domainType = DomainType.valueOf(domainDto.getType());
-		AbstractDomain parent = abstractDomainService.retrieveDomain(domainDto.getParent());
+		AbstractDomain parent = abstractDomainService.retrieveDomain(domainDto
+				.getParent());
 		AbstractDomain domain = domainType.getDomain(domainDto, parent);
-		DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(domainDto.getPolicy().getIdentifier());
+		DomainPolicy policy = domainPolicyService
+				.retrieveDomainPolicy(domainDto.getPolicy().getIdentifier());
 		domain.setPolicy(policy);
 
 		if (!domainDto.getProviders().isEmpty()) {
 			String baseDn = domainDto.getProviders().get(0).getBaseDn();
 			Validate.notEmpty(baseDn, "ldap base dn must be set.");
 
-			String domainPatternId = domainDto.getProviders().get(0).getDomainPatternId();
-			Validate.notEmpty(domainPatternId, "domain pattern identifier must be set.");
+			String domainPatternId = domainDto.getProviders().get(0)
+					.getDomainPatternId();
+			Validate.notEmpty(domainPatternId,
+					"domain pattern identifier must be set.");
 
-			String ldapConnectionId = domainDto.getProviders().get(0).getLdapConnectionId();
-			Validate.notEmpty(ldapConnectionId,"ldap connection identifier must be set.");
+			String ldapConnectionId = domainDto.getProviders().get(0)
+					.getLdapConnectionId();
+			Validate.notEmpty(ldapConnectionId,
+					"ldap connection identifier must be set.");
 
-			LDAPConnection ldapConnection = userProviderService.retrieveLDAPConnection(ldapConnectionId);
-			DomainPattern domainPattern = userProviderService.retrieveDomainPattern(domainPatternId);	
-			domain.setUserProvider(new LdapUserProvider(baseDn, ldapConnection, domainPattern));
+			LDAPConnection ldapConnection = userProviderService
+					.retrieveLDAPConnection(ldapConnectionId);
+			DomainPattern domainPattern = userProviderService
+					.retrieveDomainPattern(domainPatternId);
+			domain.setUserProvider(new LdapUserProvider(baseDn, ldapConnection,
+					domainPattern));
 		}
 		return domain;
 	}

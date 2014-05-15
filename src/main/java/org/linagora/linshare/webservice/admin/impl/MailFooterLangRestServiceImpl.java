@@ -58,7 +58,9 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/mail_footer_langs")
 @Api(value = "/rest/admin/mail_footer_langs", description = "Mail footer langs used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailFooterLangRestServiceImpl extends WebserviceBase implements MailFooterLangRestService {
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class MailFooterLangRestServiceImpl extends WebserviceBase implements
+		MailFooterLangRestService {
 
 	private final MailFooterLangFacade mailFooterLangFacade;
 
@@ -68,46 +70,44 @@ public class MailFooterLangRestServiceImpl extends WebserviceBase implements Mai
 		this.mailFooterLangFacade = mailFooterLangFacade;
 	}
 
-	@Override
 	@Path("/{uuid}")
-	@ApiOperation(value = "Find a mail footer lang.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
+	@ApiOperation(value = "Find a mail footer lang.", response = MailFooterLangDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
 	public MailFooterLangDto find(
 			@ApiParam(value = "Mail footer lang's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mailFooterLangFacade.find(uuid);
 	}
 
-	@Override
 	@Path("/")
+	@POST
 	@ApiOperation(value = "Create a mail footer lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
 	public void create(
 			@ApiParam(value = "Mail footer lang to create.", required = true) MailFooterLangDto dto)
 			throws BusinessException {
 		mailFooterLangFacade.create(dto);
 	}
 
-	@Override
 	@Path("/")
+	@PUT
 	@ApiOperation(value = "Update a mail footer lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
 	public void update(
 			@ApiParam(value = "Mail footer lang to update.", required = true) MailFooterLangDto dto)
 			throws BusinessException {
 		mailFooterLangFacade.update(dto);
 	}
 
-	@Override
 	@Path("/")
+	@DELETE
 	@ApiOperation(value = "Delete an unused mail footer lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-    @DELETE
+	@Override
 	public void delete(
 			@ApiParam(value = "Mail footer lang to delete.", required = true) MailFooterLangDto dto)
 			throws BusinessException {

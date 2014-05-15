@@ -58,7 +58,9 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/mail_configs")
 @Api(value = "/rest/admin/mail_configs", description = "Mail configurations used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailConfigRestServiceImpl extends WebserviceBase implements MailConfigRestService {
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class MailConfigRestServiceImpl extends WebserviceBase implements
+		MailConfigRestService {
 
 	private final MailConfigFacade mailConfigFacade;
 
@@ -67,46 +69,44 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements MailCon
 		this.mailConfigFacade = mailConfigFacade;
 	}
 
-	@Override
 	@Path("/{uuid}")
+	@GET
 	@ApiOperation(value = "Find a mail configuration.", response = MailConfigDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@GET
+	@Override
 	public MailConfigDto find(
 			@ApiParam(value = "Mail configuration's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mailConfigFacade.find(uuid);
 	}
 
-	@Override
 	@Path("/")
+	@POST
 	@ApiOperation(value = "Create a mail configuration.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
 	public void create(
 			@ApiParam(value = "Mail configuration to create.", required = true) MailConfigDto dto)
 			throws BusinessException {
 		mailConfigFacade.create(dto);
 	}
 
-	@Override
 	@Path("/")
+	@PUT
 	@ApiOperation(value = "Update a mail configuration.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
 	public void update(
 			@ApiParam(value = "Mail configuration to update.", required = true) MailConfigDto dto)
 			throws BusinessException {
 		mailConfigFacade.update(dto);
 	}
 
-	@Override
 	@Path("/")
+	@DELETE
 	@ApiOperation(value = "Delete an unused mail configuration.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-    @DELETE
+	@Override
 	public void delete(
 			@ApiParam(value = "Mail configuration to delete.", required = true) MailConfigDto dto)
 			throws BusinessException {

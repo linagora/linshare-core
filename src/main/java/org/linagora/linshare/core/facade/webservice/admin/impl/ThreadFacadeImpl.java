@@ -34,8 +34,8 @@
 
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -61,9 +61,9 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<ThreadDto> getAll() throws BusinessException {
+	public Set<ThreadDto> findAll() throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
-		List<ThreadDto> ret = new ArrayList<ThreadDto>();
+		Set<ThreadDto> ret = new HashSet<ThreadDto>();
 
 		for (Thread t : threadService.findAll())
 			ret.add(new ThreadDto(t));
@@ -71,17 +71,17 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public ThreadDto get(String uuid) throws BusinessException {
+	public ThreadDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
 		return new ThreadDto(threadService.findByLsUuid(uuid));
 	}
 
 	@Override
-	public List<ThreadMemberDto> getMembers(String uuid) throws BusinessException {
+	public Set<ThreadMemberDto> members(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
-		List<ThreadMemberDto> ret = new ArrayList<ThreadMemberDto>();
+		Set<ThreadMemberDto> ret = new HashSet<ThreadMemberDto>();
 
 		for (ThreadMember m : threadService.findByLsUuid(uuid).getMyMembers())
 			ret.add(new ThreadMemberDto(m));

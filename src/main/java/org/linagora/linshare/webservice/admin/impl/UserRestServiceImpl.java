@@ -45,7 +45,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
@@ -57,9 +56,12 @@ import org.linagora.linshare.webservice.dto.UserSearchDto;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Api(value = "/rest/admin/users", description = "User administration service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UserRestServiceImpl extends WebserviceBase implements
 		UserRestService {
 
@@ -67,15 +69,15 @@ public class UserRestServiceImpl extends WebserviceBase implements
 
 	private final AutocompleteFacade autocompleteFacade;
 
-	public UserRestServiceImpl(final UserFacade userFacade, final AutocompleteFacade autocompleteFacade) {
+	public UserRestServiceImpl(final UserFacade userFacade,
+			final AutocompleteFacade autocompleteFacade) {
 		this.userFacade = userFacade;
 		this.autocompleteFacade = autocompleteFacade;
 	}
 
 	@Path("/search")
-	@ApiOperation(value = "Provide all users who match with patterns.", response = UserDto.class, responseContainer = "Set")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@POST
+	@ApiOperation(value = "Search all users who match with patterns.", response = UserDto.class, responseContainer = "Set")
 	@Override
 	public Set<UserDto> search(
 			@ApiParam(value = "Patterns to search.", required = true) UserSearchDto userSearchDto)
@@ -84,8 +86,8 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/search/internals/{pattern}")
-	@ApiOperation(value = "Search among internal users.", response = UserDto.class, responseContainer = "Set")
 	@GET
+	@ApiOperation(value = "Search among internal users.", response = UserDto.class, responseContainer = "Set")
 	@Override
 	public Set<UserDto> searchInternals(
 			@ApiParam(value = "Internal users to search for.", required = true) @PathParam("pattern") String pattern)
@@ -94,8 +96,8 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/search/guests/{pattern}")
-	@ApiOperation(value = "Search among guests.", response = UserDto.class, responseContainer = "Set")
 	@GET
+	@ApiOperation(value = "Search among guests.", response = UserDto.class, responseContainer = "Set")
 	@Override
 	public Set<UserDto> searchGuests(
 			@ApiParam(value = "Guests to search for.", required = true) @PathParam("pattern") String pattern)
@@ -104,19 +106,18 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/autocomplete/{pattern}")
-	@ApiOperation(value = "Provide user autocompletion.", response = UserDto.class, responseContainer = "Set")
 	@GET
+	@ApiOperation(value = "Provide user autocompletion.", response = UserDto.class, responseContainer = "Set")
 	@Override
 	public Set<UserDto> autocomplete(
 			@ApiParam(value = "Pattern to complete.", required = true) @PathParam("pattern") String pattern)
 			throws BusinessException {
-		return autocompleteFacade.getUser(pattern);
+		return autocompleteFacade.findUser(pattern);
 	}
 
 	@Path("/")
-	@ApiOperation(value = "Update an user.")
 	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Update an user.")
 	@Override
 	public void update(
 			@ApiParam(value = "User to update", required = true) UserDto userDto)
@@ -125,9 +126,8 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/")
-	@ApiOperation(value = "Delete an user.")
 	@DELETE
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Delete an user.")
 	@Override
 	public void delete(
 			@ApiParam(value = "User to delete.", required = true) UserDto userDto)
@@ -136,21 +136,22 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/inconsistent")
-	@ApiOperation(value = "Find all inconsistent users.")
 	@GET
+	@ApiOperation(value = "Find all inconsistent users.", response = UserDto.class, responseContainer = "Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public Set<UserDto> getAllInconsistentUser() throws BusinessException {
-		return userFacade.getAllInconsistent();
+	public Set<UserDto> findAllInconsistent() throws BusinessException {
+		return userFacade.findAllInconsistent();
 	}
 
 	@Path("/inconsistent")
-	@ApiOperation(value = "Update an inconsistent user's domain.")
 	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Update an inconsistent user's domain.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void updateInconsistentUser(
+	public void updateInconsistent(
 			@ApiParam(value = "Inconsistent user to update.", required = true) UserDto userDto)
 			throws BusinessException {
-		userFacade.updateInconsistentUser(userDto);
+		userFacade.updateInconsistent(userDto);
 	}
 }

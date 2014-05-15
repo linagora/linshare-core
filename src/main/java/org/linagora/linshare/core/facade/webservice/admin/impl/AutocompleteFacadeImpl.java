@@ -62,7 +62,7 @@ public class AutocompleteFacadeImpl extends AdminGenericFacadeImpl implements Au
 	}
 
 	@Override
-	public Set<UserDto> getUser(String pattern) throws BusinessException {
+	public Set<UserDto> findUser(String pattern) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		List<User> users = userService.autoCompleteUser(actor.getLogin(), pattern);
 		logger.debug("nb result for completion : " + users.size());

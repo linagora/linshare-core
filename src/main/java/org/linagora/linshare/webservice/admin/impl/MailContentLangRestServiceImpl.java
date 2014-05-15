@@ -58,6 +58,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/mail_content_langs")
 @Api(value = "/rest/admin/mail_content_langs", description = "Mail content langs used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MailContentLangRestServiceImpl extends WebserviceBase implements
 		MailContentLangRestService {
 
@@ -69,46 +70,44 @@ public class MailContentLangRestServiceImpl extends WebserviceBase implements
 		this.mailContentLangFacade = mailContentLangFacade;
 	}
 
-	@Override
 	@Path("/{uuid}")
-	@ApiOperation(value = "Find a mail content lang.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
+	@ApiOperation(value = "Find a mail content lang.", response = MailContentLangDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
 	public MailContentLangDto find(
 			@ApiParam(value = "Mail content lang's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mailContentLangFacade.find(uuid);
 	}
 
-	@Override
 	@Path("/")
+	@POST
 	@ApiOperation(value = "Create a mail content lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
 	public void create(
 			@ApiParam(value = "Mail content lang to create.", required = true) MailContentLangDto dto)
 			throws BusinessException {
 		mailContentLangFacade.create(dto);
 	}
 
-	@Override
 	@Path("/")
+	@PUT
 	@ApiOperation(value = "Update a mail content lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
 	public void update(
 			@ApiParam(value = "Mail content lang to update.", required = true) MailContentLangDto dto)
 			throws BusinessException {
 		mailContentLangFacade.update(dto);
 	}
 
-	@Override
 	@Path("/")
+	@DELETE
 	@ApiOperation(value = "Delete an unused mail content lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-    @DELETE
+	@Override
 	public void delete(
 			@ApiParam(value = "Mail content lang to delete.", required = true) MailContentLangDto dto)
 			throws BusinessException {

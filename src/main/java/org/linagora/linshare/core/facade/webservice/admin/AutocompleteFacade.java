@@ -41,7 +41,7 @@ import org.linagora.linshare.webservice.dto.UserDto;
 
 public interface AutocompleteFacade {
 
-	Set<UserDto> getUser(String pattern)
+	Set<UserDto> findUser(String pattern)
 			throws BusinessException;
 
 	Set<UserDto> getUserSortedByFavorites(String pattern)

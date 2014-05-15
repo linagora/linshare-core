@@ -33,16 +33,16 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin;
 
-import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
 public interface DomainPolicyFacade extends AdminGenericFacade {
 
-	List<DomainPolicyDto> getAll() throws BusinessException;
+	Set<DomainPolicyDto> findAll() throws BusinessException;
 
-	DomainPolicyDto get(String identifier) throws BusinessException;
+	DomainPolicyDto find(String identifier) throws BusinessException;
 
 	void create(DomainPolicyDto policy) throws BusinessException;
 

@@ -33,8 +33,8 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -47,8 +47,6 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
 import org.linagora.linshare.webservice.dto.MailFooterDto;
-
-import com.google.common.collect.Lists;
 
 public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 		MailFooterFacade {
@@ -95,17 +93,19 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<MailFooterDto> getMailFooters(String domainIdentifier)
+	public Set<MailFooterDto> findAll(String domainIdentifier)
 			throws BusinessException {
 		User user = checkAuthentication();
 		if (domainIdentifier == null) {
 			domainIdentifier = user.getDomainId();
 		}
 
-		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-		// TODO : check if the current user has the right to get MailContent of this domain
+		AbstractDomain domain = abstractDomainService
+				.retrieveDomain(domainIdentifier);
+		// TODO : check if the current user has the right to get MailContent of
+		// this domain
 
-		ArrayList<MailFooterDto> mailFootersDto = Lists.newArrayList();
+		Set<MailFooterDto> mailFootersDto = new HashSet<MailFooterDto>();
 		for (MailFooter mailContent : domain.getMailFooters()) {
 			mailFootersDto.add(new MailFooterDto(mailContent));
 		}

@@ -49,11 +49,18 @@ import org.linagora.linshare.core.facade.webservice.admin.ThreadMemberFacade;
 import org.linagora.linshare.webservice.admin.ThreadMemberRestService;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
 @Path("/thread_members")
+@Api(value = "/rest/admin/thread_members", description = "Thread members service")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 
-	private ThreadMemberFacade threadMemberFacade;
+	private final ThreadMemberFacade threadMemberFacade;
 
 	public ThreadMemberRestServiceImpl(
 			final ThreadMemberFacade threadMemberFacade) {
@@ -63,36 +70,38 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 
 	@Path("/{id}")
 	@GET
+	@ApiOperation(value = "Find a thread member.", response = ThreadMemberDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public ThreadMemberDto get(@PathParam("id") Long id)
+	public ThreadMemberDto find(@PathParam("id") Long id)
 			throws BusinessException {
-		return threadMemberFacade.get(id);
+		return threadMemberFacade.find(id);
 	}
 
 	@Path("/")
 	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Create a thread member.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void create(ThreadMemberDto dto)
-			throws BusinessException {
+	public void create(ThreadMemberDto dto) throws BusinessException {
 		threadMemberFacade.create(dto);
 	}
 
 	@Path("/")
 	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Update a thread member.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void update(ThreadMemberDto dto)
-			throws BusinessException {
+	public void update(ThreadMemberDto dto) throws BusinessException {
 		threadMemberFacade.update(dto);
 	}
 
 	@Path("/")
 	@DELETE
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Delete a thread member.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void delete(ThreadMemberDto dto)
-			throws BusinessException {
+	public void delete(ThreadMemberDto dto) throws BusinessException {
 		threadMemberFacade.delete(dto);
 	}
 }

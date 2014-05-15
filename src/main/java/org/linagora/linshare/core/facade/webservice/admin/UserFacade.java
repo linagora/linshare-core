@@ -53,9 +53,9 @@ public interface UserFacade extends AdminGenericFacade {
 
 	void delete(UserDto userDto) throws BusinessException;
 
-	Set<UserDto> getAllInconsistent() throws BusinessException;
+	Set<UserDto> findAllInconsistent() throws BusinessException;
 
-	void updateInconsistentUser(UserDto userDto) throws BusinessException;
+	void updateInconsistent(UserDto userDto) throws BusinessException;
 
 	void changePassword(PasswordDto password) throws BusinessException;
 }

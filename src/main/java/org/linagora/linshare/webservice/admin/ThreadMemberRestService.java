@@ -39,11 +39,11 @@ import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
 public interface ThreadMemberRestService {
 
-	public ThreadMemberDto get(Long id) throws BusinessException;
+	ThreadMemberDto find(Long id) throws BusinessException;
 
-	public void create(ThreadMemberDto dto) throws BusinessException;
+	void create(ThreadMemberDto dto) throws BusinessException;
 
-	public void update(ThreadMemberDto dto) throws BusinessException;
+	void update(ThreadMemberDto dto) throws BusinessException;
 
-	public void delete(ThreadMemberDto dto) throws BusinessException;
+	void delete(ThreadMemberDto dto) throws BusinessException;
 }
