@@ -36,18 +36,19 @@ package org.linagora.linshare.webservice.admin;
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.DomainDto;
+import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
-public interface DomainRestService {
+public interface FunctionalityRestService {
 
-	Set<DomainDto> findAll() throws BusinessException;
+	Set<FunctionalityDto> findAll(String domainId)
+			throws BusinessException;
 
-	DomainDto find(String domainId, boolean tree) throws BusinessException;
+	FunctionalityDto find(String domainId, String funcId)
+			throws BusinessException;
 
-	void update(DomainDto domain) throws BusinessException;
+	void update(String domainId, FunctionalityDto func)
+			throws BusinessException;
 
-	void create(DomainDto domain) throws BusinessException;
-
-	void delete(DomainDto domain) throws BusinessException;
-
+	void delete(String domainId, FunctionalityDto func)
+			throws BusinessException;
 }

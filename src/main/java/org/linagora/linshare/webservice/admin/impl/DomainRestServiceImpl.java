@@ -49,11 +49,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
-import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.DomainRestService;
 import org.linagora.linshare.webservice.dto.DomainDto;
-import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -69,12 +67,8 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 
 	private final DomainFacade domainFacade;
 
-	private final FunctionalityFacade functionalityFacade;
-
-	public DomainRestServiceImpl(final DomainFacade domainFacade,
-			final FunctionalityFacade functionalityFacade) {
+	public DomainRestServiceImpl(final DomainFacade domainFacade) {
 		this.domainFacade = domainFacade;
-		this.functionalityFacade = functionalityFacade;
 	}
 
 	@Path("/")
@@ -86,12 +80,12 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 		return domainFacade.findAll();
 	}
 
-	@Path("/{id}")
+	@Path("/{domainId}")
 	@GET
 	@ApiOperation(value = "Find a domain.", response = DomainDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public DomainDto find(@PathParam(value = "id") String domainId,
+	public DomainDto find(@PathParam(value = "domainId") String domainId,
 			@QueryParam("tree") @DefaultValue("false") boolean tree)
 			throws BusinessException {
 		return domainFacade.find(domainId, tree);
@@ -124,48 +118,4 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 		domainFacade.delete(domain);
 	}
 
-	/*
-	 * Functionalities
-	 */
-
-	@Path("/{domainId}/functionalities")
-	@GET
-	@ApiOperation(value = "Find all domain's functionalities.")
-	@Override
-	public Set<FunctionalityDto> findAllFunctionalities(
-			@PathParam(value = "domainId") String domainId)
-			throws BusinessException {
-		return functionalityFacade.findAll(domainId);
-	}
-
-	@Path("/{domainId}/functionalities/{funcId}")
-	@GET
-	@ApiOperation(value = "Find a domain's functionality.")
-	@Override
-	public FunctionalityDto findFunctionality(
-			@PathParam(value = "domainId") String domainId,
-			@PathParam(value = "funcId") String funcId)
-			throws BusinessException {
-		return functionalityFacade.get(domainId, funcId);
-	}
-
-	@Path("/{domainId}/functionalities")
-	@PUT
-	@ApiOperation(value = "Update a domain's functionality.")
-	@Override
-	public void updateFunctionality(
-			@PathParam(value = "domainId") String domainId, FunctionalityDto func)
-			throws BusinessException {
-		functionalityFacade.update(domainId, func);
-	}
-
-	@Path("/{domainId}/functionalities")
-	@DELETE
-	@ApiOperation(value = "Delete a domain's functionality.")
-	@Override
-	public void deleteFunctionality(
-			@PathParam(value = "domainId") String domainId, FunctionalityDto func)
-			throws BusinessException {
-		functionalityFacade.delete(domainId, func);
-	}
 }

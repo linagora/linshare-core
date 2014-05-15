@@ -30,6 +30,9 @@
 
 	<bean id="adminDomainRestService" class="org.linagora.linshare.webservice.admin.impl.DomainRestServiceImpl">
 		<constructor-arg ref="wsAdminDomainFacade" />
+	</bean>
+
+	<bean id="adminFunctionalityRestService" class="org.linagora.linshare.webservice.admin.impl.FunctionalityRestServiceImpl">
 		<constructor-arg ref="wsAdminFunctionalityFacade" />
 	</bean>
 
@@ -92,6 +95,7 @@
 			<ref bean="adminDomainPatternRestService" />
 			<ref bean="adminDomainPolicyRestService" />
 			<ref bean="adminDomainRestService" />
+			<ref bean="adminFunctionalityRestService" />
 			<ref bean="adminThreadRestService" />
 			<ref bean="adminMailingListRestService" />
 			<ref bean="adminThreadMemberRestService" />
