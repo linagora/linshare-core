@@ -69,7 +69,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	private static Logger logger = LoggerFactory.getLogger(AbstractDomainServiceImplTest.class);
 
 	
-	public static String topDomaineName = "TEST_ADST_Domain-0-1";
+	public static String topDomaineName = "TEST_ADST_Domain_0_1";
 	
 	private static String baseDn = "dc=nodomain,dc=com";
 	private static String identifier= "ID_ADST_LDAP_DE_TEST";
