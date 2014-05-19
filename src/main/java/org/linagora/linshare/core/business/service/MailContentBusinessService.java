@@ -34,9 +34,9 @@
 package org.linagora.linshare.core.business.service;
 
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailContent;
-import org.linagora.linshare.core.domain.entities.MailContentType;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailContentBusinessService {
