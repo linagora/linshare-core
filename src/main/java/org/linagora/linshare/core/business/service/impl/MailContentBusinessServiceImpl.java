@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Date;
+import java.util.UUID;
+
 import org.linagora.linshare.core.business.service.MailContentBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
@@ -92,7 +95,9 @@ public class MailContentBusinessServiceImpl implements
 	@Override
 	public void create(AbstractDomain domain, MailContent content)
 			throws BusinessException {
-		content = mailContentRepository.create(content);
+		content.setUuid(UUID.randomUUID().toString());
+		content.setCreationDate(new Date());
+		content.setModificationDate(new Date());
 		domain.getMailContents().add(content);
 		abstractDomainRepository.update(domain);
 	}

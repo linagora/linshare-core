@@ -65,14 +65,6 @@ public class MailContentRepositoryImpl extends
 	}
 
 	@Override
-	public MailContent create(MailContent entity) throws BusinessException {
-		entity.setUuid(UUID.randomUUID().toString());
-		entity.setCreationDate(new Date());
-		entity.setModificationDate(new Date());
-		return super.create(entity);
-	}
-
-	@Override
 	public MailContent update(MailContent entity) throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);

@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Date;
+import java.util.UUID;
+
 import org.linagora.linshare.core.business.service.MailLayoutBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailLayout;
@@ -66,10 +69,12 @@ public class MailLayoutBusinessServiceImpl implements MailLayoutBusinessService 
 	}
 
 	@Override
-	public void create(AbstractDomain domain, MailLayout footer)
+	public void create(AbstractDomain domain, MailLayout layout)
 			throws BusinessException {
-		footer = mailLayoutRepository.create(footer);
-		domain.getMailLayouts().add(footer);
+		layout.setUuid(UUID.randomUUID().toString());
+		layout.setCreationDate(new Date());
+		layout.setModificationDate(new Date());
+		domain.getMailLayouts().add(layout);
 		abstractDomainRepository.update(domain);
 	}
 

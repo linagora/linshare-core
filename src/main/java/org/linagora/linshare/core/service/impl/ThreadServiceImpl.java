@@ -119,9 +119,9 @@ public class ThreadServiceImpl implements ThreadService {
 		} else {
 			logger.error("You can not create thread, you are not authorized.");
 			if (isGuest) {
-				logger.error("Guests are not authorised to create a thread.");
+				logger.error("Guests are not authorized to create a thread.");
 			} else {
-				logger.error("The current domain does not allowed you to create thread.");
+				logger.error("The current domain does not allow you to create a thread.");
 			}
 			return false;
 		}

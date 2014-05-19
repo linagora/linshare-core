@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
-import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -69,14 +68,6 @@ public class MailFooterRepositoryImpl extends
 	public MailFooter findByUuid(String uuid) {
 		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
 				"uuid", uuid)));
-	}
-
-	@Override
-	public MailFooter create(MailFooter entity) throws BusinessException {
-		entity.setUuid(UUID.randomUUID().toString());
-		entity.setCreationDate(new Date());
-		entity.setModificationDate(new Date());
-		return super.create(entity);
 	}
 
 	@Override

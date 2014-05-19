@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Date;
+import java.util.UUID;
+
 import org.linagora.linshare.core.business.service.MailFooterBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailFooter;
@@ -68,7 +71,9 @@ public class MailFooterBusinessServiceImpl implements MailFooterBusinessService 
 	@Override
 	public void create(AbstractDomain domain, MailFooter footer)
 			throws BusinessException {
-		footer = mailFooterRepository.create(footer);
+		footer.setUuid(UUID.randomUUID().toString());
+		footer.setCreationDate(new Date());
+		footer.setModificationDate(new Date());
 		domain.getMailFooters().add(footer);
 		abstractDomainRepository.update(domain);
 	}
