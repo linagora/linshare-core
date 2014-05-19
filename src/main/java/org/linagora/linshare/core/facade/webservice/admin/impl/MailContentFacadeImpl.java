@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailContent;
@@ -127,7 +128,8 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		content.setGreetings(dto.getGreetings());
 		content.setSubject(dto.getSubject());
 		content.setBody(dto.getBody());
-		content.setMailContentType(dto.getMailContentType());
+		content.setMailContentType(MailContentType.valueOf(
+				dto.getMailContentType()).toInt());
 	}
 
 	private MailContent findContent(User actor, String uuid)
