@@ -37,6 +37,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailContent;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -56,7 +57,7 @@ public class MailContentDto {
 	private boolean visible;
 
 	@ApiModelProperty(value = "MailContentType")
-	private int mailContentType;
+	private String mailContentType;
 
 	@ApiModelProperty(value = "Language")
 	private int language;
@@ -95,7 +96,8 @@ public class MailContentDto {
 		this.language = cont.getLanguage();
 		this.plaintext = cont.isPlaintext();
 		this.visible = cont.isVisible();
-		this.mailContentType = cont.getMailContentType();
+		this.mailContentType = MailContentType.fromInt(
+				cont.getMailContentType()).toString();
 		this.creationDate = new Date(cont.getCreationDate().getTime());
 		this.modificationDate = new Date(cont.getModificationDate().getTime());
 	}
@@ -124,11 +126,11 @@ public class MailContentDto {
 		this.visible = visible;
 	}
 
-	public int getMailContentType() {
+	public String getMailContentType() {
 		return mailContentType;
 	}
 
-	public void setMailContentType(int mailContentType) {
+	public void setMailContentType(String mailContentType) {
 		this.mailContentType = mailContentType;
 	}
 
