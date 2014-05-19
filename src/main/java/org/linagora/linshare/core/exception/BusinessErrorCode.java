@@ -80,6 +80,7 @@ public enum BusinessErrorCode implements ErrorCode {
     DOMAIN_DO_NOT_ALREADY_EXISTS(13007),
     DOMAIN_DO_NOT_EXISTS(13008, Status.NOT_FOUND),
     DOMAIN_POLICY_INVALID(13009),
+    DOMAIN_IDENTIFIER_BAD_FORMAT(13010),
     FUNCTIONALITY_ENTITY_OUT_OF_DATE(14000),
     UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT(14001),
     RELAY_HOST_NOT_ENABLE(15000),
@@ -100,30 +101,30 @@ public enum BusinessErrorCode implements ErrorCode {
     MAILLAYOUT_NOT_FOUND(19667),
 
     FORBIDDEN(17000, Status.FORBIDDEN),
-    
+
     WEBSERVICE_FAULT(20000, Status.INTERNAL_SERVER_ERROR),
     WEBSERVICE_FORBIDDEN(20001, Status.FORBIDDEN),
     WEBSERVICE_NOT_FOUND(20002, Status.NOT_FOUND),
-    
+
     LIST_DO_NOT_EXIST(25000, Status.NOT_FOUND),
     LIST_ALDREADY_EXISTS(25001),
     CONTACT_LIST_DO_NOT_EXIST(25002, Status.NOT_FOUND),
-    
+
     THREAD_NOT_FOUND(26000, Status.NOT_FOUND),
     THREAD_MEMBER_NOT_FOUND(26001, Status.NOT_FOUND),
     THREAD_ENTRY_NOT_FOUND(26002, Status.NOT_FOUND),
     ;
-    
-    
+
+
 	private final int code;
-	
+
 	private final Status status;
-	
+
 	private BusinessErrorCode(int code) {
 		this.code = code;
 		this.status = Status.BAD_REQUEST;
 	}
-	
+
 	private BusinessErrorCode(int code, Status status) {
 		this.code = code;
 		this.status = status;
