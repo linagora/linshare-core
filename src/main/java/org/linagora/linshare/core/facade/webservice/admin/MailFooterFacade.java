@@ -42,7 +42,7 @@ public interface MailFooterFacade {
 
 	MailFooterDto find(String uuid) throws BusinessException;
 
-	void create(MailFooterDto dto) throws BusinessException;
+	MailFooterDto create(MailFooterDto dto) throws BusinessException;
 
 	void update(MailFooterDto dto) throws BusinessException;
 

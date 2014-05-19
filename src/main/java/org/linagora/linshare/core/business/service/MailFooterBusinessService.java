@@ -42,7 +42,7 @@ public interface MailFooterBusinessService {
 
 	MailFooter findByUuid(String uuid);
 
-	void create(AbstractDomain domain, MailFooter footer)
+	MailFooter create(AbstractDomain domain, MailFooter footer)
 			throws BusinessException;
 
 	void update(MailFooter footer) throws BusinessException;

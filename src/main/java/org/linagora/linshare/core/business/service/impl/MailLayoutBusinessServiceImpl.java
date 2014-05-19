@@ -69,13 +69,14 @@ public class MailLayoutBusinessServiceImpl implements MailLayoutBusinessService 
 	}
 
 	@Override
-	public void create(AbstractDomain domain, MailLayout layout)
+	public MailLayout create(AbstractDomain domain, MailLayout layout)
 			throws BusinessException {
 		layout.setUuid(UUID.randomUUID().toString());
 		layout.setCreationDate(new Date());
 		layout.setModificationDate(new Date());
 		domain.getMailLayouts().add(layout);
 		abstractDomainRepository.update(domain);
+		return findByUuid(layout.getUuid());
 	}
 
 	@Override

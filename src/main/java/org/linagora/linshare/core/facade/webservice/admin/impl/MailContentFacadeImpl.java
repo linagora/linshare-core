@@ -33,9 +33,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Role;
@@ -49,8 +47,6 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
 import org.linagora.linshare.webservice.dto.MailContentDto;
-
-import com.google.common.collect.Lists;
 
 public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		MailContentFacade {
@@ -74,11 +70,12 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void create(MailContentDto dto) throws BusinessException {
+	public MailContentDto create(MailContentDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		MailContent content = new MailContent();
 		transform(content, dto);
-		mailConfigService.createContent(actor, content);
+		return new MailContentDto(mailConfigService.createContent(actor,
+				content));
 	}
 
 	@Override

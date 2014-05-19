@@ -135,9 +135,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param content
+	 * @return TODO
 	 * @throws BusinessException
 	 */
-	void createContent(User actor, MailContent content)
+	MailContent createContent(User actor, MailContent content)
 			throws BusinessException;
 
 	/**
@@ -221,9 +222,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param footer
+	 * @return TODO
 	 * @throws BusinessException
 	 */
-	void createFooter(User actor, MailFooter footer) throws BusinessException;
+	MailFooter createFooter(User actor, MailFooter footer) throws BusinessException;
 
 	/**
 	 * Update an existing mail footer.
@@ -305,9 +307,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param layout
+	 * @return TODO
 	 * @throws BusinessException
 	 */
-	void createLayout(User actor, MailLayout layout) throws BusinessException;
+	MailLayout createLayout(User actor, MailLayout layout) throws BusinessException;
 
 	/**
 	 * Update an existing mail layout.

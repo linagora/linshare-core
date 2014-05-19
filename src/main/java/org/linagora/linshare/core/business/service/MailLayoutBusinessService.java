@@ -42,7 +42,7 @@ public interface MailLayoutBusinessService {
 
 	MailLayout findByUuid(String uuid);
 
-	void create(AbstractDomain domain, MailLayout layout)
+	MailLayout create(AbstractDomain domain, MailLayout layout)
 			throws BusinessException;
 
 	void update(MailLayout layout) throws BusinessException;

@@ -98,10 +98,10 @@ public class MailContentRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Create a mail content.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void create(
+	public MailContentDto create(
 			@ApiParam(value = "Mail content to create.", required = true) MailContentDto dto)
 			throws BusinessException {
-		mailContentFacade.create(dto);
+		return mailContentFacade.create(dto);
 	}
 
 	@Path("/")

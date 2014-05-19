@@ -51,7 +51,7 @@ public interface MailContentBusinessService {
 
 	void create(String domainId, MailContent content) throws BusinessException;
 
-	void create(AbstractDomain domain, MailContent content)
+	MailContent create(AbstractDomain domain, MailContent content)
 			throws BusinessException;
 
 	void update(MailContent content) throws BusinessException;

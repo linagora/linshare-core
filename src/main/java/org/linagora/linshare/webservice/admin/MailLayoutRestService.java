@@ -44,7 +44,7 @@ public interface MailLayoutRestService {
 
 	MailLayoutDto find(String uuid) throws BusinessException;
 
-	void create(MailLayoutDto dto) throws BusinessException;
+	MailLayoutDto create(MailLayoutDto dto) throws BusinessException;
 
 	void update(MailLayoutDto dto) throws BusinessException;
 

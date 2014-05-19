@@ -98,10 +98,10 @@ public class MailLayoutRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Create a mail layout.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void create(
+	public MailLayoutDto create(
 			@ApiParam(value = "Mail layout to create.", required = true) MailLayoutDto dto)
 			throws BusinessException {
-		mailLayoutFacade.create(dto);
+		return mailLayoutFacade.create(dto);
 	}
 
 	@Path("/")

@@ -93,13 +93,14 @@ public class MailContentBusinessServiceImpl implements
 	}
 
 	@Override
-	public void create(AbstractDomain domain, MailContent content)
+	public MailContent create(AbstractDomain domain, MailContent content)
 			throws BusinessException {
 		content.setUuid(UUID.randomUUID().toString());
 		content.setCreationDate(new Date());
 		content.setModificationDate(new Date());
 		domain.getMailContents().add(content);
 		abstractDomainRepository.update(domain);
+		return findByUuid(content.getUuid());
 	}
 
 	@Override

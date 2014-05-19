@@ -69,13 +69,14 @@ public class MailFooterBusinessServiceImpl implements MailFooterBusinessService 
 	}
 
 	@Override
-	public void create(AbstractDomain domain, MailFooter footer)
+	public MailFooter create(AbstractDomain domain, MailFooter footer)
 			throws BusinessException {
 		footer.setUuid(UUID.randomUUID().toString());
 		footer.setCreationDate(new Date());
 		footer.setModificationDate(new Date());
 		domain.getMailFooters().add(footer);
 		abstractDomainRepository.update(domain);
+		return findByUuid(footer.getUuid());
 	}
 
 	@Override

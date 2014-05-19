@@ -70,11 +70,11 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void create(MailLayoutDto dto) throws BusinessException {
+	public MailLayoutDto create(MailLayoutDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		MailLayout layout = new MailLayout();
 		transform(layout, dto);
-		mailConfigService.createLayout(actor, layout);
+		return new MailLayoutDto(mailConfigService.createLayout(actor, layout));
 	}
 
 	@Override

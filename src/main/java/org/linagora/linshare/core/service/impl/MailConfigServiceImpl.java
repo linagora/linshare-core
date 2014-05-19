@@ -187,13 +187,13 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void createContent(User actor, MailContent content)
+	public MailContent createContent(User actor, MailContent content)
 			throws BusinessException {
 		if (!actor.getDomain().equals(content.getDomain()))
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail content in this domain "
 					+ actor.getDomainId());
-		mailContentBusinessService.create(content.getDomain(), content);
+		return mailContentBusinessService.create(content.getDomain(), content);
 	}
 
 	@Override
@@ -299,13 +299,13 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void createFooter(User actor, MailFooter footer)
+	public MailFooter createFooter(User actor, MailFooter footer)
 			throws BusinessException {
 		if (!actor.getDomain().equals(footer.getDomain()))
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail footer in this domain "
 					+ actor.getDomainId());
-		mailFooterBusinessService.create(footer.getDomain(), footer);
+		return mailFooterBusinessService.create(footer.getDomain(), footer);
 	}
 
 	@Override
@@ -411,13 +411,13 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void createLayout(User actor, MailLayout layout)
+	public MailLayout createLayout(User actor, MailLayout layout)
 			throws BusinessException {
 		if (!actor.getDomain().equals(layout.getDomain()))
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail layout in this domain "
 					+ actor.getDomainId());
-		mailLayoutBusinessService.create(null, layout);
+		return mailLayoutBusinessService.create(layout.getDomain(), layout);
 	}
 
 	@Override

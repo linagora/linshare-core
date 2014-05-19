@@ -98,10 +98,10 @@ public class MailFooterRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Create a mail footer.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void create(
+	public MailFooterDto create(
 			@ApiParam(value = "Mail footer to create.", required = true) MailFooterDto dto)
 			throws BusinessException {
-		mailFooterFacade.create(dto);
+		return mailFooterFacade.create(dto);
 	}
 
 	@Path("/")
