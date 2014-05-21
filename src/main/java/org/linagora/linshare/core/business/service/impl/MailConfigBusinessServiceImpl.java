@@ -81,7 +81,7 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 		MailConfig rootCfg = abstractDomainRepository.getUniqueRootDomain()
 				.getCurrentMailConfiguration();
 
-		Set<MailContentLang> rootMcl = rootCfg.getMailContents();
+		Set<MailContentLang> rootMcl = rootCfg.getMailContentLangs();
 		Map<Integer, MailFooterLang> rootMfl = rootCfg.getMailFooters();
 
 		// copy root domain's mailconfig
@@ -89,7 +89,7 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 		cfg.setMailLayoutText(rootCfg.getMailLayoutText());
 
 		for (MailContentLang mcl : rootMcl) {
-			cfg.getMailContents().add(new MailContentLang(mcl));
+			cfg.getMailContentLangs().add(new MailContentLang(mcl));
 		}
 		for (Entry<Integer, MailFooterLang> e : rootMfl.entrySet()) {
 			cfg.getMailFooters().put(e.getKey(),
@@ -149,7 +149,7 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 					"Cannot create mail footer lang with language " + lang);
 		}
 		contentLang = mailContentLangRepository.create(contentLang);
-		config.getMailContents().add(contentLang);
+		config.getMailContentLangs().add(contentLang);
 		mailConfigRepository.update(config);
 	}
 

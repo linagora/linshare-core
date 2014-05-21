@@ -80,8 +80,8 @@ public class MailConfigDto {
 	@ApiModelProperty(value = "MailFooters")
 	private Map<Integer, String> mailFooterLangs = Maps.newHashMap();
 
-	@ApiModelProperty(value = "MailContents")
-	private Set<String> mailContentLangs = Sets.newHashSet();
+	@ApiModelProperty(value = "MailContentLangs")
+	private Set<MailContentLangDto> mailContentLangs = Sets.newHashSet();
 
 	public MailConfigDto() {
 	}
@@ -97,11 +97,11 @@ public class MailConfigDto {
 		this.mailLayoutHtml = config.getMailLayoutHtml().getUuid();
 		this.mailLayoutText = config.getMailLayoutText().getUuid();
 
-		Set<MailContentLang> mcls = config.getMailContents();
+		Set<MailContentLang> mcls = config.getMailContentLangs();
 		Map<Integer, MailFooterLang> mfls = config.getMailFooters();
 
 		for (MailContentLang mcl : mcls) {
-			this.mailContentLangs.add(mcl.getUuid());
+			this.mailContentLangs.add(new MailContentLangDto(mcl));
 		}
 		for (Entry<Integer, MailFooterLang> e : mfls.entrySet()) {
 			this.mailFooterLangs.put(e.getKey(), e.getValue().getUuid());
@@ -180,11 +180,11 @@ public class MailConfigDto {
 		this.mailFooterLangs = mailFooterLangs;
 	}
 
-	public Set<String> getMailContentLangs() {
+	public Set<MailContentLangDto> getMailContentLangs() {
 		return mailContentLangs;
 	}
 
-	public void setMailContentLangs(Set<String> mailContentLangs) {
+	public void setMailContentLangs(Set<MailContentLangDto> mailContentLangs) {
 		this.mailContentLangs = mailContentLangs;
 	}
 }

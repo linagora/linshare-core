@@ -77,7 +77,7 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 		/*
 		 * Validate mail contents
 		 */
-		Set<MailContentLang> contents = current.getMailContents();
+		Set<MailContentLang> contents = current.getMailContentLangs();
 		Assert.assertNotNull(contents);
 		/*
 		 * iterate over mailcontent langs, searching for all <Language,

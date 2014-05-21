@@ -40,9 +40,5 @@ public interface MailFooterLangRestService {
 
 	MailFooterLangDto find(String uuid) throws BusinessException;
 
-	void create(MailFooterLangDto dto) throws BusinessException;
-
 	void update(MailFooterLangDto dto) throws BusinessException;
-
-	void delete(MailFooterLangDto dto) throws BusinessException;
 }

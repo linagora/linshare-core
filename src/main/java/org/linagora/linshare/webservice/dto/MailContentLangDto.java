@@ -56,6 +56,12 @@ public class MailContentLangDto {
 	@ApiModelProperty(value = "MailConfig")
 	private String mailConfig;
 
+	@ApiModelProperty(value = "MailContentType")
+	private int mailContentType;
+
+	@ApiModelProperty(value = "MailContentName")
+	private String mailContentName;
+
 	public MailContentLangDto() {
 	}
 
@@ -64,6 +70,16 @@ public class MailContentLangDto {
 		language = contentLang.getLanguage();
 		uuid = contentLang.getUuid();
 		mailContent = contentLang.getMailContent().getUuid();
+		mailContentType = contentLang.getMailContentType();
+		mailContentName = contentLang.getMailContent().getName();
+	}
+
+	public int getMailContentType() {
+		return mailContentType;
+	}
+
+	public void setMailContentType(int mailContentType) {
+		this.mailContentType = mailContentType;
 	}
 
 	public String getUuid() {
@@ -96,5 +112,13 @@ public class MailContentLangDto {
 
 	public void setMailConfig(String mailConfig) {
 		this.mailConfig = mailConfig;
+	}
+
+	public String getMailContentName() {
+		return mailContentName;
+	}
+
+	public void setMailContentName(String mailContentName) {
+		this.mailContentName = mailContentName;
 	}
 }

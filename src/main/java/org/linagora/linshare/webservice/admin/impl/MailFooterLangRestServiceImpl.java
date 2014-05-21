@@ -34,9 +34,7 @@
 package org.linagora.linshare.webservice.admin.impl;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -82,17 +80,6 @@ public class MailFooterLangRestServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/")
-	@POST
-	@ApiOperation(value = "Create a mail footer lang.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@Override
-	public void create(
-			@ApiParam(value = "Mail footer lang to create.", required = true) MailFooterLangDto dto)
-			throws BusinessException {
-		mailFooterLangFacade.create(dto);
-	}
-
-	@Path("/")
 	@PUT
 	@ApiOperation(value = "Update a mail footer lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
@@ -101,16 +88,5 @@ public class MailFooterLangRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Mail footer lang to update.", required = true) MailFooterLangDto dto)
 			throws BusinessException {
 		mailFooterLangFacade.update(dto);
-	}
-
-	@Path("/")
-	@DELETE
-	@ApiOperation(value = "Delete an unused mail footer lang.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@Override
-	public void delete(
-			@ApiParam(value = "Mail footer lang to delete.", required = true) MailFooterLangDto dto)
-			throws BusinessException {
-		mailFooterLangFacade.delete(dto.getUuid());
 	}
 }

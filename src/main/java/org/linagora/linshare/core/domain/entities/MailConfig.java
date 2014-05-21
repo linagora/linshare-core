@@ -62,7 +62,7 @@ public class MailConfig {
 
 	private Map<Integer, MailFooterLang> mailFooters = Maps.newHashMap();
 
-	private Set<MailContentLang> mailContents = Sets.newHashSet();
+	private Set<MailContentLang> mailContentLangs = Sets.newHashSet();
 
 	public MailConfig() {
 	}
@@ -147,11 +147,11 @@ public class MailConfig {
 		this.mailFooters = mailFooters;
 	}
 
-	public Set<MailContentLang> getMailContents() {
-		return mailContents;
+	public Set<MailContentLang> getMailContentLangs() {
+		return mailContentLangs;
 	}
 
-	public void setMailContents(Set<MailContentLang> mailContents) {
-		this.mailContents = mailContents;
+	public void setMailContentLangs(Set<MailContentLang> mailContents) {
+		this.mailContentLangs = mailContents;
 	}
 }

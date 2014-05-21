@@ -34,9 +34,7 @@
 package org.linagora.linshare.webservice.admin.impl;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -82,17 +80,6 @@ public class MailContentLangRestServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/")
-	@POST
-	@ApiOperation(value = "Create a mail content lang.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@Override
-	public void create(
-			@ApiParam(value = "Mail content lang to create.", required = true) MailContentLangDto dto)
-			throws BusinessException {
-		mailContentLangFacade.create(dto);
-	}
-
-	@Path("/")
 	@PUT
 	@ApiOperation(value = "Update a mail content lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
@@ -101,16 +88,5 @@ public class MailContentLangRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Mail content lang to update.", required = true) MailContentLangDto dto)
 			throws BusinessException {
 		mailContentLangFacade.update(dto);
-	}
-
-	@Path("/")
-	@DELETE
-	@ApiOperation(value = "Delete an unused mail content lang.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@Override
-	public void delete(
-			@ApiParam(value = "Mail content lang to delete.", required = true) MailContentLangDto dto)
-			throws BusinessException {
-		mailContentLangFacade.delete(dto.getUuid());
 	}
 }
