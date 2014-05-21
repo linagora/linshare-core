@@ -17,5 +17,7 @@
 			<key column="mime_policy_id" not-null="true" />
 			<one-to-many class="MimeType" />
 		</set>
+		<many-to-one name="domain" cascade="lock" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true" lazy="no-proxy"
+		insert="false" update="false" />
 	</class>
 </hibernate-mapping>

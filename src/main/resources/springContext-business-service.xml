@@ -53,11 +53,11 @@
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="accountRepository" />
 	</bean>
-	
+
 	<bean id="domainAccessPolicyBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainAccessPolicyBusinessServiceImpl">
 		<constructor-arg ref="domainAccessRuleRepository" />
 	</bean>
-	
+
 	<bean id="domainPolicyBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainPolicyBusinessServiceImpl">
 		<constructor-arg ref="domainPolicyRepository" />
 		<constructor-arg ref="abstractDomainRepository" />
@@ -105,4 +105,8 @@
 		<constructor-arg ref="mimeTypeRepository" />
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
 	</bean>
+	<bean id="domainPermissionBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainPermissionBusinessServiceImpl">
+		<constructor-arg ref="domainBusinessService" />
+	</bean>
+
 </beans>

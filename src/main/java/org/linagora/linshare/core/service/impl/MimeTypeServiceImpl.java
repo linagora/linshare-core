@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.business.service.MimeTypeBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -48,21 +50,55 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 
 	private static final Logger logger = LoggerFactory.getLogger(MimeTypeServiceImpl.class);
 
-	private final MimePolicyBusinessService mimePolicyBusinessService;
+	final private MimePolicyBusinessService mimePolicyBusinessService;
 
-	private final MimeTypeBusinessService mimeTypeBusinessService;
+	final private MimeTypeBusinessService mimeTypeBusinessService;
 
+	final private DomainPermissionBusinessService domainPermissionService;
 
 	public MimeTypeServiceImpl(
 			MimeTypeBusinessService mimeTypeBusinessService,
-			MimePolicyBusinessService mimePolicyBusinessService
+			MimePolicyBusinessService mimePolicyBusinessService,
+			DomainPermissionBusinessService domainPermissionService
 			) {
 		this.mimeTypeBusinessService = mimeTypeBusinessService;
 		this.mimePolicyBusinessService = mimePolicyBusinessService;
+		this.domainPermissionService = domainPermissionService;
+	}
+
+	@Override
+	public MimeType find(Account actor, String uuid) throws BusinessException {
+		Validate.notNull(actor);
+		Validate.notEmpty(uuid);
+		if (!isAdminFor(actor, uuid)) {
+			String msg = "The current actor "
+					+ actor.getAccountReprentation()
+					+ " does not have the right to get this MimeType.";
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
+		}
+		return mimeTypeBusinessService.find(uuid);
+	}
+
+	@Override
+	public MimeType update(Account actor, MimeType mimeTypeDto) throws BusinessException {
+		Validate.notNull(actor);
+		Validate.notNull(mimeTypeDto);
+		Validate.notEmpty(mimeTypeDto.getUuid());
+		if (!isAdminFor(actor, mimeTypeDto.getUuid())) {
+			String msg = "The current actor "
+					+ actor.getAccountReprentation()
+					+ " does not have the right to update this MimeType.";
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
+		}
+		return mimeTypeBusinessService.update(mimeTypeDto);
 	}
 
 	@Override
 	public void checkFileMimeType(Account actor, String fileName, String mimeType) throws BusinessException {
+		Validate.notNull(actor);
+		Validate.notEmpty(fileName);
+		Validate.notEmpty(mimeType);
+
 		// use mimetype filtering
 		if (logger.isDebugEnabled()) {
 			logger.debug("2)check the mimetype:" + mimeType);
@@ -83,5 +119,13 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 			logger.error(msg);
 			throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED, msg, extras);
 		}
+	}
+
+	private boolean isAdminFor(Account actor, String uuid) throws BusinessException {
+		MimeType mimeType = mimeTypeBusinessService.find(uuid);
+		// we check if the current actor is admin of the domain which belongs the MimePolicy
+		return domainPermissionService.isAdminforThisDomain(
+				actor,
+				mimeType.getMimePolicy().getDomain());
 	}
 }

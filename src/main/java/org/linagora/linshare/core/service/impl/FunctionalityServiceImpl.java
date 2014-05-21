@@ -38,6 +38,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -52,15 +53,21 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 
 	protected final Logger logger = LoggerFactory.getLogger(FunctionalityServiceImpl.class);
 
-	private FunctionalityBusinessService functionalityBusinessService;
+	final private FunctionalityBusinessService functionalityBusinessService;
 
-	private DomainBusinessService domainBusinessService;
+	final private DomainBusinessService domainBusinessService;
 
-	public FunctionalityServiceImpl(FunctionalityBusinessService functionalityBusinessService,
-			DomainBusinessService domainBusinessService) {
+	final private DomainPermissionBusinessService domainPermissionService;
+
+	public FunctionalityServiceImpl(
+			FunctionalityBusinessService functionalityBusinessService,
+			DomainBusinessService domainBusinessService,
+			DomainPermissionBusinessService domainPermissionService
+			) {
 		super();
 		this.functionalityBusinessService = functionalityBusinessService;
 		this.domainBusinessService = domainBusinessService;
+		this.domainPermissionService = domainPermissionService;
 	}
 
 	@Override
@@ -186,13 +193,8 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	private void checkDomainRights(Account actor, String domainId) throws BusinessException {
-		AbstractDomain domain = domainBusinessService.findById(domainId);
-		if(!actor.isSuperAdmin()) {
-			if (!domain.isManagedBy(actor)) {
-				logger.error("You do not have the right to access to this domain : " + domainId);
-				throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,"The current domain does not exist : domainId");
-			}
+		if(!domainPermissionService.isAdminforThisDomain(actor, domainId)) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,"The current domain does not exist : domainId");
 		}
 	}
-
 }

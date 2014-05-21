@@ -34,17 +34,25 @@
 package org.linagora.linshare.core.service;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MimeTypeService {
 
-		/**
-		 * Check a file mime type status, throw exception if it is denied. Useful for file creation control.
-		 * @param actor
-		 * @param fileName
-		 * @param mimeType
-		 * 
-		 * @throws BusinessException
-		 */
-		public void checkFileMimeType(Account actor, String fileName, String mimeType) throws BusinessException;
+	MimeType find(Account actor, String uuid) throws BusinessException;
+
+	MimeType update(Account actor, MimeType mimeTypeDto) throws BusinessException;
+
+	/**
+	 * Check a file mime type status, throw exception if it is denied. Useful
+	 * for file creation control.
+	 * 
+	 * @param actor
+	 * @param fileName
+	 * @param mimeType
+	 * 
+	 * @throws BusinessException
+	 */
+	public void checkFileMimeType(Account actor, String fileName,
+			String mimeType) throws BusinessException;
 }

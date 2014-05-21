@@ -50,20 +50,23 @@ public class MimePolicy {
 	private int displayable;
 
 	private Date creationDate;
-	
+
 	private Date modificationDate;
 
 	private Set<MimeType> mimeTypes = new HashSet<MimeType>();
+
+	private AbstractDomain domain;
 
 	public MimePolicy() {
 		super();
 	}
 
-	public MimePolicy(String name, int mode, int displayable) {
+	public MimePolicy(AbstractDomain domain, String name, int mode, int displayable) {
 		super();
 		this.name = name;
 		this.mode = mode;
 		this.displayable = displayable;
+		this.domain = domain;
 	}
 
 	public long getId() {
@@ -124,6 +127,14 @@ public class MimePolicy {
 
 	public void setMimeTypes(Set<MimeType> mimeTypes) {
 		this.mimeTypes = mimeTypes;
+	}
+
+	public AbstractDomain getDomain() {
+		return domain;
+	}
+
+	public void setDomain(AbstractDomain domain) {
+		this.domain = domain;
 	}
 
 	@Override

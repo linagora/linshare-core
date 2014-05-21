@@ -36,6 +36,7 @@ package org.linagora.linshare.core.business.service.impl;
 import org.linagora.linshare.core.business.service.MimeTypeBusinessService;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.MimeType;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MimeTypeRepository;
 
@@ -48,8 +49,18 @@ public class MimeTypeBusinessServiceImpl implements MimeTypeBusinessService {
 	}
 
 	@Override
-	public MimeType findByUuid(String uuid) {
-		return mimeTypeRepository.findByUuid(uuid);
+	public MimeType create(MimeType mimeType) throws BusinessException {
+		return mimeTypeRepository.create(mimeType);
+	}
+
+	@Override
+	public MimeType find(String uuid) throws BusinessException {
+		MimeType mimeType = mimeTypeRepository.findByUuid(uuid);
+		if (mimeType == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
+					"Can not find mimeType " + uuid);
+		}
+		return mimeType;
 	}
 
 	@Override
@@ -58,21 +69,11 @@ public class MimeTypeBusinessServiceImpl implements MimeTypeBusinessService {
 	}
 
 	@Override
-	public void create(MimeType mimeType) throws BusinessException {
-		mimeTypeRepository.create(mimeType);
-	}
-
-	@Override
-	public void update(MimeType mimeType) throws BusinessException {
+	public MimeType update(MimeType mimeType) throws BusinessException {
 		MimeType entity = mimeTypeRepository.findByUuid(mimeType.getUuid());
 		entity.setDisplayable(mimeType.getDisplayable());
 		entity.setEnable(mimeType.getEnable());
 		entity.setExtensions(mimeType.getExtensions());
-		mimeTypeRepository.update(entity);
-	}
-
-	@Override
-	public void delete(MimeType mimeType) throws BusinessException {
-		mimeTypeRepository.delete(mimeType);
+		return mimeTypeRepository.update(entity);
 	}
 }

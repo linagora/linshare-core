@@ -70,6 +70,11 @@
 	<bean id="mimeTypeService" class="org.linagora.linshare.core.service.impl.MimeTypeServiceImpl">
 		<constructor-arg ref="mimeTypeBusinessService" />
 		<constructor-arg ref="mimePolicyBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+	</bean>
+	<bean id="mimePolicyService" class="org.linagora.linshare.core.service.impl.MimePolicyServiceImpl">
+		<constructor-arg ref="mimePolicyBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 
 	<bean id="documentEntryService" class="org.linagora.linshare.core.service.impl.DocumentEntryServiceImpl">
@@ -195,6 +200,7 @@
 	<bean name="functionalityService" class="org.linagora.linshare.core.service.impl.FunctionalityServiceImpl">
 		<constructor-arg ref="functionalityBusinessService" />
 		<constructor-arg ref="domainBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 
 	<bean name="functionalityOldService" class="org.linagora.linshare.core.service.impl.FunctionalityOldServiceImpl">

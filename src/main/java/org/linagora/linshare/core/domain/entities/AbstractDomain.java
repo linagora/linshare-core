@@ -354,7 +354,7 @@ public abstract class AbstractDomain {
 				// You have the right to manage your own domain
 				return true;
 			} else {
-				// Checking parents.
+				// Checking if a parent domain is managed by the current actor
 				return checkIfManagedByParent(this, account.getDomainId());
 			}
 		}

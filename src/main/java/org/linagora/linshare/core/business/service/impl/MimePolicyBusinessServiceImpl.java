@@ -33,13 +33,18 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Set;
+
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.MimeType;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MimePolicyRepository;
 import org.linagora.linshare.core.repository.MimeTypeRepository;
+
+import com.google.common.collect.Sets;
 
 public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService {
 
@@ -49,7 +54,8 @@ public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService 
 
 	private MimeTypeMagicNumberDao mimeTypeMagicNumberDao;
 
-	public MimePolicyBusinessServiceImpl(MimePolicyRepository mimePolicyRepository,
+	public MimePolicyBusinessServiceImpl(
+			MimePolicyRepository mimePolicyRepository,
 			MimeTypeRepository mimeTypeRepository,
 			MimeTypeMagicNumberDao mimeTypeMagicNumberDao) {
 		this.mimePolicyRepository = mimePolicyRepository;
@@ -58,42 +64,56 @@ public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService 
 	}
 
 	@Override
-	public MimePolicy findByUuid(String uuid) {
-		return mimePolicyRepository.findByUuid(uuid);
-	}
-
-	@Override
-	public void create(MimePolicy mimePolicy) throws BusinessException {
+	public MimePolicy create(MimePolicy mimePolicy) throws BusinessException {
 		mimePolicyRepository.create(mimePolicy);
 		for (MimeType mimeType : mimeTypeMagicNumberDao.getAllMimeType()) {
 			mimeType.setMimePolicy(mimePolicy);
 			mimeTypeRepository.create(mimeType);
 		}
-	}
-
-	@Override
-	public void update(MimePolicy mimePolicy) throws BusinessException {
-		MimePolicy entity = mimePolicyRepository.findByUuid(mimePolicy.getUuid());
-		entity.setDisplayable(mimePolicy.getDisplayable());
-		entity.setMode(mimePolicy.getMode());
-		entity.setName(mimePolicy.getName());
-		mimePolicyRepository.update(entity);
+		return mimePolicy;
 	}
 
 	@Override
 	public void delete(MimePolicy mimePolicy) throws BusinessException {
-		mimePolicyRepository.delete(mimePolicy);		
+		mimePolicyRepository.delete(mimePolicy);
+	}
+
+	@Override
+	public MimePolicy find(String uuid) throws BusinessException {
+		MimePolicy mimePolicy = mimePolicyRepository.findByUuid(uuid);
+		if (mimePolicy == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
+					"Can not find mimePolicy " + uuid);
+		}
+		return mimePolicy;
+	}
+
+	@Override
+	public Set<MimePolicy> findAll() throws BusinessException {
+		Set<MimePolicy> res = Sets.newHashSet();
+		res.addAll(mimePolicyRepository.findAll());
+		return res;
 	}
 
 	@Override
 	public void load(MimePolicy mimePolicy) throws BusinessException {
 		if (mimePolicy.getMimeTypes() != null
-				&& mimePolicy.getMimeTypes().size() == 0
-				) {
+				&& mimePolicy.getMimeTypes().size() == 0) {
 			for (MimeType mimeType : mimeTypeMagicNumberDao.getAllMimeType()) {
 				mimeType.setMimePolicy(mimePolicy);
 				mimeTypeRepository.create(mimeType);
 			}
 		}
+	}
+
+	@Override
+	public MimePolicy update(MimePolicy mimePolicy) throws BusinessException {
+		MimePolicy entity = mimePolicyRepository.findByUuid(mimePolicy
+				.getUuid());
+		entity.setDisplayable(mimePolicy.getDisplayable());
+		entity.setMode(mimePolicy.getMode());
+		entity.setName(mimePolicy.getName());
+		mimePolicyRepository.update(entity);
+		return entity;
 	}
 }
