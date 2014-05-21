@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
+import java.util.Set;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -41,6 +43,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -67,6 +70,15 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 	public MailConfigRestServiceImpl(final MailConfigFacade mailConfigFacade) {
 		super();
 		this.mailConfigFacade = mailConfigFacade;
+	}
+
+	@Path("/")
+	@GET
+	@ApiOperation(value = "Find all mail configurations.", response = MailConfigDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public Set<MailConfigDto> findAll(@QueryParam(value = "domainId") String domainId) throws BusinessException {
+		return mailConfigFacade.findAll(domainId);
 	}
 
 	@Path("/{uuid}")

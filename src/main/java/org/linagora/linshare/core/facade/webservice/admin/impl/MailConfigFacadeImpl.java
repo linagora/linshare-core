@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
@@ -45,6 +48,8 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
 import org.linagora.linshare.webservice.dto.MailConfigDto;
+
+import com.google.common.collect.Sets;
 
 public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		MailConfigFacade {
@@ -59,6 +64,16 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		super(accountService);
 		this.mailConfigService = mailConfigService;
 		this.abstractDomainService = abstractDomainService;
+	}
+
+	@Override
+	public Set<MailConfigDto> findAll(String domainId) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
+		HashSet<MailConfigDto> mailConfigDtos = Sets.newHashSet();
+		for (MailConfig mailConfig : mailConfigService.findAllConfigs(actor, domainId)) {
+			mailConfigDtos.add(new MailConfigDto(mailConfig));
+		}
+		return mailConfigDtos;
 	}
 
 	@Override

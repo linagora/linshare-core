@@ -33,10 +33,14 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin;
 
+import java.util.Set;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.MailConfigDto;
 
 public interface MailConfigFacade extends AdminGenericFacade {
+
+	Set<MailConfigDto> findAll(String domainId) throws BusinessException;
 
 	MailConfigDto find(String uuid) throws BusinessException;
 
