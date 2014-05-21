@@ -223,7 +223,7 @@ INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mai
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (23, 1, 1, 23, 10, '1ee1c8bc-75e9-4fbe-a34b-893a86704ec9');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (24, 1, 1, 24, 11, '12242aa8-b75e-404d-85df-68e7bb8c04af');
 
-UPDATE domain_abstract SET mailconfig_id = 1;
+UPDATE domain_abstract SET mailconfig_id = 1 WHERE id = 1;
 
 CREATE TABLE mime_policy (
   id                 int8 NOT NULL, 

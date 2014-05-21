@@ -42,9 +42,6 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 			.getLogger(FunctionalityServiceImplTest.class);
 
 	@Autowired
-	private RootUserRepository rootUserRepository;
-
-	@Autowired
 	private MailConfigService mailConfigService;
 
 	@Autowired
@@ -53,17 +50,13 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 	private static final Set<Language> supportedLangs = ImmutableSet.of(
 			Language.DEFAULT, Language.FRENCH);
 
-	private User actor;
-
 	private AbstractDomain rootDomain;
 
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		actor = rootUserRepository
-				.findByLsUuid("root@localhost.localdomain@test");
 		rootDomain = abstractDomainRepository
-				.findById(LoadingServiceTestDatas.rootDomainName);
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

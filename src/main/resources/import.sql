@@ -25,7 +25,7 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 
 -- Subject NEW_SHARING_WITH_ACTOR
 -- LinShare: sharing file with personal message.
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, E'${actorSubject} from ${actorRepresentation}', 0);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} from ${actorRepresentation}', 0);
 
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: A user has just modified a shared file you still have access to
@@ -128,7 +128,7 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 
 -- Subject NEW_SHARING_WITH_ACTOR
 -- LinShare: sharing file with personal message.
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, E'${actorSubject} de la part de ${actorRepresentation}', 1);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} de la part de ${actorRepresentation}', 1);
 
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: An user has updated a shared file
@@ -230,7 +230,7 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 
 -- Subject NEW_SHARING_WITH_ACTOR
 -- LinShare: sharing file with personal message.
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, E'${actorSubject} from ${actorRepresentation}', 2);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} from ${actorRepresentation}', 2);
 
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: An user has updated a shared file
@@ -833,4 +833,4 @@ INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mai
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (23, 1, 1, 23, 10, '1ee1c8bc-75e9-4fbe-a34b-893a86704ec9');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (24, 1, 1, 24, 11, '12242aa8-b75e-404d-85df-68e7bb8c04af');
 
-UPDATE domain_abstract SET mailconfig_id = 1;
+UPDATE domain_abstract SET mailconfig_id = 1 WHERE id = 1;
