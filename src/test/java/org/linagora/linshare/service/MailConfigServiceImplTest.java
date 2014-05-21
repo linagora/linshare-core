@@ -6,7 +6,6 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -22,9 +21,10 @@ import org.linagora.linshare.core.service.MailConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+
+import com.google.common.collect.ImmutableSet;
 
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -36,8 +36,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-test.xml"
 		})
-@Ignore
-public class MailConfigServiceImplTest extends AbstractJUnit4SpringContextTests {
+public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(FunctionalityServiceImplTest.class);
@@ -50,6 +49,9 @@ public class MailConfigServiceImplTest extends AbstractJUnit4SpringContextTests 
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
+
+	private static final Set<Language> supportedLangs = ImmutableSet.of(
+			Language.DEFAULT, Language.FRENCH);
 
 	private User actor;
 
@@ -89,7 +91,7 @@ public class MailConfigServiceImplTest extends AbstractJUnit4SpringContextTests 
 		 * MailContentType> pair
 		 */
 		for (MailContentType type : MailContentType.values()) {
-			for (Language lang : Language.values()) {
+			for (Language lang : supportedLangs) {
 				boolean found = false;
 
 				for (MailContentLang c : contents) {
@@ -97,9 +99,9 @@ public class MailConfigServiceImplTest extends AbstractJUnit4SpringContextTests 
 							&& c.getLanguage() == lang.toInt())
 						found = true;
 				}
-				Assert.assertFalse(
-						"Missing MailContentLang in root domain mail config : "
-								+ lang.toString() + " " + type.toString(),
+				Assert.assertTrue(
+						"Missing MailContentLang in root domain mail config : lang="
+								+ lang.toString() + ";type=" + type.toString(),
 						found);
 			}
 		}
@@ -109,9 +111,9 @@ public class MailConfigServiceImplTest extends AbstractJUnit4SpringContextTests 
 		 */
 		Map<Integer, MailFooterLang> footers = current.getMailFooters();
 		Assert.assertNotNull(current.getMailFooters());
-		for (Language lang : Language.values()) {
+		for (Language lang : supportedLangs) {
 			Assert.assertNotNull(
-					"Missing MailFooter in root domain mail config : "
+					"Missing MailFooter in root domain mail config : lang="
 							+ lang.toString(), footers.get(lang.toInt()));
 		}
 
@@ -120,19 +122,16 @@ public class MailConfigServiceImplTest extends AbstractJUnit4SpringContextTests 
 	}
 
 	@Test
-	@DirtiesContext
 	public void testCreateMailConfig() {
 		// TODO
 	}
 
 	@Test
-	@DirtiesContext
 	public void testUpdateMailConfig() {
 		// TODO
 	}
 
 	@Test
-	@DirtiesContext
 	public void testDeleteMailConfig() {
 		// TODO
 	}
