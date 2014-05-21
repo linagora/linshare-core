@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import org.linagora.linshare.core.business.service.MimeTypeBusinessService;
+import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MimeTypeRepository;
@@ -41,7 +42,7 @@ import org.linagora.linshare.core.repository.MimeTypeRepository;
 public class MimeTypeBusinessServiceImpl implements MimeTypeBusinessService {
 
 	private MimeTypeRepository mimeTypeRepository;
-	
+
 	public MimeTypeBusinessServiceImpl(MimeTypeRepository mimeTypeRepository) {
 		this.mimeTypeRepository = mimeTypeRepository;
 	}
@@ -49,6 +50,11 @@ public class MimeTypeBusinessServiceImpl implements MimeTypeBusinessService {
 	@Override
 	public MimeType findByUuid(String uuid) {
 		return mimeTypeRepository.findByUuid(uuid);
+	}
+
+	@Override
+	public MimeType findByMimeType(MimePolicy mimePolicy, String mimeType) {
+		return mimeTypeRepository.findByMimeType(mimePolicy, mimeType);
 	}
 
 	@Override
@@ -67,6 +73,6 @@ public class MimeTypeBusinessServiceImpl implements MimeTypeBusinessService {
 
 	@Override
 	public void delete(MimeType mimeType) throws BusinessException {
-		mimeTypeRepository.delete(mimeType);		
+		mimeTypeRepository.delete(mimeType);
 	}
 }

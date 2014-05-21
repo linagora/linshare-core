@@ -64,10 +64,6 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
-	<bean name="allowedMimeTypeRepository" class="org.linagora.linshare.core.repository.hibernate.AllowedMimeTypeRepositoryImpl">
-		<constructor-arg ref="hibernateTemplate" />
-	</bean>
-
 	<bean name="recipientFavouriteRepository" class="org.linagora.linshare.core.repository.hibernate.RecipientFavouriteRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>

@@ -21,13 +21,6 @@ CREATE TABLE account (
   destroyed                       bool NOT NULL, 
   CONSTRAINT account_pkey 
     PRIMARY KEY (id));
-CREATE TABLE allowed_mimetype (
-  id          int8 NOT NULL, 
-  extensions varchar(255), 
-  mimetype   varchar(255), 
-  status     int4, 
-  CONSTRAINT linshare_allowed_mimetype_pkey 
-    PRIMARY KEY (id));
 CREATE TABLE anonymous_share_entry (
   entry_id          int8 NOT NULL, 
   downloaded        int8 NOT NULL, 
@@ -554,8 +547,6 @@ CREATE UNIQUE INDEX account_ls_uuid
   ON account (ls_uuid);
 CREATE INDEX account_account_type 
   ON account (account_type);
-CREATE INDEX allowed_mimetype_index 
-  ON allowed_mimetype (id);
 CREATE INDEX cookie2 
   ON cookie (identifier);
 CREATE INDEX cookie_i 

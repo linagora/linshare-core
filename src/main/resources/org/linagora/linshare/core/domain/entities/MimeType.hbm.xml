@@ -13,5 +13,6 @@
 		<property name="displayable" column="displayable" type="boolean" not-null="true" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="date" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="date" not-null="true" lazy="false"/>
+		<many-to-one name="mimePolicy" cascade="lock" column="mime_policy_id" class="MimePolicy" not-null="true" lazy="no-proxy"/>
 	</class>
 </hibernate-mapping>

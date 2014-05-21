@@ -33,72 +33,18 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.constants.MimeTypeStatus;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AllowedMimeType;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MimeTypeService {
 
 		/**
-		 * return allowed mime type from database, is no allowed mime type is present, we load a list form Apache Rika referential.
-		 * @return
-		 * @throws BusinessException
-		 */
-		public List<AllowedMimeType>  getAllowedMimeType() throws BusinessException;
-        
-		
-		/**
-		 * return false if mime type does not exist or if it is not set as allowed
-		 * @param mimeType to check
-		 * @return
-		 */
-		public boolean isAllowed(String mimeType);
-		
-		/**
-		 * delete and replace all entries with the given one
-		 * @param list of mime type to replace the old ones
-		 * @throws BusinessException
-		 */
-		public void createAllowedMimeType(List<AllowedMimeType> list) throws BusinessException;
-		
-		/**
-		 * update the list of mime type which is given as parameter
-		 * @param list
-		 * @throws BusinessException
-		 */
-		public void saveOrUpdateAllowedMimeType(List<AllowedMimeType> list) throws BusinessException;
-
-
-		/**
-		 * give the status associated with the mime type in database
-		 * if many occurences return the status of the fist entry
-		 * if the mime type does not exist return MimeTypeStatus.AUTHORISED
-		 * @param mimeType
-		 * @return MimeTypeStatus
-		 */
-		public MimeTypeStatus giveStatus(String mimeType);
-		
-		
-		/**
 		 * Check a file mime type status, throw exception if it is denied. Useful for file creation control.
-		 * 
+		 * @param actor
 		 * @param fileName
 		 * @param mimeType
-		 * @param owner
+		 * 
 		 * @throws BusinessException
 		 */
-		public void checkFileMimeType(String fileName, String mimeType, Account owner) throws BusinessException;
-
-
-		/**
-		 * Check if a file mime type has warning status. Useful for user message.
-		 * @param mimeType
-		 * 
-		 * @return true if file mime type has warning status
-		 */
-		boolean checkFileWarningMimeType(String mimeType);
-
+		public void checkFileMimeType(Account actor, String fileName, String mimeType) throws BusinessException;
 }

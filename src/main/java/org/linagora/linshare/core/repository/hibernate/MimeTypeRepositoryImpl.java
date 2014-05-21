@@ -39,6 +39,7 @@ import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MimeTypeRepository;
@@ -66,9 +67,14 @@ public class MimeTypeRepositoryImpl extends
 	}
 
 	@Override
-	public MimeType findByMimeType(String mimeType) {
-		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
-				"mimeType", mimeType)));
+	public MimeType findByMimeType(MimePolicy mimePolicy, String mimeType) {
+		return DataAccessUtils.singleResult(
+				findByCriteria(
+						Restrictions.and(
+								Restrictions.eq("mimeType", mimeType),
+								Restrictions.eq("mimePolicy", mimePolicy)
+								)
+						));
 	}
 
 	@Override

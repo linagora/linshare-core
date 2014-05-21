@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
-import java.util.Set;
-
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
@@ -46,9 +44,9 @@ import org.linagora.linshare.core.repository.MimeTypeRepository;
 public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService {
 
 	private MimePolicyRepository mimePolicyRepository;
-	
+
 	private MimeTypeRepository mimeTypeRepository;
-	
+
 	private MimeTypeMagicNumberDao mimeTypeMagicNumberDao;
 
 	public MimePolicyBusinessServiceImpl(MimePolicyRepository mimePolicyRepository,
@@ -66,12 +64,11 @@ public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService 
 
 	@Override
 	public void create(MimePolicy mimePolicy) throws BusinessException {
-		Set<MimeType> mimeTypes = mimeTypeMagicNumberDao.getAllMimeType();
-		for (MimeType mimeType : mimeTypes) {
+		mimePolicyRepository.create(mimePolicy);
+		for (MimeType mimeType : mimeTypeMagicNumberDao.getAllMimeType()) {
+			mimeType.setMimePolicy(mimePolicy);
 			mimeTypeRepository.create(mimeType);
 		}
-		mimePolicy.setMimeTypes(mimeTypes);
-		mimePolicyRepository.create(mimePolicy);
 	}
 
 	@Override
@@ -86,5 +83,17 @@ public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService 
 	@Override
 	public void delete(MimePolicy mimePolicy) throws BusinessException {
 		mimePolicyRepository.delete(mimePolicy);		
+	}
+
+	@Override
+	public void load(MimePolicy mimePolicy) throws BusinessException {
+		if (mimePolicy.getMimeTypes() != null
+				&& mimePolicy.getMimeTypes().size() == 0
+				) {
+			for (MimeType mimeType : mimeTypeMagicNumberDao.getAllMimeType()) {
+				mimeType.setMimePolicy(mimePolicy);
+				mimeTypeRepository.create(mimeType);
+			}
+		}
 	}
 }

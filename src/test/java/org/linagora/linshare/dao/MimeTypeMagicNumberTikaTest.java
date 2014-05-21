@@ -35,7 +35,7 @@ package org.linagora.linshare.dao;
 
 import java.io.File;
 import java.net.URL;
-import java.util.List;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -43,7 +43,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.entities.AllowedMimeType;
+import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,8 +76,7 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 	@Test
 	public void testMimeTypeCount() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-
-		List<AllowedMimeType> allSupportedMimeType = mimeTypeService.getAllSupportedMimeType();
+		Set<MimeType> allSupportedMimeType = mimeTypeService.getAllMimeType();
 		logger.debug("allSupportedMimeType size : " + allSupportedMimeType.size());
 		// old library : 161, new one : 1385
 		Assert.assertEquals(1385, allSupportedMimeType.size());
@@ -176,5 +175,5 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-		
+
 }

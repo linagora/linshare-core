@@ -8,16 +8,16 @@
 		<param name="identifierMethod">toInt</param>
 		<param name="valueOfMethod">fromInt</param>
 	</typedef>
-	
+
 
 	<class name="AbstractDomain" table="domain_abstract" discriminator-value= "-1" >
 		<id name="persistenceId" type="long">
 			<column name="id" not-null="true" index="index_abstract_domain_id"/>
 			<generator class="native" />
 		</id>
-		 
+
 		<discriminator column="type" type="integer" />
-		
+
 		<property access="field" column="identifier" name="identifier" not-null="true" unique="true" index="index_abstract_domain_identifier" />
 		<property access="field" column="label" name="label" not-null="true" />
 		<property access="field" column="enable" name="enable" not-null="true" />
@@ -27,24 +27,24 @@
 		<property access="field" column="default_locale" name="defaultLocale" />
 		<property access="field" column="used_space" name="usedSpace" not-null="true"/>
 		<property access="field" column="auth_show_order" name="authShowOrder" />
-		
+
 		<many-to-one name="userProvider" class="org.linagora.linshare.core.domain.entities.LdapUserProvider" 
 			column="user_provider_id" unique="true" lazy="false" cascade="delete" />
-			
+
 		<many-to-one name="policy" class="org.linagora.linshare.core.domain.entities.DomainPolicy" 
 			column="domain_policy_id" not-null="true" lazy="false" />
-    	
+
 		<many-to-one name="parentDomain" column="parent_id" class="AbstractDomain" lazy="false"/>
 		<set name="subdomain" lazy="false" cascade="all-delete-orphan">
 	 		<key column="parent_id" />
 	 		<one-to-many class="AbstractDomain" />
 	 	</set>
-	
+
 		<set name="functionalities" inverse="true" cascade="all-delete-orphan" lazy="false">
 			<key column="domain_id" />
 			<one-to-many class="Functionality"  />
 		</set>
-		
+
 		<set name="domainAccessRules" inverse="true" cascade="delete-orphan">
 			<key column="domain_id" />
 			<one-to-many class="DomainAccessRule"  />
@@ -70,8 +70,13 @@
 			<one-to-many class="org.linagora.linshare.core.domain.entities.MailConfig"/>
 		</set>
 
+		<many-to-one name="mimePolicy" cascade="lock" column="mime_policy_id" class="MimePolicy" not-null="false" lazy="no-proxy"/>
+		<set name="mimePolicies" lazy="true" cascade="save-update,lock" inverse="false">
+			<key column="domain_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.MimePolicy"/>
+		</set>
 
-	
+
 		<many-to-one cascade="save-update" lazy="false" access="field" class="org.linagora.linshare.core.domain.entities.MessagesConfiguration" 
 			name="messagesConfiguration" column="messages_configuration_id" not-null="false" />
 
@@ -87,7 +92,7 @@
 		        <property column="size_unit_id" name="shareSizeUnit" type="fileSizeEnumType"/>
 	      	</composite-element>
 	    </list>
-	 	
+
 		<subclass discriminator-value="0" name="org.linagora.linshare.core.domain.entities.RootDomain"></subclass>
 		<subclass discriminator-value="1" name="org.linagora.linshare.core.domain.entities.TopDomain"></subclass>
 		<subclass discriminator-value="2" name="org.linagora.linshare.core.domain.entities.SubDomain"></subclass>

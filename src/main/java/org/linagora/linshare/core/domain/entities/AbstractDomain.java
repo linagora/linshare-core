@@ -92,6 +92,9 @@ public abstract class AbstractDomain {
 	private Set<MailConfig> mailConfigs;
 	private Set<MailContent> mailContents;
 
+	private MimePolicy mimePolicy;
+	private Set<MimePolicy> mimePolicies;
+
 	protected AbstractDomain() {
 		this.identifier = null;
 	}
@@ -118,6 +121,7 @@ public abstract class AbstractDomain {
 		this.mailFooters = new HashSet<MailFooter>();
 		this.mailContents = new HashSet<MailContent>();
 		this.mailConfigs = new HashSet<MailConfig>();
+		this.mimePolicies = new HashSet<MimePolicy>();
 	}
 
 	public AbstractDomain(AbstractDomainVo d) {
@@ -156,6 +160,7 @@ public abstract class AbstractDomain {
 		this.defaultRole = Role.valueOf(domainDto.getUserRole());
 		this.defaultLocale = domainDto.getLocale();
 		this.authShowOrder = domainDto.getAuthShowOrder();
+//		TODO this.mimePolicy = new MimePolicy();
 	}
 
 	public void updateDomainWith(AbstractDomain d) {
@@ -406,5 +411,21 @@ public abstract class AbstractDomain {
 
 	public void setMailContents(Set<MailContent> mailContents) {
 		this.mailContents = mailContents;
+	}
+
+	public MimePolicy getMimePolicy() {
+		return mimePolicy;
+	}
+
+	public void setMimePolicy(MimePolicy mimePolicy) {
+		this.mimePolicy = mimePolicy;
+	}
+
+	public Set<MimePolicy> getMimePolicies() {
+		return mimePolicies;
+	}
+
+	public void setMimePolicies(Set<MimePolicy> mimePolicies) {
+		this.mimePolicies = mimePolicies;
 	}
 }

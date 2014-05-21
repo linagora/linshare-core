@@ -40,6 +40,8 @@ public interface MimePolicyBusinessService {
 
 	MimePolicy findByUuid(String uuid);
 
+	void load(MimePolicy mimePolicy) throws BusinessException;
+
 	void create(MimePolicy mimePolicy) throws BusinessException;
 
 	void update(MimePolicy mimePolicy) throws BusinessException;

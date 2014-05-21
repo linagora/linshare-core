@@ -34,12 +34,13 @@
 
 package org.linagora.linshare.core.repository;
 
+import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.MimeType;
 
 public interface MimeTypeRepository extends AbstractRepository<MimeType> {
 
 	MimeType findByUuid(String uuid);
 
-	public MimeType findByMimeType(String mimeType);
+	MimeType findByMimeType(MimePolicy mimePolicy, String mimeType);
 
 }

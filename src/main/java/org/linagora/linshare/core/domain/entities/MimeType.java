@@ -52,14 +52,21 @@ public class MimeType {
 	private Date creationDate;
 
 	private Date modificationDate;
-	
+
+	private MimePolicy mimePolicy;
+
 	public MimeType() {
 		super();
 	}
-	
+
+	public MimeType(MimePolicy mimePolicy, String mimeType, String extensions,
+			Boolean enable, Boolean displayable) {
+		this(mimeType, extensions, enable, displayable);
+		this.mimePolicy = mimePolicy;
+	}
+
 	public MimeType(String mimeType, String extensions,
 			Boolean enable, Boolean displayable) {
-		super();
 		this.mimeType = mimeType;
 		this.extensions = extensions;
 		this.enable = enable;
@@ -120,6 +127,14 @@ public class MimeType {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	public MimePolicy getMimePolicy() {
+		return mimePolicy;
+	}
+
+	public void setMimePolicy(MimePolicy mimePolicy) {
+		this.mimePolicy = mimePolicy;
 	}
 
 	@Override

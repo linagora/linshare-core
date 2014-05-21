@@ -26,7 +26,7 @@
 	<bean name="accountService" class="org.linagora.linshare.core.service.impl.AccountServiceImpl">
 		<constructor-arg ref="accountRepository" />
 	</bean>
-	
+
 	<bean name="threadService" class="org.linagora.linshare.core.service.impl.ThreadServiceImpl">
 		<constructor-arg ref="threadRepository" />
 		<constructor-arg ref="threadMemberRepository" />
@@ -68,8 +68,8 @@
 	</bean>
 
 	<bean id="mimeTypeService" class="org.linagora.linshare.core.service.impl.MimeTypeServiceImpl">
-		<constructor-arg index="0" ref="allowedMimeTypeRepository" />
-		<constructor-arg index="1" ref="mimeTypeMagicNumberDao" />
+		<constructor-arg ref="mimeTypeBusinessService" />
+		<constructor-arg ref="mimePolicyBusinessService" />
 	</bean>
 
 	<bean id="documentEntryService" class="org.linagora.linshare.core.service.impl.DocumentEntryServiceImpl">
@@ -82,7 +82,7 @@
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
 		<constructor-arg ref="antiSamyService" />
 	</bean>
-	
+
 	<bean id="threadEntryService" class="org.linagora.linshare.core.service.impl.ThreadEntryServiceImpl">
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="logEntryService" />
@@ -105,8 +105,8 @@
 		<constructor-arg ref="shareEntryService" />
 		<constructor-arg ref="anonymousShareEntryService" />
 	</bean>
-	
-	
+
+
 
 	<bean id="shareEntryService" class="org.linagora.linshare.core.service.impl.ShareEntryServiceImpl">
 		<constructor-arg ref="guestRepository" />
@@ -166,7 +166,7 @@
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="logEntryRepository" />
 	</bean>
-	
+
 	<bean name="mailContentBuildingService" class="org.linagora.linshare.core.service.impl.MailContentBuildingServiceImpl">
 		<constructor-arg value="${linshare.mails.txt.container}" />
 		<constructor-arg value="${linshare.mails.html.container}" />
@@ -176,7 +176,7 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg value="${linshare.display.licenceTerm}" />
 	</bean>
-	
+
 	<bean name="mailBuildingService" class="org.linagora.linshare.core.service.impl.MailBuildingServiceImpl">
 		<constructor-arg value="${linshare.logo.mails.visible}" />
 		<constructor-arg ref="abstractDomainService" />
@@ -196,13 +196,13 @@
 		<constructor-arg ref="functionalityBusinessService" />
 		<constructor-arg ref="domainBusinessService" />
 	</bean>
-	
+
 	<bean name="functionalityOldService" class="org.linagora.linshare.core.service.impl.FunctionalityOldServiceImpl">
 		<constructor-arg ref="functionalityRepository" />
 		<constructor-arg ref="functionalityBusinessService" />
 		<constructor-arg ref="abstractDomainRepository" />
 	</bean>
-	
+
 	<bean name="functionalityReadOnlyService" class="org.linagora.linshare.core.service.impl.FunctionalityReadOnlyServiceImpl">
 		<constructor-arg ref="functionalityRepository" />
 		<constructor-arg ref="abstractDomainRepository" />

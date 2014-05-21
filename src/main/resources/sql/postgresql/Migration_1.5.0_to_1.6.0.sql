@@ -120,6 +120,7 @@ DROP TABLE tag_enum_value CASCADE;
 DROP TABLE tag_filter CASCADE;
 DROP TABLE tag_filter_rule CASCADE;
 DROP TABLE tag_filter_rule_tag_association CASCADE;
+DROP TABLE allowed_mimetype;
 
 
 
@@ -251,6 +252,10 @@ CREATE TABLE mime_type (
 ALTER TABLE mime_type ADD CONSTRAINT FKmime_type145742 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
 ALTER TABLE mime_policy ADD CONSTRAINT FKmime_polic613419 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs809928 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
+
+INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, creation_date, modification_date) VALUES(1, 1, '3d6d8800-e0f7-11e3-8ec0-080027c0eef0', 'Default Mime Policy', 0, 0, now(), now());
+UPDATE domain_abstract SET mime_policy_id=1;
+
 
 ALTER TABLE version RENAME description TO version;
 ALTER TABLE account DROP COLUMN account_id;

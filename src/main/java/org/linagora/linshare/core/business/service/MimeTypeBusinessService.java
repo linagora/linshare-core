@@ -33,12 +33,15 @@
  */
 package org.linagora.linshare.core.business.service;
 
+import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MimeTypeBusinessService {
 
 	MimeType findByUuid(String uuid);
+
+	MimeType findByMimeType(MimePolicy mimePolicy, String mimeType);
 
 	void create(MimeType mimePolicy) throws BusinessException;
 

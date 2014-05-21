@@ -117,7 +117,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			// check if the file MimeType is allowed
 			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
 			if (mimeFunctionality.getActivationPolicy().getStatus()) {
-				mimeTypeService.checkFileMimeType(filename, mimeType, actor);
+				mimeTypeService.checkFileMimeType(actor, filename, mimeType);
 			}
 
 			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
@@ -173,7 +173,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
 		}
 	}
-	
+
 	@Override
 	public void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException {
 		Thread owner = (Thread)threadEntry.getEntryOwner();
