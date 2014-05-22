@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailContentLang;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -57,7 +58,7 @@ public class MailContentLangDto {
 	private String mailConfig;
 
 	@ApiModelProperty(value = "MailContentType")
-	private int mailContentType;
+	private String mailContentType;
 
 	@ApiModelProperty(value = "MailContentName")
 	private String mailContentName;
@@ -70,15 +71,16 @@ public class MailContentLangDto {
 		language = contentLang.getLanguage();
 		uuid = contentLang.getUuid();
 		mailContent = contentLang.getMailContent().getUuid();
-		mailContentType = contentLang.getMailContentType();
+		mailContentType = MailContentType.fromInt(
+				contentLang.getMailContentType()).toString();
 		mailContentName = contentLang.getMailContent().getName();
 	}
 
-	public int getMailContentType() {
+	public String getMailContentType() {
 		return mailContentType;
 	}
 
-	public void setMailContentType(int mailContentType) {
+	public void setMailContentType(String mailContentType) {
 		this.mailContentType = mailContentType;
 	}
 
