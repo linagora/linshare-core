@@ -35,6 +35,7 @@ package org.linagora.linshare.service;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.MimeTypeService;
@@ -44,8 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = { 
-		"classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-service.xml",
@@ -53,11 +53,12 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-startopendj.xml",
 		"classpath:springContext-jackRabbit.xml",
-		"classpath:springContext-test.xml"
-		})
-public class MimeTypeServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
+		"classpath:springContext-test.xml" })
+public class MimeTypeServiceImplTest extends
+		AbstractTransactionalJUnit4SpringContextTests {
 
-	private static Logger logger = LoggerFactory.getLogger(MimeTypeServiceImplTest.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(MimeTypeServiceImplTest.class);
 
 	@Autowired
 	private MimeTypeService mimeTypeService;
@@ -68,10 +69,14 @@ public class MimeTypeServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-
 	@After
 	public void tearDown() throws BusinessException {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
+	}
+
+	@Test
+	public void test1() {
+
 	}
 }

@@ -57,17 +57,17 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 
 	final private DomainBusinessService domainBusinessService;
 
-	final private DomainPermissionBusinessService domainPermissionService;
+	final private DomainPermissionBusinessService domainPermissionBusinessService;
 
 	public FunctionalityServiceImpl(
 			FunctionalityBusinessService functionalityBusinessService,
 			DomainBusinessService domainBusinessService,
-			DomainPermissionBusinessService domainPermissionService
+			DomainPermissionBusinessService domainPermissionBusinessService
 			) {
 		super();
 		this.functionalityBusinessService = functionalityBusinessService;
 		this.domainBusinessService = domainBusinessService;
-		this.domainPermissionService = domainPermissionService;
+		this.domainPermissionBusinessService = domainPermissionBusinessService;
 	}
 
 	@Override
@@ -193,7 +193,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	private void checkDomainRights(Account actor, String domainId) throws BusinessException {
-		if(!domainPermissionService.isAdminforThisDomain(actor, domainId)) {
+		if(!domainPermissionBusinessService.isAdminforThisDomain(actor, domainId)) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,"The current domain does not exist : domainId");
 		}
 	}
