@@ -35,6 +35,8 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 
+import org.linagora.linshare.webservice.dto.MimeTypeDto;
+
 public class MimeType {
 
 	private long id;
@@ -45,9 +47,9 @@ public class MimeType {
 
 	private String extensions;
 
-	private Boolean enable;
+	private boolean enable;
 
-	private Boolean displayable;
+	private boolean displayable;
 
 	private Date creationDate;
 
@@ -60,17 +62,22 @@ public class MimeType {
 	}
 
 	public MimeType(MimePolicy mimePolicy, String mimeType, String extensions,
-			Boolean enable, Boolean displayable) {
+			boolean enable, boolean displayable) {
 		this(mimeType, extensions, enable, displayable);
 		this.mimePolicy = mimePolicy;
 	}
 
 	public MimeType(String mimeType, String extensions,
-			Boolean enable, Boolean displayable) {
+			boolean enable, boolean displayable) {
 		this.mimeType = mimeType;
 		this.extensions = extensions;
 		this.enable = enable;
 		this.displayable = displayable;
+	}
+
+	public MimeType(MimeTypeDto m) {
+		this.uuid = m.getUuid();
+		this.extensions = m.getExtensions();
 	}
 
 	public long getId() {
@@ -97,19 +104,19 @@ public class MimeType {
 		this.extensions = extensions;
 	}
 
-	public Boolean getEnable() {
+	public boolean getEnable() {
 		return enable;
 	}
 
-	public void setEnable(Boolean enable) {
+	public void setEnable(boolean enable) {
 		this.enable = enable;
 	}
 
-	public Boolean getDisplayable() {
+	public boolean getDisplayable() {
 		return displayable;
 	}
 
-	public void setDisplayable(Boolean displayable) {
+	public void setDisplayable(boolean displayable) {
 		this.displayable = displayable;
 	}
 

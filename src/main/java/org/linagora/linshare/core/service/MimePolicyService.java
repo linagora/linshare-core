@@ -14,9 +14,7 @@ public interface MimePolicyService {
 
 	MimePolicy find(Account actor, String uuid) throws BusinessException;
 
-	Set<MimePolicy> findAllEditable(Account actor) throws BusinessException;
-
-	Set<MimePolicy> findAllUsable(Account actor) throws BusinessException;
+	Set<MimePolicy> findAll(Account actor, String domainIdentifier, boolean onlyCurrentDomain) throws BusinessException;
 
 	MimePolicy update(Account actor, MimePolicy mimePolicyDto) throws BusinessException;
 }

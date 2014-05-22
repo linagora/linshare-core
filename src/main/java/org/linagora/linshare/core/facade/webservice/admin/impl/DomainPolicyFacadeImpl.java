@@ -81,12 +81,13 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public Set<DomainPolicyDto> findAll() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-        Set<DomainPolicyDto> domainPolicies = new HashSet<DomainPolicyDto>();
-        for (DomainPolicy domainPolicy : domainPolicyService.findAllDomainPolicy()) {
-            domainPolicies.add(new DomainPolicyDto(domainPolicy));
-        }
-        return domainPolicies;
-    }
+		Set<DomainPolicyDto> domainPolicies = new HashSet<DomainPolicyDto>();
+		for (DomainPolicy domainPolicy : domainPolicyService
+				.findAllDomainPolicy()) {
+			domainPolicies.add(new DomainPolicyDto(domainPolicy));
+		}
+		return domainPolicies;
+	}
 
 	@Override
 	public void create(DomainPolicyDto dto) throws BusinessException {

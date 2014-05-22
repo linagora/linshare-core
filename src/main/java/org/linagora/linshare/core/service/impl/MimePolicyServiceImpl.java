@@ -3,6 +3,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -10,6 +11,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MimePolicyService;
 
 import com.google.common.collect.Sets;
@@ -20,14 +22,17 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 
 	final private DomainPermissionBusinessService domainPermissionService;
 
+	final private DomainBusinessService domainBusinessService;
 
 	public MimePolicyServiceImpl(
 			MimePolicyBusinessService mimePolicyBusinessService,
-			DomainPermissionBusinessService domainPermissionService
+			DomainPermissionBusinessService domainPermissionService,
+			final DomainBusinessService domainBusinessService
 			) {
 		super();
 		this.mimePolicyBusinessService = mimePolicyBusinessService;
 		this.domainPermissionService = domainPermissionService;
+		this.domainBusinessService = domainBusinessService;
 	}
 
 	@Override
@@ -41,13 +46,12 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 		Validate.notEmpty(mimePolicy.getName());
 
 		// check actor is admin of mimePolicy.getDomain();
-		 if(!mimePolicy.getDomain().isManagedBy(actor)) {
-			 String msg = "The current actor "
-						+ actor.getAccountReprentation()
-						+ " does not have the right to create a MimePolicy.";
-				throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
-		 }
-		 return mimePolicyBusinessService.create(mimePolicy);
+		if (!mimePolicy.getDomain().isManagedBy(actor)) {
+			String msg = "The current actor " + actor.getAccountReprentation()
+					+ " does not have the right to create a MimePolicy.";
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
+		}
+		return mimePolicyBusinessService.create(mimePolicy);
 	}
 
 	@Override
@@ -57,8 +61,7 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 		Validate.notNull(mimePolicy);
 		Validate.notEmpty(mimePolicy.getUuid());
 		if (!isAdminFor(actor, mimePolicy.getUuid())) {
-			String msg = "The current actor "
-					+ actor.getAccountReprentation()
+			String msg = "The current actor " + actor.getAccountReprentation()
 					+ " does not have the right to delete this MimePolicy.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
@@ -70,8 +73,7 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 		Validate.notNull(actor);
 		Validate.notEmpty(uuid);
 		if (!isAdminFor(actor, uuid)) {
-			String msg = "The current actor "
-					+ actor.getAccountReprentation()
+			String msg = "The current actor " + actor.getAccountReprentation()
 					+ " does not have the right to get this MimePolicy.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
@@ -79,13 +81,21 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 	}
 
 	@Override
-	public Set<MimePolicy> findAllUsable(Account actor)
-			throws BusinessException {
+	public Set<MimePolicy> findAll(Account actor, String domainIdentifier,
+			boolean onlyCurrentDomain) throws BusinessException {
 		Validate.notNull(actor);
-		if (actor.isSuperAdmin()) {
-			return mimePolicyBusinessService.findAll();
+		Validate.notNull(domainIdentifier);
+
+		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
+		if (!domainPermissionService.isAdminforThisDomain(actor, domain)) {
+			String msg = "The current actor " + actor.getAccountReprentation()
+					+ " does not have the right to get all MimePolicies.";
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
+		}
+		if (onlyCurrentDomain) {
+			return domain.getMimePolicies();
 		} else {
-			return getAllUsable(actor.getDomain());
+			return getAllUsable(domain);
 		}
 	}
 
@@ -99,29 +109,6 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 	}
 
 	@Override
-	public Set<MimePolicy> findAllEditable(Account actor)
-			throws BusinessException {
-		Validate.notNull(actor);
-		if (actor.isSuperAdmin()) {
-			return mimePolicyBusinessService.findAll();
-		} else {
-			return getAllEditable(actor.getDomain());
-		}
-	}
-
-	private Set<MimePolicy> getAllEditable(AbstractDomain domain) {
-		Set<MimePolicy> res = Sets.newHashSet();
-		if (domain != null) {
-			res.addAll(domain.getMimePolicies());
-			Set<AbstractDomain> subdomains = domain.getSubdomain();
-			for (AbstractDomain subdomain : subdomains) {
-				res.addAll(getAllEditable(subdomain));
-			}
-		}
-		return res;
-	}
-
-	@Override
 	public MimePolicy update(Account actor, MimePolicy mimePolicyDto)
 			throws BusinessException {
 		Validate.notNull(actor);
@@ -129,19 +116,19 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 		Validate.notEmpty(mimePolicyDto.getUuid());
 		Validate.notEmpty(mimePolicyDto.getName());
 		if (!isAdminFor(actor, mimePolicyDto.getUuid())) {
-			String msg = "The current actor "
-					+ actor.getAccountReprentation()
+			String msg = "The current actor " + actor.getAccountReprentation()
 					+ " does not have the right to update this MimePolicy.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
 		return mimePolicyBusinessService.update(mimePolicyDto);
 	}
 
-	private boolean isAdminFor(Account actor, String uuid) throws BusinessException {
+	private boolean isAdminFor(Account actor, String uuid)
+			throws BusinessException {
 		MimePolicy mimePolicy = mimePolicyBusinessService.find(uuid);
-		// we check if the current actor is admin of the domain which belongs the MimePolicy
-		return domainPermissionService.isAdminforThisDomain(
-				actor,
+		// we check if the current actor is admin of the domain which belongs
+		// the MimePolicy
+		return domainPermissionService.isAdminforThisDomain(actor,
 				mimePolicy.getDomain());
 	}
 }

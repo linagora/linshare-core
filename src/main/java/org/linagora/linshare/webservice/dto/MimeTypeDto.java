@@ -31,46 +31,50 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.webservice.dto;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-import org.linagora.linshare.webservice.dto.MimePolicyDto;
-import org.linagora.linshare.webservice.dto.MimeTypeDto;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public class MimePolicy {
+import org.linagora.linshare.core.domain.entities.MimeType;
 
-	private long id;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
+@XmlRootElement(name = "MimeType")
+@ApiModel(value = "MimeType", description = "MimeType")
+public class MimeTypeDto {
+
+	@ApiModelProperty(value = "Uuid")
 	private String uuid;
 
-	private String name;
+	@ApiModelProperty(value = "mimeType")
+	private String mimeType;
+	
+	@ApiModelProperty(value = "Extensions")
+	private String extensions;
 
-	private int mode;
-
-	private int displayable;
-
+	@ApiModelProperty(value = "Enable")
+	private boolean enable;
+	
+	@ApiModelProperty(value = "Creation date")
 	private Date creationDate;
 
+	@ApiModelProperty(value = "Modification date")
 	private Date modificationDate;
 
-	private Set<MimeType> mimeTypes = new HashSet<MimeType>();
-
-	private AbstractDomain domain;
-
-	public MimePolicy() {
-		super();
-	}
-
-	public MimePolicy(final MimePolicyDto m) {
+	public MimeTypeDto(final MimeType m) {
 		this.uuid = m.getUuid();
-		this.name = m.getName();
+		this.mimeType = m.getMimeType();
+		this.extensions = m.getExtensions();
+		this.enable = m.getEnable();
+		this.creationDate = m.getCreationDate();
+		this.modificationDate = m.getModificationDate();
 	}
 
-	public long getId() {
-		return id;
+	public MimeTypeDto() {
+		super();
 	}
 
 	public String getUuid() {
@@ -81,28 +85,28 @@ public class MimePolicy {
 		this.uuid = uuid;
 	}
 
-	public String getName() {
-		return name;
+	public String getMimeType() {
+		return mimeType;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setMimeType(String mimeType) {
+		this.mimeType = mimeType;
 	}
 
-	public int getMode() {
-		return mode;
+	public String getExtensions() {
+		return extensions;
 	}
 
-	public void setMode(int mode) {
-		this.mode = mode;
+	public void setExtensions(String extensions) {
+		this.extensions = extensions;
 	}
 
-	public int getDisplayable() {
-		return displayable;
+	public boolean isEnable() {
+		return enable;
 	}
 
-	public void setDisplayable(int displayable) {
-		this.displayable = displayable;
+	public void setEnable(boolean enable) {
+		this.enable = enable;
 	}
 
 	public Date getCreationDate() {
@@ -121,49 +125,4 @@ public class MimePolicy {
 		this.modificationDate = modificationDate;
 	}
 
-	public Set<MimeType> getMimeTypes() {
-		return mimeTypes;
-	}
-
-	public void setMimeTypes(Set<MimeType> mimeTypes) {
-		this.mimeTypes = mimeTypes;
-	}
-
-	public AbstractDomain getDomain() {
-		return domain;
-	}
-
-	public void setDomain(AbstractDomain domain) {
-		this.domain = domain;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MimePolicy other = (MimePolicy) obj;
-		if (uuid == null) {
-			if (other.uuid != null)
-				return false;
-		} else if (!uuid.equals(other.uuid))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "MimePolicy [uuid=" + uuid + ", name=" + name + "]";
-	}
 }

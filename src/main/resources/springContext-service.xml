@@ -31,8 +31,8 @@
 		<constructor-arg ref="threadRepository" />
 		<constructor-arg ref="threadMemberRepository" />
 		<constructor-arg ref="documentEntryBusinessService" />
-        <constructor-arg ref="logEntryService" />
-        <constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">
@@ -75,6 +75,7 @@
 	<bean id="mimePolicyService" class="org.linagora.linshare.core.service.impl.MimePolicyServiceImpl">
 		<constructor-arg ref="mimePolicyBusinessService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="domainBusinessService" />
 	</bean>
 
 	<bean id="documentEntryService" class="org.linagora.linshare.core.service.impl.DocumentEntryServiceImpl">
