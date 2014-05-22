@@ -14,9 +14,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.RootUserRepository;
 import org.linagora.linshare.core.service.MailConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,14 +24,15 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import com.google.common.collect.ImmutableSet;
 
-@ContextConfiguration(locations = { 
+@ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service.xml",
-		"classpath:springContext-jackRabbit.xml",
+		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
+		"classpath:springContext-startopendj.xml",
+		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
 		})
 public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {

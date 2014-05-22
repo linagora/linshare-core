@@ -57,11 +57,11 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service.xml",
-		"classpath:springContext-jackRabbit.xml",
+		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-startopendj.xml",
+		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
 		})
 public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
