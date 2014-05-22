@@ -88,7 +88,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 		List<MailConfig> configs = Lists.newArrayList();
 
 		for (AbstractDomain d : getParentDomains(domainId)) {
-			if (d.equals(actor.getDomainId())) {
+			if (d.getIdentifier().equals(actor.getDomainId())) {
 				configs.addAll(d.getMailConfigs());
 			} else {
 				for (MailConfig c : d.getMailConfigs()) {
