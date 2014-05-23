@@ -161,7 +161,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 
         DomainPattern domainPattern = userProviderService.retrieveDomainPattern(domainVo.getPatternIdentifier());
         LDAPConnection ldapConn = userProviderService.retrieveLDAPConnection(domainVo.getLdapIdentifier());
-        DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(domainVo.getPolicyIdentifier());
+        DomainPolicy policy = domainPolicyService.find(domainVo.getPolicyIdentifier());
 
         LdapUserProvider provider = null;
         String baseDn = domainVo.getDifferentialKey();

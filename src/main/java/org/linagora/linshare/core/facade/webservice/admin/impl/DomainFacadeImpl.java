@@ -165,7 +165,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 				.getParent());
 		AbstractDomain domain = domainType.getDomain(domainDto, parent);
 		DomainPolicy policy = domainPolicyService
-				.retrieveDomainPolicy(domainDto.getPolicy().getIdentifier());
+				.find(domainDto.getPolicy().getIdentifier());
 		domain.setPolicy(policy);
 
 		if (!domainDto.getProviders().isEmpty()) {

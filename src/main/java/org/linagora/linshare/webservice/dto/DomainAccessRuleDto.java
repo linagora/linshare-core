@@ -83,4 +83,14 @@ public class DomainAccessRuleDto {
 	public void setDomain(DomainDto domain) {
 		this.domain = domain;
 	}
+
+	@Override
+	public String toString() {
+		if (domain==null) {
+			return type.toString();
+		} else {
+			return type.toString() + " : " + domain.getIdentifier();
+		}
+	}
+
 }

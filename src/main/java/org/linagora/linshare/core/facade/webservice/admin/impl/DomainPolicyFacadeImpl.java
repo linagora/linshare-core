@@ -75,7 +75,7 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 	public DomainPolicyDto find(String identifier) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(identifier, "domain policy identifier must be set.");
-		return new DomainPolicyDto(domainPolicyService.retrieveDomainPolicy(identifier));
+		return new DomainPolicyDto(domainPolicyService.find(identifier));
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		checkAuthentication(Role.SUPERADMIN);
 		Set<DomainPolicyDto> domainPolicies = new HashSet<DomainPolicyDto>();
 		for (DomainPolicy domainPolicy : domainPolicyService
-				.findAllDomainPolicy()) {
+				.findAll()) {
 			domainPolicies.add(new DomainPolicyDto(domainPolicy));
 		}
 		return domainPolicies;
@@ -96,7 +96,7 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(dto.getIdentifier(), "policy identifier must be set.");
 		DomainPolicy policy = new DomainPolicy(dto);
 		policy.setDomainAccessPolicy(transformToDomainAccessPolicy(dto.getAccessPolicy()));
-		domainPolicyService.createDomainPolicy(policy);
+		domainPolicyService.create(policy);
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(dto.getIdentifier(), "policy identifier must be set.");
 		DomainPolicy policy = new DomainPolicy(dto);
 		policy.setDomainAccessPolicy(transformToDomainAccessPolicy(dto.getAccessPolicy()));
-		domainPolicyService.updateDomainPolicy(policy);
+		domainPolicyService.update(policy);
 	}
 
 	private DomainAccessPolicy transformToDomainAccessPolicy(DomainAccessPolicyDto dapDto) throws BusinessException {
@@ -153,6 +153,6 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 	public void delete(String identifier)
 			throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		domainPolicyService.deletePolicy(identifier);
+		domainPolicyService.delete(identifier);
 	}
 }

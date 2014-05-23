@@ -218,8 +218,6 @@
 
 	<bean name="domainPolicyService" class="org.linagora.linshare.core.service.impl.DomainPolicyServiceImpl">
 		<constructor-arg ref="domainPolicyBusinessService" />
-		<constructor-arg ref="domainAccessPolicyBusinessService" />
-		<constructor-arg ref="domainBusinessService" />
 	</bean>
 
 	<bean name="abstractDomainService" class="org.linagora.linshare.core.service.impl.AbstractDomainServiceImpl">

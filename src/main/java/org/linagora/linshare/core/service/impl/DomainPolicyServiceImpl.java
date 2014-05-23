@@ -35,12 +35,9 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.linagora.linshare.core.business.service.DomainAccessPolicyBusinessService;
-import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPolicyBusinessService;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -55,23 +52,19 @@ import org.slf4j.LoggerFactory;
 
 public class DomainPolicyServiceImpl implements DomainPolicyService {
 
-	private static final Logger logger = LoggerFactory.getLogger(DomainPolicyServiceImpl.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(DomainPolicyServiceImpl.class);
 	private final DomainPolicyBusinessService domainPolicyBusinessService;
-	private final DomainAccessPolicyBusinessService domainAccessPolicyBusinessService;
-    private final DomainBusinessService domainBusinessService;
 
-    public DomainPolicyServiceImpl(DomainPolicyBusinessService domainPolicyBusinessService,
-                                   DomainAccessPolicyBusinessService domainAccessPolicyBusinessService,
-                                   DomainBusinessService domainBusinessService) {
-        super();
-        this.domainPolicyBusinessService = domainPolicyBusinessService;
-        this.domainAccessPolicyBusinessService = domainAccessPolicyBusinessService;
-        this.domainBusinessService = domainBusinessService;
-    }
+	public DomainPolicyServiceImpl(
+			DomainPolicyBusinessService domainPolicyBusinessService) {
+		super();
+		this.domainPolicyBusinessService = domainPolicyBusinessService;
+	}
 
-    @Override
-	public void deletePolicy(String policyToDelete) throws BusinessException {
-		domainPolicyBusinessService.deletePolicy(policyToDelete);
+	@Override
+	public void delete(String policyToDelete) throws BusinessException {
+		domainPolicyBusinessService.delete(policyToDelete);
 	}
 
 	@Override
@@ -80,57 +73,39 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	}
 
 	@Override
-	public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException {
-        if (domainPolicy == null || domainPolicy.getDomainAccessPolicy() == null)
-            throw new BusinessException("Creating a domain policy without an associated access policy is impossible");
-        return domainPolicyBusinessService.createDomainPolicy(domainPolicy);
+	public DomainPolicy create(DomainPolicy domainPolicy)
+			throws BusinessException {
+		if (domainPolicy == null
+				|| domainPolicy.getDomainAccessPolicy() == null)
+			throw new BusinessException(
+					"Creating a domain policy without an associated access policy is impossible");
+		return domainPolicyBusinessService.create(domainPolicy);
 	}
 
 	@Override
-	public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException {
-		domainPolicyBusinessService.updateDomainPolicy(domainPolicy);
+	public void update(DomainPolicy domainPolicy) throws BusinessException {
+		domainPolicyBusinessService.update(domainPolicy);
 	}
 
 	@Override
-	public DomainPolicy retrieveDomainPolicy(String identifier) {
-		return domainPolicyBusinessService.retrieveDomainPolicy(identifier);
+	public DomainPolicy find(String identifier) {
+		return domainPolicyBusinessService.find(identifier);
 	}
 
 	@Override
-	public List<DomainPolicy> findAllDomainPolicy() throws BusinessException {
-		return domainPolicyBusinessService.findAllDomainPolicy();
+	public List<DomainPolicy> findAll() throws BusinessException {
+		return domainPolicyBusinessService.findAll();
 	}
 
-	@Override
-	public List<String> getAllDomainPolicyIdentifiers() {
-		return domainPolicyBusinessService.findAllIdentifiers();
-	}
-
-	@Override
-	public DomainAccessRule retrieveDomainAccessRule(long id) {
-		return domainAccessPolicyBusinessService.retrieveDomainAccessRule(id);
-	}
-
-	@Override
-	public void deleteDomainAccessRule(DomainPolicy policy, long persistenceID)	throws BusinessException {
-		Iterator<DomainAccessRule> it = policy.getDomainAccessPolicy().getRules().iterator();
-		while (it.hasNext()) {
-			DomainAccessRule rule = it.next();
-			if (rule.getPersistenceId() == persistenceID) {
-				it.remove();
-				break;
-			}
-		}
-		domainAccessPolicyBusinessService.deleteDomainAccessRule(persistenceID);
-	}
-
-	private List<AbstractDomain> getAuthorizedDomain(AbstractDomain domain, List<DomainAccessRule> rules) {
+	private List<AbstractDomain> getAuthorizedDomain(AbstractDomain domain,
+			List<DomainAccessRule> rules) {
 		Set<AbstractDomain> set = new HashSet<AbstractDomain>();
 		set.add(domain);
 		return getAuthorizedDomain(set, rules);
 	}
 
-	private List<AbstractDomain> getAuthorizedDomain(Set<AbstractDomain> domains, List<DomainAccessRule> rules) {
+	private List<AbstractDomain> getAuthorizedDomain(
+			Set<AbstractDomain> domains, List<DomainAccessRule> rules) {
 
 		List<AbstractDomain> includes = new ArrayList<AbstractDomain>();
 		List<AbstractDomain> excludes = new ArrayList<AbstractDomain>();
@@ -138,16 +113,20 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 		for (AbstractDomain domain : domains) {
 			logger.debug("check:domain : " + domain.toString());
 			for (DomainAccessRule domainAccessRule : rules) {
-				logger.debug("check:domainAccessRule : " + domainAccessRule.getDomainAccessRuleType().toString());
-				if (domainAccessRule.getDomainAccessRuleType().equals(DomainAccessRuleType.ALLOW_ALL)) {
+				logger.debug("check:domainAccessRule : "
+						+ domainAccessRule.getDomainAccessRuleType().toString());
+				if (domainAccessRule.getDomainAccessRuleType().equals(
+						DomainAccessRuleType.ALLOW_ALL)) {
 					// logger.debug("check:domainAccessRule : ALLOW_ALL");
 					// Allow domain without any check
-					if (!includes.contains(domain) && !excludes.contains(domain)) {
+					if (!includes.contains(domain)
+							&& !excludes.contains(domain)) {
 						includes.add(domain);
 					}
 					// This rule should me the last one
 					break;
-				} else if (domainAccessRule.getDomainAccessRuleType().equals(DomainAccessRuleType.DENY_ALL)) {
+				} else if (domainAccessRule.getDomainAccessRuleType().equals(
+						DomainAccessRuleType.DENY_ALL)) {
 					// logger.debug("check:domainAccessRule : DENY_ALL");
 					// Deny domain without any check
 					if (!excludes.contains(domain)) {
@@ -156,22 +135,26 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 					// This rule should me the last one
 					break;
 
-				} else if (domainAccessRule.getDomainAccessRuleType().equals(DomainAccessRuleType.ALLOW)) {
+				} else if (domainAccessRule.getDomainAccessRuleType().equals(
+						DomainAccessRuleType.ALLOW)) {
 					// logger.debug("check:domainAccessRule : ALLOW");
 					// Allow domain
 					AllowDomain allowDomain = (AllowDomain) domainAccessRule;
 
-					if (allowDomain.getDomain().equals(domain) && !includes.contains(domain)) {
+					if (allowDomain.getDomain().equals(domain)
+							&& !includes.contains(domain)) {
 						logger.debug(" ALLOW : " + domain.getIdentifier());
 						includes.add(domain);
 					}
 
-				} else if (domainAccessRule.getDomainAccessRuleType().equals(DomainAccessRuleType.DENY)) {
+				} else if (domainAccessRule.getDomainAccessRuleType().equals(
+						DomainAccessRuleType.DENY)) {
 					// Deny domain
 					// logger.debug("check:domainAccessRule : DENY");
 					DenyDomain denyDomain = (DenyDomain) domainAccessRule;
 
-					if (denyDomain.getDomain().equals(domain) && !excludes.contains(domain)) {
+					if (denyDomain.getDomain().equals(domain)
+							&& !excludes.contains(domain)) {
 						logger.debug(" DENY : " + domain.getIdentifier());
 						excludes.add(domain);
 					} else {
@@ -187,12 +170,15 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	@Override
 	public boolean isAuthorizedToCommunicateWithItSelf(AbstractDomain domain) {
 		logger.debug("Begin isAuthorizedToCommunicateWithItSelf : " + domain);
-		List<AbstractDomain> result = getAuthorizedDomain(domain, domain.getPolicy().getDomainAccessPolicy().getRules());
+		List<AbstractDomain> result = getAuthorizedDomain(domain, domain
+				.getPolicy().getDomainAccessPolicy().getRules());
 		if (result != null && result.size() == 1) {
-			logger.debug("Domain '" + domain.getIdentifier()+ "' is authorized to communicate with itself.");
+			logger.debug("Domain '" + domain.getIdentifier()
+					+ "' is authorized to communicate with itself.");
 			return true;
 		}
-		logger.debug("Domain '" + domain.getIdentifier()+ "' is not authorized to communicate with itself.");
+		logger.debug("Domain '" + domain.getIdentifier()
+				+ "' is not authorized to communicate with itself.");
 		logger.debug("End isAuthorizedToCommunicateWithItSelf : " + domain);
 		return false;
 	}
@@ -201,13 +187,17 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	public boolean isAuthorizedToCommunicateWithItsParent(AbstractDomain domain) {
 		logger.debug("Begin isAuthorizedToCommunicateWithItsParent : " + domain);
 		if (domain.getParentDomain() != null) {
-			List<AbstractDomain> result = getAuthorizedDomain(domain.getParentDomain(), domain.getPolicy().getDomainAccessPolicy().getRules());
+			List<AbstractDomain> result = getAuthorizedDomain(
+					domain.getParentDomain(), domain.getPolicy()
+							.getDomainAccessPolicy().getRules());
 			if (result != null && result.size() == 1) {
-				logger.debug("Domain '" + domain.getIdentifier()+ "' is authorized to communicate with its parent.");
+				logger.debug("Domain '" + domain.getIdentifier()
+						+ "' is authorized to communicate with its parent.");
 				return true;
 			}
 		}
-		logger.debug("Domain '" + domain.getIdentifier()+ "' is not authorized to communicate with its parent.");
+		logger.debug("Domain '" + domain.getIdentifier()
+				+ "' is not authorized to communicate with its parent.");
 		logger.debug("End isAuthorizedToCommunicateWithItsParent : " + domain);
 		return false;
 	}
@@ -217,7 +207,8 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 
 		logger.debug("Begin public getAuthorizedSubDomain : " + domain);
 		List<AbstractDomain> result = new ArrayList<AbstractDomain>();
-		List<DomainAccessRule> rules = domain.getPolicy().getDomainAccessPolicy().getRules();
+		List<DomainAccessRule> rules = domain.getPolicy()
+				.getDomainAccessPolicy().getRules();
 
 		// Check for communication with subdomains.
 		if (domain.getSubdomain() != null) {
@@ -233,14 +224,17 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	}
 
 	@Override
-	public List<AbstractDomain> getAuthorizedSibblingDomain(AbstractDomain domain) {
+	public List<AbstractDomain> getAuthorizedSibblingDomain(
+			AbstractDomain domain) {
 		logger.debug("Begin getAuthorizedSibblingDomain : " + domain);
 		List<AbstractDomain> result = new ArrayList<AbstractDomain>();
-		List<DomainAccessRule> rules = domain.getPolicy().getDomainAccessPolicy().getRules();
+		List<DomainAccessRule> rules = domain.getPolicy()
+				.getDomainAccessPolicy().getRules();
 
 		// Check for communication with siblings.
 		if (domain.getParentDomain() != null) {
-			result.addAll(getAuthorizedDomain(domain.getParentDomain().getSubdomain(), rules));
+			result.addAll(getAuthorizedDomain(domain.getParentDomain()
+					.getSubdomain(), rules));
 		}
 
 		logger.debug("domain result list size : " + result.size());
@@ -251,7 +245,8 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 		return result;
 	}
 
-	private List<AbstractDomain> getAllAuthorizedDomain(AbstractDomain domain, List<DomainAccessRule> rules) {
+	private List<AbstractDomain> getAllAuthorizedDomain(AbstractDomain domain,
+			List<DomainAccessRule> rules) {
 		List<AbstractDomain> result = new ArrayList<AbstractDomain>();
 
 		// Step 1 : check for self communication
@@ -272,11 +267,13 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 		return result;
 	}
 
-	private List<AbstractDomain> getAllAuthorizedDomainReverse(AbstractDomain domain, List<DomainAccessRule> rules) {
+	private List<AbstractDomain> getAllAuthorizedDomainReverse(
+			AbstractDomain domain, List<DomainAccessRule> rules) {
 		List<AbstractDomain> result = new ArrayList<AbstractDomain>();
 
 		if (domain.getParentDomain() != null) {
-			result.addAll(getAllAuthorizedDomainReverse(domain.getParentDomain(), rules));
+			result.addAll(getAllAuthorizedDomainReverse(
+					domain.getParentDomain(), rules));
 		}
 
 		// Step 1 : check for self communication
@@ -301,7 +298,8 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	public List<AbstractDomain> getAllAuthorizedDomain(AbstractDomain domain) {
 		logger.debug("Begin getAllAuthorizedDomain : " + domain);
 		List<AbstractDomain> result = new ArrayList<AbstractDomain>();
-		List<DomainAccessRule> rules = domain.getPolicy().getDomainAccessPolicy().getRules();
+		List<DomainAccessRule> rules = domain.getPolicy()
+				.getDomainAccessPolicy().getRules();
 
 		for (AbstractDomain d : getAllAuthorizedDomain(domain, rules)) {
 			if (!result.contains(d)) {

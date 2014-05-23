@@ -63,7 +63,6 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserProviderService;
-import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,11 +74,10 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final AbstractDomainRepository abstractDomainRepository;
 	private final DomainPolicyService domainPolicyService;
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-
 	private final UserProviderService userProviderService;
 	private final MessagesRepository messagesRepository;
 	private final UserRepository<User> userRepository;
-    private final DomainBusinessService domainBusinessService;
+	private final DomainBusinessService domainBusinessService;
 
 	public AbstractDomainServiceImpl(
 			AbstractDomainRepository abstractDomainRepository,
@@ -88,7 +86,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			UserProviderService userProviderService,
 			MessagesRepository messagesRepository,
 			UserRepository<User> userRepository,
-            DomainBusinessService domainBusinessService) {
+			DomainBusinessService domainBusinessService) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
@@ -96,7 +94,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.messagesRepository = messagesRepository;
 		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
-        this.domainBusinessService = domainBusinessService;
+		this.domainBusinessService = domainBusinessService;
 	}
 
 	@Override
@@ -112,14 +110,14 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					"This new domain has no identifier.");
 		}
 
-		Validate.notEmpty(domain.getIdentifier(), "domain identifier must be set.");
+		Validate.notEmpty(domain.getIdentifier(),
+				"domain identifier must be set.");
 		Pattern formatValidator = Pattern.compile("^[a-zA-Z0-9_]{4,}$");
-		if (!formatValidator.matcher(domain.getIdentifier()).matches()){
+		if (!formatValidator.matcher(domain.getIdentifier()).matches()) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_IDENTIFIER_BAD_FORMAT,
 					"This new domain identifier should only contains the following characters : a-z A-Z 0-9 _.");
 		}
-
 
 		if (retrieveDomain(domain.getIdentifier()) != null) {
 			throw new BusinessException(
@@ -152,8 +150,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			logger.debug("creation of a TopDomain without an UserProvider.");
 		}
 
-		DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(domain
-				.getPolicy().getIdentifier());
+		DomainPolicy policy = domainPolicyService.find(domain.getPolicy()
+				.getIdentifier());
 
 		if (policy == null) {
 			throw new BusinessException(
@@ -322,8 +320,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 		AbstractDomain entity = retrieveDomain(domain.getIdentifier());
 		if (entity == null) {
-			throw new BusinessException(
-					BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,
 					"This domain identifier does not exist.");
 		}
 
@@ -345,8 +342,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			}
 		}
 
-		DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(domain
-				.getPolicy().getIdentifier());
+		DomainPolicy policy = domainPolicyService.find(domain.getPolicy()
+				.getIdentifier());
 
 		if (policy == null) {
 			throw new BusinessException(
@@ -371,7 +368,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				logger.debug("Update domain with provider");
 				if (provider == null) {
 					logger.debug("Update domain with provider creation ");
-					provider = new LdapUserProvider(baseDn, ldapConn, domainPattern);
+					provider = new LdapUserProvider(baseDn, ldapConn,
+							domainPattern);
 					userProviderService.create(provider);
 					entity.setUserProvider(provider);
 				} else {
@@ -401,8 +399,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throws BusinessException {
 		User user = null;
 		if (domain.getUserProvider() != null) {
-			user = userProviderService.findUser(domain.getUserProvider(),
-						mail);
+			user = userProviderService.findUser(domain.getUserProvider(), mail);
 			if (user != null) {
 				user.setDomain(domain);
 				user.setRole(user.getDomain().getDefaultRole());
@@ -419,9 +416,11 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	public Boolean isUserExist(AbstractDomain domain, String mail)
 			throws BusinessException {
 		if (domain.getUserProvider() != null) {
-			return userProviderService.isUserExist( domain.getUserProvider(), mail);
+			return userProviderService.isUserExist(domain.getUserProvider(),
+					mail);
 		} else {
-			logger.debug("UserProvider is null for domain : " + domain.getIdentifier());
+			logger.debug("UserProvider is null for domain : "
+					+ domain.getIdentifier());
 		}
 		return false;
 	}
@@ -494,7 +493,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			// if the current domain is linked to a UserProvider, we perform a
 			// search.
 			if (d.getUserProvider() != null) {
-				List<User> list = userProviderService.autoCompleteUser(d.getUserProvider(), pattern);
+				List<User> list = userProviderService.autoCompleteUser(
+						d.getUserProvider(), pattern);
 				for (User user : list) {
 					user.setDomain(d);
 				}
@@ -625,9 +625,10 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				List<User> ldapUserList = new ArrayList<User>();
 				try {
 					ldapUserList = userProviderService.searchUser(
-						d.getUserProvider(), mail, firstName, lastName);
+							d.getUserProvider(), mail, firstName, lastName);
 				} catch (BusinessException e) {
-					logger.error("can not search users from domain:" + d.getIdentifier());
+					logger.error("can not search users from domain:"
+							+ d.getIdentifier());
 				}
 
 				// For each user, we set the domain which he came from.

@@ -276,7 +276,6 @@ public class MyBorderLayout {
 		MenuEntry userMenu;
 		MenuEntry threadMenu;
 		MenuEntry adminMenu;
-		MenuEntry domainMenu;
 		MenuEntry auditMenu;
 		MenuEntry helpMenu;
 		MenuEntry listMenu;
@@ -294,9 +293,6 @@ public class MyBorderLayout {
 		
 		// Menu : Administration
 		adminMenu = new MenuEntry(response.encodeURL("administration/index"),messages.get("components.myborderlayout.administration.title"),null,null,"administration");
-		
-		// Menu : Domains
-		domainMenu = new MenuEntry(response.encodeURL("administration/domains/index"),messages.get("components.myborderlayout.administration.domains.title"),null,null,"domains");
 		
 		// Menu : History / Audit
 		if(superadmin) {
@@ -334,7 +330,6 @@ public class MyBorderLayout {
 			
 			if (superadmin) {
 				menu.addMenuEntry(adminMenu);
-				menu.addMenuEntry(domainMenu);
 				if (showAuditTab())
 					menu.addMenuEntry(auditMenu);
 			} else {

@@ -37,9 +37,12 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.DomainPolicyBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
+import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,44 +53,54 @@ public class DomainPolicyBusinessServiceImpl implements
 	private static final Logger logger = LoggerFactory
 			.getLogger(DomainPolicyBusinessServiceImpl.class);
 
-	private final DomainPolicyRepository domainPolicyRepository;
-	private final AbstractDomainRepository abstractDomainRepository;
+	final private DomainPolicyRepository domainPolicyRepository;
+	final private AbstractDomainRepository abstractDomainRepository;
+	final private DomainAccessPolicyRepository domainAccessPolicyRepository;
 
 	public DomainPolicyBusinessServiceImpl(
 			DomainPolicyRepository domainPolicyRepository,
-			AbstractDomainRepository abstractDomainRepository) {
+			AbstractDomainRepository abstractDomainRepository,
+			DomainAccessPolicyRepository domainAccessPolicyRepository) {
 		super();
 		this.domainPolicyRepository = domainPolicyRepository;
 		this.abstractDomainRepository = abstractDomainRepository;
+		this.domainAccessPolicyRepository = domainAccessPolicyRepository;
 	}
 
 	@Override
-	public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy)
+	public DomainPolicy create(DomainPolicy domainPolicy)
 			throws BusinessException {
+		DomainAccessPolicy domainAccessPolicy = domainAccessPolicyRepository
+				.create(domainPolicy.getDomainAccessPolicy());
+		domainPolicy.setDomainAccessPolicy(domainAccessPolicy);
 		return domainPolicyRepository.create(domainPolicy);
 	}
 
 	@Override
-	public void updateDomainPolicy(DomainPolicy domainPolicy)
-			throws BusinessException {
-		DomainPolicy entity = domainPolicyRepository.findById(domainPolicy.getIdentifier());
-		entity.getDomainAccessPolicy().setRules(domainPolicy.getDomainAccessPolicy().getRules());
+	public void update(DomainPolicy dto) throws BusinessException {
+		DomainPolicy entity = domainPolicyRepository.findById(dto
+				.getIdentifier());
+		entity.setDescription(dto.getDescription());
+		List<DomainAccessRule> rules = dto.getDomainAccessPolicy().getRules();
+
+		entity.getDomainAccessPolicy().getRules().clear();
+		for (DomainAccessRule domainAccessRule : rules) {
+			entity.getDomainAccessPolicy().addRule(domainAccessRule);
+		}
 		domainPolicyRepository.update(entity);
 	}
 
 	@Override
-	public void deletePolicy(String identifier) throws BusinessException {
+	public void delete(String identifier) throws BusinessException {
 		if (!policyIsDeletable(identifier)) {
 			throw new BusinessException(
 					"Cannot delete policy because still used by domains");
 		}
-		DomainPolicy policy = retrieveDomainPolicy(identifier);
-		if (policy == null) {
-			logger.error("Policy not found: " + identifier);
-		} else {
-			logger.debug("delete policy: " + identifier);
-			domainPolicyRepository.delete(policy);
-		}
+		DomainPolicy entity = domainPolicyRepository.findById(identifier);
+		logger.debug("delete policy: " + identifier);
+		DomainAccessPolicy domainAccessPolicy = entity.getDomainAccessPolicy();
+		domainPolicyRepository.delete(entity);
+		domainAccessPolicyRepository.delete(domainAccessPolicy);
 	}
 
 	@Override
@@ -101,12 +114,12 @@ public class DomainPolicyBusinessServiceImpl implements
 	}
 
 	@Override
-	public DomainPolicy retrieveDomainPolicy(String identifier) {
+	public DomainPolicy find(String identifier) {
 		return domainPolicyRepository.findById(identifier);
 	}
 
 	@Override
-	public List<DomainPolicy> findAllDomainPolicy() {
+	public List<DomainPolicy> findAll() {
 		return domainPolicyRepository.findAll();
 	}
 
