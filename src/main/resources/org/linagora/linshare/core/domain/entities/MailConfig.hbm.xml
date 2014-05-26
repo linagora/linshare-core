@@ -22,8 +22,7 @@
 			<map-key  column="language" type="integer"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.MailFooterLang"/>
 		</map>
-
-		<set name="mailContentLangs" lazy="true" cascade="save-update,lock" inverse="false">
+		<set name="mailContentLangs" lazy="true" cascade="all" inverse="false">
 			<key column="mail_config_id" not-null="true"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.MailContentLang"/>
 		</set>
