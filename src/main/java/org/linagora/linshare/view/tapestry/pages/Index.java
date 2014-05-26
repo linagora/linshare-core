@@ -156,7 +156,7 @@ public class Index {
 		if (shareSessionObjects != null)
 			shareSessionObjects.checkDocumentsTypeIntegrity(ShareDocumentVo.class);
 		if (userVoExists && userVo.isSuperAdmin()) {
-			return org.linagora.linshare.view.tapestry.pages.user.Index.class;
+			return org.linagora.linshare.view.tapestry.pages.administration.Index.class;
 		}
     	if (finishForwarding) {
 			share.setSelectedDocuments(shareSessionObjects.getDocuments());
