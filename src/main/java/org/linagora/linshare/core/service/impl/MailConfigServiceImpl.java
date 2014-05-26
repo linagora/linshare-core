@@ -153,7 +153,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 		List<MailContent> contents = Lists.newArrayList();
 
 		for (AbstractDomain d : getParentDomains(domainId)) {
-			if (d.equals(actor.getDomainId())) {
+			if (d.getIdentifier().equals(actor.getDomainId())) {
 				contents.addAll(d.getMailContents());
 			} else {
 				for (MailContent c : d.getMailContents()) {
@@ -276,7 +276,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 		List<MailFooter> footers = Lists.newArrayList();
 
 		for (AbstractDomain d : getParentDomains(domainId)) {
-			if (d.equals(actor.getDomainId())) {
+			if (d.getIdentifier().equals(actor.getDomainId())) {
 				footers.addAll(d.getMailFooters());
 			} else {
 				for (MailFooter c : d.getMailFooters()) {
@@ -388,7 +388,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 		List<MailLayout> layouts = Lists.newArrayList();
 
 		for (AbstractDomain d : getParentDomains(domainId)) {
-			if (d.equals(actor.getDomainId())) {
+			if (d.getIdentifier().equals(actor.getDomainId())) {
 				layouts.addAll(d.getMailLayouts());
 			} else {
 				for (MailLayout c : d.getMailLayouts()) {
