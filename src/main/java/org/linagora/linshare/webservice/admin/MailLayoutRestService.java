@@ -40,7 +40,7 @@ import org.linagora.linshare.webservice.dto.MailLayoutDto;
 
 public interface MailLayoutRestService {
 
-	Set<MailLayoutDto> findAll(String domainId) throws BusinessException;
+	Set<MailLayoutDto> findAll(String domainId, boolean onlyCurrentDomain) throws BusinessException;
 
 	MailLayoutDto find(String uuid) throws BusinessException;
 

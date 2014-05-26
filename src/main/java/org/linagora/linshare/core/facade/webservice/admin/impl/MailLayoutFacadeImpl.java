@@ -92,9 +92,9 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<MailLayoutDto> findAll(String domainIdentifier)
+	public Set<MailLayoutDto> findAll(String domainIdentifier, boolean only)
 			throws BusinessException {
-		User user = checkAuthentication();
+		User user = checkAuthentication(Role.ADMIN);
 		if (domainIdentifier == null) {
 			domainIdentifier = user.getDomainId();
 		}
@@ -105,8 +105,10 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 		// this domain
 
 		Set<MailLayoutDto> mailLayoutsDto = new HashSet<MailLayoutDto>();
-		for (MailLayout mailContent : domain.getMailLayouts()) {
-			mailLayoutsDto.add(new MailLayoutDto(mailContent));
+		Iterable<MailLayout> layouts = only ? domain.getMailLayouts()
+				: mailConfigService.findAllLayouts(user, domainIdentifier);
+		for (MailLayout mailLayout : layouts) {
+			mailLayoutsDto.add(new MailLayoutDto(mailLayout));
 		}
 		return mailLayoutsDto;
 	}

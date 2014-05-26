@@ -37,6 +37,7 @@ import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -77,9 +78,10 @@ public class MailContentRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Find all mail contents.", response = MailContentDto.class, responseContainer = "Set")
 	@Override
 	public Set<MailContentDto> findAll(
-			@QueryParam(value = "domainId") String domainId)
+			@QueryParam(value = "domainId") String domainId,
+			@QueryParam("onlyCurrentDomain") @DefaultValue("false") boolean onlyCurrentDomain)
 			throws BusinessException {
-		return mailContentFacade.findAll(domainId);
+		return mailContentFacade.findAll(domainId, onlyCurrentDomain);
 	}
 
 	@Path("/{uuid}")

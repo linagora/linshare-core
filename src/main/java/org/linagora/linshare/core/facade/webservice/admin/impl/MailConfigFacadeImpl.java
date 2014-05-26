@@ -49,8 +49,6 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
 import org.linagora.linshare.webservice.dto.MailConfigDto;
 
-import com.google.common.collect.Sets;
-
 public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		MailConfigFacade {
 
@@ -67,13 +65,23 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<MailConfigDto> findAll(String domainId) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		HashSet<MailConfigDto> mailConfigDtos = Sets.newHashSet();
-		for (MailConfig mailConfig : mailConfigService.findAllConfigs(actor, domainId)) {
-			mailConfigDtos.add(new MailConfigDto(mailConfig));
+	public Set<MailConfigDto> findAll(String domainId, boolean only)
+			throws BusinessException {
+		User user = checkAuthentication(Role.ADMIN);
+		if (domainId == null) {
+			domainId = user.getDomainId();
 		}
-		return mailConfigDtos;
+
+		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
+		// TODO : check if the current user has the right to get MailConfig of
+		// this domain
+		Set<MailConfigDto> mailConfigsDto = new HashSet<MailConfigDto>();
+		Iterable<MailConfig> configs = only ? domain.getMailConfigs()
+				: mailConfigService.findAllConfigs(user, domainId);
+		for (MailConfig mailConfig : configs) {
+			mailConfigsDto.add(new MailConfigDto(mailConfig));
+		}
+		return mailConfigsDto;
 	}
 
 	@Override

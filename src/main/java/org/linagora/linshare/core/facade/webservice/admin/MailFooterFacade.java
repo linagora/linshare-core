@@ -48,5 +48,5 @@ public interface MailFooterFacade {
 
 	void delete(String uuid) throws BusinessException;
 
-	Set<MailFooterDto> findAll(String domainIdentifier) throws BusinessException;
+	Set<MailFooterDto> findAll(String domainIdentifier, boolean only) throws BusinessException;
 }

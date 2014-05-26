@@ -37,6 +37,7 @@ import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -77,8 +78,9 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Find all mail configurations.", response = MailConfigDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public Set<MailConfigDto> findAll(@QueryParam(value = "domainId") String domainId) throws BusinessException {
-		return mailConfigFacade.findAll(domainId);
+	public Set<MailConfigDto> findAll(@QueryParam(value = "domainId") String domainId,
+			@QueryParam("onlyCurrentDomain") @DefaultValue("false") boolean onlyCurrentDomain) throws BusinessException {
+		return mailConfigFacade.findAll(domainId, onlyCurrentDomain);
 	}
 
 	@Path("/{uuid}")

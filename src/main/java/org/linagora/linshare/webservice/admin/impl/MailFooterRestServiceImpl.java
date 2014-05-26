@@ -37,6 +37,7 @@ import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -77,9 +78,10 @@ public class MailFooterRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Find all mail footers.", response = MailFooterDto.class, responseContainer = "Set")
 	@Override
 	public Set<MailFooterDto> findAll(
-			@QueryParam(value = "domainId") String domainId)
+			@QueryParam(value = "domainId") String domainId,
+			@QueryParam("onlyCurrentDomain") @DefaultValue("false") boolean onlyCurrentDomain)
 			throws BusinessException {
-		return mailFooterFacade.findAll(domainId);
+		return mailFooterFacade.findAll(domainId, onlyCurrentDomain);
 	}
 
 	@Path("/{uuid}")

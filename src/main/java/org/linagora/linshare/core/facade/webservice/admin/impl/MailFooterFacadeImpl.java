@@ -93,9 +93,9 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<MailFooterDto> findAll(String domainIdentifier)
+	public Set<MailFooterDto> findAll(String domainIdentifier, boolean only)
 			throws BusinessException {
-		User user = checkAuthentication();
+		User user = checkAuthentication(Role.ADMIN);
 		if (domainIdentifier == null) {
 			domainIdentifier = user.getDomainId();
 		}
@@ -106,8 +106,10 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 		// this domain
 
 		Set<MailFooterDto> mailFootersDto = new HashSet<MailFooterDto>();
-		for (MailFooter mailContent : domain.getMailFooters()) {
-			mailFootersDto.add(new MailFooterDto(mailContent));
+		Iterable<MailFooter> footers = only ? domain.getMailFooters()
+				: mailConfigService.findAllFooters(user, domainIdentifier);
+		for (MailFooter mailFooter : footers) {
+			mailFootersDto.add(new MailFooterDto(mailFooter));
 		}
 		return mailFootersDto;
 

@@ -95,9 +95,9 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<MailContentDto> findAll(String domainIdentifier)
+	public Set<MailContentDto> findAll(String domainIdentifier, boolean only)
 			throws BusinessException {
-		User user = checkAuthentication();
+		User user = checkAuthentication(Role.ADMIN);
 		if (domainIdentifier == null) {
 			domainIdentifier = user.getDomainId();
 		}
@@ -106,9 +106,10 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 				.retrieveDomain(domainIdentifier);
 		// TODO : check if the current user has the right to get MailContent of
 		// this domain
-
 		Set<MailContentDto> mailContentsDto = new HashSet<MailContentDto>();
-		for (MailContent mailContent : domain.getMailContents()) {
+		Iterable<MailContent> contents = only ? domain.getMailContents()
+				: mailConfigService.findAllContents(user, domainIdentifier);
+		for (MailContent mailContent : contents) {
 			mailContentsDto.add(new MailContentDto(mailContent));
 		}
 		return mailContentsDto;
