@@ -34,11 +34,11 @@
 package org.linagora.linshare.repository.hibernate;
 
 import org.junit.Assert;
-
 import org.junit.Test;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -52,25 +52,30 @@ public class DomainPolicyRepositoryImplTest extends AbstractJUnit4SpringContextT
 	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
 
+	@Autowired
+	private DomainAccessPolicyRepository domainAccessRepository;
+
 	private static String domainePolicyName0 = "TestPolicy0";
-	
+
 	@Test
 	public void testCreateDomainPolicy1() throws BusinessException{
 		DomainAccessPolicy accessPolicy = new DomainAccessPolicy();
+		domainAccessRepository.create(accessPolicy);
 		DomainPolicy policy = new DomainPolicy(domainePolicyName0, accessPolicy);
-				
+
 		logger.debug("Current accessPolicy : " + accessPolicy.toString());
 		logger.debug("Current policy : " + policy.toString());
-		
+
+
 		domainPolicyRepository.create(policy);
 		Assert.assertNotNull(policy.getPersistenceId());
-		
+
 		DomainPolicy entityPolicy = domainPolicyRepository.findById(policy.getIdentifier());
-		
+
 		Assert.assertTrue(entityPolicy != null );
 		logger.debug("My name is : " + entityPolicy.getIdentifier());
 		logger.debug(entityPolicy.getDomainAccessPolicy().toString());
-		
+
 		domainPolicyRepository.delete(entityPolicy);
 	}
 }

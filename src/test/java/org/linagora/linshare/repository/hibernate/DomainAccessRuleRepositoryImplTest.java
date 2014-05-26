@@ -66,21 +66,23 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 
 	@Autowired
 	private DomainAccessPolicyRepository domainAccessPolicyRepository;
-	
+
 	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
 
-	
+	@Autowired
+	private DomainAccessPolicyRepository domainAccessRepository;
+
 	private static String rootDomaineName = "Domain0";
 	private static String domainePolicyName0 = "TestAccessPolicy0";
-	
-	
+
+
 	private DomainAccessPolicy policy;
-	
-	
+
+
 	@Before
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
@@ -96,160 +98,163 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 		domainAccessPolicyRepository.delete(policy);
 		logger.debug("End tearDown");
 	}
-	
+
 	private AbstractDomain createATestRootDomain(Integer var) throws BusinessException {
 		// Default policy creation 
-		DomainPolicy policy = new DomainPolicy(domainePolicyName0, new DomainAccessPolicy());
+		DomainAccessPolicy domainAccessPolicy = new DomainAccessPolicy();
+		domainAccessRepository.create(domainAccessPolicy);
+		DomainPolicy policy = new DomainPolicy(domainePolicyName0, domainAccessPolicy);
+
 		domainPolicyRepository.create(policy);
-				
+
 		AbstractDomain currentDomain= new RootDomain(rootDomaineName + "-" + var,"My root domain");
 		currentDomain.setPolicy(policy);
 		abstractDomainRepository.create(currentDomain);
 		logger.debug("Current AbstractDomain object: " + currentDomain.toString());
 		return currentDomain;
 	}
-	
+
 	private void deleteTestRootDomain(AbstractDomain currentDomain) throws BusinessException {
 		DomainPolicy p = currentDomain.getPolicy();
 		abstractDomainRepository.delete(currentDomain);
 		domainPolicyRepository.delete(p);
 	}
-	
+
 	@Test
 	public void testCreateAllowAllDomainRule() throws BusinessException{
 		logger.debug("Begin testCreateAllowAllDomainRule");
-		
+
 		DomainAccessRule rule = new AllowAllDomain();
 		policy.addRule(rule);
 		domainAccessPolicyRepository.update(policy);
 		Assert.assertNotNull(rule.getPersistenceId());
-		
+
 		logger.debug("Current object: " + rule.toString());
 
 		DomainAccessRule entityRule = domainAccessRuleRepository.findById(rule.getPersistenceId());
-		
+
 		Assert.assertTrue(entityRule != null );
 		Assert.assertTrue(entityRule instanceof AllowAllDomain );
-		
+
 		logger.debug("End testCreateAllowAllDomainRule");
 	}
-	
+
 	@Test
 	public void testCreateDenyAllDomainRule() throws BusinessException{
 		logger.debug("Begin testCreateDenyAllDomainRule");
-		
+
 		DomainAccessRule rule = new DenyAllDomain();
 		policy.addRule(rule);
 		domainAccessPolicyRepository.update(policy);
 		Assert.assertNotNull(rule.getPersistenceId());
-		
+
 		logger.debug("Current object: " + rule.toString());
-		
+
 		DomainAccessRule entityRule = domainAccessRuleRepository.findById(rule.getPersistenceId());
-		
+
 		Assert.assertTrue(entityRule != null );
 		Assert.assertFalse(entityRule instanceof AllowAllDomain );
 		Assert.assertTrue(entityRule instanceof DenyAllDomain );
 		logger.debug("End testCreateDenyAllDomainRule");
 	}
-	
+
 	@Test
 	public void testCreateDenyDomainRule() throws BusinessException{
 		logger.debug("Begin testCreateDenyDomainRule");
-		
+
 		AbstractDomain currentDomain = createATestRootDomain(1);
 		DomainAccessRule rule = new DenyDomain(currentDomain);
 		policy.addRule(rule);
 		currentDomain.getDomainAccessRules().add(rule);
-		
+
 		domainAccessPolicyRepository.update(policy);
 		abstractDomainRepository.update(currentDomain);
 		Assert.assertNotNull(rule.getPersistenceId());
-		
+
 		logger.debug("Current object: " + rule.toString());
-		
+
 		DomainAccessRule entityRule = domainAccessRuleRepository.findById(rule.getPersistenceId());
 		logger.debug("Current ENTITY : " + entityRule.toString());
 
 		Assert.assertTrue(entityRule instanceof DenyDomain );
-		
-		
+
+
 		logger.debug("policy.getRules().size() : " + policy.getRules().size());
 		deleteTestRootDomain(currentDomain);
-		
+
 		DomainAccessPolicy p = domainAccessPolicyRepository.findById(policy.getPersistenceId());
 		Assert.assertEquals(0, p.getRules().size());
-		
+
 		logger.debug("p.getRules().size() : " + p.getRules().size());
 		logger.debug("End testCreateDenyDomainRule");
 	}
-	
+
 	@Test
 	public void testCreateAllowDomainRule() throws BusinessException{
 		logger.debug("Begin testCreateAllowDomainRule");
-		
+
 		AbstractDomain currentDomain = createATestRootDomain(2);
 
 		AllowDomain rule = new AllowDomain(currentDomain);
 		policy.addRule(rule);
 		currentDomain.getDomainAccessRules().add(rule);
-		
+
 		domainAccessPolicyRepository.update(policy);
 		abstractDomainRepository.update(currentDomain);
 		Assert.assertNotNull(rule.getPersistenceId());
-		
+
 		logger.debug("Current object: " + rule.toString());
-		
+
 		DomainAccessRule entityRule = domainAccessRuleRepository.findById(rule.getPersistenceId());
 		logger.debug("Current ENTITY : " + entityRule.toString());
 
 		Assert.assertTrue(entityRule instanceof AllowDomain );
-		
+
 		logger.debug("currentDomain.getDomainAccessRules().size() : " + currentDomain.getDomainAccessRules().size());
-		
-		
+
+
 		logger.debug("policy.getRules().size() : " + policy.getRules().size());
 		deleteTestRootDomain(currentDomain);
-		
+
 		DomainAccessPolicy p = domainAccessPolicyRepository.findById(policy.getPersistenceId());
 		Assert.assertEquals(0, p.getRules().size());
-		
+
 		logger.debug("p.getRules().size() : " + p.getRules().size());
 		logger.debug("End testCreateAllowDomainRule");
 	}
-	
+
 	@Test
 	public void testCreateDomainWhiteListRule() throws BusinessException{
 		logger.debug("Begin testCreateDomainWhiteListRule");
-		
+
 		AbstractDomain currentDomain = createATestRootDomain(3);
-		
+
 		AllowDomain rule = new AllowDomain(currentDomain);
 		policy.addRule(rule);
 		currentDomain.getDomainAccessRules().add(rule);
-		
+
 		DomainAccessRule endRule = new DenyAllDomain();
 		policy.addRule(endRule);
 		currentDomain.getDomainAccessRules().add(endRule);
-		
+
 		domainAccessPolicyRepository.update(policy);
 		abstractDomainRepository.update(currentDomain);
 		Assert.assertNotNull(rule.getPersistenceId());
-		
+
 		logger.debug("Current object: " + rule.toString());
-		
+
 		DomainAccessRule entityRule = domainAccessRuleRepository.findById(rule.getPersistenceId());
 		logger.debug("Current ENTITY : " + entityRule.toString());
-		
+
 		Assert.assertTrue(entityRule instanceof AllowDomain );
-		
+
 		logger.debug("currentDomain.getDomainAccessRules().size() : " + currentDomain.getDomainAccessRules().size());
 		Assert.assertEquals(2, currentDomain.getDomainAccessRules().size());
-		
+
 		logger.debug("policy.getRules().size() : " + policy.getRules().size());
 		deleteTestRootDomain(currentDomain);
-		
+
 		logger.debug("End testCreateDomainWhiteListRule");
 	}
-	
+
 }
