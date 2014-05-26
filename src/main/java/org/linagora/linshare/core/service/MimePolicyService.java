@@ -12,7 +12,7 @@ public interface MimePolicyService {
 
 	MimePolicy delete(Account actor, MimePolicy mimePolicy) throws BusinessException;
 
-	MimePolicy find(Account actor, String uuid) throws BusinessException;
+	MimePolicy find(Account actor, String uuid, boolean full) throws BusinessException;
 
 	Set<MimePolicy> findAll(Account actor, String domainIdentifier, boolean onlyCurrentDomain) throws BusinessException;
 

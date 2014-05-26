@@ -11,7 +11,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MimePolicyService;
 
 import com.google.common.collect.Sets;
@@ -69,7 +68,8 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 	}
 
 	@Override
-	public MimePolicy find(Account actor, String uuid) throws BusinessException {
+	public MimePolicy find(Account actor, String uuid, boolean full)
+			throws BusinessException {
 		Validate.notNull(actor);
 		Validate.notEmpty(uuid);
 		if (!isAdminFor(actor, uuid)) {
@@ -77,7 +77,11 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 					+ " does not have the right to get this MimePolicy.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
-		return mimePolicyBusinessService.find(uuid);
+		MimePolicy ret = mimePolicyBusinessService.find(uuid);
+		if (full) {
+			mimePolicyBusinessService.load(ret);
+		}
+		return ret;
 	}
 
 	@Override

@@ -71,7 +71,7 @@ public class MimePolicyFacadeImpl extends AdminGenericFacadeImpl implements
 	public void delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(uuid, "MimePolicy uuid must be set.");
-		MimePolicy mimePolicy = mimePolicyService.find(actor, uuid);
+		MimePolicy mimePolicy = mimePolicyService.find(actor, uuid, false);
 		mimePolicyService.delete(actor, mimePolicy);
 	}
 
@@ -80,7 +80,7 @@ public class MimePolicyFacadeImpl extends AdminGenericFacadeImpl implements
 			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(uuid, "MimePolicy uuid must be set.");
-		return new MimePolicyDto(mimePolicyService.find(actor, uuid), full);
+		return new MimePolicyDto(mimePolicyService.find(actor, uuid, full), full);
 	}
 
 	@Override
