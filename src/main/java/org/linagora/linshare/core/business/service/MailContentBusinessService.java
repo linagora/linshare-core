@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.business.service;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -48,6 +50,9 @@ public interface MailContentBusinessService {
 
 	MailContent find(AbstractDomain domain, Language lang, MailContentType type)
 			throws BusinessException;
+
+	List<MailContent> findAll(AbstractDomain domain, Language lang,
+			MailContentType type);
 
 	void create(String domainId, MailContent content) throws BusinessException;
 

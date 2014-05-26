@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
@@ -118,23 +119,23 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void createConfig(User actor, MailConfig config)
+	public MailConfig createConfig(User actor, MailConfig config)
 			throws BusinessException {
 		if (!permissionService.isAdminforThisDomain(actor, config.getDomain()))
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail config in this domain "
 					+ actor.getDomainId());
-		mailConfigBusinessService.create(config.getDomain(), config);
+		return mailConfigBusinessService.create(config.getDomain(), config);
 	}
 
 	@Override
-	public void updateConfig(User actor, MailConfig config)
+	public MailConfig updateConfig(User actor, MailConfig config)
 			throws BusinessException {
 		if (!permissionService.isAdminforThisDomain(actor, config.getDomain()))
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
-		mailConfigBusinessService.update(config);
+		return mailConfigBusinessService.update(config);
 	}
 
 	@Override
@@ -187,6 +188,20 @@ public class MailConfigServiceImpl implements MailConfigService {
 					+ actor + " cannot see this mail content : "
 					+ ret.getUuid());
 		return ret;
+	}
+
+	@Override
+	public List<MailContent> findAll(MailConfig mailConfig,
+			MailContentType mailContentType, Language lang) throws BusinessException {
+
+		AbstractDomain currentDomain = mailConfig.getDomain();
+		List<MailContent> all = mailContentBusinessService.findAll(currentDomain, lang, mailContentType);
+		AbstractDomain parent = currentDomain.getParentDomain();
+		while (parent != null) {
+			all.addAll(mailContentBusinessService.findAll(currentDomain, lang, mailContentType));
+			parent = parent.getParentDomain();
+		}
+		return all;
 	}
 
 	@Override

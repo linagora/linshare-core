@@ -44,9 +44,9 @@ public interface MailConfigBusinessService {
 
 	MailConfig findByUuid(String uuid) throws BusinessException;
 
-	void create(AbstractDomain domain, MailConfig cfg) throws BusinessException;
+	MailConfig create(AbstractDomain domain, MailConfig cfg) throws BusinessException;
 
-	void update(MailConfig cfg) throws BusinessException;
+	MailConfig update(MailConfig cfg) throws BusinessException;
 
 	void delete(MailConfig cfg) throws BusinessException;
 

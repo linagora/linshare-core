@@ -81,7 +81,7 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 	}
 
 	@Override
-	public void create(AbstractDomain domain, MailConfig cfg)
+	public MailConfig create(AbstractDomain domain, MailConfig cfg)
 			throws BusinessException {
 		MailConfig rootCfg = abstractDomainRepository.getUniqueRootDomain()
 				.getCurrentMailConfiguration();
@@ -101,13 +101,13 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 					new MailFooterLang(e.getValue()));
 		}
 
-		mailConfigRepository.create(cfg);
+		return mailConfigRepository.create(cfg);
 	}
 
 	@Override
-	public void update(MailConfig cfg) throws BusinessException {
+	public MailConfig update(MailConfig cfg) throws BusinessException {
 		try {
-			mailConfigRepository.update(cfg);
+			return mailConfigRepository.update(cfg);
 		} catch (IllegalArgumentException iae) {
 			throw new BusinessException(BusinessErrorCode.MAILCONFIG_NOT_FOUND,
 					"Cannot update mailconfig " + cfg);

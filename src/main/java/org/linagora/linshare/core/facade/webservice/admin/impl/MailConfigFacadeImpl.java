@@ -34,11 +34,16 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.MailLayout;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -48,6 +53,9 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
 import org.linagora.linshare.webservice.dto.MailConfigDto;
+import org.linagora.linshare.webservice.dto.MailContentDto;
+
+import com.google.common.collect.Sets;
 
 public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		MailConfigFacade {
@@ -91,28 +99,46 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void create(MailConfigDto dto) throws BusinessException {
+	public MailConfigDto create(MailConfigDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		MailConfig config = new MailConfig();
 		transform(config, dto);
-		mailConfigService.createConfig(actor, config);
+		return new MailConfigDto(mailConfigService.createConfig(actor, config));
 	}
 
 	@Override
-	public void update(MailConfigDto dto) throws BusinessException {
+	public MailConfigDto update(MailConfigDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		MailConfig config = findConfig(actor, dto.getUuid());
-
 		transform(config, dto);
 		config.setMailLayoutHtml(findLayout(actor, dto.getMailLayoutHtml()));
 		config.setMailLayoutText(findLayout(actor, dto.getMailLayoutText()));
-		mailConfigService.updateConfig(actor, config);
+		return new MailConfigDto(mailConfigService.updateConfig(actor, config));
 	}
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		mailConfigService.deleteConfig(actor, uuid);
+	}
+
+	@Override
+	public Set<MailContentDto> findAll(String mailConfigUuid,
+			String mailContentType, String language) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(mailConfigUuid, "mailConfigUuid must be set.");
+		Validate.notEmpty(mailContentType, "mailContentType must be set.");
+		Validate.notEmpty(language, "language must be set.");
+
+		MailConfig mailConfig = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
+		MailContentType contentType = MailContentType.valueOf(mailContentType.toUpperCase());
+		Language lang = Language.valueOf(language.toUpperCase());
+		Set<MailContentDto> ret = Sets.newHashSet();
+		List<MailContent> all = mailConfigService.findAll(mailConfig, contentType, lang);
+		for (MailContent mailContent : all) {
+			ret.add(new MailContentDto(mailContent));
+		}
+		return ret;
 	}
 
 	/*

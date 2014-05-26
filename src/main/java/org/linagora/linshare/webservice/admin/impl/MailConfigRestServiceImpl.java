@@ -52,6 +52,7 @@ import org.linagora.linshare.core.facade.webservice.admin.MailConfigFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailConfigRestService;
 import org.linagora.linshare.webservice.dto.MailConfigDto;
+import org.linagora.linshare.webservice.dto.MailContentDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -99,10 +100,10 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Create a mail configuration.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void create(
+	public MailConfigDto create(
 			@ApiParam(value = "Mail configuration to create.", required = true) MailConfigDto dto)
 			throws BusinessException {
-		mailConfigFacade.create(dto);
+		return mailConfigFacade.create(dto);
 	}
 
 	@Path("/")
@@ -110,10 +111,10 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Update a mail configuration.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void update(
+	public MailConfigDto update(
 			@ApiParam(value = "Mail configuration to update.", required = true) MailConfigDto dto)
 			throws BusinessException {
-		mailConfigFacade.update(dto);
+		return mailConfigFacade.update(dto);
 	}
 
 	@Path("/")
@@ -125,5 +126,17 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Mail configuration to delete.", required = true) MailConfigDto dto)
 			throws BusinessException {
 		mailConfigFacade.delete(dto.getUuid());
+	}
+
+	@Path("/{mailConfigUuid}/mail_contents")
+	@GET
+	@ApiOperation(value = "Find all mail contents.", response = MailContentDto.class, responseContainer = "Set")
+	@Override
+	public Set<MailContentDto> findAll(
+			@ApiParam(value = "Mail configuration's uuid.", required = true) @PathParam("mailConfigUuid") String mailConfigUuid,
+			@ApiParam(value = "Mail content type.", required = true) @QueryParam("mailContentType") String mailContentType,
+			@ApiParam(value = "Mail content language.", required = true) @QueryParam("language") String language)
+			throws BusinessException {
+		return mailConfigFacade.findAll(mailConfigUuid, mailContentType, language);
 	}
 }

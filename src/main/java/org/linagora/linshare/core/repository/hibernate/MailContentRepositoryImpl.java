@@ -34,10 +34,15 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
-import java.util.UUID;
+import java.util.List;
 
+import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailContentRepository;
@@ -68,5 +73,14 @@ public class MailContentRepositoryImpl extends
 	public MailContent update(MailContent entity) throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
+	}
+
+	@Override
+	public List<MailContent> findAll(AbstractDomain domain, Language lang, MailContentType type) {
+		Conjunction and = Restrictions.conjunction();
+		and.add(Restrictions.eq("domain", domain));
+		and.add(Restrictions.eq("mailContentType", type.toInt()));
+		and.add(Restrictions.eq("language", lang.toInt()));
+		return findByCriteria(and);
 	}
 }

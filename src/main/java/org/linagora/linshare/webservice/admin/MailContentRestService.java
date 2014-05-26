@@ -40,7 +40,8 @@ import org.linagora.linshare.webservice.dto.MailContentDto;
 
 public interface MailContentRestService {
 
-	Set<MailContentDto> findAll(String domain, boolean onlyCurrentDomain) throws BusinessException;
+	Set<MailContentDto> findAll(String domain, boolean onlyCurrentDomain)
+			throws BusinessException;
 
 	MailContentDto find(String uuid) throws BusinessException;
 

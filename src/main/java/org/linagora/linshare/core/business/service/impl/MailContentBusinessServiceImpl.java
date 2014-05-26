@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.linagora.linshare.core.business.service.MailContentBusinessService;
@@ -82,8 +83,13 @@ public class MailContentBusinessServiceImpl implements
 	public MailContent find(AbstractDomain domain, Language lang,
 			MailContentType type) throws BusinessException {
 		MailConfig cfg = domain.getCurrentMailConfiguration();
-
 		return mailContentLangRepository.findMailContent(cfg, lang, type);
+	}
+
+	@Override
+	public List<MailContent> findAll(AbstractDomain domain, Language lang,
+			MailContentType type) {
+		return mailContentRepository.findAll(domain, lang, type);
 	}
 
 	@Override
