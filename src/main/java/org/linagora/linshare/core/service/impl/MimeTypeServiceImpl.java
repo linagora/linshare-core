@@ -70,12 +70,8 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 	public MimeType find(Account actor, String uuid) throws BusinessException {
 		Validate.notNull(actor);
 		Validate.notEmpty(uuid);
-		if (!isAdminFor(actor, uuid)) {
-			String msg = "The current actor "
-					+ actor.getAccountReprentation()
-					+ " does not have the right to get this MimeType.";
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
-		}
+
+		checkAdminFor(actor, uuid);
 		return mimeTypeBusinessService.find(uuid);
 	}
 
@@ -84,12 +80,8 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 		Validate.notNull(actor);
 		Validate.notNull(mimeTypeDto);
 		Validate.notEmpty(mimeTypeDto.getUuid());
-		if (!isAdminFor(actor, mimeTypeDto.getUuid())) {
-			String msg = "The current actor "
-					+ actor.getAccountReprentation()
-					+ " does not have the right to update this MimeType.";
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
-		}
+
+		checkAdminFor(actor, mimeTypeDto.getUuid());
 		return mimeTypeBusinessService.update(mimeTypeDto);
 	}
 
@@ -99,33 +91,41 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 		Validate.notEmpty(fileName);
 		Validate.notEmpty(mimeType);
 
-		// use mimetype filtering
-		if (logger.isDebugEnabled()) {
-			logger.debug("2)check the mimetype:" + mimeType);
-		}
 		String[] extras = { fileName };
 		MimePolicy mimePolicy = actor.getDomain().getMimePolicy();
 		mimePolicyBusinessService.load(mimePolicy);
-		MimeType entity = mimeTypeBusinessService.findByMimeType(mimePolicy, mimeType);
-		if (entity!= null) {
+		MimeType entity = mimeTypeBusinessService.findByMimeType(mimePolicy,
+				mimeType);
+
+		logger.debug("2)check the mimetype:" + mimeType);
+		if (entity != null) {
 			if (!entity.getEnable()) {
-				if (logger.isDebugEnabled())
-					logger.debug("mimetype not allowed: " + mimeType);
-				throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED, "This kind of file is not allowed: " + mimeType, extras);
+				logger.debug("mimetype not allowed: " + mimeType);
+				throw new BusinessException(
+						BusinessErrorCode.FILE_MIME_NOT_ALLOWED,
+						"This kind of file is not allowed: " + mimeType, extras);
 			}
 		} else {
-			// mimetype is null ?
 			String msg = "Mimetype is empty for this file" + mimeType;
 			logger.error(msg);
-			throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED, msg, extras);
+			throw new BusinessException(
+					BusinessErrorCode.FILE_MIME_NOT_ALLOWED, msg, extras);
 		}
 	}
 
-	private boolean isAdminFor(Account actor, String uuid) throws BusinessException {
+	/*
+	 * Check if the current actor is admin of the domain associated to
+	 * the MimePolicy.
+	 */
+	private void checkAdminFor(Account actor, String uuid)
+			throws BusinessException {
 		MimeType mimeType = mimeTypeBusinessService.find(uuid);
-		// we check if the current actor is admin of the domain which belongs the MimePolicy
-		return domainPermissionService.isAdminforThisDomain(
-				actor,
-				mimeType.getMimePolicy().getDomain());
+
+		if (!domainPermissionService.isAdminforThisDomain(actor, mimeType
+				.getMimePolicy().getDomain())) {
+			String msg = "The current actor " + actor.getAccountReprentation()
+					+ " does not have the right to update this MimeType.";
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
+		}
 	}
 }
