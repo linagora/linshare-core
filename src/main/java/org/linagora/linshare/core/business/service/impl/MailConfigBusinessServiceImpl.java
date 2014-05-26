@@ -71,8 +71,13 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 	}
 
 	@Override
-	public MailConfig findByUuid(String uuid) {
-		return mailConfigRepository.findByUuid(uuid);
+	public MailConfig findByUuid(String uuid) throws BusinessException {
+		MailConfig mailConfig = mailConfigRepository.findByUuid(uuid);
+		if (mailConfig == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
+					"Can not find mailConfig " + uuid);
+		}
+		return mailConfig;
 	}
 
 	@Override

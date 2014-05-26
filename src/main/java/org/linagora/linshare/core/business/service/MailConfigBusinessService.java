@@ -42,7 +42,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailConfigBusinessService {
 
-	MailConfig findByUuid(String uuid);
+	MailConfig findByUuid(String uuid) throws BusinessException;
 
 	void create(AbstractDomain domain, MailConfig cfg) throws BusinessException;
 

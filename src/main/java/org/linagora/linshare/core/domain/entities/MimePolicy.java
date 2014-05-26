@@ -38,7 +38,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.linagora.linshare.webservice.dto.MimePolicyDto;
-import org.linagora.linshare.webservice.dto.MimeTypeDto;
 
 public class MimePolicy {
 

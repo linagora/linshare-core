@@ -80,7 +80,7 @@ public class DomainDto {
 	@ApiModelProperty(value = "Parent")
 	private String parent;
 
-	@ApiModelProperty(value = "authShowOrder")
+	@ApiModelProperty(value = "AuthShowOrder")
 	private Long authShowOrder;
 
 	protected DomainDto(final AbstractDomain domain, boolean light,

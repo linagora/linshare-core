@@ -251,5 +251,6 @@
 		<constructor-arg ref="mailContentBusinessService" />
 		<constructor-arg ref="mailFooterBusinessService" />
 		<constructor-arg ref="mailLayoutBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 </beans>

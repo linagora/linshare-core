@@ -79,10 +79,10 @@ public class MimePolicyRestServiceImpl extends WebserviceBase implements
 	@Override
 	public Set<MimePolicyDto> findAll(
 			@ApiParam(value = "Identifier of the domain which you are looking into.", required = true) 
-				@QueryParam("domaindId") String domaindId,
-			@ApiParam(value = "Return mime policies of the current domain and mime policies of the parent domain.")
-				@QueryParam("onlyCurrentDomain") @DefaultValue("false") boolean onlyCurrentDomain
-				)
+			@QueryParam("domaindId") String domaindId,
+			@ApiParam(value = "Return current and parent domain's mime policies,"
+					+ " or only current domain's if onlyCurrentDomain is true.")
+			@QueryParam("onlyCurrentDomain") @DefaultValue("false") boolean onlyCurrentDomain)
 			throws BusinessException {
 		return mimePolicyFacade.findAll(domaindId, onlyCurrentDomain);
 	}
@@ -94,11 +94,10 @@ public class MimePolicyRestServiceImpl extends WebserviceBase implements
 	@Override
 	public MimePolicyDto find(
 			@ApiParam(value = "Uuid of the mime policy to search for.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "Return mime policy with mime types.") @QueryParam("full") @DefaultValue("false") boolean full
-			)
+			@ApiParam(value = "Return mime policy with mime types.") @QueryParam("full") @DefaultValue("false") boolean full)
 			throws BusinessException {
-			MimePolicyDto find = mimePolicyFacade.find(uuid, full);
-			return find;
+		MimePolicyDto find = mimePolicyFacade.find(uuid, full);
+		return find;
 	}
 
 	@Path("/")
