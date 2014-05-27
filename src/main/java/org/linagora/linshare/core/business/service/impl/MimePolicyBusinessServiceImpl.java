@@ -37,10 +37,12 @@ import java.util.Set;
 
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.MimePolicyRepository;
 import org.linagora.linshare.core.repository.MimeTypeRepository;
 
@@ -48,19 +50,23 @@ import com.google.common.collect.Sets;
 
 public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService {
 
-	private MimePolicyRepository mimePolicyRepository;
+	private final MimePolicyRepository mimePolicyRepository;
 
-	private MimeTypeRepository mimeTypeRepository;
+	private final MimeTypeRepository mimeTypeRepository;
 
-	private MimeTypeMagicNumberDao mimeTypeMagicNumberDao;
+	private final MimeTypeMagicNumberDao mimeTypeMagicNumberDao;
+
+	private final AbstractDomainRepository domainRepository;
 
 	public MimePolicyBusinessServiceImpl(
-			MimePolicyRepository mimePolicyRepository,
-			MimeTypeRepository mimeTypeRepository,
-			MimeTypeMagicNumberDao mimeTypeMagicNumberDao) {
+			final MimePolicyRepository mimePolicyRepository,
+			final MimeTypeRepository mimeTypeRepository,
+			final MimeTypeMagicNumberDao mimeTypeMagicNumberDao,
+			final AbstractDomainRepository domainRepository) {
 		this.mimePolicyRepository = mimePolicyRepository;
 		this.mimeTypeRepository = mimeTypeRepository;
 		this.mimeTypeMagicNumberDao = mimeTypeMagicNumberDao;
+		this.domainRepository = domainRepository;
 	}
 
 	@Override
@@ -75,6 +81,10 @@ public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService 
 
 	@Override
 	public void delete(MimePolicy mimePolicy) throws BusinessException {
+		AbstractDomain domain = mimePolicy.getDomain();
+		Set<MimePolicy> mimePolicies = domain.getMimePolicies();
+		mimePolicies.remove(mimePolicy);
+		domainRepository.update(domain);
 		mimePolicyRepository.delete(mimePolicy);
 	}
 
