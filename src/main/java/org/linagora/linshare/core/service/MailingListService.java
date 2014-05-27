@@ -71,7 +71,7 @@ public interface MailingListService {
 	 */
 	void updateList(String actorUuid, MailingList listToUpdate) throws BusinessException;
 
-	MailingList findByUuid(String uuid) throws BusinessException;
+	MailingList findByUuid(String actorUuid, String uuid) throws BusinessException;
 
 	/**
 	 * Find all list (private and public) of the selected user
@@ -79,7 +79,7 @@ public interface MailingListService {
 	 * @param user
 	 * @return
 	 */
-	List<MailingList> findAllListByUser(String userUuid);
+	List<MailingList> findAllListByUser(String actorUuid, String userUuid);
 
 	public MailingList findByIdentifier(String ownerUuid, String identifier);
 
@@ -89,7 +89,7 @@ public interface MailingListService {
 	 * @param user
 	 * @return
 	 */
-	List<MailingList> findAllListByOwner(String ownerUuid);
+	List<MailingList> findAllListByOwner(String actorUuid, String ownerUuid);
 
 	/**
 	 * find list of result according to visibility selected and pattern
@@ -124,14 +124,14 @@ public interface MailingListService {
 	 */
 	void addNewContact(String actorUuid, String mailingListUuid, MailingListContact contact) throws BusinessException;
 
-	void deleteContact(String ownerUuid, String mail) throws BusinessException;
+	void deleteContact(String actorUuid, String mail) throws BusinessException;
 
-	MailingListContact searchContact(String uuid) throws BusinessException;
+	MailingListContact searchContact(String actorUuid, String uuid) throws BusinessException;
 
-	void updateContact(String ownerUuid, MailingListContact contactToUpdate) throws BusinessException;
+	void updateContact(String actorUuid, MailingListContact contactToUpdate) throws BusinessException;
 
-	MailingListContact findContactWithMail(String listUuid, String mail) throws BusinessException;
+	MailingListContact findContactWithMail(String actorUuid, String listUuid, String mail) throws BusinessException;
 
-	List<String> getAllContactMails(String uuid) throws BusinessException;
+	List<String> getAllContactMails(String actorUuid, String uuid) throws BusinessException;
 
 }

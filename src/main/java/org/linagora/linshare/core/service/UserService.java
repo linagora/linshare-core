@@ -36,9 +36,9 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -73,6 +73,17 @@ public interface UserService {
 	 * @throws BusinessException
 	 */
 	public List<User> autoCompleteUser(String currentActorUuid, String pattern) throws BusinessException;
+
+	/** Search a user.
+	 * @param mail user email.
+	 * @param firstName user first name.
+	 * @param lastName user last name.
+	 * @param userType type of user (internal/guest)
+	 * @param currentUser the current user can be null, if not null and if user is a guest, the result includes the guests
+	 * created by the current User
+	 * @return a list of matching users.
+	 */
+	List<User> searchUserV2(String currentActorUuid, String mail, String firstName, String lastName, AccountType userType) throws BusinessException;
 
 	/** Search a user.
 	 * @param mail user email.

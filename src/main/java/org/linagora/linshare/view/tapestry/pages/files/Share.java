@@ -256,7 +256,7 @@ public class Share {
 			String badFormatEmail = "";
 
 			for (MailingListVo ml : mailingLists) {
-				recipients.addAll(mailingListFacade.getAllContactMails(ml));
+				recipients.addAll(mailingListFacade.getAllContactMails(userVo, ml));
 			}
 
 			for (String recipient : recipients) {
@@ -392,7 +392,7 @@ public class Share {
 
 			@Override
 			public MailingListVo toValue(String clientValue) {
-				return mailingListFacade.findByUuid(clientValue);
+				return mailingListFacade.findByUuid(userVo, clientValue);
 			}
 
 			@Override

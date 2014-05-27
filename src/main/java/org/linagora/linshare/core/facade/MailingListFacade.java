@@ -48,9 +48,9 @@ public interface MailingListFacade {
 
 	MailingListVo createList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException;
 
-	MailingListVo findByUuid(String uuid);
+	MailingListVo findByUuid(UserVo actorVo, String uuid);
 
-	List<MailingListVo> getAllMyList(UserVo user) throws BusinessException;
+	List<MailingListVo> getAllMyList(UserVo actorVo, UserVo userVo) throws BusinessException;
 
 	void updateList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException;
 
@@ -58,17 +58,18 @@ public interface MailingListFacade {
 
 	/**
 	 * Basic operations on mailingListContact
+	 * @param actorVo TODO
 	 * 
 	 * @throws BusinessException
 	 */
 
-	MailingListContactVo findContactByMail(String listUuid, String mail) throws BusinessException;
+	MailingListContactVo findContactByMail(UserVo actorVo, String listUuid, String mail) throws BusinessException;
 
 	void updateContact(UserVo actorVo, MailingListContactVo contactVo) throws BusinessException;
 
 	public void deleteContact(UserVo actorVo, String contactUuid) throws BusinessException;
 
-	public MailingListContactVo searchContact(String uuid) throws BusinessException;
+	public MailingListContactVo searchContact(UserVo actorVo, String uuid) throws BusinessException;
 
 	/**
 	 * Add user to mailing list
@@ -124,24 +125,6 @@ public interface MailingListFacade {
 	boolean getListIsDeletable(UserVo actorVo, MailingListVo listVo) throws BusinessException;
 
 	/**
-	 * Get list from share
-	 * 
-	 * @param recipients
-	 * @return
-	 */
-	List<MailingListVo> getListsFromShare(String recipients);
-
-	/**
-	 * Provide completion for share pages
-	 * 
-	 * @param user
-	 * @param input
-	 * @return
-	 * @throws BusinessException
-	 */
-	List<String> completionsForShare(UserVo user, String input) throws BusinessException;
-
-	/**
 	 * Check if new identifier doesn't exist
 	 * 
 	 * @param user
@@ -161,6 +144,6 @@ public interface MailingListFacade {
 
 	public List<MailingListVo> completionForUploadForm(UserVo userVo, String input) throws BusinessException;
 
-	public List<String> getAllContactMails(MailingListVo ml) throws BusinessException;
+	public List<String> getAllContactMails(UserVo actorVo, MailingListVo ml) throws BusinessException;
 
 }

@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.LogEntry;
@@ -11,6 +12,7 @@ import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.ThreadLogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.LogEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -33,7 +35,8 @@ public class LogEntryFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<LogDto> query(User actor, LogCriteriaDto criteria) {
+	public List<LogDto> query(LogCriteriaDto criteria) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
 		Calendar before = null;
 		Calendar after = null;
 
@@ -41,7 +44,7 @@ public class LogEntryFacadeImpl extends AdminGenericFacadeImpl implements
 		setTime(after, criteria.getAfterDate());
 
 		LogCriteriaBean crit = new LogCriteriaBean(criteria.getActorMails(),
-				criteria.getActorFirstname(), criteria.getActorLastname(),
+				criteria.getActorFirstName(), criteria.getActorLastName(),
 				criteria.getActorDomain(), criteria.getTargetMails(),
 				criteria.getTargetFirstname(), criteria.getTargetLastname(),
 				criteria.getTargetDomain(), before, after,

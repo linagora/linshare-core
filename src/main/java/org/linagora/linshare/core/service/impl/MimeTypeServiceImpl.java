@@ -33,16 +33,15 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
+import org.linagora.linshare.core.business.service.MimeTypeBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AllowedMimeType;
-import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
+import org.linagora.linshare.core.domain.entities.MimePolicy;
+import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.AllowedMimeTypeRepository;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,128 +50,82 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 
 	private static final Logger logger = LoggerFactory.getLogger(MimeTypeServiceImpl.class);
 
-	/**
-	 * database allowed mimetype
-	 */
-	private final AllowedMimeTypeRepository allowedMimeTypeRepository;
+	final private MimePolicyBusinessService mimePolicyBusinessService;
 
-	/**
-	 * supported mimetype by the provider implementation
-	 */
-	private final MimeTypeMagicNumberDao mimeTypeMagicNumberDao;
+	final private MimeTypeBusinessService mimeTypeBusinessService;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param userRepository
-	 *            repository.
-	 */
-	public MimeTypeServiceImpl(AllowedMimeTypeRepository allowedMimeTypeRepository, MimeTypeMagicNumberDao mimeTypeMagicNumberDao) {
-		this.allowedMimeTypeRepository = allowedMimeTypeRepository;
-		this.mimeTypeMagicNumberDao = mimeTypeMagicNumberDao;
+	final private DomainPermissionBusinessService domainPermissionService;
+
+	public MimeTypeServiceImpl(
+			MimeTypeBusinessService mimeTypeBusinessService,
+			MimePolicyBusinessService mimePolicyBusinessService,
+			DomainPermissionBusinessService domainPermissionService
+			) {
+		this.mimeTypeBusinessService = mimeTypeBusinessService;
+		this.mimePolicyBusinessService = mimePolicyBusinessService;
+		this.domainPermissionService = domainPermissionService;
 	}
 
 	@Override
-	public List<AllowedMimeType> getAllowedMimeType() throws BusinessException {
+	public MimeType find(Account actor, String uuid) throws BusinessException {
+		Validate.notNull(actor);
+		Validate.notEmpty(uuid);
 
-		//reading from database
-		List<AllowedMimeType> list = allowedMimeTypeRepository.findAll();
-		if(list.size() == 0) {
-			// reading from provider if table is empty
-			list = mimeTypeMagicNumberDao.getAllSupportedMimeType();
-		}
-		Collections.sort(list);
-		return list;
+		checkAdminFor(actor, uuid);
+		return mimeTypeBusinessService.find(uuid);
 	}
 
 	@Override
-	public void createAllowedMimeType(List<AllowedMimeType> newlist) throws IllegalArgumentException, BusinessException {
+	public MimeType update(Account actor, MimeType mimeTypeDto) throws BusinessException {
+		Validate.notNull(actor);
+		Validate.notNull(mimeTypeDto);
+		Validate.notEmpty(mimeTypeDto.getUuid());
 
-		List<AllowedMimeType> oldlist = allowedMimeTypeRepository.findAll();
-
-		for (AllowedMimeType one : oldlist) {
-			allowedMimeTypeRepository.delete(one);
-		}
-
-		for (AllowedMimeType one : newlist) {
-			allowedMimeTypeRepository.create(one);
-		}
+		checkAdminFor(actor, mimeTypeDto.getUuid());
+		return mimeTypeBusinessService.update(mimeTypeDto);
 	}
 
 	@Override
-	public boolean isAllowed(String mimeType) {
-
-		boolean res = true;
-
-		List<AllowedMimeType> list = allowedMimeTypeRepository.findByMimeType(mimeType);
-		if (list != null && list.size() != 0) {
-			for (AllowedMimeType allowedMimeType : list) {
-				if (allowedMimeType.getStatus() != MimeTypeStatus.AUTHORISED)
-					res = false;
-			}
-		} else {
-			res = false; // list is empty for this mime Type
-		}
-
-		return res;
-	}
-
-	@Override
-	public void saveOrUpdateAllowedMimeType(List<AllowedMimeType> list) throws BusinessException {
-		allowedMimeTypeRepository.saveOrUpdateMimeType(list);
-	}
-
-	@Override
-	public MimeTypeStatus giveStatus(String mimeType) {
-
-		MimeTypeStatus statusToReturn = MimeTypeStatus.DENIED;
-		List<AllowedMimeType> list = allowedMimeTypeRepository.findByMimeType(mimeType);
-
-		if (list != null && list.size() != 0) {
-			statusToReturn = list.get(0).getStatus();
-			// type mime exists in database (same as apperture at this time)
-			// so check admin configuration
-		} else {
-			// type mime does not exist in database
-			statusToReturn = MimeTypeStatus.AUTHORISED;
-		}
-
-		return statusToReturn;
-	}
-
-	@Override
-	public void checkFileMimeType(String fileName, String mimeType, Account owner) throws BusinessException {
-		// use mimetype filtering
-		if (logger.isDebugEnabled()) {
-			logger.debug("2)check the mimetype:" + mimeType);
-		}
+	public void checkFileMimeType(Account actor, String fileName, String mimeType) throws BusinessException {
+		Validate.notNull(actor);
+		Validate.notEmpty(fileName);
+		Validate.notEmpty(mimeType);
 
 		String[] extras = { fileName };
-		// if we refuse some typemime
-		if (mimeType != null) {
-			MimeTypeStatus status = giveStatus(mimeType);
+		MimePolicy mimePolicy = actor.getDomain().getMimePolicy();
+		mimePolicyBusinessService.load(mimePolicy);
+		MimeType entity = mimeTypeBusinessService.findByMimeType(mimePolicy,
+				mimeType);
 
-			if (status == MimeTypeStatus.DENIED) {
-				if (logger.isDebugEnabled())
-					logger.debug("mimetype not allowed: " + mimeType);
-				throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED, "This kind of file is not allowed: " + mimeType, extras);
-			} else if (status == MimeTypeStatus.WARN) {
-				if (logger.isInfoEnabled())
-					logger.info("mimetype warning: " + mimeType + "for user: " + owner.getLsUuid());
+		logger.debug("2)check the mimetype:" + mimeType);
+		if (entity != null) {
+			if (!entity.getEnable()) {
+				logger.debug("mimetype not allowed: " + mimeType);
+				throw new BusinessException(
+						BusinessErrorCode.FILE_MIME_NOT_ALLOWED,
+						"This kind of file is not allowed: " + mimeType, extras);
 			}
 		} else {
-			// mimetype is null ?
-			throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED, "Mimetype is empty for this file" + mimeType, extras);
+			String msg = "Mimetype is empty for this file" + mimeType;
+			logger.error(msg);
+			throw new BusinessException(
+					BusinessErrorCode.FILE_MIME_NOT_ALLOWED, msg, extras);
 		}
-	}
-	
-	@Override
-	public boolean checkFileWarningMimeType(String mimeType) {
-		// use mimetype filtering
-		if (logger.isDebugEnabled()) {
-			logger.debug("2)check the mimetype:" + mimeType);
-		}
-		return giveStatus(mimeType).equals(MimeTypeStatus.WARN);
 	}
 
+	/*
+	 * Check if the current actor is admin of the domain associated to
+	 * the MimePolicy.
+	 */
+	private void checkAdminFor(Account actor, String uuid)
+			throws BusinessException {
+		MimeType mimeType = mimeTypeBusinessService.find(uuid);
+
+		if (!domainPermissionService.isAdminforThisDomain(actor, mimeType
+				.getMimePolicy().getDomain())) {
+			String msg = "The current actor " + actor.getAccountReprentation()
+					+ " does not have the right to update this MimeType.";
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
+		}
+	}
 }

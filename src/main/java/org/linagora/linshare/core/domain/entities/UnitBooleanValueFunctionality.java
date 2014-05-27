@@ -36,8 +36,6 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
-import org.linagora.linshare.core.domain.vo.FunctionalityVo;
-import org.linagora.linshare.core.domain.vo.TimeValueBooleanFunctionalityVo;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 import org.linagora.linshare.webservice.dto.ParameterDto;
 
@@ -63,7 +61,7 @@ public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 	}
 	
 	@Override
-	public boolean businessEquals(Functionality obj, boolean checkPolicies) {
+	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if(super.businessEquals(obj, checkPolicies)) {
 			UnitBooleanValueFunctionality o = (UnitBooleanValueFunctionality)obj;
 			if(bool == o.getBool()) {
@@ -77,31 +75,15 @@ public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 	
 	public Object clone() {
 		UnitBooleanValueFunctionality func = null;
-      	func = (UnitBooleanValueFunctionality) super.clone();
-	    return func;
-  	}
-	
-	@Override
-	public void updateFunctionalityValuesOnlyFrom(Functionality functionality) {
-		super.updateFunctionalityValuesOnlyFrom(functionality);
-		UnitBooleanValueFunctionality f = (UnitBooleanValueFunctionality)functionality;
-		this.bool = f.getBool();
+		func = (UnitBooleanValueFunctionality) super.clone();
+		return func;
 	}
 	
 	@Override
-	public void updateFunctionalityValuesOnlyFromVo(FunctionalityVo functionality) {
-		
-		if(functionality.getType().equals(FunctionalityType.UNIT_BOOLEAN_TIME)) {
-			TimeValueBooleanFunctionalityVo f = (TimeValueBooleanFunctionalityVo)functionality;
-			if(f.getTime() != null) {
-				this.value = f.getTime();
-				this.bool = f.isBool();
-				TimeUnitClass timeUnit = (TimeUnitClass)getUnit();
-				timeUnit.setUnitValue(f.getUnit());
-			}
-		} else if(functionality.getType().equals(FunctionalityType.UNIT_BOOLEAN_SIZE)) {
-			// TO DO if needed.
-		}
+	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
+		super.updateFunctionalityValuesOnlyFrom(functionality);
+		UnitBooleanValueFunctionality f = (UnitBooleanValueFunctionality)functionality;
+		this.bool = f.getBool();
 	}
 
 	@Override

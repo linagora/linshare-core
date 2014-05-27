@@ -103,7 +103,7 @@ public class ThreadFacadeImpl extends GenericFacadeImpl implements ThreadFacade 
 		Thread thread = threadService.findByLsUuid(threadUuid);
 		User user = userService.findOrCreateUserWithDomainPolicies(mail, domainId, actor.getDomainId());
 
-		threadService.addMember(actor, thread, user, readonly);
+		threadService.addMember(actor, thread, user, false, !readonly);
 	}
 
 }

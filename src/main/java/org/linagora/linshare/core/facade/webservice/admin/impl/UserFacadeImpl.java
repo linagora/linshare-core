@@ -34,12 +34,11 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
@@ -48,7 +47,9 @@ import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.webservice.dto.PasswordDto;
 import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.webservice.dto.UserSearchDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,63 +74,92 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<UserDto> completionUser(String pattern) throws BusinessException {
-		return searchUsers(pattern, null);
+	public Set<UserDto> search(UserSearchDto userSearchDto)
+			throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
+		return searchUsers(userSearchDto.getFirstName(),
+				userSearchDto.getLastName(), userSearchDto.getMail(), null);
 	}
-	
+
 	@Override
-	public Set<UserDto> getInternals(String pattern) throws BusinessException {
+	public Set<UserDto> searchInternals(String pattern)
+			throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
 		return searchUsers(pattern, AccountType.INTERNAL);
 	}
 
 	@Override
-	public Set<UserDto> getGuests(String pattern) throws BusinessException {
+	public Set<UserDto> searchGuests(String pattern) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
 		return searchUsers(pattern, AccountType.GUEST);
 	}
-	
-	private Set<UserDto> searchUsers(String pattern, AccountType type) throws BusinessException {
+
+	/**
+	 * Search users using firstname, lastname and mail as search criteria. Each
+	 * param can be null. If all parameters are null, return all.
+	 * 
+	 * @param firstName
+	 * @param lastName
+	 * @param mail
+	 * @param type
+	 * @return
+	 * @throws BusinessException
+	 */
+	private Set<UserDto> searchUsers(String firstName, String lastName,
+			String mail, AccountType type) throws BusinessException {
 		User currentUser = super.checkAuthentication();
 
 		Set<UserDto> usersDto = new HashSet<UserDto>();
 		Set<User> users = new HashSet<User>();
-		users.addAll(userService.searchUser(pattern, null, null, type,
-				currentUser));
-		users.addAll(userService.searchUser(null, pattern, null, type,
-				currentUser));
-		users.addAll(userService.searchUser(null, null, pattern, type,
+		users.addAll(userService.searchUser(mail, firstName, lastName, type,
 				currentUser));
 		for (User user : users) {
 			UserDto userDto = UserDto.getFull(user);
 
 			if (userDto.isGuest()) {
 				if (user.isRestricted()) {
-					for (User contact : userService.fetchGuestContacts(user.getLsUuid())) {
+					for (User contact : userService.fetchGuestContacts(user
+							.getLsUuid())) {
 						userDto.getRestrictedContacts().add(contact.getMail());
 					}
 				}
 			}
 			usersDto.add(userDto);
-		}		
+		}
+		return usersDto;
+	}
+
+	private Set<UserDto> searchUsers(String pattern, AccountType type)
+			throws BusinessException {
+		Set<UserDto> usersDto = new HashSet<UserDto>();
+		usersDto.addAll(searchUsers(pattern, null, null, type));
+		usersDto.addAll(searchUsers(null, pattern, null, type));
+		usersDto.addAll(searchUsers(null, null, pattern, type));
 		return usersDto;
 	}
 
 	@Override
-	public void updateUser(UserDto userDto) throws BusinessException {
-		User actor = super.checkAuthentication();
+	public void update(UserDto userDto) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
 		User user = getUser(userDto);
 		userService.updateUser(actor, user, userDto.getDomain());
 		if (userDto.isGuest() && user.isRestricted()) {
-			userService.setGuestContactRestriction(userDto.getUuid(), userDto.getRestrictedContacts());
+			userService.setGuestContactRestriction(userDto.getUuid(),
+					userDto.getRestrictedContacts());
 		}
 	}
 
 	@Override
-	public void deleteUser(UserDto userDto) throws BusinessException {
-		User actor = super.checkAuthentication();
-		userService.deleteUser(actor, userDto.getUuid());
+	public void delete(UserDto userDto) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
+		String uuid = userDto.getUuid();
+		Validate.notEmpty(uuid, "user unique identifier must be set.");
+		userService.deleteUser(actor, uuid);
 	}
-	
+
 	private User getUser(UserDto userDto) {
+		Validate.notEmpty(userDto.getUuid(),
+				"user unique identifier must be set.");
 		if (userDto.isGuest()) {
 			return new Guest(userDto);
 		} else {
@@ -138,8 +168,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<UserDto> getAllInconsistent() throws BusinessException {
-		User actor = super.checkAuthentication();
+	public Set<UserDto> findAllInconsistent() throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Set<UserDto> ret = Sets.newHashSet();
 
 		for (User user : inconsistentUserService.findAll(actor)) {
@@ -149,11 +179,17 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void updateInconsistentUser(UserDto userDto)
+	public void updateInconsistent(UserDto userDto)
 			throws BusinessException {
-		User actor = super.checkAuthentication();
-
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		inconsistentUserService.updateDomain(actor, userDto.getUuid(),
 				userDto.getDomain());
+	}
+
+	@Override
+	public void changePassword(PasswordDto password) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
+		userService.changePassword(actor.getLsUuid(), actor.getMail(),
+				password.getOldPwd(), password.getNewPwd());
 	}
 }

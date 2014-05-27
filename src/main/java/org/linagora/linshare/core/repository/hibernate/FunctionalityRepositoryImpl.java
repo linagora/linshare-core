@@ -33,7 +33,9 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -73,17 +75,21 @@ public class FunctionalityRepositoryImpl extends AbstractRepositoryImpl<Function
 			throw new IllegalStateException("the Identifier and domain couple must be unique");
 		}
 	}
-	
+
+	@Override
+	public Set<Functionality> findAll(AbstractDomain domain) {
+		List<Functionality> fonc = findByCriteria(Restrictions.eq("domain", domain));
+		Set<Functionality> ret= new HashSet<Functionality>();
+		if (fonc != null) {
+			 ret.addAll(fonc);
+		}
+		return ret;
+	}
+
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(Functionality entity) {
 		DetachedCriteria det = DetachedCriteria.forClass(Functionality.class).add(
 				Restrictions.eq("id", entity.getId()));
 		return det;
 	}
-
-	@Override
-	public HibernateTemplate getHibernateTemplate() {
-		return super.getHibernateTemplate();
-	}
-	
 }

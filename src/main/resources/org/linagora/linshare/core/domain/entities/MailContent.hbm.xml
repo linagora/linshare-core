@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.linagora.linshare.core.domain.entities.MailContent" table="mail_content" lazy="false">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>
+		<many-to-one name="domain" cascade="lock" column="domain_abstract_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true" lazy="no-proxy" insert="false" update="false">
+		</many-to-one>
+		<property name="visible" column="visible" type="boolean" not-null="true" lazy="false"/>
+		<property name="mailContentType" column="mail_content_type" type="integer" not-null="true" lazy="false"/>
+		<property name="language" column="language" type="integer" not-null="true" lazy="false"/>
+		<property name="subject" column="subject" type="text" not-null="true" lazy="false"/>
+		<property name="greetings" column="greetings" type="text" not-null="true" lazy="false"/>
+		<property name="body" column="body" type="text" not-null="true" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="date" not-null="true" lazy="false"/>
+		<property name="modificationDate" column="modification_date" type="date" not-null="true" lazy="false"/>
+		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="plaintext" column="plaintext" type="boolean" not-null="true" lazy="false"/>
+	</class>
+</hibernate-mapping>

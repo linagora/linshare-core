@@ -33,84 +33,14 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.util.List;
-
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface FunctionalityOldService {
-
-	/**
-	 * This method returns a functionality. 
-	 * @param persistence id
-	 * @return
-	 */
-	public Functionality findById(long id);
 	
-	public void update(AbstractDomain domain, Functionality functionality) throws BusinessException;
-	public void update(String domainIdentifier, Functionality functionality) throws BusinessException;
+	public void update(Account actor, AbstractDomain domain, Functionality functionality) throws BusinessException;
 	
-	/**
-	 * This method is designed to return a list of all existing functionalities from a domain.
-	 * @param domain entity
-	 * @return
-	 */
-	public List<Functionality> getAllFunctionalities(AbstractDomain domain);
-	
-	/**
-	 * This method returns an updatable functionality. Do not try to update a functionality whit other ways. 
-	 * @param domain identifier
-	 * @param functionality identifier
-	 * @return
-	 */
-	public Functionality getFunctionalityByIdentifiers(String domainIdentifier,String functionalityIdentifier);
-	
-	/**
-	 * This method is designed to return a list of all functionalities.
-	 * Only the activation policy of these functionalities can be modified. 
-	 * @param domain entity
-	 * @return
-	 */
-	
-	public List<Functionality> getAllAvailableFunctionalities(AbstractDomain domain);
-	/**
-	 * This method is designed to return a list of all functionalities.
-	 * Only the activation policy of these functionalities can be modified.  
-	 * @param domain identifier
-	 * @return
-	 */
-	public List<Functionality> getAllAvailableFunctionalities(String domainIdentifier);
-			
-	/**
-	 * This method is designed to return a list of all functionalities.
-	 * Only the configuration policy of these functionalities can be modified. 
-	 * @param domain entity
-	 * @return
-	 */
-	public List<Functionality> getAllAlterableFunctionalities(AbstractDomain domain);
-	
-	/**
-	 * This method is designed to return a list of all functionalities.
-	 * Only the configuration policy of these functionalities can be modified.
-	 * @param domain identifier
-	 * @return
-	 */
-	public List<Functionality> getAllAlterableFunctionalities(String domainIdentifier);
-
-	/**
-	 * This method is designed to return a list of all functionalities.
-	 * Only the parameters of these functionalities can be modified. 
-	 * @param domain entity
-	 * @return
-	 */
-	public List<Functionality> getAllEditableFunctionalities(AbstractDomain domain);
-	
-	/**
-	 * This method is designed to return a list of all functionalities.
-	 * Only the parameters of these functionalities can be modified. 
-	 * @param domain identifier
-	 * @return
-	 */
-	public List<Functionality> getAllEditableFunctionalities(String domainIdentifier);
+	public void update(Account actor, String domainIdentifier, Functionality functionality) throws BusinessException;
 }

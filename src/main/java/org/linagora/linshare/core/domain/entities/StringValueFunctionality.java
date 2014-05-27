@@ -37,8 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
-import org.linagora.linshare.core.domain.vo.FunctionalityVo;
-import org.linagora.linshare.core.domain.vo.StringValueFunctionalityVo;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 import org.linagora.linshare.webservice.dto.ParameterDto;
 
@@ -59,7 +57,7 @@ public class StringValueFunctionality extends OneValueFunctionality<String> {
 	}
 
 	@Override
-	public boolean businessEquals(Functionality obj, boolean checkPolicies) {
+	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if (super.businessEquals(obj, checkPolicies)) {
 			StringValueFunctionality o = (StringValueFunctionality) obj;
 			if (value.equals(o.getValue())) {
@@ -74,20 +72,14 @@ public class StringValueFunctionality extends OneValueFunctionality<String> {
 	}
 
 	@Override
-	public void updateFunctionalityFrom(Functionality functionality) {
+	public void updateFunctionalityFrom(AbstractFunctionality functionality) {
 		super.updateFunctionalityFrom(functionality);
 		this.updateFunctionalityValuesOnlyFrom(functionality);
 	}
 
 	@Override
-	public void updateFunctionalityValuesOnlyFrom(Functionality functionality) {
+	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		StringValueFunctionality f = (StringValueFunctionality) functionality;
-		this.value = f.getValue();
-	}
-
-	@Override
-	public void updateFunctionalityValuesOnlyFromVo(FunctionalityVo functionality) {
-		StringValueFunctionalityVo f = (StringValueFunctionalityVo) functionality;
 		this.value = f.getValue();
 	}
 

@@ -33,18 +33,20 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin;
 
+import java.util.Set;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DomainDto;
 
 public interface DomainFacade extends AdminGenericFacade {
 
-	DomainDto getDomains() throws BusinessException;
+	Set<DomainDto> findAll() throws BusinessException;
 
-	DomainDto getDomainAndChildren(String domain) throws BusinessException;
+	DomainDto find(String domain, boolean tree) throws BusinessException;
 
-	void createDomain(DomainDto domain) throws BusinessException;
+	void create(DomainDto domain) throws BusinessException;
 
-	void updateDomain(DomainDto domain) throws BusinessException;
+	void update(DomainDto domain) throws BusinessException;
 
-	void deleteDomain(DomainDto domain) throws BusinessException;
+	void delete(DomainDto domain) throws BusinessException;
 }

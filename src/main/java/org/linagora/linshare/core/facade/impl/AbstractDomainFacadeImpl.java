@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
@@ -50,7 +51,6 @@ import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
-import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
@@ -161,7 +161,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 
         DomainPattern domainPattern = userProviderService.retrieveDomainPattern(domainVo.getPatternIdentifier());
         LDAPConnection ldapConn = userProviderService.retrieveLDAPConnection(domainVo.getLdapIdentifier());
-        DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(domainVo.getPolicyIdentifier());
+        DomainPolicy policy = domainPolicyService.find(domainVo.getPolicyIdentifier());
 
         LdapUserProvider provider = null;
         String baseDn = domainVo.getDifferentialKey();
@@ -614,25 +614,6 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
             throw new BusinessException("You are not authorized to update shareExpiryRules.");
         }
     }
-
-	@Override
-	public boolean isMimeTypeFilterEnableFor(String domainIdentifier,
-			UserVo actorVo) {
-		if (domainIdentifier != null && actorVo != null) {
-			if (actorVo.isSuperAdmin()) {
-				AbstractDomain domain = abstractDomainService
-						.retrieveDomain(domainIdentifier);
-				if (domain != null) {
-					Functionality mimeTypeFunctionality = functionalityReadOnlyService
-							.getMimeTypeFunctionality(domain);
-					if (mimeTypeFunctionality.getActivationPolicy().getStatus()) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
 
     @Override
     public List<String> getAllDomainIdentifiers(UserVo actorVo) throws BusinessException {

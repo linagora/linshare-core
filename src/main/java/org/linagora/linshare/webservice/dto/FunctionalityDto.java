@@ -33,9 +33,10 @@
  */
 package org.linagora.linshare.webservice.dto;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -51,42 +52,48 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "Functionality", description = "Functionalities are used to configure the application")
 public class FunctionalityDto {
 
-    @ApiModelProperty(value = "Identifier")
+	@ApiModelProperty(value = "Identifier")
 	protected String identifier;
 
 	@XmlTransient
-    @ApiModelProperty(value = "Name")
-    private String name;
+	@ApiModelProperty(value = "Name")
+	private String name;
 
-    @ApiModelProperty(value = "Domain")
+	@ApiModelProperty(value = "Domain")
 	protected String domain;
 
-    @ApiModelProperty(value = "Type")
+	@ApiModelProperty(value = "Type")
 	protected String type;
 
-    @ApiModelProperty(value = "ActivationPolicy")
+	@ApiModelProperty(value = "ActivationPolicy")
 	protected PolicyDto activationPolicy;
 
-    @ApiModelProperty(value = "ConfigurationPolicy")
+	@ApiModelProperty(value = "ConfigurationPolicy")
 	protected PolicyDto configurationPolicy;
 
-    @ApiModelProperty(value = "Parameters")
+	// This field is designed to indicate if the parent functionality allow you to update the parameters.
+	@ApiModelProperty(value = "ParentAllowParametersUpdate")
+	protected boolean parentAllowParametersUpdate;
+
+	@ApiModelProperty(value = "Parameters")
 	protected List<ParameterDto> parameters;
+
+	@ApiModelProperty(value = "parentIdentifier")
+	protected String parentIdentifier;
+
+	@ApiModelProperty(value = "functionalities")
+	protected Set<FunctionalityDto> functionalities;
+
+	@ApiModelProperty(value = "displayable")
+	protected boolean displayable;
+
+	// HOOK : To be removed. For debug.
+	protected boolean system;
 
 	public FunctionalityDto() {
 		super();
 	}
 
-	public FunctionalityDto(Functionality f) {
-		super();
-		this.activationPolicy = new PolicyDto(f.getActivationPolicy());
-		this.configurationPolicy = new PolicyDto(f.getConfigurationPolicy());
-		this.identifier = f.getIdentifier();
-		this.domain = f.getDomain().getIdentifier();
-		this.parameters = f.getParameters();
-		this.type = f.getType().toString();
-	}
-	
 	public FunctionalityDto(Functionality f, boolean parentAllowAPUpdate, boolean parentAllowCPUpdate) {
 		super();
 		this.domain = f.getDomain().getIdentifier();
@@ -99,6 +106,44 @@ public class FunctionalityDto {
 		this.configurationPolicy.setParentAllowUpdate(parentAllowCPUpdate);
 		this.parameters = f.getParameters();
 		this.type = f.getType().toString();
+		this.parentIdentifier = f.getParentIdentifier();
+		functionalities = new HashSet<FunctionalityDto>();
+		this.displayable = true;
+		this.system = f.isSystem();
+
+		if (!parentAllowAPUpdate && f.getActivationPolicy().isForbidden()) {
+			// No modification allowed, functionality is forbidden.
+			// You will never be able to perform any modification on the functionality
+			this.displayable = false;
+		}
+		if (!parentAllowAPUpdate && f.getActivationPolicy().isMandatory()) {
+			// No modification allowed for AP, functionality is mandatory.
+			if(!parentAllowCPUpdate && f.getConfigurationPolicy().isForbidden()) {
+				// No modification allowed for CP, functionality configuration is forbidden.
+				// You will never be able to perform any modification on the functionality
+				this.displayable = false;
+			}
+		}
+
+		this.parentAllowParametersUpdate = false;
+		if(parentAllowCPUpdate) {
+			this.parentAllowParametersUpdate = true;
+		} else {
+			// the CP can not be updated, so this means this is the CP of the parent domain
+			if(f.getConfigurationPolicy().isForbidden()) {
+				this.parentAllowParametersUpdate = false;
+			} else if(f.getConfigurationPolicy().isMandatory()) {
+				this.parentAllowParametersUpdate = true;
+			} else if(f.getConfigurationPolicy().getStatus()) {
+				this.parentAllowParametersUpdate = true;
+			}
+		}
+		if(parameters.size() == 0)
+			this.parentAllowParametersUpdate = false;
+
+		if (!parentAllowAPUpdate && !parentAllowCPUpdate && !parentAllowParametersUpdate) {
+			this.displayable = false;
+		}
 	}
 	
 	public String getIdentifier() {
@@ -133,6 +178,14 @@ public class FunctionalityDto {
 		this.configurationPolicy = configurationPolicy;
 	}
 
+	public boolean isParentAllowParametersUpdate() {
+		return parentAllowParametersUpdate;
+	}
+
+	public void setParentAllowParametersUpdate(boolean parentAllowParametersUpdate) {
+		this.parentAllowParametersUpdate = parentAllowParametersUpdate;
+	}
+
 	public List<ParameterDto> getParameters() {
 		return parameters;
 	}
@@ -155,5 +208,38 @@ public class FunctionalityDto {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getParentIdentifier() {
+		return parentIdentifier;
+	}
+
+	public void setParentIdentifier(String parentIdentifier) {
+		this.parentIdentifier = parentIdentifier;
+	}
+
+	public Set<FunctionalityDto> getFunctionalities() {
+		return functionalities;
+	}
+
+	public void setFunctionalities(Set<FunctionalityDto> functionalities) {
+		this.functionalities = functionalities;
+	}
+
+	public void addFunctionalities(FunctionalityDto functionality) {
+		if (functionality != null) {
+			this.functionalities.add(functionality);
+			if(functionality.isDisplayable()) {
+				this.displayable = true;
+			}
+		}
+	}
+
+	public boolean isDisplayable() {
+		return displayable;
+	}
+
+	public boolean isSystem() {
+		return system;
 	}
 }

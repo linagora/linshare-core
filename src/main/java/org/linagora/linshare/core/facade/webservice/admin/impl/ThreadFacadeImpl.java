@@ -34,10 +34,11 @@
 
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.linagora.linshare.core.domain.entities.Role;
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
@@ -60,8 +61,9 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<ThreadDto> getAll() {
-		List<ThreadDto> ret = new ArrayList<ThreadDto>();
+	public Set<ThreadDto> findAll() throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
+		Set<ThreadDto> ret = new HashSet<ThreadDto>();
 
 		for (Thread t : threadService.findAll())
 			ret.add(new ThreadDto(t));
@@ -69,13 +71,17 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public ThreadDto get(String uuid) {
+	public ThreadDto find(String uuid) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
+		Validate.notEmpty(uuid, "uuid must be set.");
 		return new ThreadDto(threadService.findByLsUuid(uuid));
 	}
 
 	@Override
-	public List<ThreadMemberDto> getMembers(String uuid) {
-		List<ThreadMemberDto> ret = new ArrayList<ThreadMemberDto>();
+	public Set<ThreadMemberDto> members(String uuid) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
+		Validate.notEmpty(uuid, "uuid must be set.");
+		Set<ThreadMemberDto> ret = new HashSet<ThreadMemberDto>();
 
 		for (ThreadMember m : threadService.findByLsUuid(uuid).getMyMembers())
 			ret.add(new ThreadMemberDto(m));
@@ -83,18 +89,18 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void addMember(String uuid, ThreadMemberDto member) throws BusinessException {
-		User actor = super.getAuthentication();
-		Thread thread = threadService.findByLsUuid(member.getThreadUuid());
-		User user = (User) accountService.findByLsUuid(member.getUserUuid());
-		boolean readOnly = member.isReadonly();
+	public void update(ThreadDto threadDto) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
+		Validate.notNull(threadDto, "thread must be set.");
+		Thread thread = threadService.findByLsUuid(threadDto.getUuid());
 
-		threadService.addMember(actor, thread, user, readOnly);
+		threadService.rename(actor, thread, threadDto.getName());
 	}
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
-		User actor = super.getAuthentication();
+		User actor = checkAuthentication(Role.SUPERADMIN);
+		Validate.notEmpty(uuid, "uuid must be set.");
 		Thread thread = threadService.findByLsUuid(uuid);
 
 		threadService.deleteThread(actor, thread);

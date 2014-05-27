@@ -42,16 +42,29 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface FunctionalityService {
-	
-	Set<Functionality> getAllFunctionalities(AbstractDomain domain);
-	
-	Set<Functionality> getAllFunctionalities(String domain);
-	
+
+	Set<Functionality> getAllFunctionalities(Account actor, AbstractDomain domain) throws BusinessException;
+
+	Set<Functionality> getAllFunctionalities(Account actor, String domain) throws BusinessException;
+
 	boolean activationPolicyIsMutable(Functionality f, String domain);
-	
+
 	boolean configurationPolicyIsMutable(Functionality f, String domain);
-	
-	Functionality getFunctionality(String domainId, String functionalityId);
-	
-	void deleteFunctionality(Account actor, String domainId, String functionalityId) throws IllegalArgumentException, BusinessException;
+
+	/**
+	 * Return a clone of the original functionality store into the database.
+	 * @param actor
+	 * @param domainId
+	 * @param functionalityId
+	 * @return
+	 * @throws BusinessException
+	 */
+	Functionality getFunctionality(Account actor, String domainId, String functionalityId) throws BusinessException;
+
+	void deleteFunctionality(Account actor, String domainId, String functionalityId) throws BusinessException;
+
+	void update(Account actor, String domain, Functionality functionality) throws BusinessException;
+
+	@Deprecated
+	void update(Account actor, AbstractDomain domain, Functionality functionality) throws BusinessException;
 }

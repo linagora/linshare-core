@@ -37,7 +37,6 @@ import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linshare.core.domain.vo.DisplayableAccountOccupationEntryVo;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.SignatureVo;
@@ -46,7 +45,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
 
 public interface DocumentFacade {
-		
+
 	/**
 	 * Insert a file in the path identifiable by its filename.
 	 * @param file the stream content file.
@@ -55,7 +54,7 @@ public interface DocumentFacade {
 	 * @throws BusinessException  FILE_TOO_LARGE if the file is too large to fit in user's space
 	 */
 	public DocumentVo insertFile(InputStream file,String fileName, UserVo owner) throws BusinessException;
-		
+
 	/**
 	 * Retrieve a DocumentVo given the user login and the id of the doc
 	 * @param login
@@ -63,8 +62,8 @@ public interface DocumentFacade {
 	 * @return
 	 */
 	public DocumentVo getDocument(String login,String uuid);
-	
-	
+
+
 	/** 
 	 * Delete a Document (or a sharedDocument)
 	 * @param actor : the actor that removes the document
@@ -72,7 +71,7 @@ public interface DocumentFacade {
 	 * @throws BusinessException
 	*/
 	public void removeDocument(UserVo actor,DocumentVo document) throws BusinessException;
-	
+
 	/**
 	 * Retrieve a stream of a Document 
 	 * @param doc the documentVo (or SharedDocumentVo)
@@ -80,7 +79,7 @@ public interface DocumentFacade {
 	 * @return inputStream the stream of the document
 	 */
 	public InputStream retrieveFileStream(DocumentVo doc, UserVo actor) throws BusinessException;
-	
+
 	/**
 	 * Retrieve a stream of a Document 
 	 * @param doc the documentVo (or SharedDocumentVo)
@@ -88,7 +87,7 @@ public interface DocumentFacade {
 	 * @return inputStream the stream of the document
 	 */
 	public InputStream retrieveFileStream(DocumentVo doc, String actor) throws BusinessException;
-	
+
 	/**
 	 * insert a signature file in repository
 	 * @param file inputstream of the xml signature file
@@ -100,7 +99,7 @@ public interface DocumentFacade {
 	 * @throws BusinessException
 	 */
 	public void insertSignatureFile(InputStream file,long size,String fileName,UserVo owner, DocumentVo document, X509Certificate signerCertificate) throws  BusinessException;
-	
+
 	/**
 	 * check if the current user is the signer of the document.
 	 * @param currentSigner current UserVo
@@ -109,7 +108,7 @@ public interface DocumentFacade {
 	 * @throws BusinessException 
 	 */
 	public boolean isSignedDocumentByCurrentUser(UserVo currentSigner, DocumentVo document) throws BusinessException;
-	
+
 	/**
 	 * check if the document is already signed by someone.
 	 * @param userlogin 
@@ -131,29 +130,29 @@ public interface DocumentFacade {
 	 * @return
 	 */
 	public SignatureVo getSignature(UserVo currentSigner,DocumentVo document);
-	
+
 	/**
 	 * Return the available space for a given user
 	 * @param user
 	 * @return
 	 */
 	public Long getUserAvailableQuota(UserVo user) throws BusinessException;
-	
-	
+
+
 	/**
 	 * Return the total space for a given user
 	 * @param user
 	 * @return
 	 */
 	public Long getUserTotalQuota(UserVo user) throws BusinessException;
-	
+
 	/**
 	 * Return the total space for a given user
 	 * @param user
 	 * @return
 	 */
 	public Long getGlobalQuota(UserVo user) throws BusinessException;
-	
+
 	/**
 	 * Return in byte the max size for an attachment 
 	 * @param user
@@ -170,14 +169,14 @@ public interface DocumentFacade {
 	 * @throws BusinessException
 	 */
 	public Long getUserAvailableSize(UserVo userVo) throws BusinessException;
-	
+
 	/**
 	 * Return the occupation of accounts statistics
 	 * @param criteria
 	 * @return
 	 */
 	public List<DisplayableAccountOccupationEntryVo> getAccountOccupationStat(AccountOccupationCriteriaBean criteria) throws BusinessException;
-	
+
 	/**
 	 * to update document content without change properties
 	 * @param currentFileUUID
@@ -190,19 +189,19 @@ public interface DocumentFacade {
 	 * @throws BusinessException
 	 */
 	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, UserVo owner, String friendlySize) throws BusinessException;
-	
-	
+
+
 	public DocumentVo encryptDocument(DocumentVo doc,UserVo user,String password) throws BusinessException;
 	public DocumentVo decryptDocument(DocumentVo doc, UserVo user,String password) throws BusinessException;
 	public InputStream retrieveSignatureFileStream(SignatureVo signaturedoc);
-	
+
     /**
      * Rename a file.
      * @param uuid the uuid that identifies the file.
      * @param newName the new name for the file.
      */
 	public void renameFile(String userlogin, String docEntryUuid, String newName);
-    
+
     public void  updateFileProperties(String userlogin, String docEntryUuid, String newName, String comment);
 
     /**
@@ -212,7 +211,7 @@ public interface DocumentFacade {
      * @return InputStream of the thumbnail
      */
     public InputStream getDocumentThumbnail(String actorUuid, String docEntryUuid);
-    
+
     /**
      * Thumbnail of the document exists ?
      * @param actorUuid : user uuid
@@ -220,7 +219,7 @@ public interface DocumentFacade {
      * @return true if the thumbnail exists, false otherwise
      */
     public boolean documentHasThumbnail(String actorUuid, String docEntryUuid);
-    
+
     /**
 	 * return true if the signature functionality is enabled
 	 * @param user
@@ -249,13 +248,4 @@ public interface DocumentFacade {
 	 * @throws BusinessException
 	 */
 	public boolean isUserQuotaActive(UserVo user) throws BusinessException;
-
-	/**
-	 * return the Mime type status of a document
-	 * @param login
-	 * @param uuid
-	 * @return
-	 */
-	public MimeTypeStatus getMimeTypeStatus(String login, String uuid);
-
 }

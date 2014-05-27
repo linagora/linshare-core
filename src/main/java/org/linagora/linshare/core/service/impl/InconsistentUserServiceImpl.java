@@ -37,7 +37,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -109,11 +108,8 @@ public class InconsistentUserServiceImpl implements InconsistentUserService {
 	}
 
 	private void checkPermissions(User actor) throws BusinessException {
-		Role role = actor.getRole();
-
-		if (role != Role.SUPERADMIN || role != Role.SYSTEM) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-					"Actor must be either superadmin or a system account.");
+		if (!actor.isSuperAdmin()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor must be either superadmin.");
 		}
 	}
 }

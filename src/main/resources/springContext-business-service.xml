@@ -21,7 +21,6 @@
 		<constructor-arg ref="signatureBusinessService" />
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="threadEntryRepository" />
-		<constructor-arg ref="tagBusinessService" />
 	</bean>
 
 
@@ -54,19 +53,15 @@
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="accountRepository" />
 	</bean>
-	
-	<bean id="tagBusinessService" class="org.linagora.linshare.core.business.service.impl.TagBusinessServiceImpl">
-		<constructor-arg ref="tagRepository" />
-		<constructor-arg ref="threadEntryRepository" />
-		<constructor-arg ref="entryTagAssociationRepository"/>
-	</bean>
+
 	<bean id="domainAccessPolicyBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainAccessPolicyBusinessServiceImpl">
 		<constructor-arg ref="domainAccessRuleRepository" />
 	</bean>
-	
+
 	<bean id="domainPolicyBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainPolicyBusinessServiceImpl">
 		<constructor-arg ref="domainPolicyRepository" />
 		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="domainAccessPolicyRepository" />
 	</bean>
 	<bean id="functionalityBusinessService" class="org.linagora.linshare.core.business.service.impl.FunctionalityBusinessServiceImpl">
 		<constructor-arg ref="functionalityRepository" />
@@ -76,4 +71,43 @@
 		<constructor-arg ref="mailingListRepository" />
 		<constructor-arg ref="mailingListContactRepository" />
 	</bean>
+
+	<bean id="mailConfigBusinessService" class="org.linagora.linshare.core.business.service.impl.MailConfigBusinessServiceImpl">
+		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="mailConfigRepository" />
+		<constructor-arg ref="mailContentLangRepository" />
+		<constructor-arg ref="mailFooterLangRepository" />
+	</bean>
+
+	<bean id="mailContentBusinessService" class="org.linagora.linshare.core.business.service.impl.MailContentBusinessServiceImpl">
+		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="mailContentRepository" />
+		<constructor-arg ref="mailContentLangRepository" />
+	</bean>
+
+	<bean id="mailFooterBusinessService" class="org.linagora.linshare.core.business.service.impl.MailFooterBusinessServiceImpl">
+		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="mailFooterRepository" />
+		<constructor-arg ref="mailFooterLangRepository" />
+	</bean>
+
+	<bean id="mailLayoutBusinessService" class="org.linagora.linshare.core.business.service.impl.MailLayoutBusinessServiceImpl">
+		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="mailLayoutRepository" />
+		<constructor-arg ref="mailConfigRepository" />
+	</bean>
+
+	<bean id="mimeTypeBusinessService" class="org.linagora.linshare.core.business.service.impl.MimeTypeBusinessServiceImpl">
+		<constructor-arg ref="mimeTypeRepository" />
+	</bean>
+
+	<bean id="mimePolicyBusinessService" class="org.linagora.linshare.core.business.service.impl.MimePolicyBusinessServiceImpl">
+		<constructor-arg ref="mimePolicyRepository" />
+		<constructor-arg ref="mimeTypeRepository" />
+		<constructor-arg ref="mimeTypeMagicNumberDao" />
+	</bean>
+	<bean id="domainPermissionBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainPermissionBusinessServiceImpl">
+		<constructor-arg ref="domainBusinessService" />
+	</bean>
+
 </beans>

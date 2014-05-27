@@ -561,5 +561,5 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'http://localhost:8080/linshare/');
 
 -- LinShare version
-INSERT INTO version (id,description) VALUES (1,'1.5.0');
+INSERT INTO version (id,version) VALUES (1,'1.5.0');
 

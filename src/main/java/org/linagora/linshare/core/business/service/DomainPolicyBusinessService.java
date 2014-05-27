@@ -38,18 +38,19 @@ import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DomainPolicyBusinessService {
-	
-    public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException ;
-	
-	public DomainPolicy retrieveDomainPolicy(String identifier);
-	
-    public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException ;
-	
+
+	public DomainPolicy create(DomainPolicy domainPolicy)
+			throws BusinessException;
+
+	public DomainPolicy find(String identifier);
+
+	public void update(DomainPolicy domainPolicy) throws BusinessException;
+
 	public List<String> findAllIdentifiers();
-	
-	public List<DomainPolicy> findAllDomainPolicy()  ;
-	
-	public void deletePolicy(String policyToDelete) throws BusinessException;
-	
+
+	public List<DomainPolicy> findAll();
+
+	public void delete(String policyToDelete) throws BusinessException;
+
 	public boolean policyIsDeletable(String policyToDelete);
 }

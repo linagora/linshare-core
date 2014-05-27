@@ -30,7 +30,7 @@
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
-*/
+ */
 
 package org.linagora.linshare.core.domain.vo;
 
@@ -40,25 +40,24 @@ public class DomainAccessRuleVo {
 
 	private String regexp;
 	private long persistenceId;
-	
-	public DomainAccessRuleVo(){
+
+	public DomainAccessRuleVo() {
 	}
-	
-	public DomainAccessRuleVo(DomainAccessRule rule)
-	{
-		this.regexp=rule.getRegexp();
-		this.persistenceId=rule.getPersistenceId();
+
+	public DomainAccessRuleVo(DomainAccessRule rule) {
+		this.regexp = rule.getRegexp();
+		this.persistenceId = rule.getPersistenceId();
 	}
-	
-	public DomainAccessRuleVo(DomainAccessRuleVo rule)
-	{
-		this.regexp=rule.getRegexp();
-		this.persistenceId=rule.getPersistenceId();
+
+	public DomainAccessRuleVo(DomainAccessRuleVo rule) {
+		this.regexp = rule.getRegexp();
+		this.persistenceId = rule.getPersistenceId();
 	}
 
 	public String getRegexp() {
 		return regexp;
 	}
+
 	public void setRegexp(String regexp) {
 		this.regexp = regexp;
 	}

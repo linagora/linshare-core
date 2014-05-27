@@ -55,7 +55,7 @@
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/**"
-				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
+				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor, logoutFilterAdmin" />
 
 			<sec:filter-chain pattern="/webservice/fineuploader/**"
 				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
@@ -136,6 +136,19 @@
 
 	<bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
 		<constructor-arg value="/" />
+		<constructor-arg>
+			<list>
+				<ref bean="rememberMeService" />
+				<bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="logoutFilterAdmin" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<property name="filterProcessesUrl">
+			<value>/webservice/rest/admin/authentication/logout</value>
+		</property>
+		<constructor-arg value="/webservice/rest/admin/authentication/authorized" />
 		<constructor-arg>
 			<list>
 				<ref bean="rememberMeService" />

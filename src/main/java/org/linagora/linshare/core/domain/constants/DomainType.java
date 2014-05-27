@@ -45,7 +45,7 @@ public enum DomainType {
 	ROOTDOMAIN(0) {
 		@Override
 		public RootDomain getDomain(DomainDto domainDto, AbstractDomain parent) {
-			throw new IllegalAccessError("Should not be used with root domain");
+			return new RootDomain(domainDto);
 		}
 	},
 	TOPDOMAIN(1) {
@@ -85,6 +85,6 @@ public enum DomainType {
 		}
 		throw new IllegalArgumentException("Doesn't match an existing DomainType");
 	}
-	
+
 	public abstract AbstractDomain getDomain(DomainDto domainDto, AbstractDomain parent);
 }

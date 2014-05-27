@@ -34,20 +34,21 @@
 
 package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailingListFacade;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailingListRestService;
 import org.linagora.linshare.webservice.dto.MailingListContactDto;
 import org.linagora.linshare.webservice.dto.MailingListDto;
@@ -60,9 +61,12 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/lists")
 @Api(value = "/rest/admin/lists", description = "Mailing lists administration")
-public class MailingListRestServiceImpl implements MailingListRestService {
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class MailingListRestServiceImpl extends WebserviceBase implements
+		MailingListRestService {
 
-	private MailingListFacade mailingListFacade;
+	private final MailingListFacade mailingListFacade;
 
 	public MailingListRestServiceImpl(final MailingListFacade mailingListFacade) {
 		super();
@@ -70,82 +74,79 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	}
 
 	@Path("/")
-	@ApiOperation(value = "Find all mailing lists.", response = MailingListDto.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Find all mailing lists.", response = MailingListDto.class, responseContainer = "Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public List<MailingListDto> getAll() throws BusinessException {
-		mailingListFacade.checkAuthentication(Role.ADMIN);
-		return mailingListFacade.getAll();
+	public Set<MailingListDto> findAll() throws BusinessException {
+		return mailingListFacade.findAll();
 	}
 
 	@Path("/{uuid}")
+	@GET
 	@ApiOperation(value = "Find a mailing list.", response = MailingListDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public MailingListDto get(
+	public MailingListDto find(
 			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		mailingListFacade.checkAuthentication(Role.ADMIN);
-		return mailingListFacade.get(uuid);
+		return mailingListFacade.find(uuid);
 	}
 
 	@Path("/")
+	@POST
 	@ApiOperation(value = "Create a mailing list.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void create(
 			@ApiParam(value = "Mailing list to create.", required = true) MailingListDto dto)
 			throws BusinessException {
-		mailingListFacade.checkAuthentication(Role.ADMIN);
 		mailingListFacade.create(dto);
 	}
 
+	@Path("/")
+	@PUT
+	@ApiOperation(value = "Update a mailing list.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public void update(
+			@ApiParam(value = "Mailing list to update.", required = true) MailingListDto dto)
+			throws BusinessException {
+		mailingListFacade.update(dto);
+	}
+
 	@Path("/{uuid}")
+	@DELETE
 	@ApiOperation(value = "Delete a mailing list.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@DELETE
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void delete(
 			@ApiParam(value = "Mailing list to delete.", required = true) MailingListDto dto)
 			throws BusinessException {
-		mailingListFacade.checkAuthentication(Role.ADMIN);
 		mailingListFacade.delete(dto.getUuid());
 	}
 
 	@Path("/{uuid}/contacts")
+	@POST
 	@ApiOperation(value = "Create a contact in a mailing list.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void createContact(
 			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "Contact to create.", required = true) MailingListContactDto dto)
 			throws BusinessException {
-		mailingListFacade.checkAuthentication(Role.ADMIN);
 		mailingListFacade.addContact(uuid, dto);
 	}
 
 	@Path("/{uuid}/contacts")
+	@DELETE
 	@ApiOperation(value = "Delete a contact from a mailing list.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@DELETE
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void deleteContact(
 			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "Contact uuid.", required = true) MailingListContactDto dto)
 			throws BusinessException {
-		mailingListFacade.checkAuthentication(Role.ADMIN);
 		mailingListFacade.deleteContact(dto.getUuid());
 	}
 }

@@ -40,7 +40,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.User;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -58,7 +57,7 @@ public class DomainDto {
 	private String label;
 
 	@ApiModelProperty(value = "Description")
-	private String description = "";
+	private String description;
 
 	@ApiModelProperty(value = "Type")
 	private String type;
@@ -79,26 +78,33 @@ public class DomainDto {
 	private List<DomainDto> children = new ArrayList<DomainDto>();
 
 	@ApiModelProperty(value = "Parent")
-	private String parent = "";
+	private String parent;
 
-	protected DomainDto(final AbstractDomain domain, boolean light) {
+	@ApiModelProperty(value = "AuthShowOrder")
+	private Long authShowOrder;
+
+	protected DomainDto(final AbstractDomain domain, boolean light,
+			boolean recursive) {
 		this.identifier = domain.getIdentifier();
 		this.label = domain.getLabel();
-		this.description = domain.getDescription();
-		this.locale = domain.getDefaultLocale();
 		this.type = domain.getDomainType().toString();
-		this.userRole = domain.getDefaultRole().toString();
 		if (!light) {
+			this.description = domain.getDescription();
+			this.locale = domain.getDefaultLocale();
+			this.userRole = domain.getDefaultRole().toString();
 			this.policy = new DomainPolicyDto(domain.getPolicy());
+			this.authShowOrder = domain.getAuthShowOrder();
 			if (domain.getUserProvider() != null) {
-				this.providers
-				.add(new LDAPUserProviderDto(domain.getUserProvider()));
+				this.providers.add(new LDAPUserProviderDto(domain
+						.getUserProvider()));
 			}
 		}
-		for (AbstractDomain child : domain.getSubdomain()) {
-			DomainDto childDto = new DomainDto(child, light);
-			this.children.add(childDto);
-			childDto.parent = this.identifier;
+		if (recursive) {
+			for (AbstractDomain child : domain.getSubdomain()) {
+				DomainDto childDto = new DomainDto(child, light, recursive);
+				this.children.add(childDto);
+				childDto.parent = this.identifier;
+			}
 		}
 	}
 
@@ -107,11 +113,19 @@ public class DomainDto {
 	}
 
 	public static DomainDto getSimple(final AbstractDomain domain) {
-		return new DomainDto(domain, true);
+		return new DomainDto(domain, true, false);
 	}
 
 	public static DomainDto getFull(final AbstractDomain domain) {
-		return new DomainDto(domain, false);
+		return new DomainDto(domain, false, false);
+	}
+
+	public static DomainDto getSimpleTree(final AbstractDomain domain) {
+		return new DomainDto(domain, true, true);
+	}
+
+	public static DomainDto getFullTree(final AbstractDomain domain) {
+		return new DomainDto(domain, false, true);
 	}
 
 	public String getIdentifier() {
@@ -192,5 +206,13 @@ public class DomainDto {
 
 	public void setParent(String parent) {
 		this.parent = parent;
+	}
+
+	public Long getAuthShowOrder() {
+		return authShowOrder;
+	}
+
+	public void setAuthShowOrder(Long authShowOrder) {
+		this.authShowOrder = authShowOrder;
 	}
 }

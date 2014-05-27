@@ -39,9 +39,6 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.constants.TimeUnit;
-import org.linagora.linshare.core.domain.vo.FunctionalityVo;
-import org.linagora.linshare.core.domain.vo.SizeValueFunctionalityVo;
-import org.linagora.linshare.core.domain.vo.TimeValueFunctionalityVo;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 import org.linagora.linshare.webservice.dto.ParameterDto;
 
@@ -73,7 +70,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	public boolean businessEquals(Functionality obj, boolean checkPolicies) {
+	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if (super.businessEquals(obj, checkPolicies)) {
 			UnitValueFunctionality o = (UnitValueFunctionality) obj;
 			if (value.equals(o.getValue())) {
@@ -97,37 +94,16 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	public void updateFunctionalityFrom(Functionality functionality) {
+	public void updateFunctionalityFrom(AbstractFunctionality functionality) {
 		super.updateFunctionalityFrom(functionality);
 		this.updateFunctionalityValuesOnlyFrom(functionality);
 	}
 
 	@Override
-	public void updateFunctionalityValuesOnlyFrom(Functionality functionality) {
+	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		UnitValueFunctionality f = (UnitValueFunctionality) functionality;
 		this.value = f.getValue();
 		this.unit.updateUnitFrom(f.getUnit());
-	}
-
-	@Override
-	public void updateFunctionalityValuesOnlyFromVo(FunctionalityVo functionality) {
-
-		if (functionality.getType().equals(FunctionalityType.UNIT_SIZE)) {
-			SizeValueFunctionalityVo f = (SizeValueFunctionalityVo) functionality;
-			if (f.getSize() != null) {
-				this.value = f.getSize();
-				FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
-				sizeUnit.setUnitValue(f.getUnit());
-			}
-
-		} else if (functionality.getType().equals(FunctionalityType.UNIT_TIME)) {
-			TimeValueFunctionalityVo f = (TimeValueFunctionalityVo) functionality;
-			if (f.getTime() != null) {
-				this.value = f.getTime();
-				TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
-				timeUnit.setUnitValue(f.getUnit());
-			}
-		}
 	}
 
 	@Override
@@ -135,7 +111,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		List<ParameterDto> parameters = functionalityDto.getParameters();
 		if (parameters != null && !parameters.isEmpty()) {
 			ParameterDto parameterDto = parameters.get(0);
-			updateFunctionality(functionalityDto.getType(), parameterDto);
+			updateFunctionality(parameterDto.getType(), parameterDto);
 		}
 	}
 

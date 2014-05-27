@@ -150,14 +150,6 @@ public class Index {
 		}
     }
     
-    public boolean getShowMimeTypeView() {
-    	if(!noDomain) {
-    		logger.debug("selectedDomain : " + selectedDomain );
-    		return domainFacade.isMimeTypeFilterEnableFor(selectedDomain, loginUser);
-    	}
-    	return false;
-    }
-
     Object onException(Throwable cause) {
     	shareSessionObjects.addError(messages.get("global.exception.message"));
     	logger.error(cause.getMessage());

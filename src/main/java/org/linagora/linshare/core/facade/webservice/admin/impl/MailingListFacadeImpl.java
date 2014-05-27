@@ -34,19 +34,22 @@
 
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailingListFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.webservice.dto.MailingListContactDto;
 import org.linagora.linshare.webservice.dto.MailingListDto;
-
-import com.google.common.collect.Lists;
 
 public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 		MailingListFacade {
@@ -60,17 +63,16 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	/*
-	 * TODO:
-	 * 		Handle mailing list update (ownership changes, ...)
-	 *  	Problem : cascade on contacts
+	 * TODO: Handle mailing list update (ownership changes, ...) Problem :
+	 * cascade on contacts
 	 */
 
 	@Override
-	public List<MailingListDto> getAll() {
-		User actor = super.getAuthentication();
-		List<MailingList> lists = mailingListService.findAllListByUser(actor
-				.getLsUuid());
-		List<MailingListDto> ret = Lists.newArrayList();
+	public Set<MailingListDto> findAll() throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
+		List<MailingList> lists = mailingListService.findAllListByUser(
+				actor.getLsUuid(), actor.getLsUuid());
+		Set<MailingListDto> ret = new HashSet<MailingListDto>();
 
 		for (MailingList list : lists) {
 			ret.add(new MailingListDto(list));
@@ -79,29 +81,43 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public MailingListDto get(String uuid) throws BusinessException {
-		return new MailingListDto(mailingListService.findByUuid(uuid));
+	public MailingListDto find(String uuid) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
+		MailingList list = mailingListService.findByUuid(actor.getLsUuid(),
+				uuid);
+		if (list == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
+					"Cannot found mailling list : " + uuid);
+		}
+		return new MailingListDto(list);
 	}
 
 	@Override
 	public void create(MailingListDto dto) throws BusinessException {
-		User actor = super.getAuthentication();
+		User actor = checkAuthentication(Role.ADMIN);
 		MailingList list = new MailingList(dto);
-
 		mailingListService.createList(actor.getLsUuid(), actor.getLsUuid(),
 				list);
 	}
 
 	@Override
+	public void update(MailingListDto dto) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
+		Validate.notNull(dto.getUuid(), "uuid dto must be set.");
+		MailingList list = new MailingList(dto);
+		mailingListService.updateList(actor.getLsUuid(), list);
+	}
+
+	@Override
 	public void delete(String uuid) throws BusinessException {
-		User actor = super.getAuthentication();
+		User actor = checkAuthentication(Role.ADMIN);
 		mailingListService.deleteList(actor.getLsUuid(), uuid);
 	}
 
 	@Override
 	public void addContact(String listUuid, MailingListContactDto dto)
 			throws BusinessException {
-		User actor = super.getAuthentication();
+		User actor = checkAuthentication(Role.ADMIN);
 		MailingListContact contact = new MailingListContact(dto);
 
 		mailingListService.addNewContact(actor.getLsUuid(), listUuid, contact);
@@ -109,7 +125,7 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public void deleteContact(String uuid) throws BusinessException {
-		User actor = super.getAuthentication();
+		User actor = checkAuthentication(Role.ADMIN);
 
 		mailingListService.deleteContact(actor.getLsUuid(), uuid);
 	}

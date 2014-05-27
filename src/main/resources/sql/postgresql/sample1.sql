@@ -91,79 +91,6 @@ INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modi
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (4, 54, true, true, current_timestamp(3), current_timestamp(3), 50); 
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (5, 54, false, true, current_timestamp(3), current_timestamp(3), 53); 
 
--- Tags
-INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (1, 51, 'Réponse', false, true, null,0);
-INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (2, 51, 'Demande', false, true, null,0);
-
-INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (3, 51, 'Phases', false, true, true,1);
-INSERT INTO tag_enum_value (id, tag_id, value) VALUES (1, 3, 'Instruction'); 
-INSERT INTO tag_enum_value (id, tag_id, value) VALUES (2, 3, 'Contradiction'); 
-INSERT INTO tag_enum_value (id, tag_id, value) VALUES (3, 3, 'Recommandation'); 
-
-INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (7, 51, 'RATP', false, true, null,0);
-
-
--- Tags
-INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (4, 52, 'Réponse', false, true, null,0);
-INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (5, 52, 'Demande', false, true, null,0);
-
-INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (6, 52, 'Phases', false, true, true,1);
-INSERT INTO tag_enum_value (id, tag_id, value) VALUES (4, 6, 'Instruction'); 
-INSERT INTO tag_enum_value (id, tag_id, value) VALUES (5, 6, 'Contradiction'); 
-INSERT INTO tag_enum_value (id, tag_id, value) VALUES (6, 6, 'Recommandation'); 
-
-INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (8, 52, 'Ministère de l''intérieur', false, true, null,0);
-
-
-
-
--- tags filters
-INSERT INTO tag_filter (id, account_id, name) VALUES (1, 51, 'Demande tag filter'); 
-INSERT INTO tag_filter (id, account_id, name) VALUES (2, 51, 'Réponse tag filter'); 
-INSERT INTO tag_filter (id, account_id, name) VALUES (5, 51, 'Thread name tag filter'); 
-
--- TagFilterByRecipient 1
--- TagFilterBySender 2
--- TagFilterByDomain 3
-
-INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (1, 1, 'MySubDomain', 3); 
-INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (1, 1, 2, null); 
-
-
-INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (2, 2, 'GuestDomain', 3); 
-INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (2, 2, 1, null); 
-
-
-INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (5, 5, null, 4); 
-INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (5, 5, 7, null); 
-
-
-
--- tags filters
-INSERT INTO tag_filter (id, account_id, name) VALUES (3, 52, 'Demande tag filter'); 
-INSERT INTO tag_filter (id, account_id, name) VALUES (4, 52, 'Réponse tag filter'); 
-INSERT INTO tag_filter (id, account_id, name) VALUES (6, 52, 'Thread name tag filter'); 
-
--- TagFilterByRecipient 1
--- TagFilterBySender 2
--- TagFilterByDomain 3
-
-INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (3, 3, 'MySubDomain', 3); 
-INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (3, 3, 5, null); 
-
-
-INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (4, 4, 'GuestDomain', 3); 
-INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (4, 4, 4, null); 
-
-INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (6, 6, null, 4); 
-INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (6, 6, 8, null); 
-
-
-
-
-
-
-
 
 
 
@@ -219,32 +146,6 @@ UPDATE policy SET status=true where id=27;
 
 -- enable thread tab
 UPDATE policy SET status=true , system=false , default_status=true where id=45;
-
-
--- default view and ratp view for thread ratp
-INSERT INTO thread_view (id, thread_account_id, name) VALUES (1, 51, 'cc_default'); 
-INSERT INTO thread_view (id, thread_account_id, name) VALUES (2, 51, 'cc_ratp'); 
-UPDATE thread set thread_view_id=2 where account_id=51;
-INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (1, 7, 2, 1); 
-INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (2, 1, 2, 2); 
-INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (3, 2, 2, 2); 
--- INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (4, 3, 2, 3); 
--- DELETE FROM thread_view_asso WHERE id=4;
-
-
--- default view and 3mi view for thread 3mi
-INSERT INTO thread_view (id, thread_account_id, name) VALUES (3, 52, 'cc_default'); 
-INSERT INTO thread_view (id, thread_account_id, name) VALUES (4, 52, 'cc_3mi'); 
-UPDATE thread set thread_view_id=4 where account_id=52;
-INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (5, 8, 4, 1); 
-INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (6, 4, 4, 2); 
-INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (7, 5, 4, 2); 
-INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (8, 6, 4, 3); 
-
--- default view for thread Test Thread
-INSERT INTO thread_view (id, thread_account_id, name) VALUES (5, 54, 'cc_default'); 
-UPDATE thread set thread_view_id=5 where account_id=54;
-
 
 
 COMMIT;

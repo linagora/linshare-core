@@ -50,7 +50,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Response;
-import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
@@ -274,14 +274,11 @@ public class MyBorderLayout {
 		MenuEntry homeMenu;
 		MenuEntry fileMenu;
 		MenuEntry userMenu;
-		MenuEntry threadAdminMenu;
 		MenuEntry threadMenu;
 		MenuEntry adminMenu;
-		MenuEntry domainMenu;
 		MenuEntry auditMenu;
 		MenuEntry helpMenu;
 		MenuEntry listMenu;
-		MenuEntry listAdminMenu;
 		
 		
 		// Menu : Home / File 
@@ -292,15 +289,10 @@ public class MyBorderLayout {
 		userMenu = new MenuEntry(response.encodeURL("user/index"),messages.get("components.myborderlayout.user.title"),null,null,"user");
 	
 		// Menu : Thread
-
-		threadAdminMenu = new MenuEntry(response.encodeURL("administration/thread/index"),messages.get("components.myborderlayout.thread.title"),null,null,"thread");
 		threadMenu = new MenuEntry(response.encodeURL("thread/index"),messages.get("components.myborderlayout.thread.title"),null,null,"thread");
 		
 		// Menu : Administration
 		adminMenu = new MenuEntry(response.encodeURL("administration/index"),messages.get("components.myborderlayout.administration.title"),null,null,"administration");
-		
-		// Menu : Domains
-		domainMenu = new MenuEntry(response.encodeURL("administration/domains/index"),messages.get("components.myborderlayout.administration.domains.title"),null,null,"domains");
 		
 		// Menu : History / Audit
 		if(superadmin) {
@@ -309,9 +301,6 @@ public class MyBorderLayout {
 			auditMenu = new MenuEntry(response.encodeURL("history/index"),messages.get("components.myborderlayout.history.title"),null,null,"history");
 		}
 		
-		// Menu : ListsAdmin
-		listAdminMenu = new MenuEntry(response.encodeURL("administration/lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
-				
 		// Menu : Lists	
 		listMenu = new MenuEntry(response.encodeURL("lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
 				
@@ -337,17 +326,12 @@ public class MyBorderLayout {
 		if(userVoExists && !userExt) {
 			// users : Accueil / Fichiers / List / Threads / Users / History / help
 			// admin : Accueil / Fichiers / List / Threads / Users/ Admin /History / help
-			// root : Admin / Domain / Users / Threads / List / History / help
+			// root : Admin / Domain / Users / History / help
 			
 			if (superadmin) {
 				menu.addMenuEntry(adminMenu);
-				menu.addMenuEntry(domainMenu);
-				menu.addMenuEntry(userMenu);
-				if (showListTab())
-					menu.addMenuEntry(listAdminMenu);
-				if (showThreadTab())
-					menu.addMenuEntry(threadAdminMenu);
-				
+				if (showAuditTab())
+					menu.addMenuEntry(auditMenu);
 			} else {
 				menu.addMenuEntry(homeMenu);
 				menu.addMenuEntry(fileMenu);
@@ -359,11 +343,11 @@ public class MyBorderLayout {
 					menu.addMenuEntry(threadMenu);
 				if (admin)
 					menu.addMenuEntry(adminMenu);
+				if (showAuditTab())
+					menu.addMenuEntry(auditMenu);
+				if (showHelpTab())
+					menu.addMenuEntry(helpMenu);
 			}
-			if (showAuditTab())
-				menu.addMenuEntry(auditMenu);
-			if (showHelpTab())
-				menu.addMenuEntry(helpMenu);
 		} else {
 			menu.addMenuEntry(homeMenu);
 			if (showHelpTab())

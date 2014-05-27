@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 
 import org.apache.tika.metadata.Metadata;
@@ -51,13 +52,14 @@ import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
-import org.linagora.linshare.core.domain.entities.AllowedMimeType;
-import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
+import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
+
+import com.google.common.collect.Sets;
 
 /**
  * This class is designed to detect mime type an extension from a file.
@@ -68,29 +70,6 @@ import org.xml.sax.ContentHandler;
 public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 
 	private static final Logger logger = LoggerFactory.getLogger(MimeTypeMagicNumberTikaImpl.class);
-
-	@Override
-	public List<AllowedMimeType> getAllSupportedMimeType() {
-
-		List<AllowedMimeType> mimetypesList = new ArrayList<AllowedMimeType>();
-
-		MimeTypes defaultMimeTypes = MimeTypes.getDefaultMimeTypes();
-		SortedSet<MediaType> types = defaultMimeTypes.getMediaTypeRegistry().getTypes();
-		for (MediaType mediaType : types) {
-			AllowedMimeType oneAllowedMimeType = null;
-			String strMimeType = mediaType.toString();
-			String extension;
-			try {
-				extension = defaultMimeTypes.forName(strMimeType).getExtension();
-				oneAllowedMimeType = new AllowedMimeType(strMimeType, extension, MimeTypeStatus.AUTHORISED);
-				mimetypesList.add(oneAllowedMimeType);
-			} catch (MimeTypeException e) {
-				logger.error("Can not find extension(s) for mime type : " + strMimeType);
-				logger.debug(e.getMessage());
-			}
-		}
-		return mimetypesList;
-	}
 
 	@Override
 	public String getMimeType(InputStream theFileInputStream) throws BusinessException {
@@ -154,6 +133,24 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 		}
 		logger.debug("Mime type found : " + mimeType);
 		return mimeType;
+	}
+
+	@Override
+	public Set<MimeType> getAllMimeType() {
+		Set<MimeType> mimeTypes = Sets.newHashSet();
+		MimeTypes defaultMimeTypes = MimeTypes.getDefaultMimeTypes();
+		SortedSet<MediaType> types = defaultMimeTypes.getMediaTypeRegistry().getTypes();
+		for (MediaType mediaType : types) {
+			String strMimeType = mediaType.toString();
+			try {
+				String extension = defaultMimeTypes.forName(strMimeType).getExtension();
+				mimeTypes.add(new MimeType(strMimeType, extension, true, false));
+			} catch (MimeTypeException e) {
+				logger.error("Can not find extension(s) for mime type : " + strMimeType);
+				logger.debug(e.getMessage());
+			}
+		}
+		return mimeTypes;
 	}
 
 }

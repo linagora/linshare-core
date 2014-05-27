@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Role;
 
 public abstract class Account {
 
@@ -70,12 +71,6 @@ public abstract class Account {
 	protected Set<ShareEntry> shareEntries = new HashSet<ShareEntry>();
 	
 	protected Set<Signature> signatures = new  HashSet<Signature>();
-	
-	protected Set<Tag> tags = new  HashSet<Tag>();
-	
-	protected Set<TagFilter> tagFilters = new  HashSet<TagFilter>();
-	
-	protected Set<View> views = new  HashSet<View>();
 	
 	public Account() {
 		setCreationDate(new Date());
@@ -111,6 +106,10 @@ public abstract class Account {
 	
 	public boolean isSuperAdmin() {
 		return this.getRole().equals(Role.SUPERADMIN);
+	}
+	
+	public boolean isAdmin() {
+		return this.getRole().equals(Role.ADMIN);
 	}
 
 	public boolean isSystempAccount() {
@@ -237,23 +236,6 @@ public abstract class Account {
 		this.signatures = signatures;
 	}
 
-	public Set<Tag> getTags() {
-		return tags;
-	}
-
-	public void setTags(Set<Tag> tags) {
-		this.tags = tags;
-	}
-
-	public Set<TagFilter> getTagFilters() {
-		return tagFilters;
-	}
-
-	public void setTagFilters(Set<TagFilter> tagFilters) {
-		this.tagFilters = tagFilters;
-	}
-
-	
 	public abstract AccountType getAccountType();
 
 	
@@ -266,17 +248,7 @@ public abstract class Account {
 		return locale;
 	}
 
-
 	public void setExternalMailLocale(String externalMailLocale) {
 		this.externalMailLocale = externalMailLocale;
 	}
-
-	public Set<View> getViews() {
-		return views;
-	}
-
-	public void setViews(Set<View> views) {
-		this.views = views;
-	}
-	
 }

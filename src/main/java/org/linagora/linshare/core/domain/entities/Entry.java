@@ -57,9 +57,6 @@ public abstract class Entry {
 	
 	protected String uuid;
 	
-	private Set<EntryTagAssociation> tagAssociations = new HashSet<EntryTagAssociation>();
-	
-	
 	public Entry() {
 	}
 	
@@ -158,13 +155,5 @@ public abstract class Entry {
 		} else if (!uuid.equals(other.uuid))
 			return false;
 		return true;
-	}
-
-	public Set<EntryTagAssociation> getTagAssociations() {
-		return tagAssociations;
-	}
-
-	public void setTagAssociations(Set<EntryTagAssociation> tagAssociations) {
-		this.tagAssociations = tagAssociations;
 	}
 }

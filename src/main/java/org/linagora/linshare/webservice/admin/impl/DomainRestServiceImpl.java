@@ -33,119 +33,89 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
-import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.DomainRestService;
 import org.linagora.linshare.webservice.dto.DomainDto;
-import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
-public class DomainRestServiceImpl extends WebserviceBase implements DomainRestService {
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
+@Path("/domains")
+@Api(value = "/rest/admin/domains", description = "Domains service.")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class DomainRestServiceImpl extends WebserviceBase implements
+		DomainRestService {
 
 	private final DomainFacade domainFacade;
-	private final FunctionalityFacade functionalityFacade;
 
-	public DomainRestServiceImpl(final DomainFacade webServiceDomainFacade, final FunctionalityFacade webServiceFunctionalityFacade) {
-		this.domainFacade = webServiceDomainFacade;
-		this.functionalityFacade = webServiceFunctionalityFacade;
+	public DomainRestServiceImpl(final DomainFacade domainFacade) {
+		this.domainFacade = domainFacade;
 	}
 
 	@Path("/")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Find all domains.", response = DomainDto.class, responseContainer = "Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public DomainDto getDomains() throws BusinessException {
-		domainFacade.checkAuthentication();
-		return domainFacade.getDomains();
+	public Set<DomainDto> findAll() throws BusinessException {
+		return domainFacade.findAll();
 	}
 
-	@Path("/{domain}")
+	@Path("/{domainId}")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Find a domain.", response = DomainDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public DomainDto getDomainAndChildren(@PathParam(value = "domain") String domain) throws BusinessException {
-		domainFacade.checkAuthentication();
-		return domainFacade.getDomainAndChildren(domain);
+	public DomainDto find(@PathParam(value = "domainId") String domainId,
+			@QueryParam("tree") @DefaultValue("false") boolean tree)
+			throws BusinessException {
+		return domainFacade.find(domainId, tree);
 	}
 
 	@Path("/")
 	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Create a domain.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void createDomain(DomainDto domain) throws BusinessException {
-		domainFacade.checkAuthentication();
-		domainFacade.createDomain(domain);
+	public void create(DomainDto domain) throws BusinessException {
+		domainFacade.create(domain);
 	}
 
 	@Path("/")
 	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Update a domain.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void updateDomain(DomainDto domain) throws BusinessException {
-		domainFacade.checkAuthentication();
-		domainFacade.updateDomain(domain);
+	public void update(DomainDto domain) throws BusinessException {
+		domainFacade.update(domain);
 	}
 
 	@Path("/")
 	@DELETE
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Delete a domain.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void deleteDomain(DomainDto domain) throws BusinessException {
-		domainFacade.checkAuthentication();
-		domainFacade.deleteDomain(domain);
+	public void delete(DomainDto domain) throws BusinessException {
+		domainFacade.delete(domain);
 	}
 
-	/*
-	 * Functionalities
-	 */
-
-	@Path("/{domain}/functionalities")
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public List<FunctionalityDto> getDomainFunctionalities(@PathParam(value = "domain") String domain) throws BusinessException {
-		functionalityFacade.checkAuthentication();
-		return functionalityFacade.getAll(domain);
-	}
-
-	@Path("/{domain}/functionalities/{identifier}")
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public FunctionalityDto getDomainFunctionality(@PathParam(value = "domain") String domain, @PathParam(value = "identifier") String identifier)
-			throws BusinessException {
-		functionalityFacade.checkAuthentication();
-		return functionalityFacade.get(domain, identifier);
-	}
-
-	@Path("/{domain}/functionalities")
-	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public void updateDomainFunctionality(@PathParam(value = "domain") String domain, FunctionalityDto func) throws BusinessException {
-		functionalityFacade.checkAuthentication();
-		functionalityFacade.update(domain, func);
-	}
-
-	@Path("/{domain}/functionalities")
-	@DELETE
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public void deleteDomainFunctionality(@PathParam(value = "domain") String domain, FunctionalityDto func) throws BusinessException {
-		functionalityFacade.checkAuthentication();
-		functionalityFacade.delete(domain, func);
-	}
 }

@@ -36,59 +36,165 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.FunctionalityService;
-import org.springframework.util.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FunctionalityServiceImpl implements FunctionalityService {
 
-	private FunctionalityBusinessService functionalityBusinessService;
+	protected final Logger logger = LoggerFactory.getLogger(FunctionalityServiceImpl.class);
 
-	public FunctionalityServiceImpl(FunctionalityBusinessService functionalityBusinessService) {
+	final private FunctionalityBusinessService functionalityBusinessService;
+
+	final private DomainBusinessService domainBusinessService;
+
+	final private DomainPermissionBusinessService domainPermissionBusinessService;
+
+	public FunctionalityServiceImpl(
+			FunctionalityBusinessService functionalityBusinessService,
+			DomainBusinessService domainBusinessService,
+			DomainPermissionBusinessService domainPermissionBusinessService
+			) {
 		super();
 		this.functionalityBusinessService = functionalityBusinessService;
+		this.domainBusinessService = domainBusinessService;
+		this.domainPermissionBusinessService = domainPermissionBusinessService;
 	}
 
 	@Override
-	public Set<Functionality> getAllFunctionalities(AbstractDomain domain) {
+	public Set<Functionality> getAllFunctionalities(Account actor, AbstractDomain domain) throws BusinessException {
+		Validate.notNull(domain);
+		Validate.notEmpty(domain.getIdentifier());
+		checkDomainRights(actor, domain.getIdentifier());
 		return functionalityBusinessService.getAllFunctionalities(domain);
 	}
 
 	@Override
-	public Set<Functionality> getAllFunctionalities(String domain) {
+	public Set<Functionality> getAllFunctionalities(Account actor, String domain) throws BusinessException {
+		Validate.notEmpty(domain);
+		checkDomainRights(actor, domain);
 		return functionalityBusinessService.getAllFunctionalities(domain);
 	}
 
 	@Override
 	public boolean activationPolicyIsMutable(Functionality f, String domain) {
-		Assert.notNull(f);
-		Assert.notNull(domain);
+		Validate.notNull(f);
+		Validate.notNull(domain);
 		return functionalityBusinessService.activationPolicyIsMutable(f, domain);
 	}
 
 	@Override
 	public boolean configurationPolicyIsMutable(Functionality f, String domain) {
-		Assert.notNull(f);
-		Assert.notNull(domain);
+		Validate.notNull(f);
+		Validate.notNull(domain);
 		return functionalityBusinessService.configurationPolicyIsMutable(f, domain);
 	}
 
 	@Override
-	public Functionality getFunctionality(String domainId, String functionalityId) {
-		Assert.notNull(domainId);
-		Assert.notNull(functionalityId);
+	public Functionality getFunctionality(Account actor, String domainId, String functionalityId) throws BusinessException {
+		Validate.notNull(domainId);
+		Validate.notNull(functionalityId);
+		logger.debug("looking for functionality : " + functionalityId + " in domain "+ domainId);
+		checkDomainRights(actor, domainId);
 		return functionalityBusinessService.getFunctionality(domainId, functionalityId);
 	}
 
 	@Override
 	public void deleteFunctionality(Account actor, String domainId, String functionalityId) throws IllegalArgumentException, BusinessException {
-		Assert.notNull(domainId);
-		Assert.notNull(functionalityId);
-		// TODO : FMA check if we are authorized to delete the functionality.
+		checkDomainRights(actor, domainId);
 		functionalityBusinessService.delete(domainId, functionalityId);
+	}
+
+	@Override
+	public void update(Account actor, String domain, Functionality functionality) throws BusinessException {
+		Validate.notNull(domain);
+		Validate.notNull(functionality.getIdentifier());
+		checkDomainRights(actor, domain);
+
+		if (checkUpdateRights(actor, domain, functionality)) {
+			functionalityBusinessService.update(domain, functionality);
+		}
+	}
+
+	@Override
+	public void update(Account actor, AbstractDomain domain, Functionality functionality) throws BusinessException {
+		this.update(actor, domain.getIdentifier(), functionality);
+	}
+
+	/**
+	 * Return true if you need to update the input functionality.
+	 * @param actor
+	 * @param domain
+	 * @param functionality : new functionality.
+	 * @param entity : original functionality. 
+	 * @return
+	 * @throws BusinessException
+	 */
+	private boolean checkUpdateRights(Account actor, String domain, Functionality functionality)
+			throws BusinessException {
+		Functionality entity = this.getFunctionality(actor, domain, functionality.getIdentifier());
+
+		// consistency checks
+		if (!entity.getType().equals(functionality.getType())) {
+			String message = entity.getType().toString() + " != " + entity.getType().toString();
+			throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "Same identifier, different functionality types : " + message);
+		}
+
+		functionality.getActivationPolicy().applyConsistency();
+
+		functionality.getConfigurationPolicy().applyConsistency();
+
+		// we check if the parent functionality allow modifications of the activation policy (AP).
+		boolean parentAllowAPUpdate = activationPolicyIsMutable(entity, domain);
+		if(!parentAllowAPUpdate) {
+			// Modifications are not allowed.
+			if (!entity.getActivationPolicy().businessEquals(functionality.getActivationPolicy())) {
+				// AP entity is different of the input AP functionality  => FORBIDDEN
+				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (AP) '" + functionality +"' in domain '" + domain +"'");
+				throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
+			}
+			if(entity.getActivationPolicy().isForbidden()) {
+				if (!functionality.businessEquals(entity, true)) {
+					logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (All) '" + functionality +"' in domain '" + domain +"'");
+					throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
+				}
+			}
+		}
+
+		// we check if the parent functionality allow modifications of the configuration policy (CP).
+		boolean parentAllowCPUpdate = configurationPolicyIsMutable(entity, domain);
+		if(!parentAllowCPUpdate) {
+			// Modifications are not allowed.
+			if (!entity.getConfigurationPolicy().businessEquals(functionality.getConfigurationPolicy())) {
+				// AP entity is different of the input CP functionality  => FORBIDDEN
+				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (CP) '" + functionality +"' in domain '" + domain +"'");
+				throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
+			}
+		}
+
+		// we check if there is any modifications
+		if (functionality.businessEquals(entity, true)) {
+			logger.debug("functionality " + functionality.toString() + " was not modified.");
+			return false;
+		}
+
+		// TODO :if ap is forbidden ? check status ?
+		// TODO: func.isSystem ??
+		return true;
+	}
+
+	private void checkDomainRights(Account actor, String domainId) throws BusinessException {
+		if(!domainPermissionBusinessService.isAdminforThisDomain(actor, domainId)) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,"The current domain does not exist : domainId");
+		}
 	}
 }

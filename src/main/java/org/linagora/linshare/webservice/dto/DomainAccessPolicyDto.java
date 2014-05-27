@@ -48,29 +48,17 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "DomainAccessPolicy", description = "Access policy of a domain, defining it's communication rules")
 public class DomainAccessPolicyDto {
 
-	@ApiModelProperty(value = "Persistence id")
-	private Long id;
-
 	@ApiModelProperty(value = "Communication rules")
 	private List<DomainAccessRuleDto> rules;
 
 	public DomainAccessPolicyDto() {
 	}
-	
+
 	public DomainAccessPolicyDto(DomainAccessPolicy dap) {
-		this.id = dap.getPersistenceId();
 		this.rules = Lists.newArrayList();
 		for (DomainAccessRule rule : dap.getRules()) {
 			this.rules.add(new DomainAccessRuleDto(rule));
 		}
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public List<DomainAccessRuleDto> getRules() {

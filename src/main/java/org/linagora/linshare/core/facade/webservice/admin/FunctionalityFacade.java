@@ -34,20 +34,20 @@
 
 package org.linagora.linshare.core.facade.webservice.admin;
 
-import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
 public interface FunctionalityFacade extends AdminGenericFacade {
 
-	FunctionalityDto get(String domain, String identifier)
+	FunctionalityDto find(String domainId, String funcId)
 			throws BusinessException;
 
-	List<FunctionalityDto> getAll(String domain) throws BusinessException;
+	Set<FunctionalityDto> findAll(String domainId) throws BusinessException;
 
-	void update(String domain, FunctionalityDto func) throws BusinessException;
-	
-	void delete(String domain, FunctionalityDto func) throws BusinessException;
+	void update(FunctionalityDto func) throws BusinessException;
+
+	void delete(FunctionalityDto func) throws BusinessException;
 
 }

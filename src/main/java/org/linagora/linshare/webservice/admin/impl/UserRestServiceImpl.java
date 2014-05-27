@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.admin.impl;
 
 import java.util.Set;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -45,104 +46,112 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UserRestService;
 import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.webservice.dto.UserSearchDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Api(value = "/rest/admin/users", description = "User administration service.")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UserRestServiceImpl extends WebserviceBase implements
 		UserRestService {
 
 	private final UserFacade userFacade;
 
-	public UserRestServiceImpl(final UserFacade userFacade) {
+	private final AutocompleteFacade autocompleteFacade;
+
+	public UserRestServiceImpl(final UserFacade userFacade,
+			final AutocompleteFacade autocompleteFacade) {
 		this.userFacade = userFacade;
+		this.autocompleteFacade = autocompleteFacade;
 	}
 
-	@Path("/search/{pattern}")
-	@ApiOperation(value = "Provide user autocompletion.", response = UserDto.class, responseContainer = "Set")
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Path("/search")
+	@POST
+	@ApiOperation(value = "Search all users who match with patterns.", response = UserDto.class, responseContainer = "Set")
 	@Override
-	public Set<UserDto> completionUser(
-			@ApiParam(value = "Pattern to complete.", required = true) @PathParam("pattern") String pattern)
+	public Set<UserDto> search(
+			@ApiParam(value = "Patterns to search.", required = true) UserSearchDto userSearchDto)
 			throws BusinessException {
-		userFacade.checkAuthentication();
-		return userFacade.completionUser(pattern);
+		return userFacade.search(userSearchDto);
 	}
 
 	@Path("/search/internals/{pattern}")
-	@ApiOperation(value = "Search among internal users.", response = UserDto.class, responseContainer = "Set")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Search among internal users.", response = UserDto.class, responseContainer = "Set")
 	@Override
-	public Set<UserDto> getInternals(
+	public Set<UserDto> searchInternals(
 			@ApiParam(value = "Internal users to search for.", required = true) @PathParam("pattern") String pattern)
 			throws BusinessException {
-		userFacade.checkAuthentication();
-		return userFacade.getInternals(pattern);
+		return userFacade.searchInternals(pattern);
 	}
 
 	@Path("/search/guests/{pattern}")
-	@ApiOperation(value = "Search among guests.", response = UserDto.class, responseContainer = "Set")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Search among guests.", response = UserDto.class, responseContainer = "Set")
 	@Override
-	public Set<UserDto> getGuests(
+	public Set<UserDto> searchGuests(
 			@ApiParam(value = "Guests to search for.", required = true) @PathParam("pattern") String pattern)
 			throws BusinessException {
-		userFacade.checkAuthentication();
-		return userFacade.getGuests(pattern);
+		return userFacade.searchGuests(pattern);
+	}
+
+	@Path("/autocomplete/{pattern}")
+	@GET
+	@ApiOperation(value = "Provide user autocompletion.", response = UserDto.class, responseContainer = "Set")
+	@Override
+	public Set<UserDto> autocomplete(
+			@ApiParam(value = "Pattern to complete.", required = true) @PathParam("pattern") String pattern)
+			throws BusinessException {
+		return autocompleteFacade.findUser(pattern);
 	}
 
 	@Path("/")
-	@ApiOperation(value = "Update an user.")
 	@PUT
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Update an user.")
 	@Override
-	public void updateUser(
+	public void update(
 			@ApiParam(value = "User to update", required = true) UserDto userDto)
 			throws BusinessException {
-		userFacade.checkAuthentication();
-		userFacade.updateUser(userDto);
+		userFacade.update(userDto);
 	}
 
 	@Path("/")
-	@ApiOperation(value = "Delete an user.")
 	@DELETE
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Delete an user.")
 	@Override
-	public void deleteUser(
+	public void delete(
 			@ApiParam(value = "User to delete.", required = true) UserDto userDto)
 			throws BusinessException {
-		userFacade.checkAuthentication();
-		userFacade.deleteUser(userDto);
+		userFacade.delete(userDto);
 	}
 
-	@Path("/inconstitent")
-	@ApiOperation(value = "Find all inconsistent users.")
+	@Path("/inconsistent")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Find all inconsistent users.", response = UserDto.class, responseContainer = "Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void getAllInconsistent() throws BusinessException {
-		userFacade.checkAuthentication();
-		userFacade.getAllInconsistent();
+	public Set<UserDto> findAllInconsistent() throws BusinessException {
+		return userFacade.findAllInconsistent();
 	}
 
-	@Path("/inconstitent")
+	@Path("/inconsistent")
+	@PUT
 	@ApiOperation(value = "Update an inconsistent user's domain.")
-	@POST
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void updateInconsistentUser(
+	public void updateInconsistent(
 			@ApiParam(value = "Inconsistent user to update.", required = true) UserDto userDto)
 			throws BusinessException {
-		userFacade.checkAuthentication();
-		userFacade.updateInconsistentUser(userDto);
+		userFacade.updateInconsistent(userDto);
 	}
 }

@@ -11,10 +11,6 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
-	<bean name="threadViewRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadViewRepositoryImpl">
-		<constructor-arg ref="hibernateTemplate" />
-	</bean>
-
 	<bean name="threadMemberRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadMemberRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
@@ -65,10 +61,6 @@
 	</bean>
 
 	<bean name="anonymousUrlRepository" class="org.linagora.linshare.core.repository.hibernate.AnonymousUrlRepositoryImpl">
-		<constructor-arg ref="hibernateTemplate" />
-	</bean>
-
-	<bean name="allowedMimeTypeRepository" class="org.linagora.linshare.core.repository.hibernate.AllowedMimeTypeRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
@@ -123,19 +115,43 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
-	<bean name="tagRepository" class="org.linagora.linshare.core.repository.hibernate.TagRepositoryImpl">
-		<constructor-arg ref="hibernateTemplate" />
-	</bean>
-
-	<bean name="entryTagAssociationRepository" class="org.linagora.linshare.core.repository.hibernate.EntryTagAssociationRepositoryImpl">
-		<constructor-arg ref="hibernateTemplate" />
-	</bean>
-
 	<bean name="mailingListRepository" class="org.linagora.linshare.core.repository.hibernate.MailingListRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
 	<bean name="mailingListContactRepository" class="org.linagora.linshare.core.repository.hibernate.MailingListContactRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="mailConfigRepository" class="org.linagora.linshare.core.repository.hibernate.MailConfigRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="mailContentLangRepository" class="org.linagora.linshare.core.repository.hibernate.MailContentLangRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="mailContentRepository" class="org.linagora.linshare.core.repository.hibernate.MailContentRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="mailFooterLangRepository" class="org.linagora.linshare.core.repository.hibernate.MailFooterLangRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="mailFooterRepository" class="org.linagora.linshare.core.repository.hibernate.MailFooterRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="mailLayoutRepository" class="org.linagora.linshare.core.repository.hibernate.MailLayoutRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="mimePolicyRepository" class="org.linagora.linshare.core.repository.hibernate.MimePolicyRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="mimeTypeRepository" class="org.linagora.linshare.core.repository.hibernate.MimeTypeRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 </beans>

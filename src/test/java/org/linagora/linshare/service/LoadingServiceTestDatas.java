@@ -33,23 +33,11 @@
  */
 package org.linagora.linshare.service;
 
-import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
-import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
-import org.linagora.linshare.core.domain.entities.DomainPolicy;
-import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.RootDomain;
-import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
-import org.linagora.linshare.core.domain.entities.SubDomain;
-import org.linagora.linshare.core.domain.entities.TopDomain;
-import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -99,13 +87,9 @@ public class LoadingServiceTestDatas {
 	
 	public static int TOTAL_COUNT_FUNC=10;
 	public static String timeStampingUrl = "http://server/service";
-	
+
 	private RootDomain rootDomain;
 
-
-	private DomainPolicy defaultPolicy;
-	
-	
 	private User user1;  /* John Doe */
 	private User user2;	 /* Jane Smith */
 	private User user3;	 /* Foo Bar */
@@ -127,322 +111,31 @@ public class LoadingServiceTestDatas {
 		this.userService = userService;
 	}
 
-	public RootDomain getRootDomain() {
-		return rootDomain;
-	}
-	
-	public  void deleteDatas() throws BusinessException {
-		abstractDomainRepository.delete(getRootDomain());
-		domainPolicyRepository.delete(defaultPolicy);
-	}
-	
-	
 	public  void deleteUsers() throws BusinessException {
 		User root = userService.findOrCreateUser("root@localhost.localdomain", LinShareConstants.rootDomainIdentifier);
-		
 		userService.deleteUser(root, getUser1().getLsUuid());
 		userService.deleteUser(root, getUser2().getLsUuid());
 		userService.deleteUser(root, getUser3().getLsUuid());
-		
-		abstractDomainRepository.delete(getRootDomain());
-		domainPolicyRepository.delete(defaultPolicy);
-	
-	}	
-		
-		
-	public  void loadDatas() throws BusinessException {
-		
-		defaultPolicy = new DomainPolicy(domainePolicyName0, new DomainAccessPolicy());
-		domainPolicyRepository.create(defaultPolicy);
-		
-		rootDomain= new RootDomain(rootDomainName,rootDomainName);
-		rootDomain.setPolicy(defaultPolicy);
-		abstractDomainRepository.create(rootDomain);
-		logger.debug("Current AbstractDomain object: " + rootDomain.toString());
-		
-		TopDomain topDomain = new TopDomain(topDomainName,topDomainName,rootDomain);
-		topDomain.setPolicy(defaultPolicy);
-		abstractDomainRepository.create(topDomain);
-		rootDomain.addSubdomain(topDomain);
-		abstractDomainRepository.update(rootDomain);
-		logger.debug("Current TopDomain object: " + topDomain.toString());
-
-		SubDomain subDomain1 = new SubDomain(subDomainName1,subDomainName1,topDomain);
-		subDomain1.setPolicy(defaultPolicy);
-		abstractDomainRepository.create(subDomain1);
-		topDomain.addSubdomain(subDomain1);
-		abstractDomainRepository.update(topDomain);
-		logger.debug("Current SubDomain object: " + subDomain1.toString());
-		
-		SubDomain subDomain2 = new SubDomain(subDomainName2,subDomainName2,topDomain);
-		subDomain2.setPolicy(defaultPolicy);
-		abstractDomainRepository.create(subDomain2);
-		topDomain.addSubdomain(subDomain2);
-		abstractDomainRepository.update(topDomain);
-		logger.debug("Current SubDomain object: " + subDomain2.toString());
-		
-		
-		GuestDomain userGuestDomain = new GuestDomain(guestDomainName1,guestDomainName1);
-		userGuestDomain.setParentDomain(topDomain);
-		userGuestDomain.setPolicy(defaultPolicy);
-		abstractDomainRepository.create(userGuestDomain);
-		
-		topDomain.addSubdomain(userGuestDomain);
-		abstractDomainRepository.update(topDomain);	
-		
-		
-		
-		createTimeStampingFunctionality(rootDomain);
-		createMaxFileSizeFunctionality(rootDomain,200);
-		createQuotaUserFunctionality(rootDomain,500);
-		createQuotaGlobalFunctionality(rootDomain);
-		createGuestFunctionality(rootDomain);
-		createFunc1Functionality(rootDomain);
-		createFunc2Functionality(rootDomain);
-		createFunc3Functionality(rootDomain);
-		createFunc4Functionality(rootDomain);
-		createFunc5Functionality(rootDomain);
-		
-		abstractDomainRepository.update(rootDomain);	
-		
-		
-		createMaxFileSizeFunctionality(topDomain,100);
-		createQuotaUserFunctionality(topDomain,250);
-		abstractDomainRepository.update(topDomain);
-		
-		createMaxFileSizeFunctionality(subDomain1,50);
-		createQuotaUserFunctionality(subDomain2,125);
-		abstractDomainRepository.update(subDomain1);
-		abstractDomainRepository.update(subDomain2);
-		
-		
-		TopDomain topDomain2 = new TopDomain(topDomainName2,topDomainName2,rootDomain);
-		topDomain2.setPolicy(defaultPolicy);
-		abstractDomainRepository.create(topDomain2);
-		rootDomain.addSubdomain(topDomain2);
-		abstractDomainRepository.update(rootDomain);
-		logger.debug("Current topDomain2 object: " + topDomain2.toString());
-		
 	}
-	
-	
-	public  void loadUsers() throws BusinessException {
-		
-		defaultPolicy = new DomainPolicy(domainePolicyName0, new DomainAccessPolicy());
-		domainPolicyRepository.create(defaultPolicy);
-		
-		rootDomain= new RootDomain(rootDomainName,rootDomainName);
-		rootDomain.setPolicy(defaultPolicy);
-		abstractDomainRepository.create(rootDomain);
-		logger.debug("Current AbstractDomain object: " + rootDomain.toString());
-		
-		TopDomain topDomain = new TopDomain(topDomainName,topDomainName,rootDomain);
-		topDomain.setPolicy(defaultPolicy);
-		abstractDomainRepository.create(topDomain);
-		rootDomain.addSubdomain(topDomain);
-		abstractDomainRepository.update(rootDomain);
-		logger.debug("Current TopDomain object: " + topDomain.toString());
 
-		SubDomain subDomain1 = new SubDomain(subDomainName1,subDomainName1,topDomain);
-		subDomain1.setPolicy(defaultPolicy);
-		abstractDomainRepository.create(subDomain1);
-		topDomain.addSubdomain(subDomain1);
-		abstractDomainRepository.update(topDomain);
-		logger.debug("Current SubDomain object: " + subDomain1.toString());
-		
-		SubDomain subDomain2 = new SubDomain(subDomainName2,subDomainName2,topDomain);
-		subDomain2.setPolicy(defaultPolicy);
-		abstractDomainRepository.create(subDomain2);
-		topDomain.addSubdomain(subDomain2);
-		abstractDomainRepository.update(topDomain);
-		logger.debug("Current SubDomain object: " + subDomain2.toString());
-		
-		
-		GuestDomain userGuestDomain = new GuestDomain(guestDomainName1,guestDomainName1);
-		userGuestDomain.setParentDomain(topDomain);
-		userGuestDomain.setPolicy(defaultPolicy);
-		abstractDomainRepository.create(userGuestDomain);
-		
-		topDomain.addSubdomain(userGuestDomain);
-		abstractDomainRepository.update(topDomain);	
-		
+	public  void loadUsers() throws BusinessException {
 		user1 = new Internal("John","Doe","user1@linpki.org", null);
 		user2 = new Internal("Jane","Smith","user2@linpki.org", null);
 		user3 = new Internal("Foo","Bar","user3@linpki.org", null); 
-		
+
+		AbstractDomain userGuestDomain = abstractDomainRepository.findById(guestDomainName1);
 		user1.setLocale(userGuestDomain.getDefaultLocale());
 		user2.setLocale(userGuestDomain.getDefaultLocale());
 		user3.setLocale(userGuestDomain.getDefaultLocale());
-		
+
 		user1.setDomain(abstractDomainRepository.findById(topDomainName));
 		user2.setDomain(abstractDomainRepository.findById(subDomainName1));
 		user3.setDomain(abstractDomainRepository.findById(guestDomainName1));
-		
+
 		userRepository.create(user1);		
 		userRepository.create(user2);
 		userRepository.create(user3);
 	}
-	
-	private void createTimeStampingFunctionality(AbstractDomain currentDomain) throws BusinessException {
-		
-		
-		Functionality fonc = new StringValueFunctionality(TEST_TIME_STAMPING,
-						false,
-						new Policy(Policies.ALLOWED, true),
-						new Policy(Policies.ALLOWED, true),
-						currentDomain,
-						timeStampingUrl);
-		
-		functionalityRepository.create(fonc);
-		currentDomain.addFunctionality(fonc);
-		logger.debug("Current object: " + fonc.toString());
-	}
-	
-	private void createGuestFunctionality(AbstractDomain currentDomain) throws BusinessException {
-		
-		Functionality fonc = new Functionality(GUEST,
-				false,
-				new Policy(Policies.ALLOWED, true),
-				new Policy(Policies.ALLOWED, true),
-				currentDomain);
-		
-		functionalityRepository.create(fonc);
-		currentDomain.addFunctionality(fonc);
-		logger.debug("Current object: " + fonc.toString());
-	}
-	
-	private void createMaxFileSizeFunctionality(AbstractDomain currentDomain,Integer value) throws BusinessException{
-		
-		Functionality fonc = new UnitValueFunctionality(FILESIZE_MAX,
-				false,
-				new Policy(Policies.ALLOWED, true),
-				new Policy(Policies.ALLOWED, true),
-				currentDomain,
-				value,
-				new FileSizeUnitClass(FileSizeUnit.MEGA)
-				);
-		
-		functionalityRepository.create(fonc);
-		currentDomain.addFunctionality(fonc);
-		logger.debug("Current object: " + fonc.toString());
-	}
-	private void createQuotaUserFunctionality(AbstractDomain currentDomain,Integer value) throws BusinessException{
-		
-		Functionality fonc = new UnitValueFunctionality(QUOTA_USER,
-				false,
-				new Policy(Policies.ALLOWED, true),
-				new Policy(Policies.ALLOWED, true),
-				currentDomain,
-				value,
-				new FileSizeUnitClass(FileSizeUnit.MEGA)
-				);
-		
-		functionalityRepository.create(fonc);
-		currentDomain.addFunctionality(fonc);
-		logger.debug("Current object: " + fonc.toString());
-	}
-	private void createQuotaGlobalFunctionality(AbstractDomain currentDomain) throws BusinessException{
-		
-		Integer value = 1;
-		Functionality fonc = new UnitValueFunctionality(QUOTA_GLOBAL,
-				true,
-				new Policy(Policies.ALLOWED, true),
-				new Policy(Policies.ALLOWED, true),
-				currentDomain,
-				value,
-				new FileSizeUnitClass(FileSizeUnit.GIGA)
-				);
-		
-		functionalityRepository.create(fonc);
-		currentDomain.addFunctionality(fonc);
-		logger.debug("Current object: " + fonc.toString());
-	}
-	
-	private void createFunc1Functionality(AbstractDomain currentDomain) throws BusinessException{
-		
-		String value = "blabla";
-		Functionality fonc = new StringValueFunctionality(FUNC1,
-				false,
-				new Policy(Policies.FORBIDDEN, true),
-				new Policy(Policies.ALLOWED, true),
-				currentDomain,
-				value
-				);
-		
-		functionalityRepository.create(fonc);
-		currentDomain.addFunctionality(fonc);
-		logger.debug("Current object: " + fonc.toString());
-	}
-	
-	private void createFunc2Functionality(AbstractDomain currentDomain) throws BusinessException{
-		
-		String value = "blabla";
-		Functionality fonc = new StringValueFunctionality(FUNC2,
-				false,
-				new Policy(Policies.FORBIDDEN, true),
-				new Policy(Policies.FORBIDDEN, true),
-				currentDomain,
-				value
-				);
-		
-		functionalityRepository.create(fonc);
-		currentDomain.addFunctionality(fonc);
-		logger.debug("Current object: " + fonc.toString());
-	}
-
-	private void createFunc3Functionality(AbstractDomain currentDomain) throws BusinessException{
-	
-		String value = "blabla";
-		Functionality fonc = new StringValueFunctionality(FUNC3,
-				false,
-				new Policy(Policies.MANDATORY, true),
-				new Policy(Policies.ALLOWED, true),
-				currentDomain,
-				value
-				);
-		
-		functionalityRepository.create(fonc);
-		currentDomain.addFunctionality(fonc);
-		logger.debug("Current object: " + fonc.toString());
-	}
-	
-	private void createFunc4Functionality(AbstractDomain currentDomain) throws BusinessException{
-		
-		String value = "blabla";
-		Functionality fonc = new StringValueFunctionality(FUNC4,
-				false,
-				new Policy(Policies.ALLOWED, true),
-				new Policy(Policies.ALLOWED, true),
-				currentDomain,
-				value
-				);
-		
-		fonc.getConfigurationPolicy().setSystem(true);
-		
-		functionalityRepository.create(fonc);
-		currentDomain.addFunctionality(fonc);
-		logger.debug("Current object: " + fonc.toString());
-	}
-	
-	private void createFunc5Functionality(AbstractDomain currentDomain) throws BusinessException{
-		
-		String value = "blabla";
-		Functionality fonc = new StringValueFunctionality(FUNC5,
-				false,
-				new Policy(Policies.ALLOWED, true),
-				new Policy(Policies.ALLOWED, false),
-				currentDomain,
-				value
-				);
-		fonc.getConfigurationPolicy().setSystem(true);
-		
-		functionalityRepository.create(fonc);
-		currentDomain.addFunctionality(fonc);
-		logger.debug("Current object: " + fonc.toString());
-	}
-	
-	
-
 
 	public Guest getGuest1() {
 		return guest1;

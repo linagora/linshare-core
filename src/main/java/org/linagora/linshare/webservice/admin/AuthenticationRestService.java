@@ -33,13 +33,15 @@
  */
 package org.linagora.linshare.webservice.admin;
 
-import javax.ws.rs.Path;
-
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.PasswordDto;
 import org.linagora.linshare.webservice.dto.UserDto;
 
-@Path("/authentication")
 public interface AuthenticationRestService {
 
 	UserDto isAuthorized() throws BusinessException;
+
+	void changePassword(PasswordDto password) throws BusinessException;
+	
+	void logout();
 }

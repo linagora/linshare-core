@@ -39,22 +39,17 @@ import java.util.Set;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.Role;
-import org.linagora.linshare.core.domain.entities.Tag;
-import org.linagora.linshare.core.domain.entities.TagFilter;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadLogEntry;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
-import org.linagora.linshare.core.domain.entities.ThreadView;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.TagRepository;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
-import org.linagora.linshare.core.repository.ThreadViewRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ThreadService;
@@ -67,25 +62,19 @@ public class ThreadServiceImpl implements ThreadService {
 
 	private final ThreadRepository threadRepository;
 
-	private final ThreadViewRepository threadViewRepository;
-
 	private final ThreadMemberRepository threadMemberRepository;
 
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 	
-	private final TagRepository tagRepository;
-
 	private final LogEntryService logEntryService;
 
-	public ThreadServiceImpl(ThreadRepository threadRepository, ThreadViewRepository threadViewRepository, ThreadMemberRepository threadMemberRepository, TagRepository tagRepository,
+	public ThreadServiceImpl(ThreadRepository threadRepository, ThreadMemberRepository threadMemberRepository,
 			DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService,FunctionalityReadOnlyService functionalityService) {
 		super();
 		this.threadRepository = threadRepository;
-		this.threadViewRepository = threadViewRepository;
 		this.threadMemberRepository = threadMemberRepository;
-		this.tagRepository = tagRepository;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 		this.functionalityReadOnlyService = functionalityService;
@@ -113,23 +102,12 @@ public class ThreadServiceImpl implements ThreadService {
 		
 		if (creation.getActivationPolicy().getStatus() && !isGuest){
 			Thread thread = null;
-			ThreadView threadView = null;
 			ThreadMember member = null;
 
 			logger.debug("User " + actor.getAccountReprentation() + " trying to create new thread named " + name);
 			thread = new Thread(actor.getDomain(), actor, name);
 			threadRepository.create(thread);
 			logEntryService.create(new ThreadLogEntry(actor, thread, LogAction.THREAD_CREATE, "Creation of a new thread."));
-
-			// creating default view
-			threadView = new ThreadView(thread);
-			threadViewRepository.create(threadView);
-			thread.getThreadViews().add(threadView);
-			threadRepository.update(thread);
-
-			// setting default view
-			thread.setCurrentThreadView(threadView);
-			threadRepository.update(thread);
 
 			// creator = first member = default admin
 			member = new ThreadMember(true, true, (User) actor, thread);
@@ -141,9 +119,9 @@ public class ThreadServiceImpl implements ThreadService {
 		} else {
 			logger.error("You can not create thread, you are not authorized.");
 			if (isGuest) {
-				logger.error("Guests are not authorised to create a thread.");
+				logger.error("Guests are not authorized to create a thread.");
 			} else {
-				logger.error("The current domain does not allowed you to create thread.");
+				logger.error("The current domain does not allow you to create a thread.");
 			}
 			return false;
 		}
@@ -204,7 +182,7 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public void addMember(Account actor, Thread thread, User user, boolean readOnly) throws BusinessException {
+	public void addMember(Account actor, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, thread);
 		
@@ -218,7 +196,7 @@ public class ThreadServiceImpl implements ThreadService {
 					"You are not authorized to add member to this thread. Already exists.");
 		}
 
-		member = new ThreadMember(!readOnly, false, user, thread);
+		member = new ThreadMember(canUpload, admin, user, thread);
 		thread.getMyMembers().add(member);
 		threadRepository.update(thread);
 
@@ -276,63 +254,6 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public void deleteThreadView(User user, Thread thread, ThreadView threadView) throws BusinessException {
-		// permission check
-		checkUserIsAdmin(user, thread);
-		
-		thread.getThreadViews().remove(threadView);
-		threadRepository.update(thread);
-		threadViewRepository.delete(threadView);
-	}
-
-	@Override
-	public void deleteAllThreadViews(User user, Thread thread) throws BusinessException {
-		// permission check
-		checkUserIsAdmin(user, thread);
-		
-		Object[] myThreadViews = thread.getThreadViews().toArray();
-
-		for (Object threadView : myThreadViews) {
-			thread.getThreadViews().remove(threadView);
-			threadRepository.update(thread);
-			threadViewRepository.delete((ThreadView) threadView);
-		}
-	}
-
-	@Override
-	public void deleteTagFilter(User user, Thread thread, TagFilter filter) throws BusinessException {
-		// permission check
-		checkUserIsAdmin(user, thread);
-		
-		thread.getTagFilters().remove(filter);
-		threadRepository.update(thread);
-	}
-
-	@Override
-	public void deleteTag(User user, Thread thread, Tag tag) throws BusinessException {
-		// permission check
-		checkUserIsAdmin(user, thread);
-		
-		thread.getTags().remove(tag);
-		threadRepository.update(thread);
-		tagRepository.delete(tag);
-	}
-
-	@Override
-	public void deleteAllTags(User user, Thread thread) throws BusinessException {
-		// permission check
-		checkUserIsAdmin(user, thread);
-		
-		Object[] myTags = thread.getTags().toArray();
-
-		for (Object tag : myTags) {
-			thread.getTags().remove(tag);
-			threadRepository.update(thread);
-			tagRepository.delete((Tag) tag);
-		}
-	}
-
-	@Override
 	public void deleteThread(User actor, Thread thread) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, thread);
@@ -342,12 +263,6 @@ public class ThreadServiceImpl implements ThreadService {
 		documentEntryBusinessService.deleteSetThreadEntry(thread.getEntries());
 		thread.setEntries(null);
 		threadRepository.update(thread);
-		// Deleting views
-		thread.setCurrentThreadView(null);
-		threadRepository.update(thread);
-		this.deleteAllThreadViews(actor, thread);
-		// Deleting tags
-		this.deleteAllTags(actor, thread);
 		// Deleting members
 		this.deleteAllMembers(actor, thread);
 		// Deleting the thread

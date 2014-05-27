@@ -41,7 +41,6 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
@@ -53,11 +52,8 @@ import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.view.tapestry.services.impl.MailingListCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 public class MailingListFacadeImpl implements MailingListFacade {
 
@@ -88,9 +84,9 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public MailingListVo findByUuid(String uuid) {
+	public MailingListVo findByUuid(UserVo actorVo, String uuid) {
 		try {
-			return new MailingListVo(mailingListService.findByUuid(uuid));
+			return new MailingListVo(mailingListService.findByUuid(actorVo.getLsUuid(), uuid));
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 		}
@@ -98,13 +94,13 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public List<MailingListVo> getAllMyList(UserVo user) throws BusinessException {
-		return ListToListVo(mailingListService.findAllListByOwner(user.getLsUuid()));
+	public List<MailingListVo> getAllMyList(UserVo actorVo, UserVo userVo) throws BusinessException {
+		return ListToListVo(mailingListService.findAllListByOwner(actorVo.getLsUuid(), userVo.getLsUuid()));
 	}
 	
 	@Override
-	public List<String> getAllContactMails(MailingListVo ml) throws BusinessException {
-		return mailingListService.getAllContactMails(ml.getUuid());
+	public List<String> getAllContactMails(UserVo actorVo, MailingListVo ml) throws BusinessException {
+		return mailingListService.getAllContactMails(actorVo.getLsUuid(), ml.getUuid());
 	}
 
 	@Override
@@ -139,13 +135,13 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public MailingListContactVo searchContact(String uuid) throws BusinessException {
-		return new MailingListContactVo(mailingListService.searchContact(uuid));
+	public MailingListContactVo searchContact(UserVo actorVo, String uuid) throws BusinessException {
+		return new MailingListContactVo(mailingListService.searchContact(actorVo.getLsUuid(), uuid));
 	}
 
 	@Override
-	public MailingListContactVo findContactByMail(String listUuid, String mail) throws BusinessException {
-		return new MailingListContactVo(mailingListService.findContactWithMail(listUuid, mail));
+	public MailingListContactVo findContactByMail(UserVo actorVo, String listUuid, String mail) throws BusinessException {
+		return new MailingListContactVo(mailingListService.findContactWithMail(actorVo.getLsUuid(), listUuid, mail));
 	}
 
 	@Override
@@ -187,33 +183,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 			i++;
 		}
 		return copy;
-	}
-
-	@Override
-	public List<String> completionsForShare(UserVo user, String input) throws BusinessException {
-		List<MailingListVo> lists = ListToListVo(mailingListService.findAllListByUser(user.getLsUuid()));
-		List<String> finalList = new ArrayList<String>();
-		for (MailingListVo list : lists) {
-			if (list.getIdentifier().startsWith(input)) {
-				finalList.add(MailingListCompletionService.formatLabel(user, list, true));
-			}
-		}
-		return finalList;
-	}
-
-	@Override
-	public List<MailingListVo> getListsFromShare(String recipients) {
-		List<String> uuids = MailingListCompletionService.parseLists(recipients);
-		List<MailingList> lists = new ArrayList<MailingList>();
-		for (String list : uuids) {
-			try {
-				MailingList listToAdd = mailingListService.findByUuid(list);
-				lists.add(listToAdd);
-			} catch (BusinessException e) {
-				e.printStackTrace();
-			}
-		}
-		return ListToListVo(lists);
 	}
 
 	private List<MailingListVo> performSearchList(UserVo loginUser, String input, String criteriaOnSearch)
@@ -284,7 +253,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public boolean getListIsDeletable(UserVo actorVo, MailingListVo listVo) throws BusinessException {
-		MailingList list = mailingListService.findByUuid(listVo.getUuid());
+		MailingList list = mailingListService.findByUuid(actorVo.getLsUuid(), listVo.getUuid());
 		User actor = (User) userService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
 
 		return list.getOwner().equals(actor) || actorVo.isSuperAdmin();

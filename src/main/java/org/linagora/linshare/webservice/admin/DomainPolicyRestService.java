@@ -33,22 +33,22 @@
  */
 package org.linagora.linshare.webservice.admin;
 
-import java.util.List;
-
-import javax.ws.rs.Path;
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
 public interface DomainPolicyRestService {
 
-	List<DomainPolicyDto> getAll() throws BusinessException;
+	Set<DomainPolicyDto> findAll() throws BusinessException;
 
-	DomainPolicyDto get(String identifier) throws BusinessException;
+	DomainPolicyDto find(String policyId) throws BusinessException;
 
 	void create(DomainPolicyDto policy) throws BusinessException;
 
 	void update(DomainPolicyDto policy) throws BusinessException;
 
-	void delete(String identifier) throws BusinessException;
+	void delete(String policyId) throws BusinessException;
+
+	void delete(DomainPolicyDto policy) throws BusinessException;
 }

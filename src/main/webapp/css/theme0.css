@@ -1916,77 +1916,6 @@ DIV.t-palette-controls BUTTON {
 }
 
 
-#edit-administration-mime {
-	margin-top: 1.0em;
-	padding: 0px;
-	font-size: .9em;
-}
-#edit-administration-mime div.t-palette-title {
-	margin-bottom: -2px;
-	padding: .3em;
-	background-color: #5A93AF;
-}
-#edit-administration-mime form#mimeTypeConfiguratorForm #displayChoice {
-	margin: .5em 0em;
-}
-#edit-administration-mime form#mimeTypeConfiguratorForm #displayChoice input#numberOfRow {
-	height: 1.2em;
-	margin-right: .1em;
-	padding: 0em .2em !important;
-	text-align: right;
-}
-#edit-administration-mime form#mimeTypeConfiguratorForm #displayChoice a {
-	margin-left: .25em;
-}
-#edit-administration-mime form#mimeTypeConfiguratorForm #mimetypeActions {
-	margin: .75em 0em 1.2em 0em;
-}
-#edit-administration-mime form#mimeTypeConfiguratorForm #mimetypeActions a {
-	margin-right: .5em;
-	padding: 0em .25em;
-	background-color: #EAF1F5;
-	border: 1px solid #ACC6D6;
-	color: #3D697F;
-	font-weight: bold;
-	cursor: pointer;
-}
-#edit-administration-mime form#mimeTypeConfiguratorForm #mimetypeActions a:link,
-#edit-administration-mime form#mimeTypeConfiguratorForm #mimetypeActions a:visited {
-	text-decoration: none;
-}
-#edit-administration-mime form#mimeTypeConfiguratorForm #mimetypeActions a:hover,
-#edit-administration-mime form#mimeTypeConfiguratorForm #mimetypeActions a:focus,
-#edit-administration-mime form#mimeTypeConfiguratorForm #mimetypeActions a:active {
-	background-color: #FDE7EB;
-	border: 1px solid #F24061;
-	color: #C00D2D;
-	text-decoration: none;
-}
-#edit-administration-mime form#mimeTypeConfiguratorForm a#linksubmit_0 {
-	font-size: 1.1em;
-	font-weight: bold;
-}
-
-#MimeTypeConfiguratorPalette {
-	margin: -.5em 0em -1.25em;
-}
-#MimeTypeConfiguratorPalette select {
-	width: 420px;
-	border: 2px solid #5A93AF;
-}
-#MimeTypeConfiguratorPalette div.t-palette-controls {
-	margin: 9.5em .5em 0em .5em;
-}
-#MimeTypeConfiguratorPalette div.t-palette-controls button {
-	margin-bottom: 1em;
-}
-#MimeTypeConfiguratorPalette div.t-palette-selected {
-	float: right;
-	clear: right;
-	margin-left: -1em;		/* Safety margin */
-}
-
-
 /*--------------------------------------------------------------------------
 * Pages > Audit  (Audit, History)
 */
@@ -2063,9 +1992,6 @@ DIV.t-palette-controls BUTTON {
 	margin-bottom: -2px;
 	padding: .3em;
 	background-color: #5A93AF;
-}
-#MimeTypeConfiguratorPalette {
-	margin: -.5em 0em -1.25em;
 }
 #history #bigPalette select,
 #audit #bigPalette select {

@@ -10,7 +10,7 @@
 		<property access="field" column="identifier" name="identifier" index="index_domain_policy_identifier" not-null="true" unique="true" />
 		<property column="description" name="description" type="text" />
 		<many-to-one name="domainAccessPolicy" class="org.linagora.linshare.core.domain.entities.DomainAccessPolicy" 
-			column="domain_access_policy_id" unique="true" cascade="all" lazy="false"/>
+			column="domain_access_policy_id" unique="true" cascade="lock" lazy="false"/>
 	</class>
 </hibernate-mapping>
 

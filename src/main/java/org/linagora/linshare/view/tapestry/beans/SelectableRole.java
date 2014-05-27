@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.view.tapestry.beans;
 
-import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.constants.Role;
 
 public enum SelectableRole {
 	

@@ -55,7 +55,6 @@ import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.LinThumbnail.utils.ImageUtils;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.SignatureBusinessService;
-import org.linagora.linshare.core.business.service.TagBusinessService;
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -92,11 +91,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final DocumentRepository documentRepository;
 	private final AccountRepository<Account> accountRepository; 
 	private final SignatureBusinessService signatureBusinessService;
-	private final TagBusinessService tagBusinessService;
-	
 	
 	public DocumentEntryBusinessServiceImpl(FileSystemDao fileSystemDao, TimeStampingService timeStampingService, DocumentEntryRepository documentEntryRepository, DocumentRepository documentRepository, 
-			AccountRepository<Account> accountRepository, SignatureBusinessService signatureBusinessService, ThreadEntryRepository threadEntryRepository, TagBusinessService tagBusinessService) {
+			AccountRepository<Account> accountRepository, SignatureBusinessService signatureBusinessService, ThreadEntryRepository threadEntryRepository) {
 		super();
 		this.fileSystemDao = fileSystemDao;
 		this.timeStampingService = timeStampingService;
@@ -105,7 +102,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.accountRepository = accountRepository;
 		this.signatureBusinessService = signatureBusinessService;
 		this.threadEntryRepository = threadEntryRepository;
-		this.tagBusinessService = tagBusinessService;
 	}
 
 	@Override
@@ -571,8 +567,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		owner.getEntries().remove(threadEntry);
 		accountRepository.update(owner);
 		Document doc = threadEntry.getDocument();
-		tagBusinessService.deleteAllTagAssociationsFromThreadEntry(threadEntry);
-		threadEntry.setTagAssociations(null);
 		threadEntryRepository.update(threadEntry);
 		threadEntryRepository.delete(threadEntry);
 		doc.setThreadEntry(null);
@@ -594,7 +588,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 //			Document doc = ((ThreadEntry)threadEntry).getDocument();
 //			Account owner = ((ThreadEntry)threadEntry).getEntryOwner();
 //			accountRepository.update(owner);
-//			tagBusinessService.deleteAllTagAssociationsFromThreadEntry(((ThreadEntry)threadEntry));
 //			((ThreadEntry)threadEntry).setTagAssociations(null);
 //			threadEntryRepository.update(((ThreadEntry)threadEntry));
 //			threadEntryRepository.delete(((ThreadEntry)threadEntry));

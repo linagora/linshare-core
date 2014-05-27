@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
-import org.linagora.linshare.core.business.service.TagBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -82,13 +81,12 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	private final MimeTypeService mimeTypeService;
 	private final AccountService accountService;
 	private final VirusScannerService virusScannerService;
-	private final TagBusinessService tagBusinessService;
 	private final ThreadMemberRepository threadMemberRepository;
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 	private final AntiSamyService antiSamyService;
 
 	public ThreadEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityReadOnlyService functionalityReadOnlyService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService, TagBusinessService tagBusinessService,
+			FunctionalityReadOnlyService functionalityReadOnlyService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService,
 			ThreadMemberRepository threadMemberRepository, MimeTypeMagicNumberDao mimeTypeIdentifier, AntiSamyService antiSamyService) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
@@ -98,7 +96,6 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		this.mimeTypeService = mimeTypeService;
 		this.accountService = accountService;
 		this.virusScannerService = virusScannerService;
-		this.tagBusinessService = tagBusinessService;
 		this.threadMemberRepository = threadMemberRepository;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
 		this.antiSamyService = antiSamyService;
@@ -120,7 +117,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			// check if the file MimeType is allowed
 			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
 			if (mimeFunctionality.getActivationPolicy().getStatus()) {
-				mimeTypeService.checkFileMimeType(filename, mimeType, actor);
+				mimeTypeService.checkFileMimeType(actor, filename, mimeType);
 			}
 
 			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
@@ -140,7 +137,6 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 
 			threadEntry = documentEntryBusinessService.createThreadEntry(thread, tempFile, size, filename, checkIfIsCiphered, timeStampingUrl, mimeType);
 			logEntryService.create(new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_UPLOAD_ENTRY, "Uploading a file in a thread."));
-			tagBusinessService.runTagFiltersOnThreadEntry(actor, thread, threadEntry);
 		} finally {
 			try{
 				logger.debug("deleting temp file : " + tempFile.getName());
@@ -177,7 +173,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
 		}
 	}
-	
+
 	@Override
 	public void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException {
 		Thread owner = (Thread)threadEntry.getEntryOwner();

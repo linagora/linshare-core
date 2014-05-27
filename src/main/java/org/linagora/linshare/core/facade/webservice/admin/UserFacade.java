@@ -37,22 +37,25 @@ package org.linagora.linshare.core.facade.webservice.admin;
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.PasswordDto;
 import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.webservice.dto.UserSearchDto;
 
 public interface UserFacade extends AdminGenericFacade {
 
-	Set<UserDto> completionUser(String pattern) throws BusinessException;
+	Set<UserDto> search(UserSearchDto userSearchDto) throws BusinessException;
 
-	Set<UserDto> getInternals(String pattern) throws BusinessException;
-	
-	Set<UserDto> getGuests(String pattern) throws BusinessException;
-	
-	void updateUser(UserDto userDto) throws BusinessException;
+	Set<UserDto> searchInternals(String pattern) throws BusinessException;
 
-	void deleteUser(UserDto userDto) throws BusinessException;
+	Set<UserDto> searchGuests(String pattern) throws BusinessException;
 
-	Set<UserDto> getAllInconsistent() throws BusinessException;
+	void update(UserDto userDto) throws BusinessException;
 
-	void updateInconsistentUser(UserDto userDto) throws BusinessException;
+	void delete(UserDto userDto) throws BusinessException;
 
+	Set<UserDto> findAllInconsistent() throws BusinessException;
+
+	void updateInconsistent(UserDto userDto) throws BusinessException;
+
+	void changePassword(PasswordDto password) throws BusinessException;
 }

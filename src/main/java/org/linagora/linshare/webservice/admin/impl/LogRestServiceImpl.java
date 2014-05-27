@@ -42,7 +42,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.LogEntryFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
@@ -58,27 +57,25 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/logs")
 @Api(value = "/rest/admin/logs", description = "Admin application audit service.")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class LogRestServiceImpl extends WebserviceBase implements
 		LogRestService {
 
-	private LogEntryFacade logEntryFacade;
+	private final LogEntryFacade logEntryFacade;
 
 	public LogRestServiceImpl(final LogEntryFacade logEntryFacade) {
 		this.logEntryFacade = logEntryFacade;
 	}
 
 	@Path("/")
-	@ApiOperation(value = "Search the user history with specified criteria.", response = LogDto.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Search the user history with specified criteria.", response = LogDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public List<LogDto> query(
 			@ApiParam(value = "Criteria to search for.", required = true) LogCriteriaDto criteria)
 			throws BusinessException {
-		User actor = logEntryFacade.checkAuthentication();
-
-		return logEntryFacade.query(actor, criteria);
+		return logEntryFacade.query(criteria);
 	}
 }

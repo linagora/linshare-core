@@ -44,6 +44,7 @@
 	
 	<!--  ExceptionMappers. -->
 	<bean id="businessExceptionMapper" class="org.linagora.linshare.webservice.interceptor.BusinessExceptionMapper" />
+	<bean id="illegalArgumentExceptionMapper" class="org.linagora.linshare.webservice.interceptor.IllegalArgumentExceptionMapper" />
 	<bean id="genericExceptionMapper" class="org.linagora.linshare.webservice.interceptor.GenericExceptionMapper" />
 	<bean id="webApplicationExceptionMapper" class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper">
 		<property name="printStackTrace" value="false" />

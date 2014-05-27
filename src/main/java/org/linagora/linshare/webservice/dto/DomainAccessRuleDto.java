@@ -60,10 +60,10 @@ public class DomainAccessRuleDto {
 		this.type = rule.getDomainAccessRuleType();
 		switch (type) {
 		case ALLOW:
-			this.domain = DomainDto.getFull(((AllowDomain) rule).getDomain());
+			this.domain = DomainDto.getSimple(((AllowDomain) rule).getDomain());
 			break;
 		case DENY:
-			this.domain = DomainDto.getFull(((DenyDomain) rule).getDomain());
+			this.domain = DomainDto.getSimple(((DenyDomain) rule).getDomain());
 			break;
 		}
 	}
@@ -83,4 +83,14 @@ public class DomainAccessRuleDto {
 	public void setDomain(DomainDto domain) {
 		this.domain = domain;
 	}
+
+	@Override
+	public String toString() {
+		if (domain==null) {
+			return type.toString();
+		} else {
+			return type.toString() + " : " + domain.getIdentifier();
+		}
+	}
+
 }

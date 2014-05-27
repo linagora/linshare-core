@@ -45,14 +45,14 @@ import org.linagora.linshare.core.exception.TechnicalException;
 
 public class SignatureTransformer implements Transformer<Signature, SignatureVo>{
 
-	
+
 	private final UserTransformer userTransformer;
-	
-	
+
+
 	public SignatureTransformer(final UserTransformer userTransformer){
 		this.userTransformer = userTransformer;
 	}
-	
+
 	public Signature assemble(SignatureVo valueObject) {
 		throw new TechnicalException("not implemented, should not be used");
 	}
@@ -62,9 +62,9 @@ public class SignatureTransformer implements Transformer<Signature, SignatureVo>
 	}
 
 	public SignatureVo disassemble(Signature entityObject) {
-		
+
 		SignatureVo res = null;
-		
+
 		if(null!=entityObject){
 			res = new SignatureVo();
 			res.setIdentifier(entityObject.getUuid());
@@ -76,7 +76,7 @@ public class SignatureTransformer implements Transformer<Signature, SignatureVo>
 			res.setSize(entityObject.getSize());
 			res.setName(entityObject.getName());
 			res.setPersistenceId(entityObject.getId());
-			
+
 			UserVo signer = userTransformer.disassemble((User)entityObject.getSigner());
 			res.setSigner(signer);	
 		}
@@ -84,11 +84,11 @@ public class SignatureTransformer implements Transformer<Signature, SignatureVo>
 	}
 
 	public List<SignatureVo> disassembleList(List<Signature> entityObjectList) {
-		ArrayList<SignatureVo> allowedMimeTypes=new ArrayList<SignatureVo>();
-		for(Signature allowedMimeType :entityObjectList){
-			allowedMimeTypes.add(disassemble(allowedMimeType));
+		ArrayList<SignatureVo> sigs=new ArrayList<SignatureVo>();
+		for(Signature sig :entityObjectList){
+			sigs.add(disassemble(sig));
 		}
-		return allowedMimeTypes;
+		return sigs;
 	}
 
 }

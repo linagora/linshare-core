@@ -58,7 +58,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
-		"classpath:springContext-startopends.xml",
+		"classpath:springContext-startopendj.xml",
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
 		})
@@ -98,14 +98,14 @@ public class LoadingServiceTestDatasTest extends AbstractTransactionalJUnit4Spri
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
-	@Test
-	public  void test() throws BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
-		datas.loadDatas();
-		datas.deleteDatas();
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
+//	@Test
+//	public  void test() throws BusinessException {
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
+//		datas.loadDatas();
+//		datas.deleteDatas();
+//		logger.debug(LinShareTestConstants.END_TEST);
+//	}
 	
 	
 	@Test

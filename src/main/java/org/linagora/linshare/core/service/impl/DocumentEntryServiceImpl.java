@@ -44,6 +44,7 @@ import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
@@ -54,8 +55,6 @@ import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.LogEntry;
-import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
-import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -120,7 +119,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
 			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
 			if (mimeFunctionality.getActivationPolicy().getStatus()) {
-				mimeTypeService.checkFileMimeType(fileName, mimeType, actor);
+				mimeTypeService.checkFileMimeType(actor, fileName, mimeType);
 			}
 
 			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
@@ -173,7 +172,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 		try {
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
-			
+
 			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
 			String originalFileName = originalEntry.getName();
 
@@ -183,28 +182,28 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			// check if the file MimeType is allowed
 			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
 			if (mimeFunctionality.getActivationPolicy().getStatus()) {
-				mimeTypeService.checkFileMimeType(fileName, mimeType, actor);
+				mimeTypeService.checkFileMimeType(actor, fileName, mimeType);
 			}
-	
+
 			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
 				checkVirus(fileName, actor, tempFile);
 			}
-	
+
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
 			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService.getTimeStampingFunctionality(domain);
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
 				timeStampingUrl = timeStampingFunctionality.getValue();
 			}
-	
+
 			Functionality enciphermentFunctionality = functionalityReadOnlyService.getEnciphermentFunctionality(domain);
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
-	
+
 			// We need to set an expiration date in case of file cleaner activation.
 			documentEntry = documentEntryBusinessService.updateDocumentEntry(actor, originalEntry, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType,
 					getDocumentExpirationDate(domain));
-	
+
 			// put new file name in log
 			// if the file is updated/replaced with a new file (new file name)
 			// put new file name in log
@@ -212,13 +211,13 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			if (!logText.equalsIgnoreCase(documentEntry.getName())) {
 				logText = documentEntry.getName() + " [" + logText + "]";
 			}
-	
+
 			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_UPDATE, "Update of a file", logText, documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
 			logEntryService.create(logEntry);
-	
+
 			removeDocSizeFromGlobalUsedQuota(oldDocSize, domain);
 			addDocSizeToGlobalUsedQuota(documentEntry.getDocument(), domain);
-	
+
 		} finally {
 			try{
 				logger.debug("deleting temp file : " + tempFile.getName());
@@ -580,11 +579,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		long newUsedQuota = domain.getUsedSpace().longValue() - docSize;
 		domain.setUsedSpace(newUsedQuota);
 		abstractDomainService.updateDomain(domain);
-	}
-	
-	@Override
-	public MimeTypeStatus getDocumentMimeTypeStatus(DocumentEntry entry) {
-		return mimeTypeService.giveStatus(entry.getType());
 	}
 
 	// FIXME : code duplication

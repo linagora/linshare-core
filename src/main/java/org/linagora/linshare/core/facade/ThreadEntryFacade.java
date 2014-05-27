@@ -37,8 +37,6 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.TagEnumVo;
-import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.ThreadMemberVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
@@ -248,17 +246,4 @@ public interface ThreadEntryFacade {
     @Deprecated
 	public List<String> completionOnMembers(UserVo actorVo,
 			ThreadVo currentThread, String pattern);
-
-    @Deprecated
-	public List<ThreadEntryVo> getAllThreadEntriesTaggedWith(UserVo actorVo,
-			ThreadVo threadVo, TagVo[] tags) throws BusinessException;
-
-    @Deprecated
-	public TagEnumVo getTagEnumVo(UserVo actorVo, ThreadVo threadVo, String name)
-			throws BusinessException;
-
-    @Deprecated
-	public void setTagsToThreadEntries(UserVo actorVo, ThreadVo threadVo,
-			List<ThreadEntryVo> threadEntriesVo, List<TagVo> tags)
-			throws BusinessException;
 }

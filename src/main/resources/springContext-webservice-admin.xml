@@ -17,27 +17,31 @@
 	<!-- REST -->
 	<bean id="adminAuthenticationRestService" class="org.linagora.linshare.webservice.admin.impl.AuthenticationRestServiceImpl">
 		<constructor-arg ref="wsAdminGenericFacade" />
+		<constructor-arg ref="wsAdminUserFacade" />
 	</bean>
 
 	<bean id="adminDomainPatternRestService" class="org.linagora.linshare.webservice.admin.impl.DomainPatternRestServiceImpl">
 		<constructor-arg ref="wsAdminDomainPatternFacade" />
 	</bean>
 
-	<bean id="adminLdapConnectionRestService" class="org.linagora.linshare.webservice.admin.impl.LDAPConnectionRestServiceImpl">
-		<constructor-arg ref="wsAdminLDAPConnectionFacade" />
-	</bean>
-
-	<bean id="adminDomainRestService" class="org.linagora.linshare.webservice.admin.impl.DomainRestServiceImpl">
-		<constructor-arg ref="wsAdminDomainFacade" />
-		<constructor-arg ref="wsAdminFunctionalityFacade" />
-	</bean>
-
 	<bean id="adminDomainPolicyRestService" class="org.linagora.linshare.webservice.admin.impl.DomainPolicyRestServiceImpl">
 		<constructor-arg ref="wsAdminDomainPolicyFacade" />
 	</bean>
 
-	<bean id="adminThreadRestService" class="org.linagora.linshare.webservice.admin.impl.ThreadRestServiceImpl">
-		<constructor-arg ref="wsAdminThreadFacade" />
+	<bean id="adminDomainRestService" class="org.linagora.linshare.webservice.admin.impl.DomainRestServiceImpl">
+		<constructor-arg ref="wsAdminDomainFacade" />
+	</bean>
+
+	<bean id="adminFunctionalityRestService" class="org.linagora.linshare.webservice.admin.impl.FunctionalityRestServiceImpl">
+		<constructor-arg ref="wsAdminFunctionalityFacade" />
+	</bean>
+
+	<bean id="adminLdapConnectionRestService" class="org.linagora.linshare.webservice.admin.impl.LDAPConnectionRestServiceImpl">
+		<constructor-arg ref="wsAdminLDAPConnectionFacade" />
+	</bean>
+
+	<bean id="adminLogRestService" class="org.linagora.linshare.webservice.admin.impl.LogRestServiceImpl">
+		<constructor-arg ref="wsAdminLogEntryFacade" />
 	</bean>
 
 	<bean id="adminMailingListRestService" class="org.linagora.linshare.webservice.admin.impl.MailingListRestServiceImpl">
@@ -48,31 +52,72 @@
 		<constructor-arg ref="wsAdminThreadMemberFacade" />
 	</bean>
 
-	<bean id="adminUserRoleRestService" class="org.linagora.linshare.webservice.admin.impl.UserRoleRestServiceImpl">
-		<constructor-arg ref="wsAdminUserRoleFacade" />
+	<bean id="adminThreadRestService" class="org.linagora.linshare.webservice.admin.impl.ThreadRestServiceImpl">
+		<constructor-arg ref="wsAdminThreadFacade" />
 	</bean>
 
 	<bean id="adminUserRestService" class="org.linagora.linshare.webservice.admin.impl.UserRestServiceImpl">
 		<constructor-arg ref="wsAdminUserFacade" />
+		<constructor-arg ref="wsAdminAutocompleteFacade" />
 	</bean>
 
-	<bean id="adminLogRestService" class="org.linagora.linshare.webservice.admin.impl.LogRestServiceImpl">
-		<constructor-arg ref="wsAdminLogEntryFacade" />
+	<bean id="adminEnumRestService" class="org.linagora.linshare.webservice.user.impl.EnumRestServiceImpl">
+	</bean>
+
+	<bean id="adminMailConfigRestService" class="org.linagora.linshare.webservice.admin.impl.MailConfigRestServiceImpl">
+		<constructor-arg ref="wsAdminMailConfigFacade" />
+	</bean>
+
+	<bean id="adminMailContentLangRestService" class="org.linagora.linshare.webservice.admin.impl.MailContentLangRestServiceImpl">
+		<constructor-arg ref="wsAdminMailContentLangFacade" />
+	</bean>
+
+	<bean id="adminMailContentRestService" class="org.linagora.linshare.webservice.admin.impl.MailContentRestServiceImpl">
+		<constructor-arg ref="wsAdminMailContentFacade" />
+	</bean>
+
+	<bean id="adminMailFooterLangRestService" class="org.linagora.linshare.webservice.admin.impl.MailFooterLangRestServiceImpl">
+		<constructor-arg ref="wsAdminMailFooterLangFacade" />
+	</bean>
+
+	<bean id="adminMailFooterRestService" class="org.linagora.linshare.webservice.admin.impl.MailFooterRestServiceImpl">
+		<constructor-arg ref="wsAdminMailFooterFacade" />
+	</bean>
+
+	<bean id="adminMailLayoutRestService" class="org.linagora.linshare.webservice.admin.impl.MailLayoutRestServiceImpl">
+		<constructor-arg ref="wsAdminMailLayoutFacade" />
+	</bean>
+
+	<bean id="adminMimePolicyRestService" class="org.linagora.linshare.webservice.admin.impl.MimePolicyRestServiceImpl">
+		<constructor-arg ref="wsAdminMimePolicyFacade" />
+	</bean>
+
+	<bean id="adminMimeTypeRestService" class="org.linagora.linshare.webservice.admin.impl.MimeTypeRestServiceImpl">
+		<constructor-arg ref="wsAdminMimeTypeFacade" />
 	</bean>
 
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">
 		<jaxrs:serviceBeans>
 			<ref bean="adminAuthenticationRestService" />
-			<ref bean="adminDomainPatternRestService" />
 			<ref bean="adminLdapConnectionRestService" />
-			<ref bean="adminDomainRestService" />
+			<ref bean="adminDomainPatternRestService" />
 			<ref bean="adminDomainPolicyRestService" />
+			<ref bean="adminDomainRestService" />
+			<ref bean="adminFunctionalityRestService" />
 			<ref bean="adminThreadRestService" />
 			<ref bean="adminMailingListRestService" />
 			<ref bean="adminThreadMemberRestService" />
-			<ref bean="adminUserRoleRestService" />
 			<ref bean="adminUserRestService" />
 			<ref bean="adminLogRestService" />
+			<ref bean="adminEnumRestService" />
+			<ref bean="adminMailConfigRestService" />
+			<ref bean="adminMailLayoutRestService" />
+			<ref bean="adminMailFooterRestService" />
+			<ref bean="adminMailFooterLangRestService" />
+			<ref bean="adminMailContentRestService" />
+			<ref bean="adminMailContentLangRestService" />
+			<ref bean="adminMimePolicyRestService" />
+			<ref bean="adminMimeTypeRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
@@ -80,6 +125,7 @@
 		</jaxrs:extensionMappings>
 		<jaxrs:providers>
 			<!--  ExceptionMappers. -->
+			<ref bean="illegalArgumentExceptionMapper" />
 			<ref bean="businessExceptionMapper" />
 			<ref bean="genericExceptionMapper" />
 			<ref bean="webApplicationExceptionMapper" />

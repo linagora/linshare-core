@@ -62,7 +62,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration(locations = { "classpath:springContext-test.xml",
 		"classpath:springContext-ldap.xml", 
-		"classpath:springContext-startopends.xml"
+		"classpath:springContext-startopendj.xml"
 })
 public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 
@@ -164,7 +164,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		initDefault(auto_complete_command_on_all_attributes, auto_complete_command_on_first_and_last_name, search_command, auth_command, 500, 5);
 
 		this.userMail1 = "aaliyah.alvarez@int5.linshare.dev";
-		this.userPassword1 = "mdp";
+		this.userPassword1 = "secret";
 		this.strPattern = "abdel";
 		
 		logger.debug(LinShareTestConstants.END_SETUP);

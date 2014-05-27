@@ -33,11 +33,12 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
-import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPatternFacade;
 import org.linagora.linshare.core.service.AccountService;
@@ -49,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements DomainPatternFacade {
 
 	private static final Logger logger = LoggerFactory.getLogger(DomainPatternFacadeImpl.class);
-	
+
 	private final UserProviderService userProviderService;
 
 	public DomainPatternFacadeImpl(final AccountService accountService, final UserProviderService userProviderService) {
@@ -58,20 +59,10 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 	}
 
 	@Override
-	public List<DomainPatternDto> getDomainPatterns() throws BusinessException {
+	public Set<DomainPatternDto> findAll() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		List<DomainPattern> domainPatterns = userProviderService.findAllUserDomainPattern();
-		List<DomainPatternDto> res = new ArrayList<DomainPatternDto>();
-		for (DomainPattern domainPattern : domainPatterns) {
-			res.add(new DomainPatternDto(domainPattern));
-		}
-		return res;
-	}
-	
-	@Override
-	public List<DomainPatternDto> getModels() throws BusinessException {
-		List<DomainPattern> domainPatterns = userProviderService.findAllDomainPattern();
-		List<DomainPatternDto> res = new ArrayList<DomainPatternDto>();
+		Set<DomainPatternDto> res = new HashSet<DomainPatternDto>();
 		for (DomainPattern domainPattern : domainPatterns) {
 			res.add(new DomainPatternDto(domainPattern));
 		}
@@ -79,19 +70,30 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 	}
 
 	@Override
-	public void updateDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException {
+	public Set<DomainPatternDto> findAllModels() throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+		List<DomainPattern> domainPatterns = userProviderService.findAllDomainPattern();
+		Set<DomainPatternDto> res = new HashSet<DomainPatternDto>();
+		for (DomainPattern domainPattern : domainPatterns) {
+			res.add(new DomainPatternDto(domainPattern));
+		}
+		return res;
+	}
+
+	@Override
+	public void update(DomainPatternDto domainPatternDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		userProviderService.updateDomainPattern(new DomainPattern(domainPatternDto));
 	}
 
 	@Override
-	public void createDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException {
+	public void create(DomainPatternDto domainPatternDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		userProviderService.createDomainPattern(new DomainPattern(domainPatternDto));
 	}
 
 	@Override
-	public void deleteDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException {
+	public void delete(DomainPatternDto domainPatternDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		userProviderService.deletePattern(domainPatternDto.getIdentifier());
 	}

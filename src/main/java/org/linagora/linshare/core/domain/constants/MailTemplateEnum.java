@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.constants;
 
+
 /**
  * Enumerate the available mail templates
  * 

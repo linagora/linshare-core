@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.webservice.dto.DomainDto;
 
@@ -84,6 +85,16 @@ public abstract class AbstractDomain {
 
 	protected Long authShowOrder;
 
+	//mail configurations
+	private MailConfig currentMailConfiguration;
+	private Set<MailLayout> mailLayouts;
+	private Set<MailFooter> mailFooters;
+	private Set<MailConfig> mailConfigs;
+	private Set<MailContent> mailContents;
+
+	private MimePolicy mimePolicy;
+	private Set<MimePolicy> mimePolicies;
+
 	protected AbstractDomain() {
 		this.identifier = null;
 	}
@@ -106,6 +117,11 @@ public abstract class AbstractDomain {
 		this.messagesConfiguration = new MessagesConfiguration();
 		this.policy = null;
 		this.authShowOrder = new Long(1);
+		this.mailLayouts = new HashSet<MailLayout>();
+		this.mailFooters = new HashSet<MailFooter>();
+		this.mailContents = new HashSet<MailContent>();
+		this.mailConfigs = new HashSet<MailConfig>();
+		this.mimePolicies = new HashSet<MimePolicy>();
 	}
 
 	public AbstractDomain(AbstractDomainVo d) {
@@ -125,7 +141,7 @@ public abstract class AbstractDomain {
 		this.usedSpace = d.getUsedSpace();
 		this.shareExpiryRules = new ArrayList<ShareExpiryRule>();
 		this.policy = null;
-		this.authShowOrder = new Long(1);
+		this.authShowOrder = d.getAuthShowOrder();
 	}
 
 	public AbstractDomain(DomainDto domainDto, AbstractDomain parent) {
@@ -139,11 +155,12 @@ public abstract class AbstractDomain {
 		this.parentDomain = parent;
 		this.enable = true;
 		this.template = false;
-		this.usedSpace = new Long(0);		
+		this.usedSpace = new Long(0);
 		this.subdomain = new HashSet<AbstractDomain>();
 		this.defaultRole = Role.valueOf(domainDto.getUserRole());
 		this.defaultLocale = domainDto.getLocale();
-		this.authShowOrder = new Long(1);
+		this.authShowOrder = domainDto.getAuthShowOrder();
+//		TODO this.mimePolicy = new MimePolicy();
 	}
 
 	public void updateDomainWith(AbstractDomain d) {
@@ -152,7 +169,7 @@ public abstract class AbstractDomain {
 		this.defaultRole = d.getDefaultRole();
 		this.defaultLocale = d.getDefaultLocale();
 		this.enable = d.isEnable();
-		this.template = d.isTemplate();
+		this.authShowOrder = d.getAuthShowOrder();
 	}
 
 	public String getDefaultLocale() {
@@ -326,5 +343,89 @@ public abstract class AbstractDomain {
 
 	public void setAuthShowOrder(Long authShowOrder) {
 		this.authShowOrder = authShowOrder;
+	}
+
+	public boolean isManagedBy(Account account) {
+		if(account.isSuperAdmin()) {
+			return true;
+		}
+		if (account.isAdmin()) {
+			if (this.identifier.equals(account.getDomainId())) {
+				// You have the right to manage your own domain
+				return true;
+			} else {
+				// Checking if a parent domain is managed by the current actor
+				return checkIfManagedByParent(this, account.getDomainId());
+			}
+		}
+		return false;
+	}
+
+	private boolean checkIfManagedByParent(AbstractDomain domain, String accountDomainId) {
+		AbstractDomain d = domain.getParentDomain();
+		if (d != null) {
+			if (d .getIdentifier().equals(accountDomainId)) {
+				return true;
+			} else {
+				checkIfManagedByParent(d, accountDomainId);
+			}
+		}
+		return false;
+	}
+
+	public MailConfig getCurrentMailConfiguration() {
+		return currentMailConfiguration;
+	}
+
+	public void setCurrentMailConfiguration(MailConfig currentMailConfiguration) {
+		this.currentMailConfiguration = currentMailConfiguration;
+	}
+
+	public Set<MailLayout> getMailLayouts() {
+		return mailLayouts;
+	}
+
+	public void setMailLayouts(Set<MailLayout> mailLayouts) {
+		this.mailLayouts = mailLayouts;
+	}
+
+	public Set<MailFooter> getMailFooters() {
+		return mailFooters;
+	}
+
+	public void setMailFooters(Set<MailFooter> mailFooters) {
+		this.mailFooters = mailFooters;
+	}
+
+	public Set<MailConfig> getMailConfigs() {
+		return mailConfigs;
+	}
+
+	public void setMailConfigs(Set<MailConfig> mailConfigs) {
+		this.mailConfigs = mailConfigs;
+	}
+
+	public Set<MailContent> getMailContents() {
+		return mailContents;
+	}
+
+	public void setMailContents(Set<MailContent> mailContents) {
+		this.mailContents = mailContents;
+	}
+
+	public MimePolicy getMimePolicy() {
+		return mimePolicy;
+	}
+
+	public void setMimePolicy(MimePolicy mimePolicy) {
+		this.mimePolicy = mimePolicy;
+	}
+
+	public Set<MimePolicy> getMimePolicies() {
+		return mimePolicies;
+	}
+
+	public void setMimePolicies(Set<MimePolicy> mimePolicies) {
+		this.mimePolicies = mimePolicies;
 	}
 }

@@ -37,8 +37,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Role;
 
 public class AccountVo implements Serializable {
 

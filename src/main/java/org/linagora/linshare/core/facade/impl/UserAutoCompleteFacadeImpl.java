@@ -63,7 +63,7 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 		List<User> users = userService.autoCompleteUser(currentUserVo.getLogin(), pattern);
 		logger.debug("nb result for completion : " + users.size());
 		// TODO : FMA : Use database configuration for auto complete limit
-		return getUserVoList(users, 15, true);
+		return getUserVoList(users, AUTO_COMPLETE_LIMIT, true);
 	}
 
 	@Override
@@ -113,18 +113,18 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 	 * @return a list of UserVo.
 	 */
 	private List<UserVo> getUserVoList(List<User> users, int limit, boolean addEmptyUser) {
-		List<UserVo> userVOs = new ArrayList<UserVo>();
+		List<UserVo> userVos = new ArrayList<UserVo>();
 		int count = 0;
 		for (User user : users) {
-			userVOs.add(new UserVo(user));
+			userVos.add(new UserVo(user));
 			count++;
 			if (count == limit) {
 				if (addEmptyUser)
-					userVOs.add(new EmptyUserVo());
+					userVos.add(new EmptyUserVo());
 				break;
 			}
 		}
-		return userVOs;
+		return userVos;
 	}
 	
 	private List<String> getMailList(List<User> users, int limit) {

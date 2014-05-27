@@ -39,21 +39,24 @@ import javax.ws.rs.Path;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.webservice.dto.UserSearchDto;
 
 @Path("/users")
 public interface UserRestService {
 
-	Set<UserDto> completionUser(String pattern) throws BusinessException;
+	Set<UserDto> search(UserSearchDto userSearchDto) throws BusinessException;
 	
-	Set<UserDto> getInternals(String pattern) throws BusinessException;
+	Set<UserDto> searchInternals(String pattern) throws BusinessException;
 
-	Set<UserDto> getGuests(String pattern) throws BusinessException;
+	Set<UserDto> searchGuests(String pattern) throws BusinessException;
+
+	Set<UserDto> autocomplete(String pattern) throws BusinessException;
 	
-	void updateUser(UserDto userDto) throws BusinessException;
+	void update(UserDto userDto) throws BusinessException;
 
-	void deleteUser(UserDto userDto) throws BusinessException;
+	void delete(UserDto userDto) throws BusinessException;
 
-	void getAllInconsistent() throws BusinessException;
+	Set<UserDto> findAllInconsistent() throws BusinessException;
 
-	void updateInconsistentUser(UserDto userDto) throws BusinessException;
+	void updateInconsistent(UserDto userDto) throws BusinessException;
 }

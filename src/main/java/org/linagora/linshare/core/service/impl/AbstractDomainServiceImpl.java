@@ -36,11 +36,24 @@ package org.linagora.linshare.core.service.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.entities.*;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.GuestDomain;
+import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapUserProvider;
+import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
+import org.linagora.linshare.core.domain.entities.RootDomain;
+import org.linagora.linshare.core.domain.entities.SubDomain;
+import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -61,11 +74,10 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final AbstractDomainRepository abstractDomainRepository;
 	private final DomainPolicyService domainPolicyService;
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-	
 	private final UserProviderService userProviderService;
 	private final MessagesRepository messagesRepository;
 	private final UserRepository<User> userRepository;
-    private final DomainBusinessService domainBusinessService;
+	private final DomainBusinessService domainBusinessService;
 
 	public AbstractDomainServiceImpl(
 			AbstractDomainRepository abstractDomainRepository,
@@ -74,7 +86,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			UserProviderService userProviderService,
 			MessagesRepository messagesRepository,
 			UserRepository<User> userRepository,
-            DomainBusinessService domainBusinessService) {
+			DomainBusinessService domainBusinessService) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
@@ -82,7 +94,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.messagesRepository = messagesRepository;
 		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
-        this.domainBusinessService = domainBusinessService;
+		this.domainBusinessService = domainBusinessService;
 	}
 
 	@Override
@@ -96,6 +108,15 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		if (domain.getIdentifier() == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
 					"This new domain has no identifier.");
+		}
+
+		Validate.notEmpty(domain.getIdentifier(),
+				"domain identifier must be set.");
+		Pattern formatValidator = Pattern.compile("^[a-zA-Z0-9_]{4,}$");
+		if (!formatValidator.matcher(domain.getIdentifier()).matches()) {
+			throw new BusinessException(
+					BusinessErrorCode.DOMAIN_IDENTIFIER_BAD_FORMAT,
+					"This new domain identifier should only contains the following characters : a-z A-Z 0-9 _.");
 		}
 
 		if (retrieveDomain(domain.getIdentifier()) != null) {
@@ -129,8 +150,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			logger.debug("creation of a TopDomain without an UserProvider.");
 		}
 
-		DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(domain
-				.getPolicy().getIdentifier());
+		DomainPolicy policy = domainPolicyService.find(domain.getPolicy()
+				.getIdentifier());
 
 		if (policy == null) {
 			throw new BusinessException(
@@ -148,6 +169,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			userProviderService.create(domain.getUserProvider());
 		}
 
+		domain.setAuthShowOrder(new Long(1));
 		// Object creation
 		abstractDomainRepository.create(domain);
 
@@ -212,7 +234,12 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	@Override
 	public AbstractDomain retrieveDomain(String identifier) {
-		return domainBusinessService.findById(identifier);
+		// HACK
+		try {
+			return domainBusinessService.findById(identifier);
+		} catch (BusinessException e) {
+			return null;
+		}
 	}
 
 	@Override
@@ -293,8 +320,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 		AbstractDomain entity = retrieveDomain(domain.getIdentifier());
 		if (entity == null) {
-			throw new BusinessException(
-					BusinessErrorCode.DOMAIN_DO_NOT_ALREADY_EXISTS,
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,
 					"This domain identifier does not exist.");
 		}
 
@@ -316,8 +342,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			}
 		}
 
-		DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(domain
-				.getPolicy().getIdentifier());
+		DomainPolicy policy = domainPolicyService.find(domain.getPolicy()
+				.getIdentifier());
 
 		if (policy == null) {
 			throw new BusinessException(
@@ -325,41 +351,45 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					"This new domain has a wrong domain policy identifier.");
 		}
 		entity.updateDomainWith(domain);
-		entity.setPolicy(policy);
-
-		LdapUserProvider provider = entity.getUserProvider();
-		DomainPattern domainPattern = null;
-		LDAPConnection ldapConn = null;
-		String baseDn = null;
-		if (domain.getUserProvider() != null) {
-			domainPattern = domain.getUserProvider().getPattern();
-			ldapConn = domain.getUserProvider().getLdapconnexion();
-			baseDn = domain.getUserProvider().getBaseDn();
-		}
-		if (baseDn != null && domainPattern != null && ldapConn != null) {
-			logger.debug("Update domain with provider");
-			if (provider == null) {
-				logger.debug("Update domain with provider creation ");
-				provider = new LdapUserProvider(baseDn, ldapConn, domainPattern);
-				userProviderService.create(provider);
-				entity.setUserProvider(provider);
-			} else {
-				logger.debug("Update domain with provider update ");
-				provider.setBaseDn(baseDn);
-				provider.setLdapconnexion(ldapConn);
-				provider.setPattern(domainPattern);
-				userProviderService.update(provider);
-			}
+		if (entity.getDomainType().equals(DomainType.ROOTDOMAIN)) {
 			abstractDomainRepository.update(entity);
 		} else {
-			logger.debug("Update domain without provider");
-			if (provider != null) {
-				logger.debug("delete old provider.");
-				entity.setUserProvider(null);
+			entity.setPolicy(policy);
+			LdapUserProvider provider = entity.getUserProvider();
+			DomainPattern domainPattern = null;
+			LDAPConnection ldapConn = null;
+			String baseDn = null;
+			if (domain.getUserProvider() != null) {
+				domainPattern = domain.getUserProvider().getPattern();
+				ldapConn = domain.getUserProvider().getLdapconnexion();
+				baseDn = domain.getUserProvider().getBaseDn();
+			}
+			if (baseDn != null && domainPattern != null && ldapConn != null) {
+				logger.debug("Update domain with provider");
+				if (provider == null) {
+					logger.debug("Update domain with provider creation ");
+					provider = new LdapUserProvider(baseDn, ldapConn,
+							domainPattern);
+					userProviderService.create(provider);
+					entity.setUserProvider(provider);
+				} else {
+					logger.debug("Update domain with provider update ");
+					provider.setBaseDn(baseDn);
+					provider.setLdapconnexion(ldapConn);
+					provider.setPattern(domainPattern);
+					userProviderService.update(provider);
+				}
 				abstractDomainRepository.update(entity);
-				userProviderService.delete(provider);
 			} else {
-				abstractDomainRepository.update(entity);
+				logger.debug("Update domain without provider");
+				if (provider != null) {
+					logger.debug("delete old provider.");
+					entity.setUserProvider(null);
+					abstractDomainRepository.update(entity);
+					userProviderService.delete(provider);
+				} else {
+					abstractDomainRepository.update(entity);
+				}
 			}
 		}
 	}
@@ -369,8 +399,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throws BusinessException {
 		User user = null;
 		if (domain.getUserProvider() != null) {
-			user = userProviderService.findUser(domain.getUserProvider(),
-						mail);
+			user = userProviderService.findUser(domain.getUserProvider(), mail);
 			if (user != null) {
 				user.setDomain(domain);
 				user.setRole(user.getDomain().getDefaultRole());
@@ -387,9 +416,11 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	public Boolean isUserExist(AbstractDomain domain, String mail)
 			throws BusinessException {
 		if (domain.getUserProvider() != null) {
-			return userProviderService.isUserExist( domain.getUserProvider(), mail);
+			return userProviderService.isUserExist(domain.getUserProvider(),
+					mail);
 		} else {
-			logger.debug("UserProvider is null for domain : " + domain.getIdentifier());
+			logger.debug("UserProvider is null for domain : "
+					+ domain.getIdentifier());
 		}
 		return false;
 	}
@@ -462,8 +493,12 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			// if the current domain is linked to a UserProvider, we perform a
 			// search.
 			if (d.getUserProvider() != null) {
-				users.addAll(userProviderService.autoCompleteUser(
-							d.getUserProvider(), pattern));
+				List<User> list = userProviderService.autoCompleteUser(
+						d.getUserProvider(), pattern);
+				for (User user : list) {
+					user.setDomain(d);
+				}
+				users.addAll(list);
 			} else {
 				logger.debug("UserProvider is null for domain : "
 						+ domain.getIdentifier());
@@ -590,9 +625,10 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				List<User> ldapUserList = new ArrayList<User>();
 				try {
 					ldapUserList = userProviderService.searchUser(
-						d.getUserProvider(), mail, firstName, lastName);
+							d.getUserProvider(), mail, firstName, lastName);
 				} catch (BusinessException e) {
-					logger.error("can not search users from domain:" + d.getIdentifier());
+					logger.error("can not search users from domain:"
+							+ d.getIdentifier());
 				}
 
 				// For each user, we set the domain which he came from.

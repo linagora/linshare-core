@@ -37,7 +37,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <script type="text/javascript" language="javascript">
         var uuids = [];
 	
-        var uploader;
+	var uploader;
 
         var sizeAvailable = ${maxFileSize};
 

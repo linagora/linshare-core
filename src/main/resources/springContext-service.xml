@@ -26,15 +26,13 @@
 	<bean name="accountService" class="org.linagora.linshare.core.service.impl.AccountServiceImpl">
 		<constructor-arg ref="accountRepository" />
 	</bean>
-	
+
 	<bean name="threadService" class="org.linagora.linshare.core.service.impl.ThreadServiceImpl">
 		<constructor-arg ref="threadRepository" />
-		<constructor-arg ref="threadViewRepository" />
 		<constructor-arg ref="threadMemberRepository" />
-		<constructor-arg ref="tagRepository" />
 		<constructor-arg ref="documentEntryBusinessService" />
-        <constructor-arg ref="logEntryService" />
-        <constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">
@@ -70,8 +68,14 @@
 	</bean>
 
 	<bean id="mimeTypeService" class="org.linagora.linshare.core.service.impl.MimeTypeServiceImpl">
-		<constructor-arg index="0" ref="allowedMimeTypeRepository" />
-		<constructor-arg index="1" ref="mimeTypeMagicNumberDao" />
+		<constructor-arg ref="mimeTypeBusinessService" />
+		<constructor-arg ref="mimePolicyBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+	</bean>
+	<bean id="mimePolicyService" class="org.linagora.linshare.core.service.impl.MimePolicyServiceImpl">
+		<constructor-arg ref="mimePolicyBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="domainBusinessService" />
 	</bean>
 
 	<bean id="documentEntryService" class="org.linagora.linshare.core.service.impl.DocumentEntryServiceImpl">
@@ -84,7 +88,7 @@
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
 		<constructor-arg ref="antiSamyService" />
 	</bean>
-	
+
 	<bean id="threadEntryService" class="org.linagora.linshare.core.service.impl.ThreadEntryServiceImpl">
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="logEntryService" />
@@ -93,7 +97,6 @@
 		<constructor-arg ref="mimeTypeService" />
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="clamavVirusScannerService" />
-		<constructor-arg ref="tagBusinessService" />
 		<constructor-arg ref="threadMemberRepository" />
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
 		<constructor-arg ref="antiSamyService" />
@@ -108,8 +111,8 @@
 		<constructor-arg ref="shareEntryService" />
 		<constructor-arg ref="anonymousShareEntryService" />
 	</bean>
-	
-	
+
+
 
 	<bean id="shareEntryService" class="org.linagora.linshare.core.service.impl.ShareEntryServiceImpl">
 		<constructor-arg ref="guestRepository" />
@@ -178,7 +181,14 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg value="${linshare.display.licenceTerm}" />
-		
+	</bean>
+
+	<bean name="mailBuildingService" class="org.linagora.linshare.core.service.impl.MailBuildingServiceImpl">
+		<constructor-arg value="${linshare.logo.mails.visible}" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="mailConfigRepository" />
+		<constructor-arg value="${linshare.display.licenceTerm}" />	
 	</bean>
 
 	<bean name="userProviderService" class="org.linagora.linshare.core.service.impl.UserProviderServiceImpl">
@@ -190,13 +200,16 @@
 
 	<bean name="functionalityService" class="org.linagora.linshare.core.service.impl.FunctionalityServiceImpl">
 		<constructor-arg ref="functionalityBusinessService" />
+		<constructor-arg ref="domainBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
-	
+
 	<bean name="functionalityOldService" class="org.linagora.linshare.core.service.impl.FunctionalityOldServiceImpl">
 		<constructor-arg ref="functionalityRepository" />
+		<constructor-arg ref="functionalityBusinessService" />
 		<constructor-arg ref="abstractDomainRepository" />
 	</bean>
-	
+
 	<bean name="functionalityReadOnlyService" class="org.linagora.linshare.core.service.impl.FunctionalityReadOnlyServiceImpl">
 		<constructor-arg ref="functionalityRepository" />
 		<constructor-arg ref="abstractDomainRepository" />
@@ -205,8 +218,6 @@
 
 	<bean name="domainPolicyService" class="org.linagora.linshare.core.service.impl.DomainPolicyServiceImpl">
 		<constructor-arg ref="domainPolicyBusinessService" />
-		<constructor-arg ref="domainAccessPolicyBusinessService" />
-		<constructor-arg ref="domainBusinessService" />
 	</bean>
 
 	<bean name="abstractDomainService" class="org.linagora.linshare.core.service.impl.AbstractDomainServiceImpl">
@@ -229,13 +240,17 @@
 		<constructor-arg ref="logEntryService" />
 	</bean>
 
-	<bean name="tagService" class="org.linagora.linshare.core.service.impl.TagServiceImpl">
-		<constructor-arg ref="tagBusinessService" />
-	</bean>
-	
-		<bean name="mailingListService" class="org.linagora.linshare.core.service.impl.MailingListServiceImpl">
+    <bean name="mailingListService" class="org.linagora.linshare.core.service.impl.MailingListServiceImpl">
 		<constructor-arg ref="mailingListBusinessService" />
 		<constructor-arg ref="userService" />
 	</bean>
 
+	<bean name="mailConfigService" class="org.linagora.linshare.core.service.impl.MailConfigServiceImpl">
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="mailConfigBusinessService" />
+		<constructor-arg ref="mailContentBusinessService" />
+		<constructor-arg ref="mailFooterBusinessService" />
+		<constructor-arg ref="mailLayoutBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+	</bean>
 </beans>

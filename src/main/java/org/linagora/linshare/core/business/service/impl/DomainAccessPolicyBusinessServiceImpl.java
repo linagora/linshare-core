@@ -33,41 +33,74 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
-
 import org.linagora.linshare.core.business.service.DomainAccessPolicyBusinessService;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainAccessRuleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DomainAccessPolicyBusinessServiceImpl implements DomainAccessPolicyBusinessService{
-	
-    private static final Logger logger = LoggerFactory.getLogger(DomainAccessPolicyBusinessServiceImpl.class);
-	
+public class DomainAccessPolicyBusinessServiceImpl implements
+		DomainAccessPolicyBusinessService {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(DomainAccessPolicyBusinessServiceImpl.class);
+
 	private final DomainAccessRuleRepository domainAccessRuleRepository;
-	
-	public DomainAccessPolicyBusinessServiceImpl(DomainAccessRuleRepository domainAccessRuleRepository){
+
+	public DomainAccessPolicyBusinessServiceImpl(
+			DomainAccessRuleRepository domainAccessRuleRepository) {
 		super();
-		this.domainAccessRuleRepository=domainAccessRuleRepository;
-		
+		this.domainAccessRuleRepository = domainAccessRuleRepository;
+
 	}
-	
+
 	@Override
-	public DomainAccessRule retrieveDomainAccessRule(long id){
+	public DomainAccessRule retrieveDomainAccessRule(long id) {
 		return domainAccessRuleRepository.findById(id);
 	}
-	
+
 	@Override
-	public void deleteDomainAccessRule(long persistenceID) throws BusinessException{
-		
-		DomainAccessRule rule =retrieveDomainAccessRule(persistenceID);
-        if(rule == null) {
-        	logger.error("rule not found: " + persistenceID);
-        } else {
-            logger.debug("delete rule: " + persistenceID);
-    		domainAccessRuleRepository.delete(rule);
-        }
+	public void deleteDomainAccessRule(long persistenceID)
+			throws BusinessException {
+
+		DomainAccessRule rule = retrieveDomainAccessRule(persistenceID);
+		if (rule == null) {
+			logger.error("rule not found: " + persistenceID);
+		} else {
+			logger.debug("delete rule: " + persistenceID);
+			domainAccessRuleRepository.delete(rule);
+		}
 	}
-		
+
+	@Override
+	public DomainAccessRule find(long id) throws BusinessException {
+		DomainAccessRule domainAccessRule = domainAccessRuleRepository
+				.findById(id);
+		if (domainAccessRule == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
+					"Can not find domainAccessRule");
+		}
+		return domainAccessRule;
+	}
+
+	@Override
+	public DomainAccessRule create(DomainAccessRule domainAccessRule)
+			throws BusinessException {
+		return domainAccessRuleRepository.create(domainAccessRule);
+	}
+
+	@Override
+	public DomainAccessRule update(DomainAccessRule domainAccessRule)
+			throws BusinessException {
+		return domainAccessRuleRepository.update(domainAccessRule);
+	}
+
+	@Override
+	public void delete(DomainAccessRule domainAccessRule)
+			throws BusinessException {
+		domainAccessRuleRepository.delete(find(domainAccessRule
+				.getPersistenceId()));
+	}
 }
