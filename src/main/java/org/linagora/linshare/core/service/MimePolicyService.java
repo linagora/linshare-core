@@ -8,9 +8,9 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MimePolicyService {
 
-	MimePolicy create(Account actor, MimePolicy mimePolicy) throws BusinessException;
+	MimePolicy create(Account actor, String domainId, MimePolicy mimePolicy) throws BusinessException;
 
-	MimePolicy delete(Account actor, MimePolicy mimePolicy) throws BusinessException;
+	void delete(Account actor, MimePolicy mimePolicy) throws BusinessException;
 
 	MimePolicy find(Account actor, String uuid, boolean full) throws BusinessException;
 

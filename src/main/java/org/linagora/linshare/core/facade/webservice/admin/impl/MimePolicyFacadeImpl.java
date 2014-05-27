@@ -67,9 +67,11 @@ public class MimePolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notNull(dto, "MimePolicy dto must be set.");
 		Validate.notEmpty(dto.getName(), "policy name must be set.");
-        MimePolicy policy = new MimePolicy(dto);
-        policy.setDomain(abstractDomainService.retrieveDomain(dto.getDomainId()));
-		return new MimePolicyDto(mimePolicyService.create(actor, policy));
+		Validate.notEmpty(dto.getDomainId(), "domain identifier name must be set.");
+
+		MimePolicy create = mimePolicyService.create(actor, dto.getDomainId(),
+				new MimePolicy(dto));
+		return new MimePolicyDto(create);
 	}
 
 	@Override

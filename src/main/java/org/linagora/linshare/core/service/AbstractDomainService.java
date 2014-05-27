@@ -37,7 +37,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
-import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
@@ -45,18 +44,21 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AbstractDomainService {
-	
+
 	public TopDomain createTopDomain(TopDomain topDomain) throws BusinessException;
 	public SubDomain createSubDomain(SubDomain subDomain) throws BusinessException;
 	public GuestDomain createGuestDomain(GuestDomain guestDomain) throws BusinessException;
-	
+
 	public AbstractDomain retrieveDomain(String identifier);
+	AbstractDomain findById(String identifier) throws BusinessException;
+
+
 	public void updateDomain(AbstractDomain domain) throws BusinessException;
 	public void deleteDomain(String identifier) throws BusinessException;
 	public List<String> getAllDomainIdentifiers();
 	public List<String> getAllMyDomainIdentifiers(String personalDomainIdentifer);
-	
-	
+
+
 	/**
 	 * This method returns all domain except the root domain.
 	 * @return AbstractDomain list
@@ -67,11 +69,11 @@ public interface AbstractDomainService {
 	public List<AbstractDomain> getAllTopDomain();
 	public List<AbstractDomain> getAllSubDomain();
 	public GuestDomain getGuestDomain(String topDomainIdentifier);
-	
-	
-	
+
+
+
 	public RootDomain getUniqueRootDomain()throws BusinessException;
-	
+
 	/**
 	 * This method returns a list containing all the authorized domains for the input domain.
 	 * This used to filter communications between domains.
@@ -79,7 +81,7 @@ public interface AbstractDomainService {
 	 * @return List of domains.
 	 */
 	public List<AbstractDomain> getAllAuthorizedDomains(String domainIdentifier);
-	
+
 	/**
 	 * This method is designed to search in a particular domain and its SubDomain.
 	 * @param domainIdentifier
@@ -88,7 +90,7 @@ public interface AbstractDomainService {
 	 * @throws BusinessException
 	 */
 	public List<User> searchUserWithDomainPolicies(String domainIdentifier, String mail, String firstName, String lastName) throws BusinessException;
-	
+
 	/**
 	 * This method is designed to search a user in all authorized Domain and SubDomain. Use ONLY for completion
 	 * @param domainIdentifier
@@ -113,7 +115,7 @@ public interface AbstractDomainService {
 	 * @throws BusinessException
 	 */
 	public List<User> searchUserRecursivelyWithoutRestriction(String mail) throws BusinessException;
-	
+
 	/**
 	 * This method is designed to search in a particular domain and its SubDomain.
 	 * @param domainIdentifier
@@ -122,8 +124,8 @@ public interface AbstractDomainService {
 	 * @throws BusinessException
 	 */
 	public List<User> searchUserRecursivelyWithoutRestriction(String domainIdentifier, String mail) throws BusinessException;
-	
-	
+
+
 	/**
 	 * This method is designed to search users in a particular domain.
 	 * @param domainIdentifier
@@ -132,7 +134,7 @@ public interface AbstractDomainService {
 	 * @throws BusinessException
 	 */
 	public User findUserWithoutRestriction(AbstractDomain domain, String mail) throws BusinessException;
-	
+
 	/**
 	 * Test if a user exists or not in ldap. This method does not test domain policies.
 	 * @param domain
@@ -141,7 +143,7 @@ public interface AbstractDomainService {
 	 * @throws BusinessException
 	 */
 	public Boolean isUserExist(AbstractDomain domain, String mail) throws BusinessException;
-	
+
 	/**
 	 * This method is designed to search in a particular domain and its SubDomain.
 	 * @param domainIdentifier
@@ -150,11 +152,11 @@ public interface AbstractDomainService {
 	 * @throws BusinessException
 	 */
 	public User searchOneUserRecursivelyWithoutRestriction(String domainIdentifier, String mail) throws BusinessException;
-	
+
 	public boolean userCanCreateGuest(User user);
 	public boolean canCreateGuestDomain(AbstractDomain domain) ;
 	public boolean hasRightsToShareWithExternals(User sender) throws BusinessException;
-	
+
 	/**
 	 * Retrieve the mail address for notifications (smtp sender)
 	 * @param domain

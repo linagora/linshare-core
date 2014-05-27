@@ -35,42 +35,47 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 	}
 
 	@Override
-	public MimePolicy create(Account actor, MimePolicy mimePolicy)
+	public MimePolicy create(Account actor, String domainId, MimePolicy mimePolicy)
 			throws BusinessException {
-		Validate.notNull(actor);
-		Validate.notNull(mimePolicy);
-		Validate.notNull(mimePolicy.getDomain(), "Domain id not specify");
-		Validate.notEmpty(mimePolicy.getDomain().getIdentifier());
-		Validate.notEmpty(mimePolicy.getName());
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(mimePolicy, "MimePolicy must be set.");
+		Validate.notEmpty(domainId, "Domain identifier must be set.");
+		Validate.notEmpty(mimePolicy.getName(), "Name of MimePolicy must be set.");
 
+		AbstractDomain domain = domainBusinessService.findById(domainId);
 		// check actor is admin of mimePolicy.getDomain();
-		if (!mimePolicy.getDomain().isManagedBy(actor)) {
+		if (!domain.isManagedBy(actor)) {
 			String msg = "The current actor " + actor.getAccountReprentation()
 					+ " does not have the right to create a MimePolicy.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
-		return mimePolicyBusinessService.create(mimePolicy);
+
+		domain.getMimePolicies().add(mimePolicy);
+		mimePolicy.setDomain(domain);
+		MimePolicy ret = mimePolicyBusinessService.create(mimePolicy);
+		domainBusinessService.update(domain);
+		return ret;
 	}
 
 	@Override
-	public MimePolicy delete(Account actor, MimePolicy mimePolicy)
+	public void delete(Account actor, MimePolicy mimePolicy)
 			throws BusinessException {
-		Validate.notNull(actor);
-		Validate.notNull(mimePolicy);
-		Validate.notEmpty(mimePolicy.getUuid());
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(mimePolicy, "MimePolicy must be set.");
+		Validate.notEmpty(mimePolicy.getUuid(), "MimePolicy uuid must be set");
 		if (!isAdminFor(actor, mimePolicy.getUuid())) {
 			String msg = "The current actor " + actor.getAccountReprentation()
 					+ " does not have the right to delete this MimePolicy.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
-		return mimePolicyBusinessService.create(mimePolicy);
+		mimePolicyBusinessService.delete(mimePolicy);
 	}
 
 	@Override
 	public MimePolicy find(Account actor, String uuid, boolean full)
 			throws BusinessException {
-		Validate.notNull(actor);
-		Validate.notEmpty(uuid);
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notEmpty(uuid, "MimePolicy uuid must be set.");
 		if (!isAdminFor(actor, uuid)) {
 			String msg = "The current actor " + actor.getAccountReprentation()
 					+ " does not have the right to get this MimePolicy.";
@@ -86,8 +91,8 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 	@Override
 	public Set<MimePolicy> findAll(Account actor, String domainIdentifier,
 			boolean onlyCurrentDomain) throws BusinessException {
-		Validate.notNull(actor);
-		Validate.notNull(domainIdentifier);
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(domainIdentifier, "Domain identifier must be set.");
 
 		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		if (!domainPermissionService.isAdminforThisDomain(actor, domain)) {
@@ -114,10 +119,10 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 	@Override
 	public MimePolicy update(Account actor, MimePolicy mimePolicyDto)
 			throws BusinessException {
-		Validate.notNull(actor);
-		Validate.notNull(mimePolicyDto);
-		Validate.notEmpty(mimePolicyDto.getUuid());
-		Validate.notEmpty(mimePolicyDto.getName());
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(mimePolicyDto, "MimePolicy must be set.");
+		Validate.notEmpty(mimePolicyDto.getUuid(), "MimePolicy uuid must be set.");
+		Validate.notEmpty(mimePolicyDto.getName(), "MimePolicy name must be set.");
 		if (!isAdminFor(actor, mimePolicyDto.getUuid())) {
 			String msg = "The current actor " + actor.getAccountReprentation()
 					+ " does not have the right to update this MimePolicy.";

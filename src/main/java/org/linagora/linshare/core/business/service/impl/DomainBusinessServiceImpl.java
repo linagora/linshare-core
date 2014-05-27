@@ -51,8 +51,15 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 	public AbstractDomain findById(String identifier) throws BusinessException {
 		AbstractDomain domain = repository.findById(identifier);
 		if (domain == null) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND, "The current domain does not exist : " + identifier);
+			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
+					"The current domain does not exist : " + identifier);
 		}
 		return domain;
+	}
+
+	@Override
+	public AbstractDomain update(AbstractDomain domain)
+			throws BusinessException {
+		return repository.update(domain);
 	}
 }

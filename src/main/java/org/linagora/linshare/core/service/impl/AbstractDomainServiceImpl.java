@@ -243,6 +243,12 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	@Override
+	public AbstractDomain findById(String identifier) throws BusinessException {
+		Validate.notEmpty(identifier, "Domain identifier must be set.");
+		return domainBusinessService.findById(identifier);
+	}
+
+	@Override
 	public void deleteDomain(String identifier) throws BusinessException {
 		AbstractDomain domain = retrieveDomain(identifier);
 
