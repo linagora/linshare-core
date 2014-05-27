@@ -261,6 +261,7 @@
 	<bean id="wsAdminMimePolicyFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.MimePolicyFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="mimePolicyService" />
+		<constructor-arg ref="abstractDomainService" />
 	</bean>
 	<bean id="wsAdminMimeTypeFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.MimeTypeFacadeImpl">
 		<constructor-arg ref="accountService" />

@@ -39,8 +39,7 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 			throws BusinessException {
 		Validate.notNull(actor);
 		Validate.notNull(mimePolicy);
-		Validate.notEmpty(mimePolicy.getUuid());
-		Validate.notNull(mimePolicy.getDomain());
+		Validate.notNull(mimePolicy.getDomain(), "Domain id not specify");
 		Validate.notEmpty(mimePolicy.getDomain().getIdentifier());
 		Validate.notEmpty(mimePolicy.getName());
 

@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MimePolicyFacade;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.webservice.dto.MimePolicyDto;
@@ -51,11 +52,14 @@ public class MimePolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		MimePolicyFacade {
 
 	private final MimePolicyService mimePolicyService;
+	private final AbstractDomainService abstractDomainService;
 
 	public MimePolicyFacadeImpl(final AccountService accountService,
-			final MimePolicyService mimePolicyService) {
+			final MimePolicyService mimePolicyService,
+			final AbstractDomainService abstractDomainService) {
 		super(accountService);
 		this.mimePolicyService = mimePolicyService;
+		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
@@ -63,8 +67,9 @@ public class MimePolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notNull(dto, "MimePolicy dto must be set.");
 		Validate.notEmpty(dto.getName(), "policy name must be set.");
-		return new MimePolicyDto(mimePolicyService.create(actor,
-				new MimePolicy(dto)));
+        MimePolicy policy = new MimePolicy(dto);
+        policy.setDomain(abstractDomainService.retrieveDomain(dto.getDomainId()));
+		return new MimePolicyDto(mimePolicyService.create(actor, policy));
 	}
 
 	@Override

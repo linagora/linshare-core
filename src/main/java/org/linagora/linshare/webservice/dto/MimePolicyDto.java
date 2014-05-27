@@ -55,6 +55,9 @@ public class MimePolicyDto {
 	@ApiModelProperty(value = "Name")
 	private String name;
 
+	@ApiModelProperty(value = "DomainId")
+	private String domainId;
+
 	@ApiModelProperty(value = "Creation date")
 	private Date creationDate;
 
@@ -69,6 +72,7 @@ public class MimePolicyDto {
 		this.name = m.getName();
 		this.creationDate = m.getCreationDate();
 		this.modificationDate = m.getModificationDate();
+		this.domainId = m.getDomain().getIdentifier();
 		if (full) {
 			mimeTypes = Sets.newHashSet();
 			for (MimeType mimeType : m.getMimeTypes()) {
@@ -123,5 +127,13 @@ public class MimePolicyDto {
 
 	public void setMimeTypes(Set<MimeTypeDto> mimeTypes) {
 		this.mimeTypes = mimeTypes;
+	}
+
+	public String getDomainId() {
+		return domainId;
+	}
+
+	public void setDomainId(String domainId) {
+		this.domainId = domainId;
 	}
 }
