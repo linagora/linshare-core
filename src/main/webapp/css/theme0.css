@@ -4089,5 +4089,19 @@ input.ck-kaptcha {
 	vertical-align: bottom;
 }
 
+#history #bigPalette .t-palette-available div.t-palette-title,
+#history #bigPalette .t-palette-selected div.t-palette-title,
+#audit #bigPalette .t-palette-available div.t-palette-title,
+#audit #bigPalette .t-palette-selected div.t-palette-title {
+    width: 358px;
+}
+
+#history #bigPalette .t-palette-available select,
+#history #bigPalette .t-palette-selected select,
+#audit #bigPalette .t-palette-available select,
+#audit #bigPalette .t-palette-selected select {
+    width: 365px;
+}
+
 /***************************************************************************/
 /* EOF */
