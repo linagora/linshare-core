@@ -167,7 +167,7 @@ public class Index {
     public void onSharePanel(Object[] elements) {
         if (shareSessionObjects.getDocuments() == null || shareSessionObjects.getDocuments().size() == 0) {
             shareSessionObjects.addMessage(messages.get("pages.index.message.toFile"));
-            Link linkUser = pageRenderLinkSource.createPageRenderLink("files/index");
+            Link linkUser = pageRenderLinkSource.createPageRenderLink("files/upload");
             try {
                 response.sendRedirect(linkUser);
             } catch (IOException ex) {

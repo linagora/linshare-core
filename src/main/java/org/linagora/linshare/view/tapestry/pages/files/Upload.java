@@ -34,12 +34,8 @@
 package org.linagora.linshare.view.tapestry.pages.files;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
 
-import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.annotations.CleanupRender;
@@ -57,7 +53,6 @@ import org.apache.tapestry5.services.SelectModelFactory;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -197,6 +192,13 @@ public class Upload {
 
 	void onActivate() {
 		contextPath = requestGlobals.getHTTPServletRequest().getContextPath();
+
+		// XXX HACK
+		if (!shareSessionObjects.getUsers().isEmpty()) {
+			recipientsSearch = initUserListFromSharePanel();
+			shareSessionObjects.setUsers(new ArrayList<UserVo>());
+			shareSessionObjects.setMessages(new ArrayList<String>());
+		}
 	}
 
 	@SetupRender
@@ -436,6 +438,20 @@ public class Upload {
 				return arg0.toString();
 			}
 		};
+	}
+
+	/*
+	 * XXX HACK
+	 */
+	private String initUserListFromSharePanel() {
+		List<String> elements = new ArrayList<String>();
+		for (UserVo user : shareSessionObjects.getUsers()) {
+			String completeName = MailCompletionService.formatLabel(user);
+			if (!elements.contains(completeName)) {
+				elements.add(completeName);
+			}
+		}
+		return StringJoiner.join(elements, " ");
 	}
 
 	/** Perform a user search using the user search pattern.
