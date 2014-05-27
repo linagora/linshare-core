@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2013 LINAGORA
+ * Copyright (C) 2014 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2013. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2014. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.annotations.CleanupRender;
@@ -57,7 +56,6 @@ import org.apache.tapestry5.services.SelectModelFactory;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -193,6 +191,13 @@ public class Upload {
 
 	void onActivate() {
 		contextPath = requestGlobals.getHTTPServletRequest().getContextPath();
+
+		// XXX HACK
+		if (!shareSessionObjects.getUsers().isEmpty()) {
+			recipientsSearch = initUserListFromSharePanel();
+			shareSessionObjects.setUsers(new ArrayList<UserVo>());
+			shareSessionObjects.setMessages(new ArrayList<String>());
+		}
 	}
 
 	@SetupRender
@@ -437,6 +442,20 @@ public class Upload {
 	/*
 	 * Helpers
 	 */
+
+	/*
+	 * XXX HACK
+	 */
+	private String initUserListFromSharePanel() {
+		List<String> elements = new ArrayList<String>();
+		for (UserVo user : shareSessionObjects.getUsers()) {
+			String completeName = MailCompletionService.formatLabel(user);
+			if (!elements.contains(completeName)) {
+				elements.add(completeName);
+			}
+		}
+		return StringJoiner.join(elements, " ");
+	}
 
 	/**
 	 * Perform a user search using the user search pattern.
