@@ -79,12 +79,12 @@ public class MimePolicyRestServiceImpl extends WebserviceBase implements
 	@Override
 	public Set<MimePolicyDto> findAll(
 			@ApiParam(value = "Identifier of the domain which you are looking into.", required = true) 
-			@QueryParam("domaindId") String domaindId,
+			@QueryParam("domainId") String domainId,
 			@ApiParam(value = "Return current and parent domain's mime policies,"
 					+ " or only current domain's if onlyCurrentDomain is true.")
 			@QueryParam("onlyCurrentDomain") @DefaultValue("false") boolean onlyCurrentDomain)
 			throws BusinessException {
-		return mimePolicyFacade.findAll(domaindId, onlyCurrentDomain);
+		return mimePolicyFacade.findAll(domainId, onlyCurrentDomain);
 	}
 
 	@Path("/{uuid}")
