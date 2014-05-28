@@ -78,11 +78,9 @@ public class MimePolicyRestServiceImpl extends WebserviceBase implements
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public Set<MimePolicyDto> findAll(
-			@ApiParam(value = "Identifier of the domain which you are looking into.", required = true) 
-			@QueryParam("domainId") String domainId,
+			@ApiParam(value = "Identifier of the domain which you are looking into.", required = true) @QueryParam("domainId") String domainId,
 			@ApiParam(value = "Return current and parent domain's mime policies,"
-					+ " or only current domain's if onlyCurrentDomain is true.")
-			@QueryParam("onlyCurrentDomain") @DefaultValue("false") boolean onlyCurrentDomain)
+					+ " or only current domain's if onlyCurrentDomain is true.") @QueryParam("onlyCurrentDomain") @DefaultValue("false") boolean onlyCurrentDomain)
 			throws BusinessException {
 		return mimePolicyFacade.findAll(domainId, onlyCurrentDomain);
 	}
@@ -121,6 +119,28 @@ public class MimePolicyRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Policy to update.", required = true) MimePolicyDto policy)
 			throws BusinessException {
 		return mimePolicyFacade.update(policy);
+	}
+
+	@Path("/{uuid}/enable_all")
+	@PUT
+	@ApiOperation(value = "Set all mime types to enable for the current mime policy.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public MimePolicyDto enableAllMimeTypes(
+			@ApiParam(value = "Uuid of the mime policy.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
+		return mimePolicyFacade.enableAllMimeTypes(uuid);
+	}
+
+	@Path("/{uuid}/disable_all")
+	@PUT
+	@ApiOperation(value = "Set all mime types to disable for the current mime policy.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public MimePolicyDto disableAllMimeTypes(
+			@ApiParam(value = "Uuid of the mime policy.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
+		return mimePolicyFacade.disableAllMimeTypes(uuid);
 	}
 
 	@Path("/{uuid}")

@@ -41,7 +41,6 @@ import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MimePolicyFacade;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.webservice.dto.MimePolicyDto;
@@ -52,14 +51,11 @@ public class MimePolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		MimePolicyFacade {
 
 	private final MimePolicyService mimePolicyService;
-	private final AbstractDomainService abstractDomainService;
 
 	public MimePolicyFacadeImpl(final AccountService accountService,
-			final MimePolicyService mimePolicyService,
-			final AbstractDomainService abstractDomainService) {
+			final MimePolicyService mimePolicyService) {
 		super(accountService);
 		this.mimePolicyService = mimePolicyService;
-		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
@@ -67,7 +63,8 @@ public class MimePolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notNull(dto, "MimePolicy dto must be set.");
 		Validate.notEmpty(dto.getName(), "policy name must be set.");
-		Validate.notEmpty(dto.getDomainId(), "domain identifier name must be set.");
+		Validate.notEmpty(dto.getDomainId(),
+				"domain identifier name must be set.");
 
 		MimePolicy create = mimePolicyService.create(actor, dto.getDomainId(),
 				new MimePolicy(dto));
@@ -87,14 +84,16 @@ public class MimePolicyFacadeImpl extends AdminGenericFacadeImpl implements
 			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(uuid, "MimePolicy uuid must be set.");
-		return new MimePolicyDto(mimePolicyService.find(actor, uuid, full), full);
+		return new MimePolicyDto(mimePolicyService.find(actor, uuid, full),
+				full);
 	}
 
 	@Override
 	public Set<MimePolicyDto> findAll(String domainId, boolean onlyCurrentDomain)
 			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		if (domainId == null)	domainId = actor.getDomainId();
+		if (domainId == null)
+			domainId = actor.getDomainId();
 		Set<MimePolicy> all = mimePolicyService.findAll(actor, domainId,
 				onlyCurrentDomain);
 		return transform(all);
@@ -119,7 +118,22 @@ public class MimePolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		return new MimePolicyDto(mimePolicy);
 	}
 
-	public MimePolicyService getMimePolicyService() {
-		return mimePolicyService;
+	@Override
+	public MimePolicyDto enableAllMimeTypes(String uuid)
+			throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(uuid, "MimePolicy uuid must be set.");
+		return new MimePolicyDto(mimePolicyService.enableAllMimeTypes(actor,
+				uuid));
 	}
+
+	@Override
+	public MimePolicyDto disableAllMimeTypes(String uuid)
+			throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(uuid, "MimePolicy uuid must be set.");
+		return new MimePolicyDto(mimePolicyService.disableAllMimeTypes(actor,
+				uuid));
+	}
+
 }

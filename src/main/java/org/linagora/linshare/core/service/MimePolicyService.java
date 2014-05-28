@@ -17,4 +17,8 @@ public interface MimePolicyService {
 	Set<MimePolicy> findAll(Account actor, String domainIdentifier, boolean onlyCurrentDomain) throws BusinessException;
 
 	MimePolicy update(Account actor, MimePolicy mimePolicyDto) throws BusinessException;
+
+	public MimePolicy enableAllMimeTypes(Account actor, String uuid) throws BusinessException;
+
+	public MimePolicy disableAllMimeTypes(Account actor, String uuid) throws BusinessException;
 }

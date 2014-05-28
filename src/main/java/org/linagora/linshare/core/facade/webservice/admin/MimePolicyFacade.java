@@ -46,8 +46,13 @@ public interface MimePolicyFacade extends AdminGenericFacade {
 
 	MimePolicyDto find(String uuid, boolean full) throws BusinessException;
 
-	Set<MimePolicyDto> findAll(String domainId, boolean onlyCurrentDomain) throws BusinessException;
+	Set<MimePolicyDto> findAll(String domainId, boolean onlyCurrentDomain)
+			throws BusinessException;
 
 	MimePolicyDto update(MimePolicyDto dto) throws BusinessException;
+
+	MimePolicyDto enableAllMimeTypes(String uuid) throws BusinessException;
+
+	MimePolicyDto disableAllMimeTypes(String uuid) throws BusinessException;
 
 }

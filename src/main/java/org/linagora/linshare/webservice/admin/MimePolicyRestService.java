@@ -40,13 +40,18 @@ import org.linagora.linshare.webservice.dto.MimePolicyDto;
 
 public interface MimePolicyRestService {
 
-	Set<MimePolicyDto> findAll(String domainId, boolean onlyCurrentDomain) throws BusinessException;
+	Set<MimePolicyDto> findAll(String domainId, boolean onlyCurrentDomain)
+			throws BusinessException;
 
 	MimePolicyDto find(String uuid, boolean mimeTypes) throws BusinessException;
 
 	MimePolicyDto create(MimePolicyDto policy) throws BusinessException;
 
 	MimePolicyDto update(MimePolicyDto policy) throws BusinessException;
+
+	MimePolicyDto enableAllMimeTypes(String uuid) throws BusinessException;
+
+	MimePolicyDto disableAllMimeTypes(String uuid) throws BusinessException;
 
 	void delete(String uuid) throws BusinessException;
 

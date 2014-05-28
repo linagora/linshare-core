@@ -60,5 +60,4 @@ public class AccountRepositoryImpl extends GenericAccountRepositoryImpl<Account>
 		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
-
 }

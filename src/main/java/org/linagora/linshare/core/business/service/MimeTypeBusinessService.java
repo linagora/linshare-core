@@ -39,8 +39,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MimeTypeBusinessService {
 
-	MimeType create(MimeType mimeType) throws BusinessException;
-
 	MimeType find(String uuid) throws BusinessException;
 
 	MimeType findByMimeType(MimePolicy mimePolicy, String mimeType);

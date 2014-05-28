@@ -49,11 +49,6 @@ public class MimeTypeBusinessServiceImpl implements MimeTypeBusinessService {
 	}
 
 	@Override
-	public MimeType create(MimeType mimeType) throws BusinessException {
-		return mimeTypeRepository.create(mimeType);
-	}
-
-	@Override
 	public MimeType find(String uuid) throws BusinessException {
 		MimeType mimeType = mimeTypeRepository.findByUuid(uuid);
 		if (mimeType == null) {
