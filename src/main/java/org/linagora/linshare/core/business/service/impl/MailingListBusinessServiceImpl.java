@@ -203,7 +203,12 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public void updateContact(MailingListContact contactToUpdate) throws BusinessException {
+	public void updateContact(MailingListContact contactToUpdate)
+			throws BusinessException {
+		/*
+		 * FIXME : update can leads to duplicate mails which in turn will break
+		 * the deletion
+		 */
 		MailingListContact contact = findContact(contactToUpdate.getUuid());
 		contact.setMail(contactToUpdate.getMail());
 		contact.setLastName(contactToUpdate.getLastName());
