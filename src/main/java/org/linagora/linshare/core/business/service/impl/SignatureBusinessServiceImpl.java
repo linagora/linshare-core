@@ -93,7 +93,7 @@ public class SignatureBusinessServiceImpl implements SignatureBusinessService {
 			Calendar now = new GregorianCalendar();
 			
 			entity = new Signature(uuid, fileName, now, now, owner, document, size, signerCertificate);
-			signatureRepository.create(entity);
+			entity = signatureRepository.create(entity);
 			
 			document.getSignatures().add(entity);
 			documentRepository.update(document);
