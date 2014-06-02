@@ -83,11 +83,19 @@ public class DomainDto {
 	@ApiModelProperty(value = "AuthShowOrder")
 	private Long authShowOrder;
 
+	@ApiModelProperty(value = "MimePolicyUuid")
+	private String mimePolicyUuid;
+
+	@ApiModelProperty(value = "MailConfigUuid")
+	private String mailConfigUuid;
+
 	protected DomainDto(final AbstractDomain domain, boolean light,
 			boolean recursive) {
 		this.identifier = domain.getIdentifier();
 		this.label = domain.getLabel();
 		this.type = domain.getDomainType().toString();
+		mimePolicyUuid = domain.getMimePolicy().getUuid();
+		mailConfigUuid = domain.getCurrentMailConfiguration().getUuid();
 		if (!light) {
 			this.description = domain.getDescription();
 			this.locale = domain.getDefaultLocale();
@@ -214,5 +222,21 @@ public class DomainDto {
 
 	public void setAuthShowOrder(Long authShowOrder) {
 		this.authShowOrder = authShowOrder;
+	}
+
+	public String getMimePolicyUuid() {
+		return mimePolicyUuid;
+	}
+
+	public void setMimePolicyUuid(String mimePolicyUuid) {
+		this.mimePolicyUuid = mimePolicyUuid;
+	}
+
+	public String getMailConfigUuid() {
+		return mailConfigUuid;
+	}
+
+	public void setMailConfigUuid(String mailConfigUuid) {
+		this.mailConfigUuid = mailConfigUuid;
 	}
 }
