@@ -195,6 +195,7 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="userProviderService" />
 		<constructor-arg ref="domainPolicyService" />
+		<constructor-arg ref="userAndDomainMultiService" />
 	</bean>
 	<bean id="wsAdminDomainPolicyFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.DomainPolicyFacadeImpl">
 		<constructor-arg ref="accountService" />

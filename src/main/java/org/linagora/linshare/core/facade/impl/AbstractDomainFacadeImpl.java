@@ -115,135 +115,6 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     }
 
     @Override
-    public void createDomain(UserVo actorVo, AbstractDomainVo domainVo) throws BusinessException {
-        if(isAuthorized(actorVo)) {
-            createOrUpdateDomain(domainVo, true);
-        }
-    }
-
-    @Override
-    public void updateDomain(UserVo actorVo, AbstractDomainVo domainVo) throws BusinessException {
-        if(isAuthorized(actorVo)) {
-            createOrUpdateDomain(domainVo, false);
-        }
-    }
-
-
-    @Override
-    public void updateAllDomainForAuthShowOrder(UserVo actorVo,List<AbstractDomainVo> domainsVo) throws BusinessException{
-        if(isAuthorized(actorVo)) {
-            for (AbstractDomainVo domainVo : domainsVo) {
-                updateDomainForAuthShowOrder(domainVo);
-            }
-        }
-    }
-
-    /**
-     * Update one domain display order value.
-     * @param domainVo
-     * @throws BusinessException
-     */
-    private void updateDomainForAuthShowOrder(AbstractDomainVo domainVo) throws BusinessException{
-        AbstractDomain abstractDomain = abstractDomainService.retrieveDomain(domainVo.getIdentifier());
-
-        if(abstractDomain == null ) {
-            throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,"The domain : " + domainVo.getIdentifier() + " has no existing id.");
-        }
-
-        logger.debug("Change domain order, Domain :" + domainVo.getIdentifier() + " old order value :" + abstractDomain.getAuthShowOrder() + ", new order value" + domainVo.getAuthShowOrder());
-        abstractDomain.setAuthShowOrder(domainVo.getAuthShowOrder());
-        abstractDomainService.updateDomain(abstractDomain);
-    }
-
-    private void createOrUpdateDomain(AbstractDomainVo domainVo, boolean create) throws BusinessException {
-        logger.debug("domainVo class:" + domainVo.getClass().toString());
-        logger.debug("domainVo :" + domainVo.toString());
-
-        DomainPattern domainPattern = userProviderService.retrieveDomainPattern(domainVo.getPatternIdentifier());
-        LDAPConnection ldapConn = userProviderService.retrieveLDAPConnection(domainVo.getLdapIdentifier());
-        DomainPolicy policy = domainPolicyService.find(domainVo.getPolicyIdentifier());
-
-        LdapUserProvider provider = null;
-        String baseDn = domainVo.getDifferentialKey();
-        if (baseDn != null && !baseDn.isEmpty() && domainPattern != null && ldapConn != null) {
-            provider = new LdapUserProvider(baseDn, ldapConn, domainPattern);
-        }
-
-        if(domainVo instanceof TopDomainVo) {
-
-            TopDomain topDomain = new TopDomain((TopDomainVo)domainVo);
-
-            if(provider !=null) {
-                topDomain.setUserProvider(provider);
-            }
-            topDomain.setPolicy(policy);
-            if(create){
-                logger.debug("Create linshare Top Domain : " + topDomain.getIdentifier());
-                abstractDomainService.createTopDomain(topDomain);
-            } else {
-                logger.debug("Update linshare Top Domain : " + topDomain.getIdentifier());
-                abstractDomainService.updateDomain(topDomain);
-            }
-
-        } else if(domainVo instanceof SubDomainVo) {
-
-            AbstractDomain topDomain = abstractDomainService.retrieveDomain(((SubDomainVo) domainVo).getParentDomainIdentifier());
-            if(topDomain == null ) {
-                throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,"This new sub domain has no parent domain defined.");
-            }
-
-            SubDomain subDomain = new SubDomain((SubDomainVo)domainVo);
-
-            subDomain.setParentDomain(topDomain);
-            if(provider !=null) {
-                subDomain.setUserProvider(provider);
-            }
-            subDomain.setPolicy(policy);
-
-            if(create){
-                logger.debug("Create linshare Sub Domain : " + subDomain.getIdentifier());
-                abstractDomainService.createSubDomain(subDomain);
-            } else {
-                logger.debug("Update linshare Sub Domain : " + subDomain.getIdentifier());
-                abstractDomainService.updateDomain(subDomain);
-            }
-
-        } else if(domainVo instanceof GuestDomainVo) {
-            AbstractDomain topDomain = abstractDomainService.retrieveDomain(((GuestDomainVo) domainVo).getParentDomainIdentifier());
-            if(topDomain == null ) {
-                throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,"This new guest domain has no parent domain defined.");
-            }
-
-            GuestDomain guestDomain = new GuestDomain((GuestDomainVo)domainVo);
-
-            guestDomain.setParentDomain(topDomain);
-            guestDomain.setPolicy(policy);
-
-            if(create){
-                logger.debug("Create linshare Guest Domain : " + guestDomain.getIdentifier());
-                abstractDomainService.createGuestDomain(guestDomain);
-            } else {
-                logger.debug("Update linshare Guest Domain : " + guestDomain.getIdentifier());
-                abstractDomainService.updateDomain(guestDomain);
-            }
-        } else {
-            AbstractDomain domain = abstractDomainService.retrieveDomain(domainVo.getIdentifier());
-
-            if(domain == null ) {
-                throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,"The domain : " + domainVo.getIdentifier() + " has no existing id.");
-            }
-
-            if(domain.getDomainType().equals(DomainType.ROOTDOMAIN)){
-                logger.debug("Update linshare Root Domain : " + domain.getIdentifier());
-                abstractDomainService.updateDomain(domain);
-            }else{
-                throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,"Wrong type of domain : not TopDomain, SubDomain, GuestDomain and rootDomain");
-            }
-        }
-    }
-
-
-    @Override
     public AbstractDomainVo retrieveDomain(String identifier) throws BusinessException {
         AbstractDomain domain = abstractDomainService.retrieveDomain(identifier);
 
@@ -255,16 +126,6 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
             return new GuestDomainVo(domain);
         }
         return new AbstractDomainVo(domain);
-    }
-
-    @Override
-    public void deleteDomain(String identifier, UserVo actorVo) throws BusinessException {
-        if(isAuthorized(actorVo)) {
-
-            User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
-
-            userAndDomainMultiService.deleteDomainAndUsers(actor, identifier);
-        }
     }
 
     @Override
@@ -368,137 +229,6 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     }
 
     @Override
-    public List<String> findAllDomainPatternIdentifiers() {
-        return userProviderService.findAllDomainPatternIdentifiers();
-    }
-    
-    @Override
-    public List<String> findAllUserDomainPatternIdentifiers() {
-        return userProviderService.findAllUserDomainPatternIdentifiers();
-    }
-
-    @Override
-    public List<String> findAllSystemDomainPatternIdentifiers() {
-        return userProviderService.findAllSystemDomainPatternIdentifiers();
-    }
-
-    
-    @Override
-    public List<DomainPatternVo> findAllUserDomainPatterns() throws BusinessException {
-        List<DomainPatternVo> res = new ArrayList<DomainPatternVo>();
-        for (DomainPattern domainPattern : userProviderService.findAllUserDomainPattern()) {
-            res.add(new DomainPatternVo(domainPattern));
-        }
-        return res;
-    }
-
-    @Override
-    public List<DomainPatternVo> findAllSystemDomainPatterns() throws BusinessException {
-        List<DomainPatternVo> res = new ArrayList<DomainPatternVo>();
-        for (DomainPattern domainPattern : userProviderService.findAllSystemDomainPattern()) {
-            res.add(new DomainPatternVo(domainPattern));
-        }
-        return res;
-    }
-
-    @Override
-    public void createDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException {
-        if(isAuthorized(actorVo)) {
-            DomainPattern domainPattern = new DomainPattern(domainPatternVo);
-            userProviderService.createDomainPattern(domainPattern);
-        } else {
-            throw new BusinessException("You are not authorized to create a domain pattern.");
-        }
-    }
-
-    @Override
-    public DomainPatternVo retrieveDomainPattern(String identifier) throws BusinessException {
-        DomainPattern pattern = userProviderService.retrieveDomainPattern(identifier);
-        return new DomainPatternVo(pattern);
-    }
-
-   
-    @Override
-    public void updateDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException {
-        if(isAuthorized(actorVo)) {
-            userProviderService.updateDomainPattern(new DomainPattern(domainPatternVo));
-        } else {
-            throw new BusinessException("You are not authorized to update a domain pattern.");
-        }
-    }
-
-    @Override
-    public void deletePattern(String patternToDelete, UserVo actorVo) throws BusinessException {
-        if(isAuthorized(actorVo)) {
-            userProviderService.deletePattern(patternToDelete);
-        } else {
-            throw new BusinessException("You are not authorized to delete a domain pattern.");
-        }
-    }
-
-    @Override
-    public boolean patternIsDeletable(String patternToDelete, UserVo actor) {
-        return userProviderService.patternIsDeletable(patternToDelete);
-    }
-
-    @Override
-    public List<String> findAllLDAPConnectionIdentifiers() {
-        return userProviderService.findAllLDAPConnectionIdentifiers();
-    }
-
-    @Override
-    public List<LDAPConnectionVo> findAllLDAPConnections() throws BusinessException {
-        List<LDAPConnectionVo> res = new ArrayList<LDAPConnectionVo>();
-        for (LDAPConnection ldap : userProviderService.findAllLDAPConnections()) {
-            res.add(new LDAPConnectionVo(ldap));
-        }
-        return res;
-    }
-
-    @Override
-    public LDAPConnectionVo createLDAPConnection(UserVo actorVo, LDAPConnectionVo ldapConnectionVo) throws BusinessException {
-        if(isAuthorized(actorVo)) {
-            LDAPConnection ldapConnection = new LDAPConnection(ldapConnectionVo);
-            return new LDAPConnectionVo(userProviderService.createLDAPConnection(ldapConnection));
-        } else {
-            throw new BusinessException("You are not authorized to create a connection.");
-        }
-    }
-
-    @Override
-    public LDAPConnectionVo retrieveLDAPConnection(String identifier)throws BusinessException {
-        LDAPConnection ldap =  userProviderService.retrieveLDAPConnection(identifier);
-        return new LDAPConnectionVo(ldap);
-    }
-
-    @Override
-    public void updateLDAPConnection(UserVo actorVo, LDAPConnectionVo ldapConn) throws BusinessException {
-        if(isAuthorized(actorVo)) {
-            LDAPConnection ldapConnection = new LDAPConnection(ldapConn);
-            userProviderService.updateLDAPConnection(ldapConnection);
-        } else {
-            throw new BusinessException("You are not authorized to update a connection.");
-        }
-    }
-
-    @Override
-    public void deleteConnection(String connectionToDelete, UserVo actorVo) throws BusinessException {
-        if(isAuthorized(actorVo)) {
-            userProviderService.deleteConnection(connectionToDelete);
-        } else {
-            throw new BusinessException("You are not authorized to delete a connection.");
-        }
-    }
-
-    @Override
-    public boolean connectionIsDeletable(String connectionToDelete, UserVo actorVo) {
-        if(actorVo == null) {
-            logger.error("actor object is null.");
-        }
-        return userProviderService.connectionIsDeletable(connectionToDelete);
-    }
-
-    @Override
     public boolean isCustomLogoActive(UserVo actorVo) throws BusinessException {
         AbstractDomain domain = abstractDomainService.retrieveDomain(actorVo.getDomainIdentifier());
         return functionalityReadOnlyService.getCustomLogoFunctionality(domain).getActivationPolicy().getStatus();
@@ -508,7 +238,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     public boolean isCustomLogoActiveInRootDomain() throws BusinessException {
         return functionalityReadOnlyService.isCustomLogoActiveInRootDomain();
     }
-    
+
     @Override
     public String getCustomLogoUrl(UserVo actorVo) throws BusinessException {
         User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
@@ -519,7 +249,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     public String getCustomLogoUrlInRootDomain() throws BusinessException {
         return functionalityReadOnlyService.getCustomLogoUrlInRootDomain();
     }
-    
+
     @Override
     public String getCustomLogoLink(UserVo actorVo) throws BusinessException {
         User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
@@ -530,7 +260,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     public String getCustomLogoLinkInRootDomain() throws BusinessException {
         return functionalityReadOnlyService.getCustomLinkLogoInRootDomain();
     }
-    
+
     @Override
     public Long getUsedSpace(String domainIdentifier) throws BusinessException {
         AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);

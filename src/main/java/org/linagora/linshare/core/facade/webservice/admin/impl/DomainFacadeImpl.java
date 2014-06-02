@@ -57,6 +57,7 @@ import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
+import org.linagora.linshare.core.service.UserAndDomainMultiService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.webservice.dto.DomainDto;
 
@@ -69,14 +70,18 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final DomainPolicyService domainPolicyService;
 
+	private final UserAndDomainMultiService userAndDomainMultiService;
+
 	public DomainFacadeImpl(final AccountService accountService,
 			final AbstractDomainService abstractDomainService,
 			final UserProviderService userProviderService,
-			final DomainPolicyService domainPolicyService) {
+			final DomainPolicyService domainPolicyService,
+			final UserAndDomainMultiService userAndDomainMultiService) {
 		super(accountService);
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
 		this.domainPolicyService = domainPolicyService;
+		this.userAndDomainMultiService = userAndDomainMultiService;
 	}
 
 	@Override
@@ -147,10 +152,10 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public void delete(DomainDto domainDto) throws BusinessException {
-		checkAuthentication(Role.SUPERADMIN);
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainDto.getIdentifier(),
 				"domain identifier must be set.");
-		abstractDomainService.deleteDomain(domainDto.getIdentifier());
+		userAndDomainMultiService.deleteDomainAndUsers(actor, domainDto.getIdentifier());
 	}
 
 	private AbstractDomain getDomain(DomainDto domainDto)
