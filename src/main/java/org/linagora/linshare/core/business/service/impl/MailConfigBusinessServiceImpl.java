@@ -94,11 +94,15 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 		cfg.setMailLayoutText(rootCfg.getMailLayoutText());
 
 		for (MailContentLang mcl : rootMcl) {
-			cfg.getMailContentLangs().add(new MailContentLang(mcl));
+			MailContentLang tmp = new MailContentLang(mcl);
+			tmp.setMailConfig(cfg);
+			cfg.getMailContentLangs().add(tmp);
 		}
 		for (Entry<Integer, MailFooterLang> e : rootMfl.entrySet()) {
+			MailFooterLang tmp = new MailFooterLang(e.getValue());
+			tmp.setMailConfig(cfg);
 			cfg.getMailFooters().put(e.getKey(),
-					new MailFooterLang(e.getValue()));
+					tmp);
 		}
 
 		return mailConfigRepository.create(cfg);
