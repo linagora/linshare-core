@@ -46,6 +46,8 @@ import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
+import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
@@ -167,6 +169,18 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		DomainPolicy policy = domainPolicyService
 				.find(domainDto.getPolicy().getIdentifier());
 		domain.setPolicy(policy);
+
+
+		if (domainDto.getMailConfigUuid() != null) {
+			MailConfig mailConfig = new MailConfig();
+			mailConfig.setUuid(domainDto.getMailConfigUuid());
+			domain.setCurrentMailConfiguration(mailConfig);
+		}
+		if (domainDto.getMimePolicyUuid() != null) {
+			MimePolicy mimePolicy = new MimePolicy();
+			mimePolicy.setUuid(domainDto.getMimePolicyUuid());
+			domain.setMimePolicy(mimePolicy);
+		}
 
 		if (!domainDto.getProviders().isEmpty()) {
 			String baseDn = domainDto.getProviders().get(0).getBaseDn();

@@ -229,6 +229,8 @@
 		<constructor-arg ref="messagesRepository" />
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="domainBusinessService" />
+		<constructor-arg ref="mailConfigBusinessService" />
+		<constructor-arg ref="mimePolicyBusinessService" />
 	</bean>
 
 	<bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">

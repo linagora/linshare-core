@@ -40,6 +40,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
+import org.linagora.linshare.core.business.service.MailConfigBusinessService;
+import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -49,7 +51,9 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
+import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
+import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
@@ -78,15 +82,19 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final MessagesRepository messagesRepository;
 	private final UserRepository<User> userRepository;
 	private final DomainBusinessService domainBusinessService;
+	private final MimePolicyBusinessService mimePolicyBusinessService;
+	private final MailConfigBusinessService mailConfigBusinessService;
 
 	public AbstractDomainServiceImpl(
-			AbstractDomainRepository abstractDomainRepository,
-			DomainPolicyService domainPolicyService,
-			FunctionalityReadOnlyService functionalityReadOnlyService,
-			UserProviderService userProviderService,
-			MessagesRepository messagesRepository,
-			UserRepository<User> userRepository,
-			DomainBusinessService domainBusinessService) {
+			final AbstractDomainRepository abstractDomainRepository,
+			final DomainPolicyService domainPolicyService,
+			final FunctionalityReadOnlyService functionalityReadOnlyService,
+			final UserProviderService userProviderService,
+			final MessagesRepository messagesRepository,
+			final UserRepository<User> userRepository,
+			final DomainBusinessService domainBusinessService,
+			final MimePolicyBusinessService mimePolicyBusinessService,
+			final MailConfigBusinessService mailConfigBusinessService) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
@@ -95,6 +103,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.domainBusinessService = domainBusinessService;
+		this.mimePolicyBusinessService = mimePolicyBusinessService;
+		this.mailConfigBusinessService = mailConfigBusinessService;
 	}
 
 	@Override
@@ -130,6 +140,16 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,
 					"This new domain has no domain policy.");
 		}
+
+		if (domain.getCurrentMailConfiguration() == null) {
+			domain.setCurrentMailConfiguration(getUniqueRootDomain()
+					.getCurrentMailConfiguration());
+		}
+
+		if (domain.getMimePolicy() == null) {
+			domain.setMimePolicy(getUniqueRootDomain().getMimePolicy());
+		}
+
 		if (domain.getUserProvider() != null) {
 			if (domain.getUserProvider().getLdapconnexion() == null) {
 				throw new BusinessException(
@@ -335,6 +355,25 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,
 					"This domain has no domain policy.");
 		}
+
+		if (domain.getCurrentMailConfiguration() == null) {
+			throw new BusinessException(
+					BusinessErrorCode.MAILCONFIG_NOT_FOUND,
+					"This domain has no mail config.");
+		} else {
+			MailConfig mailConfig = mailConfigBusinessService.findByUuid(domain.getCurrentMailConfiguration().getUuid());
+			domain.setCurrentMailConfiguration(mailConfig);
+		}
+
+		if (domain.getMimePolicy() == null) {
+			throw new BusinessException(
+					BusinessErrorCode.MIME_NOT_FOUND,
+					"This domain has no mime policy.");
+		} else {
+			MimePolicy mimePolicy = mimePolicyBusinessService.find(domain.getMimePolicy().getUuid());
+			domain.setMimePolicy(mimePolicy);
+		}
+
 		if (domain.getUserProvider() != null) {
 			if (domain.getUserProvider().getLdapconnexion() == null) {
 				throw new BusinessException(

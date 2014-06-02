@@ -677,16 +677,16 @@ INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mai
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (23, 1, 1, 23, 10, '1ee1c8bc-75e9-4fbe-a34b-893a86704ec9');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (24, 1, 1, 24, 11, '12242aa8-b75e-404d-85df-68e7bb8c04af');
 
-UPDATE domain_abstract SET mailconfig_id = 1 WHERE id = 1;
+UPDATE domain_abstract SET mailconfig_id = 1;
 
-
+INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, creation_date, modification_date) VALUES(1, 1, '3d6d8800-e0f7-11e3-8ec0-080027c0eef0', 'Default Mime Policy', 0, 0, now(), now());
+UPDATE domain_abstract SET mime_policy_id=1;
 
 -- LinShare version
-INSERT INTO version (id, version) VALUES (1, '1.5.0');
+INSERT INTO version (id, version) VALUES (1, '1.6.0');
 
 -- Sequence for hibernate
 SELECT setval('hibernate_sequence', 100);
-
 
 
 
