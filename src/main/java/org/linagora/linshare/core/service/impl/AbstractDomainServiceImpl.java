@@ -362,7 +362,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					"This domain has no mail config.");
 		} else {
 			MailConfig mailConfig = mailConfigBusinessService.findByUuid(domain.getCurrentMailConfiguration().getUuid());
-			domain.setCurrentMailConfiguration(mailConfig);
+			entity.setCurrentMailConfiguration(mailConfig);
 		}
 
 		if (domain.getMimePolicy() == null) {
@@ -371,7 +371,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					"This domain has no mime policy.");
 		} else {
 			MimePolicy mimePolicy = mimePolicyBusinessService.find(domain.getMimePolicy().getUuid());
-			domain.setMimePolicy(mimePolicy);
+			entity.setMimePolicy(mimePolicy);
 		}
 
 		if (domain.getUserProvider() != null) {
