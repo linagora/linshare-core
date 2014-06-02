@@ -352,8 +352,8 @@ CREATE TABLE mail_notification (
   activation_policy_id    int8 NOT NULL, 
   identifier              varchar(255) NOT NULL, 
   system                  bool NOT NULL, 
-  creation_date           date NOT NULL, 
-  modification_date       date NOT NULL, 
+  creation_date           timestamp(6) NOT NULL, 
+  modification_date       timestamp(6) NOT NULL, 
   uuid                    varchar(255) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mail_config (
@@ -364,8 +364,8 @@ CREATE TABLE mail_config (
   visible             bool NOT NULL, 
   mail_layout_text_id int8 NOT NULL, 
   uuid                varchar(255) NOT NULL, 
-  creation_date       date NOT NULL, 
-  modification_date   date NOT NULL, 
+  creation_date       timestamp(6) NOT NULL, 
+  modification_date   timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mail_layout (
   id                  int8 NOT NULL, 
@@ -373,8 +373,8 @@ CREATE TABLE mail_layout (
   name               varchar(255) NOT NULL, 
   visible            bool NOT NULL, 
   layout             text NOT NULL, 
-  creation_date      date NOT NULL, 
-  modification_date  date NOT NULL, 
+  creation_date      timestamp(6) NOT NULL, 
+  modification_date  timestamp(6) NOT NULL, 
   uuid               varchar(255) NOT NULL, 
   plaintext          bool NOT NULL, 
   PRIMARY KEY (id));
@@ -385,8 +385,8 @@ CREATE TABLE mail_footer (
   visible            bool NOT NULL, 
   language           int4 NOT NULL, 
   footer             text NOT NULL, 
-  creation_date      date NOT NULL, 
-  modification_date  date NOT NULL, 
+  creation_date      timestamp(6) NOT NULL, 
+  modification_date  timestamp(6) NOT NULL, 
   uuid               varchar(255) NOT NULL, 
   plaintext          bool NOT NULL, 
   PRIMARY KEY (id));
@@ -409,8 +409,8 @@ CREATE TABLE mail_content (
   body               text NOT NULL, 
   uuid               varchar(255) NOT NULL, 
   plaintext          bool NOT NULL, 
-  creation_date      date NOT NULL, 
-  modification_date  date NOT NULL, 
+  creation_date      timestamp(6) NOT NULL, 
+  modification_date  timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mail_content_lang (
   id                 int8 NOT NULL, 
@@ -454,8 +454,8 @@ CREATE TABLE mime_policy (
   name              varchar(255) NOT NULL, 
   mode              int4 NOT NULL, 
   displayable       int4 NOT NULL, 
-  creation_date     date NOT NULL, 
-  modification_date date NOT NULL, 
+  creation_date     timestamp(6) NOT NULL, 
+  modification_date timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mime_type (
   id                 int8 NOT NULL, 
@@ -465,8 +465,8 @@ CREATE TABLE mime_type (
   extensions        text NOT NULL, 
   enable            bool NOT NULL, 
   displayable       bool NOT NULL, 
-  creation_date     date NOT NULL, 
-  modification_date date NOT NULL, 
+  creation_date     timestamp(6) NOT NULL, 
+  modification_date timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;

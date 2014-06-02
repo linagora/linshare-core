@@ -12,8 +12,8 @@
 		<property name="visible" column="visible" type="boolean" not-null="true" lazy="false"/>
 		<property name="language" column="language" type="integer" not-null="true" lazy="false"/>
 		<property name="footer" column="footer" type="text" not-null="true" lazy="false"/>
-		<property name="creationDate" column="creation_date" type="date" not-null="true" lazy="false"/>
-		<property name="modificationDate" column="modification_date" type="date" not-null="true" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
+		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="plaintext" column="plaintext" type="boolean" not-null="true" lazy="false"/>
 	</class>
