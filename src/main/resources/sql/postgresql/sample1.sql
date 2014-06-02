@@ -56,6 +56,8 @@ INSERT INTO domain_abstract(id, type , identifier, label, enable, template, desc
 -- Guest domain (example domain)
 INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, messages_configuration_id, auth_show_order) VALUES (4, 3, 'GuestDomain', 'GuestDomain', true, false, 'a simple description', 0, 'en', 0, null, 1, 2, 1, 4);
 
+UPDATE domain_abstract SET mailconfig_id = 1;
+UPDATE domain_abstract SET mime_policy_id=1;
 
 
 
@@ -90,6 +92,7 @@ INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modi
 
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (4, 54, true, true, current_timestamp(3), current_timestamp(3), 50); 
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (5, 54, false, true, current_timestamp(3), current_timestamp(3), 53); 
+
 
 
 

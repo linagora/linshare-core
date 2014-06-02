@@ -679,9 +679,6 @@ INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mai
 
 UPDATE domain_abstract SET mailconfig_id = 1;
 
-INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, creation_date, modification_date) VALUES(1, 1, '3d6d8800-e0f7-11e3-8ec0-080027c0eef0', 'Default Mime Policy', 0, 0, now(), now());
-UPDATE domain_abstract SET mime_policy_id=1;
-
 -- LinShare version
 INSERT INTO version (id, version) VALUES (1, '1.6.0');
 
