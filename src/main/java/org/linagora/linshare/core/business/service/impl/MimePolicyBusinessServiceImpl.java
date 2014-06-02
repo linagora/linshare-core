@@ -123,7 +123,21 @@ public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService 
 		entity.setDisplayable(mimePolicy.getDisplayable());
 		entity.setMode(mimePolicy.getMode());
 		entity.setName(mimePolicy.getName());
-		mimePolicyRepository.update(entity);
-		return entity;
+		return mimePolicyRepository.update(entity);
+	}
+
+	@Override
+	public MimePolicy enableAll(MimePolicy mimePolicy) throws BusinessException {
+		MimePolicy entity = mimePolicyRepository.findByUuid(mimePolicy
+				.getUuid());
+		return mimePolicyRepository.enableAll(entity);
+	}
+
+	@Override
+	public MimePolicy disableAll(MimePolicy mimePolicy)
+			throws BusinessException {
+		MimePolicy entity = mimePolicyRepository.findByUuid(mimePolicy
+				.getUuid());
+		return mimePolicyRepository.disableAll(entity);
 	}
 }

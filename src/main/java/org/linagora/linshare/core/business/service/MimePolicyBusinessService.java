@@ -51,4 +51,8 @@ public interface MimePolicyBusinessService {
 	void load(MimePolicy mimePolicy) throws BusinessException;
 
 	MimePolicy update(MimePolicy mimePolicy) throws BusinessException;
+
+	MimePolicy enableAll(MimePolicy mimePolicy) throws BusinessException;
+
+	MimePolicy disableAll(MimePolicy mimePolicy) throws BusinessException;
 }

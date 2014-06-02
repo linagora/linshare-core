@@ -34,15 +34,20 @@
 
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.UUID;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MimePolicyRepository;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class MimePolicyRepositoryImpl extends
@@ -77,5 +82,31 @@ public class MimePolicyRepositoryImpl extends
 	public MimePolicy update(MimePolicy entity) throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
+	}
+
+	@Override
+	public MimePolicy enableAll(final MimePolicy entity) throws BusinessException {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session) throws HibernateException, SQLException {
+				final Query query = session.createQuery("UPDATE MimeType SET enable = true WHERE mimePolicy = :mimePolicy");
+				query.setParameter("mimePolicy", entity);
+				return (long) query.executeUpdate();
+			}
+		};
+		getHibernateTemplate().execute(action);
+		return load(entity);
+	}
+
+	@Override
+	public MimePolicy disableAll(final MimePolicy entity) throws BusinessException {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session) throws HibernateException, SQLException {
+				final Query query = session.createQuery("UPDATE MimeType SET enable = false WHERE mimePolicy = :mimePolicy");
+				query.setParameter("mimePolicy", entity);
+				return (long) query.executeUpdate();
+			}
+		};
+		getHibernateTemplate().execute(action);
+		return load(entity);
 	}
 }

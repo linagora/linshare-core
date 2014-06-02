@@ -164,10 +164,7 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 					+ " does not have the right to update this MimePolicy.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
-		for (MimeType mimeType : mimePolicy.getMimeTypes()) {
-			mimeType.setEnable(true);
-			mimeTypeBusinessService.update(mimeType);
-		}
+		mimePolicyBusinessService.enableAll(mimePolicy);
 		return mimePolicy;
 	}
 
@@ -182,10 +179,7 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 					+ " does not have the right to update this MimePolicy.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
-		for (MimeType mimeType : mimePolicy.getMimeTypes()) {
-			mimeType.setEnable(false);
-			mimeTypeBusinessService.update(mimeType);
-		}
+		mimePolicyBusinessService.disableAll(mimePolicy);
 		return mimePolicy;
 	}
 }
