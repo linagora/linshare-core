@@ -326,23 +326,24 @@ UPDATE domain_abstract SET mime_policy_id=1;
 
 
 -- system domain pattern
+-- OBM domain pattern.
 INSERT INTO domain_pattern(
  domain_pattern_id,
  identifier,
  description,
  auth_command,
- search_user_command, 
+ search_user_command,
  system,
  auto_complete_command_on_first_and_last_name,
  auto_complete_command_on_all_attributes,
- search_page_size,  
- search_size_limit, 
- completion_page_size, 
+ search_page_size,
+ search_size_limit,
+ completion_page_size,
  completion_size_limit)
 VALUES (
  1,
  'default-pattern-obm',
- 'This is pattern the default pattern for the ldap obm structure.', 
+ 'This is pattern the default pattern for the ldap obm structure.',
  'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");',
  'ldap.search(domain, "(&(objectClass=obmUser)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
  true,
@@ -353,12 +354,78 @@ VALUES (
  10,
  10
  );
-
-
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (1, 'user_mail', 'mail', false, true, true, 1, true);
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (2, 'user_firstname', 'givenName', false, true, true, 1, true);
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (3, 'user_lastname', 'sn', false, true, true, 1, true);
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (4, 'user_uid', 'uid', false, true, true, 1, false);
+
+-- Active Directory domain pattern.
+INSERT INTO domain_pattern(
+ domain_pattern_id,
+ identifier,
+ description,
+ auth_command,
+ search_user_command,
+ system,
+ auto_complete_command_on_first_and_last_name,
+ auto_complete_command_on_all_attributes,
+ search_page_size,
+ search_size_limit,
+ completion_page_size,
+ completion_size_limit)
+VALUES (
+ 2,
+ 'default-pattern-AD',
+ 'This is pattern the default pattern for the Active Directory structure.',
+ 'ldap.search(domain, "(&(objectClass=user)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(sAMAccountName="+login+")))");',
+ 'ldap.search(domain, "(&(objectClass=user)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
+ true,
+ 'ldap.search(domain, "(&(objectClass=user)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");',
+ 'ldap.search(domain, "(&(objectClass=user)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");',
+ 100,
+ 100,
+ 10,
+ 10
+ );
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (5, 'user_mail', 'mail', false, true, true, 2, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (6, 'user_firstname', 'givenName', false, true, true, 2, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (7, 'user_lastname', 'sn', false, true, true, 2, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (8, 'user_uid', 'sAMAccountName', false, true, true, 2, false);
+
+-- OpenLdap domain pattern.
+INSERT INTO domain_pattern(
+ domain_pattern_id,
+ identifier,
+ description,
+ auth_command,
+ search_user_command,
+ system,
+ auto_complete_command_on_first_and_last_name,
+ auto_complete_command_on_all_attributes,
+ search_page_size,
+ search_size_limit,
+ completion_page_size,
+ completion_size_limit)
+VALUES (
+ 3,
+ 'default-pattern-openldap',
+ 'This is pattern the default pattern for the OpenLdap structure.',
+ 'ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");',
+ 'ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
+ true,
+ 'ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");',
+ 'ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");',
+ 100,
+ 100,
+ 10,
+ 10
+ );
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (9, 'user_mail', 'mail', false, true, true, 3, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (10, 'user_firstname', 'givenName', false, true, true, 3, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (11, 'user_lastname', 'sn', false, true, true, 3, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (12, 'user_uid', 'uid', false, true, true, 3, false);
+
+
 
 
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
@@ -559,7 +626,7 @@ INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'ht
 -- Functionality : NOTIFICATION_URL
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (61, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (62, false, false, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(30, false, 'NOTIFICATION_URL', 61, 62, 1); 
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(30, false, 'NOTIFICATION_URL', 61, 62, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'http://localhost:8080/linshare/');
 
 

@@ -25,7 +25,7 @@ INSERT INTO domain_pattern(
  completion_page_size,
  completion_size_limit)
 VALUES (
- 2,
+ 50,
  'linshare-obm',
  'This is pattern the default pattern for the ldap obm structure.',
  'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");',
@@ -39,10 +39,10 @@ VALUES (
  10
  );
 
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (5, 'user_mail', 'mail', false, true, true, 2, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (6, 'user_firstname', 'givenName', false, true, true, 2, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (7, 'user_lastname', 'sn', false, true, true, 2, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (8, 'user_uid', 'uid', false, true, true, 2, false);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (51, 'user_mail', 'mail', false, true, true, 50, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (52, 'user_firstname', 'givenName', false, true, true, 50, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (53, 'user_lastname', 'sn', false, true, true, 50, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (54, 'user_uid', 'uid', false, true, true, 50, false);
 
 
 
