@@ -627,6 +627,21 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (62, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(30, false, 'NOTIFICATION_URL', 61, 62, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'http://localhost:8080/linshare/');
 
+
+-- Functionality : UPLOAD_REQUEST
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (63, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (64, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(31, false, 'UPLOAD_REQUEST', 63, 64, 1);
+
+-- Functionality : UPLOAD_REQUEST__NOTIFICATION_LANGUAGE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (65, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (66, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES(32, false, 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE', 65, 66, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (32, 'fr');
+
+
+
+
 -- %{image}    <img src="cid:image.part.1@linshare.org" /><br/><br/>
 
 INSERT INTO mail_layout (id, name,domain_abstract_id,visible,plaintext,modification_date,creation_date,uuid,layout) VALUES (1, 'Default HTML layout', 1,true,false,now(),now(),'15044750-89d1-11e3-8d50-5404a683a462',E'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml">\n<head>\n<title>${mailSubject}</title>\n<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />\n<meta http-equiv="Content-Style-Type" content="text/css" />\n<style type="text/css">\npre { margin-top: .25em; font-family: Verdana, Arial, Helvetica, sans-serif; color: blue; }\nul { margin-top: .25em; padding-left: 1.5em; }\n</style>\n</head>\n<body>\n${image}\n${personalMessage}\n${greetings}\n${body}\n <hr/>\n${footer}\n</body>\n</html>');
