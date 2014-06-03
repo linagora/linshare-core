@@ -208,7 +208,7 @@ public class UserServiceImpl implements UserService {
 			guest.setCanUpload(userCanUploadFunc.getActivationPolicy().getStatus());
 
 			guest.setCreationDate(new Date());
-			guest.setLocale(guestDomain.getDefaultLocale());
+			guest.setLocale(guestDomain.getDefaultTapestryLocale());
 			guest.setExpirationDate(calculateUserExpiryDate(ownerUser));
 
 			guestRepository.create(guest);
@@ -935,7 +935,7 @@ public class UserServiceImpl implements UserService {
 
 				user.setCreationDate(new Date());
 
-				user.setLocale(user.getDomain().getDefaultLocale());
+				user.setLocale(user.getDomain().getDefaultTapestryLocale());
 				try {
 					userRepository.create(user);
 				} catch (IllegalArgumentException e) {

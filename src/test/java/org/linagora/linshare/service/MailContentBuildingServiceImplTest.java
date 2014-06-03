@@ -307,7 +307,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		guest.setCanCreateGuest(false);
 		guest.setCanUpload(true);
 		guest.setCreationDate(new Date());
-		guest.setLocale(guestDomain.getDefaultLocale());
+		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		
 		Calendar cd = Calendar.getInstance();
 		cd.add(Calendar.MONTH, 3);

@@ -102,7 +102,7 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
 		rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
 		user = new Guest(FIRST_NAME, LAST_NAME, MAIL, PASSWORD, true, "comment");
 		user.setDomain(rootDomain);
-		user.setLocale(rootDomain.getDefaultLocale());
+		user.setLocale(rootDomain.getDefaultTapestryLocale());
 		userRepository.create(user);
 		
 		document = new Document(identifier, type, fileSize);

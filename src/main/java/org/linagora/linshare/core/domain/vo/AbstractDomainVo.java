@@ -37,12 +37,8 @@ import java.io.Serializable;
 
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.beaneditor.Validate;
-import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.GuestDomain;
-
-import com.google.common.base.Function;
 
 public class AbstractDomainVo implements Serializable {
 
@@ -82,7 +78,7 @@ public class AbstractDomainVo implements Serializable {
 	}
 	
 	public AbstractDomainVo(AbstractDomain entity) {
-		this.setDefaultLocale(entity.getDefaultLocale());
+		this.setDefaultLocale(entity.getDefaultTapestryLocale());
 		this.setDefaultRole(entity.getDefaultRole());
 		this.setDomainDescription(entity.getDescription());
 		

@@ -40,59 +40,41 @@ import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.WelcomeText;
 
-/** Helpers for Welcome message processing.
- *
+/**
+ * Helpers for Welcome message processing.
+ * 
  */
 public class WelcomeMessageUtils {
 
-    public static WelcomeText getWelcomeText(Set<WelcomeText> welcomeTexts, Language selectedLanguage, AccountType userType) {
-        for (WelcomeText welcomeText_ : welcomeTexts) {
-            if (selectedLanguage.equals(welcomeText_.getLanguage())) {
-                return welcomeText_;
-            }
-        }
-        return null;
-    }
+	public static WelcomeText getWelcomeText(Set<WelcomeText> welcomeTexts,
+			Language selectedLanguage, AccountType userType) {
+		for (WelcomeText welcomeText_ : welcomeTexts) {
+			if (selectedLanguage.equals(welcomeText_.getLanguage())) {
+				return welcomeText_;
+			}
+		}
+		return null;
+	}
 
-    public static Language getLanguageFromLocale(Locale locale) {
-        if (Locale.FRENCH.equals(locale)) {
-        	return Language.FRENCH;
-        }
-        /* java.util.Locale doesn't support dutch */
-        if (locale.getLanguage().equals("nl_NL") || locale.getLanguage().equals("nl")) {
-        	return Language.DUTCH;
-        }
-        return Language.DEFAULT;
-    }
-
-    /**
-     * Return the locale, with the following priority : persistentLocale (cookie), userLocale (user parameter),
-     * browser language
-     * @param persistentLocale
-     * @param requestLocal
-     * @param userLocale
-     * @return
-     */
-    public static Locale getNormalisedLocale(Locale persistentLocale, Locale requestLocal, Locale userLocale) {
-        if (persistentLocale == null) {
-        	if (userLocale!=null) {        		
-        		return normaliseLocale(userLocale);
-        	} else {
-        		return normaliseLocale(requestLocal);
-        	}
-        } else {
-        	return normaliseLocale(persistentLocale);
-        }
-    }
-    
-    private static Locale normaliseLocale(Locale locale) {
-    	if (Locale.FRENCH.equals(locale) || Locale.FRANCE.equals(locale)) {
-            return Locale.FRENCH;
-        } else if ("nl".equals(locale.getLanguage()) || "nl_NL".equals(locale.getLanguage())) {
-            /* java.util.Locale doesn't support dutch */
-        	return locale;
-        } else {
-            return Locale.ENGLISH;
-        }
-    }
+	/**
+	 * Return the language based on locale, with the following priority :
+	 * persistentLocale (cookie), userLocale (user parameter), browser language
+	 * 
+	 * @param persistentLocale
+	 * @param requestLocal
+	 * @param userLocale
+	 * @return
+	 */
+	public static Language getLanguage(Locale persistentLocale,
+			Locale requestLocal, Locale userLocale) {
+		if (persistentLocale == null) {
+			if (userLocale != null) {
+				return Language.fromLocale(userLocale);
+			} else {
+				return Language.fromLocale(requestLocal);
+			}
+		} else {
+			return Language.fromLocale(persistentLocale);
+		}
+	}
 }

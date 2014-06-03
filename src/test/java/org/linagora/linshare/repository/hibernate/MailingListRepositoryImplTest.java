@@ -90,7 +90,7 @@ public class MailingListRepositoryImplTest extends
 
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		internal = new Internal(FIRST_NAME, LAST_NAME, MAIL, UID);
-		internal.setLocale(domain.getDefaultLocale());
+		internal.setLocale(domain.getDefaultTapestryLocale());
 		internal.setDomain(domain);
 		accountRepository.create(internal);
 

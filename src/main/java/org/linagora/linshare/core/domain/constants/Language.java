@@ -33,27 +33,51 @@
  */
 package org.linagora.linshare.core.domain.constants;
 
-/** Defines supported languages.
+import java.util.Locale;
+
+/**
+ * Defines supported languages.
  */
 public enum Language {
-    DEFAULT(0), FRENCH(1), DUTCH(2);
+	ENGLISH(0, "en"), FRENCH(1, "fr"), DUTCH(2, "nl");
 
-    private int value;
+	private int value;
+	private String tapestryLocale;
 
-    private Language(int value) {
-        this.value = value;
-    }
+	private Language(int value, String tapestryLocale) {
+		this.value = value;
+		this.tapestryLocale = tapestryLocale;
+	}
 
-    public int toInt() {
-        return value;
-    }
+	public int toInt() {
+		return value;
+	}
 
-    public static Language fromInt(int value) {
-    	for (Language lang : values()) {
-    		if (lang.value == value) {
-    			return lang;
-    		}
-    	}
-    	throw new IllegalArgumentException("Doesn't match an existing Language");
-    }
+	public static Language fromInt(int value) {
+		for (Language lang : values()) {
+			if (lang.value == value) {
+				return lang;
+			}
+		}
+		throw new IllegalArgumentException("Doesn't match an existing Language");
+	}
+
+	public static Language fromLocale(Locale locale) {
+		if (locale.getLanguage().equals("nl_NL")
+				|| locale.getLanguage().equals("nl")) {
+			return DUTCH;
+		}
+		if (Locale.FRENCH.equals(locale) || Locale.FRANCE.equals(locale)) {
+			return FRENCH;
+		}
+		return ENGLISH;
+	}
+
+	public static Language fromTapestryLocale(String locale) {
+		return Language.fromLocale(new Locale(locale));
+	}
+
+	public String getTapestryLocale() {
+		return tapestryLocale;
+	}
 }

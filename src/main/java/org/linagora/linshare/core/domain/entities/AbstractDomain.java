@@ -53,7 +53,7 @@ public abstract class AbstractDomain {
 
 	protected String label;
 
-	protected String defaultLocale;
+	protected String defaultTapestryLocale;
 
 	protected Role defaultRole;
 
@@ -109,7 +109,7 @@ public abstract class AbstractDomain {
 		this.parentDomain = null;
 		this.subdomain = new HashSet<AbstractDomain>();
 		this.defaultRole = Role.SIMPLE;
-		this.defaultLocale = "en";
+		this.defaultTapestryLocale = "en";
 		this.enable = true;
 		this.template = false;
 		this.usedSpace = new Long(0);
@@ -135,7 +135,7 @@ public abstract class AbstractDomain {
 		this.parentDomain = null;
 		this.subdomain = new HashSet<AbstractDomain>();
 		this.defaultRole = d.getDefaultRole();
-		this.defaultLocale = d.getDefaultLocale();
+		this.defaultTapestryLocale = d.getDefaultLocale();
 		this.enable = d.isEnable();
 		this.template = d.isTemplate();
 		this.usedSpace = d.getUsedSpace();
@@ -158,7 +158,7 @@ public abstract class AbstractDomain {
 		this.usedSpace = new Long(0);
 		this.subdomain = new HashSet<AbstractDomain>();
 		this.defaultRole = Role.valueOf(domainDto.getUserRole());
-		this.defaultLocale = domainDto.getLocale();
+		this.defaultTapestryLocale = domainDto.getLanguage().getTapestryLocale();
 		this.authShowOrder = domainDto.getAuthShowOrder();
 //		TODO this.mimePolicy = new MimePolicy();
 	}
@@ -167,13 +167,13 @@ public abstract class AbstractDomain {
 		this.label = d.getLabel();
 		this.description = d.getDescription();
 		this.defaultRole = d.getDefaultRole();
-		this.defaultLocale = d.getDefaultLocale();
+		this.defaultTapestryLocale = d.getDefaultTapestryLocale();
 		this.enable = d.isEnable();
 		this.authShowOrder = d.getAuthShowOrder();
 	}
 
-	public String getDefaultLocale() {
-		return defaultLocale;
+	public String getDefaultTapestryLocale() {
+		return defaultTapestryLocale;
 	}
 
 	public Role getDefaultRole() {
@@ -208,8 +208,8 @@ public abstract class AbstractDomain {
 		return template;
 	}
 
-	public void setDefaultLocale(String defaultLocale) {
-		this.defaultLocale = defaultLocale;
+	public void setDefaultTapestryLocale(String defaultTapestryLocale) {
+		this.defaultTapestryLocale = defaultTapestryLocale;
 	}
 
 	public void setDefaultRole(Role defaultRole) {

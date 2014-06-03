@@ -384,14 +384,14 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		UserVo userVo2 = new UserVo(user2);
 
 		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
-		guestDomain.setDefaultLocale("en");
+		guestDomain.setDefaultTapestryLocale("en");
 
 		//create guest
 		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
 		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest.setOwner(user2);
-		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
-		guest.setLocale(guestDomain.getDefaultLocale());
+		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
+		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest);
 
 		userService.updateGuest(guest.getLsUuid(), LoadingServiceTestDatas.sqlGuestDomain,"user3@linpki.org","Foo", "Bar", false, false, userVo2);
@@ -460,14 +460,14 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user1);
 
 		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
-		guestDomain.setDefaultLocale("en");
+		guestDomain.setDefaultTapestryLocale("en");
 
 		//create guest
 		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
 		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest.setOwner(user1);
-		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
-		guest.setLocale(guestDomain.getDefaultLocale());
+		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
+		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		String oldPassword = "password222";
 
 		guest.setPassword(
@@ -491,15 +491,15 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user1);
 
 		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
-		guestDomain.setDefaultLocale("en");
+		guestDomain.setDefaultTapestryLocale("en");
 
 		//create guest
 		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
 		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest.setOwner(user1);
 		guest.setRestricted(true);
-		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
-		guest.setLocale(guestDomain.getDefaultLocale());
+		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
+		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest);
 		Assert.assertTrue(guest.isRestricted());
 		userService.removeGuestContactRestriction(guest.getLsUuid());
@@ -521,14 +521,14 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user1);
 
 		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
-		guestDomain.setDefaultLocale("en");
+		guestDomain.setDefaultTapestryLocale("en");
 
 		//create guest
 		Guest guest2 = new Guest("Jane","Smith","user2@linpki.org");
 		guest2.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest2.setOwner(user1);
-		guest2.setExternalMailLocale(guestDomain.getDefaultLocale());
-		guest2.setLocale(guestDomain.getDefaultLocale());
+		guest2.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
+		guest2.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest2);
 
 		//create guest
@@ -537,8 +537,8 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 
 		guest.setOwner(user1);
 		guest.setRestricted(true);
-		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
-		guest.setLocale(guestDomain.getDefaultLocale());
+		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
+		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest);
 		userService.addGuestContactRestriction(guest.getLsUuid(), guest2.getLsUuid());
 		List<AllowedContact> listAllowedContact= allowedContactRepository.findByOwner(guest);
@@ -565,14 +565,14 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user1);
 
 		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
-		guestDomain.setDefaultLocale("en");
+		guestDomain.setDefaultTapestryLocale("en");
 
 		//create guest
 		Guest guest2 = new Guest("Jane","Smith","user2@linpki.org");
 		guest2.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest2.setOwner(user1);
-		guest2.setExternalMailLocale(guestDomain.getDefaultLocale());
-		guest2.setLocale(guestDomain.getDefaultLocale());
+		guest2.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
+		guest2.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest2);
 
 		//create guest
@@ -580,8 +580,8 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest.setOwner(user1);
 		guest.setRestricted(true);
-		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
-		guest.setLocale(guestDomain.getDefaultLocale());
+		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
+		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 
 		guestRepository.create(guest);
 
@@ -613,14 +613,14 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user1);
 
 		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
-		guestDomain.setDefaultLocale("en");
+		guestDomain.setDefaultTapestryLocale("en");
 
 		//create guest
 		Guest guest2 = new Guest("Jane","Smith","user2@linpki.org");
 		guest2.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest2.setOwner(user1);
-		guest2.setExternalMailLocale(guestDomain.getDefaultLocale());
-		guest2.setLocale(guestDomain.getDefaultLocale());
+		guest2.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
+		guest2.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest2);
 
 		//create guest
@@ -628,8 +628,8 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest.setOwner(user1);
 		guest.setRestricted(true);
-		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
-		guest.setLocale(guestDomain.getDefaultLocale());
+		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
+		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest);
 
 		userService.addGuestContactRestriction(guest.getLsUuid(), guest2.getLsUuid());
@@ -652,14 +652,14 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user1);
 
 		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
-		guestDomain.setDefaultLocale("en");
+		guestDomain.setDefaultTapestryLocale("en");
 
 		//create guest
 		Guest guest2 = new Guest("Jane","Smith","user2@linpki.org");
 		guest2.setDomain(guestDomain);
 		guest2.setOwner(user1);
-		guest2.setExternalMailLocale(guestDomain.getDefaultLocale());
-		guest2.setLocale(guestDomain.getDefaultLocale());
+		guest2.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
+		guest2.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest2);
 
 		//create guest
@@ -667,8 +667,8 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		guest.setDomain(guestDomain);
 		guest.setOwner(user1);
 		guest.setRestricted(true);
-		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
-		guest.setLocale(guestDomain.getDefaultLocale());
+		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
+		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest);
 
 		userService.addGuestContactRestriction(guest.getLsUuid(), guest2.getLsUuid());

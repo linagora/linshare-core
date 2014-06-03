@@ -45,7 +45,7 @@ public class RootDomain extends AbstractDomain {
 	public RootDomain(String identifier, String label) {
 		super(identifier, label);
 		this.defaultRole=Role.SYSTEM;
-		this.defaultLocale="en";
+		this.defaultTapestryLocale="en";
 	}
 
 	public RootDomain(DomainDto domainDto) {
@@ -61,7 +61,7 @@ public class RootDomain extends AbstractDomain {
 	public void updateDomainWith(AbstractDomain d) {
 		this.label = d.getLabel();
 		this.description = d.getDescription();
-		this.defaultLocale = d.getDefaultLocale();
+		this.defaultTapestryLocale = d.getDefaultTapestryLocale();
 		this.authShowOrder = d.getAuthShowOrder();
 	}
 

@@ -24,7 +24,7 @@
 		<property access="field" column="template" name="template" not-null="true" />
 		<property access="field" column="description" name="description" />
 		<property access="field" column="default_role" name="defaultRole" type="roleEnumType" />
-		<property access="field" column="default_locale" name="defaultLocale" />
+		<property access="field" column="default_locale" name="defaultTapestryLocale" />
 		<property access="field" column="used_space" name="usedSpace" not-null="true"/>
 		<property access="field" column="auth_show_order" name="authShowOrder" />
 
