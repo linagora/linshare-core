@@ -36,6 +36,8 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
@@ -89,74 +91,64 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry>
 
 		DetachedCriteria criteria = DetachedCriteria.forClass(LogEntry.class);
 
-		if ((logCriteria.getActorMails() != null)
-				&& (logCriteria.getActorMails().size() > 0)) {
+		if (CollectionUtils.isNotEmpty(logCriteria.getActorMails())) {
 			Disjunction or = Restrictions.disjunction();
 			for (String mail : logCriteria.getActorMails()) {
-				mail = mail.trim();
-				if (!mail.isEmpty())
+				if (StringUtils.isNotBlank(mail))
 					or.add(Restrictions.like("actorMail", mail,
 							MatchMode.ANYWHERE));
 			}
 			criteria.add(or);
 		}
 
-		if ((logCriteria.getTargetMails() != null)
-				&& (logCriteria.getTargetMails().size() > 0)) {
+		if (CollectionUtils.isNotEmpty(logCriteria.getTargetMails())) {
 			Disjunction or = Restrictions.disjunction();
 			for (String mail : logCriteria.getTargetMails()) {
-				mail = mail.trim();
-				if (!mail.isEmpty())
+				if (StringUtils.isNotBlank(mail))
 					or.add(Restrictions.like("targetMail", mail,
 							MatchMode.ANYWHERE));
 			}
 			criteria.add(or);
 		}
 
-		if ((logCriteria.getActorFirstname() != null)
-				&& (logCriteria.getActorFirstname().length() > 0)) {
+		if (StringUtils.isNotBlank(logCriteria.getActorFirstname())) {
 			criteria.add(Restrictions.like("actorFirstname",
 					logCriteria.getActorFirstname(), MatchMode.ANYWHERE)
 					.ignoreCase());
 		}
 
-		if ((logCriteria.getActorLastname() != null)
+		if (StringUtils.isNotBlank(logCriteria.getActorLastname())
 				&& (logCriteria.getActorLastname().length() > 0)) {
 			criteria.add(Restrictions.like("actorLastname",
 					logCriteria.getActorLastname(), MatchMode.ANYWHERE)
 					.ignoreCase());
 		}
 
-		if (domainId != null && domainId.length() > 0) {
+		if (StringUtils.isNotBlank(domainId)) {
 			criteria.add(Restrictions.like("actorDomain", domainId));
-		} else if (logCriteria.getActorDomain() != null
-				&& logCriteria.getActorDomain().length() > 0) {
+		} else if (StringUtils.isNotBlank(logCriteria.getActorDomain())) {
 			criteria.add(Restrictions.like("actorDomain",
 					logCriteria.getActorDomain()));
 		}
 
-		if ((logCriteria.getTargetFirstname() != null)
-				&& (logCriteria.getTargetFirstname().length() > 0)) {
+		if (StringUtils.isNotBlank(logCriteria.getTargetFirstname())) {
 			criteria.add(Restrictions.like("targetFirstname",
 					logCriteria.getTargetFirstname(), MatchMode.ANYWHERE)
 					.ignoreCase());
 		}
 
-		if ((logCriteria.getTargetLastname() != null)
-				&& (logCriteria.getTargetLastname().length() > 0)) {
+		if (StringUtils.isNotBlank(logCriteria.getTargetLastname())) {
 			criteria.add(Restrictions.like("targetLastname",
 					logCriteria.getTargetLastname(), MatchMode.ANYWHERE)
 					.ignoreCase());
 		}
 
-		if (logCriteria.getTargetDomain() != null
-				&& logCriteria.getTargetDomain().length() > 0) {
+		if (StringUtils.isNotBlank(logCriteria.getTargetDomain())) {
 			criteria.add(Restrictions.like("targetDomain",
 					logCriteria.getTargetDomain()));
 		}
 
-		if ((logCriteria.getLogActions() != null)
-				&& (logCriteria.getLogActions().size() > 0)) {
+		if (CollectionUtils.isNotEmpty(logCriteria.getLogActions())) {
 			criteria.add(Restrictions.in("logAction",
 					logCriteria.getLogActions()));
 		}
@@ -170,7 +162,7 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry>
 					logCriteria.getAfterDate()));
 		}
 
-		if (logCriteria.getFileName() != null) {
+		if (StringUtils.isNotBlank(logCriteria.getFileName())) {
 
 			if (logCriteria.getFileNameMatchMode().equals(
 					CriterionMatchMode.ANYWHERE)) {
@@ -184,7 +176,7 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry>
 			}
 		}
 
-		if (logCriteria.getFileExtension() != null) {
+		if (StringUtils.isNotBlank(logCriteria.getFileExtension())) {
 			criteria.add(Restrictions.like("fileName",
 					logCriteria.getFileExtension(), MatchMode.END).ignoreCase());
 		}
