@@ -42,6 +42,8 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
@@ -128,6 +130,14 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		TopDomain topDomain = new TopDomain(topDomaineName,"label",ldapconnexion,domainPattern,baseDn);
 		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);
+
+		MailConfig mailConfig = new MailConfig();
+		mailConfig.setUuid(LinShareConstants.defaultMailConfigIdentifier);
+		topDomain.setCurrentMailConfiguration(mailConfig);
+
+		MimePolicy mimePolicy = new MimePolicy();
+		mimePolicy.setUuid(LinShareConstants.defaultMimePolicyIdentifier);
+		topDomain.setMimePolicy(mimePolicy);
 		
 		try {
 			abstractDomainService.createTopDomain(topDomain);
@@ -160,6 +170,16 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		TopDomain topDomain = new TopDomain(topDomaineName+"1","label",myldapconnexion,mydomainPattern,baseDn);
 		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);
+		
+		MailConfig mailConfig = new MailConfig();
+		mailConfig.setUuid(LinShareConstants.defaultMailConfigIdentifier);
+		topDomain.setCurrentMailConfiguration(mailConfig);
+
+		MimePolicy mimePolicy = new MimePolicy();
+		mimePolicy.setUuid(LinShareConstants.defaultMimePolicyIdentifier);
+		topDomain.setMimePolicy(mimePolicy);
+		
+		
 		
 		try {
 			abstractDomainService.createTopDomain(topDomain);
