@@ -158,8 +158,6 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry>
 		}
 
 		if (logCriteria.getAfterDate() != null) {
-			Calendar afterDate = logCriteria.getAfterDate();
-			afterDate.add(Calendar.DATE, 1);
 			criteria.add(Restrictions.lt("actionDate",
 					logCriteria.getAfterDate()));
 		}
