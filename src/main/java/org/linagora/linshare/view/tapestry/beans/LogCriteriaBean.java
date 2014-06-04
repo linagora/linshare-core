@@ -79,7 +79,7 @@ public class LogCriteriaBean {
 	
 	public LogCriteriaBean(List<String> actorMails, String actorFirstname, String actorLastname, String actorDomain,
 			List<String> targetMails, String targetFirstname, String targetLastname, String targetDomain,
-			Calendar beforeDate, Calendar afterDate, List<LogAction> logActions) {
+			Calendar beforeDate, Calendar afterDate, List<LogAction> logActions, String fileName, String fileExtension) {
 		this.actorMails = actorMails;
 		this.actorFirstname = actorFirstname;
 		this.actorLastname = actorLastname;
@@ -91,6 +91,8 @@ public class LogCriteriaBean {
 		this.beforeDate = beforeDate;
 		this.afterDate = afterDate;
 		this.logActions = logActions;
+		this.fileName = fileName;
+		this.fileExtension = fileExtension;
 		fileNameMatchMode = CriterionMatchMode.START;
 	}
 
