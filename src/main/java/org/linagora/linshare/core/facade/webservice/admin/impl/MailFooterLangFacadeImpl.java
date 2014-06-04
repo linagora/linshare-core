@@ -93,7 +93,7 @@ public class MailFooterLangFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private void transform(User actor, MailFooterLang footerLang,
 			MailFooterLangDto dto) throws BusinessException {
-		footerLang.setLanguage(dto.getLanguage());
+		footerLang.setLanguage(dto.getLanguage().toInt());
 		footerLang.setMailConfig(findConfig(actor, dto.getMailConfig()));
 		footerLang.setMailFooter(findFooter(actor, dto.getMailFooter()));
 	}

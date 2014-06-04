@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -48,7 +49,7 @@ public class MailFooterLangDto {
 	private String uuid;
 
 	@ApiModelProperty(value = "Language")
-	private int language;
+	private Language language;
 
 	@ApiModelProperty(value = "MailFooter")
 	private String mailFooter;
@@ -61,7 +62,7 @@ public class MailFooterLangDto {
 
 	public MailFooterLangDto(MailFooterLang footerLang) {
 		mailConfig = footerLang.getMailConfig().getUuid();
-		language = footerLang.getLanguage();
+		language = Language.fromInt(footerLang.getLanguage());
 		uuid = footerLang.getUuid();
 		mailFooter = footerLang.getMailFooter().getUuid();
 	}
@@ -74,11 +75,11 @@ public class MailFooterLangDto {
 		this.uuid = uuid;
 	}
 
-	public int getLanguage() {
+	public Language getLanguage() {
 		return language;
 	}
 
-	public void setLanguage(int language) {
+	public void setLanguage(Language language) {
 		this.language = language;
 	}
 

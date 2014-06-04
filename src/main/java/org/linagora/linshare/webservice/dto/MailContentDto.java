@@ -37,6 +37,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailContent;
 
@@ -60,7 +61,7 @@ public class MailContentDto {
 	private String mailContentType;
 
 	@ApiModelProperty(value = "Language")
-	private int language;
+	private Language language;
 
 	@ApiModelProperty(value = "Subject")
 	private String subject;
@@ -93,7 +94,7 @@ public class MailContentDto {
 		this.body = cont.getBody();
 		this.subject = cont.getSubject();
 		this.greetings = cont.getGreetings();
-		this.language = cont.getLanguage();
+		this.language = Language.fromInt(cont.getLanguage());
 		this.plaintext = cont.isPlaintext();
 		this.visible = cont.isVisible();
 		this.mailContentType = MailContentType.fromInt(
@@ -134,11 +135,11 @@ public class MailContentDto {
 		this.mailContentType = mailContentType;
 	}
 
-	public int getLanguage() {
+	public Language getLanguage() {
 		return language;
 	}
 
-	public void setLanguage(int language) {
+	public void setLanguage(Language language) {
 		this.language = language;
 	}
 
