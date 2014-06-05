@@ -40,7 +40,7 @@ CREATE TABLE document (
   uuid            varchar(255) NOT NULL UNIQUE, 
   creation_date   timestamp(6) NOT NULL, 
   type            varchar(255) NOT NULL, 
-  size            int8 NOT NULL, 
+  "size"          int8 NOT NULL, 
   thmb_uuid       varchar(255), 
   timestamp       bytea, 
   check_mime_type bool DEFAULT 'false' NOT NULL, 
@@ -245,7 +245,7 @@ CREATE TABLE signature (
   creation_date     timestamp(6) NOT NULL, 
   modification_date timestamp(6) NOT NULL, 
   type              varchar(255), 
-  size              int8, 
+  "size"            int8, 
   cert_subject_dn   varchar(255), 
   cert_issuer_dn    varchar(255), 
   cert_not_after    timestamp(6), 
@@ -421,27 +421,27 @@ CREATE TABLE mail_content_lang (
   uuid              varchar(255) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE upload_request (
-  id                            int8 NOT NULL, 
-  upload_request_group_id      int8 NOT NULL, 
-  uuid                         varchar(255) NOT NULL UNIQUE, 
-  max_file                     int4 NOT NULL, 
-  max_size                     int4 NOT NULL, 
-  max_file_size                int4 NOT NULL, 
-  status                       int4 NOT NULL, 
-  activation_date              timestamp(6) NOT NULL, 
-  creation_date                timestamp(6) NOT NULL, 
-  modification_date            timestamp(6) NOT NULL, 
-  notification_date            timestamp(6) NOT NULL, 
-  expiry_date                  timestamp(6) NOT NULL, 
-  UploadPropositionRequestUuid int4, 
-  can_delete                   bool NOT NULL, 
-  can_close                    bool NOT NULL, 
-  can_edit_expiry_date         bool NOT NULL, 
-  locale                       varchar(255), 
-  was_secured                  bool NOT NULL, 
-  mail_message_id              varchar(255), 
+  id                               int8 NOT NULL, 
+  upload_request_group_id         int8 NOT NULL, 
+  uuid                            varchar(255) NOT NULL UNIQUE, 
+  max_file                        int4 NOT NULL, 
+  max_size                        int8 NOT NULL, 
+  max_file_size                   int8 NOT NULL, 
+  status                          int4 NOT NULL, 
+  activation_date                 timestamp(6) NOT NULL, 
+  creation_date                   timestamp(6) NOT NULL, 
+  modification_date               timestamp(6) NOT NULL, 
+  notification_date               timestamp(6) NOT NULL, 
+  expiry_date                     timestamp(6) NOT NULL, 
+  upload_proposition_request_uuid varchar(255), 
+  can_delete                      bool NOT NULL, 
+  can_close                       bool NOT NULL, 
+  can_edit_expiry_date            bool NOT NULL, 
+  locale                          varchar(255), 
+  was_secured                     bool NOT NULL, 
+  mail_message_id                 varchar(255), 
   PRIMARY KEY (id));
-CREATE TABLE upload_request_URL (
+CREATE TABLE upload_request_url (
   id                 int8 NOT NULL, 
   contact_id        int8 NOT NULL, 
   upload_request_id int8 NOT NULL, 
@@ -453,29 +453,30 @@ CREATE TABLE upload_request_group (
   id       int8 NOT NULL, 
   subject text NOT NULL, 
   body    text NOT NULL, 
+  uuid    varchar(255) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE upload_request_history (
-  id                             int8 NOT NULL, 
-  upload_request_id             int8 NOT NULL, 
-  status                        int4 NOT NULL, 
-  status_upated                 bool NOT NULL, 
-  event_type                    int4 NOT NULL, 
-  uuid                          varchar(255) NOT NULL, 
-  activation_date               timestamp(6) NOT NULL, 
-  expiry_date                   timestamp(6) NOT NULL, 
-  notification_date             timestamp(6) NOT NULL, 
-  max_depositSize               int4 NOT NULL, 
-  max_file_count                int4 NOT NULL, 
-  max_file_size                 int4 NOT NULL, 
-  upload_propositionRequestUuid int4, 
-  can_delete                    bool NOT NULL, 
-  can_close                     bool NOT NULL, 
-  can_edit_expiry_date          bool NOT NULL, 
-  locale                        varchar(255), 
-  wasSecured                    bool NOT NULL, 
-  creation_date                 timestamp(6) NOT NULL, 
-  modification_date             timestamp(6) NOT NULL, 
-  mail_message_id               varchar(255), 
+  id                               int8 NOT NULL, 
+  upload_request_id               int8 NOT NULL, 
+  status                          int4 NOT NULL, 
+  status_upated                   bool NOT NULL, 
+  event_type                      int4 NOT NULL, 
+  uuid                            varchar(255) NOT NULL, 
+  activation_date                 timestamp(6) NOT NULL, 
+  expiry_date                     timestamp(6) NOT NULL, 
+  notification_date               timestamp(6) NOT NULL, 
+  max_depositSize                 int8 NOT NULL, 
+  max_file_count                  int4 NOT NULL, 
+  max_file_size                   int8 NOT NULL, 
+  upload_proposition_request_uuid varchar(255), 
+  can_delete                      bool NOT NULL, 
+  can_close                       bool NOT NULL, 
+  can_edit_expiry_date            bool NOT NULL, 
+  locale                          varchar(255), 
+  wasSecured                      bool NOT NULL, 
+  creation_date                   timestamp(6) NOT NULL, 
+  modification_date               timestamp(6) NOT NULL, 
+  mail_message_id                 varchar(255), 
   PRIMARY KEY (id));
 CREATE TABLE upload_request_entry (
   entry_id                int8 NOT NULL, 
@@ -484,21 +485,24 @@ CREATE TABLE upload_request_entry (
   PRIMARY KEY (entry_id));
 CREATE TABLE upload_proposition_filter (
   id                  int8 NOT NULL, 
+  uuid               varchar(255) NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
   name               varchar(255) NOT NULL, 
   match_all          bool NOT NULL, 
   enable             bool NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE upload_proposition_rule (
-  id                              int8 NOT NULL, 
-  upload_proposition_filter_id   int8 NOT NULL, 
-  operator                       int4 NOT NULL, 
-  field                          int4 NOT NULL, 
-  upload_proposition_filterIndex int4, 
-  value                          varchar(255), 
+  id                               int8 NOT NULL, 
+  uuid                            varchar(255) NOT NULL, 
+  upload_proposition_filter_id    int8 NOT NULL, 
+  operator                        int4 NOT NULL, 
+  field                           int4 NOT NULL, 
+  upload_proposition_filter_index int4 NOT NULL, 
+  value                           varchar(255), 
   PRIMARY KEY (id));
 CREATE TABLE upload_proposition_action (
   id                              int8 NOT NULL, 
+  uuid                           varchar(255) NOT NULL, 
   upload_proposition_filter_id   int8 NOT NULL, 
   action_type                    int4 NOT NULL, 
   data                           text, 
@@ -508,23 +512,6 @@ CREATE TABLE functionality_boolean (
   id                SERIAL NOT NULL, 
   functionality_id int8 NOT NULL, 
   boolean_value    bool NOT NULL, 
-  PRIMARY KEY (id));
-CREATE TABLE statistic_event (
-  id                 int8 NOT NULL, 
-  event_type        int4 NOT NULL, 
-  event_action      int4 NOT NULL, 
-  event_source      int4 NOT NULL, 
-  event_actor_type  int4 NOT NULL, 
-  action_count      int8, 
-  description       text, 
-  transfer_size     int8, 
-  transfer_duration int8, 
-  transfer_rate     int8, 
-  recipient_count   int8, 
-  document_count    int8, 
-  secured           bool, 
-  daily             int4, 
-  creation_date     timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mailing_list (
   id                  int8 NOT NULL, 
@@ -550,6 +537,7 @@ CREATE TABLE mailing_list_contact (
   PRIMARY KEY (id));
 CREATE TABLE upload_request_template (
   id                          int8 NOT NULL, 
+  uuid                       varchar(255) NOT NULL, 
   account_id                 int8 NOT NULL, 
   name                       varchar(255), 
   description                varchar(255), 
@@ -569,18 +557,18 @@ CREATE TABLE upload_request_template (
   PRIMARY KEY (id));
 CREATE TABLE upload_proposition (
   id                  int8 NOT NULL, 
+  uuid               varchar(255) NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
-  uuid               varchar(255), 
   status             int4 NOT NULL, 
-  subject            varchar(255), 
-  body               varchar(255), 
-  mail               varchar(255), 
-  first_name         varchar(255), 
-  last_name          varchar(255), 
+  subject            varchar(255) NOT NULL, 
+  body               text, 
+  mail               varchar(255) NOT NULL, 
+  first_name         varchar(255) NOT NULL, 
+  last_name          varchar(255) NOT NULL, 
   domaine_source     varchar(255), 
-  recipient_mail     varchar(255), 
-  creation_date      timestamp(6), 
-  modification_date  timestamp(6), 
+  recipient_mail     varchar(255) NOT NULL, 
+  creation_date      timestamp(6) NOT NULL, 
+  modification_date  timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mime_policy (
   id                 int8 NOT NULL, 
@@ -667,9 +655,9 @@ ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte910199 FOREIGN KEY (mai
 ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte33952 FOREIGN KEY (mail_content_id) REFERENCES mail_content (id);
 ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi541299 FOREIGN KEY (mail_layout_html_id) REFERENCES mail_layout (id);
 ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi612314 FOREIGN KEY (mail_layout_text_id) REFERENCES mail_layout (id);
-ALTER TABLE upload_request_URL ADD CONSTRAINT FKupload_req865421 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
+ALTER TABLE upload_request_url ADD CONSTRAINT FKupload_req833645 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
 ALTER TABLE upload_request ADD CONSTRAINT FKupload_req916400 FOREIGN KEY (upload_request_group_id) REFERENCES upload_request_group (id);
-ALTER TABLE upload_request_URL ADD CONSTRAINT FKupload_req570136 FOREIGN KEY (contact_id) REFERENCES contact (id);
+ALTER TABLE upload_request_url ADD CONSTRAINT FKupload_req601912 FOREIGN KEY (contact_id) REFERENCES contact (id);
 ALTER TABLE upload_request_history ADD CONSTRAINT FKupload_req678768 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req220981 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req254795 FOREIGN KEY (entry_id) REFERENCES entry (id);

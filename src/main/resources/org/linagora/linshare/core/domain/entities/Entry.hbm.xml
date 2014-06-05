@@ -62,5 +62,16 @@
 			<property name="ciphered" column="ciphered" type="boolean" not-null="true" lazy="false"/>
 			<many-to-one name="document" column="document_id" class="org.linagora.linshare.core.domain.entities.Document"  unique="true" not-null="true" lazy="no-proxy"/>
 		</joined-subclass>
+		<joined-subclass name="org.linagora.linshare.core.domain.entities.UploadRequestEntry" table="upload_request_entry" lazy="false">
+			<key>
+				<column name="entry_id"/>
+			</key>
+			<many-to-one name="documentEntry" column="document_entry_entry_id" class="org.linagora.linshare.core.domain.entities.DocumentEntry"
+				cascade="lock" unique="true" not-null="false" lazy="no-proxy">
+			</many-to-one>
+			<many-to-one name="uploadRequest" cascade="lock" column="upload_request_id" class="org.linagora.linshare.core.domain.entities.UploadRequest"
+				not-null="true" lazy="no-proxy">
+			</many-to-one>
+		</joined-subclass>
 	</class>
 </hibernate-mapping>

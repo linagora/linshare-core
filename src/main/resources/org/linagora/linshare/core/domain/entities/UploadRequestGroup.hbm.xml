@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.linagora.linshare.core.domain.entities.UploadRequestGroup"
+		table="upload_request_group" lazy="false">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<property name="subject" column="subject" type="text"
+			not-null="true" lazy="false" />
+		<property name="body" column="body" type="text" not-null="true"
+			lazy="false" />
+		<property name="uuid" column="uuid" type="string" length="255"
+			not-null="true" lazy="false" />
+		<set name="uploadRequests" lazy="true" cascade="lock"
+			inverse="true">
+			<key column="upload_request_group_id" not-null="true" />
+			<one-to-many
+				class="org.linagora.linshare.core.domain.entities.UploadRequest" />
+		</set>
+	</class>
+</hibernate-mapping>
