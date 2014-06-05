@@ -80,6 +80,8 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 
 	private final MailConfigRepository mailConfigRepository;
 
+	private static final String LINSHARE_LOGO = "<img src='cid:image.part.1@linshare.org' /><br/><br/>";
+
 	private class ContactRepresentation {
 		private String mail;
 		private String firstName;
@@ -133,20 +135,26 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	 */
 	private class MailContainerBuilder {
 
+		@SuppressWarnings("serial")
 		private class KeyValueChain extends LinkedHashMap<String, String> {
 			public KeyValueChain add(String key, String value) {
+				logger.debug("Adding K/V pair: [" + key + ", " + value
+						+ "]");
 				super.put(key, value);
 				return this;
 			}
 
 			public String build(String input) {
+				logger.debug("Building mail template.");
+				logger.debug("\tinput: " + input);
 				String ret = input;
 
 				for (Map.Entry<String, String> e : entrySet()) {
 					ret = StringUtils.replace(ret, "${" + e.getKey() + "}",
 							e.getValue());
 				}
-				return input;
+				logger.debug("\tret: " + ret);
+				return ret;
 			}
 		}
 
@@ -201,6 +209,9 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildAnonymousDownload(
 			AnonymousShareEntry shareEntry) throws BusinessException {
+		logger.info("Building mail content: "
+				+ MailContentType.ANONYMOUS_DOWNLOAD.toString());
+
 		User sender = (User) shareEntry.getEntryOwner();
 		String documentName = shareEntry.getDocumentEntry().getName();
 		String email = shareEntry.getAnonymousUrl().getContact().getMail();
@@ -231,6 +242,9 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildRegisteredDownload(
 			ShareEntry shareEntry) throws BusinessException {
+		logger.info("Building mail content: "
+				+ MailContentType.REGISTERED_DOWNLOAD.toString());
+
 		User sender = (User) shareEntry.getEntryOwner();
 		String documentName = shareEntry.getDocumentEntry().getName();
 		String actorRepresentation = new ContactRepresentation(shareEntry.getRecipient())
@@ -261,9 +275,12 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildNewGuest(User sender,
 			User recipient, String password) throws BusinessException {
+		logger.info("Building mail content: "
+				+ MailContentType.NEW_GUEST.toString());
+
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				recipient.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getGreetingsChain()
@@ -287,6 +304,9 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildResetPassword(Guest recipient,
 			String password) throws BusinessException {
+		logger.info("Building mail content: "
+				+ MailContentType.RESET_PASSWORD.toString());
+
 		MailConfig cfg = recipient.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				recipient.getExternalMailLocale());
@@ -311,18 +331,22 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	public MailContainerWithRecipient buildSharedDocUpdated(
 			Entry shareEntry, String oldDocName,
 			String fileSizeTxt) throws BusinessException {
+		logger.info("Building mail content: "
+				+ MailContentType.SHARED_DOC_UPDATED.toString());
+
 		/*
 		 * XXX ugly
 		 */
 		User sender = (User) shareEntry.getEntryOwner();
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
-		String url, firstName, lastName, mimeType, fileName, recipient; // ugly
+		String url, firstName, lastName, mimeType, fileName, recipient, locale; // ugly
 		if (shareEntry instanceof AnonymousShareEntry) {
 			AnonymousShareEntry e = (AnonymousShareEntry) shareEntry;
 			url = e.getAnonymousUrl()
 					.getFullUrl(getLinShareUrlForAContactRecipient(sender));
-			recipient = e.getAnonymousUrl().getContact().getMail();;
+			recipient = e.getAnonymousUrl().getContact().getMail();
+			locale = sender.getExternalMailLocale();
 			firstName = "";
 			lastName = recipient;
 			mimeType = e.getDocumentEntry().getType();
@@ -332,6 +356,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 			url = getLinShareUrlForAUserRecipient(
 					e.getRecipient());
 			recipient = e.getRecipient().getMail();
+			locale = e.getRecipient().getExternalMailLocale();
 			firstName = e.getRecipient().getFirstName();
 			lastName = e.getRecipient().getLastName();
 			mimeType = e.getDocumentEntry().getType();
@@ -355,7 +380,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("fileOldName", oldDocName)
 				.add("mimeType", mimeType)
 				.add("url", url)
-				.add("urlParam", "");
+				.add("urlparam", "");
 		container.setRecipient(recipient);
 		container.setFrom(abstractDomainService.getDomainMail(sender
 				.getDomain()));
@@ -367,22 +392,27 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildSharedDocDeleted(Account actor,
 			Entry shareEntry) throws BusinessException {
+		logger.info("Building mail content: "
+				+ MailContentType.SHARED_DOC_DELETED.toString());
+
 		/*
 		 * XXX ugly
 		 */
 		User sender = (User) shareEntry.getEntryOwner();
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
-		String firstName, lastName, fileName, recipient; // ugly
+		String firstName, lastName, fileName, recipient, locale; // ugly
 		if (shareEntry instanceof AnonymousShareEntry) {
 			AnonymousShareEntry e = (AnonymousShareEntry) shareEntry;
-			recipient = e.getAnonymousUrl().getContact().getMail();;
+			recipient = e.getAnonymousUrl().getContact().getMail();
+			locale = sender.getExternalMailLocale();
 			firstName = "";
 			lastName = recipient;
 			fileName = e.getDocumentEntry().getName();
 		} else {
 			ShareEntry e = (ShareEntry) shareEntry;
 			recipient = e.getRecipient().getMail();
+			locale = e.getRecipient().getExternalMailLocale();
 			firstName = e.getRecipient().getFirstName();
 			lastName = e.getRecipient().getLastName();
 			fileName = e.getDocumentEntry().getName();
@@ -390,7 +420,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				locale);
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -401,7 +431,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		builder.getBodyChain()
 				.add("firstName", sender.getFirstName())
 				.add("lastName", sender.getLastName())
-				.add("fileName", fileName);
+				.add("documentName", fileName);
 		container.setRecipient(recipient);
 		container.setFrom(abstractDomainService.getDomainMail(sender
 				.getDomain()));
@@ -413,18 +443,22 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildSharedDocUpcomingOutdated(
 			Entry shareEntry, Integer days) throws BusinessException {
+		logger.info("Building mail content: "
+				+ MailContentType.SHARED_DOC_UPCOMING_OUTDATED.toString());
+
 		/*
 		 * XXX ugly
 		 */
 		User sender = (User) shareEntry.getEntryOwner();
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
-		String url, firstName, lastName, fileName, recipient; // ugly
+		String url, firstName, lastName, fileName, recipient, locale; // ugly
 		if (shareEntry instanceof AnonymousShareEntry) {
 			AnonymousShareEntry e = (AnonymousShareEntry) shareEntry;
 			url = e.getAnonymousUrl()
 					.getFullUrl(getLinShareUrlForAContactRecipient(sender));
 			recipient = e.getAnonymousUrl().getContact().getMail();;
+			locale = sender.getExternalMailLocale();
 			firstName = "";
 			lastName = recipient;
 			fileName = e.getDocumentEntry().getName();
@@ -433,6 +467,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 			url = getLinShareUrlForAUserRecipient(
 					e.getRecipient());
 			recipient = e.getRecipient().getMail();
+			locale = e.getRecipient().getExternalMailLocale();
 			firstName = e.getRecipient().getFirstName();
 			lastName = e.getRecipient().getLastName();
 			fileName = e.getDocumentEntry().getName();
@@ -454,7 +489,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("documentName", fileName)
 				.add("nbDays", days.toString())
 				.add("url", url)
-				.add("urlParam", "");
+				.add("urlparam", "");
 		container.setRecipient(recipient);
 		container.setFrom(abstractDomainService.getDomainMail(sender
 				.getDomain()));
@@ -466,6 +501,9 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildDocUpcomingOutdated(
 			DocumentEntry document, Integer days) throws BusinessException {
+		logger.info("Building mail content: "
+				+ MailContentType.DOC_UPCOMING_OUTDATED.toString());
+
 		User owner = (User) document.getEntryOwner();
 		String actorRepresentation = new ContactRepresentation(owner)
 				.getContactRepresentation();
@@ -487,7 +525,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("documentName", document.getName())
 				.add("nbDays", days.toString())
 				.add("url", url)
-				.add("urlParam", "");
+				.add("urlparam", "");
 		container.setRecipient(owner.getMail());
 		container.setFrom(abstractDomainService.getDomainMail(owner
 				.getDomain()));
@@ -500,13 +538,16 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	public MailContainerWithRecipient buildNewSharing(User sender,
 			MailContainer input, User recipient,
 			List<ShareDocumentVo> shares) throws BusinessException {
+		logger.info("Building mail content: "
+				+ MailContentType.NEW_SHARING.toString());
+
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
 		String url = getLinShareUrlForAUserRecipient(recipient);
 
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				recipient.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		StringBuffer names = new StringBuffer();
@@ -531,7 +572,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("number", "" + shareSize)
 				.add("documentNames", names.toString())
 				.add("url", url)
-				.add("urlParam", "");
+				.add("urlparam", "");
 		container.setRecipient(recipient.getMail());
 		container.setFrom(abstractDomainService.getDomainMail(sender
 				.getDomain()));
@@ -545,6 +586,9 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	public MailContainerWithRecipient buildNewSharingProtected(User sender,
 			MailContainer input, AnonymousUrl anonUrl)
 			throws BusinessException {
+		logger.info("Building mail content: "
+				+ MailContentType.NEW_SHARING_PROTECTED.toString());
+
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
 		String url = anonUrl
@@ -573,7 +617,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("documentNames", names.toString())
 				.add("password", anonUrl.getPassword())
 				.add("url", url)
-				.add("urlParam", "");
+				.add("urlparam", "");
 		container.setRecipient(email);
 		container.setFrom(abstractDomainService.getDomainMail(sender
 				.getDomain()));
@@ -587,13 +631,16 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	public MailContainerWithRecipient buildNewSharingCyphered(User sender,
 			MailContainer input, User recipient,
 			List<ShareDocumentVo> shares) throws BusinessException {
+		logger.info("Building mail content: "
+				+ MailContentType.NEW_SHARING_CYPHERED.toString());
+
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
 		String url = getLinShareUrlForAUserRecipient(recipient);
 
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				recipient.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		StringBuffer names = new StringBuffer();
@@ -619,7 +666,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("documentNames", names.toString())
 				.add("jwsEncryptUrl", getJwsEncryptUrlString(url))
 				.add("url", url)
-				.add("urlParam", "");
+				.add("urlparam", "");
 		container.setRecipient(recipient.getMail());
 		container.setFrom(abstractDomainService.getDomainMail(sender
 				.getDomain()));
@@ -633,6 +680,9 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	public MailContainerWithRecipient buildNewSharingCypheredProtected(
 			User sender, MailContainer input, AnonymousUrl anonUrl)
 			throws BusinessException {
+		logger.info("Building mail content: "
+				+ MailContentType.NEW_SHARING_CYPHERED_PROTECTED.toString());
+
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
 		String url = anonUrl
@@ -659,10 +709,10 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("lastName", sender.getLastName())
 				.add("number", "" + anonUrl.getDocumentNames().size())
 				.add("documentNames", names.toString())
-				.add("password", anonUrl.getPassword())
+				.add("password", anonUrl.getTemporaryPlainTextPassword())
 				.add("jwsEncryptUrl", getJwsEncryptUrlString(url))
 				.add("url", url)
-				.add("urlParam", "");
+				.add("urlparam", "");
 		container.setRecipient(email);
 		container.setFrom(abstractDomainService.getDomainMail(sender
 				.getDomain()));
@@ -848,6 +898,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		body = builder.getBodyChain().build(body);
 		footer = builder.getFooterChain().build(footer);
 		layout = builder.getLayoutChain()
+				.add("image", displayLogo ? LINSHARE_LOGO : "")
 				.add("personalMessage", pm)
 				.add("greetings", greetings)
 				.add("body", body)
