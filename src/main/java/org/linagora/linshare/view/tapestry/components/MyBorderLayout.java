@@ -295,11 +295,11 @@ public class MyBorderLayout {
 		adminMenu = new MenuEntry(response.encodeURL("administration/index"),messages.get("components.myborderlayout.administration.title"),null,null,"administration");
 		
 		// Menu : History / Audit
-		if(superadmin) {
-			auditMenu = new MenuEntry(response.encodeURL("administration/audit"),messages.get("components.myborderlayout.audit.title"),null,null,"audit");
-		} else {
+//		if(superadmin) {
+//			auditMenu = new MenuEntry(response.encodeURL("administration/audit"),messages.get("components.myborderlayout.audit.title"),null,null,"audit");
+//		} else {
 			auditMenu = new MenuEntry(response.encodeURL("history/index"),messages.get("components.myborderlayout.history.title"),null,null,"history");
-		}
+//		}
 		
 		// Menu : Lists	
 		listMenu = new MenuEntry(response.encodeURL("lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
@@ -330,8 +330,6 @@ public class MyBorderLayout {
 			
 			if (superadmin) {
 				menu.addMenuEntry(adminMenu);
-				if (showAuditTab())
-					menu.addMenuEntry(auditMenu);
 			} else {
 				menu.addMenuEntry(homeMenu);
 				menu.addMenuEntry(fileMenu);
