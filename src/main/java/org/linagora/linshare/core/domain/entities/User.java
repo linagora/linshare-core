@@ -36,6 +36,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.webservice.dto.UserDto;
@@ -115,7 +116,7 @@ public abstract class User extends Account {
 	}
 	
 	public void setFirstName(String value) {
-		this.firstName = value;
+		this.firstName = StringUtils.capitalize(value);
 	}
 	
 	public String getFirstName() {
@@ -123,7 +124,7 @@ public abstract class User extends Account {
 	}
 	
 	public void setLastName(String value) {
-		this.lastName = value;
+		this.lastName = StringUtils.capitalize(value);
 	}
 	
 	public String getLastName() {
