@@ -495,70 +495,218 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	}
 
 	@Override
-	public MailContainerWithRecipient buildNewSharing()
-			throws BusinessException {
-		return null; // TODO
+	public MailContainerWithRecipient buildNewSharing(User sender,
+			MailContainer inputMailContainer, User recipient,
+			List<ShareDocumentVo> shares) throws BusinessException {
+		String actorRepresentation = new ContactRepresentation(sender)
+				.getContactRepresentation();
+		String url = getLinShareUrlForAUserRecipient(recipient);
+
+		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailContainerWithRecipient container = new MailContainerWithRecipient(
+				sender.getExternalMailLocale());
+		MailContainerBuilder builder = new MailContainerBuilder();
+
+		StringBuffer names = new StringBuffer();
+		long shareSize = 0;
+		for (ShareDocumentVo share : shares) {
+			if (recipient.getLsUuid().equals(share.getReceiver().getLsUuid())) {
+				shareSize += 1;
+				names.append("<li><a href='"
+						+ getDirectDownloadLink(recipient, share) + "'>"
+						+ share.getFileName() + "</a></li>");
+			}
+		}
+
+		builder.getSubjectChain()
+				.add("actorRepresentation", actorRepresentation);
+		builder.getGreetingsChain()
+				.add("firstName", recipient.getFirstName())
+				.add("lastName", recipient.getLastName());
+		builder.getBodyChain()
+				.add("firstName", sender.getFirstName())
+				.add("lastName", sender.getLastName())
+				.add("number", "" + shareSize)
+				.add("documentNames", names.toString())
+				.add("url", url)
+				.add("urlParam", "");
+		container.setRecipient(recipient.getMail());
+		container.setFrom(abstractDomainService.getDomainMail(sender
+				.getDomain()));
+
+		return buildMailContainer(cfg, sender, container, null,
+				MailContentType.NEW_SHARING, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildNewSharingProtected()
+	public MailContainerWithRecipient buildNewSharingProtected(User sender,
+			MailContainer inputMailContainer, AnonymousUrl anonUrl)
 			throws BusinessException {
-		return null; // TODO
+		String actorRepresentation = new ContactRepresentation(sender)
+				.getContactRepresentation();
+		String url = anonUrl
+				.getFullUrl(getLinShareUrlForAContactRecipient(sender));
+		String email = anonUrl.getContact().getMail();
+
+		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailContainerWithRecipient container = new MailContainerWithRecipient(
+				sender.getExternalMailLocale());
+		MailContainerBuilder builder = new MailContainerBuilder();
+
+		StringBuffer names = new StringBuffer();
+		for (String n : anonUrl.getDocumentNames()) {
+			names.append("<li>" + n + "</li>");
+		}
+
+		builder.getSubjectChain()
+				.add("actorRepresentation", actorRepresentation);
+		builder.getGreetingsChain()
+				.add("firstName", "")
+				.add("lastName", email);
+		builder.getBodyChain()
+				.add("firstName", sender.getFirstName())
+				.add("lastName", sender.getLastName())
+				.add("number", "" + anonUrl.getDocumentNames().size())
+				.add("documentNames", names.toString())
+				.add("password", anonUrl.getPassword())
+				.add("url", url)
+				.add("urlParam", "");
+		container.setRecipient(email);
+		container.setFrom(abstractDomainService.getDomainMail(sender
+				.getDomain()));
+
+		return buildMailContainer(cfg, sender, container, null,
+				MailContentType.NEW_SHARING_PROTECTED, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildNewSharingCyphered()
-			throws BusinessException {
-		return null; // TODO
+	public MailContainerWithRecipient buildNewSharingCyphered(User sender,
+			MailContainer inputMailContainer, User recipient,
+			List<ShareDocumentVo> shares) throws BusinessException {
+		String actorRepresentation = new ContactRepresentation(sender)
+				.getContactRepresentation();
+		String url = getLinShareUrlForAUserRecipient(recipient);
+
+		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailContainerWithRecipient container = new MailContainerWithRecipient(
+				sender.getExternalMailLocale());
+		MailContainerBuilder builder = new MailContainerBuilder();
+
+		StringBuffer names = new StringBuffer();
+		long shareSize = 0;
+		for (ShareDocumentVo share : shares) {
+			if (recipient.getLsUuid().equals(share.getReceiver().getLsUuid())) {
+				shareSize += 1;
+				names.append("<li><a href='"
+						+ getDirectDownloadLink(recipient, share) + "'>"
+						+ share.getFileName() + "</a></li>");
+			}
+		}
+
+		builder.getSubjectChain()
+				.add("actorRepresentation", actorRepresentation);
+		builder.getGreetingsChain()
+				.add("firstName", recipient.getFirstName())
+				.add("lastName", recipient.getLastName());
+		builder.getBodyChain()
+				.add("firstName", sender.getFirstName())
+				.add("lastName", sender.getLastName())
+				.add("number", "" + shareSize)
+				.add("documentNames", names.toString())
+				.add("jwsEncryptUrl", getJwsEncryptUrlString(url))
+				.add("url", url)
+				.add("urlParam", "");
+		container.setRecipient(recipient.getMail());
+		container.setFrom(abstractDomainService.getDomainMail(sender
+				.getDomain()));
+
+		return buildMailContainer(cfg, sender, container, null,
+				MailContentType.NEW_SHARING_CYPHERED, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildNewSharingCypheredProtected()
+	public MailContainerWithRecipient buildNewSharingCypheredProtected(
+			User sender, MailContainer inputMailContainer, AnonymousUrl anonUrl)
 			throws BusinessException {
-		return null; // TODO
+		String actorRepresentation = new ContactRepresentation(sender)
+				.getContactRepresentation();
+		String url = anonUrl
+				.getFullUrl(getLinShareUrlForAContactRecipient(sender));
+		String email = anonUrl.getContact().getMail();
+
+		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailContainerWithRecipient container = new MailContainerWithRecipient(
+				sender.getExternalMailLocale());
+		MailContainerBuilder builder = new MailContainerBuilder();
+
+		StringBuffer names = new StringBuffer();
+		for (String n : anonUrl.getDocumentNames()) {
+			names.append("<li>" + n + "</li>");
+		}
+
+		builder.getSubjectChain()
+				.add("actorRepresentation", actorRepresentation);
+		builder.getGreetingsChain()
+				.add("firstName", "")
+				.add("lastName", email);
+		builder.getBodyChain()
+				.add("firstName", sender.getFirstName())
+				.add("lastName", sender.getLastName())
+				.add("number", "" + anonUrl.getDocumentNames().size())
+				.add("documentNames", names.toString())
+				.add("password", anonUrl.getPassword())
+				.add("jwsEncryptUrl", getJwsEncryptUrlString(url))
+				.add("url", url)
+				.add("urlParam", "");
+		container.setRecipient(email);
+		container.setFrom(abstractDomainService.getDomainMail(sender
+				.getDomain()));
+
+		return buildMailContainer(cfg, sender, container, null,
+				MailContentType.NEW_SHARING_PROTECTED, builder);
 	}
 
 	/*
-	 * Ugly adapters
+	 * Adapters
 	 */
 
 	@Override
 	public MailContainerWithRecipient buildMailUpcomingOutdatedShare(
 			ShareEntry shareEntry, Integer days) throws BusinessException {
-		return null; // TODO
+		return buildSharedDocUpcomingOutdated(shareEntry, days);
 	}
 
 	@Override
 	public MailContainerWithRecipient buildMailUpcomingOutdatedShare(
 			AnonymousShareEntry shareEntry, Integer days)
 			throws BusinessException {
-		return null; // TODO
+		return buildSharedDocUpcomingOutdated(shareEntry, days);
 	}
 
 	@Override
 	public MailContainerWithRecipient buildMailUpcomingOutdatedDocument(
 			DocumentEntry document, Integer days) throws BusinessException {
-		return null; // TODO
+		return buildDocUpcomingOutdated(document, days);
 	}
 
 	@Override
 	public MailContainerWithRecipient buildMailSharedDocumentUpdated(
 			AnonymousShareEntry shareEntry, String oldDocName,
 			String fileSizeTxt) throws BusinessException {
-		return null; // TODO
+		return buildSharedDocUpdated(shareEntry, oldDocName, fileSizeTxt);
 	}
 
 	@Override
 	public MailContainerWithRecipient buildMailSharedDocumentUpdated(
 			ShareEntry shareEntry, String oldDocName, String fileSizeTxt)
 			throws BusinessException {
-		return null; // TODO
+		return buildSharedDocUpdated(shareEntry, oldDocName, fileSizeTxt);
 	}
 
 	@Override
 	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(
 			Account actor, ShareEntry shareEntry) throws BusinessException {
-		return null; // TODO
+		return buildSharedDocDeleted(actor, shareEntry);
 	}
 
 	@Override
@@ -569,17 +717,21 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 
 	@Override
 	public MailContainerWithRecipient buildMailNewSharingWithRecipient(
-			User sender, MailContainer inputMailContainer, User recipient,
+			User sender, MailContainer input, User recipient,
 			List<ShareDocumentVo> shares, boolean hasToDecrypt)
 			throws BusinessException {
-		return null; // TODO
+		if (hasToDecrypt)
+			return buildNewSharingCyphered(sender, input, recipient, shares);
+		return buildNewSharing(sender, input, recipient, shares);
 	}
 
 	@Override
 	public MailContainerWithRecipient buildMailNewSharingWithRecipient(
-			MailContainer inputMailContainer, AnonymousUrl anonymousUrl,
-			User sender) throws BusinessException {
-		return null; // TODO
+			MailContainer input, AnonymousUrl anonUrl, User sender)
+			throws BusinessException {
+		if (anonUrl.oneDocumentIsEncrypted())
+			return buildNewSharingCypheredProtected(sender, input, anonUrl);
+		return buildNewSharingProtected(sender, input, anonUrl);
 	}
 
 	@Override
@@ -597,7 +749,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildMailRegisteredDownloadWithOneRecipient(
 			ShareEntry shareEntry) throws BusinessException {
-		return null; // TODO
+		return buildRegisteredDownload(shareEntry);
 	}
 
 	/*
