@@ -77,68 +77,70 @@ import org.slf4j.Logger;
  */
 public class Index {
 
-    @SessionState
-    @Property
-    private ShareSessionObjects shareSessionObjects;
+	@SessionState
+	@Property
+	private ShareSessionObjects shareSessionObjects;
 
-    /* ***********************************************************
-     *                      Injected services
-     ************************************************************ */
-    @Inject
-    private ShareFacade shareFacade;
+	/* ***********************************************************
+	 * Injected services
+	 * ***********************************************************
+	 */
+	@Inject
+	private ShareFacade shareFacade;
 
-    @Inject
-    private AbstractDomainFacade domainFacade;
+	@Inject
+	private AbstractDomainFacade domainFacade;
 
 	@Inject
 	private PageRenderLinkSource linkFactory;
 
-    @Inject
-    private PersistentLocale persistentLocale;
+	@Inject
+	private PersistentLocale persistentLocale;
 
-    @Inject
-    private Request request;
+	@Inject
+	private Request request;
 
 	@Inject
 	private Messages messages;
 
-    @Environmental
-    private JavaScriptSupport renderSupport;
+	@Environmental
+	private JavaScriptSupport renderSupport;
 
-    @Inject
-    private Response response;
- 
+	@Inject
+	private Response response;
+
 	@Inject
 	private Logger logger;
-	
+
 	@InjectPage
 	private Share share;
 
-    /* ***********************************************************
-     *                Properties & injected symbol, ASO, etc
-     ************************************************************ */
-    @Property
-    @Persist
-    private List<ShareDocumentVo> shares;
+	/* ***********************************************************
+	 * Properties & injected symbol, ASO, etc
+	 * ***********************************************************
+	 */
+	@Property
+	@Persist
+	private List<ShareDocumentVo> shares;
 
-    @SessionState
-    @Property
-    private UserVo userVo;
-    @Property
-    private boolean userVoExists;
-    
-	@Inject @Symbol("linshare.display.licenceTerm")
+	@SessionState
+	@Property
+	private UserVo userVo;
+	@Property
+	private boolean userVoExists;
+
+	@Inject
+	@Symbol("linshare.display.licenceTerm")
 	@Property
 	private boolean linshareLicenceTerm;
 
 	@Property
-    private String welcomeText;
-    
+	private String welcomeText;
+
 	@Property
 	@Persist
 	private boolean advanced;
 
-	
 	@Persist
 	@Property
 	/** used to prevent the clearing of documentsVo with search*/
@@ -147,228 +149,248 @@ public class Index {
 	@Persist
 	private boolean finishForwarding;
 
+	/* ***********************************************************
+	 * Event handlers&processing
+	 * ***********************************************************
+	 */
 
-    /* ***********************************************************
-     *                   Event handlers&processing
-     ************************************************************ */
-	
 	public Object onActivate() {
 		if (shareSessionObjects != null)
-			shareSessionObjects.checkDocumentsTypeIntegrity(ShareDocumentVo.class);
+			shareSessionObjects
+					.checkDocumentsTypeIntegrity(ShareDocumentVo.class);
 		if (userVoExists && userVo.isSuperAdmin()) {
 			return org.linagora.linshare.view.tapestry.pages.administration.Index.class;
 		}
-    	if (finishForwarding) {
+		if (finishForwarding) {
 			share.setSelectedDocuments(shareSessionObjects.getDocuments());
 			clearList();
-    		finishForwarding = false;
-    		return share;
-    	}
+			finishForwarding = false;
+			return share;
+		}
 		return null;
 	}
-	
-    @SetupRender
-    private void initList() throws BusinessException {
-        if (!userVoExists) {
-        	Locale locale = WelcomeMessageUtils.getNormalisedLocale(persistentLocale.get(), request.getLocale(), null);
-        	Language language = WelcomeMessageUtils.getLanguageFromLocale(locale);
-            shares = new ArrayList<ShareDocumentVo>();
-            welcomeText = "blabla";
-            //welcomeText = WelcomeMessageUtils.getWelcomeText(parameterVo.getWelcomeTexts(), language,
-            //    UserType.INTERNAL).getWelcomeText();
 
-        } else {
-            AbstractDomainVo domain= domainFacade.retrieveDomain(userVo.getDomainIdentifier());
-            
-        	Locale userLocale = null;
-        	if (((userVo.getLocale())!= null) && (!userVo.getLocale().equals(""))) {
-        		userLocale = new Locale(userVo.getLocale());
-        	}
-        	Locale locale = WelcomeMessageUtils.getNormalisedLocale(persistentLocale.get(), request.getLocale(), userLocale);
-        	Language language = WelcomeMessageUtils.getLanguageFromLocale(locale);
-            
-        	if(!flag){
-	        	shares = shareFacade.getAllSharingReceivedByUser(userVo);
-        	}
-        	
-            welcomeText = WelcomeMessageUtils.getWelcomeText(domainFacade.getMessages(domain.getIdentifier()).getWelcomeTexts(), language,
-                userVo.getUserType()).getWelcomeText();
+	@SetupRender
+	private void initList() throws BusinessException {
+		if (!userVoExists) {
+			Language language = WelcomeMessageUtils.getLanguage(
+					persistentLocale.get(), request.getLocale(), null);
+			shares = new ArrayList<ShareDocumentVo>();
+			welcomeText = "";
+			// welcomeText =
+			// WelcomeMessageUtils.getWelcomeText(parameterVo.getWelcomeTexts(),
+			// language,
+			// UserType.INTERNAL).getWelcomeText();
 
-        }
-        
-    }
-    
+		} else {
+			AbstractDomainVo domain = domainFacade.retrieveDomain(userVo
+					.getDomainIdentifier());
+
+			Locale userLocale = null;
+			if (((userVo.getLocale()) != null)
+					&& (!userVo.getLocale().equals(""))) {
+				userLocale = new Locale(userVo.getLocale());
+			}
+			Language language = WelcomeMessageUtils.getLanguage(
+					persistentLocale.get(), request.getLocale(), userLocale);
+
+			if (!flag) {
+				shares = shareFacade.getAllSharingReceivedByUser(userVo);
+			}
+
+			welcomeText = WelcomeMessageUtils.getWelcomeText(
+					domainFacade.getMessages(domain.getIdentifier())
+							.getWelcomeTexts(), language, userVo.getUserType())
+					.getWelcomeText();
+
+		}
+
+	}
+
 	/**
 	 * Show the popup if it should be shown
 	 */
-    @AfterRender
-    public void postInit() {
-    	if (finishForwarding) {
-    		//show the share window popup
-//    		renderSupport.addScript(String.format("quickForwardWindow.showCenter(true)"));
-    		finishForwarding = false;
-    	}
-    }
-    
-    /**
-     * Call the forward popup
-     * Invoked when the user submit the basket form
-     * @param elements : a DocumentVo[] of files to forward
-     */
-    @OnEvent(value="sharePanel")
-    public void onForward(Object[] elements) {
-    	finishForwarding = true;
-    }
+	@AfterRender
+	public void postInit() {
+		if (finishForwarding) {
+			// show the share window popup
+			// renderSupport.addScript(String.format("quickForwardWindow.showCenter(true)"));
+			finishForwarding = false;
+		}
+	}
+
+	/**
+	 * Call the forward popup Invoked when the user submit the basket form
+	 * 
+	 * @param elements
+	 *            : a DocumentVo[] of files to forward
+	 */
+	@OnEvent(value = "sharePanel")
+	public void onForward(Object[] elements) {
+		finishForwarding = true;
+	}
 
 	/**
 	 * Remove the document from the share list
-	 * @param object : object[0] contains a the DocumentVo
+	 * 
+	 * @param object
+	 *            : object[0] contains a the DocumentVo
 	 */
-	@OnEvent(value="deleteFromSharePanel")
+	@OnEvent(value = "deleteFromSharePanel")
 	public void deleteSharePanel(Object[] object) {
-		shareSessionObjects.removeDocument((DocumentVo)object[0]);
-		
+		shareSessionObjects.removeDocument((DocumentVo) object[0]);
+
 	}
 
 	/**
 	 * Clear the shared document list
 	 */
-	@OnEvent(value="clearListObject")
+	@OnEvent(value = "clearListObject")
 	public void clearList() {
 		shareSessionObjects = new ShareSessionObjects();
 	}
 
 	/**
-	 * Add the document list in the shared list
-	 * Invoked when the user click on the multi share button 
-	 * @param object : a DocumentVo[] of files to forward
+	 * Add the document list in the shared list Invoked when the user click on
+	 * the multi share button
+	 * 
+	 * @param object
+	 *            : a DocumentVo[] of files to forward
 	 */
-    @OnEvent(value = "eventForwardFromListDocument")
-    private void forwardFromList(Object[] object) throws BusinessException {
+	@OnEvent(value = "eventForwardFromListDocument")
+	private void forwardFromList(Object[] object) throws BusinessException {
 		DocumentVo doc;
-		
+
 		if (shareSessionObjects.isComeFromSharePopup()) {
 			shareSessionObjects.getDocuments().clear();
 			shareSessionObjects.setComeFromSharePopup(false);
 		}
 		for (Object currentObject : object) {
-			doc = (DocumentVo)currentObject;
+			doc = (DocumentVo) currentObject;
 			shareSessionObjects.addDocument(doc);
 		}
-		shareSessionObjects.setMultipleSharing(true); //enable to multiple file sharing
-    }
+		shareSessionObjects.setMultipleSharing(true); // enable to multiple file
+														// sharing
+	}
 
-    @OnEvent(value = "eventDeleteUniqueFromListDocument")
-    private void deleteFromList(Object[] object) throws BusinessException {
-        String uuid = (String) object[0];
-        
-        ShareDocumentVo shareddoc = searchShareVoByUUid(uuid);
-        shareFacade.deleteSharing(shareddoc, userVo);
-        resetListFiles(null);
-    }
-    
-	@OnEvent(value="eventDeleteFromListDocument")
-	public void deleteFromListDocument(Object[] object) throws BusinessException{
-		 
-		for(Object currentObject:object){
-			ShareDocumentVo share = (ShareDocumentVo)currentObject;
-	        shareFacade.deleteSharing(share, userVo);
-	        shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"), share.getFileName()));
-	        resetListFiles(null);
+	@OnEvent(value = "eventDeleteUniqueFromListDocument")
+	private void deleteFromList(Object[] object) throws BusinessException {
+		String uuid = (String) object[0];
+
+		ShareDocumentVo shareddoc = searchShareVoByUUid(uuid);
+		shareFacade.deleteSharing(shareddoc, userVo);
+		resetListFiles(null);
+	}
+
+	@OnEvent(value = "eventDeleteFromListDocument")
+	public void deleteFromListDocument(Object[] object)
+			throws BusinessException {
+
+		for (Object currentObject : object) {
+			ShareDocumentVo share = (ShareDocumentVo) currentObject;
+			shareFacade.deleteSharing(share, userVo);
+			shareSessionObjects.addMessage(String.format(
+					messages.get("pages.index.message.fileRemoved"),
+					share.getFileName()));
+			resetListFiles(null);
 		}
 	}
-	
+
 	/**
-	 * sign the document 
-	 * Invoked when a user clicks on "sign" button in the searched document list
-	 * @param object a DocumentVo[]
+	 * sign the document Invoked when a user clicks on "sign" button in the
+	 * searched document list
+	 * 
+	 * @param object
+	 *            a DocumentVo[]
 	 */
-	@OnEvent(value="eventSignatureFromListDocument")
-	public void signatureFromListDocument(Object[] object){
+	@OnEvent(value = "eventSignatureFromListDocument")
+	public void signatureFromListDocument(Object[] object) {
 
 		List<String> identifiers = new ArrayList<String>();
-		
-		//context is a list of document (tab files)
+
+		// context is a list of document (tab files)
 		identifiers.add(DocToSignContext.SHARED.toString());
-		
-		for(Object currentObject:object){
-			DocumentVo doc =  (DocumentVo) currentObject;
-			
-			if(doc.getEncrypted()) {
-				shareSessionObjects.addWarning(messages.get("pages.index.message.signature.encryptedFiles"));
-				return; //quit
+
+		for (Object currentObject : object) {
+			DocumentVo doc = (DocumentVo) currentObject;
+
+			if (doc.getEncrypted()) {
+				shareSessionObjects.addWarning(messages
+						.get("pages.index.message.signature.encryptedFiles"));
+				return; // quit
 			} else {
 				identifiers.add(doc.getIdentifier());
 			}
 		}
-		
-        Link mylink = linkFactory.createPageRenderLinkWithContext("signature/SelectPolicy", identifiers.toArray());
-		
-        try {
-            response.sendRedirect(mylink);
-        } catch (IOException ex) {
-            throw new TechnicalException("Bad URL" + ex);
-        }
-		
+
+		Link mylink = linkFactory.createPageRenderLinkWithContext(
+				"signature/SelectPolicy", identifiers.toArray());
+
+		try {
+			response.sendRedirect(mylink);
+		} catch (IOException ex) {
+			throw new TechnicalException("Bad URL" + ex);
+		}
+
 	}
 
-    private ShareDocumentVo searchShareVoByUUid(String uuid) {
-        for (ShareDocumentVo shareDocumentVo : shares) {
-            if (uuid.equals(shareDocumentVo.getIdentifier())) {
-                return shareDocumentVo;
-            }
-        }
-        return null;
-    }
+	private ShareDocumentVo searchShareVoByUUid(String uuid) {
+		for (ShareDocumentVo shareDocumentVo : shares) {
+			if (uuid.equals(shareDocumentVo.getIdentifier())) {
+				return shareDocumentVo;
+			}
+		}
+		return null;
+	}
 
-    
-    public Object onActivate(Object obj) {
-    	return ErrorNotFound.class;
-    } 
-   
+	public Object onActivate(Object obj) {
+		return ErrorNotFound.class;
+	}
+
 	@CleanupRender
-	private void initFlag(){
-		//flag=false;
+	private void initFlag() {
+		// flag=false;
 	}
-   
-   
-	@OnEvent(value="eventToggleAdvancedSearchSorterComponent")
-	public void toggleAdvancedSearch(Object[] object){
-		flag=!flag;
+
+	@OnEvent(value = "eventToggleAdvancedSearchSorterComponent")
+	public void toggleAdvancedSearch(Object[] object) {
+		flag = !flag;
 		advanced = (Boolean) object[0];
 	}
-	
+
 	/**
 	 * The search component returns a document list, and we store it
-	 * @param object : object[0] contains a List<DocumentVo>
+	 * 
+	 * @param object
+	 *            : object[0] contains a List<DocumentVo>
 	 */
 	@SuppressWarnings("unchecked")
-	@OnEvent(value="eventDocument")
-	public void initListDoc(Object[] object){
-		flag=true;
-		this.shares = (List<ShareDocumentVo>)Arrays.copyOf(object,1)[0];
+	@OnEvent(value = "eventDocument")
+	public void initListDoc(Object[] object) {
+		flag = true;
+		this.shares = (List<ShareDocumentVo>) Arrays.copyOf(object, 1)[0];
 	}
-    
-    @OnEvent(value="resetListFiles")
-    public void resetListFiles(Object[] o1) {
-    	flag=false;
+
+	@OnEvent(value = "resetListFiles")
+	public void resetListFiles(Object[] o1) {
+		flag = false;
 		shares = shareFacade.getAllSharingReceivedByUser(userVo);
-    }
-    
-    @OnEvent(value="inFileSearch")
-    public void inSearch(Object[] o1) {
-    	flag=true;
-    }
-    
-    public String getPageTitle() {
-    	return messages.get("components.myborderlayout.home.title");
-    }
-    
-    public Object onException(Throwable cause) {
-    	shareSessionObjects.addError(messages.get("global.exception.message"));
-    	logger.error(cause.getMessage());
-    	cause.printStackTrace();
-    	return this;
-    }
-   
+	}
+
+	@OnEvent(value = "inFileSearch")
+	public void inSearch(Object[] o1) {
+		flag = true;
+	}
+
+	public String getPageTitle() {
+		return messages.get("components.myborderlayout.home.title");
+	}
+
+	public Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
+	}
+
 }

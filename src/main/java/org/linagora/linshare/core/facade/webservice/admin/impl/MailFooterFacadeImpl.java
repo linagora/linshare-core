@@ -125,7 +125,7 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 		footer.setName(dto.getName());
 		footer.setVisible(dto.isVisible());
 		footer.setPlaintext(dto.isPlaintext());
-		footer.setLanguage(dto.getLanguage());
+		footer.setLanguage(dto.getLanguage().toInt());
 		footer.setFooter(dto.getFooter());
 	}
 

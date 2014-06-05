@@ -84,15 +84,15 @@ public class FavouriteRepositoryImplTest extends AbstractTransactionalJUnit4Spri
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		
 		Guest robert = new Guest("robert", "lechat", "robert.lechat@linagora.com","secret", true, "comment");
-		robert.setLocale(domain.getDefaultLocale());
+		robert.setLocale(domain.getDefaultTapestryLocale());
 		robert.setDomain(domain);
 		
 		Guest jean = new Guest("jean", "lechat", "jean.lechat@linagora.com","secret", true, "comment");
-		jean.setLocale(domain.getDefaultLocale());
+		jean.setLocale(domain.getDefaultTapestryLocale());
 		jean.setDomain(domain);
 		
 		Guest pierre = new Guest("pierre", "lechat", "pierre.lechat@linagora.com","secret", true,"comment");
-		pierre.setLocale(domain.getDefaultLocale());
+		pierre.setLocale(domain.getDefaultTapestryLocale());
 		pierre.setDomain(domain);
 		
 		try {

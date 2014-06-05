@@ -38,13 +38,12 @@ import java.util.Locale;
 import org.linagora.linshare.core.domain.constants.Language;
 
 /**
- * Object that contains the informations used to build the email
- * content. Information hiding principle: for example, the view does 
- * not have to know that the services have to build two types of email 
- * contents (txt and html).
+ * Object that contains the informations used to build the email content.
+ * Information hiding principle: for example, the view does not have to know
+ * that the services have to build two types of email contents (txt and html).
  * 
  * @author sduprey
- *
+ * 
  */
 public class MailContainer {
 	protected String subject;
@@ -56,8 +55,7 @@ public class MailContainer {
 	// Additional fields for Thunderbird plugin.
 	protected String inReplyTo = "";
 	protected String references = "";
-	
-	
+
 	/**
 	 * Copy constructor
 	 * 
@@ -71,11 +69,6 @@ public class MailContainer {
 		this.language = mailContainer.getLanguage();
 	}
 
-
-	
-	
-	
-	
 	public MailContainer(Language language) {
 		super();
 		this.personalMessage = "";
@@ -84,52 +77,33 @@ public class MailContainer {
 		this.contentTXT = null;
 		this.contentHTML = null;
 	}
-	
-	
-	
+
 	public MailContainer(String locale) {
 		super();
 		this.personalMessage = "";
-		this.language = getLanguageFromLocale(new Locale(locale));
+		this.language = Language.fromLocale(new Locale(locale));
 		this.subject = null;
 		this.contentTXT = null;
 		this.contentHTML = null;
 	}
 
-	public MailContainer(String locale,String message, String subject) {
+	public MailContainer(String locale, String message, String subject) {
 		super();
 		this.personalMessage = message;
-		this.language = getLanguageFromLocale(new Locale(locale));
+		this.language = Language.fromLocale(new Locale(locale));
 		this.subject = subject;
 		this.contentTXT = null;
 		this.contentHTML = null;
 	}
-	
-	public MailContainer(String locale,String message) {
+
+	public MailContainer(String locale, String message) {
 		super();
 		this.personalMessage = message;
-		this.language = getLanguageFromLocale(new Locale(locale));
+		this.language = Language.fromLocale(new Locale(locale));
 		this.subject = null;
 		this.contentTXT = null;
 		this.contentHTML = null;
 	}
-	
-	
-	
-	
-	private Language getLanguageFromLocale(Locale locale) {
-        if (Locale.FRENCH.equals(locale)) {
-        	return Language.FRENCH;
-        }
-        /* java.util.Locale doesn't support dutch */
-        if (locale.getLanguage().equals("nl_NL") || locale.getLanguage().equals("nl")) {
-        	return Language.DUTCH;
-        }
-        return Language.DEFAULT;
-    }
-	
-	
-	
 
 	public void setSubject(String subject) {
 		this.subject = subject;
@@ -166,7 +140,7 @@ public class MailContainer {
 	public String getPersonalMessage() {
 		return personalMessage;
 	}
-	
+
 	public void setPersonalMessage(String personalMessage) {
 		this.personalMessage = personalMessage;
 	}
@@ -186,5 +160,4 @@ public class MailContainer {
 	public void setReferences(String references) {
 		this.references = references;
 	}
-	
 }

@@ -39,6 +39,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -65,8 +66,8 @@ public class DomainDto {
 	@ApiModelProperty(value = "UserRole")
 	private String userRole;
 
-	@ApiModelProperty(value = "Locale")
-	private String locale;
+	@ApiModelProperty(value = "Language")
+	private Language language;
 
 	@ApiModelProperty(value = "Policy")
 	private DomainPolicyDto policy;
@@ -98,7 +99,7 @@ public class DomainDto {
 		mailConfigUuid = domain.getCurrentMailConfiguration().getUuid();
 		if (!light) {
 			this.description = domain.getDescription();
-			this.locale = domain.getDefaultLocale();
+			this.language = Language.fromTapestryLocale(domain.getDefaultTapestryLocale());
 			this.userRole = domain.getDefaultRole().toString();
 			this.policy = new DomainPolicyDto(domain.getPolicy());
 			this.authShowOrder = domain.getAuthShowOrder();
@@ -176,12 +177,12 @@ public class DomainDto {
 		this.userRole = userRole;
 	}
 
-	public String getLocale() {
-		return locale;
+	public Language getLanguage() {
+		return language;
 	}
 
-	public void setLocale(String locale) {
-		this.locale = locale;
+	public void setLanguage(Language language) {
+		this.language = language;
 	}
 
 	public DomainPolicyDto getPolicy() {

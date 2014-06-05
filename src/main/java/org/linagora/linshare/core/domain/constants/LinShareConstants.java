@@ -39,33 +39,43 @@ public class LinShareConstants {
 	 * Default prefix to use for the db tables
 	 */
 	public static final String DEFAULT_DBTABLE_PREFIX = "linshare_";
-	
+
 	/**
-	 * Default application root domain identifier 
+	 * Default application root domain identifier
 	 */
 	public static final String rootDomainIdentifier = "LinShareRootDomain";
-	
+
 	/**
-	 * Default application root domain identifier 
+	 * Default domain policy identifier
 	 */
 	public static final String defaultDomainPolicyIdentifier = "DefaultDomainPolicy";
-	
+
 	/**
-	 * Default application root domain identifier 
+	 * Default mime policy identifier
+	 */
+	public static final String defaultMimePolicyIdentifier = "3d6d8800-e0f7-11e3-8ec0-080027c0eef0";
+
+	/**
+	 * Default mail config identifier
+	 */
+	public static final String defaultMailConfigIdentifier = "946b190d-4c95-485f-bfe6-d288a2de1edd";
+
+	/**
+	 * Default application root domain identifier
 	 */
 	public static final Integer completionThresholdConstantForDeactivation = 999999999;
-	
+
 	/**
-	 * Default max size for an upload 
+	 * Default max size for an upload
 	 */
 	public static final Long defaultMaxFileSize = Long.MAX_VALUE;	
-	
+
 	/**
 	 * Default max available size
 	 */
 	public static final Long defaultFreeSpace = Long.MAX_VALUE;
 
 	public static final String defaultThreadView = "Default";	
-	
-	
+
+
 }

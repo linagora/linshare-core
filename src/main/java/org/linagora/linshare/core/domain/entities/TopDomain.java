@@ -49,7 +49,7 @@ public class TopDomain extends AbstractDomain {
 	public TopDomain(String identifier, String label, RootDomain rootDomain) {
 		super(identifier, label);
 		this.defaultRole = Role.ADMIN;
-		this.defaultLocale = "en";
+		this.defaultTapestryLocale = "en";
 		this.parentDomain = rootDomain;
 	}
 

@@ -47,7 +47,7 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 	private AbstractDomainRepository abstractDomainRepository;
 
 	private static final Set<Language> supportedLangs = ImmutableSet.of(
-			Language.DEFAULT, Language.FRENCH);
+			Language.ENGLISH, Language.FRENCH);
 
 	private AbstractDomain rootDomain;
 

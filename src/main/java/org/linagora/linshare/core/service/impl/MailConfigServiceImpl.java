@@ -460,38 +460,44 @@ public class MailConfigServiceImpl implements MailConfigService {
 
 	@Override
 	public boolean hasRights(User actor, MailConfig config) {
-		if (config.isVisible()) {
-			return isInParentDomains(actor.getDomain(), config.getDomain());
-		} else {
-			return actor.getDomain().equals(config.getDomain());
-		}
+//		if (!permissionService.isAdminforThisDomain(actor, config.getDomain())) {
+//			if (config.isVisible()) {
+//				return isInParentDomains(actor.getDomain(), config.getDomain());
+//			} else {
+//				return actor.getDomain().equals(config.getDomain());
+//			}
+//		}
+		return true;
 	}
 
 	@Override
 	public boolean hasRights(User actor, MailContent content) {
-		if (content.isVisible()) {
-			return isInParentDomains(actor.getDomain(), content.getDomain());
-		} else {
-			return actor.getDomain().equals(content.getDomain());
-		}
+		return true;
+//		if (content.isVisible()) {
+//			return isInParentDomains(actor.getDomain(), content.getDomain());
+//		} else {
+//			return actor.getDomain().equals(content.getDomain());
+//		}
 	}
 
 	@Override
 	public boolean hasRights(User actor, MailFooter footer) {
-		if (footer.getVisible()) {
-			return isInParentDomains(actor.getDomain(), footer.getDomain());
-		} else {
-			return actor.getDomain().equals(footer.getDomain());
-		}
+		return true;
+//		if (footer.getVisible()) {
+//			return isInParentDomains(actor.getDomain(), footer.getDomain());
+//		} else {
+//			return actor.getDomain().equals(footer.getDomain());
+//		}
 	}
 
 	@Override
 	public boolean hasRights(User actor, MailLayout layout) {
-		if (layout.isVisible()) {
-			return isInParentDomains(actor.getDomain(), layout.getDomain());
-		} else {
-			return actor.getDomain().equals(layout.getDomain());
-		}
+		return true;
+//		if (layout.isVisible()) {
+//			return isInParentDomains(actor.getDomain(), layout.getDomain());
+//		} else {
+//			return actor.getDomain().equals(layout.getDomain());
+//		}
 	}
 
 	/*

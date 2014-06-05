@@ -64,10 +64,10 @@ public class LogCriteriaDto {
 	private List<String> targetMails; // The list of the selected users
 
 	@ApiModelProperty(value = "First name of the target")
-	private String targetFirstname;
+	private String targetFirstName;
 
 	@ApiModelProperty(value = "Last name of the target")
-	private String targetLastname;
+	private String targetLastName;
 
 	@ApiModelProperty(value = "Domain of the target")
 	private String targetDomain;
@@ -100,8 +100,8 @@ public class LogCriteriaDto {
 		this.actorLastName = actorLastName;
 		this.actorDomain = actorDomain;
 		this.targetMails = targetMails;
-		this.targetFirstname = targetFirstname;
-		this.targetLastname = targetLastname;
+		this.targetFirstName = targetFirstname;
+		this.targetLastName = targetLastname;
 		this.targetDomain = targetDomain;
 		this.beforeDate = beforeDate;
 		this.afterDate = afterDate;
@@ -164,20 +164,20 @@ public class LogCriteriaDto {
 		this.targetMails = targetMails;
 	}
 
-	public String getTargetFirstname() {
-		return targetFirstname;
+	public String getTargetFirstName() {
+		return targetFirstName;
 	}
 
-	public void setTargetFirstname(String targetFirstname) {
-		this.targetFirstname = targetFirstname;
+	public void setTargetFirstName(String targetFirstname) {
+		this.targetFirstName = targetFirstname;
 	}
 
-	public String getTargetLastname() {
-		return targetLastname;
+	public String getTargetLastName() {
+		return targetLastName;
 	}
 
-	public void setTargetLastname(String targetLastname) {
-		this.targetLastname = targetLastname;
+	public void setTargetLastName(String targetLastname) {
+		this.targetLastName = targetLastname;
 	}
 
 	public String getFileName() {

@@ -95,13 +95,13 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 		String encpassword = HashUtils.hashSha1withBase64(PASSWORD.getBytes());		
 		if (!flag) {
 			User u1=new Guest(FIRST_NAME2, LAST_NAME2, MAIL2,encpassword, true, "comment");
-			u1.setLocale(domain.getDefaultLocale());
+			u1.setLocale(domain.getDefaultTapestryLocale());
 			u1.setDomain(domain);
 			userRepository.create(u1);
 			
 		
 			User u2=new Guest(FIRST_NAME3, LAST_NAME3, MAIL3,encpassword, true, "comment");
-			u2.setLocale(domain.getDefaultLocale());
+			u2.setLocale(domain.getDefaultTapestryLocale());
 			u2.setDomain(domain);
 			userRepository.create(u2);
 			flag = true;
@@ -115,7 +115,7 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 		String encpassword = HashUtils.hashSha1withBase64(PASSWORD.getBytes());
 		
 		User u = new Guest( FIRST_NAME, LAST_NAME, MAIL, encpassword, true, "comment");
-		u.setLocale(domain.getDefaultLocale());
+		u.setLocale(domain.getDefaultTapestryLocale());
 		u.setDomain(domain);
 	
 		u = userRepository.create(u);
@@ -127,7 +127,7 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 	@Test
 	public void testfindUser() throws BusinessException{
 		User u = new Internal( FIRST_NAME, LAST_NAME, MAIL, null);
-		u.setLocale(domain.getDefaultLocale());
+		u.setLocale(domain.getDefaultTapestryLocale());
 		u.setDomain(domain);
 		
 		userRepository.create(u);

@@ -36,6 +36,8 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
@@ -47,122 +49,146 @@ import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 import org.linagora.linshare.view.tapestry.enums.CriterionMatchMode;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> implements
-		LogEntryRepository {
+public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry>
+		implements LogEntryRepository {
 
-    public LogEntryRepositoryImpl(HibernateTemplate hibernateTemplate) {
-        super(hibernateTemplate);
-    }
-    
-	protected DetachedCriteria getNaturalKeyCriteria(LogEntry entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(LogEntry.class).add(Restrictions.eq("id", entity.getPersistenceId()));
-        return det;
+	public LogEntryRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
 	}
-	
+
+	protected DetachedCriteria getNaturalKeyCriteria(LogEntry entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(LogEntry.class).add(
+				Restrictions.eq("id", entity.getPersistenceId()));
+		return det;
+	}
+
 	public List<LogEntry> findByUser(String mail) {
-		List<LogEntry> logEntry = findByCriteria(Restrictions.eq("actorMail", mail));
+		List<LogEntry> logEntry = findByCriteria(Restrictions.eq("actorMail",
+				mail));
 		logEntry.addAll(findByCriteria(Restrictions.eq("targetMail", mail)));
 		return logEntry;
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public List<LogEntry> findByDate(String mail, Calendar beginDate,
 			Calendar endDate) {
-		
+
 		DetachedCriteria criteria = DetachedCriteria.forClass(LogEntry.class);
-		
+
 		criteria.add(Restrictions.eq("actorMail", mail));
-		
+
 		if (beginDate != null) {
 			criteria.add(Restrictions.gt("actionDate", beginDate));
 		}
-		
+
 		if (endDate != null) {
 			criteria.add(Restrictions.lt("actionDate", endDate));
 		}
-		
-		return getHibernateTemplate().findByCriteria(criteria);
+		return findBy(criteria);
 	}
 
-	
-	
-	public List<LogEntry> findByCriteria(LogCriteriaBean logCriteria, String domainId) {
-		
+	public List<LogEntry> findByCriteria(LogCriteriaBean logCriteria,
+			String domainId) {
+
 		DetachedCriteria criteria = DetachedCriteria.forClass(LogEntry.class);
-		
-		
-		if ((logCriteria.getActorMails()!=null) && (logCriteria.getActorMails().size()>0)) {
+
+		if (CollectionUtils.isNotEmpty(logCriteria.getActorMails())) {
 			Disjunction or = Restrictions.disjunction();
 			for (String mail : logCriteria.getActorMails()) {
-				or.add(Restrictions.like("actorMail", mail, MatchMode.ANYWHERE));
+				if (StringUtils.isNotBlank(mail))
+					or.add(Restrictions.like("actorMail", mail,
+							MatchMode.ANYWHERE));
 			}
 			criteria.add(or);
 		}
-		
-		if ((logCriteria.getTargetMails()!=null) && (logCriteria.getTargetMails().size()>0)) {
+
+		if (CollectionUtils.isNotEmpty(logCriteria.getTargetMails())) {
 			Disjunction or = Restrictions.disjunction();
 			for (String mail : logCriteria.getTargetMails()) {
-				or.add(Restrictions.like("targetMail", mail, MatchMode.ANYWHERE));
+				if (StringUtils.isNotBlank(mail))
+					or.add(Restrictions.like("targetMail", mail,
+							MatchMode.ANYWHERE));
 			}
 			criteria.add(or);
 		}
-		
-		if ((logCriteria.getActorFirstname()!=null) && (logCriteria.getActorFirstname().length()>0)) {
-			criteria.add(Restrictions.like("actorFirstname", logCriteria.getActorFirstname(), MatchMode.ANYWHERE).ignoreCase());
+
+		if (StringUtils.isNotBlank(logCriteria.getActorFirstname())) {
+			criteria.add(Restrictions.like("actorFirstname",
+					logCriteria.getActorFirstname(), MatchMode.ANYWHERE)
+					.ignoreCase());
 		}
-		
-		if ((logCriteria.getActorLastname()!=null) && (logCriteria.getActorLastname().length()>0)) {
-			criteria.add(Restrictions.like("actorLastname", logCriteria.getActorLastname(), MatchMode.ANYWHERE).ignoreCase());
+
+		if (StringUtils.isNotBlank(logCriteria.getActorLastname())
+				&& (logCriteria.getActorLastname().length() > 0)) {
+			criteria.add(Restrictions.like("actorLastname",
+					logCriteria.getActorLastname(), MatchMode.ANYWHERE)
+					.ignoreCase());
 		}
-		
-		if (domainId != null && domainId.length() > 0) {
+
+		if (StringUtils.isNotBlank(domainId)) {
 			criteria.add(Restrictions.like("actorDomain", domainId));
-		} else if (logCriteria.getActorDomain() != null && logCriteria.getActorDomain().length() > 0) {
-			criteria.add(Restrictions.like("actorDomain", logCriteria.getActorDomain()));
+		} else if (StringUtils.isNotBlank(logCriteria.getActorDomain())) {
+			criteria.add(Restrictions.like("actorDomain",
+					logCriteria.getActorDomain()));
 		}
-		
-		if ((logCriteria.getTargetFirstname()!=null) && (logCriteria.getTargetFirstname().length()>0)) {
-			criteria.add(Restrictions.like("targetFirstname", logCriteria.getTargetFirstname(), MatchMode.ANYWHERE).ignoreCase());
+
+		if (StringUtils.isNotBlank(logCriteria.getTargetFirstname())) {
+			criteria.add(Restrictions.like("targetFirstname",
+					logCriteria.getTargetFirstname(), MatchMode.ANYWHERE)
+					.ignoreCase());
 		}
-		
-		if ((logCriteria.getTargetLastname()!=null) && (logCriteria.getTargetLastname().length()>0)) {
-			criteria.add(Restrictions.like("targetLastname", logCriteria.getTargetLastname(), MatchMode.ANYWHERE).ignoreCase());
+
+		if (StringUtils.isNotBlank(logCriteria.getTargetLastname())) {
+			criteria.add(Restrictions.like("targetLastname",
+					logCriteria.getTargetLastname(), MatchMode.ANYWHERE)
+					.ignoreCase());
 		}
-		
-		if (logCriteria.getTargetDomain() != null && logCriteria.getTargetDomain().length() > 0) {
-			criteria.add(Restrictions.like("targetDomain", logCriteria.getTargetDomain()));
+
+		if (StringUtils.isNotBlank(logCriteria.getTargetDomain())) {
+			criteria.add(Restrictions.like("targetDomain",
+					logCriteria.getTargetDomain()));
 		}
-		
-		if ((logCriteria.getLogActions()!=null) && (logCriteria.getLogActions().size()>0)) {
-			criteria.add(Restrictions.in("logAction", logCriteria.getLogActions()));
+
+		if (CollectionUtils.isNotEmpty(logCriteria.getLogActions())) {
+			criteria.add(Restrictions.in("logAction",
+					logCriteria.getLogActions()));
 		}
 		if (logCriteria.getBeforeDate() != null) {
-			criteria.add(Restrictions.gt("actionDate", logCriteria.getBeforeDate()));
+			criteria.add(Restrictions.gt("actionDate",
+					logCriteria.getBeforeDate()));
 		}
-		
+
 		if (logCriteria.getAfterDate() != null) {
-			criteria.add(Restrictions.lt("actionDate", logCriteria.getAfterDate()));
+			criteria.add(Restrictions.lt("actionDate",
+					logCriteria.getAfterDate()));
 		}
-		
-		if (logCriteria.getFileName() != null) {
-			
-			if(logCriteria.getFileNameMatchMode().equals(CriterionMatchMode.ANYWHERE)){
-				criteria.add(Restrictions.like("fileName", logCriteria.getFileName(), MatchMode.ANYWHERE).ignoreCase());
+
+		if (StringUtils.isNotBlank(logCriteria.getFileName())) {
+
+			if (logCriteria.getFileNameMatchMode().equals(
+					CriterionMatchMode.ANYWHERE)) {
+				criteria.add(Restrictions.like("fileName",
+						logCriteria.getFileName(), MatchMode.ANYWHERE)
+						.ignoreCase());
 			} else {
-				criteria.add(Restrictions.like("fileName", logCriteria.getFileName(), MatchMode.ANYWHERE).ignoreCase());
+				criteria.add(Restrictions.like("fileName",
+						logCriteria.getFileName(), MatchMode.ANYWHERE)
+						.ignoreCase());
 			}
 		}
-		
-		if (logCriteria.getFileExtension() != null) {
-			criteria.add(Restrictions.like("fileName", logCriteria.getFileExtension(), MatchMode.END).ignoreCase());
+
+		if (StringUtils.isNotBlank(logCriteria.getFileExtension())) {
+			criteria.add(Restrictions.like("fileName",
+					logCriteria.getFileExtension(), MatchMode.END).ignoreCase());
 		}
-		
+
 		criteria.addOrder(Order.desc("actionDate"));
-		
+
+		return findBy(criteria);
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<LogEntry> findBy(DetachedCriteria criteria) {
 		return getHibernateTemplate().findByCriteria(criteria);
 	}
 
-
-
-	
 }

@@ -124,9 +124,9 @@ public class LoadingServiceTestDatas {
 		user3 = new Internal("Foo","Bar","user3@linpki.org", null); 
 
 		AbstractDomain userGuestDomain = abstractDomainRepository.findById(guestDomainName1);
-		user1.setLocale(userGuestDomain.getDefaultLocale());
-		user2.setLocale(userGuestDomain.getDefaultLocale());
-		user3.setLocale(userGuestDomain.getDefaultLocale());
+		user1.setLocale(userGuestDomain.getDefaultTapestryLocale());
+		user2.setLocale(userGuestDomain.getDefaultTapestryLocale());
+		user3.setLocale(userGuestDomain.getDefaultTapestryLocale());
 
 		user1.setDomain(abstractDomainRepository.findById(topDomainName));
 		user2.setDomain(abstractDomainRepository.findById(subDomainName1));

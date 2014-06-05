@@ -41,9 +41,10 @@ public class LogEntryFacadeImpl extends GenericFacadeImpl implements
 		LogCriteriaBean crit = new LogCriteriaBean(Lists.newArrayList(actor
 				.getMail()), criteria.getActorFirstName(),
 				criteria.getActorLastName(), criteria.getActorDomain(),
-				criteria.getTargetMails(), criteria.getTargetFirstname(),
-				criteria.getTargetLastname(), criteria.getTargetDomain(),
-				before, after, criteria.getLogActions());
+				criteria.getTargetMails(), criteria.getTargetFirstName(),
+				criteria.getTargetLastName(), criteria.getTargetDomain(),
+				before, after, criteria.getLogActions(),
+				criteria.getFileName(), criteria.getFileExtension());
 
 		return Lists.transform(logEntryService.findByCriteria(actor, crit),
 				new Function<LogEntry, LogDto>() {

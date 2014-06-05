@@ -125,7 +125,7 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		content.setName(dto.getName());
 		content.setVisible(dto.isVisible());
 		content.setPlaintext(dto.isPlaintext());
-		content.setLanguage(dto.getLanguage());
+		content.setLanguage(dto.getLanguage().toInt());
 		content.setGreetings(dto.getGreetings());
 		content.setSubject(dto.getSubject());
 		content.setBody(dto.getBody());

@@ -67,7 +67,7 @@ public class MailContentLangFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.ADMIN);
 		MailContentLang contentLang = new MailContentLang();
 
-		contentLang.setLanguage(dto.getLanguage());
+		contentLang.setLanguage(dto.getLanguage().toInt());
 		contentLang.setMailConfig(findConfig(actor, dto.getMailConfig()));
 		contentLang.setMailContent(findContent(actor, dto.getMailContent()));
 		mailConfigService.createContentLang(actor, contentLang);

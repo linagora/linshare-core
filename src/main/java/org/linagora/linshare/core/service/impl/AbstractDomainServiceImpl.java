@@ -112,8 +112,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		return abstractDomainRepository.getUniqueRootDomain();
 	}
 
-	private void createDomain(AbstractDomain domain, AbstractDomain parentDomain)
-			throws BusinessException {
+	private AbstractDomain createDomain(AbstractDomain domain,
+			AbstractDomain parentDomain) throws BusinessException {
 
 		if (domain.getIdentifier() == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
@@ -142,12 +142,21 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 
 		if (domain.getCurrentMailConfiguration() == null) {
-			domain.setCurrentMailConfiguration(getUniqueRootDomain()
-					.getCurrentMailConfiguration());
+			throw new BusinessException(BusinessErrorCode.MAILCONFIG_NOT_FOUND,
+					"This domain has no mail config.");
+		} else {
+			MailConfig mailConfig = mailConfigBusinessService.findByUuid(domain
+					.getCurrentMailConfiguration().getUuid());
+			domain.setCurrentMailConfiguration(mailConfig);
 		}
 
 		if (domain.getMimePolicy() == null) {
-			domain.setMimePolicy(getUniqueRootDomain().getMimePolicy());
+			throw new BusinessException(BusinessErrorCode.MIME_NOT_FOUND,
+					"This domain has no mime policy.");
+		} else {
+			MimePolicy mimePolicy = mimePolicyBusinessService.find(domain
+					.getMimePolicy().getUuid());
+			domain.setMimePolicy(mimePolicy);
 		}
 
 		if (domain.getUserProvider() != null) {
@@ -191,19 +200,19 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 		domain.setAuthShowOrder(new Long(1));
 		// Object creation
-		abstractDomainRepository.create(domain);
+		domain = abstractDomainRepository.create(domain);
 
 		// Update ancestor relation
 		parentDomain.addSubdomain(domain);
 		abstractDomainRepository.update(parentDomain);
+		return domain;
 	}
 
 	@Override
 	public TopDomain createTopDomain(TopDomain topDomain)
 			throws BusinessException {
 		logger.debug("TopDomain creation attempt : " + topDomain.toString());
-		createDomain(topDomain, getUniqueRootDomain());
-		return topDomain;
+		return (TopDomain) createDomain(topDomain, getUniqueRootDomain());
 	}
 
 	@Override
@@ -224,9 +233,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
 					"Parent domain not found.");
 		}
-
-		createDomain(subDomain, parentDomain);
-		return subDomain;
+		return (SubDomain) createDomain(subDomain, parentDomain);
 	}
 
 	@Override
@@ -248,8 +255,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					"Parent domain not found.");
 		}
 
-		createDomain(guestDomain, parentDomain);
-		return guestDomain;
+		return (GuestDomain) createDomain(guestDomain, parentDomain);
 	}
 
 	@Override
@@ -357,20 +363,20 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 
 		if (domain.getCurrentMailConfiguration() == null) {
-			throw new BusinessException(
-					BusinessErrorCode.MAILCONFIG_NOT_FOUND,
+			throw new BusinessException(BusinessErrorCode.MAILCONFIG_NOT_FOUND,
 					"This domain has no mail config.");
 		} else {
-			MailConfig mailConfig = mailConfigBusinessService.findByUuid(domain.getCurrentMailConfiguration().getUuid());
+			MailConfig mailConfig = mailConfigBusinessService.findByUuid(domain
+					.getCurrentMailConfiguration().getUuid());
 			entity.setCurrentMailConfiguration(mailConfig);
 		}
 
 		if (domain.getMimePolicy() == null) {
-			throw new BusinessException(
-					BusinessErrorCode.MIME_NOT_FOUND,
+			throw new BusinessException(BusinessErrorCode.MIME_NOT_FOUND,
 					"This domain has no mime policy.");
 		} else {
-			MimePolicy mimePolicy = mimePolicyBusinessService.find(domain.getMimePolicy().getUuid());
+			MimePolicy mimePolicy = mimePolicyBusinessService.find(domain
+					.getMimePolicy().getUuid());
 			entity.setMimePolicy(mimePolicy);
 		}
 

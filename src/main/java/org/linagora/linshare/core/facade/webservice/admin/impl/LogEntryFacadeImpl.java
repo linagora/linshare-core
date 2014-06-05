@@ -40,15 +40,22 @@ public class LogEntryFacadeImpl extends AdminGenericFacadeImpl implements
 		Calendar before = null;
 		Calendar after = null;
 
-		setTime(before, criteria.getBeforeDate());
-		setTime(after, criteria.getAfterDate());
+		if (criteria.getBeforeDate() != null) {
+			before = Calendar.getInstance();
+			before.setTime(criteria.getBeforeDate());
+		}
+		if (criteria.getAfterDate() != null) {
+			after= Calendar.getInstance();
+			after.setTime(criteria.getAfterDate());
+		}
 
 		LogCriteriaBean crit = new LogCriteriaBean(criteria.getActorMails(),
 				criteria.getActorFirstName(), criteria.getActorLastName(),
 				criteria.getActorDomain(), criteria.getTargetMails(),
-				criteria.getTargetFirstname(), criteria.getTargetLastname(),
+				criteria.getTargetFirstName(), criteria.getTargetLastName(),
 				criteria.getTargetDomain(), before, after,
-				criteria.getLogActions());
+				criteria.getLogActions(), criteria.getFileName(),
+				criteria.getFileExtension());
 
 		return Lists.transform(logEntryService.findByCriteria(actor, crit),
 				new Function<LogEntry, LogDto>() {
@@ -64,12 +71,5 @@ public class LogEntryFacadeImpl extends AdminGenericFacadeImpl implements
 						return new LogDto((AntivirusLogEntry) input);
 					}
 				});
-	}
-
-	private void setTime(Calendar cal, Date date) {
-		if (date == null)
-			return;
-		cal = Calendar.getInstance();
-		cal.setTime(date);
 	}
 }

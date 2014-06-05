@@ -37,6 +37,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -56,7 +57,7 @@ public class MailFooterDto {
 	private boolean visible;
 
 	@ApiModelProperty(value = "Language")
-	private int language;
+	private Language language;
 
 	@ApiModelProperty(value = "Footer")
 	private String footer;
@@ -81,7 +82,7 @@ public class MailFooterDto {
 		this.domain = footer.getDomain().getIdentifier();
 		this.name = footer.getName();
 		this.footer = footer.getFooter();
-		this.language = footer.getLanguage();
+		this.language = Language.fromInt(footer.getLanguage());
 		this.plaintext = footer.getPlaintext();
 		this.visible = footer.getVisible();
 		this.creationDate = new Date(footer.getCreationDate().getTime());
@@ -112,11 +113,11 @@ public class MailFooterDto {
 		return visible;
 	}
 
-	public void setLanguage(int value) {
+	public void setLanguage(Language value) {
 		this.language = value;
 	}
 
-	public int getLanguage() {
+	public Language getLanguage() {
 		return language;
 	}
 
