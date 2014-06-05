@@ -174,13 +174,11 @@
 		<constructor-arg ref="logEntryRepository" />
 	</bean>
 
-	<bean name="mailContentBuildingService" class="org.linagora.linshare.core.service.impl.MailContentBuildingServiceImpl">
-		<constructor-arg value="${linshare.mails.txt.container}" />
-		<constructor-arg value="${linshare.mails.html.container}" />
-		<constructor-arg value="${linshare.mails.htmlwithoutlogo.container}" />
+	<bean name="mailContentBuildingService" class="org.linagora.linshare.core.service.impl.MailBuildingServiceImpl">
 		<constructor-arg value="${linshare.logo.mails.visible}" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="mailConfigRepository" />
 		<constructor-arg value="${linshare.display.licenceTerm}" />
 	</bean>
 

@@ -37,6 +37,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.MailContentType;
+
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -153,5 +156,44 @@ public class MailConfig {
 
 	public void setMailContentLangs(Set<MailContentLang> mailContents) {
 		this.mailContentLangs = mailContents;
+	}
+
+
+	/*
+	 * Helpers
+	 */
+
+	/**
+	 * Find a Footer by its Language
+	 * @param lang
+	 * @return
+	 */
+	public MailFooter findFooter(final Language lang) {
+		MailFooter ret = mailFooters.get(lang).getMailFooter();
+
+		if (ret == null)
+			throw new IllegalArgumentException(
+					"No MailFooter matching the language: " + lang);
+		return ret;
+	}
+
+	/**
+	 * Find a MailContent by its Language and MailContentType
+	 * 
+	 * @param lang
+	 * @param type
+	 * @return
+	 */
+	public MailContent findContent(final Language lang,
+			final MailContentType type) {
+		MailContentLang needle = new MailContentLang(lang, type);
+
+		for (MailContentLang mcl : mailContentLangs) {
+			if (mcl.businessEquals(needle))
+				return mcl.getMailContent();
+		}
+		throw new IllegalArgumentException(
+				"No MailContent matching the [Language,MailContentType] pair: ["
+						+ lang + "," + type + "]");
 	}
 }

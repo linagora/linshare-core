@@ -53,6 +53,7 @@ import org.linagora.linshare.core.exception.BusinessException;
  * @author sduprey
  *
  */
+@Deprecated
 public interface MailContentBuildingService {
 
 
