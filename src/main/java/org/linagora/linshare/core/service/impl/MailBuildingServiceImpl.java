@@ -51,6 +51,7 @@ import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.MailContent;
+import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
@@ -161,6 +162,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 			greetingsChain = new KeyValueChain();
 			bodyChain = new KeyValueChain();
 			footerChain = new KeyValueChain();
+			layoutChain = new KeyValueChain();
 		}
 
 		public KeyValueChain getSubjectChain() {
@@ -496,7 +498,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 
 	@Override
 	public MailContainerWithRecipient buildNewSharing(User sender,
-			MailContainer inputMailContainer, User recipient,
+			MailContainer input, User recipient,
 			List<ShareDocumentVo> shares) throws BusinessException {
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
@@ -534,13 +536,14 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		container.setFrom(abstractDomainService.getDomainMail(sender
 				.getDomain()));
 
-		return buildMailContainer(cfg, sender, container, null,
-				MailContentType.NEW_SHARING, builder);
+		return buildMailContainer(cfg, sender, container,
+				input.getPersonalMessage(), MailContentType.NEW_SHARING,
+				builder);
 	}
 
 	@Override
 	public MailContainerWithRecipient buildNewSharingProtected(User sender,
-			MailContainer inputMailContainer, AnonymousUrl anonUrl)
+			MailContainer input, AnonymousUrl anonUrl)
 			throws BusinessException {
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
@@ -575,13 +578,14 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		container.setFrom(abstractDomainService.getDomainMail(sender
 				.getDomain()));
 
-		return buildMailContainer(cfg, sender, container, null,
+		return buildMailContainer(cfg, sender, container,
+				input.getPersonalMessage(),
 				MailContentType.NEW_SHARING_PROTECTED, builder);
 	}
 
 	@Override
 	public MailContainerWithRecipient buildNewSharingCyphered(User sender,
-			MailContainer inputMailContainer, User recipient,
+			MailContainer input, User recipient,
 			List<ShareDocumentVo> shares) throws BusinessException {
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
@@ -620,13 +624,14 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		container.setFrom(abstractDomainService.getDomainMail(sender
 				.getDomain()));
 
-		return buildMailContainer(cfg, sender, container, null,
+		return buildMailContainer(cfg, sender, container,
+				input.getPersonalMessage(),
 				MailContentType.NEW_SHARING_CYPHERED, builder);
 	}
 
 	@Override
 	public MailContainerWithRecipient buildNewSharingCypheredProtected(
-			User sender, MailContainer inputMailContainer, AnonymousUrl anonUrl)
+			User sender, MailContainer input, AnonymousUrl anonUrl)
 			throws BusinessException {
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
@@ -662,7 +667,8 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		container.setFrom(abstractDomainService.getDomainMail(sender
 				.getDomain()));
 
-		return buildMailContainer(cfg, sender, container, null,
+		return buildMailContainer(cfg, sender, container,
+				input.getPersonalMessage(),
 				MailContentType.NEW_SHARING_PROTECTED, builder);
 	}
 
@@ -832,6 +838,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				mailContent.getSubject());
 		String greetings = mailContent.getGreetings();
 		String body = mailContent.getBody();
+		MailFooter f = cfg.findFooter(lang);
 		String footer = formatFooter(cfg.findFooter(lang).getFooter(), lang);
 		String layout = cfg.getMailLayoutHtml().getLayout();
 

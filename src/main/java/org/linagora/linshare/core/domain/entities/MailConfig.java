@@ -169,12 +169,12 @@ public class MailConfig {
 	 * @return
 	 */
 	public MailFooter findFooter(final Language lang) {
-		MailFooter ret = mailFooters.get(lang).getMailFooter();
+		MailFooterLang f = mailFooters.get(lang.toInt());
 
-		if (ret == null)
+		if (f == null)
 			throw new IllegalArgumentException(
 					"No MailFooter matching the language: " + lang);
-		return ret;
+		return f.getMailFooter();
 	}
 
 	/**
