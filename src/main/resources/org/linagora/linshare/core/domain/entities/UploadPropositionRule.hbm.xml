@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.linagora.linshare.core.domain.entities.UploadPropositionRule" table="upload_proposition_rule" lazy="false">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="operator" column="operator" type="integer" not-null="true" lazy="false"/>
+		<property name="field" column="field" type="integer" not-null="true" lazy="false"/>
+		<property name="value" column="value" type="string" length="255" not-null="false" lazy="false"/>
+	</class>
+</hibernate-mapping>

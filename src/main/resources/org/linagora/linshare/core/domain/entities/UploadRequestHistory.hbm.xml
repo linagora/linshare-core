@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class
+		name="org.linagora.linshare.core.domain.entities.UploadRequestHistory"
+		table="upload_request_history" lazy="false">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<property name="status" column="status" type="integer"
+			not-null="true" lazy="false" />
+		<property name="statusUpated" column="status_upated" type="boolean"
+			not-null="true" lazy="false" />
+		<property name="eventType" column="event_type" type="integer"
+			not-null="true" lazy="false" />
+		<property name="uuid" column="uuid" type="string" length="255"
+			not-null="true" lazy="false" />
+		<property name="activationDate" column="activation_date"
+			type="timestamp" length="6" not-null="true" lazy="false" />
+		<property name="expiryDate" column="expiry_date" type="timestamp"
+			length="6" not-null="true" lazy="false" />
+		<property name="notificationDate" column="notification_date"
+			type="timestamp" length="6" not-null="true" lazy="false" />
+		<property name="maxDepositSize" column="max_depositSize"
+			type="long" not-null="true" lazy="false" />
+		<property name="maxFileCount" column="max_file_count" type="integer"
+			not-null="true" lazy="false" />
+		<property name="maxFileSize" column="max_file_size" type="long"
+			not-null="true" lazy="false" />
+		<property name="uploadPropositionRequestUuid" column="upload_proposition_request_uuid"
+			type="string" length="255" not-null="false" lazy="false" />
+		<property name="canDelete" column="can_delete" type="boolean"
+			not-null="true" lazy="false" />
+		<property name="canClose" column="can_close" type="boolean"
+			not-null="true" lazy="false" />
+		<property name="canEditExpiryDate" column="can_edit_expiry_date"
+			type="boolean" not-null="true" lazy="false" />
+		<property name="locale" column="locale" type="string" length="255"
+			not-null="false" lazy="false" />
+		<property name="wasSecured" column="wasSecured" type="boolean"
+			not-null="true" lazy="false" />
+		<property name="creationDate" column="creation_date" type="timestamp"
+			length="6" not-null="true" lazy="false" />
+		<property name="modificationDate" column="modification_date"
+			type="timestamp" length="6" not-null="true" lazy="false" />
+		<property name="mailMessageID" column="mail_message_id" type="string"
+			length="255" not-null="false" lazy="false" />
+	</class>
+</hibernate-mapping>

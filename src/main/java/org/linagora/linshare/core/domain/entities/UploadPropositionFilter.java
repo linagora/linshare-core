@@ -31,30 +31,84 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.domain.entities;
 
-public enum EntryType {
+import java.util.List;
 
-	DOCUMENT(1), SHARE(2), ANONYMOUS_SHARE(3), THREAD(4), UPLOAD_REQUEST(5);
+public class UploadPropositionFilter {
 
-	private int value;
+	private long id;
 
-	private EntryType(int value) {
-		this.value = value;
+	private String uuid;
+
+	private String name;
+
+	private boolean matchAll;
+
+	private boolean enable;
+
+	private List<UploadPropositionRule> uploadPropositionRules;
+
+	private List<UploadPropositionAction> uploadPropositionActions;
+
+	public UploadPropositionFilter() {
 	}
 
-	public int toInt() {
-		return value;
+	public long getId() {
+		return id;
 	}
 
-	public static EntryType fromInt(int value) {
-		for (EntryType type : values()) {
-			if (type.value == value) {
-				return type;
-			}
-		}
-		throw new IllegalArgumentException(
-				"Doesn't match an existing EntryType");
+	public void setId(long id) {
+		this.id = id;
 	}
 
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean isMatchAll() {
+		return matchAll;
+	}
+
+	public void setMatchAll(boolean matchAll) {
+		this.matchAll = matchAll;
+	}
+
+	public boolean isEnable() {
+		return enable;
+	}
+
+	public void setEnable(boolean enable) {
+		this.enable = enable;
+	}
+
+	public List<UploadPropositionRule> getUploadPropositionRules() {
+		return uploadPropositionRules;
+	}
+
+	public void setUploadPropositionRules(
+			List<UploadPropositionRule> uploadPropositionRules) {
+		this.uploadPropositionRules = uploadPropositionRules;
+	}
+
+	public List<UploadPropositionAction> getUploadPropositionActions() {
+		return uploadPropositionActions;
+	}
+
+	public void setUploadPropositionActions(
+			List<UploadPropositionAction> uploadPropositionActions) {
+		this.uploadPropositionActions = uploadPropositionActions;
+	}
 }

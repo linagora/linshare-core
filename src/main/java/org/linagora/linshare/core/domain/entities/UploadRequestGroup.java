@@ -31,30 +31,62 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.domain.entities;
 
-public enum EntryType {
+public class UploadRequestGroup {
 
-	DOCUMENT(1), SHARE(2), ANONYMOUS_SHARE(3), THREAD(4), UPLOAD_REQUEST(5);
+	private long id;
 
-	private int value;
+	private String subject;
 
-	private EntryType(int value) {
-		this.value = value;
+	private String body;
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
-	public int toInt() {
-		return value;
+	private String uuid;
+
+	private java.util.Set<UploadRequest> uploadRequests;
+
+	public UploadRequestGroup() {
+		super();
 	}
 
-	public static EntryType fromInt(int value) {
-		for (EntryType type : values()) {
-			if (type.value == value) {
-				return type;
-			}
-		}
-		throw new IllegalArgumentException(
-				"Doesn't match an existing EntryType");
+	public long getId() {
+		return id;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	public String getBody() {
+		return body;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public java.util.Set<UploadRequest> getUploadRequests() {
+		return uploadRequests;
+	}
+
+	public void setUploadRequests(java.util.Set<UploadRequest> uploadRequests) {
+		this.uploadRequests = uploadRequests;
 	}
 
 }

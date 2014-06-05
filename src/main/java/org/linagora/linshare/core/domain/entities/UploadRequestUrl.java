@@ -31,30 +31,70 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.domain.entities;
 
-public enum EntryType {
+public class UploadRequestUrl {
+	private long id;
+	
+	private Contact contact;
+	
+	private UploadRequest uploadRequest;
+	
+	private String uuid;
+	
+	private String path;
+	
+	private String password;
 
-	DOCUMENT(1), SHARE(2), ANONYMOUS_SHARE(3), THREAD(4), UPLOAD_REQUEST(5);
-
-	private int value;
-
-	private EntryType(int value) {
-		this.value = value;
+	public UploadRequestUrl() {
+		super();
 	}
 
-	public int toInt() {
-		return value;
+	public long getId() {
+		return id;
 	}
 
-	public static EntryType fromInt(int value) {
-		for (EntryType type : values()) {
-			if (type.value == value) {
-				return type;
-			}
-		}
-		throw new IllegalArgumentException(
-				"Doesn't match an existing EntryType");
+	public void setId(long id) {
+		this.id = id;
 	}
 
+	public Contact getContact() {
+		return contact;
+	}
+
+	public void setContact(Contact contact) {
+		this.contact = contact;
+	}
+
+	public UploadRequest getUploadRequest() {
+		return uploadRequest;
+	}
+
+	public void setUploadRequest(UploadRequest uploadRequest) {
+		this.uploadRequest = uploadRequest;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 }

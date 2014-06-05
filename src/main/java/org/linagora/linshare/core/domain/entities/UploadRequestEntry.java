@@ -31,30 +31,46 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.domain.entities;
 
-public enum EntryType {
+import java.io.Serializable;
 
-	DOCUMENT(1), SHARE(2), ANONYMOUS_SHARE(3), THREAD(4), UPLOAD_REQUEST(5);
+import org.linagora.linshare.core.domain.constants.EntryType;
 
-	private int value;
+public class UploadRequestEntry extends Entry implements Serializable {
 
-	private EntryType(int value) {
-		this.value = value;
+	private static final long serialVersionUID = 54638444450061115L;
+
+	private DocumentEntry documentEntry;
+
+	private UploadRequest uploadRequest;
+
+	public UploadRequestEntry() {
+		super();
 	}
 
-	public int toInt() {
-		return value;
+	public DocumentEntry getDocumentEntry() {
+		return documentEntry;
 	}
 
-	public static EntryType fromInt(int value) {
-		for (EntryType type : values()) {
-			if (type.value == value) {
-				return type;
-			}
-		}
-		throw new IllegalArgumentException(
-				"Doesn't match an existing EntryType");
+	public void setDocumentEntry(DocumentEntry documentEntry) {
+		this.documentEntry = documentEntry;
 	}
 
+	public UploadRequest getUploadRequest() {
+		return uploadRequest;
+	}
+
+	public void setUploadRequest(UploadRequest uploadRequest) {
+		this.uploadRequest = uploadRequest;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	@Override
+	public EntryType getEntryType() {
+		return EntryType.UPLOAD_REQUEST;
+	}
 }

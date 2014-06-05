@@ -31,30 +31,50 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.domain.entities;
 
-public enum EntryType {
+public class UploadPropositionAction {
 
-	DOCUMENT(1), SHARE(2), ANONYMOUS_SHARE(3), THREAD(4), UPLOAD_REQUEST(5);
+	private long id;
 
-	private int value;
+	private String uuid;
 
-	private EntryType(int value) {
-		this.value = value;
+	private int actionType;
+
+	private String data;
+
+	public UploadPropositionAction() {
 	}
 
-	public int toInt() {
-		return value;
+	public long getId() {
+		return id;
 	}
 
-	public static EntryType fromInt(int value) {
-		for (EntryType type : values()) {
-			if (type.value == value) {
-				return type;
-			}
-		}
-		throw new IllegalArgumentException(
-				"Doesn't match an existing EntryType");
+	public void setId(long id) {
+		this.id = id;
 	}
 
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public int getActionType() {
+		return actionType;
+	}
+
+	public void setActionType(int actionType) {
+		this.actionType = actionType;
+	}
+
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
+	}
 }

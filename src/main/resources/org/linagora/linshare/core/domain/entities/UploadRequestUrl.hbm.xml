@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.linagora.linshare.core.domain.entities.UploadRequestUrl"
+		table="upload_request_url" lazy="false">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<many-to-one name="contact" cascade="lock" column="contact_id"
+			class="org.linagora.linshare.core.domain.entities.Contact" not-null="true"
+			lazy="no-proxy">
+		</many-to-one>
+		<many-to-one name="uploadRequest" cascade="lock"
+			column="upload_request_id" class="org.linagora.linshare.core.domain.entities.UploadRequest"
+			not-null="true" lazy="no-proxy">
+		</many-to-one>
+		<property name="uuid" column="uuid" unique="true" type="string"
+			length="255" not-null="true" lazy="false" />
+		<property name="path" column="path" type="string" length="255"
+			not-null="true" lazy="false" />
+		<property name="password" column="password" type="string"
+			length="255" not-null="false" lazy="false" />
+	</class>
+</hibernate-mapping>

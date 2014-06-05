@@ -1,58 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-  <session-factory>
+	<session-factory>
 
-    <property name="connection.autocommit">true</property>
-      <!--Use ehcache as cache manager -->
-	<property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
-	<property name="hibernate.cache.use_minimal_puts">false</property>
-	<property name="hibernate.cache.use_query_cache">true</property>
-	<property name="hibernate.cache.use_second_level_cache">true</property>
-	<property name="hibernate.cache.use_structured_entries">true</property>
-	<property name="hibernate.cache.provider_configuration_file_resource_path">ehcache.xml</property>
-    <mapping resource="org/linagora/linshare/core/domain/entities/LogEntry.hbm.xml"/>
+		<property name="connection.autocommit">true</property>
+		  <!--Use ehcache as cache manager -->
+		<property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
+		<property name="hibernate.cache.use_minimal_puts">false</property>
+		<property name="hibernate.cache.use_query_cache">true</property>
+		<property name="hibernate.cache.use_second_level_cache">true</property>
+		<property name="hibernate.cache.use_structured_entries">true</property>
+		<property name="hibernate.cache.provider_configuration_file_resource_path">ehcache.xml</property>
+		<mapping resource="org/linagora/linshare/core/domain/entities/LogEntry.hbm.xml"/>
 
-    <mapping resource="org/linagora/linshare/core/domain/entities/DomainPattern.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/AllowedContact.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/LDAPConnection.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/Policy.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/Functionality.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/Unit.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/DomainPattern.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/AllowedContact.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/LDAPConnection.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/Policy.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/Functionality.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/Unit.hbm.xml"/>
 
-    <mapping resource="org/linagora/linshare/core/domain/entities/AbstractDomain.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/LdapUserProvider.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/DomainAccessRule.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/DomainAccessPolicy.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/DomainPolicy.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/MessagesConfiguration.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/Account.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/ThreadMember.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/LdapAttribute.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/TechnicalAccountPermission.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/MailingList.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/MailingListContact.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/AbstractDomain.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/LdapUserProvider.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/DomainAccessRule.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/DomainAccessPolicy.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/DomainPolicy.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/MessagesConfiguration.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/Account.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/ThreadMember.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/LdapAttribute.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/TechnicalAccountPermission.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/MailingList.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/MailingListContact.hbm.xml"/>
 
+		<mapping resource="org/linagora/linshare/core/domain/entities/Entry.hbm.xml"/> 
+		<mapping resource="org/linagora/linshare/core/domain/entities/Document.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/RecipientFavourite.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/Contact.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/AnonymousUrl.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/Signature.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/Cookie.hbm.xml"/>
 
-	<mapping resource="org/linagora/linshare/core/domain/entities/Entry.hbm.xml"/> 
-    <mapping resource="org/linagora/linshare/core/domain/entities/Document.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/RecipientFavourite.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/Contact.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/AnonymousUrl.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/Signature.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/Cookie.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/MailLayout.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/MailFooterLang.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/MailFooter.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/MailContentLang.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/MailContent.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/MailConfig.hbm.xml"/>
 
+		<mapping resource="org/linagora/linshare/core/domain/entities/MimeType.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/MimePolicy.hbm.xml"/>
 
-    <mapping resource="org/linagora/linshare/core/domain/entities/MailLayout.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/MailFooterLang.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/MailFooter.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/MailContentLang.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/MailContent.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/MailConfig.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/UploadRequest.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/UploadRequestGroup.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/UploadRequestHistory.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/UploadRequestTemplate.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/UploadRequestUrl.hbm.xml"/>
 
-    <mapping resource="org/linagora/linshare/core/domain/entities/MimeType.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/MimePolicy.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/UploadProposition.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/UploadPropositionAction.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/UploadPropositionFilter.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/UploadPropositionRule.hbm.xml"/>
 
-  </session-factory>
+	</session-factory>
 </hibernate-configuration>
-
