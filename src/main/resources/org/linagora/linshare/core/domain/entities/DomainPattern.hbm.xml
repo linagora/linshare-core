@@ -7,7 +7,7 @@
       	<generator class="native"/>
     </id>
     <property access="field" column="identifier" index="index_domain_pattern_identifier" name="identifier" not-null="true" unique="true"/>
-    <property column="description" name="description"/>
+    <property column="description" name="description" type="text"/>
     <property column="auth_command" name="authCommand" not-null="true" type="text" />
     <property column="search_user_command" name="searchUserCommand" not-null="true" type="text" />
     <property column="auto_complete_command_on_all_attributes" name="autoCompleteCommandOnAllAttributes" not-null="true" type="text" />
