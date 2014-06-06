@@ -141,7 +141,7 @@ public interface MailConfigService {
 	 * @param language
 	 * @return
 	 */
-	public List<MailContent> findAll(MailConfig mailConfig,
+	public List<MailContent> findAllUsableContents(MailConfig mailConfig,
 			MailContentType mailContentType, Language lang) throws BusinessException;
 
 	/**
@@ -220,6 +220,15 @@ public interface MailConfigService {
 	 */
 	List<MailFooter> findAllFooters(User actor, String domainId)
 			throws BusinessException;
+
+	/**
+	 * Find a list of mail footers usable by the current mail config.
+	 * 
+	 * @param actor
+	 * @param domainId
+	 * @return
+	 */
+	List<MailFooter> findAllUsableFooters(MailConfig mailConfig, Language lang);
 
 	/**
 	 * Find a mail footer.

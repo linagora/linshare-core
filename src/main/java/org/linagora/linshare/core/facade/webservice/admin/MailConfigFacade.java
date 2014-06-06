@@ -38,6 +38,7 @@ import java.util.Set;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.MailConfigDto;
 import org.linagora.linshare.webservice.dto.MailContentDto;
+import org.linagora.linshare.webservice.dto.MailFooterDto;
 
 public interface MailConfigFacade extends AdminGenericFacade {
 
@@ -51,5 +52,7 @@ public interface MailConfigFacade extends AdminGenericFacade {
 
 	void delete(String uuid) throws BusinessException;
 
-	Set<MailContentDto> findAll(String mailConfigUuid, String mailContentType, String language) throws BusinessException;
+	Set<MailContentDto> findAllUsableContents(String mailConfigUuid, String mailContentType, String language) throws BusinessException;
+
+	Set<MailFooterDto> findAllUsableFooters(String mailConfigUuid, String language) throws BusinessException;
 }

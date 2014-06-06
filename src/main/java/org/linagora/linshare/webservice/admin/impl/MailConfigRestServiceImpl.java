@@ -53,6 +53,7 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailConfigRestService;
 import org.linagora.linshare.webservice.dto.MailConfigDto;
 import org.linagora.linshare.webservice.dto.MailContentDto;
+import org.linagora.linshare.webservice.dto.MailFooterDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -132,11 +133,22 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 	@GET
 	@ApiOperation(value = "Find all mail contents.", response = MailContentDto.class, responseContainer = "Set")
 	@Override
-	public Set<MailContentDto> findAll(
+	public Set<MailContentDto> findAllUsableContents(
 			@ApiParam(value = "Mail configuration's uuid.", required = true) @PathParam("mailConfigUuid") String mailConfigUuid,
 			@ApiParam(value = "Mail content type.", required = true) @QueryParam("mailContentType") String mailContentType,
 			@ApiParam(value = "Mail content language.", required = true) @QueryParam("language") String language)
 			throws BusinessException {
-		return mailConfigFacade.findAll(mailConfigUuid, mailContentType, language);
+		return mailConfigFacade.findAllUsableContents(mailConfigUuid, mailContentType, language);
+	}
+
+	@Path("/{mailConfigUuid}/mail_footers")
+	@GET
+	@ApiOperation(value = "Find all mail footers.", response = MailContentDto.class, responseContainer = "Set")
+	@Override
+	public Set<MailFooterDto> findAllUsableFooters(
+			@ApiParam(value = "Mail configuration's uuid.", required = true) @PathParam("mailConfigUuid") String mailConfigUuid,
+			@ApiParam(value = "Mail footer language.", required = true) @QueryParam("language") String language)
+			throws BusinessException {
+		return mailConfigFacade.findAllUsableFooters(mailConfigUuid, language);
 	}
 }

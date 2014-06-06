@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
@@ -191,14 +190,17 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public List<MailContent> findAll(MailConfig mailConfig,
-			MailContentType mailContentType, Language lang) throws BusinessException {
+	public List<MailContent> findAllUsableContents(MailConfig mailConfig,
+			MailContentType mailContentType, Language lang)
+			throws BusinessException {
 
 		AbstractDomain currentDomain = mailConfig.getDomain();
-		List<MailContent> all = mailContentBusinessService.findAll(currentDomain, lang, mailContentType);
+		List<MailContent> all = mailContentBusinessService.findAll(
+				currentDomain, lang, mailContentType);
 		AbstractDomain parent = currentDomain.getParentDomain();
 		while (parent != null) {
-			all.addAll(mailContentBusinessService.findAll(currentDomain, lang, mailContentType));
+			all.addAll(mailContentBusinessService.findAll(currentDomain, lang,
+					mailContentType));
 			parent = parent.getParentDomain();
 		}
 		return all;
@@ -302,6 +304,20 @@ public class MailConfigServiceImpl implements MailConfigService {
 			}
 		}
 		return footers;
+	}
+
+	@Override
+	public List<MailFooter> findAllUsableFooters(MailConfig mailConfig,
+			Language lang) {
+		AbstractDomain currentDomain = mailConfig.getDomain();
+		List<MailFooter> all = mailFooterBusinessService.findAll(currentDomain,
+				lang);
+		AbstractDomain parent = currentDomain.getParentDomain();
+		while (parent != null) {
+			all.addAll(mailFooterBusinessService.findAll(currentDomain, lang));
+			parent = parent.getParentDomain();
+		}
+		return all;
 	}
 
 	@Override
@@ -460,44 +476,45 @@ public class MailConfigServiceImpl implements MailConfigService {
 
 	@Override
 	public boolean hasRights(User actor, MailConfig config) {
-//		if (!permissionService.isAdminforThisDomain(actor, config.getDomain())) {
-//			if (config.isVisible()) {
-//				return isInParentDomains(actor.getDomain(), config.getDomain());
-//			} else {
-//				return actor.getDomain().equals(config.getDomain());
-//			}
-//		}
+		// if (!permissionService.isAdminforThisDomain(actor,
+		// config.getDomain())) {
+		// if (config.isVisible()) {
+		// return isInParentDomains(actor.getDomain(), config.getDomain());
+		// } else {
+		// return actor.getDomain().equals(config.getDomain());
+		// }
+		// }
 		return true;
 	}
 
 	@Override
 	public boolean hasRights(User actor, MailContent content) {
 		return true;
-//		if (content.isVisible()) {
-//			return isInParentDomains(actor.getDomain(), content.getDomain());
-//		} else {
-//			return actor.getDomain().equals(content.getDomain());
-//		}
+		// if (content.isVisible()) {
+		// return isInParentDomains(actor.getDomain(), content.getDomain());
+		// } else {
+		// return actor.getDomain().equals(content.getDomain());
+		// }
 	}
 
 	@Override
 	public boolean hasRights(User actor, MailFooter footer) {
 		return true;
-//		if (footer.getVisible()) {
-//			return isInParentDomains(actor.getDomain(), footer.getDomain());
-//		} else {
-//			return actor.getDomain().equals(footer.getDomain());
-//		}
+		// if (footer.getVisible()) {
+		// return isInParentDomains(actor.getDomain(), footer.getDomain());
+		// } else {
+		// return actor.getDomain().equals(footer.getDomain());
+		// }
 	}
 
 	@Override
 	public boolean hasRights(User actor, MailLayout layout) {
 		return true;
-//		if (layout.isVisible()) {
-//			return isInParentDomains(actor.getDomain(), layout.getDomain());
-//		} else {
-//			return actor.getDomain().equals(layout.getDomain());
-//		}
+		// if (layout.isVisible()) {
+		// return isInParentDomains(actor.getDomain(), layout.getDomain());
+		// } else {
+		// return actor.getDomain().equals(layout.getDomain());
+		// }
 	}
 
 	/*

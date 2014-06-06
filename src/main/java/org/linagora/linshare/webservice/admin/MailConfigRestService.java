@@ -38,6 +38,7 @@ import java.util.Set;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.MailConfigDto;
 import org.linagora.linshare.webservice.dto.MailContentDto;
+import org.linagora.linshare.webservice.dto.MailFooterDto;
 
 public interface MailConfigRestService {
 
@@ -51,6 +52,9 @@ public interface MailConfigRestService {
 
 	void delete(MailConfigDto dto) throws BusinessException;
 
-	Set<MailContentDto> findAll(String mailConfigUuid, String mailContentType, String language) throws BusinessException;
+	Set<MailContentDto> findAllUsableContents(String mailConfigUuid, String mailContentType, String language) throws BusinessException;
+
+	Set<MailFooterDto> findAllUsableFooters(String mailConfigUuid, String language)
+			throws BusinessException;
 
 }
