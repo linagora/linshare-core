@@ -366,6 +366,8 @@ public class MyBorderLayout {
 				menu.addMenuEntry(helpMenu);
 		} else {
 			menu.addMenuEntry(homeMenu);
+			if (showThreadTab())
+				menu.addMenuEntry(threadMenu);
 			if (showHelpTab())
 				menu.addMenuEntry(helpMenu);
 		}
