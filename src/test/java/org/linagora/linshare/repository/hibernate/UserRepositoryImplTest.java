@@ -58,8 +58,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
         "classpath:springContext-repository.xml"})
 public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
-    private static final String FIRST_NAME = "first name";
-    private static final String LAST_NAME = "last name";
+    private static final String FIRST_NAME = "First name";
+    private static final String LAST_NAME = "Last name";
     private static final String MAIL = "mail";
     private static final String PASSWORD = "password";
 
