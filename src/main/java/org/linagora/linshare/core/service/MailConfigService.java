@@ -35,7 +35,6 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
@@ -134,17 +133,6 @@ public interface MailConfigService {
 			MailContentType type) throws BusinessException;
 
 	/**
-	 * Find a list of mail content usable by the current mail config.
-	 * 
-	 * @param mailconfig
-	 * @param mailContentType
-	 * @param language
-	 * @return
-	 */
-	public List<MailContent> findAllUsableContents(MailConfig mailConfig,
-			MailContentType mailContentType, Language lang) throws BusinessException;
-
-	/**
 	 * Create a new mail content.
 	 * 
 	 * @param actor
@@ -220,15 +208,6 @@ public interface MailConfigService {
 	 */
 	List<MailFooter> findAllFooters(User actor, String domainId)
 			throws BusinessException;
-
-	/**
-	 * Find a list of mail footers usable by the current mail config.
-	 * 
-	 * @param actor
-	 * @param domainId
-	 * @return
-	 */
-	List<MailFooter> findAllUsableFooters(MailConfig mailConfig, Language lang);
 
 	/**
 	 * Find a mail footer.

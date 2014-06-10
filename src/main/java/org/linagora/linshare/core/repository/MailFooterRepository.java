@@ -33,16 +33,10 @@
  */
 package org.linagora.linshare.core.repository;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 
 public interface MailFooterRepository extends AbstractRepository<MailFooter> {
 
 	public MailFooter findByUuid(String uuid);
-
-	public List<MailFooter> findAll(AbstractDomain domain, Language lang);
 
 }

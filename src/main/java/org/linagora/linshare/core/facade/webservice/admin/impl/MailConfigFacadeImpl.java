@@ -35,6 +35,7 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -45,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.MailFooter;
+import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.domain.entities.MailLayout;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -125,7 +127,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<MailContentDto> findAllUsableContents(String mailConfigUuid,
+	public Set<MailContentDto> findAllContents(String mailConfigUuid,
 			String mailContentType, String language) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(mailConfigUuid, "mailConfigUuid must be set.");
@@ -136,27 +138,30 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		MailContentType contentType = MailContentType.valueOf(mailContentType.toUpperCase());
 		Language lang = Language.valueOf(language.toUpperCase());
 		Set<MailContentDto> ret = Sets.newHashSet();
-		List<MailContent> all = mailConfigService.findAllUsableContents(mailConfig, contentType, lang);
+		List<MailContent> all = mailConfigService.findAll(mailConfig, contentType, lang);
 		for (MailContent mailContent : all) {
 			ret.add(new MailContentDto(mailContent));
 		}
 		return ret;
 	}
 
-
 	@Override
-	public Set<MailFooterDto> findAllUsableFooters(String mailConfigUuid,
+	public Set<MailFooterDto> findAllFooters(String mailConfigUuid,
 			String language) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(mailConfigUuid, "mailConfigUuid must be set.");
 		Validate.notEmpty(language, "language must be set.");
 
-		MailConfig mailConfig = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
+		MailConfig cfg = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
 		Language lang = Language.valueOf(language.toUpperCase());
 		Set<MailFooterDto> ret = Sets.newHashSet();
-		List<MailFooter> all = mailConfigService.findAllUsableFooters(mailConfig, lang);
-		for (MailFooter mailFooter : all) {
-			ret.add(new MailFooterDto(mailFooter));
+
+		List<MailFooter> all = mailConfigService.findAllFooters(actor, cfg
+				.getDomain().getIdentifier());
+		for (MailFooter footer : all) {
+			if (footer.getLanguage() == lang.toInt()) {
+				ret.add(new MailFooterDto(footer));
+			}
 		}
 		return ret;
 	}

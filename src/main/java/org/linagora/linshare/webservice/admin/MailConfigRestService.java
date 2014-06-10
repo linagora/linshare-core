@@ -42,7 +42,8 @@ import org.linagora.linshare.webservice.dto.MailFooterDto;
 
 public interface MailConfigRestService {
 
-	Set<MailConfigDto> findAll(String domainId, boolean onlyCurrentDomain) throws BusinessException;
+	Set<MailConfigDto> findAll(String domainId, boolean onlyCurrentDomain)
+			throws BusinessException;
 
 	MailConfigDto find(String uuid) throws BusinessException;
 
@@ -52,9 +53,10 @@ public interface MailConfigRestService {
 
 	void delete(MailConfigDto dto) throws BusinessException;
 
-	Set<MailContentDto> findAllUsableContents(String mailConfigUuid, String mailContentType, String language) throws BusinessException;
-
-	Set<MailFooterDto> findAllUsableFooters(String mailConfigUuid, String language)
+	Set<MailFooterDto> findAllFooters(String mailConfigUuid, String language)
 			throws BusinessException;
+
+	Set<MailContentDto> findAllContents(String mailConfigUuid,
+			String mailContentType, String language) throws BusinessException;
 
 }

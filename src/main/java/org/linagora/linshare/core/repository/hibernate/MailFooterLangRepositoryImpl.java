@@ -35,10 +35,7 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.repository.MailFooterLangRepository;
@@ -68,15 +65,5 @@ public class MailFooterLangRepositoryImpl extends
 	@Override
 	public boolean isMailFooterReferenced(MailFooter footer) {
 		return !findByCriteria(Restrictions.eq("mailFooter", footer)).isEmpty();
-	}
-
-	@Override
-	public MailFooter findMailFooter(MailConfig config, Language lang) {
-		Disjunction and = Restrictions.disjunction();
-
-		and.add(Restrictions.eq("mailConfig", config));
-		and.add(Restrictions.eq("language", lang));
-		return DataAccessUtils.singleResult(findByCriteria(and))
-				.getMailFooter();
 	}
 }

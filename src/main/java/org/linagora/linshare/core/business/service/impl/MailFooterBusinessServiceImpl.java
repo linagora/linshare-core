@@ -34,11 +34,9 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import org.linagora.linshare.core.business.service.MailFooterBusinessService;
-import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -68,11 +66,6 @@ public class MailFooterBusinessServiceImpl implements MailFooterBusinessService 
 	@Override
 	public MailFooter findByUuid(String uuid) {
 		return mailFooterRepository.findByUuid(uuid);
-	}
-
-	@Override
-	public List<MailFooter> findAll(AbstractDomain domain, Language lang) {
-		return mailFooterRepository.findAll(domain, lang);
 	}
 
 	@Override

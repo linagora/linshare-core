@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.dto;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -77,7 +78,7 @@ public class MailConfigDto {
 	@ApiModelProperty(value = "MailLayoutText")
 	private String mailLayoutText;
 
-	@ApiModelProperty(value = "MailFooterLangs")
+	@ApiModelProperty(value = "MailFooters")
 	private Map<Language, MailFooterLangDto> mailFooterLangs = Maps.newHashMap();
 
 	@ApiModelProperty(value = "MailContentLangs")
@@ -98,13 +99,14 @@ public class MailConfigDto {
 		this.mailLayoutText = config.getMailLayoutText().getUuid();
 
 		Set<MailContentLang> mcls = config.getMailContentLangs();
-		Set<MailFooterLang> mfls = config.getMailFooterLangs();
+		Map<Integer, MailFooterLang> mfls = config.getMailFooters();
 
 		for (MailContentLang mcl : mcls) {
 			this.mailContentLangs.add(new MailContentLangDto(mcl));
 		}
-		for (MailFooterLang mfl : mfls) {
-			this.mailFooterLangs.put(Language.fromInt(mfl.getLanguage()), new MailFooterLangDto(mfl));
+		for (Entry<Integer, MailFooterLang> e : mfls.entrySet()) {
+			this.mailFooterLangs.put(Language.fromInt(e.getKey()),
+					new MailFooterLangDto(e.getValue()));
 		}
 	}
 
@@ -172,11 +174,11 @@ public class MailConfigDto {
 		this.mailLayoutText = mailLayoutText;
 	}
 
-	public Map<Language, MailFooterLangDto> getMailFooterLangs() {
+	public Map<Language, MailFooterLangDto> getMailFooters() {
 		return mailFooterLangs;
 	}
 
-	public void setMailFooterLangs(Map<Language, MailFooterLangDto> mailFooterLangs) {
+	public void setMailFooters(Map<Language, MailFooterLangDto> mailFooterLangs) {
 		this.mailFooterLangs = mailFooterLangs;
 	}
 

@@ -1,9 +1,8 @@
 package org.linagora.linshare.service;
 
+import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,7 +24,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import com.google.common.collect.ImmutableSet;
 
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = {
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-service.xml",
@@ -33,9 +33,9 @@ import com.google.common.collect.ImmutableSet;
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-startopendj.xml",
 		"classpath:springContext-jackRabbit.xml",
-		"classpath:springContext-test.xml" })
-public class MailConfigServiceImplTest extends
-		AbstractTransactionalJUnit4SpringContextTests {
+		"classpath:springContext-test.xml"
+		})
+public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(FunctionalityServiceImplTest.class);
@@ -82,43 +82,31 @@ public class MailConfigServiceImplTest extends
 		 * iterate over mailcontent langs, searching for all <Language,
 		 * MailContentType> pair
 		 */
-		for (final MailContentType type : MailContentType.values()) {
-			for (final Language lang : supportedLangs) {
-				boolean empty = CollectionUtils.select(contents,
-						new Predicate() {
+		for (MailContentType type : MailContentType.values()) {
+			for (Language lang : supportedLangs) {
+				boolean found = false;
 
-							@Override
-							public boolean evaluate(Object arg0) {
-								MailContentLang m = (MailContentLang) arg0;
-								return m.getLanguage() == lang.toInt()
-										&& m.getMailContentType() == type
-												.toInt();
-							}
-						}).isEmpty();
-				Assert.assertFalse(
+				for (MailContentLang c : contents) {
+					if (c.getMailContentType() == type.toInt()
+							&& c.getLanguage() == lang.toInt())
+						found = true;
+				}
+				Assert.assertTrue(
 						"Missing MailContentLang in root domain mail config : lang="
 								+ lang.toString() + ";type=" + type.toString(),
-						empty);
+						found);
 			}
 		}
 
 		/*
 		 * Validate mail footers
 		 */
-		Set<MailFooterLang> footers = current.getMailFooterLangs();
-		Assert.assertNotNull(footers);
-		for (final Language lang : supportedLangs) {
-			boolean empty = CollectionUtils.select(footers, new Predicate() {
-
-				@Override
-				public boolean evaluate(Object arg0) {
-					MailFooterLang m = (MailFooterLang) arg0;
-					return m.getLanguage() == lang.toInt();
-				}
-			}).isEmpty();
-			Assert.assertFalse(
+		Map<Integer, MailFooterLang> footers = current.getMailFooters();
+		Assert.assertNotNull(current.getMailFooters());
+		for (Language lang : supportedLangs) {
+			Assert.assertNotNull(
 					"Missing MailFooter in root domain mail config : lang="
-							+ lang.toString(), empty);
+							+ lang.toString(), footers.get(lang.toInt()));
 		}
 
 		Assert.assertNotNull(current.getMailLayoutHtml());
