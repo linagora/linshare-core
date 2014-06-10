@@ -45,35 +45,38 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.EntryRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class EntryRepositoryImpl extends AbstractRepositoryImpl<Entry> implements EntryRepository {
+public class EntryRepositoryImpl extends AbstractRepositoryImpl<Entry>
+		implements EntryRepository {
 
 	public EntryRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
-	
+
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(Entry aDoc) {
-		DetachedCriteria det = DetachedCriteria.forClass(Entry.class).add(Restrictions.eq( "uuid", aDoc.getUuid()) );
+		DetachedCriteria det = DetachedCriteria.forClass(Entry.class).add(
+				Restrictions.eq("uuid", aDoc.getUuid()));
 		return det;
 	}
-	
-	 /** Find a document using its id.
-     * @param id
-     * @return found document (null if no document found).
-     */
-	@Override
-    public Entry findById(String uuid) {
-        List<Entry> entries = findByCriteria(Restrictions.eq("uuid", uuid));
-        if (entries == null || entries.isEmpty()) {
-            return null;
-        } else if (entries.size() == 1) {
-            return entries.get(0);
-        } else {
-            throw new IllegalStateException("Id must be unique");
-        }
-    }
 
-	
+	/**
+	 * Find a document using its id.
+	 * 
+	 * @param id
+	 * @return found document (null if no document found).
+	 */
+	@Override
+	public Entry findById(String uuid) {
+		List<Entry> entries = findByCriteria(Restrictions.eq("uuid", uuid));
+		if (entries == null || entries.isEmpty()) {
+			return null;
+		} else if (entries.size() == 1) {
+			return entries.get(0);
+		} else {
+			throw new IllegalStateException("Id must be unique");
+		}
+	}
+
 	@Override
 	public Entry create(Entry entity) throws BusinessException {
 		entity.setCreationDate(new GregorianCalendar());
@@ -87,9 +90,10 @@ public class EntryRepositoryImpl extends AbstractRepositoryImpl<Entry> implement
 		entity.setModificationDate(new GregorianCalendar());
 		return super.update(entity);
 	}
-	
+
 	@Override
 	public List<Entry> getOutdatedEntry() {
-		return findByCriteria(Restrictions.lt("expirationDate", Calendar.getInstance()));
+		return findByCriteria(Restrictions.lt("expirationDate",
+				Calendar.getInstance()));
 	}
 }

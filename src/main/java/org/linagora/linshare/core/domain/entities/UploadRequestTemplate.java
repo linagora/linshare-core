@@ -39,6 +39,8 @@ public class UploadRequestTemplate {
 
 	private String name;
 
+	private String uuid;
+
 	private String description;
 
 	private Long durationBeforeActivation;
@@ -66,6 +68,10 @@ public class UploadRequestTemplate {
 	private Long dayBeforeNotification;
 
 	private Boolean prolongationMode;
+
+	private java.util.Date modificationDate;
+
+	private java.util.Date creationDate;
 
 	public UploadRequestTemplate() {
 		super();
@@ -199,4 +205,27 @@ public class UploadRequestTemplate {
 		this.prolongationMode = prolongationMode;
 	}
 
+	public java.util.Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(java.util.Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public java.util.Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(java.util.Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 }

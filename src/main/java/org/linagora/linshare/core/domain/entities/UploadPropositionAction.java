@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+
 public class UploadPropositionAction {
 
 	private long id;
@@ -42,6 +44,10 @@ public class UploadPropositionAction {
 	private int actionType;
 
 	private String data;
+
+	private Date creationDate;
+
+	private Date modificationDate;
 
 	public UploadPropositionAction() {
 	}
@@ -76,5 +82,21 @@ public class UploadPropositionAction {
 
 	public void setData(String data) {
 		this.data = data;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 }

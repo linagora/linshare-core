@@ -37,20 +37,24 @@ public class UploadRequestGroup {
 
 	private long id;
 
+	private String uuid;
+
 	private String subject;
 
 	private String body;
 
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	private String uuid;
-
 	private java.util.Set<UploadRequest> uploadRequests;
+
+	private java.util.Date creationDate;
+
+	private java.util.Date modificationDate;
 
 	public UploadRequestGroup() {
 		super();
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public long getId() {
@@ -89,4 +93,19 @@ public class UploadRequestGroup {
 		this.uploadRequests = uploadRequests;
 	}
 
+	public java.util.Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(java.util.Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public java.util.Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(java.util.Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
 }

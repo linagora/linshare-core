@@ -37,13 +37,15 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Entry;
 
-public interface EntryRepository extends AbstractRepository<Entry>{
-	
-	 /** Find a document using its uuid.
-     * @param  uuid
-     * @return found document (null if no document found).
-     */
+public interface EntryRepository extends AbstractRepository<Entry> {
+
+	/**
+	 * Find a document using its uuid.
+	 * 
+	 * @param uuid
+	 * @return found document (null if no document found).
+	 */
 	public Entry findById(String uuid);
-	
+
 	public List<Entry> getOutdatedEntry();
 }

@@ -20,5 +20,9 @@
 			<index column="upload_proposition_filterIndex" type="integer"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadPropositionAction"/>
 		</list>
+		<property name="creationDate" column="creation_date" type="timestamp"
+			length="6" not-null="true" lazy="false" />
+		<property name="modificationDate" column="modification_date"
+			type="timestamp" length="6" not-null="true" lazy="false" />
 	</class>
 </hibernate-mapping>

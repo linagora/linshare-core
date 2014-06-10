@@ -35,16 +35,20 @@ package org.linagora.linshare.core.domain.entities;
 
 public class UploadRequestUrl {
 	private long id;
-	
+
 	private Contact contact;
-	
+
 	private UploadRequest uploadRequest;
-	
+
 	private String uuid;
-	
+
 	private String path;
-	
+
 	private String password;
+
+	private java.util.Date creationDate;
+
+	private java.util.Date modificationDate;
 
 	public UploadRequestUrl() {
 		super();
@@ -96,5 +100,21 @@ public class UploadRequestUrl {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public java.util.Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(java.util.Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public java.util.Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(java.util.Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 }

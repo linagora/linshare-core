@@ -448,12 +448,16 @@ CREATE TABLE upload_request_url (
   uuid              varchar(255) NOT NULL UNIQUE, 
   path              varchar(255) NOT NULL, 
   password          varchar(255), 
+  creation_date     timestamp(6) NOT NULL, 
+  modification_date timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE upload_request_group (
-  id       int8 NOT NULL, 
-  subject text NOT NULL, 
-  body    text NOT NULL, 
-  uuid    varchar(255) NOT NULL, 
+  id                 int8 NOT NULL, 
+  subject           text NOT NULL, 
+  body              text NOT NULL, 
+  uuid              varchar(255) NOT NULL, 
+  creation_date     timestamp(6) NOT NULL, 
+  modification_date timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE upload_request_history (
   id                               int8 NOT NULL, 
@@ -490,6 +494,8 @@ CREATE TABLE upload_proposition_filter (
   name               varchar(255) NOT NULL, 
   match_all          bool NOT NULL, 
   enable             bool NOT NULL, 
+  creation_date      timestamp(6) NOT NULL, 
+  modification_date  timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE upload_proposition_rule (
   id                               int8 NOT NULL, 
@@ -499,6 +505,8 @@ CREATE TABLE upload_proposition_rule (
   field                           int4 NOT NULL, 
   upload_proposition_filter_index int4 NOT NULL, 
   value                           varchar(255), 
+  creation_date                   timestamp(6) NOT NULL, 
+  modification_date               timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE upload_proposition_action (
   id                              int8 NOT NULL, 
@@ -507,6 +515,8 @@ CREATE TABLE upload_proposition_action (
   action_type                    int4 NOT NULL, 
   data                           text, 
   upload_proposition_filterIndex int4, 
+  creation_date                  timestamp(6) NOT NULL, 
+  modification_date              timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE functionality_boolean (
   id                SERIAL NOT NULL, 
@@ -539,7 +549,7 @@ CREATE TABLE upload_request_template (
   id                          int8 NOT NULL, 
   uuid                       varchar(255) NOT NULL, 
   account_id                 int8 NOT NULL, 
-  name                       varchar(255), 
+  name                       varchar(255) NOT NULL, 
   description                varchar(255), 
   duration_before_activation int8, 
   unit_before_activation     int8, 
@@ -554,6 +564,8 @@ CREATE TABLE upload_request_template (
   secured                    bool, 
   day_before_notification    int8, 
   prolongation_mode          bool, 
+  creation_date              timestamp(6) NOT NULL, 
+  modification_date          timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE upload_proposition (
   id                  int8 NOT NULL, 
