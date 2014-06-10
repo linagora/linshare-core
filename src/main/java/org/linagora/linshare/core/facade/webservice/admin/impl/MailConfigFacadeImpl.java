@@ -35,7 +35,6 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -46,7 +45,6 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.MailFooter;
-import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.domain.entities.MailLayout;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -134,13 +132,18 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(mailContentType, "mailContentType must be set.");
 		Validate.notEmpty(language, "language must be set.");
 
-		MailConfig mailConfig = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
-		MailContentType contentType = MailContentType.valueOf(mailContentType.toUpperCase());
+		MailConfig cfg = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
+		MailContentType type = MailContentType.valueOf(mailContentType.toUpperCase());
 		Language lang = Language.valueOf(language.toUpperCase());
 		Set<MailContentDto> ret = Sets.newHashSet();
-		List<MailContent> all = mailConfigService.findAll(mailConfig, contentType, lang);
-		for (MailContent mailContent : all) {
-			ret.add(new MailContentDto(mailContent));
+
+		List<MailContent> all = mailConfigService.findAllContents(actor,
+				cfg.getDomain().getIdentifier());
+		for (MailContent mc : all) {
+			if (mc.getLanguage() == lang.toInt()
+					&& mc.getMailContentType() == type.toInt()) {
+				ret.add(new MailContentDto(mc));
+			}
 		}
 		return ret;
 	}
