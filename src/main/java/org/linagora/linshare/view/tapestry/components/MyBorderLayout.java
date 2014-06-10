@@ -348,6 +348,8 @@ public class MyBorderLayout {
 			}
 		} else {
 			menu.addMenuEntry(homeMenu);
+			if (showThreadTab())
+				menu.addMenuEntry(threadMenu);
 			if (showHelpTab())
 				menu.addMenuEntry(helpMenu);
 		}
