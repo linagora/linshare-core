@@ -31,82 +31,18 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.repository;
 
-import java.util.Date;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 
-public class UploadPropositionRule {
+public interface UploadRequestRepository extends
+		AbstractRepository<UploadRequest> {
 
-	private long id;
-
-	private String uuid;
-
-	private int operator;
-
-	private int field;
-
-	private String value;
-
-	private Date creationDate;
-
-	private Date modificationDate;
-
-	public UploadPropositionRule() {
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public int getOperator() {
-		return operator;
-	}
-
-	public void setOperator(int operator) {
-		this.operator = operator;
-	}
-
-	public int getField() {
-		return field;
-	}
-
-	public void setField(int field) {
-		this.field = field;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
-	}
+	/**
+	 * Find a uploadRequestEntry using its uuid.
+	 * 
+	 * @param uuid
+	 * @return found uploadRequestEntry (null if no uploadRequestEntry found).
+	 */
+	public UploadRequest findByUuid(String uuid);
 }

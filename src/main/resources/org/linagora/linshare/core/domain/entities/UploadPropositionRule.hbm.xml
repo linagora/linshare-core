@@ -10,5 +10,9 @@
 		<property name="operator" column="operator" type="integer" not-null="true" lazy="false"/>
 		<property name="field" column="field" type="integer" not-null="true" lazy="false"/>
 		<property name="value" column="value" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="timestamp"
+			length="6" not-null="true" lazy="false" />
+		<property name="modificationDate" column="modification_date"
+			type="timestamp" length="6" not-null="true" lazy="false" />
 	</class>
 </hibernate-mapping>

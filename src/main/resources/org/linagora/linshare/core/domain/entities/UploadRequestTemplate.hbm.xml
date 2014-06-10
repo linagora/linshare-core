@@ -9,7 +9,9 @@
 			</generator>
 		</id>
 		<property name="name" column="name" type="string" length="255"
-			not-null="false" lazy="false" />
+			not-null="true" lazy="false" />
+		<property name="uuid" column="uuid" type="string" length="255"
+			not-null="true" lazy="false" />
 		<property name="description" column="description" type="string"
 			length="255" not-null="false" lazy="false" />
 		<property name="durationBeforeActivation" column="duration_before_activation"
@@ -38,5 +40,9 @@
 			type="long" not-null="false" lazy="false" />
 		<property name="prolongationMode" column="prolongation_mode"
 			type="boolean" not-null="false" lazy="false" />
+		<property name="creationDate" column="creation_date" type="timestamp"
+			length="6" not-null="true" lazy="false" />
+		<property name="modificationDate" column="modification_date"
+			type="timestamp" length="6" not-null="true" lazy="false" />
 	</class>
 </hibernate-mapping>

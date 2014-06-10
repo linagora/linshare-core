@@ -9,5 +9,9 @@
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="actionType" column="action_type" type="integer" not-null="true" lazy="false"/>
 		<property name="data" column="data" type="text" not-null="false" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="timestamp"
+			length="6" not-null="true" lazy="false" />
+		<property name="modificationDate" column="modification_date"
+			type="timestamp" length="6" not-null="true" lazy="false" />
 	</class>
 </hibernate-mapping>

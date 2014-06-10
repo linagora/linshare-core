@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
 import java.util.List;
 
 public class UploadPropositionFilter {
@@ -50,6 +51,10 @@ public class UploadPropositionFilter {
 	private List<UploadPropositionRule> uploadPropositionRules;
 
 	private List<UploadPropositionAction> uploadPropositionActions;
+
+	private Date creationDate;
+
+	private Date modificationDate;
 
 	public UploadPropositionFilter() {
 	}
@@ -110,5 +115,21 @@ public class UploadPropositionFilter {
 	public void setUploadPropositionActions(
 			List<UploadPropositionAction> uploadPropositionActions) {
 		this.uploadPropositionActions = uploadPropositionActions;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 }

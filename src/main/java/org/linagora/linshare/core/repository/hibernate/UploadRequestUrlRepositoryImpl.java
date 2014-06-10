@@ -31,82 +31,61 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
-public class UploadPropositionRule {
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.UploadRequestUrlRepository;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 
-	private long id;
+public class UploadRequestUrlRepositoryImpl extends
+		AbstractRepositoryImpl<UploadRequestUrl> implements
+		UploadRequestUrlRepository {
 
-	private String uuid;
-
-	private int operator;
-
-	private int field;
-
-	private String value;
-
-	private Date creationDate;
-
-	private Date modificationDate;
-
-	public UploadPropositionRule() {
+	public UploadRequestUrlRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
 	}
 
-	public long getId() {
-		return id;
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(UploadRequestUrl aDoc) {
+		DetachedCriteria det = DetachedCriteria.forClass(Entry.class).add(
+				Restrictions.eq("uuid", aDoc.getUuid()));
+		return det;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	@Override
+	public UploadRequestUrl findByUuid(String uuid) {
+		List<UploadRequestUrl> entries = findByCriteria(Restrictions.eq(
+				"uuid", uuid));
+		if (entries == null || entries.isEmpty()) {
+			return null;
+		} else if (entries.size() == 1) {
+			return entries.get(0);
+		} else {
+			throw new IllegalStateException("Id must be unique");
+		}
 	}
 
-	public String getUuid() {
-		return uuid;
+	@Override
+	public UploadRequestUrl create(UploadRequestUrl entity)
+			throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setUuid(UUID.randomUUID().toString());
+		return super.create(entity);
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public int getOperator() {
-		return operator;
-	}
-
-	public void setOperator(int operator) {
-		this.operator = operator;
-	}
-
-	public int getField() {
-		return field;
-	}
-
-	public void setField(int field) {
-		this.field = field;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
+	@Override
+	public UploadRequestUrl update(UploadRequestUrl entity)
+			throws BusinessException {
+		entity.setModificationDate(new Date());
+		return super.update(entity);
 	}
 }
