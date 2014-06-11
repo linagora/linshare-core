@@ -174,11 +174,11 @@ public class MailConfigDto {
 		this.mailLayoutText = mailLayoutText;
 	}
 
-	public Map<Language, MailFooterLangDto> getMailFooters() {
+	public Map<Language, MailFooterLangDto> getMailFooterLangs() {
 		return mailFooterLangs;
 	}
 
-	public void setMailFooters(Map<Language, MailFooterLangDto> mailFooterLangs) {
+	public void setMailFooterLangs(Map<Language, MailFooterLangDto> mailFooterLangs) {
 		this.mailFooterLangs = mailFooterLangs;
 	}
 
