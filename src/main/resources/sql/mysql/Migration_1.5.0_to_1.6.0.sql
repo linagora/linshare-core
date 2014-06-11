@@ -1,11 +1,11 @@
 -- MySQL migration script : 1.5.0 to 1.6.0
 
+SET storage_engine=INNODB;
 SET NAMES UTF8 COLLATE utf8_general_ci;
 SET CHARACTER SET UTF8;
 
 SET AUTOCOMMIT=0;
 START TRANSACTION;
-
 
 
 
@@ -108,6 +108,7 @@ ALTER TABLE mail_content_lang ADD INDEX FKmail_conte33952 (mail_content_id), ADD
 ALTER TABLE mail_config ADD INDEX FKmail_confi541299 (mail_layout_html_id), ADD CONSTRAINT FKmail_confi541299 FOREIGN KEY (mail_layout_html_id) REFERENCES mail_layout (id);
 ALTER TABLE mail_config ADD INDEX FKmail_confi612314 (mail_layout_text_id), ADD CONSTRAINT FKmail_confi612314 FOREIGN KEY (mail_layout_text_id) REFERENCES mail_layout (id);
 
+SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE thread_view CASCADE;
 DROP TABLE thread_view_asso CASCADE;
 DROP TABLE view_context CASCADE;
@@ -121,8 +122,7 @@ DROP TABLE tag_filter CASCADE;
 DROP TABLE tag_filter_rule CASCADE;
 DROP TABLE tag_filter_rule_tag_association CASCADE;
 DROP TABLE allowed_mimetype;
-
-
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- %{image}    <img src="cid:image.part.1@linshare.org" /><br/><br/>
 
@@ -326,12 +326,11 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pa
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (12, 'user_uid', 'uid', false, true, true, 3, false);
 
 
-ALTER TABLE version RENAME description TO version;
-ALTER TABLE account DROP COLUMN account_id;
+ALTER TABLE version CHANGE description version varchar(255);
 
 
 -- LinShare version
-INSERT INTO version (description) VALUES ('1.6.0');
+INSERT INTO version (version) VALUES ('1.6.0');
 
 COMMIT;
 SET AUTOCOMMIT=1;
