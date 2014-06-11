@@ -120,10 +120,10 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		Validate.notNull(functionality.getIdentifier());
 		checkDomainRights(actor, domain);
 
-		if (!checkUpdateRights(actor, domain, functionality)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "functionality update forbidden for the actor");
+		if (checkUpdateRights(actor, domain, functionality)) {
+			functionalityBusinessService.update(domain, functionality);
 		}
-		return functionalityBusinessService.update(domain, functionality);
+		return functionalityBusinessService.getFunctionality(domain, functionality.getIdentifier());
 	}
 
 	@Override
