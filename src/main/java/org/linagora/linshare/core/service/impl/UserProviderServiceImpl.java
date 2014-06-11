@@ -36,9 +36,11 @@ package org.linagora.linshare.core.service.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.naming.NamingException;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
@@ -77,6 +79,14 @@ public class UserProviderServiceImpl implements UserProviderService {
 	@Override
 	public DomainPattern createDomainPattern(DomainPattern domainPattern)
 			throws BusinessException {
+		Validate.notEmpty(domainPattern.getIdentifier(),
+				"domain pattern identifier must be set.");
+		Pattern formatValidator = Pattern.compile("^[a-zA-Z0-9_]{4,}$");
+		if (!formatValidator.matcher(domainPattern.getIdentifier()).matches()) {
+			throw new BusinessException(
+					BusinessErrorCode.LDAP_CONNECTION_ID_BAD_FORMAT,
+					"This new domain pattern identifier should only contains the following characters : a-z A-Z 0-9 _.");
+		}
 		DomainPattern createdDomain = domainPatternRepository
 				.create(domainPattern);
 		return createdDomain;
@@ -85,6 +95,14 @@ public class UserProviderServiceImpl implements UserProviderService {
 	@Override
 	public LDAPConnection createLDAPConnection(LDAPConnection ldapConnection)
 			throws BusinessException {
+		Validate.notEmpty(ldapConnection.getIdentifier(),
+				"ldap connection identifier must be set.");
+		Pattern formatValidator = Pattern.compile("^[a-zA-Z0-9_]{4,}$");
+		if (!formatValidator.matcher(ldapConnection.getIdentifier()).matches()) {
+			throw new BusinessException(
+					BusinessErrorCode.LDAP_CONNECTION_ID_BAD_FORMAT,
+					"This new ldap connection identifier should only contains the following characters : a-z A-Z 0-9 _.");
+		}
 		LDAPConnection createdLDAPConnection = ldapConnectionRepository
 				.create(ldapConnection);
 		return createdLDAPConnection;
@@ -183,22 +201,28 @@ public class UserProviderServiceImpl implements UserProviderService {
 	}
 
 	@Override
-	public void updateLDAPConnection(LDAPConnection ldapConnection)
+	public LDAPConnection updateLDAPConnection(LDAPConnection ldapConnection)
 			throws BusinessException {
 		LDAPConnection ldapConn = ldapConnectionRepository
 				.findById(ldapConnection.getIdentifier());
+		if (ldapConn == null) {
+			throw new BusinessException(BusinessErrorCode.LDAP_CONNECTION_NOT_FOUND, "no such ldap connection");
+		}
 		ldapConn.setProviderUrl(ldapConnection.getProviderUrl());
 		ldapConn.setSecurityAuth(ldapConnection.getSecurityAuth());
 		ldapConn.setSecurityCredentials(ldapConnection.getSecurityCredentials());
 		ldapConn.setSecurityPrincipal(ldapConnection.getSecurityPrincipal());
-		ldapConnectionRepository.update(ldapConn);
+		return ldapConnectionRepository.update(ldapConn);
 	}
 
 	@Override
-	public void updateDomainPattern(DomainPattern domainPattern)
+	public DomainPattern updateDomainPattern(DomainPattern domainPattern)
 			throws BusinessException {
 		DomainPattern pattern = domainPatternRepository.findById(domainPattern
 				.getIdentifier());
+		if (pattern == null) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND, "no such domain pattern");
+		}
 		pattern.setDescription(domainPattern.getDescription());
 		pattern.setAuthCommand(domainPattern.getAuthCommand());
 		pattern.setSearchUserCommand(domainPattern.getSearchUserCommand());
@@ -232,7 +256,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 				.setAttribute(
 						domainPattern.getAttributes()
 								.get(DomainPattern.USER_UID).getAttribute());
-		domainPatternRepository.update(pattern);
+		return domainPatternRepository.update(pattern);
 	}
 
 	@Override

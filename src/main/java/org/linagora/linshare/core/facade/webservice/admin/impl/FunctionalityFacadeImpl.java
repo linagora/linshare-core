@@ -123,14 +123,15 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void update(FunctionalityDto func) throws BusinessException {
+	public FunctionalityDto update(FunctionalityDto func)
+			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 
 		Validate.notEmpty(func.getDomain(), "domain identifier must be set.");
 		Validate.notEmpty(func.getIdentifier(),
 				"functionality identifier must be set.");
-		Functionality f = functionalityService.getFunctionality(actor, func.getDomain(),
-				func.getIdentifier());
+		Functionality f = functionalityService.getFunctionality(actor,
+				func.getDomain(), func.getIdentifier());
 
 		// copy of activation policy.
 		String ap = func.getActivationPolicy().getPolicy().trim().toUpperCase();
@@ -147,12 +148,17 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 
 		// copy of parameters.
 		f.updateFunctionalityValuesOnlyFromDto(func);
-		functionalityService.update(actor, func.getDomain(), f);
+		Functionality update = functionalityService.update(actor,
+				func.getDomain(), f);
+		boolean parentAllowAPUpdate = functionalityService
+				.activationPolicyIsMutable(update, update.getDomain().getIdentifier());
+		boolean parentAllowCPUpdate = functionalityService
+				.configurationPolicyIsMutable(f, update.getDomain().getIdentifier());
+		return new FunctionalityDto(update, parentAllowAPUpdate, parentAllowCPUpdate);
 	}
 
 	@Override
-	public void delete(FunctionalityDto func)
-			throws BusinessException {
+	public void delete(FunctionalityDto func) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(func.getDomain(), "domain identifier must be set.");
 		Validate.notEmpty(func.getIdentifier(),

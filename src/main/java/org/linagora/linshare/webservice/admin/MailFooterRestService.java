@@ -46,7 +46,7 @@ public interface MailFooterRestService {
 
 	MailFooterDto create(MailFooterDto dto) throws BusinessException;
 
-	void update(MailFooterDto dto) throws BusinessException;
+	MailFooterDto update(MailFooterDto dto) throws BusinessException;
 
 	void delete(MailFooterDto dto) throws BusinessException;
 }

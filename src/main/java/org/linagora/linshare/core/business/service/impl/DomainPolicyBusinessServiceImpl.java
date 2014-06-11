@@ -77,7 +77,7 @@ public class DomainPolicyBusinessServiceImpl implements
 	}
 
 	@Override
-	public void update(DomainPolicy dto) throws BusinessException {
+	public DomainPolicy update(DomainPolicy dto) throws BusinessException {
 		DomainPolicy entity = domainPolicyRepository.findById(dto
 				.getIdentifier());
 		entity.setDescription(dto.getDescription());
@@ -87,7 +87,7 @@ public class DomainPolicyBusinessServiceImpl implements
 		for (DomainAccessRule domainAccessRule : rules) {
 			entity.getDomainAccessPolicy().addRule(domainAccessRule);
 		}
-		domainPolicyRepository.update(entity);
+		return domainPolicyRepository.update(entity);
 	}
 
 	@Override

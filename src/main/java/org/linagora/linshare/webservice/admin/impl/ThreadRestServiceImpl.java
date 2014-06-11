@@ -103,8 +103,8 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 	@ApiOperation(value = "Update a thread.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void update(ThreadDto thread) throws BusinessException {
-		threadFacade.update(thread);
+	public ThreadDto update(ThreadDto thread) throws BusinessException {
+		return threadFacade.update(thread);
 	}
 
 	@Path("/")

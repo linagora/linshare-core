@@ -40,5 +40,5 @@ public interface MailContentLangRestService {
 
 	MailContentLangDto find(String uuid) throws BusinessException;
 
-	void update(MailContentLangDto dto) throws BusinessException;
+	MailContentLangDto update(MailContentLangDto dto) throws BusinessException;
 }

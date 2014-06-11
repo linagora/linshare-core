@@ -98,10 +98,10 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 403, message = "User isn't superadmin."),
 			@ApiResponse(code = 400, message = "Invalid domain policy.") })
 	@Override
-	public void create(
+	public DomainPolicyDto create(
 			@ApiParam(value = "Policy to create.", required = true) DomainPolicyDto policy)
 			throws BusinessException {
-		domainPolicyFacade.create(policy);
+		return domainPolicyFacade.create(policy);
 	}
 
 	@Path("/")
@@ -109,10 +109,10 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Update a domain policy.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
 	@Override
-	public void update(
+	public DomainPolicyDto update(
 			@ApiParam(value = "Policy to update.", required = true) DomainPolicyDto policy)
 			throws BusinessException {
-		domainPolicyFacade.update(policy);
+		return domainPolicyFacade.update(policy);
 	}
 
 	@Path("/{policyId}")

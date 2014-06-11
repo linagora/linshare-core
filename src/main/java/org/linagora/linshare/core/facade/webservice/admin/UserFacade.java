@@ -49,7 +49,7 @@ public interface UserFacade extends AdminGenericFacade {
 
 	Set<UserDto> searchGuests(String pattern) throws BusinessException;
 
-	void update(UserDto userDto) throws BusinessException;
+	UserDto update(UserDto userDto) throws BusinessException;
 
 	void delete(UserDto userDto) throws BusinessException;
 

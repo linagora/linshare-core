@@ -44,7 +44,7 @@ public interface MailLayoutFacade {
 
 	MailLayoutDto create(MailLayoutDto dto) throws BusinessException;
 
-	void update(MailLayoutDto dto) throws BusinessException;
+	MailLayoutDto update(MailLayoutDto dto) throws BusinessException;
 
 	void delete(String uuid) throws BusinessException;
 

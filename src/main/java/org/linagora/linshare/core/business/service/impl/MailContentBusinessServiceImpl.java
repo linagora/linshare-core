@@ -110,9 +110,9 @@ public class MailContentBusinessServiceImpl implements
 	}
 
 	@Override
-	public void update(MailContent content) throws BusinessException {
+	public MailContent update(MailContent content) throws BusinessException {
 		try {
-			mailContentRepository.update(content);
+			return mailContentRepository.update(content);
 		} catch (IllegalArgumentException iae) {
 			throw new BusinessException(
 					BusinessErrorCode.MAILCONTENT_NOT_FOUND,

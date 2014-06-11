@@ -148,9 +148,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param content
+	 * @return 
 	 * @throws BusinessException
 	 */
-	void updateContent(User actor, MailContent content)
+	MailContent updateContent(User actor, MailContent content)
 			throws BusinessException;
 
 	/**
@@ -177,18 +178,20 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param content
+	 * @return 
 	 * @throws BusinessException
 	 */
-	void createContentLang(User actor, MailContentLang contentLang) throws BusinessException;
+	MailContentLang createContentLang(User actor, MailContentLang contentLang) throws BusinessException;
 
 	/**
 	 * Update an existing mail content lang.
 	 * 
 	 * @param actor
 	 * @param content
+	 * @return 
 	 * @throws BusinessException
 	 */
-	void updateContentLang(User actor, MailContentLang contentLang) throws BusinessException;
+	MailContentLang updateContentLang(User actor, MailContentLang contentLang) throws BusinessException;
 
 	/**
 	 * Delete an existing mail content lang and remove it from its mail configuration.
@@ -234,9 +237,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param footer
+	 * @return 
 	 * @throws BusinessException
 	 */
-	void updateFooter(User actor, MailFooter footer) throws BusinessException;
+	MailFooter updateFooter(User actor, MailFooter footer) throws BusinessException;
 
 	/**
 	 * Delete an existing mail footer.
@@ -262,9 +266,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param footer
+	 * @return 
 	 * @throws BusinessException
 	 */
-	void createFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;
+	MailFooterLang createFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;
 
 	/**
 	 * Update an existing mail footer lang.
@@ -273,7 +278,7 @@ public interface MailConfigService {
 	 * @param footer
 	 * @throws BusinessException
 	 */
-	void updateFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;
+	MailFooterLang updateFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;
 
 	/**
 	 * Delete an existing mail footer lang and remove it from its mail configuration.
@@ -319,9 +324,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param layout
+	 * @return 
 	 * @throws BusinessException
 	 */
-	void updateLayout(User actor, MailLayout layout) throws BusinessException;
+	MailLayout updateLayout(User actor, MailLayout layout) throws BusinessException;
 
 	/**
 	 * Delete an existing mail layout.

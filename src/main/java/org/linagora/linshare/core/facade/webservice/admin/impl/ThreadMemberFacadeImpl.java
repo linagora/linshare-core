@@ -68,7 +68,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void create(ThreadMemberDto dto) throws BusinessException {
+	public ThreadMemberDto create(ThreadMemberDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notEmpty(dto.getThreadUuid(), "thread member thread id must be set.");
@@ -89,11 +89,11 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		boolean admin = dto.isAdmin();
 		boolean canUpload = !dto.isReadonly();
 
-		threadService.addMember(actor, thread, user, admin, canUpload);
+		return new ThreadMemberDto(threadService.addMember(actor, thread, user, admin, canUpload));
 	}
 
 	@Override
-	public void update(ThreadMemberDto dto) throws BusinessException {
+	public ThreadMemberDto update(ThreadMemberDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notNull(dto.getId(), "thread member id must be set.");
@@ -101,7 +101,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		boolean admin = dto.isAdmin();
 		boolean readonly = dto.isReadonly();
 
-		this.threadService.updateMember(actor, member, admin, !readonly);
+		return new ThreadMemberDto(this.threadService.updateMember(actor, member, admin, !readonly));
 	}
 
 	@Override

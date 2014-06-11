@@ -294,8 +294,9 @@ public interface UserService {
 	 * @param actor
 	 * @param updatedUser
 	 * @param domainId domain id of the user
+	 * @return 
 	 * 
 	 * @throws BusinessException
 	 */
-	void updateUser(User actor, User updatedUser, String domainId) throws BusinessException;
+	User updateUser(User actor, User updatedUser, String domainId) throws BusinessException;
 }

@@ -63,7 +63,7 @@ public interface FunctionalityService {
 
 	void deleteFunctionality(Account actor, String domainId, String functionalityId) throws BusinessException;
 
-	void update(Account actor, String domain, Functionality functionality) throws BusinessException;
+	Functionality update(Account actor, String domain, Functionality functionality) throws BusinessException;
 
 	@Deprecated
 	void update(Account actor, AbstractDomain domain, Functionality functionality) throws BusinessException;

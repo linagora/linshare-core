@@ -44,9 +44,9 @@ public interface DomainRestService {
 
 	DomainDto find(String domainId, boolean tree) throws BusinessException;
 
-	void update(DomainDto domain) throws BusinessException;
+	DomainDto update(DomainDto domain) throws BusinessException;
 
-	void create(DomainDto domain) throws BusinessException;
+	DomainDto create(DomainDto domain) throws BusinessException;
 
 	void delete(DomainDto domain) throws BusinessException;
 

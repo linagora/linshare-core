@@ -53,7 +53,7 @@ public interface AbstractDomainService {
 	AbstractDomain findById(String identifier) throws BusinessException;
 
 
-	public void updateDomain(AbstractDomain domain) throws BusinessException;
+	public AbstractDomain updateDomain(AbstractDomain domain) throws BusinessException;
 	public void deleteDomain(String identifier) throws BusinessException;
 	public List<String> getAllDomainIdentifiers();
 	public List<String> getAllMyDomainIdentifiers(String personalDomainIdentifer);

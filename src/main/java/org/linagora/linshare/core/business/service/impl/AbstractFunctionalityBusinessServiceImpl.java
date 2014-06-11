@@ -318,7 +318,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	@Override
-	public void update(String domainId, T functionality) throws BusinessException {
+	public T update(String domainId, T functionality) throws BusinessException {
 
 		AbstractDomain currentDomain = abstractDomainRepository.findById(domainId);
 		T entity = getFunctionalityEntityByIdentifiers(currentDomain, functionality.getIdentifier());
@@ -348,6 +348,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 				logger.debug("functionality " + functionality.getIdentifier()+ " was not modified.");
 			}
 		}
+		return this.getFunctionality(domainId, entity.getIdentifier());
 	}
 
 	@Override

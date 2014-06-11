@@ -42,9 +42,9 @@ public interface LDAPConnectionRestService {
 
 	Set<LDAPConnectionDto> findAll() throws BusinessException;
 
-	void update(LDAPConnectionDto ldapConnection) throws BusinessException;
+	LDAPConnectionDto update(LDAPConnectionDto ldapConnection) throws BusinessException;
 
-	void create(LDAPConnectionDto ldapConnection) throws BusinessException;
+	LDAPConnectionDto create(LDAPConnectionDto ldapConnection) throws BusinessException;
 
 	void delete(LDAPConnectionDto ldapConnection) throws BusinessException;
 }

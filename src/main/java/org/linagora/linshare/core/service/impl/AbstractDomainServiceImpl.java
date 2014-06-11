@@ -125,7 +125,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		Pattern formatValidator = Pattern.compile("^[a-zA-Z0-9_]{4,}$");
 		if (!formatValidator.matcher(domain.getIdentifier()).matches()) {
 			throw new BusinessException(
-					BusinessErrorCode.DOMAIN_IDENTIFIER_BAD_FORMAT,
+					BusinessErrorCode.DOMAIN_ID_BAD_FORMAT,
 					"This new domain identifier should only contains the following characters : a-z A-Z 0-9 _.");
 		}
 
@@ -344,7 +344,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	@Override
-	public void updateDomain(AbstractDomain domain) throws BusinessException {
+	public AbstractDomain updateDomain(AbstractDomain domain) throws BusinessException {
 		logger.debug("Update domain :" + domain.getIdentifier());
 		if (domain.getIdentifier() == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
@@ -403,7 +403,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 		entity.updateDomainWith(domain);
 		if (entity.getDomainType().equals(DomainType.ROOTDOMAIN)) {
-			abstractDomainRepository.update(entity);
+			return abstractDomainRepository.update(entity);
 		} else {
 			entity.setPolicy(policy);
 			LdapUserProvider provider = entity.getUserProvider();
@@ -430,16 +430,17 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					provider.setPattern(domainPattern);
 					userProviderService.update(provider);
 				}
-				abstractDomainRepository.update(entity);
+				return abstractDomainRepository.update(entity);
 			} else {
 				logger.debug("Update domain without provider");
 				if (provider != null) {
 					logger.debug("delete old provider.");
 					entity.setUserProvider(null);
-					abstractDomainRepository.update(entity);
+					AbstractDomain update = abstractDomainRepository.update(entity);
 					userProviderService.delete(provider);
+					return update;
 				} else {
-					abstractDomainRepository.update(entity);
+					return abstractDomainRepository.update(entity);
 				}
 			}
 		}

@@ -96,8 +96,8 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Create a domain.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void create(DomainDto domain) throws BusinessException {
-		domainFacade.create(domain);
+	public DomainDto create(DomainDto domain) throws BusinessException {
+		return domainFacade.create(domain);
 	}
 
 	@Path("/")
@@ -105,8 +105,8 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Update a domain.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void update(DomainDto domain) throws BusinessException {
-		domainFacade.update(domain);
+	public DomainDto update(DomainDto domain) throws BusinessException {
+		return domainFacade.update(domain);
 	}
 
 	@Path("/")

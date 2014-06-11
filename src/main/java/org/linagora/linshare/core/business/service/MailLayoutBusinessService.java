@@ -45,7 +45,7 @@ public interface MailLayoutBusinessService {
 	MailLayout create(AbstractDomain domain, MailLayout layout)
 			throws BusinessException;
 
-	void update(MailLayout layout) throws BusinessException;
+	MailLayout update(MailLayout layout) throws BusinessException;
 
 	void delete(MailLayout val) throws BusinessException;
 

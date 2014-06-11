@@ -145,7 +145,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public void updateList(MailingList updatedMailingList) throws BusinessException {
+	public MailingList updateList(MailingList updatedMailingList) throws BusinessException {
 		MailingList entity = findByUuid(updatedMailingList.getUuid());
 		String newIdentifier = updatedMailingList.getIdentifier();
 		if (!entity.getIdentifier().equals(newIdentifier)) {
@@ -164,7 +164,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 			entity.setDomain(updatedMailingList.getDomain());
 		if (updatedMailingList.getOwner() != null)
 			entity.setOwner(updatedMailingList.getOwner());
-		listRepository.update(entity);
+		return listRepository.update(entity);
 	}
 
 	/**

@@ -52,7 +52,7 @@ public interface UserRestService {
 
 	Set<UserDto> autocomplete(String pattern) throws BusinessException;
 	
-	void update(UserDto userDto) throws BusinessException;
+	UserDto update(UserDto userDto) throws BusinessException;
 
 	void delete(UserDto userDto) throws BusinessException;
 

@@ -111,10 +111,10 @@ public class MailFooterRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Update a mail footer.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void update(
+	public MailFooterDto update(
 			@ApiParam(value = "Mail footer to update.", required = true) MailFooterDto dto)
 			throws BusinessException {
-		mailFooterFacade.update(dto);
+		return mailFooterFacade.update(dto);
 	}
 
 	@Path("/")

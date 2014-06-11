@@ -80,12 +80,12 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void update(MailContentDto dto) throws BusinessException {
+	public MailContentDto update(MailContentDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		MailContent content = findContent(actor, dto.getUuid());
 
 		transform(content, dto);
-		mailConfigService.updateContent(actor, content);
+		return new MailContentDto(mailConfigService.updateContent(actor, content));
 	}
 
 	@Override

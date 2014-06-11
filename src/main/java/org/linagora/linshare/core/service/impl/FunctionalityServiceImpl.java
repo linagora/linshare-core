@@ -115,14 +115,15 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
-	public void update(Account actor, String domain, Functionality functionality) throws BusinessException {
+	public Functionality update(Account actor, String domain, Functionality functionality) throws BusinessException {
 		Validate.notNull(domain);
 		Validate.notNull(functionality.getIdentifier());
 		checkDomainRights(actor, domain);
 
-		if (checkUpdateRights(actor, domain, functionality)) {
-			functionalityBusinessService.update(domain, functionality);
+		if (!checkUpdateRights(actor, domain, functionality)) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "functionality update forbidden for the actor");
 		}
+		return functionalityBusinessService.update(domain, functionality);
 	}
 
 	@Override

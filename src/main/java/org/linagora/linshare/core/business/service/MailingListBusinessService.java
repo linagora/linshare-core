@@ -70,7 +70,7 @@ public interface MailingListBusinessService {
 
 	void deleteList(String uuid) throws BusinessException;
 
-	void updateList(MailingList mailingList) throws BusinessException;
+	MailingList updateList(MailingList mailingList) throws BusinessException;
 
 	/**
 	 * Find all list where user is owner

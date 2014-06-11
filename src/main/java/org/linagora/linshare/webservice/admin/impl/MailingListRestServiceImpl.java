@@ -98,10 +98,10 @@ public class MailingListRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Create a mailing list.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void create(
+	public MailingListDto create(
 			@ApiParam(value = "Mailing list to create.", required = true) MailingListDto dto)
 			throws BusinessException {
-		mailingListFacade.create(dto);
+		return mailingListFacade.create(dto);
 	}
 
 	@Path("/")
@@ -109,10 +109,10 @@ public class MailingListRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Update a mailing list.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void update(
+	public MailingListDto update(
 			@ApiParam(value = "Mailing list to update.", required = true) MailingListDto dto)
 			throws BusinessException {
-		mailingListFacade.update(dto);
+		return mailingListFacade.update(dto);
 	}
 
 	@Path("/{uuid}")

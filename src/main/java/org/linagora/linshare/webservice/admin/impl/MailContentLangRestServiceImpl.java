@@ -84,9 +84,9 @@ public class MailContentLangRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Update a mail content lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void update(
+	public MailContentLangDto update(
 			@ApiParam(value = "Mail content lang to update.", required = true) MailContentLangDto dto)
 			throws BusinessException {
-		mailContentLangFacade.update(dto);
+		return mailContentLangFacade.update(dto);
 	}
 }

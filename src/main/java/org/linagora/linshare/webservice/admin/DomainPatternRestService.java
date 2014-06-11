@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.admin;
 
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DomainPatternDto;
 
@@ -44,9 +45,9 @@ public interface DomainPatternRestService {
 
 	Set<DomainPatternDto> findAllModels() throws BusinessException;
 	
-	void update(DomainPatternDto domainPattern) throws BusinessException;
+	DomainPatternDto update(DomainPatternDto domainPattern) throws BusinessException;
 
-	void create(DomainPatternDto domainPattern) throws BusinessException;
+	DomainPatternDto create(DomainPatternDto domainPattern) throws BusinessException;
 
 	void delete(DomainPatternDto domainPattern) throws BusinessException;
 	
