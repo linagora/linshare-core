@@ -50,7 +50,6 @@ import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.PasswordDto;
 import org.linagora.linshare.webservice.dto.UserDto;
 import org.linagora.linshare.webservice.dto.UserSearchDto;
-import org.opends.guitools.controlpanel.ui.NewUserPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
