@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
@@ -96,7 +97,7 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 			tmp.setMailConfig(cfg);
 			cfg.getMailContentLangs().add(tmp);
 		}
-		for (Entry<Integer, MailFooterLang> e : rootMfl.entrySet()) {
+		for (Map.Entry<Integer, MailFooterLang> e : rootMfl.entrySet()) {
 			MailFooterLang tmp = new MailFooterLang(e.getValue());
 			tmp.setMailConfig(cfg);
 			cfg.getMailFooters().put(e.getKey(),

@@ -87,6 +87,11 @@ public class UserProviderServiceImpl implements UserProviderService {
 					BusinessErrorCode.LDAP_CONNECTION_ID_BAD_FORMAT,
 					"This new domain pattern identifier should only contains the following characters : a-z A-Z 0-9 _.");
 		}
+		if (domainPatternRepository.findById(domainPattern.getIdentifier()) != null) {
+			throw new BusinessException(
+					BusinessErrorCode.DOMAIN_PATTERN_ID_ALREADY_EXISTS,
+					"This new domain pattern identifier already exists.");
+		}
 		DomainPattern createdDomain = domainPatternRepository
 				.create(domainPattern);
 		return createdDomain;
@@ -102,6 +107,11 @@ public class UserProviderServiceImpl implements UserProviderService {
 			throw new BusinessException(
 					BusinessErrorCode.LDAP_CONNECTION_ID_BAD_FORMAT,
 					"This new ldap connection identifier should only contains the following characters : a-z A-Z 0-9 _.");
+		}
+		if (ldapConnectionRepository.findById(ldapConnection.getIdentifier()) != null) {
+			throw new BusinessException(
+					BusinessErrorCode.LDAP_CONNECTION_ID_ALREADY_EXISTS,
+					"This new ldap connection identifier already exists.");
 		}
 		LDAPConnection createdLDAPConnection = ldapConnectionRepository
 				.create(ldapConnection);
