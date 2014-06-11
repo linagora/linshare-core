@@ -89,7 +89,7 @@ CREATE TABLE mail_content_lang (
 ALTER TABLE domain_abstract ADD mailconfig_id bigint(8);
 ALTER TABLE domain_abstract ADD mime_policy_id bigint(8);
 
-ALTER TABLE functionality ADD param bool DEFAULT 'false' NOT NULL; 
+ALTER TABLE functionality ADD param bit DEFAULT false NOT NULL; 
 ALTER TABLE functionality ADD parent_identifier varchar(255); 
 ALTER TABLE functionality ADD policy_delegation_id bigint(8);
 
