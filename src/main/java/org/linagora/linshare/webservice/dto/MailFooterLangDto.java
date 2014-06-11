@@ -54,11 +54,11 @@ public class MailFooterLangDto {
 	@ApiModelProperty(value = "MailFooter")
 	private String mailFooter;
 
-	@ApiModelProperty(value = "MailFooterName")
-	private String mailFooterName;
-
 	@ApiModelProperty(value = "MailConfig")
 	private String mailConfig;
+
+	@ApiModelProperty(value = "MailFooterName")
+	private String mailFooterName;
 
 	public MailFooterLangDto() {
 	}
@@ -68,7 +68,7 @@ public class MailFooterLangDto {
 		language = Language.fromInt(footerLang.getLanguage());
 		uuid = footerLang.getUuid();
 		mailFooter = footerLang.getMailFooter().getUuid();
-		mailFooterName = footerLang.getMailFooter().getName();
+		setMailFooterName(footerLang.getMailFooter().getName());
 	}
 
 	public String getUuid() {

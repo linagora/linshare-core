@@ -125,38 +125,46 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<MailContentDto> findAllUsableContents(String mailConfigUuid,
+	public Set<MailContentDto> findAllContents(String mailConfigUuid,
 			String mailContentType, String language) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(mailConfigUuid, "mailConfigUuid must be set.");
 		Validate.notEmpty(mailContentType, "mailContentType must be set.");
 		Validate.notEmpty(language, "language must be set.");
 
-		MailConfig mailConfig = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
-		MailContentType contentType = MailContentType.valueOf(mailContentType.toUpperCase());
+		MailConfig cfg = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
+		MailContentType type = MailContentType.valueOf(mailContentType.toUpperCase());
 		Language lang = Language.valueOf(language.toUpperCase());
 		Set<MailContentDto> ret = Sets.newHashSet();
-		List<MailContent> all = mailConfigService.findAllUsableContents(mailConfig, contentType, lang);
-		for (MailContent mailContent : all) {
-			ret.add(new MailContentDto(mailContent));
+
+		List<MailContent> all = mailConfigService.findAllContents(actor,
+				cfg.getDomain().getIdentifier());
+		for (MailContent mc : all) {
+			if (mc.getLanguage() == lang.toInt()
+					&& mc.getMailContentType() == type.toInt()) {
+				ret.add(new MailContentDto(mc));
+			}
 		}
 		return ret;
 	}
 
-
 	@Override
-	public Set<MailFooterDto> findAllUsableFooters(String mailConfigUuid,
+	public Set<MailFooterDto> findAllFooters(String mailConfigUuid,
 			String language) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(mailConfigUuid, "mailConfigUuid must be set.");
 		Validate.notEmpty(language, "language must be set.");
 
-		MailConfig mailConfig = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
+		MailConfig cfg = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
 		Language lang = Language.valueOf(language.toUpperCase());
 		Set<MailFooterDto> ret = Sets.newHashSet();
-		List<MailFooter> all = mailConfigService.findAllUsableFooters(mailConfig, lang);
-		for (MailFooter mailFooter : all) {
-			ret.add(new MailFooterDto(mailFooter));
+
+		List<MailFooter> all = mailConfigService.findAllFooters(actor, cfg
+				.getDomain().getIdentifier());
+		for (MailFooter footer : all) {
+			if (footer.getLanguage() == lang.toInt()) {
+				ret.add(new MailFooterDto(footer));
+			}
 		}
 		return ret;
 	}

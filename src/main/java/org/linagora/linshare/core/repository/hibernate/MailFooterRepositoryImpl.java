@@ -34,13 +34,9 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
-import java.util.List;
 
-import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailFooterRepository;
@@ -78,13 +74,5 @@ public class MailFooterRepositoryImpl extends
 	public MailFooter update(MailFooter entity) throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
-	}
-
-	@Override
-	public List<MailFooter> findAll(AbstractDomain domain, Language lang) {
-		Conjunction and = Restrictions.conjunction();
-		and.add(Restrictions.eq("domain", domain));
-		and.add(Restrictions.eq("language", lang.toInt()));
-		return findByCriteria(and);
 	}
 }

@@ -87,7 +87,7 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 				.getCurrentMailConfiguration();
 
 		Set<MailContentLang> rootMcl = rootCfg.getMailContentLangs();
-		Set<MailFooterLang> rootMfl = rootCfg.getMailFooterLangs();
+		Map<Integer, MailFooterLang> rootMfl = rootCfg.getMailFooters();
 
 		// copy root domain's mailconfig
 		cfg.setMailLayoutHtml(rootCfg.getMailLayoutHtml());
@@ -98,10 +98,11 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 			tmp.setMailConfig(cfg);
 			cfg.getMailContentLangs().add(tmp);
 		}
-		for (MailFooterLang mfl : rootMfl) {
-			MailFooterLang tmp = new MailFooterLang(mfl);
+		for (Entry<Integer, MailFooterLang> e : rootMfl.entrySet()) {
+			MailFooterLang tmp = new MailFooterLang(e.getValue());
 			tmp.setMailConfig(cfg);
-			cfg.getMailFooterLangs().add(tmp);
+			cfg.getMailFooters().put(e.getKey(),
+					tmp);
 		}
 
 		return mailConfigRepository.create(cfg);
@@ -194,15 +195,15 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 	public void createFooterLang(MailFooterLang footerLang)
 			throws BusinessException {
 		MailConfig config = footerLang.getMailConfig();
-		Language lang = Language.fromInt(footerLang.getLanguage());
 
-		if (mailFooterLangRepository.findMailFooter(config, lang) != null) {
+		if (config.getMailFooters().containsKey(footerLang.getLanguage())) {
 			throw new BusinessException(
 					BusinessErrorCode.MAILCONTENTLANG_DUPLICATE,
-					"Cannot create mail footer lang with language " + lang);
+					"Cannot create mail footer lang with language "
+							+ Language.fromInt(footerLang.getLanguage()));
 		}
 		footerLang = mailFooterLangRepository.create(footerLang);
-		config.getMailFooterLangs().add(footerLang);
+		config.getMailFooters().put(footerLang.getLanguage(), footerLang);
 		mailConfigRepository.update(config);
 	}
 

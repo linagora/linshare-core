@@ -34,11 +34,13 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class MailConfig {
@@ -61,7 +63,7 @@ public class MailConfig {
 
 	private String uuid;
 
-	private Set<MailFooterLang> mailFooterLangs = Sets.newHashSet();
+	private Map<Integer, MailFooterLang> mailFooters = Maps.newHashMap();
 
 	private Set<MailContentLang> mailContentLangs = Sets.newHashSet();
 
@@ -140,21 +142,22 @@ public class MailConfig {
 		this.uuid = uuid;
 	}
 
+	public Map<Integer, MailFooterLang> getMailFooters() {
+		return mailFooters;
+	}
+
+	public void setMailFooters(Map<Integer, MailFooterLang> mailFooters) {
+		this.mailFooters = mailFooters;
+	}
+
 	public Set<MailContentLang> getMailContentLangs() {
 		return mailContentLangs;
-	}
-
-	public void setMailFooterLangs(Set<MailFooterLang> mailFooterLangs) {
-		this.mailFooterLangs = mailFooterLangs;
-	}
-
-	public Set<MailFooterLang> getMailFooterLangs() {
-		return mailFooterLangs;
 	}
 
 	public void setMailContentLangs(Set<MailContentLang> mailContents) {
 		this.mailContentLangs = mailContents;
 	}
+
 
 	/*
 	 * Helpers
@@ -162,18 +165,16 @@ public class MailConfig {
 
 	/**
 	 * Find a Footer by its Language
-	 * 
 	 * @param lang
 	 * @return
 	 */
 	public MailFooter findFooter(final Language lang) {
-		for (MailFooterLang mfl : mailFooterLangs) {
-			if (mfl.getLanguage() == lang.toInt()) {
-				return mfl.getMailFooter();
-			}
-		}
-		throw new IllegalArgumentException(
-				"No MailFooter matching the language: " + lang);
+		MailFooterLang f = mailFooters.get(lang.toInt());
+
+		if (f == null)
+			throw new IllegalArgumentException(
+					"No MailFooter matching the language: " + lang);
+		return f.getMailFooter();
 	}
 
 	/**
