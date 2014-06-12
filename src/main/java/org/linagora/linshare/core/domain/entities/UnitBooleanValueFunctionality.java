@@ -92,7 +92,6 @@ public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 		if (parameters != null && !parameters.isEmpty()) {
 			for (ParameterDto parameterDto : parameters) {
 				String parameterType = parameterDto.getType().toUpperCase().trim();
-				this.value = parameterDto.getInteger();
 				if (parameterType.equals("BOOLEAN")) {
 					this.setBool(parameterDto.getBool());
 				} else {
