@@ -36,7 +36,6 @@ package org.linagora.linshare.core.service.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.naming.NamingException;
 
@@ -52,6 +51,7 @@ import org.linagora.linshare.core.repository.LDAPConnectionRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.linagora.linshare.core.service.LDAPQueryService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.core.utils.LsIdValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,11 +81,10 @@ public class UserProviderServiceImpl implements UserProviderService {
 			throws BusinessException {
 		Validate.notEmpty(domainPattern.getIdentifier(),
 				"domain pattern identifier must be set.");
-		Pattern formatValidator = Pattern.compile("^[a-zA-Z0-9_]{4,}$");
-		if (!formatValidator.matcher(domainPattern.getIdentifier()).matches()) {
-			throw new BusinessException(
-					BusinessErrorCode.LDAP_CONNECTION_ID_BAD_FORMAT,
-					"This new domain pattern identifier should only contains the following characters : a-z A-Z 0-9 _.");
+		if (!LsIdValidator.isValid(domainPattern.getIdentifier())) {
+			throw new BusinessException(BusinessErrorCode.LDAP_CONNECTION_ID_BAD_FORMAT,
+					"This new domain pattern identifier should only contains the following characters : "
+							+ LsIdValidator.getAllowedCharacters() + ".");
 		}
 		if (domainPatternRepository.findById(domainPattern.getIdentifier()) != null) {
 			throw new BusinessException(
@@ -102,11 +101,11 @@ public class UserProviderServiceImpl implements UserProviderService {
 			throws BusinessException {
 		Validate.notEmpty(ldapConnection.getIdentifier(),
 				"ldap connection identifier must be set.");
-		Pattern formatValidator = Pattern.compile("^[a-zA-Z0-9_]{4,}$");
-		if (!formatValidator.matcher(ldapConnection.getIdentifier()).matches()) {
+		if (!LsIdValidator.isValid(ldapConnection.getIdentifier())) {
 			throw new BusinessException(
 					BusinessErrorCode.LDAP_CONNECTION_ID_BAD_FORMAT,
-					"This new ldap connection identifier should only contains the following characters : a-z A-Z 0-9 _.");
+					"This new ldap connection identifier should only contains the following characters : "
+							+ LsIdValidator.getAllowedCharacters() + ".");
 		}
 		if (ldapConnectionRepository.findById(ldapConnection.getIdentifier()) != null) {
 			throw new BusinessException(

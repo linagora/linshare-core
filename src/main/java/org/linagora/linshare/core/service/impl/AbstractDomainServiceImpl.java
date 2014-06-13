@@ -36,7 +36,6 @@ package org.linagora.linshare.core.service.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
@@ -67,6 +66,7 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.core.utils.LsIdValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,11 +122,10 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 		Validate.notEmpty(domain.getIdentifier(),
 				"domain identifier must be set.");
-		Pattern formatValidator = Pattern.compile("^[a-zA-Z0-9_]{4,}$");
-		if (!formatValidator.matcher(domain.getIdentifier()).matches()) {
-			throw new BusinessException(
-					BusinessErrorCode.DOMAIN_ID_BAD_FORMAT,
-					"This new domain identifier should only contains the following characters : a-z A-Z 0-9 _.");
+		if (!LsIdValidator.isValid(domain.getIdentifier())) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_BAD_FORMAT,
+					"This new domain identifier should only contains the following characters : "
+							+ LsIdValidator.getAllowedCharacters() + ".");
 		}
 
 		if (retrieveDomain(domain.getIdentifier()) != null) {
