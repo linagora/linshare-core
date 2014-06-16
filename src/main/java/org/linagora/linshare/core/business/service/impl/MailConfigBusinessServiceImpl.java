@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
@@ -98,7 +97,7 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 			tmp.setMailConfig(cfg);
 			cfg.getMailContentLangs().add(tmp);
 		}
-		for (Entry<Integer, MailFooterLang> e : rootMfl.entrySet()) {
+		for (Map.Entry<Integer, MailFooterLang> e : rootMfl.entrySet()) {
 			MailFooterLang tmp = new MailFooterLang(e.getValue());
 			tmp.setMailConfig(cfg);
 			cfg.getMailFooters().put(e.getKey(),
@@ -145,7 +144,7 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 	}
 
 	@Override
-	public void createContentLang(MailContentLang contentLang)
+	public MailContentLang createContentLang(MailContentLang contentLang)
 			throws BusinessException {
 		MailConfig config = contentLang.getMailConfig();
 		Language lang = Language.fromInt(contentLang.getLanguage());
@@ -160,13 +159,14 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 		contentLang = mailContentLangRepository.create(contentLang);
 		config.getMailContentLangs().add(contentLang);
 		mailConfigRepository.update(config);
+		return contentLang;
 	}
 
 	@Override
-	public void updateContentLang(MailContentLang contentLang)
+	public MailContentLang updateContentLang(MailContentLang contentLang)
 			throws BusinessException {
 		try {
-			mailContentLangRepository.update(contentLang);
+			return mailContentLangRepository.update(contentLang);
 		} catch (IllegalArgumentException iae) {
 			throw new BusinessException(
 					BusinessErrorCode.MAILCONTENTLANG_NOT_FOUND,
@@ -192,7 +192,7 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 	}
 
 	@Override
-	public void createFooterLang(MailFooterLang footerLang)
+	public MailFooterLang createFooterLang(MailFooterLang footerLang)
 			throws BusinessException {
 		MailConfig config = footerLang.getMailConfig();
 
@@ -205,13 +205,14 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 		footerLang = mailFooterLangRepository.create(footerLang);
 		config.getMailFooters().put(footerLang.getLanguage(), footerLang);
 		mailConfigRepository.update(config);
+		return footerLang;
 	}
 
 	@Override
-	public void updateFooterLang(MailFooterLang footerLang)
+	public MailFooterLang updateFooterLang(MailFooterLang footerLang)
 			throws BusinessException {
 		try {
-			mailFooterLangRepository.update(footerLang);
+			return mailFooterLangRepository.update(footerLang);
 		} catch (IllegalArgumentException iae) {
 			throw new BusinessException(
 					BusinessErrorCode.MAILFOOTERLANG_NOT_FOUND,

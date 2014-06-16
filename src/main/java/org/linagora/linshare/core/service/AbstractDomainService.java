@@ -34,8 +34,10 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
@@ -53,7 +55,7 @@ public interface AbstractDomainService {
 	AbstractDomain findById(String identifier) throws BusinessException;
 
 
-	public void updateDomain(AbstractDomain domain) throws BusinessException;
+	public AbstractDomain updateDomain(AbstractDomain domain) throws BusinessException;
 	public void deleteDomain(String identifier) throws BusinessException;
 	public List<String> getAllDomainIdentifiers();
 	public List<String> getAllMyDomainIdentifiers(String personalDomainIdentifer);
@@ -163,4 +165,10 @@ public interface AbstractDomainService {
 	 * @return the mail
 	 */
 	public String getDomainMail(AbstractDomain domain);
+
+	/**
+	 * Retrieve a list of all domains visible by the current actor.
+	 * @return
+	 */
+	public List<AbstractDomain> findAll(Account actor);
 }

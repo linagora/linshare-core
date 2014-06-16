@@ -139,14 +139,15 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void update(UserDto userDto) throws BusinessException {
+	public UserDto update(UserDto userDto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		User user = getUser(userDto);
-		userService.updateUser(actor, user, userDto.getDomain());
+		User update = userService.updateUser(actor, user, userDto.getDomain());
 		if (userDto.isGuest() && user.isRestricted()) {
 			userService.setGuestContactRestriction(userDto.getUuid(),
 					userDto.getRestrictedContacts());
 		}
+		return UserDto.getSimple(update);
 	}
 
 	@Override

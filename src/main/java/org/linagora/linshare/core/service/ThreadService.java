@@ -72,9 +72,9 @@ public interface ThreadService {
 
 	public int countEntries(Thread thread);
 
-	public void addMember(Account actor, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException;
+	public ThreadMember addMember(Account actor, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException;
 
-	public void updateMember(Account actor, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException;
+	public ThreadMember updateMember(Account actor, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException;
 
 	public void deleteMember(Account actor, Thread thread, ThreadMember member) throws BusinessException;
 	
@@ -84,7 +84,7 @@ public interface ThreadService {
 
 	public void deleteThread(User actor, Thread thread) throws BusinessException;
 
-	public void rename(User actor, Thread thread, String threadName) throws BusinessException;
+	public Thread rename(User actor, Thread thread, String threadName) throws BusinessException;
 
 	public List<Thread> searchByName(User actor, String pattern);
 

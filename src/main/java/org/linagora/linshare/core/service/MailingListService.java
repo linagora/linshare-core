@@ -67,9 +67,10 @@ public interface MailingListService {
 	 * 
 	 * @param actorUuid
 	 * @param listToUpdate
+	 * @return 
 	 * @throws BusinessException
 	 */
-	void updateList(String actorUuid, MailingList listToUpdate) throws BusinessException;
+	MailingList updateList(String actorUuid, MailingList listToUpdate) throws BusinessException;
 
 	MailingList findByUuid(String actorUuid, String uuid) throws BusinessException;
 

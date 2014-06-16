@@ -42,9 +42,9 @@ public interface LDAPConnectionFacade extends AdminGenericFacade {
 
 	Set<LDAPConnectionDto> findAll() throws BusinessException;
 
-	void update(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
+	LDAPConnectionDto update(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
 
-	void create(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
+	LDAPConnectionDto create(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
 
 	void delete(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
 }

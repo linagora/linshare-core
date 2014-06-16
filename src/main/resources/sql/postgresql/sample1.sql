@@ -46,7 +46,7 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pa
 
 
 
-INSERT INTO user_provider_ldap(id, differential_key, domain_pattern_id, ldap_connection_id) VALUES (1, 'ou=users,dc=int1.linshare.dev,dc=local', 2, 1);
+INSERT INTO user_provider_ldap(id, differential_key, domain_pattern_id, ldap_connection_id) VALUES (1, 'ou=users,dc=int1.linshare.dev,dc=local', 50, 1);
 
 
 -- Top domain (example domain)

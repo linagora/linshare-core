@@ -89,12 +89,12 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void update(ThreadDto threadDto) throws BusinessException {
+	public ThreadDto update(ThreadDto threadDto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(threadDto, "thread must be set.");
 		Thread thread = threadService.findByLsUuid(threadDto.getUuid());
 
-		threadService.rename(actor, thread, threadDto.getName());
+		return new ThreadDto(threadService.rename(actor, thread, threadDto.getName()));
 	}
 
 	@Override

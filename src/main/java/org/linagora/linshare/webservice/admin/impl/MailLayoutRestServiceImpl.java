@@ -111,10 +111,10 @@ public class MailLayoutRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Update a mail layout.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void update(
+	public MailLayoutDto update(
 			@ApiParam(value = "Mail layout to update.", required = true) MailLayoutDto dto)
 			throws BusinessException {
-		mailLayoutFacade.update(dto);
+		return mailLayoutFacade.update(dto);
 	}
 
 	@Path("/")

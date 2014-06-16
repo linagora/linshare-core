@@ -60,8 +60,8 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 	@PUT
 	@ApiOperation(value = "Update a domain's functionality.")
 	@Override
-	public void update(FunctionalityDto func) throws BusinessException {
-		functionalityFacade.update(func);
+	public FunctionalityDto update(FunctionalityDto func) throws BusinessException {
+		return functionalityFacade.update(func);
 	}
 
 	@Path("/")

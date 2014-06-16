@@ -84,9 +84,9 @@ public class MailFooterLangRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Update a mail footer lang.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void update(
+	public MailFooterLangDto update(
 			@ApiParam(value = "Mail footer lang to update.", required = true) MailFooterLangDto dto)
 			throws BusinessException {
-		mailFooterLangFacade.update(dto);
+		return mailFooterLangFacade.update(dto);
 	}
 }

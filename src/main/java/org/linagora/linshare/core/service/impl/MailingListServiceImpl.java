@@ -169,7 +169,7 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public void updateList(String actorUuid, MailingList listToUpdate) throws BusinessException {
+	public MailingList updateList(String actorUuid, MailingList listToUpdate) throws BusinessException {
 		Validate.notEmpty(actorUuid);
 		Validate.notNull(listToUpdate);
 		Validate.notEmpty(listToUpdate.getUuid());
@@ -186,7 +186,7 @@ public class MailingListServiceImpl implements MailingListService {
 				listToUpdate.setNewOwner(userService.findByLsUuid(owner.getLsUuid()));
 			}
 		}
-		mailingListBusinessService.updateList(listToUpdate);
+		return mailingListBusinessService.updateList(listToUpdate);
 	}
 
 	/**

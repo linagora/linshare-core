@@ -1091,7 +1091,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUser(User actor, User updatedUser, String domainId)
+	public User updateUser(User actor, User updatedUser, String domainId)
 			throws BusinessException {
 		User user = find(updatedUser, domainId);
 		Assert.notNull(updatedUser.getRole());
@@ -1114,9 +1114,10 @@ public class UserServiceImpl implements UserService {
 					.getOwner().getDomainId());
 			guest.setOwner(owner);
 		}
-		userRepository.update(user);
+		User update = userRepository.update(user);
 		UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_UPDATE,
 				"Update of a user:" + user.getMail(), user);
 		logEntryService.create(logEntry);
+		return update;
 	}
 }

@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
@@ -191,20 +190,6 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public List<MailContent> findAll(MailConfig mailConfig,
-			MailContentType mailContentType, Language lang) throws BusinessException {
-
-		AbstractDomain currentDomain = mailConfig.getDomain();
-		List<MailContent> all = mailContentBusinessService.findAll(currentDomain, lang, mailContentType);
-		AbstractDomain parent = currentDomain.getParentDomain();
-		while (parent != null) {
-			all.addAll(mailContentBusinessService.findAll(currentDomain, lang, mailContentType));
-			parent = parent.getParentDomain();
-		}
-		return all;
-	}
-
-	@Override
 	public MailContent createContent(User actor, MailContent content)
 			throws BusinessException {
 		if (!permissionService.isAdminforThisDomain(actor, content.getDomain()))
@@ -215,13 +200,13 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void updateContent(User actor, MailContent content)
+	public MailContent updateContent(User actor, MailContent content)
 			throws BusinessException {
 		if (!permissionService.isAdminforThisDomain(actor, content.getDomain()))
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail content in this domain "
 					+ actor.getDomainId());
-		mailContentBusinessService.update(content);
+		return mailContentBusinessService.update(content);
 	}
 
 	@Override
@@ -249,7 +234,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void createContentLang(User actor, MailContentLang contentLang)
+	public MailContentLang createContentLang(User actor, MailContentLang contentLang)
 			throws BusinessException {
 		MailConfig config = contentLang.getMailConfig();
 
@@ -257,11 +242,11 @@ public class MailConfigServiceImpl implements MailConfigService {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
-		mailConfigBusinessService.createContentLang(contentLang);
+		return mailConfigBusinessService.createContentLang(contentLang);
 	}
 
 	@Override
-	public void updateContentLang(User actor, MailContentLang contentLang)
+	public MailContentLang updateContentLang(User actor, MailContentLang contentLang)
 			throws BusinessException {
 		MailConfig config = contentLang.getMailConfig();
 
@@ -269,7 +254,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
-		mailConfigBusinessService.updateContentLang(contentLang);
+		return mailConfigBusinessService.updateContentLang(contentLang);
 	}
 
 	@Override
@@ -326,13 +311,13 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void updateFooter(User actor, MailFooter footer)
+	public MailFooter updateFooter(User actor, MailFooter footer)
 			throws BusinessException {
 		if (!permissionService.isAdminforThisDomain(actor, footer.getDomain()))
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail footer in this domain "
 					+ actor.getDomainId());
-		mailFooterBusinessService.update(footer);
+		return mailFooterBusinessService.update(footer);
 	}
 
 	@Override
@@ -361,7 +346,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void createFooterLang(User actor, MailFooterLang footerLang)
+	public MailFooterLang createFooterLang(User actor, MailFooterLang footerLang)
 			throws BusinessException {
 		MailConfig config = footerLang.getMailConfig();
 
@@ -369,11 +354,11 @@ public class MailConfigServiceImpl implements MailConfigService {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
-		mailConfigBusinessService.createFooterLang(footerLang);
+		return mailConfigBusinessService.createFooterLang(footerLang);
 	}
 
 	@Override
-	public void updateFooterLang(User actor, MailFooterLang footerLang)
+	public MailFooterLang updateFooterLang(User actor, MailFooterLang footerLang)
 			throws BusinessException {
 		MailConfig config = footerLang.getMailConfig();
 
@@ -381,7 +366,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
-		mailConfigBusinessService.updateFooterLang(footerLang);
+		return mailConfigBusinessService.updateFooterLang(footerLang);
 	}
 
 	@Override
@@ -438,13 +423,13 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void updateLayout(User actor, MailLayout layout)
+	public MailLayout updateLayout(User actor, MailLayout layout)
 			throws BusinessException {
 		if (!permissionService.isAdminforThisDomain(actor, layout.getDomain()))
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail layout in this domain "
 					+ actor.getDomainId());
-		mailLayoutBusinessService.update(layout);
+		return mailLayoutBusinessService.update(layout);
 	}
 
 	@Override

@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -81,15 +82,17 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 	}
 
 	@Override
-	public void update(DomainPatternDto domainPatternDto) throws BusinessException {
+	public DomainPatternDto update(DomainPatternDto domainPatternDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		userProviderService.updateDomainPattern(new DomainPattern(domainPatternDto));
+		Validate.notEmpty(domainPatternDto.getIdentifier(), "domain pattern id must be set.");
+		return new DomainPatternDto(userProviderService.updateDomainPattern(new DomainPattern(domainPatternDto)));
 	}
 
 	@Override
-	public void create(DomainPatternDto domainPatternDto) throws BusinessException {
+	public DomainPatternDto create(DomainPatternDto domainPatternDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		userProviderService.createDomainPattern(new DomainPattern(domainPatternDto));
+		Validate.notEmpty(domainPatternDto.getIdentifier(), "domain pattern id must be set.");
+		return new DomainPatternDto(userProviderService.createDomainPattern(new DomainPattern(domainPatternDto)));
 	}
 
 	@Override

@@ -35,6 +35,9 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.UUID;
 
+import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.MailContentType;
+
 public class MailContentLang {
 
 	private long id;
@@ -57,6 +60,14 @@ public class MailContentLang {
 		this.mailContent = copied.mailContent;
 		this.mailContentType = copied.mailContentType;
 		this.uuid = UUID.randomUUID().toString();
+	}
+
+	/*
+	 * for filtering purpose
+	 */
+	public MailContentLang(Language language, MailContentType mailContentType) {
+		this.language = language.toInt();
+		this.mailContentType = mailContentType.toInt();
 	}
 
 	public long getId() {
@@ -105,5 +116,20 @@ public class MailContentLang {
 
 	public void setMailConfig(MailConfig mailConfig) {
 		this.mailConfig = mailConfig;
+	}
+
+	public boolean businessEquals(final Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MailContentLang other = (MailContentLang) obj;
+		if (language != other.language)
+			return false;
+		if (mailContentType != other.mailContentType)
+			return false;
+		return true;
 	}
 }

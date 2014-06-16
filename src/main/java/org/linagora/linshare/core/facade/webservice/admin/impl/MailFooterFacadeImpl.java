@@ -78,12 +78,12 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void update(MailFooterDto dto) throws BusinessException {
+	public MailFooterDto update(MailFooterDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		MailFooter footer = findFooter(actor, dto.getUuid());
 
 		transform(footer, dto);
-		mailConfigService.updateFooter(actor, footer);
+		return new MailFooterDto(mailConfigService.updateFooter(actor, footer));
 	}
 
 	@Override

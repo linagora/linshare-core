@@ -111,10 +111,10 @@ public class MailContentRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Update a mail content.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void update(
+	public MailContentDto update(
 			@ApiParam(value = "Mail content to update.", required = true) MailContentDto dto)
 			throws BusinessException {
-		mailContentFacade.update(dto);
+		return mailContentFacade.update(dto);
 	}
 
 	@Path("/")

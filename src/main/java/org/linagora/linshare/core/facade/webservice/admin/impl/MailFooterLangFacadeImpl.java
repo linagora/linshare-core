@@ -63,21 +63,21 @@ public class MailFooterLangFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void create(MailFooterLangDto dto) throws BusinessException {
+	public MailFooterLangDto create(MailFooterLangDto dto) throws BusinessException {
 		User actor = super.getAuthentication();
 		MailFooterLang footerLang = new MailFooterLang();
 
 		transform(actor, footerLang, dto);
-		mailConfigService.createFooterLang(actor, footerLang);
+		return new MailFooterLangDto(mailConfigService.createFooterLang(actor, footerLang));
 	}
 
 	@Override
-	public void update(MailFooterLangDto dto) throws BusinessException {
+	public MailFooterLangDto update(MailFooterLangDto dto) throws BusinessException {
 		User actor = super.getAuthentication();
 		MailFooterLang footerLang = findFooterLang(actor, dto.getUuid());
 
 		transform(actor, footerLang, dto);
-		mailConfigService.updateFooterLang(actor, footerLang);
+		return new MailFooterLangDto(mailConfigService.updateFooterLang(actor, footerLang));
 	}
 
 	@Override

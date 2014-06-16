@@ -36,7 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
@@ -45,6 +45,7 @@ import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -67,8 +68,11 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.core.utils.LsIdValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 public class AbstractDomainServiceImpl implements AbstractDomainService {
 
@@ -122,11 +126,10 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 		Validate.notEmpty(domain.getIdentifier(),
 				"domain identifier must be set.");
-		Pattern formatValidator = Pattern.compile("^[a-zA-Z0-9_]{4,}$");
-		if (!formatValidator.matcher(domain.getIdentifier()).matches()) {
-			throw new BusinessException(
-					BusinessErrorCode.DOMAIN_IDENTIFIER_BAD_FORMAT,
-					"This new domain identifier should only contains the following characters : a-z A-Z 0-9 _.");
+		if (!LsIdValidator.isValid(domain.getIdentifier())) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_BAD_FORMAT,
+					"This new domain identifier should only contains the following characters : "
+							+ LsIdValidator.getAllowedCharacters() + ".");
 		}
 
 		if (retrieveDomain(domain.getIdentifier()) != null) {
@@ -344,7 +347,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	@Override
-	public void updateDomain(AbstractDomain domain) throws BusinessException {
+	public AbstractDomain updateDomain(AbstractDomain domain) throws BusinessException {
 		logger.debug("Update domain :" + domain.getIdentifier());
 		if (domain.getIdentifier() == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
@@ -403,7 +406,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 		entity.updateDomainWith(domain);
 		if (entity.getDomainType().equals(DomainType.ROOTDOMAIN)) {
-			abstractDomainRepository.update(entity);
+			return abstractDomainRepository.update(entity);
 		} else {
 			entity.setPolicy(policy);
 			LdapUserProvider provider = entity.getUserProvider();
@@ -430,16 +433,17 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					provider.setPattern(domainPattern);
 					userProviderService.update(provider);
 				}
-				abstractDomainRepository.update(entity);
+				return abstractDomainRepository.update(entity);
 			} else {
 				logger.debug("Update domain without provider");
 				if (provider != null) {
 					logger.debug("delete old provider.");
 					entity.setUserProvider(null);
-					abstractDomainRepository.update(entity);
+					AbstractDomain update = abstractDomainRepository.update(entity);
 					userProviderService.delete(provider);
+					return update;
 				} else {
-					abstractDomainRepository.update(entity);
+					return abstractDomainRepository.update(entity);
 				}
 			}
 		}
@@ -823,4 +827,20 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		return functionalityReadOnlyService.getDomainMailFunctionality(domain)
 				.getValue();
 	}
+
+	@Override
+	public List<AbstractDomain> findAll(Account actor) {
+		if (actor.isSuperAdmin()) {
+			return abstractDomainRepository.findAll();
+		} else {
+			List<AbstractDomain> domainList = Lists.newArrayList();
+			domainList.add(actor.getDomain());
+			Set<AbstractDomain> entities = actor.getDomain().getSubdomain();
+			for (AbstractDomain abstractDomain : entities) {
+				domainList.add(abstractDomain);
+			}
+			return domainList;
+		}
+	}
+
 }

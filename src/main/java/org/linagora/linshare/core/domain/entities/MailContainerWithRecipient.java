@@ -116,7 +116,6 @@ public class MailContainerWithRecipient extends MailContainer {
 		bufferHTML.append(template.getContentHTML() + "<br/>");
 	}
 	
-
 	@Override
 	public String getContentTXT() {
 		contentTXT = bufferTXT.toString();

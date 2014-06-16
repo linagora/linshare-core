@@ -49,7 +49,7 @@ public interface ThreadRestService {
 	public Set<ThreadMemberDto> members(String uuid)
 			throws BusinessException;
 
-	public void update(ThreadDto thread) throws BusinessException;
+	public ThreadDto update(ThreadDto thread) throws BusinessException;
 
 	public void delete(ThreadDto thread) throws BusinessException;
 }

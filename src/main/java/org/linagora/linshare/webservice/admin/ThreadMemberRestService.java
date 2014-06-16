@@ -41,9 +41,9 @@ public interface ThreadMemberRestService {
 
 	ThreadMemberDto find(Long id) throws BusinessException;
 
-	void create(ThreadMemberDto dto) throws BusinessException;
+	ThreadMemberDto create(ThreadMemberDto dto) throws BusinessException;
 
-	void update(ThreadMemberDto dto) throws BusinessException;
+	ThreadMemberDto update(ThreadMemberDto dto) throws BusinessException;
 
 	void delete(ThreadMemberDto dto) throws BusinessException;
 }

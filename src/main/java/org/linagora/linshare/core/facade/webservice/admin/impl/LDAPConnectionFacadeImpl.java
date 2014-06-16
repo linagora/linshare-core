@@ -66,15 +66,15 @@ public class LDAPConnectionFacadeImpl extends AdminGenericFacadeImpl implements 
 	}
 
 	@Override
-	public void update(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
+	public LDAPConnectionDto update(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		userProviderService.updateLDAPConnection(new LDAPConnection(ldapConnectionDto));
+		return new LDAPConnectionDto(userProviderService.updateLDAPConnection(new LDAPConnection(ldapConnectionDto)));
 	}
 
 	@Override
-	public void create(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
+	public LDAPConnectionDto create(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		userProviderService.createLDAPConnection(new LDAPConnection(ldapConnectionDto));
+		return new LDAPConnectionDto(userProviderService.createLDAPConnection(new LDAPConnection(ldapConnectionDto)));
 	}
 
 	@Override

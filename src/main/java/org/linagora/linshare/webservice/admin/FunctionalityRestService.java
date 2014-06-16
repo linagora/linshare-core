@@ -45,7 +45,7 @@ public interface FunctionalityRestService {
 	FunctionalityDto find(String domainId, String funcId)
 			throws BusinessException;
 
-	void update(FunctionalityDto func) throws BusinessException;
+	FunctionalityDto update(FunctionalityDto func) throws BusinessException;
 
 	void delete(FunctionalityDto func) throws BusinessException;
 }

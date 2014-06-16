@@ -35,6 +35,7 @@ package org.linagora.linshare.core.facade.webservice.admin;
 
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.MailContentDto;
 
@@ -44,7 +45,7 @@ public interface MailContentFacade {
 
 	MailContentDto create(MailContentDto dto) throws BusinessException;
 
-	void update(MailContentDto dto) throws BusinessException;
+	MailContentDto update(MailContentDto dto) throws BusinessException;
 
 	void delete(String uuid) throws BusinessException;
 

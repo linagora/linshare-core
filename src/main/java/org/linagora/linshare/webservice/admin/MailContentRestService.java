@@ -47,7 +47,7 @@ public interface MailContentRestService {
 
 	MailContentDto create(MailContentDto dto) throws BusinessException;
 
-	void update(MailContentDto dto) throws BusinessException;
+	MailContentDto update(MailContentDto dto) throws BusinessException;
 
 	void delete(MailContentDto dto) throws BusinessException;
 }

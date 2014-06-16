@@ -83,8 +83,8 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	}
 
 	@Override
-	public void update(DomainPolicy domainPolicy) throws BusinessException {
-		domainPolicyBusinessService.update(domainPolicy);
+	public DomainPolicy update(DomainPolicy domainPolicy) throws BusinessException {
+		return domainPolicyBusinessService.update(domainPolicy);
 	}
 
 	@Override

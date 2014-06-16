@@ -44,6 +44,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPatternFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
@@ -92,9 +93,9 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Create a domain pattern.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void create(DomainPatternDto domainPattern)
+	public DomainPatternDto create(DomainPatternDto domainPattern)
 			throws BusinessException {
-		domainPatternFacade.create(domainPattern);
+		return domainPatternFacade.create(domainPattern);
 	}
 
 	@Path("/")
@@ -102,9 +103,9 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Update a domain pattern.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void update(DomainPatternDto domainPattern)
+	public DomainPatternDto update(DomainPatternDto domainPattern)
 			throws BusinessException {
-		domainPatternFacade.update(domainPattern);
+		return domainPatternFacade.update(domainPattern);
 	}
 
 	@Path("/")

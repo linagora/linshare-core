@@ -93,19 +93,19 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void create(MailingListDto dto) throws BusinessException {
+	public MailingListDto create(MailingListDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		MailingList list = new MailingList(dto);
-		mailingListService.createList(actor.getLsUuid(), actor.getLsUuid(),
-				list);
+		return new MailingListDto(mailingListService.createList(actor.getLsUuid(), actor.getLsUuid(),
+				list));
 	}
 
 	@Override
-	public void update(MailingListDto dto) throws BusinessException {
+	public MailingListDto update(MailingListDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notNull(dto.getUuid(), "uuid dto must be set.");
 		MailingList list = new MailingList(dto);
-		mailingListService.updateList(actor.getLsUuid(), list);
+		return new MailingListDto(mailingListService.updateList(actor.getLsUuid(), list));
 	}
 
 	@Override

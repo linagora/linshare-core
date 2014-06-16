@@ -41,28 +41,20 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.DomainPattern;
-import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
-import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
 import org.linagora.linshare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
-import org.linagora.linshare.core.domain.vo.DomainPatternVo;
 import org.linagora.linshare.core.domain.vo.GuestDomainVo;
-import org.linagora.linshare.core.domain.vo.LDAPConnectionVo;
 import org.linagora.linshare.core.domain.vo.SubDomainVo;
 import org.linagora.linshare.core.domain.vo.TopDomainVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -167,47 +159,11 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         return false;
     }
 
-
-    @Override
-    public List<AbstractDomainVo> findAllDomain() {
-        List<AbstractDomainVo> res = new ArrayList<AbstractDomainVo>();
-        for (AbstractDomain abstractDomain : abstractDomainService.getAllDomains()) {
-            res.add(new AbstractDomainVo(abstractDomain));
-        }
-        return res;
-    }
-
-    @Override
-    public List<AbstractDomainVo> findAllTopDomain() {
-        List<AbstractDomainVo> res = new ArrayList<AbstractDomainVo>();
-        for (AbstractDomain abstractDomain : abstractDomainService.getAllTopDomain()) {
-            res.add(new AbstractDomainVo(abstractDomain));
-        }
-        return res;
-    }
-
     @Override
     public List<AbstractDomainVo> findAllTopAndSubDomain() {
         List<AbstractDomainVo> res = new ArrayList<AbstractDomainVo>();
         for (AbstractDomain abstractDomain : abstractDomainService.getAllTopAndSubDomain()) {
             res.add(new AbstractDomainVo(abstractDomain));
-        }
-        return res;
-    }
-
-    @Override
-    public List<AbstractDomainVo> findAllSubDomainWithoutGuestDomain(String topDomainIdentifier) {
-        List<AbstractDomainVo> res = new ArrayList<AbstractDomainVo>();
-
-        AbstractDomain topDomain = abstractDomainService.retrieveDomain(topDomainIdentifier);
-        if(topDomain == null) {
-            logger.error("The top domain " + topDomainIdentifier + " was not found.");
-        } else {
-            for (AbstractDomain abstractDomain : topDomain.getSubdomain()) {
-                if(!abstractDomain.getDomainType().equals(DomainType.GUESTDOMAIN)) {
-                    res.add(new AbstractDomainVo(abstractDomain));
-                }
-            }
         }
         return res;
     }
@@ -221,11 +177,6 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         } else {
             return new GuestDomainVo (abstractDomainService.getGuestDomain(topDomainIdentifier));
         }
-    }
-
-    @Override
-    public List<String> findAllDomainIdentifiers(){
-        return abstractDomainService.getAllDomainIdentifiers();
     }
 
     @Override

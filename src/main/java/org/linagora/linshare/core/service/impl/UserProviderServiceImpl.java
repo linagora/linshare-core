@@ -39,6 +39,7 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
@@ -50,6 +51,7 @@ import org.linagora.linshare.core.repository.LDAPConnectionRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.linagora.linshare.core.service.LDAPQueryService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.core.utils.LsIdValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +79,18 @@ public class UserProviderServiceImpl implements UserProviderService {
 	@Override
 	public DomainPattern createDomainPattern(DomainPattern domainPattern)
 			throws BusinessException {
+		Validate.notEmpty(domainPattern.getIdentifier(),
+				"domain pattern identifier must be set.");
+		if (!LsIdValidator.isValid(domainPattern.getIdentifier())) {
+			throw new BusinessException(BusinessErrorCode.LDAP_CONNECTION_ID_BAD_FORMAT,
+					"This new domain pattern identifier should only contains the following characters : "
+							+ LsIdValidator.getAllowedCharacters() + ".");
+		}
+		if (domainPatternRepository.findById(domainPattern.getIdentifier()) != null) {
+			throw new BusinessException(
+					BusinessErrorCode.DOMAIN_PATTERN_ID_ALREADY_EXISTS,
+					"This new domain pattern identifier already exists.");
+		}
 		DomainPattern createdDomain = domainPatternRepository
 				.create(domainPattern);
 		return createdDomain;
@@ -85,6 +99,19 @@ public class UserProviderServiceImpl implements UserProviderService {
 	@Override
 	public LDAPConnection createLDAPConnection(LDAPConnection ldapConnection)
 			throws BusinessException {
+		Validate.notEmpty(ldapConnection.getIdentifier(),
+				"ldap connection identifier must be set.");
+		if (!LsIdValidator.isValid(ldapConnection.getIdentifier())) {
+			throw new BusinessException(
+					BusinessErrorCode.LDAP_CONNECTION_ID_BAD_FORMAT,
+					"This new ldap connection identifier should only contains the following characters : "
+							+ LsIdValidator.getAllowedCharacters() + ".");
+		}
+		if (ldapConnectionRepository.findById(ldapConnection.getIdentifier()) != null) {
+			throw new BusinessException(
+					BusinessErrorCode.LDAP_CONNECTION_ID_ALREADY_EXISTS,
+					"This new ldap connection identifier already exists.");
+		}
 		LDAPConnection createdLDAPConnection = ldapConnectionRepository
 				.create(ldapConnection);
 		return createdLDAPConnection;
@@ -183,22 +210,28 @@ public class UserProviderServiceImpl implements UserProviderService {
 	}
 
 	@Override
-	public void updateLDAPConnection(LDAPConnection ldapConnection)
+	public LDAPConnection updateLDAPConnection(LDAPConnection ldapConnection)
 			throws BusinessException {
 		LDAPConnection ldapConn = ldapConnectionRepository
 				.findById(ldapConnection.getIdentifier());
+		if (ldapConn == null) {
+			throw new BusinessException(BusinessErrorCode.LDAP_CONNECTION_NOT_FOUND, "no such ldap connection");
+		}
 		ldapConn.setProviderUrl(ldapConnection.getProviderUrl());
 		ldapConn.setSecurityAuth(ldapConnection.getSecurityAuth());
 		ldapConn.setSecurityCredentials(ldapConnection.getSecurityCredentials());
 		ldapConn.setSecurityPrincipal(ldapConnection.getSecurityPrincipal());
-		ldapConnectionRepository.update(ldapConn);
+		return ldapConnectionRepository.update(ldapConn);
 	}
 
 	@Override
-	public void updateDomainPattern(DomainPattern domainPattern)
+	public DomainPattern updateDomainPattern(DomainPattern domainPattern)
 			throws BusinessException {
 		DomainPattern pattern = domainPatternRepository.findById(domainPattern
 				.getIdentifier());
+		if (pattern == null) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND, "no such domain pattern");
+		}
 		pattern.setDescription(domainPattern.getDescription());
 		pattern.setAuthCommand(domainPattern.getAuthCommand());
 		pattern.setSearchUserCommand(domainPattern.getSearchUserCommand());
@@ -232,7 +265,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 				.setAttribute(
 						domainPattern.getAttributes()
 								.get(DomainPattern.USER_UID).getAttribute());
-		domainPatternRepository.update(pattern);
+		return domainPatternRepository.update(pattern);
 	}
 
 	@Override

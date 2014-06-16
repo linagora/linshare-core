@@ -44,7 +44,7 @@ public interface DomainPolicyBusinessService {
 
 	public DomainPolicy find(String identifier);
 
-	public void update(DomainPolicy domainPolicy) throws BusinessException;
+	public DomainPolicy update(DomainPolicy domainPolicy) throws BusinessException;
 
 	public List<String> findAllIdentifiers();
 

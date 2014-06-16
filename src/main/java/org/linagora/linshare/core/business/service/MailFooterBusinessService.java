@@ -45,7 +45,7 @@ public interface MailFooterBusinessService {
 	MailFooter create(AbstractDomain domain, MailFooter footer)
 			throws BusinessException;
 
-	void update(MailFooter footer) throws BusinessException;
+	MailFooter update(MailFooter footer) throws BusinessException;
 
 	void delete(MailFooter val) throws BusinessException;
 

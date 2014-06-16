@@ -44,9 +44,9 @@ public interface DomainPolicyFacade extends AdminGenericFacade {
 
 	DomainPolicyDto find(String identifier) throws BusinessException;
 
-	void create(DomainPolicyDto policy) throws BusinessException;
+	DomainPolicyDto create(DomainPolicyDto policy) throws BusinessException;
 
-	void update(DomainPolicyDto policy) throws BusinessException;
+	DomainPolicyDto update(DomainPolicyDto policy) throws BusinessException;
 
 	void delete(String identifier) throws BusinessException;
 }

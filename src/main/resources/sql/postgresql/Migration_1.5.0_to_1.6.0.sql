@@ -16,8 +16,8 @@ CREATE TABLE mail_notification (
   activation_policy_id    int8 NOT NULL, 
   identifier              varchar(255) NOT NULL, 
   system                  bool NOT NULL, 
-  creation_date           date NOT NULL, 
-  modification_date       date NOT NULL, 
+  creation_date           timestamp(6)NOT NULL, 
+  modification_date       timestamp(6)NOT NULL, 
   uuid                    varchar(255) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mail_config (
@@ -28,8 +28,8 @@ CREATE TABLE mail_config (
   visible             bool NOT NULL, 
   mail_layout_text_id int8 NOT NULL, 
   uuid                varchar(255) NOT NULL, 
-  creation_date       date NOT NULL, 
-  modification_date   date NOT NULL, 
+  creation_date       timestamp(6)NOT NULL, 
+  modification_date   timestamp(6)NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mail_layout (
   id                  int8 NOT NULL, 
@@ -37,8 +37,8 @@ CREATE TABLE mail_layout (
   name               varchar(255) NOT NULL, 
   visible            bool NOT NULL, 
   layout             text NOT NULL, 
-  creation_date      date NOT NULL, 
-  modification_date  date NOT NULL, 
+  creation_date      timestamp(6)NOT NULL, 
+  modification_date  timestamp(6)NOT NULL, 
   uuid               varchar(255) NOT NULL, 
   plaintext          bool NOT NULL, 
   PRIMARY KEY (id));
@@ -49,8 +49,8 @@ CREATE TABLE mail_footer (
   visible            bool NOT NULL, 
   language           int4 NOT NULL, 
   footer             text NOT NULL, 
-  creation_date      date NOT NULL, 
-  modification_date  date NOT NULL, 
+  creation_date      timestamp(6)NOT NULL, 
+  modification_date   timestamp(6)NOT NULL, 
   uuid               varchar(255) NOT NULL, 
   plaintext          bool NOT NULL, 
   PRIMARY KEY (id));
@@ -73,8 +73,8 @@ CREATE TABLE mail_content (
   body               text NOT NULL, 
   uuid               varchar(255) NOT NULL, 
   plaintext          bool NOT NULL, 
-  creation_date      date NOT NULL, 
-  modification_date  date NOT NULL, 
+  creation_date      timestamp(6)NOT NULL, 
+  modification_date  timestamp(6)NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mail_content_lang (
   id                 int8 NOT NULL, 
@@ -126,8 +126,8 @@ DROP TABLE allowed_mimetype;
 
 -- %{image}    <img src="cid:image.part.1@linshare.org" /><br/><br/>
 
-INSERT INTO mail_layout (id, name,domain_abstract_id,visible,plaintext,modification_date,creation_date,uuid,layout) VALUES (1, 'Default HTML layout', 1,true,false,now(),now(),'15044750-89d1-11e3-8d50-5404a683a462',E'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml">\n<head>\n<title>%{mailSubject}</title>\n<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />\n<meta http-equiv="Content-Style-Type" content="text/css" />\n<style type="text/css">\npre { margin-top: .25em; font-family: Verdana, Arial, Helvetica, sans-serif; color: blue; }\nul { margin-top: .25em; padding-left: 1.5em; }\n</style>\n</head>\n<body>\n%{image}\n%{personalMessage}\n%{greetings}\n%{body}\n <hr/>\n%{footer}\n</body>\n</html>');
-INSERT INTO mail_layout (id, name,domain_abstract_id,visible,plaintext,modification_date,creation_date,uuid,layout) VALUES (2, 'Default plaintext layout', 1,true,true,now(),now(),'db044da6-89d1-11e3-b6a9-5404a683a462', E'%{personalMessage}\n\n%{greetings}\n\n%{body}\n-- \n%{footer}\n');
+INSERT INTO mail_layout (id, name,domain_abstract_id,visible,plaintext,modification_date,creation_date,uuid,layout) VALUES (1, 'Default HTML layout', 1,true,false,now(),now(),'15044750-89d1-11e3-8d50-5404a683a462',E'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml">\n<head>\n<title>${mailSubject}</title>\n<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />\n<meta http-equiv="Content-Style-Type" content="text/css" />\n<style type="text/css">\npre { margin-top: .25em; font-family: Verdana, Arial, Helvetica, sans-serif; color: blue; }\nul { margin-top: .25em; padding-left: 1.5em; }\n</style>\n</head>\n<body>\n${image}\n${personalMessage}\n${greetings}\n${body}\n <hr/>\n${footer}\n</body>\n</html>');
+INSERT INTO mail_layout (id, name,domain_abstract_id,visible,plaintext,modification_date,creation_date,uuid,layout) VALUES (2, 'Default plaintext layout', 1,true,true,now(),now(),'db044da6-89d1-11e3-b6a9-5404a683a462', E'${personalMessage}\n\n${greetings}\n\n${body}\n-- \n${footer}\n');
 
 INSERT INTO mail_footer (id, name, language, domain_abstract_id, visible, plaintext, footer,uuid,modification_date,creation_date) VALUES (1, 'FOOTER_HTML', 0,1, true, false, E'<a href="http://linshare.org/" title="LinShare"><strong>LinShare</strong></a> - THE Secure, Open-Source File Sharing Tool','e85f4a22-8cf2-11e3-8a7a-5404a683a462',now(),now());
 INSERT INTO mail_footer (id, name, language, domain_abstract_id, visible, plaintext, footer,uuid,modification_date,creation_date) VALUES (2, 'FOOTER_HTML', 1,1, true, false, E'<a href="http://www.linshare.org/" title="LinShare"><strong>LinShare</strong></a> - Logiciel libre de partage de fichiers sécurisé','c9e8e482-8daa-11e3-9d04-5404a683a462',now(),now());
@@ -233,8 +233,8 @@ CREATE TABLE mime_policy (
   name              varchar(255) NOT NULL, 
   mode              int4 NOT NULL, 
   displayable       int4 NOT NULL, 
-  creation_date     date NOT NULL, 
-  modification_date date NOT NULL, 
+  creation_date     timestamp(6)NOT NULL, 
+  modification_date timestamp(6)NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mime_type (
   id                 int8 NOT NULL, 
@@ -244,8 +244,8 @@ CREATE TABLE mime_type (
   extensions        text NOT NULL, 
   enable            bool NOT NULL, 
   displayable       bool NOT NULL, 
-  creation_date     date NOT NULL, 
-  modification_date date NOT NULL, 
+  creation_date     timestamp(6)NOT NULL, 
+  modification_date timestamp(6)NOT NULL, 
   PRIMARY KEY (id));
 
 

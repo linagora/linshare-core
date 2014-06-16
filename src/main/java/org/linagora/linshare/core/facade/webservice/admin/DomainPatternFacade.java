@@ -44,9 +44,9 @@ public interface DomainPatternFacade extends AdminGenericFacade {
 
 	Set<DomainPatternDto> findAllModels() throws BusinessException;
 	
-	void update(DomainPatternDto domainPatternDto) throws BusinessException;
+	DomainPatternDto update(DomainPatternDto domainPatternDto) throws BusinessException;
 
-	void create(DomainPatternDto domainPatternDto) throws BusinessException;
+	DomainPatternDto create(DomainPatternDto domainPatternDto) throws BusinessException;
 
 	void delete(DomainPatternDto domainPatternDto) throws BusinessException;
 }

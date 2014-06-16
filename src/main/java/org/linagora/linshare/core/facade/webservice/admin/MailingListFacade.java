@@ -46,9 +46,9 @@ public interface MailingListFacade extends AdminGenericFacade {
 
 	MailingListDto find(String uuid) throws BusinessException;
 
-	void create(MailingListDto dto) throws BusinessException;
+	MailingListDto create(MailingListDto dto) throws BusinessException;
 
-	void update(MailingListDto dto) throws BusinessException;
+	MailingListDto update(MailingListDto dto) throws BusinessException;
 
 	void delete(String uuid) throws BusinessException;
 

@@ -40,9 +40,9 @@ public interface MailContentLangFacade {
 
 	MailContentLangDto find(String uuid) throws BusinessException;
 
-	void create(MailContentLangDto dto) throws BusinessException;
+	MailContentLangDto create(MailContentLangDto dto) throws BusinessException;
 
-	void update(MailContentLangDto dto) throws BusinessException;
+	MailContentLangDto update(MailContentLangDto dto) throws BusinessException;
 
 	void delete(String uuid) throws BusinessException;
 

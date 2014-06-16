@@ -46,9 +46,9 @@ public interface MailingListRestService {
 
 	MailingListDto find(String uuid) throws BusinessException;
 
-	void create(MailingListDto dto) throws BusinessException;
+	MailingListDto create(MailingListDto dto) throws BusinessException;
 
-	void update(MailingListDto dto) throws BusinessException;
+	MailingListDto update(MailingListDto dto) throws BusinessException;
 
 	void delete(MailingListDto dto) throws BusinessException;
 

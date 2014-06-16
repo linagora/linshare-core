@@ -119,10 +119,10 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@PUT
 	@ApiOperation(value = "Update an user.")
 	@Override
-	public void update(
+	public UserDto update(
 			@ApiParam(value = "User to update", required = true) UserDto userDto)
 			throws BusinessException {
-		userFacade.update(userDto);
+		return userFacade.update(userDto);
 	}
 
 	@Path("/")

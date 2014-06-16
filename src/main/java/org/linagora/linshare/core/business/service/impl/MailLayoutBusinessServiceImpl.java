@@ -80,9 +80,9 @@ public class MailLayoutBusinessServiceImpl implements MailLayoutBusinessService 
 	}
 
 	@Override
-	public void update(MailLayout footer) throws BusinessException {
+	public MailLayout update(MailLayout footer) throws BusinessException {
 		try {
-			mailLayoutRepository.update(footer);
+			return mailLayoutRepository.update(footer);
 		} catch (IllegalArgumentException iae) {
 			throw new BusinessException(BusinessErrorCode.MAILLAYOUT_NOT_FOUND,
 					"Cannot update footer " + footer);

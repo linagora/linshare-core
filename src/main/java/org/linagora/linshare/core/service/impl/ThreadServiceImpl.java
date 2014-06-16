@@ -182,7 +182,7 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public void addMember(Account actor, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException {
+	public ThreadMember addMember(Account actor, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, thread);
 		
@@ -204,16 +204,17 @@ public class ThreadServiceImpl implements ThreadService {
 				LogAction.THREAD_ADD_MEMBER,
 				"Adding a new member to a thread : "
 						+ member.getUser().getAccountReprentation()));
+		return member;
 	}
 
 	@Override
-	public void updateMember(Account actor, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException {
+	public ThreadMember updateMember(Account actor, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, member.getThread());
 	
 		member.setAdmin(admin);
 		member.setCanUpload(canUpload);
-		threadMemberRepository.update(member);
+		return threadMemberRepository.update(member);
 	}
 
 	@Override
@@ -271,16 +272,17 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public void rename(User actor, Thread thread, String threadName) throws BusinessException {
+	public Thread rename(User actor, Thread thread, String threadName) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, thread);
 		
 		String oldname = thread.getName();
 		thread.setName(threadName);
-		threadRepository.update(thread);
+		Thread update = threadRepository.update(thread);
 
 		logEntryService.create(new ThreadLogEntry(actor, thread,
 				LogAction.THREAD_RENAME, "Renamed thread from " + oldname + " to " + threadName));
+		return update;
 	}
 	
 	@Override

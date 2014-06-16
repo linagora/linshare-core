@@ -63,23 +63,23 @@ public class MailContentLangFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void create(MailContentLangDto dto) throws BusinessException {
+	public MailContentLangDto create(MailContentLangDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		MailContentLang contentLang = new MailContentLang();
 
 		contentLang.setLanguage(dto.getLanguage().toInt());
 		contentLang.setMailConfig(findConfig(actor, dto.getMailConfig()));
 		contentLang.setMailContent(findContent(actor, dto.getMailContent()));
-		mailConfigService.createContentLang(actor, contentLang);
+		return new MailContentLangDto(mailConfigService.createContentLang(actor, contentLang));
 	}
 
 	@Override
-	public void update(MailContentLangDto dto) throws BusinessException {
+	public MailContentLangDto update(MailContentLangDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		MailContentLang contentLang = findContentLang(actor, dto.getUuid());
 
 		contentLang.setMailContent(findContent(actor, dto.getMailContent()));
-		mailConfigService.updateContentLang(actor, contentLang);
+		return new MailContentLangDto(mailConfigService.updateContentLang(actor, contentLang));
 	}
 
 	@Override

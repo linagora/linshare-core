@@ -35,7 +35,6 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
@@ -134,17 +133,6 @@ public interface MailConfigService {
 			MailContentType type) throws BusinessException;
 
 	/**
-	 * Find a list of mail content usable by the current mail config.
-	 * 
-	 * @param mailconfig
-	 * @param mailContentType
-	 * @param language
-	 * @return
-	 */
-	public List<MailContent> findAll(MailConfig mailConfig,
-			MailContentType mailContentType, Language lang) throws BusinessException;
-
-	/**
 	 * Create a new mail content.
 	 * 
 	 * @param actor
@@ -160,9 +148,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param content
+	 * @return 
 	 * @throws BusinessException
 	 */
-	void updateContent(User actor, MailContent content)
+	MailContent updateContent(User actor, MailContent content)
 			throws BusinessException;
 
 	/**
@@ -189,18 +178,20 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param content
+	 * @return 
 	 * @throws BusinessException
 	 */
-	void createContentLang(User actor, MailContentLang contentLang) throws BusinessException;
+	MailContentLang createContentLang(User actor, MailContentLang contentLang) throws BusinessException;
 
 	/**
 	 * Update an existing mail content lang.
 	 * 
 	 * @param actor
 	 * @param content
+	 * @return 
 	 * @throws BusinessException
 	 */
-	void updateContentLang(User actor, MailContentLang contentLang) throws BusinessException;
+	MailContentLang updateContentLang(User actor, MailContentLang contentLang) throws BusinessException;
 
 	/**
 	 * Delete an existing mail content lang and remove it from its mail configuration.
@@ -246,9 +237,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param footer
+	 * @return 
 	 * @throws BusinessException
 	 */
-	void updateFooter(User actor, MailFooter footer) throws BusinessException;
+	MailFooter updateFooter(User actor, MailFooter footer) throws BusinessException;
 
 	/**
 	 * Delete an existing mail footer.
@@ -274,9 +266,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param footer
+	 * @return 
 	 * @throws BusinessException
 	 */
-	void createFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;
+	MailFooterLang createFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;
 
 	/**
 	 * Update an existing mail footer lang.
@@ -285,7 +278,7 @@ public interface MailConfigService {
 	 * @param footer
 	 * @throws BusinessException
 	 */
-	void updateFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;
+	MailFooterLang updateFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;
 
 	/**
 	 * Delete an existing mail footer lang and remove it from its mail configuration.
@@ -331,9 +324,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param layout
+	 * @return 
 	 * @throws BusinessException
 	 */
-	void updateLayout(User actor, MailLayout layout) throws BusinessException;
+	MailLayout updateLayout(User actor, MailLayout layout) throws BusinessException;
 
 	/**
 	 * Delete an existing mail layout.

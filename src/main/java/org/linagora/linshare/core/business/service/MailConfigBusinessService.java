@@ -52,10 +52,10 @@ public interface MailConfigBusinessService {
 
 	MailContentLang findContentLangByUuid(String uuid);
 
-	void createContentLang(MailContentLang contentLang)
+	MailContentLang createContentLang(MailContentLang contentLang)
 			throws BusinessException;
 
-	void updateContentLang(MailContentLang contentLang)
+	MailContentLang updateContentLang(MailContentLang contentLang)
 			throws BusinessException;
 
 	void deleteContentLang(MailContentLang contentLang)
@@ -63,9 +63,9 @@ public interface MailConfigBusinessService {
 
 	MailFooterLang findFooterLangByUuid(String uuid);
 
-	void createFooterLang(MailFooterLang footerLang) throws BusinessException;
+	MailFooterLang createFooterLang(MailFooterLang footerLang) throws BusinessException;
 
-	void updateFooterLang(MailFooterLang footerLang) throws BusinessException;
+	MailFooterLang updateFooterLang(MailFooterLang footerLang) throws BusinessException;
 
 	void deleteFooterLang(MailFooterLang footerLang) throws BusinessException;
 }

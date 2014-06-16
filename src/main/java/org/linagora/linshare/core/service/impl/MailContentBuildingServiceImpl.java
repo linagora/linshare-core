@@ -66,6 +66,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+@Deprecated
 public class MailContentBuildingServiceImpl implements MailContentBuildingService {
 	
 	private final static Logger logger = LoggerFactory.getLogger(MailContentBuildingServiceImpl.class);

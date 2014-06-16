@@ -83,8 +83,8 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 	@ApiOperation(value = "Create a thread member.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void create(ThreadMemberDto dto) throws BusinessException {
-		threadMemberFacade.create(dto);
+	public ThreadMemberDto create(ThreadMemberDto dto) throws BusinessException {
+		return threadMemberFacade.create(dto);
 	}
 
 	@Path("/")
@@ -92,8 +92,8 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 	@ApiOperation(value = "Update a thread member.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void update(ThreadMemberDto dto) throws BusinessException {
-		threadMemberFacade.update(dto);
+	public ThreadMemberDto update(ThreadMemberDto dto) throws BusinessException {
+		return threadMemberFacade.update(dto);
 	}
 
 	@Path("/")

@@ -44,7 +44,7 @@ public interface MailFooterFacade {
 
 	MailFooterDto create(MailFooterDto dto) throws BusinessException;
 
-	void update(MailFooterDto dto) throws BusinessException;
+	MailFooterDto update(MailFooterDto dto) throws BusinessException;
 
 	void delete(String uuid) throws BusinessException;
 

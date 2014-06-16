@@ -34,5 +34,61 @@
 
 package org.linagora.linshare.core.service;
 
+import java.util.List;
+
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.AnonymousUrl;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.MailContainer;
+import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
+import org.linagora.linshare.core.exception.BusinessException;
+
 public interface MailBuildingService {
+
+	MailContainerWithRecipient buildAnonymousDownload(
+			AnonymousShareEntry shareEntry) throws BusinessException;
+
+	MailContainerWithRecipient buildRegisteredDownload(ShareEntry shareEntry)
+			throws BusinessException;
+
+	MailContainerWithRecipient buildNewGuest(User sender, User recipient,
+			String password) throws BusinessException;
+
+	MailContainerWithRecipient buildResetPassword(Guest recipient,
+			String password) throws BusinessException;
+
+	MailContainerWithRecipient buildSharedDocUpdated(Entry shareEntry,
+			String oldDocName, String fileSizeTxt) throws BusinessException;
+
+	MailContainerWithRecipient buildSharedDocDeleted(Account actor,
+			Entry shareEntry) throws BusinessException;
+
+	MailContainerWithRecipient buildSharedDocUpcomingOutdated(
+			Entry shareEntry, Integer days) throws BusinessException;
+
+	MailContainerWithRecipient buildDocUpcomingOutdated(DocumentEntry document,
+			Integer days) throws BusinessException;
+
+	MailContainerWithRecipient buildNewSharing(User sender,
+			MailContainer inputMailContainer, User recipient,
+			List<ShareDocumentVo> shares) throws BusinessException;
+
+	MailContainerWithRecipient buildNewSharingProtected(User sender,
+			MailContainer inputMailContainer, AnonymousUrl anonymousUrl)
+			throws BusinessException;
+
+	MailContainerWithRecipient buildNewSharingCyphered(User sender,
+			MailContainer inputMailContainer, User recipient,
+			List<ShareDocumentVo> shares) throws BusinessException;
+
+	MailContainerWithRecipient buildNewSharingCypheredProtected(User sender,
+			MailContainer inputMailContainer, AnonymousUrl anonymousUrl)
+			throws BusinessException;
+
 }

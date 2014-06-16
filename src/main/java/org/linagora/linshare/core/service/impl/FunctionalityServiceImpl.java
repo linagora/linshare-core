@@ -115,7 +115,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
-	public void update(Account actor, String domain, Functionality functionality) throws BusinessException {
+	public Functionality update(Account actor, String domain, Functionality functionality) throws BusinessException {
 		Validate.notNull(domain);
 		Validate.notNull(functionality.getIdentifier());
 		checkDomainRights(actor, domain);
@@ -123,6 +123,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		if (checkUpdateRights(actor, domain, functionality)) {
 			functionalityBusinessService.update(domain, functionality);
 		}
+		return functionalityBusinessService.getFunctionality(domain, functionality.getIdentifier());
 	}
 
 	@Override

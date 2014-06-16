@@ -6,7 +6,7 @@
 
 	<div id="content">
 
-		<h1>${message:components.myborderlayout.administration.title} : ${selectedDomain}</h1>
+		<h1>${message:components.myborderlayout.administration.title}</h1>
 
 		<t:messagePanel />
 
@@ -20,27 +20,13 @@
 				<div id="version">
 					<strong>${message:global.version.label} : </strong> <code>${version}</code>
 					<br/>
+					 <p>
+						<t:pagelink t:id="personalization" t:page="administration/Personalization"  context="selectedDomain">
+							<span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/>${message:pages.administration.index.link.personalization}</span>
+						</t:pagelink>
+					</p>
 				</div>
-				<p>
-					<t:pagelink t:id="personalization" t:page="administration/Personalization"  context="selectedDomain">
-						<span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/>${message:pages.administration.index.link.personalization}</span>
-					</t:pagelink>
-				</p>
 			</t:if>
 		</div>
-
 	</div><!-- id="content" -->
-
-	<!-- Actions widget -->
-	<t:parameter name="actionsWidget">
-		<t:if test="admin">
-			<t:widget widgetId="actionsWidget" title="${message:pages.administration.index.domainSelector.title}">
-				<t:form t:id="updateDomain">
-					<t:select t:id="domainSelect" t:value="selectedDomain" t:model="domains" blankOption="never" />
-					<t:submit value="${message:global.button.validate}"/>
-				</t:form>
-			</t:widget>
-		</t:if>
-	</t:parameter>
-
 </t:MyBorderLayout>

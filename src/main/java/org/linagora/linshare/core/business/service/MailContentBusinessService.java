@@ -59,7 +59,7 @@ public interface MailContentBusinessService {
 	MailContent create(AbstractDomain domain, MailContent content)
 			throws BusinessException;
 
-	void update(MailContent content) throws BusinessException;
+	MailContent update(MailContent content) throws BusinessException;
 
 	void delete(MailContent content) throws BusinessException;
 }
