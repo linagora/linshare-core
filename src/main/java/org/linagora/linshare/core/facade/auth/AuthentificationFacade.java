@@ -54,4 +54,5 @@ public interface AuthentificationFacade {
 	public AbstractDomain retrieveDomain(String domainIdentifier);
 
 	public List<AbstractDomain> getAllDomains();
+
 }

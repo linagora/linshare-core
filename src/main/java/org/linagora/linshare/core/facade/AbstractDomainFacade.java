@@ -60,18 +60,9 @@ public interface AbstractDomainFacade {
 	public boolean guestDomainAllowed(String domainIdentifier)
 			throws BusinessException;
 
-	public List<AbstractDomainVo> findAllDomain();
-
-	public List<AbstractDomainVo> findAllTopDomain();
-
 	public List<AbstractDomainVo> findAllTopAndSubDomain();
 
-	public List<AbstractDomainVo> findAllSubDomainWithoutGuestDomain(
-			String topDomainIdentifier);
-
 	public GuestDomainVo findGuestDomain(String topDomainIdentifier);
-
-	public List<String> findAllDomainIdentifiers();
 
 	public boolean isCustomLogoActive(UserVo actorVo) throws BusinessException;
 
@@ -111,5 +102,4 @@ public interface AbstractDomainFacade {
 	 * call to crypt function.
 	 */
 	public boolean checkPlatformEncryptSupportedAlgo();
-
 }

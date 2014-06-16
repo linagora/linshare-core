@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -61,6 +60,8 @@ import org.linagora.linshare.core.service.UserAndDomainMultiService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.webservice.dto.DomainDto;
 
+import com.google.common.collect.Sets;
+
 public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		DomainFacade {
 
@@ -86,9 +87,9 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public Set<DomainDto> findAll() throws BusinessException {
-		checkAuthentication(Role.SUPERADMIN);
-		List<AbstractDomain> entities = abstractDomainService.getAllDomains();
-		Set<DomainDto> domainDtoList = new HashSet<DomainDto>();
+		User actor = checkAuthentication(Role.ADMIN);
+		Set<DomainDto> domainDtoList = Sets.newHashSet();
+		List<AbstractDomain> entities = abstractDomainService.findAll(actor);
 		for (AbstractDomain abstractDomain : entities) {
 			domainDtoList.add(DomainDto.getFull(abstractDomain));
 		}

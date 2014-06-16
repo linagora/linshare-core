@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
@@ -44,6 +45,7 @@ import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -69,6 +71,8 @@ import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.utils.LsIdValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 public class AbstractDomainServiceImpl implements AbstractDomainService {
 
@@ -823,4 +827,20 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		return functionalityReadOnlyService.getDomainMailFunctionality(domain)
 				.getValue();
 	}
+
+	@Override
+	public List<AbstractDomain> findAll(Account actor) {
+		if (actor.isSuperAdmin()) {
+			return abstractDomainRepository.findAll();
+		} else {
+			List<AbstractDomain> domainList = Lists.newArrayList();
+			domainList.add(actor.getDomain());
+			Set<AbstractDomain> entities = actor.getDomain().getSubdomain();
+			for (AbstractDomain abstractDomain : entities) {
+				domainList.add(abstractDomain);
+			}
+			return domainList;
+		}
+	}
+
 }
