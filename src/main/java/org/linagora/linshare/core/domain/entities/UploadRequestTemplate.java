@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+
 public class UploadRequestTemplate {
 
 	private long id;
@@ -69,9 +71,9 @@ public class UploadRequestTemplate {
 
 	private Boolean prolongationMode;
 
-	private java.util.Date modificationDate;
+	private Date modificationDate;
 
-	private java.util.Date creationDate;
+	private Date creationDate;
 
 	public UploadRequestTemplate() {
 		super();
@@ -205,19 +207,19 @@ public class UploadRequestTemplate {
 		this.prolongationMode = prolongationMode;
 	}
 
-	public java.util.Date getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(java.util.Date creationDate) {
+	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
 
-	public java.util.Date getModificationDate() {
+	public Date getModificationDate() {
 		return modificationDate;
 	}
 
-	public void setModificationDate(java.util.Date modificationDate) {
+	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
 

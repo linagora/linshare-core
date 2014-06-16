@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
 import java.util.Set;
 
 public class UploadRequest {
@@ -51,15 +52,15 @@ public class UploadRequest {
 
 	private int status;
 
-	private java.util.Date activationDate;
+	private Date activationDate;
 
-	private java.util.Date creationDate;
+	private Date creationDate;
 
-	private java.util.Date modificationDate;
+	private Date modificationDate;
 
-	private java.util.Date notificationDate;
+	private Date notificationDate;
 
-	private java.util.Date expiryDate;
+	private Date expiryDate;
 
 	private Integer uploadPropositionRequestUuid;
 
@@ -142,43 +143,43 @@ public class UploadRequest {
 		this.status = status;
 	}
 
-	public java.util.Date getActivationDate() {
+	public Date getActivationDate() {
 		return activationDate;
 	}
 
-	public void setActivationDate(java.util.Date activationDate) {
+	public void setActivationDate(Date activationDate) {
 		this.activationDate = activationDate;
 	}
 
-	public java.util.Date getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(java.util.Date creationDate) {
+	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
 
-	public java.util.Date getModificationDate() {
+	public Date getModificationDate() {
 		return modificationDate;
 	}
 
-	public void setModificationDate(java.util.Date modificationDate) {
+	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
 
-	public java.util.Date getNotificationDate() {
+	public Date getNotificationDate() {
 		return notificationDate;
 	}
 
-	public void setNotificationDate(java.util.Date notificationDate) {
+	public void setNotificationDate(Date notificationDate) {
 		this.notificationDate = notificationDate;
 	}
 
-	public java.util.Date getExpiryDate() {
+	public Date getExpiryDate() {
 		return expiryDate;
 	}
 
-	public void setExpiryDate(java.util.Date expiryDate) {
+	public void setExpiryDate(Date expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 

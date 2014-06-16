@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+import java.util.Set;
+
 public class UploadRequestGroup {
 
 	private long id;
@@ -43,11 +46,11 @@ public class UploadRequestGroup {
 
 	private String body;
 
-	private java.util.Set<UploadRequest> uploadRequests;
+	private Set<UploadRequest> uploadRequests;
 
-	private java.util.Date creationDate;
+	private Date creationDate;
 
-	private java.util.Date modificationDate;
+	private Date modificationDate;
 
 	public UploadRequestGroup() {
 		super();
@@ -85,27 +88,27 @@ public class UploadRequestGroup {
 		this.uuid = uuid;
 	}
 
-	public java.util.Set<UploadRequest> getUploadRequests() {
+	public Set<UploadRequest> getUploadRequests() {
 		return uploadRequests;
 	}
 
-	public void setUploadRequests(java.util.Set<UploadRequest> uploadRequests) {
+	public void setUploadRequests(Set<UploadRequest> uploadRequests) {
 		this.uploadRequests = uploadRequests;
 	}
 
-	public java.util.Date getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(java.util.Date creationDate) {
+	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
 
-	public java.util.Date getModificationDate() {
+	public Date getModificationDate() {
 		return modificationDate;
 	}
 
-	public void setModificationDate(java.util.Date modificationDate) {
+	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
 }
