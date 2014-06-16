@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 
+import org.apache.xmlbeans.impl.xb.xmlconfig.Extensionconfig.Interface;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.business.service.MailContentBusinessService;

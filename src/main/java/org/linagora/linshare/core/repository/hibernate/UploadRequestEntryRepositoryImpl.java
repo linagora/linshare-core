@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -43,6 +42,7 @@ import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class UploadRequestEntryRepositoryImpl extends
@@ -62,15 +62,8 @@ public class UploadRequestEntryRepositoryImpl extends
 
 	@Override
 	public UploadRequestEntry findByUuid(String uuid) {
-		List<UploadRequestEntry> entries = findByCriteria(Restrictions.eq(
-				"uuid", uuid));
-		if (entries == null || entries.isEmpty()) {
-			return null;
-		} else if (entries.size() == 1) {
-			return entries.get(0);
-		} else {
-			throw new IllegalStateException("Id must be unique");
-		}
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"uuid", uuid)));
 	}
 
 	@Override
