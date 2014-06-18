@@ -65,4 +65,9 @@ public class UploadRequestHistoryBusinessServiceImpl implements
 			throws BusinessException {
 		return uploadRequestHistoryRepository.update(hist);
 	}
+
+	@Override
+	public void delete(UploadRequestHistory history) throws BusinessException {
+		uploadRequestHistoryRepository.delete(history);
+	}
 }

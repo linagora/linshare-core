@@ -34,6 +34,11 @@
 package org.linagora.linshare.core.service;
 
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
+import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestService {
@@ -45,4 +50,56 @@ public interface UploadRequestService {
 	UploadRequest updateRequest(UploadRequest req) throws BusinessException;
 
 	void deleteRequest(UploadRequest req) throws BusinessException;
+
+	UploadRequestEntry findRequestEntryByUuid(String uuid);
+
+	UploadRequestEntry createRequestEntry(UploadRequestEntry entry)
+			throws BusinessException;
+
+	UploadRequestEntry updateRequestEntry(UploadRequestEntry entry)
+			throws BusinessException;
+
+	void deleteRequestEntry(UploadRequestEntry entry) throws BusinessException;
+
+	UploadRequestGroup findRequestGroupByUuid(String uuid);
+
+	UploadRequestGroup createRequestGroup(UploadRequestGroup group)
+			throws BusinessException;
+
+	UploadRequestGroup updateRequestGroup(UploadRequestGroup group)
+			throws BusinessException;
+
+	void deleteRequestGroup(UploadRequestGroup group) throws BusinessException;
+
+	UploadRequestHistory findRequestHistoryByUuid(String uuid);
+
+	UploadRequestHistory createRequestHistory(UploadRequestHistory history)
+			throws BusinessException;
+
+	UploadRequestHistory updateRequestHistory(UploadRequestHistory history)
+			throws BusinessException;
+
+	void deleteRequestHistory(UploadRequestHistory history)
+			throws BusinessException;
+
+	UploadRequestTemplate findRequestTemplateByUuid(String uuid);
+
+	UploadRequestTemplate createRequestTemplate(UploadRequestTemplate template)
+			throws BusinessException;
+
+	UploadRequestTemplate updateRequestTemplate(UploadRequestTemplate template)
+			throws BusinessException;
+
+	void deleteRequestTemplate(UploadRequestTemplate template)
+			throws BusinessException;
+
+	UploadRequestUrl findRequestUrlByUuid(String uuid);
+
+	UploadRequestUrl createRequestUrl(UploadRequestUrl url)
+			throws BusinessException;
+
+	UploadRequestUrl updateRequestUrl(UploadRequestUrl url)
+			throws BusinessException;
+
+	void deleteRequestUrl(UploadRequestUrl url) throws BusinessException;
 }

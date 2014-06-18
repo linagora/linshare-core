@@ -65,4 +65,9 @@ public class UploadRequestUrlBusinessServiceImpl implements
 			throws BusinessException {
 		return uploadRequestUrlRepository.update(url);
 	}
+
+	@Override
+	public void delete(UploadRequestUrl url) throws BusinessException {
+		uploadRequestUrlRepository.delete(url);
+	}
 }
