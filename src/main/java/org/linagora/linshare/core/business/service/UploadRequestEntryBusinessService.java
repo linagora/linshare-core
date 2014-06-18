@@ -45,4 +45,6 @@ public interface UploadRequestEntryBusinessService {
 
 	UploadRequestEntry update(UploadRequestEntry entry)
 			throws BusinessException;
+
+	void delete(UploadRequestEntry entry) throws BusinessException;
 }

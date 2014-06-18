@@ -65,4 +65,9 @@ public class UploadRequestEntryBusinessServiceImpl implements
 			throws BusinessException {
 		return uploadRequestEntryRepository.update(entry);
 	}
+
+	@Override
+	public void delete(UploadRequestEntry entry) throws BusinessException {
+		uploadRequestEntryRepository.delete(entry);
+	}
 }

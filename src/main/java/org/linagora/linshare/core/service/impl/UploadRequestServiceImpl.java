@@ -40,13 +40,16 @@ import org.linagora.linshare.core.business.service.UploadRequestHistoryBusinessS
 import org.linagora.linshare.core.business.service.UploadRequestTemplateBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
+import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.UploadRequestRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.UploadRequestService;
 
-public class UploadRequestServiceImpl implements
-		UploadRequestService {
+public class UploadRequestServiceImpl implements UploadRequestService {
 
 	private final AbstractDomainService abstractDomainService;
 	private final UploadRequestBusinessService uploadRequestBusinessService;
@@ -91,8 +94,121 @@ public class UploadRequestServiceImpl implements
 	}
 
 	@Override
-	public void deleteRequest(UploadRequest req)
-			throws BusinessException {
+	public void deleteRequest(UploadRequest req) throws BusinessException {
 		uploadRequestBusinessService.delete(req);
+	}
+
+	@Override
+	public UploadRequestEntry findRequestEntryByUuid(String uuid) {
+		return uploadRequestEntryBusinessService.findByUuid(uuid);
+	}
+
+	@Override
+	public UploadRequestEntry createRequestEntry(UploadRequestEntry entry)
+			throws BusinessException {
+		return uploadRequestEntryBusinessService.create(entry);
+	}
+
+	@Override
+	public UploadRequestEntry updateRequestEntry(UploadRequestEntry entry)
+			throws BusinessException {
+		return uploadRequestEntryBusinessService.update(entry);
+	}
+
+	@Override
+	public void deleteRequestEntry(UploadRequestEntry entry)
+			throws BusinessException {
+		uploadRequestEntryBusinessService.delete(entry);
+	}
+
+	@Override
+	public UploadRequestGroup findRequestGroupByUuid(String uuid) {
+		return uploadRequestGroupBusinessService.findByUuid(uuid);
+	}
+
+	@Override
+	public UploadRequestGroup createRequestGroup(UploadRequestGroup group)
+			throws BusinessException {
+		return uploadRequestGroupBusinessService.create(group);
+	}
+
+	@Override
+	public UploadRequestGroup updateRequestGroup(UploadRequestGroup group)
+			throws BusinessException {
+		return uploadRequestGroupBusinessService.update(group);
+	}
+
+	@Override
+	public void deleteRequestGroup(UploadRequestGroup group)
+			throws BusinessException {
+		uploadRequestGroupBusinessService.delete(group);
+	}
+
+	@Override
+	public UploadRequestHistory findRequestHistoryByUuid(String uuid) {
+		return uploadRequestHistoryBusinessService.findByUuid(uuid);
+	}
+
+	@Override
+	public UploadRequestHistory createRequestHistory(
+			UploadRequestHistory history) throws BusinessException {
+		return uploadRequestHistoryBusinessService.create(history);
+	}
+
+	@Override
+	public UploadRequestHistory updateRequestHistory(
+			UploadRequestHistory history) throws BusinessException {
+		return uploadRequestHistoryBusinessService.update(history);
+	}
+
+	@Override
+	public void deleteRequestHistory(UploadRequestHistory history)
+			throws BusinessException {
+		uploadRequestHistoryBusinessService.delete(history);
+	}
+
+	@Override
+	public UploadRequestTemplate findRequestTemplateByUuid(String uuid) {
+		return uploadRequestTemplateBusinessService.findByUuid(uuid);
+	}
+
+	@Override
+	public UploadRequestTemplate createRequestTemplate(
+			UploadRequestTemplate template) throws BusinessException {
+		return uploadRequestTemplateBusinessService.create(template);
+	}
+
+	@Override
+	public UploadRequestTemplate updateRequestTemplate(
+			UploadRequestTemplate template) throws BusinessException {
+		return uploadRequestTemplateBusinessService.update(template);
+	}
+
+	@Override
+	public void deleteRequestTemplate(UploadRequestTemplate template)
+			throws BusinessException {
+		uploadRequestTemplateBusinessService.delete(template);
+	}
+
+	@Override
+	public UploadRequestUrl findRequestUrlByUuid(String uuid) {
+		return uploadRequestUrlBusinessService.findByUuid(uuid);
+	}
+
+	@Override
+	public UploadRequestUrl createRequestUrl(UploadRequestUrl url)
+			throws BusinessException {
+		return uploadRequestUrlBusinessService.create(url);
+	}
+
+	@Override
+	public UploadRequestUrl updateRequestUrl(UploadRequestUrl url)
+			throws BusinessException {
+		return uploadRequestUrlBusinessService.update(url);
+	}
+
+	@Override
+	public void deleteRequestUrl(UploadRequestUrl url) throws BusinessException {
+		uploadRequestUrlBusinessService.delete(url);
 	}
 }

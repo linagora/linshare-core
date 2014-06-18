@@ -45,4 +45,6 @@ public interface UploadRequestGroupBusinessService {
 
 	UploadRequestGroup update(UploadRequestGroup group)
 			throws BusinessException;
+
+	void delete(UploadRequestGroup group) throws BusinessException;
 }

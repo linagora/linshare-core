@@ -45,4 +45,6 @@ public interface UploadRequestHistoryBusinessService {
 
 	UploadRequestHistory update(UploadRequestHistory hist)
 			throws BusinessException;
+
+	void delete(UploadRequestHistory history) throws BusinessException;
 }

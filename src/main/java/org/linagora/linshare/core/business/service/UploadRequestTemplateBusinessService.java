@@ -45,4 +45,6 @@ public interface UploadRequestTemplateBusinessService {
 
 	UploadRequestTemplate update(UploadRequestTemplate template)
 			throws BusinessException;
+
+	void delete(UploadRequestTemplate template) throws BusinessException;
 }

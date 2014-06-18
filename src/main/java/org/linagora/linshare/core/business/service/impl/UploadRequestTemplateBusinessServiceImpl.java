@@ -65,4 +65,9 @@ public class UploadRequestTemplateBusinessServiceImpl implements
 			throws BusinessException {
 		return uploadRequestTemplateRepository.update(template);
 	}
+
+	@Override
+	public void delete(UploadRequestTemplate template) throws BusinessException {
+		uploadRequestTemplateRepository.delete(template);
+	}
 }
