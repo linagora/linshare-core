@@ -257,11 +257,11 @@
 
 	<bean name="uploadRequestService" class="org.linagora.linshare.core.service.impl.UploadRequestServiceImpl">
 		<constructor-arg ref="abstractDomainService" />
-		<constructor-arg ref="UploadRequestBusinessService" />
-		<constructor-arg ref="UploadRequestEntryBusinessService" />
-		<constructor-arg ref="UploadRequestGroupBusinessService" />
-		<constructor-arg ref="UploadRequestHistoryBusinessService" />
-		<constructor-arg ref="UploadRequestTemplateBusinessService" />
-		<constructor-arg ref="UploadRequestUrlBusinessService" />
+		<constructor-arg ref="uploadRequestBusinessService" />
+		<constructor-arg ref="uploadRequestEntryBusinessService" />
+		<constructor-arg ref="uploadRequestGroupBusinessService" />
+		<constructor-arg ref="uploadRequestHistoryBusinessService" />
+		<constructor-arg ref="uploadRequestTemplateBusinessService" />
+		<constructor-arg ref="uploadRequestUrlBusinessService" />
 	</bean>
 </beans>
