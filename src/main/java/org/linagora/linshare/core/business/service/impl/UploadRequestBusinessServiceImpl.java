@@ -41,7 +41,7 @@ import org.linagora.linshare.core.repository.UploadRequestRepository;
 public class UploadRequestBusinessServiceImpl implements
 		UploadRequestBusinessService {
 
-	private UploadRequestRepository uploadRequestRepository;
+	private final UploadRequestRepository uploadRequestRepository;
 
 	public UploadRequestBusinessServiceImpl(
 			final UploadRequestRepository uploadRequestRepository) {
@@ -64,5 +64,10 @@ public class UploadRequestBusinessServiceImpl implements
 	public UploadRequest update(UploadRequest req)
 			throws BusinessException {
 		return uploadRequestRepository.update(req);
+	}
+
+	@Override
+	public void delete(UploadRequest req) throws BusinessException {
+		uploadRequestRepository.delete(req);
 	}
 }
