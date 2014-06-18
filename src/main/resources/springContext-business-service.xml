@@ -112,22 +112,22 @@
 	</bean>
 
     <bean id="uploadRequestBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestBusinessServiceImpl">
-        <constructor-arg ref="uploadrequestrepository" />
+        <constructor-arg ref="uploadRequestRepository" />
     </bean>
-    <bean id="uploadrequestentrybusinessservice" class="org.linagora.linshare.core.business.service.impl.uploadrequestentrybusinessserviceimpl">
-        <constructor-arg ref="uploadrequestentryrepository" />
+    <bean id="uploadRequestEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestEntryBusinessServiceImpl">
+        <constructor-arg ref="uploadRequestEntryRepository" />
     </bean>
-    <bean id="uploadrequestgroupbusinessservice" class="org.linagora.linshare.core.business.service.impl.uploadrequestgroupbusinessserviceimpl">
-        <constructor-arg ref="uploadrequestgrouprepository" />
+    <bean id="uploadRequestGroupBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestGroupBusinessServiceImpl">
+        <constructor-arg ref="uploadRequestGroupRepository" />
     </bean>
-    <bean id="uploadrequesthistorybusinessservice" class="org.linagora.linshare.core.business.service.impl.uploadrequesthistorybusinessserviceimpl">
-        <constructor-arg ref="uploadrequesthistoryrepository" />
+    <bean id="uploadRequestHistoryBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestHistoryBusinessServiceImpl">
+        <constructor-arg ref="uploadRequestHistoryRepository" />
     </bean>
-    <bean id="uploadrequesttemplatebusinessservice" class="org.linagora.linshare.core.business.service.impl.uploadrequesttemplatebusinessserviceimpl">
-        <constructor-arg ref="uploadrequesttemplaterepository" />
+    <bean id="uploadRequestTemplateBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestTemplateBusinessServiceImpl">
+        <constructor-arg ref="uploadRequestTemplateRepository" />
     </bean>
-    <bean id="uploadrequesturlbusinessservice" class="org.linagora.linshare.core.business.service.impl.uploadrequesturlbusinessserviceimpl">
-        <constructor-arg ref="uploadrequesturlrepository" />
+    <bean id="uploadRequestUrlBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestUrlBusinessServiceImpl">
+        <constructor-arg ref="uploadRequestUrlRepository" />
     </bean>
 
 </beans>
