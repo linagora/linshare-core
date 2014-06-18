@@ -33,6 +33,21 @@
  */
 package org.linagora.linshare.core.facade;
 
+import org.linagora.linshare.core.domain.vo.UploadRequestVo;
+import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
+
 public interface UploadRequestFacade {
-	
+
+	UploadRequestVo findRequestByUuid(UserVo actor, String uuid);
+
+	UploadRequestVo createRequest(UserVo actor, UploadRequestVo req)
+			throws BusinessException;
+
+	UploadRequestVo updateRequest(UserVo actor, UploadRequestVo req)
+			throws BusinessException;
+
+	void deleteRequest(UserVo actor, UploadRequestVo req)
+			throws BusinessException;
+
 }
