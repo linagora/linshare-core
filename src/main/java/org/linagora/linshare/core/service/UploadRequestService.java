@@ -31,18 +31,18 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
+package org.linagora.linshare.core.service;
 
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface UploadRequestBusinessService {
+public interface UploadRequestService {
 
-	UploadRequest findByUuid(String uuid);
+	UploadRequest findRequestByUuid(String uuid);
 
-	UploadRequest create(UploadRequest req) throws BusinessException;
+	UploadRequest createRequest(UploadRequest req) throws BusinessException;
 
-	UploadRequest update(UploadRequest req) throws BusinessException;
+	UploadRequest updateRequest(UploadRequest req) throws BusinessException;
 
-	void delete(UploadRequest req) throws BusinessException;
+	void deleteRequest(UploadRequest req) throws BusinessException;
 }

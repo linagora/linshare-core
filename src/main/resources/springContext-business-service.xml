@@ -111,4 +111,23 @@
 		<constructor-arg ref="domainBusinessService" />
 	</bean>
 
+    <bean id="uploadRequestBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestBusinessServiceImpl">
+        <constructor-arg ref="uploadrequestrepository" />
+    </bean>
+    <bean id="uploadrequestentrybusinessservice" class="org.linagora.linshare.core.business.service.impl.uploadrequestentrybusinessserviceimpl">
+        <constructor-arg ref="uploadrequestentryrepository" />
+    </bean>
+    <bean id="uploadrequestgroupbusinessservice" class="org.linagora.linshare.core.business.service.impl.uploadrequestgroupbusinessserviceimpl">
+        <constructor-arg ref="uploadrequestgrouprepository" />
+    </bean>
+    <bean id="uploadrequesthistorybusinessservice" class="org.linagora.linshare.core.business.service.impl.uploadrequesthistorybusinessserviceimpl">
+        <constructor-arg ref="uploadrequesthistoryrepository" />
+    </bean>
+    <bean id="uploadrequesttemplatebusinessservice" class="org.linagora.linshare.core.business.service.impl.uploadrequesttemplatebusinessserviceimpl">
+        <constructor-arg ref="uploadrequesttemplaterepository" />
+    </bean>
+    <bean id="uploadrequesturlbusinessservice" class="org.linagora.linshare.core.business.service.impl.uploadrequesturlbusinessserviceimpl">
+        <constructor-arg ref="uploadrequesturlrepository" />
+    </bean>
+
 </beans>

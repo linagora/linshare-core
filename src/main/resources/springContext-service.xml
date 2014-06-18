@@ -241,7 +241,7 @@
 		<constructor-arg ref="logEntryService" />
 	</bean>
 
-    <bean name="mailingListService" class="org.linagora.linshare.core.service.impl.MailingListServiceImpl">
+	<bean name="mailingListService" class="org.linagora.linshare.core.service.impl.MailingListServiceImpl">
 		<constructor-arg ref="mailingListBusinessService" />
 		<constructor-arg ref="userService" />
 	</bean>
@@ -253,5 +253,15 @@
 		<constructor-arg ref="mailFooterBusinessService" />
 		<constructor-arg ref="mailLayoutBusinessService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
+	</bean>
+
+	<bean name="uploadRequestService" class="org.linagora.linshare.core.service.impl.UploadRequestServiceImpl">
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="UploadRequestBusinessService" />
+		<constructor-arg ref="UploadRequestEntryBusinessService" />
+		<constructor-arg ref="UploadRequestGroupBusinessService" />
+		<constructor-arg ref="UploadRequestHistoryBusinessService" />
+		<constructor-arg ref="UploadRequestTemplateBusinessService" />
+		<constructor-arg ref="UploadRequestUrlBusinessService" />
 	</bean>
 </beans>

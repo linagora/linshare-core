@@ -41,7 +41,7 @@ import org.linagora.linshare.core.repository.UploadRequestGroupRepository;
 public class UploadRequestGroupBusinessServiceImpl implements
 		UploadRequestGroupBusinessService {
 
-	private UploadRequestGroupRepository uploadRequestGroupRepository;
+	private final UploadRequestGroupRepository uploadRequestGroupRepository;
 
 	public UploadRequestGroupBusinessServiceImpl(
 			final UploadRequestGroupRepository uploadRequestGroupRepository) {

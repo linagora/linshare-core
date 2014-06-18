@@ -41,7 +41,7 @@ import org.linagora.linshare.core.repository.UploadRequestHistoryRepository;
 public class UploadRequestHistoryBusinessServiceImpl implements
 		UploadRequestHistoryBusinessService {
 
-	private UploadRequestHistoryRepository uploadRequestHistoryRepository;
+	private final UploadRequestHistoryRepository uploadRequestHistoryRepository;
 
 	public UploadRequestHistoryBusinessServiceImpl(
 			final UploadRequestHistoryRepository uploadRequestHistoryRepository) {
