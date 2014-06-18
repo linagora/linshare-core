@@ -38,27 +38,34 @@ import java.util.UUID;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.webservice.dto.UserDto;
 
-/** Internal user.
+/**
+ * Internal user.
  */
 public class Internal extends User {
 
-    /** Default constructor for hibernate. */
+	/** Default constructor for hibernate. */
 	public Internal() {
-        super();
-        lsUuid= UUID.randomUUID().toString();
-    }
+		super();
+		lsUuid = UUID.randomUUID().toString();
+	}
 
-    /** Constructor.
-     * @param firstName first name.
-     * @param lastName last name.
-     * @param mail email.
-     * @param ldapUid 
-     */
-    public Internal(String firstName, String lastName, String mail, String ldapUid) {
-        super(firstName, lastName, mail);
-        this.ldapUid = ldapUid;
-        this.lsUuid = UUID.randomUUID().toString();
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param firstName
+	 *            first name.
+	 * @param lastName
+	 *            last name.
+	 * @param mail
+	 *            email.
+	 * @param ldapUid
+	 */
+	public Internal(String firstName, String lastName, String mail,
+			String ldapUid) {
+		super(firstName, lastName, mail);
+		this.ldapUid = ldapUid;
+		this.lsUuid = UUID.randomUUID().toString();
+	}
 
 	public Internal(UserDto userDto) {
 		super(userDto);
@@ -68,11 +75,11 @@ public class Internal extends User {
 	public AccountType getAccountType() {
 		return AccountType.INTERNAL;
 	}
-	
+
 	@Override
 	public String getAccountReprentation() {
-		return this.firstName + " " + this.lastName + "(" + lsUuid + ", " + this.ldapUid + ")";
+		return this.firstName + " " + this.lastName + "(" + lsUuid + ", "
+				+ this.ldapUid + ")";
 	}
-
 
 }

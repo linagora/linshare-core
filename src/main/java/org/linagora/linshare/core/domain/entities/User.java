@@ -41,55 +41,47 @@ import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.webservice.dto.UserDto;
 
-
 public abstract class User extends Account {
-	
+
 	protected Set<ThreadMember> myThreads = new java.util.HashSet<ThreadMember>();
-	
+
 	protected String firstName;
-	
+
 	protected String lastName;
-	
+
 	protected String mail;
-	
+
+	// NOT IMPLEMENTED YET
 	protected Date notAfter;
-	
+
+	// NOT IMPLEMENTED YET
 	protected Date notBefore;
-	
-	protected Date expirationDate;
-	
+
 	protected String ldapUid;
-	
+
 	protected boolean canUpload;
-	
-	protected String comment;
-	
-	protected boolean restricted;
-	
+
 	protected TechnicalAccountPermission technicalAccountPermission;
-	
+
 	/** If the user is allowed to create guest */
 	protected boolean canCreateGuest;
 
-	
 	public User() {
 		this.firstName = null;
 		this.lastName = null;
 		this.mail = null;
-		
+
 		this.lsUuid = null;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 		this.role = Role.SIMPLE;
 		this.enable = true;
 		this.destroyed = false;
-		this.comment = "";
 		this.canUpload = true;
 		this.canCreateGuest = true;
-		this.restricted = false;
 	}
-	
-	public User(String firstName, String lastName, String mail) { 
+
+	public User(String firstName, String lastName, String mail) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.mail = mail;
@@ -99,10 +91,8 @@ public abstract class User extends Account {
 		this.role = Role.SIMPLE;
 		this.enable = true;
 		this.destroyed = false;
-		this.comment = "";
 		this.canUpload = true;
 		this.canCreateGuest = true;
-		this.restricted = false;
 	}
 
 	public User(UserDto userDto) {
@@ -112,61 +102,53 @@ public abstract class User extends Account {
 		this.mail = userDto.getMail();
 		this.role = Role.valueOf(userDto.getRole());
 		this.canUpload = userDto.getCanUpload();
-		this.canCreateGuest = userDto.isCanCreateGuest();
+		this.canCreateGuest = userDto.getCanCreateGuest();
 	}
-	
+
 	public void setFirstName(String value) {
 		this.firstName = StringUtils.capitalize(value);
 	}
-	
+
 	public String getFirstName() {
 		return firstName;
 	}
-	
+
 	public void setLastName(String value) {
 		this.lastName = StringUtils.capitalize(value);
 	}
-	
+
 	public String getLastName() {
 		return lastName;
 	}
-	
+
 	public void setMail(String value) {
 		this.mail = value;
 	}
-	
+
 	public String getMail() {
 		return mail;
 	}
-	
+
 	public String getLogin() {
 		return mail;
 	}
-	
+
 	public void setNotAfter(Date value) {
 		this.notAfter = value;
 	}
-	
+
 	public Date getNotAfter() {
 		return notAfter;
 	}
-	
+
 	public void setNotBefore(Date value) {
 		this.notBefore = value;
 	}
-	
+
 	public Date getNotBefore() {
 		return notBefore;
 	}
-	
-	public void setExpirationDate(Date value) {
-		this.expirationDate = value;
-	}
-	
-	public Date getExpirationDate() {
-		return expirationDate;
-	}
-	
+
 	public String getLdapUid() {
 		return ldapUid;
 	}
@@ -178,35 +160,23 @@ public abstract class User extends Account {
 	public void setCanUpload(boolean value) {
 		this.canUpload = value;
 	}
-	
+
 	public boolean getCanUpload() {
 		return canUpload;
 	}
-	
-	public void setComment(String value) {
-		this.comment = value;
-	}
-	
-	public String getComment() {
-		return comment;
-	}
-	
-	public void setRestricted(boolean value) {
-		this.restricted = value;
-	}
-	
+
 	public boolean isRestricted() {
-		return restricted;
+		return false;
 	}
-	
+
 	public void setTechnicalAccountPermission(TechnicalAccountPermission value) {
 		this.technicalAccountPermission = value;
 	}
-	
+
 	public TechnicalAccountPermission getTechnicalAccountPermission() {
 		return technicalAccountPermission;
 	}
-	
+
 	public Set<ThreadMember> getMyThreads() {
 		return myThreads;
 	}
@@ -214,11 +184,11 @@ public abstract class User extends Account {
 	public void setMyThreads(Set<ThreadMember> myThreads) {
 		this.myThreads = myThreads;
 	}
-	
+
 	public boolean getCanCreateGuest() {
 		return canCreateGuest;
 	}
-	
+
 	public void setCanCreateGuest(Boolean canCreateGuest) {
 		this.canCreateGuest = canCreateGuest;
 	}

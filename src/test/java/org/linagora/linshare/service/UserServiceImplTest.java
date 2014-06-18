@@ -72,6 +72,7 @@ import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.slf4j.Logger;
@@ -83,8 +84,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.subethamail.wiser.Wiser;
 
-@ContextConfiguration(locations = { 
-		"classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-service.xml",
@@ -92,11 +92,12 @@ import org.subethamail.wiser.Wiser;
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-startopendj.xml",
 		"classpath:springContext-jackRabbit.xml",
-		"classpath:springContext-test.xml"
-		})
-public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
+		"classpath:springContext-test.xml" })
+public class UserServiceImplTest extends
+		AbstractTransactionalJUnit4SpringContextTests {
 
-	private static Logger logger = LoggerFactory.getLogger(UserServiceImplTest.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(UserServiceImplTest.class);
 
 	@Autowired
 	private AccountService accountService;
@@ -130,6 +131,9 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 	@Autowired
 	private DomainAccessPolicyRepository domainAccessRepository;
 
+	@Autowired
+	private GuestService guestService;
+
 	private Wiser wiser;
 
 	public UserServiceImplTest() {
@@ -138,12 +142,10 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 
 	}
 
-
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
-
 
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -156,31 +158,28 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
-
-
 	@Test
-	public void testCreateGuest() throws BusinessException{
+	public void testCreateGuest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
+		AbstractDomain domain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
 
 		Functionality fonc = new Functionality(FunctionalityNames.GUESTS,
-				false,
-				new Policy(Policies.ALLOWED, true),
-				new Policy(Policies.ALLOWED, true),
-				domain);
+				false, new Policy(Policies.ALLOWED, true), new Policy(
+						Policies.ALLOWED, true), domain);
 
 		functionalityRepository.create(fonc);
 		domain.addFunctionality(fonc);
 
-
-		Internal user = new Internal("John","Doe","user1@linpki.org", null);
+		Internal user = new Internal("John", "Doe", "user1@linpki.org", null);
 		user.setDomain(domain);
 		user.setCanCreateGuest(true);
 		userService.saveOrUpdateUser(user);
 
-		try{
-			userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user.getLsUuid(), user.getDomainId());
-		}catch(TechnicalException e){
+		try {
+			Guest guest = new Guest("Guest", "Doe", "guest1@linpki.org");
+			guestService.create(user, guest, user.getLsUuid());
+		} catch (TechnicalException e) {
 			logger.info("Impossible to send mail, normal in test environment");
 		}
 		Assert.assertNotNull(userRepository.findByMail("guest1@linpki.org"));
@@ -189,57 +188,65 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 	}
 
 	@Test
-	public void testFindUserInDB(){
+	public void testFindUserInDB() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
-		Internal user = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain domain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
+		Internal user = new Internal("John", "Doe", "user1@linpki.org", null);
 		user.setDomain(domain);
 		logger.info("Save user in DB");
 		userService.saveOrUpdateUser(user);
 
-		Assert.assertNotNull(userService.findUserInDB(LoadingServiceTestDatas.sqlSubDomain, "user1@linpki.org"));
+		Assert.assertNotNull(userService.findUserInDB(
+				LoadingServiceTestDatas.sqlSubDomain, "user1@linpki.org"));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testFindUnkownUserInDB(){
+	public void testFindUnkownUserInDB() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
-		Internal user = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain domain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
+		Internal user = new Internal("John", "Doe", "user1@linpki.org", null);
 		user.setDomain(domain);
 		logger.info("Save user in DB");
 		userService.saveOrUpdateUser(user);
 
-		Assert.assertTrue(userService.findUnkownUserInDB("user1@linpki.org").equals(user));
+		Assert.assertTrue(userService.findUnkownUserInDB("user1@linpki.org")
+				.equals(user));
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testFindUsersInDB(){
+	public void testFindUsersInDB() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
-		Internal user = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain domain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
+		Internal user = new Internal("John", "Doe", "user1@linpki.org", null);
 		user.setDomain(domain);
 		logger.info("Save user in DB");
 		userService.saveOrUpdateUser(user);
 
-		Assert.assertTrue(userService.findUsersInDB(LoadingServiceTestDatas.sqlSubDomain).contains(user));
+		Assert.assertTrue(userService.findUsersInDB(
+				LoadingServiceTestDatas.sqlSubDomain).contains(user));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testDeleteUser() throws BusinessException{
+	public void testDeleteUser() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		AbstractDomain subDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
+		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setRole(Role.ADMIN);
-		Internal user2 = new Internal("Jane","Smith","user2@linpki.org", null);
+		Internal user2 = new Internal("Jane", "Smith", "user2@linpki.org", null);
 		user2.setDomain(subDomain);
 
 		logger.info("Save users in DB");
@@ -248,30 +255,34 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 
 		try {
 			logger.info("John Doe trying to delete Jane Smith");
-			User u = userService.findUserInDB(LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org");
+			User u = userService.findUserInDB(
+					LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org");
 			userService.deleteUser(user1, u.getLsUuid());
 		} catch (BusinessException e) {
 			Assert.fail(e.getMessage());
 		}
 
-		Assert.assertNull(userService.findUserInDB(LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org"));
-		Assert.assertNotNull(userService.findUserInDB(LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org"));
+		Assert.assertNull(userService.findUserInDB(
+				LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org"));
+		Assert.assertNotNull(userService.findUserInDB(
+				LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org"));
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-
 	@Test
-	public void testDeleteAllUsersFromDomain() throws BusinessException{
+	public void testDeleteAllUsersFromDomain() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		AbstractDomain subDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
+		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setRole(Role.ADMIN);
-		Internal user2 = new Internal("Jane","Smith","user2@linpki.org", null);
+		Internal user2 = new Internal("Jane", "Smith", "user2@linpki.org", null);
 		user2.setDomain(subDomain);
-		Internal user3 = new Internal("Foo","Bar","user3@linpki.org", null);
+		Internal user3 = new Internal("Foo", "Bar", "user3@linpki.org", null);
 		user3.setDomain(subDomain);
 
 		logger.info("Save users in DB");
@@ -281,56 +292,62 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 
 		try {
 			logger.info("John Doe trying to delete Jane Smith");
-			userService.deleteAllUsersFromDomain(user1, subDomain.getIdentifier());
+			userService.deleteAllUsersFromDomain(user1,
+					subDomain.getIdentifier());
 		} catch (BusinessException e) {
 			Assert.fail(e.getMessage());
 		}
 
-		Assert.assertNull(userService.findUserInDB(LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org"));
-		Assert.assertNull(userService.findUserInDB(LoadingServiceTestDatas.sqlSubDomain, "user3@linpki.org"));
+		Assert.assertNull(userService.findUserInDB(
+				LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org"));
+		Assert.assertNull(userService.findUserInDB(
+				LoadingServiceTestDatas.sqlSubDomain, "user3@linpki.org"));
 
-		Assert.assertNotNull(userService.findUserInDB(LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org"));
+		Assert.assertNotNull(userService.findUserInDB(
+				LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org"));
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testIsAdminForThisUser(){
+	public void testIsAdminForThisUser() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		AbstractDomain subDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
+		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setRole(Role.ADMIN);
-		Internal user2 = new Internal("Jane","Smith","user2@linpki.org", null);
+		Internal user2 = new Internal("Jane", "Smith", "user2@linpki.org", null);
 		user2.setDomain(subDomain);
 
-		Assert.assertTrue(userService.isAdminForThisUser(user1, user2.getDomainId(),user2.getLsUuid()));
+		Assert.assertTrue(userService.isAdminForThisUser(user1, user2));
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-
 	@Test
-	public void testCleanExpiredGuestAcccounts() throws IllegalArgumentException, BusinessException, ParseException{
+	public void testCleanExpiredGuestAcccounts()
+			throws IllegalArgumentException, BusinessException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
+		AbstractDomain domain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
 
 		Functionality fonc = new Functionality(FunctionalityNames.GUESTS,
-				false,
-				new Policy(Policies.ALLOWED, true),
-				new Policy(Policies.ALLOWED, true),
-				domain);
+				false, new Policy(Policies.ALLOWED, true), new Policy(
+						Policies.ALLOWED, true), domain);
 
 		functionalityRepository.create(fonc);
 		domain.addFunctionality(fonc);
 
-		Internal user = new Internal("John","Doe","user1@linpki.org", null);
+		Internal user = new Internal("John", "Doe", "user1@linpki.org", null);
 		user.setDomain(domain);
 		user.setCanCreateGuest(true);
 		userService.saveOrUpdateUser(user);
 
-		Guest guest = userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user.getLsUuid(), user.getDomainId());
+		Guest guest = new Guest("Guest", "Doe", "guest1@linpki.org");
+		guestService.create(user, guest, user.getLsUuid());
 		Assert.assertNotNull(userRepository.findByMail("guest1@linpki.org"));
 
 		DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -338,43 +355,47 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		Date date = dfm.parse("2007-02-26 20:15:00");
 
 		guest.setExpirationDate(date);
-		userService.cleanExpiredGuestAcccounts(userRepository.getSystemAccount());
+		guestService.cleanExpiredGuests(userRepository.getSystemAccount());
 		Assert.assertNull(userRepository.findByMail("guest1@linpki.org"));
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testSearchUser() throws BusinessException{
+	public void testSearchUser() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		AbstractDomain subDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
+		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setRole(Role.ADMIN);
-		Internal user2 = new Internal("Jane","Smith","user2@linpki.org", null);
+		Internal user2 = new Internal("Jane", "Smith", "user2@linpki.org", null);
 		user2.setDomain(subDomain);
 		userService.saveOrUpdateUser(user1);
 		userService.saveOrUpdateUser(user2);
-		Assert.assertTrue(userService.searchUser(user2.getMail(), user2.getFirstName(), user2.getLastName(), AccountType.INTERNAL, user1).get(0).getMail().equals(user2.getMail()));
+		Assert.assertTrue(userService
+				.searchUser(user2.getMail(), user2.getFirstName(),
+						user2.getLastName(), AccountType.INTERNAL, user1)
+				.get(0).getMail().equals(user2.getMail()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testUpdateGuest()throws BusinessException{
+	public void testUpdateGuest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
+		AbstractDomain subDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
 		Functionality fonc = new Functionality(FunctionalityNames.GUESTS,
-				false,
-				new Policy(Policies.ALLOWED, true),
-				new Policy(Policies.ALLOWED, true),
-				subDomain);
+				false, new Policy(Policies.ALLOWED, true), new Policy(
+						Policies.ALLOWED, true), subDomain);
 
 		functionalityRepository.create(fonc);
 		subDomain.addFunctionality(fonc);
 
-		User user2 = new Internal("Jane","Smith","user2@linpki.org", null);
+		User user2 = new Internal("Jane", "Smith", "user2@linpki.org", null);
 		user2.setDomain(subDomain);
 		user2.setCanCreateGuest(true);
 		user2.setRole(Role.SYSTEM);
@@ -383,34 +404,40 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 
 		UserVo userVo2 = new UserVo(user2);
 
-		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		AbstractDomain guestDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		guestDomain.setDefaultTapestryLocale("en");
 
-		//create guest
-		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
-		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
+		// create guest
+		Guest guest = new Guest("Foo", "Bar", "user3@linpki.org");
+		guest.setDomain(abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest.setOwner(user2);
 		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest);
 
-		userService.updateGuest(guest.getLsUuid(), LoadingServiceTestDatas.sqlGuestDomain,"user3@linpki.org","Foo", "Bar", false, false, userVo2);
+		guest.setCanCreateGuest(false);
+		guestService.update(user2, guest, user2.getLsUuid());
 		Assert.assertFalse(guest.getCanCreateGuest());
-		userService.updateGuest(guest.getLsUuid(), LoadingServiceTestDatas.sqlGuestDomain,"user3@linpki.org","Foo", "Bar", true, true, userVo2);
+		guest.setCanCreateGuest(true);
+		guestService.update(user2, guest, user2.getLsUuid());
 		Assert.assertTrue(guest.getCanCreateGuest());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testUpdateUserRole() throws BusinessException{
+	public void testUpdateUserRole() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		AbstractDomain subDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
+		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setRole(Role.SYSTEM);
 
-		User user2 = new Internal("Jane","Smith","user2@linpki.org", null);
+		User user2 = new Internal("Jane", "Smith", "user2@linpki.org", null);
 		user2.setDomain(subDomain);
 		user2.setCanCreateGuest(true);
 		user2.setRole(Role.SIMPLE);
@@ -420,133 +447,149 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 
 		UserVo userVo = new UserVo(user1);
 
-		Assert.assertTrue(user2.getRole()==Role.SIMPLE);
-		userService.updateUserRole(user2.getLsUuid(), LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org", Role.ADMIN, userVo);
-		Assert.assertTrue(user2.getRole()==Role.ADMIN);
+		Assert.assertTrue(user2.getRole() == Role.SIMPLE);
+		userService.updateUserRole(user2.getLsUuid(),
+				LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org",
+				Role.ADMIN, userVo);
+		Assert.assertTrue(user2.getRole() == Role.ADMIN);
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-
 	@Test
-	public void testChangePassword() throws BusinessException{
+	public void testChangePassword() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Guest user1 = new Guest("John","Doe","user1@linpki.org");
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		Guest user1 = new Guest("John", "Doe", "user1@linpki.org");
 		user1.setDomain(rootDomain);
 
 		String oldPassword = "password";
 
-		user1.setPassword(
-				HashUtils.hashSha1withBase64(oldPassword.getBytes()));
+		user1.setPassword(HashUtils.hashSha1withBase64(oldPassword.getBytes()));
 
 		userService.saveOrUpdateUser(user1);
 		String newPassword = "newPassword";
-		Assert.assertTrue(user1.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes())));
-		userService.changePassword(user1.getLsUuid(), "user1@linpki.org", oldPassword, newPassword);
-		Assert.assertTrue(user1.getPassword().equals(HashUtils.hashSha1withBase64(newPassword.getBytes())));
+		Assert.assertTrue(user1.getPassword().equals(
+				HashUtils.hashSha1withBase64(oldPassword.getBytes())));
+		userService.changePassword(user1.getLsUuid(), "user1@linpki.org",
+				oldPassword, newPassword);
+		Assert.assertTrue(user1.getPassword().equals(
+				HashUtils.hashSha1withBase64(newPassword.getBytes())));
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testResetPassword() throws BusinessException{
+	public void testResetPassword() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
 
 		userService.saveOrUpdateUser(user1);
 
-		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		AbstractDomain guestDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		guestDomain.setDefaultTapestryLocale("en");
 
-		//create guest
-		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
-		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
+		// create guest
+		Guest guest = new Guest("Foo", "Bar", "user3@linpki.org");
+		guest.setDomain(abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest.setOwner(user1);
 		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		String oldPassword = "password222";
 
-		guest.setPassword(
-				HashUtils.hashSha1withBase64(oldPassword.getBytes()));
+		guest.setPassword(HashUtils.hashSha1withBase64(oldPassword.getBytes()));
 
 		guestRepository.create(guest);
 		userService.resetPassword(guest.getLsUuid(), "user3@linpki.org");
-		Assert.assertFalse(guest.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes())));
+		Assert.assertFalse(guest.getPassword().equals(
+				HashUtils.hashSha1withBase64(oldPassword.getBytes())));
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testRemoveGuestContactRestriction() throws IllegalArgumentException, BusinessException{
+	public void testRemoveGuestContactRestriction()
+			throws IllegalArgumentException, BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
 
 		userService.saveOrUpdateUser(user1);
 
-		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		AbstractDomain guestDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		guestDomain.setDefaultTapestryLocale("en");
 
-		//create guest
-		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
-		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
+		// create guest
+		Guest guest = new Guest("Foo", "Bar", "user3@linpki.org");
+		guest.setDomain(abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest.setOwner(user1);
 		guest.setRestricted(true);
 		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest);
 		Assert.assertTrue(guest.isRestricted());
-		userService.removeGuestContactRestriction(guest.getLsUuid());
+		guestService.removeContactRestriction(user1, guest.getLsUuid());
 		Assert.assertFalse(guest.isRestricted());
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-
 	@Test
-	public void testAddGuestContactRestriction() throws BusinessException{
+	public void testAddGuestContactRestriction() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
 
 		userService.saveOrUpdateUser(user1);
 
-		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		AbstractDomain guestDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		guestDomain.setDefaultTapestryLocale("en");
 
-		//create guest
-		Guest guest2 = new Guest("Jane","Smith","user2@linpki.org");
-		guest2.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
+		// create guest
+		Guest guest2 = new Guest("Jane", "Smith", "user2@linpki.org");
+		guest2.setDomain(abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest2.setOwner(user1);
 		guest2.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest2.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest2);
 
-		//create guest
-		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
-		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
+		// create guest
+		Guest guest = new Guest("Foo", "Bar", "user3@linpki.org");
+		guest.setDomain(abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 
 		guest.setOwner(user1);
 		guest.setRestricted(true);
 		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest);
-		userService.addGuestContactRestriction(guest.getLsUuid(), guest2.getLsUuid());
-		List<AllowedContact> listAllowedContact= allowedContactRepository.findByOwner(guest);
+		guestService.addRestrictedContact(user1, guest.getLsUuid(), guest2.getLsUuid());
+		List<AllowedContact> listAllowedContact = allowedContactRepository
+				.findByOwner(guest);
 		boolean test = false;
 		for (AllowedContact allowedContact : listAllowedContact) {
-			if(allowedContact.getContact().getLsUuid().equals(guest2.getLsUuid())){
-				test=true;
-			}	
+			if (allowedContact.getContact().getLsUuid()
+					.equals(guest2.getLsUuid())) {
+				test = true;
+			}
 		}
 		Assert.assertTrue(test);
 
@@ -554,30 +597,34 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 	}
 
 	@Test
-	public void testSetGuestContactRestriction() throws BusinessException{
+	public void testSetGuestContactRestriction() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
 
 		userService.saveOrUpdateUser(user1);
 
-		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		AbstractDomain guestDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		guestDomain.setDefaultTapestryLocale("en");
 
-		//create guest
-		Guest guest2 = new Guest("Jane","Smith","user2@linpki.org");
-		guest2.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
+		// create guest
+		Guest guest2 = new Guest("Jane", "Smith", "user2@linpki.org");
+		guest2.setDomain(abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest2.setOwner(user1);
 		guest2.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest2.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest2);
 
-		//create guest
-		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
-		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
+		// create guest
+		Guest guest = new Guest("Foo", "Bar", "user3@linpki.org");
+		guest.setDomain(abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest.setOwner(user1);
 		guest.setRestricted(true);
 		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
@@ -587,83 +634,97 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 
 		List<String> mailContacts = new ArrayList<String>();
 		mailContacts.add(guest2.getMail());
-		userService.setGuestContactRestriction(guest.getLsUuid(), mailContacts);
-		List<AllowedContact> listAllowedContact= allowedContactRepository.findByOwner(guest);
+		guestService.resetContactRestrictions(user1, guest.getLsUuid(), mailContacts);
+		List<AllowedContact> listAllowedContact = allowedContactRepository
+				.findByOwner(guest);
 		boolean test = false;
 		for (AllowedContact allowedContact : listAllowedContact) {
-			if(allowedContact.getContact().getLsUuid().equals(guest2.getLsUuid())){
-				test=true;
-			}	
+			if (allowedContact.getContact().getLsUuid()
+					.equals(guest2.getLsUuid())) {
+				test = true;
+			}
 		}
 		Assert.assertTrue(test);
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-
 	@Test
-	public void testFetchGuestContacts() throws IllegalArgumentException, BusinessException{
+	public void testFetchGuestContacts() throws IllegalArgumentException,
+			BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
 
 		userService.saveOrUpdateUser(user1);
 
-		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		AbstractDomain guestDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		guestDomain.setDefaultTapestryLocale("en");
 
-		//create guest
-		Guest guest2 = new Guest("Jane","Smith","user2@linpki.org");
-		guest2.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
+		// create guest
+		Guest guest2 = new Guest("Jane", "Smith", "user2@linpki.org");
+		guest2.setDomain(abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest2.setOwner(user1);
 		guest2.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest2.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest2);
 
-		//create guest
-		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
-		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
+		// create guest
+		Guest guest = new Guest("Foo", "Bar", "user3@linpki.org");
+		guest.setDomain(abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest.setOwner(user1);
 		guest.setRestricted(true);
 		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest);
 
-		userService.addGuestContactRestriction(guest.getLsUuid(), guest2.getLsUuid());
-		List<User> guestContacts = userService.fetchGuestContacts(guest.getLsUuid());
-		Assert.assertTrue(guestContacts.contains(guest2));
+		guestService.addRestrictedContact(user1, guest.getLsUuid(), guest2.getLsUuid());
+		List<AllowedContact> guestContacts = guestService.getRestrictedContacts(user1, guest.getLsUuid());
+		boolean contain = false;
+		for (AllowedContact contact : guestContacts) {
+			if (contact.getContact().equals(guest2)) {
+				contain = true;
+			}
+		}
+		Assert.assertTrue(contain);
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-
 	@Test
-	public void testGetGuestEmailContacts() throws IllegalArgumentException, BusinessException{
+	public void testGetGuestEmailContacts() throws IllegalArgumentException,
+			BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
 
 		userService.saveOrUpdateUser(user1);
 
-		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		AbstractDomain guestDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		guestDomain.setDefaultTapestryLocale("en");
 
-		//create guest
-		Guest guest2 = new Guest("Jane","Smith","user2@linpki.org");
+		// create guest
+		Guest guest2 = new Guest("Jane", "Smith", "user2@linpki.org");
 		guest2.setDomain(guestDomain);
 		guest2.setOwner(user1);
 		guest2.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest2.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest2);
 
-		//create guest
-		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
+		// create guest
+		Guest guest = new Guest("Foo", "Bar", "user3@linpki.org");
 		guest.setDomain(guestDomain);
 		guest.setOwner(user1);
 		guest.setRestricted(true);
@@ -671,57 +732,74 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		guestRepository.create(guest);
 
-		userService.addGuestContactRestriction(guest.getLsUuid(), guest2.getLsUuid());
-		List<String> guestEmailContacts = userService.getGuestEmailContacts(guest.getMail());
-		Assert.assertTrue(guestEmailContacts.contains(guest2.getMail()));
+		guestService.addRestrictedContact(user1, guest.getLsUuid(), guest2.getLsUuid());
+		List<AllowedContact> guestContacts = guestService.getRestrictedContacts(user1, guest.getLsUuid());
+		boolean contain = false;
+		for (AllowedContact contact : guestContacts) {
+			if (contact.getContact().getMail().equals(guest2.getMail())) {
+				contain = true;
+			}
+		}
+		Assert.assertTrue(contain);
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testUpdateUserDomain() throws BusinessException{
+	public void testUpdateUserDomain() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setRole(Role.SUPERADMIN);
 
 		userService.saveOrUpdateUser(user1);
 		UserVo userVo = new UserVo(user1);
 
-		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
-		Internal user2 = new Internal("Jane","Smith","user2@linpki.org", null);
+		AbstractDomain subDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
+		Internal user2 = new Internal("Jane", "Smith", "user2@linpki.org", null);
 		user2.setDomain(subDomain);
 
 		userService.saveOrUpdateUser(user2);
 
-		userService.updateUserDomain(user2.getMail(), LoadingServiceTestDatas.sqlGuestDomain, userVo);
+		userService.updateUserDomain(user2.getMail(),
+				LoadingServiceTestDatas.sqlGuestDomain, userVo);
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testFindOrCreateUserWithDomainPolicies() throws IllegalArgumentException, BusinessException {
+	public void testFindOrCreateUserWithDomainPolicies()
+			throws IllegalArgumentException, BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 
 		userService.saveOrUpdateUser(user1);
 
-		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
-		Internal user2 = new Internal("Jane","Smith","user2@linpki.org", null);
+		AbstractDomain subDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
+		Internal user2 = new Internal("Jane", "Smith", "user2@linpki.org", null);
 		user2.setDomain(subDomain);
 
 		userService.saveOrUpdateUser(user2);
 
-		Assert.assertEquals(user1, userService.findOrCreateUserWithDomainPolicies(LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain));
+		Assert.assertEquals(user1, userService
+				.findOrCreateUserWithDomainPolicies(
+						LoadingServiceTestDatas.sqlRootDomain,
+						"user1@linpki.org",
+						LoadingServiceTestDatas.sqlSubDomain));
 
 		DomainAccessPolicy accessPolicy = new DomainAccessPolicy();
 		domainAccessRepository.create(accessPolicy);
-		DomainPolicy domainPolicy = new DomainPolicy("domainPolicy", accessPolicy);
+		DomainPolicy domainPolicy = new DomainPolicy("domainPolicy",
+				accessPolicy);
 		domainPolicyRepository.create(domainPolicy);
 
 		DomainAccessRule endRule = new DenyAllDomain();
@@ -730,18 +808,23 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 
 		domainPolicyRepository.update(domainPolicy);
 
-		abstractDomainRepository.update(subDomain);		
+		abstractDomainRepository.update(subDomain);
 
-		try{
-			userService.findOrCreateUserWithDomainPolicies(LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+		try {
+			userService.findOrCreateUserWithDomainPolicies(
+					LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org",
+					LoadingServiceTestDatas.sqlSubDomain);
 
 			logger.error("Test shouldn't go here because findOrCreateUserWithDomainPolicies should rise a exception");
 			Assert.fail();
-		}catch(BusinessException e){
-			logger.debug("Test succeed"); 
+		} catch (BusinessException e) {
+			logger.debug("Test succeed");
 		}
 
-		User foundUser = userService.findOrCreateUserWithDomainPolicies(LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org", null);
+		User foundUser = userService
+				.findOrCreateUserWithDomainPolicies(
+						LoadingServiceTestDatas.sqlRootDomain,
+						"user1@linpki.org", null);
 		Assert.assertEquals(foundUser, user1);
 
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -750,15 +833,17 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 	@Test
 	public void testFindOrCreateUser() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		long id_user=0;
+		long id_user = 0;
 
 		try {
 			logger.debug("Trying to find john doe: should create this user");
-			User user = userService.findOrCreateUserWithDomainPolicies("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+			User user = userService.findOrCreateUserWithDomainPolicies(
+					"user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
 			Assert.assertEquals("John", user.getFirstName());
 			Assert.assertEquals("Doe", user.getLastName());
-			id_user= user.getId();
-			logger.debug("the user created was " + user.getFirstName() + " " + user.getLastName() +" (id=" + user.getId() + ")");
+			id_user = user.getId();
+			logger.debug("the user created was " + user.getFirstName() + " "
+					+ user.getLastName() + " (id=" + user.getId() + ")");
 		} catch (BusinessException e) {
 			logger.error("userService can not create an user ");
 			logger.error(e.toString());
@@ -766,12 +851,14 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 
 		try {
 			logger.debug("Trying to find john doe: should return this user");
-			User user = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+			User user = userService.findOrCreateUser("user1@linpki.org",
+					LoadingServiceTestDatas.sqlSubDomain);
 			Assert.assertEquals("John", user.getFirstName());
 			Assert.assertEquals("Doe", user.getLastName());
 			// Should be the same user, not a new one.
 			Assert.assertEquals(id_user, user.getId());
-			logger.debug("the user created was " + user.getFirstName() + " " + user.getLastName() +" (id=" + user.getId() + ")");
+			logger.debug("the user created was " + user.getFirstName() + " "
+					+ user.getLastName() + " (id=" + user.getId() + ")");
 
 		} catch (BusinessException e) {
 			logger.error("userService can not find an user ");
@@ -780,12 +867,14 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 
 		try {
 			logger.debug("Trying to find john doe: should return this user");
-			User user = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+			User user = userService.findOrCreateUser("user1@linpki.org",
+					LoadingServiceTestDatas.sqlSubDomain);
 			Assert.assertEquals("John", user.getFirstName());
 			Assert.assertEquals("Doe", user.getLastName());
 			// Should be the same user, not a new one.
 			Assert.assertEquals(id_user, user.getId());
-			logger.debug("the user created was " + user.getFirstName() + " " + user.getLastName() +" (id=" + user.getId() + ")");
+			logger.debug("the user created was " + user.getFirstName() + " "
+					+ user.getLastName() + " (id=" + user.getId() + ")");
 
 		} catch (BusinessException e) {
 			logger.error("userService can not find an user ");
@@ -794,17 +883,20 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	@Test 
-	public void testSearchAndCreateUserEntityFromDirectory() throws BusinessException{
+	@Test
+	public void testSearchAndCreateUserEntityFromDirectory()
+			throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		AbstractDomain rootDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlRootDomain);
+		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 
 		Assert.assertNull(userService.findUnkownUserInDB("user1@linpki.org"));
 
-		userService.searchAndCreateUserEntityFromDirectory(LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org");
+		userService.searchAndCreateUserEntityFromDirectory(
+				LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org");
 
 		Assert.assertNotNull(userService.findUnkownUserInDB("user1@linpki.org"));
 
@@ -815,9 +907,10 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 	@Rollback(true)
 	public void testSaveOrUpdateUser() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
+		AbstractDomain domain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
 
-		Internal user = new Internal("John","Doe","user1@linpki.org", null);
+		Internal user = new Internal("John", "Doe", "user1@linpki.org", null);
 
 		logger.info("Trying to create a user without domain : should fail.");
 		try {
@@ -837,10 +930,5 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		Assert.assertFalse(user.getCanUpload());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-
-
-
-
-
 
 }

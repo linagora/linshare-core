@@ -46,45 +46,36 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "Account", description = "")
 public class AccountDto {
 
-    @ApiModelProperty(value = "Uuid")
+	@ApiModelProperty(value = "Uuid")
 	protected String uuid;
 
-    @ApiModelProperty(value = "CreationDate")
+	@ApiModelProperty(value = "CreationDate")
 	protected Date creationDate;
 
-    @ApiModelProperty(value = "ModificationDate")
+	@ApiModelProperty(value = "ModificationDate")
 	protected Date modificationDate;
 
-    @ApiModelProperty(value = "Locale")
+	@ApiModelProperty(value = "Locale")
 	protected String locale;
 
-    @ApiModelProperty(value = "Domain")
+	@ApiModelProperty(value = "Domain")
 	protected String domain;
 
-    @ApiModelProperty(value = "Owner")
+	@ApiModelProperty(value = "Owner")
 	protected UserDto owner = null;
 
 	public AccountDto() {
 		super();
 	}
 
-	public AccountDto(Account a) {
+	public AccountDto(Account a, boolean full) {
 		this.uuid = a.getLsUuid();
-		this.creationDate = a.getCreationDate();
-		this.modificationDate = a.getModificationDate();
-		this.locale = a.getLocale();
 		this.domain = a.getDomainId();
-	}
-
-	protected AccountDto(String uuid, Date creationDate, Date modificationDate,
-			String locale, String domain, UserDto owner) {
-		super();
-		this.uuid = uuid;
-		this.creationDate = creationDate;
-		this.modificationDate = modificationDate;
-		this.locale = locale;
-		this.domain = domain;
-		this.owner = owner;
+		if (full) {
+			this.creationDate = a.getCreationDate();
+			this.modificationDate = a.getModificationDate();
+			this.locale = a.getLocale();
+		}
 	}
 
 	public String getUuid() {

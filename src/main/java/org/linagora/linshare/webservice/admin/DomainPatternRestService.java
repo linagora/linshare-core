@@ -35,7 +35,6 @@ package org.linagora.linshare.webservice.admin;
 
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DomainPatternDto;
 

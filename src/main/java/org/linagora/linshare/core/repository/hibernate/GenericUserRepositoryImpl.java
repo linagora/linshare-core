@@ -69,10 +69,10 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	}
 	
 	@Override
-	public U findByMailAndDomain(String domain, String mail) {
+	public U findByMailAndDomain(String domainId, String mail) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
-		criteria.add(Restrictions.eq("domain.identifier",domain));
+		criteria.add(Restrictions.eq("domain.identifier",domainId));
 		criteria.add(Restrictions.eq("mail", mail).ignoreCase());
 		criteria.add(Restrictions.eq("destroyed",false));
 		
@@ -89,11 +89,11 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<U> findByDomain(String domain) {
+	public List<U> findByDomain(String domainId) {
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
-		criteria.add(Restrictions.eq("domain.identifier",domain));
+		criteria.add(Restrictions.eq("domain.identifier",domainId));
 		criteria.add(Restrictions.eq("destroyed",false));
 		return getHibernateTemplate().findByCriteria(criteria);
 	}

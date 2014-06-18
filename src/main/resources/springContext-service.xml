@@ -48,6 +48,7 @@
 		<constructor-arg ref="passwordService" />
 		<constructor-arg ref="entryService" />
 		<constructor-arg ref="threadService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 
 	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">
@@ -255,6 +256,14 @@
 		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 
+	<bean name="guestService" class="org.linagora.linshare.core.service.impl.GuestServiceImpl">
+		<constructor-arg ref="guestBusinessService" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+	</bean>
+
 	<bean name="uploadRequestService" class="org.linagora.linshare.core.service.impl.UploadRequestServiceImpl">
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="uploadRequestBusinessService" />
@@ -264,4 +273,5 @@
 		<constructor-arg ref="uploadRequestTemplateBusinessService" />
 		<constructor-arg ref="uploadRequestUrlBusinessService" />
 	</bean>
+
 </beans>

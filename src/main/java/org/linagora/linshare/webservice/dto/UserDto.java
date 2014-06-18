@@ -33,97 +33,81 @@
  */
 package org.linagora.linshare.webservice.dto;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 
-import com.wordnik.swagger.annotations.ApiModel;
+import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name = "User")
-@ApiModel(value = "User", description = "A user")
 public class UserDto extends AccountDto {
 
-    @ApiModelProperty(value = "FirstName")
+	@ApiModelProperty(value = "FirstName")
 	private String firstName;
 
-    @ApiModelProperty(value = "LastName")
+	@ApiModelProperty(value = "LastName")
 	private String lastName;
 
-    @ApiModelProperty(value = "Mail")
+	@ApiModelProperty(value = "Mail")
 	private String mail;
 
-    @ApiModelProperty(value = "Role")
+	@ApiModelProperty(value = "Role")
 	private String role;
 
-    @ApiModelProperty(value = "CanUpload")
-	private Boolean canUpload;
+	@ApiModelProperty(value = "CanUpload")
+	private boolean canUpload;
 
-    @ApiModelProperty(value = "CanCreateGuest")
-	private Boolean canCreateGuest;
+	@ApiModelProperty(value = "CanCreateGuest")
+	private boolean canCreateGuest;
 
-    @ApiModelProperty(value = "ExpirationDate")
-	private Date expirationDate;
+	@ApiModelProperty(value = "AccountType")
+	private String accountType;
 
-    @ApiModelProperty(value = "Guest")
-	private Boolean guest;
+	@ApiModelProperty(value = "Restricted")
+	private boolean restricted;
 
-    @ApiModelProperty(value = "Restricted")
-	private Boolean restricted;
-
-    @ApiModelProperty(value = "RestrictedContacts")
-	private List<String> restrictedContacts = new ArrayList<String>();
-
-    @ApiModelProperty(value = "Comment")
+	@ApiModelProperty(value = "Comment")
 	private String comment;
+
+	@ApiModelProperty(value = "Expiration date")
+	private Date expirationDate;
+	
+	@ApiModelProperty(value = "RestrictedContacts")
+	private List<String> restrictedContacts = Lists.newArrayList();
+	
 
 	public UserDto() {
 		super();
 	}
 
-	protected UserDto(User u) {
-		super(u);
+	protected UserDto(User u, boolean full) {
+		super(u, full);
 		this.firstName = u.getFirstName();
 		this.lastName = u.getLastName();
 		this.mail = u.getMail();
-		this.setRole(u.getRole().toString());
-		this.canUpload = u.getCanUpload();
-		this.canCreateGuest = u.getCanCreateGuest();
-		this.expirationDate = u.getExpirationDate();
-		this.guest = u.getAccountType() == AccountType.GUEST;
-		if (this.guest) {
-			Guest g = (Guest) u;
-			this.owner = new UserDto((User) g.getOwner());
-			this.expirationDate = g.getExpirationDate();
-			this.restricted = g.isRestricted();
-			this.comment = g.getComment();
+		this.role = u.getRole().toString();
+		this.accountType = u.getAccountType().toString();
+		if (full) {
+			if (this.isGuest()) {
+				Guest g = (Guest)u;
+				this.restricted = g.isRestricted();
+				this.comment = g.getComment();
+				this.expirationDate = g.getExpirationDate();
+			}
+			this.canUpload = u.getCanUpload();
+			this.canCreateGuest = u.getCanCreateGuest();
 		}
 	}
 
-	protected UserDto(String uuid, String domain, String firstName,
-			String lastName, String mail, String role, Boolean guest) {
-		super(uuid, null, null, null, domain, null);
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.mail = mail;
-		this.role = role;
-		this.guest = guest;
+	public static UserDto getSimple(User user) {
+		return new UserDto(user, false);
 	}
 
-	public static UserDto getSimple(User u) {
-		return new UserDto(u.getLsUuid(), u.getDomainId(), u.getFirstName(),
-				u.getLastName(), u.getMail(), null, u.getAccountType().equals(
-						AccountType.GUEST));
-	}
-
-	public static UserDto getFull(User u) {
-		return new UserDto(u);
+	public static UserDto getFull(User user) {
+		return new UserDto(user, true);
 	}
 
 	public String getFirstName() {
@@ -158,43 +142,39 @@ public class UserDto extends AccountDto {
 		this.role = role;
 	}
 
-	public Boolean getCanUpload() {
+	public boolean getCanUpload() {
 		return canUpload;
 	}
 
-	public void setCanUpload(Boolean canUpload) {
+	public void setCanUpload(boolean canUpload) {
 		this.canUpload = canUpload;
 	}
 
-	public Boolean isCanCreateGuest() {
+	public boolean getCanCreateGuest() {
 		return canCreateGuest;
 	}
 
-	public void setCanCreateGuest(Boolean canCreateGuest) {
+	public void setCanCreateGuest(boolean canCreateGuest) {
 		this.canCreateGuest = canCreateGuest;
 	}
 
-	public Date getExpirationDate() {
-		return expirationDate;
+	public String getAccountType() {
+		return accountType;
 	}
 
-	public void setExpirationDate(Date expirationDate) {
-		this.expirationDate = expirationDate;
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
 	}
 
-	public Boolean isGuest() {
-		return guest;
+	public boolean isGuest() {
+		return AccountType.valueOf(this.accountType) == AccountType.GUEST;
 	}
 
-	public void setGuest(Boolean guest) {
-		this.guest = guest;
-	}
-
-	public Boolean isRestricted() {
+	public boolean isRestricted() {
 		return restricted;
 	}
 
-	public void setRestricted(Boolean restricted) {
+	public void setRestricted(boolean restricted) {
 		this.restricted = restricted;
 	}
 
@@ -204,6 +184,22 @@ public class UserDto extends AccountDto {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+	
+	public List<String> getRestrictedContacts() {
+		return restrictedContacts;
+	}
+
+	public void setRestrictedContacts(List<String> restrictedContacts) {
+		this.restrictedContacts = restrictedContacts;
 	}
 
 	@Override
@@ -244,13 +240,4 @@ public class UserDto extends AccountDto {
 			return false;
 		return true;
 	}
-
-	public List<String> getRestrictedContacts() {
-		return restrictedContacts;
-	}
-
-	public void setRestrictedContacts(List<String> restrictedContacts) {
-		this.restrictedContacts = restrictedContacts;
-	}
-
 }

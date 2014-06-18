@@ -97,7 +97,13 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 			this.mail = user.getMail();
 			this.upload = user.getCanUpload();
 			this.createGuest = user.getCanCreateGuest();
-			this.expirationDate = user.getExpirationDate();
+			this.expirationDate = null;
+			if (userType.equals(AccountType.GUEST)) {
+				Guest guest = (Guest)user;
+				this.expirationDate = guest.getExpirationDate();
+				this.restricted = guest.isRestricted();
+				this.comment = guest.getComment();
+			}
 		} else {
 			this.firstName = null;
 			this.lastName = null;

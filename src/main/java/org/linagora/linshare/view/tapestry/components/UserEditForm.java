@@ -34,10 +34,7 @@
 package org.linagora.linshare.view.tapestry.components;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
@@ -234,7 +231,7 @@ public class UserEditForm {
 	    		if (userRestrictedGuest) {
 	    			List<UserVo> contacts = null;
 					try {
-						contacts = userFacade.fetchGuestContacts(currentUser.getLsUuid());
+						contacts = userFacade.fetchGuestContacts(userLoggedIn, currentUser.getLsUuid());
 					} catch (BusinessException e) {
 						e.printStackTrace();
 					}
@@ -365,14 +362,14 @@ public class UserEditForm {
 				
 				
 				if (restrictedEditGuest && !guest.isRestricted()) { //toogle restricted to true
-					userFacade.setGuestContactRestriction(guest.getLsUuid(), recipientsEmail);
+					userFacade.setGuestContactRestriction(userLoggedIn, guest.getLsUuid(), recipientsEmail);
 					
 				} else if (!restrictedEditGuest && guest.isRestricted()) { //toogle restricted to false
-					userFacade.removeGuestContactRestriction(guest.getLsUuid());
+					userFacade.removeGuestContactRestriction(userLoggedIn, guest.getLsUuid());
 					
 				} else if (restrictedEditGuest && guest.isRestricted()) { //maybe user add new contact
 					if (!intialContacts.equalsIgnoreCase(recipientsSearch)) {
-						userFacade.setGuestContactRestriction(guest.getLsUuid(), recipientsEmail);
+						userFacade.setGuestContactRestriction(userLoggedIn, guest.getLsUuid(), recipientsEmail);
 					}
 				}				
 		        shareSessionObjects.addMessage(messages.get("components.userEditForm.action.update.confirm"));
