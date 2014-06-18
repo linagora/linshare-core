@@ -33,6 +33,41 @@
  */
 package org.linagora.linshare.core.facade.impl;
 
-public class UploadRequestFacadeImpl {
-	
+import org.linagora.linshare.core.domain.vo.UploadRequestVo;
+import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.UploadRequestFacade;
+import org.linagora.linshare.core.service.UploadRequestService;
+
+public class UploadRequestFacadeImpl implements UploadRequestFacade {
+
+	private final UploadRequestService uploadRequestService;
+
+	public UploadRequestFacadeImpl(
+			final UploadRequestService uploadRequestService) {
+		this.uploadRequestService = uploadRequestService;
+	}
+
+	@Override
+	public UploadRequestVo findRequestByUuid(UserVo actor, String uuid) {
+		// TODO
+	}
+
+	@Override
+	public UploadRequestVo createRequest(UserVo actor, UploadRequestVo req)
+			throws BusinessException {
+		// TODO
+	}
+
+	@Override
+	public UploadRequestVo updateRequest(UserVo actor, UploadRequestVo req)
+			throws BusinessException {
+		// TODO
+	}
+
+	@Override
+	public void deleteRequest(UserVo actor, UploadRequestVo req)
+			throws BusinessException {
+		// TODO
+	}
 }
