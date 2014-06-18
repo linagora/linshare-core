@@ -739,6 +739,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		return false;
 	}
 
+	@Deprecated
 	@Override
 	public boolean userCanCreateGuest(User user) {
 

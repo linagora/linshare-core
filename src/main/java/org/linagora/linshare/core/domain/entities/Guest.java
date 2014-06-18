@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.webservice.dto.UserDto;
 
@@ -40,6 +42,12 @@ import org.linagora.linshare.webservice.dto.UserDto;
  */
 public class Guest extends User {
 
+	private boolean restricted;
+
+	private String comment;
+
+	private Date expirationDate;
+	
 
 	/** Default constructor for hibernate. */
     @SuppressWarnings("unused")
@@ -53,22 +61,24 @@ public class Guest extends User {
         this.password = password;
         this.comment = comment;
         this.restricted = false;
+        this.canCreateGuest = false;
     }
 	
 	public Guest(String firstName, String lastName, String mail) {
         super(firstName, lastName, mail);
         this.restricted = false;
         this.comment = "";
+        this.canCreateGuest = false;
     }
 
-	public Guest(UserDto userDto) {
-		super(userDto.getFirstName(), userDto.getLastName(), userDto.getMail());
-		this.restricted = userDto.isRestricted();
-		this.comment = userDto.getComment();
+	public Guest(UserDto guestDto) {
+		super(guestDto.getFirstName(), guestDto.getLastName(), guestDto.getMail());
+		this.restricted = guestDto.isRestricted();
+		this.comment = guestDto.getComment();
+		this.owner = new Internal(guestDto.getOwner());
+		this.expirationDate = guestDto.getExpirationDate();
+		this.canUpload = guestDto.getCanUpload();
 		this.canCreateGuest = false;
-		this.owner = new Internal(userDto.getOwner());
-		this.expirationDate = userDto.getExpirationDate();
-		this.canUpload = userDto.getCanUpload();
 	}
 
 	@Override
@@ -81,4 +91,28 @@ public class Guest extends User {
 		return this.firstName + " " + this.lastName + "(" + lsUuid + ")";
 	}
 
+	public void setComment(String value) {
+		this.comment = value;
+	}
+	
+	public String getComment() {
+		return comment;
+	}
+	
+	public void setRestricted(boolean value) {
+		this.restricted = value;
+	}
+	
+	public boolean isRestricted() {
+		return restricted;
+	}
+
+	public void setExpirationDate(Date value) {
+		this.expirationDate = value;
+	}
+	
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+	
 }

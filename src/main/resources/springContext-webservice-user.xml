@@ -88,6 +88,10 @@
 	<bean id="enumRestService" class="org.linagora.linshare.webservice.user.impl.EnumRestServiceImpl">
 	</bean>
 
+	<bean id="guestRestService" class="org.linagora.linshare.webservice.user.impl.GuestRestServiceImpl">
+		<constructor-arg ref="wsGuestFacade" />
+	</bean>
+
 	<jaxrs:server id="restContainer" address="/rest">
 		<jaxrs:serviceBeans>
 			<ref bean="authenticationRestService" />
@@ -99,6 +103,7 @@
 			<ref bean="userRestService" />
 			<ref bean="logRestService" />
 			<ref bean="enumRestService" />
+			<ref bean="guestRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

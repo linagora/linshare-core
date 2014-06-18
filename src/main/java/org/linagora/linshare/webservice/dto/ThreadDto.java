@@ -56,12 +56,12 @@ public class ThreadDto extends AccountDto {
 	protected List<ThreadMemberDto> members;
 
 	public ThreadDto(Thread thread) {
-		super(thread);
+		super(thread, true);
 		this.name = thread.getName();
 	}
 
 	public ThreadDto(Thread thread, Set<ThreadMember> members) {
-		super(thread);
+		super(thread, true);
 		this.name = thread.getName();
 		this.members = new ArrayList<ThreadMemberDto>();
 		for (ThreadMember member : members) {

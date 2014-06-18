@@ -73,8 +73,6 @@ public abstract class AbstractDomain {
 
 	protected Set<Functionality> functionalities;
 
-	protected Set<User> userList;
-
 	protected AbstractDomain parentDomain;
 
 	protected Set<AbstractDomain> subdomain;
@@ -108,7 +106,6 @@ public abstract class AbstractDomain {
 		this.label = label;
 		this.description = null;
 		this.functionalities = new HashSet<Functionality>();
-		this.userList = new HashSet<User>();
 		this.domainAccessRules = new HashSet<DomainAccessRule>();
 		this.parentDomain = null;
 		this.subdomain = new HashSet<AbstractDomain>();
@@ -134,7 +131,6 @@ public abstract class AbstractDomain {
 		this.description = d.getDomainDescription();
 		this.functionalities = new HashSet<Functionality>();
 		this.messagesConfiguration = new MessagesConfiguration();
-		this.userList = new HashSet<User>();
 		this.domainAccessRules = new HashSet<DomainAccessRule>();
 		this.parentDomain = null;
 		this.subdomain = new HashSet<AbstractDomain>();
@@ -154,7 +150,6 @@ public abstract class AbstractDomain {
 		this.description = domainDto.getDescription();
 		this.functionalities = new HashSet<Functionality>();
 		this.messagesConfiguration = new MessagesConfiguration();
-		this.userList = new HashSet<User>();
 		this.domainAccessRules = new HashSet<DomainAccessRule>();
 		this.parentDomain = parent;
 		this.enable = true;
@@ -200,10 +195,6 @@ public abstract class AbstractDomain {
 		return persistenceId;
 	}
 
-	public Set<User> getUserList() {
-		return userList;
-	}
-
 	public boolean isEnable() {
 		return enable;
 	}
@@ -238,10 +229,6 @@ public abstract class AbstractDomain {
 
 	public void setTemplate(boolean template) {
 		this.template = template;
-	}
-
-	public void setUserList(Set<User> userList) {
-		this.userList = userList;
 	}
 
 	@Override

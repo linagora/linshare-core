@@ -24,6 +24,7 @@
 		<constructor-arg ref="enciphermentService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="accountService" />
+		<constructor-arg ref="guestService" />
 	</bean>
 
 	<bean name="documentFacade" class="org.linagora.linshare.core.facade.impl.DocumentFacadeImpl">
@@ -67,6 +68,7 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="anonymousShareEntryService" />
 		<constructor-arg ref="signatureTransformer" />
+		<constructor-arg ref="guestService" />
 	</bean>
 
 	<bean name="shareExpiryDateFacade" class="org.linagora.linshare.core.facade.impl.ShareExpiryDateFacadeImpl">
@@ -177,6 +179,10 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
+	<bean id="wsGuestFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.GuestFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="guestService" />
+	</bean>
 
 	<bean id="wsAdminAutocompleteFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.AutocompleteFacadeImpl">
 		<constructor-arg ref="accountService" />
@@ -230,6 +236,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="inconsistentUserService" />
+		<constructor-arg ref="guestService" />
 	</bean>
 	<bean id="wsAdminMailConfigFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.MailConfigFacadeImpl">
 		<constructor-arg ref="accountService" />

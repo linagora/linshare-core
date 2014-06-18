@@ -10,7 +10,7 @@
 
     <bean name="userManagementBatch" class="org.linagora.linshare.core.batches.impl.UserManagementBatchImpl">
         <constructor-arg ref="accountRepository"/>
-        <constructor-arg ref="userService"/>
+        <constructor-arg ref="guestService"/>
     </bean>
 
     <bean name="shareManagementBatch" class="org.linagora.linshare.core.batches.impl.ShareManagementBatchImpl">

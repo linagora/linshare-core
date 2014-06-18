@@ -78,7 +78,7 @@ public class MailingListDto {
 		this.identifier = list.getIdentifier();
 		this.description = list.getDescription();
 		this.isPublic = list.isPublic();
-		this.owner = new UserDto(list.getOwner());
+		this.owner = UserDto.getSimple(list.getOwner());
 		this.domainId = list.getDomain().getIdentifier();
 
 		for (MailingListContact current : list.getMailingListContact()) {

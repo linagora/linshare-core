@@ -93,9 +93,9 @@ public class MailContentBusinessServiceImpl implements
 	}
 
 	@Override
-	public void create(String domainId, MailContent content)
+	public MailContent create(String domainId, MailContent content)
 			throws BusinessException {
-		this.create(findDomain(domainId), content);
+		return this.create(findDomain(domainId), content);
 	}
 
 	@Override

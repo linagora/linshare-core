@@ -107,8 +107,15 @@
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
 		<constructor-arg ref="abstractDomainRepository" />
 	</bean>
+
 	<bean id="domainPermissionBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainPermissionBusinessServiceImpl">
 		<constructor-arg ref="domainBusinessService" />
+	</bean>
+
+	<bean id="guestBusinessService" class="org.linagora.linshare.core.business.service.impl.GuestBusinessServiceImpl">
+		<constructor-arg ref="guestRepository" />
+		<constructor-arg ref="userRepository" />
+		<constructor-arg ref="allowedContactRepository" />
 	</bean>
 
 </beans>
