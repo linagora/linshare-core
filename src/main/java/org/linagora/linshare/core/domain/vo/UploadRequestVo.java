@@ -70,7 +70,7 @@ public class UploadRequestVo {
 
 	private String locale;
 
-	private boolean wasSecured;
+	private boolean secured;
 
 	public UploadRequestVo() {
 		super();
@@ -201,16 +201,36 @@ public class UploadRequestVo {
 		this.locale = locale;
 	}
 
-	public boolean isWasSecured() {
-		return wasSecured;
+	public boolean isSecured() {
+		return secured;
 	}
 
-	public void setWasSecured(boolean wasSecured) {
-		this.wasSecured = wasSecured;
+	public void setSecured(boolean secured) {
+		this.secured = secured;
 	}
 
+	/**
+	 * Transformer
+	 * @return
+	 */
 	public UploadRequest toEntity() {
-		// TODO Auto-generated method stub
-		return null;
+		UploadRequest ret = new UploadRequest();
+
+		ret.setUploadRequestGroup(uploadRequestGroup); // FIXME
+		ret.setMaxFileCount(maxFileCount);
+		ret.setMaxDepositSize(maxDepositSize);
+		ret.setMaxFileSize(maxFileSize);
+		ret.setStatus(status);
+		ret.setActivationDate(activationDate);
+		ret.setCreationDate(creationDate);
+		ret.setModificationDate(modificationDate);
+		ret.setNotificationDate(notificationDate);
+		ret.setExpiryDate(expiryDate);
+		ret.setCanDelete(canDelete);
+		ret.setCanClose(canClose);
+		ret.setCanEditExpiryDate(canEditExpiryDate);
+		ret.setLocale(locale);
+		ret.setSecured(secured);
+		return ret;
 	}
 }
