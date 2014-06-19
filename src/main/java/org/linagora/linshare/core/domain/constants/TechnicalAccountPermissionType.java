@@ -31,80 +31,60 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.domain.constants;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
+import org.apache.commons.lang.StringUtils;
+import org.linagora.linshare.core.exception.TechnicalErrorCode;
+import org.linagora.linshare.core.exception.TechnicalException;
 
-import com.google.common.collect.Sets;
+public enum TechnicalAccountPermissionType {
+	GUESTS_LIST,
+	GUESTS_GET,
+	GUESTS_CREATE,
+	GUESTS_UPDATE,
+	GUESTS_DELETE,
+	
+	DOCUMENTS_LIST,
+	DOCUMENTS_GET,
+	DOCUMENTS_CREATE,
+	DOCUMENTS_UPDATE,
+	DOCUMENTS_DELETE,
+	
+	SHARES_LIST,
+	SHARES_GET,
+	SHARES_CREATE,
+	SHARES_UPDATE,
+	SHARES_DELETE,
+	
+	RECEIVED_SHARES_LIST,
+	RECEIVED_SHARES_GET,
+	RECEIVED_SHARES_CREATE,
+	RECEIVED_SHARES_UPDATE,
+	RECEIVED_SHARES_DELETE,
+	
+	THREADS_LIST,
+	THREADS_GET,
+	THREADS_CREATE,
+	THREADS_UPDATE,
+	THREADS_DELETE,
+	
+	THREADS_MEMBER_LIST,
+	THREADS_MEMBER_GET,
+	THREADS_MEMBER_CREATE,
+	THREADS_MEMBER_UPDATE,
+	THREADS_MEMBER_DELETE,
+	
+	LISTS_LIST,
+	LISTS_GET,
+	LISTS_CREATE,
+	LISTS_UPDATE,
+	LISTS_DELETE;
 
-public class TechnicalAccountPermission {
-
-	private long id;
-
-	private String uuid;
-
-	private Date creationDate;
-
-	private Date modificationDate;
-
-	private Set<AccountPermission> accountPermissions = Sets.newHashSet();
-
-	private Set<AbstractDomain> domains = Sets.newHashSet();
-
-	public TechnicalAccountPermission() {
-		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.creationDate = new Date();
-		this.modificationDate = new Date();
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public java.util.Set<AbstractDomain> getDomains() {
-		return domains;
-	}
-
-	public void setDomains(Set<AbstractDomain> domains) {
-		this.domains = domains;
-	}
-
-	public Set<AccountPermission> getAccountPermissions() {
-		return accountPermissions;
-	}
-
-	public void setAccountPermissions(Set<AccountPermission> accountPermissions) {
-		this.accountPermissions = accountPermissions;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
+	public static TechnicalAccountPermissionType fromString(String s) {
+		try {
+			return TechnicalAccountPermissionType.valueOf(s.toUpperCase());
+		} catch (RuntimeException e) {
+			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_TECHNICAL_PERMISSION_TYPE, StringUtils.isEmpty(s) ? "null or empty" : s);
+		}
 	}
 }

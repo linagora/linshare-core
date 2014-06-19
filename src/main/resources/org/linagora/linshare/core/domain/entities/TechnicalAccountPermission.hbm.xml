@@ -6,16 +6,17 @@
 			<generator class="native">
 			</generator>
 		</id>
-		<property name="write" column="write" type="boolean" not-null="true" lazy="false"/>
-		<property name="all" column="all_permissions" type="boolean" not-null="true" lazy="false"/>
 
-		<set name="accounts" table="technical_account_permission_account" lazy="true" cascade="save-update,lock">
+		<property name="uuid" column="uuid" unique="true" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="date" not-null="true" lazy="false"/>
+		<property name="modificationDate" column="modification_date" type="date" not-null="true" lazy="false"/>
+
+		<set name="accountPermissions" lazy="true" cascade="save-update,lock" inverse="false">
 			<key column="technical_account_permission_id" not-null="true"/>
-			<many-to-many column="account_id" class="org.linagora.linshare.core.domain.entities.Account">
-			</many-to-many>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.AccountPermission"/>
 		</set>
 
-		<set name="domains" table="technical_account_permission_domain_abstract" lazy="true" cascade="save-update,lock">
+		<set name="domains" table="technical_account_permission_domain_abstract" lazy="true">
 			<key column="technical_account_permission_id" not-null="true"/>
 			<many-to-many column="domain_abstract_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain">
 			</many-to-many>

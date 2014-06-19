@@ -15,7 +15,6 @@
 		<property name="modificationDate" column="modification_date" type="timestamp" length="29" not-null="true" lazy="false" />
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
 
-
 		<list name="mailingListContact" cascade="all" lazy="true">
 			<key column="mailing_list_id" not-null="true" />
 			<list-index column="mailing_list_contact_index" />

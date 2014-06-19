@@ -33,24 +33,22 @@
  */
 package org.linagora.linshare.core.repository;
 
-
-
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 
-public interface AccountRepository<U extends Account> extends AbstractRepository<U> {
+public interface AccountRepository<U extends Account> extends
+		AbstractRepository<U> {
 
-	
-    U findByLsUuid(String lsUuid);
-    
-    boolean exist(String lsUuid);
+	U findByLsUuid(String lsUuid);
+
+	boolean exist(String lsUuid);
 
 	List<U> findByDomain(String domain);
 
 	SystemAccount getSystemAccount();
-	
-    List<U> findAllDestroyedAccounts();
-	
-} 
+
+	List<U> findAllDestroyedAccounts();
+
+}

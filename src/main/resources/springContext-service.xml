@@ -239,7 +239,7 @@
 		<constructor-arg ref="logEntryService" />
 	</bean>
 
-    <bean name="mailingListService" class="org.linagora.linshare.core.service.impl.MailingListServiceImpl">
+	<bean name="mailingListService" class="org.linagora.linshare.core.service.impl.MailingListServiceImpl">
 		<constructor-arg ref="mailingListBusinessService" />
 		<constructor-arg ref="userService" />
 	</bean>
@@ -262,4 +262,15 @@
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="mailBuildingService" />
 	</bean>
+
+	<bean name="technicalAccountService" class="org.linagora.linshare.core.service.impl.TechnicalAccountServiceImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="technicalAccountBusinessService" />
+	</bean>
+
+	<bean id="technicalAccountPermissionService" class="org.linagora.linshare.core.service.impl.TechnicalAccountPermissionServiceImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="technicalAccountPermissionBusinessService" />
+	</bean>
+
 </beans>
