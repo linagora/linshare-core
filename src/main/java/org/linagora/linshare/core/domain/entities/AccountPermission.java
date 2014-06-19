@@ -33,31 +33,16 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
+import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 
-import com.google.common.collect.Sets;
-
-public class TechnicalAccountPermission {
+public class AccountPermission {
 
 	private long id;
 
-	private String uuid;
+	private TechnicalAccountPermissionType permission;
 
-	private Date creationDate;
-
-	private Date modificationDate;
-
-	private Set<AccountPermission> accountPermissions = Sets.newHashSet();
-
-	private Set<AbstractDomain> domains = Sets.newHashSet();
-
-	public TechnicalAccountPermission() {
+	public AccountPermission() {
 		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.creationDate = new Date();
-		this.modificationDate = new Date();
 	}
 
 	public long getId() {
@@ -68,43 +53,11 @@ public class TechnicalAccountPermission {
 		this.id = id;
 	}
 
-	public java.util.Set<AbstractDomain> getDomains() {
-		return domains;
+	public TechnicalAccountPermissionType getPermission() {
+		return permission;
 	}
 
-	public void setDomains(Set<AbstractDomain> domains) {
-		this.domains = domains;
-	}
-
-	public Set<AccountPermission> getAccountPermissions() {
-		return accountPermissions;
-	}
-
-	public void setAccountPermissions(Set<AccountPermission> accountPermissions) {
-		this.accountPermissions = accountPermissions;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
+	public void setPermission(TechnicalAccountPermissionType permission) {
+		this.permission = permission;
 	}
 }

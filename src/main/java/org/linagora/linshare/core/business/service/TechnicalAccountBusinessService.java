@@ -31,80 +31,26 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.business.service;
 
-import java.util.Date;
 import java.util.Set;
-import java.util.UUID;
 
-import com.google.common.collect.Sets;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.TechnicalAccount;
+import org.linagora.linshare.core.exception.BusinessException;
 
-public class TechnicalAccountPermission {
+public interface TechnicalAccountBusinessService {
 
-	private long id;
+	TechnicalAccount find(String uuid);
 
-	private String uuid;
+	Set<TechnicalAccount> findAll(String domainId);
 
-	private Date creationDate;
+	TechnicalAccount create(String domainId, TechnicalAccount account) throws BusinessException;
 
-	private Date modificationDate;
+	TechnicalAccount create(AbstractDomain domain, TechnicalAccount account)
+			throws BusinessException;
 
-	private Set<AccountPermission> accountPermissions = Sets.newHashSet();
+	TechnicalAccount update(TechnicalAccount account) throws BusinessException;
 
-	private Set<AbstractDomain> domains = Sets.newHashSet();
-
-	public TechnicalAccountPermission() {
-		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.creationDate = new Date();
-		this.modificationDate = new Date();
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public java.util.Set<AbstractDomain> getDomains() {
-		return domains;
-	}
-
-	public void setDomains(Set<AbstractDomain> domains) {
-		this.domains = domains;
-	}
-
-	public Set<AccountPermission> getAccountPermissions() {
-		return accountPermissions;
-	}
-
-	public void setAccountPermissions(Set<AccountPermission> accountPermissions) {
-		this.accountPermissions = accountPermissions;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
-	}
+	void delete(TechnicalAccount account) throws BusinessException;
 }

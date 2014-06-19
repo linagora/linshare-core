@@ -31,80 +31,55 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.business.service.impl;
 
-import java.util.Date;
 import java.util.Set;
-import java.util.UUID;
+
+import org.linagora.linshare.core.business.service.TechnicalAccountPermissionBusinessService;
+import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.TechnicalAccountPermissionRepository;
 
 import com.google.common.collect.Sets;
 
-public class TechnicalAccountPermission {
+public class TechnicalAccountPermissionBusinessServiceImpl implements
+		TechnicalAccountPermissionBusinessService {
 
-	private long id;
+	private final TechnicalAccountPermissionRepository technicalAccountPermissionRepository;
 
-	private String uuid;
-
-	private Date creationDate;
-
-	private Date modificationDate;
-
-	private Set<AccountPermission> accountPermissions = Sets.newHashSet();
-
-	private Set<AbstractDomain> domains = Sets.newHashSet();
-
-	public TechnicalAccountPermission() {
+	public TechnicalAccountPermissionBusinessServiceImpl(
+			TechnicalAccountPermissionRepository technicalAccountPermissionRepository) {
 		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.creationDate = new Date();
-		this.modificationDate = new Date();
+		this.technicalAccountPermissionRepository = technicalAccountPermissionRepository;
 	}
 
-	public long getId() {
-		return id;
+	@Override
+	public TechnicalAccountPermission find(String uuid) {
+		return technicalAccountPermissionRepository.find(uuid);
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	@Override
+	public Set<TechnicalAccountPermission> findAll() {
+		Set<TechnicalAccountPermission> res = Sets.newHashSet();
+		res.addAll(technicalAccountPermissionRepository.findAll());
+		return res;
 	}
 
-	public java.util.Set<AbstractDomain> getDomains() {
-		return domains;
+	@Override
+	public TechnicalAccountPermission create(TechnicalAccountPermission account)
+			throws BusinessException {
+		return technicalAccountPermissionRepository.create(account);
 	}
 
-	public void setDomains(Set<AbstractDomain> domains) {
-		this.domains = domains;
+	@Override
+	public TechnicalAccountPermission update(TechnicalAccountPermission account)
+			throws BusinessException {
+		return technicalAccountPermissionRepository.update(account);
 	}
 
-	public Set<AccountPermission> getAccountPermissions() {
-		return accountPermissions;
-	}
-
-	public void setAccountPermissions(Set<AccountPermission> accountPermissions) {
-		this.accountPermissions = accountPermissions;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
+	@Override
+	public void delete(TechnicalAccountPermission account)
+			throws BusinessException {
+		technicalAccountPermissionRepository.delete(account);
 	}
 }

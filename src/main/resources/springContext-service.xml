@@ -273,4 +273,14 @@
 		<constructor-arg ref="uploadRequestUrlBusinessService" />
 	</bean>
 
+	<bean name="technicalAccountService" class="org.linagora.linshare.core.service.impl.TechnicalAccountServiceImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="technicalAccountBusinessService" />
+	</bean>
+
+	<bean id="technicalAccountPermissionService" class="org.linagora.linshare.core.service.impl.TechnicalAccountPermissionServiceImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="technicalAccountPermissionBusinessService" />
+	</bean>
+
 </beans>

@@ -332,19 +332,15 @@ CREATE TABLE technical_account_permission_domain_abstract (
   PRIMARY KEY (technical_account_permission_id, 
   domain_abstract_id));
 CREATE TABLE technical_account_permission (
-  id               int8 NOT NULL, 
-  write           bool NOT NULL, 
-  all_permissions bool NOT NULL, 
+  id                 int8 NOT NULL, 
+  uuid              varchar(255) NOT NULL UNIQUE, 
+  creation_date     date NOT NULL, 
+  modification_date date NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE contact (
   id    int8 NOT NULL, 
   mail varchar(255) NOT NULL UNIQUE, 
   PRIMARY KEY (id));
-CREATE TABLE technical_account_permission_account (
-  technical_account_permission_id int8 NOT NULL, 
-  account_id                      int8 NOT NULL, 
-  PRIMARY KEY (technical_account_permission_id, 
-  account_id));
 CREATE TABLE mail_notification (
   id                       int8 NOT NULL, 
   configuration_policy_id int8 NOT NULL, 
@@ -603,6 +599,11 @@ CREATE TABLE mime_type (
   creation_date     timestamp(6) NOT NULL, 
   modification_date timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
+CREATE TABLE account_permission (
+  id                               int8 NOT NULL, 
+  technical_account_permission_id int8 NOT NULL, 
+  permision                       varchar(255) NOT NULL, 
+  PRIMARY KEY (id));
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
@@ -650,8 +651,6 @@ ALTER TABLE thread_entry ADD CONSTRAINT FKthread_ent715634 FOREIGN KEY (entry_id
 ALTER TABLE entry ADD CONSTRAINT FKentry500391 FOREIGN KEY (owner_id) REFERENCES account (id);
 ALTER TABLE anonymous_url ADD CONSTRAINT FKanonymous_877695 FOREIGN KEY (contact_id) REFERENCES contact (id);
 ALTER TABLE signature ADD CONSTRAINT FKsignature417918 FOREIGN KEY (owner_id) REFERENCES account (id);
-ALTER TABLE technical_account_permission_account ADD CONSTRAINT FKtechnical_69967 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
-ALTER TABLE technical_account_permission_account ADD CONSTRAINT FKtechnical_622557 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE account ADD CONSTRAINT FKaccount693567 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
 ALTER TABLE thread_entry ADD CONSTRAINT FKthread_ent140657 FOREIGN KEY (document_id) REFERENCES document (id);
 ALTER TABLE mail_notification ADD CONSTRAINT FKmail_notif244118 FOREIGN KEY (activation_policy_id) REFERENCES policy (id);
@@ -688,6 +687,7 @@ ALTER TABLE upload_proposition ADD CONSTRAINT FKupload_pro226633 FOREIGN KEY (do
 ALTER TABLE mime_type ADD CONSTRAINT FKmime_type145742 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
 ALTER TABLE mime_policy ADD CONSTRAINT FKmime_polic613419 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs809928 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
+ALTER TABLE account_permission ADD CONSTRAINT FKaccount_pe759382 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
 CREATE UNIQUE INDEX account_lsuid_index 
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid 
