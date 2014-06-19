@@ -74,7 +74,7 @@ public class UploadRequest {
 
 	private boolean secured;
 
-	private String mailMessageID;
+	private String mailMessageId;
 
 	private Set<UploadRequestUrl> UploadRequestURL;
 
@@ -231,12 +231,12 @@ public class UploadRequest {
 		this.secured = secured;
 	}
 
-	public String getMailMessageID() {
-		return mailMessageID;
+	public String getMailMessageId() {
+		return mailMessageId;
 	}
 
-	public void setMailMessageID(String mailMessageID) {
-		this.mailMessageID = mailMessageID;
+	public void setMailMessageId(String mailMessageID) {
+		this.mailMessageId = mailMessageID;
 	}
 
 	public Set<UploadRequestUrl> getUploadRequestURL() {
