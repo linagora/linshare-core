@@ -39,67 +39,73 @@ import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestService {
 
-	UploadRequest findRequestByUuid(String uuid);
+	UploadRequest findRequestByUuid(User actor, String uuid);
 
-	UploadRequest createRequest(UploadRequest req) throws BusinessException;
-
-	UploadRequest updateRequest(UploadRequest req) throws BusinessException;
-
-	void deleteRequest(UploadRequest req) throws BusinessException;
-
-	UploadRequestEntry findRequestEntryByUuid(String uuid);
-
-	UploadRequestEntry createRequestEntry(UploadRequestEntry entry)
+	UploadRequest createRequest(User actor, UploadRequest req)
 			throws BusinessException;
 
-	UploadRequestEntry updateRequestEntry(UploadRequestEntry entry)
+	UploadRequest updateRequest(User actor, UploadRequest req)
 			throws BusinessException;
 
-	void deleteRequestEntry(UploadRequestEntry entry) throws BusinessException;
+	void deleteRequest(User actor, UploadRequest req) throws BusinessException;
 
-	UploadRequestGroup findRequestGroupByUuid(String uuid);
+	UploadRequestEntry findRequestEntryByUuid(User actor, String uuid);
 
-	UploadRequestGroup createRequestGroup(UploadRequestGroup group)
+	UploadRequestEntry createRequestEntry(User actor, UploadRequestEntry entry)
 			throws BusinessException;
 
-	UploadRequestGroup updateRequestGroup(UploadRequestGroup group)
+	UploadRequestEntry updateRequestEntry(User actor, UploadRequestEntry entry)
 			throws BusinessException;
 
-	void deleteRequestGroup(UploadRequestGroup group) throws BusinessException;
-
-	UploadRequestHistory findRequestHistoryByUuid(String uuid);
-
-	UploadRequestHistory createRequestHistory(UploadRequestHistory history)
+	void deleteRequestEntry(User actor, UploadRequestEntry entry)
 			throws BusinessException;
 
-	UploadRequestHistory updateRequestHistory(UploadRequestHistory history)
+	UploadRequestGroup findRequestGroupByUuid(User actor, String uuid);
+
+	UploadRequestGroup createRequestGroup(User actor, UploadRequestGroup group)
 			throws BusinessException;
 
-	void deleteRequestHistory(UploadRequestHistory history)
+	UploadRequestGroup updateRequestGroup(User actor, UploadRequestGroup group)
 			throws BusinessException;
 
-	UploadRequestTemplate findRequestTemplateByUuid(String uuid);
-
-	UploadRequestTemplate createRequestTemplate(UploadRequestTemplate template)
+	void deleteRequestGroup(User actor, UploadRequestGroup group)
 			throws BusinessException;
 
-	UploadRequestTemplate updateRequestTemplate(UploadRequestTemplate template)
+	UploadRequestHistory findRequestHistoryByUuid(User actor, String uuid);
+
+	UploadRequestHistory createRequestHistory(User actor,
+			UploadRequestHistory history) throws BusinessException;
+
+	UploadRequestHistory updateRequestHistory(User actor,
+			UploadRequestHistory history) throws BusinessException;
+
+	void deleteRequestHistory(User actor, UploadRequestHistory history)
 			throws BusinessException;
 
-	void deleteRequestTemplate(UploadRequestTemplate template)
+	UploadRequestTemplate findRequestTemplateByUuid(User actor, String uuid);
+
+	UploadRequestTemplate createRequestTemplate(User actor,
+			UploadRequestTemplate template) throws BusinessException;
+
+	UploadRequestTemplate updateRequestTemplate(User actor,
+			UploadRequestTemplate template) throws BusinessException;
+
+	void deleteRequestTemplate(User actor, UploadRequestTemplate template)
 			throws BusinessException;
 
-	UploadRequestUrl findRequestUrlByUuid(String uuid);
+	UploadRequestUrl findRequestUrlByUuid(User actor, String uuid);
 
-	UploadRequestUrl createRequestUrl(UploadRequestUrl url)
+	UploadRequestUrl createRequestUrl(User actor, UploadRequestUrl url)
 			throws BusinessException;
 
-	UploadRequestUrl updateRequestUrl(UploadRequestUrl url)
+	UploadRequestUrl updateRequestUrl(User actor, UploadRequestUrl url)
 			throws BusinessException;
 
-	void deleteRequestUrl(UploadRequestUrl url) throws BusinessException;
+	void deleteRequestUrl(User actor, UploadRequestUrl url)
+			throws BusinessException;
 }

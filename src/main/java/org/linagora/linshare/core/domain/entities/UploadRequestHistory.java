@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+
 public class UploadRequestHistory {
 
 	private long id;
@@ -45,11 +47,11 @@ public class UploadRequestHistory {
 
 	private String uuid;
 
-	private java.util.Date activationDate;
+	private Date activationDate;
 
-	private java.util.Date expiryDate;
+	private Date expiryDate;
 
-	private java.util.Date notificationDate;
+	private Date notificationDate;
 
 	private long maxDepositSize;
 
@@ -67,11 +69,11 @@ public class UploadRequestHistory {
 
 	private String locale;
 
-	private boolean wasSecured;
+	private boolean secured;
 
-	private java.util.Date creationDate;
+	private Date creationDate;
 
-	private java.util.Date modificationDate;
+	private Date modificationDate;
 
 	private String mailMessageID;
 
@@ -119,27 +121,27 @@ public class UploadRequestHistory {
 		this.uuid = uuid;
 	}
 
-	public java.util.Date getActivationDate() {
+	public Date getActivationDate() {
 		return activationDate;
 	}
 
-	public void setActivationDate(java.util.Date activationDate) {
+	public void setActivationDate(Date activationDate) {
 		this.activationDate = activationDate;
 	}
 
-	public java.util.Date getExpiryDate() {
+	public Date getExpiryDate() {
 		return expiryDate;
 	}
 
-	public void setExpiryDate(java.util.Date expiryDate) {
+	public void setExpiryDate(Date expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 
-	public java.util.Date getNotificationDate() {
+	public Date getNotificationDate() {
 		return notificationDate;
 	}
 
-	public void setNotificationDate(java.util.Date notificationDate) {
+	public void setNotificationDate(Date notificationDate) {
 		this.notificationDate = notificationDate;
 	}
 
@@ -208,27 +210,27 @@ public class UploadRequestHistory {
 		this.locale = locale;
 	}
 
-	public boolean isWasSecured() {
-		return wasSecured;
+	public boolean isSecured() {
+		return secured;
 	}
 
-	public void setWasSecured(boolean wasSecured) {
-		this.wasSecured = wasSecured;
+	public void setSecured(boolean secured) {
+		this.secured = secured;
 	}
 
-	public java.util.Date getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(java.util.Date creationDate) {
+	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
 
-	public java.util.Date getModificationDate() {
+	public Date getModificationDate() {
 		return modificationDate;
 	}
 
-	public void setModificationDate(java.util.Date modificationDate) {
+	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
 

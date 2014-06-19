@@ -42,9 +42,9 @@
 			type="boolean" not-null="true" lazy="false" />
 		<property name="locale" column="locale" type="string" length="255"
 			not-null="false" lazy="false" />
-		<property name="wasSecured" column="was_secured" type="boolean"
+		<property name="secured" column="secured" type="boolean"
 			not-null="true" lazy="false" />
-		<property name="mailMessageID" column="mail_message_id" type="string"
+		<property name="mailMessageId" column="mail_message_id" type="string"
 			length="255" not-null="false" lazy="false" />
 		<set name="UploadRequestURL" lazy="true" cascade="lock" inverse="true">
 			<key column="upload_request_id" not-null="true" />

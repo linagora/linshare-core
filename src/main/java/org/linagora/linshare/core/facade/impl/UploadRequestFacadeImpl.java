@@ -33,41 +33,58 @@
  */
 package org.linagora.linshare.core.facade.impl;
 
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.core.service.UploadRequestService;
+import org.linagora.linshare.core.service.UserService;
 
 public class UploadRequestFacadeImpl implements UploadRequestFacade {
 
+	private final UserService userService;
 	private final UploadRequestService uploadRequestService;
 
 	public UploadRequestFacadeImpl(
+			final UserService userService,
 			final UploadRequestService uploadRequestService) {
+		this.userService = userService;
 		this.uploadRequestService = uploadRequestService;
 	}
 
 	@Override
-	public UploadRequestVo findRequestByUuid(UserVo actor, String uuid) {
+	public UploadRequestVo findRequestByUuid(UserVo actorVo, String uuid) {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		// TODO
+		return new UploadRequestVo(uploadRequestService.findRequestByUuid(
+				actor, uuid));
 	}
 
 	@Override
-	public UploadRequestVo createRequest(UserVo actor, UploadRequestVo req)
+	public UploadRequestVo createRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		// TODO
+		return new UploadRequestVo(uploadRequestService.createRequest(actor,
+				req.toEntity()));
 	}
 
 	@Override
-	public UploadRequestVo updateRequest(UserVo actor, UploadRequestVo req)
+	public UploadRequestVo updateRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		// TODO
+		return new UploadRequestVo(uploadRequestService.updateRequest(actor,
+				req.toEntity()));
 	}
 
 	@Override
-	public void deleteRequest(UserVo actor, UploadRequestVo req)
+	public void deleteRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		// TODO
+		uploadRequestService.deleteRequest(actor, req.toEntity());
 	}
 }
