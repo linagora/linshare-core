@@ -39,15 +39,15 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestFacade {
 
-	UploadRequestVo findRequestByUuid(UserVo actor, String uuid);
+	UploadRequestVo findRequestByUuid(UserVo actorVo, String uuid);
 
-	UploadRequestVo createRequest(UserVo actor, UploadRequestVo req)
+	UploadRequestVo createRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException;
 
-	UploadRequestVo updateRequest(UserVo actor, UploadRequestVo req)
+	UploadRequestVo updateRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException;
 
-	void deleteRequest(UserVo actor, UploadRequestVo req)
+	void deleteRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException;
 
 }

@@ -62,7 +62,7 @@ public class UploadRequest {
 
 	private Date expiryDate;
 
-	private Integer uploadPropositionRequestUuid;
+	private String uploadPropositionRequestUuid;
 
 	private boolean canDelete;
 
@@ -72,7 +72,7 @@ public class UploadRequest {
 
 	private String locale;
 
-	private boolean wasSecured;
+	private boolean secured;
 
 	private String mailMessageID;
 
@@ -183,11 +183,11 @@ public class UploadRequest {
 		this.expiryDate = expiryDate;
 	}
 
-	public Integer getUploadPropositionRequestUuid() {
+	public String getUploadPropositionRequestUuid() {
 		return uploadPropositionRequestUuid;
 	}
 
-	public void setUploadPropositionRequestUuid(Integer uploadPropositionRequestUuid) {
+	public void setUploadPropositionRequestUuid(String uploadPropositionRequestUuid) {
 		this.uploadPropositionRequestUuid = uploadPropositionRequestUuid;
 	}
 
@@ -223,12 +223,12 @@ public class UploadRequest {
 		this.locale = locale;
 	}
 
-	public boolean isWasSecured() {
-		return wasSecured;
+	public boolean isSecured() {
+		return secured;
 	}
 
-	public void setWasSecured(boolean wasSecured) {
-		this.wasSecured = wasSecured;
+	public void setSecured(boolean secured) {
+		this.secured = secured;
 	}
 
 	public String getMailMessageID() {

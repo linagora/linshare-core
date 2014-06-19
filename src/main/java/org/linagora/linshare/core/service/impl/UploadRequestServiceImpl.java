@@ -1,9 +1,9 @@
 /*
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
- * 
+ *
  * Copyright (C) 2014 LINAGORA
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,12 +19,12 @@
  * refrain from infringing Linagora intellectual property rights over its
  * trademarks and commercial brands. Other Additional Terms apply, see
  * <http://www.linagora.com/licenses/> for more details.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.UploadRequestService;
@@ -77,138 +78,141 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequest findRequestByUuid(String uuid) {
+	public UploadRequest findRequestByUuid(User actor, String uuid) {
 		return uploadRequestBusinessService.findByUuid(uuid);
 	}
 
 	@Override
-	public UploadRequest createRequest(UploadRequest req)
+	public UploadRequest createRequest(User actor, UploadRequest req)
 			throws BusinessException {
 		return uploadRequestBusinessService.create(req);
 	}
 
 	@Override
-	public UploadRequest updateRequest(UploadRequest req)
+	public UploadRequest updateRequest(User actor, UploadRequest req)
 			throws BusinessException {
 		return uploadRequestBusinessService.update(req);
 	}
 
 	@Override
-	public void deleteRequest(UploadRequest req) throws BusinessException {
+	public void deleteRequest(User actor, UploadRequest req)
+			throws BusinessException {
 		uploadRequestBusinessService.delete(req);
 	}
 
 	@Override
-	public UploadRequestEntry findRequestEntryByUuid(String uuid) {
+	public UploadRequestEntry findRequestEntryByUuid(User actor, String uuid) {
 		return uploadRequestEntryBusinessService.findByUuid(uuid);
 	}
 
 	@Override
-	public UploadRequestEntry createRequestEntry(UploadRequestEntry entry)
-			throws BusinessException {
+	public UploadRequestEntry createRequestEntry(User actor,
+			UploadRequestEntry entry) throws BusinessException {
 		return uploadRequestEntryBusinessService.create(entry);
 	}
 
 	@Override
-	public UploadRequestEntry updateRequestEntry(UploadRequestEntry entry)
-			throws BusinessException {
+	public UploadRequestEntry updateRequestEntry(User actor,
+			UploadRequestEntry entry) throws BusinessException {
 		return uploadRequestEntryBusinessService.update(entry);
 	}
 
 	@Override
-	public void deleteRequestEntry(UploadRequestEntry entry)
+	public void deleteRequestEntry(User actor, UploadRequestEntry entry)
 			throws BusinessException {
 		uploadRequestEntryBusinessService.delete(entry);
 	}
 
 	@Override
-	public UploadRequestGroup findRequestGroupByUuid(String uuid) {
+	public UploadRequestGroup findRequestGroupByUuid(User actor, String uuid) {
 		return uploadRequestGroupBusinessService.findByUuid(uuid);
 	}
 
 	@Override
-	public UploadRequestGroup createRequestGroup(UploadRequestGroup group)
-			throws BusinessException {
+	public UploadRequestGroup createRequestGroup(User actor,
+			UploadRequestGroup group) throws BusinessException {
 		return uploadRequestGroupBusinessService.create(group);
 	}
 
 	@Override
-	public UploadRequestGroup updateRequestGroup(UploadRequestGroup group)
-			throws BusinessException {
+	public UploadRequestGroup updateRequestGroup(User actor,
+			UploadRequestGroup group) throws BusinessException {
 		return uploadRequestGroupBusinessService.update(group);
 	}
 
 	@Override
-	public void deleteRequestGroup(UploadRequestGroup group)
+	public void deleteRequestGroup(User actor, UploadRequestGroup group)
 			throws BusinessException {
 		uploadRequestGroupBusinessService.delete(group);
 	}
 
 	@Override
-	public UploadRequestHistory findRequestHistoryByUuid(String uuid) {
+	public UploadRequestHistory findRequestHistoryByUuid(User actor, String uuid) {
 		return uploadRequestHistoryBusinessService.findByUuid(uuid);
 	}
 
 	@Override
-	public UploadRequestHistory createRequestHistory(
+	public UploadRequestHistory createRequestHistory(User actor,
 			UploadRequestHistory history) throws BusinessException {
 		return uploadRequestHistoryBusinessService.create(history);
 	}
 
 	@Override
-	public UploadRequestHistory updateRequestHistory(
+	public UploadRequestHistory updateRequestHistory(User actor,
 			UploadRequestHistory history) throws BusinessException {
 		return uploadRequestHistoryBusinessService.update(history);
 	}
 
 	@Override
-	public void deleteRequestHistory(UploadRequestHistory history)
+	public void deleteRequestHistory(User actor, UploadRequestHistory history)
 			throws BusinessException {
 		uploadRequestHistoryBusinessService.delete(history);
 	}
 
 	@Override
-	public UploadRequestTemplate findRequestTemplateByUuid(String uuid) {
+	public UploadRequestTemplate findRequestTemplateByUuid(User actor,
+			String uuid) {
 		return uploadRequestTemplateBusinessService.findByUuid(uuid);
 	}
 
 	@Override
-	public UploadRequestTemplate createRequestTemplate(
+	public UploadRequestTemplate createRequestTemplate(User actor,
 			UploadRequestTemplate template) throws BusinessException {
 		return uploadRequestTemplateBusinessService.create(template);
 	}
 
 	@Override
-	public UploadRequestTemplate updateRequestTemplate(
+	public UploadRequestTemplate updateRequestTemplate(User actor,
 			UploadRequestTemplate template) throws BusinessException {
 		return uploadRequestTemplateBusinessService.update(template);
 	}
 
 	@Override
-	public void deleteRequestTemplate(UploadRequestTemplate template)
+	public void deleteRequestTemplate(User actor, UploadRequestTemplate template)
 			throws BusinessException {
 		uploadRequestTemplateBusinessService.delete(template);
 	}
 
 	@Override
-	public UploadRequestUrl findRequestUrlByUuid(String uuid) {
+	public UploadRequestUrl findRequestUrlByUuid(User actor, String uuid) {
 		return uploadRequestUrlBusinessService.findByUuid(uuid);
 	}
 
 	@Override
-	public UploadRequestUrl createRequestUrl(UploadRequestUrl url)
+	public UploadRequestUrl createRequestUrl(User actor, UploadRequestUrl url)
 			throws BusinessException {
 		return uploadRequestUrlBusinessService.create(url);
 	}
 
 	@Override
-	public UploadRequestUrl updateRequestUrl(UploadRequestUrl url)
+	public UploadRequestUrl updateRequestUrl(User actor, UploadRequestUrl url)
 			throws BusinessException {
 		return uploadRequestUrlBusinessService.update(url);
 	}
 
 	@Override
-	public void deleteRequestUrl(UploadRequestUrl url) throws BusinessException {
+	public void deleteRequestUrl(User actor, UploadRequestUrl url)
+			throws BusinessException {
 		uploadRequestUrlBusinessService.delete(url);
 	}
 }

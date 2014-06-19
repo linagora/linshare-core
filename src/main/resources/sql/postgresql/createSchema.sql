@@ -438,7 +438,7 @@ CREATE TABLE upload_request (
   can_close                       bool NOT NULL, 
   can_edit_expiry_date            bool NOT NULL, 
   locale                          varchar(255), 
-  was_secured                     bool NOT NULL, 
+  secured                         bool NOT NULL, 
   mail_message_id                 varchar(255), 
   PRIMARY KEY (id));
 CREATE TABLE upload_request_url (
@@ -477,7 +477,7 @@ CREATE TABLE upload_request_history (
   can_close                       bool NOT NULL, 
   can_edit_expiry_date            bool NOT NULL, 
   locale                          varchar(255), 
-  wasSecured                      bool NOT NULL, 
+  secured                         bool NOT NULL, 
   creation_date                   timestamp(6) NOT NULL, 
   modification_date               timestamp(6) NOT NULL, 
   mail_message_id                 varchar(255), 
