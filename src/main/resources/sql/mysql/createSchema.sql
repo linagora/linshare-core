@@ -423,7 +423,7 @@ CREATE TABLE functionality_boolean (
   boolean_value    bit NOT NULL, 
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mailing_list (
-  id                  bigint(8) NOT NULL,
+  id                  bigint(8) NOT NULL AUTO_INCREMENT,
   domain_abstract_id bigint(8) NOT NULL,
   user_id            bigint(8) NOT NULL,
   is_public          bool NOT NULL,
