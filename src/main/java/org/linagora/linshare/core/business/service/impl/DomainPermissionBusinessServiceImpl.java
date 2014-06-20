@@ -35,8 +35,6 @@ public class DomainPermissionBusinessServiceImpl implements
 	public boolean isAdminforThisDomain(Account actor, AbstractDomain domain) {
 		if (!actor.isSuperAdmin() && !actor.isSystemAccount()) {
 			if (!domain.isManagedBy(actor)) {
-				logger.error("You do not have the right to managed parameters of this domain : "
-						+ domain.toString());
 				return false;
 			}
 		}
@@ -46,7 +44,7 @@ public class DomainPermissionBusinessServiceImpl implements
 	@Override
 	public boolean isAdminForThisUser(Account actor, User user) {
 		return isAdminforThisDomain(actor, user.getDomain())
-				|| isOwner(actor, user);
+				|| isOwner(actor, user) || actor.equals(user);
 	}
 
 	private boolean isOwner(Account actor, User guest) {

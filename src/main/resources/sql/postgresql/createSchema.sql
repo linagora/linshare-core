@@ -299,7 +299,7 @@ CREATE TABLE users (
   not_before            timestamp(6), 
   can_upload            bool NOT NULL, 
   comment               text, 
-  restricted            bool NOT NULL, 
+  restricted            bool, 
   expiration_date       timestamp, 
   ldap_uid              varchar(255), 
   can_create_guest      bool NOT NULL, 

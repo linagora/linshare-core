@@ -115,14 +115,6 @@ public interface UserService {
 	 */
 	public void changePassword(String uuid, String mail, String oldPassword, String newPassword) throws BusinessException;
 
-	/**
-	 * Reset a guest password
-	 * @param mail
-	 * @param login
-	 * @throws BusinessException
-	 */
-	public void resetPassword(String uuid, String mail) throws BusinessException;
-
 	void updateUserDomain(String mail, String selectedDomain, UserVo actor) throws BusinessException;
 
 	/**

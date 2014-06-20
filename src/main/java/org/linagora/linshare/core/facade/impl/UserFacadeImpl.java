@@ -306,15 +306,16 @@ public class UserFacadeImpl implements UserFacade {
 
 	}
 
+	@Override
 	public void resetPassword(UserVo user) throws BusinessException {
 		if (!user.getUserType().equals(AccountType.GUEST)) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
 					"The user type is wrong, only a guest may change its password");
 		}
-
-		userService.resetPassword(user.getLsUuid(), user.getMail());
+		guestService.resetPassword(user.getLsUuid());
 	}
 
+	@Override
 	public void setGuestContactRestriction(UserVo actorVo, String lsUuid,
 			List<String> mailContacts) throws BusinessException {
 
@@ -322,6 +323,7 @@ public class UserFacadeImpl implements UserFacade {
 		guestService.resetContactRestrictions(actor, lsUuid, mailContacts);
 	}
 
+	@Override
 	public void removeGuestContactRestriction(UserVo actorVo, String lsUuid)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());

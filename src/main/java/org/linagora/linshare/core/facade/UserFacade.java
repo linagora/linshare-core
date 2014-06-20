@@ -147,10 +147,11 @@ public interface UserFacade {
     void changePassword(UserVo user, String oldPassword, String newPassword) throws BusinessException;
     
     /**
-     * Set a new password to a guest user
-     * @param user
+     * Set a new password to a guest 
+     * @param guest
+     * @param actor
      */
-    void resetPassword(UserVo user) throws BusinessException;
+    void resetPassword(UserVo guest) throws BusinessException;
     
     /**
 	 * Update a guest as restricted and set his list of contacts

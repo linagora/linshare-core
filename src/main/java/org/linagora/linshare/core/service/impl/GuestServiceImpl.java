@@ -1,18 +1,23 @@
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
@@ -77,13 +82,9 @@ public class GuestServiceImpl implements GuestService {
 		Assert.notNull(guest);
 		Assert.notNull(ownerLsUuid);
 		User owner = retreiveOwner(ownerLsUuid);
-		if (exist(guest.getLsUuid())) {
-			throw new BusinessException(BusinessErrorCode.GUEST_ALREADY_EXISTS,
-					"Guest already exist");
-		}
-		if (!exist(ownerLsUuid)) {
+		if (userService.findByLsUuid(ownerLsUuid) == null) {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
-					"Owner not  found");
+					"Owner not found");
 		}
 		if (!canCreateGuest(owner)) {
 			throw new BusinessException(
@@ -96,13 +97,13 @@ public class GuestServiceImpl implements GuestService {
 		}
 		GuestDomain guestDomain = abstractDomainService.getGuestDomain(owner
 				.getDomainId());
-		if (!guestBusinessService.isValid(guestDomain.getIdentifier(),
+		if (!guestBusinessService.exist(guestDomain.getIdentifier(),
 				guest.getMail())) {
 			throw new BusinessException(BusinessErrorCode.GUEST_ALREADY_EXISTS,
-					"Tuple mail/domain already exist");
-
+					"Pair mail/domain already exist");
 		}
-		return guestBusinessService.create(guest, owner, guestDomain);
+		Date expiryDate = calculateUserExpiryDate(owner);
+		return guestBusinessService.create(guest, owner, guestDomain, expiryDate);
 	}
 
 	@Override
@@ -142,7 +143,7 @@ public class GuestServiceImpl implements GuestService {
 		if (!domainPermissionBusinessService.isAdminForThisUser(actor, guest)) {
 			throw new BusinessException(
 					BusinessErrorCode.USER_CANNOT_DELETE_GUEST,
-					"Actor cannot update guest");
+					"Actor cannot delete guest");
 		}
 
 		guestBusinessService.delete(guest);
@@ -165,23 +166,34 @@ public class GuestServiceImpl implements GuestService {
 	}
 
 	@Override
-	public void removeContactRestriction(User actor, String lsUuid)
+	public void addRestrictedContact(User actor, String lsUuid,
+			String mailContact) throws BusinessException {
+		Assert.notNull(actor);
+		Assert.notNull(lsUuid);
+
+		Guest guest = checkExistAndGet(lsUuid);
+		User contact = userService.findUnkownUserInDB(mailContact);
+		if (contact == null) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
+					"Contact not found");
+		}
+		guestBusinessService.addRestrictedContact(guest, contact);
+	}
+
+	@Override
+	public Guest removeContactRestriction(User actor, String lsUuid)
 			throws BusinessException {
 		Assert.notNull(actor);
 		Assert.notNull(lsUuid);
 
-		Guest guest = guestBusinessService.findByLsUuid(lsUuid);
-		guestBusinessService.purgeRestriction(guest);
-		guest.setRestricted(false);
-		guestBusinessService.update(guest, guest.getOwner(), guest.getDomain());
-	}
+		Guest guest = checkExistAndGet(lsUuid);
+		if (!domainPermissionBusinessService.isAdminForThisUser(actor, guest)) {
 
-	@Override
-	public void addRestrictedContact(User actor, String lsUuid,
-			String contactLsUuid) throws BusinessException {
-		Assert.notNull(actor);
-		Assert.notNull(lsUuid);
-
+			throw new BusinessException(
+					BusinessErrorCode.USER_CANNOT_UPDATE_GUEST,
+					"Actor cannot update guest");
+		}
+		return guestBusinessService.removeContactRestriction(guest);
 	}
 
 	@Override
@@ -190,8 +202,15 @@ public class GuestServiceImpl implements GuestService {
 		Assert.notNull(actor);
 		Assert.notNull(lsUuid);
 
-		removeContactRestriction(actor, lsUuid);
-		enableContactRestriction(actor, lsUuid);
+		Guest guest = checkExistAndGet(lsUuid);
+		if (!domainPermissionBusinessService.isAdminForThisUser(actor, guest)) {
+
+			throw new BusinessException(
+					BusinessErrorCode.USER_CANNOT_UPDATE_GUEST,
+					"Actor cannot update guest");
+		}
+		guestBusinessService.removeContactRestriction(guest);
+		guestBusinessService.enableContactRestriction(guest);
 		for (String contactLsUuid : mailContacts) {
 			addRestrictedContact(actor, lsUuid, contactLsUuid);
 		}
@@ -202,16 +221,33 @@ public class GuestServiceImpl implements GuestService {
 			throws BusinessException {
 		Assert.notNull(actor);
 		Assert.notNull(lsUuid);
-		Guest guest = guestBusinessService.findByLsUuid(lsUuid);
-		if (guest.isRestricted()) {
+		Guest guest = checkExistAndGet(lsUuid);
+		if (!guest.isRestricted()) {
 			return Lists.newArrayList();
 		}
 		return guestBusinessService.getRestrictedContacts(guest);
 	}
 
+	@Override
+	public void resetPassword(String lsUuid)
+			throws BusinessException {
+		Assert.notNull(lsUuid);
+		Guest guest = checkExistAndGet(lsUuid);
+		guestBusinessService.resetPassword(guest);
+	}
+
 	/**
 	 * HELPERS
 	 */
+
+	private Guest checkExistAndGet(String lsUuid) throws BusinessException {
+		Guest guest = guestBusinessService.findByLsUuid(lsUuid);
+		if (guest == null) {
+			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND,
+					"Guest does not exist");
+		}
+		return guest;
+	}
 
 	private boolean hasGuestDomain(String topDomainId) {
 		return abstractDomainService.getGuestDomain(topDomainId) != null;
@@ -229,6 +265,14 @@ public class GuestServiceImpl implements GuestService {
 				.getActivationPolicy().getStatus();
 	}
 
+	private Date calculateUserExpiryDate(Account owner) {
+		Calendar expiryDate = Calendar.getInstance();
+		TimeUnitValueFunctionality func = functionalityReadOnlyService
+				.getGuestAccountExpiryTimeFunctionality(owner.getDomain());
+		expiryDate.add(func.toCalendarUnitValue(), func.getValue());
+		return expiryDate.getTime();
+	}
+
 	private User retreiveOwner(String ownerLsUuid) throws BusinessException {
 		User owner = userService.findByLsUuid(ownerLsUuid);
 		if (owner == null) {
@@ -236,12 +280,5 @@ public class GuestServiceImpl implements GuestService {
 					"Owner was not found");
 		}
 		return owner;
-	}
-
-	private void enableContactRestriction(User actor, String lsUuid)
-			throws BusinessException {
-		Guest guest = guestBusinessService.findByLsUuid(lsUuid);
-		guest.setRestricted(true);
-		update(actor, guest, guest.getLsUuid());
 	}
 }

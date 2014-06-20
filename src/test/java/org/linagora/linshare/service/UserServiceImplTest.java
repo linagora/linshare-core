@@ -507,7 +507,7 @@ public class UserServiceImplTest extends
 		guest.setPassword(HashUtils.hashSha1withBase64(oldPassword.getBytes()));
 
 		guestRepository.create(guest);
-		userService.resetPassword(guest.getLsUuid(), "user3@linpki.org");
+		guestService.resetPassword(guest.getLsUuid());
 		Assert.assertFalse(guest.getPassword().equals(
 				HashUtils.hashSha1withBase64(oldPassword.getBytes())));
 

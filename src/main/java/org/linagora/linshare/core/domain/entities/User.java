@@ -79,6 +79,7 @@ public abstract class User extends Account {
 		this.destroyed = false;
 		this.canUpload = true;
 		this.canCreateGuest = true;
+		this.externalMailLocale = "en";
 	}
 
 	public User(String firstName, String lastName, String mail) {
@@ -93,6 +94,7 @@ public abstract class User extends Account {
 		this.destroyed = false;
 		this.canUpload = true;
 		this.canCreateGuest = true;
+		this.externalMailLocale = "en";
 	}
 
 	public User(UserDto userDto) {
@@ -103,6 +105,7 @@ public abstract class User extends Account {
 		this.role = Role.valueOf(userDto.getRole());
 		this.canUpload = userDto.getCanUpload();
 		this.canCreateGuest = userDto.getCanCreateGuest();
+		this.externalMailLocale = userDto.getLocale();
 	}
 
 	public void setFirstName(String value) {

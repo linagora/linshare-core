@@ -116,6 +116,9 @@
 		<constructor-arg ref="guestRepository" />
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="allowedContactRepository" />
+		<constructor-arg ref="passwordService" />
+		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="mailBuildingService" />
 	</bean>
 
 	<bean id="uploadRequestBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestBusinessServiceImpl">
