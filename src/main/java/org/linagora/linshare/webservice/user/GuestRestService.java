@@ -9,7 +9,7 @@ public interface GuestRestService {
 
 	UserDto find(String lsUuid) throws BusinessException;
 	
-	UserDto findAll(String ownerLsUuid) throws BusinessException;
+	List<UserDto> findAll(String ownerLsUuid) throws BusinessException;
 	
 	UserDto create(UserDto guest) throws BusinessException;
 

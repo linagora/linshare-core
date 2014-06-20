@@ -135,8 +135,8 @@ public class GuestEditForm {
     @Property
     private String lastName;
 
-//    @Property
-//    private boolean uploadGranted;
+    @Property
+    private boolean uploadGranted;
 	
 	@Property
 	private boolean guestsAllowedToCreateGuest;
@@ -194,6 +194,7 @@ public class GuestEditForm {
     	}
     	
 		guestsAllowedToCreateGuest = false;
+		uploadGranted = false;
 		autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
 	}
 	
@@ -299,12 +300,7 @@ public class GuestEditForm {
 		
 		UserVo guestVo = null ;
 		try {
-			// set uploadGranted always to true for guest
-			boolean uploadGranted = true;
-
-			boolean allowedToCreateGuest = guestsAllowedToCreateGuest;
-        	
-        	guestVo = userFacade.createGuest(mail, firstName, lastName, uploadGranted, allowedToCreateGuest, comment, userLoggedIn);
+        	guestVo = userFacade.createGuest(mail, firstName, lastName, uploadGranted, guestsAllowedToCreateGuest, comment, userLoggedIn);
 		} catch (BusinessException e) { 
 			logger.error("Can't create Guest : " + mail);
 			logger.debug(e.toString());

@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -51,7 +50,6 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
-import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -64,9 +62,6 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.EntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
-import org.linagora.linshare.core.service.MailContentBuildingService;
-import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.service.RecipientFavouriteService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
@@ -83,23 +78,15 @@ public class UserServiceImpl implements UserService {
 	final private static Logger logger = LoggerFactory
 			.getLogger(UserServiceImpl.class);
 
-	/** User repository. */
 	private final UserRepository<User> userRepository;
-
-	/** Notifier service. */
-	private final NotifierService notifierService;
 
 	private final LogEntryService logEntryService;
 
 	private final RecipientFavouriteService recipientFavouriteService;
 
-	private final MailContentBuildingService mailElementsFactory;
-
 	private final AbstractDomainService abstractDomainService;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-
-	private final PasswordService passwordService;
 
 	private final EntryService entryService;
 
@@ -114,29 +101,23 @@ public class UserServiceImpl implements UserService {
 
 	public UserServiceImpl(
 			final UserRepository<User> userRepository,
-			final NotifierService notifierService,
 			final LogEntryService logEntryService,
 			final GuestRepository guestRepository,
 			final RecipientFavouriteService recipientFavouriteService,
 			final AllowedContactRepository allowedContactRepository,
-			final MailContentBuildingService mailElementsFactory,
 			final FunctionalityReadOnlyService functionalityService,
 			final AbstractDomainService abstractDomainService,
-			final PasswordService passwordService,
 			final EntryService entryService,
 			final ThreadService threadService,
 			final DomainPermissionBusinessService domainPermissionBusinessService) {
 
 		this.userRepository = userRepository;
-		this.notifierService = notifierService;
 		this.logEntryService = logEntryService;
 		this.guestRepository = guestRepository;
 		this.recipientFavouriteService = recipientFavouriteService;
 		this.allowedContactRepository = allowedContactRepository;
-		this.mailElementsFactory = mailElementsFactory;
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityReadOnlyService = functionalityService;
-		this.passwordService = passwordService;
 		this.entryService = entryService;
 		this.threadService = threadService;
 		this.domainPermisionService = domainPermissionBusinessService;
@@ -165,19 +146,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<User> findUsersInDB(String domain) {
 		return userRepository.findByDomain(domain);
-	}
-
-	/**
-	 * Calculate the user expiry date.
-	 * 
-	 * @return user expiry date.
-	 */
-	private Date calculateUserExpiryDate(Account sender) {
-		Calendar expiryDate = Calendar.getInstance();
-		TimeUnitValueFunctionality func = functionalityReadOnlyService
-				.getGuestAccountExpiryTimeFunctionality(sender.getDomain());
-		expiryDate.add(func.toCalendarUnitValue(), func.getValue());
-		return expiryDate.getTime();
 	}
 
 	@Override
@@ -251,6 +219,9 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+	/**
+	 * Legacy code, saved for future batch delete
+	 */
 	private void doDeleteUser(Account actor, User userToDelete)
 			throws BusinessException {
 		try {
@@ -589,28 +560,6 @@ public class UserServiceImpl implements UserService {
 
 		user.setPassword(HashUtils.hashSha1withBase64(newPassword.getBytes()));
 		userRepository.update(user);
-	}
-
-	@Override
-	public void resetPassword(String uuid, String mail)
-			throws BusinessException {
-		Guest guest = guestRepository.findByLsUuid(uuid);
-		if (guest == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
-					"Could not find a guest with the login " + mail);
-		}
-
-		// generate a password.
-		String password = passwordService.generatePassword();
-		String hashedPassword = HashUtils.hashSha1withBase64(password
-				.getBytes());
-
-		// Send an email to the guest.
-		notifierService.sendAllNotification(mailElementsFactory
-				.buildMailResetPassword(guest, password));
-
-		guest.setPassword(hashedPassword);
-		guestRepository.update(guest);
 	}
 
 	@Override

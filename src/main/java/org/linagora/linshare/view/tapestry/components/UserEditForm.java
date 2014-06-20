@@ -368,7 +368,7 @@ public class UserEditForm {
 					userFacade.removeGuestContactRestriction(userLoggedIn, guest.getLsUuid());
 					
 				} else if (restrictedEditGuest && guest.isRestricted()) { //maybe user add new contact
-					if (!intialContacts.equalsIgnoreCase(recipientsSearch)) {
+					if (intialContacts != null && !intialContacts.equalsIgnoreCase(recipientsSearch)) {
 						userFacade.setGuestContactRestriction(userLoggedIn, guest.getLsUuid(), recipientsEmail);
 					}
 				}				

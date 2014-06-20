@@ -49,13 +49,6 @@ public interface GuestService {
 	void cleanExpiredGuests(SystemAccount systemAccount);
 
 	/**
-	 * Remove restriction on contacts for a guest and delete all his contacts
-	 * @param lsUuid guest lsUuid
-	 * @throws BusinessException
-	 */
-	void removeContactRestriction(User actor, String lsUuid) throws BusinessException;
-
-	/**
 	 * Add a contact for a restricted guest
 	 * @param actor who trigger the action
 	 * @param lsUuid guest lsUuid
@@ -82,4 +75,21 @@ public interface GuestService {
 	 */
 	List<AllowedContact> getRestrictedContacts(User actor, String lsUuid) throws BusinessException;
 
+	/**
+	 * Reset guest password
+	 * @param lsUuid guest lsUuid
+	 * @throws BusinessException 
+	 */
+	void resetPassword(String lsUuid) throws BusinessException;
+
+
+	/**
+	 * Remove restriction on contacts for a guest and delete all his contacts
+	 * @param actor who trigger the action
+	 * @param lsUuid guest lsUuid
+	 * @return updated guest
+	 * @throws BusinessException
+	 */
+	Guest removeContactRestriction(User actor, String lsUuid)
+			throws BusinessException;
 }
