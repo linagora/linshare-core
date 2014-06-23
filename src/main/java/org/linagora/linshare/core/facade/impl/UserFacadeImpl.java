@@ -35,6 +35,7 @@ package org.linagora.linshare.core.facade.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -320,26 +321,38 @@ public class UserFacadeImpl implements UserFacade {
 			List<String> mailContacts) throws BusinessException {
 
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		guestService.resetContactRestrictions(actor, lsUuid, mailContacts);
+		Guest guest = guestService.findByLsUuid(actor, lsUuid);
+		
+		for (String mail : mailContacts) {
+			User user = userService.findUnkownUserInDB(mail);
+			guest.addContact(new AllowedContact(guest, user));
+		}
+		guestService.update(actor, guest, actor.getLsUuid());
 	}
 
 	@Override
 	public void removeGuestContactRestriction(UserVo actorVo, String lsUuid)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		guestService.removeContactRestriction(actor, lsUuid);
+		Guest guest = guestService.findByLsUuid(actor, lsUuid);
+		guest.setRestricted(true);
+		guestService.update(actor, guest, actor.getLsUuid());
 	}
 
 	public void addGuestContactRestriction(UserVo actorVo, String ownerLsUuid, String guestLsUuid)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		guestService.addRestrictedContact(actor, guestLsUuid, ownerLsUuid);
+		Guest guest = guestService.findByLsUuid(actor, guestLsUuid);
+
+		guest.addContact(new AllowedContact(guest, actor));
+		guestService.update(actor, guest, ownerLsUuid);
 	}
 
 	public List<UserVo> fetchGuestContacts(UserVo actorVo, String lsUuid)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		List<AllowedContact> contacts = guestService.getRestrictedContacts(actor, lsUuid);
+		Guest guest = guestService.findByLsUuid(actor, lsUuid);
+		Set<AllowedContact> contacts = guest.getContacts();
 		// compatibility
 		if (contacts.isEmpty()) {
 			return null;

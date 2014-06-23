@@ -128,9 +128,10 @@ public interface UserService {
 	/**
 	 * This method create a new user entity from a valid user object, or update an existing one. 
 	 * @param user
+	 * @return TODO
 	 * @return user entity created or updated.
 	 */
-	public void saveOrUpdateUser(User user) throws TechnicalException ;
+	public User saveOrUpdateUser(User user) throws TechnicalException ;
 	
 	/** Find a  user (based on mail address).
 	 * Search first in database, then on ldap if not found.

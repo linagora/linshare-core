@@ -36,9 +36,9 @@ package org.linagora.linshare.service;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 import org.junit.After;
@@ -243,15 +243,15 @@ public class UserServiceImplTest extends
 				.findById(LoadingServiceTestDatas.sqlRootDomain);
 		AbstractDomain subDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlSubDomain);
-		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
+		User user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setRole(Role.ADMIN);
-		Internal user2 = new Internal("Jane", "Smith", "user2@linpki.org", null);
+		User user2 = new Internal("Jane", "Smith", "user2@linpki.org", null);
 		user2.setDomain(subDomain);
 
 		logger.info("Save users in DB");
-		userService.saveOrUpdateUser(user1);
-		userService.saveOrUpdateUser(user2);
+		user1 = userService.saveOrUpdateUser(user1);
+		user2 = userService.saveOrUpdateUser(user2);
 
 		try {
 			logger.info("John Doe trying to delete Jane Smith");
@@ -400,7 +400,7 @@ public class UserServiceImplTest extends
 		user2.setCanCreateGuest(true);
 		user2.setRole(Role.SYSTEM);
 
-		userService.saveOrUpdateUser(user2);
+		user2 = userService.saveOrUpdateUser(user2);
 
 		UserVo userVo2 = new UserVo(user2);
 
@@ -415,7 +415,7 @@ public class UserServiceImplTest extends
 		guest.setOwner(user2);
 		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
-		guestRepository.create(guest);
+		guest = guestRepository.create(guest);
 
 		guest.setCanCreateGuest(false);
 		guestService.update(user2, guest, user2.getLsUuid());
@@ -485,11 +485,11 @@ public class UserServiceImplTest extends
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain rootDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
+		User user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
 
-		userService.saveOrUpdateUser(user1);
+		user1 = userService.saveOrUpdateUser(user1);
 
 		AbstractDomain guestDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain);
@@ -506,7 +506,7 @@ public class UserServiceImplTest extends
 
 		guest.setPassword(HashUtils.hashSha1withBase64(oldPassword.getBytes()));
 
-		guestRepository.create(guest);
+		guest = guestRepository.create(guest);
 		guestService.resetPassword(guest.getLsUuid());
 		Assert.assertFalse(guest.getPassword().equals(
 				HashUtils.hashSha1withBase64(oldPassword.getBytes())));
@@ -520,11 +520,11 @@ public class UserServiceImplTest extends
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain rootDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
+		User user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
 
-		userService.saveOrUpdateUser(user1);
+		user1 = userService.saveOrUpdateUser(user1);
 
 		AbstractDomain guestDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain);
@@ -538,9 +538,11 @@ public class UserServiceImplTest extends
 		guest.setRestricted(true);
 		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
-		guestRepository.create(guest);
+		guest = guestRepository.create(guest);
+
 		Assert.assertTrue(guest.isRestricted());
-		guestService.removeContactRestriction(user1, guest.getLsUuid());
+		guest.setRestricted(false);
+		guest = guestService.update(user1, guest, null);
 		Assert.assertFalse(guest.isRestricted());
 
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -552,11 +554,11 @@ public class UserServiceImplTest extends
 
 		AbstractDomain rootDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
+		User user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
 
-		userService.saveOrUpdateUser(user1);
+		user1 = userService.saveOrUpdateUser(user1);
 
 		AbstractDomain guestDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain);
@@ -569,7 +571,7 @@ public class UserServiceImplTest extends
 		guest2.setOwner(user1);
 		guest2.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest2.setLocale(guestDomain.getDefaultTapestryLocale());
-		guestRepository.create(guest2);
+		Guest createGuest2 = guestRepository.create(guest2);
 
 		// create guest
 		Guest guest = new Guest("Foo", "Bar", "user3@linpki.org");
@@ -580,14 +582,16 @@ public class UserServiceImplTest extends
 		guest.setRestricted(true);
 		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
-		guestRepository.create(guest);
-		guestService.addRestrictedContact(user1, guest.getLsUuid(), guest2.getLsUuid());
+		Guest createGuest = guestRepository.create(guest);
+
+		createGuest.addContact(new AllowedContact(createGuest, createGuest2));
+		guestService.update(user1, createGuest, null);
 		List<AllowedContact> listAllowedContact = allowedContactRepository
-				.findByOwner(guest);
+				.findByOwner(createGuest);
 		boolean test = false;
 		for (AllowedContact allowedContact : listAllowedContact) {
 			if (allowedContact.getContact().getLsUuid()
-					.equals(guest2.getLsUuid())) {
+					.equals(createGuest2.getLsUuid())) {
 				test = true;
 			}
 		}
@@ -602,11 +606,11 @@ public class UserServiceImplTest extends
 
 		AbstractDomain rootDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
+		User user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
 
-		userService.saveOrUpdateUser(user1);
+		user1 = userService.saveOrUpdateUser(user1);
 
 		AbstractDomain guestDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain);
@@ -619,7 +623,7 @@ public class UserServiceImplTest extends
 		guest2.setOwner(user1);
 		guest2.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest2.setLocale(guestDomain.getDefaultTapestryLocale());
-		guestRepository.create(guest2);
+		guest2 = guestRepository.create(guest2);
 
 		// create guest
 		Guest guest = new Guest("Foo", "Bar", "user3@linpki.org");
@@ -630,11 +634,10 @@ public class UserServiceImplTest extends
 		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 
-		guestRepository.create(guest);
+		guest = guestRepository.create(guest);
 
-		List<String> mailContacts = new ArrayList<String>();
-		mailContacts.add(guest2.getMail());
-		guestService.resetContactRestrictions(user1, guest.getLsUuid(), mailContacts);
+		guest.addContact(new AllowedContact(guest, guest2));
+		guest = guestService.update(user1, guest, null);
 		List<AllowedContact> listAllowedContact = allowedContactRepository
 				.findByOwner(guest);
 		boolean test = false;
@@ -656,11 +659,11 @@ public class UserServiceImplTest extends
 
 		AbstractDomain rootDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
+		User user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
 
-		userService.saveOrUpdateUser(user1);
+		user1 = userService.saveOrUpdateUser(user1);
 
 		AbstractDomain guestDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain);
@@ -668,25 +671,24 @@ public class UserServiceImplTest extends
 
 		// create guest
 		Guest guest2 = new Guest("Jane", "Smith", "user2@linpki.org");
-		guest2.setDomain(abstractDomainRepository
-				.findById(LoadingServiceTestDatas.sqlGuestDomain));
+		guest2.setDomain(guestDomain);
 		guest2.setOwner(user1);
 		guest2.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest2.setLocale(guestDomain.getDefaultTapestryLocale());
-		guestRepository.create(guest2);
+		guest2 = guestRepository.create(guest2);
 
 		// create guest
 		Guest guest = new Guest("Foo", "Bar", "user3@linpki.org");
-		guest.setDomain(abstractDomainRepository
-				.findById(LoadingServiceTestDatas.sqlGuestDomain));
+		guest.setDomain(guestDomain);
 		guest.setOwner(user1);
 		guest.setRestricted(true);
 		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
-		guestRepository.create(guest);
+		guest = guestRepository.create(guest);
 
-		guestService.addRestrictedContact(user1, guest.getLsUuid(), guest2.getLsUuid());
-		List<AllowedContact> guestContacts = guestService.getRestrictedContacts(user1, guest.getLsUuid());
+		guest.addContact(new AllowedContact(guest, guest2));
+		guest = guestService.update(user1, guest, null);
+		Set<AllowedContact> guestContacts = guest.getContacts();
 		boolean contain = false;
 		for (AllowedContact contact : guestContacts) {
 			if (contact.getContact().equals(guest2)) {
@@ -705,11 +707,11 @@ public class UserServiceImplTest extends
 
 		AbstractDomain rootDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
+		User user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
 
-		userService.saveOrUpdateUser(user1);
+		user1 = userService.saveOrUpdateUser(user1);
 
 		AbstractDomain guestDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain);
@@ -721,7 +723,7 @@ public class UserServiceImplTest extends
 		guest2.setOwner(user1);
 		guest2.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest2.setLocale(guestDomain.getDefaultTapestryLocale());
-		guestRepository.create(guest2);
+		Guest createGuest2 = guestRepository.create(guest2);
 
 		// create guest
 		Guest guest = new Guest("Foo", "Bar", "user3@linpki.org");
@@ -730,13 +732,14 @@ public class UserServiceImplTest extends
 		guest.setRestricted(true);
 		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
-		guestRepository.create(guest);
+		Guest createGuest = guestRepository.create(guest);
 
-		guestService.addRestrictedContact(user1, guest.getLsUuid(), guest2.getLsUuid());
-		List<AllowedContact> guestContacts = guestService.getRestrictedContacts(user1, guest.getLsUuid());
+		createGuest.addContact(new AllowedContact(createGuest, createGuest2));
+		guest = guestService.update(user1, createGuest, null);
+		Set<AllowedContact> guestContacts = guest.getContacts();
 		boolean contain = false;
 		for (AllowedContact contact : guestContacts) {
-			if (contact.getContact().getMail().equals(guest2.getMail())) {
+			if (contact.getContact().getMail().equals(createGuest2.getMail())) {
 				contain = true;
 			}
 		}

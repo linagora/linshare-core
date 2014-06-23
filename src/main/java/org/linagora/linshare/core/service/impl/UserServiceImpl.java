@@ -616,7 +616,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void saveOrUpdateUser(User user) throws TechnicalException {
+	public User saveOrUpdateUser(User user) throws TechnicalException {
 		// User object should be an new entity, or an existing one
 		logger.debug("Begin saveOrUpdateUser");
 		if (user != null && user.getDomain() != null) {
@@ -629,7 +629,7 @@ public class UserServiceImpl implements UserService {
 				// update
 				logger.debug("userRepository.update(user)");
 				try {
-					userRepository.update(user);
+					return userRepository.update(user);
 				} catch (IllegalArgumentException e) {
 					logger.error("Could not update the user " + user.getMail()
 							+ " in the database ", e);
@@ -660,7 +660,7 @@ public class UserServiceImpl implements UserService {
 
 				user.setLocale(user.getDomain().getDefaultTapestryLocale());
 				try {
-					userRepository.create(user);
+					return userRepository.create(user);
 				} catch (IllegalArgumentException e) {
 					logger.error("Could not create the user " + user.getMail()
 							+ " in the database ", e);
@@ -688,8 +688,6 @@ public class UserServiceImpl implements UserService {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
 					msg);
 		}
-
-		logger.debug("End saveOrUpdateUser");
 	}
 
 	/**

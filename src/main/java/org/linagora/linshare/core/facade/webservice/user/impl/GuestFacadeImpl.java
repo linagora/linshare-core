@@ -1,6 +1,7 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -33,7 +34,8 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements GuestFacade {
 	public List<UserDto> getRestrictedContacts(String lsUuid)
 			throws BusinessException {
 		User actor = checkAuthentication();
-		List<AllowedContact> contacts = guestService.getRestrictedContacts(actor, lsUuid);
+		Guest guest = guestService.findByLsUuid(actor, lsUuid);
+		Set<AllowedContact> contacts = guest.getContacts();
 		List<UserDto> dtos = Lists.newArrayList();
 		for (AllowedContact contact : contacts) {
 			dtos.add(UserDto.getSimple(contact.getContact()));

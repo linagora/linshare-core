@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -65,7 +64,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			.getLogger(UserFacadeImpl.class);
 
 	private final UserService userService;
-	
+
 	private final GuestService guestService;
 
 	private final InconsistentUserService inconsistentUserService;
@@ -124,9 +123,12 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			UserDto userDto = UserDto.getFull(user);
 
 			if (user.isGuest() && user.isRestricted()) {
-				List<AllowedContact> contacts = guestService.getRestrictedContacts(currentUser, user.getLsUuid());
+				Guest guest = guestService.findByLsUuid(currentUser,
+						user.getLsUuid());
+				Set<AllowedContact> contacts = guest.getContacts();
 				for (AllowedContact contact : contacts) {
-					userDto.getRestrictedContacts().add(contact.getContact().getMail());
+					userDto.getRestrictedContacts().add(
+							contact.getContact().getMail());
 				}
 			}
 			usersDto.add(userDto);
@@ -147,9 +149,12 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	public UserDto update(UserDto userDto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		User user = getUser(userDto);
-		User update = userService.updateUser(actor, user, userDto.getDomain());
-		if (userDto.isGuest() && user.isRestricted()) {
-			guestService.resetContactRestrictions(actor, update.getLsUuid(), userDto.getRestrictedContacts());
+		User update;
+		if (userDto.isGuest()) {
+			update = guestService.update(actor, (Guest) user, user.getOwner()
+					.getLsUuid());
+		} else {
+			update = userService.updateUser(actor, user, userDto.getDomain());
 		}
 		return UserDto.getSimple(update);
 	}

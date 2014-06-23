@@ -259,6 +259,8 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="mailBuildingService" />
 	</bean>
 
 	<bean name="uploadRequestService" class="org.linagora.linshare.core.service.impl.UploadRequestServiceImpl">
