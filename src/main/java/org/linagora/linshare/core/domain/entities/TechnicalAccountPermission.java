@@ -37,6 +37,8 @@ import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
+import org.linagora.linshare.webservice.dto.TechnicalAccountPermissionDto;
+
 import com.google.common.collect.Sets;
 
 public class TechnicalAccountPermission {
@@ -60,6 +62,17 @@ public class TechnicalAccountPermission {
 		this.modificationDate = new Date();
 	}
 
+	public TechnicalAccountPermission(TechnicalAccountPermissionDto dto) {
+		super();
+		this.uuid = dto.getUuid();
+		Set<String> permissions = dto.getPermissions();
+
+		for (String perm: permissions) {
+			accountPermissions.add(new AccountPermission(perm));
+		}
+
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -69,6 +82,11 @@ public class TechnicalAccountPermission {
 	}
 
 	public java.util.Set<AbstractDomain> getDomains() {
+		return domains;
+	}
+
+	public Set<AbstractDomain> addDomain(AbstractDomain domain) {
+		domains.add(domain);
 		return domains;
 	}
 

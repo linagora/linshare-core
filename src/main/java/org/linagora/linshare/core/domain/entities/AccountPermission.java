@@ -41,8 +41,14 @@ public class AccountPermission {
 
 	private TechnicalAccountPermissionType permission;
 
-	public AccountPermission() {
+	public AccountPermission(TechnicalAccountPermissionType perm) {
 		super();
+		this.permission = perm;
+	}
+
+	public AccountPermission(String perm) {
+		super();
+		this.permission = TechnicalAccountPermissionType.valueOf(perm);
 	}
 
 	public long getId() {

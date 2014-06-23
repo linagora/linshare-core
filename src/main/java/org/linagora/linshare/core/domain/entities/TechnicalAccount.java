@@ -34,19 +34,33 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
 
 public class TechnicalAccount extends User {
 
 	private TechnicalAccountPermission permission;
-	
+
+	public TechnicalAccount(TechnicalAccountDto dto) {
+		super();
+		this.lastName = dto.getName();
+		this.lsUuid = dto.getUuid();
+		this.mail = dto.getMail();
+		this.destroyed = false;
+		this.canUpload = false;
+		this.canCreateGuest = false;
+		this.enable = true;
+		this.externalMailLocale = "en";
+		this.locale = "en";
+	}
+
 	@Override
 	public AccountType getAccountType() {
-		return AccountType.TECHNICALACCOUNT;
+		return AccountType.TECHNICAL_ACCOUNT;
 	}
-	
+
 	@Override
 	public String getAccountReprentation() {
-		return lsUuid ;
+		return this.lastName + "(" + lsUuid + ")";
 	}
 
 	public TechnicalAccountPermission getPermission() {
@@ -56,5 +70,4 @@ public class TechnicalAccount extends User {
 	public void setPermission(TechnicalAccountPermission permission) {
 		this.permission = permission;
 	}
-
 }

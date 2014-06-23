@@ -31,18 +31,27 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
+package org.linagora.linshare.webservice.admin;
 
-import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
+import java.util.Set;
+
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
 
-public interface TechnicalAccountPermissionBusinessService {
+public interface TechnicalAccountRestService {
 
-	TechnicalAccountPermission find(String uuid);
+	Set<TechnicalAccountDto> findAll() throws BusinessException;
 
-	TechnicalAccountPermission create(TechnicalAccountPermission account) throws BusinessException;
+	TechnicalAccountDto find(String uuid) throws BusinessException;
 
-	TechnicalAccountPermission update(TechnicalAccountPermission account) throws BusinessException;
+	TechnicalAccountDto update(TechnicalAccountDto account)
+			throws BusinessException;
 
-	void delete(TechnicalAccountPermission account) throws BusinessException;
+	TechnicalAccountDto create(TechnicalAccountDto account)
+			throws BusinessException;
+
+	void delete(TechnicalAccountDto account) throws BusinessException;
+
+	void delete(String uuid) throws BusinessException;
+
 }

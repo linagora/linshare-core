@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.Set;
-
 import org.linagora.linshare.core.business.service.TechnicalAccountPermissionBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
@@ -42,7 +40,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.TechnicalAccountPermissionService;
 
-public class TechnicalAccountPermissionServiceImpl implements TechnicalAccountPermissionService {
+public class TechnicalAccountPermissionServiceImpl implements
+		TechnicalAccountPermissionService {
 
 	private final TechnicalAccountPermissionBusinessService technicalAccountPermissionBusinessService;
 
@@ -57,7 +56,8 @@ public class TechnicalAccountPermissionServiceImpl implements TechnicalAccountPe
 	}
 
 	@Override
-	public TechnicalAccountPermission create(Account actor, TechnicalAccountPermission permission) throws BusinessException {
+	public TechnicalAccountPermission create(Account actor,
+			TechnicalAccountPermission permission) throws BusinessException {
 		return technicalAccountPermissionBusinessService.create(permission);
 	}
 
@@ -74,15 +74,12 @@ public class TechnicalAccountPermissionServiceImpl implements TechnicalAccountPe
 	}
 
 	@Override
-	public Set<TechnicalAccountPermission> findAll(Account actor)
-			throws BusinessException {
-		return technicalAccountPermissionBusinessService.findAll();
-	}
-
-	@Override
-	public TechnicalAccountPermission update(Account actor, TechnicalAccountPermission permissionDto)
-			throws BusinessException {
-		TechnicalAccountPermission permission = technicalAccountPermissionBusinessService.find(permissionDto.getUuid());
+	public TechnicalAccountPermission update(Account actor,
+			TechnicalAccountPermission permissionDto) throws BusinessException {
+		TechnicalAccountPermission permission = technicalAccountPermissionBusinessService
+				.find(permissionDto.getUuid());
+		permission.setAccountPermissions(permissionDto.getAccountPermissions());
+		permission.setDomains(permissionDto.getDomains());
 		return technicalAccountPermissionBusinessService.update(permission);
 	}
 }

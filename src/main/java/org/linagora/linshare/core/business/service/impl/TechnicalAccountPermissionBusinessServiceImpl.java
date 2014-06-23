@@ -33,14 +33,10 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
-import java.util.Set;
-
 import org.linagora.linshare.core.business.service.TechnicalAccountPermissionBusinessService;
 import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.TechnicalAccountPermissionRepository;
-
-import com.google.common.collect.Sets;
 
 public class TechnicalAccountPermissionBusinessServiceImpl implements
 		TechnicalAccountPermissionBusinessService {
@@ -56,13 +52,6 @@ public class TechnicalAccountPermissionBusinessServiceImpl implements
 	@Override
 	public TechnicalAccountPermission find(String uuid) {
 		return technicalAccountPermissionRepository.find(uuid);
-	}
-
-	@Override
-	public Set<TechnicalAccountPermission> findAll() {
-		Set<TechnicalAccountPermission> res = Sets.newHashSet();
-		res.addAll(technicalAccountPermissionRepository.findAll());
-		return res;
 	}
 
 	@Override

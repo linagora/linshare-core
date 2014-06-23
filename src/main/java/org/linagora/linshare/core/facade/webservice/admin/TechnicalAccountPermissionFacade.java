@@ -31,18 +31,17 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
+package org.linagora.linshare.core.facade.webservice.admin;
 
-import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.delegation.DelegationGenericFacade;
+import org.linagora.linshare.webservice.dto.TechnicalAccountPermissionDto;
 
-public interface TechnicalAccountPermissionBusinessService {
+public interface TechnicalAccountPermissionFacade extends DelegationGenericFacade {
 
-	TechnicalAccountPermission find(String uuid);
+	TechnicalAccountPermissionDto find(String uuid) throws BusinessException;
 
-	TechnicalAccountPermission create(TechnicalAccountPermission account) throws BusinessException;
+	TechnicalAccountPermissionDto update(TechnicalAccountPermissionDto dto)
+			throws BusinessException;
 
-	TechnicalAccountPermission update(TechnicalAccountPermission account) throws BusinessException;
-
-	void delete(TechnicalAccountPermission account) throws BusinessException;
 }

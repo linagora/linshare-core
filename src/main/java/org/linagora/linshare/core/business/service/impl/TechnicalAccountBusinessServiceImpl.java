@@ -39,6 +39,7 @@ import java.util.Set;
 import org.linagora.linshare.core.business.service.TechnicalAccountBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
+import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.TechnicalAccountRepository;
@@ -85,6 +86,7 @@ public class TechnicalAccountBusinessServiceImpl implements
 	public TechnicalAccount create(AbstractDomain domain,
 			TechnicalAccount account) throws BusinessException {
 		account.setDomain(domain);
+		account.setPermission(new TechnicalAccountPermission());
 		return technicalAccountRepository.create(account);
 	}
 

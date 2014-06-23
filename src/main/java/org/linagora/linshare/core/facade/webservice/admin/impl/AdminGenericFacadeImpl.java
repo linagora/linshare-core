@@ -55,18 +55,19 @@ public class AdminGenericFacadeImpl extends GenericFacadeImpl implements
 
 	@Override
 	public User checkAuthentication(Role role) throws BusinessException {
-		User user = super.checkAuthentication();
+		User actor = super.checkAuthentication();
 
 		if (role != Role.SUPERADMIN && role != Role.ADMIN) {
 			logger.error("Programmatic error: role must be set either to SUPERADMIN or ADMIN but is " + role.name());
 			throw new IllegalArgumentException(
 					"role must be either SUPERADMIN or ADMIN");
 		}
-		// user as at least admin role 
-		if (user.getRole().toInt() < role.toInt())
+		if (!(actor.isAdmin() || actor.isSuperAdmin())) {
+			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountReprentation());
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
-		return user;
+		}
+		return actor;
 	}
 }

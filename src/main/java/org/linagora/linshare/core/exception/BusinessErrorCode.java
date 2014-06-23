@@ -118,11 +118,10 @@ public enum BusinessErrorCode implements ErrorCode {
     THREAD_NOT_FOUND(26000, Status.NOT_FOUND),
     THREAD_MEMBER_NOT_FOUND(26001, Status.NOT_FOUND),
     THREAD_ENTRY_NOT_FOUND(26002, Status.NOT_FOUND),
-    
+
     GUEST_NOT_FOUND(28000, Status.NOT_FOUND), 
     GUEST_ALREADY_EXISTS(28001, Status.BAD_REQUEST),
-    ;
-
+    TECHNICAL_ACCOUNT_NOT_FOUND(29000, Status.NOT_FOUND);
 
 	private final int code;
 
