@@ -259,5 +259,7 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="mailBuildingService" />
 	</bean>
 </beans>

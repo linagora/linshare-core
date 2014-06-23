@@ -9,7 +9,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
-import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -18,11 +17,8 @@ import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.MailBuildingService;
-import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.utils.HashUtils;
-import org.springframework.util.Assert;
 
 public class GuestBusinessServiceImpl implements GuestBusinessService {
 
@@ -34,42 +30,50 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 
 	private final PasswordService passwordService;
 
-	private final NotifierService notifierService;
-
-	private final MailBuildingService mailBuildingService;
-
 	public GuestBusinessServiceImpl(final GuestRepository guestRepository,
 			final UserRepository<User> userRepository,
 			final AllowedContactRepository allowedContactRepository,
-			final PasswordService passwordService,
-			final NotifierService notifierService,
-			final MailBuildingService mailBuildingService) {
+			final PasswordService passwordService) {
 		this.guestRepository = guestRepository;
 		this.userRepository = userRepository;
 		this.allowedContactRepository = allowedContactRepository;
 		this.passwordService = passwordService;
-		this.notifierService = notifierService;
-		this.mailBuildingService = mailBuildingService;
 	}
 
 	@Override
 	public Guest findByLsUuid(String lsUuid) throws BusinessException {
-		return guestRepository.findByLsUuid(lsUuid);
+		Guest guest = guestRepository.findByLsUuid(lsUuid);
+		if (guest.isRestricted()) {
+			guest.addContacts(allowedContactRepository.findByOwner(guest));
+		}
+		return guest;
 	}
 
 	@Override
 	public List<Guest> findAll() {
-		return guestRepository.findAll();
+		List<Guest> all = guestRepository.findAll();
+		for (Guest guest : all) {
+			if (guest.isRestricted()) {
+				guest.addContacts(allowedContactRepository.findByOwner(guest));
+			}
+		}
+		return all;
 	}
 
 	@Override
 	public List<Guest> findOutdatedGuests() {
-		return guestRepository.findOutdatedGuests();
+		List<Guest> outdatedGuests = guestRepository.findOutdatedGuests();
+		for (Guest guest : outdatedGuests) {
+			if (guest.isRestricted()) {
+				guest.addContacts(allowedContactRepository.findByOwner(guest));
+			}
+		}
+		return outdatedGuests;
 	}
 
 	@Override
-	public Guest create(Guest guest, User owner, GuestDomain domain, Date expiryDate)
-			throws BusinessException {
+	public GuestWithMetadata create(Guest guest, User owner,
+			GuestDomain domain, Date expiryDate) throws BusinessException {
 		String password = passwordService.generatePassword();
 		String hashedPassword = HashUtils.hashSha1withBase64(password
 				.getBytes());
@@ -80,12 +84,13 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		guest.setExternalMailLocale(domain.getDefaultTapestryLocale());
 		guest.setPassword(hashedPassword);
 		guest.setExpirationDate(expiryDate);
-        Guest create = guestRepository.create(guest);
-        
-		MailContainerWithRecipient mail = mailBuildingService.buildNewGuest(
-				owner, guest, password);
-		notifierService.sendAllNotification(mail);
-		return create;
+		Guest create = guestRepository.create(guest);
+		if (create.isRestricted()) {
+			for (AllowedContact c : guest.getContacts()) {
+				allowedContactRepository.create(c);
+			}
+		}
+		return new GuestWithMetadata(password, create);
 	}
 
 	@Override
@@ -94,7 +99,21 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		try {
 			guest.setOwner(owner);
 			guest.setDomain(domain);
-			return guestRepository.update(guest);
+			Guest update = guestRepository.update(guest);
+			if (update.isRestricted()) {
+				try {
+					allowedContactRepository.purge(update);
+				} catch (IllegalArgumentException e) {
+					throw new TechnicalException(
+							TechnicalErrorCode.USER_INCOHERENCE, "Guest "
+									+ guest.getLsUuid()
+									+ " contacts cannot be purge");
+				}
+				for (AllowedContact c : guest.getContacts()) {
+					allowedContactRepository.create(c);
+				}
+			}
+			return update;
 		} catch (IllegalArgumentException iae) {
 			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND,
 					"Cannot update guest " + guest);
@@ -103,6 +122,9 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 
 	@Override
 	public void delete(Guest guest) throws BusinessException {
+		if (guest.isRestricted()) {
+			allowedContactRepository.purge(guest);
+		}
 		userRepository.delete(guest);
 	}
 
@@ -112,61 +134,38 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public void purgeRestriction(Guest guest) throws BusinessException {
-		try {
-			allowedContactRepository.purge(guest);
-		} catch (IllegalArgumentException e) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
-					"Guest " + guest.getLsUuid() + " contacts cannot be purge");
-		}
-	}
-
-	@Override
-	public void addRestrictedContact(Guest guest, User contact)
+	public GuestWithMetadata resetPassword(Guest guest)
 			throws BusinessException {
-		AllowedContact allowedContact = new AllowedContact(guest, contact);
-		allowedContactRepository.create(allowedContact);
-	}
-
-	@Override
-	public List<AllowedContact> getRestrictedContacts(Guest guest) {
-		return allowedContactRepository.findByOwner(guest);
-	}
-
-	@Override
-	public Guest enableContactRestriction(Guest guest)
-			throws BusinessException {
-		Assert.notNull(guest);
-
-		guest.setRestricted(true);
-		return update(guest, guest.getOwner(), guest.getDomain());
-	}
-	
-	@Override
-	public Guest removeContactRestriction(Guest guest)
-			throws BusinessException {
-		Assert.notNull(guest);
-
-		purgeRestriction(guest);
-		guest.setRestricted(false);
-		return update(guest, guest.getOwner(), guest.getDomain());
-	}
-
-	@Override
-	public void resetPassword(Guest guest) throws BusinessException {
 		String password = passwordService.generatePassword();
 		String hashedPassword = HashUtils.hashSha1withBase64(password
 				.getBytes());
-		MailContainerWithRecipient mail = mailBuildingService
-				.buildResetPassword(guest, password);
-		notifierService.sendAllNotification(mail);
 		guest.setPassword(hashedPassword);
-		guestRepository.update(guest);
+		Guest update = guestRepository.update(guest);
+		return new GuestWithMetadata(password, update);
 	}
 
 	/**
 	 * HELPERS
 	 */
 
+	public class GuestWithMetadata {
 
+		private final String password;
+
+		private final Guest guest;
+
+		public GuestWithMetadata(String password, Guest guest) {
+			super();
+			this.password = password;
+			this.guest = guest;
+		}
+
+		public String getPassword() {
+			return password;
+		}
+
+		public Guest getGuest() {
+			return guest;
+		}
+	}
 }

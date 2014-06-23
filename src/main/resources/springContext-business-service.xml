@@ -117,8 +117,6 @@
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="allowedContactRepository" />
 		<constructor-arg ref="passwordService" />
-		<constructor-arg ref="notifierService" />
-		<constructor-arg ref="mailBuildingService" />
 	</bean>
 
 </beans>

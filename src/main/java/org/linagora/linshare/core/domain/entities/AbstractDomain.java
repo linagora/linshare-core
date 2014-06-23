@@ -358,7 +358,7 @@ public abstract class AbstractDomain {
 			if (d .getIdentifier().equals(accountDomainId)) {
 				return true;
 			} else {
-				checkIfManagedByParent(d, accountDomainId);
+				return checkIfManagedByParent(d, accountDomainId);
 			}
 		}
 		return false;
