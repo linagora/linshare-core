@@ -277,18 +277,18 @@ public class UserServiceImplTest extends
 				.findById(LoadingServiceTestDatas.sqlRootDomain);
 		AbstractDomain subDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlSubDomain);
-		Internal user1 = new Internal("John", "Doe", "user1@linpki.org", null);
+		User user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setRole(Role.ADMIN);
-		Internal user2 = new Internal("Jane", "Smith", "user2@linpki.org", null);
+		User user2 = new Internal("Jane", "Smith", "user2@linpki.org", null);
 		user2.setDomain(subDomain);
-		Internal user3 = new Internal("Foo", "Bar", "user3@linpki.org", null);
+		User user3 = new Internal("Foo", "Bar", "user3@linpki.org", null);
 		user3.setDomain(subDomain);
 
 		logger.info("Save users in DB");
-		userService.saveOrUpdateUser(user1);
-		userService.saveOrUpdateUser(user2);
-		userService.saveOrUpdateUser(user3);
+		user1 = userService.saveOrUpdateUser(user1);
+		user2 = userService.saveOrUpdateUser(user2);
+		user3 = userService.saveOrUpdateUser(user3);
 
 		try {
 			logger.info("John Doe trying to delete Jane Smith");
@@ -571,7 +571,7 @@ public class UserServiceImplTest extends
 		guest2.setOwner(user1);
 		guest2.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest2.setLocale(guestDomain.getDefaultTapestryLocale());
-		Guest createGuest2 = guestRepository.create(guest2);
+		guest2 = guestRepository.create(guest2);
 
 		// create guest
 		Guest guest = new Guest("Foo", "Bar", "user3@linpki.org");
@@ -582,16 +582,16 @@ public class UserServiceImplTest extends
 		guest.setRestricted(true);
 		guest.setExternalMailLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
-		Guest createGuest = guestRepository.create(guest);
+		guest = guestRepository.create(guest);
 
-		createGuest.addContact(new AllowedContact(createGuest, createGuest2));
-		guestService.update(user1, createGuest, null);
+		guest.addContact(new AllowedContact(guest, guest2));
+		guestService.update(user1, guest, null);
 		List<AllowedContact> listAllowedContact = allowedContactRepository
-				.findByOwner(createGuest);
+				.findByOwner(guest);
 		boolean test = false;
 		for (AllowedContact allowedContact : listAllowedContact) {
 			if (allowedContact.getContact().getLsUuid()
-					.equals(createGuest2.getLsUuid())) {
+					.equals(guest2.getLsUuid())) {
 				test = true;
 			}
 		}
