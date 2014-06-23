@@ -141,6 +141,11 @@ public class GuestServiceImpl implements GuestService {
 		User owner = retreiveOwner(ownerLsUuid);
 		GuestDomain guestDomain = abstractDomainService.getGuestDomain(owner
 				.getDomainId());
+		if (guestDomain == null) {
+			throw new BusinessException(
+					BusinessErrorCode.USER_CANNOT_CREATE_GUEST,
+					"New owner doesn't have guest domain");
+		}
 		return guestBusinessService.update(guest, owner, guestDomain);
 	}
 
