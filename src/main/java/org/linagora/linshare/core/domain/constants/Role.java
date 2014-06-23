@@ -36,7 +36,7 @@ package org.linagora.linshare.core.domain.constants;
 /**
  */
 public enum Role {
-    SIMPLE(0), ADMIN(1), SYSTEM(2), SUPERADMIN(3);
+    SIMPLE(0), ADMIN(1), SYSTEM(2), SUPERADMIN(3), DELEGATION(4);
 
     private int value;
 

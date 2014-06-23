@@ -96,6 +96,14 @@
 		<constructor-arg ref="wsAdminMimeTypeFacade" />
 	</bean>
 
+	<bean id="adminTechnicalAccountFacade" class="org.linagora.linshare.webservice.admin.impl.TechnicalAccountRestServiceImpl">
+		<constructor-arg ref="wsAdminTechnicalAccountFacade" />
+	</bean>
+
+	<bean id="adminTechnicalAccountPermissionFacade" class="org.linagora.linshare.webservice.admin.impl.TechnicalAccountPermissionRestServiceImpl">
+		<constructor-arg ref="wsAdminTechnicalAccountPermissionFacade" />
+	</bean>
+
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">
 		<jaxrs:serviceBeans>
 			<ref bean="adminAuthenticationRestService" />
@@ -118,6 +126,8 @@
 			<ref bean="adminMailContentLangRestService" />
 			<ref bean="adminMimePolicyRestService" />
 			<ref bean="adminMimeTypeRestService" />
+			<ref bean="adminTechnicalAccountFacade" />
+			<ref bean="adminTechnicalAccountPermissionFacade" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
@@ -133,7 +143,7 @@
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 		<jaxrs:features>
-<!--			<cxf:logging /> -->
+<!-- 			<cxf:logging /> -->
 		</jaxrs:features>
 		<jaxrs:inInterceptors>
 			<!-- For debug only : print input message -->

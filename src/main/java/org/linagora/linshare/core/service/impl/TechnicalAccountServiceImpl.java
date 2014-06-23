@@ -36,8 +36,10 @@ package org.linagora.linshare.core.service.impl;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.TechnicalAccountBusinessService;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
@@ -57,37 +59,45 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 	}
 
 	@Override
-	public TechnicalAccount create(Account actor, String domainId,
-			TechnicalAccount account) throws BusinessException {
-		return technicalAccountBusinessService.create(domainId, account);
+	public TechnicalAccount create(Account actor, TechnicalAccount account) throws BusinessException {
+		// TODO : check rights, log actions.
+		return technicalAccountBusinessService.create(LinShareConstants.rootDomainIdentifier, account);
 	}
 
 	@Override
 	public void delete(Account actor, TechnicalAccount account)
 			throws BusinessException {
+		// TODO : check rights, log actions.
 		technicalAccountBusinessService.delete(account);
 	}
 
 	@Override
 	public TechnicalAccount find(Account actor, String uuid)
 			throws BusinessException {
-		return technicalAccountBusinessService.find(uuid);
+		// TODO : check rights, log actions.
+		TechnicalAccount account = technicalAccountBusinessService.find(uuid);
+		if (account == null) {
+			throw new BusinessException(BusinessErrorCode.TECHNICAL_ACCOUNT_NOT_FOUND,
+					"The technical account does not exist : " + uuid);
+		}
+		return account;
 	}
 
 	@Override
-	public Set<TechnicalAccount> findAll(Account actor, String domainIdentifier)
+	public Set<TechnicalAccount> findAll(Account actor)
 			throws BusinessException {
-		return technicalAccountBusinessService.findAll(domainIdentifier);
+		// TODO : check rights, log actions.
+		return technicalAccountBusinessService.findAll(LinShareConstants.rootDomainIdentifier);
 	}
 
 	@Override
 	public TechnicalAccount update(Account actor, TechnicalAccount accountDto)
 			throws BusinessException {
+		// TODO : check rights, log actions.
 		TechnicalAccount technicalAccount = technicalAccountBusinessService.find(accountDto.getLsUuid());
 		technicalAccount.setLastName(accountDto.getLastName());
 		technicalAccount.setMail(accountDto.getMail());
-		technicalAccount.setFirstName(accountDto.getFirstName());
-		technicalAccount.setPassword(accountDto.getPassword());
+		technicalAccount.setEnable(accountDto.isEnable());
 		return technicalAccountBusinessService.update(technicalAccount);
 	}
 }

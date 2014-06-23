@@ -497,7 +497,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	@Override
 	public void renameDocumentEntry(Account actor, String docEntryUuid, String newName) throws BusinessException {
 		DocumentEntry entry = documentEntryBusinessService.findById(docEntryUuid);
-		if (!actor.isSuperAdmin() && !actor.isTechnicalAccount()) {
+		if (!actor.isSuperAdmin() && !actor.isSystemAccount()) {
 			if (!entry.getEntryOwner().equals(actor)) {
 				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to rename this document.");
 			}
@@ -508,7 +508,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	@Override
 	public void updateFileProperties(Account actor, String docEntryUuid, String newName, String fileComment) throws BusinessException {
 		DocumentEntry entry = documentEntryBusinessService.findById(docEntryUuid);
-		if (!actor.isSuperAdmin() && !actor.isTechnicalAccount()) {
+		if (!actor.isSuperAdmin() && !actor.isSystemAccount()) {
 			if (!entry.getEntryOwner().equals(actor)) {
 				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to update this document.");
 			}

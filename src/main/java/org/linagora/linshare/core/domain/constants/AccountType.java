@@ -38,7 +38,7 @@ public enum AccountType {
 	// 0 Account
 	// 1 USER
 	// 
-	INTERNAL(2), GUEST(3), TECHNICALACCOUNT(4), THREAD(5), ROOT(6), SYSTEM(7);
+	INTERNAL(2), GUEST(3), TECHNICAL_ACCOUNT(4), THREAD(5), ROOT(6), SYSTEM(7);
 
 	private int value;
 

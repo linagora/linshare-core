@@ -41,16 +41,15 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface TechnicalAccountService {
 
-	TechnicalAccount create(Account actor, String domainId,
-			TechnicalAccount account) throws BusinessException;
+	TechnicalAccount create(Account actor, TechnicalAccount account)
+			throws BusinessException;
 
 	void delete(Account actor, TechnicalAccount account)
 			throws BusinessException;
 
 	TechnicalAccount find(Account actor, String uuid) throws BusinessException;
 
-	Set<TechnicalAccount> findAll(Account actor, String domainIdentifier)
-			throws BusinessException;
+	Set<TechnicalAccount> findAll(Account actor) throws BusinessException;
 
 	TechnicalAccount update(Account actor, TechnicalAccount accountDto)
 			throws BusinessException;

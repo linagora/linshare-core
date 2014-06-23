@@ -64,25 +64,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ShareEntryServiceImpl implements ShareEntryService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ShareEntryServiceImpl.class);
-	
+
 	private final GuestRepository guestRepository;
-	
+
 	private final FunctionalityReadOnlyService functionalityService;
-	
+
 	private final ShareEntryBusinessService shareEntryBusinessService;
-	
+
 	private final ShareExpiryDateService shareExpiryDateService;
-	
+
 	private final LogEntryService logEntryService;
-	
+
 	private final DocumentEntryService documentEntryService ;
-	
+
 	private final DocumentEntryBusinessService documentEntryBusinessService ;
-	
+
 	private final NotifierService notifierService;
-    
+
     private final MailContentBuildingService mailContentBuildingService;
 
 
@@ -103,32 +103,32 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 	@Override
 	public ShareEntry createShare(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate) throws BusinessException {
-		
+
 		if (expirationDate == null) {
 			expirationDate = shareExpiryDateService.computeShareExpiryDate(documentEntry, sender);
 		}
-		
+
 		ShareEntry createShare = shareEntryBusinessService.createShare(documentEntry, sender, recipient, expirationDate);
 		if (recipient.getAccountType().equals(AccountType.GUEST)) {
 			updateGuestExpirationDate(recipient, sender);
 		}
-		
+
 		logEntryService.create(new ShareLogEntry(sender, createShare, LogAction.FILE_SHARE, "Sharing of a file"));
 		logEntryService.create(new ShareLogEntry(
 				recipient, LogAction.SHARE_RECEIVED, "Receiving a shared file", createShare, sender));
 		return createShare;
 	}
 
-	
+
 	private void updateGuestExpirationDate(User recipient, User sender) {
 		// update guest account expiry date
 		if (recipient.getAccountType().equals(AccountType.GUEST)) {
-			
+
 			// get new guest expiry date
 			Calendar guestExpiryDate = Calendar.getInstance();
 			TimeUnitValueFunctionality guestFunctionality = functionalityService.getGuestAccountExpiryTimeFunctionality(sender.getDomain());
 	        guestExpiryDate.add(guestFunctionality.toCalendarUnitValue(), guestFunctionality.getValue());
-	        
+
 			Guest guest = guestRepository.findByMail(recipient.getLogin());
 			guest.setExpirationDate(guestExpiryDate.getTime());
 			try {
@@ -140,18 +140,18 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			}
 		}
 	}
-	
-	
+
+
 	@Override
 	public SuccessesAndFailsItems<ShareEntry> createShare(DocumentEntry documentEntry, User sender, List<User> recipients, Calendar expirationDate)  {
-		
+
 		SuccessesAndFailsItems<ShareEntry> returnItems = new SuccessesAndFailsItems<ShareEntry>();
-		
+
 		for (User recipient : recipients) {
 			try {
 				ShareEntry s = createShare(documentEntry, sender, recipient, expirationDate);
 				returnItems.addSuccessItem(s);
-				
+
 			} catch (BusinessException e) {
 				ShareEntry failSharing = new ShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), recipient, documentEntry, expirationDate);
 				returnItems.addSuccessItem(failSharing);
@@ -171,19 +171,19 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 		}
 		deleteShare(actor, share);
 	}
-	
+
 
 	@Override
 	public void deleteShare(Account actor, ShareEntry share) throws BusinessException {
 		if (share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin()
-				|| actor.isTechnicalAccount()) {
+				|| actor.isSystemAccount()) {
 			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Delete a sharing");
 			logEntryService.create(logEntry);
 
 			logger.info("delete share : " + share.getUuid());
 			shareEntryBusinessService.deleteShare(share);
 
-			if (share.getEntryOwner().equals(actor) || actor.isSuperAdmin() || actor.isTechnicalAccount()) {
+			if (share.getEntryOwner().equals(actor) || actor.isSuperAdmin() || actor.isSystemAccount()) {
 				notifierService.sendAllNotification(mailContentBuildingService.buildMailSharedFileDeletedWithRecipient(
 						actor, share));
 			}
@@ -194,11 +194,11 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 					"You are not authorized to delete this share, it does not belong to you.");
 		}
 	}
-	
-	
+
+
 	@Override
 	public void deleteShare(SystemAccount actor, ShareEntry share) throws BusinessException {
-		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin() || actor.isTechnicalAccount()) {
+		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin() || actor.isSystemAccount()) {
 			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Delete a sharing");
 			logEntryService.create(logEntry);
 			logger.info("delete share : " + share.getUuid());
@@ -208,19 +208,19 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this share, it does not belong to you.");
 		}
 	}
-	
+
 
 	@Override
 	public SuccessesAndFailsItems<ShareEntry> createShare(List<DocumentEntry> documentEntries, User sender, List<User> recipients, Calendar expirationDate) {
 		SuccessesAndFailsItems<ShareEntry> returnItems = new SuccessesAndFailsItems<ShareEntry>();
-		
+
 		for (DocumentEntry documentEntry : documentEntries) {
 			returnItems.addAll(createShare(documentEntry, sender, recipients, expirationDate));
 		}
 		return returnItems;
 	}
-	
-	
+
+
 	@Override
 	public DocumentEntry copyDocumentFromShare(String shareUuid, User actor) throws BusinessException {
 
@@ -251,7 +251,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to copy this share, it does not belong to you.");
 		}
-		
+
 	}
 
 
@@ -262,7 +262,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
 		}
-		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin() || actor.isTechnicalAccount()) {
+		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin() || actor.isSystemAccount()) {
 			return share;
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
@@ -284,7 +284,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to update comment on this share, it does not belong to you.");
 		}
-		
+
 	}
 
 
@@ -338,7 +338,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			throw e;
 		}
 	}
-	
+
 
 	@Override
 	public List<ShareEntry> findAllMyShareEntries(Account actor, User owner) {
@@ -355,7 +355,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			logger.error("Error while trying to notify document update ", e);
 		}
 	}
-	
+
 
 	@Override
 	public void sendUpcomingOutdatedShareEntryNotification(SystemAccount actor, ShareEntry shareEntry, Integer days) {

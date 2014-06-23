@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.util.Set;
-
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -48,9 +46,6 @@ public interface TechnicalAccountPermissionService {
 			throws BusinessException;
 
 	TechnicalAccountPermission find(Account actor, String uuid)
-			throws BusinessException;
-
-	Set<TechnicalAccountPermission> findAll(Account actor)
 			throws BusinessException;
 
 	TechnicalAccountPermission update(Account actor,

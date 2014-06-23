@@ -43,35 +43,35 @@ import org.linagora.linshare.core.domain.constants.Role;
 public abstract class Account {
 
 	protected long id;
-	
+
 	protected String lsUuid;
-	
+
 	protected Date creationDate;
-	
+
 	protected Date modificationDate;
-	
+
 	protected Role role = Role.SIMPLE;
-	
+
 	protected String locale;
-	
+
 	protected String externalMailLocale;
-	
+
 	protected boolean enable;
-	
+
 	protected String password;
-	
+
 	protected boolean destroyed;
-	
+
 	protected AbstractDomain domain;
-	
+
 	protected Account owner;
-	
+
 	protected Set<Entry> entries = new HashSet<Entry>();
-	
+
 	protected Set<ShareEntry> shareEntries = new HashSet<ShareEntry>();
-	
+
 	protected Set<Signature> signatures = new  HashSet<Signature>();
-	
+
 	public Account() {
 		setCreationDate(new Date());
 		setModificationDate(new Date());
@@ -103,11 +103,11 @@ public abstract class Account {
 			return false;
 		return true;
 	}
-	
+
 	public boolean isSuperAdmin() {
 		return this.getRole().equals(Role.SUPERADMIN);
 	}
-	
+
 	public boolean isAdmin() {
 		return this.getRole().equals(Role.ADMIN);
 	}
@@ -116,8 +116,8 @@ public abstract class Account {
 		 return this.getRole().equals(Role.SYSTEM);
 	}
 
-	public boolean isTechnicalAccount() {
-		 return this.getRole().equals(Role.SYSTEM);
+	public boolean isDelegationAccount() {
+		 return this.getRole().equals(Role.DELEGATION);
 	}
 
 	public long getId() {
@@ -207,11 +207,11 @@ public abstract class Account {
 	public void setDomain(AbstractDomain domain) {
 		this.domain = domain;
 	}
-	
+
 	public String getDomainId() {
 		return ( (this.domain == null) ? null : this.domain.getIdentifier() );
 	}
-	
+
     public Set<Entry> getEntries() {
 		return entries;
 	}
@@ -227,7 +227,7 @@ public abstract class Account {
 	public void setShareEntries(Set<ShareEntry> shareEntries) {
 		this.shareEntries = shareEntries;
 	}
-	
+
 	public Set<Signature> getSignatures() {
 		return signatures;
 	}
@@ -238,7 +238,7 @@ public abstract class Account {
 
 	public abstract AccountType getAccountType();
 
-	
+
 	public abstract String getAccountReprentation();
 
 
