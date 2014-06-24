@@ -167,14 +167,18 @@
 
 		<property name="securityMetadataSource">
 			<sec:filter-security-metadata-source>
-				<sec:intercept-url pattern="/**/administration/userconfig*" access="ROLE_AUTH" />
+				<sec:intercept-url pattern="/**/administration/userconfig*" access="ROLE_USER" />
 				<sec:intercept-url pattern="/**/administration/domains/**" access="ROLE_SUPERADMIN" />
 				<sec:intercept-url pattern="/**/administration/thread/**" access="ROLE_SUPERADMIN" />
 				<sec:intercept-url pattern="/**/administration/list/**" access="ROLE_SUPERADMIN" />
 				<sec:intercept-url pattern="/**/administration/**" access="ROLE_ADMIN" />
 				<sec:intercept-url pattern="/**/testpopup/" access="ROLE_ADMIN" />
 				<sec:intercept-url pattern="/**/webservice/rest/admin/**" access="ROLE_ADMIN" />
-				<sec:intercept-url pattern="/**" access="ROLE_AUTH" />
+				<sec:intercept-url pattern="/**/webservice/rest/delegation/**" access="ROLE_DELEGATION" />
+				<sec:intercept-url pattern="/**/webservice/rest/**" access="ROLE_USER" />
+				<sec:intercept-url pattern="/**/logout" access="ROLE_AUTH" />
+				<sec:intercept-url pattern="/**/startingpage" access="ROLE_AUTH" />
+				<sec:intercept-url pattern="/**" access="ROLE_USER" />
 			</sec:filter-security-metadata-source>
 		</property>
 	</bean>
@@ -225,6 +229,7 @@
 			<list>
 				<ref bean="guestRepository" />
 				<ref bean="rootUserRepository" />
+				<ref bean="technicalAccountRepository" />
 			</list>
 		</property>
 	</bean>

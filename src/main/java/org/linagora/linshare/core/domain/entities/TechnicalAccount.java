@@ -38,7 +38,10 @@ import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
 
 public class TechnicalAccount extends User {
 
-	private TechnicalAccountPermission permission;
+	@SuppressWarnings("unused")
+	private TechnicalAccount() {
+		super();
+	}
 
 	public TechnicalAccount(TechnicalAccountDto dto) {
 		super();
@@ -61,13 +64,5 @@ public class TechnicalAccount extends User {
 	@Override
 	public String getAccountReprentation() {
 		return this.lastName + "(" + lsUuid + ")";
-	}
-
-	public TechnicalAccountPermission getPermission() {
-		return permission;
-	}
-
-	public void setPermission(TechnicalAccountPermission permission) {
-		this.permission = permission;
 	}
 }

@@ -35,7 +35,6 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 import java.util.Set;
-import java.util.UUID;
 
 import org.linagora.linshare.webservice.dto.TechnicalAccountPermissionDto;
 
@@ -55,11 +54,9 @@ public class TechnicalAccountPermission {
 
 	private Set<AbstractDomain> domains = Sets.newHashSet();
 
+	@SuppressWarnings("unused")
 	public TechnicalAccountPermission() {
 		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.creationDate = new Date();
-		this.modificationDate = new Date();
 	}
 
 	public TechnicalAccountPermission(TechnicalAccountPermissionDto dto) {
@@ -67,7 +64,7 @@ public class TechnicalAccountPermission {
 		this.uuid = dto.getUuid();
 		Set<String> permissions = dto.getPermissions();
 
-		for (String perm: permissions) {
+		for (String perm : permissions) {
 			accountPermissions.add(new AccountPermission(perm));
 		}
 

@@ -175,15 +175,15 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 	@Override
 	public void deleteShare(Account actor, ShareEntry share) throws BusinessException {
-		if (share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin()
-				|| actor.isSystemAccount()) {
+		if (share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.hasSuperAdminRole()
+				|| actor.hasSystemAccountRole()) {
 			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Delete a sharing");
 			logEntryService.create(logEntry);
 
 			logger.info("delete share : " + share.getUuid());
 			shareEntryBusinessService.deleteShare(share);
 
-			if (share.getEntryOwner().equals(actor) || actor.isSuperAdmin() || actor.isSystemAccount()) {
+			if (share.getEntryOwner().equals(actor) || actor.hasSuperAdminRole() || actor.hasSystemAccountRole()) {
 				notifierService.sendAllNotification(mailContentBuildingService.buildMailSharedFileDeletedWithRecipient(
 						actor, share));
 			}
@@ -198,7 +198,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 	@Override
 	public void deleteShare(SystemAccount actor, ShareEntry share) throws BusinessException {
-		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin() || actor.isSystemAccount()) {
+		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.hasSuperAdminRole() || actor.hasSystemAccountRole()) {
 			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Delete a sharing");
 			logEntryService.create(logEntry);
 			logger.info("delete share : " + share.getUuid());
@@ -262,7 +262,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
 		}
-		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin() || actor.isSystemAccount()) {
+		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.hasSuperAdminRole() || actor.hasSystemAccountRole()) {
 			return share;
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);

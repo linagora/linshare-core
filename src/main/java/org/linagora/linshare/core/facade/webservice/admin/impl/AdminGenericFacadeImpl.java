@@ -62,7 +62,7 @@ public class AdminGenericFacadeImpl extends GenericFacadeImpl implements
 			throw new IllegalArgumentException(
 					"role must be either SUPERADMIN or ADMIN");
 		}
-		if (!(actor.isAdmin() || actor.isSuperAdmin())) {
+		if (!(actor.hasAdminRole() || actor.hasSuperAdminRole())) {
 			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountReprentation());
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,

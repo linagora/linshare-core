@@ -190,7 +190,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	@Override
 	public List<ThreadEntry> findAllThreadEntries(Account actor, Thread thread) throws BusinessException {
 		if (!this.isThreadMember(thread, (User) actor)) {
-			if(!actor.isSuperAdmin()) {
+			if(!actor.hasSuperAdminRole()) {
 				return new ArrayList<ThreadEntry>();
 			}
 		}
