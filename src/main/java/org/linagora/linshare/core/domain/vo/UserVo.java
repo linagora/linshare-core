@@ -80,7 +80,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		this.restricted = false;
 		this.domainIdentifier = null;
 	}
-	
+
 	public UserVo(Account account) {
 		this.login = account.getLsUuid();
 		this.userType = account.getAccountType();
@@ -192,7 +192,6 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 
 	public UserVo(String login, String firstName, String lastName, String mail,
 			Role role, AccountType userType, String locale) {
-		super();
 		this.login = login;
 		this.firstName = firstName;
 		this.lastName = lastName;

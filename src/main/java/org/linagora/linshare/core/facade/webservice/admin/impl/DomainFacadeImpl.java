@@ -107,7 +107,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 					"the curent domain was not found : " + domain);
 		}
 		if (tree) {
-			if (actor.isSuperAdmin()) {
+			if (actor.hasSuperAdminRole()) {
 				return DomainDto.getFullTree(entity);
 			}
 			if (entity.isManagedBy(actor)) {

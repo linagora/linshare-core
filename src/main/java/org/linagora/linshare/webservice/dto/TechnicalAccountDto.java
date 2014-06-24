@@ -11,7 +11,7 @@ public class TechnicalAccountDto extends AccountDto {
 
 	@ApiModelProperty(value = "Mail")
 	private String mail;
-	
+
 	@ApiModelProperty(value = "TechnicalAccountPermissionUuid")
 	private String technicalAccountPermissionUuid;
 
@@ -19,7 +19,8 @@ public class TechnicalAccountDto extends AccountDto {
 		super(account, false);
 		this.name = account.getLastName();
 		this.mail = account.getMail();
-		this.technicalAccountPermissionUuid = account.getPermission().getUuid();
+		if (account.getPermission() != null)
+			this.technicalAccountPermissionUuid = account.getPermission().getUuid();
 	}
 
 	public String getName() {

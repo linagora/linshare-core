@@ -100,7 +100,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
 		}
-		if(actor.isSystemAccount() || share.getEntryOwner().equals(actor) ) {
+		if(actor.hasSystemAccountRole() || share.getEntryOwner().equals(actor) ) {
 			return share;
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);

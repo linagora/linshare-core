@@ -50,7 +50,7 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 		implements ThreadRepository {
-	
+
 	private static final MatchMode ANYWHERE = MatchMode.ANYWHERE;
 
 	public ThreadRepositoryImpl(HibernateTemplate hibernateTemplate) {
@@ -135,7 +135,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 
 		// query
 		det.createAlias("myMembers", "member");
-		if (!actor.isSuperAdmin())
+		if (!actor.hasSuperAdminRole())
 			det.add(Restrictions.eq("member.user", actor));
 		det.addOrder(Order.desc("modificationDate"));
 		det.add(Restrictions.ilike("name", pattern, ANYWHERE));
@@ -157,7 +157,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 
 		DetachedCriteria sub = DetachedCriteria.forClass(Thread.class);
 		sub.createAlias("myMembers", "member");
-		if (!actor.isSuperAdmin())
+		if (!actor.hasSuperAdminRole())
 			sub.add(Restrictions.eq("member.user", actor));
 		sub.setProjection(Projections.id());
 

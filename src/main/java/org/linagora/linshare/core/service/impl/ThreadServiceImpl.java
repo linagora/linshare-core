@@ -67,7 +67,7 @@ public class ThreadServiceImpl implements ThreadService {
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-	
+
 	private final LogEntryService logEntryService;
 
 	public ThreadServiceImpl(ThreadRepository threadRepository, ThreadMemberRepository threadMemberRepository,
@@ -89,7 +89,7 @@ public class ThreadServiceImpl implements ThreadService {
 		}
 		return thread;
 	}
-	
+
 	@Override
 	public List<Thread> findAll() {
 		return threadRepository.findAll();
@@ -99,7 +99,7 @@ public class ThreadServiceImpl implements ThreadService {
 	public Boolean create(Account actor, String name) throws BusinessException {
 		boolean isGuest = actor.getAccountType().equals(AccountType.GUEST);
 		Functionality creation = functionalityReadOnlyService.getThreadCreationPermissionFunctionality(actor.getDomain());
-		
+
 		if (creation.getActivationPolicy().getStatus() && !isGuest){
 			Thread thread = null;
 			ThreadMember member = null;
@@ -136,16 +136,16 @@ public class ThreadServiceImpl implements ThreadService {
 	public ThreadMember getMemberFromUser(Thread thread, User user) throws BusinessException {
 		return threadMemberRepository.findUserThreadMember(thread, user);
 	}
-	
+
 	@Override
 	public Set<ThreadMember> getMembers(User actor, Thread thread)
 			throws BusinessException {
-		if (getMemberFromUser(thread, actor) == null && !actor.isSuperAdmin())
+		if (getMemberFromUser(thread, actor) == null && !actor.hasSuperAdminRole())
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"Actor is not a member of the thread.");
 		return thread.getMyMembers();
 	}
-	
+
 	@Override
 	public List<Thread> findAllWhereMember(User user) {
 		return threadRepository.findAllWhereMember(user);
@@ -165,17 +165,17 @@ public class ThreadServiceImpl implements ThreadService {
 	public boolean hasAnyWhereAdmin(User user) {
 		return threadMemberRepository.isUserAdminOfAny(user);
 	}
-	
+
 	@Override
 	public boolean isUserAdmin(User user, Thread thread) {
 		return threadMemberRepository.isUserAdmin(user, thread);
 	}
-	
+
 	@Override
 	public int countMembers(Thread thread) {
 		return threadMemberRepository.count(thread);
 	}
-	
+
 	@Override
 	public int countEntries(Thread thread) {
 		return documentEntryBusinessService.countThreadEntries(thread);
@@ -185,7 +185,7 @@ public class ThreadServiceImpl implements ThreadService {
 	public ThreadMember addMember(Account actor, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, thread);
-		
+
 		ThreadMember member = getMemberFromUser(thread, user);
 
 		if (member != null) {
@@ -211,7 +211,7 @@ public class ThreadServiceImpl implements ThreadService {
 	public ThreadMember updateMember(Account actor, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, member.getThread());
-	
+
 		member.setAdmin(admin);
 		member.setCanUpload(canUpload);
 		return threadMemberRepository.update(member);
@@ -221,7 +221,7 @@ public class ThreadServiceImpl implements ThreadService {
 	public void deleteMember(Account actor, Thread thread, ThreadMember member) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, thread);
-		
+
 		thread.getMyMembers().remove(member);
 		threadRepository.update(thread);
 		threadMemberRepository.delete(member);
@@ -235,7 +235,7 @@ public class ThreadServiceImpl implements ThreadService {
 	public void deleteAllMembers(Account actor, Thread thread) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, thread);
-		
+
 		Object[] myMembers = thread.getMyMembers().toArray();
 
 		for (Object threadMember : myMembers) {
@@ -258,7 +258,7 @@ public class ThreadServiceImpl implements ThreadService {
 	public void deleteThread(User actor, Thread thread) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, thread);
-		
+
 		ThreadLogEntry log = new ThreadLogEntry(actor, thread, LogAction.THREAD_DELETE, "Deleting a thread.");
 		// Delete all entries
 		documentEntryBusinessService.deleteSetThreadEntry(thread.getEntries());
@@ -275,7 +275,7 @@ public class ThreadServiceImpl implements ThreadService {
 	public Thread rename(User actor, Thread thread, String threadName) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, thread);
-		
+
 		String oldname = thread.getName();
 		thread.setName(threadName);
 		Thread update = threadRepository.update(thread);
@@ -284,12 +284,12 @@ public class ThreadServiceImpl implements ThreadService {
 				LogAction.THREAD_RENAME, "Renamed thread from " + oldname + " to " + threadName));
 		return update;
 	}
-	
+
 	@Override
 	public List<Thread> findLatestWhereMember(User actor, int limit) {
 		return threadRepository.findLatestWhereMember(actor, limit);
 	}
-	
+
 	@Override
 	public List<Thread> searchByName(User actor, String pattern) {
 		return threadRepository.searchByName(actor, pattern);
@@ -300,12 +300,12 @@ public class ThreadServiceImpl implements ThreadService {
 		return threadRepository.searchAmongMembers(actor, pattern);
 	}
 
-	
+
     /* ***********************************************************
      *                   Helpers
      ************************************************************ */
-	
-	
+
+
 	/**
 	 * Check if actor is admin of the thread and so has the right to perform any action.
 	 * Throw a BusinessException if the actor isn't authorized to modify the thread.

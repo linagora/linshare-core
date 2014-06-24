@@ -38,10 +38,22 @@ import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.repository.TechnicalAccountRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class TechnicalAccountRepositoryImpl extends GenericAccountRepositoryImpl<TechnicalAccount>
-		implements TechnicalAccountRepository {
+public class TechnicalAccountRepositoryImpl extends
+		GenericUserRepositoryImpl<TechnicalAccount> implements
+		TechnicalAccountRepository {
 
 	public TechnicalAccountRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
+
+	@Override
+	public TechnicalAccount findByLogin(String login) {
+		return super.findByLsUuid(login);
+	}
+
+	@Override
+	public TechnicalAccount findByLoginAndDomain(String domain, String login) {
+		return super.findByLsUuid(login);
+	}
+
 }

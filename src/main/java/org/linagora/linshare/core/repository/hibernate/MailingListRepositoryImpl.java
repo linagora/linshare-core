@@ -108,7 +108,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	public List<MailingList> searchListWithInput(User user, String input) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 
-		if (user.isSuperAdmin()) {
+		if (user.hasSuperAdminRole()) {
 			det.add(Restrictions.like("identifier", "%" + input + "%").ignoreCase());
 		} else {
 			// all public lists that belong to my domain.
@@ -130,7 +130,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 
 	@Override
 	public List<MailingList> findAllMyList(User user) {
-		if (user.isSuperAdmin()) {
+		if (user.hasSuperAdminRole()) {
 			return findAll();
 		}
 
@@ -167,7 +167,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 
 		if (isPublic == false) {
-			if (user.isSuperAdmin()) {
+			if (user.hasSuperAdminRole()) {
 				det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(),
 						Restrictions.eq("isPublic", false)));
 			} else {
@@ -176,7 +176,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 				det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(), publicLists));
 			}
 		} else {
-			if (user.isSuperAdmin()) {
+			if (user.hasSuperAdminRole()) {
 				det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(),
 						Restrictions.eq("isPublic", true)));
 			} else {
@@ -194,13 +194,13 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 
 		if (isPublic == false) {
-			if (user.isSuperAdmin()) {
+			if (user.hasSuperAdminRole()) {
 				det.add(Restrictions.eq("isPublic", false));
 			} else {
 				det.add(Restrictions.and(Restrictions.eq("owner", user), Restrictions.eq("isPublic", false)));
 			}
 		} else {
-			if (user.isSuperAdmin()) {
+			if (user.hasSuperAdminRole()) {
 				det.add(Restrictions.eq("isPublic", true));
 			} else {
 				det.add(Restrictions.and(Restrictions.eq("isPublic", true), Restrictions.eq("domain", user.getDomain())));

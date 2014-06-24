@@ -69,7 +69,7 @@ public class InconsistentUserServiceImpl implements InconsistentUserService {
 	public void updateDomain(User actor, String uuid, String domain)
 			throws BusinessException {
 		checkPermissions(actor);
-		if (!actor.isSuperAdmin()) {
+		if (!actor.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER,
 					"Only superadmins can update an inconsistent user.");
 		}
@@ -108,7 +108,7 @@ public class InconsistentUserServiceImpl implements InconsistentUserService {
 	}
 
 	private void checkPermissions(User actor) throws BusinessException {
-		if (!actor.isSuperAdmin()) {
+		if (!actor.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor must be either superadmin.");
 		}
 	}
