@@ -69,6 +69,14 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 		this.userFacade = userFacade;
 	}
 
+	@Path("/")
+	@GET
+	@ApiOperation(value = "No operation.")
+	@Override
+	public void noop() {
+		return; // do nothing
+	}
+
 	@Path("/authorized")
 	@GET
 	@ApiOperation(value = "Check if user is authorized.", response = UserDto.class)
