@@ -9,8 +9,6 @@ public interface GuestFacade {
 	
 	UserDto find(String lsUuid) throws BusinessException;
 	
-	List<UserDto> getRestrictedContacts(String lsUuid) throws BusinessException;
-	
 	UserDto create(UserDto guest, String ownerLsUuid) throws BusinessException;
 
 	UserDto create(UserDto guest) throws BusinessException;

@@ -352,7 +352,7 @@ public class UserFacadeImpl implements UserFacade {
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		Guest guest = guestService.findByLsUuid(actor, lsUuid);
-		Set<AllowedContact> contacts = guest.getContacts();
+		Set<AllowedContact> contacts = guest.getRestrictedContacts();
 		// compatibility
 		if (contacts.isEmpty()) {
 			return null;

@@ -8,10 +8,10 @@ import org.linagora.linshare.webservice.dto.UserDto;
 public interface GuestRestService {
 
 	UserDto find(String lsUuid) throws BusinessException;
-	
+
 	List<UserDto> findAll(String ownerLsUuid) throws BusinessException;
-	
-	UserDto create(UserDto guest) throws BusinessException;
+
+	UserDto create(UserDto guest, String ownerLsUuid) throws BusinessException;
 
 	UserDto update(UserDto guest) throws BusinessException;
 
@@ -19,6 +19,4 @@ public interface GuestRestService {
 
 	void delete(String lsUuid) throws BusinessException;
 
-	List<UserDto> getRestrictedContacts(String lsUuid) throws BusinessException;
-	
 }

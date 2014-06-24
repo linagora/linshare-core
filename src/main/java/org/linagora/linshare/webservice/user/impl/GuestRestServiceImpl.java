@@ -4,12 +4,14 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -56,9 +58,10 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@ApiOperation(value = "Create a guest.")
 	@Override
 	public UserDto create(
-			@ApiParam(value = "Guest to create.", required = true) UserDto guest)
+			@ApiParam(value = "Guest to create.", required = true) UserDto guest,
+			@ApiParam(value = "Guest owner lsuuid.") @QueryParam("ownerLsUuid") @DefaultValue("null") String ownerLsUuid)
 			throws BusinessException {
-		return guestFacade.create(guest);
+		return guestFacade.create(guest, ownerLsUuid);
 	}
 
 	@Path("/")
@@ -89,14 +92,5 @@ public class GuestRestServiceImpl implements GuestRestService {
 			@ApiParam(value = "Guest's lsUuid to create.", required = true) @PathParam("lsUuid") String lsUuid)
 			throws BusinessException {
 		guestFacade.delete(lsUuid);
-	}
-
-	@Path("/{lsUuid}/restricted_contacts")
-	@GET
-	@ApiOperation(value = "Find all restricted contacts of a guest.", response = UserDto.class)
-	@Override
-	public List<UserDto> getRestrictedContacts(@ApiParam(value = "Guest's lsUuid.", required = true) @PathParam("lsUuid") String lsUuid)
-			throws BusinessException {
-		return guestFacade.getRestrictedContacts(lsUuid);
 	}
 }
