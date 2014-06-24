@@ -40,5 +40,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 @Path("/authentication")
 public interface AuthenticationRestService {
 
+	void noop();
+
 	Boolean isAuthorized() throws BusinessException;
 }
