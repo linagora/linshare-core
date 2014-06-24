@@ -125,10 +125,10 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			if (user.isGuest() && user.isRestricted()) {
 				Guest guest = guestService.findByLsUuid(currentUser,
 						user.getLsUuid());
-				Set<AllowedContact> contacts = guest.getContacts();
+				Set<AllowedContact> contacts = guest.getRestrictedContacts();
 				for (AllowedContact contact : contacts) {
 					userDto.getRestrictedContacts().add(
-							contact.getContact().getMail());
+							UserDto.getSimple(contact.getContact()));
 				}
 			}
 			usersDto.add(userDto);

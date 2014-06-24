@@ -688,7 +688,7 @@ public class UserServiceImplTest extends
 
 		guest.addContact(new AllowedContact(guest, guest2));
 		guest = guestService.update(user1, guest, null);
-		Set<AllowedContact> guestContacts = guest.getContacts();
+		Set<AllowedContact> guestContacts = guest.getRestrictedContacts();
 		boolean contain = false;
 		for (AllowedContact contact : guestContacts) {
 			if (contact.getContact().equals(guest2)) {
@@ -736,7 +736,7 @@ public class UserServiceImplTest extends
 
 		createGuest.addContact(new AllowedContact(createGuest, createGuest2));
 		guest = guestService.update(user1, createGuest, null);
-		Set<AllowedContact> guestContacts = guest.getContacts();
+		Set<AllowedContact> guestContacts = guest.getRestrictedContacts();
 		boolean contain = false;
 		for (AllowedContact contact : guestContacts) {
 			if (contact.getContact().getMail().equals(createGuest2.getMail())) {

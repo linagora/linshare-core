@@ -326,7 +326,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		if (sender.getAccountType().equals(AccountType.GUEST)
 				&& ((Guest) sender).isRestricted()) {
 			Guest guest = guestService.findByLsUuid(sender, sender.getLsUuid());
-			Set<AllowedContact> contacts = guest.getContacts();
+			Set<AllowedContact> contacts = guest.getRestrictedContacts();
 			List<String> guestAllowedContacts = Lists.newArrayList();
 			for (AllowedContact contact : contacts) {
 				guestAllowedContacts.add(contact.getContact().getMail());

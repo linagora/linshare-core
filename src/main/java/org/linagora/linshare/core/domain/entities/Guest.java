@@ -120,7 +120,7 @@ public class Guest extends User {
 		return expirationDate;
 	}
 
-	public Set<AllowedContact> getContacts() {
+	public Set<AllowedContact> getRestrictedContacts() {
 		return contacts;
 	}
 

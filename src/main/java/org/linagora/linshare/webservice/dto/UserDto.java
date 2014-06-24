@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 
@@ -76,7 +77,7 @@ public class UserDto extends AccountDto {
 	private Date expirationDate;
 	
 	@ApiModelProperty(value = "RestrictedContacts")
-	private List<String> restrictedContacts = Lists.newArrayList();
+	private List<UserDto> restrictedContacts = Lists.newArrayList();
 	
 
 	public UserDto() {
@@ -96,6 +97,11 @@ public class UserDto extends AccountDto {
 				this.restricted = g.isRestricted();
 				this.comment = g.getComment();
 				this.expirationDate = g.getExpirationDate();
+				if (g.isRestricted()) {
+					for (AllowedContact contact : g.getRestrictedContacts()) {
+						this.restrictedContacts.add(getSimple(contact.getContact()));
+					}
+				}
 			}
 			this.canUpload = u.getCanUpload();
 			this.canCreateGuest = u.getCanCreateGuest();
@@ -194,11 +200,11 @@ public class UserDto extends AccountDto {
 		this.expirationDate = expirationDate;
 	}
 	
-	public List<String> getRestrictedContacts() {
+	public List<UserDto> getRestrictedContacts() {
 		return restrictedContacts;
 	}
 
-	public void setRestrictedContacts(List<String> restrictedContacts) {
+	public void setRestrictedContacts(List<UserDto> restrictedContacts) {
 		this.restrictedContacts = restrictedContacts;
 	}
 

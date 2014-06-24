@@ -86,7 +86,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		guest.setExpirationDate(expiryDate);
 		Guest create = guestRepository.create(guest);
 		if (create.isRestricted()) {
-			for (AllowedContact c : guest.getContacts()) {
+			for (AllowedContact c : guest.getRestrictedContacts()) {
 				allowedContactRepository.create(c);
 			}
 		}
@@ -109,7 +109,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 									+ guest.getLsUuid()
 									+ " contacts cannot be purge");
 				}
-				for (AllowedContact c : guest.getContacts()) {
+				for (AllowedContact c : guest.getRestrictedContacts()) {
 					allowedContactRepository.create(c);
 				}
 			}
