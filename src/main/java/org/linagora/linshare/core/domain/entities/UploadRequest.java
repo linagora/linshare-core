@@ -82,6 +82,8 @@ public class UploadRequest {
 
 	private Set<UploadRequestHistory> uploadRequestHistory;
 
+	private Account owner;
+
 	public UploadRequest() {
 		super();
 	}
@@ -262,5 +264,13 @@ public class UploadRequest {
 	public void setUploadRequestHistory(
 			Set<UploadRequestHistory> uploadRequestHistory) {
 		this.uploadRequestHistory = uploadRequestHistory;
+	}
+
+	public Account getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Account owner) {
+		this.owner = owner;
 	}
 }
