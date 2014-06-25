@@ -7,6 +7,7 @@
 			<generator class="native">
 			</generator>
 		</id>
+		<many-to-one name="owner" cascade="lock" column="account_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="no-proxy"/>
 		<many-to-one name="uploadRequestGroup" cascade="lock"
 			column="upload_request_group_id"
 			class="org.linagora.linshare.core.domain.entities.UploadRequestGroup"

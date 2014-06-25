@@ -418,6 +418,7 @@ CREATE TABLE mail_content_lang (
   PRIMARY KEY (id));
 CREATE TABLE upload_request (
   id                               int8 NOT NULL, 
+  account_id                      int8 NOT NULL, 
   upload_request_group_id         int8 NOT NULL, 
   uuid                            varchar(255) NOT NULL UNIQUE, 
   max_file                        int4 NOT NULL, 
@@ -602,7 +603,7 @@ CREATE TABLE mime_type (
 CREATE TABLE account_permission (
   id                               int8 NOT NULL, 
   technical_account_permission_id int8 NOT NULL, 
-  permision                       varchar(255) NOT NULL, 
+  permission                      varchar(255) NOT NULL, 
   PRIMARY KEY (id));
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
@@ -688,6 +689,7 @@ ALTER TABLE mime_type ADD CONSTRAINT FKmime_type145742 FOREIGN KEY (mime_policy_
 ALTER TABLE mime_policy ADD CONSTRAINT FKmime_polic613419 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs809928 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
 ALTER TABLE account_permission ADD CONSTRAINT FKaccount_pe759382 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
+ALTER TABLE upload_request ADD CONSTRAINT FKupload_req220337 FOREIGN KEY (account_id) REFERENCES account (id);
 CREATE UNIQUE INDEX account_lsuid_index 
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid 

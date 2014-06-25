@@ -74,6 +74,10 @@ public abstract class Account {
 
 	private TechnicalAccountPermission permission;
 
+	private Set<UploadRequestTemplate> uploadRequestTemplates;
+
+	private Set<UploadRequest> uploadRequests;
+
 	public Account() {
 		setCreationDate(new Date());
 		setModificationDate(new Date());
@@ -243,7 +247,22 @@ public abstract class Account {
 		this.permission = permission;
 	}
 
+	public Set<UploadRequest> getUploadRequests() {
+		return uploadRequests;
+	}
 
+	public void setUploadRequests(Set<UploadRequest> uploadRequests) {
+		this.uploadRequests = uploadRequests;
+	}
+
+	public Set<UploadRequestTemplate> getUploadRequestTemplates() {
+		return uploadRequestTemplates;
+	}
+
+	public void setUploadRequestTemplates(
+			Set<UploadRequestTemplate> uploadRequestTemplates) {
+		this.uploadRequestTemplates = uploadRequestTemplates;
+	}
 
 	/**
 	 * Role Helpers
