@@ -39,6 +39,8 @@ import org.linagora.linshare.webservice.dto.UserDto;
 
 public interface AuthenticationRestService {
 
+	void noop();
+
 	UserDto isAuthorized() throws BusinessException;
 
 	void changePassword(PasswordDto password) throws BusinessException;

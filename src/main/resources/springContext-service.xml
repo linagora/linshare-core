@@ -37,17 +37,15 @@
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">
 		<constructor-arg ref="userRepository" />
-		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="guestRepository" />
 		<constructor-arg ref="recipientFavouriteService" />
 		<constructor-arg ref="allowedContactRepository" />
-		<constructor-arg ref="mailContentBuildingService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="abstractDomainService" />
-		<constructor-arg ref="passwordService" />
 		<constructor-arg ref="entryService" />
 		<constructor-arg ref="threadService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 
 	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">
@@ -263,5 +261,24 @@
 		<constructor-arg ref="uploadRequestHistoryBusinessService" />
 		<constructor-arg ref="uploadRequestTemplateBusinessService" />
 		<constructor-arg ref="uploadRequestUrlBusinessService" />
+	</bean>
+	<bean name="guestService" class="org.linagora.linshare.core.service.impl.GuestServiceImpl">
+		<constructor-arg ref="guestBusinessService" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="mailBuildingService" />
+	</bean>
+
+	<bean name="technicalAccountService" class="org.linagora.linshare.core.service.impl.TechnicalAccountServiceImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="technicalAccountBusinessService" />
+	</bean>
+
+	<bean id="technicalAccountPermissionService" class="org.linagora.linshare.core.service.impl.TechnicalAccountPermissionServiceImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="technicalAccountPermissionBusinessService" />
 	</bean>
 </beans>

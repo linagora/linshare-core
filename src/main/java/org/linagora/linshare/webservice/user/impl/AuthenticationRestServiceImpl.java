@@ -51,6 +51,13 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 		this.webServiceUserFacade = webServiceUserFacade;
 	}
 
+	@Path("/")
+	@GET
+	@Override
+	public void noop() {
+		return; // do nothing
+	}
+
 	@Path("/authorized")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

@@ -38,6 +38,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 
 /**
  * Some guest can only see a restricted list of users : the guest allowed contacts.
@@ -68,4 +69,12 @@ public interface AllowedContactRepository extends AbstractRepository<AllowedCont
 	 * @param user
 	 */
 	void deleteAllByUserBothSides(final User user);
+
+	/**
+	 * Delete all contacts for a guest
+	 * @param guest
+	 * @throws BusinessException 
+	 * @throws IllegalArgumentException 
+	 */
+	void purge(Guest guest) throws IllegalArgumentException, BusinessException;
 }

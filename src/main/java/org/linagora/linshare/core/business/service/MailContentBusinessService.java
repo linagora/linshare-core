@@ -54,7 +54,7 @@ public interface MailContentBusinessService {
 	List<MailContent> findAll(AbstractDomain domain, Language lang,
 			MailContentType type);
 
-	void create(String domainId, MailContent content) throws BusinessException;
+	MailContent create(String domainId, MailContent content) throws BusinessException;
 
 	MailContent create(AbstractDomain domain, MailContent content)
 			throws BusinessException;

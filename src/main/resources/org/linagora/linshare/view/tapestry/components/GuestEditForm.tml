@@ -54,6 +54,10 @@
                 <br/>
                 <div class="clear"></div>
 
+                <div id="uploadGranted">
+                    <label for="uploadGranted" class="edit-form-label">${message:components.guestEditForm.field.uploadGranted}</label>
+                    <input class="edit-form-checkbox" type="checkbox" name="uploadGranted"/>
+                </div>
                 <div id="askCustomMessageBlock">
                     <label for="customMessage" class="edit-form-label">${message:components.guestEditForm.field.addMessage}</label>
                     <input class="edit-form-checkbox" type="checkbox" name="customMessage"

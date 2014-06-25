@@ -739,6 +739,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		return false;
 	}
 
+	@Deprecated
 	@Override
 	public boolean userCanCreateGuest(User user) {
 
@@ -830,7 +831,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	@Override
 	public List<AbstractDomain> findAll(Account actor) {
-		if (actor.isSuperAdmin()) {
+		if (actor.hasSuperAdminRole()) {
 			return abstractDomainRepository.findAll();
 		} else {
 			List<AbstractDomain> domainList = Lists.newArrayList();

@@ -77,7 +77,7 @@ public class MailingListServiceImpl implements MailingListService {
 		User actor = userService.findByLsUuid(actorUuid);
 		User owner = userService.findByLsUuid(ownerUuid);
 
-		if (actor.isSuperAdmin())
+		if (actor.hasSuperAdminRole())
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to create a list.");
 		return mailingListBusinessService.createList(list, owner);
 	}
@@ -163,7 +163,7 @@ public class MailingListServiceImpl implements MailingListService {
 		MailingList list = findByUuid(actorUuid, mailingListUuid);
 		User actor = userService.findByLsUuid(actorUuid);
 
-		if (!actor.isSuperAdmin())
+		if (!actor.hasSuperAdminRole())
 			checkRights(actor, list, "You are not authorized to delete this list.");
 		mailingListBusinessService.deleteList(mailingListUuid);
 	}
@@ -175,11 +175,11 @@ public class MailingListServiceImpl implements MailingListService {
 		Validate.notEmpty(listToUpdate.getUuid());
 
 		User actor = userService.findByLsUuid(actorUuid);
-		if (!actor.isSuperAdmin()) {
+		if (!actor.hasSuperAdminRole()) {
 			checkRights(actor, listToUpdate, "You are not authorized to update this list.");
 		}
 
-		if (actor.isSuperAdmin()) {
+		if (actor.hasSuperAdminRole()) {
 			// only super admin is authorized to modify list owner.
 			User owner = listToUpdate.getOwner();
 			if (owner != null) {

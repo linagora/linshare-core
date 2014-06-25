@@ -147,41 +147,46 @@ public interface UserFacade {
     void changePassword(UserVo user, String oldPassword, String newPassword) throws BusinessException;
     
     /**
-     * Set a new password to a guest user
-     * @param user
+     * Set a new password to a guest 
+     * @param guest
+     * @param actor
      */
-    void resetPassword(UserVo user) throws BusinessException;
+    void resetPassword(UserVo guest) throws BusinessException;
     
     /**
 	 * Update a guest as restricted and set his list of contacts
+     * @param actorVo 
 	 * 
 	 * @param login of the guest
 	 * @param mailContacts
 	 */
-	void setGuestContactRestriction(String login, List<String> mailContacts) throws BusinessException;
+	void setGuestContactRestriction(UserVo actorVo, String login, List<String> mailContacts) throws BusinessException;
 	
     /**
 	 * Set a guest as not restricted and remove his list of contacts
+     * @param actorVo 
 	 * 
 	 * @param login
 	 */
-	public void removeGuestContactRestriction(String login) throws BusinessException;
+	public void removeGuestContactRestriction(UserVo actorVo, String login) throws BusinessException;
 	
 	/**
 	 * Add one contact to a restricted guest
+	 * @param actorVo
 	 * 
 	 * @param ownerUuid
 	 * @param contactUuid
 	 */
-	public void addGuestContactRestriction(String ownerUuid, String contactUuid) throws BusinessException;
+	public void addGuestContactRestriction(UserVo actorVo, String ownerUuid, String contactUuid) throws BusinessException;
     
 	/**
 	 * Retrieve the list of contacts of the guest
+	 * @param actorVo 
 	 * 
 	 * @param login
 	 * @return
 	 */
-	List<UserVo> fetchGuestContacts(String login) throws BusinessException;
+	List<UserVo> fetchGuestContacts(UserVo actorVo, String login) throws BusinessException;
 
 	void updateUserDomain(String mail, AbstractDomainVo selectedDomain,
 			UserVo userLoggedIn) throws BusinessException;

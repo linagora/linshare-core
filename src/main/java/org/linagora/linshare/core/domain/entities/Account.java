@@ -43,40 +43,41 @@ import org.linagora.linshare.core.domain.constants.Role;
 public abstract class Account {
 
 	protected long id;
-	
+
 	protected String lsUuid;
-	
+
 	protected Date creationDate;
-	
+
 	protected Date modificationDate;
-	
+
 	protected Role role = Role.SIMPLE;
-	
+
 	protected String locale;
-	
+
 	protected String externalMailLocale;
-	
+
 	protected boolean enable;
-	
+
 	protected String password;
-	
+
 	protected boolean destroyed;
-	
+
 	protected AbstractDomain domain;
-	
+
 	protected Account owner;
-	
+
 	protected Set<Entry> entries = new HashSet<Entry>();
-	
+
 	protected Set<ShareEntry> shareEntries = new HashSet<ShareEntry>();
-	
-	protected Set<Signature> signatures = new  HashSet<Signature>();
-	
+
+	protected Set<Signature> signatures = new HashSet<Signature>();
+
+	private TechnicalAccountPermission permission;
+
 	public Account() {
 		setCreationDate(new Date());
 		setModificationDate(new Date());
 	}
-
 
 	@Override
 	public int hashCode() {
@@ -85,7 +86,6 @@ public abstract class Account {
 		result = prime * result + ((lsUuid == null) ? 0 : lsUuid.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -102,22 +102,6 @@ public abstract class Account {
 		} else if (!lsUuid.equals(other.lsUuid))
 			return false;
 		return true;
-	}
-	
-	public boolean isSuperAdmin() {
-		return this.getRole().equals(Role.SUPERADMIN);
-	}
-	
-	public boolean isAdmin() {
-		return this.getRole().equals(Role.ADMIN);
-	}
-
-	public boolean isSystempAccount() {
-		 return this.getRole().equals(Role.SYSTEM);
-	}
-
-	public boolean isTechnicalAccount() {
-		 return this.getRole().equals(Role.SYSTEM);
 	}
 
 	public long getId() {
@@ -207,12 +191,12 @@ public abstract class Account {
 	public void setDomain(AbstractDomain domain) {
 		this.domain = domain;
 	}
-	
+
 	public String getDomainId() {
-		return ( (this.domain == null) ? null : this.domain.getIdentifier() );
+		return ((this.domain == null) ? null : this.domain.getIdentifier());
 	}
-	
-    public Set<Entry> getEntries() {
+
+	public Set<Entry> getEntries() {
 		return entries;
 	}
 
@@ -227,7 +211,7 @@ public abstract class Account {
 	public void setShareEntries(Set<ShareEntry> shareEntries) {
 		this.shareEntries = shareEntries;
 	}
-	
+
 	public Set<Signature> getSignatures() {
 		return signatures;
 	}
@@ -238,17 +222,62 @@ public abstract class Account {
 
 	public abstract AccountType getAccountType();
 
-	
 	public abstract String getAccountReprentation();
 
-
 	public String getExternalMailLocale() {
-		//TODO : add ihm for external mail locale value. For now, using user locale.
-//		return externalMailLocale;
+		// TODO : add ihm for external mail locale value. For now, using user
+		// locale.
+		// return externalMailLocale;
 		return locale;
 	}
 
 	public void setExternalMailLocale(String externalMailLocale) {
 		this.externalMailLocale = externalMailLocale;
+	}
+
+	public TechnicalAccountPermission getPermission() {
+		return permission;
+	}
+
+	public void setPermission(TechnicalAccountPermission permission) {
+		this.permission = permission;
+	}
+
+
+
+	/**
+	 * Role Helpers
+	 */
+
+	public boolean hasSuperAdminRole() {
+		return this.getRole().equals(Role.SUPERADMIN);
+	}
+
+	public boolean hasAdminRole() {
+		return this.getRole().equals(Role.ADMIN);
+	}
+
+	public boolean hasSimpleRole() {
+		return this.getRole().equals(Role.SIMPLE);
+	}
+
+	public boolean hasSystemAccountRole() {
+		return this.getRole().equals(Role.SYSTEM);
+	}
+
+	public boolean hasDelegationRole() {
+		return this.getRole().equals(Role.DELEGATION);
+	}
+
+	/**
+	 * Account type Helpers
+	 */
+
+	public boolean isGuest() {
+		return this.getAccountType().equals(AccountType.GUEST);
+	}
+
+	public boolean isInternal() {
+		return this.getAccountType().equals(AccountType.INTERNAL);
 	}
 }

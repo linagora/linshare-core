@@ -433,7 +433,6 @@ INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, 
 -- system account :
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (2, 7, 'system', current_date,current_date, 3, 'en', 'en', true, false, 1);
 
-
 -- unit type : TIME(0), SIZE(1)
 -- unit value : FileSizeUnit : KILO(0), MEGA(1), GIGA(2)
 -- unit value : TimeUnit : DAY(0), WEEK(1), MONTH(2)
@@ -637,80 +636,99 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 -- Functionality : UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (65, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (66, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
- VALUES(32, false, 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION', 65, 66, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (67, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(32, false, 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION', 65, 66, 67, 1, 'UPLOAD_REQUEST', true);
 INSERT INTO unit(id, unit_type, unit_value) VALUES (7, 0, 2);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (32, 0, 7);
 
 -- Functionality : UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (67, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (68, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
- VALUES(33, false, 'UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION', 67, 68, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO unit(id, unit_type, unit_value) VALUES (8, 0, 2);
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (33, 0, 8);
-
--- Functionality : UPLOAD_REQUEST__TOGETHER_MODE
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (69, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (70, true, true, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
- VALUES(34, false, 'UPLOAD_REQUEST__TOGETHER_MODE', 69, 70, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (70, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(33, false, 'UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION', 68, 69, 70, 1, 'UPLOAD_REQUEST', true);
+-- time unit : month
+ INSERT INTO unit(id, unit_type, unit_value) VALUES (8, 0, 2);
+-- month : 1 month
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (33, 1, 8);
+
+-- Functionality : UPLOAD_REQUEST__GROUPED_MODE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (71, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (72, true, true, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (73, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(34, false, 'UPLOAD_REQUEST__GROUPED_MODE', 71, 72, 73, 1, 'UPLOAD_REQUEST', true);
 
 -- Functionality : UPLOAD_REQUEST__MAXIMUM_FILE_COUNT
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (71, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (72, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
- VALUES(35, false, 'UPLOAD_REQUEST__MAXIMUM_FILE_COUNT', 71, 72, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO functionality_integer(functionality_id, integer_value) VALUES (35, 0);
-
--- Functionality : UPLOAD_REQUEST__MAXIMUM_FILE_SIZE
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (73, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (74, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
- VALUES(36, false, 'UPLOAD_REQUEST__MAXIMUM_FILE_SIZE', 73, 74, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO unit(id, unit_type, unit_value) VALUES (9, 0, 2);
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (36, 0, 9);
-
--- Functionality : UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (75, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (76, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
- VALUES(37, false, 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE', 75, 76, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO unit(id, unit_type, unit_value) VALUES (10, 0, 2);
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (37, 0, 10);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(35, false, 'UPLOAD_REQUEST__MAXIMUM_FILE_COUNT', 74, 75, 76, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_integer(functionality_id, integer_value) VALUES (35, 3);
 
--- Functionality : UPLOAD_REQUEST__NOTIFICATION_LANGUAGE
+-- Functionality : UPLOAD_REQUEST__MAXIMUM_FILE_SIZE
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (77, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (78, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
- VALUES(38, false, 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE', 77, 78, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (38, 'DEFAULT_STRING_VALUE');
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (79, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(36, false, 'UPLOAD_REQUEST__MAXIMUM_FILE_SIZE', 77, 78, 79, 1, 'UPLOAD_REQUEST', true);
+ -- file size unit : Mega
+INSERT INTO unit(id, unit_type, unit_value) VALUES (9, 1, 1);
+-- size : 10 Mega
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (36, 10, 9);
+
+-- Functionality : UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (80, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (81, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (82, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(37, false, 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE', 80, 81, 82, 1, 'UPLOAD_REQUEST', true);
+ -- file size unit : Mega
+INSERT INTO unit(id, unit_type, unit_value) VALUES (10, 1, 1);
+-- size : 30 Mega
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (37, 30, 10);
+
+-- Functionality : UPLOAD_REQUEST__NOTIFICATION_LANGUAGE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (83, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (84, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (85, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(38, false, 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE', 83, 84, 85, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (38, 'en');
 
 -- Functionality : UPLOAD_REQUEST__SECURED_URL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (79, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (80, true, true, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
- VALUES(39, false, 'UPLOAD_REQUEST__SECURED_URL', 79, 80, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (86, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (87, true, true, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (88, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(39, false, 'UPLOAD_REQUEST__SECURED_URL', 86, 87, 88, 1, 'UPLOAD_REQUEST', true);
 
 -- Functionality : UPLOAD_REQUEST__PROLONGATION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (81, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (82, true, true, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
- VALUES(40, false, 'UPLOAD_REQUEST__PROLONGATION', 81, 82, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (89, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (90, true, true, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (91, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(40, false, 'UPLOAD_REQUEST__PROLONGATION', 89, 90, 91, 1, 'UPLOAD_REQUEST', true);
 
 -- Functionality : UPLOAD_REQUEST__DEPOSIT_ONLY
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (83, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (84, true, true, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
- VALUES(41, false, 'UPLOAD_REQUEST__DEPOSIT_ONLY', 83, 84, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (92, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (93, true, true, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (94, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(41, false, 'UPLOAD_REQUEST__DEPOSIT_ONLY', 92, 93, 94, 1, 'UPLOAD_REQUEST', true);
 
 -- Functionality : UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (85, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (86, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
- VALUES(42, false, 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION', 85, 86, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO unit(id, unit_type, unit_value) VALUES (11, 0, 2);
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (42, 0, 11);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (95, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (96, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (97, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(42, false, 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION', 95, 96, 97, 1, 'UPLOAD_REQUEST', true);
+-- time unit : day
+INSERT INTO unit(id, unit_type, unit_value) VALUES (11, 0, 0);
+-- time : 7 days
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (42, 7, 11);
 
 
 -- %{image}    <img src="cid:image.part.1@linshare.org" /><br/><br/>

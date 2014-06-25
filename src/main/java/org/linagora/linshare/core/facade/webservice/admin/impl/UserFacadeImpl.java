@@ -39,12 +39,14 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.PasswordDto;
@@ -63,14 +65,18 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final UserService userService;
 
+	private final GuestService guestService;
+
 	private final InconsistentUserService inconsistentUserService;
 
 	public UserFacadeImpl(final AccountService accountService,
 			final UserService userService,
-			final InconsistentUserService inconsistentUserService) {
+			final InconsistentUserService inconsistentUserService,
+			final GuestService guestService) {
 		super(accountService);
 		this.userService = userService;
 		this.inconsistentUserService = inconsistentUserService;
+		this.guestService = guestService;
 	}
 
 	@Override
@@ -116,12 +122,13 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		for (User user : users) {
 			UserDto userDto = UserDto.getFull(user);
 
-			if (userDto.isGuest()) {
-				if (user.isRestricted()) {
-					for (User contact : userService.fetchGuestContacts(user
-							.getLsUuid())) {
-						userDto.getRestrictedContacts().add(contact.getMail());
-					}
+			if (user.isGuest() && user.isRestricted()) {
+				Guest guest = guestService.findByLsUuid(currentUser,
+						user.getLsUuid());
+				Set<AllowedContact> contacts = guest.getRestrictedContacts();
+				for (AllowedContact contact : contacts) {
+					userDto.getRestrictedContacts().add(
+							UserDto.getSimple(contact.getContact()));
 				}
 			}
 			usersDto.add(userDto);
@@ -142,10 +149,12 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	public UserDto update(UserDto userDto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		User user = getUser(userDto);
-		User update = userService.updateUser(actor, user, userDto.getDomain());
-		if (userDto.isGuest() && user.isRestricted()) {
-			userService.setGuestContactRestriction(userDto.getUuid(),
-					userDto.getRestrictedContacts());
+		User update;
+		if (userDto.isGuest()) {
+			update = guestService.update(actor, (Guest) user, user.getOwner()
+					.getLsUuid());
+		} else {
+			update = userService.updateUser(actor, user, userDto.getDomain());
 		}
 		return UserDto.getSimple(update);
 	}
@@ -163,9 +172,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 				"user unique identifier must be set.");
 		if (userDto.isGuest()) {
 			return new Guest(userDto);
-		} else {
-			return new Internal(userDto);
 		}
+		return new Internal(userDto);
 	}
 
 	@Override
@@ -180,8 +188,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void updateInconsistent(UserDto userDto)
-			throws BusinessException {
+	public void updateInconsistent(UserDto userDto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		inconsistentUserService.updateDomain(actor, userDto.getUuid(),
 				userDto.getDomain());

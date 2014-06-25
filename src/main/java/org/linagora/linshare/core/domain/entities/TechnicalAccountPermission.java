@@ -33,20 +33,42 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import java.util.HashSet;
+import java.util.Date;
 import java.util.Set;
+
+import org.linagora.linshare.webservice.dto.TechnicalAccountPermissionDto;
+
+import com.google.common.collect.Sets;
 
 public class TechnicalAccountPermission {
 
 	private long id;
-	
-	private boolean write;
-	
-	private boolean all;
-	
-	private Set<Account> accounts = new HashSet<Account>();
-	
-	private Set<AbstractDomain> domains = new HashSet<AbstractDomain>();
+
+	private String uuid;
+
+	private Date creationDate;
+
+	private Date modificationDate;
+
+	private Set<AccountPermission> accountPermissions = Sets.newHashSet();
+
+	private Set<AbstractDomain> domains = Sets.newHashSet();
+
+	@SuppressWarnings("unused")
+	public TechnicalAccountPermission() {
+		super();
+	}
+
+	public TechnicalAccountPermission(TechnicalAccountPermissionDto dto) {
+		super();
+		this.uuid = dto.getUuid();
+		Set<String> permissions = dto.getPermissions();
+
+		for (String perm : permissions) {
+			accountPermissions.add(new AccountPermission(perm));
+		}
+
+	}
 
 	public long getId() {
 		return id;
@@ -56,35 +78,48 @@ public class TechnicalAccountPermission {
 		this.id = id;
 	}
 
-	public boolean isWrite() {
-		return write;
-	}
-
-	public void setWrite(boolean write) {
-		this.write = write;
-	}
-
-	public boolean isAll() {
-		return all;
-	}
-
-	public void setAll(boolean all) {
-		this.all = all;
-	}
-
-	public Set<Account> getAccounts() {
-		return accounts;
-	}
-
-	public void setAccounts(Set<Account> accounts) {
-		this.accounts = accounts;
-	}
-
 	public java.util.Set<AbstractDomain> getDomains() {
+		return domains;
+	}
+
+	public Set<AbstractDomain> addDomain(AbstractDomain domain) {
+		domains.add(domain);
 		return domains;
 	}
 
 	public void setDomains(Set<AbstractDomain> domains) {
 		this.domains = domains;
+	}
+
+	public Set<AccountPermission> getAccountPermissions() {
+		return accountPermissions;
+	}
+
+	public void setAccountPermissions(Set<AccountPermission> accountPermissions) {
+		this.accountPermissions = accountPermissions;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 }

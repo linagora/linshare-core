@@ -36,24 +36,24 @@ package org.linagora.linshare.core.domain.constants;
 /**
  */
 public enum Role {
-    SIMPLE(0), ADMIN(1), SYSTEM(2), SUPERADMIN(3);
+	SIMPLE(0), ADMIN(1), SYSTEM(2), SUPERADMIN(3), DELEGATION(4);
 
-    private int value;
+	private int value;
 
-    private Role(int value) {
-        this.value = value;
-    }
+	private Role(int value) {
+		this.value = value;
+	}
 
-    public int toInt() {
-        return value;
-    }
+	public int toInt() {
+		return value;
+	}
 
-    public static Role fromInt(int value) {
-    	for (Role role : values()) {
-    		if (role.value == value) {
-    			return role;
-    		}
+	public static Role fromInt(int value) {
+		for (Role role : values()) {
+			if (role.value == value) {
+				return role;
+			}
 		}
-    	throw new IllegalArgumentException("Doesn't match an existing Role");
-    }
+		throw new IllegalArgumentException("Doesn't match an existing Role");
+	}
 }

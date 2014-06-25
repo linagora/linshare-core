@@ -80,7 +80,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		this.restricted = false;
 		this.domainIdentifier = null;
 	}
-	
+
 	public UserVo(Account account) {
 		this.login = account.getLsUuid();
 		this.userType = account.getAccountType();
@@ -97,7 +97,13 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 			this.mail = user.getMail();
 			this.upload = user.getCanUpload();
 			this.createGuest = user.getCanCreateGuest();
-			this.expirationDate = user.getExpirationDate();
+			this.expirationDate = null;
+			if (userType.equals(AccountType.GUEST)) {
+				Guest guest = (Guest)user;
+				this.expirationDate = guest.getExpirationDate();
+				this.restricted = guest.isRestricted();
+				this.comment = guest.getComment();
+			}
 		} else {
 			this.firstName = null;
 			this.lastName = null;
@@ -186,7 +192,6 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 
 	public UserVo(String login, String firstName, String lastName, String mail,
 			Role role, AccountType userType, String locale) {
-		super();
 		this.login = login;
 		this.firstName = firstName;
 		this.lastName = lastName;

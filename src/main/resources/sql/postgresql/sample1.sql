@@ -64,6 +64,15 @@ UPDATE domain_abstract SET mime_policy_id=1;
 
 
 
+INSERT INTO technical_account_permission (id, uuid, creation_date, modification_date) VALUES (40, 'fbba4e41-ca60-4f09-8d59-fbfe052acb82', current_timestamp(3), current_timestamp(3));
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id, technical_account_permission_id)
+	VALUES (40, 4, 'fff38827-490a-4654-86a6-57b61611b42d', current_date,current_date, 4, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1, 40);
+INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST)
+	VALUES (40, null, 'Technical Account for test', 'bart.simpson@int1.linshare.dev', false, '', false, false);
+
+
+
+
 -- Users
 -- bart simpson
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (50, 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_timestamp(3), current_timestamp(3), 0, 'fr', 'en', true, false, 3);

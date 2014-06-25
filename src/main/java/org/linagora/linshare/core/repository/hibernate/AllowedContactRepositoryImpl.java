@@ -64,6 +64,7 @@ public class AllowedContactRepositoryImpl extends AbstractRepositoryImpl<Allowed
 		return det;
 	}
 
+	@Override
 	public List<AllowedContact> findByOwner(final User owner) {
 		List<AllowedContact> contacts = findByCriteria(Restrictions.eq("owner", owner));
 		return contacts;
@@ -73,6 +74,7 @@ public class AllowedContactRepositoryImpl extends AbstractRepositoryImpl<Allowed
 	// FIXME
 	// XXX
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<AllowedContact> searchContact(final String mail, final String firstName, final String lastName, final Guest guest) {
 		return getHibernateTemplate().executeFind(new HibernateCallback() {
 			public Object doInHibernate(final Session session)
@@ -96,6 +98,7 @@ public class AllowedContactRepositoryImpl extends AbstractRepositoryImpl<Allowed
 		});
 	}
 
+	@Override
 	public void deleteAllByUserBothSides(final User user) {
 		List<AllowedContact> results = new ArrayList<AllowedContact>();
 		results.addAll(findByCriteria(Restrictions.eq("owner", user)));
@@ -108,6 +111,13 @@ public class AllowedContactRepositoryImpl extends AbstractRepositoryImpl<Allowed
 			} catch (BusinessException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	@Override
+	public void purge(Guest guest) throws IllegalArgumentException, BusinessException {
+		for(AllowedContact contact : this.findByOwner(guest)) {
+			this.delete(contact);
 		}
 	}
 }

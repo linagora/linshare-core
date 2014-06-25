@@ -38,8 +38,6 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -48,20 +46,6 @@ import org.linagora.linshare.core.exception.TechnicalException;
 /** Services for User management.
  */
 public interface UserService {
-
-	/** Create a guest.
-	 * @param login login.
-	 * @param firstName first name.
-	 * @param lastName last name.
-	 * @param mail guest email address.
-	 * @param canUpload : if the user can upload file
-	 * @param comment : the comment about the user
-	 * @param ownerLogin login of the user who create the guest.
-	 * @return persisted guest.
-	 * @throws BusinessException in case of duplicated guest.
-	 */
-	Guest createGuest(String login, String firstName, String lastName, String mail, Boolean canUpload, Boolean canCreateGuest, String comment, 
-			String ownerLogin, String ownerDomain) throws BusinessException;
 
 	/**
 	 * Search a user on ldap and database for completion ONLY.
@@ -73,17 +57,6 @@ public interface UserService {
 	 * @throws BusinessException
 	 */
 	public List<User> autoCompleteUser(String currentActorUuid, String pattern) throws BusinessException;
-
-	/** Search a user.
-	 * @param mail user email.
-	 * @param firstName user first name.
-	 * @param lastName user last name.
-	 * @param userType type of user (internal/guest)
-	 * @param currentUser the current user can be null, if not null and if user is a guest, the result includes the guests
-	 * created by the current User
-	 * @return a list of matching users.
-	 */
-	List<User> searchUserV2(String currentActorUuid, String mail, String firstName, String lastName, AccountType userType) throws BusinessException;
 
 	/** Search a user.
 	 * @param mail user email.
@@ -114,22 +87,6 @@ public interface UserService {
 	 */
 	void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException;
 
-
-	/** Clean outdated guest accounts. */
-	void cleanExpiredGuestAcccounts(SystemAccount systemAccount);
-
-	/**
-	 * update a guest (edit mode)
-	 * @param guestUuid 
-	 * @param mail
-	 * @param firstName
-	 * @param lastName
-	 * @param canUpload
-	 * @param owner
-	 * @throws BusinessException
-	 */
-	public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException;
-
 	/**
 	 * update the role of a user (admin, simple)
 	 * @param userUuid 
@@ -158,47 +115,6 @@ public interface UserService {
 	 */
 	public void changePassword(String uuid, String mail, String oldPassword, String newPassword) throws BusinessException;
 
-	/**
-	 * Reset a guest password
-	 * @param mail
-	 * @param login
-	 * @throws BusinessException
-	 */
-	public void resetPassword(String uuid, String mail) throws BusinessException;
-
-	/**
-	 * Update a guest as restricted and set his list of contacts
-	 * 
-	 * @param login of the guest
-	 * @param mailContacts
-	 */
-	public void setGuestContactRestriction(String uuid, List<String> mailContacts) throws BusinessException;
-
-	/**
-	 * Set a guest as not restricted and remove his list of contacts
-	 * 
-	 * @param login
-	 */
-	public void removeGuestContactRestriction(String uuid) throws BusinessException;
-
-	/**
-	 * Add one contact to a restricted guest
-	 * 
-	 * @param ownerUuid
-	 * @param contactUuid
-	 */
-	public void addGuestContactRestriction(String ownerUuid, String contactUuid) throws BusinessException;
-
-	/**
-	 * Retrieve the list of contacts of the guest
-	 * 
-	 * @param login
-	 * @return
-	 */
-	public List<User> fetchGuestContacts(String uuid) throws BusinessException;
-
-	public List<String> getGuestEmailContacts(String uuid) throws BusinessException;
-
 	void updateUserDomain(String mail, String selectedDomain, UserVo actor) throws BusinessException;
 
 	/**
@@ -212,9 +128,10 @@ public interface UserService {
 	/**
 	 * This method create a new user entity from a valid user object, or update an existing one. 
 	 * @param user
+	 * @return TODO
 	 * @return user entity created or updated.
 	 */
-	public void saveOrUpdateUser(User user) throws TechnicalException ;
+	public User saveOrUpdateUser(User user) throws TechnicalException ;
 	
 	/** Find a  user (based on mail address).
 	 * Search first in database, then on ldap if not found.
@@ -259,6 +176,8 @@ public interface UserService {
 
 	public User findByLsUuid(String lsUuid);
 
+	boolean exist(String lsUuid);
+
 	public User findUserInDB(String domain, String mail);
 
 	public List<User> findUsersInDB(String domain);
@@ -274,11 +193,10 @@ public interface UserService {
 	/**
 	 * Check if the actor is authorized to manage the second user (userToManage).
 	 * @param actor
-	 * @param userDomainToManage
-	 * @param userMailToManage 
+	 * @param user
 	 * @return
 	 */
-	public boolean isAdminForThisUser(Account actor, String userDomainToManage, String userMailToManage);
+	public boolean isAdminForThisUser(Account actor, User user);
 
 
 	/**
