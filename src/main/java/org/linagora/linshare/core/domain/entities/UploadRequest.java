@@ -36,6 +36,8 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+
 public class UploadRequest {
 
 	private long id;
@@ -50,7 +52,7 @@ public class UploadRequest {
 
 	private long maxFileSize;
 
-	private int status;
+	private UploadRequestStatus status;
 
 	private Date activationDate;
 
@@ -76,7 +78,7 @@ public class UploadRequest {
 
 	private String mailMessageId;
 
-	private Set<UploadRequestUrl> UploadRequestURL;
+	private Set<UploadRequestUrl> uploadRequestURLs;
 
 	private Set<UploadRequestEntry> uploadRequestEntries;
 
@@ -137,11 +139,11 @@ public class UploadRequest {
 		this.maxFileSize = maxFileSize;
 	}
 
-	public int getStatus() {
+	public UploadRequestStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(UploadRequestStatus status) {
 		this.status = status;
 	}
 
@@ -241,12 +243,12 @@ public class UploadRequest {
 		this.mailMessageId = mailMessageID;
 	}
 
-	public Set<UploadRequestUrl> getUploadRequestURL() {
-		return UploadRequestURL;
+	public Set<UploadRequestUrl> getUploadRequestURLs() {
+		return uploadRequestURLs;
 	}
 
-	public void setUploadRequestURL(Set<UploadRequestUrl> uploadRequestURL) {
-		UploadRequestURL = uploadRequestURL;
+	public void setUploadRequestURLs(Set<UploadRequestUrl> uploadRequestURLs) {
+		this.uploadRequestURLs = uploadRequestURLs;
 	}
 
 	public Set<UploadRequestEntry> getUploadRequestEntries() {

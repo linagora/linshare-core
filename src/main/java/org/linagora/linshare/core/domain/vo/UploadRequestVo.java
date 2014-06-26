@@ -35,6 +35,7 @@ package org.linagora.linshare.core.domain.vo;
 
 import java.util.Date;
 
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 
@@ -220,7 +221,7 @@ public class UploadRequestVo {
 		ret.setMaxFileCount(maxFileCount);
 		ret.setMaxDepositSize(maxDepositSize);
 		ret.setMaxFileSize(maxFileSize);
-		ret.setStatus(status);
+		ret.setStatus(UploadRequestStatus.STATUS_ENABLED);
 		ret.setActivationDate(activationDate);
 		ret.setCreationDate(creationDate);
 		ret.setModificationDate(modificationDate);

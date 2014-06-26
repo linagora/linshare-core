@@ -19,13 +19,13 @@
 		<constructor-arg ref="wsDelegationGenericFacade" />
 		<constructor-arg ref="wsDelegationUserFacade" />
 	</bean>
-	
+
 	<jaxrs:server id="restDelegationContainer" address="/rest/delegation">
 		<jaxrs:serviceBeans>
 			<ref bean="delegationAuthenticationRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
-			<entry key="json" value="text/plain" />
+			<entry key="json" value="application/json" />
 			<entry key="xml" value="application/xml" />
 		</jaxrs:extensionMappings>
 		<jaxrs:providers>
