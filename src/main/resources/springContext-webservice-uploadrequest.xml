@@ -17,6 +17,7 @@
 	<jaxrs:server id="restUploadRequestContainer" address="/rest/uploadrequest">
 		<jaxrs:serviceBeans>
 			<bean class="org.linagora.linshare.webservice.uploadrequest.impl.UploadRequestRestServiceImpl"/>
+			<bean class="org.linagora.linshare.webservice.uploadrequest.impl.FineUploaderRestServiceImpl"/>
 <!-- 			<ref bean="id"/> -->
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
