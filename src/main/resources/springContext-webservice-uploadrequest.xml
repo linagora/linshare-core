@@ -14,17 +14,13 @@
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
 
-	<!-- REST  -->
-	<bean id="uploadPropositionAuthenticationRestService" class="org.linagora.linshare.webservice.uploadproposition.impl.AuthenticationRestServiceImpl">
-		<constructor-arg ref="wsUploadPropositionGenericFacade" />
-	</bean>
-
-	<jaxrs:server id="restUploadPropositionContainer" address="/rest/uploadproposition">
+	<jaxrs:server id="restUploadRequestContainer" address="/rest/uploadrequest">
 		<jaxrs:serviceBeans>
-			<ref bean="uploadPropositionAuthenticationRestService" />
+			<bean class="org.linagora.linshare.webservice.uploadrequest.impl.UploadRequestRestServiceImpl"/>
+<!-- 			<ref bean="id"/> -->
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
-			<entry key="json" value="text/plain" />
+			<entry key="json" value="application/json" />
 			<entry key="xml" value="application/xml" />
 		</jaxrs:extensionMappings>
 		<jaxrs:providers>

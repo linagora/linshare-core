@@ -53,8 +53,9 @@
 			<sec:filter-chain pattern="/webservice/rest/admin?_wadl" filters="none" />
 			<sec:filter-chain pattern="/webservice/fineuploader?_wadl" filters="none" />
 
-            <sec:filter-chain pattern="/webservice/rest/authentication/" filters="none" />
-            <sec:filter-chain pattern="/webservice/rest/admin/authentication/" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/authentication/" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/admin/authentication/" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/uploadrequest/**" filters="none" />
 
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
