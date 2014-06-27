@@ -35,32 +35,20 @@ package org.linagora.linshare.webservice.uploadrequest;
 
 import java.io.InputStream;
 
+import javax.ws.rs.core.Response;
+
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.FineUploaderDto;
 
-public interface FineUploaderRestService {
+public interface FlowUploaderRestService {
 
-	/**
-	 * Upload method contains logic for a file upload and return the correct
-	 * DocumentDto if upload was successful.
-	 * 
-	 * @param file
-	 * @param fileName
-	 * @param body
-	 * @return
-	 */
-	public FineUploaderDto upload(InputStream file, String fileName,
-			MultipartBody body) throws BusinessException;
+	void uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
+			long totalSize, String identifier, String filename,
+			String relativePath, InputStream file, MultipartBody body)
+			throws BusinessException;
 
-	/**
-	 * Delete an existing file.
-	 * 
-	 * @param file
-	 * @param fileName
-	 * @param body
-	 * @return
-	 */
-	public FineUploaderDto delete(String uuid) throws BusinessException;
+	Response testChumk(long chunkNumber, long totalChunks, long chunkSize,
+			long totalSize, String identifier, String filename,
+			String relativePath);
 
 }
