@@ -33,36 +33,53 @@
  */
 package org.linagora.linshare.core.domain.constants;
 
-public interface FunctionalityNames {
+public enum FunctionalityNames {
 
-	public static final String FILESIZE_MAX = "FILESIZE_MAX";
-	public static final String QUOTA_GLOBAL = "QUOTA_GLOBAL";
-	public static final String QUOTA_USER = "QUOTA_USER";
-	public static final String MIME_TYPE = "MIME_TYPE";
-	public static final String SIGNATURE = "SIGNATURE";
-	public static final String ENCIPHERMENT = "ENCIPHERMENT";
-	public static final String TIME_STAMPING = "TIME_STAMPING";
-	public static final String ANTIVIRUS = "ANTIVIRUS";
-	public static final String CUSTOM_LOGO = "CUSTOM_LOGO";
-	public static final String ACCOUNT_EXPIRATION = "ACCOUNT_EXPIRATION";
-	public static final String FILE_EXPIRATION = "FILE_EXPIRATION";
-	public static final String SHARE_EXPIRATION = "SHARE_EXPIRATION";
-	public static final String ANONYMOUS_URL = "ANONYMOUS_URL";
-	public static final String SECURED_ANONYMOUS_URL= "SECURED_ANONYMOUS_URL";
-	public static final String GUESTS = "GUESTS";
-	public static final String USER_CAN_UPLOAD = "USER_CAN_UPLOAD";
-	public static final String COMPLETION = "COMPLETION";
-	public static final String TAB_HELP = "TAB_HELP";
-	public static final String TAB_LIST = "TAB_LIST";
-	public static final String TAB_AUDIT = "TAB_AUDIT";
-	public static final String TAB_USER = "TAB_USER";
-	public static final String TAB_THREAD = "TAB_THREAD";
-	public static final String CREATE_THREAD_PERMISSION = "CREATE_THREAD_PERMISSION";
-	public static final String UPDATE_FILE = "UPDATE_FILE";
-	public static final String SHARE_NOTIFICATION_BEFORE_EXPIRATION = "SHARE_NOTIFICATION_BEFORE_EXPIRATION";
-	public static final String RESTRICTED_GUEST = "RESTRICTED_GUEST";
-	public static final String DOMAIN_MAIL = "DOMAIN_MAIL";
-	public static final String LINK_LOGO = "LINK_LOGO";
-	public static final String NOTIFICATION_URL = "NOTIFICATION_URL";
-	
+	FILESIZE_MAX,
+	QUOTA_GLOBAL,
+	QUOTA_USER,
+	MIME_TYPE,
+	SIGNATURE,
+	ENCIPHERMENT,
+	TIME_STAMPING,
+	ANTIVIRUS,
+	CUSTOM_LOGO,
+	ACCOUNT_EXPIRATION,
+	FILE_EXPIRATION,
+	SHARE_EXPIRATION,
+	ANONYMOUS_URL,
+	SECURED_ANONYMOUS_URL,
+	GUESTS,
+	USER_CAN_UPLOAD,
+	COMPLETION,
+	TAB_HELP,
+	TAB_LIST,
+	TAB_AUDIT,
+	TAB_USER,
+	TAB_THREAD,
+	CREATE_THREAD_PERMISSION,
+	UPDATE_FILE,
+	SHARE_NOTIFICATION_BEFORE_EXPIRATION,
+	RESTRICTED_GUEST,
+	DOMAIN_MAIL,
+	LINK_LOGO,
+	NOTIFICATION_URL,
+	UPLOAD_REQUEST,
+	UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION,
+	UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION,
+	UPLOAD_REQUEST__GROUPED_MODE,
+	UPLOAD_REQUEST__MAXIMUM_FILE_COUNT,
+	UPLOAD_REQUEST__MAXIMUM_FILE_SIZE,
+	UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE,
+	UPLOAD_REQUEST__NOTIFICATION_LANGUAGE,
+	UPLOAD_REQUEST__SECURED_URL,
+	UPLOAD_REQUEST__PROLONGATION,
+	UPLOAD_REQUEST__DEPOSIT_ONLY,
+	UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION;
+
+	@Override
+	public String toString() {
+		return this.name();
+	}
+
 }

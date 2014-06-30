@@ -36,6 +36,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 import org.linagora.linshare.webservice.dto.ParameterDto;
@@ -61,6 +62,11 @@ public class Functionality extends AbstractFunctionality {
 			Policy activationPolicy, Policy configurationPolicy,
 			AbstractDomain domain) {
 		super(identifier, system, activationPolicy, configurationPolicy, domain);
+	}
+
+	public Functionality(FunctionalityNames fn, boolean b, Policy policy,
+			Policy policy2, AbstractDomain domain) {
+		new Functionality(String.valueOf(fn), b, policy, policy2, domain);
 	}
 
 	public FunctionalityType getType() {

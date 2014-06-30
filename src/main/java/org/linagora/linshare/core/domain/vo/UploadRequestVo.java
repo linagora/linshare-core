@@ -77,7 +77,7 @@ public class UploadRequestVo {
 		super();
 	}
 
-	public UploadRequestVo(UploadRequest findRequestByUuid) {
+	public UploadRequestVo(UploadRequest req) {
 		// TODO Auto-generated constructor stub
 	}
 
