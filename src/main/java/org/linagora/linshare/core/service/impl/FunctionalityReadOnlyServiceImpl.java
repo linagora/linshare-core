@@ -90,6 +90,12 @@ public class FunctionalityReadOnlyServiceImpl implements
 		return fonc;
 	}
 
+	/*
+	 * Adapter
+	 */
+	private  Functionality _getFunctionality(AbstractDomain domain, FunctionalityNames fn) {
+		return _getFunctionality(domain, String.valueOf(fn));
+	}
 	
 	@Override
 	public TimeUnitBooleanValueFunctionality getDefaultShareExpiryTimeFunctionality(AbstractDomain domain) {
@@ -235,6 +241,11 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain) {
 		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.NOTIFICATION_URL);
+	}
+
+	@Override
+	public Functionality getUploadRequestGroupedFunctionality(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__GROUPED_MODE);
 	}
 
 	@Override

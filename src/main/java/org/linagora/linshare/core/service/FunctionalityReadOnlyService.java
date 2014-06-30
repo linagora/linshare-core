@@ -44,45 +44,48 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface FunctionalityReadOnlyService {
 
-	public Functionality get(String domainIdentifier,String functionalityIdentifier);
+	Functionality get(String domainIdentifier,String functionalityIdentifier);
 	
 	/** 
 	 * Shortcuts to functionalities
 	 */
 
-	public SizeUnitValueFunctionality getGlobalQuotaFunctionality (AbstractDomain domain);
-    public SizeUnitValueFunctionality getUserQuotaFunctionality (AbstractDomain domain);
-    public SizeUnitValueFunctionality getUserMaxFileSizeFunctionality (AbstractDomain domain);
-	public TimeUnitBooleanValueFunctionality getDefaultShareExpiryTimeFunctionality (AbstractDomain domain);
-	public TimeUnitValueFunctionality getDefaultFileExpiryTimeFunctionality (AbstractDomain domain);
+	SizeUnitValueFunctionality getGlobalQuotaFunctionality (AbstractDomain domain);
+    SizeUnitValueFunctionality getUserQuotaFunctionality (AbstractDomain domain);
+    SizeUnitValueFunctionality getUserMaxFileSizeFunctionality (AbstractDomain domain);
+	TimeUnitBooleanValueFunctionality getDefaultShareExpiryTimeFunctionality (AbstractDomain domain);
+	TimeUnitValueFunctionality getDefaultFileExpiryTimeFunctionality (AbstractDomain domain);
 	
-	public Functionality getGuestFunctionality (AbstractDomain domain);
-	public TimeUnitValueFunctionality getGuestAccountExpiryTimeFunctionality (AbstractDomain domain);
+	Functionality getGuestFunctionality (AbstractDomain domain);
+	TimeUnitValueFunctionality getGuestAccountExpiryTimeFunctionality (AbstractDomain domain);
 	
 	
-	public StringValueFunctionality getTimeStampingFunctionality(AbstractDomain domain);
-	public StringValueFunctionality getDomainMailFunctionality(AbstractDomain domain);
-	public Functionality getMimeTypeFunctionality(AbstractDomain domain);
-	public Functionality getEnciphermentFunctionality(AbstractDomain domain);
-	public Functionality getAntivirusFunctionality(AbstractDomain domain);
-	public Functionality getAnonymousUrlFunctionality(AbstractDomain domain);
-	public Functionality getSecuredAnonymousUrlFunctionality(AbstractDomain domain);
-	public Functionality getRestrictedGuestFunctionality(AbstractDomain domain);
-	public Functionality getSignatureFunctionality(AbstractDomain domain);
-	public Functionality getThreadCreationPermissionFunctionality(AbstractDomain domain);
-	public Functionality getUpdateFilesFunctionality(AbstractDomain domain);
-	public Functionality getUserCanUploadFunctionality(AbstractDomain domain);
-	public StringValueFunctionality getCustomLogoFunctionality(AbstractDomain domain);
-	public StringValueFunctionality getCustomLinkLogoFunctionality(AbstractDomain domain);
-	public StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain);
-	public StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain);
+	StringValueFunctionality getTimeStampingFunctionality(AbstractDomain domain);
+	StringValueFunctionality getDomainMailFunctionality(AbstractDomain domain);
+	Functionality getMimeTypeFunctionality(AbstractDomain domain);
+	Functionality getEnciphermentFunctionality(AbstractDomain domain);
+	Functionality getAntivirusFunctionality(AbstractDomain domain);
+	Functionality getAnonymousUrlFunctionality(AbstractDomain domain);
+	Functionality getSecuredAnonymousUrlFunctionality(AbstractDomain domain);
+	Functionality getRestrictedGuestFunctionality(AbstractDomain domain);
+	Functionality getSignatureFunctionality(AbstractDomain domain);
+	Functionality getThreadCreationPermissionFunctionality(AbstractDomain domain);
+	Functionality getUpdateFilesFunctionality(AbstractDomain domain);
+	Functionality getUserCanUploadFunctionality(AbstractDomain domain);
+	StringValueFunctionality getCustomLogoFunctionality(AbstractDomain domain);
+	StringValueFunctionality getCustomLinkLogoFunctionality(AbstractDomain domain);
+	StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain);
+	StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain);
 	
-	public IntegerValueFunctionality getCompletionFunctionality(AbstractDomain domain);
-	public Functionality getUserTabFunctionality(AbstractDomain domain);
-	public Functionality getAuditTabFunctionality(AbstractDomain domain);
-	public Functionality getThreadTabFunctionality(AbstractDomain domain);
-	public Functionality getHelpTabFunctionality(AbstractDomain domain);
-	public Functionality getListTabFunctionality(AbstractDomain domain);
+	IntegerValueFunctionality getCompletionFunctionality(AbstractDomain domain);
+	Functionality getUserTabFunctionality(AbstractDomain domain);
+	Functionality getAuditTabFunctionality(AbstractDomain domain);
+	Functionality getThreadTabFunctionality(AbstractDomain domain);
+	Functionality getHelpTabFunctionality(AbstractDomain domain);
+	Functionality getListTabFunctionality(AbstractDomain domain);
+
+	Functionality getUploadRequestGroupedFunctionality(AbstractDomain domain);
+	
 	
 	
 	/**
@@ -90,71 +93,71 @@ public interface FunctionalityReadOnlyService {
 	 * @param domain : the current domain identifier
 	 * @return 
 	 */
-	public boolean isSauMadatory(String domainIdentifier);
+	boolean isSauMadatory(String domainIdentifier);
 	
 	/**
 	 * Check if SecuredAnonymousUrl (SAU) is allowed
 	 * @param domain : the current domain identifier
 	 * @return 
 	 */
-	public boolean isSauAllowed(String domainIdentifier);
+	boolean isSauAllowed(String domainIdentifier);
 
 	/**
 	 * return the default value for SecuredAnonymousUrl (SAU)
 	 * @param domain : the current domain identifier
 	 * @return
 	 */
-	public boolean getDefaultSauValue(String domainIdentifier);
+	boolean getDefaultSauValue(String domainIdentifier);
 	
 	/**
 	 * return the default value for RestrictedGuest
 	 * @param domain : the current domain identifier
 	 * @return
 	 */
-	public boolean getDefaultRestrictedGuestValue(String domainIdentifier);
+	boolean getDefaultRestrictedGuestValue(String domainIdentifier);
 
 	/**
 	 * Check if RestrictedGuest is mandatory
 	 * @param domain : the current domain identifier
 	 * @return 
 	 */
-	public boolean isRestrictedGuestMadatory(String domainIdentifier);
+	boolean isRestrictedGuestMadatory(String domainIdentifier);
 	
 	/**
 	 * Check if RestrictedGuest is allowed
 	 * @param domain : the current domain identifier
 	 * @return 
 	 */
-	public boolean isRestrictedGuestAllowed(String domainIdentifier);
+	boolean isRestrictedGuestAllowed(String domainIdentifier);
 
 	/**
 	 * Return the status of the custom logo  in root domain
 	 * @return the status
 	 */
-	public boolean isCustomLogoActiveInRootDomain() throws BusinessException;
+	boolean isCustomLogoActiveInRootDomain() throws BusinessException;
 	
 	/**
 	 * Return the status of the custom logo  in root domain
 	 * @return the status
 	 */
-	public String getCustomLogoUrlInRootDomain() throws BusinessException;
+	String getCustomLogoUrlInRootDomain() throws BusinessException;
 	
 	/**
 	 * Return the status of the custom link logo  in root domain
 	 * @return the status
 	 */
-	public boolean isCustomLinkLogoActiveInRootDomain() throws BusinessException;
+	boolean isCustomLinkLogoActiveInRootDomain() throws BusinessException;
 	
 	/**
 	 * Return the status of the custom link logo  in root domain
 	 * @return the status
 	 */
-	public String getCustomLinkLogoInRootDomain() throws BusinessException;
+	String getCustomLinkLogoInRootDomain() throws BusinessException;
 	
 	/**
 	 * Return the status of the custom Notification URL in root domain
 	 * @return the status
 	 */
-	public String getCustomNotificationURLInRootDomain() throws BusinessException;
-	
+	String getCustomNotificationURLInRootDomain() throws BusinessException;
+
 }
