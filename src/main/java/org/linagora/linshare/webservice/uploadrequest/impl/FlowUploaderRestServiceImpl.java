@@ -33,24 +33,9 @@
  */
 package org.linagora.linshare.webservice.uploadrequest.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Map;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.wordnik.swagger.annotations.Api;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
@@ -58,16 +43,26 @@ import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
+import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.uploadrequest.FlowUploaderRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
-import com.wordnik.swagger.annotations.Api;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentMap;
 
 @Path("/flow/upload")
 @Api(value = "/rest/uploadrequest/flow/upload", description = "upload_requests API")
-@Produces({ "application/json", "application/xml" })
+@Produces({"application/json", "application/xml"})
 public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 		FlowUploaderRestService {
 
@@ -84,8 +79,34 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	private static final String FILE = "file";
 
 	private final DocumentFacade documentFacade;
-	
-	private static final Map<String, ArrayList<Integer>> chunks = Maps.newHashMap();
+
+	private static final ConcurrentMap<String, ChunkedFile> chunkedFiles = Maps.newConcurrentMap();
+
+	private class ChunkedFile {
+
+		private final ArrayList<Long> chunks = Lists.newArrayList();
+		private final java.nio.file.Path path;
+
+		private ChunkedFile(java.nio.file.Path path) {
+			this.path = path;
+		}
+
+		public boolean hasChunk(long chunkNumber) {
+			return chunks.contains(chunkNumber);
+		}
+
+		public void addChunk(long chunkNumber) {
+			chunks.add(chunkNumber);
+		}
+
+		public ArrayList<Long> getChunks() {
+			return chunks;
+		}
+
+		public java.nio.file.Path getPath() {
+			return path;
+		}
+	}
 
 	public FlowUploaderRestServiceImpl(DocumentFacade documentFacade) {
 		super();
@@ -95,19 +116,20 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	@Path("/")
 	@GET
 	@Override
-	public Response testChumk(@QueryParam(CHUNK_NUMBER) long chunkNumber,
-			@QueryParam(TOTAL_CHUNKS) long totalChunks,
-			@QueryParam(CHUNK_SIZE) long chunkSize,
-			@QueryParam(TOTAL_SIZE) long totalSize,
-			@QueryParam(IDENTIFIER) String identifier,
-			@QueryParam(FILENAME) String filename,
-			@QueryParam(RELATIVE_PATH) String relativePath) {
+	public Response testChunk(@QueryParam(CHUNK_NUMBER) long chunkNumber,
+							  @QueryParam(TOTAL_CHUNKS) long totalChunks,
+							  @QueryParam(CHUNK_SIZE) long chunkSize,
+							  @QueryParam(TOTAL_SIZE) long totalSize,
+							  @QueryParam(IDENTIFIER) String identifier,
+							  @QueryParam(FILENAME) String filename,
+							  @QueryParam(RELATIVE_PATH) String relativePath) {
 
 		identifier = cleanIdentifier(identifier);
 		Validate.isTrue(isValid(chunkNumber, chunkSize, totalSize, identifier,
 				filename));
 
-		if (chunks.get(identifier).contains(chunkNumber)) {
+
+		if (chunkedFiles.containsKey(identifier) && chunkedFiles.get(identifier).hasChunk(chunkNumber)) {
 			return Response.ok().build();
 		}
 		return Response.status(Status.NOT_FOUND).build();
@@ -117,45 +139,57 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	@POST
 	@Consumes("multipart/form-data")
 	@Override
-	public void uploadChunk(@Multipart(CHUNK_NUMBER) long chunkNumber,
-			@Multipart(TOTAL_CHUNKS) long totalChunks,
-			@Multipart(CHUNK_SIZE) long chunkSize,
-			@Multipart(TOTAL_SIZE) long totalSize,
-			@Multipart(IDENTIFIER) String identifier,
-			@Multipart(FILENAME) String filename,
-			@Multipart(RELATIVE_PATH) String relativePath,
-			@Multipart(FILE) InputStream file, MultipartBody body)
+	public Response uploadChunk(@Multipart(CHUNK_NUMBER) long chunkNumber,
+								@Multipart(TOTAL_CHUNKS) long totalChunks,
+								@Multipart(CHUNK_SIZE) long chunkSize,
+								@Multipart(TOTAL_SIZE) long totalSize,
+								@Multipart(IDENTIFIER) String identifier,
+								@Multipart(FILENAME) String filename,
+								@Multipart(RELATIVE_PATH) String relativePath,
+								@Multipart(FILE) InputStream file, MultipartBody body)
 			throws BusinessException {
 
+		logger.debug("upload chunk number : " + chunkNumber);
 		identifier = cleanIdentifier(identifier);
 		Validate.isTrue(isValid(chunkNumber, chunkSize, totalSize, identifier,
 				filename));
 
-		
 		try {
+			logger.debug("writing chunk number : " + chunkNumber);
 			java.nio.file.Path tempFile = getTempFile(identifier);
 			FileChannel fc = FileChannel.open(tempFile, StandardOpenOption.CREATE,
 					StandardOpenOption.APPEND);
 			byte[] byteArray = IOUtils.toByteArray(file);
 			fc.write(ByteBuffer.wrap(byteArray), (chunkNumber - 1) * chunkSize);
-			//Files.write(tempFile, byteArray, StandardOpenOption.CREATE,
-			//		StandardOpenOption.APPEND);
-			if (isUploadFinished(chunkSize, totalSize)) {
-				documentFacade
+			fc.close();
+			chunkedFiles.get(identifier).addChunk(chunkNumber);
+			if (isUploadFinished(identifier, chunkSize, totalSize)) {
+				logger.debug("upload finished ");
+				DocumentDto dto = documentFacade
 						.uploadfile(Files.newInputStream(tempFile,
 								StandardOpenOption.READ), filename, "");
+				ChunkedFile remove = chunkedFiles.remove(identifier);
+				Files.deleteIfExists(remove.getPath());
+				return Response.ok(dto).build();
+			} else {
+				logger.debug("upload pending ");
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		return Response.ok("upload success").build();
 	}
 
 	private java.nio.file.Path getTempFile(String identifier)
 			throws IOException {
-		java.nio.file.Path tempFile = Files.createTempFile("ls-chunks-" + identifier, ".temp");
-		return tempFile;
+		ChunkedFile chunkedFile = chunkedFiles.get(identifier);
+		if (chunkedFile == null) {
+			java.nio.file.Path path = Files.createTempFile("ls-chunks-" + identifier, ".temp");
+			chunkedFiles.putIfAbsent(identifier, new ChunkedFile(path));
+			chunkedFile = chunkedFiles.get(identifier);
+		}
+		return chunkedFile.getPath();
 	}
 
 	/**
@@ -167,7 +201,7 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	}
 
 	private boolean isValid(long chunkNumber, long chunkSize, long totalSize,
-			String identifier, String filename) {
+							String identifier, String filename) {
 		// Check if the request is sane
 		if (chunkNumber == 0 || chunkSize == 0 || totalSize == 0
 				|| identifier.length() == 0 || filename.length() == 0) {
@@ -180,43 +214,12 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 		return true;
 	}
 
-	private boolean isValid(int chunkNumber, int chunkSize, int totalSize,
-			String identifier, String filename, int fileSize) {
-		if (!isValid(chunkNumber, chunkSize, totalSize, identifier, filename)) {
-			return false;
-		}
-		double numberOfChunks = computeNumberOfChunks(chunkSize, totalSize);
-		if (chunkNumber > numberOfChunks) {
-			return false;
-		}
-		if (chunkNumber < numberOfChunks && fileSize != chunkSize) {
-			// The chunk in the POST request isn't the correct size
-			return false;
-		}
-		if (numberOfChunks > 1 && chunkNumber == numberOfChunks
-				&& fileSize != ((totalSize % chunkSize) + chunkSize)) {
-			// The chunks in the POST is the last one, and the fil is not the
-			// correct size
-			return false;
-		}
-		if (numberOfChunks == 1 && fileSize != totalSize) {
-			// The file is only a single chunk, and the data size does not fit
-			return false;
-		}
-		return true;
-	}
-
 	private double computeNumberOfChunks(long chunkSize, long totalSize) {
 		return Math.max(Math.floor(totalSize / chunkSize), 1);
 	}
 
-	private boolean isUploadFinished(long chunkSize, long totalSize) {
+	private boolean isUploadFinished(String identifier, long chunkSize, long totalSize) {
 		double numberOfChunks = computeNumberOfChunks(chunkSize, totalSize);
-
-		// check if all parts are present
-		if (numberOfChunks * chunkSize > (totalSize - chunkSize + 1)) {
-			return true;
-		}
-		return false;
+		return chunkedFiles.get(identifier).getChunks().size() == numberOfChunks;
 	}
 }
