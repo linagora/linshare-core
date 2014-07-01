@@ -42,13 +42,13 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface FlowUploaderRestService {
 
-	void uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
+	Response uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
 			long totalSize, String identifier, String filename,
 			String relativePath, InputStream file, MultipartBody body)
 			throws BusinessException;
 
-	Response testChumk(long chunkNumber, long totalChunks, long chunkSize,
-			long totalSize, String identifier, String filename,
-			String relativePath);
+	Response testChunk(long chunkNumber, long totalChunks, long chunkSize,
+					   long totalSize, String identifier, String filename,
+					   String relativePath);
 
 }
