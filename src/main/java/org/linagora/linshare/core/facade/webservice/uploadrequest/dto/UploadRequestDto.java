@@ -1,4 +1,3 @@
-
 package org.linagora.linshare.core.facade.webservice.uploadrequest.dto;
 
 import java.util.Date;
@@ -53,6 +52,8 @@ public class UploadRequestDto {
 
 	private boolean protectedByPassword;
 
+	private long usedSpace = 0;
+
 	Set<String> mimeTypes = Sets.newHashSet();
 
 	public UploadRequestDto() {
@@ -62,10 +63,10 @@ public class UploadRequestDto {
 	/**
 	 * for tests only
 	 */
-	public UploadRequestDto(String uuid, Integer maxFileCount, Long maxDepositSize,
-			Long maxFileSize, Date activationDate, Date expiryDate,
-			boolean canDeleteDocument, boolean canClose, String subject,
-			String body, boolean isClosed) {
+	public UploadRequestDto(String uuid, Integer maxFileCount,
+			Long maxDepositSize, Long maxFileSize, Date activationDate,
+			Date expiryDate, boolean canDeleteDocument, boolean canClose,
+			String subject, String body, boolean isClosed) {
 		super();
 		this.uuid = uuid;
 		this.maxFileCount = maxFileCount;
@@ -94,14 +95,16 @@ public class UploadRequestDto {
 		this.canDeleteDocument = entity.isCanDelete();
 		this.canClose = entity.isCanClose();
 		this.subject = entity.getUploadRequestGroup().getSubject();
-		this.body= entity.getUploadRequestGroup().getBody();
+		this.body = entity.getUploadRequestGroup().getBody();
 		this.isClosed = false;
-		if (entity.getStatus().equals(UploadRequestStatus.STATUS_CLOSED)) 
+		if (entity.getStatus().equals(UploadRequestStatus.STATUS_CLOSED))
 			this.isClosed = true;
 		for (UploadRequestEntry entry : entity.getUploadRequestEntries()) {
 			DocumentEntry documentEntry = entry.getDocumentEntry();
 			if (documentEntry != null) {
-				this.documents.put(documentEntry.getUuid(), documentEntry.getName());
+				this.documents.put(documentEntry.getUuid(),
+						documentEntry.getName());
+				this.usedSpace += documentEntry.getSize();
 			}
 		}
 		this.protectedByPassword = false;
@@ -225,6 +228,14 @@ public class UploadRequestDto {
 
 	public void setProtectedByPassword(boolean protectedByPassword) {
 		this.protectedByPassword = protectedByPassword;
+	}
+
+	public long getUsedSpace() {
+		return usedSpace;
+	}
+
+	public void setUsedSpace(long usedSpace) {
+		this.usedSpace = usedSpace;
 	}
 
 	public Set<String> getMimeTypes() {
