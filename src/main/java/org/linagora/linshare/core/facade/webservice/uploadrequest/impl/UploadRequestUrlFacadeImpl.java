@@ -1,36 +1,41 @@
 package org.linagora.linshare.core.facade.webservice.uploadrequest.impl;
 
+import java.io.InputStream;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.MimeTypeDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
+import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
-
-import com.google.common.collect.Sets;
+import org.linagora.linshare.webservice.dto.DocumentDto;
 
 public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 
 	private final UploadRequestUrlService uploadRequestUrlService;
-	
+
 	private final MimePolicyService mimePolicyService;
-	
+
+	private final DocumentEntryService documentEntryService;
 
 	public UploadRequestUrlFacadeImpl(
 			final UploadRequestUrlService uploadRequestUrlService,
-			final MimePolicyService mimePolicyService) {
+			final MimePolicyService mimePolicyService,
+			final DocumentEntryService documentEntryService) {
 		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.mimePolicyService = mimePolicyService;
+		this.documentEntryService = documentEntryService;
 	}
-	
+
 	@Override
 	public UploadRequestDto find(String uploadRequestUrlUuid) throws BusinessException {
 		Validate.notEmpty(uploadRequestUrlUuid);
@@ -48,15 +53,20 @@ public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 	}
 
 	@Override
-	public Set<MimeTypeDto> findAllMyMimeTypes(String uploadRequestUrlUuid) throws BusinessException {
-		Set<MimeTypeDto> res = Sets.newHashSet();
+	public DocumentDto addUploadRequestEntry(String uploadRequestUrlUuid,
+			InputStream fi, String fileName) throws BusinessException {
+		// TODO : Dirty : To fix
 		UploadRequestUrl requestUrl = uploadRequestUrlService.find(uploadRequestUrlUuid);
-		Set<MimeType> mimeTypes = mimePolicyService.findAllMyMimeTypes(requestUrl.getUploadRequest().getOwner());
-		for (MimeType mimeType : mimeTypes) {
-			res.add(new MimeTypeDto(mimeType));
-		}
-		return res;
+		Account actor = requestUrl.getUploadRequest().getOwner();
+		DocumentEntry res = documentEntryService.createDocumentEntry(actor, fi, fileName);
+		UploadRequestEntry uploadRequestEntry = new UploadRequestEntry(res, requestUrl.getUploadRequest());
+		uploadRequestUrlService.createRequestEntry(actor, uploadRequestEntry);
+		return new DocumentDto(res);
 	}
+
+	/**
+	 * Helpers
+	 */
 
 	private UploadRequestDto transform(UploadRequestUrl requestUrl) throws BusinessException {
 		UploadRequest request = requestUrl.getUploadRequest();

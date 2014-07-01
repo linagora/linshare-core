@@ -284,5 +284,6 @@
 	</bean>
 	<bean name="uploadRequestUrlService" class="org.linagora.linshare.core.service.impl.UploadRequestUrlServiceImpl">
 		<constructor-arg ref="uploadRequestUrlBusinessService" />
+		<constructor-arg ref="uploadRequestEntryBusinessService" />
 	</bean>
 </beans>

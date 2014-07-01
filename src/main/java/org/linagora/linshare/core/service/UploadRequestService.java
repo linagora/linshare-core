@@ -54,17 +54,6 @@ public interface UploadRequestService {
 
 	void deleteRequest(User actor, UploadRequest req) throws BusinessException;
 
-	UploadRequestEntry findRequestEntryByUuid(User actor, String uuid);
-
-	UploadRequestEntry createRequestEntry(User actor, UploadRequestEntry entry)
-			throws BusinessException;
-
-	UploadRequestEntry updateRequestEntry(User actor, UploadRequestEntry entry)
-			throws BusinessException;
-
-	void deleteRequestEntry(User actor, UploadRequestEntry entry)
-			throws BusinessException;
-
 	UploadRequestGroup findRequestGroupByUuid(User actor, String uuid);
 
 	UploadRequestGroup createRequestGroup(User actor, UploadRequestGroup group)
