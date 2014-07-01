@@ -20,7 +20,7 @@
 				<constructor-arg ref="wsUploadRequestUrlFacade" />
 			</bean>
 			<bean class="org.linagora.linshare.webservice.uploadrequest.impl.FlowUploaderRestServiceImpl">
-				<constructor-arg ref="wsDocumentFacade" />
+				<constructor-arg ref="wsUploadRequestUrlFacade" />
 			</bean>
 <!-- 			<ref bean="id"/> -->
 		</jaxrs:serviceBeans>

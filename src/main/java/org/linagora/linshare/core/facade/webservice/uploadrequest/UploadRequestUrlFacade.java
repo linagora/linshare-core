@@ -33,11 +33,11 @@
  */
 package org.linagora.linshare.core.facade.webservice.uploadrequest;
 
-import java.util.Set;
+import java.io.InputStream;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.MimeTypeDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
+import org.linagora.linshare.webservice.dto.DocumentDto;
 
 
 public interface UploadRequestUrlFacade {
@@ -47,6 +47,6 @@ public interface UploadRequestUrlFacade {
 	UploadRequestDto close(UploadRequestDto req)
 			throws BusinessException;
 
-	Set<MimeTypeDto> findAllMyMimeTypes(String uploadRequestUrlUuid) throws BusinessException;
+	DocumentDto addUploadRequestEntry(String uploadRequestUrlUuid, InputStream fi, String fileName) throws BusinessException;
 }
 

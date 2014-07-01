@@ -49,6 +49,13 @@ public class UploadRequestEntry extends Entry implements Serializable {
 		super();
 	}
 
+	public UploadRequestEntry(DocumentEntry documentEntry,
+			UploadRequest uploadRequest) {
+		super();
+		this.documentEntry = documentEntry;
+		this.uploadRequest = uploadRequest;
+	}
+
 	public DocumentEntry getDocumentEntry() {
 		return documentEntry;
 	}

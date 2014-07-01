@@ -101,29 +101,6 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequestEntry findRequestEntryByUuid(User actor, String uuid) {
-		return uploadRequestEntryBusinessService.findByUuid(uuid);
-	}
-
-	@Override
-	public UploadRequestEntry createRequestEntry(User actor,
-			UploadRequestEntry entry) throws BusinessException {
-		return uploadRequestEntryBusinessService.create(entry);
-	}
-
-	@Override
-	public UploadRequestEntry updateRequestEntry(User actor,
-			UploadRequestEntry entry) throws BusinessException {
-		return uploadRequestEntryBusinessService.update(entry);
-	}
-
-	@Override
-	public void deleteRequestEntry(User actor, UploadRequestEntry entry)
-			throws BusinessException {
-		uploadRequestEntryBusinessService.delete(entry);
-	}
-
-	@Override
 	public UploadRequestGroup findRequestGroupByUuid(User actor, String uuid) {
 		return uploadRequestGroupBusinessService.findByUuid(uuid);
 	}

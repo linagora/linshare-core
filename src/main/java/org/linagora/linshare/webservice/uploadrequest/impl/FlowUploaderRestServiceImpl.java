@@ -36,11 +36,13 @@ package org.linagora.linshare.webservice.uploadrequest.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wordnik.swagger.annotations.Api;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.dto.DocumentDto;
@@ -51,6 +53,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -78,7 +81,7 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	private static final String RELATIVE_PATH = "flowRelativePath";
 	private static final String FILE = "file";
 
-	private final DocumentFacade documentFacade;
+	private final UploadRequestUrlFacade uploadRequestUrlFacade;
 
 	private static final ConcurrentMap<String, ChunkedFile> chunkedFiles = Maps.newConcurrentMap();
 
@@ -108,9 +111,10 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 		}
 	}
 
-	public FlowUploaderRestServiceImpl(DocumentFacade documentFacade) {
+	public FlowUploaderRestServiceImpl(
+			UploadRequestUrlFacade uploadRequestUrlFacade) {
 		super();
-		this.documentFacade = documentFacade;
+		this.uploadRequestUrlFacade = uploadRequestUrlFacade;
 	}
 
 	@Path("/")
@@ -154,6 +158,9 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 		Validate.isTrue(isValid(chunkNumber, chunkSize, totalSize, identifier,
 				filename));
 
+		// TODO : HACK: To be removed.
+		String uploadRequestUrlUuid = "90b8a0f8-af07-4052-8bb8-bc5179f64b72";
+
 		try {
 			logger.debug("writing chunk number : " + chunkNumber);
 			java.nio.file.Path tempFile = getTempFile(identifier);
@@ -165,9 +172,10 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			chunkedFiles.get(identifier).addChunk(chunkNumber);
 			if (isUploadFinished(identifier, chunkSize, totalSize)) {
 				logger.debug("upload finished ");
-				DocumentDto dto = documentFacade
-						.uploadfile(Files.newInputStream(tempFile,
-								StandardOpenOption.READ), filename, "");
+				InputStream inputStream = Files.newInputStream(tempFile,
+						StandardOpenOption.READ);
+				DocumentDto dto = uploadRequestUrlFacade
+						.addUploadRequestEntry(uploadRequestUrlUuid, inputStream, filename);
 				ChunkedFile remove = chunkedFiles.remove(identifier);
 				Files.deleteIfExists(remove.getPath());
 				return Response.ok(dto).build();
