@@ -31,59 +31,55 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository.hibernate;
+package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.Entry;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.User;
+import org.apache.tapestry5.annotations.AfterRender;
+import org.apache.tapestry5.annotations.CleanupRender;
+import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.OnEvent;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.UploadRequestRepository;
-import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.linagora.linshare.core.facade.UploadRequestFacade;
+import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class UploadRequestRepositoryImpl extends
-		AbstractRepositoryImpl<UploadRequest> implements
-		UploadRequestRepository {
+public class UploadRequestContent {
 
-	public UploadRequestRepositoryImpl(HibernateTemplate hibernateTemplate) {
-		super(hibernateTemplate);
+	private static final Logger logger = LoggerFactory
+			.getLogger(UploadRequestContent.class);
+
+	@Inject
+	private Messages messages;
+
+	@Inject
+	private ThreadEntryFacade threadEntryFacade;
+
+	@Inject
+	private BusinessMessagesManagementService businessMessagesManagementService;
+
+	public Object onActivate(String uuid) {
+		try {
+			this.selected = 
+		} catch (BusinessException e) {
+			businessMessagesManagementService.notify(new BusinessUserMessage(
+					BusinessUserMessageType.UPLOAD_REQUEST_NOT_FOUND,
+					MessageSeverity.ERROR));
+			return Index.class;
+		}
+		return null;
 	}
 
-	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(UploadRequest aDoc) {
-		DetachedCriteria det = DetachedCriteria.forClass(Entry.class).add(
-				Restrictions.eq("uuid", aDoc.getUuid()));
-		return det;
-	}
-
-	@Override
-	public UploadRequest findByUuid(String uuid) {
-		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
-				"uuid", uuid)));
-	}
-
-	@Override
-	public List<UploadRequest> findByOwner(User owner) {
-		return findByCriteria(Restrictions.eq("owner", owner));
-	}
-
-	@Override
-	public UploadRequest create(UploadRequest entity) throws BusinessException {
-		entity.setCreationDate(new Date());
-		entity.setModificationDate(new Date());
-		entity.setUuid(UUID.randomUUID().toString());
-		return super.create(entity);
-	}
-
-	@Override
-	public UploadRequest update(UploadRequest entity) throws BusinessException {
-		entity.setModificationDate(new Date());
-		return super.update(entity);
+	Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
 	}
 }

@@ -244,6 +244,11 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public Functionality getUploadRequestFunctionality(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST);
+	}
+
+	@Override
 	public Functionality getUploadRequestGroupedFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__GROUPED_MODE);
 	}

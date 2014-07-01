@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
+
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
@@ -75,6 +77,11 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 		this.uploadRequestHistoryBusinessService = uploadRequestHistoryBusinessService;
 		this.uploadRequestTemplateBusinessService = uploadRequestTemplateBusinessService;
 		this.uploadRequestUrlBusinessService = uploadRequestUrlBusinessService;
+	}
+
+	@Override
+	public List<UploadRequest> findAllRequest(User actor) {
+		return uploadRequestBusinessService.findAll(actor);
 	}
 
 	@Override

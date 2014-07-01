@@ -45,6 +45,7 @@ public interface FunctionalityFacade {
 	public boolean isEnableUpdateFiles(String domainIdentifier);
 	public boolean isEnableCreateThread(String domainIdentifier);
 	public boolean isEnableCustomLogoLink(String domainIdentifier);
+	public boolean isEnableUploadRequest(String domainIdentifier);
 	
 	public boolean getDefaultRestrictedGuestValue(String domainIdentifier);
 	public boolean isRestrictedGuestEnabled(String domainIdentifier);
