@@ -1,7 +1,9 @@
-package org.linagora.linshare.webservice.uploadrequest.dto;
+
+package org.linagora.linshare.core.facade.webservice.uploadrequest.dto;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -9,6 +11,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class UploadRequestDto {
@@ -49,6 +52,8 @@ public class UploadRequestDto {
 	private Map<String, String> documents = Maps.newHashMap();
 
 	private boolean protectedByPassword;
+
+	Set<String> mimeTypes = Sets.newHashSet();
 
 	public UploadRequestDto() {
 		super();
@@ -220,5 +225,20 @@ public class UploadRequestDto {
 
 	public void setProtectedByPassword(boolean protectedByPassword) {
 		this.protectedByPassword = protectedByPassword;
+	}
+
+	public Set<String> getMimeTypes() {
+		return mimeTypes;
+	}
+
+	public void setMimeTypes(Set<String> mimeTypes) {
+		this.mimeTypes = mimeTypes;
+	}
+
+	/**
+	 * Helpers
+	 */
+	public void addMimeTypes(String mimeType) {
+		this.mimeTypes.add(mimeType);
 	}
 }

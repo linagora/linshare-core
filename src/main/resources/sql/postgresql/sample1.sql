@@ -64,13 +64,13 @@ UPDATE domain_abstract SET mime_policy_id=1;
 
 
 
-INSERT INTO technical_account_permission (id, uuid, creation_date, modification_date) VALUES (40, 'fbba4e41-ca60-4f09-8d59-fbfe052acb82', current_timestamp(3), current_timestamp(3));
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id, technical_account_permission_id)
-	VALUES (40, 4, 'fff38827-490a-4654-86a6-57b61611b42d', current_date,current_date, 4, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1, 40);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id)
+	VALUES (40, 4, 'fff38827-490a-4654-86a6-57b61611b42d', current_date,current_date, 4, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST)
 	VALUES (40, null, 'Technical Account for test', 'bart.simpson@int1.linshare.dev', false, '', false, false);
 
 
+INSERT INTO technical_account_permission (id, uuid, creation_date, modification_date) VALUES (40, 'fbba4e41-ca60-4f09-8d59-fbfe052acb82', current_timestamp(3), current_timestamp(3));
 
 
 -- Users
@@ -80,6 +80,16 @@ INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, 
 -- pierre mongin : 15kn60njvhdjh
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, owner_id , password ) VALUES (53, 3, 'fa2cab19-2cd7-44f5-96f6-418455899d3e', current_timestamp(3), current_timestamp(3), 0, 'fr', 'fr', true, false, 4, 50 , 'OsFTxoUjd62imwHnaV/4zQfrJ5s=');
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, expiration_date) VALUES (53, 'Pierre', 'Mongin', 'pmongin@ratp.fr', true, '', false, false, current_timestamp(3));
+
+INSERT INTO upload_request_group (id, subject, body, uuid, creation_date, modification_date)
+	VALUES (1, 'subject of upload request 1', 'body of upload request 1', 'b344b5ca-d9e7-4857-b959-5e86f34a91f7', current_date, current_date);
+INSERT INTO upload_request (id, account_id, upload_request_group_id, uuid, max_file, max_size, max_file_size, status, activation_date, creation_date, modification_date, notification_date, expiry_date, upload_proposition_request_uuid, can_delete, can_close, can_edit_expiry_date, locale, secured, mail_message_id)
+	VALUES (1, 50, 1, '916a6e65-deb8-4120-b2ab-c64bfcbf4e02', 3, 31457280, 10485760, 'STATUS_ENABLED', current_date, current_date, current_date, '2014-08-10 00:00:00', '2014-09-10 00:00:00', null, true, true, true, 'fr', true, null); 
+
+INSERT INTO contact (id, mail) VALUES (1,'ctjhoa@linagora.com');
+INSERT INTO upload_request_url (id, contact_id, upload_request_id, uuid, path, password, creation_date, modification_date)
+	VALUES (1, 1, 1, '90b8a0f8-af07-4052-8bb8-bc5179f64b72', 'upload_request', 'fred', current_date, current_date);
+
 
 
 -- Thread : projet : RATP

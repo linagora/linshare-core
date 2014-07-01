@@ -7,4 +7,8 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
 	default-autowire="no">
 
+	<bean id="wsUploadRequestUrlFacade" class="org.linagora.linshare.core.facade.webservice.uploadrequest.impl.UploadRequestUrlFacadeImpl">
+		<constructor-arg ref="uploadRequestUrlService" />
+		<constructor-arg ref="mimePolicyService" />
+	</bean>
 </beans>

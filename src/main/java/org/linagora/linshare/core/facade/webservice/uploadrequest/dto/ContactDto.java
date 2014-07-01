@@ -1,4 +1,4 @@
-package org.linagora.linshare.webservice.uploadrequest.dto;
+package org.linagora.linshare.core.facade.webservice.uploadrequest.dto;
 
 import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.entities.Account;

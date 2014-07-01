@@ -31,96 +31,47 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.facade.webservice.uploadrequest.dto;
 
-import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public class UploadRequestUrl {
-	private long id;
+import org.linagora.linshare.core.domain.entities.MimeType;
 
-	private Contact contact;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-	private UploadRequest uploadRequest;
+@XmlRootElement(name = "MimeType")
+@ApiModel(value = "MimeType", description = "MimeType")
+public class MimeTypeDto {
 
-	private String uuid;
+	@ApiModelProperty(value = "Extensions")
+	private String extensions;
 
-	private String path;
+	@ApiModelProperty(value = "Enable")
+	private boolean enable;
+	
+	public MimeTypeDto(final MimeType m) {
+		this.extensions = m.getExtensions();
+		this.enable = m.getEnable();
+	}
 
-	private String password;
-
-	private Date creationDate;
-
-	private Date modificationDate;
-
-	public UploadRequestUrl() {
+	public MimeTypeDto() {
 		super();
 	}
 
-	public long getId() {
-		return id;
+	public String getExtensions() {
+		return extensions;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public void setExtensions(String extensions) {
+		this.extensions = extensions;
 	}
 
-	public Contact getContact() {
-		return contact;
+	public boolean isEnable() {
+		return enable;
 	}
 
-	public void setContact(Contact contact) {
-		this.contact = contact;
-	}
-
-	public UploadRequest getUploadRequest() {
-		return uploadRequest;
-	}
-
-	public void setUploadRequest(UploadRequest uploadRequest) {
-		this.uploadRequest = uploadRequest;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
-	}
-
-	public boolean isProtectedByPassword() {
-		return password != null;
+	public void setEnable(boolean enable) {
+		this.enable = enable;
 	}
 }
