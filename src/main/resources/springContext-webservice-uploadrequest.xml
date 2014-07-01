@@ -19,6 +19,9 @@
 			<bean class="org.linagora.linshare.webservice.uploadrequest.impl.UploadRequestRestServiceImpl">
 				<constructor-arg ref="wsUploadRequestUrlFacade" />
 			</bean>
+			<bean class="org.linagora.linshare.webservice.uploadrequest.impl.FlowUploaderRestServiceImpl">
+				<constructor-arg ref="wsDocumentFacade" />
+			</bean>
 <!-- 			<ref bean="id"/> -->
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
@@ -35,17 +38,17 @@
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 		<jaxrs:features>
-<!-- 			<cxf:logging /> -->
+			<cxf:logging />
 		</jaxrs:features>
 		<jaxrs:inInterceptors>
 			<!-- For debug only : print input message -->
-<!-- 			<ref bean="logInbound" /> -->
+			<ref bean="logInbound" />
 			<!-- This interceptor is designed to store some context properties in message exchange context for timingOutInterceptor -->
 			<ref bean="timingInInterceptor" />
 		</jaxrs:inInterceptors>
 		<jaxrs:outInterceptors>
 			<!-- For debug only : print output  message -->
-<!--             	<ref bean="logOutbound" /> -->
+            	<ref bean="logOutbound" />
 			<!-- This interceptor is designed compute request execution time.-->
 			<ref bean="timingOutInterceptor" />
 		</jaxrs:outInterceptors>
