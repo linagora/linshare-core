@@ -424,7 +424,7 @@ CREATE TABLE upload_request (
   max_file                        int4 NOT NULL, 
   max_size                        int8 NOT NULL, 
   max_file_size                   int8 NOT NULL, 
-  status                          int4 NOT NULL, 
+  status                          varchar(255) NOT NULL, 
   activation_date                 timestamp(6) NOT NULL, 
   creation_date                   timestamp(6) NOT NULL, 
   modification_date               timestamp(6) NOT NULL, 

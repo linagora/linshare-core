@@ -16,9 +16,11 @@
 
 	<jaxrs:server id="restUploadRequestContainer" address="/rest/uploadrequest">
 		<jaxrs:serviceBeans>
-			<bean class="org.linagora.linshare.webservice.uploadrequest.impl.UploadRequestRestServiceImpl"/>
 			<bean class="org.linagora.linshare.webservice.uploadrequest.impl.FlowUploaderRestServiceImpl">
 				<constructor-arg ref="wsDocumentFacade" />
+			</bean>
+			<bean class="org.linagora.linshare.webservice.uploadrequest.impl.UploadRequestRestServiceImpl">
+				<constructor-arg ref="wsUploadRequestUrlFacade" />
 			</bean>
 <!-- 			<ref bean="id"/> -->
 		</jaxrs:serviceBeans>

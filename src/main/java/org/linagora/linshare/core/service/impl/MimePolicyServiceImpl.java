@@ -10,6 +10,7 @@ import org.linagora.linshare.core.business.service.MimeTypeBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
+import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.MimePolicyService;
@@ -91,6 +92,14 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 			mimePolicyBusinessService.load(ret);
 		}
 		return ret;
+	}
+
+	@Override
+	public Set<MimeType> findAllMyMimeTypes(Account actor)
+			throws BusinessException {
+		MimePolicy mimePolicy = actor.getDomain().getMimePolicy();
+		mimePolicyBusinessService.load(mimePolicy);
+		return mimePolicy.getMimeTypes();
 	}
 
 	@Override

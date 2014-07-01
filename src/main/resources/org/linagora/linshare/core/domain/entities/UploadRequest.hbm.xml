@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
+	<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadRequestStatus">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadRequestStatus</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
 	<class name="org.linagora.linshare.core.domain.entities.UploadRequest"
 		table="upload_request" lazy="false">
 		<id name="id" column="id" type="long" unsaved-value="0">
@@ -21,8 +26,8 @@
 			not-null="true" lazy="false" />
 		<property name="maxFileSize" column="max_file_size" type="long"
 			not-null="true" lazy="false" />
-		<property name="status" column="status" type="integer"
-			not-null="true" lazy="false" />
+		<property access="field" name="status" column="status"
+			not-null="true" lazy="false" type="uploadRequestStatus" />
 		<property name="activationDate" column="activation_date"
 			type="timestamp" length="6" not-null="true" lazy="false" />
 		<property name="creationDate" column="creation_date" type="timestamp"

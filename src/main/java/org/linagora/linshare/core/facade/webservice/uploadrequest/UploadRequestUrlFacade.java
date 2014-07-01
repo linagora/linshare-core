@@ -31,96 +31,22 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.facade.webservice.uploadrequest;
 
-import java.util.Date;
+import java.util.Set;
 
-public class UploadRequestUrl {
-	private long id;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.MimeTypeDto;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
 
-	private Contact contact;
 
-	private UploadRequest uploadRequest;
+public interface UploadRequestUrlFacade {
 
-	private String uuid;
+	UploadRequestDto find(String uploadRequestUrlUuid) throws BusinessException;
 
-	private String path;
+	UploadRequestDto close(UploadRequestDto req)
+			throws BusinessException;
 
-	private String password;
-
-	private Date creationDate;
-
-	private Date modificationDate;
-
-	public UploadRequestUrl() {
-		super();
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public Contact getContact() {
-		return contact;
-	}
-
-	public void setContact(Contact contact) {
-		this.contact = contact;
-	}
-
-	public UploadRequest getUploadRequest() {
-		return uploadRequest;
-	}
-
-	public void setUploadRequest(UploadRequest uploadRequest) {
-		this.uploadRequest = uploadRequest;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
-	}
-
-	public boolean isProtectedByPassword() {
-		return password != null;
-	}
+	Set<MimeTypeDto> findAllMyMimeTypes(String uploadRequestUrlUuid) throws BusinessException;
 }
+
