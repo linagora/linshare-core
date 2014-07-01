@@ -66,7 +66,7 @@ public class Functionality extends AbstractFunctionality {
 
 	public Functionality(FunctionalityNames fn, boolean b, Policy policy,
 			Policy policy2, AbstractDomain domain) {
-		new Functionality(String.valueOf(fn), b, policy, policy2, domain);
+		this(fn.toString(), b, policy, policy2, domain);
 	}
 
 	public FunctionalityType getType() {
