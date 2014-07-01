@@ -31,59 +31,89 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.impl;
+package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
-import org.linagora.linshare.core.domain.entities.User;
+import java.util.List;
+
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
-import org.linagora.linshare.core.service.UploadRequestService;
-import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class UploadRequestFacadeImpl implements UploadRequestFacade {
+public class Index {
 
-	private final UserService userService;
-	private final UploadRequestService uploadRequestService;
+	private static Logger logger = LoggerFactory.getLogger(Index.class);
 
-	public UploadRequestFacadeImpl(
-			final UserService userService,
-			final UploadRequestService uploadRequestService) {
-		this.userService = userService;
-		this.uploadRequestService = uploadRequestService;
+	/*
+	 * Tapestry properties
+	 */
+
+	@SessionState
+	@Property
+	private ShareSessionObjects shareSessionObjects;
+
+	@SessionState
+	@Property
+	private UserVo userVo;
+
+	@Persist
+	@Property
+	private List<UploadRequestVo> uploadRequests;
+
+	@Persist
+	@Property
+	private String pattern;
+
+    @Property
+    private UploadRequestVo current;
+ 
+    @Property
+    private boolean latest;
+
+	/*
+	 * Injected beans
+	 */
+
+    @InjectPage
+    private UploadRequestContent uploadRequestContent;
+
+	@Inject
+	private PersistentLocale persistentLocale;
+
+	@Inject
+	private Messages messages;
+
+	@Inject
+	private FunctionalityFacade functionalityFacade;
+
+	@Inject
+	private UploadRequestFacade uploadRequestEntryFacade;
+
+	public Object onActivate() {
+		if (!functionalityFacade
+				.isEnableUploadRequest(userVo.getDomainIdentifier()))
+			return org.linagora.linshare.view.tapestry.pages.Index.class;
+		return null;
 	}
 
-	@Override
-	public UploadRequestVo findRequestByUuid(UserVo actorVo, String uuid) {
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		// TODO
-		return new UploadRequestVo(uploadRequestService.findRequestByUuid(
-				actor, uuid));
-	}
+	/*
+	 * Exception Handling
+	 */
 
-	@Override
-	public UploadRequestVo createRequest(UserVo actorVo, UploadRequestVo req)
-			throws BusinessException {
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		// TODO
-		return new UploadRequestVo(uploadRequestService.createRequest(actor,
-				req.toEntity()));
-	}
-
-	@Override
-	public UploadRequestVo updateRequest(UserVo actorVo, UploadRequestVo req)
-			throws BusinessException {
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		// TODO
-		return new UploadRequestVo(uploadRequestService.updateRequest(actor,
-				req.toEntity()));
-	}
-
-	@Override
-	public void deleteRequest(UserVo actorVo, UploadRequestVo req)
-			throws BusinessException {
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		// TODO
-		uploadRequestService.deleteRequest(actor, req.toEntity());
+	public Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
 	}
 }

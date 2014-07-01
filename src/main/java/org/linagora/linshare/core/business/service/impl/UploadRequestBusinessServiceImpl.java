@@ -33,8 +33,11 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.List;
+
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestRepository;
 
@@ -47,6 +50,11 @@ public class UploadRequestBusinessServiceImpl implements
 			final UploadRequestRepository uploadRequestRepository) {
 		super();
 		this.uploadRequestRepository = uploadRequestRepository;
+	}
+
+	@Override
+	public List<UploadRequest> findAll(User actor) {
+		return uploadRequestRepository.findByOwner(actor);
 	}
 
 	@Override
