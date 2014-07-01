@@ -459,7 +459,7 @@ CREATE TABLE upload_request_group (
 CREATE TABLE upload_request_history (
   id                               int8 NOT NULL, 
   upload_request_id               int8 NOT NULL, 
-  status                          int4 NOT NULL, 
+  status                          varchar(255) NOT NULL, 
   status_upated                   bool NOT NULL, 
   event_type                      int4 NOT NULL, 
   uuid                            varchar(255) NOT NULL, 

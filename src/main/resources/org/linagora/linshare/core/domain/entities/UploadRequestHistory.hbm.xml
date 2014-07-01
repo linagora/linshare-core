@@ -8,8 +8,8 @@
 			<generator class="native">
 			</generator>
 		</id>
-		<property name="status" column="status" type="integer"
-			not-null="true" lazy="false" />
+		<property access="field" name="status" column="status"
+			not-null="true" lazy="false" type="uploadRequestStatus" />
 		<property name="statusUpated" column="status_upated" type="boolean"
 			not-null="true" lazy="false" />
 		<property name="eventType" column="event_type" type="integer"

@@ -35,11 +35,13 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+
 public class UploadRequestHistory {
 
 	private long id;
 
-	private int status;
+	private UploadRequestStatus status;
 
 	private boolean statusUpated;
 
@@ -89,11 +91,11 @@ public class UploadRequestHistory {
 		this.id = id;
 	}
 
-	public int getStatus() {
+	public UploadRequestStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(UploadRequestStatus status) {
 		this.status = status;
 	}
 
