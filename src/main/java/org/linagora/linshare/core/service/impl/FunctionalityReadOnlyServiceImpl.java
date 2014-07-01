@@ -94,7 +94,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	 * Adapter
 	 */
 	private  Functionality _getFunctionality(AbstractDomain domain, FunctionalityNames fn) {
-		return _getFunctionality(domain, String.valueOf(fn));
+		return _getFunctionality(domain, fn.toString());
 	}
 	
 	@Override
