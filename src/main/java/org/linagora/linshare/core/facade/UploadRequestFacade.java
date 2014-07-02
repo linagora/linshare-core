@@ -39,7 +39,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestFacade {
 
-	UploadRequestVo findRequestByUuid(UserVo actorVo, String uuid);
+	UploadRequestVo findRequestByUuid(UserVo actorVo, String uuid) throws BusinessException;
 
 	UploadRequestVo createRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException;

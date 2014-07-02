@@ -349,6 +349,22 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		return true;
 	}
 
+	public boolean businessEquals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof UserVo))
+			return false;
+		UserVo other = (UserVo) obj;
+		if (login == null) {
+			if (other.login != null)
+				return false;
+		} else if (!login.equals(other.login))
+			return false;
+		return true;
+	}
+
 	public String toString() {
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("\nlogin : ").append(login);

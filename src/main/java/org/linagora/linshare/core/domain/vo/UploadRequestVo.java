@@ -51,7 +51,7 @@ public class UploadRequestVo {
 
 	private long maxFileSize;
 
-	private int status;
+	private String status;
 
 	private Date activationDate;
 
@@ -73,12 +73,29 @@ public class UploadRequestVo {
 
 	private boolean secured;
 
+	private UserVo owner;
+
 	public UploadRequestVo() {
 		super();
 	}
 
 	public UploadRequestVo(UploadRequest req) {
-		// TODO Auto-generated constructor stub
+		uuid = req.getUuid();
+		maxFileCount = req.getMaxFileCount();
+		maxDepositSize = req.getMaxDepositSize();
+		maxFileSize = req.getMaxFileSize();
+		status = req.getStatus().toString();
+		activationDate = req.getActivationDate();
+		creationDate = req.getCreationDate();
+		modificationDate = req.getModificationDate();
+		notificationDate = req.getNotificationDate();
+		expiryDate = req.getExpiryDate();
+		canDelete = req.isCanDelete();
+		canClose = req.isCanClose();
+		canEditExpiryDate = req.isCanEditExpiryDate();
+		locale = req.getLocale();
+		secured = req.isSecured();
+		owner = new UserVo(req.getOwner());
 	}
 
 	public UploadRequestGroup getUploadRequestGroup() {
@@ -122,11 +139,11 @@ public class UploadRequestVo {
 		this.maxFileSize = maxFileSize;
 	}
 
-	public int getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
@@ -208,6 +225,14 @@ public class UploadRequestVo {
 
 	public void setSecured(boolean secured) {
 		this.secured = secured;
+	}
+
+	public UserVo getOwner() {
+		return owner;
+	}
+
+	public void setOwner(UserVo owner) {
+		this.owner = owner;
 	}
 
 	/**

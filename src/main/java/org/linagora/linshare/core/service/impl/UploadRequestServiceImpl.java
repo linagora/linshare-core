@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.UploadRequestService;
@@ -85,8 +86,15 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequest findRequestByUuid(User actor, String uuid) {
-		return uploadRequestBusinessService.findByUuid(uuid);
+	public UploadRequest findRequestByUuid(User actor, String uuid) throws BusinessException {
+		UploadRequest ret = uploadRequestBusinessService.findByUuid(uuid);
+
+		if (ret == null) {
+			throw new BusinessException(
+					BusinessErrorCode.UPLOAD_REQUEST_NOT_FOUND,
+					"Upload request not found. Uuid: " + uuid);
+		}
+		return ret;
 	}
 
 	@Override
