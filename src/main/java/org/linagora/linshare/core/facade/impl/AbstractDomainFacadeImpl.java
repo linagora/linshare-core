@@ -75,7 +75,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     private static final Logger logger = LoggerFactory.getLogger(AbstractDomainFacadeImpl.class);
 
     public AbstractDomainFacadeImpl(AbstractDomainService abstractDomainService, FunctionalityReadOnlyService functionalityReadOnlyService,
-            DomainPolicyService domainPolicyService, UserAndDomainMultiService userAndDomainMultiService) {
+            UserAndDomainMultiService userAndDomainMultiService) {
         super();
         this.abstractDomainService = abstractDomainService;
         this.functionalityReadOnlyService = functionalityReadOnlyService;
