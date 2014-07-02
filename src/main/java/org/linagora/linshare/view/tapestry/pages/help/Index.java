@@ -61,16 +61,13 @@ public class Index {
 	 *                      Injected services
 	 ************************************************************ */
 
-	@SuppressWarnings("unused")
 	@SessionState
 	private HelpsASO helpsASO;
 	
 	
-	@SuppressWarnings("unused")
 	@SessionState(create=false)
 	private UserVo userVo;
 	
-	@SuppressWarnings("unused") // used in tml
 	@Inject
 	private Messages messages;
 	

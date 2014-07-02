@@ -57,13 +57,11 @@ public class WarningDisplayer {
      ************************************************************ */
     
 	
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)
 	@Property
 	private String warningMessage;
 	
 	
-	@SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=350", "height=150"})
     private WindowWithEffectsComponent warningWindow;
     

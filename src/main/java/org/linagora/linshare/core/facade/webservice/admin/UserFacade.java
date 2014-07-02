@@ -37,7 +37,6 @@ package org.linagora.linshare.core.facade.webservice.admin;
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.UserDto;
 import org.linagora.linshare.webservice.dto.PasswordDto;
 import org.linagora.linshare.webservice.dto.UserDto;
 import org.linagora.linshare.webservice.dto.UserSearchDto;

@@ -58,10 +58,8 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
-import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.utils.AESCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,18 +69,14 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     private final AbstractDomainService abstractDomainService;
     private final FunctionalityReadOnlyService functionalityReadOnlyService;
     private final UserAndDomainMultiService userAndDomainMultiService;
-    private final UserProviderService userProviderService;
-    private final DomainPolicyService domainPolicyService;
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractDomainFacadeImpl.class);
 
     public AbstractDomainFacadeImpl(AbstractDomainService abstractDomainService, FunctionalityReadOnlyService functionalityReadOnlyService,
-            UserProviderService userProviderService, DomainPolicyService domainPolicyService, UserAndDomainMultiService userAndDomainMultiService) {
+            UserAndDomainMultiService userAndDomainMultiService) {
         super();
         this.abstractDomainService = abstractDomainService;
         this.functionalityReadOnlyService = functionalityReadOnlyService;
-        this.userProviderService = userProviderService;
-        this.domainPolicyService = domainPolicyService;
         this.userAndDomainMultiService = userAndDomainMultiService;
     }
 

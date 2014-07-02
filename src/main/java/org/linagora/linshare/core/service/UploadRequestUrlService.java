@@ -1,6 +1,7 @@
 package org.linagora.linshare.core.service;
 
-import org.linagora.linshare.core.domain.entities.Account;
+import java.io.InputStream;
+
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -9,16 +10,8 @@ public interface UploadRequestUrlService {
 
 	UploadRequestUrl find(String uuid) throws BusinessException;
 
-	UploadRequestUrl close(String uuid);
+	UploadRequestUrl close(String uuid) throws BusinessException;
 
-	UploadRequestEntry findRequestEntryByUuid(Account actor, String uuid);
-
-	UploadRequestEntry createRequestEntry(Account actor, UploadRequestEntry entry)
-			throws BusinessException;
-
-	UploadRequestEntry updateRequestEntry(Account actor, UploadRequestEntry entry)
-			throws BusinessException;
-
-	void deleteRequestEntry(Account actor, UploadRequestEntry entry)
-			throws BusinessException;
+	UploadRequestEntry createUploadRequestEntry(String uploadRequestUrlUuid,
+			InputStream fi, String fileName) throws BusinessException;
 }

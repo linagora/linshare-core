@@ -54,7 +54,6 @@ public class RepositoryContent {
 	@Persist
 	private List<FileInfo> listPath;
 	
-	@SuppressWarnings("unused")
 	@Property
 	@Persist
 	private FileInfo file;

@@ -69,7 +69,6 @@ public class ThreadMember {
 	}
 
 
-	@SuppressWarnings("unused")
 	private void setId(long value) {
 		this.id = value;
 	}

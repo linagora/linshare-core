@@ -33,12 +33,12 @@
  */
 package org.linagora.linshare.core.business.service;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-
-import java.util.List;
 
 public interface MailingListBusinessService {
 

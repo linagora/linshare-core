@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
-import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;

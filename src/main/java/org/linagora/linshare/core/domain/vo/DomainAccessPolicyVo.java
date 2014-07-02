@@ -42,7 +42,6 @@ import org.linagora.linshare.core.domain.entities.DenyAllDomain;
 import org.linagora.linshare.core.domain.entities.DenyDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
-import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 
 public class DomainAccessPolicyVo {
 

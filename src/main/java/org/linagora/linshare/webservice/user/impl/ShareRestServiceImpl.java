@@ -60,7 +60,6 @@ import org.slf4j.LoggerFactory;
 
 public class ShareRestServiceImpl extends WebserviceBase implements ShareRestService {
 
-	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(ShareRestServiceImpl.class);
 
 	private final ShareFacade webServiceShareFacade;

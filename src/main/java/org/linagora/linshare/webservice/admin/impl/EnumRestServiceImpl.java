@@ -18,7 +18,6 @@ import javax.ws.rs.core.UriInfo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.EnumRestService;
-import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
 import org.linagora.linshare.webservice.utils.EnumResourceUtils;
 
 import com.google.common.collect.Lists;

@@ -110,15 +110,12 @@ public class UserSearchResults {
     @Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
 
-    @SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=550", "height=400"})
     private WindowWithEffects userEditWindow;
 
-    @SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=400", "height=120"})
     private WindowWithEffects zoneDomainMoveWindow;
 
-    @SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=550", "height=350"})
     private WindowWithEffects userAddToThreadWindow;
 
@@ -154,7 +151,6 @@ public class UserSearchResults {
     @Property
     private UserVo detailedUser = new UserVo("", "", "", "", AccountType.GUEST);
 
-    @SuppressWarnings("unused")
 	@Property
     private Boolean valueCheck;
     
@@ -173,7 +169,6 @@ public class UserSearchResults {
 	/**
 	 * Components Model.
 	 */
-	@SuppressWarnings("unused")
 	@Property
 	@Persist
 	private SorterModel<UserVo> sorterModel;

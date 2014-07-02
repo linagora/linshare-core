@@ -63,7 +63,6 @@ public class MailingListContact {
 	/**
 	 * Hibernate constructor.
 	 */
-	@SuppressWarnings("unused")
 	private MailingListContact() {
 	}
 

@@ -109,7 +109,6 @@ public class Sorter<T> {
 	private String properties;
 	
 	
-	@SuppressWarnings("unused")
 	@Persist
 	@Property
 	private String selected;

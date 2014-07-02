@@ -92,11 +92,9 @@ public class AccountOccupation {
 	@Inject
 	private UserFacade userFacade;
 	
-	@SuppressWarnings("unused")
 	@InjectComponent
 	private TextArea actorMails;
 	
-	@SuppressWarnings("unused")
 	@Component
 	private Form formReport;
 	
@@ -117,7 +115,7 @@ public class AccountOccupation {
 	private DisplayableAccountOccupationEntryVo accountOccupationEntry;
 	
 	
-	@Persist @Property(write=false) @SuppressWarnings("unused") //used in tml
+	@Persist @Property(write=false)
 	private boolean displayGrid;
 	
 	private boolean reset;

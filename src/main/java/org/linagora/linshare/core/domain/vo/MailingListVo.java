@@ -37,8 +37,6 @@ package org.linagora.linshare.core.domain.vo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.tapestry5.beaneditor.NonVisual;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 

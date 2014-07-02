@@ -86,11 +86,9 @@ public class ActionsBarShare {
 	/***********************************
 	 * Flags
 	 ***********************************/
-	@SuppressWarnings("unused")
 	@Property
 	private boolean activeSignature;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private boolean activeEncipherment;
 

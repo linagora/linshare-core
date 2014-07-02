@@ -43,7 +43,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;

@@ -130,7 +130,6 @@ public class UserConfig {
 	@Property
 	private String confirmNewUserPassword;
 	
-	@SuppressWarnings("unused")
 	@Persist
 	@Property
 	private SimpleSelectModel<String> model;

@@ -57,7 +57,6 @@ public class FAQ {
 	 *                      Injected services
 	 ************************************************************ */
 
-	@SuppressWarnings("unused") // used in tml
 	@Inject
 	private Messages messages;
 	

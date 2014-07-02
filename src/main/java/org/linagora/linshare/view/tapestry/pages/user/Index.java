@@ -74,7 +74,6 @@ public class Index {
     /* ***********************************************************
      *                      Injected services
      ************************************************************ */
-    @SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=570", "height=450"})
     private WindowWithEffects userSearchWindow;
 /*
@@ -140,7 +139,6 @@ public class Index {
 	@Property
 	private boolean showAll;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private boolean superadmin;
 	   

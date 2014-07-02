@@ -72,7 +72,6 @@ public class LdapAttribute {
 		this.completion = completion;
 	}
 
-	@SuppressWarnings("unused")
 	private void setId(Long value) {
 		this.id = value;
 	}

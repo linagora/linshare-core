@@ -53,16 +53,13 @@ public class ConfirmSubmitPopup {
      *                         Parameters
      ************************************************************ */
 	
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)
 	@Property
 	private String messageLabel;
 	
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)
 	private String fieldName;
 	
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)
 	private String formName;
 	

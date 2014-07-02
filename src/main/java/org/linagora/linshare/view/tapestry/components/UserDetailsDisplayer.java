@@ -60,7 +60,6 @@ public class UserDetailsDisplayer {
      ************************************************************ */
     @SessionState
     private UserVo userLoggedIn;
-    @SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=700", "height=300"})
     private WindowWithEffects userDetailsWindow;
     @InjectComponent
@@ -72,7 +71,6 @@ public class UserDetailsDisplayer {
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
-    @SuppressWarnings("unused")
     @Property
     private UserVo detailedUser = new UserVo("", "", "", "", AccountType.GUEST);
 

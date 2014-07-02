@@ -84,7 +84,6 @@ public class CopyInThreadPopup {
 	@Component(parameters = {"style=bluelighting", "show=false","width=700", "height=300"})
 	private WindowWithEffects groupShareWindow;
 
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)
 	@Property
 	private String messageLabel;
@@ -104,7 +103,6 @@ public class CopyInThreadPopup {
 	@Inject
 	private Block onFailure;
     
-    @SuppressWarnings("unused")
 	@Property
     private Boolean valueCheck;
 	

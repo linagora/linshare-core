@@ -122,8 +122,6 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="userAndDomainMultiService" />
-		<constructor-arg ref="userProviderService" />
-		<constructor-arg ref="domainPolicyService" />
 	</bean>
 
 	<bean name="functionalityFacade" class="org.linagora.linshare.core.facade.impl.FunctionalityFacadeImpl">

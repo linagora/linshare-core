@@ -54,7 +54,6 @@ public class TechnicalAccountPermission {
 
 	private Set<AbstractDomain> domains = Sets.newHashSet();
 
-	@SuppressWarnings("unused")
 	public TechnicalAccountPermission() {
 		super();
 	}

@@ -34,8 +34,6 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.EntryType;
 

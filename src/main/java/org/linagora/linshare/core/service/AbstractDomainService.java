@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
