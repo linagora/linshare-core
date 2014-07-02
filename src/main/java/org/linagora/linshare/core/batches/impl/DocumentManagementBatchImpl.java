@@ -71,30 +71,30 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 	private final DocumentRepository documentRepository;
 
 	private final DocumentEntryRepository documentEntryRepository;
-	
+
 	private final DocumentEntryService documentEntryService;
-	
+
 	private final ThreadEntryService threadEntryService;
-	
+
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
 	private final AccountRepository<Account> accountRepository;
 
 	private final FileSystemDao fileSystemDao;
-	
+
 	private final boolean cronActivated;
-	
+
 	private final NotifierService notifierService;
-	
+
 	private final MailContentBuildingService mailBuilder;
-	
+
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-	
+
 	private final EntryService entryService;
-	
+
 	private final MimeTypeMagicNumberDao mimeTypeMagicNumberDao;
-	
-	
+
+
 
 	public DocumentManagementBatchImpl(DocumentRepository documentRepository,
 			DocumentEntryRepository documentEntryRepository, DocumentEntryService documentEntryService,
@@ -124,7 +124,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 
 	@Override
 	public void removeMissingDocuments() {
-		SystemAccount systemAccount = accountRepository.getSystemAccount();
+		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
 
 		List<Document> documents = documentRepository.findAll();
 		long totalDocument = documents.size();
@@ -197,7 +197,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 
 		List<DocumentEntry> findAllExpiredEntries = documentEntryRepository.findAllExpiredEntries();
 		logger.info("Expired documents found : " + findAllExpiredEntries.size());
-		SystemAccount systemAccount = accountRepository.getSystemAccount();
+		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
 		Calendar now = GregorianCalendar.getInstance();
 
 		for (DocumentEntry documentEntry : findAllExpiredEntries) {

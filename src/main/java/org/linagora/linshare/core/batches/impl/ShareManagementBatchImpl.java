@@ -66,23 +66,23 @@ import org.slf4j.LoggerFactory;
 public class ShareManagementBatchImpl implements ShareManagementBatch {
 
 	private static final Logger logger = LoggerFactory.getLogger(ShareManagementBatchImpl.class);
-	
+
     private final ShareEntryService shareEntryService;
-    
+
     private final AnonymousShareEntryService anonymousShareEntryService;
-    
+
     private final ShareEntryRepository shareEntryRepository;
-    
+
     private final AnonymousShareEntryRepository anonymousShareEntryRepository;
-    
+
     private final DocumentEntryRepository documentEntryRepository;
 
     private final AccountRepository<Account> accountRepository;
-    
+
     private final FunctionalityReadOnlyService functionalityReadOnlyService;
-    
+
     private final DocumentEntryService documentEntryService;
-    
+
     private final AnonymousUrlRepository anonymousUrlRepository;
 
 
@@ -110,29 +110,29 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		removeAllExpiredAnonymousUrl();
 		logger.info("End clean outdated shares");
     }
-    
+
 
 	private void removeAllExpiredAnonymousShareEntries() {
-		SystemAccount systemAccount = accountRepository.getSystemAccount();
-		
+		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
+
 		List<AnonymousShareEntry> expiredEntries = anonymousShareEntryRepository.findAllExpiredEntries();
 		logger.info(expiredEntries.size() + " expired anonymous share(s) found to be delete.");
 		for (AnonymousShareEntry shareEntry : expiredEntries) {
 			AbstractDomain domain = shareEntry.getEntryOwner().getDomain();
-			
+
 			TimeUnitBooleanValueFunctionality shareExpiryTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(domain);
 			// test if this functionality is enable for the current domain.
 			if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
 				try {
-					
+
 					DocumentEntry documentEntry = shareEntry.getDocumentEntry();
 					boolean doDeleteDoc = documentSuppressionIsNeeded(documentEntry);
-					
+
 					anonymousShareEntryService.deleteShare(systemAccount, shareEntry);
 					if(doDeleteDoc) {
 						documentEntryService.deleteExpiredDocumentEntry(systemAccount, documentEntry);
 					}
-					
+
 				} catch (BusinessException e) {
 					logger.error("Can't delete expired anonymous share : " + shareEntry.getUuid()  + " : " + e.getMessage() );
 					logger.debug(e.toString());
@@ -156,13 +156,13 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 					doDeleteDoc = true;
 					logger.debug("current document " + documentEntry.getUuid() + " need to be deleted.");
 				} else {
-					
+
 					TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityReadOnlyService.getDefaultFileExpiryTimeFunctionality(domain);
-					
+
 					Calendar deletionDate = Calendar.getInstance();
 					deletionDate.add(fileExpirationTimeFunctionality.toCalendarUnitValue(), fileExpirationTimeFunctionality.getValue());
 					documentEntry.setExpirationDate(deletionDate);
-						
+
 					try {
 						documentEntryRepository.update(documentEntry);
 					} catch (IllegalArgumentException e) {
@@ -179,23 +179,23 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		}
 		return doDeleteDoc;
 	}
-	
+
 
 	private void removeAllExpiredShareEntries() {
-		SystemAccount systemAccount = accountRepository.getSystemAccount();
-		
+		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
+
 		List<ShareEntry> expiredEntries = shareEntryRepository.findAllExpiredEntries();
 		logger.info(expiredEntries.size() + " expired share(s) found to be delete.");
 		for (ShareEntry shareEntry : expiredEntries) {
 			AbstractDomain domain = shareEntry.getEntryOwner().getDomain();
-			
+
 			TimeUnitBooleanValueFunctionality shareExpiryTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(domain);
 			// test if this functionality is enable for the current domain.
 			if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
 				try {
 					DocumentEntry documentEntry = shareEntry.getDocumentEntry();
 					boolean doDeleteDoc = documentSuppressionIsNeeded(documentEntry);
-					
+
 					shareEntryService.deleteShare(systemAccount, shareEntry);
 					if(doDeleteDoc) {
 						documentEntryService.deleteExpiredDocumentEntry(systemAccount, documentEntry);
@@ -207,8 +207,8 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 			}
 		}
 	}
-	
-	
+
+
 	private void removeAllExpiredAnonymousUrl() {
 		List<AnonymousUrl> allExpiredUrl = anonymousUrlRepository.getAllExpiredUrl();
 		logger.info(allExpiredUrl.size() + " expired anonymous url(s) found to be delete.");
@@ -224,25 +224,25 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	@Override
     public void notifyUpcomingOutdatedShares() {
-		
-		SystemAccount systemAccount = accountRepository.getSystemAccount();
-		
+
+		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
+
 		StringValueFunctionality notificationBeforeExpirationFunctionality = functionalityReadOnlyService.getShareNotificationBeforeExpirationFunctionality(systemAccount.getDomain());
-		
+
 		List<Integer> datesForNotifyUpcomingOutdatedShares = new ArrayList<Integer>();
-		
+
         String[] dates = notificationBeforeExpirationFunctionality.getValue().split(",");
         for (String date : dates) {
         	datesForNotifyUpcomingOutdatedShares.add(Integer.parseInt(date));
 		}
-		
+
         for (Integer day : datesForNotifyUpcomingOutdatedShares) {
-        	
+
 	        List<ShareEntry> shares = shareEntryRepository.findUpcomingExpiredEntries(day);
 	        logger.info(shares.size() + " upcoming (in "+ day.toString()+" days) outdated share(s) found to be notified.");
 	        for (ShareEntry share : shares) {
@@ -253,13 +253,13 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 
 	        List<AnonymousShareEntry> anonymousShareEntries = anonymousShareEntryRepository.findUpcomingExpiredEntries(day);
 	        logger.info(anonymousShareEntries.size() + " upcoming (in "+day.toString()+" days) outdated anonymous share Url(s) found to be notified.");
-	        
+
 	        for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
 	        	if(anonymousShareEntry.getDownloaded() < 1) {
 	        		anonymousShareEntryService.sendUpcomingOutdatedShareEntryNotification(systemAccount, anonymousShareEntry, day);
 	        	}
 			}
-	        
+
         }
     }
 }

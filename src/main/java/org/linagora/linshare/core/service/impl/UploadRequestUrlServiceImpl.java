@@ -1,6 +1,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.InputStream;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
@@ -39,49 +40,88 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	}
 
 	@Override
-	public UploadRequestUrl find(String uuid, String password) throws BusinessException {
+	public UploadRequestUrl find(String uuid, String password)
+			throws BusinessException {
 		Validate.notEmpty(uuid);
-		UploadRequestUrl data = uploadRequestUrlBusinessService.findByUuid(uuid);
+		UploadRequestUrl data = uploadRequestUrlBusinessService
+				.findByUuid(uuid);
 		if (data != null && isValidPassword(data, password)) {
 			return data;
 		}
-		throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to upload file into upload request : " + uuid);
+		throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+				"You do not have the right to upload file into upload request : "
+						+ uuid);
 	}
 
 	private boolean isValidPassword(UploadRequestUrl data, String password) {
 		if (data.isProtectedByPassword()) {
 			if (password == null)
 				return false;
-			String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
+			String hashedPassword = HashUtils.hashSha1withBase64(password
+					.getBytes());
 			return hashedPassword.equals(data.getPassword());
 		}
 		return true;
 	}
 
 	@Override
-	public UploadRequestUrl close(String uuid, String password) throws BusinessException {
+	public UploadRequestUrl close(String uuid, String password)
+			throws BusinessException {
 		UploadRequestUrl url = find(uuid, password);
-		Account actor = accountRepository.getSystemAccount();
+		Account actor = accountRepository.getUploadRequestSystemAccount();
 		uploadRequestService.setStatusToClosed(actor, url.getUploadRequest());
 		return find(uuid, password);
 	}
 
 	@Override
 	public UploadRequestEntry createUploadRequestEntry(
-			String uploadRequestUrlUuid, InputStream fi, String fileName, String password)
-			throws BusinessException {
+			String uploadRequestUrlUuid, InputStream fi, String fileName,
+			String password) throws BusinessException {
 		// Retrieve upload request URL
 		UploadRequestUrl requestUrl = find(uploadRequestUrlUuid, password);
-		// Extract owner for upload request URL
+		// HOOK : Extract owner for upload request URL
 		Account owner = requestUrl.getUploadRequest().getOwner();
 		// Store the file into the owner account.
 		DocumentEntry document = documentEntryService.createDocumentEntry(
 				owner, fi, fileName);
-		Account actor = accountRepository.getSystemAccount();
+		Account actor = accountRepository.getUploadRequestSystemAccount();
 		// Create the link between the document and the upload request URL.
 		UploadRequestEntry uploadRequestEntry = new UploadRequestEntry(
 				document, requestUrl.getUploadRequest());
 		return uploadRequestService.createRequestEntry(actor,
 				uploadRequestEntry);
+	}
+
+	@Override
+	public void deleteUploadRequestEntry(String uploadRequestUrlUuid,
+			String password, String entryUuid) throws BusinessException {
+		UploadRequestUrl requestUrl = find(uploadRequestUrlUuid, password);
+		Set<UploadRequestEntry> entries = requestUrl.getUploadRequest()
+				.getUploadRequestEntries();
+		UploadRequestEntry found = null;
+		for (UploadRequestEntry entry : entries) {
+			if (entry.getUuid().equals(entryUuid)) {
+				found = entry;
+				break;
+			}
+		}
+		if (found != null) {
+			DocumentEntry documentEntry = found.getDocumentEntry();
+			Account actor = accountRepository.getUploadRequestSystemAccount();
+			uploadRequestService.deleteRequestEntry(actor, found);
+
+			if (documentEntry != null) {
+				// HOOK : Extract owner for upload request URL
+				// Actor should be used instead as owner
+				Account owner = requestUrl.getUploadRequest().getOwner();
+				// Store the file into the owner account.
+				documentEntryService.deleteDocumentEntry(owner, documentEntry);
+			}
+		} else {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					"You do not have the right to delete a file into upload request : "
+							+ uploadRequestUrlUuid);
+		}
+
 	}
 }

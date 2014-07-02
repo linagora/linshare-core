@@ -355,7 +355,7 @@ public class UserServiceImplTest extends
 		Date date = dfm.parse("2007-02-26 20:15:00");
 
 		guest.setExpirationDate(date);
-		guestService.cleanExpiredGuests(userRepository.getSystemAccount());
+		guestService.cleanExpiredGuests(userRepository.getBatchSystemAccount());
 		Assert.assertNull(userRepository.findByMail("guest1@linpki.org"));
 
 		logger.debug(LinShareTestConstants.END_TEST);

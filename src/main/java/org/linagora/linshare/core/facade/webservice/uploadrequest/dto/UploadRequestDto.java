@@ -1,15 +1,13 @@
 package org.linagora.linshare.core.facade.webservice.uploadrequest.dto;
 
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -48,7 +46,7 @@ public class UploadRequestDto {
 
 	private boolean isClosed;
 
-	private Map<String, String> documents = Maps.newHashMap();
+	private Set<EntryDto> entries = Sets.newHashSet();
 
 	private boolean protectedByPassword;
 
@@ -60,31 +58,8 @@ public class UploadRequestDto {
 		super();
 	}
 
-	/**
-	 * for tests only
-	 */
-	public UploadRequestDto(String uuid, Integer maxFileCount,
-			Long maxDepositSize, Long maxFileSize, Date activationDate,
-			Date expiryDate, boolean canDeleteDocument, boolean canClose,
-			String subject, String body, boolean isClosed) {
-		super();
-		this.uuid = uuid;
-		this.maxFileCount = maxFileCount;
-		this.maxDepositSize = maxDepositSize;
-		this.maxFileSize = maxFileSize;
-		this.activationDate = activationDate;
-		this.expiryDate = expiryDate;
-		this.canDeleteDocument = canDeleteDocument;
-		this.canClose = canClose;
-		this.subject = subject;
-		this.body = body;
-		this.isClosed = isClosed;
-		this.protectedByPassword = false;
-	}
-
 	public UploadRequestDto(UploadRequest entity) {
 		super();
-		this.uuid = entity.getUuid();
 		this.owner = new ContactDto(entity.getOwner());
 		this.recipient = null;
 		this.maxFileCount = entity.getMaxFileCount();
@@ -100,14 +75,17 @@ public class UploadRequestDto {
 		if (entity.getStatus().equals(UploadRequestStatus.STATUS_CLOSED))
 			this.isClosed = true;
 		for (UploadRequestEntry entry : entity.getUploadRequestEntries()) {
-			DocumentEntry documentEntry = entry.getDocumentEntry();
-			if (documentEntry != null) {
-				this.documents.put(documentEntry.getUuid(),
-						documentEntry.getName());
-				this.usedSpace += documentEntry.getSize();
-			}
+			entries.add(new EntryDto(entry));
+			this.usedSpace += entry.getSize();
 		}
 		this.protectedByPassword = false;
+	}
+
+	public UploadRequestDto(UploadRequestUrl requestUrl) {
+		this(requestUrl.getUploadRequest());
+		this.uuid = requestUrl.getUuid();
+		this.recipient = new ContactDto(requestUrl.getContact());
+		this.protectedByPassword = requestUrl.isProtectedByPassword();
 	}
 
 	public String getUuid() {
@@ -206,12 +184,12 @@ public class UploadRequestDto {
 		this.isClosed = isClosed;
 	}
 
-	public Map<String, String> getDocuments() {
-		return documents;
+	public Set<EntryDto> getEntries() {
+		return entries;
 	}
 
-	public void setDocuments(Map<String, String> documents) {
-		this.documents = documents;
+	public void setEntries(Set<EntryDto> entries) {
+		this.entries = entries;
 	}
 
 	public boolean isCanDeleteDocument() {

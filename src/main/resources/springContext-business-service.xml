@@ -21,6 +21,7 @@
 		<constructor-arg ref="signatureBusinessService" />
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="threadEntryRepository" />
+		<constructor-arg ref="uploadRequestEntryBusinessService" />
 	</bean>
 
 

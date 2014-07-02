@@ -56,7 +56,7 @@ public class UserManagementBatchImpl implements UserManagementBatch {
 
 	/** Find all outdated guest accounts and remove them. */
 	public void cleanExpiredGuestAccounts() {
-		SystemAccount systemAccount = accountRepository.getSystemAccount();
+		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
 		guestService.cleanExpiredGuests(systemAccount);
 	}
 
