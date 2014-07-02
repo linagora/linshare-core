@@ -55,13 +55,8 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 		logger.debug("uuid : " + uuid);
 		logger.debug("password : " + password);
 
-		ResponseBuilder response = null;
 		UploadRequestDto data = uploadRequestUrlFacade.find(uuid, password);
-		if (data != null) {
-			response = Response.ok(data);
-		} else {
-			response = Response.status(Response.Status.FORBIDDEN);
-		}
+		ResponseBuilder response = Response.ok(data);
 		return response.build();
 	}
 

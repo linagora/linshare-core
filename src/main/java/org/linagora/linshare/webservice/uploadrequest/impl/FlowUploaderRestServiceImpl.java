@@ -44,7 +44,6 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -59,7 +58,6 @@ import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.uploadrequest.FlowUploaderRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,6 +83,8 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	private static final String FILENAME = "flowFilename";
 	private static final String RELATIVE_PATH = "flowRelativePath";
 	private static final String FILE = "file";
+	private static final String PASSWORD = "password";
+	private static final String REQUEST_URL_UUID = "requestUrlUuid";
 
 	private final UploadRequestUrlFacade uploadRequestUrlFacade;
 
@@ -155,17 +155,14 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 								@Multipart(FILENAME) String filename,
 								@Multipart(RELATIVE_PATH) String relativePath,
 								@Multipart(FILE) InputStream file, MultipartBody body,
-								@HeaderParam("linshare-uploadrequest-password") String password)
+								@Multipart(REQUEST_URL_UUID) String uploadRequestUrlUuid,
+								@Multipart(PASSWORD) String password)
 			throws BusinessException {
 
 		logger.debug("upload chunk number : " + chunkNumber);
 		identifier = cleanIdentifier(identifier);
 		Validate.isTrue(isValid(chunkNumber, chunkSize, totalSize, identifier,
 				filename));
-
-		// TODO : HACK: To be removed.
-		String uploadRequestUrlUuid = "90b8a0f8-af07-4052-8bb8-bc5179f64b72";
-
 		try {
 			logger.debug("writing chunk number : " + chunkNumber);
 			java.nio.file.Path tempFile = getTempFile(identifier);
@@ -178,7 +175,7 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			if (isUploadFinished(identifier, chunkSize, totalSize)) {
 				logger.debug("upload finished ");
 				InputStream inputStream = Files.newInputStream(tempFile, StandardOpenOption.READ);
-				uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid, inputStream, filename, password);
+				uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid, password, inputStream, filename);
 				ChunkedFile remove = chunkedFiles.remove(identifier);
 				Files.deleteIfExists(remove.getPath());
 				return Response.ok("upload success").build();
