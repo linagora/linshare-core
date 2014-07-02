@@ -56,7 +56,6 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 		logger.debug("password : " + password);
 
 		ResponseBuilder response = null;
-//		UploadRequestDto data = getTestData();
 		UploadRequestDto data = uploadRequestUrlFacade.find(uuid);
 		if (data.isProtectedByPassword()) {
 			if (password != null && password.trim().equals("fred")) {
@@ -68,19 +67,6 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			response = Response.ok(data);
 		}
 		return response.build();
-	}
-
-	private UploadRequestDto getTestData() {
-		@SuppressWarnings("deprecation")
-		UploadRequestDto a = new UploadRequestDto(
-				"b344b5ca-d9e7-4857-b959-5e86f34a91f7", new Integer(3),
-				new Long(30), new Long(10), new Date(), new Date(2014, 10, 1),
-				true, true, "coucou", "my message", false);
-		a.setOwner(new ContactDto("Bart", "Simspon",
-				"bart.simpson@int1.linshare.dev"));
-		a.setRecipient(new ContactDto("Yo", "Da", "yoda@int3.linshare.dev"));
-		a.setProtectedByPassword(true);
-		return a;
 	}
 
 	@POST
