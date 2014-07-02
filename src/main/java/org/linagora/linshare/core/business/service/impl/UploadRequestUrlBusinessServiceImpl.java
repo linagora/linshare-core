@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestUrlRepository;

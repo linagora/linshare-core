@@ -35,7 +35,9 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
@@ -100,4 +102,22 @@ public interface UploadRequestService {
 
 	void deleteRequestUrl(User actor, UploadRequestUrl url)
 			throws BusinessException;
+
+	UploadRequestEntry findRequestEntryByUuid(Account actor, String uuid);
+
+	UploadRequestEntry createRequestEntry(Account actor, UploadRequestEntry entry)
+			throws BusinessException;
+
+	UploadRequestEntry updateRequestEntry(Account actor, UploadRequestEntry entry)
+			throws BusinessException;
+
+	void deleteRequestEntry(Account actor, UploadRequestEntry entry)
+			throws BusinessException;
+
+	/**
+	 * Business methods
+	 * @param actor TODO
+	 */
+
+	UploadRequest setStatusToClosed(Account actor, UploadRequest req) throws BusinessException;
 }

@@ -176,13 +176,11 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			chunkedFiles.get(identifier).addChunk(chunkNumber);
 			if (isUploadFinished(identifier, chunkSize, totalSize)) {
 				logger.debug("upload finished ");
-				InputStream inputStream = Files.newInputStream(tempFile,
-						StandardOpenOption.READ);
-				DocumentDto dto = uploadRequestUrlFacade
-						.addUploadRequestEntry(uploadRequestUrlUuid, inputStream, filename);
+				InputStream inputStream = Files.newInputStream(tempFile, StandardOpenOption.READ);
+				uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid, inputStream, filename);
 				ChunkedFile remove = chunkedFiles.remove(identifier);
 				Files.deleteIfExists(remove.getPath());
-				return Response.ok(dto).build();
+				return Response.ok("upload success").build();
 			} else {
 				logger.debug("upload pending ");
 			}
