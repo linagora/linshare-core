@@ -114,9 +114,8 @@ public interface UploadRequestService {
 	void deleteRequestEntry(Account actor, UploadRequestEntry entry)
 			throws BusinessException;
 
-	/**
+	/*
 	 * Business methods
-	 * @param actor TODO
 	 */
 
 	UploadRequest setStatusToClosed(Account actor, UploadRequest req) throws BusinessException;
