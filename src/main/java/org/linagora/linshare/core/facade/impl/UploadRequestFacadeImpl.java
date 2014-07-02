@@ -46,15 +46,15 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	private final UserService userService;
 	private final UploadRequestService uploadRequestService;
 
-	public UploadRequestFacadeImpl(
-			final UserService userService,
+	public UploadRequestFacadeImpl(final UserService userService,
 			final UploadRequestService uploadRequestService) {
 		this.userService = userService;
 		this.uploadRequestService = uploadRequestService;
 	}
 
 	@Override
-	public UploadRequestVo findRequestByUuid(UserVo actorVo, String uuid) {
+	public UploadRequestVo findRequestByUuid(UserVo actorVo, String uuid)
+			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		// TODO
 		return new UploadRequestVo(uploadRequestService.findRequestByUuid(

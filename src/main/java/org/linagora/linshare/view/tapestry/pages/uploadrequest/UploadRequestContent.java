@@ -33,19 +33,19 @@
  */
 package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
-import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.CleanupRender;
-import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.InjectPage;
-import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
-import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.domain.vo.UploadRequestVo;
+import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
+import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
+import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
+import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,19 +55,46 @@ public class UploadRequestContent {
 	private static final Logger logger = LoggerFactory
 			.getLogger(UploadRequestContent.class);
 
+	@SessionState
+	@Property
+	private ShareSessionObjects shareSessionObjects;
+
+	@SessionState
+	@Property
+	private UserVo userVo;
+
+	@Property
+	@Persist
+	private UploadRequestVo selected;
+
 	@Inject
 	private Messages messages;
 
 	@Inject
-	private ThreadEntryFacade threadEntryFacade;
+	private UploadRequestFacade uploadRequestFacade;
 
 	@Inject
 	private BusinessMessagesManagementService businessMessagesManagementService;
 
 	public Object onActivate(String uuid) {
 		try {
-			this.selected = 
+			this.selected = uploadRequestFacade.findRequestByUuid(userVo, uuid);
 		} catch (BusinessException e) {
+			businessMessagesManagementService.notify(new BusinessUserMessage(
+					BusinessUserMessageType.UPLOAD_REQUEST_NOT_FOUND,
+					MessageSeverity.ERROR));
+			return Index.class;
+		}
+		return null;
+	}
+
+	public Object onActivate() {
+		if (selected == null) {
+			logger.info("No thread selected, abort");
+			return Index.class;
+		}
+		if (!selected.getOwner().businessEquals(userVo)) {
+			logger.info("Unauthorized");
 			businessMessagesManagementService.notify(new BusinessUserMessage(
 					BusinessUserMessageType.UPLOAD_REQUEST_NOT_FOUND,
 					MessageSeverity.ERROR));

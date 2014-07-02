@@ -48,7 +48,7 @@ public interface UploadRequestService {
 
 	List<UploadRequest> findAllRequest(User actor);
 
-	UploadRequest findRequestByUuid(User actor, String uuid);
+	UploadRequest findRequestByUuid(User actor, String uuid) throws BusinessException;
 
 	UploadRequest createRequest(User actor, UploadRequest req)
 			throws BusinessException;
