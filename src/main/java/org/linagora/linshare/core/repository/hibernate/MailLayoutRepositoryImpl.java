@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
-import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;

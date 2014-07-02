@@ -33,9 +33,8 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import org.junit.Assert;
-
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;

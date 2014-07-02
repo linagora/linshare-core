@@ -55,7 +55,6 @@ public class Guest extends User {
 	private Set<AllowedContact> contacts = Sets.newHashSet();
 
 	/** Default constructor for hibernate. */
-    @SuppressWarnings("unused")
 	private Guest() {
         super();
     }

@@ -74,7 +74,6 @@ public class ManualText {
 	@SessionState
 	private HelpsASO helpsASO;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private String roleLabel;
 	

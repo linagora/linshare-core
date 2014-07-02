@@ -39,7 +39,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.junit.Assert;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;

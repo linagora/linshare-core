@@ -71,7 +71,7 @@ public class AbstractDomainRepositoryImplTest extends AbstractJUnit4SpringContex
 	private static String subDomainName = "Domain0.1.1";
 	private static String domainePolicyName0 = "TestAccessPolicy0";
 
-	private static String baseDn = "dc=nodomain,dc=com";
+	//private static String baseDn = "dc=nodomain,dc=com";
 	private static String identifier= "ID_LDAP_DE_TEST";
 	private static String identifierP= "ID_PARAM_DE_TEST";
 	private static String providerUrl= "ldap://10.75.113.53:389";

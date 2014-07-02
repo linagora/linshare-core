@@ -84,7 +84,6 @@ public class Tracker {
 	/**
 	 * The separator used to display links.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=false,value=">",defaultPrefix=BindingConstants.LITERAL)
 	@Property
 	private String separator;
@@ -92,7 +91,6 @@ public class Tracker {
 	/**
 	 * The label displayed before links.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=false,value="",defaultPrefix=BindingConstants.LITERAL)
 	@Property
 	private String trackerTitle;
@@ -108,7 +106,6 @@ public class Tracker {
 
 
 	
-	@SuppressWarnings("unused")
 	@Property
 	private TrackerObject object;
 	

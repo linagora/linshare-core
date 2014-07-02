@@ -1,8 +1,5 @@
 package org.linagora.linshare.webservice.user;
 
-import java.util.List;
-
-import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 

@@ -44,7 +44,6 @@ public class DenyDomain extends DomainAccessRule {
 	 * you can not persist this entity without setting up a domain. That is why
 	 * this contructor is private.
 	 */
-	@SuppressWarnings("unused")
 	private DenyDomain() {
 		super();
 	}

@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service;
 
 import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.exception.BusinessException;
 

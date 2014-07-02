@@ -43,7 +43,6 @@ public class FilePage {
 	@Inject
 	private FileSystemDao fileSystemDao;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private FileInfo fileInfo;
 	

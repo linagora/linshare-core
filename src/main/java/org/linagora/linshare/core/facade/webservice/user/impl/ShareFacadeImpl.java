@@ -59,7 +59,6 @@ import org.slf4j.LoggerFactory;
 public class ShareFacadeImpl extends GenericFacadeImpl
 		implements ShareFacade {
 
-	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory
 			.getLogger(ShareFacadeImpl.class);
 

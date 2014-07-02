@@ -325,7 +325,6 @@ public class SearchFile {
 			}
 		}else{
 			try{
-				@SuppressWarnings("unused")
 				Long size=(sizeMin!=null)?Long.parseLong(sizeMin):null;
 				size=(sizeMax!=null)?Long.parseLong(sizeMax):null;
 

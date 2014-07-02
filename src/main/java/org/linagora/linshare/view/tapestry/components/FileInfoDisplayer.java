@@ -40,7 +40,6 @@ import org.linagora.linshare.core.domain.objects.FileInfo;
 
 public class FileInfoDisplayer {
 
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix=BindingConstants.PROP )
 	@Property
 	private FileInfo source;

@@ -45,14 +45,11 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Import(library = {"jquery/jquery-1.7.2.js", "jquery/jquery.ui.core.js", "jquery/jquery.ui.datepicker.js", "jquery/jquery.ui.datepicker-fr.js", "DatePicker.js"},stylesheet = {"jquery/jquery-ui-1.8.21.custom.css", "DatePicker.css"})
 
 public class DatePicker {
-	private static final Logger logger = LoggerFactory.getLogger(DatePicker.class);
-	
+
 	@Parameter(required=false)
 	@Property
 	private Date minDate;

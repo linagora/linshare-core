@@ -42,12 +42,10 @@ public class Widget {
 	/* ***********************************************************
 	 *                         Parameters
 	 ************************************************************ */
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix = BindingConstants.LITERAL)
 	@Property
 	private String title;
 	
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix = BindingConstants.LITERAL)
 	@Property
 	private String widgetId;

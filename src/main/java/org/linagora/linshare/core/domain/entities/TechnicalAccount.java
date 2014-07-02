@@ -38,7 +38,6 @@ import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
 
 public class TechnicalAccount extends User {
 
-	@SuppressWarnings("unused")
 	private TechnicalAccount() {
 		super();
 	}

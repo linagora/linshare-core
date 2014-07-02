@@ -84,7 +84,6 @@ public class Menu implements ClientElement{
 	 * The title of the menu.
 	 * this parameter is required.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix = BindingConstants.LITERAL)
 	@Property
 	private String title;
@@ -98,7 +97,6 @@ public class Menu implements ClientElement{
 	@Property
 	private MenuEntry object;
 
-	@SuppressWarnings("unused")
 	@Inject
 	@Property
 	private Request request;
@@ -112,11 +110,9 @@ public class Menu implements ClientElement{
 	@Property
 	private boolean image=false;
 
-	@SuppressWarnings("unused")
 	@Property
 	private boolean label=false;
 
-	@SuppressWarnings("unused")
 	@Property
 	private boolean target=false;
 

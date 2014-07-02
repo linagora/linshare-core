@@ -133,7 +133,6 @@ public class Help {
 	@Property
 	private boolean helpsASOExists;
 
-	@SuppressWarnings("unused")
 	@Property
 	private String helpTitle;
 	
@@ -146,14 +145,12 @@ public class Help {
 	@Property
 	private Subsection subsection;
 
-	@SuppressWarnings("unused")
 	@Property
 	private String description;
 
 	@Persist
 	private Integer descLength;
 
-	@SuppressWarnings("unused")
 	private String videoUrl;
 	
 	private String videoFile;

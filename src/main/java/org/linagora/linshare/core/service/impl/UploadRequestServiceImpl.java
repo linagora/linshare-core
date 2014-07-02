@@ -42,7 +42,6 @@ import org.linagora.linshare.core.business.service.UploadRequestHistoryBusinessS
 import org.linagora.linshare.core.business.service.UploadRequestTemplateBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;

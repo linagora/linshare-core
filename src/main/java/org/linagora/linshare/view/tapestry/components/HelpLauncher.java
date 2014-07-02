@@ -58,7 +58,6 @@ public class HelpLauncher {
 
 	
 
-	@SuppressWarnings("unused")
 	@Property
 	private String uuid;
 	
@@ -74,7 +73,6 @@ public class HelpLauncher {
 	/**
 	 * The css class
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(name="class",required=true,allowNull=false,defaultPrefix=BindingConstants.LITERAL)
 	@Property
 	private String cssClass;
@@ -116,7 +114,6 @@ public class HelpLauncher {
 	/**
 	 * The title of the help.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=true,allowNull=false, defaultPrefix=BindingConstants.LITERAL)
 	@Property
 	private String title;
@@ -126,7 +123,6 @@ public class HelpLauncher {
 	 * video or text.
 	 * by default text.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=false,allowNull=false, defaultPrefix=BindingConstants.LITERAL)
 	@Property
 	private boolean video;

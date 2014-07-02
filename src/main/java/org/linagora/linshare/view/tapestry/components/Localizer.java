@@ -103,7 +103,6 @@ public class Localizer {
 	/**
 	 * The label presents before links of locales.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=false,defaultPrefix=BindingConstants.LITERAL)
 	@Property
 	private String title;
@@ -111,7 +110,6 @@ public class Localizer {
 	/**
 	 * The separator between each locale link.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=false,value="",defaultPrefix=BindingConstants.LITERAL)
 	@Property
 	private String separator;

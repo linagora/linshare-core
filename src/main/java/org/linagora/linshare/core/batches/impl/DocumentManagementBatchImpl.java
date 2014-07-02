@@ -256,6 +256,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		logger.info("checkDocumentEntriesMimeType : batch ended");
 	}
 
+	@SuppressWarnings("unused")
 	private void sendUpcomingDeletionNotification(DocumentEntry document, Integer days) {
 		final long MILISECOND_PER_DAY = 24 * 60 * 60 * 1000;
 		// int days = Math.round(Math.abs((deletionDate.getTimeInMillis()-

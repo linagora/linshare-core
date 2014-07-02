@@ -580,7 +580,7 @@ public class AESCrypt {
 		
 		BufferedInputStream in = null;
 		byte[] text = null;
-		long total = 3 + 1 + 1 + BLOCK_SIZE + BLOCK_SIZE + KEY_SIZE + SHA_SIZE+ 1 + SHA_SIZE;
+//		long total = 3 + 1 + 1 + BLOCK_SIZE + BLOCK_SIZE + KEY_SIZE + SHA_SIZE+ 1 + SHA_SIZE;
 		
 		try{
 		int version;
@@ -610,7 +610,7 @@ public class AESCrypt {
 				if (in.skip(len) != len) {
 					throw new IOException("Unexpected end of extension");
 				}
-				total += 2 + len;
+//				total += 2 + len;
 				debug("Skipped extension sized: " + len);
 			} while (len != 0);
 		}
@@ -635,7 +635,7 @@ public class AESCrypt {
 
 		BufferedInputStream in = null;
 		byte[] text = null, backup = null;
-		long total = 3 + 1 + 1 + BLOCK_SIZE + BLOCK_SIZE + KEY_SIZE + SHA_SIZE + 1 + SHA_SIZE;
+//		long total = 3 + 1 + 1 + BLOCK_SIZE + BLOCK_SIZE + KEY_SIZE + SHA_SIZE + 1 + SHA_SIZE;
 
 		int version;
 		try {
@@ -665,7 +665,7 @@ public class AESCrypt {
 					if (in.skip(len) != len) {
 						throw new IOException("Unexpected end of extension");
 					}
-					total += 2 + len;
+//					total += 2 + len;
 					debug("Skipped extension sized: " + len);
 				} while (len != 0);
 			}

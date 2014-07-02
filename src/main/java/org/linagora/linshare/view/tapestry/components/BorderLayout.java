@@ -172,7 +172,6 @@ public class BorderLayout {
 	/**
 	 * The title of the page.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix = BindingConstants.LITERAL)
 	@Property
 	private String title;
@@ -181,7 +180,6 @@ public class BorderLayout {
 	/**
 	 * Identifier of the page.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix = BindingConstants.LITERAL)
 	@Property
 	private String identifier;
@@ -190,7 +188,6 @@ public class BorderLayout {
 	/**
 	 * The header of the page (placed on top of the page).
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix = BindingConstants.BLOCK)
 	@Property
 	private Block header;
@@ -198,7 +195,6 @@ public class BorderLayout {
 	/**
 	 * The left panel content.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=false,defaultPrefix = BindingConstants.BLOCK)
 	@Property
 	private Block left;
@@ -206,7 +202,6 @@ public class BorderLayout {
 	/**
 	 * The right panel content.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=false,defaultPrefix = BindingConstants.BLOCK)
 	@Property
 	private Block right;
@@ -214,7 +209,6 @@ public class BorderLayout {
 	/**
 	 * The footer of the page (placed on the bottom of the page).
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix = BindingConstants.BLOCK)
 	@Property
 	private Block footer;
@@ -223,7 +217,6 @@ public class BorderLayout {
 	/**
 	 * For including head inside &lt;head&gt; tag.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=false,defaultPrefix = BindingConstants.BLOCK)
 	@Property
 	private Block head;
@@ -232,7 +225,6 @@ public class BorderLayout {
 	/**
 	 * <p>This block will be display under the header to the right of the left panel.</p>
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=false,defaultPrefix = BindingConstants.BLOCK)
 	@Property
 	private Block menuBar;
@@ -241,34 +233,27 @@ public class BorderLayout {
 	 * MenuBar properties is true if and only if a menuBar was specified.
 	 * In other words when null!=menuBar.
 	 */
-	@SuppressWarnings("unused")
 	@Property
 	private Boolean menuBarEnable=false;
 
 	
-	@SuppressWarnings("unused")
 	@Property
 	private Boolean leftEnable=false;
 
-	@SuppressWarnings("unused")
 	@Property
 	private Boolean rightEnable=false;
 
-	@SuppressWarnings("unused")
 	@Property
 	private Boolean sideEnabled=false;
 	
 	
-	@SuppressWarnings("unused")
 	@Property
 	private Boolean headContent=false;
 
 	
-	@SuppressWarnings("unused")
 	@Property
 	private String documentId;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private String documentLayoutClass;
 	

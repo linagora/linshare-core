@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
 
 public class ThreadFacadeImpl extends GenericFacadeImpl implements ThreadFacade {
 
-	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(ThreadFacadeImpl.class);
 
 	private final ThreadService threadService;

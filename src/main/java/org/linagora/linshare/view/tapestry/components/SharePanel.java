@@ -69,7 +69,6 @@ public class SharePanel {
 	/**
 	 * Read only parameter. If the component must show only the grid.
 	 */
-	@SuppressWarnings("unused")
 	@Property
 	@Parameter(required=false,value="false",defaultPrefix=BindingConstants.LITERAL)
 	private boolean readOnly;
@@ -77,7 +76,6 @@ public class SharePanel {
 	/**
 	 * The label to display in the top of the component.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=false,value="",defaultPrefix=BindingConstants.LITERAL)
 	@Property
 	private String label;
@@ -85,7 +83,6 @@ public class SharePanel {
 	/**
 	 * The columns to display in the grid.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)
 	@Property
 	private String columns;
@@ -94,7 +91,6 @@ public class SharePanel {
 	/**
 	 * The list of the objects displayed in the grid.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix=BindingConstants.PROP)
 	@Property
 	private List<Object> listObject;
@@ -115,7 +111,6 @@ public class SharePanel {
 	/* ***********************************************************
 	 *                Properties & injected symbol, ASO, etc
 	 ************************************************************ */
-	@SuppressWarnings("unused")
 	@Property
 	private Object object;
 	

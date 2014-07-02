@@ -133,7 +133,6 @@ public class ListDocument {
 	 * Properties
 	 **************************************************************************/
 
-	@SuppressWarnings("unused")
 	@Property
 	private String userlogin;
 
@@ -144,7 +143,6 @@ public class ListDocument {
 	@Property
 	private DocumentVo document;
 
-	@SuppressWarnings("unused")
 	@Property
 	private Boolean valueCheck;
 	
@@ -273,7 +271,6 @@ public class ListDocument {
 	private boolean activeEncipherment;
 
 
-	@SuppressWarnings("unused")
 	private boolean filesSelected;
 
 	@Persist("flash")
@@ -291,7 +288,6 @@ public class ListDocument {
 	/**
 	 * Components Model.
 	 */
-	@SuppressWarnings("unused")
 	@Property
 	@Persist
 	private SorterModel<DocumentVo> sorterModel;

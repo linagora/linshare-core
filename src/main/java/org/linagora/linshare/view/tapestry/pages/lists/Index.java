@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.view.tapestry.pages.lists;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.Import;
@@ -55,7 +54,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.pages.lists.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

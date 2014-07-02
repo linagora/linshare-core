@@ -70,7 +70,6 @@ public class MultiLink {
 	/**
 	 * The css class for the links.
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(name="class",required=false,value="multiLink",defaultPrefix=BindingConstants.LITERAL)
 	@Property
 	private String myClass;
@@ -78,7 +77,6 @@ public class MultiLink {
 	/**
 	 * The content of the link (image,label... with "A" tag it's the content between <a>and </a>).
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix=BindingConstants.BLOCK)
 	@Property
 	private Block content;
@@ -87,15 +85,12 @@ public class MultiLink {
 	private ComponentClassResolver componentClassResolver;
 
 	
-	@SuppressWarnings("unused")
 	@Property
 	private boolean targetEnable=false;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private boolean page=false;
 	
-	@SuppressWarnings("unused")
 	@SetupRender
 	private void initUrl(){
 		if(null!=target && !"".equals(target)){

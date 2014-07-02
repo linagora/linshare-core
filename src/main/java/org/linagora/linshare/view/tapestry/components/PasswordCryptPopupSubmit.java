@@ -69,7 +69,6 @@ public class PasswordCryptPopupSubmit {
 	private String title;
 	
 	// Content of the window
-	@SuppressWarnings("unused")
 	@Parameter("content")
 	@Property
 	private String content;

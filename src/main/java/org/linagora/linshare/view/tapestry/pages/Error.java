@@ -39,7 +39,6 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 public class Error {
 
 	
-	@SuppressWarnings("unused")
 	@Property
 	private boolean auth;
 	
