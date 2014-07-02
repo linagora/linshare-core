@@ -44,6 +44,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -136,7 +137,6 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 		Validate.isTrue(isValid(chunkNumber, chunkSize, totalSize, identifier,
 				filename));
 
-
 		if (chunkedFiles.containsKey(identifier) && chunkedFiles.get(identifier).hasChunk(chunkNumber)) {
 			return Response.ok().build();
 		}
@@ -154,7 +154,8 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 								@Multipart(IDENTIFIER) String identifier,
 								@Multipart(FILENAME) String filename,
 								@Multipart(RELATIVE_PATH) String relativePath,
-								@Multipart(FILE) InputStream file, MultipartBody body)
+								@Multipart(FILE) InputStream file, MultipartBody body,
+								@HeaderParam("linshare-uploadrequest-password") String password)
 			throws BusinessException {
 
 		logger.debug("upload chunk number : " + chunkNumber);
@@ -177,7 +178,7 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			if (isUploadFinished(identifier, chunkSize, totalSize)) {
 				logger.debug("upload finished ");
 				InputStream inputStream = Files.newInputStream(tempFile, StandardOpenOption.READ);
-				uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid, inputStream, filename);
+				uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid, inputStream, filename, password);
 				ChunkedFile remove = chunkedFiles.remove(identifier);
 				Files.deleteIfExists(remove.getPath());
 				return Response.ok("upload success").build();

@@ -41,11 +41,11 @@ import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequ
 
 public interface UploadRequestUrlFacade {
 
-	UploadRequestDto find(String uploadRequestUrlUuid) throws BusinessException;
+	UploadRequestDto find(String uploadRequestUrlUuid, String password) throws BusinessException;
 
-	UploadRequestDto close(UploadRequestDto req)
+	UploadRequestDto close(UploadRequestDto req, String password)
 			throws BusinessException;
 
-	void addUploadRequestEntry(String uploadRequestUrlUuid, InputStream fi, String fileName) throws BusinessException;
+	void addUploadRequestEntry(String uploadRequestUrlUuid, InputStream fi, String fileName, String password) throws BusinessException;
 }
 
