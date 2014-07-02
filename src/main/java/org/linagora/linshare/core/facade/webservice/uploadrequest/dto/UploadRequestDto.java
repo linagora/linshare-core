@@ -54,7 +54,7 @@ public class UploadRequestDto {
 
 	private long usedSpace = 0;
 
-	Set<String> mimeTypes = Sets.newHashSet();
+	Set<String> extensions = Sets.newHashSet();
 
 	public UploadRequestDto() {
 		super();
@@ -238,18 +238,18 @@ public class UploadRequestDto {
 		this.usedSpace = usedSpace;
 	}
 
-	public Set<String> getMimeTypes() {
-		return mimeTypes;
+	public Set<String> getExtensions() {
+		return extensions;
 	}
 
-	public void setMimeTypes(Set<String> mimeTypes) {
-		this.mimeTypes = mimeTypes;
+	public void setExtensions(Set<String> extensions) {
+		this.extensions = extensions;
 	}
 
 	/**
 	 * Helpers
 	 */
-	public void addMimeTypes(String mimeType) {
-		this.mimeTypes.add(mimeType);
+	public void addExtensions(String mimeType) {
+		this.extensions.add(mimeType);
 	}
 }

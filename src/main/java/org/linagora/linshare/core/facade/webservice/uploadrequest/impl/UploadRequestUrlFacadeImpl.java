@@ -47,7 +47,7 @@ public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 
 	@Override
 	public void addUploadRequestEntry(String uploadRequestUrlUuid,
-			InputStream fi, String fileName, String password) throws BusinessException {
+			String password, InputStream fi, String fileName) throws BusinessException {
 		Validate.notEmpty(uploadRequestUrlUuid);
 		Validate.notNull(fi);
 		Validate.notEmpty(fileName);
@@ -69,9 +69,11 @@ public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 		Account owner = requestUrl.getUploadRequest().getOwner();
 		Set<MimeType> mimeTypes = mimePolicyService.findAllMyMimeTypes(owner);
 		for (MimeType mimeType : mimeTypes) {
-			String extension = mimeType.getExtensions();
-			if (!extension.isEmpty()) {
-				dto.addMimeTypes(extension.substring(1));
+			if (mimeType.getEnable()) {
+				String extension = mimeType.getExtensions();
+				if (!extension.isEmpty()) {
+					dto.addExtensions(extension.substring(1));
+				}
 			}
 		}
 		return dto;

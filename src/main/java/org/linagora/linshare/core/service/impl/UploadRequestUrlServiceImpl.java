@@ -8,6 +8,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
@@ -41,11 +42,10 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	public UploadRequestUrl find(String uuid, String password) throws BusinessException {
 		Validate.notEmpty(uuid);
 		UploadRequestUrl data = uploadRequestUrlBusinessService.findByUuid(uuid);
-		if (data != null) {
-			if (!isValidPassword(data, password))
-				return null;
+		if (data != null && isValidPassword(data, password)) {
+			return data;
 		}
-		return data;
+		throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to upload file into upload request : " + uuid);
 	}
 
 	private boolean isValidPassword(UploadRequestUrl data, String password) {
