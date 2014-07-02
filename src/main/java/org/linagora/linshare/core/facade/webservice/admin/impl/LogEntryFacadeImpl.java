@@ -1,7 +1,6 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Role;

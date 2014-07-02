@@ -88,15 +88,12 @@ public class ActionsBarDocument {
 	/***********************************
 	 * Flags
 	 ***********************************/
-	@SuppressWarnings("unused")
 	@Property
 	private boolean activeSignature;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private boolean activeEncipherment;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private boolean activeThreadTab;
 	

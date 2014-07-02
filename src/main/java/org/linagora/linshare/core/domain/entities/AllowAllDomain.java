@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
-import org.linagora.linshare.webservice.dto.DomainAccessRuleDto;
 
 public class AllowAllDomain extends DomainAccessRule {
 

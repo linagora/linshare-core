@@ -97,7 +97,6 @@ public class ThreadEntryEditForm {
      ************************************************************ */
     
 	
-	@SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=400", "height=200"})
     private WindowWithEffectsComponent fileEditWindow;
     

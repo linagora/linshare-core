@@ -67,22 +67,18 @@ public class MyBorderLayout {
  	/* ***********************************************************
 	 *                         Parameters
 	 ************************************************************ */
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix = BindingConstants.LITERAL)
 	@Property
 	private String title;
 
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix = BindingConstants.LITERAL)
 	@Property
 	private String identifier;
 
-	@SuppressWarnings("unused")
 	@Parameter(required=false,defaultPrefix = BindingConstants.LITERAL)
 	@Property
 	private String linkTracker;
 
-	@SuppressWarnings("unused")
 	@Parameter(required=false,value="",defaultPrefix = BindingConstants.LITERAL)
 	@Property
 	private String currentHighlight;
@@ -222,7 +218,6 @@ public class MyBorderLayout {
 	@Property
 	private String logoLink;
 
-	@SuppressWarnings("unused")
 	@Inject
 	private Response response;
 

@@ -208,7 +208,6 @@ public class ListSharedDocument {
 	private List<ShareDocumentVo> docs;
 
 
-	@SuppressWarnings("unused")
 	private boolean filesSelected;
 
 	@Property

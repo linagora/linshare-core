@@ -38,10 +38,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -79,7 +75,6 @@ import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.core.utils.FileUtils;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.models.SorterModel;
-import org.linagora.linshare.view.tapestry.models.impl.ThreadEntrySorterModel;
 import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
 import org.linagora.linshare.view.tapestry.pages.thread.ThreadContent;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;

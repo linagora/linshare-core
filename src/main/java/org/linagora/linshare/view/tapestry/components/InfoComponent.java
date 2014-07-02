@@ -84,18 +84,15 @@ public class InfoComponent {
 	@Property
 	private boolean canUpload;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private String expirationDate;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private String usedQuota;
 	
 	@Property
 	private int usedQuotaPercent;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private String totalQuota;
 	

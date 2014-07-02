@@ -34,7 +34,6 @@
 package org.linagora.linshare.repository.hibernate;
 
 import org.junit.Assert;
-
 import org.junit.Test;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.exception.BusinessException;

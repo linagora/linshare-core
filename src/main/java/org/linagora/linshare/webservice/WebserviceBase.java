@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
  */
 public class WebserviceBase {
 
-	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory
 			.getLogger(WebserviceBase.class);
 

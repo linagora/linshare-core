@@ -34,10 +34,7 @@
 package org.linagora.linshare.view.tapestry.pages.files;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.SelectModel;
@@ -79,10 +76,9 @@ import org.owasp.validator.html.Policy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-
 import se.unbound.tapestry.tagselect.LabelAwareValueEncoder;
+
+import com.google.common.collect.Lists;
 
 @Import(library = { "../../components/jquery/jquery-1.7.2.js",
 		"../../components/bootstrap/js/bootstrap.js" }, stylesheet = {

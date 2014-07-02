@@ -1,6 +1,5 @@
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.webservice.dto.FunctionalityDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

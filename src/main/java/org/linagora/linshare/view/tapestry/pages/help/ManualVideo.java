@@ -77,7 +77,6 @@ public class ManualVideo {
 	@SessionState
 	private HelpsASO helpsASO;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private String roleLabel;
 	
