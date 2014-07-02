@@ -26,8 +26,8 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/upload_requests")
-@Api(value = "/rest/uploadrequest/upload_requests", description = "upload_requests API")
+@Path("/requests")
+@Api(value = "/rest/uploadrequest/requests", description = "requests API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadRequestRestServiceImpl implements UploadRequestRestService {
