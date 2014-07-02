@@ -9,6 +9,7 @@ public interface UploadRequestRestService {
 
 	Response find(String uuid, String password) throws BusinessException;
 
-	UploadRequestDto update(UploadRequestDto dto) throws BusinessException;
+	UploadRequestDto update(UploadRequestDto dto, String password)
+			throws BusinessException;
 
 }

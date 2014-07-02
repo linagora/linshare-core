@@ -56,15 +56,11 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 		logger.debug("password : " + password);
 
 		ResponseBuilder response = null;
-		UploadRequestDto data = uploadRequestUrlFacade.find(uuid);
-		if (data.isProtectedByPassword()) {
-			if (password != null && password.trim().equals("fred")) {
-				response = Response.ok(data);
-			} else {
-				response = Response.status(Response.Status.UNAUTHORIZED);
-			}
-		} else {
+		UploadRequestDto data = uploadRequestUrlFacade.find(uuid, password);
+		if (data != null) {
 			response = Response.ok(data);
+		} else {
+			response = Response.status(Response.Status.FORBIDDEN);
 		}
 		return response.build();
 	}
@@ -74,8 +70,9 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@ApiOperation(value = "Find an upload request.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a technical account.") })
 	@Override
-	public UploadRequestDto update(UploadRequestDto dto)
+	public UploadRequestDto update(UploadRequestDto dto,
+			@HeaderParam("linshare-uploadrequest-password") String password)
 			throws BusinessException {
-		return uploadRequestUrlFacade.close(dto);
+		return uploadRequestUrlFacade.close(dto, password);
 	}
 }

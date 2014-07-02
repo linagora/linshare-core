@@ -10,6 +10,5 @@
 	<bean id="wsUploadRequestUrlFacade" class="org.linagora.linshare.core.facade.webservice.uploadrequest.impl.UploadRequestUrlFacadeImpl">
 		<constructor-arg ref="uploadRequestUrlService" />
 		<constructor-arg ref="mimePolicyService" />
-		<constructor-arg ref="documentEntryService" />
 	</bean>
 </beans>

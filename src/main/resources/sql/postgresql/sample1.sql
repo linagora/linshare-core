@@ -87,8 +87,9 @@ INSERT INTO upload_request (id, account_id, upload_request_group_id, uuid, max_f
 	VALUES (1, 50, 1, '916a6e65-deb8-4120-b2ab-c64bfcbf4e02', 3, 31457280, 10485760, 'STATUS_ENABLED', current_date, current_date, current_date, '2014-08-10 00:00:00', '2014-09-10 00:00:00', null, true, true, true, 'fr', true, null); 
 
 INSERT INTO contact (id, mail) VALUES (1,'ctjhoa@linagora.com');
+-- password : 1qm6xtpyu93qp
 INSERT INTO upload_request_url (id, contact_id, upload_request_id, uuid, path, password, creation_date, modification_date)
-	VALUES (1, 1, 1, '90b8a0f8-af07-4052-8bb8-bc5179f64b72', 'upload_request', 'fred', current_date, current_date);
+	VALUES (1, 1, 1, '90b8a0f8-af07-4052-8bb8-bc5179f64b72', 'upload_request', 'kITh6Jk+FiuyGQtdtaeFxvYnzug=', current_date, current_date);
 
 
 

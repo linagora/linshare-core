@@ -8,12 +8,12 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
+import org.linagora.linshare.core.utils.HashUtils;
 
 public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 
@@ -38,30 +38,40 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	}
 
 	@Override
-	public UploadRequestUrl find(String uuid) throws BusinessException {
+	public UploadRequestUrl find(String uuid, String password) throws BusinessException {
 		Validate.notEmpty(uuid);
-		UploadRequestUrl url = uploadRequestUrlBusinessService.findByUuid(uuid);
-		if (url == null) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
-					"UploadRequestUrl not found.");
+		UploadRequestUrl data = uploadRequestUrlBusinessService.findByUuid(uuid);
+		if (data != null) {
+			if (!isValidPassword(data, password))
+				return null;
 		}
-		return url;
+		return data;
+	}
+
+	private boolean isValidPassword(UploadRequestUrl data, String password) {
+		if (data.isProtectedByPassword()) {
+			if (password == null)
+				return false;
+			String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
+			return hashedPassword.equals(data.getPassword());
+		}
+		return true;
 	}
 
 	@Override
-	public UploadRequestUrl close(String uuid) throws BusinessException {
-		UploadRequestUrl url = find(uuid);
+	public UploadRequestUrl close(String uuid, String password) throws BusinessException {
+		UploadRequestUrl url = find(uuid, password);
 		Account actor = accountRepository.getSystemAccount();
 		uploadRequestService.setStatusToClosed(actor, url.getUploadRequest());
-		return find(uuid);
+		return find(uuid, password);
 	}
 
 	@Override
 	public UploadRequestEntry createUploadRequestEntry(
-			String uploadRequestUrlUuid, InputStream fi, String fileName)
+			String uploadRequestUrlUuid, InputStream fi, String fileName, String password)
 			throws BusinessException {
 		// Retrieve upload request URL
-		UploadRequestUrl requestUrl = find(uploadRequestUrlUuid);
+		UploadRequestUrl requestUrl = find(uploadRequestUrlUuid, password);
 		// Extract owner for upload request URL
 		Account owner = requestUrl.getUploadRequest().getOwner();
 		// Store the file into the owner account.
