@@ -39,12 +39,15 @@ import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessSer
 import org.linagora.linshare.core.business.service.UploadRequestHistoryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestTemplateBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.UploadRequestService;
@@ -190,5 +193,43 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	public void deleteRequestUrl(User actor, UploadRequestUrl url)
 			throws BusinessException {
 		uploadRequestUrlBusinessService.delete(url);
+	}
+
+	@Override
+	public UploadRequestEntry findRequestEntryByUuid(Account actor, String uuid) {
+		return uploadRequestEntryBusinessService.findByUuid(uuid);
+	}
+
+	@Override
+	public UploadRequestEntry createRequestEntry(Account actor,
+			UploadRequestEntry entry) throws BusinessException {
+		return uploadRequestEntryBusinessService.create(entry);
+	}
+
+	@Override
+	public UploadRequestEntry updateRequestEntry(Account actor,
+			UploadRequestEntry entry) throws BusinessException {
+		return uploadRequestEntryBusinessService.update(entry);
+	}
+
+	@Override
+	public void deleteRequestEntry(Account actor, UploadRequestEntry entry)
+			throws BusinessException {
+		uploadRequestEntryBusinessService.delete(entry);
+	}
+
+	/**
+	 * business methods.
+	 */
+
+	@Override
+	public UploadRequest setStatusToClosed(Account actor, UploadRequest req) throws BusinessException {
+		// TODO : notifications, log history
+		if (actor.hasSystemAccountRole() || actor.equals(req.getOwner()) || actor.hasSuperAdminRole()) {
+			req.setStatus(UploadRequestStatus.STATUS_CLOSED);
+			return uploadRequestBusinessService.update(req);
+		} else {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "you do not have the right to close this upload request url : " + req.getUuid());
+		}
 	}
 }

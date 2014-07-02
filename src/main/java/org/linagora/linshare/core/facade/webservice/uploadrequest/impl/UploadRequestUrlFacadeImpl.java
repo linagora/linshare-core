@@ -17,7 +17,6 @@ import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequ
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
-import org.linagora.linshare.webservice.dto.DocumentDto;
 
 public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 
@@ -53,15 +52,12 @@ public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 	}
 
 	@Override
-	public DocumentDto addUploadRequestEntry(String uploadRequestUrlUuid,
+	public void addUploadRequestEntry(String uploadRequestUrlUuid,
 			InputStream fi, String fileName) throws BusinessException {
-		// TODO : Dirty : To fix
-		UploadRequestUrl requestUrl = uploadRequestUrlService.find(uploadRequestUrlUuid);
-		Account actor = requestUrl.getUploadRequest().getOwner();
-		DocumentEntry res = documentEntryService.createDocumentEntry(actor, fi, fileName);
-		UploadRequestEntry uploadRequestEntry = new UploadRequestEntry(res, requestUrl.getUploadRequest());
-		uploadRequestUrlService.createRequestEntry(actor, uploadRequestEntry);
-		return new DocumentDto(res);
+		Validate.notEmpty(uploadRequestUrlUuid);
+		Validate.notNull(fi);
+		Validate.notEmpty(fileName);
+		uploadRequestUrlService.createUploadRequestEntry(uploadRequestUrlUuid, fi, fileName);
 	}
 
 	/**
