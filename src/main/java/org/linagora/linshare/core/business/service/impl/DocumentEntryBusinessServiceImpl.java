@@ -55,6 +55,7 @@ import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.LinThumbnail.utils.ImageUtils;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.SignatureBusinessService;
+import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -63,6 +64,7 @@ import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -80,8 +82,8 @@ import org.slf4j.LoggerFactory;
 
 
 public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessService {
-	
-	
+
+
 	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryBusinessServiceImpl.class);
 
 	private final FileSystemDao fileSystemDao;
@@ -91,9 +93,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final DocumentRepository documentRepository;
 	private final AccountRepository<Account> accountRepository; 
 	private final SignatureBusinessService signatureBusinessService;
-	
+	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
+
 	public DocumentEntryBusinessServiceImpl(FileSystemDao fileSystemDao, TimeStampingService timeStampingService, DocumentEntryRepository documentEntryRepository, DocumentRepository documentRepository, 
-			AccountRepository<Account> accountRepository, SignatureBusinessService signatureBusinessService, ThreadEntryRepository threadEntryRepository) {
+			AccountRepository<Account> accountRepository, SignatureBusinessService signatureBusinessService, ThreadEntryRepository threadEntryRepository,
+			UploadRequestEntryBusinessService uploadRequestEntryBusinessService) {
 		super();
 		this.fileSystemDao = fileSystemDao;
 		this.timeStampingService = timeStampingService;
@@ -102,11 +106,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.accountRepository = accountRepository;
 		this.signatureBusinessService = signatureBusinessService;
 		this.threadEntryRepository = threadEntryRepository;
+		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 	}
 
 	@Override
 	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException {
-		
+
 		// add an entry for the file in DB
 		DocumentEntry entity = null;
 		try {
@@ -121,10 +126,10 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				docEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
 			}
 			entity = documentEntryRepository.create(docEntry);
-			
+
 			owner.getEntries().add(entity);
 			accountRepository.update(owner);
-			
+
 
 		} catch (BusinessException e) {
 			logger.error("Could not add  " + fileName + " to user " + owner.getLsUuid() + ", reason : ", e);
@@ -132,17 +137,17 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 		return entity;
 	}
-	
-	
+
+
 	@Override
 	public byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException {
 		if(timeStampingUrl == null) {
 			return null;
 		}
-		
+
 		byte[] timestampToken = null;
 		FileInputStream fis = null;
-		
+
 		try{
 			fis = new FileInputStream(tempFile);
 			TimeStampResponse resp =  timeStampingService.getTimeStamp(timeStampingUrl, fis);
@@ -168,11 +173,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				logger.error(e.toString());
 			}
 		}
-		
+
 		return timestampToken ;
 	}
-	
-	
+
+
 	@Override
 	public InputStream getDocumentThumbnailStream(DocumentEntry entry) {
 		Document doc = documentRepository.findByUuid(entry.getDocument().getUuid());
@@ -184,8 +189,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 		return null;
 	}
-	
-	
+
+
 	@Override
 	public InputStream getThreadEntryThumbnailStream(ThreadEntry entry) {
 		Document doc = documentRepository.findByUuid(entry.getDocument().getUuid());
@@ -197,8 +202,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 		return null;
 	}
-	
-	
+
+
 	@Override
 	public InputStream getDocumentStream(DocumentEntry entry) {
 		String UUID = entry.getDocument().getUuid();
@@ -216,7 +221,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return documentEntryRepository.findById(docEntryUuid);
 	}
 
-	
+
 	@Override
 	public List<DocumentEntry> findAllMyDocumentEntries(User owner) {
 		return documentEntryRepository.findAllMyDocumentEntries(owner);
@@ -230,8 +235,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		entry.setName(newName);
         documentEntryRepository.update(entry);
 	}
-	
-	
+
+
 	@Override
 	public void updateFileProperties(DocumentEntry entry, String newName, String fileComment) throws BusinessException {
 		String uuid = entry.getDocument().getUuid();
@@ -246,40 +251,40 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		entry.setComment(fileComment);
         threadEntryRepository.update(entry);
 	}
-	
+
 	@Override
 	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException {
-		
+
 		//create and insert the thumbnail into the JCR
 		String uuidThmb = generateThumbnailIntoJCR(fileName, owner.getLsUuid(), myFile);
-		
+
 		String uuid = insertIntoJCR(size, fileName, mimeType, owner.getLsUuid(), myFile);
-		
+
 		Document oldDocument = documentRepository.findByUuid(docEntry.getDocument().getUuid());
-		
+
 		// want a timestamp on doc ? if timeStamping url is null, time stamp will be null
 		byte[] timestampToken = getTimeStamp(fileName, myFile, timeStampingUrl);
-		
+
 		try {
-			
+
 			Document document = new Document(uuid, mimeType, size);
 			document.setThmbUuid(uuidThmb);
-			
+
 			document.setTimeStamp(timestampToken);
 			documentRepository.create(document);
-			
-			
+
+
 			docEntry.setName(fileName);
 			docEntry.setDocument(document);
 			docEntry.setExpirationDate(expirationDate);
-			
+
 			//aes encrypt ? check headers
 			if(checkIfIsCiphered) {
 				docEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
 			}
 			documentEntryRepository.update(docEntry);
 			deleteDocument(oldDocument);
-			
+
 			return docEntry;
 		} catch (BusinessException e) {
 			logger.error("Could not add  " + fileName + " to user " + owner.getLsUuid() + ", reason : ", e);
@@ -287,12 +292,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "couldn't register the file in the database");
 		}
 	}
-		
-	
+
+
 	@Override
 	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl, Calendar expirationDate ) throws BusinessException {
 		InputStream stream = getDocumentStream(originalEntry);
-		
+
 		DocumentUtils util = new DocumentUtils();
 		File tempFile = util.getTempFile(stream, originalEntry.getName());
 		DocumentEntry documentEntry = null;
@@ -311,12 +316,17 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return documentEntry;
 	}
 
-	
+
 	@Override
 	public void deleteDocumentEntry(DocumentEntry documentEntry) throws BusinessException {
 		if(documentEntry.isShared()) {
 			logger.error("Could not delete docEntry " + documentEntry.getName()+ " (" + documentEntry.getUuid() + " own by " + documentEntry.getEntryOwner().getLsUuid() + ", reason : it is still shared. ");
 			throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_SHARED_DOCUMENT, "Can't delete a shared document. Delete all shares first.");
+		}
+		UploadRequestEntry uploadRequestEntry = documentEntry.getUploadRequestEntry();
+		if (uploadRequestEntry != null) {
+			uploadRequestEntry.setDocumentEntry(null);
+			uploadRequestEntryBusinessService.update(uploadRequestEntry);
 		}
 		logger.debug("Deleting document entry: " + documentEntry.getUuid());
 		Account owner = documentEntry.getEntryOwner();
@@ -330,7 +340,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		deleteDocument(doc);
 	}
 
-	
 	@Override
 	public ThreadEntry createThreadEntry(Thread owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException {
 		// add an entry for the file in DB
@@ -344,10 +353,10 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				docEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
 			}
 			entity = threadEntryRepository.create(docEntry);
-			
+
 			owner.getEntries().add(entity);
 			accountRepository.update(owner);
-			
+
 
 		} catch (BusinessException e) {
 			logger.error("Could not add  " + fileName + " to user " + owner.getLsUuid() + ", reason : ", e);
@@ -355,8 +364,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 		return entity;
 	}
-	
-	
+
+
 	@Override
 	public ThreadEntry findThreadEntryById(String docEntryUuid) {
 		return threadEntryRepository.findByUuid(docEntryUuid);
@@ -372,12 +381,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names) {
 		return threadEntryRepository.findAllThreadEntriesTaggedWith(owner, names);
 	}
-	
+
 	@Override
 	public int countThreadEntries(Thread thread) {
 		return threadEntryRepository.count(thread);
 	}
-	
+
 	@Override
 	public InputStream getDocumentStream(ThreadEntry entry) {
 		String UUID = entry.getDocument().getUuid();
@@ -393,16 +402,16 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType) throws BusinessException {
 		//create and insert the thumbnail into the JCR
 		String uuidThmb = generateThumbnailIntoJCR(fileName, owner.getLsUuid(), myFile);
-			
+
 		String uuid = insertIntoJCR(size, fileName, mimeType, owner.getLsUuid(), myFile);
-			
+
 		try {
 			// want a timestamp on doc ?
 			byte[] timestampToken = null;
 			if(timeStampingUrl != null) {
 				timestampToken = getTimeStamp(fileName, myFile, timeStampingUrl);
 			}
-					
+
 			// add an document for the file in DB
 			Document document = new Document(uuid, mimeType, size);
 			document.setThmbUuid(uuidThmb);
@@ -418,13 +427,13 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 
 
-	
+
 	private void deleteDocument(Document document) throws BusinessException {
 		// delete old thumbnail in JCR
 		String oldThumbUuid = document.getThmbUuid(); 
 		if (oldThumbUuid != null && oldThumbUuid.length() > 0) {
 			logger.debug("suppresion of Thumb, Uuid : " + oldThumbUuid);
-			
+
 			try {
 				fileSystemDao.removeFileByUUID(oldThumbUuid);
 			} catch (org.springframework.dao.DataRetrievalFailureException e) {
@@ -432,7 +441,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				logger.debug(e.toString());
 			}
 		}
-		
+
 		// remove old document in JCR
 		logger.debug("suppresion of doc, Uuid : " + document.getUuid());
 		try {
@@ -441,7 +450,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			logger.error("Can not suppress document {}", document.getUuid());
 			logger.debug(e.toString());
 		}
-		
+
 		//clean all signatures ...
 		Set<Signature> signatures = document.getSignatures();
 		for (Signature signature : signatures) {
@@ -449,12 +458,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 		signatures.clear();
 		documentRepository.update(document);
-		
+
 		// remove old document from database
 		documentRepository.delete(document);
 	}
 
-	
+
 	private String generateThumbnailIntoJCR(String fileName, String path, File tempFile) {
 		FileResourceFactory fileResourceFactory = FileResourceFactory.getInstance();
 		FileResource fileResource = fileResourceFactory.getFileResource(tempFile);
@@ -474,15 +483,15 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 					fisThmb = ImageUtils.getInputStreamFromImage(bufferedImage, "png");
 					tempThumbFile = File.createTempFile("linthumbnail", fileName+"_thumb.png");
 					tempThumbFile.createNewFile();
-					
+
 					if (bufferedImage!=null)
 						ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
-				
+
 					if (logger.isDebugEnabled()) {
 						logger.debug("5.1)start insert of thumbnail in jack rabbit:" + tempThumbFile.getName());
 					}
 					String mimeTypeThb = "image/png";//getMimeType(fisThmb, file.getAbsolutePath());
-					
+
 					uuidThmb = fileSystemDao.insertFile(path, fisThmb, tempThumbFile.length(), tempThumbFile.getName(), mimeTypeThb);
 				}
 			} catch (FileNotFoundException e) {
@@ -507,7 +516,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return uuidThmb;
 	}
 
-	
+
 	private String insertIntoJCR(long size, String fileName, String mimeType, String path, File tempFile) {
 		// insert the file into JCR
 		FileInputStream fis = null;
@@ -535,8 +544,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 		return uuid;
 	}
-	
-	
+
+
 	private boolean checkIfFileIsCiphered(String fileName, File tempFile) throws BusinessException {
 		boolean testheaders = false;
 		if(fileName.endsWith(".aes")){
@@ -548,7 +557,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			} catch (GeneralSecurityException e) {
 				throw new BusinessException(BusinessErrorCode.FILE_ENCRYPTION_UNDEFINED,"undefined encryption format");
 			}
-			
+
 			if(!testheaders)
 				throw new BusinessException(BusinessErrorCode.FILE_ENCRYPTION_UNDEFINED,"undefined encryption format");
 		}
@@ -573,14 +582,14 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		documentRepository.update(doc);
 		deleteDocument(doc);
 	}
-	
+
 	@Override
 	public void deleteSetThreadEntry(Set<Entry> setThreadEntry) throws BusinessException {
-		
+
 		for (Object threadEntry : setThreadEntry.toArray()) {
 			this.deleteThreadEntry((ThreadEntry) threadEntry);
 		}
-		
+
 //		owner.getEntries().remove(setThreadEntry);
 //		accountRepository.update(owner);
 //		

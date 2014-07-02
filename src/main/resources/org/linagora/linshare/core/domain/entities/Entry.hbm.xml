@@ -22,7 +22,7 @@
 			<property name="downloaded" column="downloaded" type="long" not-null="true" lazy="false"/>
 			<many-to-one name="documentEntry" column="document_entry_id" class="org.linagora.linshare.core.domain.entities.DocumentEntry" not-null="true" lazy="no-proxy"/>
 			<many-to-one name="anonymousUrl" column="anonymous_url_id" class="org.linagora.linshare.core.domain.entities.AnonymousUrl" not-null="true" lazy="no-proxy"/>
-		
+
 		</joined-subclass>
 		<joined-subclass name="org.linagora.linshare.core.domain.entities.DocumentEntry" table="document_entry" lazy="false">
 			<key>
@@ -44,6 +44,7 @@
 			</set>
 			 -->
 			<many-to-one name="document" column="document_id" class="org.linagora.linshare.core.domain.entities.Document"  unique="true" not-null="true" lazy="no-proxy"/>
+			<one-to-one name="uploadRequestEntry" class="org.linagora.linshare.core.domain.entities.UploadRequestEntry" property-ref="documentEntry" lazy="no-proxy"/>
 		</joined-subclass>
 		<joined-subclass name="org.linagora.linshare.core.domain.entities.ShareEntry" table="share_entry" lazy="false">
 			<key>
@@ -66,6 +67,7 @@
 			<key>
 				<column name="entry_id"/>
 			</key>
+			<property name="size" column="size" type="long" not-null="true" lazy="false" />
 			<many-to-one name="documentEntry" column="document_entry_entry_id" class="org.linagora.linshare.core.domain.entities.DocumentEntry"
 				cascade="lock" unique="true" not-null="false" lazy="no-proxy">
 			</many-to-one>

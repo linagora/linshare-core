@@ -1,11 +1,10 @@
 package org.linagora.linshare.webservice.uploadrequest.impl;
 
-import java.util.Date;
-
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -15,7 +14,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
 import org.linagora.linshare.webservice.uploadrequest.UploadRequestRestService;
 import org.slf4j.Logger;
@@ -44,10 +43,10 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 		this.uploadRequestUrlFacade = uploadRequestUrlFacade;
 	}
 
-	@Path("/{uuid}")
 	@GET
+	@Path("/{uuid}")
 	@ApiOperation(value = "Find an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a technical account.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentification failed.") })
 	@Override
 	public Response find(@PathParam(value = "uuid") String uuid,
 			@HeaderParam("linshare-uploadrequest-password") String password)
@@ -60,14 +59,37 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 		return response.build();
 	}
 
-	@POST
+	@PUT
 	@Path("/")
-	@ApiOperation(value = "Find an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a technical account.") })
+	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentification failed.") })
 	@Override
 	public UploadRequestDto update(UploadRequestDto dto,
 			@HeaderParam("linshare-uploadrequest-password") String password)
 			throws BusinessException {
 		return uploadRequestUrlFacade.close(dto, password);
 	}
+
+	@DELETE
+	@Path("/{requestUrlUuid}/{entryUuid}")
+	@ApiOperation(value = "Delete an entry in an upload request.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentification failed.") })
+	public void delete(@PathParam(value = "requestUrlUuid") String requestUrlUuid,
+			@HeaderParam("linshare-uploadrequest-password") String password,
+			@PathParam(value = "entryUuid") String entryUuid)
+			throws BusinessException {
+		uploadRequestUrlFacade.deleteUploadRequestEntry(requestUrlUuid, password, entryUuid);
+	}
+
+	@DELETE
+	@Path("/{requestUrlUuid}")
+	@ApiOperation(value = "Delete an entry in an upload request.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentification failed.") })
+	@Override
+	public void delete(@PathParam(value = "requestUrlUuid") String requestUrlUuid,
+			@HeaderParam("linshare-uploadrequest-password") String password, EntryDto entry)
+			throws BusinessException {
+		uploadRequestUrlFacade.deleteUploadRequestEntry(requestUrlUuid, password, entry);
+	}
+
 }

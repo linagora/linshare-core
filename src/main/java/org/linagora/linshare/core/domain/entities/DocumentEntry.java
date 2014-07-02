@@ -44,16 +44,18 @@ public class DocumentEntry extends Entry implements Serializable {
 	private static final long serialVersionUID = -6168359253673278696L;
 
 	protected Document document;
-	
+
 	protected Boolean ciphered;
-	
+
 	protected Set<ShareEntry> shareEntries = new HashSet<ShareEntry>();
-	
+
 	protected Set<AnonymousShareEntry> anonymousShareEntries = new HashSet<AnonymousShareEntry>();
-	
+
+	protected UploadRequestEntry uploadRequestEntry;
+
 	public DocumentEntry() {
 	}
-	
+
 	@Override
 	public EntryType getEntryType() {
 		return EntryType.DOCUMENT;
@@ -64,13 +66,13 @@ public class DocumentEntry extends Entry implements Serializable {
 		this.document = document;
 		this.ciphered = false;
 	}
-	
+
 	public DocumentEntry(Account entryOwner, String name, Document document) {
 		super(entryOwner, name, "");
 		this.document = document;
 		this.ciphered = false;
 	}
-	
+
 	public Document getDocument() {
 		return document;
 	}
@@ -103,21 +105,29 @@ public class DocumentEntry extends Entry implements Serializable {
 	public void setCiphered(Boolean ciphered) {
 		this.ciphered = ciphered;
 	}
-	
+
 	public Boolean isShared() {
 		if(getAnonymousShareEntries().size() > 0 || getShareEntries().size() > 0) {
 			return true;
 		}
 		return false;
 	}
-	
+
+	public UploadRequestEntry getUploadRequestEntry() {
+		return uploadRequestEntry;
+	}
+
+	public void setUploadRequestEntry(UploadRequestEntry uploadRequestEntry) {
+		this.uploadRequestEntry = uploadRequestEntry;
+	}
+
 	/* usefull getters */
 	public long getSize() {
 		return document.getSize();
 	}
-	
+
 	public String getType() {
 		return document.getType();
 	}
-	
+
 }
