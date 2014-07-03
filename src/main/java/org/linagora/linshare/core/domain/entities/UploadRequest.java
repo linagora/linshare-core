@@ -46,11 +46,11 @@ public class UploadRequest {
 
 	private String uuid;
 
-	private int maxFileCount;
+	private Integer maxFileCount;
 
-	private long maxDepositSize;
+	private Long maxDepositSize;
 
-	private long maxFileSize;
+	private Long maxFileSize;
 
 	private UploadRequestStatus status;
 
@@ -115,27 +115,27 @@ public class UploadRequest {
 		this.uuid = uuid;
 	}
 
-	public int getMaxFileCount() {
+	public Integer getMaxFileCount() {
 		return maxFileCount;
 	}
 
-	public void setMaxFileCount(int maxFileCount) {
+	public void setMaxFileCount(Integer maxFileCount) {
 		this.maxFileCount = maxFileCount;
 	}
 
-	public long getMaxDepositSize() {
+	public Long getMaxDepositSize() {
 		return maxDepositSize;
 	}
 
-	public void setMaxDepositSize(long maxDepositSize) {
+	public void setMaxDepositSize(Long maxDepositSize) {
 		this.maxDepositSize = maxDepositSize;
 	}
 
-	public long getMaxFileSize() {
+	public Long getMaxFileSize() {
 		return maxFileSize;
 	}
 
-	public void setMaxFileSize(long maxFileSize) {
+	public void setMaxFileSize(Long maxFileSize) {
 		this.maxFileSize = maxFileSize;
 	}
 
