@@ -483,6 +483,7 @@ CREATE TABLE upload_request_entry (
   entry_id                int8 NOT NULL, 
   document_entry_entry_id int8, 
   upload_request_id       int8 NOT NULL, 
+  "size"                  int8 NOT NULL, 
   PRIMARY KEY (entry_id));
 CREATE TABLE upload_proposition_filter (
   id                  int8 NOT NULL, 

@@ -58,7 +58,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
 		criteria.add(Restrictions.eq("destroyed", false));
-		
+
 		 List<U> users = findByCriteria(criteria);
 	        if (users == null || users.isEmpty()) {
 	            return null;
@@ -79,7 +79,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		criteria.add(Restrictions.eq("destroyed", false));
 		return getHibernateTemplate().findByCriteria(criteria);
 	}
-	
+
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(U entity) {
@@ -114,13 +114,13 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 			throw new IllegalStateException("lsUid must be unique");
 		}
 	}
-	
+
 	@Override
 	public U update(U entity) throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
-	
+
 	@Override
 	public U create(U entity) throws BusinessException {
 		entity.setCreationDate(new Date());
@@ -128,19 +128,35 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		entity.setLsUuid(UUID.randomUUID().toString());
 		return super.create(entity);
 	}
-	
+
 	@Override
-	public SystemAccount getSystemAccount() {
-		DetachedCriteria det = DetachedCriteria.forClass( SystemAccount.class ).add(Restrictions.eq( "lsUuid", "system" ) );
-		
+	public SystemAccount getBatchSystemAccount() {
+		DetachedCriteria det = DetachedCriteria.forClass(SystemAccount.class)
+				.add(Restrictions.eq("lsUuid", "system"));
+
 		List<U> users = findByCriteria(det);
-        if (users == null || users.isEmpty()) {
-            return null;
-        } else if (users.size() == 1) {
-            return (SystemAccount) users.get(0);
-        } else {
-            throw new IllegalStateException("lsUuid must be unique");
-        }
+		if (users == null || users.isEmpty()) {
+			return null;
+		} else if (users.size() == 1) {
+			return (SystemAccount) users.get(0);
+		} else {
+			throw new IllegalStateException("lsUuid must be unique");
+		}
+	}
+
+	@Override
+	public SystemAccount getUploadRequestSystemAccount() {
+		DetachedCriteria det = DetachedCriteria.forClass(SystemAccount.class)
+				.add(Restrictions.eq("lsUuid", "system-account-uploadrequest"));
+
+		List<U> users = findByCriteria(det);
+		if (users == null || users.isEmpty()) {
+			return null;
+		} else if (users.size() == 1) {
+			return (SystemAccount) users.get(0);
+		} else {
+			throw new IllegalStateException("lsUuid must be unique");
+		}
 	}
 
 	@Override

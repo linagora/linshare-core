@@ -45,15 +45,19 @@ public class UploadRequestEntry extends Entry implements Serializable {
 
 	private UploadRequest uploadRequest;
 
+	private long size;
+
 	public UploadRequestEntry() {
 		super();
 	}
 
 	public UploadRequestEntry(DocumentEntry documentEntry,
 			UploadRequest uploadRequest) {
-		super(documentEntry.getEntryOwner(),documentEntry.getName(), documentEntry.getComment());
+		super(documentEntry.getEntryOwner(), documentEntry.getName(),
+				documentEntry.getComment());
 		this.documentEntry = documentEntry;
 		this.uploadRequest = uploadRequest;
+		this.size = documentEntry.getSize();
 	}
 
 	public DocumentEntry getDocumentEntry() {
@@ -80,4 +84,13 @@ public class UploadRequestEntry extends Entry implements Serializable {
 	public EntryType getEntryType() {
 		return EntryType.UPLOAD_REQUEST;
 	}
+
+	public long getSize() {
+		return size;
+	}
+
+	public void setSize(long size) {
+		this.size = size;
+	}
+
 }

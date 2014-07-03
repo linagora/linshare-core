@@ -36,16 +36,22 @@ package org.linagora.linshare.core.facade.webservice.uploadrequest;
 import java.io.InputStream;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
-
 
 public interface UploadRequestUrlFacade {
 
-	UploadRequestDto find(String uploadRequestUrlUuid) throws BusinessException;
-
-	UploadRequestDto close(UploadRequestDto req)
+	UploadRequestDto find(String uploadRequestUrlUuid, String password)
 			throws BusinessException;
 
-	void addUploadRequestEntry(String uploadRequestUrlUuid, InputStream fi, String fileName) throws BusinessException;
-}
+	UploadRequestDto close(UploadRequestDto req, String password)
+			throws BusinessException;
 
+	void addUploadRequestEntry(String uploadRequestUrlUuid, String password, InputStream fi, String fileName) throws BusinessException;
+
+	void deleteUploadRequestEntry(String uploadRequestUrlUuid, String password,
+			EntryDto entry) throws BusinessException;
+
+	void deleteUploadRequestEntry(String uploadRequestUrlUuid, String password,
+			String entryUuid) throws BusinessException;
+}

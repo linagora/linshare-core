@@ -47,7 +47,9 @@ public interface AccountRepository<U extends Account> extends
 
 	List<U> findByDomain(String domain);
 
-	SystemAccount getSystemAccount();
+	SystemAccount getBatchSystemAccount();
+
+	SystemAccount getUploadRequestSystemAccount();
 
 	List<U> findAllDestroyedAccounts();
 
