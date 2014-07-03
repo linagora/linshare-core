@@ -77,6 +77,7 @@ public class UploadRequestContent {
 	private BusinessMessagesManagementService businessMessagesManagementService;
 
 	public Object onActivate(String uuid) {
+		logger.debug("Upload Request uuid: " + uuid);
 		try {
 			this.selected = uploadRequestFacade.findRequestByUuid(userVo, uuid);
 		} catch (BusinessException e) {

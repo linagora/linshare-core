@@ -97,7 +97,7 @@ public class Index {
 	private FunctionalityFacade functionalityFacade;
 
 	@Inject
-	private UploadRequestFacade uploadRequestEntryFacade;
+	private UploadRequestFacade uploadRequestFacade;
 
 	public Object onActivate() {
 		if (!functionalityFacade
