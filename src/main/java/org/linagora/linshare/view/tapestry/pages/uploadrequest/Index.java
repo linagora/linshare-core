@@ -39,16 +39,20 @@ import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Iterables;
 
 public class Index {
 
@@ -68,24 +72,24 @@ public class Index {
 
 	@Persist
 	@Property
-	private List<UploadRequestVo> uploadRequests;
+	private List<UploadRequestVo> requests;
 
 	@Persist
 	@Property
 	private String pattern;
 
-    @Property
-    private UploadRequestVo current;
- 
-    @Property
-    private boolean latest;
+	@Property
+	private UploadRequestVo current;
+
+	@Property
+	private boolean latest;
 
 	/*
 	 * Injected beans
 	 */
 
-    @InjectPage
-    private UploadRequestContent uploadRequestContent;
+	@InjectPage
+	private UploadRequestContent uploadRequestContent;
 
 	@Inject
 	private PersistentLocale persistentLocale;
@@ -100,11 +104,24 @@ public class Index {
 	private UploadRequestFacade uploadRequestFacade;
 
 	public Object onActivate() {
-		if (!functionalityFacade
-				.isEnableUploadRequest(userVo.getDomainIdentifier()))
+		if (!functionalityFacade.isEnableUploadRequest(userVo
+				.getDomainIdentifier()))
 			return org.linagora.linshare.view.tapestry.pages.Index.class;
 		return null;
 	}
+
+	@SetupRender
+	public void init() throws BusinessException {
+		logger.debug("Setup Render begins");
+
+		requests = uploadRequestFacade.findAll(userVo);
+	}
+
+    public Object onActionFromShowContent(String uuid) {
+		uploadRequestContent.setMySelected(Iterables.find(requests,
+				UploadRequestVo.equalTo(uuid)));
+		return uploadRequestContent;
+    }
 
 	/*
 	 * Exception Handling

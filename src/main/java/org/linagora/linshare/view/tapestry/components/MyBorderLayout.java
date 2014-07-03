@@ -270,6 +270,7 @@ public class MyBorderLayout {
 		MenuEntry fileMenu;
 		MenuEntry userMenu;
 		MenuEntry threadMenu;
+		MenuEntry requestMenu;
 		MenuEntry adminMenu;
 		MenuEntry auditMenu;
 		MenuEntry helpMenu;
@@ -285,6 +286,9 @@ public class MyBorderLayout {
 
 		// Menu : Thread
 		threadMenu = new MenuEntry(response.encodeURL("thread/index"),messages.get("components.myborderlayout.thread.title"),null,null,"thread");
+
+		// Menu : Upload Request
+		requestMenu = new MenuEntry(response.encodeURL("uploadrequest/index"),messages.get("components.myborderlayout.uploadrequest.title"),null,null,"uploadrequest");
 
 		// Menu : Administration
 		adminMenu = new MenuEntry(response.encodeURL("administration/index"),messages.get("components.myborderlayout.administration.title"),null,null,"administration");
@@ -323,6 +327,8 @@ public class MyBorderLayout {
 				menu.addMenuEntry(homeMenu);
 				if (showThreadTab())
 					menu.addMenuEntry(threadMenu);
+				if (showRequestTab())
+					menu.addMenuEntry(requestMenu);
 				if (showHelpTab())
 					menu.addMenuEntry(helpMenu);
 			} else if (userVo.getRole().equals(Role.DELEGATION)) {
@@ -343,6 +349,8 @@ public class MyBorderLayout {
 						menu.addMenuEntry(listMenu);
 					if (showThreadTab()) 
 						menu.addMenuEntry(threadMenu);
+					if (showRequestTab())
+						menu.addMenuEntry(requestMenu);
 					if (admin)
 						menu.addMenuEntry(adminMenu);
 					if (showAuditTab())
@@ -361,6 +369,12 @@ public class MyBorderLayout {
 		return false;
 	}
 
+	boolean showRequestTab() {
+		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
+			return functionalityFacade.isEnableUploadRequest(userVo.getDomainIdentifier());
+		}
+		return false;
+	}
 
 	boolean showUserTab() {
 		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
@@ -371,7 +385,6 @@ public class MyBorderLayout {
 		}
 		return false;
 	}
-
 
 	boolean showAuditTab() {
 		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {

@@ -52,10 +52,10 @@ import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementSe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UploadRequestContent {
+public class Edit {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(UploadRequestContent.class);
+			.getLogger(Edit.class);
 
 	@SessionState
 	@Property
@@ -119,13 +119,10 @@ public class UploadRequestContent {
 		return selected.getUuid();
 	}
 
-    public void onActionFromClose() throws BusinessException {
-		selected = uploadRequestFacade.closeRequest(userVo, selected);
-    }
-
-    public void onActionFromDelete() throws BusinessException {
-		selected = uploadRequestFacade.archiveRequest(userVo, selected);
-    }
+	public Object onSuccess() throws BusinessException {
+		uploadRequestFacade.updateRequest(userVo, selected);
+		return Index.class;
+	}
 
 	public void setMySelected(UploadRequestVo selected) {
 		this.selected = selected;
