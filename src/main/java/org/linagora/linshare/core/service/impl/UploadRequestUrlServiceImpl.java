@@ -121,17 +121,22 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 			}
 		}
 		if (found != null) {
-			DocumentEntry documentEntry = found.getDocumentEntry();
 			Account actor = accountRepository.getUploadRequestSystemAccount();
-			uploadRequestService.deleteRequestEntry(actor, found);
-
-			if (documentEntry != null) {
+			String documentEntryUuid = null;
+			if (found.getDocumentEntry() != null) {
+				documentEntryUuid = found.getDocumentEntry().getUuid();
+			}
+			found.setDocumentEntry(null);
+			uploadRequestService.updateRequestEntry(actor, found);
+			if (documentEntryUuid != null) {
 				// TODO: HOOK : Extract owner for upload request URL
 				// Actor should be used instead of owner
 				Account owner = requestUrl.getUploadRequest().getOwner();
 				// Store the file into the owner account.
+				DocumentEntry documentEntry = documentEntryService.findById(owner, documentEntryUuid);
 				documentEntryService.deleteDocumentEntry(owner, documentEntry);
 			}
+			uploadRequestService.deleteRequestEntry(actor, found);
 		} else {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"You do not have the right to delete a file into upload request : "
