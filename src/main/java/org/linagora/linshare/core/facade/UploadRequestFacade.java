@@ -33,11 +33,14 @@
  */
 package org.linagora.linshare.core.facade;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestFacade {
+	List<UploadRequestVo> findAll(UserVo actorVo) throws BusinessException;
 
 	UploadRequestVo findRequestByUuid(UserVo actorVo, String uuid) throws BusinessException;
 
@@ -48,6 +51,12 @@ public interface UploadRequestFacade {
 			throws BusinessException;
 
 	void deleteRequest(UserVo actorVo, UploadRequestVo req)
+			throws BusinessException;
+
+	UploadRequestVo closeRequest(UserVo actorVo, UploadRequestVo req)
+			throws BusinessException;
+
+	UploadRequestVo archiveRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException;
 
 }

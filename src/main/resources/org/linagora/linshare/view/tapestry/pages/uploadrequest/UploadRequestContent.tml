@@ -1,33 +1,42 @@
-<t:MyBorderLayout t:title="message:pages.thread.index.title" t:identifier="thread" t:currentHighlight="thread"
-        xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
-        xmlns:p="tapestry:parameter">
-    
-    <!-- Main content -->
+<t:MyBorderLayout t:title="message:pages.uploadrequest.index.title" t:identifier="uploadrequest" t:currentHighlight="uploadrequest"
+		  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+		  xmlns:p="tapestry:parameter">
+  
+  <!-- Main content -->
+  <div id="content">
+    <h1 title="Content (TODO)"><span class="truncate">Content (TODO)</span></h1>
 
-    <div id="content">
-        <h1 title="FOOBAR"><span class="truncate">FOOBAR</span></h1>
+    <t:messagePanel />
+    <t:businessMessagesDisplayer />
 
-        <t:messagePanel />
-        <t:businessMessagesDisplayer />
+    <!-- Action bar -->
+    <div id="actionBar">
+      <h4>Actions</h4>
+      <ul>
+        <li>
+          <t:actionLink t:id="close" class="button" title="${message:pages.uploadrequest.close.button}">
+            <span><img src="${asset:context:images/icons/icon-refresh.png}" alt="" /> ${message:pages.uploadrequest.close.button}</span>
+          </t:actionLink>
+        </li>
+        <li>
+          <t:actionLink t:id="delete" class="button" title="${message:pages.uploadrequest.delete.button}">
+            <span><img src="${asset:context:images/icons/delete-small.png}" alt="" /> ${message:pages.uploadrequest.delete.button}</span>
+          </t:actionLink>
+        </li>
+        <t:pageLink id="edit" class="button" page="uploadrequest/edit" context="selected.uuid">
+          <span><img src="${asset:context:images/icons/edit-button.png}" alt=""/> ${message:pages.uploadrequest.edit.button}</span>
+        </t:pageLink>
+      </ul>
+    </div><!-- id="actionBar" -->
 
-        <!-- Action bar -->
+    <!-- Page content -->
+    <div id="pageContent">
+      <t:beandisplay object="selected"/>
+    </div>
+  </div><!-- id="content" -->
 
-        <div id="actionBar">
-            <h4>Actions</h4>
-            <ul>
-	    </ul>
-        </div><!-- id="actionBar" -->
+  <!-- Popups -->
 
-        <!-- Page content -->
-
-        <div id="pageContent">
-	  ${selected.uuid}
-	  ${selected.status}
-        </div>
-    </div><!-- id="content" -->
-
-    <!-- Popups -->
-
-    <!-- Widgets -->
+  <!-- Widgets -->
 
 </t:MyBorderLayout>

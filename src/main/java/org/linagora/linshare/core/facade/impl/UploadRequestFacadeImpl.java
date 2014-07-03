@@ -33,6 +33,10 @@
  */
 package org.linagora.linshare.core.facade.impl;
 
+import java.util.List;
+
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -40,6 +44,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UserService;
+
+import com.google.common.collect.Lists;
 
 public class UploadRequestFacadeImpl implements UploadRequestFacade {
 
@@ -50,6 +56,18 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 			final UploadRequestService uploadRequestService) {
 		this.userService = userService;
 		this.uploadRequestService = uploadRequestService;
+	}
+
+	@Override
+	public List<UploadRequestVo> findAll(UserVo actorVo)
+			throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+		List<UploadRequestVo> ret = Lists.newArrayList();
+
+		for (UploadRequest req : uploadRequestService.findAllRequest(actor)) {
+			ret.add(new UploadRequestVo(req));
+		}
+		return ret;
 	}
 
 	@Override
@@ -74,9 +92,14 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	public UploadRequestVo updateRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		// TODO
-		return new UploadRequestVo(uploadRequestService.updateRequest(actor,
-				req.toEntity()));
+		UploadRequest e = uploadRequestService.findRequestByUuid(actor,
+				req.getUuid());
+
+		// TODO activationDate / expiryDate / locale
+		e.setMaxFileCount(req.getMaxFileCount());
+		e.setMaxFileSize(req.getMaxFileSize());
+		e.setMaxDepositSize(req.getMaxDepositSize());
+		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
 	}
 
 	@Override
@@ -86,4 +109,27 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		// TODO
 		uploadRequestService.deleteRequest(actor, req.toEntity());
 	}
+
+	@Override
+	public UploadRequestVo closeRequest(UserVo actorVo, UploadRequestVo req)
+			throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+		UploadRequest e = uploadRequestService.findRequestByUuid(actor,
+				req.getUuid());
+
+		e.setStatus(UploadRequestStatus.STATUS_CLOSED);
+		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
+	}
+
+	@Override
+	public UploadRequestVo archiveRequest(UserVo actorVo, UploadRequestVo req)
+			throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+
+		UploadRequest e = uploadRequestService.findRequestByUuid(actor,
+				req.getUuid());
+		e.setStatus(UploadRequestStatus.STATUS_ARCHIVED);
+		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
+	}
+
 }

@@ -37,13 +37,19 @@ import java.util.Date;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 public class UploadRequestVo {
 
-	private UploadRequestGroup uploadRequestGroup;
-
 	private String uuid;
+
+	private String subject;
+
+	private String body;
+
+	private int size;
 
 	private int maxFileCount;
 
@@ -81,6 +87,9 @@ public class UploadRequestVo {
 
 	public UploadRequestVo(UploadRequest req) {
 		uuid = req.getUuid();
+		subject = req.getUploadRequestGroup().getSubject();
+		body = req.getUploadRequestGroup().getBody();
+		size = req.getUploadRequestEntries().size();
 		maxFileCount = req.getMaxFileCount();
 		maxDepositSize = req.getMaxDepositSize();
 		maxFileSize = req.getMaxFileSize();
@@ -98,21 +107,36 @@ public class UploadRequestVo {
 		owner = new UserVo(req.getOwner());
 	}
 
-	public UploadRequestGroup getUploadRequestGroup() {
-		return uploadRequestGroup;
-	}
-
-	public void setUploadRequestGroup(
-			UploadRequestGroup uploadRequestGroup) {
-		this.uploadRequestGroup = uploadRequestGroup;
-	}
-
 	public String getUuid() {
 		return uuid;
 	}
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	public String getBody() {
+		return body;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
 	}
 
 	public int getMaxFileCount() {
@@ -235,14 +259,13 @@ public class UploadRequestVo {
 		this.owner = owner;
 	}
 
-	/**
+	/*
 	 * Transformer
-	 * @return
 	 */
 	public UploadRequest toEntity() {
 		UploadRequest ret = new UploadRequest();
 
-		ret.setUploadRequestGroup(uploadRequestGroup); // FIXME
+		// ret.setUploadRequestGroup(uploadRequestGroup); // FIXME TODO
 		ret.setMaxFileCount(maxFileCount);
 		ret.setMaxDepositSize(maxDepositSize);
 		ret.setMaxFileSize(maxFileSize);
@@ -258,5 +281,40 @@ public class UploadRequestVo {
 		ret.setLocale(locale);
 		ret.setSecured(secured);
 		return ret;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof UploadRequestVo))
+			return false;
+		UploadRequestVo other = (UploadRequestVo) obj;
+		if (uuid == null) {
+			if (other.uuid != null)
+				return false;
+		} else if (!uuid.equals(other.uuid))
+			return false;
+		return true;
+	}
+
+	/*
+	 * Filters
+	 */
+	public static Predicate<? super UploadRequestVo> equalTo(String uuid) {
+		UploadRequestVo test = new UploadRequestVo();
+
+		test.setUuid(uuid);
+		return Predicates.equalTo(test);
 	}
 }

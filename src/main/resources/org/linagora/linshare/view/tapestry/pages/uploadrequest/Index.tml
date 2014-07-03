@@ -1,0 +1,28 @@
+<t:MyBorderLayout t:title="message:pages.uploadrequest.index.title" t:identifier="uploadrequest" t:currentHighlight="uploadrequest"
+		  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+		  xmlns:p="tapestry:parameter">
+  
+  <!-- Main content -->
+  <div id="content">
+    <h1 title="Index (TODO)"><span class="truncate">Index (TODO)</span></h1>
+
+    <t:messagePanel />
+    <t:businessMessagesDisplayer />
+    
+    <div id="pageContent">
+      <t:grid source="requests" row="current" include="subject, size, activationDate, expiryDate, status" rowsPerPage="10">
+        <p:subjectCell>
+	  <span class="truncate">
+            <t:actionlink t:id="showContent" context="current.uuid" title="${current.subject}">
+	      ${current.subject}
+	    </t:actionlink>
+	  </span>
+        </p:subjectCell>
+        <p:empty>
+          ${message:pages.thread.empty}
+        </p:empty>
+      </t:grid>
+    </div>
+
+  </div><!-- id="content" -->
+</t:MyBorderLayout>
