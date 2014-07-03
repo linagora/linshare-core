@@ -52,4 +52,5 @@ public interface UploadRequestRestService {
 
 	void delete(String uuid, String password, EntryDto entry)
 			throws BusinessException;
+
 }

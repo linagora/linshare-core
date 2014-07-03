@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadPropositionActionType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadPropositionActionType</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
 	<class name="org.linagora.linshare.core.domain.entities.UploadPropositionAction" table="upload_proposition_action" lazy="false">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>
 		</id>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
-		<property name="actionType" column="action_type" type="integer" not-null="true" lazy="false"/>
+		<property name="actionType" column="action_type" type="uploadPropositionActionType" not-null="true" lazy="false"/>
 		<property name="data" column="data" type="text" not-null="false" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp"
 			length="6" not-null="true" lazy="false" />

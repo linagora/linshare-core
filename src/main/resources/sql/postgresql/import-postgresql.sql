@@ -435,6 +435,13 @@ INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date,
 -- system account for upload-request:
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (3, 7, 'system-account-uploadrequest', now(),now(), 3, 'en', 'en', true, false, 1);
 
+
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id)
+	VALUES (4, 4, '89877610-574a-4e79-aeef-5606b96bde35', now(),now(), 5, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+INSERT INTO users(account_id, first_name, last_name, mail, can_upload, comment, restricted, can_create_guest)
+	VALUES (4, null, 'Technical Account for upload proposition', 'bart.simpson@int1.linshare.dev', false, '', false, false);
+
+
 -- unit type : TIME(0), SIZE(1)
 -- unit value : FileSizeUnit : KILO(0), MEGA(1), GIGA(2)
 -- unit value : TimeUnit : DAY(0), WEEK(1), MONTH(2)

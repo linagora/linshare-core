@@ -35,19 +35,21 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 
+import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
+
 public class UploadPropositionAction {
 
-	private long id;
+	protected long id;
 
-	private String uuid;
+	protected String uuid;
 
-	private int actionType;
+	protected UploadPropositionActionType actionType;
 
-	private String data;
+	protected String data;
 
-	private Date creationDate;
+	protected Date creationDate;
 
-	private Date modificationDate;
+	protected Date modificationDate;
 
 	public UploadPropositionAction() {
 	}
@@ -68,11 +70,11 @@ public class UploadPropositionAction {
 		this.uuid = uuid;
 	}
 
-	public int getActionType() {
+	public UploadPropositionActionType getActionType() {
 		return actionType;
 	}
 
-	public void setActionType(int actionType) {
+	public void setActionType(UploadPropositionActionType actionType) {
 		this.actionType = actionType;
 	}
 

@@ -35,6 +35,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 
+import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 
 public class UploadRequestHistory {
@@ -43,9 +44,9 @@ public class UploadRequestHistory {
 
 	private UploadRequestStatus status;
 
-	private boolean statusUpated;
+	private boolean statusUpdated;
 
-	private int eventType;
+	private UploadRequestHistoryEventType eventType;
 
 	private String uuid;
 
@@ -83,6 +84,32 @@ public class UploadRequestHistory {
 		super();
 	}
 
+	public UploadRequestHistory(UploadRequest update, UploadRequestHistoryEventType eventType) {
+		this(update, eventType, false);
+	}
+
+	public UploadRequestHistory(UploadRequest update, UploadRequestHistoryEventType eventType, boolean statusUpdated) {
+
+		super();
+		this.statusUpdated = statusUpdated;
+		this.eventType = eventType;
+		this.status = update.getStatus();
+		this.activationDate = update.getActivationDate();
+		this.expiryDate = update.getExpiryDate();
+		this.notificationDate = update.getNotificationDate();
+		this.maxDepositSize = update.getMaxDepositSize();
+		this.maxFileCount = update.getMaxFileCount();
+		this.maxFileSize = update.getMaxFileSize();
+		this.uploadPropositionRequestUuid = update.getUploadPropositionRequestUuid();
+		this.canDelete = update.isCanDelete();
+		this.canClose = update.isCanClose();
+		this.canEditExpiryDate = update.isCanEditExpiryDate();
+		this.locale = update.getLocale();
+		this.secured = update.isSecured();
+		this.mailMessageID = update.getMailMessageId();
+	}
+
+
 	public long getId() {
 		return id;
 	}
@@ -99,19 +126,19 @@ public class UploadRequestHistory {
 		this.status = status;
 	}
 
-	public boolean isStatusUpated() {
-		return statusUpated;
+	public boolean isStatusUpdated() {
+		return statusUpdated;
 	}
 
-	public void setStatusUpated(boolean statusUpated) {
-		this.statusUpated = statusUpated;
+	public void setStatusUpdated(boolean statusUpdated) {
+		this.statusUpdated = statusUpdated;
 	}
 
-	public int getEventType() {
+	public UploadRequestHistoryEventType getEventType() {
 		return eventType;
 	}
 
-	public void setEventType(int eventType) {
+	public void setEventType(UploadRequestHistoryEventType eventType) {
 		this.eventType = eventType;
 	}
 

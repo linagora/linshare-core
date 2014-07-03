@@ -72,7 +72,7 @@ public interface UploadRequestService {
 
 	UploadRequestHistory findRequestHistoryByUuid(User actor, String uuid);
 
-	UploadRequestHistory createRequestHistory(User actor,
+	UploadRequestHistory createRequestHistory(Account actor,
 			UploadRequestHistory history) throws BusinessException;
 
 	UploadRequestHistory updateRequestHistory(User actor,

@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadPropositionRuleOperatorType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadPropositionRuleOperatorType</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
 	<class name="org.linagora.linshare.core.domain.entities.UploadPropositionRule" table="upload_proposition_rule" lazy="false">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>
 		</id>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
-		<property name="operator" column="operator" type="integer" not-null="true" lazy="false"/>
-		<property name="field" column="field" type="integer" not-null="true" lazy="false"/>
+		<property access="field"  name="operator" column="operator" type="uploadPropositionRuleOperatorType" length="255" not-null="true" lazy="false" />
+		<property access="field"  name="field" column="field" type="uploadPropositionRuleOperatorType" length="255" not-null="true" lazy="false" />
 		<property name="value" column="value" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp"
 			length="6" not-null="true" lazy="false" />

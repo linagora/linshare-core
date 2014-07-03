@@ -73,6 +73,8 @@ public class RoleProvider {
 			}
 		} else if (account.hasDelegationRole()) {
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_DELEGATION));
+		} else if (account.hasUploadPropositionRole()) {
+			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD_PROPOSTION));
 		}
 		return grantedAuthorities;
 	}

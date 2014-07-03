@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
+	<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadRequestHistoryEventType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
 	<class
 		name="org.linagora.linshare.core.domain.entities.UploadRequestHistory"
 		table="upload_request_history" lazy="false">
@@ -10,9 +15,9 @@
 		</id>
 		<property access="field" name="status" column="status"
 			not-null="true" lazy="false" type="uploadRequestStatus" />
-		<property name="statusUpated" column="status_upated" type="boolean"
+		<property name="statusUpdated" column="status_updated" type="boolean"
 			not-null="true" lazy="false" />
-		<property name="eventType" column="event_type" type="integer"
+		<property name="eventType" column="event_type" type="uploadRequestHistoryEventType"
 			not-null="true" lazy="false" />
 		<property name="uuid" column="uuid" type="string" length="255"
 			not-null="true" lazy="false" />

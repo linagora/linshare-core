@@ -31,35 +31,26 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.uploadproposition.impl;
 
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.uploadproposition.UploadPropositionGenericFacade;
-import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
-import org.linagora.linshare.core.service.AccountService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package org.linagora.linshare.core.domain.constants;
 
-public class UploadPropositionGenericFacadeImpl extends GenericFacadeImpl implements UploadPropositionGenericFacade {
+import org.apache.commons.lang.StringUtils;
+import org.linagora.linshare.core.exception.TechnicalErrorCode;
+import org.linagora.linshare.core.exception.TechnicalException;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(UploadPropositionGenericFacadeImpl.class);
+public enum UploadRequestHistoryEventType {
+	EVENT_CREATED,
+	EVENT_CANCELED,
+	EVENT_ENABLED,
+	EVENT_CLOSED,
+	EVENT_ARCHIVED,
+	EVENT_DELETED;
 
-	public UploadPropositionGenericFacadeImpl(AccountService accountService) {
-		super(accountService);
-	}
-
-	@Override
-	public User checkAuthentication() throws BusinessException {
-		User actor = super.checkAuthentication();
-		if (!actor.hasUploadPropositionRole()) {
-			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountReprentation());
-			throw new BusinessException(
-					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
-					"You are not authorized to use this service");
+	public static UploadRequestHistoryEventType fromString(String s) {
+		try {
+			return UploadRequestHistoryEventType.valueOf(s.toUpperCase());
+		} catch (RuntimeException e) {
+			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_UPLOAD_REQUEST_EVENT_TYPE, StringUtils.isEmpty(s) ? "null or empty" : s);
 		}
-		return actor;
 	}
 }

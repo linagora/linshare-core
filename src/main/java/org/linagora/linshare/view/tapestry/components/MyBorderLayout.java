@@ -333,6 +333,8 @@ public class MyBorderLayout {
 					menu.addMenuEntry(helpMenu);
 			} else if (userVo.getRole().equals(Role.DELEGATION)) {
 				menu.addMenuEntry(homeMenu);
+			} else if (userVo.getRole().equals(Role.UPLOAD_PROPOSITION)) {
+				menu.addMenuEntry(homeMenu);
 			} else {
 				// users : Accueil / Fichiers / List / Threads / Users / History / help
 				// admin : Accueil / Fichiers / List / Threads / Users/ Admin /History / help

@@ -15,16 +15,17 @@
 
 
 	<!-- REST  -->
-	<bean id="uploadPropositionAuthenticationRestService" class="org.linagora.linshare.webservice.uploadproposition.impl.AuthenticationRestServiceImpl">
-		<constructor-arg ref="wsUploadPropositionGenericFacade" />
-	</bean>
-
 	<jaxrs:server id="restUploadPropositionContainer" address="/rest/uploadproposition">
 		<jaxrs:serviceBeans>
-			<ref bean="uploadPropositionAuthenticationRestService" />
+			<bean class="org.linagora.linshare.webservice.uploadproposition.impl.AuthenticationRestServiceImpl">
+				<constructor-arg ref="wsUploadPropositionGenericFacade" />
+			</bean>
+			<bean class="org.linagora.linshare.webservice.uploadproposition.impl.UploadPropositionRestServiceImpl">
+				<constructor-arg ref="wsUploadPropositionUploadPropositionFacade" />
+			</bean>
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
-			<entry key="json" value="text/plain" />
+			<entry key="json" value="application/json" />
 			<entry key="xml" value="application/xml" />
 		</jaxrs:extensionMappings>
 		<jaxrs:providers>
@@ -37,17 +38,17 @@
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 		<jaxrs:features>
-<!-- 			<cxf:logging /> -->
+			<cxf:logging />
 		</jaxrs:features>
 		<jaxrs:inInterceptors>
 			<!-- For debug only : print input message -->
-<!-- 			<ref bean="logInbound" /> -->
+			<ref bean="logInbound" />
 			<!-- This interceptor is designed to store some context properties in message exchange context for timingOutInterceptor -->
 			<ref bean="timingInInterceptor" />
 		</jaxrs:inInterceptors>
 		<jaxrs:outInterceptors>
 			<!-- For debug only : print output  message -->
-<!--             	<ref bean="logOutbound" /> -->
+            	<ref bean="logOutbound" />
 			<!-- This interceptor is designed compute request execution time.-->
 			<ref bean="timingOutInterceptor" />
 		</jaxrs:outInterceptors>
