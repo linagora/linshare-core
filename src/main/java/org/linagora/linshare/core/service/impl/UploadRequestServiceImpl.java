@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
+
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
@@ -81,8 +83,20 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequest findRequestByUuid(User actor, String uuid) {
-		return uploadRequestBusinessService.findByUuid(uuid);
+	public List<UploadRequest> findAllRequest(User actor) {
+		return uploadRequestBusinessService.findAll(actor);
+	}
+
+	@Override
+	public UploadRequest findRequestByUuid(User actor, String uuid) throws BusinessException {
+		UploadRequest ret = uploadRequestBusinessService.findByUuid(uuid);
+
+		if (ret == null) {
+			throw new BusinessException(
+					BusinessErrorCode.UPLOAD_REQUEST_NOT_FOUND,
+					"Upload request not found. Uuid: " + uuid);
+		}
+		return ret;
 	}
 
 	@Override

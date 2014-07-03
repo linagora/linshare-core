@@ -1,0 +1,33 @@
+<t:MyBorderLayout t:title="message:pages.thread.index.title" t:identifier="thread" t:currentHighlight="thread"
+        xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+        xmlns:p="tapestry:parameter">
+    
+    <!-- Main content -->
+
+    <div id="content">
+        <h1 title="FOOBAR"><span class="truncate">FOOBAR</span></h1>
+
+        <t:messagePanel />
+        <t:businessMessagesDisplayer />
+
+        <!-- Action bar -->
+
+        <div id="actionBar">
+            <h4>Actions</h4>
+            <ul>
+	    </ul>
+        </div><!-- id="actionBar" -->
+
+        <!-- Page content -->
+
+        <div id="pageContent">
+	  ${selected.uuid}
+	  ${selected.status}
+        </div>
+    </div><!-- id="content" -->
+
+    <!-- Popups -->
+
+    <!-- Widgets -->
+
+</t:MyBorderLayout>

@@ -34,12 +34,14 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestRepository;
 import org.springframework.dao.support.DataAccessUtils;
@@ -64,6 +66,11 @@ public class UploadRequestRepositoryImpl extends
 	public UploadRequest findByUuid(String uuid) {
 		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
 				"uuid", uuid)));
+	}
+
+	@Override
+	public List<UploadRequest> findByOwner(User owner) {
+		return findByCriteria(Restrictions.eq("owner", owner));
 	}
 
 	@Override

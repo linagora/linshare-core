@@ -33,7 +33,10 @@
  */
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.User;
 
 public interface UploadRequestRepository extends
 		AbstractRepository<UploadRequest> {
@@ -42,7 +45,15 @@ public interface UploadRequestRepository extends
 	 * Find a uploadRequestEntry using its uuid.
 	 * 
 	 * @param uuid
-	 * @return found uploadRequestEntry (null if no uploadRequestEntry found).
+	 * @return found uploadRequest (null if no uploadRequestEntry found).
 	 */
 	public UploadRequest findByUuid(String uuid);
+
+	/**
+	 * Find a uploadRequestEntry using its owner.
+	 * 
+	 * @param uuid
+	 * @return found uploadRequest (null if no uploadRequestEntry found).
+	 */
+	public List<UploadRequest> findByOwner(User owner);
 }

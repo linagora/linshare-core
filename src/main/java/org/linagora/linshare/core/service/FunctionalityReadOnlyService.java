@@ -84,6 +84,7 @@ public interface FunctionalityReadOnlyService {
 	Functionality getHelpTabFunctionality(AbstractDomain domain);
 	Functionality getListTabFunctionality(AbstractDomain domain);
 
+	Functionality getUploadRequestFunctionality(AbstractDomain domain);
 	Functionality getUploadRequestGroupedFunctionality(AbstractDomain domain);
 	
 	
