@@ -22,17 +22,12 @@
 
         <div id="pageContent">
 	  ${selected.uuid}
+	  ${selected.status}
         </div>
     </div><!-- id="content" -->
 
     <!-- Popups -->
 
     <!-- Widgets -->
-
-    <!-- Members widget -->
-    <t:parameter name="membersWidget">
-        <t:widget widgetId="membersWidget" title="${message:components.widget.membersWidget.title}">
-        </t:widget>
-    </t:parameter>
 
 </t:MyBorderLayout>
