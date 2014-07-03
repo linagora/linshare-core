@@ -31,85 +31,104 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
 
-import java.util.Date;
+package org.linagora.linshare.core.facade.webservice.uploadproposition.dto;
 
-import org.linagora.linshare.core.domain.constants.UploadPropositionRuleFieldType;
-import org.linagora.linshare.core.domain.constants.UploadPropositionRuleOperatorType;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-public class UploadPropositionRule {
+public class UploadPropositionDto {
 
-	protected long id;
+	@ApiModelProperty(value = "FirstName")
+	private String firstName;
 
-	protected String uuid;
+	@ApiModelProperty(value = "LastName")
+	private String lastName;
 
-	protected UploadPropositionRuleOperatorType operator;
+	@ApiModelProperty(value = "Mail")
+	private String mail;
+	
+	@ApiModelProperty(value = "Subject")
+	private String subject;
+	
+	@ApiModelProperty(value = "Body")
+	private String body;
+	
+	@ApiModelProperty(value = "recipientMail")
+	private String recipientMail;
 
-	protected UploadPropositionRuleFieldType field;
+	@ApiModelProperty(value = "recipientDomain")
+	private String recipientDomain;
 
-	protected String value;
-
-	protected Date creationDate;
-
-	protected Date modificationDate;
-
-	public UploadPropositionRule() {
+	public UploadPropositionDto() {
+		super();
 	}
 
-	public long getId() {
-		return id;
+	public UploadPropositionDto(String firstName, String lastName, String mail,
+			String subject, String body, String recipientMail,
+			String recipientDomain) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.mail = mail;
+		this.subject = subject;
+		this.body = body;
+		this.recipientMail = recipientMail;
+		this.recipientDomain = recipientDomain;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public String getUuid() {
-		return uuid;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public UploadPropositionRuleFieldType getField() {
-		return field;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
-	public void setField(UploadPropositionRuleFieldType field) {
-		this.field = field;
+	public String getMail() {
+		return mail;
 	}
 
-	public UploadPropositionRuleOperatorType getOperator() {
-		return operator;
+	public void setMail(String mail) {
+		this.mail = mail;
 	}
 
-	public void setOperator(UploadPropositionRuleOperatorType operator) {
-		this.operator = operator;
+	public String getSubject() {
+		return subject;
 	}
 
-	public String getValue() {
-		return value;
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public String getBody() {
+		return body;
 	}
 
-	public Date getCreationDate() {
-		return creationDate;
+	public void setBody(String body) {
+		this.body = body;
 	}
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public String getRecipientMail() {
+		return recipientMail;
 	}
 
-	public Date getModificationDate() {
-		return modificationDate;
+	public void setRecipientMail(String recipientMail) {
+		this.recipientMail = recipientMail;
 	}
 
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
+	public String getRecipientDomain() {
+		return recipientDomain;
+	}
+
+	public void setRecipientDomain(String recipientDomain) {
+		this.recipientDomain = recipientDomain;
 	}
 }

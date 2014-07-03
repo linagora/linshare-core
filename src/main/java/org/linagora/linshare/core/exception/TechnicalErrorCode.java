@@ -36,12 +36,17 @@ package org.linagora.linshare.core.exception;
 public enum TechnicalErrorCode implements ErrorCode{
 	/** Exception error code.
 	 */
-	
+
 	GENERIC(100),
 	MAIL_EXCEPTION(101),
 	NO_SUCH_LOG_ACTION(200),
 	NO_SUCH_DOC_TYPE(201),
 	NO_SUCH_TECHNICAL_PERMISSION_TYPE(202),
+	NO_SUCH_UPLOAD_PROPOSITION_ACTION_TYPE(203),
+	NO_SUCH_UPLOAD_PROPOSITION_RULE_FIELD_TYPE(204),
+	NO_SUCH_UPLOAD_PROPOSITION_OPERATOR_TYPE(205),
+	NO_SUCH_UPLOAD_REQUEST_STATUS(206),
+	NO_SUCH_UPLOAD_REQUEST_EVENT_TYPE(207),
 	DATABASE_INCOHERENCE(1000),
 	USER_INCOHERENCE(1100),
 	USER_ERROR_CREATION(1101),
@@ -59,11 +64,11 @@ public enum TechnicalErrorCode implements ErrorCode{
 	FUNCTIONALITY_ENTITY_MODIFICATION_NOT_ALLOW(7002),
 	FUNCTIONALITY_ENTITY_UPDATE_FAILED(7003),
 	METHOD_NOT_IMPLEMENTED(8000);
-	
+
 	private final int code;
 
 	private String description;
-	
+
 	public String getDescription() {
 		return description;
 	}
@@ -71,7 +76,7 @@ public enum TechnicalErrorCode implements ErrorCode{
 	public int getCode() {
 		return code;
 	}
-	
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -79,5 +84,5 @@ public enum TechnicalErrorCode implements ErrorCode{
 	private TechnicalErrorCode(int code) {
 		this.code = code;
 	}
-	
+
 }

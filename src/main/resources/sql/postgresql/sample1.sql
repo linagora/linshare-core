@@ -69,7 +69,6 @@ INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date,
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST)
 	VALUES (40, null, 'Technical Account for test', 'bart.simpson@int1.linshare.dev', false, '', false, false);
 
-
 INSERT INTO technical_account_permission (id, uuid, creation_date, modification_date) VALUES (40, 'fbba4e41-ca60-4f09-8d59-fbfe052acb82', current_timestamp(3), current_timestamp(3));
 
 

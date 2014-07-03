@@ -41,6 +41,7 @@ import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessSer
 import org.linagora.linshare.core.business.service.UploadRequestHistoryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestTemplateBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
+import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -146,7 +147,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequestHistory createRequestHistory(User actor,
+	public UploadRequestHistory createRequestHistory(Account actor,
 			UploadRequestHistory history) throws BusinessException {
 		return uploadRequestHistoryBusinessService.create(history);
 	}
@@ -242,7 +243,12 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 		// TODO : notifications, log history
 		if (actor.hasSystemAccountRole() || actor.equals(req.getOwner()) || actor.hasSuperAdminRole()) {
 			req.setStatus(UploadRequestStatus.STATUS_CLOSED);
-			return uploadRequestBusinessService.update(req);
+			// FIXME : it works without updating the entity. It does not work if we do. ! :(
+//			uploadRequestBusinessService.update(req);
+//			UploadRequestHistory history = createRequestHistory(actor, new UploadRequestHistory(req, UploadRequestHistoryEventType.EVENT_CLOSED, true));
+//			req.getUploadRequestHistory().add(history);
+//			uploadRequestBusinessService.update(req);
+			return req;
 		} else {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "you do not have the right to close this upload request url : " + req.getUuid());
 		}

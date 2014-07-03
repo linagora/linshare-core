@@ -54,8 +54,12 @@ import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.core.utils.HashUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
+
+	final private static Logger logger = LoggerFactory.getLogger(UploadRequestUrlServiceImpl.class);
 
 	private final UploadRequestUrlBusinessService uploadRequestUrlBusinessService;
 
@@ -96,10 +100,11 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	public UploadRequestUrl close(String uuid, String password)
 			throws BusinessException {
 		UploadRequestUrl url = find(uuid, password);
-		// if it is alread close.
+		// if it is already close.
 		if (url.getUploadRequest().getStatus()
 				.equals(UploadRequestStatus.STATUS_CLOSED)) {
-			return find(uuid, password);
+			logger.warn("Closing an already closed upload request url : " + uuid);
+			return url;
 		}
 		Account actor = accountRepository.getUploadRequestSystemAccount();
 		uploadRequestService.setStatusToClosed(actor, url.getUploadRequest());
