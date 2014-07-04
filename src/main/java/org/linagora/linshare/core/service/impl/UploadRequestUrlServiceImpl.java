@@ -184,7 +184,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 			String password) throws BusinessException {
 		UploadRequest request = requestUrl.getUploadRequest();
 		if (!isValidPassword(requestUrl, password)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_UNAUTHORISED,
 					"You do not have the right to get this upload request url : "
 							+ requestUrl.getUuid());
 		}
