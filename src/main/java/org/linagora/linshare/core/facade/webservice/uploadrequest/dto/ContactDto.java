@@ -52,6 +52,9 @@ public class ContactDto {
 	@ApiModelProperty(value = "Mail")
 	private String mail;
 
+	public ContactDto() {
+	}
+
 	public ContactDto(String firstName, String lastName, String mail) {
 		super();
 		this.firstName = firstName;
