@@ -1,0 +1,12 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  <form t:id="form" validate="object">
+    <t:errors/>
+    <div class="well">
+      <t:beaneditor t:id="editor" object="object" model="model" overrides="this"/>
+      <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="${submitLabel}"/>
+        <t:submit t:id="cancel" class="btn" mode="cancel" value="message:cancel-label"/>
+      </div>
+    </div>
+  </form>
+</t:container>

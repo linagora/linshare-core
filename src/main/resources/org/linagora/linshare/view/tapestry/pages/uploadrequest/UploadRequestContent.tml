@@ -4,7 +4,7 @@
   
   <!-- Main content -->
   <div id="content">
-    <h1 title="Content (TODO)"><span class="truncate">Content (TODO)</span></h1>
+    <h1 title="${selected.subject}"><span class="truncate">${selected.subject}</span></h1>
 
     <t:messagePanel />
     <t:businessMessagesDisplayer />
@@ -13,25 +13,35 @@
     <div id="actionBar">
       <h4>Actions</h4>
       <ul>
-        <li>
-          <t:actionLink t:id="close" class="button" title="${message:pages.uploadrequest.close.button}">
-            <span><img src="${asset:context:images/icons/icon-refresh.png}" alt="" /> ${message:pages.uploadrequest.close.button}</span>
-          </t:actionLink>
-        </li>
-        <li>
-          <t:actionLink t:id="delete" class="button" title="${message:pages.uploadrequest.delete.button}">
-            <span><img src="${asset:context:images/icons/delete-small.png}" alt="" /> ${message:pages.uploadrequest.delete.button}</span>
-          </t:actionLink>
-        </li>
-        <t:pageLink id="edit" class="button" page="uploadrequest/edit" context="selected.uuid">
-          <span><img src="${asset:context:images/icons/edit-button.png}" alt=""/> ${message:pages.uploadrequest.edit.button}</span>
-        </t:pageLink>
+	<t:if test="selected.closed">
+          <li>
+            <t:actionLink t:id="delete" class="button" title="${message:pages.uploadrequest.delete.button}">
+	      <span><img src="${asset:context:images/icons/delete-small.png}" alt="" /> ${message:pages.uploadrequest.delete.button}</span>
+            </t:actionLink>
+          </li>
+	  <p:else>
+            <t:actionLink t:id="close" class="button" title="${message:pages.uploadrequest.close.button}">
+	      <span><img src="${asset:context:images/icons/icon-refresh.png}" alt="" /> ${message:pages.uploadrequest.close.button}</span>
+            </t:actionLink>
+            <li>
+              <t:pageLink id="edit" class="button" page="uploadrequest/edit" context="selected.uuid">
+		<span><img src="${asset:context:images/icons/edit-button.png}" alt=""/> ${message:pages.uploadrequest.edit.button}</span>
+              </t:pageLink>
+            </li>
+	  </p:else>
+	</t:if>
       </ul>
     </div><!-- id="actionBar" -->
 
     <!-- Page content -->
     <div id="pageContent">
-      <t:beandisplay object="selected"/>
+      <div style="float: left;">
+	<t:bsbeandisplay object="selected" include="body,status,size,canDelete,canClose,locale,secured"/>
+      </div>
+      <div style="float: left;">
+	<t:bsbeandisplay object="selected" include="maxFileCount,maxDepositSize,maxFileSize,activationDate,creationDate,modificationDate,expiryDate"/>
+      </div>
+      <div style="clear: both;"></div>
     </div>
   </div><!-- id="content" -->
 

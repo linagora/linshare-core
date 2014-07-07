@@ -35,6 +35,7 @@ package org.linagora.linshare.core.domain.vo;
 
 import java.util.Date;
 
+import org.apache.tapestry5.beaneditor.NonVisual;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 
@@ -107,6 +108,7 @@ public class UploadRequestVo {
 		owner = new UserVo(req.getOwner());
 	}
 
+	@NonVisual
 	public String getUuid() {
 		return uuid;
 	}
@@ -306,6 +308,12 @@ public class UploadRequestVo {
 		} else if (!uuid.equals(other.uuid))
 			return false;
 		return true;
+	}
+
+	@NonVisual
+	public boolean isClosed() {
+		return UploadRequestStatus.fromString(this.getStatus()).equals(
+				UploadRequestStatus.STATUS_CLOSED);
 	}
 
 	/*
