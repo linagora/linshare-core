@@ -11,8 +11,8 @@
 
     <!-- Page content -->
     <div id="pageContent">
-      <t:beanEditForm t:object="selected" submitlabel="message:global.button.validate" include="maxFileCount,maxFileSize,maxDepositSize">
-      </t:beanEditForm>
+      <t:bsBeanEditForm t:object="selected" submitlabel="message:global.button.validate" include="maxFileCount,maxFileSize,maxDepositSize">
+      </t:bsBeanEditForm>
     </div>
   </div><!-- id="content" -->
 

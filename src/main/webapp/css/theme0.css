@@ -1348,17 +1348,17 @@ div.dialog button img {
  */
 
 .btn {		/* Keep without 'a' */
-	text-decoration: none !important;
-	-moz-user-select: none;
+	/* text-decoration: none !important; */
+	/* -moz-user-select: none; */
 }
 .btn-primary {		/* Keep without 'a' */
-	font-weight: bold;
+	/* font-weight: bold; */
 }
 a.btn-primary:hover,
 a.btn-primary:focus,
 a.btn-primary:active,
 a.btn-primary:visited {
-	color: #FFF !important;
+	/* color: #FFF !important; */
 }
 
 
@@ -1368,7 +1368,7 @@ a.btn-primary:visited {
 
 input, button,
 select, textarea {
-	padding: 2px !important;
+	/* padding: 2px !important; */
 	border: 0px none;
 }
 
