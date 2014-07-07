@@ -39,12 +39,12 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 
 public enum UploadPropositionStatus {
-	STATUS_CREATED,
-	STATUS_CANCELED,
-	STATUS_ENABLED,
-	STATUS_CLOSED,
-	STATUS_ARCHIVED,
-	STATUS_DELETED;
+	SYSTEM_PENDING,
+	SYSTEM_ACCEPTED,
+	SYSTEM_REJECTED,
+	USER_PENDING,
+	USER_ACCEPTED,
+	USER_REJECTED;
 
 	public static UploadPropositionStatus fromString(String s) {
 		try {
