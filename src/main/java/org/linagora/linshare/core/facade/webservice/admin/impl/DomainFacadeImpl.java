@@ -128,11 +128,11 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		AbstractDomain domain = getDomain(domainDto);
 		switch (domain.getDomainType()) {
 		case TOPDOMAIN:
-			return DomainDto.getSimple(abstractDomainService.createTopDomain((TopDomain) domain));
+			return DomainDto.getFull(abstractDomainService.createTopDomain((TopDomain) domain));
 		case SUBDOMAIN:
-			return DomainDto.getSimple(abstractDomainService.createSubDomain((SubDomain) domain));
+			return DomainDto.getFull(abstractDomainService.createSubDomain((SubDomain) domain));
 		case GUESTDOMAIN:
-			return DomainDto.getSimple(abstractDomainService.createGuestDomain((GuestDomain) domain));
+			return DomainDto.getFull(abstractDomainService.createGuestDomain((GuestDomain) domain));
 		default:
 			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,
 					"Try to create a root domain");
@@ -145,7 +145,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(domainDto.getIdentifier(),
 				"domain identifier must be set.");
 		AbstractDomain domain = getDomain(domainDto);
-		return DomainDto.getSimple(abstractDomainService.updateDomain(domain));
+		return DomainDto.getFull(abstractDomainService.updateDomain(domain));
 	}
 
 	@Override
