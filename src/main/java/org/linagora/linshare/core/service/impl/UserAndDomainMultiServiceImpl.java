@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
@@ -61,22 +62,23 @@ public class UserAndDomainMultiServiceImpl implements UserAndDomainMultiService 
 		logger.debug("deleteDomainAndUsers: begin");
 		
 		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-		
-		if(domain != null ){
-			logger.debug("Delete all subdomains users");
-			for (AbstractDomain subDomain : domain.getSubdomain()) {
-				userService.deleteAllUsersFromDomain(actor, subDomain.getIdentifier());
-			}
-			logger.debug("Delete domain users");
-			userService.deleteAllUsersFromDomain(actor, domainIdentifier);
-			
-			if(logger.isDebugEnabled())
-				logger.debug("Delete domain "+ domainIdentifier + " and its subdomains");
-			abstractDomainService.deleteDomain(domainIdentifier);
-		}else{
-			logger.error("Domain not authorized for this user");
+		if (domain == null) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
+					"Domain identifier no found.");
 		}
-		logger.debug("deleteDomainAndUsers: end");		
+		logger.debug("Delete all subdomains users");
+		for (AbstractDomain subDomain : domain.getSubdomain()) {
+			userService.deleteAllUsersFromDomain(actor,
+					subDomain.getIdentifier());
+		}
+		logger.debug("Delete domain users");
+		userService.deleteAllUsersFromDomain(actor, domainIdentifier);
+
+		if (logger.isDebugEnabled())
+			logger.debug("Delete domain " + domainIdentifier
+					+ " and its subdomains");
+		abstractDomainService.deleteDomain(domainIdentifier);
+		logger.debug("deleteDomainAndUsers: end");
 	}
 
 	@Override
