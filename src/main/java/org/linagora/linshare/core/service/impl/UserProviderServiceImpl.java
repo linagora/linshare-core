@@ -120,7 +120,12 @@ public class UserProviderServiceImpl implements UserProviderService {
 	@Override
 	public LDAPConnection retrieveLDAPConnection(String identifier)
 			throws BusinessException {
-		return ldapConnectionRepository.findById(identifier);
+		LDAPConnection connection = ldapConnectionRepository.findById(identifier);
+		if (connection == null) {
+			throw new BusinessException(BusinessErrorCode.LDAP_CONNECTION_NOT_FOUND,
+					"ldap connexion identifier no found.");
+		}
+		return connection;
 	}
 
 	@Override
