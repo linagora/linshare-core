@@ -79,6 +79,8 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 	
 	@Override
 	public boolean isValid(String uuid, String password) {
+		logger.debug("current uuid : " + uuid);
+		logger.debug("current password: " + password);
 		try {
 			return anonymousUrlService.isValid(uuid, password);
 		} catch (LinShareNotSuchElementException e) {
