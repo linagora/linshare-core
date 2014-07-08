@@ -28,12 +28,12 @@
                             <t:select t:id="visibility"/>
                         </td>
 						<td>
-						     <input type="submit" value="${message:global.button.search}"/>
+						     <input class="legacy" type="submit" value="${message:global.button.search}"/>
 						</td>
 						</t:form>
 						<td>
 							<t:form t:type="form" t:id="resetForm">
-								<input type="submit" value="${message:global.button.reset}"/>
+								<input class="legacy" type="submit" value="${message:global.button.reset}"/>
 							</t:form>
 						</td>
 					</tr>

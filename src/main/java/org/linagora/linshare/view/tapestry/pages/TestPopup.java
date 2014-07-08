@@ -34,6 +34,7 @@
 package org.linagora.linshare.view.tapestry.pages;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,9 +45,11 @@ import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.SelectModelVisitor;
 import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.ioc.Messages;
@@ -138,7 +141,13 @@ public class TestPopup {
 	
 	@Component(parameters = {"style=darkbluelighting", "show=false","width=360", "height=335"})
 	private WindowWithEffects darkbluelighting;
+
+	@Property
+	private Date date;
 	
+	@InjectComponent
+	private Form dateTest;
+
 	Zone onValidateFormFromPasswordPopup()
 	{
 
@@ -318,5 +327,9 @@ public class TestPopup {
 			logger.error("Error while searching user in QuickSharePopup", e);
 		}
 		return res;
+	}
+	
+	public void onSuccessFromDateTestForm() {
+		logger.debug("Date: " + date);
 	}
 }

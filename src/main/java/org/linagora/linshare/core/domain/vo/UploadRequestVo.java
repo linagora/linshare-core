@@ -36,6 +36,7 @@ package org.linagora.linshare.core.domain.vo;
 import java.util.Date;
 
 import org.apache.tapestry5.beaneditor.NonVisual;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 
@@ -76,7 +77,7 @@ public class UploadRequestVo {
 
 	private boolean canEditExpiryDate;
 
-	private String locale;
+	private Language locale;
 
 	private boolean secured;
 
@@ -103,7 +104,7 @@ public class UploadRequestVo {
 		canDelete = req.isCanDelete();
 		canClose = req.isCanClose();
 		canEditExpiryDate = req.isCanEditExpiryDate();
-		locale = req.getLocale();
+		locale = Language.fromTapestryLocale(req.getLocale());
 		secured = req.isSecured();
 		owner = new UserVo(req.getOwner());
 	}
@@ -237,11 +238,11 @@ public class UploadRequestVo {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
 
-	public String getLocale() {
+	public Language getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(Language locale) {
 		this.locale = locale;
 	}
 
@@ -280,7 +281,7 @@ public class UploadRequestVo {
 		ret.setCanDelete(canDelete);
 		ret.setCanClose(canClose);
 		ret.setCanEditExpiryDate(canEditExpiryDate);
-		ret.setLocale(locale);
+		ret.setLocale(locale.getTapestryLocale());
 		ret.setSecured(secured);
 		return ret;
 	}

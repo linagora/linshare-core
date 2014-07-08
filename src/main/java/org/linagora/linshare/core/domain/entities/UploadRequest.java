@@ -102,8 +102,7 @@ public class UploadRequest {
 		return uploadRequestGroup;
 	}
 
-	public void setUploadRequestGroup(
-			UploadRequestGroup uploadRequestGroup) {
+	public void setUploadRequestGroup(UploadRequestGroup uploadRequestGroup) {
 		this.uploadRequestGroup = uploadRequestGroup;
 	}
 
@@ -191,7 +190,8 @@ public class UploadRequest {
 		return uploadPropositionRequestUuid;
 	}
 
-	public void setUploadPropositionRequestUuid(String uploadPropositionRequestUuid) {
+	public void setUploadPropositionRequestUuid(
+			String uploadPropositionRequestUuid) {
 		this.uploadPropositionRequestUuid = uploadPropositionRequestUuid;
 	}
 
@@ -255,7 +255,8 @@ public class UploadRequest {
 		return uploadRequestEntries;
 	}
 
-	public void setUploadRequestEntries(Set<UploadRequestEntry> uploadRequestEntries) {
+	public void setUploadRequestEntries(
+			Set<UploadRequestEntry> uploadRequestEntries) {
 		this.uploadRequestEntries = uploadRequestEntries;
 	}
 

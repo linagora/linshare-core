@@ -1,11 +1,11 @@
 <t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
   <div class="well" style="margin: 10px; width: 300px;">
     <t:loop t:source="model.propertyNames" t:formState="ITERATION" t:value="propertyName">
-      <div class="form-group" style="margin-bottom: 12px;">
-	<label for="${propertyName}" class="control-label" style="font-size: 12px;">
+      <div class="control-group">
+	<label for="${propertyName}" class="control-label">
 		<b>${propertyModel.label}</b>
 	</label>
-	<span id="${propertyName}" class="form-control" style="font-size: 12px;">
+	<span id="${propertyName}" class="form-control">
 		<t:propertydisplay model="propertyModel" overrides="overrides" object="object"/>
 	</span>
       </div> <!-- form-group -->
