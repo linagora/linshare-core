@@ -418,12 +418,13 @@ CREATE TABLE mail_content_lang (
   PRIMARY KEY (id));
 CREATE TABLE upload_request (
   id                               int8 NOT NULL, 
+  domain_abstract_id              int8 NOT NULL, 
   account_id                      int8 NOT NULL, 
   upload_request_group_id         int8 NOT NULL, 
   uuid                            varchar(255) NOT NULL UNIQUE, 
-  max_file                        int4 NOT NULL, 
-  max_size                        int8 NOT NULL, 
-  max_file_size                   int8 NOT NULL, 
+  max_file                        int4, 
+  max_deposit_size                int8, 
+  max_file_size                   int8, 
   status                          varchar(255) NOT NULL, 
   activation_date                 timestamp(6) NOT NULL, 
   creation_date                   timestamp(6) NOT NULL, 
@@ -460,20 +461,20 @@ CREATE TABLE upload_request_history (
   id                               int8 NOT NULL, 
   upload_request_id               int8 NOT NULL, 
   status                          varchar(255) NOT NULL, 
-  status_updated                   bool NOT NULL, 
+  status_updated                  bool NOT NULL, 
   event_type                      varchar(255) NOT NULL, 
-  uuid                            varchar(255) NOT NULL, 
+  uuid                            varchar(255) NOT NULL UNIQUE, 
   activation_date                 timestamp(6) NOT NULL, 
   expiry_date                     timestamp(6) NOT NULL, 
   notification_date               timestamp(6) NOT NULL, 
-  max_depositSize                 int8 NOT NULL, 
-  max_file_count                  int4 NOT NULL, 
-  max_file_size                   int8 NOT NULL, 
+  max_deposit_size                int8, 
+  max_file_count                  int4, 
+  max_file_size                   int8, 
   upload_proposition_request_uuid varchar(255), 
   can_delete                      bool NOT NULL, 
   can_close                       bool NOT NULL, 
   can_edit_expiry_date            bool NOT NULL, 
-  locale                          varchar(255), 
+  locale                          varchar(255) NOT NULL, 
   secured                         bool NOT NULL, 
   creation_date                   timestamp(6) NOT NULL, 
   modification_date               timestamp(6) NOT NULL, 
@@ -691,6 +692,7 @@ ALTER TABLE mime_policy ADD CONSTRAINT FKmime_polic613419 FOREIGN KEY (domain_id
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs809928 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
 ALTER TABLE account_permission ADD CONSTRAINT FKaccount_pe759382 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
 ALTER TABLE upload_request ADD CONSTRAINT FKupload_req220337 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE upload_request ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 CREATE UNIQUE INDEX account_lsuid_index 
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid 

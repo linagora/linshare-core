@@ -103,6 +103,8 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	@Override
 	public UploadRequest createRequest(User actor, UploadRequest req)
 			throws BusinessException {
+		req.setOwner(actor);
+		req.setAbstractDomain(actor.getDomain());
 		return uploadRequestBusinessService.create(req);
 	}
 
