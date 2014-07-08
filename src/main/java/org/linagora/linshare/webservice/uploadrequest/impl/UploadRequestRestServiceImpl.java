@@ -80,7 +80,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@GET
 	@Path("/{uuid}")
 	@ApiOperation(value = "Find an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentification failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
 	@Override
 	public Response find(@PathParam(value = "uuid") String uuid,
 			@HeaderParam("linshare-uploadrequest-password") String password)
@@ -96,7 +96,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@PUT
 	@Path("/")
 	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentification failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
 	@Override
 	public UploadRequestDto update(UploadRequestDto dto,
 			@HeaderParam("linshare-uploadrequest-password") String password)
@@ -107,7 +107,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@DELETE
 	@Path("/{requestUrlUuid}/{entryUuid}")
 	@ApiOperation(value = "Delete an entry in an upload request.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentification failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
 	public void delete(@PathParam(value = "requestUrlUuid") String requestUrlUuid,
 			@HeaderParam("linshare-uploadrequest-password") String password,
 			@PathParam(value = "entryUuid") String entryUuid)
@@ -118,7 +118,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@DELETE
 	@Path("/{requestUrlUuid}")
 	@ApiOperation(value = "Delete an entry in an upload request.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentification failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
 	@Override
 	public void delete(@PathParam(value = "requestUrlUuid") String requestUrlUuid,
 			@HeaderParam("linshare-uploadrequest-password") String password, EntryDto entry)

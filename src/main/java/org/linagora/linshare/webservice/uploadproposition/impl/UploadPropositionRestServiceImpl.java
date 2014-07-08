@@ -40,7 +40,7 @@ public class UploadPropositionRestServiceImpl implements
 	@GET
 	@Path("/filters")
 	@ApiOperation(value = "Find all upload proposition filters.", response = UploadPropositionFilterDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentification failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
 	@Override
 	public List<UploadPropositionFilterDto> findAllFilters()
 			throws BusinessException {
@@ -50,7 +50,7 @@ public class UploadPropositionRestServiceImpl implements
 	@GET
 	@Path("/recipient/{userMail}}")
 	@ApiOperation(value = "Check if it is a valid user.", response = Boolean.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentification failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
 	@Override
 	public Boolean checkIfValidRecipient(
 			@PathParam(value = "userMail") String userMail,
@@ -62,7 +62,7 @@ public class UploadPropositionRestServiceImpl implements
 	@POST
 	@Path("/propositions")
 	@ApiOperation(value = "Check if it is a valid user.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentification failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
 	@Override
 	public void create(UploadPropositionDto dto) throws BusinessException {
 		uploadPropositionFacade.create(dto);
