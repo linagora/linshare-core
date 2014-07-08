@@ -52,7 +52,7 @@ public class UploadPropositionRestServiceImpl implements
 	@ApiOperation(value = "Check if it is a valid user.", response = Boolean.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentification failed.") })
 	@Override
-	public Boolean checkIfValidRecipeint(
+	public Boolean checkIfValidRecipient(
 			@PathParam(value = "userMail") String userMail,
 			@QueryParam(value = "userDomain") String userDomain) {
 		return uploadPropositionFacade.checkIfValidRecipeint(userMail,
