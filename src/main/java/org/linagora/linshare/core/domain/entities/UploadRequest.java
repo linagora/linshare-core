@@ -86,6 +86,8 @@ public class UploadRequest {
 
 	private Account owner;
 
+	private AbstractDomain abstractDomain;
+
 	public UploadRequest() {
 		super();
 	}
@@ -275,5 +277,13 @@ public class UploadRequest {
 
 	public void setOwner(Account owner) {
 		this.owner = owner;
+	}
+
+	public AbstractDomain getAbstractDomain() {
+		return abstractDomain;
+	}
+
+	public void setAbstractDomain(AbstractDomain abstractDomain) {
+		this.abstractDomain = abstractDomain;
 	}
 }

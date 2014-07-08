@@ -27,7 +27,7 @@
 			length="6" not-null="true" lazy="false" />
 		<property name="notificationDate" column="notification_date"
 			type="timestamp" length="6" not-null="true" lazy="false" />
-		<property name="maxDepositSize" column="max_depositSize"
+		<property name="maxDepositSize" column="max_deposit_size"
 			type="long" not-null="true" lazy="false" />
 		<property name="maxFileCount" column="max_file_count" type="integer"
 			not-null="true" lazy="false" />
