@@ -126,7 +126,12 @@ public class UserProviderServiceImpl implements UserProviderService {
 	@Override
 	public DomainPattern retrieveDomainPattern(String identifier)
 			throws BusinessException {
-		return domainPatternRepository.findById(identifier);
+		DomainPattern pattern = domainPatternRepository.findById(identifier);
+		if (pattern == null) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND,
+					"Domain pattern identifier no found.");
+		}
+		return pattern;
 	}
 
 	@Override
