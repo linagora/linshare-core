@@ -60,7 +60,7 @@
                 </div>
                 <div id="askCustomMessageBlock">
                     <label for="customMessage" class="edit-form-label">${message:components.guestEditForm.field.addMessage}</label>
-                    <input class="edit-form-checkbox" type="checkbox" name="customMessage"
+                    <input class="edit-form-checkbox legacy" type="checkbox" name="customMessage"
                         onclick="javascript:enableCustomMessage();"/>
                 </div>
                 <div id="customMessageBlock" style="display:none">

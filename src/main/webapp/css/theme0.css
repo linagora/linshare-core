@@ -1373,7 +1373,7 @@ select, textarea {
 }
 
 input[type="text"], input[type="password"], input[type="file"],
-input[type="submit"], input[type="reset"], input[type="button"],
+input[type="reset"], input[type="button"],
 select, textarea {
 	border: 1px solid #DDD;
 }
@@ -3742,7 +3742,7 @@ div.ck_tooltip {
 
 /* Form buttons */
 
-input[type="submit"] {
+input[type="submit"].legacy {
 	background-color: #EAF1F5;
 	cursor: pointer;
 	float: none !important;
@@ -4027,6 +4027,29 @@ input.ck-kaptcha {
 #audit #bigPalette .t-palette-available select,
 #audit #bigPalette .t-palette-selected select {
     width: 365px;
+}
+
+/*
+ * Bootstrap customization
+ */
+.well {
+    font-size: 12px;
+}
+
+.well label {
+    font-size: 12px;
+}
+
+.well .form-actions {
+    margin-bottom: 0;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-actions .btn {
+    margin-right: 4px;
 }
 
 /***************************************************************************/

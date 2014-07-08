@@ -33,7 +33,7 @@
               	</select>
             </t:if>
 			
-<!--			<input type="submit" class="loginSubmit" value="${message:pages.login.form.logLabel}"/>-->
+<!--			<input type="submit" class="loginSubmit legacy" value="${message:pages.login.form.logLabel}"/>-->
 				<button class="loginSubmit" onclick="submitWithCookie();">${message:pages.login.form.logLabel}</button>
 			
 			<br />
@@ -42,7 +42,7 @@
         </form>
 		
 		<t:if t:test="ssoButtonHide" t:negate="true">
-		<form><t:pagelink page="sso"><input type="submit" class="loginSubmit" value="${message:pages.login.form.logLabel.internal}"/></t:pagelink></form>
+		<form><t:pagelink page="sso"><input type="submit" class="loginSubmit legacy" value="${message:pages.login.form.logLabel.internal}"/></t:pagelink></form>
         </t:if>
         
         <t:if t:test="badCredentials">

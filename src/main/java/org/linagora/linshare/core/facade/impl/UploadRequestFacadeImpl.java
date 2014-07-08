@@ -95,10 +95,12 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		UploadRequest e = uploadRequestService.findRequestByUuid(actor,
 				req.getUuid());
 
-		// TODO activationDate / expiryDate / locale
 		e.setMaxFileCount(req.getMaxFileCount());
 		e.setMaxFileSize(req.getMaxFileSize());
 		e.setMaxDepositSize(req.getMaxDepositSize());
+		e.setActivationDate(req.getActivationDate());
+		e.setExpiryDate(req.getExpiryDate());
+		e.setLocale(req.getLocale().getTapestryLocale());
 		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
 	}
 

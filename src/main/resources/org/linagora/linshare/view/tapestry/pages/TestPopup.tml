@@ -1,5 +1,10 @@
-<t:MyBorderLayout t:title="TEST POPUPS" t:identifier="home"
+<html>
+<body
 xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+
+<!--<t:MyBorderLayout t:title="TEST POPUPS" t:identifier="home"
+xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"> -->
 
 
     <h1>Test of tapestry-tagselect</h1>
@@ -112,7 +117,10 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 	<t:actionlink t:id="checkDocumentsMimeType">checkDocumentsMimeType</t:actionlink>
 	<br/>
 	
-        
+    <t:form t:id="dateTest">
+        <t:datefield t:id="date" />       
+    </t:form>
 
-  </t:MyBorderLayout>   
-
+<!--  </t:MyBorderLayout>   -->
+</body>
+</html>
