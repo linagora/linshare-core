@@ -107,6 +107,9 @@ public class DomainDto {
 				this.providers.add(new LDAPUserProviderDto(domain
 						.getUserProvider()));
 			}
+			if (domain.getParentDomain() != null) {
+				this.parent = domain.getParentDomain().getIdentifier();
+			}
 		}
 		if (recursive) {
 			for (AbstractDomain child : domain.getSubdomain()) {
