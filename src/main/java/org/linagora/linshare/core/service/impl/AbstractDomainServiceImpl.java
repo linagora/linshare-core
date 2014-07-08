@@ -128,8 +128,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				"domain identifier must be set.");
 		if (!LsIdValidator.isValid(domain.getIdentifier())) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_BAD_FORMAT,
-					"This new domain identifier should only contains the following characters : "
-							+ LsIdValidator.getAllowedCharacters() + ".");
+					"This new domain identifier should only contains at least 4 characters among : "
+							+ LsIdValidator.getAllowedCharacters());
 		}
 
 		if (retrieveDomain(domain.getIdentifier()) != null) {
