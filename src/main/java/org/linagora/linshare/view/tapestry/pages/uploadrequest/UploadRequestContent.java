@@ -33,12 +33,12 @@
  */
 package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
+import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -68,6 +68,9 @@ public class UploadRequestContent {
 	@Property
 	@Persist
 	private UploadRequestVo selected;
+
+	@InjectPage
+	private Edit edit;
 
 	@Inject
 	private Messages messages;
@@ -104,8 +107,7 @@ public class UploadRequestContent {
 			return Index.class;
 		}
 		if (!selected.getOwner().businessEquals(userVo)
-				|| selected.getStatus().equals(
-						UploadRequestStatus.STATUS_ARCHIVED)) {
+				|| !selected.isVisible()) {
 			logger.info("Unauthorized");
 			businessMessagesManagementService.notify(new BusinessUserMessage(
 					BusinessUserMessageType.UPLOAD_REQUEST_NOT_FOUND,
@@ -119,13 +121,18 @@ public class UploadRequestContent {
 		return selected.getUuid();
 	}
 
-    public void onActionFromClose() throws BusinessException {
+	public void onActionFromClose() throws BusinessException {
 		selected = uploadRequestFacade.closeRequest(userVo, selected);
-    }
+	}
 
-    public void onActionFromDelete() throws BusinessException {
+	public void onActionFromDelete() throws BusinessException {
 		selected = uploadRequestFacade.archiveRequest(userVo, selected);
-    }
+	}
+
+	public Object onActionFromEdit() throws BusinessException {
+		edit.setMySelected(selected);
+		return edit;
+	}
 
 	public void setMySelected(UploadRequestVo selected) {
 		this.selected = selected;

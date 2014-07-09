@@ -20,13 +20,15 @@
             </t:actionLink>
           </li>
 	  <p:else>
-            <t:actionLink t:id="close" class="button" title="${message:pages.uploadrequest.close.button}">
-	      <span><img src="${asset:context:images/icons/icon-refresh.png}" alt="" /> ${message:pages.uploadrequest.close.button}</span>
-            </t:actionLink>
             <li>
-              <t:pageLink id="edit" class="button" page="uploadrequest/edit" context="selected.uuid">
+              <t:actionLink t:id="close" class="button" title="${message:pages.uploadrequest.close.button}">
+		<span><img src="${asset:context:images/icons/icon-refresh.png}" alt="" /> ${message:pages.uploadrequest.close.button}</span>
+              </t:actionLink>
+            </li>
+            <li>
+              <t:actionLink t:id="edit" class="button" title="${message:pages.uploadrequest.edit.button}">
 		<span><img src="${asset:context:images/icons/edit-button.png}" alt=""/> ${message:pages.uploadrequest.edit.button}</span>
-              </t:pageLink>
+              </t:actionLink>
             </li>
 	  </p:else>
 	</t:if>
