@@ -35,22 +35,42 @@
 package org.linagora.linshare.core.domain.constants;
 
 import org.apache.commons.lang.StringUtils;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
+
 public enum UploadRequestStatus {
-	STATUS_CREATED,
+	STATUS_DELETED,
+	STATUS_ARCHIVED(STATUS_DELETED),
+	STATUS_CLOSED(STATUS_ARCHIVED),
+	STATUS_ENABLED(STATUS_CLOSED),
 	STATUS_CANCELED,
-	STATUS_ENABLED,
-	STATUS_CLOSED,
-	STATUS_ARCHIVED,
-	STATUS_DELETED;
+	STATUS_CREATED(STATUS_CANCELED, STATUS_ENABLED);
+
+	private final UploadRequestStatus[] next;
+
+	private UploadRequestStatus(UploadRequestStatus... next) {
+		this.next = next;
+	}
+
+	public UploadRequestStatus transition(final UploadRequestStatus status)
+			throws BusinessException {
+		if (!Arrays.asList(next).contains(status)) {
+			throw new BusinessException("Cannot transition from " + name()
+					+ " to " + status.name() + '.'); // TODO XXX
+		}
+		return status;
+	}
 
 	public static UploadRequestStatus fromString(String s) {
 		try {
 			return UploadRequestStatus.valueOf(s.toUpperCase());
 		} catch (RuntimeException e) {
-			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_UPLOAD_REQUEST_STATUS, StringUtils.isEmpty(s) ? "null or empty" : s);
+			throw new TechnicalException(
+					TechnicalErrorCode.NO_SUCH_UPLOAD_REQUEST_STATUS,
+					StringUtils.isEmpty(s) ? "null or empty" : s);
 		}
 	}
 }

@@ -244,7 +244,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	public UploadRequest setStatusToClosed(Account actor, UploadRequest req) throws BusinessException {
 		// TODO : notifications, log history
 		if (actor.hasSystemAccountRole() || actor.equals(req.getOwner()) || actor.hasSuperAdminRole()) {
-			req.setStatus(UploadRequestStatus.STATUS_CLOSED);
+			req.updateStatus(UploadRequestStatus.STATUS_CLOSED);
 			// FIXME : it works without updating the entity. It does not work if we do. ! :(
 //			uploadRequestBusinessService.update(req);
 //			UploadRequestHistory history = createRequestHistory(actor, new UploadRequestHistory(req, UploadRequestHistoryEventType.EVENT_CLOSED, true));
