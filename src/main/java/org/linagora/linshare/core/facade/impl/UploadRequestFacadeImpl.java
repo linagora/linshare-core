@@ -119,7 +119,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		UploadRequest e = uploadRequestService.findRequestByUuid(actor,
 				req.getUuid());
 
-		e.setStatus(UploadRequestStatus.STATUS_CLOSED);
+		e.updateStatus(UploadRequestStatus.STATUS_CLOSED);
 		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
 	}
 
@@ -130,7 +130,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 
 		UploadRequest e = uploadRequestService.findRequestByUuid(actor,
 				req.getUuid());
-		e.setStatus(UploadRequestStatus.STATUS_ARCHIVED);
+		e.updateStatus(UploadRequestStatus.STATUS_ARCHIVED);
 		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
 	}
 

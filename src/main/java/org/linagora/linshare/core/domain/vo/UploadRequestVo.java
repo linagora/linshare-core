@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 
 public class UploadRequestVo {
 
@@ -59,7 +60,7 @@ public class UploadRequestVo {
 
 	private long maxFileSize;
 
-	private String status;
+	private UploadRequestStatus status;
 
 	private Date activationDate;
 
@@ -95,7 +96,7 @@ public class UploadRequestVo {
 		maxFileCount = req.getMaxFileCount();
 		maxDepositSize = req.getMaxDepositSize();
 		maxFileSize = req.getMaxFileSize();
-		status = req.getStatus().toString();
+		status = req.getStatus();
 		activationDate = req.getActivationDate();
 		creationDate = req.getCreationDate();
 		modificationDate = req.getModificationDate();
@@ -166,11 +167,11 @@ public class UploadRequestVo {
 		this.maxFileSize = maxFileSize;
 	}
 
-	public String getStatus() {
+	public UploadRequestStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(UploadRequestStatus status) {
 		this.status = status;
 	}
 
@@ -313,8 +314,14 @@ public class UploadRequestVo {
 
 	@NonVisual
 	public boolean isClosed() {
-		return UploadRequestStatus.fromString(this.getStatus()).equals(
-				UploadRequestStatus.STATUS_CLOSED);
+		return this.getStatus().equals(UploadRequestStatus.STATUS_CLOSED);
+	}
+
+	@NonVisual
+	public boolean isVisible() {
+		return Lists.newArrayList(UploadRequestStatus.STATUS_CREATED,
+				UploadRequestStatus.STATUS_ENABLED,
+				UploadRequestStatus.STATUS_CLOSED).contains(this.getStatus());
 	}
 
 	/*

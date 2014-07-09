@@ -121,7 +121,11 @@ public class Edit {
 
 	public Object onSuccess() throws BusinessException {
 		uploadRequestFacade.updateRequest(userVo, selected);
-		return Index.class;
+		return UploadRequestContent.class;
+	}
+
+	public Object onCancel() throws BusinessException {
+		return UploadRequestContent.class;
 	}
 
 	public void setMySelected(UploadRequestVo selected) {
