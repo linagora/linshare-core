@@ -82,7 +82,7 @@ INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, 
 
 INSERT INTO upload_request_group (id, subject, body, uuid, creation_date, modification_date)
 	VALUES (1, 'subject of upload request 1', 'body of upload request 1', 'b344b5ca-d9e7-4857-b959-5e86f34a91f7', now(), now());
-INSERT INTO upload_request (id, domain_abstract_id, account_id, upload_request_group_id, uuid, max_file, max_size, max_file_size, status, activation_date, creation_date, modification_date, notification_date, expiry_date, upload_proposition_request_uuid, can_delete, can_close, can_edit_expiry_date, locale, secured, mail_message_id)
+INSERT INTO upload_request (id, domain_abstract_id, account_id, upload_request_group_id, uuid, max_file, max_deposit_size, max_file_size, status, activation_date, creation_date, modification_date, notification_date, expiry_date, upload_proposition_request_uuid, can_delete, can_close, can_edit_expiry_date, locale, secured, mail_message_id)
 	VALUES (1, 3, 50, 1, '916a6e65-deb8-4120-b2ab-c64bfcbf4e02', 3, 31457280, 10485760, 'STATUS_ENABLED', now(), now(), now(), '2014-08-10 00:00:00', '2014-09-10 00:00:00', null, true, true, true, 'fr', true, null); 
 
 INSERT INTO contact (id, mail) VALUES (1,'ctjhoa@linagora.com');
