@@ -35,6 +35,8 @@ package org.linagora.linshare.core.business.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -42,6 +44,10 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface UploadRequestBusinessService {
 
 	List<UploadRequest> findAll(User actor);
+
+	List<UploadRequest> findAll(List<UploadRequestStatus> status);
+
+	List<UploadRequest> findAll(List<AbstractDomain> domains, List<UploadRequestStatus> status);
 
 	UploadRequest findByUuid(String uuid);
 

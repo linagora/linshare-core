@@ -129,4 +129,9 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="technicalAccountPermissionService" />
 	</bean>
+	<bean id="wsAdminUploadRequestHistoryFacade"
+		  class="org.linagora.linshare.core.facade.webservice.admin.impl.UploadRequestHistoryFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="uploadRequestService" />
+	</bean>
 </beans>

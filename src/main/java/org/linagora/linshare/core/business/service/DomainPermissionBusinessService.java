@@ -39,6 +39,8 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
+import java.util.List;
+
 public interface DomainPermissionBusinessService {
 
 	boolean isAdminforThisDomain(Account actor, String domainId)
@@ -48,4 +50,5 @@ public interface DomainPermissionBusinessService {
 
 	boolean isAdminForThisUser(Account actor, User user);
 
+	List<AbstractDomain> getMyAdministredDomains(Account actor);
 }

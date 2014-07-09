@@ -261,6 +261,7 @@
 		<constructor-arg ref="uploadRequestHistoryBusinessService" />
 		<constructor-arg ref="uploadRequestTemplateBusinessService" />
 		<constructor-arg ref="uploadRequestUrlBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 	<bean name="guestService" class="org.linagora.linshare.core.service.impl.GuestServiceImpl">
 		<constructor-arg ref="guestBusinessService" />

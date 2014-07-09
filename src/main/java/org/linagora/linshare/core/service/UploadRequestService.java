@@ -33,8 +33,7 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.util.List;
-
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
@@ -44,6 +43,9 @@ import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+
+import java.util.List;
+import java.util.Set;
 
 public interface UploadRequestService {
 
@@ -73,10 +75,10 @@ public interface UploadRequestService {
 	UploadRequestHistory findRequestHistoryByUuid(User actor, String uuid);
 
 	UploadRequestHistory createRequestHistory(Account actor,
-			UploadRequestHistory history) throws BusinessException;
+											  UploadRequestHistory history) throws BusinessException;
 
 	UploadRequestHistory updateRequestHistory(User actor,
-			UploadRequestHistory history) throws BusinessException;
+											  UploadRequestHistory history) throws BusinessException;
 
 	void deleteRequestHistory(User actor, UploadRequestHistory history)
 			throws BusinessException;
@@ -84,10 +86,10 @@ public interface UploadRequestService {
 	UploadRequestTemplate findRequestTemplateByUuid(User actor, String uuid);
 
 	UploadRequestTemplate createRequestTemplate(User actor,
-			UploadRequestTemplate template) throws BusinessException;
+												UploadRequestTemplate template) throws BusinessException;
 
 	UploadRequestTemplate updateRequestTemplate(User actor,
-			UploadRequestTemplate template) throws BusinessException;
+												UploadRequestTemplate template) throws BusinessException;
 
 	void deleteRequestTemplate(User actor, UploadRequestTemplate template)
 			throws BusinessException;
@@ -119,4 +121,8 @@ public interface UploadRequestService {
 	 */
 
 	UploadRequest setStatusToClosed(Account actor, UploadRequest req) throws BusinessException;
+
+	Set<UploadRequestHistory> findAllRequestHistory(Account actor, String uploadRequestUuid) throws BusinessException;
+
+	Set<UploadRequestHistory> findAllRequestHistory(Account actor, List<UploadRequestStatus> status) throws BusinessException;
 }

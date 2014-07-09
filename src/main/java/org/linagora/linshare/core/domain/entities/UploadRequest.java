@@ -33,10 +33,10 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+
 import java.util.Date;
 import java.util.Set;
-
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 
 public class UploadRequest {
 
