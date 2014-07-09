@@ -33,19 +33,21 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 public class UploadRequestRepositoryImpl extends
 		AbstractRepositoryImpl<UploadRequest> implements
@@ -64,13 +66,34 @@ public class UploadRequestRepositoryImpl extends
 
 	@Override
 	public UploadRequest findByUuid(String uuid) {
-		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
-				"uuid", uuid)));
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq("uuid", uuid)));
 	}
 
 	@Override
 	public List<UploadRequest> findByOwner(User owner) {
 		return findByCriteria(Restrictions.eq("owner", owner));
+	}
+
+	@Override
+	public List<UploadRequest> findByStatus(List<UploadRequestStatus> status) {
+		Disjunction orStatus = Restrictions.disjunction();
+		for (UploadRequestStatus s : status) {
+			orStatus.add(Restrictions.eq("status", s));
+		}
+		return findByCriteria(orStatus);
+	}
+
+	@Override
+	public List<UploadRequest> findByDomainsAndStatus(List<AbstractDomain> domains, List<UploadRequestStatus> status) {
+		Disjunction orStatus = Restrictions.disjunction();
+		Disjunction orDomains = Restrictions.disjunction();
+		for (AbstractDomain d : domains) {
+			orDomains.add(Restrictions.eq("abstractDomain", d));
+		}
+		for (UploadRequestStatus s : status) {
+			orStatus.add(Restrictions.eq("status", s));
+		}
+		return findByCriteria(Restrictions.and(orStatus, orDomains));
 	}
 
 	@Override

@@ -1,9 +1,9 @@
 /*
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
- * 
+ *
  * Copyright (C) 2014 LINAGORA
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,76 +19,60 @@
  * refrain from infringing Linagora intellectual property rights over its
  * trademarks and commercial brands. Other Additional Terms apply, see
  * <http://www.linagora.com/licenses/> for more details.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service.impl;
+package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
+import com.wordnik.swagger.annotations.*;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.UploadRequestRepository;
+import org.linagora.linshare.core.facade.webservice.admin.UploadRequestHistoryFacade;
+import org.linagora.linshare.webservice.WebserviceBase;
+import org.linagora.linshare.webservice.admin.UploadRequestHistoryRestService;
+import org.linagora.linshare.webservice.dto.UploadRequestHistoryDto;
 
-public class UploadRequestBusinessServiceImpl implements
-		UploadRequestBusinessService {
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
+import java.util.Set;
 
-	private final UploadRequestRepository uploadRequestRepository;
+@Path("/upload_requests")
+@Api(value = "/rest/admin/upload_requests", description = "History requests API")
+@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+public class UploadRequestHistoryRestServiceImpl extends WebserviceBase implements UploadRequestHistoryRestService {
 
-	public UploadRequestBusinessServiceImpl(
-			final UploadRequestRepository uploadRequestRepository) {
-		super();
-		this.uploadRequestRepository = uploadRequestRepository;
+	private final UploadRequestHistoryFacade uploadRequestHistoryFacade;
+
+	public UploadRequestHistoryRestServiceImpl(UploadRequestHistoryFacade uploadRequestHistoryFacade) {
+		this.uploadRequestHistoryFacade = uploadRequestHistoryFacade;
 	}
 
+	@Path("/{requestUuid}")
+	@GET
+	@ApiOperation(value = "Search all history entries for an upload request.", response = UploadRequestHistoryDto.class)
+	@ApiResponses({@ApiResponse(code = 403, message = "User isn't admin.")})
 	@Override
-	public List<UploadRequest> findAll(User actor) {
-		return uploadRequestRepository.findByOwner(actor);
+	public Set<UploadRequestHistoryDto> findAll(@PathParam(value = "requestUuid") String requestUuid) throws BusinessException {
+		return uploadRequestHistoryFacade.findAll(requestUuid);
 	}
 
+	@Path("/")
+	@POST
+	@ApiOperation(value = "Search all created or enabled history entries.", response = UploadRequestHistoryDto.class)
+	@ApiResponses({@ApiResponse(code = 403, message = "User isn't admin.")})
 	@Override
-	public List<UploadRequest> findAll(List<UploadRequestStatus> status) {
-		return uploadRequestRepository.findByStatus(status);
-	}
-
-	@Override
-	public List<UploadRequest> findAll(List<AbstractDomain> domains, List<UploadRequestStatus> status) {
-		return uploadRequestRepository.findByDomainsAndStatus(domains, status);
-	}
-
-	@Override
-	public UploadRequest findByUuid(String uuid) {
-		return uploadRequestRepository.findByUuid(uuid);
-	}
-
-	@Override
-	public UploadRequest create(UploadRequest req)
-			throws BusinessException {
-		return uploadRequestRepository.create(req);
-	}
-
-	@Override
-	public UploadRequest update(UploadRequest req)
-			throws BusinessException {
-		return uploadRequestRepository.update(req);
-	}
-
-	@Override
-	public void delete(UploadRequest req) throws BusinessException {
-		uploadRequestRepository.delete(req);
+	public Set<UploadRequestHistoryDto> findAllByStatus(@ApiParam(value = "Status to search for.", required = true) List<UploadRequestStatus> status) throws BusinessException {
+		return uploadRequestHistoryFacade.findAll(status);
 	}
 }

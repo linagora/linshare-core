@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.business.service.impl;
 
+import com.google.common.collect.Lists;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -43,6 +44,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class DomainPermissionBusinessServiceImpl implements
 		DomainPermissionBusinessService {
@@ -80,6 +83,23 @@ public class DomainPermissionBusinessServiceImpl implements
 	public boolean isAdminForThisUser(Account actor, User user) {
 		return isAdminforThisDomain(actor, user.getDomain())
 				|| isOwner(actor, user);
+	}
+
+	@Override
+	public List<AbstractDomain> getMyAdministredDomains(Account actor) {
+		if (!(actor.hasAdminRole() || actor.hasSuperAdminRole())) {
+			return Lists.newArrayList();
+		}
+		return findRecursivelyDomains(actor.getDomain());
+	}
+
+	private List<AbstractDomain> findRecursivelyDomains(AbstractDomain root) {
+		List<AbstractDomain> list = Lists.newArrayList();
+		list.add(root);
+		for (AbstractDomain sub : root.getSubdomain()) {
+			list.addAll(findRecursivelyDomains(sub));
+		}
+		return list;
 	}
 
 	private boolean isOwner(Account actor, User guest) {
