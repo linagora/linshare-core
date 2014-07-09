@@ -278,7 +278,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	public Set<UploadRequestHistory> findAllRequestHistory(Account actor, List<UploadRequestStatus> status) throws BusinessException {
 		if (!actor.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_UNAUTHORISED, "Unauthorized upload request history search");
-		}u
+		}
 		Set<UploadRequestHistory> list = Sets.newHashSet();
 		List<AbstractDomain> myAdministredDomains = domainPermissionBusinessService.getMyAdministredDomains(actor);
 		List<UploadRequest> requests = uploadRequestBusinessService.findAll(myAdministredDomains, status);

@@ -290,6 +290,35 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		return false;
 	}
 
+	@Override
+	public boolean delegationPolicyIsMutable(T functionality, String domain) {
+		Assert.notNull(functionality);
+		Assert.notNull(domain);
+
+		// Check if the current functionality belong to the current domain.
+		if (functionality.getDomain().getIdentifier().equals(domain)) {
+			// we have to check if we have the permission to modify the configuration status of this functionality
+			AbstractDomain abstractDomain = abstractDomainRepository.findById(domain);
+			T ancestorFunc = getParentFunctionality(abstractDomain, functionality.getIdentifier());
+			// We check if the parent domain allow the current domain to
+			// modify/override activation policy configuration.
+			if (ancestorFunc == null) {
+				if (functionality.getDelegationPolicy().isSystem()) {
+					return false;
+				}
+				return true;
+			} else if (ancestorFunc.getDelegationPolicy().isMutable()) {
+				return true;
+			}
+		} else {
+			// The current functionality belong to a parent domain.
+			if (functionality.getDelegationPolicy().isMutable()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private  T getFunctionalityEntityByIdentifiers(AbstractDomain domain, String functionalityId) {
 		Assert.notNull(domain);
 		Assert.notNull(functionalityId);

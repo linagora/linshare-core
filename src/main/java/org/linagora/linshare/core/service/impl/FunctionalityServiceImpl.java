@@ -100,6 +100,13 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
+	public boolean delegationPolicyIsMutable(Functionality f, String domain) {
+		Validate.notNull(f);
+		Validate.notNull(domain);
+		return functionalityBusinessService.delegationPolicyIsMutable(f, domain);
+	}
+
+	@Override
 	public Functionality getFunctionality(Account actor, String domainId, String functionalityId) throws BusinessException {
 		Validate.notNull(domainId);
 		Validate.notNull(functionalityId);
