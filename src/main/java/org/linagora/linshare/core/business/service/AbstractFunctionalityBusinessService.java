@@ -49,6 +49,8 @@ public interface AbstractFunctionalityBusinessService <T> {
 
 	boolean configurationPolicyIsMutable(T f, String domain);
 
+	boolean delegationPolicyIsMutable(T f, String domain);
+
 	T getFunctionality(String domainId, String functionalityId);
 
 	void delete(String domainId, String functionalityId)

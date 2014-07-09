@@ -71,6 +71,9 @@ public class FunctionalityDto {
 	@ApiModelProperty(value = "ConfigurationPolicy")
 	protected PolicyDto configurationPolicy;
 
+	@ApiModelProperty(value = "DelegationPolicy")
+	protected PolicyDto delegationPolicy;
+
 	// This field is designed to indicate if the parent functionality allow you to update the parameters.
 	@ApiModelProperty(value = "ParentAllowParametersUpdate")
 	protected boolean parentAllowParametersUpdate;
@@ -94,7 +97,7 @@ public class FunctionalityDto {
 		super();
 	}
 
-	public FunctionalityDto(Functionality f, boolean parentAllowAPUpdate, boolean parentAllowCPUpdate) {
+	public FunctionalityDto(Functionality f, boolean parentAllowAPUpdate, boolean parentAllowCPUpdate, boolean parentAllowDPUpdate) {
 		super();
 		this.domain = f.getDomain().getIdentifier();
 		this.identifier = f.getIdentifier();
@@ -104,6 +107,9 @@ public class FunctionalityDto {
 		// Configuration policy
 		this.configurationPolicy = new PolicyDto(f.getConfigurationPolicy());
 		this.configurationPolicy.setParentAllowUpdate(parentAllowCPUpdate);
+		// Delegation policy
+		this.delegationPolicy = new PolicyDto(f.getDelegationPolicy());
+		this.delegationPolicy.setParentAllowUpdate(parentAllowDPUpdate);
 		this.parameters = f.getParameters();
 		this.type = f.getType().toString();
 		this.parentIdentifier = f.getParentIdentifier();

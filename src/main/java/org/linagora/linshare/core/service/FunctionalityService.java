@@ -51,6 +51,8 @@ public interface FunctionalityService {
 
 	boolean configurationPolicyIsMutable(Functionality f, String domain);
 
+	boolean delegationPolicyIsMutable(Functionality f, String domain);
+
 	/**
 	 * Return a clone of the original functionality store into the database.
 	 * @param actor

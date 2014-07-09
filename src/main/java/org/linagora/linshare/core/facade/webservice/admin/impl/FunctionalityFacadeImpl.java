@@ -75,8 +75,10 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 				.activationPolicyIsMutable(f, domainId);
 		boolean parentAllowCPUpdate = functionalityService
 				.configurationPolicyIsMutable(f, domainId);
+		boolean parentAllowDPUpdate = functionalityService
+				.configurationPolicyIsMutable(f, domainId);
 		FunctionalityDto func = new FunctionalityDto(f, parentAllowAPUpdate,
-				parentAllowCPUpdate);
+				parentAllowCPUpdate, parentAllowDPUpdate);
 		func.setDomain(domainId);
 		return func;
 	}
@@ -97,8 +99,10 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 					.activationPolicyIsMutable(f, domainId);
 			boolean parentAllowCPUpdate = functionalityService
 					.configurationPolicyIsMutable(f, domainId);
+			boolean parentAllowDPUpdate = functionalityService
+					.delegationPolicyIsMutable(f, domainId);
 			FunctionalityDto func = new FunctionalityDto(f,
-					parentAllowAPUpdate, parentAllowCPUpdate);
+					parentAllowAPUpdate, parentAllowCPUpdate, parentAllowDPUpdate);
 			// We force the domain id to be coherent to the argument.
 			func.setDomain(domainId);
 
@@ -154,7 +158,9 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 				.activationPolicyIsMutable(update, update.getDomain().getIdentifier());
 		boolean parentAllowCPUpdate = functionalityService
 				.configurationPolicyIsMutable(f, update.getDomain().getIdentifier());
-		return new FunctionalityDto(update, parentAllowAPUpdate, parentAllowCPUpdate);
+		boolean parentAllowDPUpdate = functionalityService
+				.delegationPolicyIsMutable(f, update.getDomain().getIdentifier());
+		return new FunctionalityDto(update, parentAllowAPUpdate, parentAllowCPUpdate, parentAllowDPUpdate);
 	}
 
 	@Override

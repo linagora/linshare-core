@@ -114,6 +114,14 @@ public abstract class AbstractFunctionality implements Cloneable {
 		this.activationPolicy = activationPolicy;
 	}
 
+	public Policy getDelegationPolicy() {
+		return delegationPolicy;
+	}
+
+	public void setDelegationPolicy(Policy delegationPolicy) {
+		this.delegationPolicy = delegationPolicy;
+	}
+
 	public Policy getConfigurationPolicy() {
 		return configurationPolicy;
 	}
@@ -121,7 +129,6 @@ public abstract class AbstractFunctionality implements Cloneable {
 	public void setConfigurationPolicy(Policy configurationPolicy) {
 		this.configurationPolicy = configurationPolicy;
 	}
-
 	public AbstractDomain getDomain() {
 		return domain;
 	}
