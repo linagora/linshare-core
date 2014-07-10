@@ -56,6 +56,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.UploadRequestService;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -275,13 +276,13 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public Set<UploadRequestHistory> findAllRequestHistory(Account actor, List<UploadRequestStatus> status) throws BusinessException {
+	public Set<UploadRequestHistory> findAllRequestHistory(Account actor, List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException {
 		if (!actor.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_UNAUTHORISED, "Unauthorized upload request history search");
 		}
 		Set<UploadRequestHistory> list = Sets.newHashSet();
 		List<AbstractDomain> myAdministredDomains = domainPermissionBusinessService.getMyAdministredDomains(actor);
-		List<UploadRequest> requests = uploadRequestBusinessService.findAll(myAdministredDomains, status);
+		List<UploadRequest> requests = uploadRequestBusinessService.findAll(myAdministredDomains, status, afterDate, beforeDate);
 		for (UploadRequest req : requests) {
 			list.addAll(req.getUploadRequestHistory());
 		}

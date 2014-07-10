@@ -43,6 +43,8 @@ import org.linagora.linshare.webservice.dto.UploadRequestHistoryDto;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -72,7 +74,19 @@ public class UploadRequestHistoryRestServiceImpl extends WebserviceBase implemen
 	@ApiOperation(value = "Search all created or enabled history entries.", response = UploadRequestHistoryDto.class)
 	@ApiResponses({@ApiResponse(code = 403, message = "User isn't admin.")})
 	@Override
-	public Set<UploadRequestHistoryDto> findAllByStatus(@ApiParam(value = "Status to search for.", required = true) List<UploadRequestStatus> status) throws BusinessException {
-		return uploadRequestHistoryFacade.findAll(status);
+	public Set<UploadRequestHistoryDto> findAllByStatus(@ApiParam(value = "Status to search for.", required = true) List<UploadRequestStatus> status,
+														@ApiParam(value = "Min date limit.") Date afterDate,
+														@ApiParam(value = "Max date limit.") Date beforeDate) throws BusinessException {
+		if (afterDate == null) {
+			afterDate = new Date();
+		}
+		if (beforeDate == null) {
+			Date referenceDate = new Date();
+			Calendar c = Calendar.getInstance();
+			c.setTime(referenceDate);
+			c.add(Calendar.MONTH, -1);
+			beforeDate = c.getTime();
+		}
+		return uploadRequestHistoryFacade.findAll(status, afterDate, beforeDate);
 	}
 }

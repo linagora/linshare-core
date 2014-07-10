@@ -38,6 +38,7 @@ import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.UploadRequestHistoryDto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -45,5 +46,5 @@ public interface UploadRequestHistoryRestService {
 
 	Set<UploadRequestHistoryDto> findAll(String uuid) throws BusinessException;
 
-	Set<UploadRequestHistoryDto> findAllByStatus(List<UploadRequestStatus> status) throws BusinessException;
+	Set<UploadRequestHistoryDto> findAllByStatus(List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException;
 }

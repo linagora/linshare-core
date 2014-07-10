@@ -43,6 +43,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.webservice.dto.UploadRequestHistoryDto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -67,10 +68,10 @@ public class UploadRequestHistoryFacadeImpl extends AdminGenericFacadeImpl imple
 	}
 
 	@Override
-	public Set<UploadRequestHistoryDto> findAll(List<UploadRequestStatus> status) throws BusinessException {
+	public Set<UploadRequestHistoryDto> findAll(List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException {
 		User actor = checkAuthentication();
 		Set<UploadRequestHistoryDto> dtos = Sets.newHashSet();
-		Set<UploadRequestHistory> res = uploadRequestService.findAllRequestHistory(actor, status);
+		Set<UploadRequestHistory> res = uploadRequestService.findAllRequestHistory(actor, status, afterDate, beforeDate);
 		for (UploadRequestHistory u: res) {
 			dtos.add(new UploadRequestHistoryDto(u));
 		}
