@@ -34,30 +34,35 @@
 
 package org.linagora.linshare.core.facade.webservice.uploadproposition.dto;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class UploadPropositionDto {
 
 	@ApiModelProperty(value = "FirstName")
-	private String firstName;
+	protected String firstName;
 
 	@ApiModelProperty(value = "LastName")
-	private String lastName;
+	protected String lastName;
 
 	@ApiModelProperty(value = "Mail")
-	private String mail;
-	
+	protected String mail;
+
 	@ApiModelProperty(value = "Subject")
-	private String subject;
-	
+	protected String subject;
+
 	@ApiModelProperty(value = "Body")
-	private String body;
-	
+	protected String body;
+
 	@ApiModelProperty(value = "recipientMail")
-	private String recipientMail;
+	protected String recipientMail;
 
 	@ApiModelProperty(value = "recipientDomain")
-	private String recipientDomain;
+	protected String recipientDomain;
+
+	@ApiModelProperty(value = "action")
+	protected String action;
 
 	public UploadPropositionDto() {
 		super();
@@ -130,5 +135,22 @@ public class UploadPropositionDto {
 
 	public void setRecipientDomain(String recipientDomain) {
 		this.recipientDomain = recipientDomain;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	@Override
+	public String toString() {
+		return "UploadPropositionDto [firstName=" + firstName + ", lastName="
+				+ lastName + ", mail=" + mail + ", subject=" + subject
+				+ ", body=" + body + ", recipientMail=" + recipientMail
+				+ ", recipientDomain=" + recipientDomain + ", action=" + action
+				+ "]";
 	}
 }
