@@ -31,35 +31,94 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade;
+package org.linagora.linshare.core.domain.vo;
 
-import java.util.List;
+import java.util.Date;
 
-import org.linagora.linshare.core.domain.vo.UploadRequestEntryVo;
-import org.linagora.linshare.core.domain.vo.UploadRequestVo;
-import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 
-public interface UploadRequestFacade {
-	List<UploadRequestVo> findAll(UserVo actorVo) throws BusinessException;
+public class UploadRequestEntryVo {
 
-	UploadRequestVo findRequestByUuid(UserVo actorVo, String uuid) throws BusinessException;
+	private String uuid;
 
-	UploadRequestVo createRequest(UserVo actorVo, UploadRequestVo req)
-			throws BusinessException;
+	private long size;
 
-	UploadRequestVo updateRequest(UserVo actorVo, UploadRequestVo req)
-			throws BusinessException;
+	private String name;
 
-	void deleteRequest(UserVo actorVo, UploadRequestVo req)
-			throws BusinessException;
+	private Date creationDate;
+	
+	private Date modificationDate;
+	
+	private Date expirationDate;
+	
+	private DocumentVo doc;
 
-	UploadRequestVo closeRequest(UserVo actorVo, UploadRequestVo req)
-			throws BusinessException;
+	public UploadRequestEntryVo() {
+	}
 
-	UploadRequestVo archiveRequest(UserVo actorVo, UploadRequestVo req)
-			throws BusinessException;
+	public UploadRequestEntryVo(UploadRequestEntry e) {
+		this.uuid = e.getUuid();
+		this.size = e.getSize();
+		this.name = e.getName();
+		this.creationDate = e.getCreationDate().getTime();
+		this.modificationDate = e.getModificationDate().getTime();
+		this.expirationDate = e.getExpirationDate().getTime();
+		this.doc = new DocumentVo(e.getDocumentEntry());
+	}
 
-	List<UploadRequestEntryVo> findAllEntries(UserVo actorVo, UploadRequestVo req)
-			throws BusinessException;
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public long getSize() {
+		return size;
+	}
+
+	public void setSize(long size) {
+		this.size = size;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+
+	public DocumentVo getDoc() {
+		return doc;
+	}
+
+	public void setDoc(DocumentVo doc) {
+		this.doc = doc;
+	}
 }
