@@ -56,7 +56,7 @@ import org.springframework.util.Assert;
 public abstract class AbstractFunctionalityBusinessServiceImpl<T extends AbstractFunctionality> implements AbstractFunctionalityBusinessService<T> {
 
 	private final static Logger logger = LoggerFactory.getLogger(AbstractFunctionalityBusinessServiceImpl.class);
-	
+
 	protected AbstractFunctionalityRepository<T> functionalityRepository;
 
 	protected AbstractDomainRepository abstractDomainRepository;
@@ -68,58 +68,9 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		this.abstractDomainRepository = abstractDomainRepository;
 	}
 
-	private class InnerFunctionality {
-
-		private final T functionality;
-
-		private final String identifier;
-
-		public InnerFunctionality(T functionality) {
-			super();
-			this.functionality = functionality;
-			this.identifier = functionality.getIdentifier();
-		}
-
-		public T getFunctionality() {
-			return functionality;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((identifier == null) ? 0 : identifier.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			@SuppressWarnings("unchecked")
-			InnerFunctionality other = (InnerFunctionality) obj;
-			if (identifier == null) {
-				if (other.identifier != null)
-					return false;
-			} else if (!identifier.equals(other.identifier))
-				return false;
-			return true;
-		}
-
-		@Override
-		public String toString() {
-			return "InnerFunctionality : " + identifier + "(" + functionality.getDomain().getIdentifier() + ")";
-		}
-
-	}
-
 	/**
 	 * Helper : convert Functionality list to InnerFunctionality list.
-	 * 
+	 *
 	 * @param functionalities
 	 * @return innerFunctionalities
 	 */
@@ -163,7 +114,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	 * get all functionalities from current domain, then ask parent domains to
 	 * get missing ones, recursively until all root domain is reached. At this
 	 * point all LinShare functionalities are collected in the result list.
-	 * 
+	 *
 	 * @param domain
 	 * @return result contains unique list of InnerFunctionality.
 	 *         InnerFunctionality is an association of functionality identifier
@@ -303,16 +254,16 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			// We check if the parent domain allow the current domain to
 			// modify/override activation policy configuration.
 			if (ancestorFunc == null) {
-				if (functionality.getDelegationPolicy().isSystem()) {
+				if (functionality.getDelegationPolicy() != null && functionality.getDelegationPolicy().isSystem()) {
 					return false;
 				}
 				return true;
-			} else if (ancestorFunc.getDelegationPolicy().isMutable()) {
+			} else if (ancestorFunc.getDelegationPolicy() != null && ancestorFunc.getDelegationPolicy().isMutable()) {
 				return true;
 			}
 		} else {
 			// The current functionality belong to a parent domain.
-			if (functionality.getDelegationPolicy().isMutable()) {
+			if (functionality.getDelegationPolicy() != null && functionality.getDelegationPolicy().isMutable()) {
 				return true;
 			}
 		}
@@ -337,7 +288,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		AbstractDomain domain = abstractDomainRepository.findById(domainId);
 		T functionality = getFunctionalityEntityByIdentifiers(domain, functionalityId);
 		// Never returns the entity when we try to modify the functionality.
-		// The current functionality returned could belong to a parent domain. 
+		// The current functionality returned could belong to a parent domain.
 		// In this case, the functionality will be clone, linked to the input domain.
 		@SuppressWarnings("unchecked")
 		T clone = (T)functionality.clone();
@@ -397,7 +348,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			abstractDomainRepository.update(domain);
 		} else {
 			logger.warn("You are trying to delete the functionality "  + domainId + " : " + functionalityId + " which does not belong to the current domain : " + functionality.getDomain().getIdentifier());
-		}	
+		}
 	}
 
 	private void deleteFunctionalityRecursivly(AbstractDomain domain, String functionalityIdentifier) throws IllegalArgumentException, BusinessException {
@@ -468,5 +419,54 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			// We have to update the configuration policy of each functionality from all the sub domains
 			updateConfigurationPolicyRecursivly(functionalityEntity.getDomain(), functionalityEntity, false);
 		}
+	}
+
+	private class InnerFunctionality {
+
+		private final T functionality;
+
+		private final String identifier;
+
+		public InnerFunctionality(T functionality) {
+			super();
+			this.functionality = functionality;
+			this.identifier = functionality.getIdentifier();
+		}
+
+		public T getFunctionality() {
+			return functionality;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((identifier == null) ? 0 : identifier.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			@SuppressWarnings("unchecked")
+			InnerFunctionality other = (InnerFunctionality) obj;
+			if (identifier == null) {
+				if (other.identifier != null)
+					return false;
+			} else if (!identifier.equals(other.identifier))
+				return false;
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			return "InnerFunctionality : " + identifier + "(" + functionality.getDomain().getIdentifier() + ")";
+		}
+
 	}
 }

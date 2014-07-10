@@ -108,8 +108,10 @@ public class FunctionalityDto {
 		this.configurationPolicy = new PolicyDto(f.getConfigurationPolicy());
 		this.configurationPolicy.setParentAllowUpdate(parentAllowCPUpdate);
 		// Delegation policy
-		this.delegationPolicy = new PolicyDto(f.getDelegationPolicy());
-		this.delegationPolicy.setParentAllowUpdate(parentAllowDPUpdate);
+		if (f.getDelegationPolicy() != null) {
+			this.delegationPolicy = new PolicyDto(f.getDelegationPolicy());
+			this.delegationPolicy.setParentAllowUpdate(parentAllowDPUpdate);
+		}
 		this.parameters = f.getParameters();
 		this.type = f.getType().toString();
 		this.parentIdentifier = f.getParentIdentifier();
