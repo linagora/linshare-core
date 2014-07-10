@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.vo.UploadRequestEntryVo;
@@ -62,4 +63,6 @@ public interface UploadRequestFacade {
 
 	List<UploadRequestEntryVo> findAllEntries(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException;
+
+	InputStream getFileStream(UserVo actorVo, UploadRequestEntryVo entry) throws BusinessException;
 }

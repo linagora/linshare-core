@@ -89,7 +89,7 @@ public class Index {
 	 */
 
 	@InjectPage
-	private UploadRequestContent uploadRequestContent;
+	private Content content;
 
 	@Inject
 	private PersistentLocale persistentLocale;
@@ -118,9 +118,9 @@ public class Index {
 	}
 
     public Object onActionFromShowContent(String uuid) {
-		uploadRequestContent.setMySelected(Iterables.find(requests,
+		content.setMySelected(Iterables.find(requests,
 				UploadRequestVo.equalTo(uuid)));
-		return uploadRequestContent;
+		return content;
     }
 
 	/*

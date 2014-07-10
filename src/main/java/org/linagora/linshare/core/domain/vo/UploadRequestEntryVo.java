@@ -33,25 +33,30 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
-import java.util.Date;
+import java.util.Calendar;
 
+import org.apache.tapestry5.beaneditor.NonVisual;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 public class UploadRequestEntryVo {
 
+	@NonVisual
 	private String uuid;
 
 	private long size;
 
 	private String name;
 
-	private Date creationDate;
-	
-	private Date modificationDate;
-	
-	private Date expirationDate;
-	
-	private DocumentVo doc;
+	private Calendar creationDate;
+
+	private Calendar modificationDate;
+
+	private Calendar expirationDate;
+
+	private DocumentVo document;
 
 	public UploadRequestEntryVo() {
 	}
@@ -60,10 +65,10 @@ public class UploadRequestEntryVo {
 		this.uuid = e.getUuid();
 		this.size = e.getSize();
 		this.name = e.getName();
-		this.creationDate = e.getCreationDate().getTime();
-		this.modificationDate = e.getModificationDate().getTime();
-		this.expirationDate = e.getExpirationDate().getTime();
-		this.doc = new DocumentVo(e.getDocumentEntry());
+		this.creationDate = e.getCreationDate();
+		this.modificationDate = e.getModificationDate();
+		this.expirationDate = e.getExpirationDate();
+		this.document = new DocumentVo(e.getDocumentEntry());
 	}
 
 	public String getUuid() {
@@ -90,35 +95,70 @@ public class UploadRequestEntryVo {
 		this.name = name;
 	}
 
-	public Date getCreationDate() {
+	public Calendar getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(Date creationDate) {
+	public void setCreationDate(Calendar creationDate) {
 		this.creationDate = creationDate;
 	}
 
-	public Date getModificationDate() {
+	public Calendar getModificationDate() {
 		return modificationDate;
 	}
 
-	public void setModificationDate(Date modificationDate) {
+	public void setModificationDate(Calendar modificationDate) {
 		this.modificationDate = modificationDate;
 	}
 
-	public Date getExpirationDate() {
+	public Calendar getExpirationDate() {
 		return expirationDate;
 	}
 
-	public void setExpirationDate(Date expirationDate) {
+	public void setExpirationDate(Calendar expirationDate) {
 		this.expirationDate = expirationDate;
 	}
 
-	public DocumentVo getDoc() {
-		return doc;
+	public DocumentVo getDocument() {
+		return document;
 	}
 
-	public void setDoc(DocumentVo doc) {
-		this.doc = doc;
+	public void setDocumentUuid(DocumentVo document) {
+		this.document = document;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof UploadRequestEntryVo))
+			return false;
+		UploadRequestEntryVo other = (UploadRequestEntryVo) obj;
+		if (uuid == null) {
+			if (other.uuid != null)
+				return false;
+		} else if (!uuid.equals(other.uuid))
+			return false;
+		return true;
+	}
+
+	/*
+	 * Filters
+	 */
+	public static Predicate<? super UploadRequestEntryVo> equalTo(String uuid) {
+		UploadRequestEntryVo test = new UploadRequestEntryVo();
+
+		test.setUuid(uuid);
+		return Predicates.equalTo(test);
 	}
 }

@@ -52,10 +52,9 @@ import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementSe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UploadRequestContent {
+public class Detail {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(UploadRequestContent.class);
+	private static final Logger logger = LoggerFactory.getLogger(Detail.class);
 
 	@SessionState
 	@Property
@@ -119,6 +118,10 @@ public class UploadRequestContent {
 
 	public Object onPassivate() {
 		return selected.getUuid();
+	}
+
+	public Object onActionFromBack() throws BusinessException {
+		return Content.class;
 	}
 
 	public void onActionFromClose() throws BusinessException {

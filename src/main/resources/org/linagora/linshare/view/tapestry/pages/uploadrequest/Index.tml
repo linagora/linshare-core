@@ -4,7 +4,7 @@
   
   <!-- Main content -->
   <div id="content">
-    <h1 title="Index (TODO)"><span class="truncate">Index (TODO)</span></h1>
+    <h1 title="${message:pages.uploadrequest.index.title}"><span class="truncate">${message:pages.uploadrequest.index.title}</span></h1>
 
     <t:messagePanel />
     <t:businessMessagesDisplayer />
@@ -19,7 +19,7 @@
 	  </span>
         </p:subjectCell>
         <p:empty>
-          ${message:pages.thread.empty}
+          ${message:pages.uploadrequest.index.empty}
         </p:empty>
       </t:grid>
     </div>
