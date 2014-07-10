@@ -186,4 +186,8 @@
 	<bean name="technicalAccountPermissionRepository" class="org.linagora.linshare.core.repository.hibernate.TechnicalAccountPermissionRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
+	<bean name="uploadPropositionRepository" class="org.linagora.linshare.core.repository.hibernate.UploadPropositionRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>

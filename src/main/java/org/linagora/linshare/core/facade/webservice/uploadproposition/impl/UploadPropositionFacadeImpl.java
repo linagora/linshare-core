@@ -105,6 +105,7 @@ public class UploadPropositionFacadeImpl extends
 	public void create(UploadPropositionDto dto) throws BusinessException {
 		// TODO Auto-generated method stub
 		logger.debug("it works.");
+
 		logger.debug(dto.toString());
 	}
 }

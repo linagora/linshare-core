@@ -288,4 +288,8 @@
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="documentEntryService" />
 	</bean>
+	<bean name="uploadPropositionService" class="org.linagora.linshare.core.service.impl.UploadPropositionServiceImpl">
+		<constructor-arg ref="uploadPropositionBusinessService" />
+		<constructor-arg ref="domainBusinessService" />
+	</bean>
 </beans>
