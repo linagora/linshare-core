@@ -33,11 +33,11 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.exception.BusinessException;
-
 import java.util.Date;
 import java.util.Set;
+
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.exception.BusinessException;
 
 public class UploadRequest {
 

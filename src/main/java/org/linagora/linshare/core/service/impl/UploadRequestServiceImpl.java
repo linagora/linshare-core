@@ -34,23 +34,9 @@
 package org.linagora.linshare.core.service.impl;
 
 import com.google.common.collect.Sets;
-import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
-import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
-import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
-import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
-import org.linagora.linshare.core.business.service.UploadRequestHistoryBusinessService;
-import org.linagora.linshare.core.business.service.UploadRequestTemplateBusinessService;
-import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
+import org.linagora.linshare.core.business.service.*;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
-import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
-import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
-import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.*;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -96,7 +82,8 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequest findRequestByUuid(User actor, String uuid) throws BusinessException {
+	public UploadRequest findRequestByUuid(User actor, String uuid)
+			throws BusinessException {
 		UploadRequest ret = uploadRequestBusinessService.findByUuid(uuid);
 
 		if (ret == null) {
@@ -134,13 +121,13 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 
 	@Override
 	public UploadRequestGroup createRequestGroup(User actor,
-												 UploadRequestGroup group) throws BusinessException {
+			UploadRequestGroup group) throws BusinessException {
 		return uploadRequestGroupBusinessService.create(group);
 	}
 
 	@Override
 	public UploadRequestGroup updateRequestGroup(User actor,
-												 UploadRequestGroup group) throws BusinessException {
+			UploadRequestGroup group) throws BusinessException {
 		return uploadRequestGroupBusinessService.update(group);
 	}
 
@@ -151,19 +138,57 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
+	public Set<UploadRequestHistory> findAllRequestHistory(Account actor,
+			String uploadRequestUuid) throws BusinessException {
+		UploadRequest request = uploadRequestBusinessService
+				.findByUuid(uploadRequestUuid);
+		if (request == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
+					"upload request not found : " + uploadRequestUuid);
+		}
+		if (!(domainPermissionBusinessService.isAdminforThisDomain(actor,
+				request.getAbstractDomain()) || actor
+				.equals(request.getOwner()))) {
+			throw new BusinessException(
+					BusinessErrorCode.UPLOAD_REQUEST_UNAUTHORISED,
+					"Unauthorized upload request history search");
+		}
+		return request.getUploadRequestHistory();
+	}
+
+	@Override
+	public Set<UploadRequestHistory> findAllRequestHistory(Account actor,
+			List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException {
+		if (!actor.hasSuperAdminRole()) {
+			throw new BusinessException(
+					BusinessErrorCode.UPLOAD_REQUEST_UNAUTHORISED,
+					"Unauthorized upload request history search");
+		}
+		Set<UploadRequestHistory> list = Sets.newHashSet();
+		List<AbstractDomain> myAdministredDomains = domainPermissionBusinessService
+				.getMyAdministredDomains(actor);
+		List<UploadRequest> requests = uploadRequestBusinessService.findAll(
+				myAdministredDomains, status, afterDate, beforeDate);
+		for (UploadRequest req : requests) {
+			list.addAll(req.getUploadRequestHistory());
+		}
+		return list;
+	}
+
+	@Override
 	public UploadRequestHistory findRequestHistoryByUuid(User actor, String uuid) {
 		return uploadRequestHistoryBusinessService.findByUuid(uuid);
 	}
 
 	@Override
 	public UploadRequestHistory createRequestHistory(Account actor,
-													 UploadRequestHistory history) throws BusinessException {
+			UploadRequestHistory history) throws BusinessException {
 		return uploadRequestHistoryBusinessService.create(history);
 	}
 
 	@Override
 	public UploadRequestHistory updateRequestHistory(User actor,
-													 UploadRequestHistory history) throws BusinessException {
+			UploadRequestHistory history) throws BusinessException {
 		return uploadRequestHistoryBusinessService.update(history);
 	}
 
@@ -175,19 +200,19 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 
 	@Override
 	public UploadRequestTemplate findRequestTemplateByUuid(User actor,
-														   String uuid) {
+			String uuid) {
 		return uploadRequestTemplateBusinessService.findByUuid(uuid);
 	}
 
 	@Override
 	public UploadRequestTemplate createRequestTemplate(User actor,
-													   UploadRequestTemplate template) throws BusinessException {
+			UploadRequestTemplate template) throws BusinessException {
 		return uploadRequestTemplateBusinessService.create(template);
 	}
 
 	@Override
 	public UploadRequestTemplate updateRequestTemplate(User actor,
-													   UploadRequestTemplate template) throws BusinessException {
+			UploadRequestTemplate template) throws BusinessException {
 		return uploadRequestTemplateBusinessService.update(template);
 	}
 
@@ -227,13 +252,13 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 
 	@Override
 	public UploadRequestEntry createRequestEntry(Account actor,
-												 UploadRequestEntry entry) throws BusinessException {
+			UploadRequestEntry entry) throws BusinessException {
 		return uploadRequestEntryBusinessService.create(entry);
 	}
 
 	@Override
 	public UploadRequestEntry updateRequestEntry(Account actor,
-												 UploadRequestEntry entry) throws BusinessException {
+			UploadRequestEntry entry) throws BusinessException {
 		return uploadRequestEntryBusinessService.update(entry);
 	}
 
@@ -248,44 +273,25 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	 */
 
 	@Override
-	public UploadRequest setStatusToClosed(Account actor, UploadRequest req) throws BusinessException {
+	public UploadRequest setStatusToClosed(Account actor, UploadRequest req)
+			throws BusinessException {
 		// TODO : notifications, log history
-		if (actor.hasSystemAccountRole() || actor.equals(req.getOwner()) || actor.hasSuperAdminRole()) {
+		if (actor.hasSystemAccountRole() || actor.equals(req.getOwner())
+				|| actor.hasSuperAdminRole()) {
 			req.updateStatus(UploadRequestStatus.STATUS_CLOSED);
-			// FIXME : it works without updating the entity. It does not work if we do. ! :(
-//			uploadRequestBusinessService.update(req);
-//			UploadRequestHistory history = createRequestHistory(actor, new UploadRequestHistory(req, UploadRequestHistoryEventType.EVENT_CLOSED, true));
-//			req.getUploadRequestHistory().add(history);
-//			uploadRequestBusinessService.update(req);
+			// FIXME : it works without updating the entity. It does not work if
+			// we do. ! :(
+			// uploadRequestBusinessService.update(req);
+			// UploadRequestHistory history = createRequestHistory(actor, new
+			// UploadRequestHistory(req,
+			// UploadRequestHistoryEventType.EVENT_CLOSED, true));
+			// req.getUploadRequestHistory().add(history);
+			// uploadRequestBusinessService.update(req);
 			return req;
 		} else {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "you do not have the right to close this upload request url : " + req.getUuid());
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					"you do not have the right to close this upload request url : "
+							+ req.getUuid());
 		}
-	}
-
-	@Override
-	public Set<UploadRequestHistory> findAllRequestHistory(Account actor, String uploadRequestUuid) throws BusinessException {
-		UploadRequest request = uploadRequestBusinessService.findByUuid(uploadRequestUuid);
-		if (request == null) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "upload request not found : " + uploadRequestUuid);
-		}
-		if (!(domainPermissionBusinessService.isAdminforThisDomain(actor, request.getAbstractDomain()) || actor.equals(request.getOwner()))) {
-			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_UNAUTHORISED, "Unauthorized upload request history search");
-		}
-		return request.getUploadRequestHistory();
-	}
-
-	@Override
-	public Set<UploadRequestHistory> findAllRequestHistory(Account actor, List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException {
-		if (!actor.hasSuperAdminRole()) {
-			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_UNAUTHORISED, "Unauthorized upload request history search");
-		}
-		Set<UploadRequestHistory> list = Sets.newHashSet();
-		List<AbstractDomain> myAdministredDomains = domainPermissionBusinessService.getMyAdministredDomains(actor);
-		List<UploadRequest> requests = uploadRequestBusinessService.findAll(myAdministredDomains, status, afterDate, beforeDate);
-		for (UploadRequest req : requests) {
-			list.addAll(req.getUploadRequestHistory());
-		}
-		return list;
 	}
 }

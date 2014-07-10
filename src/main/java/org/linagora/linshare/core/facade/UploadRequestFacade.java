@@ -35,6 +35,7 @@ package org.linagora.linshare.core.facade;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.vo.UploadRequestEntryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -59,4 +60,6 @@ public interface UploadRequestFacade {
 	UploadRequestVo archiveRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException;
 
+	List<UploadRequestEntryVo> findAllEntries(UserVo actorVo, UploadRequestVo req)
+			throws BusinessException;
 }

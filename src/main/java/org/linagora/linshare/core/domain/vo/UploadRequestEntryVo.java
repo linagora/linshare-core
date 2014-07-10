@@ -31,18 +31,94 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.domain.vo;
 
-package org.linagora.linshare.view.tapestry.components;
+import java.util.Date;
 
-import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
-import org.apache.tapestry5.corelib.components.BeanDisplay;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 
-@Import(library = { "bootstrap/js/bootstrap.js" })
-@SupportsInformalParameters
-public class BSBeanDisplay extends BeanDisplay {
+public class UploadRequestEntryVo {
 
-	@Import(stylesheet = { "bootstrap/css/bootstrap.css" })
-	void cleanupRender() {
+	private String uuid;
+
+	private long size;
+
+	private String name;
+
+	private Date creationDate;
+	
+	private Date modificationDate;
+	
+	private Date expirationDate;
+	
+	private DocumentVo doc;
+
+	public UploadRequestEntryVo() {
+	}
+
+	public UploadRequestEntryVo(UploadRequestEntry e) {
+		this.uuid = e.getUuid();
+		this.size = e.getSize();
+		this.name = e.getName();
+		this.creationDate = e.getCreationDate().getTime();
+		this.modificationDate = e.getModificationDate().getTime();
+		this.expirationDate = e.getExpirationDate().getTime();
+		this.doc = new DocumentVo(e.getDocumentEntry());
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public long getSize() {
+		return size;
+	}
+
+	public void setSize(long size) {
+		this.size = size;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+
+	public DocumentVo getDoc() {
+		return doc;
+	}
+
+	public void setDoc(DocumentVo doc) {
+		this.doc = doc;
 	}
 }
