@@ -140,8 +140,9 @@
 		<constructor-arg ref="accountService" />
 	</bean>
 
-	<bean id="uploadRequestHistoryFacade" class="org.linagora.linshare.core.facade.impl.UploadRequestFacadeImpl">
+	<bean id="uploadRequestFacade" class="org.linagora.linshare.core.facade.impl.UploadRequestFacadeImpl">
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="uploadRequestService" />
+		<constructor-arg ref="documentEntryService" />
 	</bean>
 </beans>

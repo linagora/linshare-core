@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade.impl;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -44,6 +45,7 @@ import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
+import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UserService;
 
@@ -53,11 +55,14 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 
 	private final UserService userService;
 	private final UploadRequestService uploadRequestService;
+	private final DocumentEntryService documentEntryService;
 
 	public UploadRequestFacadeImpl(final UserService userService,
-			final UploadRequestService uploadRequestService) {
+			final UploadRequestService uploadRequestService,
+			final DocumentEntryService documentEntryService) {
 		this.userService = userService;
 		this.uploadRequestService = uploadRequestService;
+		this.documentEntryService = documentEntryService;
 	}
 
 	@Override
@@ -137,16 +142,25 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	}
 
 	@Override
-	public List<UploadRequestEntryVo> findAllEntries(UserVo actorVo, UploadRequestVo req)
-			throws BusinessException {
+	public List<UploadRequestEntryVo> findAllEntries(UserVo actorVo,
+			UploadRequestVo req) throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		UploadRequest e = uploadRequestService.findRequestByUuid(actor,
 				req.getUuid());
 		List<UploadRequestEntryVo> ret = Lists.newArrayList();
-	
+
 		for (UploadRequestEntry ent : e.getUploadRequestEntries()) {
 			ret.add(new UploadRequestEntryVo(ent));
 		}
 		return ret;
+	}
+
+	@Override
+	public InputStream getFileStream(UserVo actorVo, UploadRequestEntryVo entry)
+			throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+
+		return documentEntryService.getDocumentStream(actor, entry
+				.getDocument().getIdentifier());
 	}
 }

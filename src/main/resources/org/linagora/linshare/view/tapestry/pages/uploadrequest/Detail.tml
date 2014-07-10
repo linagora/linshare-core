@@ -12,7 +12,13 @@
     <!-- Action bar -->
     <div id="actionBar">
       <h4>Actions</h4>
+      <br />
       <ul>
+        <li>
+          <t:actionLink t:id="back" class="button" title="${message:pages.uploadrequest.back.button}">
+	    <span>${message:pages.uploadrequest.back.button}</span>
+          </t:actionLink>
+        </li>
 	<t:if test="selected.closed">
           <li>
             <t:actionLink t:id="delete" class="button" title="${message:pages.uploadrequest.delete.button}">
