@@ -45,6 +45,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.collect.Sets;
+import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
@@ -58,12 +60,16 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Api(value = "/rest/admin/users", description = "User administration service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UserRestServiceImpl extends WebserviceBase implements
 		UserRestService {
+
+	private static final Logger logger = LoggerFactory.getLogger(UserRestServiceImpl.class);
 
 	private final UserFacade userFacade;
 
@@ -82,6 +88,10 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public Set<UserDto> search(
 			@ApiParam(value = "Patterns to search.", required = true) UserSearchDto userSearchDto)
 			throws BusinessException {
+		if (userSearchDto.getFirstName().length() < 3 && userSearchDto.getLastName().length() < 3 && userSearchDto.getMail().length() < 3) {
+			logger.info("Search request less than 3 char");
+			return Sets.newHashSet();
+		}
 		return userFacade.search(userSearchDto);
 	}
 
@@ -92,6 +102,10 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public Set<UserDto> searchInternals(
 			@ApiParam(value = "Internal users to search for.", required = true) @PathParam("pattern") String pattern)
 			throws BusinessException {
+		if (pattern.length() < 3) {
+			logger.info("Search request less than 3 char");
+			return Sets.newHashSet();
+		}
 		return userFacade.searchInternals(pattern);
 	}
 
@@ -102,6 +116,10 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public Set<UserDto> searchGuests(
 			@ApiParam(value = "Guests to search for.", required = true) @PathParam("pattern") String pattern)
 			throws BusinessException {
+		if (pattern.length() < 3) {
+			logger.info("Search request less than 3 char");
+			return Sets.newHashSet();
+		}
 		return userFacade.searchGuests(pattern);
 	}
 
