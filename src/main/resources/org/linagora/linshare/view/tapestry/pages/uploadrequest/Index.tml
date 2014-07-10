@@ -9,6 +9,18 @@
     <t:messagePanel />
     <t:businessMessagesDisplayer />
     
+    <!-- Action bar -->
+    <div id="actionBar">
+      <h4>Actions</h4>
+      <br />
+      <ul>
+
+        <t:actionLink t:id="create" class="button" title="${message:pages.uploadrequest.create.button}">
+	  <span><img src="${asset:context:images/icons/edit-button.png}" alt=""/> ${message:pages.uploadrequest.create.button}</span>
+        </t:actionLink>
+      </ul>
+    </div><!-- id="actionBar" -->
+
     <div id="pageContent">
       <t:grid source="requests" row="current" include="subject, size, activationDate, expiryDate, status" rowsPerPage="10">
         <p:subjectCell>

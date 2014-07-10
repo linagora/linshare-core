@@ -33,13 +33,9 @@
  */
 package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
-import java.util.List;
-
 import org.apache.tapestry5.annotations.InjectPage;
-import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
-import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
@@ -51,11 +47,9 @@ import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Iterables;
+public class Create {
 
-public class Index {
-
-	private static Logger logger = LoggerFactory.getLogger(Index.class);
+	private static Logger logger = LoggerFactory.getLogger(Create.class);
 
 	/*
 	 * Tapestry properties
@@ -68,14 +62,6 @@ public class Index {
 	@SessionState
 	@Property
 	private UserVo userVo;
-
-	@Persist
-	@Property
-	private List<UploadRequestVo> requests;
-
-	@Persist
-	@Property
-	private String pattern;
 
 	@Property
 	private UploadRequestVo current;
@@ -100,34 +86,16 @@ public class Index {
 		if (!functionalityFacade.isEnableUploadRequest(userVo
 				.getDomainIdentifier()))
 			return org.linagora.linshare.view.tapestry.pages.Index.class;
+		current = new UploadRequestVo();
 		return null;
 	}
 
-	@SetupRender
-	public void init() throws BusinessException {
-		logger.debug("Setup Render begins");
-
-		requests = uploadRequestFacade.findAll(userVo);
+	public Object onSuccess() throws BusinessException {
+		uploadRequestFacade.closeRequest(userVo, current);
+		return Index.class;
 	}
 
-    public Object onActionFromShowContent(String uuid) {
-		content.setMySelected(Iterables.find(requests,
-				UploadRequestVo.equalTo(uuid)));
-		return content;
-    }
-
-    public Object onActionFromCreate() {
-		return Create.class;
-    }
-
-	/*
-	 * Exception Handling
-	 */
-
-	public Object onException(Throwable cause) {
-		shareSessionObjects.addError(messages.get("global.exception.message"));
-		logger.error(cause.getMessage());
-		cause.printStackTrace();
-		return this;
+	public Object onCancel() throws BusinessException {
+		return Index.class;
 	}
 }
