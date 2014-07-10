@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.business.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -47,7 +48,7 @@ public interface UploadRequestBusinessService {
 
 	List<UploadRequest> findAll(List<UploadRequestStatus> status);
 
-	List<UploadRequest> findAll(List<AbstractDomain> domains, List<UploadRequestStatus> status);
+	List<UploadRequest> findAll(List<AbstractDomain> domains, List<UploadRequestStatus> status, Date afterDate, Date beforeDate);
 
 	UploadRequest findByUuid(String uuid);
 

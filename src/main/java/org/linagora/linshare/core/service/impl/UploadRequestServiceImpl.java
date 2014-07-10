@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -171,25 +172,6 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public Set<UploadRequestHistory> findAllRequestHistory(Account actor,
-			List<UploadRequestStatus> status) throws BusinessException {
-		if (!actor.hasSuperAdminRole()) {
-			throw new BusinessException(
-					BusinessErrorCode.UPLOAD_REQUEST_UNAUTHORISED,
-					"Unauthorized upload request history search");
-		}
-		Set<UploadRequestHistory> list = Sets.newHashSet();
-		List<AbstractDomain> myAdministredDomains = domainPermissionBusinessService
-				.getMyAdministredDomains(actor);
-		List<UploadRequest> requests = uploadRequestBusinessService.findAll(
-				myAdministredDomains, status);
-		for (UploadRequest req : requests) {
-			list.addAll(req.getUploadRequestHistory());
-		}
-		return list;
-	}
-
-	@Override
 	public UploadRequestHistory findRequestHistoryByUuid(User actor, String uuid) {
 		return uploadRequestHistoryBusinessService.findByUuid(uuid);
 	}
@@ -307,5 +289,19 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 					"you do not have the right to close this upload request url : "
 							+ req.getUuid());
 		}
+	}
+
+	@Override
+	public Set<UploadRequestHistory> findAllRequestHistory(Account actor, List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException {
+		if (!actor.hasSuperAdminRole()) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_UNAUTHORISED, "Unauthorized upload request history search");
+		}
+		Set<UploadRequestHistory> list = Sets.newHashSet();
+		List<AbstractDomain> myAdministredDomains = domainPermissionBusinessService.getMyAdministredDomains(actor);
+		List<UploadRequest> requests = uploadRequestBusinessService.findAll(myAdministredDomains, status, afterDate, beforeDate);
+		for (UploadRequest req : requests) {
+			list.addAll(req.getUploadRequestHistory());
+		}
+		return list;
 	}
 }

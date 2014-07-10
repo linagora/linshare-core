@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
@@ -84,16 +85,20 @@ public class UploadRequestRepositoryImpl extends
 	}
 
 	@Override
-	public List<UploadRequest> findByDomainsAndStatus(List<AbstractDomain> domains, List<UploadRequestStatus> status) {
+	public List<UploadRequest> findByDomainsAndStatus(List<AbstractDomain> domains, List<UploadRequestStatus> status, Date afterDate, Date beforeDate) {
 		Disjunction orStatus = Restrictions.disjunction();
 		Disjunction orDomains = Restrictions.disjunction();
+		Conjunction and = Restrictions.conjunction();
 		for (AbstractDomain d : domains) {
 			orDomains.add(Restrictions.eq("abstractDomain", d));
 		}
 		for (UploadRequestStatus s : status) {
 			orStatus.add(Restrictions.eq("status", s));
 		}
-		return findByCriteria(Restrictions.and(orStatus, orDomains));
+		and.add(orStatus);
+		and.add(orDomains);
+		and.add(Restrictions.between("creationDate", afterDate, beforeDate));
+		return findByCriteria(and);
 	}
 
 	@Override

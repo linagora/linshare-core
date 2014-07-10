@@ -38,6 +38,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
 
+import java.util.Date;
 import java.util.List;
 
 public interface UploadRequestRepository extends
@@ -72,7 +73,9 @@ public interface UploadRequestRepository extends
 	 *
 	 * @param domains
 	 * @param status
+	 * @param afterDate based on creation date
+	 * @param beforeDate based on creation date
 	 * @return found uploadRequests otherwise null.
 	 */
-	List<UploadRequest> findByDomainsAndStatus(List<AbstractDomain> domains, List<UploadRequestStatus> status);
+	List<UploadRequest> findByDomainsAndStatus(List<AbstractDomain> domains, List<UploadRequestStatus> status, Date afterDate, Date beforeDate);
 }

@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -66,8 +67,8 @@ public class UploadRequestBusinessServiceImpl implements
 	}
 
 	@Override
-	public List<UploadRequest> findAll(List<AbstractDomain> domains, List<UploadRequestStatus> status) {
-		return uploadRequestRepository.findByDomainsAndStatus(domains, status);
+	public List<UploadRequest> findAll(List<AbstractDomain> domains, List<UploadRequestStatus> status, Date afterDate, Date beforeDate) {
+		return uploadRequestRepository.findByDomainsAndStatus(domains, status, afterDate, beforeDate);
 	}
 
 	@Override

@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -124,5 +125,5 @@ public interface UploadRequestService {
 
 	Set<UploadRequestHistory> findAllRequestHistory(Account actor, String uploadRequestUuid) throws BusinessException;
 
-	Set<UploadRequestHistory> findAllRequestHistory(Account actor, List<UploadRequestStatus> status) throws BusinessException;
+	Set<UploadRequestHistory> findAllRequestHistory(Account actor, List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException;
 }
