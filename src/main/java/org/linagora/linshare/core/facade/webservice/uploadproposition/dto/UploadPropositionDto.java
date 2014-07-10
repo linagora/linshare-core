@@ -34,8 +34,6 @@
 
 package org.linagora.linshare.core.facade.webservice.uploadproposition.dto;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class UploadPropositionDto {

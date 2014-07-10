@@ -11,7 +11,7 @@
 
 	<bean id="domainBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainBusinessServiceImpl">
 		<constructor-arg ref="abstractDomainRepository" />
-    </bean>
+	</bean>
 
 	<bean id="documentEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.DocumentEntryBusinessServiceImpl">
 		<constructor-arg ref="jackRabbitRepository" />
@@ -151,5 +151,9 @@
 
 	<bean id="technicalAccountPermissionBusinessService" class="org.linagora.linshare.core.business.service.impl.TechnicalAccountPermissionBusinessServiceImpl">
 		<constructor-arg ref="technicalAccountPermissionRepository" />
+	</bean>
+
+	<bean id="uploadPropositionBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadPropositionBusinessServiceImpl">
+		<constructor-arg ref="uploadPropositionRepository" />
 	</bean>
 </beans>
