@@ -42,7 +42,7 @@ public class UploadPropositionActionDto {
 
 	protected String uuid;
 
-	protected String actionType;
+	protected String action;
 
 	protected String data;
 
@@ -51,14 +51,14 @@ public class UploadPropositionActionDto {
 			String data) {
 		super();
 		this.uuid = uuid;
-		this.actionType = actionType.name();
+		this.action = actionType.name();
 		this.data = data;
 	}
 
 	public UploadPropositionActionDto(UploadPropositionAction entity) {
 		super();
 		this.uuid = entity.getUuid();
-		this.actionType = entity.getActionType().name();
+		this.action = entity.getActionType().name();
 		this.data = entity.getData();
 	}
 
@@ -70,12 +70,12 @@ public class UploadPropositionActionDto {
 		this.uuid = uuid;
 	}
 
-	public String getActionType() {
-		return actionType;
+	public String getAction() {
+		return action;
 	}
 
-	public void setActionType(String actionType) {
-		this.actionType = actionType;
+	public void setAction(String action) {
+		this.action = action;
 	}
 
 	public String getData() {

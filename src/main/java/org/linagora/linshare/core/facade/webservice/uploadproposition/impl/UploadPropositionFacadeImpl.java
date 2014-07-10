@@ -41,17 +41,23 @@ import org.linagora.linshare.core.domain.constants.UploadPropositionRuleFieldTyp
 import org.linagora.linshare.core.domain.constants.UploadPropositionRuleOperatorType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.impl.AbstractDomainFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.UploadPropositionFacade;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionActionDto;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionDto;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionFilterDto;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionRuleDto;
 import org.linagora.linshare.core.service.AccountService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 public class UploadPropositionFacadeImpl extends
 		UploadPropositionGenericFacadeImpl implements UploadPropositionFacade {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(UploadPropositionFacadeImpl.class);
 
 	public UploadPropositionFacadeImpl(AccountService accountService) {
 		super(accountService);
@@ -61,6 +67,7 @@ public class UploadPropositionFacadeImpl extends
 	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
 		User actor = this.checkAuthentication();
 		List<UploadPropositionFilterDto> filters = Lists.newArrayList();
+
 		UploadPropositionActionDto action = new UploadPropositionActionDto(
 				"ee1bf0ab-21ad-4a69-914d-d792eb2b36d7",
 				UploadPropositionActionType.ACCEPT, null);
@@ -68,6 +75,16 @@ public class UploadPropositionFacadeImpl extends
 				"3f52d026-9719-4f0b-bf4b-f5e9252a71a7",
 				UploadPropositionRuleOperatorType.TRUE,
 				UploadPropositionRuleFieldType.SENDER_EMAIL, null);
+
+		UploadPropositionActionDto action1 = new UploadPropositionActionDto(
+				"ee1bf0ab-21ad-4a69-914d-d792eb2b36d7",
+				UploadPropositionActionType.REJECT, null);
+		UploadPropositionRuleDto rule1 = new UploadPropositionRuleDto(
+				"3f52d026-9719-4f0b-bf4b-f5e9252a71a7",
+				UploadPropositionRuleOperatorType.EQUAL,
+				UploadPropositionRuleFieldType.SENDER_EMAIL,
+				"bart.simpson@int1.linshare.dev");
+
 		UploadPropositionFilterDto filter = new UploadPropositionFilterDto(
 				"5724946a-eebe-450b-bb84-0d8af480f3f6", "default filter 1",
 				true);
@@ -87,5 +104,7 @@ public class UploadPropositionFacadeImpl extends
 	@Override
 	public void create(UploadPropositionDto dto) throws BusinessException {
 		// TODO Auto-generated method stub
+		logger.debug("it works.");
+		logger.debug(dto.toString());
 	}
 }

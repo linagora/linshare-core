@@ -54,6 +54,7 @@ public class UploadPropositionFilterDto {
 
 	protected List<UploadPropositionActionDto> uploadPropositionActions = Lists.newArrayList();
 
+
 	//Tests only 
 	public UploadPropositionFilterDto(String uuid, String name,
 			boolean matchAll) {
