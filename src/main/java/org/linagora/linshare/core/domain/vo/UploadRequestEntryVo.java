@@ -68,7 +68,9 @@ public class UploadRequestEntryVo {
 		this.creationDate = e.getCreationDate();
 		this.modificationDate = e.getModificationDate();
 		this.expirationDate = e.getExpirationDate();
-		this.document = new DocumentVo(e.getDocumentEntry());
+		if (e.getDocumentEntry() != null) {
+			this.document = new DocumentVo(e.getDocumentEntry());
+		}
 	}
 
 	public String getUuid() {

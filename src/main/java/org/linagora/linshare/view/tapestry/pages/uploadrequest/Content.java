@@ -159,10 +159,10 @@ public class Content {
 			InputStream stream = uploadRequestFacade.getFileStream(userVo, entry);
 			return new FileStreamResponse(entry.getDocument(), stream);
 		} catch (Exception e) {
-			logger.error("File don't exist anymore, please remove it");
+			logger.error("File don't exist anymore.");
 			businessMessagesManagementService
 					.notify(new BusinessException(
-							BusinessErrorCode.FILE_UNREACHABLE,
+							BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_UNREACHABLE,
 							"File unreachable in file system, please remove the entry"));
 			return null;
 		}
