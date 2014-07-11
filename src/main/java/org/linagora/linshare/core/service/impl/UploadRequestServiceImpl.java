@@ -33,7 +33,9 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -58,8 +60,6 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.UploadRequestService;
-
-import com.google.common.collect.Sets;
 
 public class UploadRequestServiceImpl implements UploadRequestService {
 
@@ -169,6 +169,35 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 					"Unauthorized upload request history search");
 		}
 		return request.getUploadRequestHistory();
+	}
+
+	@Override
+	public Set<UploadRequest> findAll(Account actor,
+			List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException {
+		if (!actor.hasSuperAdminRole()) {
+			throw new BusinessException(
+					BusinessErrorCode.UPLOAD_REQUEST_UNAUTHORISED,
+					"Unauthorized upload request history search");
+		}
+		if (afterDate == null) {
+			Date referenceDate = new Date();
+			Calendar c = Calendar.getInstance();
+			c.setTime(referenceDate);
+			c.add(Calendar.MONTH, -1);
+			afterDate = c.getTime();
+		}
+		if (beforeDate == null) {
+			beforeDate = new Date();
+		}
+		if (!afterDate.before(beforeDate)) {
+			throw new BusinessException(
+					BusinessErrorCode.WEBSERVICE_FAULT,
+					"min date limit after max date limit");
+		};
+		List<AbstractDomain> myAdministredDomains = domainPermissionBusinessService
+				.getMyAdministredDomains(actor);
+		return new HashSet<UploadRequest>(uploadRequestBusinessService.findAll(
+				myAdministredDomains, status, afterDate, beforeDate));
 	}
 
 	@Override
@@ -289,19 +318,5 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 					"you do not have the right to close this upload request url : "
 							+ req.getUuid());
 		}
-	}
-
-	@Override
-	public Set<UploadRequestHistory> findAllRequestHistory(Account actor, List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException {
-		if (!actor.hasSuperAdminRole()) {
-			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_UNAUTHORISED, "Unauthorized upload request history search");
-		}
-		Set<UploadRequestHistory> list = Sets.newHashSet();
-		List<AbstractDomain> myAdministredDomains = domainPermissionBusinessService.getMyAdministredDomains(actor);
-		List<UploadRequest> requests = uploadRequestBusinessService.findAll(myAdministredDomains, status, afterDate, beforeDate);
-		for (UploadRequest req : requests) {
-			list.addAll(req.getUploadRequestHistory());
-		}
-		return list;
 	}
 }

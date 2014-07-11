@@ -31,20 +31,52 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-package org.linagora.linshare.webservice.admin;
-
+import com.google.common.collect.Sets;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.UploadRequestFacade;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.UploadRequestService;
+import org.linagora.linshare.webservice.dto.UploadRequestDto;
 import org.linagora.linshare.webservice.dto.UploadRequestHistoryDto;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-public interface UploadRequestHistoryRestService {
+public class UploadRequestFacadeImpl extends AdminGenericFacadeImpl implements UploadRequestFacade {
 
-	Set<UploadRequestHistoryDto> findAll(String uuid) throws BusinessException;
+	private final UploadRequestService uploadRequestService;
 
-	Set<UploadRequestHistoryDto> findAllByStatus(List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException;
+	public UploadRequestFacadeImpl(AccountService accountService, UploadRequestService uploadRequestService) {
+		super(accountService);
+		this.uploadRequestService = uploadRequestService;
+	}
+
+	@Override
+	public Set<UploadRequestHistoryDto> findAllHistory(String uploadRequestUuid) throws BusinessException {
+		User actor = checkAuthentication();
+		Set<UploadRequestHistoryDto> dtos = Sets.newHashSet();
+		Set<UploadRequestHistory> res = uploadRequestService.findAllRequestHistory(actor, uploadRequestUuid);
+		for (UploadRequestHistory u: res) {
+			dtos.add(new UploadRequestHistoryDto(u));
+		}
+		return dtos;
+	}
+
+	@Override
+	public Set<UploadRequestDto> findAll(List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException {
+		User actor = checkAuthentication();
+		Set<UploadRequestDto> dtos = Sets.newHashSet();
+		Set<UploadRequest> res = uploadRequestService.findAll(actor, status, afterDate, beforeDate);
+		for (UploadRequest u: res) {
+			dtos.add(new UploadRequestDto(u));
+		}
+		return dtos;
+	}
 }
