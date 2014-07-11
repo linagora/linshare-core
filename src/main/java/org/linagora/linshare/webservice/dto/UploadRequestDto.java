@@ -31,31 +31,106 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
+
+package org.linagora.linshare.webservice.dto;
+
+import com.wordnik.swagger.annotations.ApiModelProperty;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
+public class UploadRequestDto {
 
-public interface UploadRequestBusinessService {
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
 
-	List<UploadRequest> findAll(User actor);
+	@ApiModelProperty(value = "Owner")
+	private ContactDto owner;
 
-	List<UploadRequest> findAll(List<UploadRequestStatus> status);
+	@ApiModelProperty(value = "Activation date")
+	private Date activationDate;
 
-	List<UploadRequest> findAll(List<AbstractDomain> domains, List<UploadRequestStatus> status, Date afterDate, Date beforeDate);
+	@ApiModelProperty(value = "Creation date")
+	private Date creationDate;
 
-	UploadRequest findByUuid(String uuid);
+	// could be null
+	@ApiModelProperty(value = "Expiry date")
+	private Date expiryDate;
 
-	UploadRequest create(UploadRequest req) throws BusinessException;
+	@ApiModelProperty(value = "Subject")
+	private String subject;
 
-	UploadRequest update(UploadRequest req) throws BusinessException;
+	@ApiModelProperty(value = "Status")
+	private UploadRequestStatus status;
 
-	void delete(UploadRequest req) throws BusinessException;
+	public UploadRequestDto() {
+		super();
+	}
+
+	public UploadRequestDto(UploadRequest entity) {
+		super();
+		this.owner = new ContactDto(entity.getOwner());
+		this.activationDate = entity.getActivationDate();
+		this.creationDate = entity.getCreationDate();
+		this.expiryDate = entity.getExpiryDate();
+		this.subject = entity.getUploadRequestGroup().getSubject();
+		this.status = entity.getStatus();
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public ContactDto getOwner() {
+		return owner;
+	}
+
+	public void setOwner(ContactDto owner) {
+		this.owner = owner;
+	}
+
+	public Date getExpiryDate() {
+		return expiryDate;
+	}
+
+	public void setExpiryDate(Date expiryDate) {
+		this.expiryDate = expiryDate;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	public Date getActivationDate() {
+		return activationDate;
+	}
+
+	public void setActivationDate(Date activationDate) {
+		this.activationDate = activationDate;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public UploadRequestStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(UploadRequestStatus status) {
+		this.status = status;
+	}
 }

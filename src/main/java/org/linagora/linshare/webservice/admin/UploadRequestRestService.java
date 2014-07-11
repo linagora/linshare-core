@@ -1,9 +1,9 @@
 /*
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
- * 
+ *
  * Copyright (C) 2014 LINAGORA
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,43 +19,31 @@
  * refrain from infringing Linagora intellectual property rights over its
  * trademarks and commercial brands. Other Additional Terms apply, see
  * <http://www.linagora.com/licenses/> for more details.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
 
-import java.util.Date;
-import java.util.List;
+package org.linagora.linshare.webservice.admin;
+
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.UploadRequestCriteriaDto;
+import org.linagora.linshare.webservice.dto.UploadRequestDto;
+import org.linagora.linshare.webservice.dto.UploadRequestHistoryDto;
+
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
+public interface UploadRequestRestService {
 
-public interface UploadRequestBusinessService {
+	Set<UploadRequestHistoryDto> findAll(String uuid) throws BusinessException;
 
-	List<UploadRequest> findAll(User actor);
-
-	List<UploadRequest> findAll(List<UploadRequestStatus> status);
-
-	List<UploadRequest> findAll(List<AbstractDomain> domains, List<UploadRequestStatus> status, Date afterDate, Date beforeDate);
-
-	UploadRequest findByUuid(String uuid);
-
-	UploadRequest create(UploadRequest req) throws BusinessException;
-
-	UploadRequest update(UploadRequest req) throws BusinessException;
-
-	void delete(UploadRequest req) throws BusinessException;
+	Set<UploadRequestDto> findAllByCriteria(UploadRequestCriteriaDto dto) throws BusinessException;
 }

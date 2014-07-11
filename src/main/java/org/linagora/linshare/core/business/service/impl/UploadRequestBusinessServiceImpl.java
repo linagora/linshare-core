@@ -35,6 +35,7 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;

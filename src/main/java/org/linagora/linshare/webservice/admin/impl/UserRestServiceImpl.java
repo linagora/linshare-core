@@ -88,7 +88,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public Set<UserDto> search(
 			@ApiParam(value = "Patterns to search.", required = true) UserSearchDto userSearchDto)
 			throws BusinessException {
-		if (userSearchDto.getFirstName().length() < 3 && userSearchDto.getLastName().length() < 3 && userSearchDto.getMail().length() < 3) {
+		if (lessThan3Char(userSearchDto.getFirstName()) && lessThan3Char(userSearchDto.getLastName()) && lessThan3Char(userSearchDto.getMail())) {
 			logger.info("Search request less than 3 char");
 			return Sets.newHashSet();
 		}
@@ -171,5 +171,9 @@ public class UserRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Inconsistent user to update.", required = true) UserDto userDto)
 			throws BusinessException {
 		userFacade.updateInconsistent(userDto);
+	}
+
+	private boolean lessThan3Char(String s) {
+		return StringUtils.length(s) < 3;
 	}
 }

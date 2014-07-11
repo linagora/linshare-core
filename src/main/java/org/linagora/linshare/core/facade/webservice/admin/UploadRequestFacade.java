@@ -35,14 +35,16 @@ package org.linagora.linshare.core.facade.webservice.admin;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.UploadRequestDto;
 import org.linagora.linshare.webservice.dto.UploadRequestHistoryDto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
-public interface UploadRequestHistoryFacade {
+public interface UploadRequestFacade {
 
-	java.util.Set<UploadRequestHistoryDto> findAll(String uploadRequestUuid) throws BusinessException;
+	Set<UploadRequestHistoryDto> findAllHistory(String uploadRequestUuid) throws BusinessException;
 
-	java.util.Set<UploadRequestHistoryDto> findAll(List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException;
+	Set<UploadRequestDto> findAll(List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException;
 }

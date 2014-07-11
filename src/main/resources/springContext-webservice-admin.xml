@@ -104,8 +104,8 @@
 		<constructor-arg ref="wsAdminTechnicalAccountPermissionFacade" />
 	</bean>
 
-	<bean id="adminUploadRequestHistoryRestService" class="org.linagora.linshare.webservice.admin.impl.UploadRequestHistoryRestServiceImpl">
-		<constructor-arg ref="wsAdminUploadRequestHistoryFacade" />
+	<bean id="adminUploadRequestRestService" class="org.linagora.linshare.webservice.admin.impl.UploadRequestRestServiceImpl">
+		<constructor-arg ref="wsAdminUploadRequestFacade" />
 	</bean>
 
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">
@@ -132,7 +132,7 @@
 			<ref bean="adminMimeTypeRestService" />
 			<ref bean="adminTechnicalAccountRestService" />
 			<ref bean="adminTechnicalAccountPermissionRestService" />
-			<ref bean="adminUploadRequestHistoryRestService" />
+			<ref bean="adminUploadRequestRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

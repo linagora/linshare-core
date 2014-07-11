@@ -125,5 +125,5 @@ public interface UploadRequestService {
 
 	Set<UploadRequestHistory> findAllRequestHistory(Account actor, String uploadRequestUuid) throws BusinessException;
 
-	Set<UploadRequestHistory> findAllRequestHistory(Account actor, List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException;
+	Set<UploadRequest> findAll(Account actor, List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException;
 }

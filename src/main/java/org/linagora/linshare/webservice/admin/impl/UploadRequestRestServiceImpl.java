@@ -31,50 +31,49 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.admin.impl;
+package org.linagora.linshare.webservice.admin.impl;
 
-import com.google.common.collect.Sets;
+import com.wordnik.swagger.annotations.*;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.UploadRequestHistoryFacade;
-import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.UploadRequestService;
+import org.linagora.linshare.core.facade.webservice.admin.UploadRequestFacade;
+import org.linagora.linshare.webservice.WebserviceBase;
+import org.linagora.linshare.webservice.admin.UploadRequestRestService;
+import org.linagora.linshare.webservice.dto.UploadRequestCriteriaDto;
+import org.linagora.linshare.webservice.dto.UploadRequestDto;
 import org.linagora.linshare.webservice.dto.UploadRequestHistoryDto;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.*;
 
-public class UploadRequestHistoryFacadeImpl extends AdminGenericFacadeImpl implements UploadRequestHistoryFacade {
+@Path("/upload_requests")
+@Api(value = "/rest/admin/upload_requests", description = "History requests API")
+@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+public class UploadRequestRestServiceImpl extends WebserviceBase implements UploadRequestRestService {
 
-	private final UploadRequestService uploadRequestService;
+	private final UploadRequestFacade uploadRequestFacade;
 
-	public UploadRequestHistoryFacadeImpl(AccountService accountService, UploadRequestService uploadRequestService) {
-		super(accountService);
-		this.uploadRequestService = uploadRequestService;
+	public UploadRequestRestServiceImpl(final UploadRequestFacade uploadRequestFacade) {
+		this.uploadRequestFacade = uploadRequestFacade;
 	}
 
+	@Path("/history/{requestUuid}")
+	@GET
+	@ApiOperation(value = "Search all history entries for an upload request.", response = UploadRequestHistoryDto.class)
+	@ApiResponses({@ApiResponse(code = 403, message = "User isn't admin.")})
 	@Override
-	public Set<UploadRequestHistoryDto> findAll(String uploadRequestUuid) throws BusinessException {
-		User actor = checkAuthentication();
-		Set<UploadRequestHistoryDto> dtos = Sets.newHashSet();
-		Set<UploadRequestHistory> res = uploadRequestService.findAllRequestHistory(actor, uploadRequestUuid);
-		for (UploadRequestHistory u: res) {
-			dtos.add(new UploadRequestHistoryDto(u));
-		}
-		return dtos;
+	public Set<UploadRequestHistoryDto> findAll(@PathParam(value = "requestUuid") String requestUuid) throws BusinessException {
+		return uploadRequestFacade.findAllHistory(requestUuid);
 	}
 
+	@Path("/")
+	@POST
+	@ApiOperation(value = "Search all upload request by criteria.", response = UploadRequestHistoryDto.class)
+	@ApiResponses({@ApiResponse(code = 403, message = "User isn't admin.")})
 	@Override
-	public Set<UploadRequestHistoryDto> findAll(List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException {
-		User actor = checkAuthentication();
-		Set<UploadRequestHistoryDto> dtos = Sets.newHashSet();
-		Set<UploadRequestHistory> res = uploadRequestService.findAllRequestHistory(actor, status, afterDate, beforeDate);
-		for (UploadRequestHistory u: res) {
-			dtos.add(new UploadRequestHistoryDto(u));
-		}
-		return dtos;
+	public Set<UploadRequestDto> findAllByCriteria(@ApiParam(value = "Criteria to search for.", required = true) UploadRequestCriteriaDto dto) throws BusinessException {
+		return uploadRequestFacade.findAll(dto.getStatus(), dto.getAfterDate(), dto.getBeforeDate());
 	}
 }

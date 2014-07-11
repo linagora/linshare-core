@@ -31,31 +31,88 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+package org.linagora.linshare.webservice.dto;
 
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang.StringUtils;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
 
-public interface UploadRequestBusinessService {
+public class ContactDto {
 
-	List<UploadRequest> findAll(User actor);
+	@ApiModelProperty(value = "FirstName")
+	private String firstName;
 
-	List<UploadRequest> findAll(List<UploadRequestStatus> status);
+	@ApiModelProperty(value = "LastName")
+	private String lastName;
 
-	List<UploadRequest> findAll(List<AbstractDomain> domains, List<UploadRequestStatus> status, Date afterDate, Date beforeDate);
+	@ApiModelProperty(value = "Mail")
+	private String mail;
 
-	UploadRequest findByUuid(String uuid);
+	public ContactDto() {
+	}
 
-	UploadRequest create(UploadRequest req) throws BusinessException;
+	public ContactDto(String firstName, String lastName, String mail) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.mail = mail;
+	}
 
-	UploadRequest update(UploadRequest req) throws BusinessException;
+	public ContactDto(Account account) {
+		super();
+		User u = (User)account;
+		this.firstName = u.getFirstName();
+		this.lastName = u.getLastName();
+		this.mail = u.getMail();
+	}
 
-	void delete(UploadRequest req) throws BusinessException;
+	public ContactDto(Contact contact) {
+		super();
+		// TODO support first and last name in contact ?
+		this.firstName = null;
+		this.lastName = null;
+		this.mail = contact.getMail();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder res = new StringBuilder("Contact : ");
+		if (!StringUtils.isBlank(firstName)
+				&& !StringUtils.isBlank(this.lastName)) {
+			res.append(this.firstName);
+			res.append(" ");
+			res.append(this.lastName);
+			res.append(" : ");
+		}
+		res.append(this.mail);
+		return res.toString();
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
+
 }
