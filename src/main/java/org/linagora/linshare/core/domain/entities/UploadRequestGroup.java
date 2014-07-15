@@ -36,6 +36,10 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.vo.UploadRequestVo;
+
+import com.google.common.collect.Sets;
+
 public class UploadRequestGroup {
 
 	private long id;
@@ -46,7 +50,7 @@ public class UploadRequestGroup {
 
 	private String body;
 
-	private Set<UploadRequest> uploadRequests;
+	private Set<UploadRequest> uploadRequests = Sets.newHashSet();
 
 	private Date creationDate;
 
@@ -54,6 +58,12 @@ public class UploadRequestGroup {
 
 	public UploadRequestGroup() {
 		super();
+	}
+
+	public UploadRequestGroup(UploadRequestVo req) {
+		super();
+		subject = req.getSubject();
+		body = req.getBody();
 	}
 
 	public void setId(long id) {

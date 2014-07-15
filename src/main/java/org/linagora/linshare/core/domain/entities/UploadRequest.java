@@ -39,6 +39,8 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
 
+import com.google.common.collect.Sets;
+
 public class UploadRequest {
 
 	private long id;
@@ -79,11 +81,11 @@ public class UploadRequest {
 
 	private String mailMessageId;
 
-	private Set<UploadRequestUrl> uploadRequestURLs;
+	private Set<UploadRequestUrl> uploadRequestURLs = Sets.newHashSet();
 
-	private Set<UploadRequestEntry> uploadRequestEntries;
+	private Set<UploadRequestEntry> uploadRequestEntries = Sets.newHashSet();
 
-	private Set<UploadRequestHistory> uploadRequestHistory;
+	private Set<UploadRequestHistory> uploadRequestHistory = Sets.newHashSet();
 
 	private Account owner;
 

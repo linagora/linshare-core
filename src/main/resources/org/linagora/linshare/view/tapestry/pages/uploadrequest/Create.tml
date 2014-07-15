@@ -18,7 +18,7 @@
     <!-- Page content -->
     <div id="pageContent">
       <t:bsBeanEditForm t:object="current" submitlabel="message:global.button.validate"
-			exclude="status,creationdate,modificationdate,notificationdate">
+			exclude="size,status,creationdate,modificationdate,notificationdate">
 	<p:body>
 	  <t:label for="body" />
 	  <t:textarea t:id="body" value="current.body" />
