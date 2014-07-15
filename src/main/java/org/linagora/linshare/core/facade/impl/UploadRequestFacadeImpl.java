@@ -39,6 +39,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UploadRequestEntryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
@@ -90,9 +91,17 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	public UploadRequestVo createRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		// TODO
+		UploadRequestGroup grp = new UploadRequestGroup(req);
+		UploadRequest e = req.toEntity();
+
+		// TODO functionalityFacade
+		grp = uploadRequestService.createRequestGroup(actor, grp);
+
+		e.setNotificationDate(e.getExpiryDate()); // FIXME functionalityFacade
+		e.setUploadRequestGroup(grp);
+		grp.getUploadRequests().add(e);
 		return new UploadRequestVo(uploadRequestService.createRequest(actor,
-				req.toEntity()));
+				e));
 	}
 
 	@Override
