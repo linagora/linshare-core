@@ -2556,7 +2556,14 @@ div#blocDL ul li {
 #content td.shared a,
 #content td.deleteColumn a {
 	background-color: transparent;		/* KEEP IT */
+}
+
+#content div#actionBar a {
+	margin: 0 20px 0 10px;
+}
 	
+#content td.shared a,
+#content td.deleteColumn a {
 	margin: 0 20px 0 30px;
 }
 

@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.facade.impl;
 
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -98,9 +99,16 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		// TODO functionalityFacade
 		grp = uploadRequestService.createRequestGroup(actor, grp);
 
+		e.setActivationDate(new Date()); // FIXME handle activationDate
 		e.setNotificationDate(e.getExpiryDate()); // FIXME functionalityFacade
 		e.setUploadRequestGroup(grp);
-		return new UploadRequestVo(uploadRequestService.createRequest(actor, e));
+		e = uploadRequestService.createRequest(actor, e);
+
+		/*
+		 * FIXME handle activationDate
+		 */
+		e.updateStatus(UploadRequestStatus.STATUS_ENABLED);
+		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
 	}
 
 	@Override

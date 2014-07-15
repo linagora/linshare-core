@@ -35,9 +35,7 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-import com.google.common.collect.Lists;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -80,6 +78,7 @@ public class UploadRequestBusinessServiceImpl implements
 	@Override
 	public UploadRequest create(UploadRequest req)
 			throws BusinessException {
+		req.setStatus(UploadRequestStatus.STATUS_CREATED);
 		return uploadRequestRepository.create(req);
 	}
 
