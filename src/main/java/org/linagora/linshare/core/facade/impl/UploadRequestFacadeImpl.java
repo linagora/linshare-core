@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UploadRequestEntryVo;
+import org.linagora.linshare.core.domain.vo.UploadRequestHistoryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -160,6 +161,15 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 			ret.add(new UploadRequestEntryVo(ent));
 		}
 		return ret;
+	}
+
+	@Override
+	public List<UploadRequestHistoryVo> findHistory(UserVo actorVo,
+			UploadRequestVo req) throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+
+		uploadRequestService.findAllRequestHistory(actor, req.getUuid());
+		return null; // FIXME TODO
 	}
 
 	@Override

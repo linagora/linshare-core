@@ -33,6 +33,10 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -44,15 +48,11 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 public interface UploadRequestService {
 
 	List<UploadRequest> findAllRequest(User actor);
 
-	UploadRequest findRequestByUuid(User actor, String uuid) throws BusinessException;
+	UploadRequest findRequestByUuid(Account actor, String uuid) throws BusinessException;
 
 	UploadRequest createRequest(User actor, UploadRequest req)
 			throws BusinessException;

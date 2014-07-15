@@ -33,16 +33,38 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import com.google.common.collect.Sets;
-import org.linagora.linshare.core.business.service.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
+import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
+import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
+import org.linagora.linshare.core.business.service.UploadRequestHistoryBusinessService;
+import org.linagora.linshare.core.business.service.UploadRequestTemplateBusinessService;
+import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
+import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.domain.entities.*;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
+import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.UploadRequestService;
 
-import java.util.*;
+import com.google.common.collect.Lists;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 public class UploadRequestServiceImpl implements UploadRequestService {
 
@@ -80,7 +102,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequest findRequestByUuid(User actor, String uuid)
+	public UploadRequest findRequestByUuid(Account actor, String uuid)
 			throws BusinessException {
 		UploadRequest ret = uploadRequestBusinessService.findByUuid(uuid);
 
@@ -95,14 +117,26 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	@Override
 	public UploadRequest createRequest(User actor, UploadRequest req)
 			throws BusinessException {
+		UploadRequestHistory hist = new UploadRequestHistory(req,
+				UploadRequestHistoryEventType.fromStatus(req.getStatus()));
+
 		req.setOwner(actor);
 		req.setAbstractDomain(actor.getDomain());
+		req.getUploadRequestHistory().add(hist);
 		return uploadRequestBusinessService.create(req);
 	}
 
 	@Override
 	public UploadRequest updateRequest(User actor, UploadRequest req)
 			throws BusinessException {
+		UploadRequestHistory last = (UploadRequestHistory) Collections
+				.max(Lists.newArrayList(req.getUploadRequestHistory()));
+		UploadRequestHistory hist = new UploadRequestHistory(req,
+				UploadRequestHistoryEventType.fromStatus(req.getStatus()),
+				!last.getStatus().equals(req.getStatus()));
+
+		hist = createRequestHistory(actor, hist);
+		req.getUploadRequestHistory().add(hist);
 		return uploadRequestBusinessService.update(req);
 	}
 
@@ -138,18 +172,14 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	@Override
 	public Set<UploadRequestHistory> findAllRequestHistory(Account actor,
 			String uploadRequestUuid) throws BusinessException {
-		UploadRequest request = uploadRequestBusinessService
-				.findByUuid(uploadRequestUuid);
-		if (request == null) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
-					"upload request not found : " + uploadRequestUuid);
-		}
+		UploadRequest request = findRequestByUuid(actor, uploadRequestUuid);
+
 		if (!(domainPermissionBusinessService.isAdminforThisDomain(actor,
 				request.getAbstractDomain()) || actor
 				.equals(request.getOwner()))) {
 			throw new BusinessException(
-					BusinessErrorCode.UPLOAD_REQUEST_UNAUTHORISED,
-					"Unauthorized upload request history search");
+					BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
+					"Upload request history search forbidden");
 		}
 		return request.getUploadRequestHistory();
 	}
@@ -159,8 +189,8 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 			List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException {
 		if (!actor.hasSuperAdminRole()) {
 			throw new BusinessException(
-					BusinessErrorCode.UPLOAD_REQUEST_UNAUTHORISED,
-					"Unauthorized upload request history search");
+					BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
+					"Upload request history search forbidden");
 		}
 		if (afterDate == null) {
 			Date referenceDate = new Date();
@@ -173,10 +203,9 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 			beforeDate = new Date();
 		}
 		if (afterDate.after(beforeDate)) {
-			throw new BusinessException(
-					BusinessErrorCode.WEBSERVICE_FAULT,
-					"min date limit after max date limit");
-		};
+			throw new BusinessException(BusinessErrorCode.BAD_REQUEST,
+					"Min date limit after max date limit");
+		}
 		List<AbstractDomain> myAdministredDomains = domainPermissionBusinessService
 				.getMyAdministredDomains(actor);
 		return new HashSet<UploadRequest>(uploadRequestBusinessService.findAll(

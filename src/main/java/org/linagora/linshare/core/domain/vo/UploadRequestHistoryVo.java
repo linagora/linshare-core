@@ -31,21 +31,20 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.domain.vo;
 
 import java.util.Date;
-import java.util.UUID;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 
-public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
-
-	private long id;
-
-	private UploadRequestStatus status;
+public class UploadRequestHistoryVo {
 
 	private boolean statusUpdated;
+
+	private UploadRequestStatus status;
 
 	private UploadRequestHistoryEventType eventType;
 
@@ -63,7 +62,7 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 
 	private long maxFileSize;
 
-	private String uploadPropositionRequestUuid;
+	private String uploadPropositionUuid;
 
 	private boolean canDelete;
 
@@ -71,7 +70,7 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 
 	private boolean canEditExpiryDate;
 
-	private String locale;
+	private Language locale;
 
 	private boolean secured;
 
@@ -79,58 +78,26 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 
 	private Date modificationDate;
 
-	private String mailMessageID;
-
-	public UploadRequestHistory() {
+	public UploadRequestHistoryVo() {
 		super();
 	}
 
-	public UploadRequestHistory(UploadRequest update,
-			UploadRequestHistoryEventType eventType) {
-		this(update, eventType, false);
-	}
-
-	public UploadRequestHistory(UploadRequest update,
-			UploadRequestHistoryEventType eventType, boolean statusUpdated) {
-		super();
-		// on cascade
-		this.setCreationDate(new Date());
-		this.setModificationDate(new Date());
-		this.setUuid(UUID.randomUUID().toString());
-
-		this.statusUpdated = statusUpdated;
-		this.eventType = eventType;
-		this.status = update.getStatus();
-		this.activationDate = update.getActivationDate();
-		this.expiryDate = update.getExpiryDate();
-		this.notificationDate = update.getNotificationDate();
-		this.maxDepositSize = update.getMaxDepositSize();
-		this.maxFileCount = update.getMaxFileCount();
-		this.maxFileSize = update.getMaxFileSize();
-		this.uploadPropositionRequestUuid = update
-				.getUploadPropositionRequestUuid();
-		this.canDelete = update.isCanDelete();
-		this.canClose = update.isCanClose();
-		this.canEditExpiryDate = update.isCanEditExpiryDate();
-		this.locale = update.getLocale();
-		this.secured = update.isSecured();
-		this.mailMessageID = update.getMailMessageId();
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public UploadRequestStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(UploadRequestStatus status) {
-		this.status = status;
+	public UploadRequestHistoryVo(UploadRequestHistory hist) {
+		uuid = hist.getUuid();
+		maxFileCount = hist.getMaxFileCount();
+		maxDepositSize = hist.getMaxDepositSize();
+		maxFileSize = hist.getMaxFileSize();
+		status = hist.getStatus();
+		activationDate = hist.getActivationDate();
+		creationDate = hist.getCreationDate();
+		modificationDate = hist.getModificationDate();
+		notificationDate = hist.getNotificationDate();
+		expiryDate = hist.getExpiryDate();
+		canDelete = hist.isCanDelete();
+		canClose = hist.isCanClose();
+		canEditExpiryDate = hist.isCanEditExpiryDate();
+		locale = Language.fromTapestryLocale(hist.getLocale());
+		secured = hist.isSecured();
 	}
 
 	public boolean isStatusUpdated() {
@@ -139,6 +106,14 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 
 	public void setStatusUpdated(boolean statusUpdated) {
 		this.statusUpdated = statusUpdated;
+	}
+
+	public UploadRequestStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(UploadRequestStatus status) {
+		this.status = status;
 	}
 
 	public UploadRequestHistoryEventType getEventType() {
@@ -205,13 +180,12 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 		this.maxFileSize = maxFileSize;
 	}
 
-	public String getUploadPropositionRequestUuid() {
-		return uploadPropositionRequestUuid;
+	public String getUploadPropositionUuid() {
+		return uploadPropositionUuid;
 	}
 
-	public void setUploadPropositionRequestUuid(
-			String uploadPropositionRequestUuid) {
-		this.uploadPropositionRequestUuid = uploadPropositionRequestUuid;
+	public void setUploadPropositionUuid(String uploadPropositionUuid) {
+		this.uploadPropositionUuid = uploadPropositionUuid;
 	}
 
 	public boolean isCanDelete() {
@@ -238,11 +212,11 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
 
-	public String getLocale() {
+	public Language getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(Language locale) {
 		this.locale = locale;
 	}
 
@@ -268,18 +242,5 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
-	}
-
-	public String getMailMessageID() {
-		return mailMessageID;
-	}
-
-	public void setMailMessageID(String mailMessageID) {
-		this.mailMessageID = mailMessageID;
-	}
-
-	@Override
-	public int compareTo(UploadRequestHistory o) {
-		return this.modificationDate.compareTo(o.modificationDate);
 	}
 }

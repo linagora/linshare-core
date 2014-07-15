@@ -33,8 +33,16 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
-import com.wordnik.swagger.annotations.*;
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import java.util.Set;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UploadRequestFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
@@ -43,37 +51,46 @@ import org.linagora.linshare.webservice.dto.UploadRequestCriteriaDto;
 import org.linagora.linshare.webservice.dto.UploadRequestDto;
 import org.linagora.linshare.webservice.dto.UploadRequestHistoryDto;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.util.*;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/upload_requests")
 @Api(value = "/rest/admin/upload_requests", description = "History requests API")
-@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-public class UploadRequestRestServiceImpl extends WebserviceBase implements UploadRequestRestService {
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class UploadRequestRestServiceImpl extends WebserviceBase implements
+		UploadRequestRestService {
 
 	private final UploadRequestFacade uploadRequestFacade;
 
-	public UploadRequestRestServiceImpl(final UploadRequestFacade uploadRequestFacade) {
+	public UploadRequestRestServiceImpl(
+			final UploadRequestFacade uploadRequestFacade) {
 		this.uploadRequestFacade = uploadRequestFacade;
 	}
 
 	@Path("/history/{requestUuid}")
 	@GET
 	@ApiOperation(value = "Search all history entries for an upload request.", response = UploadRequestHistoryDto.class)
-	@ApiResponses({@ApiResponse(code = 403, message = "User isn't admin.")})
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public Set<UploadRequestHistoryDto> findAll(@PathParam(value = "requestUuid") String requestUuid) throws BusinessException {
+	public Set<UploadRequestHistoryDto> findAll(
+			@PathParam(value = "requestUuid") String requestUuid)
+			throws BusinessException {
 		return uploadRequestFacade.findAllHistory(requestUuid);
 	}
 
 	@Path("/")
 	@POST
 	@ApiOperation(value = "Search all upload request by criteria.", response = UploadRequestHistoryDto.class)
-	@ApiResponses({@ApiResponse(code = 403, message = "User isn't admin.")})
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public Set<UploadRequestDto> findAllByCriteria(@ApiParam(value = "Criteria to search for.", required = true) UploadRequestCriteriaDto dto) throws BusinessException {
-		return uploadRequestFacade.findAll(dto.getStatus(), dto.getAfterDate(), dto.getBeforeDate());
+	public Set<UploadRequestDto> findAllByCriteria(
+			@ApiParam(value = "Criteria to search for.", required = true) UploadRequestCriteriaDto dto)
+			throws BusinessException {
+		return uploadRequestFacade.findAll(dto.getStatus(), dto.getAfterDate(),
+				dto.getBeforeDate());
 	}
 }

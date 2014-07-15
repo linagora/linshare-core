@@ -123,7 +123,7 @@ public class GuestServiceImpl implements GuestService {
 		Assert.notNull(actor);
 		Assert.notNull(guest);
 		Assert.notNull(ownerLsUuid);
-		User owner = retreiveOwner(ownerLsUuid);
+		User owner = retrieveOwner(ownerLsUuid);
 		Date expiryDate = calculateUserExpiryDate(owner);
 		if (userService.findByLsUuid(ownerLsUuid) == null) {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
@@ -172,7 +172,7 @@ public class GuestServiceImpl implements GuestService {
 			return guestBusinessService.update(guest, guest.getOwner(),
 					guest.getDomain());
 		}
-		User owner = retreiveOwner(ownerLsUuid);
+		User owner = retrieveOwner(ownerLsUuid);
 		GuestDomain guestDomain = abstractDomainService.getGuestDomain(owner
 				.getDomainId());
 		if (guestDomain == null) {
@@ -219,7 +219,7 @@ public class GuestServiceImpl implements GuestService {
 	@Override
 	public void resetPassword(String lsUuid) throws BusinessException {
 		Assert.notNull(lsUuid);
-		Guest guest = retreiveGuest(lsUuid);
+		Guest guest = retrieveGuest(lsUuid);
 		GuestWithMetadata update = guestBusinessService.resetPassword(guest);
 		MailContainerWithRecipient mail = mailBuildingService
 				.buildResetPassword(update.getGuest(), update.getPassword());
@@ -230,7 +230,7 @@ public class GuestServiceImpl implements GuestService {
 	 * HELPERS
 	 */
 
-	private Guest retreiveGuest(String lsUuid) throws BusinessException {
+	private Guest retrieveGuest(String lsUuid) throws BusinessException {
 		Guest guest = guestBusinessService.findByLsUuid(lsUuid);
 		if (guest == null) {
 			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND,
@@ -239,7 +239,7 @@ public class GuestServiceImpl implements GuestService {
 		return guest;
 	}
 
-	private User retreiveOwner(String ownerLsUuid) throws BusinessException {
+	private User retrieveOwner(String ownerLsUuid) throws BusinessException {
 		User owner = userService.findByLsUuid(ownerLsUuid);
 		if (owner == null) {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
