@@ -59,7 +59,7 @@ public enum UploadRequestStatus {
 			throws BusinessException {
 		if (!Arrays.asList(next).contains(status)) {
 			throw new BusinessException("Cannot transition from " + name()
-					+ " to " + status.name() + '.'); // TODO XXX
+					+ " to " + status.name() + '.'); // TODO BusinessErrorCode
 		}
 		return status;
 	}

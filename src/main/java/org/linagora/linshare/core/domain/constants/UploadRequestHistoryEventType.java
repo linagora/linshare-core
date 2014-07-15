@@ -50,7 +50,13 @@ public enum UploadRequestHistoryEventType {
 		try {
 			return UploadRequestHistoryEventType.valueOf(s.toUpperCase());
 		} catch (RuntimeException e) {
-			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_UPLOAD_REQUEST_EVENT_TYPE, StringUtils.isEmpty(s) ? "null or empty" : s);
+			throw new TechnicalException(
+					TechnicalErrorCode.NO_SUCH_UPLOAD_REQUEST_EVENT_TYPE,
+					StringUtils.isEmpty(s) ? "null or empty" : s);
 		}
+	}
+
+	public static UploadRequestHistoryEventType fromStatus(UploadRequestStatus s) {
+		return fromString(StringUtils.replace(s.name(), "STATUS", "EVENT"));
 	}
 }

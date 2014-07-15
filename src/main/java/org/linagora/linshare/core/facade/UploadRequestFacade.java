@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.vo.UploadRequestEntryVo;
+import org.linagora.linshare.core.domain.vo.UploadRequestHistoryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -44,7 +45,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface UploadRequestFacade {
 	List<UploadRequestVo> findAll(UserVo actorVo) throws BusinessException;
 
-	UploadRequestVo findRequestByUuid(UserVo actorVo, String uuid) throws BusinessException;
+	UploadRequestVo findRequestByUuid(UserVo actorVo, String uuid)
+			throws BusinessException;
 
 	UploadRequestVo createRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException;
@@ -61,8 +63,11 @@ public interface UploadRequestFacade {
 	UploadRequestVo archiveRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException;
 
-	List<UploadRequestEntryVo> findAllEntries(UserVo actorVo, UploadRequestVo req)
-			throws BusinessException;
+	List<UploadRequestEntryVo> findAllEntries(UserVo actorVo,
+			UploadRequestVo req) throws BusinessException;
 
-	InputStream getFileStream(UserVo actorVo, UploadRequestEntryVo entry) throws BusinessException;
+	List<UploadRequestHistoryVo> findHistory(UserVo actorVo, UploadRequestVo req) throws BusinessException;
+
+	InputStream getFileStream(UserVo actorVo, UploadRequestEntryVo entry)
+			throws BusinessException;
 }
