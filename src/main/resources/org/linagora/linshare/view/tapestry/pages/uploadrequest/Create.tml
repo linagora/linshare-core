@@ -4,7 +4,7 @@
   
   <!-- Main content -->
   <div id="content">
-    <h1 title="${current.subject}"><span class="truncate">${selected.subject}</span></h1>
+    <h1 title="${message:pages.uploadrequest.create.title}"><span class="truncate">${message:pages.uploadrequest.create.title}</span></h1>
 
     <t:messagePanel />
     <t:businessMessagesDisplayer />
@@ -18,7 +18,12 @@
 
     <!-- Page content -->
     <div id="pageContent">
-      <t:bsBeanEditForm t:object="current" submitlabel="message:global.button.validate">
+      <t:bsBeanEditForm t:object="current" submitlabel="message:global.button.validate"
+			exclude="status,creationdate,modificationdate,notificationdate">
+	<p:body>
+	  <t:label for="body" />
+	  <t:textarea t:id="body" value="current.body" />
+	</p:body>
       </t:bsBeanEditForm>
     </div>
   </div><!-- id="content" -->
