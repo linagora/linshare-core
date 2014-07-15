@@ -172,7 +172,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 		if (beforeDate == null) {
 			beforeDate = new Date();
 		}
-		if (!afterDate.before(beforeDate)) {
+		if (afterDate.after(beforeDate)) {
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FAULT,
 					"min date limit after max date limit");
