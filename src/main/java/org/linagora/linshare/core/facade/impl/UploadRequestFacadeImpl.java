@@ -100,8 +100,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		e.setNotificationDate(e.getExpiryDate()); // FIXME functionalityFacade
 		e.setUploadRequestGroup(grp);
 		grp.getUploadRequests().add(e);
-		return new UploadRequestVo(uploadRequestService.createRequest(actor,
-				e));
+		return new UploadRequestVo(uploadRequestService.createRequest(actor, e));
 	}
 
 	@Override
