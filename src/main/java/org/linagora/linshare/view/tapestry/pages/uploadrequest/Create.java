@@ -91,11 +91,22 @@ public class Create {
 	}
 
 	public Object onSuccess() throws BusinessException {
-		uploadRequestFacade.closeRequest(userVo, current);
+		uploadRequestFacade.createRequest(userVo, current);
 		return Index.class;
 	}
 
 	public Object onCancel() throws BusinessException {
 		return Index.class;
+	}
+
+	/*
+	 * Exception Handling
+	 */
+
+	public Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
 	}
 }
