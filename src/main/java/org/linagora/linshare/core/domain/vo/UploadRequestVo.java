@@ -273,7 +273,6 @@ public class UploadRequestVo {
 		ret.setMaxFileCount(maxFileCount);
 		ret.setMaxDepositSize(maxDepositSize);
 		ret.setMaxFileSize(maxFileSize);
-		ret.setStatus(UploadRequestStatus.STATUS_ENABLED);
 		ret.setActivationDate(activationDate);
 		ret.setCreationDate(creationDate);
 		ret.setModificationDate(modificationDate);
@@ -281,7 +280,7 @@ public class UploadRequestVo {
 		ret.setExpiryDate(expiryDate);
 		ret.setCanDelete(canDelete);
 		ret.setCanClose(canClose);
-		ret.setCanEditExpiryDate(canEditExpiryDate);
+		ret.setCanEditExpiryDate(canEditExpiryDate); // TODO functionality
 		ret.setLocale(locale.getTapestryLocale());
 		ret.setSecured(secured);
 		return ret;

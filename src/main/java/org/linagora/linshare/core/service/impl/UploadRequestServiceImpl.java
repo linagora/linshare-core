@@ -116,8 +116,10 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	@Override
 	public UploadRequest createRequest(User actor, UploadRequest req)
 			throws BusinessException {
+		req.setStatus(UploadRequestStatus.STATUS_CREATED);
+
 		UploadRequestHistory hist = new UploadRequestHistory(req,
-				UploadRequestHistoryEventType.fromStatus(req.getStatus()));
+				UploadRequestHistoryEventType.EVENT_CREATED);
 
 		req.setOwner(actor);
 		req.setAbstractDomain(actor.getDomain());
@@ -134,7 +136,6 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 				UploadRequestHistoryEventType.fromStatus(req.getStatus()),
 				!last.getStatus().equals(req.getStatus()));
 
-		hist = createRequestHistory(actor, hist);
 		req.getUploadRequestHistory().add(hist);
 		return uploadRequestBusinessService.update(req);
 	}
