@@ -12,7 +12,6 @@
     <!-- Action bar -->
     <div id="actionBar">
       <h4>Actions</h4>
-      <br />
       <ul>
         <li>
           <t:actionLink t:id="back" class="button" title="${message:pages.uploadrequest.back.button}">
@@ -43,6 +42,7 @@
 
     <!-- Page content -->
     <div id="pageContent">
+      <h2> ${message:pages.uploadrequest.detail.title}</h2>
       <div style="float: left;">
 	<t:bsbeandisplay object="selected" include="body,status,size,canDelete,canClose,locale,secured"/>
       </div>

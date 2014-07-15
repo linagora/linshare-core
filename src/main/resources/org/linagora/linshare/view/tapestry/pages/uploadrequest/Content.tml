@@ -23,6 +23,7 @@
 
     <!-- Page content -->
     <div id="pageContent">
+      <h2> ${message:pages.uploadrequest.content.grid}</h2>
       <t:grid source="entries" row="current"
 	      reorder="name,size,creationDate,modificationDate,expirationDate"
 	      rowsperpage="10">

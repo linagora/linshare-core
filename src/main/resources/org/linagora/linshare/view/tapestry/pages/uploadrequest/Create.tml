@@ -12,7 +12,6 @@
     <!-- Action bar -->
     <div id="actionBar">
       <h4>Actions</h4>
-      <br />
       <ul></ul>
     </div><!-- id="actionBar" -->
 
