@@ -61,7 +61,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final AbstractDomainRepository abstractDomainRepository;
 	private final DomainPolicyService domainPolicyService;
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-	
+
 	private final UserProviderService userProviderService;
 	private final MessagesRepository messagesRepository;
 	private final UserRepository<User> userRepository;
@@ -622,7 +622,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	@Override
 	public List<AbstractDomain> getAllAuthorizedDomains(String domainIdentifier) {
-		logger.debug("Begin getAllAuthorizedDomains");
+		logger.debug("Begin getAllAuthorizedDomains" + domainIdentifier);
+
 		AbstractDomain domain = retrieveDomain(domainIdentifier);
 		if (domain == null) {
 			logger.error("Impossible to find domain : " + domainIdentifier
