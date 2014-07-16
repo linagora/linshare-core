@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UploadRequestEntryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestHistoryVo;
@@ -69,13 +70,32 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	}
 
 	@Override
-	public List<UploadRequestVo> findAll(UserVo actorVo)
+	public List<UploadRequestVo> findAllVisibles(UserVo actorVo)
+			throws BusinessException {
+		return findAll(actorVo, UploadRequestStatus.STATUS_CREATED,
+				UploadRequestStatus.STATUS_ENABLED,
+				UploadRequestStatus.STATUS_CLOSED);
+	}
+
+	@Override
+	public List<UploadRequestVo> findAllNotDeleted(UserVo actorVo)
+			throws BusinessException {
+		return findAll(actorVo, UploadRequestStatus.STATUS_CREATED,
+				UploadRequestStatus.STATUS_ENABLED,
+				UploadRequestStatus.STATUS_CLOSED,
+				UploadRequestStatus.STATUS_CANCELED,
+				UploadRequestStatus.STATUS_ARCHIVED);
+	}
+
+	private List<UploadRequestVo> findAll(UserVo actorVo, UploadRequestStatus ... include)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		List<UploadRequestVo> ret = Lists.newArrayList();
 
 		for (UploadRequest req : uploadRequestService.findAllRequest(actor)) {
-			ret.add(new UploadRequestVo(req));
+			if (Lists.newArrayList(include).contains(req.getStatus())) {
+				ret.add(new UploadRequestVo(req));
+			}
 		}
 		return ret;
 	}
@@ -175,9 +195,13 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	public List<UploadRequestHistoryVo> findHistory(UserVo actorVo,
 			UploadRequestVo req) throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+		List<UploadRequestHistoryVo> ret = Lists.newArrayList();
 
-		uploadRequestService.findAllRequestHistory(actor, req.getUuid());
-		return null; // FIXME TODO
+		for (UploadRequestHistory h : uploadRequestService
+				.findAllRequestHistory(actor, req.getUuid())) {
+			ret.add(new UploadRequestHistoryVo(h));
+		}
+		return ret;
 	}
 
 	@Override

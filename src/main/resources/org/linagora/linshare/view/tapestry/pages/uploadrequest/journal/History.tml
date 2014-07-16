@@ -1,0 +1,33 @@
+<t:MyBorderLayout t:title="message:pages.uploadrequest.index.title" t:identifier="uploadrequest" t:currentHighlight="uploadrequest"
+		  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+		  xmlns:p="tapestry:parameter">
+  
+  <!-- Main content -->
+  <div id="content">
+    <h1 title="${selected.subject}"><span class="truncate">${selected.subject}</span></h1>
+
+    <t:messagePanel />
+    <t:businessMessagesDisplayer />
+    
+    <!-- Action bar -->
+    <div id="actionBar">
+      <h4>Actions</h4>
+      <ul>
+	<t:actionLink t:id="back" class="button" title="${message:pages.uploadrequest.back.button}">
+	  <span>${message:pages.uploadrequest.back.button}</span>
+	</t:actionLink>
+      </ul>
+    </div><!-- id="actionBar" -->
+
+    <div id="pageContent">
+      <h2> ${message:pages.uploadrequest.journal.history.grid}</h2>
+      <t:grid source="history" row="current" rowsPerPage="10"
+	      include="status,modificationdate,maxFileCount,maxFileSize,maxDepositSize,canDelete,canClose">
+        <p:empty>
+          ${message:pages.uploadrequest.journal.history.empty}
+        </p:empty>
+      </t:grid>
+    </div>
+
+  </div><!-- id="content" -->
+</t:MyBorderLayout>

@@ -12,10 +12,17 @@
     <!-- Action bar -->
     <div id="actionBar">
       <h4>Actions</h4>
+      <br />
+      <br />
       <ul>
         <li>
           <t:actionLink t:id="back" class="button" title="${message:pages.uploadrequest.back.button}">
 	    <span>${message:pages.uploadrequest.back.button}</span>
+          </t:actionLink>
+        </li>
+        <li>
+          <t:actionLink t:id="history" class="button" title="${message:pages.uploadrequest.history.button}">
+	    <span><img src="${asset:context:images/icons/icon-list-mini.png}" alt=""/> ${message:pages.uploadrequest.history.button}</span>
           </t:actionLink>
         </li>
 	<t:if test="selected.closed">

@@ -35,6 +35,7 @@ package org.linagora.linshare.core.domain.vo;
 
 import java.util.Date;
 
+import org.apache.tapestry5.beaneditor.NonVisual;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -84,6 +85,7 @@ public class UploadRequestHistoryVo {
 
 	public UploadRequestHistoryVo(UploadRequestHistory hist) {
 		uuid = hist.getUuid();
+		statusUpdated = hist.isStatusUpdated();
 		maxFileCount = hist.getMaxFileCount();
 		maxDepositSize = hist.getMaxDepositSize();
 		maxFileSize = hist.getMaxFileSize();
@@ -98,6 +100,15 @@ public class UploadRequestHistoryVo {
 		canEditExpiryDate = hist.isCanEditExpiryDate();
 		locale = Language.fromTapestryLocale(hist.getLocale());
 		secured = hist.isSecured();
+	}
+
+	@NonVisual
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public boolean isStatusUpdated() {
@@ -122,14 +133,6 @@ public class UploadRequestHistoryVo {
 
 	public void setEventType(UploadRequestHistoryEventType eventType) {
 		this.eventType = eventType;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
 	}
 
 	public Date getActivationDate() {

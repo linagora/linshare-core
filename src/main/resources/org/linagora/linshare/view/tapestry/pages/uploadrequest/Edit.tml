@@ -4,7 +4,7 @@
   
   <!-- Main content -->
   <div id="content">
-    <h1 title="Content (TODO)"><span class="truncate">Content (TODO)</span></h1>
+    <h1 title="${selected.subject}"><span class="truncate">${selected.subject}</span></h1>
 
     <t:messagePanel />
     <t:businessMessagesDisplayer />

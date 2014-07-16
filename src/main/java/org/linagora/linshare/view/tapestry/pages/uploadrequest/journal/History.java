@@ -31,35 +31,33 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.view.tapestry.pages.uploadrequest;
+package org.linagora.linshare.view.tapestry.pages.uploadrequest.journal;
 
 import java.util.List;
 
-import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.domain.vo.UploadRequestHistoryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
+import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
+import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
+import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Iterables;
+public class History {
 
-public class Index {
-
-	private static Logger logger = LoggerFactory.getLogger(Index.class);
-
-	/*
-	 * Tapestry properties
-	 */
+	private static final Logger logger = LoggerFactory.getLogger(History.class);
 
 	@SessionState
 	@Property
@@ -69,23 +67,16 @@ public class Index {
 	@Property
 	private UserVo userVo;
 
+	@Property
+	@Persist
+	private UploadRequestVo selected;
+
 	@Persist
 	@Property
-	private List<UploadRequestVo> requests;
-
-	@Persist
-	@Property
-	private String pattern;
+	private List<UploadRequestHistoryVo> history;
 
 	@Property
-	private UploadRequestVo current;
-
-	/*
-	 * Injected beans
-	 */
-
-	@InjectPage
-	private Content content;
+	private UploadRequestHistoryVo current;
 
 	@Inject
 	private Messages messages;
@@ -96,35 +87,65 @@ public class Index {
 	@Inject
 	private UploadRequestFacade uploadRequestFacade;
 
+	@Inject
+	private BusinessMessagesManagementService businessMessagesManagementService;
+
+	public Object onActivate(String uuid) {
+		logger.debug("Upload Request uuid: " + uuid);
+		try {
+			this.selected = uploadRequestFacade.findRequestByUuid(userVo, uuid);
+		} catch (BusinessException e) {
+			businessMessagesManagementService.notify(new BusinessUserMessage(
+					BusinessUserMessageType.UPLOAD_REQUEST_NOT_FOUND,
+					MessageSeverity.ERROR));
+			return Index.class;
+		}
+		return null;
+	}
+
 	public Object onActivate() {
 		if (!functionalityFacade.isEnableUploadRequest(userVo
-				.getDomainIdentifier()))
-			return org.linagora.linshare.view.tapestry.pages.Index.class;
+				.getDomainIdentifier())) {
+			return Index.class;
+		}
+		if (selected == null) {
+			logger.info("No upload request selected, abort");
+			return Index.class;
+		}
+		if (!selected.getOwner().businessEquals(userVo)) {
+			logger.info("Unauthorized");
+			businessMessagesManagementService.notify(new BusinessUserMessage(
+					BusinessUserMessageType.UPLOAD_REQUEST_NOT_FOUND,
+					MessageSeverity.ERROR));
+			return Index.class;
+		}
 		return null;
+	}
+
+	public Object onPassivate() {
+		return selected.getUuid();
 	}
 
 	@SetupRender
 	public void init() throws BusinessException {
 		logger.debug("Setup Render begins");
 
-		requests = uploadRequestFacade.findAllVisibles(userVo);
+		history = uploadRequestFacade.findHistory(userVo, selected);
 	}
 
-    public Object onActionFromShowContent(String uuid) {
-		content.setMySelected(Iterables.find(requests,
-				UploadRequestVo.equalTo(uuid)));
-		return content;
-    }
+	public Object onActionFromBack() throws BusinessException {
+		return Index.class;
+	}
 
-    public Object onActionFromCreate() {
-		return Create.class;
-    }
+	public void setMySelected(UploadRequestVo selected) {
+		this.selected = selected;
+	}
 
 	/*
 	 * Exception Handling
 	 */
 
-	public Object onException(Throwable cause) {
+	Object onException(Throwable cause) {
 		shareSessionObjects.addError(messages.get("global.exception.message"));
 		logger.error(cause.getMessage());
 		cause.printStackTrace();
