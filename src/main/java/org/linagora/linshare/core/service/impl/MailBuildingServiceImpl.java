@@ -140,7 +140,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 			public KeyValueChain add(String key, String value) {
 				logger.debug("Adding K/V pair: [" + key + ", " + value
 						+ "]");
-				super.put(key, value);
+				super.put(key, StringUtils.defaultString(value));
 				return this;
 			}
 
@@ -615,7 +615,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("lastName", sender.getLastName())
 				.add("number", "" + anonUrl.getDocumentNames().size())
 				.add("documentNames", names.toString())
-				.add("password", anonUrl.getPassword())
+				.add("password", anonUrl.getTemporaryPlainTextPassword())
 				.add("url", url)
 				.add("urlparam", "");
 		container.setRecipient(email);
