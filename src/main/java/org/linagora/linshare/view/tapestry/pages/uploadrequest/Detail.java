@@ -71,6 +71,9 @@ public class Detail {
 	@InjectPage
 	private Edit edit;
 
+	@InjectPage
+	private History history;
+
 	@Inject
 	private Messages messages;
 
@@ -137,9 +140,18 @@ public class Detail {
 		return edit;
 	}
 
+	public Object onActionFromHistory() throws BusinessException {
+		history.setMySelected(selected);
+		return history;
+	}
+
 	public void setMySelected(UploadRequestVo selected) {
 		this.selected = selected;
 	}
+
+	/*
+	 * Exception Handling
+	 */
 
 	Object onException(Throwable cause) {
 		shareSessionObjects.addError(messages.get("global.exception.message"));

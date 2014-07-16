@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.view.tapestry.pages.uploadrequest;
+package org.linagora.linshare.view.tapestry.pages.uploadrequest.journal;
 
 import java.util.List;
 
@@ -85,7 +85,7 @@ public class Index {
 	 */
 
 	@InjectPage
-	private Content content;
+	private History history;
 
 	@Inject
 	private Messages messages;
@@ -107,17 +107,13 @@ public class Index {
 	public void init() throws BusinessException {
 		logger.debug("Setup Render begins");
 
-		requests = uploadRequestFacade.findAllVisibles(userVo);
+		requests = uploadRequestFacade.findAllNotDeleted(userVo);
 	}
 
-    public Object onActionFromShowContent(String uuid) {
-		content.setMySelected(Iterables.find(requests,
+    public Object onActionFromShowHistory(String uuid) {
+		history.setMySelected(Iterables.find(requests,
 				UploadRequestVo.equalTo(uuid)));
-		return content;
-    }
-
-    public Object onActionFromCreate() {
-		return Create.class;
+		return history;
     }
 
 	/*

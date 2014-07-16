@@ -13,6 +13,10 @@
     <div id="actionBar">
       <h4>Actions</h4>
       <ul>
+        <t:pageLink page="uploadrequest/journal/index" class="button" title="${message:pages.uploadrequest.history.button}">
+	  <span><img src="${asset:context:images/icons/icon-list-mini.png}" alt=""/> ${message:pages.uploadrequest.history.button}</span>
+        </t:pageLink>
+      </ul><ul>
         <t:actionLink t:id="create" class="button" title="${message:pages.uploadrequest.create.button}">
 	  <span><img src="${asset:context:images/icons/edit-button.png}" alt=""/> ${message:pages.uploadrequest.create.button}</span>
         </t:actionLink>

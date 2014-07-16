@@ -43,7 +43,10 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestFacade {
-	List<UploadRequestVo> findAll(UserVo actorVo) throws BusinessException;
+	List<UploadRequestVo> findAllVisibles(UserVo actorVo) throws BusinessException;
+
+	List<UploadRequestVo> findAllNotDeleted(UserVo actorVo)
+			throws BusinessException;
 
 	UploadRequestVo findRequestByUuid(UserVo actorVo, String uuid)
 			throws BusinessException;
