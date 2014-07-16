@@ -720,7 +720,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	@Override
 	public List<AbstractDomain> getAllAuthorizedDomains(String domainIdentifier) {
-		logger.debug("Begin getAllAuthorizedDomains");
+		logger.debug("Begin getAllAuthorizedDomains" + domainIdentifier);
+
 		AbstractDomain domain = retrieveDomain(domainIdentifier);
 		if (domain == null) {
 			logger.error("Impossible to find domain : " + domainIdentifier
