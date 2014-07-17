@@ -34,6 +34,10 @@
 
 package org.linagora.linshare.core.facade.webservice.uploadproposition.dto;
 
+import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
+import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
+import org.linagora.linshare.core.domain.entities.UploadProposition;
+
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class UploadPropositionDto {
@@ -77,6 +81,28 @@ public class UploadPropositionDto {
 		this.body = body;
 		this.recipientMail = recipientMail;
 		this.recipientDomain = recipientDomain;
+	}
+
+
+	public UploadProposition toEntity(UploadPropositionDto dto) {
+		UploadProposition entity = new UploadProposition();
+		entity.setBody(dto.getBody());
+		entity.setDomaineSource(dto.getRecipientDomain());
+		entity.setFirstName(dto.getFirstName());
+		entity.setLastName(dto.getLastName());
+		entity.setSubject(dto.getSubject());
+		entity.setMail(dto.getMail());
+		entity.setRecipientMail(dto.getRecipientMail());
+		entity.setStatus(UploadPropositionStatus.SYSTEM_PENDING);
+		if (dto.getAction() != null) {
+			UploadPropositionActionType actionType = UploadPropositionActionType.fromString(dto.getAction());
+			if (UploadPropositionActionType.ACCEPT.equals(actionType)) {
+				entity.setStatus(UploadPropositionStatus.SYSTEM_ACCEPTED);
+			} else if (UploadPropositionActionType.REJECT.equals(actionType)) {
+				entity.setStatus(UploadPropositionStatus.SYSTEM_REJECTED);
+			}
+		}
+		return entity;
 	}
 
 	public String getFirstName() {

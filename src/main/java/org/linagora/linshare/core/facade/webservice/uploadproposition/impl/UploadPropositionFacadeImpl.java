@@ -41,13 +41,13 @@ import org.linagora.linshare.core.domain.constants.UploadPropositionRuleFieldTyp
 import org.linagora.linshare.core.domain.constants.UploadPropositionRuleOperatorType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.impl.AbstractDomainFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.UploadPropositionFacade;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionActionDto;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionDto;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionFilterDto;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionRuleDto;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.UploadPropositionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,30 +59,32 @@ public class UploadPropositionFacadeImpl extends
 	private static final Logger logger = LoggerFactory
 			.getLogger(UploadPropositionFacadeImpl.class);
 
-	public UploadPropositionFacadeImpl(AccountService accountService) {
+	private final UploadPropositionService uploadPropositionService;
+
+	public UploadPropositionFacadeImpl(AccountService accountService,
+			UploadPropositionService uploadPropositionService) {
 		super(accountService);
+		this.uploadPropositionService = uploadPropositionService;
 	}
 
 	@Override
 	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
 		User actor = this.checkAuthentication();
 		List<UploadPropositionFilterDto> filters = Lists.newArrayList();
+		filters.add(addBartFilter("default filter 1"));
+		filters.add(addHomerFilter("default filter 2"));
+		filters.add(addDefaultFilter());
+		return filters;
+	}
 
+	private UploadPropositionFilterDto addDefaultFilter() {
 		UploadPropositionActionDto action = new UploadPropositionActionDto(
 				"ee1bf0ab-21ad-4a69-914d-d792eb2b36d7",
-				UploadPropositionActionType.ACCEPT, null);
+				UploadPropositionActionType.MANUAL, null);
 		UploadPropositionRuleDto rule = new UploadPropositionRuleDto(
 				"3f52d026-9719-4f0b-bf4b-f5e9252a71a7",
 				UploadPropositionRuleOperatorType.TRUE,
-				UploadPropositionRuleFieldType.SENDER_EMAIL, null);
-
-		UploadPropositionActionDto action1 = new UploadPropositionActionDto(
-				"ee1bf0ab-21ad-4a69-914d-d792eb2b36d7",
-				UploadPropositionActionType.REJECT, null);
-		UploadPropositionRuleDto rule1 = new UploadPropositionRuleDto(
-				"3f52d026-9719-4f0b-bf4b-f5e9252a71a7",
-				UploadPropositionRuleOperatorType.EQUAL,
-				UploadPropositionRuleFieldType.SENDER_EMAIL,
+				UploadPropositionRuleFieldType.NONE,
 				"bart.simpson@int1.linshare.dev");
 
 		UploadPropositionFilterDto filter = new UploadPropositionFilterDto(
@@ -90,22 +92,55 @@ public class UploadPropositionFacadeImpl extends
 				true);
 		filter.getUploadPropositionActions().add(action);
 		filter.getUploadPropositionRules().add(rule);
-		filters.add(filter);
-		return filters;
+		return filter;
+	}
+
+	private UploadPropositionFilterDto addBartFilter(String filterName) {
+		UploadPropositionActionDto action = new UploadPropositionActionDto(
+				"ee1bf0ab-21ad-4a69-914d-d792eb2b36d8",
+				UploadPropositionActionType.ACCEPT, null);
+		UploadPropositionRuleDto rule = new UploadPropositionRuleDto(
+				"3f52d026-9719-4f0b-bf4b-f5e9252a71a8",
+				UploadPropositionRuleOperatorType.EQUAL,
+				UploadPropositionRuleFieldType.RECIPIENT_EMAIL,
+				"bart.simpson@int1.linshare.dev");
+		UploadPropositionFilterDto filter = new UploadPropositionFilterDto(
+				"5724946a-eebe-450b-bb84-0d8af480f3f7", filterName, true);
+		filter.getUploadPropositionActions().add(action);
+		filter.getUploadPropositionRules().add(rule);
+		return filter;
+	}
+
+	private UploadPropositionFilterDto addHomerFilter(String filterName) {
+		UploadPropositionActionDto action = new UploadPropositionActionDto(
+				"ee1bf0ab-21ad-4a69-914d-d792eb2b36d9",
+				UploadPropositionActionType.REJECT, null);
+		UploadPropositionRuleDto rule = new UploadPropositionRuleDto(
+				"3f52d026-9719-4f0b-bf4b-f5e9252a71a9",
+				UploadPropositionRuleOperatorType.EQUAL,
+				UploadPropositionRuleFieldType.RECIPIENT_EMAIL,
+				"homer.simpson@int1.linshare.dev");
+		UploadPropositionFilterDto filter = new UploadPropositionFilterDto(
+				"5724946a-eebe-450b-bb84-0d8af480f3f8", filterName, true);
+		filter.getUploadPropositionActions().add(action);
+		filter.getUploadPropositionRules().add(rule);
+		return filter;
 	}
 
 	@Override
 	public boolean checkIfValidRecipeint(String userMail, String userDomain) {
 		List<String> list = Lists.newArrayList();
 		list.add("bart.simpson@int1.linshare.dev");
+		list.add("lisa.simpson@int1.linshare.dev");
+		list.add("homer.simpson@int1.linshare.dev");
+		list.add("marge.simpson@int1.linshare.dev");
 		return list.contains(userMail);
 	}
 
 	@Override
 	public void create(UploadPropositionDto dto) throws BusinessException {
-		// TODO Auto-generated method stub
-		logger.debug("it works.");
-
 		logger.debug(dto.toString());
+		UploadPropositionActionType actionType = UploadPropositionActionType.fromString(dto.getAction());
+		uploadPropositionService.create(dto.toEntity(dto), actionType);
 	}
 }

@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -63,8 +64,6 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.UploadRequestService;
 
 import com.google.common.collect.Lists;
-
-import edu.emory.mathcs.backport.java.util.Collections;
 
 public class UploadRequestServiceImpl implements UploadRequestService {
 
@@ -115,7 +114,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequest createRequest(User actor, UploadRequest req)
+	public UploadRequest createRequest(Account actor, UploadRequest req)
 			throws BusinessException {
 		req.setStatus(UploadRequestStatus.STATUS_CREATED);
 
@@ -153,7 +152,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequestGroup createRequestGroup(User actor,
+	public UploadRequestGroup createRequestGroup(Account actor,
 			UploadRequestGroup group) throws BusinessException {
 		return uploadRequestGroupBusinessService.create(group);
 	}
