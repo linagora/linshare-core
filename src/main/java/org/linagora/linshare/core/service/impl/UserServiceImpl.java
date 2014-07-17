@@ -627,9 +627,9 @@ public class UserServiceImpl implements UserService {
 					.getDomain().getIdentifier(), user.getMail());
 			if (existingUser != null) {
 				// update
-				logger.debug("userRepository.update(user)");
+				logger.debug("userRepository.update(existingUser)");
 				try {
-					return userRepository.update(user);
+					return userRepository.update(existingUser);
 				} catch (IllegalArgumentException e) {
 					logger.error("Could not update the user " + user.getMail()
 							+ " in the database ", e);
@@ -712,7 +712,7 @@ public class UserServiceImpl implements UserService {
 			user = abstractDomainService.findUserWithoutRestriction(
 					abstractDomain, mail);
 			if (user != null) {
-				saveOrUpdateUser(user);
+				user = saveOrUpdateUser(user);
 			}
 		}
 		return user;
@@ -777,10 +777,11 @@ public class UserServiceImpl implements UserService {
 					.searchUserRecursivelyWithoutRestriction(domainId, mail);
 			if (users != null && users.size() == 1) {
 				user = users.get(0);
-				saveOrUpdateUser(user);
+				user = saveOrUpdateUser(user);
 			} else {
 				logger.error("Could not find the user " + mail
 						+ " in the database nor in the LDAP");
+				logger.debug("nb result : " + users.size());
 				// this should really not happened
 				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
 						"The user could not be found in the DB nor in the LDAP");
