@@ -30,6 +30,8 @@ ALTER TABLE technical_account_permission_domain_abstract ADD CONSTRAINT FKtechni
 ALTER TABLE technical_account_permission_domain_abstract ADD CONSTRAINT FKtechnical_231219 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE account ADD CONSTRAINT FKaccount693567 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
 
+ALTER TABLE users  ALTER COLUMN restricted DROP NOT NULL ;
+
 
 -- LinShare version
 INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence')),'1.7.0');
