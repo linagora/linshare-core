@@ -12,5 +12,6 @@
 	</bean>
 	<bean id="wsUploadPropositionUploadPropositionFacade" class="org.linagora.linshare.core.facade.webservice.uploadproposition.impl.UploadPropositionFacadeImpl">
 		<constructor-arg ref="accountService" />
+		<constructor-arg ref="uploadPropositionService" />
 	</bean>
 </beans>

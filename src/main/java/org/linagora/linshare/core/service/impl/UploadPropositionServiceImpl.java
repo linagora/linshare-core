@@ -34,36 +34,113 @@
 
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
+import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
+import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UploadPropositionService;
+import org.linagora.linshare.core.service.UploadRequestService;
+import org.linagora.linshare.core.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UploadPropositionServiceImpl implements UploadPropositionService {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(UploadPropositionServiceImpl.class);
+
 
 	final private UploadPropositionBusinessService uploadPropositionBusinessService;
 
 	final private DomainBusinessService domainBusinessService;
 
+	final private UploadRequestService uploadRequestService;
+
+	final private AccountRepository<Account> accountRepository;
+
+	final private UserService userService;
+
 	public UploadPropositionServiceImpl(
 			final UploadPropositionBusinessService uploadPropositionBusinessService,
-			final DomainBusinessService domainBusinessService) {
+			final DomainBusinessService domainBusinessService,
+			final UploadRequestService uploadRequestService,
+			final AccountRepository<Account> accountRepository,
+			final UserService userService) {
 		super();
 		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
 		this.domainBusinessService = domainBusinessService;
+		this.uploadRequestService = uploadRequestService;
+		this.accountRepository = accountRepository;
+		this.userService = userService;
 	}
 
 	@Override
-	public UploadProposition create(Account actor, UploadProposition proposition)
-			throws BusinessException {
-		Validate.notNull(actor, "Actor must be set.");
+	public UploadProposition create(UploadProposition proposition,
+			UploadPropositionActionType action) throws BusinessException {
 		Validate.notNull(proposition, "UploadProposition must be set.");
-		return uploadPropositionBusinessService.create(proposition);
+
+		AbstractDomain rootDomain = domainBusinessService.getUniqueRootDomain();
+		proposition.setDomain(rootDomain);
+
+		UploadProposition created;
+		if (action.equals(UploadPropositionActionType.ACCEPT)) {
+			proposition.setStatus(UploadPropositionStatus.SYSTEM_ACCEPTED);
+			created = uploadPropositionBusinessService.create(proposition);
+			User owner = null;
+			try {
+				if (proposition.getDomaineSource() != null) {
+					owner = userService.findOrCreateUser(proposition.getRecipientMail(), proposition.getDomaineSource());
+				} else {
+					owner = userService.findOrCreateUser(proposition.getRecipientMail(), rootDomain.getIdentifier());
+				}
+			} catch (BusinessException e) {
+				logger.error("The recipient of the upload proposition can't be found : " + created.getUuid() + ": " + proposition.getRecipientMail());
+				return null;
+			}
+
+			// TODO functionalityFacade
+			UploadRequestGroup grp = new UploadRequestGroup(created);
+//			Account actor = accountRepository.getUploadRequestSystemAccount();
+			grp = uploadRequestService.createRequestGroup(owner, grp);
+
+
+			UploadRequest e = new UploadRequest();
+			e.setOwner(owner);
+			e.setAbstractDomain(owner.getDomain());
+			e.setNotificationDate(e.getExpiryDate()); // FIXME functionalityFacade
+			e.setUploadRequestGroup(grp);
+
+			e.setUploadPropositionRequestUuid(created.getUuid());
+			e.setMaxFileCount(3);
+			e.setMaxDepositSize(new Long(30*1024*1024));
+			e.setMaxFileSize(new Long(3*1024*1024));
+			e.setStatus(UploadRequestStatus.STATUS_ENABLED);
+			e.setActivationDate(new Date());
+			e.setNotificationDate(new Date());
+			e.setExpiryDate(new Date());
+			e.setCanDelete(true);
+			e.setCanClose(true);
+			e.setCanEditExpiryDate(true);
+			e.setLocale("fr");
+			e.setSecured(true);
+			uploadRequestService.createRequest(owner, e);
+		} else {
+			created = uploadPropositionBusinessService.create(proposition);
+		}
+		return created;
 	}
 
 	@Override
@@ -92,7 +169,8 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			UploadProposition propositionDto) throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(propositionDto, "UploadProposition must be set.");
-		Validate.notEmpty(propositionDto.getUuid(), "UploadProposition identifier must be set.");
+		Validate.notEmpty(propositionDto.getUuid(),
+				"UploadProposition identifier must be set.");
 		return uploadPropositionBusinessService.update(propositionDto);
 	}
 }

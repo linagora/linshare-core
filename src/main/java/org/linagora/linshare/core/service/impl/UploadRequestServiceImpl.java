@@ -114,7 +114,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequest createRequest(User actor, UploadRequest req)
+	public UploadRequest createRequest(Account actor, UploadRequest req)
 			throws BusinessException {
 		req.setStatus(UploadRequestStatus.STATUS_CREATED);
 
@@ -152,7 +152,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequestGroup createRequestGroup(User actor,
+	public UploadRequestGroup createRequestGroup(Account actor,
 			UploadRequestGroup group) throws BusinessException {
 		return uploadRequestGroupBusinessService.create(group);
 	}

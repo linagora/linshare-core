@@ -54,7 +54,7 @@ public interface UploadRequestService {
 
 	UploadRequest findRequestByUuid(Account actor, String uuid) throws BusinessException;
 
-	UploadRequest createRequest(User actor, UploadRequest req)
+	UploadRequest createRequest(Account actor, UploadRequest req)
 			throws BusinessException;
 
 	UploadRequest updateRequest(User actor, UploadRequest req)
@@ -64,7 +64,7 @@ public interface UploadRequestService {
 
 	UploadRequestGroup findRequestGroupByUuid(User actor, String uuid);
 
-	UploadRequestGroup createRequestGroup(User actor, UploadRequestGroup group)
+	UploadRequestGroup createRequestGroup(Account actor, UploadRequestGroup group)
 			throws BusinessException;
 
 	UploadRequestGroup updateRequestGroup(User actor, UploadRequestGroup group)

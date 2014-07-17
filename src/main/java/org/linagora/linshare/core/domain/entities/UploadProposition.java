@@ -35,34 +35,36 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 
+import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
+
 public class UploadProposition {
 
 	private long id;
-	
+
 	private AbstractDomain domain;
-	
+
 	private String uuid;
-	
-	private int status;
-	
+
+	private UploadPropositionStatus status;
+
 	private String subject;
-	
+
 	private String body;
-	
+
 	private String mail;
-	
+
 	private String firstName;
-	
+
 	private String lastName;
-	
+
 	private String domaineSource;
-	
+
 	private String recipientMail;
-	
+
 	private Date creationDate;
-	
+
 	private Date modificationDate;
-	
+
 	public UploadProposition() {
 	}
 
@@ -90,11 +92,11 @@ public class UploadProposition {
 		this.uuid = uuid;
 	}
 
-	public int getStatus() {
+	public UploadPropositionStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(UploadPropositionStatus status) {
 		this.status = status;
 	}
 
@@ -168,5 +170,16 @@ public class UploadProposition {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	@Override
+	public String toString() {
+		return "UploadProposition [id=" + id + ", domain=" + domain + ", uuid="
+				+ uuid + ", status=" + status + ", subject=" + subject
+				+ ", body=" + body + ", mail=" + mail + ", firstName="
+				+ firstName + ", lastName=" + lastName + ", domaineSource="
+				+ domaineSource + ", recipientMail=" + recipientMail
+				+ ", creationDate=" + creationDate + ", modificationDate="
+				+ modificationDate + "]";
 	}
 }

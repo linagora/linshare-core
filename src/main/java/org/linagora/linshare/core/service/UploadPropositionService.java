@@ -36,13 +36,14 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadPropositionService {
 
-	UploadProposition create(Account actor, UploadProposition proposition) throws BusinessException;
+	UploadProposition create(UploadProposition proposition, UploadPropositionActionType action) throws BusinessException;
 
 	void delete(Account actor, UploadProposition proposition) throws BusinessException;
 

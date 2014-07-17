@@ -35,6 +35,7 @@ package org.linagora.linshare.core.business.service.impl;
 
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -45,6 +46,11 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 
 	public DomainBusinessServiceImpl(AbstractDomainRepository repository) {
 		this.repository = repository;
+	}
+
+	@Override
+	public RootDomain getUniqueRootDomain() throws BusinessException {
+		return repository.getUniqueRootDomain();
 	}
 
 	@Override

@@ -66,6 +66,12 @@ public class UploadRequestGroup {
 		body = req.getBody();
 	}
 
+	public UploadRequestGroup(UploadProposition proposition) {
+		super();
+		subject = proposition.getSubject();
+		body = proposition.getBody();
+	}
+
 	public void setId(long id) {
 		this.id = id;
 	}
