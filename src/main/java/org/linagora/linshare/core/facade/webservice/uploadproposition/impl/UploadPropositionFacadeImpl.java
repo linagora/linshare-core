@@ -71,8 +71,8 @@ public class UploadPropositionFacadeImpl extends
 	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
 		User actor = this.checkAuthentication();
 		List<UploadPropositionFilterDto> filters = Lists.newArrayList();
-		filters.add(addBartFilter("default filter 1"));
-		filters.add(addHomerFilter("default filter 2"));
+//		filters.add(addBartFilter("default filter 1"));
+//		filters.add(addHomerFilter("default filter 2"));
 		filters.add(addDefaultFilter());
 		return filters;
 	}
@@ -80,12 +80,12 @@ public class UploadPropositionFacadeImpl extends
 	private UploadPropositionFilterDto addDefaultFilter() {
 		UploadPropositionActionDto action = new UploadPropositionActionDto(
 				"ee1bf0ab-21ad-4a69-914d-d792eb2b36d7",
-				UploadPropositionActionType.MANUAL, null);
+				UploadPropositionActionType.ACCEPT, null);
 		UploadPropositionRuleDto rule = new UploadPropositionRuleDto(
 				"3f52d026-9719-4f0b-bf4b-f5e9252a71a7",
 				UploadPropositionRuleOperatorType.TRUE,
 				UploadPropositionRuleFieldType.NONE,
-				"bart.simpson@int1.linshare.dev");
+				null);
 
 		UploadPropositionFilterDto filter = new UploadPropositionFilterDto(
 				"5724946a-eebe-450b-bb84-0d8af480f3f6", "default filter 1",
