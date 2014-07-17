@@ -57,9 +57,8 @@ import org.slf4j.LoggerFactory;
 
 public class DisplayMailingList {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(DisplayMailingList.class);
-	
+	private static final Logger logger = LoggerFactory.getLogger(DisplayMailingList.class);
+
 	@Inject
 	private MailingListFacade mailingListFacade;
 
@@ -188,7 +187,7 @@ public class DisplayMailingList {
 					contact.setFirstName(firstName);
 					contact.setLastName(lastName);
 					contact.setMail(mail);
-					mailingListFacade.updateContact(loginUser, contact);	
+					mailingListFacade.updateContact(loginUser, contact);
 				} catch (BusinessException e) {
 					logger.error("cannot retrieve user" + e.getMessage());
 					logger.debug(e.toString());
@@ -226,10 +225,19 @@ public class DisplayMailingList {
 	}
 
 	public void onActionFromAddUser(String lsUuid) throws BusinessException {
-		for (UserVo user: results) {
+		for (UserVo user : results) {
 			if (user.getLsUuid().equals(lsUuid)) {
-				mailingListFacade.addUserToList(loginUser, mailingListVo, user.getDomainIdentifier(), user.getMail());
-				mailingListVo = mailingListFacade.findByUuid(mailingListVo.getUuid());
+				// The domain of the current user is null, because user list
+				// come form autoCompleteFacade.
+				// We need to find the real user.
+				// UGLY.
+				List<UserVo> founds = userFacade.searchUser(user.getMail(), null, null, loginUser);
+				if (founds.size() >= 1) {
+					UserVo found = founds.get(0);
+					mailingListFacade.addUserToList(loginUser, mailingListVo, found.getDomainIdentifier(),
+							found.getMail());
+					mailingListVo = mailingListFacade.findByUuid(mailingListVo.getUuid());
+				}
 				return;
 			}
 		}
