@@ -45,7 +45,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface FunctionalityReadOnlyService {
 
 	Functionality get(String domainIdentifier,String functionalityIdentifier);
-	
+
 	/** 
 	 * Shortcuts to functionalities
 	 */
@@ -55,11 +55,11 @@ public interface FunctionalityReadOnlyService {
     SizeUnitValueFunctionality getUserMaxFileSizeFunctionality (AbstractDomain domain);
 	TimeUnitBooleanValueFunctionality getDefaultShareExpiryTimeFunctionality (AbstractDomain domain);
 	TimeUnitValueFunctionality getDefaultFileExpiryTimeFunctionality (AbstractDomain domain);
-	
+
 	Functionality getGuestFunctionality (AbstractDomain domain);
 	TimeUnitValueFunctionality getGuestAccountExpiryTimeFunctionality (AbstractDomain domain);
-	
-	
+
+
 	StringValueFunctionality getTimeStampingFunctionality(AbstractDomain domain);
 	StringValueFunctionality getDomainMailFunctionality(AbstractDomain domain);
 	Functionality getMimeTypeFunctionality(AbstractDomain domain);
@@ -76,7 +76,7 @@ public interface FunctionalityReadOnlyService {
 	StringValueFunctionality getCustomLinkLogoFunctionality(AbstractDomain domain);
 	StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain);
 	StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain);
-	
+
 	IntegerValueFunctionality getCompletionFunctionality(AbstractDomain domain);
 	Functionality getUserTabFunctionality(AbstractDomain domain);
 	Functionality getAuditTabFunctionality(AbstractDomain domain);
@@ -84,18 +84,18 @@ public interface FunctionalityReadOnlyService {
 	Functionality getHelpTabFunctionality(AbstractDomain domain);
 	Functionality getListTabFunctionality(AbstractDomain domain);
 
-	Functionality getUploadRequestFunctionality(AbstractDomain domain);
+	StringValueFunctionality getUploadRequestFunctionality(AbstractDomain domain);
 	Functionality getUploadRequestGroupedFunctionality(AbstractDomain domain);
-	
-	
-	
+
+
+
 	/**
 	 * Check if SecuredAnonymousUrl (SAU) is mandatory
 	 * @param domain : the current domain identifier
 	 * @return 
 	 */
 	boolean isSauMadatory(String domainIdentifier);
-	
+
 	/**
 	 * Check if SecuredAnonymousUrl (SAU) is allowed
 	 * @param domain : the current domain identifier
@@ -109,7 +109,7 @@ public interface FunctionalityReadOnlyService {
 	 * @return
 	 */
 	boolean getDefaultSauValue(String domainIdentifier);
-	
+
 	/**
 	 * return the default value for RestrictedGuest
 	 * @param domain : the current domain identifier
@@ -123,7 +123,7 @@ public interface FunctionalityReadOnlyService {
 	 * @return 
 	 */
 	boolean isRestrictedGuestMadatory(String domainIdentifier);
-	
+
 	/**
 	 * Check if RestrictedGuest is allowed
 	 * @param domain : the current domain identifier
@@ -136,25 +136,25 @@ public interface FunctionalityReadOnlyService {
 	 * @return the status
 	 */
 	boolean isCustomLogoActiveInRootDomain() throws BusinessException;
-	
+
 	/**
 	 * Return the status of the custom logo  in root domain
 	 * @return the status
 	 */
 	String getCustomLogoUrlInRootDomain() throws BusinessException;
-	
+
 	/**
 	 * Return the status of the custom link logo  in root domain
 	 * @return the status
 	 */
 	boolean isCustomLinkLogoActiveInRootDomain() throws BusinessException;
-	
+
 	/**
 	 * Return the status of the custom link logo  in root domain
 	 * @return the status
 	 */
 	String getCustomLinkLogoInRootDomain() throws BusinessException;
-	
+
 	/**
 	 * Return the status of the custom Notification URL in root domain
 	 * @return the status

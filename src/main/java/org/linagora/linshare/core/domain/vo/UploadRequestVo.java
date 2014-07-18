@@ -84,6 +84,8 @@ public class UploadRequestVo {
 
 	private UserVo owner;
 
+	private String recipient;
+
 	public UploadRequestVo() {
 		super();
 	}
@@ -133,6 +135,14 @@ public class UploadRequestVo {
 
 	public void setBody(String body) {
 		this.body = body;
+	}
+
+	public String getRecipient() {
+		return recipient;
+	}
+
+	public void setRecipient(String recipient) {
+		this.recipient = recipient;
 	}
 
 	public int getSize() {

@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +46,7 @@ import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
@@ -130,13 +132,19 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			e.setStatus(UploadRequestStatus.STATUS_ENABLED);
 			e.setActivationDate(new Date());
 			e.setNotificationDate(new Date());
-			e.setExpiryDate(new Date());
+
+			Calendar a = Calendar.getInstance();
+			a.add(Calendar.MONTH, 3);
+			e.setExpiryDate(a.getTime());
+
 			e.setCanDelete(true);
 			e.setCanClose(true);
 			e.setCanEditExpiryDate(true);
 			e.setLocale("fr");
 			e.setSecured(true);
-			uploadRequestService.createRequest(owner, e);
+
+			Contact contact = new Contact(proposition.getRecipientMail());
+			uploadRequestService.createRequest(owner, e, contact);
 		} else {
 			created = uploadPropositionBusinessService.create(proposition);
 		}

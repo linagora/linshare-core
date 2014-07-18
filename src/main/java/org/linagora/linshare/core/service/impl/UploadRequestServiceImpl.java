@@ -51,6 +51,9 @@ import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.MailContainer;
+import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
@@ -61,6 +64,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.MailBuildingService;
+import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestService;
 
 import com.google.common.collect.Lists;
@@ -75,6 +80,8 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	private final UploadRequestTemplateBusinessService uploadRequestTemplateBusinessService;
 	private final UploadRequestUrlBusinessService uploadRequestUrlBusinessService;
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
+	private final MailBuildingService mailBuildingService;
+	private final NotifierService notifierService;
 
 	public UploadRequestServiceImpl(
 			final AbstractDomainService abstractDomainService,
@@ -84,7 +91,9 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 			final UploadRequestHistoryBusinessService uploadRequestHistoryBusinessService,
 			final UploadRequestTemplateBusinessService uploadRequestTemplateBusinessService,
 			final UploadRequestUrlBusinessService uploadRequestUrlBusinessService,
-			final DomainPermissionBusinessService domainPermissionBusinessService) {
+			final DomainPermissionBusinessService domainPermissionBusinessService,
+			final MailBuildingService mailBuildingService,
+			final NotifierService notifierService) {
 		this.abstractDomainService = abstractDomainService;
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
@@ -93,6 +102,8 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 		this.uploadRequestTemplateBusinessService = uploadRequestTemplateBusinessService;
 		this.uploadRequestUrlBusinessService = uploadRequestUrlBusinessService;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
+		this.mailBuildingService = mailBuildingService;
+		this.notifierService = notifierService;
 	}
 
 	@Override
@@ -114,17 +125,38 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequest createRequest(Account actor, UploadRequest req)
-			throws BusinessException {
-		req.setStatus(UploadRequestStatus.STATUS_CREATED);
+	public UploadRequest createRequest(Account actor, UploadRequest req,
+			Contact contact) throws BusinessException {
+		List<Contact> contacts = Lists.newArrayList();
+		contacts.add(contact);
+		return this.createRequest(actor, req, contacts);
+	}
 
-		UploadRequestHistory hist = new UploadRequestHistory(req,
+	@Override
+	public UploadRequest createRequest(Account actor, UploadRequest toCreate, List<Contact> contacts)
+			throws BusinessException {
+		toCreate.setStatus(UploadRequestStatus.STATUS_CREATED);
+
+		UploadRequestHistory hist = new UploadRequestHistory(toCreate,
 				UploadRequestHistoryEventType.EVENT_CREATED);
 
-		req.setOwner(actor);
-		req.setAbstractDomain(actor.getDomain());
-		req.getUploadRequestHistory().add(hist);
-		return uploadRequestBusinessService.create(req);
+		toCreate.setOwner(actor);
+		toCreate.setAbstractDomain(actor.getDomain());
+		toCreate.getUploadRequestHistory().add(hist);
+		// HOOK
+		UploadRequest request = uploadRequestBusinessService.create(toCreate);
+		request.setStatus(UploadRequestStatus.STATUS_ENABLED);
+		request = uploadRequestBusinessService.update(request);
+
+		// Dirty. :(
+		MailContainer mailContainer = new MailContainer(
+				actor.getExternalMailLocale());
+		for (Contact contact : contacts) {
+			UploadRequestUrl uploadRequestUrl = uploadRequestUrlBusinessService.create(request, false, contact);
+			MailContainerWithRecipient buildNewUploadRequest = mailBuildingService.buildNewUploadRequest((User)actor, mailContainer, uploadRequestUrl);
+			notifierService.sendAllNotification(buildNewUploadRequest);
+		}
+		return request;
 	}
 
 	@Override
@@ -264,11 +296,11 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 		return uploadRequestUrlBusinessService.findByUuid(uuid);
 	}
 
-	@Override
-	public UploadRequestUrl createRequestUrl(User actor, UploadRequestUrl url)
-			throws BusinessException {
-		return uploadRequestUrlBusinessService.create(url);
-	}
+//	@Override
+//	public UploadRequestUrl createRequestUrl(User actor, UploadRequestUrl url)
+//			throws BusinessException {
+//		return uploadRequestUrlBusinessService.create(url);
+//	}
 
 	@Override
 	public UploadRequestUrl updateRequestUrl(User actor, UploadRequestUrl url)

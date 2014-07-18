@@ -53,11 +53,11 @@ import org.slf4j.LoggerFactory;
 
 public class FunctionalityReadOnlyServiceImpl implements
 		FunctionalityReadOnlyService {
-	
+
 	protected final Logger logger = LoggerFactory.getLogger(FunctionalityReadOnlyServiceImpl.class);
-	
+
 	private final AbstractDomainRepository abstractDomainRepository;
-	
+
 	private final FunctionalityRepository functionalityRepository;
 
 	public FunctionalityReadOnlyServiceImpl(
@@ -96,7 +96,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	private  Functionality _getFunctionality(AbstractDomain domain, FunctionalityNames fn) {
 		return _getFunctionality(domain, fn.toString());
 	}
-	
+
 	@Override
 	public TimeUnitBooleanValueFunctionality getDefaultShareExpiryTimeFunctionality(AbstractDomain domain) {
 		return new TimeUnitBooleanValueFunctionality((UnitBooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.SHARE_EXPIRATION));
@@ -131,7 +131,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	public StringValueFunctionality getTimeStampingFunctionality(AbstractDomain domain) {
 		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.TIME_STAMPING);
 	}
-	
+
 	@Override
 	public StringValueFunctionality getDomainMailFunctionality(AbstractDomain domain) {
 		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.DOMAIN_MAIL);
@@ -186,7 +186,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	public StringValueFunctionality getCustomLinkLogoFunctionality(AbstractDomain domain) {
 		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.LINK_LOGO);
 	}
-	
+
 	@Override
 	public Functionality getUserCanUploadFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.USER_CAN_UPLOAD);
@@ -201,7 +201,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	public Functionality getUserTabFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.TAB_USER);
 	}
-	
+
 	@Override
 	public Functionality getThreadCreationPermissionFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.CREATE_THREAD_PERMISSION);
@@ -211,13 +211,13 @@ public class FunctionalityReadOnlyServiceImpl implements
 	public Functionality getUpdateFilesFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.UPDATE_FILE);
 	}
-	
+
 	@Override
 	public Functionality getAuditTabFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.TAB_AUDIT);
 	}
 
-	
+
 	@Override
 	public Functionality getThreadTabFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.TAB_THREAD);
@@ -227,25 +227,25 @@ public class FunctionalityReadOnlyServiceImpl implements
 	public Functionality getHelpTabFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.TAB_HELP);
 	}
-	
+
 	@Override
 	public Functionality getListTabFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.TAB_LIST);
 	}
-	
+
 	@Override
 	public StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain) {
 		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.SHARE_NOTIFICATION_BEFORE_EXPIRATION);
 	}
-	
+
 	@Override
 	public StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain) {
 		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.NOTIFICATION_URL);
 	}
 
 	@Override
-	public Functionality getUploadRequestFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST);
+	public StringValueFunctionality getUploadRequestFunctionality(AbstractDomain domain) {
+		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST);
 	}
 
 	@Override
@@ -264,63 +264,63 @@ public class FunctionalityReadOnlyServiceImpl implements
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean isSauMadatory(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		Functionality func = getSecuredAnonymousUrlFunctionality(domain);
 		return func.getActivationPolicy().getPolicy().equals(Policies.MANDATORY);
 	}
-	
+
 	@Override
 	public boolean getDefaultSauValue(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		Functionality func = getSecuredAnonymousUrlFunctionality(domain);
 		return func.getActivationPolicy().getStatus();
 	}
-	
-	
+
+
 	@Override
 	public boolean getDefaultRestrictedGuestValue(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		Functionality func = getRestrictedGuestFunctionality(domain);
 		return func.getActivationPolicy().getStatus();
 	}
-	
+
 	@Override
 	public boolean isRestrictedGuestAllowed(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		Functionality funcRG = getRestrictedGuestFunctionality(domain);
 		return funcRG.getActivationPolicy().getPolicy().equals(Policies.ALLOWED);
 	}
-	
+
 	@Override
 	public boolean isRestrictedGuestMadatory(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		Functionality func = getRestrictedGuestFunctionality(domain);
 		return func.getActivationPolicy().getPolicy().equals(Policies.MANDATORY);
 	}
-	
+
 	@Override
 	public boolean isCustomLogoActiveInRootDomain() throws BusinessException {
 		return this.getCustomLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getActivationPolicy().getStatus();
 	}
-	
+
 	@Override
 	public String getCustomLogoUrlInRootDomain() throws BusinessException {
 		return this.getCustomLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();
 	}
-	
+
 	@Override
 	public boolean isCustomLinkLogoActiveInRootDomain() throws BusinessException {
 		return this.getCustomLinkLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getActivationPolicy().getStatus();
 	}
-	
+
 	@Override
 	public String getCustomLinkLogoInRootDomain() throws BusinessException {
 		return this.getCustomLinkLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();
 	}
-	
+
 	@Override
 	public String getCustomNotificationURLInRootDomain() throws BusinessException {
 		return this.getCustomNotificationUrlFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();

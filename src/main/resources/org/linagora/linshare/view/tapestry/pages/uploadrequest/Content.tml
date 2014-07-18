@@ -1,7 +1,7 @@
 <t:MyBorderLayout t:title="message:pages.uploadrequest.index.title" t:identifier="uploadrequest" t:currentHighlight="uploadrequest"
 		  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
 		  xmlns:p="tapestry:parameter">
-  
+
   <!-- Main content -->
   <div id="content">
     <h1 title="${selected.subject}"><span class="truncate">${selected.subject}</span></h1>
@@ -25,7 +25,7 @@
     <div id="pageContent">
       <h2> ${message:pages.uploadrequest.content.grid}</h2>
       <t:grid source="entries" row="current"
-	      reorder="name,size,creationDate,modificationDate,expirationDate"
+	      reorder="name,size,creationDate"
 	      rowsperpage="10">
         <p:empty>
           ${message:pages.uploadrequest.content.empty}

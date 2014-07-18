@@ -640,6 +640,8 @@ INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'ht
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (63, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (64, true, true, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(31, false, 'UPLOAD_REQUEST', 63, 64, 1);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (31, 'http://linshare-upload-request.local');
+
 
 
 -- Functionality : UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION

@@ -53,6 +53,7 @@ import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
@@ -722,6 +723,48 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				MailContentType.NEW_SHARING_PROTECTED, builder);
 	}
 
+	@Override
+	public MailContainerWithRecipient buildNewUploadRequest(User sender,
+			MailContainer inputMailContainer, UploadRequestUrl requestUrl)
+					throws BusinessException {
+
+		logger.info("Building mail content: "
+				+ MailContentType.UPLOAD_REQUEST_ACTIVATED.toString());
+
+		String actorRepresentation = new ContactRepresentation(sender)
+				.getContactRepresentation();
+		String url = requestUrl
+				.getFullUrl(getLinShareUploadRequestUrl(sender));
+		String email = requestUrl.getContact().getMail();
+
+		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+//		requestUrl.getUploadRequest().getLocale()
+		MailContainerWithRecipient container = new MailContainerWithRecipient(
+				sender.getExternalMailLocale());
+		MailContainerBuilder builder = new MailContainerBuilder();
+
+		builder.getSubjectChain()
+				.add("actorRepresentation", actorRepresentation)
+				.add("subject", requestUrl.getUploadRequest().getUploadRequestGroup().getSubject());
+		builder.getGreetingsChain()
+				.add("firstName", "")
+				.add("lastName", email);
+		builder.getBodyChain()
+				.add("firstName", sender.getFirstName())
+				.add("lastName", sender.getLastName())
+				.add("password", requestUrl.getTemporaryPlainTextPassword())
+				.add("url", url)
+				.add("urlparam", "");
+		container.setRecipient(email);
+		container.setFrom(abstractDomainService.getDomainMail(sender
+				.getDomain()));
+
+		return buildMailContainer(cfg, sender, container,
+				inputMailContainer.getPersonalMessage(),
+				MailContentType.UPLOAD_REQUEST_ACTIVATED, builder);
+	}
+
+
 	/*
 	 * Adapters
 	 */
@@ -812,6 +855,13 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	 * Helpers
 	 */
 
+	private String getLinShareUploadRequestUrl(Account sender) {
+		return functionalityReadOnlyService
+				.getUploadRequestFunctionality(sender.getDomain())
+				.getValue();
+	}
+
+
 	private String getLinShareUrlForAUserRecipient(Account recipient) {
 		return functionalityReadOnlyService
 				.getCustomNotificationUrlFunctionality(recipient.getDomain())
@@ -874,7 +924,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
         }
         return footer;
 	}
-	
+
 	private MailContainerWithRecipient buildMailContainer(MailConfig cfg,
 			User sender, final MailContainerWithRecipient input, String pm,
 			MailContentType type, MailContainerBuilder builder)

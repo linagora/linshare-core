@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.business.service;
 
+import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -40,7 +42,7 @@ public interface UploadRequestUrlBusinessService {
 
 	UploadRequestUrl findByUuid(String uuid);
 
-	UploadRequestUrl create(UploadRequestUrl url) throws BusinessException;
+	UploadRequestUrl create(UploadRequest request, Boolean passwordProtected, Contact contact) throws BusinessException;
 
 	UploadRequestUrl update(UploadRequestUrl url) throws BusinessException;
 
