@@ -34,19 +34,35 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
+import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.UploadRequestUrlRepository;
+import org.linagora.linshare.core.service.PasswordService;
+import org.linagora.linshare.core.utils.HashUtils;
 
 public class UploadRequestUrlBusinessServiceImpl implements
 		UploadRequestUrlBusinessService {
 
 	private final UploadRequestUrlRepository uploadRequestUrlRepository;
 
+	private final PasswordService passwordService;
+
+	private final ContactRepository contactRepository;
+
+	private final String baseUrl;
+
 	public UploadRequestUrlBusinessServiceImpl(
-			final UploadRequestUrlRepository uploadRequestUrlRepository) {
+			UploadRequestUrlRepository uploadRequestUrlRepository,
+			ContactRepository contactRepository ,
+			PasswordService passwordService, String baseUrl) {
 		super();
 		this.uploadRequestUrlRepository = uploadRequestUrlRepository;
+		this.passwordService = passwordService;
+		this.contactRepository = contactRepository ;
+		this.baseUrl = baseUrl;
 	}
 
 	@Override
@@ -55,8 +71,20 @@ public class UploadRequestUrlBusinessServiceImpl implements
 	}
 
 	@Override
-	public UploadRequestUrl create(UploadRequestUrl url)
+	public UploadRequestUrl create(UploadRequest request, Boolean passwordProtected, Contact contact)
 			throws BusinessException {
+		Contact recipient = contactRepository.find(contact);
+		if (recipient == null) {
+			recipient = contactRepository.create(contact);
+		}
+
+		UploadRequestUrl url = new UploadRequestUrl(request, baseUrl, recipient);
+		if (passwordProtected) {
+			String password = passwordService.generatePassword();
+			// We store it temporary in this object for mail notification.
+			url.setTemporaryPlainTextPassword(password);
+			url.setPassword(HashUtils.hashSha1withBase64(password.getBytes()));
+		}
 		return uploadRequestUrlRepository.create(url);
 	}
 

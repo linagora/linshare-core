@@ -36,6 +36,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 
 public class UploadRequestUrl {
+
 	private long id;
 
 	private Contact contact;
@@ -48,12 +49,23 @@ public class UploadRequestUrl {
 
 	private String password;
 
+	private String temporaryPlainTextPassword;
+
 	private Date creationDate;
 
 	private Date modificationDate;
 
 	public UploadRequestUrl() {
 		super();
+	}
+
+	public UploadRequestUrl(UploadRequest uploadRequest, String path, Contact contact) {
+		super();
+		this.uploadRequest = uploadRequest;
+		this.path = path;
+		this.password = null;
+		this.temporaryPlainTextPassword = "";
+		this.contact = contact;
 	}
 
 	public long getId() {
@@ -122,5 +134,28 @@ public class UploadRequestUrl {
 
 	public boolean isProtectedByPassword() {
 		return password != null;
+	}
+
+	public String getTemporaryPlainTextPassword() {
+		return temporaryPlainTextPassword;
+	}
+
+	public void setTemporaryPlainTextPassword(String temporaryPlainTextPassword) {
+		this.temporaryPlainTextPassword = temporaryPlainTextPassword;
+	}
+
+	public String getFullUrl(String baseUrl) {
+		// compose the secured url to give in mail
+		StringBuffer httpUrlBase = new StringBuffer();
+		httpUrlBase.append(baseUrl);
+		if (!baseUrl.endsWith("/")) {
+			httpUrlBase.append('/');
+		}
+		httpUrlBase.append(getPath());
+		if (!getPath().endsWith("/")) {
+			httpUrlBase.append('/');
+		}
+		httpUrlBase.append(getUuid());
+		return httpUrlBase.toString();
 	}
 }

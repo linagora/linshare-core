@@ -57,6 +57,10 @@ public enum UploadRequestStatus {
 
 	public UploadRequestStatus transition(final UploadRequestStatus status)
 			throws BusinessException {
+		// let update status from itself to itself.
+		if (this.equals(status)) {
+			return status;
+		}
 		if (!Arrays.asList(next).contains(status)) {
 			throw new BusinessException("Cannot transition from " + name()
 					+ " to " + status.name() + '.'); // TODO BusinessErrorCode

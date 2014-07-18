@@ -66,7 +66,6 @@ public class MimeTypeBusinessServiceImpl implements MimeTypeBusinessService {
 	@Override
 	public MimeType update(MimeType mimeType) throws BusinessException {
 		MimeType entity = mimeTypeRepository.findByUuid(mimeType.getUuid());
-		entity.setDisplayable(mimeType.getDisplayable());
 		entity.setEnable(mimeType.getEnable());
 		entity.setExtensions(mimeType.getExtensions());
 		return mimeTypeRepository.update(entity);

@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -90,5 +91,8 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildNewSharingCypheredProtected(User sender,
 			MailContainer inputMailContainer, AnonymousUrl anonymousUrl)
 			throws BusinessException;
+
+	MailContainerWithRecipient buildNewUploadRequest(User sender,
+			MailContainer inputMailContainer, UploadRequestUrl requestUrl) throws BusinessException;
 
 }

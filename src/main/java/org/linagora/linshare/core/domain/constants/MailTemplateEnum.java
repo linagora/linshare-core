@@ -40,6 +40,7 @@ package org.linagora.linshare.core.domain.constants;
  * @author sduprey
  *
  */
+@Deprecated
 public enum MailTemplateEnum {
 	GREETINGS(0),
 	FOOTER(1),

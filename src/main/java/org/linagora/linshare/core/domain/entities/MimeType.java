@@ -78,6 +78,7 @@ public class MimeType {
 	public MimeType(MimeTypeDto m) {
 		this.uuid = m.getUuid();
 		this.extensions = m.getExtensions();
+		this.enable = m.isEnable();
 	}
 
 	public long getId() {

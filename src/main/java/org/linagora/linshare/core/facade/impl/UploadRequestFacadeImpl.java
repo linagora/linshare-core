@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
@@ -122,10 +123,11 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		e.setActivationDate(new Date()); // FIXME handle activationDate
 		e.setNotificationDate(e.getExpiryDate()); // FIXME functionalityFacade
 		e.setUploadRequestGroup(grp);
-		e = uploadRequestService.createRequest(actor, e);
+		e = uploadRequestService.createRequest(actor, e, new Contact(req.getRecipient()));
 
 		/*
 		 * FIXME handle activationDate
+		 * FIXME handle status enabled
 		 */
 		e.updateStatus(UploadRequestStatus.STATUS_ENABLED);
 		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));

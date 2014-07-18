@@ -130,6 +130,9 @@
 	</bean>
 	<bean id="uploadRequestUrlBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestUrlBusinessServiceImpl">
 		<constructor-arg ref="uploadRequestUrlRepository" />
+		<constructor-arg ref="passwordService" />
+		<constructor-arg ref="contactRepository" />
+		<constructor-arg value="#" />
 	</bean>
 
 	<bean id="guestBusinessService" class="org.linagora.linshare.core.business.service.impl.GuestBusinessServiceImpl">

@@ -39,6 +39,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
@@ -54,7 +55,10 @@ public interface UploadRequestService {
 
 	UploadRequest findRequestByUuid(Account actor, String uuid) throws BusinessException;
 
-	UploadRequest createRequest(Account actor, UploadRequest req)
+	UploadRequest createRequest(Account actor, UploadRequest req, List<Contact> contacts)
+			throws BusinessException;
+
+	UploadRequest createRequest(Account actor, UploadRequest req, Contact contact)
 			throws BusinessException;
 
 	UploadRequest updateRequest(User actor, UploadRequest req)
@@ -96,9 +100,6 @@ public interface UploadRequestService {
 			throws BusinessException;
 
 	UploadRequestUrl findRequestUrlByUuid(User actor, String uuid);
-
-	UploadRequestUrl createRequestUrl(User actor, UploadRequestUrl url)
-			throws BusinessException;
 
 	UploadRequestUrl updateRequestUrl(User actor, UploadRequestUrl url)
 			throws BusinessException;

@@ -52,10 +52,6 @@ public class UploadRequestEntryVo {
 
 	private Calendar creationDate;
 
-	private Calendar modificationDate;
-
-	private Calendar expirationDate;
-
 	private DocumentVo document;
 
 	public UploadRequestEntryVo() {
@@ -66,8 +62,6 @@ public class UploadRequestEntryVo {
 		this.size = e.getSize();
 		this.name = e.getName();
 		this.creationDate = e.getCreationDate();
-		this.modificationDate = e.getModificationDate();
-		this.expirationDate = e.getExpirationDate();
 		if (e.getDocumentEntry() != null) {
 			this.document = new DocumentVo(e.getDocumentEntry());
 		}
@@ -103,22 +97,6 @@ public class UploadRequestEntryVo {
 
 	public void setCreationDate(Calendar creationDate) {
 		this.creationDate = creationDate;
-	}
-
-	public Calendar getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Calendar modificationDate) {
-		this.modificationDate = modificationDate;
-	}
-
-	public Calendar getExpirationDate() {
-		return expirationDate;
-	}
-
-	public void setExpirationDate(Calendar expirationDate) {
-		this.expirationDate = expirationDate;
 	}
 
 	public DocumentVo getDocument() {
