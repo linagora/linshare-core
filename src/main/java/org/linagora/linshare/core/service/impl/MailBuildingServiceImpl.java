@@ -729,7 +729,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 					throws BusinessException {
 
 		logger.info("Building mail content: "
-				+ MailContentType.UPLOAD_REQUEST_ACTIVATED.toString());
+				+ MailContentType.UPLOAD_REQUEST_CREATED.toString());
 
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
@@ -761,7 +761,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 
 		return buildMailContainer(cfg, sender, container,
 				inputMailContainer.getPersonalMessage(),
-				MailContentType.UPLOAD_REQUEST_ACTIVATED, builder);
+				MailContentType.UPLOAD_REQUEST_CREATED, builder);
 	}
 
 
