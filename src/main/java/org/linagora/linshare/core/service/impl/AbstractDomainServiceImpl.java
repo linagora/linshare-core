@@ -236,7 +236,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
 					"Parent domain not found.");
 		}
-		if (parentDomain.getDomainType().equals(DomainType.TOPDOMAIN)) {
+		if (!parentDomain.getDomainType().equals(DomainType.TOPDOMAIN)) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,
 					"Parent domain invalid type.");
 		}
@@ -261,7 +261,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
 					"Parent domain not found.");
 		}
-		if (parentDomain.getDomainType().equals(DomainType.TOPDOMAIN)) {
+		if (!parentDomain.getDomainType().equals(DomainType.TOPDOMAIN)) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,
 					"Parent domain invalid type.");
 		}
