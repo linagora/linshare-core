@@ -44,7 +44,7 @@ public interface UploadRequestRestService {
 
 	Response find(String uuid, String password) throws BusinessException;
 
-	UploadRequestDto update(UploadRequestDto dto, String password)
+	UploadRequestDto close(String uuid, String password)
 			throws BusinessException;
 
 	void delete(String uuid, String password, String entryUuid)

@@ -94,14 +94,14 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	}
 
 	@PUT
-	@Path("/")
+	@Path("/{requestUrlUuid}")
 	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
 	@Override
-	public UploadRequestDto update(UploadRequestDto dto,
+	public UploadRequestDto close(@PathParam(value = "requestUrlUuid") String requestUrlUuid,
 			@HeaderParam("linshare-uploadrequest-password") String password)
 			throws BusinessException {
-		return uploadRequestUrlFacade.close(dto, password);
+		return uploadRequestUrlFacade.close(requestUrlUuid, password);
 	}
 
 	@DELETE
