@@ -18,7 +18,9 @@
 
     <div id="pageContent">
       <h2> ${message:pages.uploadrequest.journal.index.grid}</h2>
-      <t:grid source="requests" row="current" include="subject, activationDate, expiryDate, status" rowsPerPage="10">
+      <t:grid source="requests" row="current" rowsPerPage="10"
+	      include="subject, creationDate, modificationDate, status" 
+	      t:mixins="defaultSort" sort="modificationDate" descending="true">
         <p:subjectCell>
 	  <span class="truncate">
             <t:actionlink t:id="showHistory" context="current.uuid" title="${current.subject}">

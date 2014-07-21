@@ -26,7 +26,8 @@
       <h2> ${message:pages.uploadrequest.content.grid}</h2>
       <t:grid source="entries" row="current"
 	      reorder="name,size,creationDate"
-	      rowsperpage="10">
+	      rowsperpage="10"
+	      t:mixins="defaultSort" sort="creationDate" descending="true">
         <p:empty>
           ${message:pages.uploadrequest.content.empty}
         </p:empty>

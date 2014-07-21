@@ -105,8 +105,6 @@ public class Index {
 
 	@SetupRender
 	public void init() throws BusinessException {
-		logger.debug("Setup Render begins");
-
 		requests = uploadRequestFacade.findAllNotDeleted(userVo);
 	}
 
