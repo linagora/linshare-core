@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
+import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -50,12 +51,8 @@ import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Edit {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(Edit.class);
 
 	@SessionState
 	@Property
@@ -68,6 +65,9 @@ public class Edit {
 	@Property
 	@Persist
 	private UploadRequestVo selected;
+
+	@Inject
+	private Logger logger;
 
 	@Inject
 	private Messages messages;
@@ -119,12 +119,14 @@ public class Edit {
 		return selected.getUuid();
 	}
 
+	@Log
 	public Object onSuccess() throws BusinessException {
 		uploadRequestFacade.updateRequest(userVo, selected);
 		return Detail.class;
 	}
 
-	public Object onCancel() throws BusinessException {
+	@Log
+	public Object onCanceled() throws BusinessException {
 		return Detail.class;
 	}
 

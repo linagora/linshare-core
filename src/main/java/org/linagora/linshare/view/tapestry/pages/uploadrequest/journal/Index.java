@@ -49,13 +49,10 @@ import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
 
 public class Index {
-
-	private static Logger logger = LoggerFactory.getLogger(Index.class);
 
 	/*
 	 * Tapestry properties
@@ -86,6 +83,9 @@ public class Index {
 
 	@InjectPage
 	private History history;
+
+	@Inject
+	private Logger logger;
 
 	@Inject
 	private Messages messages;

@@ -35,6 +35,7 @@ package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
 import java.util.List;
 
+import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -54,12 +55,8 @@ import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class History {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(History.class);
 
 	@SessionState
 	@Property
@@ -79,6 +76,9 @@ public class History {
 
 	@Property
 	private UploadRequestHistoryVo current;
+
+	@Inject
+	private Logger logger;
 
 	@Inject
 	private Messages messages;
@@ -137,10 +137,12 @@ public class History {
 		history = uploadRequestFacade.findHistory(userVo, selected);
 	}
 
+	@Log
 	public Object onActionFromBack() throws BusinessException {
 		return Detail.class;
 	}
 
+	@Log
 	public void setMySelected(UploadRequestVo selected) {
 		this.selected = selected;
 	}
