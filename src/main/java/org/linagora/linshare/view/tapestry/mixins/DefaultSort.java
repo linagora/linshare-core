@@ -55,6 +55,10 @@ public class DefaultSort {
 
 	@SetupRender
 	void setupRender() {
+		if (grid.getDataSource().getRowType() == null) {
+			return;
+		}
+
 		GridSortModel sortModel = grid.getSortModel();
 		ColumnSort order = descending ? ColumnSort.DESCENDING
 				: ColumnSort.ASCENDING;

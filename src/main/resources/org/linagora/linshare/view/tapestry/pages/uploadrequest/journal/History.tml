@@ -22,11 +22,14 @@
     <div id="pageContent">
       <h2> ${message:pages.uploadrequest.journal.history.grid}</h2>
       <t:grid source="history" row="current" rowsPerPage="10"
-	      include="status,modificationDate,maxFileCount,maxFileSize,maxDepositSize,canDelete,canClose"
+	      include="status,modificationDate,maxFileCount,maxFileSize,maxDepositSize"
 	      t:mixins="defaultSort" sort="modificationDate" descending="true">
         <p:empty>
           ${message:pages.uploadrequest.journal.history.empty}
         </p:empty>
+	<p:modificationDateCell>
+	  <t:output format="${message:global.pattern.timestamp}" value="current.modificationDate" />
+	</p:modificationDateCell>
       </t:grid>
     </div>
 

@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
-import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
@@ -50,7 +50,7 @@ public class UploadRequestEntryVo {
 
 	private String name;
 
-	private Calendar creationDate;
+	private Date creationDate;
 
 	@NonVisual
 	private DocumentVo document;
@@ -62,7 +62,7 @@ public class UploadRequestEntryVo {
 		this.uuid = e.getUuid();
 		this.size = e.getSize();
 		this.name = e.getName();
-		this.creationDate = e.getCreationDate();
+		this.creationDate = e.getCreationDate().getTime();
 		if (e.getDocumentEntry() != null) {
 			this.document = new DocumentVo(e.getDocumentEntry());
 		}
@@ -92,11 +92,11 @@ public class UploadRequestEntryVo {
 		this.name = name;
 	}
 
-	public Calendar getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(Calendar creationDate) {
+	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
 
