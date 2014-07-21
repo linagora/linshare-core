@@ -33,7 +33,8 @@
  */
 package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
-import org.apache.commons.io.FileUtils;
+import java.util.Locale;
+
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
@@ -41,6 +42,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -72,6 +74,9 @@ public class Detail {
 
 	@InjectPage
 	private History history;
+
+	@Inject
+	private PersistentLocale persistentLocale;
 
 	@Inject
 	private Logger logger;
@@ -156,8 +161,16 @@ public class Detail {
 		this.selected = selected;
 	}
 
-	public String getFileSize(int sz) {
-		return FileUtils.byteCountToDisplaySize(sz);
+	/*
+	 * TODO: ugly
+	 */
+	public String getFileSize(int bytes) {
+		boolean si = !persistentLocale.get().equals(Locale.ENGLISH);
+		int unit = si ? 1000 : 1024;
+		if (bytes < unit) return bytes + " B";
+		int exp = (int) (Math.log(bytes) / Math.log(unit));
+		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 
 	/*
