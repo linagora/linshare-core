@@ -28,6 +28,12 @@
 	    </t:actionlink>
 	  </span>
         </p:subjectCell>
+	<p:creationDateCell>
+	  <t:output format="${message:global.pattern.timestamp}" value="current.creationDate" />
+	</p:creationDateCell>
+	<p:modificationDateCell>
+	  <t:output format="${message:global.pattern.timestamp}" value="current.modificationDate" />
+	</p:modificationDateCell>
         <p:empty>
           ${message:pages.uploadrequest.journal.index.empty}
         </p:empty>

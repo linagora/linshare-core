@@ -54,7 +54,14 @@
 	<t:bsbeandisplay object="selected" include="body,status,size,canDelete,canClose,locale,secured"/>
       </div>
       <div style="float: left;">
-	<t:bsbeandisplay object="selected" include="maxFileCount,maxDepositSize,maxFileSize,activationDate,creationDate,modificationDate,expiryDate"/>
+	<t:bsbeandisplay object="selected" include="maxFileCount,maxDepositSize,maxFileSize,activationDate,creationDate,modificationDate,expiryDate">
+	  <p:creationDate>
+	    <t:output format="${message:global.pattern.timestamp}" value="current.creationDate" />
+	  </p:creationDate>
+	  <p:modificationDate>
+	    <t:output format="${message:global.pattern.timestamp}" value="current.modificationDate" />
+	  </p:modificationDate>
+	</t:bsbeandisplay>
       </div>
       <div style="clear: both;"></div>
     </div>
