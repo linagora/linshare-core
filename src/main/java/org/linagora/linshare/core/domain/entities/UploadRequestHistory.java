@@ -93,7 +93,6 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 	public UploadRequestHistory(UploadRequest update,
 			UploadRequestHistoryEventType eventType, boolean statusUpdated) {
 		super();
-		System.err.println("TOTO: statusUpdated: " + statusUpdated);
 		// on cascade
 		this.setCreationDate(new Date());
 		this.setModificationDate(new Date());
