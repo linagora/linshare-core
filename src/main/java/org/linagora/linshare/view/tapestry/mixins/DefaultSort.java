@@ -64,9 +64,9 @@ public class DefaultSort {
 				: ColumnSort.ASCENDING;
 
 		if (sortModel.getSortConstraints().isEmpty()) {
-			while (!sortModel.getColumnSort(sort).equals(order)) {
+			do {
 				sortModel.updateSort(sort);
-			}
+			} while (!sortModel.getColumnSort(sort).equals(order));
 		}
 	}
 }

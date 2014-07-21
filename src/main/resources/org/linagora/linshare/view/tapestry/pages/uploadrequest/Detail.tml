@@ -56,10 +56,10 @@
       <div style="float: left;">
 	<t:bsbeandisplay object="selected" include="maxFileCount,maxDepositSize,maxFileSize,activationDate,creationDate,modificationDate,expiryDate">
 	  <p:creationDate>
-	    <t:output format="${message:global.pattern.timestamp}" value="current.creationDate" />
+	    <t:output format="${message:global.pattern.timestamp}" value="selected.creationDate" />
 	  </p:creationDate>
 	  <p:modificationDate>
-	    <t:output format="${message:global.pattern.timestamp}" value="current.modificationDate" />
+	    <t:output format="${message:global.pattern.timestamp}" value="selected.modificationDate" />
 	  </p:modificationDate>
 	</t:bsbeandisplay>
       </div>
