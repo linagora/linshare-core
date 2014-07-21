@@ -42,6 +42,7 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.vo.UploadRequestHistoryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -136,8 +137,23 @@ public class History {
 		return Index.class;
 	}
 
+	@Log
+	public Object onActionFromDelete() throws BusinessException {
+		uploadRequestFacade.deleteRequest(userVo, selected);
+		return Index.class;
+	}
+
 	public void setMySelected(UploadRequestVo selected) {
 		this.selected = selected;
+	}
+
+	public boolean isDeletable() {
+		try {
+			selected.getStatus().transition(UploadRequestStatus.STATUS_DELETED);
+			return true;
+		} catch (BusinessException e) {
+			return false;
+		}
 	}
 
 	/*

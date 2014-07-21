@@ -134,8 +134,9 @@ public class Detail {
 	}
 
 	@Log
-	public void onActionFromDelete() throws BusinessException {
+	public Object onActionFromDelete() throws BusinessException {
 		selected = uploadRequestFacade.archiveRequest(userVo, selected);
+		return Index.class;
 	}
 
 	@Log

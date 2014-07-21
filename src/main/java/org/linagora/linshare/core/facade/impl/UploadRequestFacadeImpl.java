@@ -150,11 +150,14 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	}
 
 	@Override
-	public void deleteRequest(UserVo actorVo, UploadRequestVo req)
+	public UploadRequestVo deleteRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		// TODO
-		uploadRequestService.deleteRequest(actor, req.toEntity());
+		UploadRequest e = uploadRequestService.findRequestByUuid(actor,
+				req.getUuid());
+
+		e.updateStatus(UploadRequestStatus.STATUS_DELETED);
+		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
 	}
 
 	@Override

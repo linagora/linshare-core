@@ -13,9 +13,18 @@
     <div id="actionBar">
       <h4>Actions</h4>
       <ul>
-	<t:actionLink t:id="back" class="button" title="${message:pages.uploadrequest.back.button}">
-	  <span>${message:pages.uploadrequest.back.button}</span>
-	</t:actionLink>
+	<t:if test="deletable">
+	  <li>
+	    <t:actionLink t:id="delete" class="button" title="${message:pages.uploadrequest.delete.button}">
+	      <span><img src="${asset:context:images/icons/delete-small.png}" alt="" /> ${message:pages.uploadrequest.delete.button}</span>
+	    </t:actionLink>
+	  </li>
+	</t:if>
+	<li>
+	  <t:actionLink t:id="back" class="button" title="${message:pages.uploadrequest.back.button}">
+	    <span>${message:pages.uploadrequest.back.button}</span>
+	  </t:actionLink>
+	</li>
       </ul>
     </div><!-- id="actionBar" -->
 
