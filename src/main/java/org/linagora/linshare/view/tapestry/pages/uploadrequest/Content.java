@@ -39,6 +39,7 @@ import java.util.List;
 
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -59,13 +60,10 @@ import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
 
 public class Content {
-
-	private static final Logger logger = LoggerFactory.getLogger(Content.class);
 
 	@SessionState
 	@Property
@@ -90,6 +88,9 @@ public class Content {
 	private Detail detail;
 
 	@Inject
+	private Logger logger;
+
+	@Inject
 	private Messages messages;
 
 	@Inject
@@ -102,7 +103,6 @@ public class Content {
 	private BusinessMessagesManagementService businessMessagesManagementService;
 
 	public Object onActivate(String uuid) {
-		logger.debug("Upload Request uuid: " + uuid);
 		try {
 			this.selected = uploadRequestFacade.findRequestByUuid(userVo, uuid);
 		} catch (BusinessException e) {
@@ -145,11 +145,13 @@ public class Content {
 		entries = uploadRequestFacade.findAllEntries(userVo, selected);
 	}
 
+	@Log
 	public Object onActionFromShowDetail() throws BusinessException {
 		detail.setMySelected(selected);
 		return detail;
 	}
 
+	@Log
 	public StreamResponse onActionFromDownload(String uuid)
 			throws BusinessException {
 		UploadRequestEntryVo entry = Iterables.find(entries,

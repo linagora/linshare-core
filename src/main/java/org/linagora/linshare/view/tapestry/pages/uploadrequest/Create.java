@@ -34,6 +34,7 @@
 package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
@@ -45,11 +46,8 @@ import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Create {
-
-	private static Logger logger = LoggerFactory.getLogger(Create.class);
 
 	/*
 	 * Tapestry properties
@@ -69,6 +67,9 @@ public class Create {
 	/*
 	 * Injected beans
 	 */
+
+	@Inject
+	private Logger logger;
 
 	@InjectPage
 	private Content content;
@@ -90,12 +91,14 @@ public class Create {
 		return null;
 	}
 
+	@Log
 	public Object onSuccess() throws BusinessException {
 		uploadRequestFacade.createRequest(userVo, current);
 		return Index.class;
 	}
 
-	public Object onCancel() throws BusinessException {
+	@Log
+	public Object onCanceled() throws BusinessException {
 		return Index.class;
 	}
 

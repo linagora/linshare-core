@@ -36,6 +36,7 @@ package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -49,13 +50,10 @@ import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
 
 public class Index {
-
-	private static Logger logger = LoggerFactory.getLogger(Index.class);
 
 	/*
 	 * Tapestry properties
@@ -88,6 +86,9 @@ public class Index {
 	private Content content;
 
 	@Inject
+	private Logger logger;
+
+	@Inject
 	private Messages messages;
 
 	@Inject
@@ -105,17 +106,17 @@ public class Index {
 
 	@SetupRender
 	public void init() throws BusinessException {
-		logger.debug("Setup Render begins");
-
 		requests = uploadRequestFacade.findAllVisibles(userVo);
 	}
 
+	@Log
     public Object onActionFromShowContent(String uuid) {
 		content.setMySelected(Iterables.find(requests,
 				UploadRequestVo.equalTo(uuid)));
 		return content;
     }
 
+    @Log
     public Object onActionFromCreate() {
 		return Create.class;
     }

@@ -34,6 +34,7 @@
 package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -50,11 +51,8 @@ import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Detail {
-
-	private static final Logger logger = LoggerFactory.getLogger(Detail.class);
 
 	@SessionState
 	@Property
@@ -75,6 +73,9 @@ public class Detail {
 	private History history;
 
 	@Inject
+	private Logger logger;
+
+	@Inject
 	private Messages messages;
 
 	@Inject
@@ -87,7 +88,6 @@ public class Detail {
 	private BusinessMessagesManagementService businessMessagesManagementService;
 
 	public Object onActivate(String uuid) {
-		logger.debug("Upload Request uuid: " + uuid);
 		try {
 			this.selected = uploadRequestFacade.findRequestByUuid(userVo, uuid);
 		} catch (BusinessException e) {
@@ -123,23 +123,28 @@ public class Detail {
 		return selected.getUuid();
 	}
 
+	@Log
 	public Object onActionFromBack() throws BusinessException {
 		return Content.class;
 	}
 
+	@Log
 	public void onActionFromClose() throws BusinessException {
 		selected = uploadRequestFacade.closeRequest(userVo, selected);
 	}
 
+	@Log
 	public void onActionFromDelete() throws BusinessException {
 		selected = uploadRequestFacade.archiveRequest(userVo, selected);
 	}
 
+	@Log
 	public Object onActionFromEdit() throws BusinessException {
 		edit.setMySelected(selected);
 		return edit;
 	}
 
+	@Log
 	public Object onActionFromHistory() throws BusinessException {
 		history.setMySelected(selected);
 		return history;
