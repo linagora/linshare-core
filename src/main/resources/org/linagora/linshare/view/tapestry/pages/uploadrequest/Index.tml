@@ -25,7 +25,9 @@
 
     <div id="pageContent">
       <h2> ${message:pages.uploadrequest.index.grid}</h2>
-      <t:grid source="requests" row="current" include="subject, size, activationDate, expiryDate, status" rowsPerPage="10">
+      <t:grid source="requests" row="current" rowsPerPage="10"
+	      include="subject, size, creationDate, modificationDate, status"
+	      t:mixins="defaultSort" sort="modificationDate" descending="true">
         <p:subjectCell>
 	  <span class="truncate">
             <t:actionlink t:id="showContent" context="current.uuid" title="${current.subject}">

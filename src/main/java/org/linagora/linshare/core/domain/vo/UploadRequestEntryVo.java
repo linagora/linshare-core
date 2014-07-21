@@ -52,6 +52,7 @@ public class UploadRequestEntryVo {
 
 	private Calendar creationDate;
 
+	@NonVisual
 	private DocumentVo document;
 
 	public UploadRequestEntryVo() {
