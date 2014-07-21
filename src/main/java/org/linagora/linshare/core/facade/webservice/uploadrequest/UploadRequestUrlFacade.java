@@ -44,7 +44,7 @@ public interface UploadRequestUrlFacade {
 	UploadRequestDto find(String uploadRequestUrlUuid, String password)
 			throws BusinessException;
 
-	UploadRequestDto close(UploadRequestDto req, String password)
+	UploadRequestDto close(String uuid, String password)
 			throws BusinessException;
 
 	void addUploadRequestEntry(String uploadRequestUrlUuid, String password, InputStream fi, String fileName) throws BusinessException;

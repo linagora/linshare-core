@@ -71,11 +71,10 @@ public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 	}
 
 	@Override
-	public UploadRequestDto close(UploadRequestDto req, String password)
+	public UploadRequestDto close(String uuid, String password)
 			throws BusinessException {
-		Validate.notNull(req);
-		Validate.notEmpty(req.getUuid());
-		return transform(uploadRequestUrlService.close(req.getUuid(), password));
+		Validate.notEmpty(uuid);
+		return transform(uploadRequestUrlService.close(uuid, password));
 	}
 
 	@Override
