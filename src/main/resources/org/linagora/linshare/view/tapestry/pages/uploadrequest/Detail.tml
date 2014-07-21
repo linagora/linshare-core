@@ -27,8 +27,8 @@
         </li>
 	<t:if test="selected.closed">
           <li>
-            <t:actionLink t:id="delete" class="button" title="${message:pages.uploadrequest.delete.button}">
-	      <span><img src="${asset:context:images/icons/delete-small.png}" alt="" /> ${message:pages.uploadrequest.delete.button}</span>
+            <t:actionLink t:id="delete" class="button" title="${message:pages.uploadrequest.archive.button}">
+	      <span><img src="${asset:context:images/icons/delete-small.png}" alt="" /> ${message:pages.uploadrequest.archive.button}</span>
             </t:actionLink>
           </li>
 	  <p:else>
