@@ -143,6 +143,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 		toCreate.setOwner(actor);
 		toCreate.setAbstractDomain(actor.getDomain());
 		toCreate.getUploadRequestHistory().add(hist);
+		// FIXME fma
 		// HOOK
 		UploadRequest request = uploadRequestBusinessService.create(toCreate);
 		request.setStatus(UploadRequestStatus.STATUS_ENABLED);

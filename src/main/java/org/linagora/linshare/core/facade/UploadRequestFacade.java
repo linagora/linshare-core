@@ -57,7 +57,7 @@ public interface UploadRequestFacade {
 	UploadRequestVo updateRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException;
 
-	void deleteRequest(UserVo actorVo, UploadRequestVo req)
+	UploadRequestVo deleteRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException;
 
 	UploadRequestVo closeRequest(UserVo actorVo, UploadRequestVo req)
