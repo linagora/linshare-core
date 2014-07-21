@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
@@ -153,6 +154,10 @@ public class Detail {
 
 	public void setMySelected(UploadRequestVo selected) {
 		this.selected = selected;
+	}
+
+	public String getFileSize(int sz) {
+		return FileUtils.byteCountToDisplaySize(sz);
 	}
 
 	/*
