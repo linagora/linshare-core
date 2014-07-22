@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -73,7 +73,7 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 	@GET
 	@ApiOperation(value = "Find all domain's functionalities.", response = FunctionalityDto.class, responseContainer = "Set")
 	@Override
-	public Set<FunctionalityDto> findAll(
+	public List<FunctionalityDto> findAll(
 			@QueryParam(value = "domainId") String domainId)
 			throws BusinessException {
 		return functionalityFacade.findAll(domainId);

@@ -33,9 +33,8 @@
  */
 package org.linagora.linshare.webservice.dto;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -43,6 +42,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.entities.Functionality;
 
+import com.google.common.collect.Ordering;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -50,7 +50,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @JsonIgnoreProperties({"name"})
 @XmlRootElement(name = "Functionality")
 @ApiModel(value = "Functionality", description = "Functionalities are used to configure the application")
-public class FunctionalityDto {
+public class FunctionalityDto implements Comparable<FunctionalityDto> {
 
 	@ApiModelProperty(value = "Identifier")
 	protected String identifier;
@@ -85,7 +85,7 @@ public class FunctionalityDto {
 	protected String parentIdentifier;
 
 	@ApiModelProperty(value = "functionalities")
-	protected Set<FunctionalityDto> functionalities;
+	protected List<FunctionalityDto> functionalities;
 
 	@ApiModelProperty(value = "displayable")
 	protected boolean displayable;
@@ -115,7 +115,7 @@ public class FunctionalityDto {
 		this.parameters = f.getParameters();
 		this.type = f.getType().toString();
 		this.parentIdentifier = f.getParentIdentifier();
-		functionalities = new HashSet<FunctionalityDto>();
+		functionalities = new ArrayList<FunctionalityDto>();
 		this.displayable = true;
 		this.system = f.isSystem();
 
@@ -234,11 +234,11 @@ public class FunctionalityDto {
 		this.parentIdentifier = parentIdentifier;
 	}
 
-	public Set<FunctionalityDto> getFunctionalities() {
-		return functionalities;
+	public List<FunctionalityDto> getFunctionalities() {
+		return Ordering.natural().immutableSortedCopy(functionalities);
 	}
 
-	public void setFunctionalities(Set<FunctionalityDto> functionalities) {
+	public void setFunctionalities(List<FunctionalityDto> functionalities) {
 		this.functionalities = functionalities;
 	}
 
@@ -257,6 +257,11 @@ public class FunctionalityDto {
 
 	public boolean isSystem() {
 		return system;
+	}
+
+	@Override
+	public int compareTo(FunctionalityDto o) {
+		return this.identifier.compareTo(o.getIdentifier());
 	}
 
 	@Override

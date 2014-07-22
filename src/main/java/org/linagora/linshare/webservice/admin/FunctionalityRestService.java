@@ -33,14 +33,14 @@
  */
 package org.linagora.linshare.webservice.admin;
 
-import java.util.Set;
+import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
 public interface FunctionalityRestService {
 
-	Set<FunctionalityDto> findAll(String domainId) throws BusinessException;
+	List<FunctionalityDto> findAll(String domainId) throws BusinessException;
 
 	FunctionalityDto find(String domainId, String funcId)
 			throws BusinessException;

@@ -36,7 +36,6 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,6 +50,8 @@ import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
+
+import com.google.common.collect.Ordering;
 
 public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		FunctionalityFacade {
@@ -84,7 +85,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<FunctionalityDto> findAll(String domainId)
+	public List<FunctionalityDto> findAll(String domainId)
 			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
@@ -123,7 +124,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 				ret.get(func.getParentIdentifier()).addFunctionalities(func);
 			}
 		}
-		return new HashSet<FunctionalityDto>(ret.values());
+		return Ordering.natural().immutableSortedCopy(ret.values());
 	}
 
 	@Override
