@@ -98,6 +98,9 @@ public interface FunctionalityReadOnlyService {
 	Functionality getUploadRequestDepositOnlyFunctionality(AbstractDomain domain);
 	TimeUnitValueFunctionality getUploadRequestNotificationTimeFunctionality (AbstractDomain domain);
 
+	// UPLOAD PROPOSITION
+	Functionality getUploadPropositionFunctionality(AbstractDomain domain);
+
 	/**
 	 * Check if SecuredAnonymousUrl (SAU) is mandatory
 	 * @param domain : the current domain identifier

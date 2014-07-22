@@ -170,5 +170,8 @@ UPDATE policy SET status=true where id=27;
 -- enable thread tab
 UPDATE policy SET status=true , system=false , default_status=true where id=45;
 
+-- enable upload proposition web service
+UPDATE policy SET status=true , policy=1 where id=98;
+
 
 COMMIT;

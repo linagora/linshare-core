@@ -44,7 +44,7 @@ public interface UploadPropositionRestService {
 
 	List<UploadPropositionFilterDto> findAllFilters() throws BusinessException;
 
-	Boolean checkIfValidRecipient(String userMail, String userDomain);
+	Boolean checkIfValidRecipient(String userMail, String userDomain) throws BusinessException;
 
 	void create(UploadPropositionDto dto) throws BusinessException;
 }

@@ -66,9 +66,9 @@ public class UploadPropositionRestServiceImpl implements
 	private final UploadPropositionFacade uploadPropositionFacade;
 
 	public UploadPropositionRestServiceImpl(
-			UploadPropositionFacade uploadPropositionFilterFacade) {
+			UploadPropositionFacade uploadPropositionFacade) {
 		super();
-		this.uploadPropositionFacade = uploadPropositionFilterFacade;
+		this.uploadPropositionFacade = uploadPropositionFacade;
 	}
 
 	@GET
@@ -88,7 +88,7 @@ public class UploadPropositionRestServiceImpl implements
 	@Override
 	public Boolean checkIfValidRecipient(
 			@PathParam(value = "userMail") String userMail,
-			@QueryParam(value = "userDomain") String userDomain) {
+			@QueryParam(value = "userDomain") String userDomain) throws BusinessException {
 		return uploadPropositionFacade.checkIfValidRecipeint(userMail,
 				userDomain);
 	}

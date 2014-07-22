@@ -314,6 +314,11 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public Functionality getUploadPropositionFunctionality(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.UPLOAD_PROPOSITION);
+	}
+
+	@Override
 	public boolean isSauAllowed(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		Functionality funcAU = getAnonymousUrlFunctionality(domain);

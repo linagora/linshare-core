@@ -33,12 +33,14 @@
  */
 package org.linagora.linshare.core.facade.webservice.uploadproposition.impl;
 
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.UploadPropositionGenericFacade;
 import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,8 +49,13 @@ public class UploadPropositionGenericFacadeImpl extends GenericFacadeImpl implem
 	private static final Logger logger = LoggerFactory
 			.getLogger(UploadPropositionGenericFacadeImpl.class);
 
-	public UploadPropositionGenericFacadeImpl(AccountService accountService) {
+	private final FunctionalityReadOnlyService functionalityService;
+
+
+	public UploadPropositionGenericFacadeImpl(AccountService accountService,
+			FunctionalityReadOnlyService functionalityService) {
 		super(accountService);
+		this.functionalityService = functionalityService;
 	}
 
 	@Override
@@ -59,6 +66,12 @@ public class UploadPropositionGenericFacadeImpl extends GenericFacadeImpl implem
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
+		}
+		Functionality func = functionalityService.getUploadPropositionFunctionality(actor.getDomain());
+		if (!func.getActivationPolicy().getStatus()) {
+			throw new BusinessException(
+					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+					"This service UploadProposition is not enable.");
 		}
 		return actor;
 	}

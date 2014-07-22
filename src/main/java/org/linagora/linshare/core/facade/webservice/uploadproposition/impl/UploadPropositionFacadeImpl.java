@@ -39,7 +39,6 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionRuleFieldType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionRuleOperatorType;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.UploadPropositionFacade;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionActionDto;
@@ -47,6 +46,7 @@ import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.Upload
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionFilterDto;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionRuleDto;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UploadPropositionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,17 +62,18 @@ public class UploadPropositionFacadeImpl extends
 	private final UploadPropositionService uploadPropositionService;
 
 	public UploadPropositionFacadeImpl(AccountService accountService,
-			UploadPropositionService uploadPropositionService) {
-		super(accountService);
+			UploadPropositionService uploadPropositionService,
+			FunctionalityReadOnlyService functionalityService) {
+		super(accountService, functionalityService);
 		this.uploadPropositionService = uploadPropositionService;
 	}
 
 	@Override
 	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
-		User actor = this.checkAuthentication();
+		this.checkAuthentication();
 		List<UploadPropositionFilterDto> filters = Lists.newArrayList();
-//		filters.add(addBartFilter("default filter 1"));
-//		filters.add(addHomerFilter("default filter 2"));
+		filters.add(addBartFilter("default filter 1"));
+		filters.add(addHomerFilter("default filter 2"));
 		filters.add(addDefaultFilter());
 		return filters;
 	}
@@ -128,7 +129,8 @@ public class UploadPropositionFacadeImpl extends
 	}
 
 	@Override
-	public boolean checkIfValidRecipeint(String userMail, String userDomain) {
+	public boolean checkIfValidRecipeint(String userMail, String userDomain) throws BusinessException {
+		this.checkAuthentication();
 		List<String> list = Lists.newArrayList();
 		list.add("bart.simpson@int1.linshare.dev");
 		list.add("lisa.simpson@int1.linshare.dev");
@@ -139,6 +141,7 @@ public class UploadPropositionFacadeImpl extends
 
 	@Override
 	public void create(UploadPropositionDto dto) throws BusinessException {
+		this.checkAuthentication();
 		logger.debug(dto.toString());
 		UploadPropositionActionType actionType = UploadPropositionActionType.fromString(dto.getAction());
 		uploadPropositionService.create(dto.toEntity(dto), actionType);
