@@ -35,6 +35,7 @@ package org.linagora.linshare.core.domain.vo;
 
 import java.util.Date;
 
+import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -78,13 +79,16 @@ public class UploadRequestVo {
 
 	private boolean canEditExpiryDate;
 
-	private Language locale;
+	private Language locale = Language.ENGLISH;
 
 	private boolean secured;
 
 	private UserVo owner;
 
 	private String recipient;
+
+	@NonVisual
+	private BeanModel<UploadRequestVo> model;
 
 	public UploadRequestVo() {
 		super();
@@ -271,6 +275,14 @@ public class UploadRequestVo {
 
 	public void setOwner(UserVo owner) {
 		this.owner = owner;
+	}
+
+	public BeanModel<UploadRequestVo> getModel() {
+		return model;
+	}
+
+	public void setModel(BeanModel<UploadRequestVo> model) {
+		this.model = model;
 	}
 
 	/*

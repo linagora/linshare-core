@@ -37,14 +37,17 @@ import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.BeanModelSource;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 
 public class Create {
@@ -75,7 +78,13 @@ public class Create {
 	private Content content;
 
 	@Inject
+	private BeanModelSource beanModelSource;
+
+	@Inject
 	private Messages messages;
+
+	@Inject
+	private BusinessMessagesManagementService businessMessagesManagementService;
 
 	@Inject
 	private FunctionalityFacade functionalityFacade;
@@ -85,9 +94,19 @@ public class Create {
 
 	public Object onActivate() {
 		if (!functionalityFacade.isEnableUploadRequest(userVo
-				.getDomainIdentifier()))
+				.getDomainIdentifier())) {
 			return org.linagora.linshare.view.tapestry.pages.Index.class;
-		current = new UploadRequestVo();
+		}
+		try {
+			BeanModel<UploadRequestVo> model = beanModelSource.createEditModel(
+					UploadRequestVo.class, messages);
+			current = uploadRequestFacade.getDefaultValue(userVo, model);
+		} catch (BusinessException e) {
+			logger.error("Cannot get default upload request value for user "
+					+ userVo.getLsUuid());
+			businessMessagesManagementService.notify(e);
+			return Index.class;
+		}
 		return null;
 	}
 
@@ -100,6 +119,10 @@ public class Create {
 	@Log
 	public Object onCanceled() throws BusinessException {
 		return Index.class;
+	}
+
+	public BeanModel<UploadRequestVo> getModel() {
+		return current.getModel();
 	}
 
 	/*

@@ -36,19 +36,19 @@ package org.linagora.linshare.core.facade;
 
 public interface FunctionalityFacade {
 
-	public Integer completionThreshold(String domainIdentifier);
-	public boolean isEnableUserTab(String domainIdentifier);
-	public boolean isEnableAuditTab(String domainIdentifier);
-	public boolean isEnableHelpTab(String domainIdentifier);
-	public boolean isEnableListTab(String domainIdentifier);
-	public boolean isEnableThreadTab(String domainIdentifier);
-	public boolean isEnableUpdateFiles(String domainIdentifier);
-	public boolean isEnableCreateThread(String domainIdentifier);
-	public boolean isEnableCustomLogoLink(String domainIdentifier);
-	public boolean isEnableUploadRequest(String domainIdentifier);
+	Integer completionThreshold(String domainIdentifier);
+	boolean isEnableUserTab(String domainIdentifier);
+	boolean isEnableAuditTab(String domainIdentifier);
+	boolean isEnableHelpTab(String domainIdentifier);
+	boolean isEnableListTab(String domainIdentifier);
+	boolean isEnableThreadTab(String domainIdentifier);
+	boolean isEnableUpdateFiles(String domainIdentifier);
+	boolean isEnableCreateThread(String domainIdentifier);
+	boolean isEnableCustomLogoLink(String domainIdentifier);
+	boolean isEnableUploadRequest(String domainIdentifier);
 	
-	public boolean getDefaultRestrictedGuestValue(String domainIdentifier);
-	public boolean isRestrictedGuestEnabled(String domainIdentifier);
+	boolean getDefaultRestrictedGuestValue(String domainIdentifier);
+	boolean isRestrictedGuestEnabled(String domainIdentifier);
 	
 	/**
 	 * Check if the policy "Allowed guest" is enabled
@@ -56,5 +56,5 @@ public interface FunctionalityFacade {
 	 * @param domainIdentifier the domain to check
 	 * @return return true if the policy is enabled, otherwise return false
 	 */
-	public boolean isEnableGuest(String domainIdentifier);
+	boolean isEnableGuest(String domainIdentifier);
 }

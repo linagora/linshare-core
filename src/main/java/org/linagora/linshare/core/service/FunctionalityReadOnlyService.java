@@ -86,8 +86,8 @@ public interface FunctionalityReadOnlyService {
 
 	// UPLOAD_REQUEST
 	StringValueFunctionality getUploadRequestFunctionality(AbstractDomain domain);
-	TimeUnitValueFunctionality getUploadRequestActivationTimeFunctionality (AbstractDomain domain);
-	TimeUnitValueFunctionality getUploadRequestExpiryTimeFunctionality (AbstractDomain domain);
+	TimeUnitValueFunctionality getUploadRequestActivationTimeFunctionality(AbstractDomain domain);
+	TimeUnitValueFunctionality getUploadRequestExpiryTimeFunctionality(AbstractDomain domain);
 	Functionality getUploadRequestGroupedFunctionality(AbstractDomain domain);
 	IntegerValueFunctionality getUploadRequestMaxFileCountFunctionality(AbstractDomain domain);
 	SizeUnitValueFunctionality getUploadRequestMaxFileSizeFunctionality(AbstractDomain domain);
@@ -96,7 +96,7 @@ public interface FunctionalityReadOnlyService {
 	Functionality getUploadRequestSecureUrlFunctionality(AbstractDomain domain);
 	Functionality getUploadRequestProlongationFunctionality(AbstractDomain domain);
 	Functionality getUploadRequestDepositOnlyFunctionality(AbstractDomain domain);
-	TimeUnitValueFunctionality getUploadRequestNotificationTimeFunctionality (AbstractDomain domain);
+	TimeUnitValueFunctionality getUploadRequestNotificationTimeFunctionality(AbstractDomain domain);
 
 	// UPLOAD PROPOSITION
 	Functionality getUploadPropositionFunctionality(AbstractDomain domain);

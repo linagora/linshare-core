@@ -37,20 +37,31 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.tapestry5.beaneditor.BeanModel;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
+import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.vo.UploadRequestEntryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestHistoryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DocumentEntryService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UserService;
 
@@ -58,16 +69,23 @@ import com.google.common.collect.Lists;
 
 public class UploadRequestFacadeImpl implements UploadRequestFacade {
 
+	private final AbstractDomainService abstractDomainService;
 	private final UserService userService;
 	private final UploadRequestService uploadRequestService;
 	private final DocumentEntryService documentEntryService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	public UploadRequestFacadeImpl(final UserService userService,
+	public UploadRequestFacadeImpl(
+			final AbstractDomainService abstractDomainService,
+			final UserService userService,
 			final UploadRequestService uploadRequestService,
-			final DocumentEntryService documentEntryService) {
+			final DocumentEntryService documentEntryService,
+			final FunctionalityReadOnlyService functionalityReadOnlyService) {
+		this.abstractDomainService = abstractDomainService;
 		this.userService = userService;
 		this.uploadRequestService = uploadRequestService;
 		this.documentEntryService = documentEntryService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
 	@Override
@@ -88,8 +106,8 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				UploadRequestStatus.STATUS_ARCHIVED);
 	}
 
-	private List<UploadRequestVo> findAll(UserVo actorVo, UploadRequestStatus ... include)
-			throws BusinessException {
+	private List<UploadRequestVo> findAll(UserVo actorVo,
+			UploadRequestStatus... include) throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		List<UploadRequestVo> ret = Lists.newArrayList();
 
@@ -123,11 +141,11 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		e.setActivationDate(new Date()); // FIXME handle activationDate
 		e.setNotificationDate(e.getExpiryDate()); // FIXME functionalityFacade
 		e.setUploadRequestGroup(grp);
-		e = uploadRequestService.createRequest(actor, e, new Contact(req.getRecipient()));
+		e = uploadRequestService.createRequest(actor, e,
+				new Contact(req.getRecipient()));
 
 		/*
-		 * FIXME handle activationDate
-		 * FIXME handle status enabled
+		 * FIXME handle activationDate FIXME handle status enabled
 		 */
 		e.updateStatus(UploadRequestStatus.STATUS_ENABLED);
 		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
@@ -216,5 +234,100 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 
 		return documentEntryService.getDocumentStream(actor, entry
 				.getDocument().getIdentifier());
+	}
+
+	@Override
+	public UploadRequestVo getDefaultValue(UserVo actorVo,
+			BeanModel<UploadRequestVo> beanModel) throws BusinessException {
+		AbstractDomain domain = abstractDomainService.findById(actorVo
+				.getDomainIdentifier());
+		UploadRequestVo ret = new UploadRequestVo();
+		List<String> includes = Lists.newArrayList();
+
+		includes.add("subject");
+		includes.add("body");
+		includes.add("recipient");
+
+		TimeUnitValueFunctionality expiryDateFunc = functionalityReadOnlyService
+				.getUploadRequestExpiryTimeFunctionality(domain);
+
+		if (expiryDateFunc.getActivationPolicy().getStatus()) {
+			if (expiryDateFunc.getDelegationPolicy() != null
+					&& expiryDateFunc.getDelegationPolicy().getStatus()) {
+				includes.add("expiryDate");
+			}
+			@SuppressWarnings("deprecation")
+			Date expiryDate = DateUtils.add(new Date(),
+					expiryDateFunc.toCalendarUnitValue(),
+					expiryDateFunc.getValue());
+			ret.setExpiryDate(expiryDate);
+		}
+
+		SizeUnitValueFunctionality maxDepositSizeFunc = functionalityReadOnlyService
+				.getUploadRequestMaxDepositSizeFunctionality(domain);
+
+		if (maxDepositSizeFunc.getActivationPolicy().getStatus()) {
+			if (maxDepositSizeFunc.getDelegationPolicy() != null
+					&& maxDepositSizeFunc.getDelegationPolicy().getStatus()) {
+				includes.add("maxDepositSize");
+			}
+			long maxDepositSize = maxDepositSizeFunc.getValue().longValue();
+			ret.setMaxDepositSize(maxDepositSize);
+		}
+
+		IntegerValueFunctionality maxFileCountFunc = functionalityReadOnlyService
+				.getUploadRequestMaxFileCountFunctionality(domain);
+
+		if (maxFileCountFunc.getActivationPolicy().getStatus()) {
+			if (maxFileCountFunc.getDelegationPolicy() != null
+					&& maxFileCountFunc.getDelegationPolicy().getStatus()) {
+				includes.add("maxFileCount");
+			}
+			int maxFileCount = maxFileCountFunc.getValue().intValue();
+			ret.setMaxFileCount(maxFileCount);
+		}
+
+		SizeUnitValueFunctionality maxFileSizeFunc = functionalityReadOnlyService
+				.getUploadRequestMaxFileSizeFunctionality(domain);
+
+		if (maxFileSizeFunc.getActivationPolicy().getStatus()) {
+			if (maxFileSizeFunc.getDelegationPolicy() != null
+					&& maxFileSizeFunc.getDelegationPolicy().getStatus()) {
+				includes.add("maxFileSize");
+			}
+			long maxFileSize = maxFileSizeFunc.getValue().longValue();
+			ret.setMaxFileSize(maxFileSize);
+		}
+
+		StringValueFunctionality notificationLangFunc = functionalityReadOnlyService
+				.getUploadRequestNotificationLanguageFunctionality(domain);
+
+		if (notificationLangFunc.getActivationPolicy().getStatus()) {
+			if (notificationLangFunc.getDelegationPolicy() != null
+					&& notificationLangFunc.getDelegationPolicy().getStatus()) {
+				includes.add("locale");
+			}
+			Language locale = Language.fromTapestryLocale(notificationLangFunc
+					.getValue());
+			ret.setLocale(locale);
+		}
+
+		Functionality secureUrlFunc = functionalityReadOnlyService
+				.getUploadRequestSecureUrlFunctionality(domain);
+
+		if (secureUrlFunc.getActivationPolicy().getStatus()) {
+			if (secureUrlFunc.getDelegationPolicy() != null
+					&& secureUrlFunc.getDelegationPolicy().getStatus()) {
+				includes.add("secured");
+			}
+			ret.setSecured(false);
+		}
+
+		includes.add("canDelete");
+		includes.add("canClose");
+		beanModel.include(includes.toArray(new String[includes.size()]));
+		ret.setModel(beanModel);
+
+		return ret;
 	}
 }

@@ -37,8 +37,10 @@ import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.BeanModelSource;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -65,6 +67,9 @@ public class Edit {
 	@Property
 	@Persist
 	private UploadRequestVo selected;
+
+	@Inject
+	private BeanModelSource beanModelSource;
 
 	@Inject
 	private Logger logger;
@@ -132,6 +137,19 @@ public class Edit {
 
 	public void setMySelected(UploadRequestVo selected) {
 		this.selected = selected;
+	}
+
+	public BeanModel<UploadRequestVo> getModel() {
+		BeanModel<UploadRequestVo> ret = beanModelSource.createEditModel(
+				UploadRequestVo.class, messages);
+
+		ret.add("maxFileCount");
+		ret.add("maxFileSize");
+		ret.add("maxDepositSize");
+		ret.add("locale");
+		ret.add("activationDate");
+		ret.add("expiryDate");
+		return ret;
 	}
 
 	Object onException(Throwable cause) {

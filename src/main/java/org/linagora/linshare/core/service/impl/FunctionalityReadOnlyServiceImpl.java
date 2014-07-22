@@ -251,13 +251,13 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public TimeUnitValueFunctionality getUploadRequestActivationTimeFunctionality(
 			AbstractDomain domain) {
-		return (TimeUnitValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION);
+		return new TimeUnitValueFunctionality((UnitValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION));
 	}
 
 	@Override
 	public TimeUnitValueFunctionality getUploadRequestExpiryTimeFunctionality(
 			AbstractDomain domain) {
-		return (TimeUnitValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION);
+		return new TimeUnitValueFunctionality((UnitValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION));
 	}
 
 	@Override
@@ -274,13 +274,13 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public SizeUnitValueFunctionality getUploadRequestMaxFileSizeFunctionality(
 			AbstractDomain domain) {
-		return (SizeUnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__MAXIMUM_FILE_SIZE);
+		return new SizeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__MAXIMUM_FILE_SIZE));
 	}
 
 	@Override
 	public SizeUnitValueFunctionality getUploadRequestMaxDepositSizeFunctionality(
 			AbstractDomain domain) {
-		return (SizeUnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE);
+		return new SizeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE));
 	}
 
 	@Override

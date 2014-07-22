@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.tapestry5.beaneditor.BeanModel;
 import org.linagora.linshare.core.domain.vo.UploadRequestEntryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestHistoryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
@@ -73,4 +74,7 @@ public interface UploadRequestFacade {
 
 	InputStream getFileStream(UserVo actorVo, UploadRequestEntryVo entry)
 			throws BusinessException;
+
+	UploadRequestVo getDefaultValue(UserVo actorVo,
+			BeanModel<UploadRequestVo> beanModel) throws BusinessException;
 }

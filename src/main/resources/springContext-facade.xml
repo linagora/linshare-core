@@ -141,8 +141,10 @@
 	</bean>
 
 	<bean id="uploadRequestFacade" class="org.linagora.linshare.core.facade.impl.UploadRequestFacadeImpl">
+		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="uploadRequestService" />
 		<constructor-arg ref="documentEntryService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 </beans>
