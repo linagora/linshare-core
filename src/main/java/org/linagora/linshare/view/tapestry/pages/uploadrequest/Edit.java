@@ -139,17 +139,9 @@ public class Edit {
 		this.selected = selected;
 	}
 
-	public BeanModel<UploadRequestVo> getModel() {
-		BeanModel<UploadRequestVo> ret = beanModelSource.createEditModel(
-				UploadRequestVo.class, messages);
-
-		ret.add("maxFileCount");
-		ret.add("maxFileSize");
-		ret.add("maxDepositSize");
-		ret.add("locale");
-		ret.add("activationDate");
-		ret.add("expiryDate");
-		return ret;
+	public BeanModel<UploadRequestVo> getModel() throws BusinessException {
+		return uploadRequestFacade.getEditModel(userVo, beanModelSource
+				.createEditModel(UploadRequestVo.class, messages));
 	}
 
 	Object onException(Throwable cause) {

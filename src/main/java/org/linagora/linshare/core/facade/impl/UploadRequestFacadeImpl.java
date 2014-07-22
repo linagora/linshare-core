@@ -330,4 +330,65 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 
 		return ret;
 	}
+
+	@Override
+	public BeanModel<UploadRequestVo> getEditModel(UserVo actorVo,
+			BeanModel<UploadRequestVo> beanModel) throws BusinessException {
+		AbstractDomain domain = abstractDomainService.findById(actorVo
+				.getDomainIdentifier());
+		List<String> includes = Lists.newArrayList();
+
+		TimeUnitValueFunctionality expiryDateFunc = functionalityReadOnlyService
+				.getUploadRequestExpiryTimeFunctionality(domain);
+
+		if (expiryDateFunc.getActivationPolicy().getStatus()) {
+			if (expiryDateFunc.getDelegationPolicy() != null
+					&& expiryDateFunc.getDelegationPolicy().getStatus()) {
+				includes.add("expiryDate");
+			}
+		}
+
+		SizeUnitValueFunctionality maxDepositSizeFunc = functionalityReadOnlyService
+				.getUploadRequestMaxDepositSizeFunctionality(domain);
+
+		if (maxDepositSizeFunc.getActivationPolicy().getStatus()) {
+			if (maxDepositSizeFunc.getDelegationPolicy() != null
+					&& maxDepositSizeFunc.getDelegationPolicy().getStatus()) {
+				includes.add("maxDepositSize");
+			}
+		}
+
+		IntegerValueFunctionality maxFileCountFunc = functionalityReadOnlyService
+				.getUploadRequestMaxFileCountFunctionality(domain);
+
+		if (maxFileCountFunc.getActivationPolicy().getStatus()) {
+			if (maxFileCountFunc.getDelegationPolicy() != null
+					&& maxFileCountFunc.getDelegationPolicy().getStatus()) {
+				includes.add("maxFileCount");
+			}
+		}
+
+		SizeUnitValueFunctionality maxFileSizeFunc = functionalityReadOnlyService
+				.getUploadRequestMaxFileSizeFunctionality(domain);
+
+		if (maxFileSizeFunc.getActivationPolicy().getStatus()) {
+			if (maxFileSizeFunc.getDelegationPolicy() != null
+					&& maxFileSizeFunc.getDelegationPolicy().getStatus()) {
+				includes.add("maxFileSize");
+			}
+		}
+
+		StringValueFunctionality notificationLangFunc = functionalityReadOnlyService
+				.getUploadRequestNotificationLanguageFunctionality(domain);
+
+		if (notificationLangFunc.getActivationPolicy().getStatus()) {
+			if (notificationLangFunc.getDelegationPolicy() != null
+					&& notificationLangFunc.getDelegationPolicy().getStatus()) {
+				includes.add("locale");
+			}
+		}
+
+		beanModel.include(includes.toArray(new String[includes.size()]));
+		return beanModel;
+	}
 }

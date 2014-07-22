@@ -77,4 +77,7 @@ public interface UploadRequestFacade {
 
 	UploadRequestVo getDefaultValue(UserVo actorVo,
 			BeanModel<UploadRequestVo> beanModel) throws BusinessException;
+
+	BeanModel<UploadRequestVo> getEditModel(UserVo actorVo,
+			BeanModel<UploadRequestVo> beanModel) throws BusinessException;
 }
