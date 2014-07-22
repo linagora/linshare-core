@@ -186,6 +186,14 @@ public class FunctionalityDto {
 		this.configurationPolicy = configurationPolicy;
 	}
 
+	public PolicyDto getDelegationPolicy() {
+		return delegationPolicy;
+	}
+
+	public void setDelegationPolicy(PolicyDto delegationPolicy) {
+		this.delegationPolicy = delegationPolicy;
+	}
+
 	public boolean isParentAllowParametersUpdate() {
 		return parentAllowParametersUpdate;
 	}
