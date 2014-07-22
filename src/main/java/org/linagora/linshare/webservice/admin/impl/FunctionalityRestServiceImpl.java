@@ -52,6 +52,7 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.FunctionalityRestService;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
+import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
@@ -94,12 +95,15 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 	@PUT
 	@ApiOperation(value = "Update a domain's functionality.")
 	@Override
-	public FunctionalityDto update(FunctionalityDto func) throws BusinessException {
+	public FunctionalityDto update(FunctionalityDto func)
+			throws BusinessException {
+		List<FunctionalityDto> subs = Lists.newArrayList();
 		for (FunctionalityDto functionalityDto : func.getFunctionalities()) {
-			FunctionalityDto temp = functionalityFacade.update(functionalityDto);
+			subs.add(functionalityFacade.update(functionalityDto));
 		}
-
-		return functionalityFacade.update(func);
+		FunctionalityDto ret = functionalityFacade.update(func);
+		ret.setFunctionalities(subs);
+		return ret;
 	}
 
 	@Path("/")
