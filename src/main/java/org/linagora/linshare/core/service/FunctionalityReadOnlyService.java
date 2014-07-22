@@ -84,10 +84,19 @@ public interface FunctionalityReadOnlyService {
 	Functionality getHelpTabFunctionality(AbstractDomain domain);
 	Functionality getListTabFunctionality(AbstractDomain domain);
 
+	// UPLOAD_REQUEST
 	StringValueFunctionality getUploadRequestFunctionality(AbstractDomain domain);
+	TimeUnitValueFunctionality getUploadRequestActivationTimeFunctionality (AbstractDomain domain);
+	TimeUnitValueFunctionality getUploadRequestExpiryTimeFunctionality (AbstractDomain domain);
 	Functionality getUploadRequestGroupedFunctionality(AbstractDomain domain);
-
-
+	IntegerValueFunctionality getUploadRequestMaxFileCountFunctionality(AbstractDomain domain);
+	SizeUnitValueFunctionality getUploadRequestMaxFileSizeFunctionality(AbstractDomain domain);
+	SizeUnitValueFunctionality getUploadRequestMaxDepositSizeFunctionality(AbstractDomain domain);
+	StringValueFunctionality getUploadRequestNotificationLanguageFunctionality(AbstractDomain domain);
+	Functionality getUploadRequestSecureUrlFunctionality(AbstractDomain domain);
+	Functionality getUploadRequestProlongationFunctionality(AbstractDomain domain);
+	Functionality getUploadRequestDepositOnlyFunctionality(AbstractDomain domain);
+	TimeUnitValueFunctionality getUploadRequestNotificationTimeFunctionality (AbstractDomain domain);
 
 	/**
 	 * Check if SecuredAnonymousUrl (SAU) is mandatory

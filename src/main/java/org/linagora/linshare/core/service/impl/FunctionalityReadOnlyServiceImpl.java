@@ -249,8 +249,68 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public TimeUnitValueFunctionality getUploadRequestActivationTimeFunctionality(
+			AbstractDomain domain) {
+		return (TimeUnitValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION);
+	}
+
+	@Override
+	public TimeUnitValueFunctionality getUploadRequestExpiryTimeFunctionality(
+			AbstractDomain domain) {
+		return (TimeUnitValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION);
+	}
+
+	@Override
 	public Functionality getUploadRequestGroupedFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__GROUPED_MODE);
+	}
+
+	@Override
+	public IntegerValueFunctionality getUploadRequestMaxFileCountFunctionality(
+			AbstractDomain domain) {
+		return (IntegerValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__MAXIMUM_FILE_COUNT);
+	}
+
+	@Override
+	public SizeUnitValueFunctionality getUploadRequestMaxFileSizeFunctionality(
+			AbstractDomain domain) {
+		return (SizeUnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__MAXIMUM_FILE_SIZE);
+	}
+
+	@Override
+	public SizeUnitValueFunctionality getUploadRequestMaxDepositSizeFunctionality(
+			AbstractDomain domain) {
+		return (SizeUnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE);
+	}
+
+	@Override
+	public StringValueFunctionality getUploadRequestNotificationLanguageFunctionality(
+			AbstractDomain domain) {
+		return (StringValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__NOTIFICATION_LANGUAGE);
+	}
+
+	@Override
+	public Functionality getUploadRequestSecureUrlFunctionality(
+			AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__SECURED_URL);
+	}
+
+	@Override
+	public Functionality getUploadRequestProlongationFunctionality(
+			AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__PROLONGATION);
+	}
+
+	@Override
+	public Functionality getUploadRequestDepositOnlyFunctionality(
+			AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__DEPOSIT_ONLY);
+	}
+
+	@Override
+	public TimeUnitValueFunctionality getUploadRequestNotificationTimeFunctionality(
+			AbstractDomain domain) {
+		return (TimeUnitValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION);
 	}
 
 	@Override
