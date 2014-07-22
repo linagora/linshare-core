@@ -258,4 +258,10 @@ public class FunctionalityDto {
 	public boolean isSystem() {
 		return system;
 	}
+
+	@Override
+	public String toString() {
+		return "FunctionalityDto [identifier=" + identifier + ", domain="
+				+ domain + "]";
+	}
 }
