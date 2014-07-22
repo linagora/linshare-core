@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.dto;
 import java.util.Date;
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -172,6 +173,7 @@ public class UserDto extends AccountDto {
 		this.accountType = accountType;
 	}
 
+	@JsonIgnore
 	public boolean isGuest() {
 		return AccountType.valueOf(this.accountType) == AccountType.GUEST;
 	}
