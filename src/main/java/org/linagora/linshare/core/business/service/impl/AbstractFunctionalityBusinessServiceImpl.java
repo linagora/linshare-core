@@ -310,6 +310,9 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			functionalityRepository.update(entity);
 			permissionPropagationForActivationPolicy(entity);
 			permissionPropagationForConfigurationPolicy(entity);
+			if (entity.getDelegationPolicy() != null) {
+				permissionPropagationForDelegationPolicy(entity);
+			}
 		} else {
 			// This functionality does not belong to the current domain.
 			logger.debug("this functionality does not belong to the current domain");
@@ -400,6 +403,21 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		}
 	}
 
+	private void updateDelegationPolicyRecursivly(AbstractDomain domain, T functionality) throws IllegalArgumentException, BusinessException {
+		if(domain != null ) {
+			for (AbstractDomain subDomain : domain.getSubdomain()) {
+				for (T f : functionalityRepository.findAll(subDomain)) {
+					if(f.getIdentifier().equals(functionality.getIdentifier())) {
+						f.getDelegationPolicy().updatePolicyFrom(functionality.getDelegationPolicy());
+						functionalityRepository.update(f);
+						break;
+					}
+				}
+				updateDelegationPolicyRecursivly(subDomain, functionality);
+			}
+		}
+	}
+
 	private void permissionPropagationForActivationPolicy(T functionalityEntity) throws IllegalArgumentException, BusinessException {
 		if(functionalityEntity.getActivationPolicy().getPolicy().equals(Policies.FORBIDDEN)) {
 			// We have to delete the activation policy of each functionality from all the sub  domains
@@ -418,6 +436,16 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		} else if(functionalityEntity.getConfigurationPolicy().getPolicy().equals(Policies.MANDATORY)) {
 			// We have to update the configuration policy of each functionality from all the sub domains
 			updateConfigurationPolicyRecursivly(functionalityEntity.getDomain(), functionalityEntity, false);
+		}
+	}
+
+	private void permissionPropagationForDelegationPolicy(T functionalityEntity) throws IllegalArgumentException, BusinessException {
+		if(functionalityEntity.getConfigurationPolicy().getPolicy().equals(Policies.FORBIDDEN)) {
+			// We have to update the delegation policy of each functionality from all the sub domains
+			updateDelegationPolicyRecursivly(functionalityEntity.getDomain(), functionalityEntity);
+		} else if(functionalityEntity.getConfigurationPolicy().getPolicy().equals(Policies.MANDATORY)) {
+			// We have to update the delegation policy of each functionality from all the sub domains
+			updateDelegationPolicyRecursivly(functionalityEntity.getDomain(), functionalityEntity);
 		}
 	}
 

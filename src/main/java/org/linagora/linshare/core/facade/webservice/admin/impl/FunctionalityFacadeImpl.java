@@ -151,6 +151,15 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		f.getConfigurationPolicy().setStatus(
 				func.getConfigurationPolicy().getStatus());
 
+		if (func.getDelegationPolicy() != null) {
+			// copy of configuration policy.
+			String dp = func.getDelegationPolicy().getPolicy().trim()
+					.toUpperCase();
+			f.getDelegationPolicy().setPolicy(Policies.valueOf(dp));
+			f.getDelegationPolicy().setStatus(
+					func.getDelegationPolicy().getStatus());
+		}
+
 		// copy of parameters.
 		f.updateFunctionalityValuesOnlyFromDto(func);
 		Functionality update = functionalityService.update(actor,

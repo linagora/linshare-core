@@ -95,6 +95,10 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Update a domain's functionality.")
 	@Override
 	public FunctionalityDto update(FunctionalityDto func) throws BusinessException {
+		for (FunctionalityDto functionalityDto : func.getFunctionalities()) {
+			FunctionalityDto temp = functionalityFacade.update(functionalityDto);
+		}
+
 		return functionalityFacade.update(func);
 	}
 

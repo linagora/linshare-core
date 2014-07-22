@@ -161,6 +161,10 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 
 		functionality.getConfigurationPolicy().applyConsistency();
 
+		if (functionality.getDelegationPolicy() != null) {
+			functionality.getDelegationPolicy().applyConsistency();
+		}
+
 		// we check if the parent functionality allow modifications of the activation policy (AP).
 		boolean parentAllowAPUpdate = activationPolicyIsMutable(entity, domain);
 		if(!parentAllowAPUpdate) {
@@ -183,9 +187,22 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		if(!parentAllowCPUpdate) {
 			// Modifications are not allowed.
 			if (!entity.getConfigurationPolicy().businessEquals(functionality.getConfigurationPolicy())) {
-				// AP entity is different of the input CP functionality  => FORBIDDEN
+				// CP entity is different of the input CP functionality  => FORBIDDEN
 				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (CP) '" + functionality +"' in domain '" + domain +"'");
 				throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
+			}
+		}
+
+		// we check if the parent functionality allow modifications of the delegation policy (DP).
+		if (entity.getDelegationPolicy() != null) {
+			boolean parentAllowDPUpdate = delegationPolicyIsMutable(entity, domain);
+			if(!parentAllowDPUpdate) {
+				// Modifications are not allowed.
+				if (!entity.getDelegationPolicy().businessEquals(functionality.getDelegationPolicy())) {
+					// DP entity is different of the input DP functionality  => FORBIDDEN
+					logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (DP) '" + functionality +"' in domain '" + domain +"'");
+					throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
+				}
 			}
 		}
 

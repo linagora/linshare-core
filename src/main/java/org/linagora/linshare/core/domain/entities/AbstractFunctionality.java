@@ -62,7 +62,7 @@ public abstract class AbstractFunctionality implements Cloneable {
 	protected Policy delegationPolicy;
 
 	protected AbstractDomain domain;
-	
+
 	/**
 	 * Logger available to subclasses.
 	 */
@@ -82,6 +82,7 @@ public abstract class AbstractFunctionality implements Cloneable {
 		this.configurationPolicy = configurationPolicy;
 		this.domain = domain;
 	}
+
 	public long getId() {
 		return persistenceId;
 	}
@@ -136,9 +137,8 @@ public abstract class AbstractFunctionality implements Cloneable {
 	public void setDomain(AbstractDomain domain) {
 		this.domain = domain;
 	}
-	
+
 	public boolean businessEquals(AbstractFunctionality fonc, boolean checkPolicies) {
-		
 		if(identifier.equals(fonc.getIdentifier())) {
 			if(system == fonc.isSystem()) {
 				if(checkPolicies) { 
@@ -157,7 +157,7 @@ public abstract class AbstractFunctionality implements Cloneable {
 		logger.debug("Functionality : " + this.toString() + " is not equal to Functionality " + fonc.toString());
 		return false;
 	}
-	
+
 	public Object clone() {
 		// Every properties are clones, except domain.
 		AbstractFunctionality func = null;
@@ -210,14 +210,16 @@ public abstract class AbstractFunctionality implements Cloneable {
 			return false;
 		return true;
 	}
-	
+
 	public void updateFunctionalityFrom(AbstractFunctionality functionality) {
 		this.activationPolicy.updatePolicyFrom(functionality.getActivationPolicy());
 		this.configurationPolicy.updatePolicyFrom(functionality.getConfigurationPolicy());
+		if (this.delegationPolicy!= null) {
+			this.delegationPolicy.updatePolicyFrom(functionality.getDelegationPolicy());
+		}
 	}
-	
+
 	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		// no data in this class.
 	}
-
 }
