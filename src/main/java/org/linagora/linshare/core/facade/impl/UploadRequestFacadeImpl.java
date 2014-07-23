@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.linagora.linshare.core.domain.constants.Language;
@@ -64,10 +65,15 @@ import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 public class UploadRequestFacadeImpl implements UploadRequestFacade {
+
+	private final Logger logger = LoggerFactory
+			.getLogger(UploadRequestFacadeImpl.class);
 
 	private final AbstractDomainService abstractDomainService;
 	private final UserService userService;
@@ -252,8 +258,10 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				.getUploadRequestExpiryTimeFunctionality(domain);
 
 		if (expiryDateFunc.getActivationPolicy().getStatus()) {
+			logger.debug("expiryDateFunc is activated");
 			if (expiryDateFunc.getDelegationPolicy() != null
 					&& expiryDateFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("expiryDateFunc has a delegation policy");
 				includes.add("expiryDate");
 			}
 			@SuppressWarnings("deprecation")
@@ -267,8 +275,10 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				.getUploadRequestMaxDepositSizeFunctionality(domain);
 
 		if (maxDepositSizeFunc.getActivationPolicy().getStatus()) {
+			logger.debug("maxDepositSizeFunc is activated");
 			if (maxDepositSizeFunc.getDelegationPolicy() != null
 					&& maxDepositSizeFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("maxDepositSizeFunc has a delegation policy");
 				includes.add("maxDepositSize");
 			}
 			long maxDepositSize = maxDepositSizeFunc.getValue().longValue();
@@ -279,8 +289,10 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				.getUploadRequestMaxFileCountFunctionality(domain);
 
 		if (maxFileCountFunc.getActivationPolicy().getStatus()) {
+			logger.debug("maxFileCountFunc is activated");
 			if (maxFileCountFunc.getDelegationPolicy() != null
 					&& maxFileCountFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("maxFileCountFunc has a delegation policy");
 				includes.add("maxFileCount");
 			}
 			int maxFileCount = maxFileCountFunc.getValue().intValue();
@@ -291,8 +303,10 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				.getUploadRequestMaxFileSizeFunctionality(domain);
 
 		if (maxFileSizeFunc.getActivationPolicy().getStatus()) {
+			logger.debug("maxFileSizeFunc is activated");
 			if (maxFileSizeFunc.getDelegationPolicy() != null
 					&& maxFileSizeFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("maxFileSizeFunc has a delegation policy");
 				includes.add("maxFileSize");
 			}
 			long maxFileSize = maxFileSizeFunc.getValue().longValue();
@@ -303,8 +317,10 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				.getUploadRequestNotificationLanguageFunctionality(domain);
 
 		if (notificationLangFunc.getActivationPolicy().getStatus()) {
+			logger.debug("notificationLangFunc is activated");
 			if (notificationLangFunc.getDelegationPolicy() != null
 					&& notificationLangFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("notificationLangFunc has a delegation policy");
 				includes.add("locale");
 			}
 			Language locale = Language.fromTapestryLocale(notificationLangFunc
@@ -316,8 +332,10 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				.getUploadRequestSecureUrlFunctionality(domain);
 
 		if (secureUrlFunc.getActivationPolicy().getStatus()) {
+			logger.debug("secureUrlFunc is activated");
 			if (secureUrlFunc.getDelegationPolicy() != null
 					&& secureUrlFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("secureUrlFunc has a delegation policy");
 				includes.add("secured");
 			}
 			ret.setSecured(false);
@@ -325,7 +343,12 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 
 		includes.add("canDelete");
 		includes.add("canClose");
-		beanModel.include(includes.toArray(new String[includes.size()]));
+
+		String[] include = includes.toArray(new String[includes.size()]);
+
+		logger.debug("Create BeanModel includes :\n\t\t"
+				+ StringUtils.join(include, "\n\t\t"));
+		beanModel.include(include);
 		ret.setModel(beanModel);
 
 		return ret;
@@ -342,8 +365,10 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				.getUploadRequestExpiryTimeFunctionality(domain);
 
 		if (expiryDateFunc.getActivationPolicy().getStatus()) {
+			logger.debug("expiryDateFunc is activated");
 			if (expiryDateFunc.getDelegationPolicy() != null
 					&& expiryDateFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("expiryDateFunc has a delegation policy");
 				includes.add("expiryDate");
 			}
 		}
@@ -352,8 +377,10 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				.getUploadRequestMaxDepositSizeFunctionality(domain);
 
 		if (maxDepositSizeFunc.getActivationPolicy().getStatus()) {
+			logger.debug("maxDepositSizeFunc is activated");
 			if (maxDepositSizeFunc.getDelegationPolicy() != null
 					&& maxDepositSizeFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("maxDepositSizeFunc has a delegation policy");
 				includes.add("maxDepositSize");
 			}
 		}
@@ -362,8 +389,10 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				.getUploadRequestMaxFileCountFunctionality(domain);
 
 		if (maxFileCountFunc.getActivationPolicy().getStatus()) {
+			logger.debug("maxFileCountFunc is activated");
 			if (maxFileCountFunc.getDelegationPolicy() != null
 					&& maxFileCountFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("maxFileCountFunc has a delegation policy");
 				includes.add("maxFileCount");
 			}
 		}
@@ -372,8 +401,10 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				.getUploadRequestMaxFileSizeFunctionality(domain);
 
 		if (maxFileSizeFunc.getActivationPolicy().getStatus()) {
+			logger.debug("maxFileSizeFunc is activated");
 			if (maxFileSizeFunc.getDelegationPolicy() != null
 					&& maxFileSizeFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("maxFileSizeFunc has a delegation policy");
 				includes.add("maxFileSize");
 			}
 		}
@@ -382,13 +413,19 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				.getUploadRequestNotificationLanguageFunctionality(domain);
 
 		if (notificationLangFunc.getActivationPolicy().getStatus()) {
+			logger.debug("notificationLangFunc is activated");
 			if (notificationLangFunc.getDelegationPolicy() != null
 					&& notificationLangFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("notificationLangFunc has a delegation policy");
 				includes.add("locale");
 			}
 		}
 
-		beanModel.include(includes.toArray(new String[includes.size()]));
+		String[] include = includes.toArray(new String[includes.size()]);
+
+		logger.debug("Edit BeanModel includes :\n\t\t"
+				+ StringUtils.join(include, "\n\t\t"));
+		beanModel.include(include);
 		return beanModel;
 	}
 }
