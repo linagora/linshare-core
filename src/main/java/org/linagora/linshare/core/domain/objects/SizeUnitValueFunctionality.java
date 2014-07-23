@@ -46,6 +46,9 @@ public class SizeUnitValueFunctionality extends UnitValueFunctionality {
 		super();
 		setActivationPolicy(f.getActivationPolicy());
 		setConfigurationPolicy(f.getConfigurationPolicy());
+		if (f.getDelegationPolicy() != null) {
+			setDelegationPolicy(f.getDelegationPolicy());
+		}
 		setDomain(f.getDomain());
 		setId(f.getId());
 		setIdentifier(f.getIdentifier());

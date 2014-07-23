@@ -38,15 +38,20 @@ import org.linagora.linshare.core.domain.entities.UnitBooleanValueFunctionality;
 
 /**
  * This class is just for easy use. It is not an entity
+ *
  * @author fred
  *
  */
-public class TimeUnitBooleanValueFunctionality extends UnitBooleanValueFunctionality{
+public class TimeUnitBooleanValueFunctionality extends
+		UnitBooleanValueFunctionality {
 
 	public TimeUnitBooleanValueFunctionality(UnitBooleanValueFunctionality f) {
 		super();
 		setActivationPolicy(f.getActivationPolicy());
 		setConfigurationPolicy(f.getConfigurationPolicy());
+		if (f.getDelegationPolicy() != null) {
+			setDelegationPolicy(f.getDelegationPolicy());
+		}
 		setDomain(f.getDomain());
 		setId(f.getId());
 		setIdentifier(f.getIdentifier());
@@ -55,9 +60,9 @@ public class TimeUnitBooleanValueFunctionality extends UnitBooleanValueFunctiona
 		setValue(f.getValue());
 		setBool(f.getBool());
 	}
-	
+
 	public int toCalendarValue() {
-		TimeUnitClass timeUnit = (TimeUnitClass)getUnit();
+		TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
 		return timeUnit.toCalendarValue();
 	}
 }

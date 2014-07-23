@@ -83,6 +83,18 @@ public abstract class AbstractFunctionality implements Cloneable {
 		this.domain = domain;
 	}
 
+	public AbstractFunctionality(String identifier, boolean system,
+			Policy activationPolicy, Policy configurationPolicy, Policy delegationPolicy,
+			AbstractDomain domain) {
+		super();
+		this.identifier = identifier;
+		this.system = system;
+		this.activationPolicy = activationPolicy;
+		this.configurationPolicy = configurationPolicy;
+		this.delegationPolicy = delegationPolicy;
+		this.domain = domain;
+	}
+
 	public long getId() {
 		return persistenceId;
 	}
@@ -144,8 +156,15 @@ public abstract class AbstractFunctionality implements Cloneable {
 				if(checkPolicies) { 
 					if(configurationPolicy.businessEquals(fonc.getConfigurationPolicy())) {
 						if(activationPolicy.businessEquals(fonc.getActivationPolicy())) {
-							logger.debug("Functionality : " + this.toString() + " is equal to Functionality " + fonc.toString());
-							return true;
+							if (delegationPolicy != null) {
+								if(delegationPolicy.businessEquals(fonc.getDelegationPolicy())) {
+									logger.debug("Functionality : " + this.toString() + " is equal to Functionality " + fonc.toString());
+									return true;
+								}
+							} else {
+								logger.debug("Functionality : " + this.toString() + " is equal to Functionality " + fonc.toString());
+								return true;
+							}
 						}
 					}
 				} else {
@@ -168,6 +187,9 @@ public abstract class AbstractFunctionality implements Cloneable {
 		}
 		func.activationPolicy = (Policy) activationPolicy.clone();
 		func.configurationPolicy = (Policy) configurationPolicy.clone();
+		if (delegationPolicy != null) {
+			func.delegationPolicy = (Policy) delegationPolicy.clone();
+		}
 		func.persistenceId = 0;
 		return func;
 	}
