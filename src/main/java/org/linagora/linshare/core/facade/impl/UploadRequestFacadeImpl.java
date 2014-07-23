@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
@@ -281,7 +282,8 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				logger.debug("maxDepositSizeFunc has a delegation policy");
 				includes.add("maxDepositSize");
 			}
-			long maxDepositSize = maxDepositSizeFunc.getValue().longValue();
+			long maxDepositSize = ((FileSizeUnitClass) maxDepositSizeFunc
+					.getUnit()).getPlainSize(maxDepositSizeFunc.getValue());
 			ret.setMaxDepositSize(maxDepositSize);
 		}
 
@@ -295,7 +297,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				logger.debug("maxFileCountFunc has a delegation policy");
 				includes.add("maxFileCount");
 			}
-			int maxFileCount = maxFileCountFunc.getValue().intValue();
+			int maxFileCount = maxFileCountFunc.getValue();
 			ret.setMaxFileCount(maxFileCount);
 		}
 
@@ -309,7 +311,8 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				logger.debug("maxFileSizeFunc has a delegation policy");
 				includes.add("maxFileSize");
 			}
-			long maxFileSize = maxFileSizeFunc.getValue().longValue();
+			long maxFileSize = ((FileSizeUnitClass) maxFileSizeFunc.getUnit())
+					.getPlainSize(maxFileSizeFunc.getValue());
 			ret.setMaxFileSize(maxFileSize);
 		}
 
