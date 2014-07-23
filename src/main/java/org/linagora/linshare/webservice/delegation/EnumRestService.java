@@ -32,22 +32,16 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.user;
+package org.linagora.linshare.webservice.delegation;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.GuestDto;
 
-public interface GuestFacade {
+public interface EnumRestService {
 
-	GuestDto find(String uuid) throws BusinessException;
+	Response get(UriInfo info) throws BusinessException;
 
-	GuestDto create(GuestDto guest, String ownerUuid) throws BusinessException;
-
-	GuestDto create(GuestDto guest) throws BusinessException;
-
-	GuestDto update(GuestDto guest) throws BusinessException;
-
-	void delete(GuestDto guest) throws BusinessException;
-
-	void delete(String uuid) throws BusinessException;
+	Response options(String enumName) throws BusinessException;
 }

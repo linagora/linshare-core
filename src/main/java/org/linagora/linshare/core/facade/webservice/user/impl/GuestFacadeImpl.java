@@ -42,7 +42,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
-import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.webservice.dto.GenericUserDto;
+import org.linagora.linshare.webservice.dto.GuestDto;
 
 public class GuestFacadeImpl extends GenericFacadeImpl implements GuestFacade {
 
@@ -55,56 +56,56 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements GuestFacade {
 	}
 
 	@Override
-	public UserDto find(String lsUuid) throws BusinessException {
+	public GuestDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication();
-		return UserDto.getFull(guestService.findByLsUuid(actor, lsUuid));
+		return GuestDto.getFull(guestService.findByLsUuid(actor, uuid));
 	}
 
 	@Override
-	public UserDto create(UserDto guestDto, String ownerLsUuid)
+	public GuestDto create(GuestDto guestDto, String ownerUuid)
 			throws BusinessException {
 		User actor = checkAuthentication();
 		Guest guest = retreiveGuest(guestDto);
-		return UserDto.getFull(guestService.create(actor, guest, ownerLsUuid));
+		return GuestDto.getFull(guestService.create(actor, guest, ownerUuid));
 	}
 
 	@Override
-	public UserDto create(UserDto guestDto) throws BusinessException {
+	public GuestDto create(GuestDto guestDto) throws BusinessException {
 		User actor = checkAuthentication();
 		Guest guest = retreiveGuest(guestDto);
-		return UserDto.getFull(guestService.create(actor, guest,
+		return GuestDto.getFull(guestService.create(actor, guest,
 				actor.getLsUuid()));
 	}
 
 	@Override
-	public UserDto update(UserDto guestDto) throws BusinessException {
+	public GuestDto update(GuestDto guestDto) throws BusinessException {
 		User actor = checkAuthentication();
-		return UserDto.getFull(guestService.update(actor, new Guest(guestDto),
+		return GuestDto.getFull(guestService.update(actor, new Guest(guestDto),
 				guestDto.getOwner().getUuid()));
 	}
 
 	@Override
-	public void delete(UserDto guestDto) throws BusinessException {
+	public void delete(GuestDto guestDto) throws BusinessException {
 		User actor = checkAuthentication();
 		guestService.delete(actor, guestDto.getUuid());
 	}
 
 	@Override
-	public void delete(String lsUuid) throws BusinessException {
+	public void delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication();
-		guestService.delete(actor, lsUuid);
+		guestService.delete(actor, uuid);
 	}
 
 	/**
 	 * HELPERS
 	 */
 
-	private Guest retreiveGuest(UserDto guestDto) {
+	private Guest retreiveGuest(GuestDto guestDto) {
 		Guest guest = new Guest(guestDto);
 		if (guest.isRestricted()) {
-			for (UserDto contact : guestDto.getRestrictedContacts()) {
+			for (GenericUserDto contactDto : guestDto.getRestrictedContacts()) {
 				guest.addContact(new AllowedContact(guest,
-						new Internal(contact)));
+						new Internal(contactDto)));
 			}
 		}
 		return guest;

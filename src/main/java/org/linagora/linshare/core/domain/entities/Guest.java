@@ -39,6 +39,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.webservice.dto.GuestDto;
 import org.linagora.linshare.webservice.dto.UserDto;
 
 import com.google.common.collect.Sets;
@@ -52,7 +53,7 @@ public class Guest extends User {
 	private String comment;
 
 	private Date expirationDate;
-	
+
 	private Set<AllowedContact> contacts = Sets.newHashSet();
 
 	/** Default constructor for hibernate. */
@@ -69,7 +70,7 @@ public class Guest extends User {
         this.canCreateGuest = false;
         this.role = Role.SIMPLE;
     }
-	
+
 	public Guest(String firstName, String lastName, String mail) {
         super(firstName, lastName, mail);
         this.restricted = false;
@@ -82,18 +83,26 @@ public class Guest extends User {
 		super(guestDto.getFirstName(), guestDto.getLastName(), guestDto.getMail());
 		this.restricted = guestDto.isRestricted();
 		this.comment = guestDto.getComment();
-		this.owner = new Internal(guestDto.getOwner());
 		this.expirationDate = guestDto.getExpirationDate();
 		this.canUpload = guestDto.getCanUpload();
 		this.canCreateGuest = false;
 		this.role = Role.SIMPLE;
 	}
 
+	public Guest(GuestDto guestDto) {
+		super(guestDto.getFirstName(), guestDto.getLastName(), guestDto.getMail());
+		this.restricted = guestDto.isRestricted();
+		this.comment = guestDto.getComment();
+		this.expirationDate = guestDto.getExpirationDate();
+		this.canUpload = guestDto.isCanUpload();
+		this.canCreateGuest = false;
+	}
+
 	@Override
 	public AccountType getAccountType() {
 		return AccountType.GUEST;
 	}
-    
+
 	@Override
 	public String getAccountReprentation() {
 		return this.firstName + " " + this.lastName + "(" + lsUuid + ")";
@@ -102,15 +111,15 @@ public class Guest extends User {
 	public void setComment(String value) {
 		this.comment = value;
 	}
-	
+
 	public String getComment() {
 		return comment;
 	}
-	
+
 	public void setRestricted(boolean value) {
 		this.restricted = value;
 	}
-	
+
 	public boolean isRestricted() {
 		return restricted;
 	}
@@ -118,7 +127,7 @@ public class Guest extends User {
 	public void setExpirationDate(Date value) {
 		this.expirationDate = value;
 	}
-	
+
 	public Date getExpirationDate() {
 		return expirationDate;
 	}
@@ -130,7 +139,7 @@ public class Guest extends User {
 	public void setContacts(Set<AllowedContact> contacts) {
 		this.contacts = contacts;
 	}
-	
+
 	public void addContact(AllowedContact c) {
 		this.contacts.add(c);
 	}

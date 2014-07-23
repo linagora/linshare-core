@@ -37,19 +37,19 @@ package org.linagora.linshare.webservice.user;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.webservice.dto.GuestDto;
 
 public interface GuestRestService {
 
-	UserDto find(String lsUuid) throws BusinessException;
+	GuestDto find(String lsUuid) throws BusinessException;
 
-	List<UserDto> findAll(String ownerLsUuid) throws BusinessException;
+	List<GuestDto> findAll(String ownerLsUuid) throws BusinessException;
 
-	UserDto create(UserDto guest, String ownerLsUuid) throws BusinessException;
+	GuestDto create(GuestDto guest, String ownerLsUuid) throws BusinessException;
 
-	UserDto update(UserDto guest) throws BusinessException;
+	GuestDto update(GuestDto guest) throws BusinessException;
 
-	void delete(UserDto guest) throws BusinessException;
+	void delete(GuestDto guest) throws BusinessException;
 
 	void delete(String lsUuid) throws BusinessException;
 

@@ -48,22 +48,24 @@ import org.linagora.linshare.core.facade.webservice.delegation.DelegationGeneric
 import org.linagora.linshare.core.facade.webservice.delegation.UserFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegation.AuthenticationRestService;
+import org.linagora.linshare.webservice.delegation.dto.AccountDto;
 import org.linagora.linshare.webservice.dto.PasswordDto;
-import org.linagora.linshare.webservice.dto.UserDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/authentication")
-@Api(value = "/rest/delegation/authentication", description = "Authentication delegation API")
+@Api(value = "/rest/delegation/authentication", basePath = "/rest/delegation/", description = "Authentication delegation API",
+produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
 
 	private final DelegationGenericFacade delegationGenericFacade;
-	
+
 	private final UserFacade userFacade;
 
 	public AuthenticationRestServiceImpl(final DelegationGenericFacade delegationFacade, final UserFacade userFacade) {
@@ -81,10 +83,10 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/authorized")
 	@GET
-	@ApiOperation(value = "Check if user is authorized.", response = UserDto.class)
+	@ApiOperation(value = "Check if user is authorized.", response = AccountDto.class)
 	@Override
-	public UserDto isAuthorized() throws BusinessException {
-		return UserDto.getFull(delegationGenericFacade.checkAuthentication());
+	public AccountDto isAuthorized() throws BusinessException {
+		return new AccountDto(delegationGenericFacade.checkAuthentication());
 	}
 
 	@Path("/change_password")
@@ -92,7 +94,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	@ApiOperation(value = "Change the password of the current user.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void changePassword(PasswordDto password) throws BusinessException {
+	public void changePassword(@ApiParam(value = "New password.", required = true) PasswordDto password) throws BusinessException {
 		userFacade.changePassword(password);
 	}
 

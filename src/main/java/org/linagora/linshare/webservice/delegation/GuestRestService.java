@@ -32,22 +32,25 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.user;
+package org.linagora.linshare.webservice.delegation;
+
+import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.GuestDto;
 
-public interface GuestFacade {
+public interface GuestRestService {
 
-	GuestDto find(String uuid) throws BusinessException;
+	GuestDto create(String ownerUuid, GuestDto guest) throws BusinessException;
 
-	GuestDto create(GuestDto guest, String ownerUuid) throws BusinessException;
+	GuestDto get(String ownerUuid, String uuid) throws BusinessException;
 
-	GuestDto create(GuestDto guest) throws BusinessException;
+	List<GuestDto> getAll(String ownerUuid) throws BusinessException;
 
-	GuestDto update(GuestDto guest) throws BusinessException;
+	GuestDto update(String ownerUuid, GuestDto guest) throws BusinessException;
 
-	void delete(GuestDto guest) throws BusinessException;
+	void delete(String ownerUuid, GuestDto guest) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	void delete(String ownerUuid, String uuid) throws BusinessException;
+
 }

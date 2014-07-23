@@ -36,6 +36,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.UUID;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.webservice.dto.GenericUserDto;
 import org.linagora.linshare.webservice.dto.UserDto;
 
 /**
@@ -73,6 +74,12 @@ public class Internal extends User {
 
 	public Internal(UserDto userDto) {
 		super(userDto);
+	}
+	public Internal(GenericUserDto userDto) {
+		this.lsUuid = userDto.getUuid();
+		this.firstName = userDto.getFirstName();
+		this.lastName = userDto.getLastName();
+		this.mail = userDto.getMail();
 	}
 
 	@Override

@@ -50,7 +50,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
-import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.webservice.dto.GuestDto;
 import org.linagora.linshare.webservice.user.GuestRestService;
 
 import com.wordnik.swagger.annotations.Api;
@@ -71,9 +71,9 @@ public class GuestRestServiceImpl implements GuestRestService {
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all guest of a user.", response = UserDto.class)
+	@ApiOperation(value = "Find all guest of a user.", response = GuestDto.class)
 	@Override
-	public List<UserDto> findAll(String ownerLsUuid) throws BusinessException {
+	public List<GuestDto> findAll(String ownerLsUuid) throws BusinessException {
 		return null;
 	}
 
@@ -81,7 +81,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@GET
 	@ApiOperation(value = "Find a guest.")
 	@Override
-	public UserDto find(
+	public GuestDto find(
 			@ApiParam(value = "Guest's lsUuid.", required = true) @PathParam("lsUuid") String lsUuid)
 			throws BusinessException {
 		return guestFacade.find(lsUuid);
@@ -91,8 +91,8 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@POST
 	@ApiOperation(value = "Create a guest.")
 	@Override
-	public UserDto create(
-			@ApiParam(value = "Guest to create.", required = true) UserDto guest,
+	public GuestDto create(
+			@ApiParam(value = "Guest to create.", required = true) GuestDto guest,
 			@ApiParam(value = "Guest owner lsuuid.") @QueryParam("ownerLsUuid") @DefaultValue("null") String ownerLsUuid)
 			throws BusinessException {
 		return guestFacade.create(guest, ownerLsUuid);
@@ -102,8 +102,8 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@PUT
 	@ApiOperation(value = "Update a guest.")
 	@Override
-	public UserDto update(
-			@ApiParam(value = "Guest to update.", required = true) UserDto guest)
+	public GuestDto update(
+			@ApiParam(value = "Guest to update.", required = true) GuestDto guest)
 			throws BusinessException {
 		return guestFacade.update(guest);
 	}
@@ -113,7 +113,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@ApiOperation(value = "Delete a guest.")
 	@Override
 	public void delete(
-			@ApiParam(value = "Guest to delete.", required = true) UserDto guest)
+			@ApiParam(value = "Guest to delete.", required = true) GuestDto guest)
 			throws BusinessException {
 		guestFacade.delete(guest);
 	}

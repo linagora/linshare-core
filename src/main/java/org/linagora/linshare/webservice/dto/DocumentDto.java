@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.webservice.dto;
 
-import java.util.Calendar;
+import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -43,45 +43,44 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement(name = "Document")
-@ApiModel(value = "Domain", description = "A Document")
+@ApiModel(value = "Document", description = "A Document")
 public class DocumentDto {
 
-    @ApiModelProperty(value = "Uuid")
+	@ApiModelProperty(value = "Uuid")
 	protected String uuid;
 
-    @ApiModelProperty(value = "Name")
+	@ApiModelProperty(value = "Name")
 	protected String name;
 
-    @ApiModelProperty(value = "Description")
+	@ApiModelProperty(value = "Description")
 	protected String description;
 
-    @ApiModelProperty(value = "CreationDate")
-	protected Calendar creationDate;
+	@ApiModelProperty(value = "CreationDate")
+	protected Date creationDate;
 
-    @ApiModelProperty(value = "ModificationDate")
-	protected Calendar modificationDate;
+	@ApiModelProperty(value = "ModificationDate")
+	protected Date modificationDate;
 
-    @ApiModelProperty(value = "ExpirationDate")
-	protected Calendar expirationDate;
+	@ApiModelProperty(value = "ExpirationDate")
+	protected Date expirationDate;
 
-    @ApiModelProperty(value = "Ciphered")
+	@ApiModelProperty(value = "Ciphered")
 	protected Boolean ciphered;
 
-    @ApiModelProperty(value = "Type")
+	@ApiModelProperty(value = "Type")
 	protected String type;
 
-    @ApiModelProperty(value = "Size")
+	@ApiModelProperty(value = "Size")
 	protected Long size;
-
 
 	public DocumentDto(DocumentEntry de) {
 		if (de == null)
 			return;
 		this.uuid = de.getUuid();
 		this.name = de.getName();
-		this.creationDate = de.getCreationDate();
-		this.modificationDate = de.getModificationDate();
-		this.expirationDate = de.getExpirationDate();
+		this.creationDate = de.getCreationDate().getTime();
+		this.modificationDate = de.getModificationDate().getTime();
+		this.expirationDate = de.getExpirationDate().getTime();
 		this.description = de.getComment();
 		this.ciphered = de.getCiphered();
 		this.type = de.getDocument().getType();
@@ -140,27 +139,27 @@ public class DocumentDto {
 		this.description = description;
 	}
 
-	public Calendar getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(Calendar creationDate) {
+	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
 
-	public Calendar getModificationDate() {
+	public Date getModificationDate() {
 		return modificationDate;
 	}
 
-	public void setModificationDate(Calendar modificationDate) {
+	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
 
-	public Calendar getExpirationDate() {
+	public Date getExpirationDate() {
 		return expirationDate;
 	}
 
-	public void setExpirationDate(Calendar expirationDate) {
+	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
 	}
 

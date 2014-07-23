@@ -31,23 +31,41 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.webservice.delegation;
 
-package org.linagora.linshare.core.facade.webservice.user;
+import java.io.InputStream;
+import java.util.List;
 
+import javax.ws.rs.core.Response;
+
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.GuestDto;
+import org.linagora.linshare.webservice.delegation.dto.DocumentDto;
 
-public interface GuestFacade {
+/**
+ * REST jaxRS interface
+ */
 
-	GuestDto find(String uuid) throws BusinessException;
+public interface DocumentRestService {
 
-	GuestDto create(GuestDto guest, String ownerUuid) throws BusinessException;
+	DocumentDto create(String ownerUuid, InputStream theFile,
+			String description, String givenFileName, MultipartBody body)
+			throws BusinessException;
 
-	GuestDto create(GuestDto guest) throws BusinessException;
+	DocumentDto get(String ownerUuid, String uuid) throws BusinessException;
 
-	GuestDto update(GuestDto guest) throws BusinessException;
+	List<DocumentDto> getAll(String ownerUuid) throws BusinessException;
 
-	void delete(GuestDto guest) throws BusinessException;
+	DocumentDto update(String ownerUuid, String uuid, String description,
+			String fileName) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	void delete(String ownerUuid, String uuid) throws BusinessException;
+
+	Response download(String ownerUuid, String uuid) throws BusinessException;
+
+	Response thumbnail(String ownerUuid, String uuid) throws BusinessException;
+
+	DocumentDto updateFile(String ownerUuid, String uuid, InputStream theFile,
+			String description, String givenFileName, MultipartBody body)
+					throws BusinessException;
 }

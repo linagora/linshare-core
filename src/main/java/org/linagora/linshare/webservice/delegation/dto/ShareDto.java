@@ -31,7 +31,8 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.dto;
+
+package org.linagora.linshare.webservice.delegation.dto;
 
 import java.util.Date;
 
@@ -39,6 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.webservice.dto.GenericUserDto;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -47,65 +49,48 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "Share", description = "A document can be shared between users.")
 public class ShareDto {
 
-	/**
-	 * Share
-	 */
-    @ApiModelProperty(value = "Uuid")
+	@ApiModelProperty(value = "Uuid")
 	protected String uuid;
 
-    @ApiModelProperty(value = "Name")
+	@ApiModelProperty(value = "Name")
 	protected String name;
 
-    @ApiModelProperty(value = "CreationDate")
+	@ApiModelProperty(value = "CreationDate")
 	protected Date creationDate;
 
-    @ApiModelProperty(value = "ModificationDate")
+	@ApiModelProperty(value = "ModificationDate")
 	protected Date modificationDate;
 
-    @ApiModelProperty(value = "ExpirationDate")
+	@ApiModelProperty(value = "ExpirationDate")
 	protected Date expirationDate;
 
-    @ApiModelProperty(value = "Downloaded")
+	@ApiModelProperty(value = "Downloaded")
 	protected Long downloaded;
 
-	/**
-	 * SentShare
-	 */
-    @ApiModelProperty(value = "DocumentDto")
+	@ApiModelProperty(value = "DocumentDto")
 	protected DocumentDto documentDto;
 
-    @ApiModelProperty(value = "Recipient")
-	protected UserDto recipient;
+	@ApiModelProperty(value = "Recipient")
+	protected GenericUserDto recipient;
 
-	/**
-	 * Received Share.
-	 */
-    @ApiModelProperty(value = "Description")
+	@ApiModelProperty(value = "Description")
 	protected String description;
 
-    @ApiModelProperty(value = "Sender")
-	protected UserDto sender;
+	@ApiModelProperty(value = "Sender")
+	protected GenericUserDto sender;
 
-    @ApiModelProperty(value = "Size")
+	@ApiModelProperty(value = "Size")
 	protected Long size;
 
-    @ApiModelProperty(value = "Type")
+	@ApiModelProperty(value = "Type")
 	protected String type;
 
-    @ApiModelProperty(value = "Ciphered")
+	@ApiModelProperty(value = "Ciphered")
 	protected Boolean ciphered;
 
-	/**
-	 * ???
-	 */
-    @ApiModelProperty(value = "Message")
+	@ApiModelProperty(value = "Message")
 	protected String message;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param shareEntry
-	 */
 	protected ShareDto(ShareEntry shareEntry, boolean receivedShare) {
 		this.uuid = shareEntry.getUuid();
 		this.name = shareEntry.getName();
@@ -115,14 +100,15 @@ public class ShareDto {
 		if (receivedShare) {
 			this.downloaded = shareEntry.getDownloaded();
 			this.description = shareEntry.getComment();
-			this.sender = UserDto.getSimple((User) shareEntry.getEntryOwner());
+			this.sender = new GenericUserDto((User) shareEntry.getEntryOwner());
 			this.size = shareEntry.getDocumentEntry().getSize();
 			this.type = shareEntry.getDocumentEntry().getType();
 			this.ciphered = shareEntry.getDocumentEntry().getCiphered();
 		} else {
 			// sent share.
 			this.documentDto = new DocumentDto(shareEntry.getDocumentEntry());
-			this.recipient = UserDto.getSimple((User) shareEntry.getRecipient());
+			this.recipient = new GenericUserDto(
+					(User) shareEntry.getRecipient());
 		}
 	}
 
@@ -194,11 +180,11 @@ public class ShareDto {
 		this.documentDto = documentDto;
 	}
 
-	public UserDto getRecipient() {
+	public GenericUserDto getRecipient() {
 		return recipient;
 	}
 
-	public void setRecipient(UserDto recipient) {
+	public void setRecipient(GenericUserDto recipient) {
 		this.recipient = recipient;
 	}
 
@@ -210,11 +196,11 @@ public class ShareDto {
 		this.description = description;
 	}
 
-	public UserDto getSender() {
+	public GenericUserDto getSender() {
 		return sender;
 	}
 
-	public void setSender(UserDto sender) {
+	public void setSender(GenericUserDto sender) {
 		this.sender = sender;
 	}
 

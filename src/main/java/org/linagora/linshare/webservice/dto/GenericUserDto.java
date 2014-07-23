@@ -31,23 +31,83 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.webservice.dto;
 
-package org.linagora.linshare.core.facade.webservice.user;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.GuestDto;
+import org.linagora.linshare.core.domain.entities.User;
 
-public interface GuestFacade {
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-	GuestDto find(String uuid) throws BusinessException;
+@XmlRootElement(name = "GenericUser")
+@ApiModel(value = "GenericUser", description = "This class is a container to display or identify a user."
+		+ "If the uuid is set, it will be used as the key for retrieve the user profile from the database."
+		+ "If not, we will use the mail. The domain could be use to restrict the search to a particular domain."
+		+ "This is usefull for a multi-domain LinShare instance.")
+public class GenericUserDto {
 
-	GuestDto create(GuestDto guest, String ownerUuid) throws BusinessException;
+	@ApiModelProperty(value = "User uuid")
+	protected String uuid = null;
 
-	GuestDto create(GuestDto guest) throws BusinessException;
+	@ApiModelProperty(value = "Domain identifier")
+	protected String domain = null;
 
-	GuestDto update(GuestDto guest) throws BusinessException;
+	@ApiModelProperty(value = "FirstName")
+	private String firstName;
 
-	void delete(GuestDto guest) throws BusinessException;
+	@ApiModelProperty(value = "LastName")
+	private String lastName;
 
-	void delete(String uuid) throws BusinessException;
+	@ApiModelProperty(value = "Mail")
+	private String mail = null;
+
+	public GenericUserDto(User u) {
+		super();
+		setUuid(u.getLsUuid());
+		setDomain(u.getDomainId());
+		setMail(u.getMail());
+		setFirstName(u.getFirstName());
+		setLastName(u.getLastName());
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getDomain() {
+		return domain;
+	}
+
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
 }

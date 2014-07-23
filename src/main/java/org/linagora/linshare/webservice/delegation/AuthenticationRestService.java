@@ -34,14 +34,14 @@
 package org.linagora.linshare.webservice.delegation;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.delegation.dto.AccountDto;
 import org.linagora.linshare.webservice.dto.PasswordDto;
-import org.linagora.linshare.webservice.dto.UserDto;
 
 public interface AuthenticationRestService {
 
 	void noop();
 
-	UserDto isAuthorized() throws BusinessException;
+	AccountDto isAuthorized() throws BusinessException;
 
 	void changePassword(PasswordDto password) throws BusinessException;
 

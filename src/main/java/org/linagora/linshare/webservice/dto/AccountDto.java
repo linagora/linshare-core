@@ -61,9 +61,6 @@ public class AccountDto {
 	@ApiModelProperty(value = "Domain")
 	protected String domain;
 
-	@ApiModelProperty(value = "Owner")
-	protected UserDto owner = null;
-
 	public AccountDto() {
 		super();
 	}
@@ -116,13 +113,5 @@ public class AccountDto {
 
 	public void setDomain(String domain) {
 		this.domain = domain;
-	}
-
-	public UserDto getOwner() {
-		return owner;
-	}
-
-	public void setOwner(UserDto owner) {
-		this.owner = owner;
 	}
 }

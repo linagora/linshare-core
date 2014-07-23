@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.webservice.dto;
 
-import java.util.Calendar;
+import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -47,30 +47,29 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "ThreadEntry", description = "A file in a thread.")
 public class ThreadEntryDto {
 
-    @ApiModelProperty(value = "Uuid")
+	@ApiModelProperty(value = "Uuid")
 	protected String uuid;
 
-    @ApiModelProperty(value = "Name")
+	@ApiModelProperty(value = "Name")
 	protected String name;
 
-    @ApiModelProperty(value = "Description")
+	@ApiModelProperty(value = "Description")
 	protected String description;
 
-    @ApiModelProperty(value = "CreationDate")
-	protected Calendar creationDate;
+	@ApiModelProperty(value = "CreationDate")
+	protected Date creationDate;
 
-    @ApiModelProperty(value = "ModificationDate")
-	protected Calendar modificationDate;
+	@ApiModelProperty(value = "ModificationDate")
+	protected Date modificationDate;
 
-    @ApiModelProperty(value = "Ciphered")
+	@ApiModelProperty(value = "Ciphered")
 	protected Boolean ciphered;
 
-    @ApiModelProperty(value = "Type")
+	@ApiModelProperty(value = "Type")
 	protected String type;
 
-    @ApiModelProperty(value = "Size")
+	@ApiModelProperty(value = "Size")
 	protected Long size;
-
 
 	public ThreadEntryDto(ThreadEntry te) {
 		super();
@@ -79,8 +78,8 @@ public class ThreadEntryDto {
 		}
 		this.uuid = te.getUuid();
 		this.name = te.getName();
-		this.creationDate = te.getCreationDate();
-		this.modificationDate = te.getModificationDate();
+		this.creationDate = te.getCreationDate().getTime();
+		this.modificationDate = te.getModificationDate().getTime();
 		this.description = te.getComment();
 		this.ciphered = te.getCiphered();
 		this.type = te.getDocument().getType();
@@ -115,19 +114,19 @@ public class ThreadEntryDto {
 		this.description = description;
 	}
 
-	public Calendar getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(Calendar creationDate) {
+	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
 
-	public Calendar getModificationDate() {
+	public Date getModificationDate() {
 		return modificationDate;
 	}
 
-	public void setModificationDate(Calendar modificationDate) {
+	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
 
@@ -157,6 +156,7 @@ public class ThreadEntryDto {
 
 	@Override
 	public String toString() {
-		return "ThreadEntry [id=" + uuid + ", name=" + name + ", creation=" + creationDate + "]";
+		return "ThreadEntry [id=" + uuid + ", name=" + name + ", creation="
+				+ creationDate + "]";
 	}
 }
