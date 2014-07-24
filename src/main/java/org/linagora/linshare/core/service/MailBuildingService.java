@@ -130,6 +130,7 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildErrorUploadRequestNoSpaceLeft(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
+	@Deprecated
 	MailContainerWithRecipient buildNewUploadRequest(User sender, UploadRequestUrl requestUrl) throws BusinessException;
 
 }

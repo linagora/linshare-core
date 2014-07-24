@@ -42,17 +42,11 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.domain.entities.*;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.UploadRequestService;
-import org.linagora.linshare.core.service.UploadRequestUrlService;
+import org.linagora.linshare.core.service.*;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,16 +63,24 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 
 	private final DocumentEntryService documentEntryService;
 
+	private final MailBuildingService mailBuildingService;
+
+	private final NotifierService notifierService;
+
 	public UploadRequestUrlServiceImpl(
 			final UploadRequestUrlBusinessService uploadRequestUrlBusinessService,
 			final UploadRequestService uploadRequestService,
 			final AccountRepository<Account> accountRepository,
-			final DocumentEntryService documentEntryService) {
+			final DocumentEntryService documentEntryService,
+			final MailBuildingService mailBuildingService,
+			final NotifierService notifierService) {
 		super();
 		this.uploadRequestUrlBusinessService = uploadRequestUrlBusinessService;
 		this.uploadRequestService = uploadRequestService;
 		this.accountRepository = accountRepository;
 		this.documentEntryService = documentEntryService;
+		this.mailBuildingService = mailBuildingService;
+		this.notifierService = notifierService;
 	}
 
 	@Override
@@ -108,7 +110,9 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		}
 		Account actor = accountRepository.getUploadRequestSystemAccount();
 		uploadRequestService.setStatusToClosed(actor, url.getUploadRequest());
-		return find(uuid, password);
+		url = find(uuid, password);
+		notifierService.sendAllNotification(mailBuildingService.buildCloseUploadRequestByRecipient((User) url.getUploadRequest().getOwner(), url));
+		return url;
 	}
 
 	@Override
