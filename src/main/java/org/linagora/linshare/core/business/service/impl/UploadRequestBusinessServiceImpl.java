@@ -62,13 +62,15 @@ public class UploadRequestBusinessServiceImpl implements
 	}
 
 	@Override
-	public List<UploadRequest> findAll(List<UploadRequestStatus> status) {
+	public List<UploadRequest> findAll(UploadRequestStatus... status) {
 		return uploadRequestRepository.findByStatus(status);
 	}
 
 	@Override
-	public List<UploadRequest> findAll(List<AbstractDomain> domains, List<UploadRequestStatus> status, Date afterDate, Date beforeDate) {
-		return uploadRequestRepository.findByDomainsAndStatus(domains, status, afterDate, beforeDate);
+	public List<UploadRequest> findAll(List<AbstractDomain> domains,
+			List<UploadRequestStatus> status, Date afterDate, Date beforeDate) {
+		return uploadRequestRepository.findByDomainsAndStatus(domains, status,
+				afterDate, beforeDate);
 	}
 
 	@Override
@@ -77,15 +79,13 @@ public class UploadRequestBusinessServiceImpl implements
 	}
 
 	@Override
-	public UploadRequest create(UploadRequest req)
-			throws BusinessException {
+	public UploadRequest create(UploadRequest req) throws BusinessException {
 		req.setStatus(UploadRequestStatus.STATUS_CREATED);
 		return uploadRequestRepository.create(req);
 	}
 
 	@Override
-	public UploadRequest update(UploadRequest req)
-			throws BusinessException {
+	public UploadRequest update(UploadRequest req) throws BusinessException {
 		return uploadRequestRepository.update(req);
 	}
 

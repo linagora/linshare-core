@@ -129,7 +129,6 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			e.setMaxFileCount(3);
 			e.setMaxDepositSize(new Long(30*1024*1024));
 			e.setMaxFileSize(new Long(3*1024*1024));
-			e.setStatus(UploadRequestStatus.STATUS_ENABLED);
 			e.setActivationDate(new Date());
 			e.setNotificationDate(new Date());
 
@@ -144,7 +143,10 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			e.setSecured(true);
 
 			Contact contact = new Contact(proposition.getRecipientMail());
-			uploadRequestService.createRequest(owner, e, contact);
+			e = uploadRequestService.createRequest(owner, e, contact);
+
+			e.updateStatus(UploadRequestStatus.STATUS_ENABLED); // TODO
+			uploadRequestService.updateRequest(owner, e);
 		} else {
 			created = uploadPropositionBusinessService.create(proposition);
 		}

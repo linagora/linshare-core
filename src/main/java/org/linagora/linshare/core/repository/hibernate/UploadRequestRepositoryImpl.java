@@ -33,9 +33,11 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import org.hibernate.criterion.Conjunction;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -45,10 +47,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 public class UploadRequestRepositoryImpl extends
 		AbstractRepositoryImpl<UploadRequest> implements
@@ -67,7 +65,8 @@ public class UploadRequestRepositoryImpl extends
 
 	@Override
 	public UploadRequest findByUuid(String uuid) {
-		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq("uuid", uuid)));
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"uuid", uuid)));
 	}
 
 	@Override
@@ -76,29 +75,18 @@ public class UploadRequestRepositoryImpl extends
 	}
 
 	@Override
-	public List<UploadRequest> findByStatus(List<UploadRequestStatus> status) {
-		Disjunction orStatus = Restrictions.disjunction();
-		for (UploadRequestStatus s : status) {
-			orStatus.add(Restrictions.eq("status", s));
-		}
-		return findByCriteria(orStatus);
+	public List<UploadRequest> findByStatus(UploadRequestStatus[] status) {
+		return findByCriteria(Restrictions.in("status", status));
 	}
 
 	@Override
-	public List<UploadRequest> findByDomainsAndStatus(List<AbstractDomain> domains, List<UploadRequestStatus> status, Date afterDate, Date beforeDate) {
-		Disjunction orStatus = Restrictions.disjunction();
-		Disjunction orDomains = Restrictions.disjunction();
-		Conjunction and = Restrictions.conjunction();
-		for (AbstractDomain d : domains) {
-			orDomains.add(Restrictions.eq("abstractDomain", d));
-		}
-		for (UploadRequestStatus s : status) {
-			orStatus.add(Restrictions.eq("status", s));
-		}
-		and.add(orStatus);
-		and.add(orDomains);
-		and.add(Restrictions.between("creationDate", afterDate, beforeDate));
-		return findByCriteria(and);
+	public List<UploadRequest> findByDomainsAndStatus(
+			List<AbstractDomain> domains, List<UploadRequestStatus> status,
+			Date after, Date before) {
+		return findByCriteria(Restrictions.conjunction()
+				.add(Restrictions.in("abstractDomain", domains))
+				.add(Restrictions.in("status", status))
+				.add(Restrictions.between("creationDate", after, before)));
 	}
 
 	@Override

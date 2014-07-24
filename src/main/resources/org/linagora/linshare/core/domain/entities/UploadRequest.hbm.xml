@@ -36,7 +36,7 @@
 		<property name="modificationDate" column="modification_date"
 			type="timestamp" length="6" not-null="true" lazy="false" />
 		<property name="notificationDate" column="notification_date"
-			type="timestamp" length="6" not-null="true" lazy="false" />
+			type="timestamp" length="6" lazy="false" />
 		<property name="expiryDate" column="expiry_date" type="timestamp"
 			length="6" not-null="true" lazy="false" />
 		<property name="uploadPropositionRequestUuid" column="upload_proposition_request_uuid"

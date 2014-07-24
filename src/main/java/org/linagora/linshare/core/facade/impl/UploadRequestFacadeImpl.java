@@ -130,7 +130,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	public UploadRequestVo findRequestByUuid(UserVo actorVo, String uuid)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		// TODO
+
 		return new UploadRequestVo(uploadRequestService.findRequestByUuid(
 				actor, uuid));
 	}
@@ -142,11 +142,9 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		UploadRequestGroup grp = new UploadRequestGroup(req);
 		UploadRequest e = req.toEntity();
 
-		// TODO functionalityFacade
 		grp = uploadRequestService.createRequestGroup(actor, grp);
 
 		e.setActivationDate(new Date()); // FIXME handle activationDate
-		e.setNotificationDate(e.getExpiryDate()); // FIXME functionalityFacade
 		e.setUploadRequestGroup(grp);
 		e = uploadRequestService.createRequest(actor, e,
 				new Contact(req.getRecipient()));

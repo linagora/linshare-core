@@ -66,16 +66,16 @@ public interface UploadRequestRepository extends
 	 * @param status
 	 * @return found uploadRequests otherwise null.
 	 */
-	List<UploadRequest> findByStatus(List<UploadRequestStatus> status);
+	List<UploadRequest> findByStatus(UploadRequestStatus[] status);
 
 	/**
 	 * Find uploadRequests using their status and their domains.
 	 *
 	 * @param domains
 	 * @param status
-	 * @param afterDate based on creation date
-	 * @param beforeDate based on creation date
+	 * @param after based on creation date
+	 * @param before based on creation date
 	 * @return found uploadRequests otherwise null.
 	 */
-	List<UploadRequest> findByDomainsAndStatus(List<AbstractDomain> domains, List<UploadRequestStatus> status, Date afterDate, Date beforeDate);
+	List<UploadRequest> findByDomainsAndStatus(List<AbstractDomain> domains, List<UploadRequestStatus> status, Date after, Date before);
 }

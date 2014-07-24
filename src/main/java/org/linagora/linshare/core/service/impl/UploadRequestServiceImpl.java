@@ -127,27 +127,23 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	@Override
 	public UploadRequest createRequest(Account actor, UploadRequest req,
 			Contact contact) throws BusinessException {
-		List<Contact> contacts = Lists.newArrayList();
-		contacts.add(contact);
-		return this.createRequest(actor, req, contacts);
+		return this.createRequest(actor, req, Lists.newArrayList(contact));
 	}
 
 	@Override
-	public UploadRequest createRequest(Account actor, UploadRequest toCreate, List<Contact> contacts)
+	public UploadRequest createRequest(Account actor, UploadRequest req, List<Contact> contacts)
 			throws BusinessException {
-		toCreate.setStatus(UploadRequestStatus.STATUS_CREATED);
+		req.setStatus(UploadRequestStatus.STATUS_CREATED);
 
-		UploadRequestHistory hist = new UploadRequestHistory(toCreate,
+		UploadRequestHistory hist = new UploadRequestHistory(req,
 				UploadRequestHistoryEventType.EVENT_CREATED);
 
-		toCreate.setOwner(actor);
-		toCreate.setAbstractDomain(actor.getDomain());
-		toCreate.getUploadRequestHistory().add(hist);
+		req.getUploadRequestHistory().add(hist);
+		req.setOwner(actor);
+		req.setAbstractDomain(actor.getDomain());
 		// FIXME fma
 		// HOOK
-		UploadRequest request = uploadRequestBusinessService.create(toCreate);
-		request.setStatus(UploadRequestStatus.STATUS_ENABLED);
-		request = uploadRequestBusinessService.update(request);
+		UploadRequest request = uploadRequestBusinessService.create(req);
 
 		// Dirty. :(
 		MailContainer mailContainer = new MailContainer(
