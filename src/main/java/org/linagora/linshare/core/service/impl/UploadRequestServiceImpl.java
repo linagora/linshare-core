@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
@@ -222,11 +223,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 					"Upload request history search forbidden");
 		}
 		if (afterDate == null) {
-			Date referenceDate = new Date();
-			Calendar c = Calendar.getInstance();
-			c.setTime(referenceDate);
-			c.add(Calendar.MONTH, -1);
-			afterDate = c.getTime();
+			afterDate = DateUtils.addMonths(new Date(), -1);
 		}
 		if (beforeDate == null) {
 			beforeDate = new Date();

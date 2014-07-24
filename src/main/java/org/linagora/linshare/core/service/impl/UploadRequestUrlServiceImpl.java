@@ -111,7 +111,8 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		Account actor = accountRepository.getUploadRequestSystemAccount();
 		uploadRequestService.setStatusToClosed(actor, url.getUploadRequest());
 		url = find(uuid, password);
-		notifierService.sendAllNotification(mailBuildingService.buildCloseUploadRequestByRecipient((User) url.getUploadRequest().getOwner(), url));
+		MailContainerWithRecipient mail = mailBuildingService.buildCloseUploadRequestByRecipient((User) url.getUploadRequest().getOwner(), url);
+		notifierService.sendAllNotification(mail);
 		return url;
 	}
 
