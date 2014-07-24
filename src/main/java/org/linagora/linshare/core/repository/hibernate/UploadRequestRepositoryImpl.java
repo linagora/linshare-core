@@ -75,7 +75,7 @@ public class UploadRequestRepositoryImpl extends
 	}
 
 	@Override
-	public List<UploadRequest> findByStatus(UploadRequestStatus[] status) {
+	public List<UploadRequest> findByStatus(UploadRequestStatus... status) {
 		return findByCriteria(Restrictions.in("status", status));
 	}
 

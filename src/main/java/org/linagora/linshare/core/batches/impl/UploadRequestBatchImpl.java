@@ -69,7 +69,7 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 	public void updateStatus() {
 		logger.info("Update upload request status");
 		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
-		for (UploadRequest r : uploadRequestRepository.findByStatus(Lists.newArrayList(UploadRequestStatus.STATUS_CREATED))) {
+		for (UploadRequest r : uploadRequestRepository.findByStatus(UploadRequestStatus.STATUS_CREATED)) {
 			if (r.getActivationDate().before(new Date())) {
 				try {
 					r.updateStatus(UploadRequestStatus.STATUS_ENABLED);
@@ -82,7 +82,7 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 				}
 			}
 		}
-		for (UploadRequest r : uploadRequestRepository.findByStatus(Lists.newArrayList(UploadRequestStatus.STATUS_ENABLED))) {
+		for (UploadRequest r : uploadRequestRepository.findByStatus(UploadRequestStatus.STATUS_ENABLED)) {
 			if (DateUtils.isSameDay(r.getExpiryDate(), r.getNotificationDate())) {
 				try {
 					for (UploadRequestUrl u: r.getUploadRequestURLs()) {

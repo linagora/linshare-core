@@ -66,7 +66,7 @@ public interface UploadRequestRepository extends
 	 * @param status
 	 * @return found uploadRequests otherwise null.
 	 */
-	List<UploadRequest> findByStatus(UploadRequestStatus[] status);
+	List<UploadRequest> findByStatus(UploadRequestStatus... status);
 
 	/**
 	 * Find uploadRequests using their status and their domains.
