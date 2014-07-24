@@ -169,8 +169,11 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		// Create the link between the document and the upload request URL.
 		UploadRequestEntry uploadRequestEntry = new UploadRequestEntry(
 				document, requestUrl.getUploadRequest());
-		return uploadRequestService.createRequestEntry(actor,
+		UploadRequestEntry requestEntry = uploadRequestService.createRequestEntry(actor,
 				uploadRequestEntry);
+		MailContainerWithRecipient mail = mailBuildingService.buildAckUploadRequest((User) requestUrl.getUploadRequest().getOwner(), requestUrl, requestEntry);
+		notifierService.sendAllNotification(mail);
+		return requestEntry;
 	}
 
 	private boolean isValidPassword(UploadRequestUrl data, String password) {
