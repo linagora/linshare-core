@@ -75,7 +75,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param config
-	 * @return TODO
+	 * @return
 	 * @throws BusinessException
 	 */
 	MailConfig createConfig(User actor, MailConfig config) throws BusinessException;
@@ -85,7 +85,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param config
-	 * @return TODO
+	 * @return
 	 * @throws BusinessException
 	 */
 	MailConfig updateConfig(User actor, MailConfig config) throws BusinessException;
@@ -137,7 +137,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param content
-	 * @return TODO
+	 * @return
 	 * @throws BusinessException
 	 */
 	MailContent createContent(User actor, MailContent content)
@@ -227,7 +227,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param footer
-	 * @return TODO
+	 * @return
 	 * @throws BusinessException
 	 */
 	MailFooter createFooter(User actor, MailFooter footer) throws BusinessException;
@@ -314,7 +314,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param layout
-	 * @return TODO
+	 * @return
 	 * @throws BusinessException
 	 */
 	MailLayout createLayout(User actor, MailLayout layout) throws BusinessException;

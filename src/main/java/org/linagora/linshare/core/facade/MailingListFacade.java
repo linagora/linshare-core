@@ -58,7 +58,7 @@ public interface MailingListFacade {
 
 	/**
 	 * Basic operations on mailingListContact
-	 * @param actorVo TODO
+	 * @param actorVo
 	 * 
 	 * @throws BusinessException
 	 */
@@ -74,8 +74,8 @@ public interface MailingListFacade {
 	/**
 	 * Add user to mailing list
 	 * @param mailingListVo
-	 * @param domainId TODO
-	 * @param mail TODO
+	 * @param domainId
+	 * @param mail
 	 * @param domain
 	 * @param mail
 	 * 

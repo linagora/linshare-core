@@ -69,7 +69,7 @@ public interface ThreadRepository extends AccountRepository<Thread> {
 	/**
 	 * Find all threads modified by the actor on last 15 days
 	 * @param actor
-	 * @param limit TODO
+	 * @param limit
 	 * @param date
 	 * @return
 	 */
