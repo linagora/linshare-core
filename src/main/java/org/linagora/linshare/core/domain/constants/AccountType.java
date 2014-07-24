@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.constants;
 
+import org.linagora.linshare.core.domain.entities.Account;
+
 public enum AccountType {
 
 	// 0 Account
@@ -57,5 +59,18 @@ public enum AccountType {
 			}
 		}
 		throw new IllegalArgumentException("Doesn't match an existing AccountType");
+	}
+
+	/*
+	 * check whether an account is ROOT or SYSTEM
+	 */
+	public boolean hasAllRights(Account a) {
+		return a.getAccountType().value >= ROOT.value;
+	}
+
+	public boolean isUser() {
+		return this.equals(AccountType.GUEST)
+				|| this.equals(AccountType.INTERNAL)
+				|| this.equals(AccountType.ROOT);
 	}
 }

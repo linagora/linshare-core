@@ -268,6 +268,10 @@ public abstract class Account {
 	 * Role Helpers
 	 */
 
+	public boolean hasAllRights() {
+		return hasSuperAdminRole() || hasSystemAccountRole();
+	}
+
 	public boolean hasSuperAdminRole() {
 		return this.getRole().equals(Role.SUPERADMIN);
 	}

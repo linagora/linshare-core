@@ -37,7 +37,6 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.vo.UserVo;
 
@@ -136,11 +135,7 @@ public abstract class LogEntry implements Serializable {
 	}
 
 	public static boolean isUser(Account actor) {
-		if (actor.getAccountType().equals(AccountType.GUEST)
-				|| actor.getAccountType().equals(AccountType.INTERNAL)
-				|| actor.getAccountType().equals(AccountType.ROOT))
-			return true;
-		return false;
+		return actor.getAccountType().isUser();
 	}
 
 	public Calendar getActionDate() {

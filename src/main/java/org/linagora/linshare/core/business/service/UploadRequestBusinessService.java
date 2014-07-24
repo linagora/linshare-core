@@ -45,7 +45,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestBusinessService {
 
-	List<UploadRequest> findAll(User actor);
+	List<UploadRequest> findAll(User owner);
 
 	List<UploadRequest> findAll(List<UploadRequestStatus> status);
 

@@ -56,8 +56,11 @@ public class UploadRequestBusinessServiceImpl implements
 	}
 
 	@Override
-	public List<UploadRequest> findAll(User actor) {
-		return uploadRequestRepository.findByOwner(actor);
+	public List<UploadRequest> findAll(User owner) {
+		if (owner.hasAllRights()) {
+			return uploadRequestRepository.findAll();
+		}
+		return uploadRequestRepository.findByOwner(owner);
 	}
 
 	@Override
