@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.constants.Language;
@@ -200,9 +199,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildAnonymousDownload(
 			AnonymousShareEntry shareEntry) throws BusinessException {
-		logger.info("Building mail content: "
-				+ MailContentType.ANONYMOUS_DOWNLOAD.toString());
-
 		User sender = (User) shareEntry.getEntryOwner();
 		String documentName = shareEntry.getDocumentEntry().getName();
 		String email = shareEntry.getAnonymousUrl().getContact().getMail();
@@ -233,9 +229,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildRegisteredDownload(
 			ShareEntry shareEntry) throws BusinessException {
-		logger.info("Building mail content: "
-				+ MailContentType.REGISTERED_DOWNLOAD.toString());
-
 		User sender = (User) shareEntry.getEntryOwner();
 		String documentName = shareEntry.getDocumentEntry().getName();
 		String actorRepresentation = new ContactRepresentation(shareEntry.getRecipient())
@@ -266,9 +259,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildNewGuest(User sender,
 			User recipient, String password) throws BusinessException {
-		logger.info("Building mail content: "
-				+ MailContentType.NEW_GUEST.toString());
-
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				recipient.getExternalMailLocale());
@@ -295,9 +285,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildResetPassword(Guest recipient,
 			String password) throws BusinessException {
-		logger.info("Building mail content: "
-				+ MailContentType.RESET_PASSWORD.toString());
-
 		MailConfig cfg = recipient.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				recipient.getExternalMailLocale());
@@ -322,9 +309,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	public MailContainerWithRecipient buildSharedDocUpdated(
 			Entry shareEntry, String oldDocName,
 			String fileSizeTxt) throws BusinessException {
-		logger.info("Building mail content: "
-				+ MailContentType.SHARED_DOC_UPDATED.toString());
-
 		/*
 		 * XXX ugly
 		 */
@@ -383,9 +367,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildSharedDocDeleted(Account actor,
 			Entry shareEntry) throws BusinessException {
-		logger.info("Building mail content: "
-				+ MailContentType.SHARED_DOC_DELETED.toString());
-
 		/*
 		 * XXX ugly
 		 */
@@ -434,9 +415,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildSharedDocUpcomingOutdated(
 			Entry shareEntry, Integer days) throws BusinessException {
-		logger.info("Building mail content: "
-				+ MailContentType.SHARED_DOC_UPCOMING_OUTDATED.toString());
-
 		/*
 		 * XXX ugly
 		 */
@@ -492,9 +470,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildDocUpcomingOutdated(
 			DocumentEntry document, Integer days) throws BusinessException {
-		logger.info("Building mail content: "
-				+ MailContentType.DOC_UPCOMING_OUTDATED.toString());
-
 		User owner = (User) document.getEntryOwner();
 		String actorRepresentation = new ContactRepresentation(owner)
 				.getContactRepresentation();
@@ -529,9 +504,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	public MailContainerWithRecipient buildNewSharing(User sender,
 			MailContainer input, User recipient,
 			List<ShareDocumentVo> shares) throws BusinessException {
-		logger.info("Building mail content: "
-				+ MailContentType.NEW_SHARING.toString());
-
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
 		String url = getLinShareUrlForAUserRecipient(recipient);
@@ -577,9 +549,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	public MailContainerWithRecipient buildNewSharingProtected(User sender,
 			MailContainer input, AnonymousUrl anonUrl)
 			throws BusinessException {
-		logger.info("Building mail content: "
-				+ MailContentType.NEW_SHARING_PROTECTED.toString());
-
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
 		String url = anonUrl
@@ -622,9 +591,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	public MailContainerWithRecipient buildNewSharingCyphered(User sender,
 			MailContainer input, User recipient,
 			List<ShareDocumentVo> shares) throws BusinessException {
-		logger.info("Building mail content: "
-				+ MailContentType.NEW_SHARING_CYPHERED.toString());
-
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
 		String url = getLinShareUrlForAUserRecipient(recipient);
@@ -671,9 +637,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	public MailContainerWithRecipient buildNewSharingCypheredProtected(
 			User sender, MailContainer input, AnonymousUrl anonUrl)
 			throws BusinessException {
-		logger.info("Building mail content: "
-				+ MailContentType.NEW_SHARING_CYPHERED_PROTECTED.toString());
-
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
 		String url = anonUrl
@@ -714,13 +677,8 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	}
 
 	@Override
-	public MailContainerWithRecipient buildCreateUploadProposition(User recipient,
-															MailContainer inputMailContainer, UploadProposition proposition)
+	public MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadProposition proposition)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_PROPOSITION_CREATED;
-
-		logger.info("Building mail content: "
-				+ type.toString());
 		MailConfig cfg = recipient.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				recipient.getExternalMailLocale());
@@ -738,19 +696,12 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		container.setRecipient(recipient.getMail());
 		container.setFrom(proposition.getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_PROPOSITION_CREATED, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildRejectUploadProposition(User sender,
-																MailContainer inputMailContainer, UploadProposition proposition)
+	public MailContainerWithRecipient buildRejectUploadProposition(User sender, UploadProposition proposition)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_PROPOSITION_REJECTED;
-
-		logger.info("Building mail content: "
-				+ type.toString());
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				sender.getExternalMailLocale());
@@ -768,117 +719,89 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		container.setRecipient(proposition.getMail());
 		container.setFrom(sender.getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_PROPOSITION_REJECTED, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildUpdateUploadRequest(User sender,
-																   MailContainer inputMailContainer, UploadRequestUrl request)
+	public MailContainerWithRecipient buildUpdateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_REQUEST_UPDATED;
-
-		logger.info("Building mail content: "
-				+ type.toString());
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
-				.add("actorRepresentation", new ContactRepresentation(sender).getContactRepresentation())
+				.add("actorRepresentation", new ContactRepresentation(owner).getContactRepresentation())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
 				.add("firstName", request.getContact().getMail())
 				.add("lastName", "");
 		builder.getBodyChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody());
 		container.setRecipient(request.getContact().getMail());
-		container.setFrom(sender.getMail());
+		container.setFrom(owner.getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_UPDATED, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildActivateUploadRequest(User sender,
-															   MailContainer inputMailContainer, UploadRequestUrl request)
+	public MailContainerWithRecipient buildActivateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_REQUEST_ACTIVATED;
-
-		logger.info("Building mail content: "
-				+ type.toString());
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
-				.add("actorRepresentation", new ContactRepresentation(sender).getContactRepresentation())
+				.add("actorRepresentation", new ContactRepresentation(owner).getContactRepresentation())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
 				.add("firstName", request.getContact().getMail())
 				.add("lastName", "");
 		builder.getBodyChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(sender)))
+				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(owner)))
 				.add("password", request.getTemporaryPlainTextPassword());
 		container.setRecipient(request.getContact().getMail());
-		container.setFrom(sender.getMail());
+		container.setFrom(owner.getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_ACTIVATED, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildFilterUploadRequest(User recipient,
-																 MailContainer inputMailContainer, UploadRequestUrl request)
+	public MailContainerWithRecipient buildFilterUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_REQUEST_AUTO_FILTER;
-
-		logger.info("Building mail content: "
-				+ type.toString());
-		MailConfig cfg = recipient.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				recipient.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
-				.add("firstName", recipient.getFirstName())
-				.add("lastName", recipient.getLastName());
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName());
 		builder.getBodyChain()
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody());
 		container.setRecipient(request.getContact().getMail());
-		container.setFrom(recipient.getMail());
+		container.setFrom(owner.getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_AUTO_FILTER, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildCreateUploadRequest(User sender,
-																 MailContainer inputMailContainer, UploadRequestUrl request)
+	public MailContainerWithRecipient buildCreateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_REQUEST_CREATED;
-
-		logger.info("Building mail content: "
-				+ type.toString());
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -888,38 +811,32 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("firstName", request.getContact().getMail())
 				.add("lastName", "");
 		builder.getBodyChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
 				.add("activationDate", request.getUploadRequest().getActivationDate().toString());
 		container.setRecipient(request.getContact().getMail());
-		container.setFrom(sender.getMail());
+		container.setFrom(owner.getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null,
+				MailContentType.UPLOAD_REQUEST_CREATED, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildAckUploadRequest(User recipient,
-															   MailContainer inputMailContainer, UploadRequestUrl request, UploadRequestEntry entry)
+	public MailContainerWithRecipient buildAckUploadRequest(User owner, UploadRequestUrl request, UploadRequestEntry entry)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_REQUEST_CREATED;
-
-		logger.info("Building mail content: "
-				+ type.toString());
-		MailConfig cfg = recipient.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				recipient.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
 				.add("actorRepresentation", request.getContact().getMail())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
-				.add("firstName", recipient.getFirstName())
-				.add("lastName", recipient.getLastName());
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName());
 		builder.getBodyChain()
 				.add("firstName", request.getContact().getMail())
 				.add("lastName", "")
@@ -927,95 +844,74 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
 				.add("fileName", entry.getDocumentEntry().getName())
 				.add("depositDate", entry.getCreationDate().toString());
-		container.setRecipient(recipient.getMail());
+		container.setRecipient(owner.getMail());
 		container.setFrom(request.getContact().getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_CREATED, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildRemindUploadRequest(User sender,
-															MailContainer inputMailContainer, UploadRequestUrl request)
+	public MailContainerWithRecipient buildRemindUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_REQUEST_REMINDER;
-
-		logger.info("Building mail content: "
-				+ type.toString());
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
-				.add("actorRepresentation", new ContactRepresentation(sender).getContactRepresentation())
+				.add("actorRepresentation", new ContactRepresentation(owner).getContactRepresentation())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
 				.add("firstName", request.getContact().getMail())
 				.add("lastName", "");
 		builder.getBodyChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(sender)))
+				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(owner)))
 				.add("password", request.getTemporaryPlainTextPassword());
 		container.setRecipient(request.getContact().getMail());
-		container.setFrom(sender.getMail());
+		container.setFrom(owner.getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_REMINDER, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnOwner(User recipient,
-															   MailContainer inputMailContainer, UploadRequestUrl request)
+	public MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnOwner(User owner, UploadRequest request)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_REQUEST_WARN_OWNER_BEFORE_EXPIRY;
-
-		logger.info("Building mail content: "
-				+ type.toString());
-		MailConfig cfg = recipient.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				recipient.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
-		Collection entries = CollectionUtils.transformedCollection(request.getUploadRequest().getUploadRequestEntries(), new Transformer() {
+		Collection entries = CollectionUtils.transformedCollection(request.getUploadRequestEntries(), new Transformer() {
 			@Override
 			public Object transform(Object input) {
 				return ((UploadRequestEntry) input).getDocumentEntry().getName();
 			}
 		});
 		builder.getSubjectChain()
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
+				.add("subject", request.getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
-				.add("firstName", recipient.getFirstName())
-				.add("lastName", recipient.getLastName());
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName());
 		builder.getBodyChain()
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
-				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
+				.add("subject", request.getUploadRequestGroup().getSubject())
+				.add("body", request.getUploadRequestGroup().getBody())
 				.add("files", entries.toString());
-		container.setRecipient(recipient.getMail());
-		container.setFrom(request.getContact().getMail());
+		container.setRecipient(owner.getMail());
+		container.setFrom(owner.getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_OWNER_BEFORE_EXPIRY, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnRecipient(User sender,
-																		MailContainer inputMailContainer, UploadRequestUrl request)
+	public MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnRecipient(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY;
-
-		logger.info("Building mail content: "
-				+ type.toString());
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		Collection entries = CollectionUtils.transformedCollection(request.getUploadRequest().getUploadRequestEntries(), new Transformer() {
@@ -1033,62 +929,48 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
 				.add("files", entries.toString())
-				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(sender)));
+				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(owner)));
 		container.setRecipient(request.getContact().getMail());
-		container.setFrom(sender.getMail());
+		container.setFrom(owner.getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildUploadRequestExpiryWarnOwner(User recipient,
-																			MailContainer inputMailContainer, UploadRequestUrl request)
+	public MailContainerWithRecipient buildUploadRequestExpiryWarnOwner(User owner, UploadRequest request)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_REQUEST_WARN_OWNER_EXPIRY;
-
-		logger.info("Building mail content: "
-				+ type.toString());
-		MailConfig cfg = recipient.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				recipient.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
-		Collection entries = CollectionUtils.transformedCollection(request.getUploadRequest().getUploadRequestEntries(), new Transformer() {
+		Collection entries = CollectionUtils.transformedCollection(request.getUploadRequestEntries(), new Transformer() {
 			@Override
 			public Object transform(Object input) {
 				return ((UploadRequestEntry) input).getDocumentEntry().getName();
 			}
 		});
 		builder.getSubjectChain()
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
+				.add("subject", request.getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
-				.add("firstName", recipient.getFirstName())
-				.add("lastName", recipient.getLastName());
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName());
 		builder.getBodyChain()
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
-				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
+				.add("subject", request.getUploadRequestGroup().getSubject())
+				.add("body", request.getUploadRequestGroup().getBody())
 				.add("files", entries.toString());
-		container.setRecipient(recipient.getMail());
-		container.setFrom(request.getContact().getMail());
+		container.setRecipient(owner.getMail());
+		container.setFrom(owner.getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_OWNER_EXPIRY, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildUploadRequestExpiryWarnRecipient(User sender,
-																			MailContainer inputMailContainer, UploadRequestUrl request)
+	public MailContainerWithRecipient buildUploadRequestExpiryWarnRecipient(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_REQUEST_WARN_RECIPIENT_EXPIRY;
-
-		logger.info("Building mail content: "
-				+ type.toString());
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		Collection entries = CollectionUtils.transformedCollection(request.getUploadRequest().getUploadRequestEntries(), new Transformer() {
@@ -1107,24 +989,17 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
 				.add("files", entries.toString());
 		container.setRecipient(request.getContact().getMail());
-		container.setFrom(sender.getMail());
+		container.setFrom(owner.getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_RECIPIENT_EXPIRY, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildCloseUploadRequestByRecipient(User recipient,
-																			MailContainer inputMailContainer, UploadRequestUrl request)
+	public MailContainerWithRecipient buildCloseUploadRequestByRecipient(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_REQUEST_CLOSED_BY_RECIPIENT;
-
-		logger.info("Building mail content: "
-				+ type.toString());
-		MailConfig cfg = recipient.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				recipient.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		Collection entries = CollectionUtils.transformedCollection(request.getUploadRequest().getUploadRequestEntries(), new Transformer() {
@@ -1137,33 +1012,26 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("actorRepresentation", request.getContact().getMail())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
-				.add("firstName", recipient.getFirstName())
-				.add("lastName", recipient.getLastName());
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName());
 		builder.getBodyChain()
 				.add("firstName", request.getContact().getMail())
 				.add("lastName", "")
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
 				.add("files", entries.toString());
-		container.setRecipient(recipient.getMail());
+		container.setRecipient(owner.getMail());
 		container.setFrom(request.getContact().getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_CLOSED_BY_RECIPIENT, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildCloseUploadRequestByOwner(User sender,
-																		 MailContainer inputMailContainer, UploadRequestUrl request)
+	public MailContainerWithRecipient buildCloseUploadRequestByOwner(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_REQUEST_CLOSED_BY_OWNER;
-
-		logger.info("Building mail content: "
-				+ type.toString());
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		Collection entries = CollectionUtils.transformedCollection(request.getUploadRequest().getUploadRequestEntries(), new Transformer() {
@@ -1173,107 +1041,87 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 			}
 		});
 		builder.getSubjectChain()
-				.add("actorRepresentation", new ContactRepresentation(sender).getContactRepresentation())
+				.add("actorRepresentation", new ContactRepresentation(owner).getContactRepresentation())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
 				.add("firstName", request.getContact().getMail())
 				.add("lastName", "");
 		builder.getBodyChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
 				.add("files", entries.toString());
 		container.setRecipient(request.getContact().getMail());
-		container.setFrom(sender.getMail());
+		container.setFrom(owner.getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_CLOSED_BY_OWNER, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildDeleteUploadRequestByOwner(User sender,
-																	 MailContainer inputMailContainer, UploadRequestUrl request)
+	public MailContainerWithRecipient buildDeleteUploadRequestByOwner(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_REQUEST_DELETED_BY_OWNER;
-
-		logger.info("Building mail content: "
-				+ type.toString());
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
-				.add("actorRepresentation", new ContactRepresentation(sender).getContactRepresentation())
+				.add("actorRepresentation", new ContactRepresentation(owner).getContactRepresentation())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
 				.add("firstName", request.getContact().getMail())
 				.add("lastName", "");
 		builder.getBodyChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody());
 		container.setRecipient(request.getContact().getMail());
-		container.setFrom(sender.getMail());
+		container.setFrom(owner.getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_DELETED_BY_OWNER, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildErrorUploadRequestNoSpaceLeft(User recipient,
-																	  MailContainer inputMailContainer, UploadRequestUrl request)
+	public MailContainerWithRecipient buildErrorUploadRequestNoSpaceLeft(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		MailContentType type = MailContentType.UPLOAD_REQUEST_NO_SPACE_LEFT;
-
-		logger.info("Building mail content: "
-				+ type.toString());
-		MailConfig cfg = recipient.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				recipient.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
 				.add("actorRepresentation", request.getContact().getMail())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
-				.add("firstName", recipient.getFirstName())
-				.add("lastName", recipient.getLastName());
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName());
 		builder.getBodyChain()
 				.add("firstName", request.getContact().getMail())
 				.add("lastName", "")
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody());
-		container.setRecipient(recipient.getMail());
+		container.setRecipient(owner.getMail());
 		container.setFrom(request.getContact().getMail());
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				type, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_NO_SPACE_LEFT, builder);
 	}
 
 	@Override
-	public MailContainerWithRecipient buildNewUploadRequest(User sender,
-			MailContainer inputMailContainer, UploadRequestUrl requestUrl)
+	public MailContainerWithRecipient buildNewUploadRequest(User owner, UploadRequestUrl requestUrl)
 					throws BusinessException {
 
-		logger.info("Building mail content: "
-				+ MailContentType.UPLOAD_REQUEST_CREATED.toString());
-
-		String actorRepresentation = new ContactRepresentation(sender)
+		String actorRepresentation = new ContactRepresentation(owner)
 				.getContactRepresentation();
 		String url = requestUrl
-				.getFullUrl(getLinShareUploadRequestUrl(sender));
+				.getFullUrl(getLinShareUploadRequestUrl(owner));
 		String email = requestUrl.getContact().getMail();
 
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 //		requestUrl.getUploadRequest().getLocale()
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -1283,17 +1131,15 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("firstName", "")
 				.add("lastName", email);
 		builder.getBodyChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName())
 				.add("password", requestUrl.getTemporaryPlainTextPassword())
 				.add("url", url);
 		container.setRecipient(email);
-		container.setFrom(abstractDomainService.getDomainMail(sender
+		container.setFrom(abstractDomainService.getDomainMail(owner
 				.getDomain()));
 
-		return buildMailContainer(cfg, container,
-				inputMailContainer.getPersonalMessage(),
-				MailContentType.UPLOAD_REQUEST_CREATED, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_CREATED, builder);
 	}
 
 
@@ -1473,6 +1319,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		String footer = formatFooter(cfg.findFooter(lang).getFooter(), lang);
 		String layout = cfg.getMailLayoutHtml().getLayout();
 
+		logger.info("Building mail content: " + type);
 		pm = formatPersonalMessage(pm, lang);
 		subject = builder.getSubjectChain().build(subject);
 		greetings = builder.getGreetingsChain().build(greetings);

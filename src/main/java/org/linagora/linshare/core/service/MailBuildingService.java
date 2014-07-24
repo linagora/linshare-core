@@ -82,71 +82,54 @@ public interface MailBuildingService {
 			MailContainer inputMailContainer, AnonymousUrl anonymousUrl)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildCreateUploadProposition(User recipient,
-															MailContainer inputMailContainer, UploadProposition proposition)
+	MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadProposition proposition)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildRejectUploadProposition(User sender,
-															MailContainer inputMailContainer, UploadProposition proposition)
+	MailContainerWithRecipient buildRejectUploadProposition(User sender, UploadProposition proposition)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildUpdateUploadRequest(User sender,
-														MailContainer inputMailContainer, UploadRequestUrl request)
+	MailContainerWithRecipient buildUpdateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildActivateUploadRequest(User sender,
-														  MailContainer inputMailContainer, UploadRequestUrl request)
+	MailContainerWithRecipient buildActivateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildFilterUploadRequest(User recipient,
-														MailContainer inputMailContainer, UploadRequestUrl request)
+	MailContainerWithRecipient buildFilterUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildCreateUploadRequest(User sender,
-														MailContainer inputMailContainer, UploadRequestUrl request)
+	MailContainerWithRecipient buildCreateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildAckUploadRequest(User recipient,
-													 MailContainer inputMailContainer, UploadRequestUrl request, UploadRequestEntry entry)
+	MailContainerWithRecipient buildAckUploadRequest(User owner, UploadRequestUrl request, UploadRequestEntry entry)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildRemindUploadRequest(User sender,
-														MailContainer inputMailContainer, UploadRequestUrl request)
+	MailContainerWithRecipient buildRemindUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnOwner(User recipient,
-																	   MailContainer inputMailContainer, UploadRequestUrl request)
+	MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnOwner(User owner, UploadRequest request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnRecipient(User sender,
-																		   MailContainer inputMailContainer, UploadRequestUrl request)
+	MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnRecipient(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildUploadRequestExpiryWarnOwner(User recipient,
-																 MailContainer inputMailContainer, UploadRequestUrl request)
+	MailContainerWithRecipient buildUploadRequestExpiryWarnOwner(User owner, UploadRequest request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildUploadRequestExpiryWarnRecipient(User sender,
-																	 MailContainer inputMailContainer, UploadRequestUrl request)
+	MailContainerWithRecipient buildUploadRequestExpiryWarnRecipient(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildCloseUploadRequestByRecipient(User recipient,
-																  MailContainer inputMailContainer, UploadRequestUrl request)
+	MailContainerWithRecipient buildCloseUploadRequestByRecipient(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildCloseUploadRequestByOwner(User sender,
-															  MailContainer inputMailContainer, UploadRequestUrl request)
+	MailContainerWithRecipient buildCloseUploadRequestByOwner(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildDeleteUploadRequestByOwner(User sender,
-															   MailContainer inputMailContainer, UploadRequestUrl request)
+	MailContainerWithRecipient buildDeleteUploadRequestByOwner(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildErrorUploadRequestNoSpaceLeft(User recipient,
-																  MailContainer inputMailContainer, UploadRequestUrl request)
+	MailContainerWithRecipient buildErrorUploadRequestNoSpaceLeft(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildNewUploadRequest(User sender,
-			MailContainer inputMailContainer, UploadRequestUrl requestUrl) throws BusinessException;
+	MailContainerWithRecipient buildNewUploadRequest(User sender, UploadRequestUrl requestUrl) throws BusinessException;
 
 }

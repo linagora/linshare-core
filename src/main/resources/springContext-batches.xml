@@ -41,6 +41,11 @@
         <constructor-arg ref="threadEntryService" />
     </bean>
 
+    <bean name="uploadRequestBatch" class="org.linagora.linshare.core.batches.impl.UploadRequestBatchImpl">
+        <constructor-arg ref="uploadRequestRepository" />
+        <constructor-arg ref="mailBuildingService" />
+    </bean>
+
 	<!-- Don't use that with Jackrabbit 1.4 !! -->
 	<!-- https://issues.apache.org/jira/browse/JCR-2492 -->
     <bean name="jcrGarbageCollectionBatch" class="org.linagora.linshare.core.batches.impl.JcrGarbageCollectionBatchImpl">

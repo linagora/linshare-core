@@ -154,7 +154,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 				actor.getExternalMailLocale());
 		for (Contact contact : contacts) {
 			UploadRequestUrl uploadRequestUrl = uploadRequestUrlBusinessService.create(request, false, contact);
-			MailContainerWithRecipient buildNewUploadRequest = mailBuildingService.buildNewUploadRequest((User)actor, mailContainer, uploadRequestUrl);
+			MailContainerWithRecipient buildNewUploadRequest = mailBuildingService.buildNewUploadRequest((User)actor, uploadRequestUrl);
 			notifierService.sendAllNotification(buildNewUploadRequest);
 		}
 		return request;

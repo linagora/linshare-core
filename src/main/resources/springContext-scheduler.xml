@@ -99,6 +99,20 @@
         <property name="cronExpression" value="${job.document.cleaner.cron.expression}"/>
     </bean>
 
+    <bean id="updateUploadRequestJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="org.linagora.linshare.core.job.quartz.UpdateUploadRequest"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="batch" value-ref="uploadRequestBatch"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="updateUploadRequestJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="updateUploadRequestJob"/>
+        <property name="cronExpression" value="${job.uploadrequest.cron.expression}"/>
+    </bean>
+
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
@@ -109,6 +123,7 @@
                 <ref bean="cleanInconsistentDocumentEntriesJobTrigger"/>
                 <ref bean="cleanJcrUnusedFilesJobTrigger"/>
                 <ref bean="cleanOutdatedDocumentsJobTrigger"/>
+                <ref bean="updateUploadRequestJobTrigger"/>
             </list>
         </property>
     </bean>
