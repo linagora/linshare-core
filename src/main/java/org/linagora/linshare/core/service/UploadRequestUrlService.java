@@ -35,7 +35,10 @@
 package org.linagora.linshare.core.service;
 
 import java.io.InputStream;
+import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -44,6 +47,10 @@ public interface UploadRequestUrlService {
 
 	UploadRequestUrl find(String uuid, String password)
 			throws BusinessException;
+
+	List<UploadRequestUrl> create(UploadRequest request, Contact contact) throws BusinessException;
+
+	List<UploadRequestUrl> create(UploadRequest request, List<Contact> contacts) throws BusinessException;
 
 	UploadRequestUrl close(String uuid, String password)
 			throws BusinessException;

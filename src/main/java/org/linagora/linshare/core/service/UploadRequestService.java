@@ -55,10 +55,7 @@ public interface UploadRequestService {
 
 	UploadRequest findRequestByUuid(Account actor, String uuid) throws BusinessException;
 
-	UploadRequest createRequest(Account actor, UploadRequest req, List<Contact> contacts)
-			throws BusinessException;
-
-	UploadRequest createRequest(Account actor, UploadRequest req, Contact contact)
+	UploadRequest createRequest(Account actor, UploadRequest req)
 			throws BusinessException;
 
 	UploadRequest updateRequest(User actor, UploadRequest req)
@@ -98,31 +95,6 @@ public interface UploadRequestService {
 
 	void deleteRequestTemplate(User actor, UploadRequestTemplate template)
 			throws BusinessException;
-
-	UploadRequestUrl findRequestUrlByUuid(User actor, String uuid);
-
-	UploadRequestUrl updateRequestUrl(User actor, UploadRequestUrl url)
-			throws BusinessException;
-
-	void deleteRequestUrl(User actor, UploadRequestUrl url)
-			throws BusinessException;
-
-	UploadRequestEntry findRequestEntryByUuid(Account actor, String uuid);
-
-	UploadRequestEntry createRequestEntry(Account actor, UploadRequestEntry entry)
-			throws BusinessException;
-
-	UploadRequestEntry updateRequestEntry(Account actor, UploadRequestEntry entry)
-			throws BusinessException;
-
-	void deleteRequestEntry(Account actor, UploadRequestEntry entry)
-			throws BusinessException;
-
-	/*
-	 * Business methods
-	 */
-
-	UploadRequest setStatusToClosed(Account actor, UploadRequest req) throws BusinessException;
 
 	Set<UploadRequestHistory> findAllRequestHistory(Account actor, String uploadRequestUuid) throws BusinessException;
 

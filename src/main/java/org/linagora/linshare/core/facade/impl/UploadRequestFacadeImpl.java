@@ -61,11 +61,7 @@ import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
-import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.core.service.UploadRequestService;
-import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +75,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	private final AbstractDomainService abstractDomainService;
 	private final UserService userService;
 	private final UploadRequestService uploadRequestService;
+	private final UploadRequestUrlService uploadRequestUrlService;
 	private final DocumentEntryService documentEntryService;
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
@@ -86,11 +83,13 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 			final AbstractDomainService abstractDomainService,
 			final UserService userService,
 			final UploadRequestService uploadRequestService,
+			final UploadRequestUrlService uploadRequestUrlService,
 			final DocumentEntryService documentEntryService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService) {
 		this.abstractDomainService = abstractDomainService;
 		this.userService = userService;
 		this.uploadRequestService = uploadRequestService;
+		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.documentEntryService = documentEntryService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
@@ -146,13 +145,8 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 
 		e.setActivationDate(new Date()); // FIXME handle activationDate
 		e.setUploadRequestGroup(grp);
-		e = uploadRequestService.createRequest(actor, e,
-				new Contact(req.getRecipient()));
+		uploadRequestUrlService.create(e, new Contact(req.getRecipient()));
 
-		/*
-		 * FIXME handle activationDate FIXME handle status enabled
-		 */
-		e.updateStatus(UploadRequestStatus.STATUS_ENABLED);
 		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
 	}
 

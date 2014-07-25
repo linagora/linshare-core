@@ -37,9 +37,13 @@ package org.linagora.linshare.core.service.impl;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.*;
@@ -57,9 +61,11 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 
 	private final UploadRequestUrlBusinessService uploadRequestUrlBusinessService;
 
-	private final UploadRequestService uploadRequestService;
+	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
 
 	private final AccountRepository<Account> accountRepository;
+
+	private final DomainPermissionBusinessService domainPermissionBusinessService;
 
 	private final DocumentEntryService documentEntryService;
 
@@ -69,15 +75,17 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 
 	public UploadRequestUrlServiceImpl(
 			final UploadRequestUrlBusinessService uploadRequestUrlBusinessService,
-			final UploadRequestService uploadRequestService,
+			final UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
 			final AccountRepository<Account> accountRepository,
+			final DomainPermissionBusinessService domainPermissionBusinessService,
 			final DocumentEntryService documentEntryService,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService) {
 		super();
 		this.uploadRequestUrlBusinessService = uploadRequestUrlBusinessService;
-		this.uploadRequestService = uploadRequestService;
+		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.accountRepository = accountRepository;
+		this.domainPermissionBusinessService = domainPermissionBusinessService;
 		this.documentEntryService = documentEntryService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
@@ -99,19 +107,43 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	}
 
 	@Override
+	public List<UploadRequestUrl> create(UploadRequest request, Contact contact) throws BusinessException {
+		return this.create(request, Lists.newArrayList(contact));
+	}
+
+	@Override
+	public List<UploadRequestUrl> create(UploadRequest request, List<Contact> contacts) throws BusinessException {
+		List<MailContainerWithRecipient> mails = Lists.newArrayList();
+		List<UploadRequestUrl> list = Lists.newArrayList();
+		for (Contact contact : contacts) {
+			UploadRequestUrl uploadRequestUrl = uploadRequestUrlBusinessService.create(request, false, contact);
+			list.add(uploadRequestUrl);
+			mails.add(mailBuildingService.buildNewUploadRequest((User) request.getOwner(), uploadRequestUrl));
+		}
+		return list;
+	}
+
+	@Override
 	public UploadRequestUrl close(String uuid, String password)
 			throws BusinessException {
 		UploadRequestUrl url = find(uuid, password);
 		// if it is already close.
-		if (url.getUploadRequest().getStatus()
+		UploadRequest request = url.getUploadRequest();
+		if (request.getStatus()
 				.equals(UploadRequestStatus.STATUS_CLOSED)) {
 			logger.warn("Closing an already closed upload request url : " + uuid);
 			return url;
 		}
 		Account actor = accountRepository.getUploadRequestSystemAccount();
-		uploadRequestService.setStatusToClosed(actor, url.getUploadRequest());
-		url = find(uuid, password);
-		MailContainerWithRecipient mail = mailBuildingService.buildCloseUploadRequestByRecipient((User) url.getUploadRequest().getOwner(), url);
+
+		if (!domainPermissionBusinessService.isAdminForThisUploadRequest(actor, request)) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					"you do not have the right to close this upload request url : "
+							+ request.getUuid());
+		}
+		request.updateStatus(UploadRequestStatus.STATUS_CLOSED);
+		url = uploadRequestUrlBusinessService.update(url);
+		MailContainerWithRecipient mail = mailBuildingService.buildCloseUploadRequestByRecipient((User) request.getOwner(), url);
 		notifierService.sendAllNotification(mail);
 		return url;
 	}
@@ -131,13 +163,12 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 			}
 		}
 		if (found != null) {
-			Account actor = accountRepository.getUploadRequestSystemAccount();
 			String documentEntryUuid = null;
 			if (found.getDocumentEntry() != null) {
 				documentEntryUuid = found.getDocumentEntry().getUuid();
 			}
 			found.setDocumentEntry(null);
-			uploadRequestService.updateRequestEntry(actor, found);
+			found = uploadRequestEntryBusinessService.update(found);
 			if (documentEntryUuid != null) {
 				// TODO: HOOK : Extract owner for upload request URL
 				// Actor should be used instead of owner
@@ -146,7 +177,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 				DocumentEntry documentEntry = documentEntryService.findById(owner, documentEntryUuid);
 				documentEntryService.deleteDocumentEntry(owner, documentEntry);
 			}
-			uploadRequestService.deleteRequestEntry(actor, found);
+			uploadRequestEntryBusinessService.delete(found);
 		} else {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"You do not have the right to delete a file into upload request : "
@@ -170,8 +201,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		// Create the link between the document and the upload request URL.
 		UploadRequestEntry uploadRequestEntry = new UploadRequestEntry(
 				document, requestUrl.getUploadRequest());
-		UploadRequestEntry requestEntry = uploadRequestService.createRequestEntry(actor,
-				uploadRequestEntry);
+		UploadRequestEntry requestEntry = uploadRequestEntryBusinessService.create(uploadRequestEntry);
 		MailContainerWithRecipient mail = mailBuildingService.buildAckUploadRequest((User) requestUrl.getUploadRequest().getOwner(), requestUrl, requestEntry);
 		notifierService.sendAllNotification(mail);
 		return requestEntry;

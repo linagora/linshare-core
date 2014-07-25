@@ -43,7 +43,6 @@ import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
@@ -52,9 +51,9 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UploadPropositionService;
 import org.linagora.linshare.core.service.UploadRequestService;
+import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,27 +64,27 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			.getLogger(UploadPropositionServiceImpl.class);
 
 
-	final private UploadPropositionBusinessService uploadPropositionBusinessService;
+	private final UploadPropositionBusinessService uploadPropositionBusinessService;
 
-	final private DomainBusinessService domainBusinessService;
+	private final DomainBusinessService domainBusinessService;
 
-	final private UploadRequestService uploadRequestService;
+	private final UploadRequestService uploadRequestService;
 
-	final private AccountRepository<Account> accountRepository;
+	private final UploadRequestUrlService uploadRequestUrlService;
 
-	final private UserService userService;
+	private final UserService userService;
 
 	public UploadPropositionServiceImpl(
 			final UploadPropositionBusinessService uploadPropositionBusinessService,
 			final DomainBusinessService domainBusinessService,
 			final UploadRequestService uploadRequestService,
-			final AccountRepository<Account> accountRepository,
+			final UploadRequestUrlService uploadRequestUrlService,
 			final UserService userService) {
 		super();
 		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
 		this.domainBusinessService = domainBusinessService;
 		this.uploadRequestService = uploadRequestService;
-		this.accountRepository = accountRepository;
+		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.userService = userService;
 	}
 
@@ -143,10 +142,8 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			e.setSecured(true);
 
 			Contact contact = new Contact(proposition.getRecipientMail());
-			e = uploadRequestService.createRequest(owner, e, contact);
-
-			e.updateStatus(UploadRequestStatus.STATUS_ENABLED); // TODO
-			uploadRequestService.updateRequest(owner, e);
+			e = uploadRequestService.createRequest(owner, e);
+			uploadRequestUrlService.create(e, contact);
 		} else {
 			created = uploadPropositionBusinessService.create(proposition);
 		}

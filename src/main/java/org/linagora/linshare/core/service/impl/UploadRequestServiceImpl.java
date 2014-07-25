@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -43,20 +42,15 @@ import java.util.Set;
 import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
-import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestHistoryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestTemplateBusinessService;
-import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
 import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Contact;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
@@ -64,7 +58,6 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestService;
@@ -73,35 +66,26 @@ import com.google.common.collect.Lists;
 
 public class UploadRequestServiceImpl implements UploadRequestService {
 
-	private final AbstractDomainService abstractDomainService;
 	private final UploadRequestBusinessService uploadRequestBusinessService;
-	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
 	private final UploadRequestGroupBusinessService uploadRequestGroupBusinessService;
 	private final UploadRequestHistoryBusinessService uploadRequestHistoryBusinessService;
 	private final UploadRequestTemplateBusinessService uploadRequestTemplateBusinessService;
-	private final UploadRequestUrlBusinessService uploadRequestUrlBusinessService;
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
 	private final MailBuildingService mailBuildingService;
 	private final NotifierService notifierService;
 
 	public UploadRequestServiceImpl(
-			final AbstractDomainService abstractDomainService,
 			final UploadRequestBusinessService uploadRequestBusinessService,
-			final UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
 			final UploadRequestGroupBusinessService uploadRequestGroupBusinessService,
 			final UploadRequestHistoryBusinessService uploadRequestHistoryBusinessService,
 			final UploadRequestTemplateBusinessService uploadRequestTemplateBusinessService,
-			final UploadRequestUrlBusinessService uploadRequestUrlBusinessService,
 			final DomainPermissionBusinessService domainPermissionBusinessService,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService) {
-		this.abstractDomainService = abstractDomainService;
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
-		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
 		this.uploadRequestHistoryBusinessService = uploadRequestHistoryBusinessService;
 		this.uploadRequestTemplateBusinessService = uploadRequestTemplateBusinessService;
-		this.uploadRequestUrlBusinessService = uploadRequestUrlBusinessService;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
@@ -126,41 +110,21 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequest createRequest(Account actor, UploadRequest req,
-			Contact contact) throws BusinessException {
-		return this.createRequest(actor, req, Lists.newArrayList(contact));
-	}
-
-	@Override
-	public UploadRequest createRequest(Account actor, UploadRequest req, List<Contact> contacts)
+	public UploadRequest createRequest(Account actor, UploadRequest req)
 			throws BusinessException {
 		req.setStatus(UploadRequestStatus.STATUS_CREATED);
-
 		UploadRequestHistory hist = new UploadRequestHistory(req,
 				UploadRequestHistoryEventType.EVENT_CREATED);
-
 		req.getUploadRequestHistory().add(hist);
 		req.setOwner(actor);
 		req.setAbstractDomain(actor.getDomain());
-		// FIXME fma
-		// HOOK
-		UploadRequest request = uploadRequestBusinessService.create(req);
-
-		// Dirty. :(
-		MailContainer mailContainer = new MailContainer(
-				actor.getExternalMailLocale());
-		for (Contact contact : contacts) {
-			UploadRequestUrl uploadRequestUrl = uploadRequestUrlBusinessService.create(request, false, contact);
-			MailContainerWithRecipient buildNewUploadRequest = mailBuildingService.buildNewUploadRequest((User)actor, uploadRequestUrl);
-			notifierService.sendAllNotification(buildNewUploadRequest);
-		}
-		return request;
+		return uploadRequestBusinessService.create(req);
 	}
 
 	@Override
 	public UploadRequest updateRequest(User actor, UploadRequest req)
 			throws BusinessException {
-		UploadRequestHistory last = (UploadRequestHistory) Collections
+		UploadRequestHistory last = Collections
 				.max(Lists.newArrayList(req.getUploadRequestHistory()));
 		UploadRequestHistory hist = new UploadRequestHistory(req,
 				UploadRequestHistoryEventType.fromStatus(req.getStatus()),
@@ -184,7 +148,15 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	@Override
 	public UploadRequestGroup createRequestGroup(Account actor,
 			UploadRequestGroup group) throws BusinessException {
-		return uploadRequestGroupBusinessService.create(group);
+		UploadRequestGroup requestGroup = uploadRequestGroupBusinessService.create(group);
+		List<MailContainerWithRecipient> mails = Lists.newArrayList();
+		for (UploadRequest request : requestGroup.getUploadRequests()) {
+			for (UploadRequestUrl url : request.getUploadRequestURLs()) {
+				mails.add(mailBuildingService.buildCreateUploadRequest((User) request.getOwner(), url));
+			}
+		}
+		notifierService.sendAllNotifications(mails);
+		return requestGroup;
 	}
 
 	@Override
@@ -204,9 +176,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 			String uploadRequestUuid) throws BusinessException {
 		UploadRequest request = findRequestByUuid(actor, uploadRequestUuid);
 
-		if (!(domainPermissionBusinessService.isAdminforThisDomain(actor,
-				request.getAbstractDomain()) || actor
-				.equals(request.getOwner()))) {
+		if (!domainPermissionBusinessService.isAdminForThisUploadRequest(actor, request)) {
 			throw new BusinessException(
 					BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
 					"Upload request history search forbidden");
@@ -283,78 +253,5 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	public void deleteRequestTemplate(User actor, UploadRequestTemplate template)
 			throws BusinessException {
 		uploadRequestTemplateBusinessService.delete(template);
-	}
-
-	@Override
-	public UploadRequestUrl findRequestUrlByUuid(User actor, String uuid) {
-		return uploadRequestUrlBusinessService.findByUuid(uuid);
-	}
-
-//	@Override
-//	public UploadRequestUrl createRequestUrl(User actor, UploadRequestUrl url)
-//			throws BusinessException {
-//		return uploadRequestUrlBusinessService.create(url);
-//	}
-
-	@Override
-	public UploadRequestUrl updateRequestUrl(User actor, UploadRequestUrl url)
-			throws BusinessException {
-		return uploadRequestUrlBusinessService.update(url);
-	}
-
-	@Override
-	public void deleteRequestUrl(User actor, UploadRequestUrl url)
-			throws BusinessException {
-		uploadRequestUrlBusinessService.delete(url);
-	}
-
-	@Override
-	public UploadRequestEntry findRequestEntryByUuid(Account actor, String uuid) {
-		return uploadRequestEntryBusinessService.findByUuid(uuid);
-	}
-
-	@Override
-	public UploadRequestEntry createRequestEntry(Account actor,
-			UploadRequestEntry entry) throws BusinessException {
-		return uploadRequestEntryBusinessService.create(entry);
-	}
-
-	@Override
-	public UploadRequestEntry updateRequestEntry(Account actor,
-			UploadRequestEntry entry) throws BusinessException {
-		return uploadRequestEntryBusinessService.update(entry);
-	}
-
-	@Override
-	public void deleteRequestEntry(Account actor, UploadRequestEntry entry)
-			throws BusinessException {
-		uploadRequestEntryBusinessService.delete(entry);
-	}
-
-	/**
-	 * business methods.
-	 */
-
-	@Override
-	public UploadRequest setStatusToClosed(Account actor, UploadRequest req)
-			throws BusinessException {
-		// TODO : notifications, log history
-		if (actor.hasSystemAccountRole() || actor.equals(req.getOwner())
-				|| actor.hasSuperAdminRole()) {
-			req.updateStatus(UploadRequestStatus.STATUS_CLOSED);
-			// FIXME : it works without updating the entity. It does not work if
-			// we do. ! :(
-			// uploadRequestBusinessService.update(req);
-			// UploadRequestHistory history = createRequestHistory(actor, new
-			// UploadRequestHistory(req,
-			// UploadRequestHistoryEventType.EVENT_CLOSED, true));
-			// req.getUploadRequestHistory().add(history);
-			// uploadRequestBusinessService.update(req);
-			return req;
-		} else {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-					"you do not have the right to close this upload request url : "
-							+ req.getUuid());
-		}
 	}
 }

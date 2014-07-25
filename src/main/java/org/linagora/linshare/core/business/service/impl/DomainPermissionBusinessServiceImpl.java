@@ -37,10 +37,7 @@ package org.linagora.linshare.core.business.service.impl;
 import com.google.common.collect.Lists;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.*;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +83,12 @@ public class DomainPermissionBusinessServiceImpl implements
 	}
 
 	@Override
+	public boolean isAdminForThisUploadRequest(Account actor, UploadRequest request) {
+		return isAdminforThisDomain(actor, request.getAbstractDomain())
+				|| isOwner(actor, request);
+	}
+
+	@Override
 	public List<AbstractDomain> getMyAdministredDomains(Account actor) {
 		if (!(actor.hasAdminRole() || actor.hasSuperAdminRole())) {
 			return Lists.newArrayList();
@@ -103,9 +106,10 @@ public class DomainPermissionBusinessServiceImpl implements
 	}
 
 	private boolean isOwner(Account actor, User guest) {
-		if (guest instanceof Guest) {
-			return guest.getOwner().equals(actor);
-		}
-		return false;
+		return guest instanceof Guest && guest.getOwner().equals(actor);
+	}
+
+	private boolean isOwner(Account actor, UploadRequest request) {
+		return request.getOwner().equals(actor);
 	}
 }
