@@ -132,7 +132,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		    logEntryService.create(logEntry);
 		}
 
-		notifierService.sendAllNotification(mailContentBuildingService.buildMailNewSharingWithRecipient(mailContainer, anonymousUrl, sender));
+		notifierService.sendNotification(mailContentBuildingService.buildMailNewSharingWithRecipient(mailContainer, anonymousUrl, sender));
 
 
 		List<AnonymousShareEntry> anonymousShareEntries = new ArrayList<AnonymousShareEntry>(anonymousUrl.getAnonymousShareEntries());
@@ -174,7 +174,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		logEntryService.create(logEntry);
 
 		// TODO : anonymous share deletion notification
-		// notifierService.sendAllNotification();
+		// notifierService.sendNotification();
 	}
 
 
@@ -197,7 +197,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		}
 		try {
 			//send a notification by mail to the owner
-			notifierService.sendAllNotification(mailContentBuildingService.buildMailAnonymousDownload(shareEntry));
+			notifierService.sendNotification(mailContentBuildingService.buildMailAnonymousDownload(shareEntry));
 		} catch (BusinessException e) {
 			// TODO : FIXME : send the notification to the domain administration address. => a new functionality need to be add. 
 			if(e.getErrorCode().equals(BusinessErrorCode.RELAY_HOST_NOT_ENABLE)) {
@@ -221,7 +221,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 	@Override
 	public void sendDocumentEntryUpdateNotification(AnonymousShareEntry anonymousShareEntry, String friendlySize, String originalFileName) {
 		try {
-			notifierService.sendAllNotification(mailContentBuildingService.buildMailSharedDocumentUpdated(anonymousShareEntry, originalFileName, friendlySize));
+			notifierService.sendNotification(mailContentBuildingService.buildMailSharedDocumentUpdated(anonymousShareEntry, originalFileName, friendlySize));
 		} catch (BusinessException e) {
 			logger.error("Error while trying to notify document update ", e);
 		}
@@ -231,7 +231,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 	@Override
 	public void sendUpcomingOutdatedShareEntryNotification(SystemAccount actor, AnonymousShareEntry shareEntry, Integer days) {
 		try {
-			notifierService.sendAllNotification(mailContentBuildingService.buildMailUpcomingOutdatedShare(shareEntry, days));
+			notifierService.sendNotification(mailContentBuildingService.buildMailUpcomingOutdatedShare(shareEntry, days));
 		} catch (BusinessException e) {
 			logger.error("Error while trying to notify upcoming outdated share", e);
 		}

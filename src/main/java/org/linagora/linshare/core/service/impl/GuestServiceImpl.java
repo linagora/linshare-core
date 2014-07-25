@@ -149,7 +149,7 @@ public class GuestServiceImpl implements GuestService {
 				guestDomain, expiryDate);
 		MailContainerWithRecipient mail = mailBuildingService.buildNewGuest(
 				owner, create.getGuest(), create.getPassword());
-		notifierService.sendAllNotification(mail);
+		notifierService.sendNotification(mail);
 		return create.getGuest();
 	}
 
@@ -223,7 +223,7 @@ public class GuestServiceImpl implements GuestService {
 		GuestWithMetadata update = guestBusinessService.resetPassword(guest);
 		MailContainerWithRecipient mail = mailBuildingService
 				.buildResetPassword(update.getGuest(), update.getPassword());
-		notifierService.sendAllNotification(mail);
+		notifierService.sendNotification(mail);
 	}
 
 	/**

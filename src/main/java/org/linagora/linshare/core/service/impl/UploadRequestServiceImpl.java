@@ -33,12 +33,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
@@ -49,6 +44,7 @@ import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
@@ -58,34 +54,46 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestService;
+import org.linagora.linshare.core.service.UploadRequestUrlService;
 
-import com.google.common.collect.Lists;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class UploadRequestServiceImpl implements UploadRequestService {
 
+	private final AccountRepository<Account> accountRepository;
 	private final UploadRequestBusinessService uploadRequestBusinessService;
 	private final UploadRequestGroupBusinessService uploadRequestGroupBusinessService;
 	private final UploadRequestHistoryBusinessService uploadRequestHistoryBusinessService;
 	private final UploadRequestTemplateBusinessService uploadRequestTemplateBusinessService;
+	private final UploadRequestUrlService uploadRequestUrlService;
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
 	private final MailBuildingService mailBuildingService;
 	private final NotifierService notifierService;
 
 	public UploadRequestServiceImpl(
+			final AccountRepository<Account> accountRepository,
 			final UploadRequestBusinessService uploadRequestBusinessService,
 			final UploadRequestGroupBusinessService uploadRequestGroupBusinessService,
 			final UploadRequestHistoryBusinessService uploadRequestHistoryBusinessService,
 			final UploadRequestTemplateBusinessService uploadRequestTemplateBusinessService,
+			final UploadRequestUrlService uploadRequestUrlService,
 			final DomainPermissionBusinessService domainPermissionBusinessService,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService) {
+		this.accountRepository = accountRepository;
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
 		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
 		this.uploadRequestHistoryBusinessService = uploadRequestHistoryBusinessService;
 		this.uploadRequestTemplateBusinessService = uploadRequestTemplateBusinessService;
+		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
@@ -110,7 +118,11 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequest createRequest(Account actor, UploadRequest req)
+	public UploadRequest createRequest(Account actor, UploadRequest req, Contact contact) throws BusinessException {
+		return createRequest(actor, req, Lists.newArrayList(contact));
+	}
+	@Override
+	public UploadRequest createRequest(Account actor, UploadRequest req, List<Contact> contacts)
 			throws BusinessException {
 		req.setStatus(UploadRequestStatus.STATUS_CREATED);
 		UploadRequestHistory hist = new UploadRequestHistory(req,
@@ -118,30 +130,56 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 		req.getUploadRequestHistory().add(hist);
 		req.setOwner(actor);
 		req.setAbstractDomain(actor.getDomain());
-		return uploadRequestBusinessService.create(req);
+		req = uploadRequestBusinessService.create(req);
+		List<MailContainerWithRecipient> mails = Lists.newArrayList();
+		for (Contact c: contacts) {
+			UploadRequestUrl requestUrl = uploadRequestUrlService.create(req, c);
+			mails.add(mailBuildingService.buildNewUploadRequest((User) req.getOwner(), requestUrl));
+		}
+		notifierService.sendNotification(mails);
+		return req;
 	}
 
 	@Override
-	public UploadRequest updateRequest(User actor, UploadRequest req)
+	public UploadRequest updateRequest(Account actor, UploadRequest req)
 			throws BusinessException {
 		UploadRequestHistory last = Collections
 				.max(Lists.newArrayList(req.getUploadRequestHistory()));
 		UploadRequestHistory hist = new UploadRequestHistory(req,
 				UploadRequestHistoryEventType.fromStatus(req.getStatus()),
 				!last.getStatus().equals(req.getStatus()));
-
 		req.getUploadRequestHistory().add(hist);
 		return uploadRequestBusinessService.update(req);
 	}
 
 	@Override
-	public void deleteRequest(User actor, UploadRequest req)
+	public UploadRequest closeRequestByRecipient(UploadRequestUrl url) throws BusinessException {
+		Account actor = accountRepository.getUploadRequestSystemAccount();
+		UploadRequest req = url.getUploadRequest();
+		if (req.getStatus().equals(UploadRequestStatus.STATUS_CLOSED)) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					"Closing an already closed upload request url : " + req.getUuid());
+		}
+		if (!domainPermissionBusinessService.isAdminForThisUploadRequest(actor, req)) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					"you do not have the right to close this upload request url : "
+							+ req.getUuid());
+		}
+		req.updateStatus(UploadRequestStatus.STATUS_CLOSED);
+		UploadRequest update = updateRequest(actor, req);
+		MailContainerWithRecipient mail = mailBuildingService.buildCloseUploadRequestByRecipient((User) req.getOwner(), url);
+		notifierService.sendNotification(mail);
+		return update;
+	}
+
+	@Override
+	public void deleteRequest(Account actor, UploadRequest req)
 			throws BusinessException {
 		uploadRequestBusinessService.delete(req);
 	}
 
 	@Override
-	public UploadRequestGroup findRequestGroupByUuid(User actor, String uuid) {
+	public UploadRequestGroup findRequestGroupByUuid(Account actor, String uuid) {
 		return uploadRequestGroupBusinessService.findByUuid(uuid);
 	}
 
@@ -155,18 +193,18 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 				mails.add(mailBuildingService.buildCreateUploadRequest((User) request.getOwner(), url));
 			}
 		}
-		notifierService.sendAllNotifications(mails);
+		notifierService.sendNotification(mails);
 		return requestGroup;
 	}
 
 	@Override
-	public UploadRequestGroup updateRequestGroup(User actor,
+	public UploadRequestGroup updateRequestGroup(Account actor,
 			UploadRequestGroup group) throws BusinessException {
 		return uploadRequestGroupBusinessService.update(group);
 	}
 
 	@Override
-	public void deleteRequestGroup(User actor, UploadRequestGroup group)
+	public void deleteRequestGroup(Account actor, UploadRequestGroup group)
 			throws BusinessException {
 		uploadRequestGroupBusinessService.delete(group);
 	}
@@ -209,7 +247,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequestHistory findRequestHistoryByUuid(User actor, String uuid) {
+	public UploadRequestHistory findRequestHistoryByUuid(Account actor, String uuid) {
 		return uploadRequestHistoryBusinessService.findByUuid(uuid);
 	}
 
@@ -220,37 +258,37 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequestHistory updateRequestHistory(User actor,
+	public UploadRequestHistory updateRequestHistory(Account actor,
 			UploadRequestHistory history) throws BusinessException {
 		return uploadRequestHistoryBusinessService.update(history);
 	}
 
 	@Override
-	public void deleteRequestHistory(User actor, UploadRequestHistory history)
+	public void deleteRequestHistory(Account actor, UploadRequestHistory history)
 			throws BusinessException {
 		uploadRequestHistoryBusinessService.delete(history);
 	}
 
 	@Override
-	public UploadRequestTemplate findRequestTemplateByUuid(User actor,
+	public UploadRequestTemplate findRequestTemplateByUuid(Account actor,
 			String uuid) {
 		return uploadRequestTemplateBusinessService.findByUuid(uuid);
 	}
 
 	@Override
-	public UploadRequestTemplate createRequestTemplate(User actor,
+	public UploadRequestTemplate createRequestTemplate(Account actor,
 			UploadRequestTemplate template) throws BusinessException {
 		return uploadRequestTemplateBusinessService.create(template);
 	}
 
 	@Override
-	public UploadRequestTemplate updateRequestTemplate(User actor,
+	public UploadRequestTemplate updateRequestTemplate(Account actor,
 			UploadRequestTemplate template) throws BusinessException {
 		return uploadRequestTemplateBusinessService.update(template);
 	}
 
 	@Override
-	public void deleteRequestTemplate(User actor, UploadRequestTemplate template)
+	public void deleteRequestTemplate(Account actor, UploadRequestTemplate template)
 			throws BusinessException {
 		uploadRequestTemplateBusinessService.delete(template);
 	}

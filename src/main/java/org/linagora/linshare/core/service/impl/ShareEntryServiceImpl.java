@@ -184,7 +184,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			shareEntryBusinessService.deleteShare(share);
 
 			if (share.getEntryOwner().equals(actor) || actor.hasSuperAdminRole() || actor.hasSystemAccountRole()) {
-				notifierService.sendAllNotification(mailContentBuildingService.buildMailSharedFileDeletedWithRecipient(
+				notifierService.sendNotification(mailContentBuildingService.buildMailSharedFileDeletedWithRecipient(
 						actor, share));
 			}
 
@@ -242,7 +242,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			logger.info("delete share : " + share.getUuid());
 
 			if (share.getDownloaded() < 1) {
-				notifierService.sendAllNotification(mailContentBuildingService.buildMailRegisteredDownloadWithOneRecipient(share));
+				notifierService.sendNotification(mailContentBuildingService.buildMailRegisteredDownloadWithOneRecipient(share));
 			}
 			shareEntryBusinessService.deleteShare(share);
 
@@ -350,7 +350,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	@Override
 	public void sendDocumentEntryUpdateNotification(ShareEntry shareEntry, String friendlySize, String originalFileName) {
 		try {
-			notifierService.sendAllNotification(mailContentBuildingService.buildMailSharedDocumentUpdated(shareEntry, originalFileName, friendlySize));
+			notifierService.sendNotification(mailContentBuildingService.buildMailSharedDocumentUpdated(shareEntry, originalFileName, friendlySize));
 		} catch (BusinessException e) {
 			logger.error("Error while trying to notify document update ", e);
 		}
@@ -360,7 +360,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	@Override
 	public void sendUpcomingOutdatedShareEntryNotification(SystemAccount actor, ShareEntry shareEntry, Integer days) {
 		try {
-			notifierService.sendAllNotification(mailContentBuildingService.buildMailUpcomingOutdatedShare(shareEntry, days));
+			notifierService.sendNotification(mailContentBuildingService.buildMailUpcomingOutdatedShare(shareEntry, days));
 		} catch (BusinessException e) {
 			logger.error("Error while trying to notify upcoming outdated share", e);
 		}

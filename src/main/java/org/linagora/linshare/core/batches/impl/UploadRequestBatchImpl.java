@@ -107,7 +107,7 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 			}
 		}
 		try {
-			notifierService.sendAllNotifications(notifications);
+			notifierService.sendNotification(notifications);
 		} catch (BusinessException e) {
 			logger.error("Unable to send upload request status notifications");
 		}

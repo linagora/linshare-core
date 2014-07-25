@@ -36,7 +36,6 @@ package org.linagora.linshare.core.service.impl;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Properties;
@@ -54,6 +53,8 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -294,21 +295,21 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 * Send multiple notifications giving a mailContainerWithRecipient object.
 	 */	
 	@Override
-	public void sendAllNotifications(List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException {
-		
-		if(mailContainerWithRecipient != null) { 
-			
-			List<String> unknownRecipients = new ArrayList<String>();	
-			
+	public void sendNotification(List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException {
+		if(CollectionUtils.isNotEmpty(mailContainerWithRecipient)) {
+			List<String> unknownRecipients = Lists.newArrayList();
 			for (MailContainerWithRecipient mailContainer : mailContainerWithRecipient) {
 				try {
-					sendNotification(mailContainer.getFrom(), mailContainer.getReplyTo(), mailContainer.getRecipient(), mailContainer);
+					if (mailContainer.getRecipient() == null) {
+						logger.error("can not send mails, no recipient");
+					} else {
+						sendNotification(mailContainer.getFrom(), mailContainer.getReplyTo(), mailContainer.getRecipient(), mailContainer);
+					}
 				} catch (SendFailedException e) {
 					unknownRecipients.add(mailContainer.getRecipient());
 					logger.debug(e.toString());
 				}
 			}
-			
 			if(!unknownRecipients.isEmpty()){
 				logger.error("Addresses unreachables : " + unknownRecipients.toString());
 				throw new BusinessException(BusinessErrorCode.RELAY_HOST_NOT_ENABLE, "Address Unreachable", unknownRecipients);
@@ -320,20 +321,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	
 	
 	@Override
-	public void sendAllNotification(MailContainerWithRecipient mailContainer) throws BusinessException {
-		if(mailContainer== null) { 
-			logger.error("can not send mails, input container empty");
-		} else if (mailContainer.getRecipient() == null) {
-			logger.error("can not send mails, no recipient");
-		} else {
-			try {
-				sendNotification(mailContainer.getFrom(), mailContainer.getReplyTo(), mailContainer.getRecipient(), mailContainer);
-			} catch (SendFailedException e) {
-				logger.error("Addresses unreachables : " + mailContainer.getRecipient());
-				throw new BusinessException(BusinessErrorCode.RELAY_HOST_NOT_ENABLE, "Address Unreachable " + mailContainer.getRecipient());
-			}
-		}
-	}	
-
-
+	public void sendNotification(MailContainerWithRecipient mailContainer) throws BusinessException {
+		this.sendNotification(Lists.newArrayList(mailContainer));
+	}
 }

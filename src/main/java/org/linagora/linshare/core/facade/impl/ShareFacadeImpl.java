@@ -206,7 +206,7 @@ public class ShareFacadeImpl implements ShareFacade {
 
 		}
 
-		notifierService.sendAllNotifications(mailContainerWithRecipient);
+		notifierService.sendNotification(mailContainerWithRecipient);
 		logger.debug("createSharingWithMail:End");
 		return result;
 	}
@@ -438,7 +438,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			// send a notification by mail to the owner
 			ShareEntry shareEntry = shareEntryService.findByUuid(user,
 					sharedDocument.getIdentifier());
-			notifierService.sendAllNotification(mailElementsFactory
+			notifierService.sendNotification(mailElementsFactory
 					.buildMailRegisteredDownloadWithOneRecipient(shareEntry));
 		} catch (BusinessException e) {
 			// TODO : FIXME : send the notification to the domain administration

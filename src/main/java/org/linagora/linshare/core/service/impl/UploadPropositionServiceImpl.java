@@ -142,8 +142,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			e.setSecured(true);
 
 			Contact contact = new Contact(proposition.getRecipientMail());
-			e = uploadRequestService.createRequest(owner, e);
-			uploadRequestUrlService.create(e, contact);
+			uploadRequestService.createRequest(owner, e, contact);
 		} else {
 			created = uploadPropositionBusinessService.create(proposition);
 		}

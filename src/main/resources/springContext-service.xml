@@ -254,10 +254,12 @@
 	</bean>
 
 	<bean name="uploadRequestService" class="org.linagora.linshare.core.service.impl.UploadRequestServiceImpl">
+		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="uploadRequestBusinessService" />
 		<constructor-arg ref="uploadRequestGroupBusinessService" />
 		<constructor-arg ref="uploadRequestHistoryBusinessService" />
 		<constructor-arg ref="uploadRequestTemplateBusinessService" />
+		<constructor-arg ref="uploadRequestUrlService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
@@ -296,7 +298,6 @@
 		<constructor-arg ref="uploadRequestUrlBusinessService" />
 		<constructor-arg ref="uploadRequestEntryBusinessService" />
 		<constructor-arg ref="accountRepository" />
-		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />

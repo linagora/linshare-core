@@ -173,7 +173,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
 		mailContainerWithRecipientList.add(mailContainerWithRecipient);
 		mailContainerWithRecipientList.add(mailContainerWithRecipient2);
 		
-		mailNotifierService.sendAllNotifications(mailContainerWithRecipientList);
+		mailNotifierService.sendNotification(mailContainerWithRecipientList);
     	
         if (wiser.getMessages().size() > 0) {
             WiserMessage wMsg = wiser.getMessages().get(0);
@@ -205,7 +205,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
         
         mailContainerWithRecipientList.get(0).setReplyTo(fromUser);
         mailContainerWithRecipientList.get(1).setReplyTo(fromUser);
-		mailNotifierService.sendAllNotifications(mailContainerWithRecipientList);
+		mailNotifierService.sendNotification(mailContainerWithRecipientList);
     	
         if (wiser.getMessages().size() > 0) {
             WiserMessage wMsg = wiser.getMessages().get(2);

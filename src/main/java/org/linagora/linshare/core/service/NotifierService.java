@@ -75,8 +75,8 @@ public interface NotifierService {
      * @param mailContainerWithRecipient list of mail containers attached to recipients
      * @throws BusinessException 
      */
-    public void sendAllNotifications(List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException;
+    public void sendNotification(List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException;
     
-    public void sendAllNotification(MailContainerWithRecipient mailContainerWithRecipient) throws BusinessException;
+    public void sendNotification(MailContainerWithRecipient mailContainerWithRecipient) throws BusinessException;
   
 }

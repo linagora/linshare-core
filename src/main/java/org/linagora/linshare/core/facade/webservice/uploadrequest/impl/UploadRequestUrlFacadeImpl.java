@@ -34,9 +34,6 @@
 
 package org.linagora.linshare.core.facade.webservice.uploadrequest.impl;
 
-import java.io.InputStream;
-import java.util.Set;
-
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MimeType;
@@ -46,9 +43,15 @@ import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestU
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
 import org.linagora.linshare.core.service.MimePolicyService;
+import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 
+import java.io.InputStream;
+import java.util.Set;
+
 public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
+
+	private final UploadRequestService uploadRequestService;
 
 	private final UploadRequestUrlService uploadRequestUrlService;
 
@@ -56,8 +59,10 @@ public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 
 
 	public UploadRequestUrlFacadeImpl(
+			final UploadRequestService uploadRequestService,
 			final UploadRequestUrlService uploadRequestUrlService,
 			final MimePolicyService mimePolicyService) {
+		this.uploadRequestService = uploadRequestService;
 		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.mimePolicyService = mimePolicyService;
 	}
@@ -74,7 +79,9 @@ public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 	public UploadRequestDto close(String uuid, String password)
 			throws BusinessException {
 		Validate.notEmpty(uuid);
-		return transform(uploadRequestUrlService.close(uuid, password));
+		UploadRequestUrl url = uploadRequestUrlService.find(uuid, password);
+		uploadRequestService.closeRequestByRecipient(url);
+		return transform(uploadRequestUrlService.find(uuid, password));
 	}
 
 	@Override
