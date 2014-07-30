@@ -34,3 +34,25 @@ After the restart of tomcat, you need to reconfigure the way LinShare gathers da
 You should create a new model parttern and backport your configuration (filters, fields) to the new one.
 
 Then you must edit all your domains to use this new domain pattern.
+
+
+### From 1.5.x to 1.6.x
+
+The LinShare 1.6.0 is the first release of LinShare without the administration UI.
+Now it is a standalone application built using AngularJS. This new application is called
+linshare-ui-admin (2.0.0), store in a dedicated repository.
+The deployment is a little bit more complicated, you need a new Apache virtual host for this new
+ application like below :
+
+<VirtualHost *:443>
+	...
+	ServerName linshare-admin.yourdomain.com
+	<Location /linshare>
+		ProxyPass http://127.0.0.1:8080/linshare/webservice/rest/admin
+		ProxyPassReverse http://127.0.0.1:8080/linshare/webservice/rest/admin
+	</Location>
+	DocumentRoot /var/www/linshare-ui-admin-2.0.0
+	...
+</VirtualHost>
+
+Look at the quick install guide for more informations.
