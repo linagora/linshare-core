@@ -468,7 +468,13 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		String uuidThmb = null;
 		if (fileResource != null) {
 			try {
-				bufferedImage = fileResource.generateThumbnailImage();
+				
+				try {
+					bufferedImage = fileResource.generateThumbnailImage();
+				} catch (Exception e) {
+					logger.error(e.getLocalizedMessage());
+					logger.debug(e.toString());
+				}
 				if (bufferedImage != null) {
 					fisThmb = ImageUtils.getInputStreamFromImage(bufferedImage, "png");
 					tempThumbFile = File.createTempFile("linthumbnail", fileName+"_thumb.png");
