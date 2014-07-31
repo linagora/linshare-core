@@ -73,11 +73,11 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 
 	private final NotifierService notifierService;
 
-    private final MailContentBuildingService mailContentBuildingService;
+	private final MailContentBuildingService mailContentBuildingService;
 
-    private final DocumentEntryBusinessService documentEntryBusinessService;
+	private final DocumentEntryBusinessService documentEntryBusinessService;
 
-    private static final Logger logger = LoggerFactory.getLogger(AnonymousShareEntryServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(AnonymousShareEntryServiceImpl.class);
 
 	public AnonymousShareEntryServiceImpl(FunctionalityReadOnlyService functionalityService, AnonymousShareEntryBusinessService anonymousShareEntryBusinessService,
 			ShareExpiryDateService shareExpiryDateService, LogEntryService logEntryService, NotifierService notifierService, MailContentBuildingService mailElementsFactory,
@@ -111,30 +111,22 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 
 	@Override
 	public List<AnonymousShareEntry> createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, MailContainer mailContainer) throws BusinessException {
-
 		if(functionalityReadOnlyService.isSauMadatory(sender.getDomain().getIdentifier())) {
 			passwordProtected = true;
-		} else if(!functionalityReadOnlyService.isSauAllowed(sender.getDomain().getIdentifier())) {
-			// if it is not mandatory an not allowed, it must be forbidden
+		} else if(functionalityReadOnlyService.isSauForbidden(sender.getDomain().getIdentifier())) {
 			passwordProtected = false;
 		}
-
 		if (expirationDate == null) {
 			expirationDate = shareExpiryDateService.computeMinShareExpiryDateOfList(documentEntries, sender);
 		}
-
 		AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService.createAnonymousShare(documentEntries, sender, recipient, expirationDate, passwordProtected);
-
 
 		// logs
 		for (DocumentEntry documentEntry : documentEntries) {
 			ShareLogEntry logEntry = new ShareLogEntry(sender, documentEntry, LogAction.FILE_SHARE, "Anonymous sharing of a file", expirationDate);
-		    logEntryService.create(logEntry);
+			logEntryService.create(logEntry);
 		}
-
 		notifierService.sendNotification(mailContentBuildingService.buildMailNewSharingWithRecipient(mailContainer, anonymousUrl, sender));
-
-
 		List<AnonymousShareEntry> anonymousShareEntries = new ArrayList<AnonymousShareEntry>(anonymousUrl.getAnonymousShareEntries());
 		return anonymousShareEntries;
 	}

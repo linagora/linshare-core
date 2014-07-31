@@ -738,8 +738,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	@Override
-	public boolean hasRightsToShareWithExternals(User sender)
-			throws BusinessException {
+	public boolean hasRightsToShareWithExternals(User sender) {
 
 		AbstractDomain domain = sender.getDomain();
 		if (domain != null) {

@@ -103,7 +103,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 }
 
 	@Override
-	public ShareEntry createShare(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate) throws BusinessException {
+	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate) throws BusinessException {
 
 		if (expirationDate == null) {
 			expirationDate = shareExpiryDateService.computeShareExpiryDate(documentEntry, sender);
@@ -150,7 +150,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 		for (User recipient : recipients) {
 			try {
-				ShareEntry s = createShare(documentEntry, sender, recipient, expirationDate);
+				ShareEntry s = create(documentEntry, sender, recipient, expirationDate);
 				returnItems.addSuccessItem(s);
 
 			} catch (BusinessException e) {
@@ -164,7 +164,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 
 	@Override
-	public void deleteShare(Account actor, String shareUuid) throws BusinessException {
+	public void delete(Account actor, String shareUuid) throws BusinessException {
 		ShareEntry share = shareEntryBusinessService.find(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
@@ -290,7 +290,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 
 	@Override
-	public boolean shareHasThumbnail(User actor, String shareEntryUuid) {
+	public boolean hasThumbnail(User actor, String shareEntryUuid) {
 		try {
 			ShareEntry shareEntry = find(actor, shareEntryUuid);
 			if (shareEntry.getRecipient().equals(actor)) {
@@ -307,7 +307,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 
 	@Override
-	public InputStream getShareThumbnailStream(User actor, String shareEntryUuid) throws BusinessException {
+	public InputStream getThumbnailStream(User actor, String shareEntryUuid) throws BusinessException {
 		try {
 			ShareEntry shareEntry = find(actor, shareEntryUuid);
 			if (!shareEntry.getRecipient().equals(actor)) {
@@ -322,7 +322,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 
 	@Override
-	public InputStream getShareStream(User actor, String shareEntryUuid) throws BusinessException {
+	public InputStream getStream(User actor, String shareEntryUuid) throws BusinessException {
 		try {
 			ShareEntry shareEntry = find(actor, shareEntryUuid);
 			if (!shareEntry.getRecipient().equals(actor)) {

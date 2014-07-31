@@ -45,7 +45,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface FunctionalityReadOnlyService {
 
-	Functionality get(String domainIdentifier,String functionalityIdentifier);
+	Functionality get(String domainIdentifier,String functionalityIdentifier) throws BusinessException;
 
 	/** 
 	 * Shortcuts to functionalities
@@ -106,44 +106,53 @@ public interface FunctionalityReadOnlyService {
 	/**
 	 * Check if SecuredAnonymousUrl (SAU) is mandatory
 	 * @param domain : the current domain identifier
-	 * @return 
+	 * @return
 	 */
-	boolean isSauMadatory(String domainIdentifier);
+	boolean isSauMadatory(String domainIdentifier) throws BusinessException;
+
+	/**
+	 * Check if SecuredAnonymousUrl (SAU) is forbidden
+	 * @param domain : the current domain identifier
+	 * @return
+	 */
+	boolean isSauForbidden(String domainIdentifier) throws BusinessException;
 
 	/**
 	 * Check if SecuredAnonymousUrl (SAU) is allowed
 	 * @param domain : the current domain identifier
-	 * @return 
+	 * @return
+	 * @throws BusinessException
 	 */
-	boolean isSauAllowed(String domainIdentifier);
+	boolean isSauAllowed(String domainIdentifier) throws BusinessException;
 
 	/**
 	 * return the default value for SecuredAnonymousUrl (SAU)
 	 * @param domain : the current domain identifier
 	 * @return
 	 */
-	boolean getDefaultSauValue(String domainIdentifier);
+	boolean getDefaultSauValue(String domainIdentifier) throws BusinessException;
 
 	/**
 	 * return the default value for RestrictedGuest
 	 * @param domain : the current domain identifier
 	 * @return
 	 */
-	boolean getDefaultRestrictedGuestValue(String domainIdentifier);
+	boolean getDefaultRestrictedGuestValue(String domainIdentifier) throws BusinessException;
 
 	/**
 	 * Check if RestrictedGuest is mandatory
 	 * @param domain : the current domain identifier
-	 * @return 
+	 * @return
+	 * @throws BusinessException
 	 */
-	boolean isRestrictedGuestMadatory(String domainIdentifier);
+	boolean isRestrictedGuestMadatory(String domainIdentifier) throws BusinessException;
 
 	/**
 	 * Check if RestrictedGuest is allowed
 	 * @param domain : the current domain identifier
-	 * @return 
+	 * @return
 	 */
-	boolean isRestrictedGuestAllowed(String domainIdentifier);
+	boolean isRestrictedGuestAllowed(String domainIdentifier) throws BusinessException;
 
 	/**
 	 * Return the status of the custom logo  in root domain

@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -188,7 +189,6 @@ public class ShareFacadeImpl implements ShareFacade {
 					.contains(successfullSharing.getReceiver())) {
 				successfullRecipient.add(successfullSharing.getReceiver());
 			}
-
 		}
 
 		User owner_ = userRepository.findByLsUuid(owner.getLogin());
@@ -212,13 +212,8 @@ public class ShareFacadeImpl implements ShareFacade {
 	}
 
 	@Override
-	public List<ShareDocumentVo> getAllSharingReceivedByUser(UserVo recipientVo) {
-		User actor = userService.findByLsUuid(recipientVo.getLsUuid());
-
-		if (actor == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
-					"Could not find the user");
-		}
+	public List<ShareDocumentVo> getAllSharingReceivedByUser(UserVo recipientVo) throws BusinessException {
+		User actor = getActor(recipientVo);
 		ArrayList<ShareEntry> arrayList = new ArrayList<ShareEntry>(
 				actor.getShareEntries());
 		logger.debug("AllSharingReceived size : " + arrayList.size());
@@ -226,18 +221,12 @@ public class ShareFacadeImpl implements ShareFacade {
 	}
 
 	@Override
-	public List<ShareDocumentVo> getSharingsByUserAndFile(UserVo senderVo,
+	public List<ShareDocumentVo> getSharingsByUserAndFile(UserVo actorVo,
 			DocumentVo documentVo) {
-
-		User actor = userService.findByLsUuid(senderVo.getLsUuid());
-		if (actor == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
-					"Could not find the user");
-		}
 
 		DocumentEntry documentEntry;
 		try {
-			documentEntry = documentEntryService.findById(actor,
+			documentEntry = documentEntryService.findById(getActor(actorVo),
 					documentVo.getIdentifier());
 			return shareEntryTransformer
 					.disassembleList(new ArrayList<ShareEntry>(documentEntry
@@ -251,18 +240,12 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	@Override
 	public Map<String, Calendar> getAnonymousSharingsByUserAndFile(
-			UserVo senderVo, DocumentVo documentVo) {
-
-		User actor = userService.findByLsUuid(senderVo.getLsUuid());
-		if (actor == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
-					"Could not find the user");
-		}
+			UserVo actorVo, DocumentVo documentVo) {
 
 		Map<String, Calendar> res = new HashMap<String, Calendar>();
 		DocumentEntry documentEntry;
 		try {
-			documentEntry = documentEntryService.findById(actor,
+			documentEntry = documentEntryService.findById(getActor(actorVo),
 					documentVo.getIdentifier());
 
 			for (AnonymousShareEntry entry : documentEntry
@@ -280,16 +263,14 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
 	public void deleteSharing(ShareDocumentVo share, UserVo actorVo)
 			throws BusinessException {
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		shareEntryService.deleteShare(actor, share.getIdentifier());
+		shareEntryService.delete(getActor(actorVo), share.getIdentifier());
 	}
 
 	@Override
 	public DocumentVo createLocalCopy(ShareDocumentVo shareDocumentVo,
-			UserVo userVo) throws BusinessException {
-		User actor = userService.findByLsUuid(userVo.getLsUuid());
+			UserVo actorVo) throws BusinessException {
 		DocumentEntry documentEntry = shareEntryService.copyDocumentFromShare(
-				shareDocumentVo.getIdentifier(), actor);
+				shareDocumentVo.getIdentifier(), getActor(actorVo));
 		return documentEntryTransformer.disassemble(documentEntry);
 	}
 
@@ -312,8 +293,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			throws BusinessException {
 		logger.debug("createSharingWithMailUsingRecipientsEmail");
 
-		User sender = userService.findByLsUuid(actorVo.getLsUuid());
-
+		User sender = getActor(actorVo);
 		SuccessesAndFailsItems<ShareDocumentVo> result = new SuccessesAndFailsItems<ShareDocumentVo>();
 
 		List<UserVo> knownRecipients = new ArrayList<UserVo>();
@@ -386,19 +366,8 @@ public class ShareFacadeImpl implements ShareFacade {
 													// account to activate
 													// sharing)
 
-			boolean hasRightsToShareWithExternals = false;
-
-			try {
-				hasRightsToShareWithExternals = abstractDomainService
-						.hasRightsToShareWithExternals(sender);
-			} catch (BusinessException e) {
-				logger.error("Could not retrieve domain of sender while sharing to externals: "
-						+ sender.getAccountReprentation());
-				logger.debug(e.toString());
-			}
-
+			boolean hasRightsToShareWithExternals = abstractDomainService.hasRightsToShareWithExternals(sender);
 			if (hasRightsToShareWithExternals) {
-
 				List<DocumentEntry> documentEntries = documentEntryTransformer
 						.assembleList(documents);
 
@@ -431,12 +400,10 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	@Override
 	public void sendDownloadNotification(ShareDocumentVo sharedDocument,
-			UserVo currentUser) throws BusinessException {
-
-		User user = userRepository.findByLsUuid(currentUser.getLogin());
+			UserVo actorVo) throws BusinessException {
 		try {
 			// send a notification by mail to the owner
-			ShareEntry shareEntry = shareEntryService.find(user,
+			ShareEntry shareEntry = shareEntryService.find(getActor(actorVo),
 					sharedDocument.getIdentifier());
 			notifierService.sendNotification(mailElementsFactory
 					.buildMailRegisteredDownloadWithOneRecipient(shareEntry));
@@ -473,22 +440,33 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	@Override
 	public boolean isVisibleSecuredAnonymousUrlCheckBox(String domainIdentifier) {
-		return functionalityReadOnlyService.isSauAllowed(domainIdentifier);
+		try {
+			return functionalityReadOnlyService.isSauAllowed(domainIdentifier);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getDefaultSecuredAnonymousUrlCheckBoxValue(
 			String domainIdentifier) {
-		return functionalityReadOnlyService
-				.getDefaultSauValue(domainIdentifier);
+		try {
+			return functionalityReadOnlyService
+					.getDefaultSauValue(domainIdentifier);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+			return false;
+		}
 	}
 
 	@Override
 	public ShareDocumentVo getShareDocumentVoByUuid(UserVo actorVo, String uuid)
 			throws BusinessException {
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		return shareEntryTransformer.disassemble(shareEntryService.find(
-				actor, uuid));
+				getActor(actorVo), uuid));
 	}
 
 	@Override
@@ -496,46 +474,30 @@ public class ShareFacadeImpl implements ShareFacade {
 			throws IllegalArgumentException, BusinessException {
 		logger.debug("updateShareComment:" + uuid);
 		logger.debug("comment : " + comment);
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		ShareEntry share = new ShareEntry();
 		share.setUuid(uuid);
 		share.setComment(comment);
-		shareEntryService.update(actor, share);
+		shareEntryService.update(getActor(actorVo), share);
 	}
 
 	@Override
 	public boolean shareHasThumbnail(UserVo actorVo, String shareEntryUuid) {
-		String lsUid = actorVo.getLsUuid();
-		if (lsUid == null) {
-			logger.error("Can't find user with null parameter.");
+		try {
+			User actor = getActor(actorVo);
+			return shareEntryService.hasThumbnail(actor, shareEntryUuid);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
 			return false;
 		}
-
-		User actor = userService.findByLsUuid(lsUid);
-		if (actor == null) {
-			logger.error("Can't find logged user.");
-			return false;
-		}
-		return shareEntryService.shareHasThumbnail(actor, shareEntryUuid);
 	}
 
 	@Override
 	public InputStream getShareThumbnailStream(UserVo actorVo,
-			String shareEntryUuid) {
-		String lsUid = actorVo.getLsUuid();
-		if (lsUid == null) {
-			logger.error("Can't find user with null parametter.");
-			return null;
-		}
-
-		User actor = userService.findByLsUuid(lsUid);
-		if (actor == null) {
-			logger.error("Can't find logged user.");
-			return null;
-		}
-
+			String shareEntryUuid) throws BusinessException {
 		try {
-			return shareEntryService.getShareThumbnailStream(actor,
+			User actor = getActor(actorVo);
+			return shareEntryService.getThumbnailStream(actor,
 					shareEntryUuid);
 		} catch (BusinessException e) {
 			logger.error("Can't get document thumbnail : " + shareEntryUuid
@@ -561,7 +523,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 
 		try {
-			return shareEntryService.getShareStream(actor, shareEntryUuid);
+			return shareEntryService.getStream(actor, shareEntryUuid);
 		} catch (BusinessException e) {
 			logger.error("Can't get document thumbnail : " + shareEntryUuid
 					+ " : " + e.getMessage());
@@ -645,4 +607,15 @@ public class ShareFacadeImpl implements ShareFacade {
 		return null;
 	}
 
+	private User getActor(UserVo userVo) throws BusinessException {
+		Validate.notEmpty(userVo.getLsUuid(), "Missing actor uuid");
+		User actor = userService.findByLsUuid(userVo.getLsUuid());
+		if (actor == null) {
+			logger.error("Can't find actor : " + userVo.getLsUuid());
+			throw new BusinessException(
+					BusinessErrorCode.USER_NOT_FOUND,
+					"You are not authorized to use this service");
+		}
+		return actor;
+	}
 }

@@ -37,6 +37,7 @@ import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -243,13 +244,25 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 
 	@Override
 	public boolean getDefaultRestrictedGuestValue(String domainIdentifier) {
-		return functionalityReadOnlyService
-				.getDefaultRestrictedGuestValue(domainIdentifier);
+		try {
+			return functionalityReadOnlyService
+					.getDefaultRestrictedGuestValue(domainIdentifier);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+			return false;
+		}
 	}
 
 	@Override
 	public boolean isRestrictedGuestEnabled(String domainIdentifier) {
-		return functionalityReadOnlyService
-				.isRestrictedGuestAllowed(domainIdentifier);
+		try {
+			return functionalityReadOnlyService
+					.isRestrictedGuestAllowed(domainIdentifier);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+			return false;
+		}
 	}
 }

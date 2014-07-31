@@ -116,7 +116,7 @@ public class EntryServiceImpl implements EntryService {
 		}
 		
 		for (String uuid : b) {
-			shareEntryService.deleteShare(actor, uuid);
+			shareEntryService.delete(actor, uuid);
 		}
 	}
 	
@@ -133,7 +133,7 @@ public class EntryServiceImpl implements EntryService {
 	@Override
 	public void deleteAllReceivedShareEntries(Account actor, User recipient) throws BusinessException {
 		for (ShareEntry shareEntry : shareEntryService.findAllMyShareEntries(actor, recipient)) {
-			shareEntryService.deleteShare(actor, shareEntry.getUuid());
+			shareEntryService.delete(actor, shareEntry.getUuid());
 		}
 	}
 

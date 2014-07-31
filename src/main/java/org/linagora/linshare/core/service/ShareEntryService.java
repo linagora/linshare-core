@@ -49,13 +49,13 @@ public interface ShareEntryService {
 
 	public ShareEntry find(User actor, String uuid)  throws BusinessException ;
 
-	public ShareEntry createShare(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate) throws BusinessException;
+	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate) throws BusinessException;
 
 	public SuccessesAndFailsItems<ShareEntry> createShare(DocumentEntry documentEntry, User sender, List<User> recipients, Calendar expirationDate) ;
 
 	public SuccessesAndFailsItems<ShareEntry> createShare(List<DocumentEntry> documentEntries, User sender, List<User> recipients, Calendar expirationDate);
 
-	public void deleteShare(Account actor, String shareUuid) throws BusinessException;
+	public void delete(Account actor, String shareUuid) throws BusinessException;
 
 	public void deleteShare(Account actor, ShareEntry share) throws BusinessException;
 
@@ -65,11 +65,11 @@ public interface ShareEntryService {
 
 	public ShareEntry update(User actor, ShareEntry shareEntry) throws BusinessException;
 
-	public boolean shareHasThumbnail(User actor, String shareEntryUuid);
+	public boolean hasThumbnail(User actor, String shareEntryUuid);
 
-	public InputStream getShareThumbnailStream(User actor, String shareEntryUuid) throws BusinessException;
+	public InputStream getThumbnailStream(User actor, String shareEntryUuid) throws BusinessException;
 
-	public InputStream getShareStream(User actor, String shareEntryUuid) throws BusinessException;
+	public InputStream getStream(User actor, String shareEntryUuid) throws BusinessException;
 
 	public void sendDocumentEntryUpdateNotification(ShareEntry shareEntry, String friendlySize, String originalFileName);
 
