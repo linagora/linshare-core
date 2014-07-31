@@ -80,7 +80,9 @@ public class DocumentDto {
 		this.name = de.getName();
 		this.creationDate = de.getCreationDate().getTime();
 		this.modificationDate = de.getModificationDate().getTime();
-		this.expirationDate = de.getExpirationDate().getTime();
+		if (de.getExpirationDate() != null) {
+			this.expirationDate = de.getExpirationDate().getTime();
+		}
 		this.description = de.getComment();
 		this.ciphered = de.getCiphered();
 		this.type = de.getDocument().getType();
