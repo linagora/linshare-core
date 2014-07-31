@@ -40,32 +40,32 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 
-public interface ShareEntryRepository extends AbstractRepository<ShareEntry>{
-	
-	
-	final static int BEGIN=0;
-	
-	final static int END=1;
-	
-	final static int ANYWHERE=2;
-	
-	
-	 /** Find a Share using its uuid.
-     * @param  uuid
-     * @return found document (null if no document found).
-     */
-	public ShareEntry findByUuid(String uuid);
-	
-	
-	public ShareEntry getShareEntry(DocumentEntry documentEntry, User sender, User recipient);
+public interface ShareEntryRepository extends AbstractRepository<ShareEntry> {
 
-	
+	final static int BEGIN = 0;
+
+	final static int END = 1;
+
+	final static int ANYWHERE = 2;
+
+	/**
+	 * Find a ShareEntry using its uuid.
+	 * 
+	 * @param uuid
+	 * @return found document (null if no ShareEntry found).
+	 */
+	public ShareEntry findByUuid(String uuid);
+
+	public ShareEntry getShareEntry(DocumentEntry documentEntry, User sender,
+			User recipient);
+
 	public List<ShareEntry> findAllMyShareEntries(User owner);
-	
+
 	public List<ShareEntry> findAllExpiredEntries();
-	
+
 	public List<ShareEntry> findUpcomingExpiredEntries(Integer date);
-	
-	public List<ShareEntry> retrieveUserShareEntriesWithMatchCriterion(SearchDocumentCriterion searchDocumentCriterion);
-	
+
+	public List<ShareEntry> retrieveUserShareEntriesWithMatchCriterion(
+			SearchDocumentCriterion searchDocumentCriterion);
+
 }

@@ -37,8 +37,8 @@ import java.util.List;
 
 import javax.mail.SendFailedException;
 
-import org.linagora.linshare.core.domain.entities.MailContainer;
-import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.objects.MailContainer;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 
 /** Provides notification services.

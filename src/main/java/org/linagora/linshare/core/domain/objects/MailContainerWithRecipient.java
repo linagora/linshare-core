@@ -31,9 +31,13 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.domain.objects;
 
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.MailSubject;
+import org.linagora.linshare.core.domain.entities.MailTemplate;
+import org.linagora.linshare.core.domain.entities.User;
 
 /**
  * Object that contains the informations used to build the email
