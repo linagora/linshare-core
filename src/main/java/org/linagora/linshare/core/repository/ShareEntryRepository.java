@@ -54,7 +54,7 @@ public interface ShareEntryRepository extends AbstractRepository<ShareEntry>{
      * @param  uuid
      * @return found document (null if no document found).
      */
-	public ShareEntry findById(String uuid);
+	public ShareEntry findByUuid(String uuid);
 	
 	
 	public ShareEntry getShareEntry(DocumentEntry documentEntry, User sender, User recipient);

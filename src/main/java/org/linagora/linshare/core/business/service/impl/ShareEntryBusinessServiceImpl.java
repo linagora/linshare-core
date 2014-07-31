@@ -67,7 +67,7 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 
 	@Override
 	public ShareEntry findByUuid(String uuid) {
-		return shareEntryRepository.findById(uuid);
+		return shareEntryRepository.findByUuid(uuid);
 	}
 
 
