@@ -43,16 +43,18 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ShareEntryBusinessService {
 
-	public ShareEntry createShare(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate) throws BusinessException;
-	
-	public void deleteShare(ShareEntry share) throws BusinessException;
-	
-	public ShareEntry findByUuid(String uuid);
+	public ShareEntry create(DocumentEntry documentEntry, User sender,
+			User recipient, Calendar expirationDate) throws BusinessException;
 
-	public void updateShareComment(ShareEntry share, String comment) throws BusinessException;
-	
+	public void delete(ShareEntry share) throws BusinessException;
+
+	public ShareEntry find(String uuid);
+
+	public ShareEntry update(ShareEntry entry) throws BusinessException;
+
 	public List<ShareEntry> findAllMyShareEntries(User owner);
-	
-	public void addDownload(ShareEntry entry) throws BusinessException;
-	
+
+	public ShareEntry updateDownloadCounter(String uuid)
+			throws BusinessException;
+
 }

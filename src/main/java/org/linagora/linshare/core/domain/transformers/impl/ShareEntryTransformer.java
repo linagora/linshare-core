@@ -92,7 +92,7 @@ public class ShareEntryTransformer implements Transformer<ShareEntry, ShareDocum
 
 	@Override
 	public ShareEntry assemble(ShareDocumentVo valueObject) {
-		return shareEntryBusinessService.findByUuid(valueObject.getIdentifier());
+		return shareEntryBusinessService.find(valueObject.getIdentifier());
 	}
 
 

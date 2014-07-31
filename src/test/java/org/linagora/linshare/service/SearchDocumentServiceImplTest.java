@@ -441,7 +441,7 @@ AbstractTransactionalJUnit4SpringContextTests {
 		ArrayList<ShareEntry> shares = new ArrayList<ShareEntry>();
 
 		for (DocumentEntry documentEntry : shareDocuments) {
-			shares.add(shareEntryBusinessService.createShare(documentEntry,
+			shares.add(shareEntryBusinessService.create(documentEntry,
 					John, Jane, cldr));
 		}
 		
@@ -470,7 +470,7 @@ AbstractTransactionalJUnit4SpringContextTests {
 
 		} finally {
 			for (ShareEntry share : shares) {
-				shareEntryBusinessService.deleteShare(share);
+				shareEntryBusinessService.delete(share);
 			}
 			logger.debug(LinShareTestConstants.END_TEST);
 		}
@@ -490,7 +490,7 @@ AbstractTransactionalJUnit4SpringContextTests {
 		ArrayList<ShareEntry> shares = new ArrayList<ShareEntry>();
 
 		for (DocumentEntry documentEntry : shareDocuments) {
-			shares.add(shareEntryBusinessService.createShare(documentEntry,
+			shares.add(shareEntryBusinessService.create(documentEntry,
 					John, Jane, cldr));
 		}
 
@@ -692,7 +692,7 @@ AbstractTransactionalJUnit4SpringContextTests {
 
 		} finally {
 			for (ShareEntry share : shares) {
-				shareEntryBusinessService.deleteShare(share);
+				shareEntryBusinessService.delete(share);
 			}
 			logger.debug(LinShareTestConstants.END_TEST);
 		}

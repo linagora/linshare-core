@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
@@ -108,7 +109,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			expirationDate = shareExpiryDateService.computeShareExpiryDate(documentEntry, sender);
 		}
 
-		ShareEntry createShare = shareEntryBusinessService.createShare(documentEntry, sender, recipient, expirationDate);
+		ShareEntry createShare = shareEntryBusinessService.create(documentEntry, sender, recipient, expirationDate);
 		if (recipient.getAccountType().equals(AccountType.GUEST)) {
 			updateGuestExpirationDate(recipient, sender);
 		}
@@ -164,7 +165,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 	@Override
 	public void deleteShare(Account actor, String shareUuid) throws BusinessException {
-		ShareEntry share = shareEntryBusinessService.findByUuid(shareUuid);
+		ShareEntry share = shareEntryBusinessService.find(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
@@ -181,7 +182,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			logEntryService.create(logEntry);
 
 			logger.info("delete share : " + share.getUuid());
-			shareEntryBusinessService.deleteShare(share);
+			shareEntryBusinessService.delete(share);
 
 			if (share.getEntryOwner().equals(actor) || actor.hasSuperAdminRole() || actor.hasSystemAccountRole()) {
 				notifierService.sendNotification(mailContentBuildingService.buildMailSharedFileDeletedWithRecipient(
@@ -202,7 +203,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Delete a sharing");
 			logEntryService.create(logEntry);
 			logger.info("delete share : " + share.getUuid());
-			shareEntryBusinessService.deleteShare(share);
+			shareEntryBusinessService.delete(share);
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + share.getUuid());
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this share, it does not belong to you.");
@@ -224,7 +225,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	@Override
 	public DocumentEntry copyDocumentFromShare(String shareUuid, User actor) throws BusinessException {
 
-		ShareEntry share = shareEntryBusinessService.findByUuid(shareUuid);
+		ShareEntry share = shareEntryBusinessService.find(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
@@ -244,7 +245,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			if (share.getDownloaded() < 1) {
 				notifierService.sendNotification(mailContentBuildingService.buildMailRegisteredDownloadWithOneRecipient(share));
 			}
-			shareEntryBusinessService.deleteShare(share);
+			shareEntryBusinessService.delete(share);
 
 			return newDocumentEntry;
 		} else {
@@ -256,8 +257,8 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 
 	@Override
-	public ShareEntry findByUuid(User actor, String shareUuid) throws BusinessException {
-		ShareEntry share = shareEntryBusinessService.findByUuid(shareUuid);
+	public ShareEntry find(User actor, String shareUuid) throws BusinessException {
+		ShareEntry share = shareEntryBusinessService.find(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
@@ -272,26 +273,26 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 
 	@Override
-	public void updateShareComment(User actor, String shareUuid, String comment) throws BusinessException {
-		ShareEntry share = shareEntryBusinessService.findByUuid(shareUuid);
+	public ShareEntry update(User actor, ShareEntry dto) throws BusinessException {
+		String shareUuid = dto.getUuid();
+		Validate.notEmpty(shareUuid);
+		ShareEntry share = shareEntryBusinessService.find(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
 		}
-		if(share.getRecipient().equals(actor)) {
-			shareEntryBusinessService.updateShareComment(share, comment);
-		} else {
+		if(!share.getRecipient().equals(actor)) {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to update comment on this share, it does not belong to you.");
 		}
-
+		return shareEntryBusinessService.update(share);
 	}
 
 
 	@Override
 	public boolean shareHasThumbnail(User actor, String shareEntryUuid) {
 		try {
-			ShareEntry shareEntry = findByUuid(actor, shareEntryUuid);
+			ShareEntry shareEntry = find(actor, shareEntryUuid);
 			if (shareEntry.getRecipient().equals(actor)) {
 				String thmbUUID = shareEntry.getDocumentEntry().getDocument().getThmbUuid();
 				return (thmbUUID!=null && thmbUUID.length()>0);
@@ -308,7 +309,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	@Override
 	public InputStream getShareThumbnailStream(User actor, String shareEntryUuid) throws BusinessException {
 		try {
-			ShareEntry shareEntry = findByUuid(actor, shareEntryUuid);
+			ShareEntry shareEntry = find(actor, shareEntryUuid);
 			if (!shareEntry.getRecipient().equals(actor)) {
 				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get thumbnail for this share.");
 			}
@@ -323,7 +324,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	@Override
 	public InputStream getShareStream(User actor, String shareEntryUuid) throws BusinessException {
 		try {
-			ShareEntry shareEntry = findByUuid(actor, shareEntryUuid);
+			ShareEntry shareEntry = find(actor, shareEntryUuid);
 			if (!shareEntry.getRecipient().equals(actor)) {
 				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this share.");
 			}
@@ -331,7 +332,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			ShareLogEntry logEntryTarget = ShareLogEntry.aShareWasDownloaded(actor, shareEntry);
 			logEntryService.create(logEntryActor);
 			logEntryService.create(logEntryTarget);
-			shareEntryBusinessService.addDownload(shareEntry);
+			shareEntryBusinessService.updateDownloadCounter(shareEntry.getUuid());
 			return documentEntryBusinessService.getDocumentStream(shareEntry.getDocumentEntry());
 		} catch (BusinessException e) {
 			logger.error("Can't find share for thumbnail : " + shareEntryUuid + " : " + e.getMessage());

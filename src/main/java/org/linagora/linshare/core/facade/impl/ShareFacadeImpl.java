@@ -436,7 +436,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		User user = userRepository.findByLsUuid(currentUser.getLogin());
 		try {
 			// send a notification by mail to the owner
-			ShareEntry shareEntry = shareEntryService.findByUuid(user,
+			ShareEntry shareEntry = shareEntryService.find(user,
 					sharedDocument.getIdentifier());
 			notifierService.sendNotification(mailElementsFactory
 					.buildMailRegisteredDownloadWithOneRecipient(shareEntry));
@@ -487,7 +487,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	public ShareDocumentVo getShareDocumentVoByUuid(UserVo actorVo, String uuid)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		return shareEntryTransformer.disassemble(shareEntryService.findByUuid(
+		return shareEntryTransformer.disassemble(shareEntryService.find(
 				actor, uuid));
 	}
 
@@ -495,11 +495,12 @@ public class ShareFacadeImpl implements ShareFacade {
 	public void updateShareComment(UserVo actorVo, String uuid, String comment)
 			throws IllegalArgumentException, BusinessException {
 		logger.debug("updateShareComment:" + uuid);
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		ShareEntry shareEntry = shareEntryService.findByUuid(actor, uuid);
-		//shareEntry.setComment(comment);
 		logger.debug("comment : " + comment);
-		shareEntryService.updateShareComment(actor, uuid, comment);
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+		ShareEntry share = new ShareEntry();
+		share.setUuid(uuid);
+		share.setComment(comment);
+		shareEntryService.update(actor, share);
 	}
 
 	@Override
@@ -573,7 +574,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		boolean res = false;
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		try {
-			ShareEntry share = shareEntryService.findByUuid(actor,
+			ShareEntry share = shareEntryService.find(actor,
 					shareVo.getIdentifier());
 			Set<Signature> signatures = share.getDocumentEntry().getDocument()
 					.getSignatures();
@@ -591,7 +592,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		boolean res = false;
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		try {
-			ShareEntry share = shareEntryService.findByUuid(actor,
+			ShareEntry share = shareEntryService.find(actor,
 					shareVoIdentifier);
 			Set<Signature> signatures = share.getDocumentEntry().getDocument()
 					.getSignatures();
@@ -608,7 +609,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	public SignatureVo getSignature(UserVo actorVo, ShareDocumentVo documentVo) {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		try {
-			ShareEntry share = shareEntryService.findByUuid(actor,
+			ShareEntry share = shareEntryService.find(actor,
 					documentVo.getIdentifier());
 
 			SignatureVo res = null;
@@ -632,7 +633,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			ShareDocumentVo documentVo) {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		try {
-			ShareEntry share = shareEntryService.findByUuid(actor,
+			ShareEntry share = shareEntryService.find(actor,
 					documentVo.getIdentifier());
 			return signatureTransformer
 					.disassembleList(new ArrayList<Signature>(share

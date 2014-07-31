@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.ShareEntryRepository;
@@ -51,11 +52,12 @@ import org.slf4j.LoggerFactory;
 public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService {
 
 	private final ShareEntryRepository shareEntryRepository ;
+
 	private final AccountService accountService;
+
 	private final DocumentEntryRepository documentEntryRepository ;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ShareEntryBusinessServiceImpl.class);
-	
 
 	public ShareEntryBusinessServiceImpl(ShareEntryRepository shareEntryRepository, AccountService accountService, DocumentEntryRepository documentEntryRepository) {
 		super();
@@ -64,15 +66,13 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		this.documentEntryRepository = documentEntryRepository;
 	}
 
-
 	@Override
-	public ShareEntry findByUuid(String uuid) {
+	public ShareEntry find(String uuid) {
 		return shareEntryRepository.findByUuid(uuid);
 	}
 
-
 	@Override
-	public ShareEntry createShare(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate) throws BusinessException {
+	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate) throws BusinessException {
 		ShareEntry shareEntity;
 		ShareEntry current_share = shareEntryRepository.getShareEntry(documentEntry, sender, recipient);
 		if(current_share == null) {
@@ -103,9 +103,8 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		return shareEntity;
 	}
 
-
 	@Override
-	public void deleteShare(ShareEntry share) throws BusinessException {
+	public void delete(ShareEntry share) throws BusinessException {
 		
 		shareEntryRepository.delete(share);
 		
@@ -123,26 +122,27 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		accountService.update(sender);
 	}
 
-
 	@Override
-	public void updateShareComment(ShareEntry share, String comment) throws BusinessException {
-		
-		share.setComment(comment==null?"":comment);
-		shareEntryRepository.update(share);
+	public ShareEntry update(ShareEntry entry) throws BusinessException {
+		ShareEntry shareEntry = find(entry.getUuid());
+		shareEntry.setComment(entry.getComment()==null?"":entry.getComment());
+		return shareEntryRepository.update(shareEntry);
 	}
-
 
 	@Override
 	public List<ShareEntry> findAllMyShareEntries(User owner) {
 		return shareEntryRepository.findAllMyShareEntries(owner);
 	}
 
-
 	@Override
-	public void addDownload(ShareEntry entry) throws BusinessException {
-		entry.incrementDownloaded();
-		shareEntryRepository.update(entry);
+	public ShareEntry updateDownloadCounter(String uuid) throws BusinessException {
+		ShareEntry shareEntry = find(uuid);
+		if (shareEntry == null) {
+			logger.error("Share not found : " + uuid);
+			throw new BusinessException(BusinessErrorCode.SHARE_NOT_FOUND, "Share entry not found : " + uuid);
+		}
+		shareEntry.incrementDownloaded();
+		return shareEntryRepository.update(shareEntry);
 	}
-
 
 }
