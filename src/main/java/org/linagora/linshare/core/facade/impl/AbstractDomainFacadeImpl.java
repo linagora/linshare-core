@@ -259,7 +259,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
             MessagesConfiguration m = new MessagesConfiguration(messages);
             domain.setMessagesConfiguration(m);
 
-            abstractDomainService.updateDomain(domain);
+            abstractDomainService.updateDomain(actor, domain);
         } else {
             throw new BusinessException("You are not authorized to update messages.");
         }
@@ -286,7 +286,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         if(isAuthorized(actorVo)) {
             AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
             domain.setShareExpiryRules(shareExpiryRules);
-            abstractDomainService.updateDomain(domain);
+            abstractDomainService.updateDomain(actor, domain);
         } else {
             throw new BusinessException("You are not authorized to update shareExpiryRules.");
         }

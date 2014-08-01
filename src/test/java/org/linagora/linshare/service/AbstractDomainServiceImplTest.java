@@ -140,8 +140,8 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		topDomain.setMimePolicy(mimePolicy);
 		
 		try {
-			abstractDomainService.createTopDomain(topDomain);
-			abstractDomainService.deleteDomain(topDomain.getIdentifier());
+			abstractDomainService.createTopDomain(actor, topDomain);
+			abstractDomainService.deleteDomain(actor, topDomain.getIdentifier());
 					
 			
 		} catch (BusinessException e) {
@@ -182,14 +182,14 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		
 		
 		try {
-			abstractDomainService.createTopDomain(topDomain);
+			abstractDomainService.createTopDomain(actor, topDomain);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't create domain.");
 		}
 		
 		try {
-			abstractDomainService.deleteDomain(topDomain.getIdentifier());
+			abstractDomainService.deleteDomain(actor, topDomain.getIdentifier());
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't delete top domain.");

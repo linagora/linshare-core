@@ -117,16 +117,12 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		return abstractDomainRepository.getUniqueRootDomain();
 	}
 
-	private AbstractDomain createDomain(AbstractDomain domain,
-			AbstractDomain parentDomain) throws BusinessException {
-
-		if (domain.getIdentifier() == null) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
-					"This new domain has no identifier.");
+	private AbstractDomain createDomain(Account actor,
+			AbstractDomain domain, AbstractDomain parentDomain) throws BusinessException {
+		if (!actor.isSuperAdmin()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Only root is authorized to create domains.");
 		}
-
-		Validate.notEmpty(domain.getIdentifier(),
-				"domain identifier must be set.");
+		Validate.notEmpty(domain.getIdentifier(), "domain identifier must be set.");
 		if (!LsIdValidator.isValid(domain.getIdentifier())) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_BAD_FORMAT,
 					"This new domain identifier should only contains at least 4 characters among : "
@@ -213,17 +209,17 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	@Override
-	public TopDomain createTopDomain(TopDomain topDomain)
+	public TopDomain createTopDomain(Account actor, TopDomain topDomain)
 			throws BusinessException {
 		if (!(topDomain.getDefaultRole().equals(Role.SIMPLE) || topDomain.getDefaultRole().equals(Role.ADMIN))) {
 			topDomain.setDefaultRole(Role.SIMPLE);
 		}
 		logger.debug("TopDomain creation attempt : " + topDomain.toString());
-		return (TopDomain) createDomain(topDomain, getUniqueRootDomain());
+		return (TopDomain) createDomain(actor, topDomain, getUniqueRootDomain());
 	}
 
 	@Override
-	public SubDomain createSubDomain(SubDomain subDomain)
+	public SubDomain createSubDomain(Account actor, SubDomain subDomain)
 			throws BusinessException {
 
 		logger.debug("SubDomain creation attempt : " + subDomain.toString());
@@ -246,13 +242,12 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,
 					"You must create a subdomain inside a TopDomain.");
 		}
-		return (SubDomain) createDomain(subDomain, parentDomain);
+		return (SubDomain) createDomain(actor, subDomain, parentDomain);
 	}
 
 	@Override
-	public GuestDomain createGuestDomain(GuestDomain guestDomain)
+	public GuestDomain createGuestDomain(Account actor, GuestDomain guestDomain)
 			throws BusinessException {
-
 		logger.debug("SubDomain creation attempt : " + guestDomain.toString());
 		guestDomain.setDefaultRole(Role.SIMPLE);
 		if (guestDomain.getParentDomain() == null
@@ -271,7 +266,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,
 					"You must create a guest domain inside a TopDomain.");
 		}
-		return (GuestDomain) createDomain(guestDomain, parentDomain);
+		return (GuestDomain) createDomain(actor, guestDomain, parentDomain);
 	}
 
 	@Override
@@ -291,8 +286,14 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	@Override
-	public void deleteDomain(String identifier) throws BusinessException {
-		AbstractDomain domain = retrieveDomain(identifier);
+	public void deleteDomain(Account actor, String identifier) throws BusinessException {
+		if (!actor.isSuperAdmin()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Only root is authorized to create domains.");
+		}
+		AbstractDomain domain = findById(identifier);
+		if (domain.getDomainType().equals(DomainType.ROOTDOMAIN)) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Only root is authorized to delete root domain.");
+		}
 		abstractDomainRepository.delete(domain);
 		// Remove element from its ancestor. It does not need to be updated. Do
 		// not know why, implicit update somewhere ?
@@ -358,18 +359,16 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	@Override
-	public AbstractDomain updateDomain(AbstractDomain domain) throws BusinessException {
+	public AbstractDomain updateDomain(Account actor, AbstractDomain domain) throws BusinessException {
+		if (!actor.isSuperAdmin()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Only root is authorized to create domains.");
+		}
 		logger.debug("Update domain :" + domain.getIdentifier());
 		if (domain.getIdentifier() == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
 					"This domain has no current identifier.");
 		}
-		AbstractDomain entity = retrieveDomain(domain.getIdentifier());
-		if (entity == null) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,
-					"This domain identifier does not exist.");
-		}
-
+		AbstractDomain entity = findById(domain.getIdentifier());
 		if (domain.getPolicy() == null) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,

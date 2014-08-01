@@ -572,13 +572,13 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	private void addDocSizeToGlobalUsedQuota(Document docEntity, AbstractDomain domain) throws BusinessException {
 		long newUsedQuota = domain.getUsedSpace().longValue() + docEntity.getSize();
 		domain.setUsedSpace(newUsedQuota);
-		abstractDomainService.updateDomain(domain);
+		abstractDomainService.updateDomain(actor, domain);
 	}
 
 	private void removeDocSizeFromGlobalUsedQuota(long docSize, AbstractDomain domain) throws BusinessException {
 		long newUsedQuota = domain.getUsedSpace().longValue() - docSize;
 		domain.setUsedSpace(newUsedQuota);
-		abstractDomainService.updateDomain(domain);
+		abstractDomainService.updateDomain(actor, domain);
 	}
 
 	// FIXME : code duplication

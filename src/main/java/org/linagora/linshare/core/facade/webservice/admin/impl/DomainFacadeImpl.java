@@ -124,15 +124,15 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public DomainDto create(DomainDto domainDto) throws BusinessException {
-		checkAuthentication(Role.SUPERADMIN);
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		AbstractDomain domain = getDomain(domainDto);
 		switch (domain.getDomainType()) {
 		case TOPDOMAIN:
-			return DomainDto.getFull(abstractDomainService.createTopDomain((TopDomain) domain));
+			return DomainDto.getFull(abstractDomainService.createTopDomain(actor, (TopDomain) domain));
 		case SUBDOMAIN:
-			return DomainDto.getFull(abstractDomainService.createSubDomain((SubDomain) domain));
+			return DomainDto.getFull(abstractDomainService.createSubDomain(actor, (SubDomain) domain));
 		case GUESTDOMAIN:
-			return DomainDto.getFull(abstractDomainService.createGuestDomain((GuestDomain) domain));
+			return DomainDto.getFull(abstractDomainService.createGuestDomain(actor, (GuestDomain) domain));
 		default:
 			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,
 					"Try to create a root domain");
@@ -141,11 +141,11 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public DomainDto update(DomainDto domainDto) throws BusinessException {
-		checkAuthentication(Role.SUPERADMIN);
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainDto.getIdentifier(),
 				"domain identifier must be set.");
 		AbstractDomain domain = getDomain(domainDto);
-		return DomainDto.getFull(abstractDomainService.updateDomain(domain));
+		return DomainDto.getFull(abstractDomainService.updateDomain(actor, domain));
 	}
 
 	@Override
