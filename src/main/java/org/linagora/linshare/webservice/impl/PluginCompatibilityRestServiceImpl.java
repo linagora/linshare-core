@@ -127,16 +127,17 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 			// so need to search this information in the header of the
 			// attachement (with id file)
 			fileName = body.getAttachment("file").getContentDisposition().getParameter("filename");
+			try {
+				byte[] bytes = fileName.getBytes("ISO-8859-1");
+				fileName = new String(bytes, "UTF-8");
+			} catch (UnsupportedEncodingException e1) {
+				logger.error("Can not encode file name " + e1.getMessage());
+			}
 		} else {
 			fileName = givenFileName;
 		}
 
-		try {
-			byte[] bytes = fileName.getBytes("ISO-8859-1");
-			fileName = new String(bytes, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			logger.error("Can not encode file name " + e1.getMessage());
-		}
+		
 
 		// comment can not be null ?
 		return webServiceDocumentFacade.uploadfile(theFile, fileName, comment);
