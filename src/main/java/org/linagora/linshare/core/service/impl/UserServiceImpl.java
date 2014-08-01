@@ -512,8 +512,10 @@ public class UserServiceImpl implements UserService {
 		} else {
 			logger.debug("User " + mail + " found.");
 			user.setRole(role);
+			if (!(user.getRole().equals(Role.SIMPLE) || user.getRole().equals(Role.ADMIN))) {
+				user.setRole(Role.SIMPLE);
+			}
 			userRepository.update(user);
-
 			User owner = userRepository.findByLsUuid(ownerVo.getLsUuid());
 			UserLogEntry logEntry = new UserLogEntry(owner,
 					LogAction.USER_UPDATE,

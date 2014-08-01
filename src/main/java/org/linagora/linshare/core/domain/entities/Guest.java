@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.webservice.dto.UserDto;
 
 import com.google.common.collect.Sets;
@@ -66,6 +67,7 @@ public class Guest extends User {
         this.comment = comment;
         this.restricted = false;
         this.canCreateGuest = false;
+        this.role = Role.SIMPLE;
     }
 	
 	public Guest(String firstName, String lastName, String mail) {
@@ -73,6 +75,7 @@ public class Guest extends User {
         this.restricted = false;
         this.comment = "";
         this.canCreateGuest = false;
+        this.role = Role.SIMPLE;
     }
 
 	public Guest(UserDto guestDto) {
@@ -83,6 +86,7 @@ public class Guest extends User {
 		this.expirationDate = guestDto.getExpirationDate();
 		this.canUpload = guestDto.getCanUpload();
 		this.canCreateGuest = false;
+		this.role = Role.SIMPLE;
 	}
 
 	@Override
