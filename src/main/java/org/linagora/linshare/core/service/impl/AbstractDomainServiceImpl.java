@@ -119,7 +119,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	private AbstractDomain createDomain(Account actor,
 			AbstractDomain domain, AbstractDomain parentDomain) throws BusinessException {
-		if (!actor.hasSuperAdminRole()) {
+		if (!actor.isSuperAdmin()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Only root is authorized to create domains.");
 		}
 		Validate.notEmpty(domain.getIdentifier(), "domain identifier must be set.");
@@ -287,7 +287,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	@Override
 	public void deleteDomain(Account actor, String identifier) throws BusinessException {
-		if (!actor.hasSuperAdminRole()) {
+		if (!actor.isSuperAdmin()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Only root is authorized to create domains.");
 		}
 		AbstractDomain domain = findById(identifier);
@@ -360,7 +360,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	@Override
 	public AbstractDomain updateDomain(Account actor, AbstractDomain domain) throws BusinessException {
-		if (!actor.hasSuperAdminRole()) {
+		if (!actor.isSuperAdmin()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Only root is authorized to create domains.");
 		}
 		logger.debug("Update domain :" + domain.getIdentifier());
