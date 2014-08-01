@@ -44,12 +44,13 @@ public class RootDomain extends AbstractDomain {
 
 	public RootDomain(String identifier, String label) {
 		super(identifier, label);
-		this.defaultRole=Role.SYSTEM;
+		this.defaultRole=Role.SUPERADMIN;
 		this.defaultTapestryLocale="en";
 	}
 
 	public RootDomain(DomainDto domainDto) {
 		super(domainDto, null);
+		this.defaultRole=Role.SUPERADMIN;
 	}
 
 	@Override
@@ -63,6 +64,7 @@ public class RootDomain extends AbstractDomain {
 		this.description = d.getDescription();
 		this.defaultTapestryLocale = d.getDefaultTapestryLocale();
 		this.authShowOrder = d.getAuthShowOrder();
+		this.defaultRole = Role.SUPERADMIN;
 	}
 
 }
