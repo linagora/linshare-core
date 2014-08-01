@@ -497,7 +497,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		logger.debug("updateShareComment:" + uuid);
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		ShareEntry shareEntry = shareEntryService.findByUuid(actor, uuid);
-		shareEntry.setComment(comment);
+		//shareEntry.setComment(comment);
 		logger.debug("comment : " + comment);
 		shareEntryService.updateShareComment(actor, uuid, comment);
 	}

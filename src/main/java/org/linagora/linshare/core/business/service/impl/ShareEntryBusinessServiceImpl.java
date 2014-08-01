@@ -126,7 +126,8 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 
 	@Override
 	public void updateShareComment(ShareEntry share, String comment) throws BusinessException {
-		share.setComment(comment);
+		
+		share.setComment(comment==null?"":comment);
 		shareEntryRepository.update(share);
 	}
 
