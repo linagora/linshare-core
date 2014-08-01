@@ -160,12 +160,8 @@ public class UserServiceImpl implements UserService {
 	public Guest createGuest(String login, String firstName, String lastName, String mail, Boolean canUpload, Boolean canCreateGuest, String comment, String ownerLogin, String ownerDomain)
 			throws BusinessException {
 
-		AbstractDomain domain = abstractDomainService.retrieveDomain(ownerDomain);
-
-		if (domain == null) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND, "Domain was not found");
-		}
-		
+		// why ?
+		AbstractDomain domain = abstractDomainService.findById(ownerDomain);
 		User ownerUser = userRepository.findByLsUuid(ownerLogin); 
 		
 		if(ownerUser == null) {
@@ -677,8 +673,10 @@ public class UserServiceImpl implements UserService {
 		} else {
 			logger.debug("User " + mail + " found.");
 			user.setRole(role);
+			if (!(user.getRole().equals(Role.SIMPLE) || user.getRole().equals(Role.ADMIN))) {
+				user.setRole(Role.SIMPLE);
+			}
 			userRepository.update(user);
-
 			User owner = userRepository.findByLsUuid(ownerVo.getLsUuid());
 			UserLogEntry logEntry = new UserLogEntry(owner, LogAction.USER_UPDATE, "Update of a user:" + user.getMail(), user);
 			logEntryService.create(logEntry);
@@ -1099,6 +1097,9 @@ public class UserServiceImpl implements UserService {
 		user.setFirstName(updatedUser.getFirstName());
 		user.setLastName(updatedUser.getLastName());
 		user.setRole(updatedUser.getRole());
+		if (!(user.getRole().equals(Role.SIMPLE) || user.getRole().equals(Role.ADMIN))) {
+			user.setRole(Role.SIMPLE);
+		}
 		user.setCanCreateGuest(updatedUser.getCanCreateGuest());
 		user.setCanUpload(updatedUser.getCanUpload());
 		if (user.getAccountType() == AccountType.GUEST) {
