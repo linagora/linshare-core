@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.vo.GuestDomainVo;
 import org.linagora.linshare.webservice.dto.DomainDto;
 
@@ -57,5 +58,11 @@ public class GuestDomain extends AbstractDomain {
 	@Override
 	public DomainType getDomainType() {
 		return DomainType.GUESTDOMAIN;
+	}
+
+	@Override
+	public void updateDomainWith(AbstractDomain d) {
+		super.updateDomainWith(d);
+		this.defaultRole = Role.SIMPLE;
 	}
 }

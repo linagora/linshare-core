@@ -44,6 +44,7 @@ import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
@@ -214,6 +215,9 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	@Override
 	public TopDomain createTopDomain(TopDomain topDomain)
 			throws BusinessException {
+		if (!(topDomain.getDefaultRole().equals(Role.SIMPLE) || topDomain.getDefaultRole().equals(Role.ADMIN))) {
+			topDomain.setDefaultRole(Role.SIMPLE);
+		}
 		logger.debug("TopDomain creation attempt : " + topDomain.toString());
 		return (TopDomain) createDomain(topDomain, getUniqueRootDomain());
 	}
@@ -223,7 +227,9 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throws BusinessException {
 
 		logger.debug("SubDomain creation attempt : " + subDomain.toString());
-
+		if (!(subDomain.getDefaultRole().equals(Role.SIMPLE) || subDomain.getDefaultRole().equals(Role.ADMIN))) {
+			subDomain.setDefaultRole(Role.SIMPLE);
+		}
 		if (subDomain.getParentDomain() == null
 				|| subDomain.getParentDomain().getIdentifier() == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
@@ -248,7 +254,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throws BusinessException {
 
 		logger.debug("SubDomain creation attempt : " + guestDomain.toString());
-
+		guestDomain.setDefaultRole(Role.SIMPLE);
 		if (guestDomain.getParentDomain() == null
 				|| guestDomain.getParentDomain().getIdentifier() == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
@@ -287,7 +293,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	@Override
 	public void deleteDomain(String identifier) throws BusinessException {
 		AbstractDomain domain = retrieveDomain(identifier);
-
 		abstractDomainRepository.delete(domain);
 		// Remove element from its ancestor. It does not need to be updated. Do
 		// not know why, implicit update somewhere ?
@@ -325,7 +330,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	@Override
 	public List<String> getAllMyDomainIdentifiers(String personalDomainIdentifer) {
 		List<String> domains = new ArrayList<String>();
-
 		AbstractDomain domain = retrieveDomain(personalDomainIdentifer);
 		for (AbstractDomain abstractDomain : getMyDomainRecursively(domain)) {
 			domains.add(abstractDomain.getIdentifier());
