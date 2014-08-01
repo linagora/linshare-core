@@ -262,7 +262,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
             // Stuff to be compatible with old shit.
             MessagesConfiguration m = new MessagesConfiguration(messages);
             domain.setMessagesConfiguration(m);
-
+            User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
             abstractDomainService.updateDomain(actor, domain);
         } else {
             throw new BusinessException("You are not authorized to update messages.");
@@ -290,6 +290,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         if(isAuthorized(actorVo)) {
             AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
             domain.setShareExpiryRules(shareExpiryRules);
+            User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
             abstractDomainService.updateDomain(actor, domain);
         } else {
             throw new BusinessException("You are not authorized to update shareExpiryRules.");

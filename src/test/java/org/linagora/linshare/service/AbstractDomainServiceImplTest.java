@@ -39,6 +39,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
@@ -48,6 +49,7 @@ import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,10 +89,15 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	private UserProviderService userProviderService;
 	
 	@Autowired
+	private AccountService accountService;
+	
+	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
 	
 	private LDAPConnection ldapconnexion;
+	
 	private DomainPattern domainPattern;
+
 	
 	@Before
 	public void setUp() throws Exception {
@@ -140,6 +147,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		topDomain.setMimePolicy(mimePolicy);
 		
 		try {
+			Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 			abstractDomainService.createTopDomain(actor, topDomain);
 			abstractDomainService.deleteDomain(actor, topDomain.getIdentifier());
 					
@@ -181,6 +189,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		
 		
 		
+		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		try {
 			abstractDomainService.createTopDomain(actor, topDomain);
 		} catch (BusinessException e) {

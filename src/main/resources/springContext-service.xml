@@ -88,6 +88,7 @@
 		<constructor-arg ref="clamavVirusScannerService" />
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
 		<constructor-arg ref="antiSamyService" />
+		<constructor-arg ref="domainBusinessService" />
 	</bean>
 
 	<bean id="threadEntryService" class="org.linagora.linshare.core.service.impl.ThreadEntryServiceImpl">
