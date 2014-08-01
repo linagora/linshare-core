@@ -46,16 +46,16 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AbstractDomainService {
 
-	public TopDomain createTopDomain(TopDomain topDomain) throws BusinessException;
-	public SubDomain createSubDomain(SubDomain subDomain) throws BusinessException;
-	public GuestDomain createGuestDomain(GuestDomain guestDomain) throws BusinessException;
+	public TopDomain createTopDomain(Account actor, TopDomain topDomain) throws BusinessException;
+	public SubDomain createSubDomain(Account actor, SubDomain subDomain) throws BusinessException;
+	public GuestDomain createGuestDomain(Account actor, GuestDomain guestDomain) throws BusinessException;
 
 	public AbstractDomain retrieveDomain(String identifier);
 	AbstractDomain findById(String identifier) throws BusinessException;
 
 
-	public AbstractDomain updateDomain(AbstractDomain domain) throws BusinessException;
-	public void deleteDomain(String identifier) throws BusinessException;
+	public AbstractDomain updateDomain(Account actor, AbstractDomain domain) throws BusinessException;
+	public void deleteDomain(Account actor, String identifier) throws BusinessException;
 	public List<String> getAllDomainIdentifiers();
 	public List<String> getAllMyDomainIdentifiers(String personalDomainIdentifer);
 
