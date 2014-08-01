@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
@@ -87,10 +88,11 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	private final VirusScannerService virusScannerService;
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 	private final AntiSamyService antiSamyService;
+	private final DomainBusinessService domainBusinessService;
 
 	public DocumentEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
 			FunctionalityReadOnlyService functionalityReadOnlyService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService, MimeTypeMagicNumberDao mimeTypeIdentifier,
-			AntiSamyService antiSamyService) {
+			AntiSamyService antiSamyService, DomainBusinessService domainBusinessService) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -100,6 +102,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		this.virusScannerService = virusScannerService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
 		this.antiSamyService = antiSamyService;
+		this.domainBusinessService = domainBusinessService;
 	}
 
 	@Override
@@ -572,13 +575,13 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	private void addDocSizeToGlobalUsedQuota(Document docEntity, AbstractDomain domain) throws BusinessException {
 		long newUsedQuota = domain.getUsedSpace().longValue() + docEntity.getSize();
 		domain.setUsedSpace(newUsedQuota);
-		abstractDomainService.updateDomain(actor, domain);
+		domainBusinessService.update(domain);
 	}
 
 	private void removeDocSizeFromGlobalUsedQuota(long docSize, AbstractDomain domain) throws BusinessException {
 		long newUsedQuota = domain.getUsedSpace().longValue() - docSize;
 		domain.setUsedSpace(newUsedQuota);
-		abstractDomainService.updateDomain(actor, domain);
+		domainBusinessService.update(domain);
 	}
 
 	// FIXME : code duplication
