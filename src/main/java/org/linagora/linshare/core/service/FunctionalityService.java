@@ -47,9 +47,11 @@ public interface FunctionalityService {
 
 	Set<Functionality> getAllFunctionalities(Account actor, String domain) throws BusinessException;
 
-	boolean activationPolicyIsMutable(Functionality f, String domain);
+	boolean activationPolicyIsMutable(Account actor, Functionality f, String domain) throws BusinessException;
 
-	boolean configurationPolicyIsMutable(Functionality f, String domain);
+	boolean configurationPolicyIsMutable(Account actor, Functionality f, String domain) throws BusinessException;
+
+	boolean parametersAreMutable(Account actor, Functionality f, String domain) throws BusinessException;
 
 	boolean delegationPolicyIsMutable(Functionality f, String domain);
 

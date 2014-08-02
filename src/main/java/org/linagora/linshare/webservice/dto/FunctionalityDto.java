@@ -90,14 +90,15 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 	@ApiModelProperty(value = "displayable")
 	protected boolean displayable;
 
-	// HOOK : To be removed. For debug.
-	protected boolean system;
-
 	public FunctionalityDto() {
 		super();
 	}
 
-	public FunctionalityDto(Functionality f, boolean parentAllowAPUpdate, boolean parentAllowCPUpdate, boolean parentAllowDPUpdate) {
+	public FunctionalityDto(Functionality f,
+			boolean parentAllowAPUpdate,
+			boolean parentAllowCPUpdate,
+			boolean parentAllowDPUpdate,
+			boolean parentAllowParametersUpdate) {
 		super();
 		this.domain = f.getDomain().getIdentifier();
 		this.identifier = f.getIdentifier();
@@ -112,12 +113,13 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 			this.delegationPolicy = new PolicyDto(f.getDelegationPolicy());
 			this.delegationPolicy.setParentAllowUpdate(parentAllowDPUpdate);
 		}
+		// Parameters
+		this.parentAllowParametersUpdate = parentAllowParametersUpdate;
 		this.parameters = f.getParameters();
 		this.type = f.getType().toString();
 		this.parentIdentifier = f.getParentIdentifier();
 		functionalities = new ArrayList<FunctionalityDto>();
 		this.displayable = true;
-		this.system = f.isSystem();
 
 		if (!parentAllowAPUpdate && f.getActivationPolicy().isForbidden()) {
 			// No modification allowed, functionality is forbidden.
@@ -132,24 +134,9 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 				this.displayable = false;
 			}
 		}
-
-		this.parentAllowParametersUpdate = false;
-		if(parentAllowCPUpdate) {
-			this.parentAllowParametersUpdate = true;
-		} else {
-			// the CP can not be updated, so this means this is the CP of the parent domain
-			if(f.getConfigurationPolicy().isForbidden()) {
-				this.parentAllowParametersUpdate = false;
-			} else if(f.getConfigurationPolicy().isMandatory()) {
-				this.parentAllowParametersUpdate = true;
-			} else if(f.getConfigurationPolicy().getStatus()) {
-				this.parentAllowParametersUpdate = true;
-			}
-		}
 		if(parameters.size() == 0)
 			this.parentAllowParametersUpdate = false;
-
-		if (!parentAllowAPUpdate && !parentAllowCPUpdate && !parentAllowParametersUpdate) {
+		if (!parentAllowAPUpdate && !parentAllowCPUpdate && !this.parentAllowParametersUpdate) {
 			this.displayable = false;
 		}
 	}
@@ -253,10 +240,6 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 
 	public boolean isDisplayable() {
 		return displayable;
-	}
-
-	public boolean isSystem() {
-		return system;
 	}
 
 	@Override

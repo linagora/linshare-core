@@ -43,6 +43,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -72,16 +73,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(funcId, "functionality identifier must be set.");
 		Functionality f = functionalityService.getFunctionality(actor,
 				domainId, funcId);
-		boolean parentAllowAPUpdate = functionalityService
-				.activationPolicyIsMutable(f, domainId);
-		boolean parentAllowCPUpdate = functionalityService
-				.configurationPolicyIsMutable(f, domainId);
-		boolean parentAllowDPUpdate = functionalityService
-				.configurationPolicyIsMutable(f, domainId);
-		FunctionalityDto func = new FunctionalityDto(f, parentAllowAPUpdate,
-				parentAllowCPUpdate, parentAllowDPUpdate);
-		func.setDomain(domainId);
-		return func;
+		return transform(actor, f);
 	}
 
 	@Override
@@ -96,17 +88,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		List<FunctionalityDto> subs = new ArrayList<FunctionalityDto>();
 
 		for (Functionality f : entities) {
-			boolean parentAllowAPUpdate = functionalityService
-					.activationPolicyIsMutable(f, domainId);
-			boolean parentAllowCPUpdate = functionalityService
-					.configurationPolicyIsMutable(f, domainId);
-			boolean parentAllowDPUpdate = functionalityService
-					.delegationPolicyIsMutable(f, domainId);
-			FunctionalityDto func = new FunctionalityDto(f,
-					parentAllowAPUpdate, parentAllowCPUpdate, parentAllowDPUpdate);
-			// We force the domain id to be coherent to the argument.
-			func.setDomain(domainId);
-
+			FunctionalityDto func = transform(actor, f);
 			// We check if this a sub functionality (a parameter)
 			if (f.isParam()) {
 				if (ret.containsKey(func.getParentIdentifier())) {
@@ -135,42 +117,49 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(func.getDomain(), "domain identifier must be set.");
 		Validate.notEmpty(func.getIdentifier(),
 				"functionality identifier must be set.");
-		Functionality f = functionalityService.getFunctionality(actor,
+		Functionality entity = functionalityService.getFunctionality(actor,
 				func.getDomain(), func.getIdentifier());
 
 		// copy of activation policy.
 		String ap = func.getActivationPolicy().getPolicy().trim().toUpperCase();
-		f.getActivationPolicy().setPolicy(Policies.valueOf(ap));
-		f.getActivationPolicy().setStatus(
+		entity.getActivationPolicy().setPolicy(Policies.valueOf(ap));
+		entity.getActivationPolicy().setStatus(
 				func.getActivationPolicy().getStatus());
 
 		// copy of configuration policy.
 		String cp = func.getConfigurationPolicy().getPolicy().trim()
 				.toUpperCase();
-		f.getConfigurationPolicy().setPolicy(Policies.valueOf(cp));
-		f.getConfigurationPolicy().setStatus(
+		entity.getConfigurationPolicy().setPolicy(Policies.valueOf(cp));
+		entity.getConfigurationPolicy().setStatus(
 				func.getConfigurationPolicy().getStatus());
 
 		if (func.getDelegationPolicy() != null) {
 			// copy of configuration policy.
 			String dp = func.getDelegationPolicy().getPolicy().trim()
 					.toUpperCase();
-			f.getDelegationPolicy().setPolicy(Policies.valueOf(dp));
-			f.getDelegationPolicy().setStatus(
+			entity.getDelegationPolicy().setPolicy(Policies.valueOf(dp));
+			entity.getDelegationPolicy().setStatus(
 					func.getDelegationPolicy().getStatus());
 		}
 
 		// copy of parameters.
-		f.updateFunctionalityValuesOnlyFromDto(func);
+		entity.updateFunctionalityValuesOnlyFromDto(func);
 		Functionality update = functionalityService.update(actor,
-				func.getDomain(), f);
+				func.getDomain(), entity);
+		return transform(actor, update);
+	}
+
+	private FunctionalityDto transform(Account actor, Functionality update) throws BusinessException {
 		boolean parentAllowAPUpdate = functionalityService
-				.activationPolicyIsMutable(update, update.getDomain().getIdentifier());
+				.activationPolicyIsMutable(actor, update, update.getDomain()
+						.getIdentifier());
 		boolean parentAllowCPUpdate = functionalityService
-				.configurationPolicyIsMutable(f, update.getDomain().getIdentifier());
+				.configurationPolicyIsMutable(actor, update, update.getDomain()
+						.getIdentifier());
 		boolean parentAllowDPUpdate = functionalityService
-				.delegationPolicyIsMutable(f, update.getDomain().getIdentifier());
-		return new FunctionalityDto(update, parentAllowAPUpdate, parentAllowCPUpdate, parentAllowDPUpdate);
+				.delegationPolicyIsMutable(update, update.getDomain().getIdentifier());
+		boolean parentAllowParametersUpdate = functionalityService.parametersAreMutable(actor, update, update.getDomain().getIdentifier());
+		return new FunctionalityDto(update, parentAllowAPUpdate, parentAllowCPUpdate, parentAllowDPUpdate, parentAllowParametersUpdate);
 	}
 
 	@Override

@@ -86,16 +86,18 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
-	public boolean activationPolicyIsMutable(Functionality f, String domain) {
+	public boolean activationPolicyIsMutable(Account actor, Functionality f, String domain) throws BusinessException {
 		Validate.notNull(f);
 		Validate.notNull(domain);
+		checkDomainRights(actor, domain);
 		return functionalityBusinessService.activationPolicyIsMutable(f, domain);
 	}
 
 	@Override
-	public boolean configurationPolicyIsMutable(Functionality f, String domain) {
+	public boolean configurationPolicyIsMutable(Account actor, Functionality f, String domain) throws BusinessException {
 		Validate.notNull(f);
 		Validate.notNull(domain);
+		checkDomainRights(actor, domain);
 		return functionalityBusinessService.configurationPolicyIsMutable(f, domain);
 	}
 
@@ -104,6 +106,14 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		Validate.notNull(f);
 		Validate.notNull(domain);
 		return functionalityBusinessService.delegationPolicyIsMutable(f, domain);
+	}
+
+	@Override
+	public boolean parametersAreMutable(Account actor, Functionality f, String domain) throws BusinessException {
+		Validate.notNull(f);
+		Validate.notNull(domain);
+		checkDomainRights(actor, domain);
+		return functionalityBusinessService.parametersAreMutable(f, domain);
 	}
 
 	@Override
@@ -166,7 +176,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		}
 
 		// we check if the parent functionality allow modifications of the activation policy (AP).
-		boolean parentAllowAPUpdate = activationPolicyIsMutable(entity, domain);
+		boolean parentAllowAPUpdate = activationPolicyIsMutable(actor, entity, domain);
 		if(!parentAllowAPUpdate) {
 			// Modifications are not allowed.
 			if (!entity.getActivationPolicy().businessEquals(functionality.getActivationPolicy())) {
@@ -183,7 +193,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		}
 
 		// we check if the parent functionality allow modifications of the configuration policy (CP).
-		boolean parentAllowCPUpdate = configurationPolicyIsMutable(entity, domain);
+		boolean parentAllowCPUpdate = configurationPolicyIsMutable(actor, entity, domain);
 		if(!parentAllowCPUpdate) {
 			// Modifications are not allowed.
 			if (!entity.getConfigurationPolicy().businessEquals(functionality.getConfigurationPolicy())) {
@@ -206,14 +216,19 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 			}
 		}
 
+		boolean parentAllowParamUpdate = parametersAreMutable(actor, entity, domain);
+		if(!parentAllowParamUpdate) {
+			if (!functionality.businessEquals(entity, true)) {
+				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (PARAM) '" + functionality +"' in domain '" + domain +"'");
+				throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
+			}
+		}
+
 		// we check if there is any modifications
 		if (functionality.businessEquals(entity, true)) {
 			logger.debug("functionality " + functionality.toString() + " was not modified.");
 			return false;
 		}
-
-		// TODO :if ap is forbidden ? check status ?
-		// TODO: func.isSystem ??
 		return true;
 	}
 
