@@ -39,7 +39,7 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface AbstractFunctionalityBusinessService <T> {
+public interface AbstractFunctionalityBusinessService<T> {
 
 	Set<T> getAllFunctionalities(AbstractDomain domain);
 
@@ -48,6 +48,8 @@ public interface AbstractFunctionalityBusinessService <T> {
 	boolean activationPolicyIsMutable(T f, String domain);
 
 	boolean configurationPolicyIsMutable(T f, String domain);
+
+	boolean parametersAreMutable(T f, String domain);
 
 	T getFunctionality(String domainId, String functionalityId);
 

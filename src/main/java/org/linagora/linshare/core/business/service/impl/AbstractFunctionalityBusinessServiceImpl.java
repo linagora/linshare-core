@@ -254,7 +254,8 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			}
 		} else {
 			// the current functionality belongs to the parent functionality, so it could be considered as an ancestor.
-			if (functionality.getActivationPolicy().isMutable()) {
+			T ancestorFunc = functionality;
+			if (ancestorFunc.getActivationPolicy().isMutable()) {
 				return true;
 			}
 		}
@@ -283,7 +284,53 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			}
 		} else {
 			// The current functionality belong to a parent domain.
-			if (functionality.getConfigurationPolicy().isMutable()) {
+			T ancestorFunc = functionality;
+			if (ancestorFunc.getConfigurationPolicy().isMutable()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean parametersAreMutable(T functionality, String domain) {
+		Assert.notNull(functionality);
+		Assert.notNull(domain);
+
+		// Check if the current functionality belong to the current domain.
+		if (functionality.getDomain().getIdentifier().equals(domain)) {
+			// we have to check if we have the permission to modify the configuration status of this functionality
+			AbstractDomain abstractDomain = abstractDomainRepository.findById(domain);
+			T ancestorFunc = getParentFunctionality(abstractDomain, functionality.getIdentifier());
+			// We check if the parent domain allow the current domain to
+			// modify/override activation policy configuration.
+			if (ancestorFunc == null) {
+				// This functionality belongs to the root domain.
+				if (functionality.isSystem()) {
+					return false;
+				}
+				return true;
+			} else {
+				if (ancestorFunc.isSystem()) {
+					return false;
+				}
+				if (ancestorFunc.getActivationPolicy().isForbidden()) {
+					return false;
+				}
+				if (ancestorFunc.getConfigurationPolicy().getStatus()) {
+					return true;
+				}
+			}
+		} else {
+			// The current functionality belong to a parent domain.
+			T ancestorFunc = functionality;
+			if (ancestorFunc.isSystem()) {
+				return false;
+			}
+			if (ancestorFunc.getActivationPolicy().isForbidden()) {
+				return false;
+			}
+			if (ancestorFunc.getConfigurationPolicy().getStatus()) {
 				return true;
 			}
 		}
