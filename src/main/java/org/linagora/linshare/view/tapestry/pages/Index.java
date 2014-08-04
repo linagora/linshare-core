@@ -372,7 +372,7 @@ public class Index {
 	}
 
 	@OnEvent(value = "resetListFiles")
-	public void resetListFiles(Object[] o1) {
+	public void resetListFiles(Object[] o1) throws BusinessException {
 		flag = false;
 		shares = shareFacade.getAllSharingReceivedByUser(userVo);
 	}

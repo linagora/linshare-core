@@ -81,7 +81,7 @@ public class SearchFile {
 
 	@Parameter(required=true,defaultPrefix=BindingConstants.PROP)
 	private UserVo userlogin;
-	
+
 	/**
 	 * flag to always filter on shared file
 	 * desactive also search criteria on sharing state
@@ -90,7 +90,7 @@ public class SearchFile {
 	@Parameter(required=false,defaultPrefix=BindingConstants.PROP)
 	private boolean forceFilterOnSharedFile;
 
-	
+
 	/**
 	 * if present, remote control (with an external link) is activated
 	 * to show basic or advanced search window. the wanted state is given through this property.
@@ -99,7 +99,7 @@ public class SearchFile {
 	@Property
 	@Parameter(required=false,defaultPrefix=BindingConstants.PROP)
 	private Boolean advancedmode;
-	
+
 
 	@Persist
 	private UserVo userTemp;
@@ -110,16 +110,16 @@ public class SearchFile {
 
 	@Inject
 	private UserAutoCompleteFacade userAutoCompleteFacade;
-	
+
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
 
 	@Inject
 	private SearchDocumentFacade searchDocumentFacade;
-	
+
 	@Inject
 	private UserFacade userFacade;
-	
+
     @Inject
     private ShareFacade shareFacade;
 
@@ -161,16 +161,16 @@ public class SearchFile {
 	@Persist
 	@Property
 	private SharedType shared;
-	
+
 	//fileNamePattern is used with advanced search
 	@Persist
 	@Property
 	private String fileNamePattern;
-	
+
 	@Persist
 	@Property
 	private String extension;
-	
+
 	@Persist
 	@Property
 	private String sharedFrom;
@@ -179,13 +179,13 @@ public class SearchFile {
 	private Calendar calBegin;
 
 	private Calendar calEnd;
-	
+
 	@Persist
 	private boolean reset;
-	
+
 	@Persist
 	private boolean resetSimple;
-	
+
 
 	@Persist
 	@Property
@@ -212,7 +212,7 @@ public class SearchFile {
 
 	@Property
 	private int autocompleteMin;
-	
+
 	@Inject
 	private FunctionalityFacade functionalityFacade;
 
@@ -226,7 +226,7 @@ public class SearchFile {
 	void setupRender() {
 
 		autocompleteMin = functionalityFacade.completionThreshold(userlogin.getDomainIdentifier());
-		
+
 		if(isRemoteToggleAdvancedSearch()){
 			advancedSearch = advancedmode;
 		}
@@ -234,7 +234,7 @@ public class SearchFile {
 		if (shared==null) shared = SharedType.ALL_FILES;
 		if (documentType==null) { documentType = true; }
 		userTemp=userlogin;
-		
+
 		if(advancedSearch) {
 			//get the name (already entered) inside advanced search
 			if (name!=null) fileNamePattern = name;
@@ -273,7 +273,7 @@ public class SearchFile {
 	 * We use a boolean which is a switch.
 	 */
 	public void onActionFromToggleSearch(){
-		
+
 		advancedSearch=!advancedSearch;
 	}
 
@@ -340,21 +340,22 @@ public class SearchFile {
 	 * AutoCompletion for name field.
 	 * @param value the value entered by the user
 	 * @return list the list of string matched by value.
+	 * @throws BusinessException 
 	 */
-	public List<String> onProvideCompletionsFromFileNamePattern(String value) {
+	public List<String> onProvideCompletionsFromFileNamePattern(String value) throws BusinessException {
 		return onProvideCompletionsFromName(value);
 	}
-	public List<String> onProvideCompletionsFromName(String value){
+	public List<String> onProvideCompletionsFromName(String value) throws BusinessException{
 
 		if(forceFilterOnSharedFile) {
 			shared = SharedType.SHARED_ONLY;
 		}
-		
+
 		SearchDocumentCriterion searchDocumentCriterion=new SearchDocumentCriterion(userlogin,value,null,null,null,isShared(this.shared),null,null,null,null, DocumentType.BOTH);
-		
+
 		if (!forceFilterOnSharedFile) {
 			List<DocumentVo> documents=searchDocumentFacade.retrieveDocumentContainsCriterion(userlogin, searchDocumentCriterion);
-			
+
 			if(documents.size()>0){
 				ArrayList<String> names=new ArrayList<String>();
 				for(DocumentVo documentVo:documents){
@@ -365,10 +366,10 @@ public class SearchFile {
 			}else{
 				return null;
 			}
-			
+
 		} else {
 			List<ShareDocumentVo> sharings=shareFacade.getAllSharingReceivedByUser(userlogin);
-			
+
 			if(sharings.size()>0){
 				ArrayList<String> names=new ArrayList<String>();
 				for(ShareDocumentVo documentVo:sharings){
@@ -383,8 +384,8 @@ public class SearchFile {
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * provide completion for users email
 	 * @param input
@@ -398,11 +399,11 @@ public class SearchFile {
 		}
 		return new ArrayList<String>();
 	}
-	
+
 
 	public Object onSuccessFromAdvancedSearchForm(){
-		
-		
+
+
 		if (reset){
 			this.fileNamePattern = null;
 			this.sizeMin = null;
@@ -417,9 +418,9 @@ public class SearchFile {
 			this.sharedFrom = null;
 			this.name = null;
 			this.reset = false;
-			
+
 			componentResources.triggerEvent("resetListFiles", null, null);
-			
+
 			return null;
 		}
 
@@ -446,7 +447,7 @@ public class SearchFile {
 		 * call a different facade given the type of search ?
 		 */
 		List<DocumentVo> docs;
-		
+
 		if(forceFilterOnSharedFile){
 			List<ShareDocumentVo> sharedocs = searchDocumentFacade.retrieveShareDocumentContainsCriterion(userlogin, searchDocumentCriterion);	
 			docs = new ArrayList<DocumentVo>(sharedocs);
@@ -468,25 +469,25 @@ public class SearchFile {
 	}
 
 	public Object onSuccessFromSimpleSearchForm(){
-		
+
 		if (resetSimple) {
 			this.name = null;
 			this.resetSimple = false;
 			componentResources.triggerEvent("resetListFiles", null, null);
 			return null;
 		}
-		
-		
+
+
 		Boolean shared = null;
 		if (forceFilterOnSharedFile) shared = forceFilterOnSharedFile;
-		
+
 		SearchDocumentCriterion searchDocumentCriterion = new SearchDocumentCriterion(userTemp,name, null,null, null, shared, null, null, null, null, null);
 
 		/**
 		 * call a different facade given the type of search ?
 		 */
 		List<DocumentVo> docs;
-		
+
 		if(forceFilterOnSharedFile){
 			List<ShareDocumentVo> shareddocs = searchDocumentFacade.retrieveShareDocumentContainsCriterion(userlogin, searchDocumentCriterion);
 			docs =  new ArrayList<DocumentVo>(shareddocs);
@@ -501,16 +502,16 @@ public class SearchFile {
 		componentResources.triggerEvent("inFileSearch", null, null);
 		return null;
 	}
-	
+
 	void onSelectedFromReset() { 
 		reset = true; 
 	}
-	
+
 	void onSelectedFromResetSimple() {
 		resetSimple = true;
 	}
-	
-	
+
+
 
 
 	/* ***********************************************************
@@ -552,7 +553,7 @@ public class SearchFile {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * check if advancedmode is present in the parameter of the component
 	 * if present, remote control (with an external link) is activated to show basic or advanced search window

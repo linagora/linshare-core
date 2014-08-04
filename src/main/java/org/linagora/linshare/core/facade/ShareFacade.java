@@ -48,7 +48,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ShareFacade {
 
-	
+
 //	/**
 //	 * Create a whole set of sharing
 //	 * The expiration date will be defined in the config
@@ -114,7 +114,7 @@ public interface ShareFacade {
 			boolean secureSharing, MailContainer mailContainer,
 			Calendar expiryDateSelected)
 			throws BusinessException;
-	
+
 	/**
 	 * Retrieve all the sharing received by a user
 	 * @param recipient the user
@@ -122,8 +122,8 @@ public interface ShareFacade {
 	 * @throws BusinessException
 	 */
 	public List<ShareDocumentVo> getAllSharingReceivedByUser(UserVo recipient) throws BusinessException;
-	
-	
+
+
 	/**
 	 * Retrieve all the sharings of a file by a user
 	 * @param sender the user
@@ -131,8 +131,8 @@ public interface ShareFacade {
 	 * @return
 	 */
 	public List<ShareDocumentVo> getSharingsByUserAndFile(UserVo sender, DocumentVo document);
-	
-	
+
+
 	/**
 	 * Retrieve all the sharing urls of a file by a user (email)
 	 * @param sender the user
@@ -140,8 +140,8 @@ public interface ShareFacade {
 	 * @return a list of couples : the mail of the recipient and the expiration of the url
 	 */
 	public Map<String, Calendar> getAnonymousSharingsByUserAndFile(UserVo senderVo, DocumentVo documentVo);
-	
-	
+
+
 	/**
 	 * Delete a sharing
 	 * @param share
@@ -149,8 +149,8 @@ public interface ShareFacade {
 	 * @throws BusinessException
 	 */
 	void deleteSharing(ShareDocumentVo share, UserVo actor) throws BusinessException;
-	
-	
+
+
     /** Create a local copy of a shared document.
      * @param shareDocumentVo shared document.
      * @param actorVo user that the document belongs to.
@@ -182,14 +182,14 @@ public interface ShareFacade {
 	 * @return
 	 */
 	public boolean getDefaultSecuredAnonymousUrlCheckBoxValue(String domainIdentifier);
-	
+
 	/**
 	 * Get a ShareDocumentVo by the share persistenceId
 	 * @param persistenceId
 	 * @return
 	 */
 	public ShareDocumentVo getShareDocumentVoByUuid(UserVo actorVo, String uuid ) throws BusinessException;
-	
+
 	/**
 	 * This method is desinged to update only share comment.
 	 * @param actorVo
@@ -200,20 +200,24 @@ public interface ShareFacade {
 	 */
 	public void updateShareComment(UserVo actorVo, String uuid, String comment) throws IllegalArgumentException, BusinessException ;
 
-	
+
 	public boolean shareHasThumbnail(UserVo actorVo, String shareEntryUuid);
-	
+
 	public InputStream getShareThumbnailStream(UserVo actorVo, String shareEntryUuid) throws BusinessException;
-	
+
 	public InputStream getShareStream(UserVo actorVo, String shareEntryUuid) throws BusinessException;
-	
+
 	public boolean isSignedShare(UserVo actorVo, ShareDocumentVo shareVo);
-	
+
 	public boolean isSignedShare(UserVo actorVo, String shareVoIdentifier);
-	
+
 	public SignatureVo getSignature(UserVo actorVo, ShareDocumentVo documentVo);
 
 	public List<SignatureVo> getAllSignatures(UserVo actorVo, ShareDocumentVo documentVo);
-	
+
+	public List<ShareDocumentVo> share(UserVo actorVo, List<DocumentVo> documentVos,
+			List<String> recipientsEmail,
+			boolean secured, MailContainer mailContainer)
+			throws BusinessException;
 }
 

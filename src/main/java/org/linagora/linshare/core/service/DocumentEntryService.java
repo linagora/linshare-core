@@ -135,6 +135,8 @@ public interface DocumentEntryService {
 	 */
 	public Long getGlobalQuota(Account account) throws BusinessException;
 
+	public DocumentEntry find(Account actor, Account owner, String currentDocEntryUuid) throws BusinessException;
+
 	public DocumentEntry findById(Account actor, String currentDocEntryUuid) throws BusinessException;
 
 	public List<DocumentEntry> findAllMyDocumentEntries(Account actor, User owner) throws BusinessException;

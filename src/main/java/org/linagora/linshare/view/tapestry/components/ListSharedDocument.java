@@ -96,7 +96,7 @@ import org.slf4j.LoggerFactory;
 public class ListSharedDocument {
 
 	private static final Logger logger = LoggerFactory.getLogger(ListSharedDocument.class);
-	
+
 	/***********************************
 	 * Parameters
 	 ***********************************/
@@ -112,20 +112,20 @@ public class ListSharedDocument {
 	@Parameter(required=true,defaultPrefix=BindingConstants.PROP)
 	@Property
 	private List<ShareDocumentVo> shareDocuments;
-    
+
     @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
     @Property
     private boolean inSearch;
-    
+
     @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
     @Property
     private boolean disableDeletion;
-	
-	
+
+
 	/***********************************
 	 * Properties
 	 ***********************************/
-	
+
 
 	@Property
 	private ShareDocumentVo shareDocument;
@@ -133,15 +133,15 @@ public class ListSharedDocument {
 	@Property
 	@Persist
 	private List<ShareDocumentVo> listSelected;
-	
+
 
 	/***********************************
 	 * Service injection
 	 ***********************************/
-	
+
 	@Inject
 	private PersistentLocale persistentLocale;
-	
+
 	@Inject
 	private DocumentFacade documentFacade;
 
@@ -150,60 +150,60 @@ public class ListSharedDocument {
 
 	@Inject
 	private AbstractDomainFacade domainFacade;
-	
+
 	@Inject
 	private ComponentResources componentResources; 
-	
+
 	@Inject
 	private Response response;
 
 	@Inject
 	private BeanModelSource beanModelSource;
-	
+
 	@InjectComponent
 	private UserDetailsDisplayer userDetailsDisplayer;
-	
+
 	@Component(parameters={ "share=true" })
 	private SignatureDetailsDisplayer signatureDetailsDisplayer;
-	
+
 	@InjectComponent
 	private PasswordDecryptPopup passwordDecryptPopup;
-	
+
 	@Inject
 	private PageRenderLinkSource linkFactory;
-	
-	
+
+
 	@Property
 	@Persist
 	private BeanModel model;
-	
+
 	@Inject
 	private Messages messages;
 
     @Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
-	
+
 	/***********************************
 	 * Flags
 	 ***********************************/
 	@Persist
 	private String currentUuid;
-	
+
 	@Persist
 	private List<ShareDocumentVo> componentdocuments;
-	
+
 	@Property
 	private boolean activeSignature;
-	
+
 	@Property
 	private boolean activeEncypher;
-	
+
 	@Property
 	private boolean enabledToUpload;
-	
+
 	@Persist
 	private boolean refreshFlag;
-	
+
 	@Persist
 	private List<ShareDocumentVo> docs;
 
@@ -215,7 +215,7 @@ public class ListSharedDocument {
 
 	@Persist("flash")
 	private ActionFromBarDocument actionbutton;
-	
+
 	@Property
 	private String action;
 
@@ -224,22 +224,22 @@ public class ListSharedDocument {
 
 	@Persist
 	private String pass;
-	
-	
+
+
 	/**
 	 * Components Model.
 	 */
 	@Property
 	@Persist
 	private SorterModel<ShareDocumentVo> sorterModel;
-	
+
 
 	@Property
 	@InjectComponent
 	private ShareEditForm shareEditForm;
-	
-	
-	
+
+
+
 	/*********************************
 	 * Phase render
 	 *********************************/
@@ -257,13 +257,13 @@ public class ListSharedDocument {
 		this.activeEncypher = documentFacade.isEnciphermentActive(user);
 		//if(model==null) // need to redo the model each type, for the config may change 
 		model=initModel();
-		
+
 	}
 
 	/********************************
 	 * ActionLink methods
 	 *********************************/
-	
+
 	/**
 	 * The action declenched when the user click on the download link on the name of the file. 
 	 */
@@ -275,7 +275,7 @@ public class ListSharedDocument {
 		}
 
 		ShareDocumentVo currentSharedDocumentVo=searchDocumentVoByUUid(componentdocuments, uuid);
-		
+
 		if (null == currentSharedDocumentVo) {
 			businessMessagesManagementService.notify(new BusinessException(
 					BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND,
@@ -284,7 +284,7 @@ public class ListSharedDocument {
 		} else {
 			boolean alreadyDownloaded = currentSharedDocumentVo.getDownloaded();
 			InputStream stream = shareFacade.getShareStream(user, currentSharedDocumentVo.getIdentifier());
-			
+
 			// send an email to the owner if it is the first time the document is downloaded
 			if (!alreadyDownloaded) {
 				logger.info("First download of this shar, notify the owner of it.");
@@ -295,7 +295,7 @@ public class ListSharedDocument {
 		}
 
 	}
-	
+
 	private void notifyOwnerByEmail(ShareDocumentVo currentSharedDocumentVo) {
 		try {
 			shareFacade.sendDownloadNotification(currentSharedDocumentVo, user);
@@ -308,11 +308,11 @@ public class ListSharedDocument {
 	public void onActionFromDelete(String uuid){
 		currentUuid = uuid;
 	}
-	
+
 	public Object onActionFromSignature(String uuid) throws BusinessException{
 		currentUuid = uuid;
 		ShareDocumentVo shareddoc = searchDocumentVoByUUid(componentdocuments,uuid);
-		
+
 		if (null==shareddoc) {
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
 		} else {
@@ -328,20 +328,20 @@ public class ListSharedDocument {
 		actionbutton = ActionFromBarDocument.DECRYPT_ACTION;
 		passwordDecryptPopup.getFormPassword().clearErrors(); // delete popup message
 	}
-	
+
 	public Zone onActionFromShowUser(String mail) throws BusinessException {
 		return userDetailsDisplayer.getShowUser(mail);	
 	}
-	
+
 	public Zone onActionFromShowSignature(String docidentifier) throws BusinessException {
 		return signatureDetailsDisplayer.getShowSignature(docidentifier);
 	}
-	
+
     public void onActionFromCopy(String docIdentifier) {
     	logger.debug("onActionFromCopy");
         ShareDocumentVo shareDocumentVo = searchDocumentVoByUUid(componentdocuments, docIdentifier);
         boolean copyDone = false;
-        
+
         //create the copy of the document and remove it from the received documents
         try {
             shareFacade.createLocalCopy(shareDocumentVo, user);
@@ -350,23 +350,23 @@ public class ListSharedDocument {
             // process business exception. Can be thrown if no space left or wrong mime type.
             businessMessagesManagementService.notify(e);
         }
-        
+
         if (copyDone) {
             businessMessagesManagementService.notify(new BusinessUserMessage(
             		BusinessUserMessageType.LOCAL_COPY_OK, MessageSeverity.INFO));
             componentResources.triggerEvent("resetListFiles", null, null);
         }
     }
-    
+
 	public Object onSuccessFromSearch() {
 		if (listSelected.size() < 1) {
             businessMessagesManagementService.notify(new BusinessUserMessage(
             		BusinessUserMessageType.NOFILE_SELECTED, MessageSeverity.WARNING));
     		return null;
 		}
-		
+
 		actionbutton = ActionFromBarDocument.fromString(action);
-		
+
 		switch (actionbutton) {
 		case DELETE_ACTION:
 			if ("true".equals(deleteConfirmed)) {
@@ -405,18 +405,18 @@ public class ListSharedDocument {
 
 		return null;
 	}
-	
+
 	public Zone onValidateFormFromPasswordDecryptPopup() throws BusinessException {
 		String pass = passwordDecryptPopup.getPassword();
 
 		ShareDocumentVo currentSharedDocumentVo=searchDocumentVoByUUid(componentdocuments,currentUuid);
-		
+
 		if(null==currentSharedDocumentVo){
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
 		}else{
 	        boolean copyDone = false;
 	        boolean alreadyDownloaded = currentSharedDocumentVo.getDownloaded();
-	        
+
 	        //create the copy of the document and remove it from the received documents
 	        DocumentVo copyDoc = null;
 	        try {
@@ -426,38 +426,38 @@ public class ListSharedDocument {
 	            // process business exception. Can be thrown if no space left or wrong mime type.
 	            businessMessagesManagementService.notify(e);
 	        }
-	        
+
 	        //send an email to the owner if it is the first time the document is downloaded
 			if (!alreadyDownloaded) 
 				notifyOwnerByEmail(currentSharedDocumentVo);
-			
+
 	        if (copyDone) {
 	            businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.LOCAL_COPY_OK,
 	                MessageSeverity.INFO));
 	        }
-	        
+
 	        //decrypt document
 	        if(copyDoc != null && copyDoc.getEncrypted()){ 
 				try {
 					documentFacade.decryptDocument(copyDoc, user,pass);
 					 businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.DECRYPTION_OK,
 				                MessageSeverity.INFO));
-	
+
 				} catch (BusinessException e) {
 					businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.DECRYPTION_FAILED,
 				                MessageSeverity.WARNING));
 					logger.debug(e.toString());
 				}
-	
+
 			}
 		}
 	    return passwordDecryptPopup.formSuccess();
 	}
-	
+
 	/***************************
 	 * Events 
 	 ***************************/
-	
+
 	/**
 	 * The event triggered by the confirm window when the user pushes on YES.
 	 * @throws BusinessException exception throws when the uuid doesn't exist.
@@ -471,7 +471,7 @@ public class ListSharedDocument {
 		}
 	}
 
-	
+
 	@OnEvent(value="signatureDocumentEvent")
 	public void signatureDocument() throws BusinessException{
 		if(null!=currentUuid){
@@ -481,13 +481,13 @@ public class ListSharedDocument {
 		}
 	}
 
-    
+
 	public void copyFromListDocument(List<ShareDocumentVo> shares) {
 		logger.debug("copyFromListDocument");
-		 
+
 		for (ShareDocumentVo shareDocumentVo:shares){
 	        boolean copyDone = false;
-	        
+
 	        //create the copy of the document and remove it from the received documents
 	        try {
 	            shareFacade.createLocalCopy(shareDocumentVo, user);
@@ -503,13 +503,13 @@ public class ListSharedDocument {
 		}
         componentResources.triggerEvent("resetListFiles", null, null);
 	}
-	
-	
-	
+
+
+
 	/***************************
 	 * Other methods
 	 ****************************/
-	
+
 	/**
 	 * Property used for know if the list is empty.
 	 * @return true if the list is empty. else false.
@@ -518,7 +518,7 @@ public class ListSharedDocument {
 	public boolean isEmptyList(){
 		return (null == shareDocuments || shareDocuments.isEmpty());
 	}
-	
+
 	/**
 	 * Format the creation date for good displaying using DateFormatUtils of apache commons lib.
 	 * @return creation date the date in localized format.
@@ -536,12 +536,12 @@ public class ListSharedDocument {
 	   SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
 	   return formatter.format(shareDocument.getShareExpirationDate().getTime());
 	}
-	
+
 	public String getSharingDate(){
 		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
 		return formatter.format(shareDocument.getSharingDate().getTime());
 	}
-	
+
 	public String getFriendlySize(){
 		return FileUtils.getFriendlySize(shareDocument.getSize(),messages);
 	}
@@ -555,7 +555,7 @@ public class ListSharedDocument {
 	public boolean isDocumentNotSignedByCurrentUserAndDocNotEncrypted() throws BusinessException{
 		return !shareDocument.getEncrypted() && !isDocumentSignedByCurrentUser();
 	}
-	
+
 	public boolean isDocumentSigned(){
 		return shareFacade.isSignedShare(user, shareDocument);
 	}
@@ -579,7 +579,7 @@ public class ListSharedDocument {
 			listSelected.add(shareDocument);
 		}
 	}
-	
+
 	/**
 	 * Help method for use in this component. It retrieves a documentVo by it's id.
 	 * @param documents list of documents.  
@@ -594,9 +594,9 @@ public class ListSharedDocument {
 		}
 		return null;
 	}
-	
-	
-	
+
+
+
 	@SuppressWarnings("unchecked")
 	@OnEvent(value="eventReorderList")
 	public void reorderList(Object[] o1){
@@ -605,9 +605,9 @@ public class ListSharedDocument {
 			this.sorterModel=new SharedFileSorterModel(this.docs);
 			refreshFlag=true;
     	}
-		
+
 	}
-	
+
 
 	/**
 	 * model for the datagrid
@@ -617,21 +617,21 @@ public class ListSharedDocument {
 	 * @throws BusinessException
 	 */
 	public BeanModel initModel() throws BusinessException {
-		
-		
+
+
 		//Initialize the sorter model for sorter component.
 		if (refreshFlag) {
 			shareDocuments = docs;
 			refreshFlag = false;
 		}
-        
+
 		sorterModel = new SharedFileSorterModel(shareDocuments);
-    	
+
     	model = beanModelSource.createDisplayModel(ShareDocumentVo.class, componentResources.getMessages());
-        
-		
-    	
-    	
+
+
+
+
     	// Native TML in HTML was:
 		// exclude="fileName, identifier, size, encrypted, ownerLogin, shared, type, shareActive, downloaded, comment"
 		// add="fileProperties,expirationDate,signed,actions"
@@ -639,13 +639,13 @@ public class ListSharedDocument {
     	// Another native TML in HTML was: 
 		// exclude="identifier, size, encrypted, ownerLogin, shared, type, shareActive, downloaded, comment"
 		// add="friendlySize,createDate,expirationDate,signed,sharedBy,actions"
-	
+
     	model.add("fileProperties",null);
         //model.add("expirationDate",null);
     	model.add("shareEdit",null);
 		model.add("selectedValue", null);
 //    	model.add("actions",null);
-    	
+
     	if(activeSignature && activeEncypher){
         	model.add("signed",null);
     		model.add("encryptedAdd", null);
@@ -665,7 +665,7 @@ public class ListSharedDocument {
 	public boolean isActiveSignature() {
 		return activeSignature;
 	}
-	
+
 	public boolean isEnabledToUpload() {
 		return user.isUpload();
 	}
@@ -674,11 +674,11 @@ public class ListSharedDocument {
 	public Link getThumbnailPath() {
         return componentResources.createEventLink("thumbnail", shareDocument.getIdentifier());
 	}
-	
+
 	public boolean getThumbnailExists() {
 		return shareFacade.shareHasThumbnail(user, shareDocument.getIdentifier());
 	}
-	
+
 	public String getTypeCSSClass() {
 		String ret = shareDocument.getType();
 		ret = ret.replace("/", "_");
@@ -686,8 +686,8 @@ public class ListSharedDocument {
 		ret = ret.replace(".", "_-_");
 		return ret;
 	}
-	
-	public void onThumbnail(String docID) {
+
+	public void onThumbnail(String docID) throws BusinessException {
 		InputStream stream=null;
 		DocumentVo currentDocumentVo = searchDocumentVoByUUid(componentdocuments,
 				docID);
@@ -719,7 +719,7 @@ public class ListSharedDocument {
 
 		}
 	}
-	
+
 	/**
 	 * remove all carriage return for chenille kit tool tip
 	 * @return
@@ -729,7 +729,7 @@ public class ListSharedDocument {
 		result = result.replaceAll("\n", " ");
 		return result;
 	}
-	
+
 	public Zone onActionFromShareEditProperties(String persistenceId) throws BusinessException {
 		shareEditForm.setEditShareWithId(persistenceId);
 	    return shareEditForm.getShowPopupWindow();

@@ -53,6 +53,7 @@ import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
 import org.linagora.linshare.core.domain.transformers.impl.ShareEntryTransformer;
@@ -63,8 +64,6 @@ import org.linagora.linshare.core.domain.vo.SignatureVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -75,6 +74,7 @@ import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
+import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +112,8 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	private final GuestService guestService;
 
+	private final ShareService shareService;
+
 	public ShareFacadeImpl(final ShareEntryTransformer shareEntryTransformer,
 			final UserRepository<User> userRepository,
 			final NotifierService notifierService,
@@ -123,7 +125,8 @@ public class ShareFacadeImpl implements ShareFacade {
 			final FunctionalityReadOnlyService functionalityService,
 			final AnonymousShareEntryService anonymousShareEntryService,
 			final SignatureTransformer signatureTransformer,
-			final GuestService guestService) {
+			final GuestService guestService,
+			final ShareService shareService) {
 		super();
 		this.shareEntryTransformer = shareEntryTransformer;
 		this.userRepository = userRepository;
@@ -138,6 +141,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.anonymousShareEntryService = anonymousShareEntryService;
 		this.signatureTransformer = signatureTransformer;
 		this.guestService = guestService;
+		this.shareService = shareService;
 	}
 
 	private SuccessesAndFailsItems<ShareDocumentVo> createSharing(
@@ -607,6 +611,23 @@ public class ShareFacadeImpl implements ShareFacade {
 		return null;
 	}
 
+	@Override
+	public List<ShareDocumentVo> share(UserVo actorVo,
+			List<DocumentVo> documentVos, List<String> recipientsEmail,
+			boolean secured, MailContainer mailContainer)
+			throws BusinessException {
+		User actor = getActor(actorVo);
+		ShareContainer sc = new ShareContainer(mailContainer.getSubject(),
+				mailContainer.getPersonalMessage(), secured);
+		sc.addDocumentsVo(documentVos);
+		sc.addRecipient(recipientsEmail);
+		List<ShareEntry> list = shareService.create(actor, actor, sc);
+		return shareEntryTransformer.disassembleList(list);
+	}
+
+	/*
+	 * Helpers
+	 */
 	private User getActor(UserVo userVo) throws BusinessException {
 		Validate.notEmpty(userVo.getLsUuid(), "Missing actor uuid");
 		User actor = userService.findByLsUuid(userVo.getLsUuid());

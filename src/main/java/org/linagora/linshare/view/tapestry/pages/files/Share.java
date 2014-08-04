@@ -160,7 +160,7 @@ public class Share {
 
 	@Inject
 	private Policy antiSamyPolicy;
-	
+
 	@Inject
 	private UserAutoCompleteFacade userAutoCompleteFacade;
 
@@ -285,15 +285,17 @@ public class Share {
 			// PROCESS SHARE
 
 			Boolean errorOnAddress = false;
+			// TODO FIXME: FMA
 			SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
 
 			try {
 				MailContainer mailContainer = new MailContainer(
 						userVo.getLocale(), textAreaValue, textAreaSubjectValue);
-				sharing = shareFacade
-						.createSharingWithMailUsingRecipientsEmailAndExpiryDate(
-								userVo, documents, recipientsEmail,
-								secureSharing, mailContainer, null);
+//				sharing = shareFacade
+//						.createSharingWithMailUsingRecipientsEmailAndExpiryDate(
+//								userVo, documents, recipientsEmail,
+//								secureSharing, mailContainer, null);
+				shareFacade.share(userVo, documents, recipientsEmail, secureSharing, mailContainer);
 			} catch (BusinessException e1) {
 
 				// IF RELAY IS DISABLE ON SMTP SERVER
@@ -366,7 +368,7 @@ public class Share {
 		}
 		return elements;
 	}
-	
+
 	public SelectModel onProvideCompletionsFromMailingLists(String input)
 			throws BusinessException {
 		List<MailingListVo> lists = mailingListFacade.completionForUploadForm(
@@ -397,12 +399,12 @@ public class Share {
 			}
 		};
 	}
-	
+
 	public void setSelectedDocuments(List<DocumentVo> documents) {
 		this.documents = documents;
 	}
 
-	
+
 	/** Perform a user search using the user search pattern.
 	 * @param input user search pattern.
 	 * @return list of users.

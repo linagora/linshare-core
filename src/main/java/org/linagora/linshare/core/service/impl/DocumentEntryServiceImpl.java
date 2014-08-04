@@ -106,6 +106,20 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	}
 
 	@Override
+	public DocumentEntry find(Account actor, Account owner,
+			String currentDocEntryUuid) throws BusinessException {
+
+		DocumentEntry entry = documentEntryBusinessService.findById(currentDocEntryUuid);
+		if (entry == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Can not find document entry with uuid : " + currentDocEntryUuid);
+		}
+		if (!isAuthorized(actor, entry)) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this document. current actor is : " + actor.getAccountReprentation());
+		}
+		return entry;
+	}
+
+	@Override
 	public DocumentEntry createDocumentEntry(Account actor, InputStream stream, String fileName) throws BusinessException {
 		fileName = sanitizeFileName(fileName); // throws
 
@@ -611,6 +625,18 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			if (actor.getId() == ((Guest) user).getOwner().getId()) {
 				return true;
 			}
+		}
+		return false;
+	}
+
+	private boolean isAuthorized(Account actor, DocumentEntry documentEntry) {
+		if (actor.equals(documentEntry.getEntryOwner())) {
+			return true;
+		} else if (actor.hasAllRights()) {
+			return true;
+		} else if (actor.hasDelegationRole()) {
+			// TODO : Check delegations permissions.
+			return true;
 		}
 		return false;
 	}
