@@ -268,9 +268,10 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 				if (ancestorFunc.getActivationPolicy().isForbidden()) {
 					return false;
 				}
-				if (ancestorFunc.getConfigurationPolicy().getStatus()) {
-					return true;
+				if (ancestorFunc.getConfigurationPolicy().isForbidden()) {
+					return false;
 				}
+				return true;
 			}
 		} else {
 			// The current functionality belong to a parent domain.
@@ -281,11 +282,8 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			if (ancestorFunc.getActivationPolicy().isForbidden()) {
 				return false;
 			}
-			if (ancestorFunc.getConfigurationPolicy().getStatus()) {
-				return true;
-			}
+			return ancestorFunc.getConfigurationPolicy().getStatus();
 		}
-		return false;
 	}
 
 	@Override

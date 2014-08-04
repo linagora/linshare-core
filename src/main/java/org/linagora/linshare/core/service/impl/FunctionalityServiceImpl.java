@@ -218,7 +218,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 
 		boolean parentAllowParamUpdate = parametersAreMutable(actor, entity, domain);
 		if(!parentAllowParamUpdate) {
-			if (!functionality.businessEquals(entity, true)) {
+			if (!functionality.businessEquals(entity, false)) {
 				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (PARAM) '" + functionality +"' in domain '" + domain +"'");
 				throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
 			}
