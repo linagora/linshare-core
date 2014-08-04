@@ -5,3 +5,9 @@
 /*.iml
 /.idea
 /target
+/dependency
+/distrib
+/generated*
+/misc/jetty.zip
+/misc/jetty
+
