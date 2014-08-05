@@ -327,7 +327,6 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pa
 
 
 ALTER TABLE version RENAME description TO version;
-ALTER TABLE account DROP COLUMN account_id;
 
 
 -- LinShare version
