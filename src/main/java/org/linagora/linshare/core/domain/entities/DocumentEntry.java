@@ -130,4 +130,11 @@ public class DocumentEntry extends Entry implements Serializable {
 		return document.getType();
 	}
 
+	/*
+	 * helpers
+	 */
+	public boolean hasThumbnail() {
+		String thmbUUID = document.getThmbUuid();
+		return (thmbUUID != null && thmbUUID.length() > 0);
+	}
 }

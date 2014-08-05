@@ -72,6 +72,10 @@ INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, 
 INSERT INTO technical_account_permission (id, uuid, creation_date, modification_date) VALUES (40, 'fbba4e41-ca60-4f09-8d59-fbfe052acb82', current_timestamp(3), current_timestamp(3));
 
 
+INSERT INTO technical_account_permission (id, uuid, creation_date, modification_date) VALUES (50, 'fbba4e41-ca60-4f09-8d59-fbfe052acb83', current_timestamp(3), current_timestamp(3));
+
+// 765f1ee6-4df7-420c-b8a5-ad63ae258dd8
+
 -- Users
 -- bart simpson
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (50, 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_timestamp(3), current_timestamp(3), 0, 'fr', 'en', true, false, 3);

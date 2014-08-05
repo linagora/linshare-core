@@ -31,15 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade;
+package org.linagora.linshare.core.domain.constants;
 
-import java.util.Calendar;
-import java.util.List;
-
-import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.UserVo;
-
-public interface ShareExpiryDateFacade {
-	public Calendar computeShareExpiryDate(DocumentVo docVo, UserVo owner) ;
-	public Calendar computeMinShareExpiryDateOfList(List<DocumentVo> docsVo, UserVo owner) ;
+public enum PermissionType {
+	GET,
+	LIST,
+	CREATE,
+	UPDATE,
+	DELETE,
 }

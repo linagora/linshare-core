@@ -53,19 +53,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(SearchDocumentFacadeImpl.class);
-	
+
 
 	private final SearchDocumentService searchDocumentService;
 	private final DocumentEntryTransformer documentEntryTransformer;
-	
+
 	private final ShareEntryTransformer shareEntryTransformer;
-	
+
 	private final AccountService accountService;
 	private final DocumentEntryService documentEntryService;
-	
-	
+
+
 	public SearchDocumentFacadeImpl(SearchDocumentService searchDocumentService, DocumentEntryTransformer documentEntryTransformer, ShareEntryTransformer shareEntryTransformer,
 			AccountService accountService, DocumentEntryService documentEntryService) {
 		super();
@@ -80,7 +80,7 @@ public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 	public List<DocumentVo> retrieveDocument(UserVo userVo) {
 		User user = (User) accountService.findByLsUuid(userVo.getLsUuid());
 		try {
-			List<DocumentEntry> documentEntries = documentEntryService.findAllMyDocumentEntries(user, user);
+			List<DocumentEntry> documentEntries = documentEntryService.findAll(user, user);
 			return documentEntryTransformer.disassembleList(documentEntries);
 		} catch (BusinessException e) {
 			logger.error("can't find my document entries");

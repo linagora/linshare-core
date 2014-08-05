@@ -49,7 +49,7 @@
 			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadRequestTemplate"/>
 		</set>
 
-		<many-to-one name="permission" cascade="lock" column="technical_account_permission_id" class="org.linagora.linshare.core.domain.entities.TechnicalAccountPermission" not-null="false" lazy="no-proxy">
+		<many-to-one name="permission" cascade="lock" column="technical_account_permission_id" class="org.linagora.linshare.core.domain.entities.TechnicalAccountPermission" not-null="false">
 		</many-to-one>
 
 		<subclass name="org.linagora.linshare.core.domain.entities.User" discriminator-value="1" lazy="false">

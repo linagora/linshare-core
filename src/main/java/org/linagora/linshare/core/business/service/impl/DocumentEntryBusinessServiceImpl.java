@@ -190,7 +190,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return null;
 	}
 
-
 	@Override
 	public InputStream getThreadEntryThumbnailStream(ThreadEntry entry) {
 		Document doc = documentRepository.findByUuid(entry.getDocument().getUuid());
@@ -217,13 +216,13 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 
 	@Override
-	public DocumentEntry findById(String docEntryUuid) {
-		return documentEntryRepository.findById(docEntryUuid);
+	public DocumentEntry find(String uuid) {
+		return documentEntryRepository.findById(uuid);
 	}
 
 
 	@Override
-	public List<DocumentEntry> findAllMyDocumentEntries(User owner) {
+	public List<DocumentEntry> findAllMyDocumentEntries(Account owner) {
 		return documentEntryRepository.findAllMyDocumentEntries(owner);
 	}
 

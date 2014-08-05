@@ -68,70 +68,70 @@ import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
  *
  */
 public class SignatureDetailsDisplayer {
-	
-	
+
+
     @Component(parameters = {"style=bluelighting", "show=false", "width=900", "height=400"})
     private WindowWithEffects signatureDetailsWindow;
-    
+
     @Parameter (value="false")
     private boolean share;
-    
+
     @InjectComponent
     private Zone signatureDetailsTemplateZone;
-    
+
     @Inject
     private DocumentFacade documentFacade;
 
     @Inject
     private ShareFacade shareFacade;
-  
-    
+
+
     @SessionState
     @Property
     private UserVo userVo;
-    
+
 	@Property
 	@Persist
     private List<SignatureVo> signatures;
-	
+
 	@Property
 	@Persist
 	private SignatureVo signature;
-	
+
 	@Property
 	private boolean isSignedByCurrentUser;
-	
+
 	@Property
 	private SignatureVo userOwnsignature;
-	
+
 	@Property
 	private String currentfileName;
-	
+
 	@Persist
 	private DocumentVo currentdoc; //keep the doc associated to all signatures we are going to display
 
 	@Persist
 	private ShareDocumentVo shareDocumentVo; //keep the doc associated to all signatures we are going to display
-	
+
     @Inject
     private Messages messages;
-	
+
 	@Inject
 	private PersistentLocale persistentLocale;
-	
-    
+
+
 	public Zone getShowSignature(String uuidIdentifier) throws BusinessException {
-		
+
 		// Fix : very very ugly.
 		if(share) {
 			shareDocumentVo = shareFacade.getShareDocumentVoByUuid(userVo, uuidIdentifier);
 			currentfileName = shareDocumentVo.getFileName();
-			currentdoc = documentFacade.getDocument(userVo.getLogin(), shareDocumentVo.getIdentifier());
+			currentdoc = documentFacade.getDocument(userVo, shareDocumentVo.getIdentifier());
 			isSignedByCurrentUser = shareFacade.isSignedShare(userVo, uuidIdentifier);
 			userOwnsignature = shareFacade.getSignature(userVo, shareDocumentVo);
 			signatures = shareFacade.getAllSignatures(userVo, shareDocumentVo);
 		} else {
-			currentdoc = documentFacade.getDocument(userVo.getLogin(), uuidIdentifier);
+			currentdoc = documentFacade.getDocument(userVo, uuidIdentifier);
 			isSignedByCurrentUser = documentFacade.isSignedDocumentByCurrentUser(userVo, currentdoc);
 			currentfileName = currentdoc.getFileName();
 			userOwnsignature = documentFacade.getSignature(userVo, currentdoc);
@@ -139,7 +139,7 @@ public class SignatureDetailsDisplayer {
 		}
 	    return signatureDetailsTemplateZone;
 	}
-	
+
 	public String getUserOwnsignatureDate(){
 		if (userOwnsignature!=null) {
 			String pattern = messages.get("global.pattern.timestamp");
@@ -147,8 +147,8 @@ public class SignatureDetailsDisplayer {
 		}
 		else return null;
 	}
-	
-	
+
+
 	/**
 	 * Format the creation date for good displaying using DateFormatUtils of apache commons lib.
 	 * @return creation date the date in localized format.
@@ -161,7 +161,7 @@ public class SignatureDetailsDisplayer {
 			}
 		else return null;
 	}
-	
+
 	public String getCertValidity(){
 		if (signature!=null) 
 		{
@@ -170,23 +170,23 @@ public class SignatureDetailsDisplayer {
 		}
 		else return null;
 	}
-	
+
 	public boolean isSignedByCurrentUser(){
 		return isSignedByCurrentUser;
 	}
-	
+
 	public String getJSONId(){
 		return signatureDetailsWindow.getJSONId();
 	}
-	
-	
+
+
 	/**
 	 * The action declenched when the user click on the download for the signature
 	 */
 	public StreamResponse onActionFromDownload(String uuid) throws BusinessException{
 
 		SignatureVo currentSignature= searchDocumentVoByUUid(signatures,uuid);
-		
+
 		if(currentSignature==null){
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid signature uuid");
 		}else{
@@ -195,10 +195,10 @@ public class SignatureDetailsDisplayer {
 		}
 
 	}
-	
-	
+
+
 	public StreamResponse onActionFromDownloadSignedArchive() throws IOException, BusinessException{
-			
+
 			Map<String,InputStream> map = new HashMap<String, InputStream>();
 
 			// Fix : very very ugly.
@@ -214,16 +214,16 @@ public class SignatureDetailsDisplayer {
 				String fileName = oneSignature.getName()+"_"+oneSignature.getPersistenceId()+".xml";
 				map.put(fileName, documentFacade.retrieveSignatureFileStream(oneSignature));
 			}	
-			
+
 			//prepare an archive zip
 			ArchiveZipStream ai = new ArchiveZipStream(map);
-			
-			
+
+
 			return (new FileStreamResponse(ai,archiveName));
 	}
-	
-	
-	
+
+
+
 	private SignatureVo searchDocumentVoByUUid(List<SignatureVo> allSignatures,String uuid){
 		for(SignatureVo onesignature:allSignatures){
 			if(uuid.equals(onesignature.getIdentifier())){
@@ -232,6 +232,6 @@ public class SignatureDetailsDisplayer {
 		}
 		return null;
 	}
-	
-	
+
+
 }

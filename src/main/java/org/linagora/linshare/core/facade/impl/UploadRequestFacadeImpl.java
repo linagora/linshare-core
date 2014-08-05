@@ -236,7 +236,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 
-		return documentEntryService.getDocumentStream(actor, entry
+		return documentEntryService.getDocumentStream(actor, actor, entry
 				.getDocument().getIdentifier());
 	}
 

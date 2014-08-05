@@ -65,7 +65,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class DocumentFacadeImpl implements DocumentFacade {
+public class DocumentFacadeImpl extends GenericTapestryFacade implements DocumentFacade {
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentFacadeImpl.class);
 
@@ -89,7 +89,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 			EnciphermentService enciphermentService, DocumentEntryService documentEntryService, AccountService accountService,
 			DocumentEntryTransformer documentEntryTransformer, SignatureService signatureService, 
 			EntryService entryService) {
-		super();
+		super(accountService);
 		this.userRepository = userRepository;
 		this.signatureTransformer = signatureTransformer;
 		this.enciphermentService = enciphermentService;
@@ -107,7 +107,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		Account actor = accountService.findByLsUuid(owner.getLsUuid());
 		fileName = fileName.replace("\\", "_");
 		fileName = fileName.replace(":", "_");
-		DocumentEntry createDocumentEntry = documentEntryService.createDocumentEntry(actor, in, fileName);
+		DocumentEntry createDocumentEntry = documentEntryService.createDocumentEntry(actor, actor, in, fileName);
 		return documentEntryTransformer.disassemble(createDocumentEntry);
 	}
 
@@ -116,7 +116,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	public void removeDocument(UserVo actorVo, DocumentVo document) throws BusinessException {
 		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		if(actor != null) {
-			entryService.deleteAllShareEntriesWithDocumentEntry(actor, document.getIdentifier());
+			entryService.deleteAllShareEntriesWithDocumentEntry(actor, actor, document.getIdentifier());
 		} else {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user couldn't be found");
 		}
@@ -124,25 +124,17 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 
 	@Override
-	public DocumentVo getDocument(String login, String uuid) {
-		Account actor = accountService.findByLsUuid(login);
-		if(actor != null) {
-			DocumentEntry entry;
-			try {
-				entry = documentEntryService.findById(actor, uuid);
-				return documentEntryTransformer.disassemble(entry);
-			} catch (BusinessException e) {
-				logger.error("can't get document : " + e.getMessage());
-			}
-		}
-		return null;
+	public DocumentVo getDocument(UserVo actorVo, String uuid) throws BusinessException {
+			User actor = getActor(actorVo);
+			DocumentEntry entry = documentEntryService.find(actor, actor, uuid);
+			return documentEntryTransformer.disassemble(entry);
 	}
 
 
 	@Override
 	public InputStream retrieveFileStream(DocumentVo doc, String lsUid) throws BusinessException {
 		Account actor = accountService.findByLsUuid(lsUid);
-		return documentEntryService.getDocumentStream(actor, doc.getIdentifier());
+		return documentEntryService.getDocumentStream(actor, actor, doc.getIdentifier());
 	}
 
 
@@ -154,17 +146,17 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	@Override
 	public void insertSignatureFile(InputStream file, long size, String fileName, UserVo ownerVo, DocumentVo documentVo, X509Certificate signerCertificate) throws BusinessException {
-		Account actor = accountService.findByLsUuid(ownerVo.getLsUuid());
-		DocumentEntry documentEntry = documentEntryService.findById(actor, documentVo.getIdentifier());
+		Account actor = getActor(ownerVo);
+		DocumentEntry documentEntry = documentEntryService.find(actor, actor, documentVo.getIdentifier());
 		signatureService.createSignature(actor, documentEntry.getDocument(), file, size, fileName, signerCertificate);
 	}
 
 
 	@Override
 	public List<SignatureVo> getAllSignatures(UserVo userVo, DocumentVo documentVo){
-		Account actor = accountService.findByLsUuid(userVo.getLsUuid());
 		try {
-			DocumentEntry document = documentEntryService.findById(actor, documentVo.getIdentifier());
+			Account actor = getActor(userVo);
+			DocumentEntry document = documentEntryService.find(actor, actor, documentVo.getIdentifier());
 			return signatureTransformer.disassembleList(new ArrayList<Signature>(document.getDocument().getSignatures()));
 		} catch (BusinessException e) {
 			logger.error("Can't find document : " + documentVo.getIdentifier() + ": " + e.getMessage());
@@ -175,9 +167,9 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	@Override
 	public SignatureVo getSignature(UserVo currentSigner, DocumentVo documentVo) {
-		Account actor = accountService.findByLsUuid(currentSigner.getLsUuid());
 		try {
-			DocumentEntry document = documentEntryService.findById(actor, documentVo.getIdentifier());
+			User actor = getActor(currentSigner);
+			DocumentEntry document = documentEntryService.find(actor, actor, documentVo.getIdentifier());
 			SignatureVo res = null;
 			for (Signature signature : document.getDocument().getSignatures()) {
 				if (signature.getSigner().equals(actor)) {
@@ -201,7 +193,8 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		boolean res = false;
 		Account actor = accountService.findByLsUuid(userLsUuid);
 		try {
-			DocumentEntry document = documentEntryService.findById(actor, documentVo.getIdentifier());
+//			Account actor = getActor(userVo);
+			DocumentEntry document = documentEntryService.find(actor, actor, documentVo.getIdentifier());
 			Set<Signature> signatures = document.getDocument().getSignatures();
 			if(signatures!=null && signatures.size()>0) res = true;
 		} catch (BusinessException e) {
@@ -213,9 +206,8 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	@Override
 	public boolean isSignedDocumentByCurrentUser(UserVo currentSigner, DocumentVo documentVo) throws BusinessException{
-
-		Account actor = accountService.findByLsUuid(currentSigner.getLsUuid());
-		DocumentEntry doc = documentEntryService.findById(actor, documentVo.getIdentifier());
+		Account actor = getActor(currentSigner);
+		DocumentEntry doc = documentEntryService.find(actor, actor, documentVo.getIdentifier());
 		Set<Signature> signatures = doc.getDocument().getSignatures();
 
 		boolean res = false;
@@ -317,12 +309,11 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	@Override
 	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, UserVo ownerVo, String friendlySize) throws BusinessException {
-		Account actor = accountService.findByLsUuid(ownerVo.getLsUuid());
-
-		DocumentEntry originalEntry = documentEntryService.findById(actor, currentFileUUID);
+		Account actor = getActor(ownerVo);
+		DocumentEntry originalEntry = documentEntryService.find(actor, actor, currentFileUUID);
 		String originalFileName = originalEntry.getName();
 
-		DocumentEntry documentEntry = documentEntryService.updateDocumentEntry(actor, currentFileUUID, file, size, fileName);
+		DocumentEntry documentEntry = documentEntryService.updateDocumentEntry(actor, actor, currentFileUUID, file, size, fileName);
 		if(documentEntry.isShared()){
 			//send email, file has been replaced ....
 			entryService.sendSharedUpdateDocNotification(documentEntry, friendlySize, originalFileName);
@@ -335,7 +326,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
     public void renameFile(String userlogin, String docEntryUuid, String newName) {
 		Account actor = accountService.findByLsUuid(userlogin);
         try {
-			documentEntryService.renameDocumentEntry(actor, docEntryUuid, newName);
+			documentEntryService.renameDocumentEntry(actor, actor, docEntryUuid, newName);
 		} catch (BusinessException e) {
 			logger.error("Can't rename document : " + docEntryUuid + " : " + e.getMessage());
 		}
@@ -349,7 +340,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 			comment = "";
 		}
         try {
-			documentEntryService.updateFileProperties(actor, docEntryUuid, newName, comment);
+			documentEntryService.updateFileProperties(actor, actor, docEntryUuid, newName, comment);
 		} catch (BusinessException e) {
 			logger.error("Can't update file properties document : " + docEntryUuid + " : " + e.getMessage());
 		}
@@ -370,29 +361,12 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		}
 
 		try {
-			return documentEntryService.getDocumentThumbnailStream(actor, docEntryUuid);
+			return documentEntryService.getDocumentThumbnailStream(actor, actor, docEntryUuid);
 		} catch (BusinessException e) {
 			logger.error("Can't get document thumbnail : " + docEntryUuid + " : " + e.getMessage());
 		}
     	return null;
     }
-
-
-	@Override
-    public boolean documentHasThumbnail(String actorUuid, String docEntryUuid) {
-		if(actorUuid == null) {
-			logger.error("Can't find user with null parameter.");
-			return false;
-		}
-
-		Account actor = accountService.findByLsUuid(actorUuid);
-		if(actor == null) {
-			logger.error("Can't find logged user.");
-			return false;
-		}
-		return documentEntryService.documentHasThumbnail(actor, docEntryUuid);
-    }
-
 
 	@Override
 	public boolean isSignatureActive(UserVo userVo) {

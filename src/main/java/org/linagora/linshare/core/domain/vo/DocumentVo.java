@@ -36,6 +36,7 @@ package org.linagora.linshare.core.domain.vo;
 import java.io.Serializable;
 import java.util.Calendar;
 
+import org.apache.tapestry5.beaneditor.NonVisual;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 
@@ -46,52 +47,55 @@ public class DocumentVo implements Serializable, Comparable {
 	/**
 	 * The size of the document
 	 */
-	
+
 	private final Long size;
-	
+
 	/**
 	 * the identifier of the document.
 	 */
 	private final String identifier;
-	
+
 	/**
 	 * the fileName of the document.
 	 */
 	private final String fileName;
-	
+
 	/**
 	 * the creation date of the document.
 	 */
 	private final Calendar creationDate;
-	
+
 	/**
 	 * the expiration date of the document.
 	 */
 	private final Calendar expirationDate;
-	
+
 	/**
 	 * the document owner.
 	 */
 	private final String ownerLogin;
-	
+
 	/**
 	 * if the document is encrypted.
 	 */
 	private final Boolean encrypted;
-	
+
 	/**
 	 * if the document is shared.
 	 */
 	private final Boolean shared;
-	
+
 	/**
 	 * the mime type of document
 	 */
 	private final String type;
-	
-	
+
+
 	private final String fileComment;
-	
+
+	@NonVisual
+	private final boolean  hasThumbnail;
+
 	public DocumentVo(DocumentEntry documentEntry) {
 		super();
 		this.identifier = documentEntry.getUuid();
@@ -108,8 +112,9 @@ public class DocumentVo implements Serializable, Comparable {
 		this.type = documentEntry.getType();
 		this.size = documentEntry.getSize();
 		this.fileComment = documentEntry.getComment();
+		this.hasThumbnail = documentEntry.hasThumbnail();
 	}
-	
+
 	public DocumentVo(String identifier,String name, String fileComment, Calendar creationDate,
 			Calendar expirationDate,String type, String ownerLogin, Boolean encrypted,
 			Boolean shared,Long size) {
@@ -128,9 +133,10 @@ public class DocumentVo implements Serializable, Comparable {
 		this.type=type;
 		this.size=size;
 		this.fileComment = fileComment;
+		this.hasThumbnail = false;
 	}
-	
-	
+
+
 	public DocumentVo(AnonymousShareEntry anonymousShareEntry) {
 		super();
 		this.identifier=anonymousShareEntry.getUuid();
@@ -147,10 +153,11 @@ public class DocumentVo implements Serializable, Comparable {
 		this.type=anonymousShareEntry.getDocumentEntry().getType();
 		this.size=anonymousShareEntry.getDocumentEntry().getSize();
 		this.fileComment = anonymousShareEntry.getDocumentEntry().getComment();
+		this.hasThumbnail = anonymousShareEntry.getDocumentEntry().hasThumbnail();
 	}
-	
-	
-	
+
+
+
 	public Long getSize() {
 		return size;
 	}
@@ -171,7 +178,7 @@ public class DocumentVo implements Serializable, Comparable {
 		return expirationDate;
 	}
 
-	
+
 	public boolean getEncrypted() {
 		return encrypted;
 	}
@@ -187,9 +194,13 @@ public class DocumentVo implements Serializable, Comparable {
 	public String getType() {
 		return type;
 	}
-	
+
 	public String getFileComment() {
 		return fileComment;
+	}
+
+	public boolean isHasThumbnail() {
+		return hasThumbnail;
 	}
 
 	@Override
@@ -198,9 +209,9 @@ public class DocumentVo implements Serializable, Comparable {
 			return false;
 		}
 		return ((DocumentVo) o).getIdentifier().equals(this.getIdentifier()); 
-		
+
 	}
-	
+
 	@Override
 	public int hashCode(){
 		return this.getIdentifier().hashCode();

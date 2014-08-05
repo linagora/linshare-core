@@ -55,35 +55,35 @@ public interface DocumentEntryBusinessService {
 	 * @return
 	 */
 	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException;
-	
+
 	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException ;
-	
+
 	public void deleteDocumentEntry(DocumentEntry documentEntry) throws BusinessException ;
-	
+
 	public byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException;
-	
+
 	public InputStream getDocumentThumbnailStream(DocumentEntry entry) ;
-	
+
 	public InputStream getDocumentStream(DocumentEntry entry) ;
-	
-	public DocumentEntry findById(String docEntryUuid);
-	
-	public List<DocumentEntry> findAllMyDocumentEntries(User owner);
-	
+
+	public DocumentEntry find(String uuid);
+
+	public List<DocumentEntry> findAllMyDocumentEntries(Account owner);
+
 	public void renameDocumentEntry(DocumentEntry entry, String newName) throws BusinessException;
-	
+
 	public void updateFileProperties(DocumentEntry entry, String newName, String fileComment) throws BusinessException;
-	
+
 	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl, Calendar expirationDate) throws BusinessException;
 
 	public long getRelatedEntriesCount(DocumentEntry documentEntry);
-	
-	
-	
+
+
+
 	public ThreadEntry createThreadEntry(Thread owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException;
-	
+
 	public ThreadEntry findThreadEntryById(String docEntryUuid);
-	
+
 	public List<ThreadEntry> findAllThreadEntries(Thread owner);
 
 	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names);

@@ -131,6 +131,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 			}
 		}
 		if (found != null) {
+			Account actor = accountRepository.getUploadRequestSystemAccount();
 			String documentEntryUuid = null;
 			if (found.getDocumentEntry() != null) {
 				documentEntryUuid = found.getDocumentEntry().getUuid();
@@ -138,12 +139,10 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 			found.setDocumentEntry(null);
 			found = uploadRequestEntryBusinessService.update(found);
 			if (documentEntryUuid != null) {
-				// TODO: HOOK : Extract owner for upload request URL
-				// Actor should be used instead of owner
+				// Extract owner for upload request URL
 				Account owner = requestUrl.getUploadRequest().getOwner();
 				// Store the file into the owner account.
-				DocumentEntry documentEntry = documentEntryService.findById(
-						owner, documentEntryUuid);
+				DocumentEntry documentEntry = documentEntryService.find(actor, owner, documentEntryUuid);
 				documentEntryService.deleteDocumentEntry(owner, documentEntry);
 			}
 			uploadRequestEntryBusinessService.delete(found);
@@ -158,15 +157,15 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	public UploadRequestEntry createUploadRequestEntry(
 			String uploadRequestUrlUuid, InputStream fi, String fileName,
 			String password) throws BusinessException {
+		Account actor = accountRepository.getUploadRequestSystemAccount();
 		// Retrieve upload request URL
 		UploadRequestUrl requestUrl = find(uploadRequestUrlUuid, password);
 		// HOOK : Extract owner for upload request URL
 		Account owner = requestUrl.getUploadRequest().getOwner();
 		// Store the file into the owner account.
 		DocumentEntry document = documentEntryService.createDocumentEntry(
-				owner, fi, fileName);
+				actor, owner, fi, fileName);
 		createBusinessCheck(requestUrl, document);
-		Account actor = accountRepository.getUploadRequestSystemAccount();
 		// Create the link between the document and the upload request URL.
 		UploadRequestEntry uploadRequestEntry = new UploadRequestEntry(
 				document, requestUrl.getUploadRequest());

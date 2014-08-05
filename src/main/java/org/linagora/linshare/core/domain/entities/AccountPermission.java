@@ -41,13 +41,13 @@ public class AccountPermission {
 
 	private TechnicalAccountPermissionType permission;
 
+	public AccountPermission() {
+		super();
+	}
+
 	public AccountPermission(TechnicalAccountPermissionType perm) {
 		super();
 		this.permission = perm;
-	}
-
-	public AccountPermission() {
-		super();
 	}
 
 	public AccountPermission(String perm) {
@@ -70,4 +70,10 @@ public class AccountPermission {
 	public void setPermission(TechnicalAccountPermissionType permission) {
 		this.permission = permission;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return ((AccountPermission)obj).getPermission().equals(this.getPermission());
+	}
+
 }

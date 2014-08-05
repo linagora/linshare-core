@@ -69,11 +69,7 @@
 		<constructor-arg ref="anonymousShareEntryService" />
 		<constructor-arg ref="signatureTransformer" />
 		<constructor-arg ref="guestService" />
-	</bean>
-
-	<bean name="shareExpiryDateFacade" class="org.linagora.linshare.core.facade.impl.ShareExpiryDateFacadeImpl">
-		<constructor-arg ref="documentEntryService" />
-		<constructor-arg ref="shareExpiryDateService" />
+		<constructor-arg ref="shareService" />
 		<constructor-arg ref="accountService" />
 	</bean>
 

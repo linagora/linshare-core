@@ -47,6 +47,7 @@ import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Policies;
+import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.constants.TimeUnit;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -56,6 +57,7 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import org.linagora.linshare.core.domain.entities.TimeUnitClass;
 import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
@@ -90,80 +92,80 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
 
 	private static Logger logger = LoggerFactory.getLogger(DocumentEntryServiceImplTest.class);
-	
+
 	@Autowired
 	private FunctionalityRepository functionalityRepository;
-	
+
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
-	
+
 	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
-	
+
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
-	
+
 	@Autowired
 	private DocumentRepository documentRepository;
-	
+
 	@Autowired
 	private FileSystemDao fileRepository;	
-	
+
 	@Autowired
 	private DocumentEntryRepository documentEntryRepository;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private DocumentEntryService documentEntryService;
-	
+
 	private User jane;
 	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
 	private final Long size = (long) 1000;
 	private final String fileName = "linshare-default.properties";
 	private DocumentEntry aDocumentEntry;
-	
+
 	private LoadingServiceTestDatas datas;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
 		datas.loadUsers();
 		jane = datas.getUser2();		
-		
+
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
-	
+
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		datas.deleteUsers();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
-	
+
 	@Test
 	public void testCreateDocumentEntry() throws BusinessException, IOException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
+
 		createFunctionalities();
-		
+
 		Account actor = jane;
-		aDocumentEntry = documentEntryService.createDocumentEntry(actor, stream, fileName);
+		aDocumentEntry = documentEntryService.createDocumentEntry(actor, actor, stream, fileName);
 		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
-		
+
 		Document aDocument = aDocumentEntry.getDocument();
 		documentEntryRepository.delete(aDocumentEntry);
 		jane.getEntries().clear();
 		userRepository.update(jane);
 		fileRepository.removeFileByUUID(aDocument.getUuid());
 		documentRepository.delete(aDocument);
-		
+
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	/**
 	 * We need this method because all the functionalities are check when we create a DocumentEntry
 	 * 
@@ -183,7 +185,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 				new FileSizeUnitClass(FileSizeUnit.GIGA)
 			)
 		);
-		
+
 		functionalities.add(
 			new UnitValueFunctionality("QUOTA_USER",
 				true,
@@ -194,7 +196,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 				new FileSizeUnitClass(FileSizeUnit.GIGA)
 			)
 		);
-		
+
 		functionalities.add(
 				new UnitValueFunctionality("MIME_TYPE",
 					true,
@@ -205,7 +207,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 					new FileSizeUnitClass(FileSizeUnit.GIGA)
 				)
 		);
-		
+
 		functionalities.add(
 				new UnitValueFunctionality("ANTIVIRUS",
 					true,
@@ -216,7 +218,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 					new FileSizeUnitClass(FileSizeUnit.GIGA)
 				)
 		);
-		
+
 		functionalities.add(
 				new UnitValueFunctionality("ENCIPHERMENT",
 					true,
@@ -227,7 +229,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 					new FileSizeUnitClass(FileSizeUnit.GIGA)
 				)
 		);
-		
+
 		functionalities.add(
 				new StringValueFunctionality("TIME_STAMPING",
 					true,
@@ -237,7 +239,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 					""
 				)
 		);
-		
+
 		functionalities.add(
 				new UnitValueFunctionality("FILE_EXPIRATION",
 					true,
@@ -248,7 +250,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 					new TimeUnitClass(TimeUnit.DAY)
 				)
 		);
-		
+
 		functionalities.add(
 				new UnitValueFunctionality("FILESIZE_MAX",
 					true,
@@ -259,31 +261,31 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 					new FileSizeUnitClass(FileSizeUnit.GIGA)
 				)
 		);
-		
+
 		for (Functionality functionality : functionalities) {
 			functionalityRepository.create(functionality);
 			jane.getDomain().addFunctionality(functionality);
 		}
 	}
-	
+
 	@Test
 	public void testFindAllMyDocumentEntries() throws BusinessException, IOException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		User owner = jane;
 		createFunctionalities();
-		aDocumentEntry = documentEntryService.createDocumentEntry(actor, stream, fileName);
-		List<DocumentEntry> documents = documentEntryService.findAllMyDocumentEntries(actor, owner);
+		aDocumentEntry = documentEntryService.createDocumentEntry(actor, actor, stream, fileName);
+		List<DocumentEntry> documents = documentEntryService.findAll(actor, owner);
 		Assert.assertTrue(documents.contains(aDocumentEntry));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void testDeleteDocumentEntries() throws BusinessException, IOException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		createFunctionalities();
-		aDocumentEntry = documentEntryService.createDocumentEntry(actor, stream, fileName);
+		aDocumentEntry = documentEntryService.createDocumentEntry(actor, actor, stream, fileName);
 		aDocumentEntry.getDocument().setSignatures(new HashSet<Signature>());
 		documentEntryService.deleteDocumentEntry(actor, aDocumentEntry);
 		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) == null);

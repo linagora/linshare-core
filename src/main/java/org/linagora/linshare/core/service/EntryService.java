@@ -43,20 +43,21 @@ public interface EntryService {
 	/**
 	 * The document entry and all its shares will be removed. A mail notification will be sent.
 	 * @param actor
+	 * @param owner TODO
 	 * @param docEntryUuid
 	 * @throws BusinessException
 	 */
-	public void deleteAllShareEntriesWithDocumentEntry(Account actor, String docEntryUuid) throws BusinessException;
-	
+	public void deleteAllShareEntriesWithDocumentEntry(Account actor, Account owner, String docEntryUuid) throws BusinessException;
+
 	public void deleteAllInconsistentShareEntries(Account actor, DocumentEntry documentEntry) throws BusinessException;
-	
+
 	/**
 	 * All The document entries own by the user "owner" and all its shares will be removed. No mail will be sent.
 	 * @param owner
 	 * @return
 	 */
 	public void deleteAllShareEntriesWithDocumentEntries(Account actor, User owner ) throws BusinessException;
-	
+
 	/**
 	 * All The share entries received by the user "recipient" will be removed. No mail will be sent.
 	 * @param actor
@@ -64,13 +65,13 @@ public interface EntryService {
 	 * @throws BusinessException
 	 */
 	public void deleteAllReceivedShareEntries(Account actor, User recipient ) throws BusinessException;
-	
-	
-	
-	
-	
+
+
+
+
+
 	public void sendSharedUpdateDocNotification(DocumentEntry documentEntry, String friendlySize, String originalFileName);
-	
-	
+
+
 
 }

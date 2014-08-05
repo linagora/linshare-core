@@ -71,12 +71,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
-public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
+public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements ThreadEntryFacade {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(ThreadEntryFacadeImpl.class);
-
-	private final AccountService accountService;
 
 	private final ThreadService threadService;
 
@@ -93,8 +91,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			ThreadEntryTransformer threadEntryTransformer,
 			DocumentEntryService documentEntryService,
 			UserService userService) {
-		super();
-		this.accountService = accountService;
+		super(accountService);
 		this.threadService = threadService;
 		this.threadEntryService = threadEntryService;
 		this.threadEntryTransformer = threadEntryTransformer;
@@ -115,9 +112,10 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public void copyDocinThread(UserVo actorVo, ThreadVo threadVo,
 			DocumentVo documentVo) throws BusinessException {
+		User actor = getActor(actorVo);
 		Account owner = accountService.findByLsUuid(documentVo.getOwnerLogin());
-		InputStream stream = documentEntryService.getDocumentStream(owner,
-				documentVo.getIdentifier());
+		InputStream stream = documentEntryService.getDocumentStream(actor,
+				owner, documentVo.getIdentifier());
 
 		insertFile(actorVo, threadVo, stream, documentVo.getSize(),
 				documentVo.getFileName());
@@ -211,7 +209,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 		threadEntryService.deleteThreadEntry(actor, threadEntry);
 	}
-	
+
 	@Override
 	public int countEntries(ThreadVo threadVo) throws BusinessException {
 		return threadService.countEntries(findThread(threadVo));
@@ -355,12 +353,12 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			throws BusinessException {
 		return countMembers(actorVo, threadVo) != 1;
 	}
-	
+
 
 	/*
 	 * Helpers.
 	 */
-	
+
 	/*
 	 * Guava helpers, as Lists.transform return a lazy loaded list of proxies.
 	 * Avoid LazyLoadingException from the Hibernate proxies as Session is
@@ -390,38 +388,38 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	 * Use theses instead of their respective services to ensure proper error
 	 * handling and cleaner code.
 	 */
-	
+
 	private User findUser(UserVo userVo) throws BusinessException {
 		User u = (User) accountService.findByLsUuid(userVo.getLsUuid());
-	
+
 		if (u == null) {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
 					"Cannot find user : " + userVo.getLsUuid());
 		}
 		return u;
 	}
-	
+
 	private User findOrCreateUser(UserVo userVo) throws BusinessException {
 		User u = userService.findOrCreateUser(userVo.getMail(),
 				userVo.getDomainIdentifier());
-	
+
 		if (u == null) {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
 					"Cannot find user : " + userVo.getLsUuid());
 		}
 		return u;
 	}
-	
+
 	private Thread findThread(ThreadVo threadVo) throws BusinessException {
 		Thread t = threadService.findByLsUuid(threadVo.getLsUuid());
-		
+
 		if (t == null) {
 			throw new BusinessException(BusinessErrorCode.THREAD_NOT_FOUND,
 					"Cannot find thread : " + threadVo.getLsUuid());
 		}
 		return t;
 	}
-	
+
 	private ThreadMember findMember(Thread thread, User user)
 			throws BusinessException {
 		ThreadMember m = threadService.getMemberFromUser(thread, user);
@@ -433,19 +431,19 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		}
 		return m;
 	}
-	
+
 	private ThreadEntry findEntry(User actor, String entryUuid)
 			throws BusinessException {
 		ThreadEntry e = threadEntryService.findById(actor, entryUuid);
-		
+
 		if (e == null) {
 			throw new BusinessException(BusinessErrorCode.THREAD_ENTRY_NOT_FOUND,
 					"Cannot find thread entry : " + entryUuid);
 		}
 		return e;
 	}
-	
-	
+
+
     /*
      * Thou Shalt Not Trespass For Thy Life Is Endangered
      */

@@ -56,14 +56,14 @@ import org.slf4j.LoggerFactory;
 public class EntryServiceImpl implements EntryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(EntryServiceImpl.class);
-	
+
 	private final ShareEntryService shareEntryService;
-	
+
 	private final DocumentEntryService documentEntryService;
-	
+
 	private final AnonymousShareEntryService anonymousShareEntryService;
 
-	
+
 	public EntryServiceImpl(ShareEntryService shareEntryService, DocumentEntryService documentEntryService, AnonymousShareEntryService anonymousShareEntryService) {
 		super();
 		this.shareEntryService = shareEntryService;
@@ -73,14 +73,14 @@ public class EntryServiceImpl implements EntryService {
 
 
 	@Override
-	public void deleteAllShareEntriesWithDocumentEntry(Account actor, String docEntryUuid) throws BusinessException {
+	public void deleteAllShareEntriesWithDocumentEntry(Account actor, Account owner, String docEntryUuid) throws BusinessException {
 		try {
-			DocumentEntry documentEntry = documentEntryService.findById(actor, docEntryUuid);
-			
+			DocumentEntry documentEntry = documentEntryService.find(actor, owner, docEntryUuid);
+
 			deleteAllShareEntries(actor, documentEntry);
-			
+
 			documentEntryService.deleteDocumentEntry(actor, documentEntry);
-			
+
 		} catch (BusinessException e) {
 			logger.error("can not delete document : " + docEntryUuid);
 			throw e;
@@ -102,11 +102,11 @@ public class EntryServiceImpl implements EntryService {
 	private void deleteAllShareEntries(Account actor, DocumentEntry entry) throws BusinessException {
 		List<String> a = new ArrayList<String>();
 		List<String> b = new ArrayList<String>();
-		
+
 		for (AnonymousShareEntry anonymousShareEntry : entry.getAnonymousShareEntries()) {
 			a.add(anonymousShareEntry.getUuid());
 		}
-		
+
 		for (ShareEntry shareEntry : entry.getShareEntries()) {
 			b.add(shareEntry.getUuid());
 		}
@@ -114,18 +114,18 @@ public class EntryServiceImpl implements EntryService {
 		for (String uuid : a) {
 			anonymousShareEntryService.deleteShare(actor, uuid);
 		}
-		
+
 		for (String uuid : b) {
 			shareEntryService.delete(actor, uuid);
 		}
 	}
-	
-	
+
+
 	@Override
 	public void deleteAllShareEntriesWithDocumentEntries( Account actor , User owner) throws BusinessException {
-		List<DocumentEntry> documentEntries = documentEntryService.findAllMyDocumentEntries(actor, owner);
+		List<DocumentEntry> documentEntries = documentEntryService.findAll(actor, owner);
 		for (DocumentEntry documentEntry : documentEntries) {
-			this.deleteAllShareEntriesWithDocumentEntry(actor, documentEntry.getUuid());
+			this.deleteAllShareEntriesWithDocumentEntry(actor, owner, documentEntry.getUuid());
 		}
 	}
 
@@ -144,7 +144,7 @@ public class EntryServiceImpl implements EntryService {
 			for (AnonymousShareEntry anonymousShareEntry : documentEntry.getAnonymousShareEntries()) {
 				anonymousShareEntryService.sendDocumentEntryUpdateNotification(anonymousShareEntry, friendlySize, originalFileName);
 			}
-			
+
 			for (ShareEntry shareEntry : documentEntry.getShareEntries()) {
 				shareEntryService.sendDocumentEntryUpdateNotification(shareEntry, friendlySize, originalFileName);
 			}

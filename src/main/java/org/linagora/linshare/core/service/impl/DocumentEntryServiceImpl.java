@@ -39,13 +39,16 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.PermissionType;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
@@ -58,7 +61,6 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -76,7 +78,7 @@ import org.linagora.linshare.core.utils.DocumentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentEntryServiceImpl implements DocumentEntryService {
+public class DocumentEntryServiceImpl extends GenericService implements DocumentEntryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryServiceImpl.class);
 
@@ -106,21 +108,36 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	}
 
 	@Override
-	public DocumentEntry find(Account actor, Account owner,
-			String currentDocEntryUuid) throws BusinessException {
-
-		DocumentEntry entry = documentEntryBusinessService.findById(currentDocEntryUuid);
+	public DocumentEntry find(Account actor, Account owner, String uuid)
+			throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "Missing document entry uuid");
+		DocumentEntry entry = documentEntryBusinessService.find(uuid);
 		if (entry == null) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Can not find document entry with uuid : " + currentDocEntryUuid);
+			logger.error("Current actor " + actor.getAccountReprentation()
+					+ " is looking for a misssing document entry (" + uuid
+					+ ") owned by : " + owner.getAccountReprentation());
+			String message = "Can not find document entry with uuid : " + uuid;
+			throw new BusinessException(
+					BusinessErrorCode.DOCUMENT_ENTRY_NOT_FOUND, message);
 		}
-		if (!isAuthorized(actor, entry)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this document. current actor is : " + actor.getAccountReprentation());
-		}
+		checkReadPermission(actor, entry);
 		return entry;
 	}
 
 	@Override
-	public DocumentEntry createDocumentEntry(Account actor, InputStream stream, String fileName) throws BusinessException {
+	public List<DocumentEntry> findAll(Account actor, Account owner)
+			throws BusinessException {
+		preChecks(actor, owner);
+		checkListPermission(actor, owner);
+		return documentEntryBusinessService.findAllMyDocumentEntries(owner);
+	}
+
+	@Override
+	public DocumentEntry createDocumentEntry(Account actor, Account owner, InputStream stream, String fileName) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(fileName, "fileName is required.");
+		checkCreatePermission(actor, owner);
 		fileName = sanitizeFileName(fileName); // throws
 
 		DocumentUtils util = new DocumentUtils();
@@ -130,17 +147,17 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 		try {
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
-			checkSpace(size, fileName, actor);
+			checkSpace(size, fileName, owner);
 
 			// check if the file MimeType is allowed
 			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
 			if (mimeTypeFilteringStatus(actor)) {
-				mimeTypeService.checkFileMimeType(actor, fileName, mimeType);
+				mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
 			}
 
 			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-				checkVirus(fileName, actor, tempFile);
+				checkVirus(fileName, owner, tempFile);
 			}
 
 			// want a timestamp on doc ?
@@ -155,9 +172,9 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 			// We need to set an expiration date in case of file cleaner
 			// activation.
-			docEntry = documentEntryBusinessService.createDocumentEntry(actor, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, getDocumentExpirationDate(domain));
+			docEntry = documentEntryBusinessService.createDocumentEntry(owner, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, getDocumentExpirationDate(domain));
 
-			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_UPLOAD, "Creation of a file", docEntry.getName(), docEntry.getDocument().getSize(), docEntry.getDocument().getType());
+			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_UPLOAD, "Creation of a file", docEntry.getName(), docEntry.getDocument().getSize(), docEntry.getDocument().getType());
 			logEntryService.create(logEntry);
 
 			addDocSizeToGlobalUsedQuota(docEntry.getDocument(), domain);
@@ -181,12 +198,12 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	}
 
 	@Override
-	public DocumentEntry updateDocumentEntry(Account actor, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException {
-		DocumentEntry originalEntry = documentEntryBusinessService.findById(docEntryUuid);
-		if (!originalEntry.getEntryOwner().equals(actor)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to update this document.");
-		}
-
+	public DocumentEntry updateDocumentEntry(Account actor, Account owner, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(docEntryUuid, "document entry uuid is required.");
+		Validate.notEmpty(fileName, "fileName is required.");
+		DocumentEntry originalEntry = find(actor, owner, docEntryUuid);
+		checkUpdatePermission(actor, originalEntry);
 		fileName = sanitizeFileName(fileName); // throws
 
 		DocumentUtils util = new DocumentUtils();
@@ -196,21 +213,21 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		try {
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 
-			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
+			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
 			String originalFileName = originalEntry.getName();
 
 			long oldDocSize = originalEntry.getDocument().getSize();
-			checkSpace(size, fileName, actor);
+			checkSpace(size, fileName, owner);
 
 			// check if the file MimeType is allowed
 			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
 			if (mimeFunctionality.getActivationPolicy().getStatus()) {
-				mimeTypeService.checkFileMimeType(actor, fileName, mimeType);
+				mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
 			}
 
 			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-				checkVirus(fileName, actor, tempFile);
+				checkVirus(fileName, owner, tempFile);
 			}
 
 			// want a timestamp on doc ?
@@ -224,7 +241,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
 
 			// We need to set an expiration date in case of file cleaner activation.
-			documentEntry = documentEntryBusinessService.updateDocumentEntry(actor, originalEntry, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType,
+			documentEntry = documentEntryBusinessService.updateDocumentEntry(owner, originalEntry, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType,
 					getDocumentExpirationDate(domain));
 
 			// put new file name in log
@@ -235,7 +252,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 				logText = documentEntry.getName() + " [" + logText + "]";
 			}
 
-			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_UPDATE, "Update of a file", logText, documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
+			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_UPDATE, "Update of a file", logText, documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
 			logEntryService.create(logEntry);
 
 			removeDocSizeFromGlobalUsedQuota(oldDocSize, domain);
@@ -261,7 +278,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 	@Override
 	public DocumentEntry duplicateDocumentEntry(Account actor, String docEntryUuid) throws BusinessException {
-		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
+		DocumentEntry documentEntry = documentEntryBusinessService.find(docEntryUuid);
 		DocumentEntry ret = null;
 		// TODO : Check the current doc entry id is shared with the actor (if
 		// not, you should not have the right to duplicate it)
@@ -432,41 +449,21 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	}
 
 	@Override
-	public boolean documentHasThumbnail(Account owner, String docEntryUuid) {
-		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
-		if (documentEntry == null) {
-			logger.error("Can't find document entry, are you sure it is not a share ? : " + docEntryUuid);
-		} else if (documentEntry.getEntryOwner().equals(owner)) {
-			String thmbUUID = documentEntry.getDocument().getThmbUuid();
-			return (thmbUUID != null && thmbUUID.length() > 0);
-		}
-		return false;
+	public InputStream getDocumentThumbnailStream(Account actor, Account owner, String uuid) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "document entry uuid is required.");
+		DocumentEntry entry = find(actor, owner, uuid);
+		checkThumbNailDownloadPermission(actor, entry);
+		return documentEntryBusinessService.getDocumentThumbnailStream(entry);
 	}
 
 	@Override
-	public InputStream getDocumentThumbnailStream(Account owner, String docEntryUuid) throws BusinessException {
-		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
-		if (documentEntry == null) {
-			logger.error("Can't find document entry, are you sure it is not a share ? : " + docEntryUuid);
-			return null;
-		} else if (!documentEntry.getEntryOwner().equals(owner)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get thumbnail for this document.");
-		} else {
-			return documentEntryBusinessService.getDocumentThumbnailStream(documentEntry);
-		}
-	}
-
-	@Override
-	public InputStream getDocumentStream(Account owner, String docEntryUuid) throws BusinessException {
-		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
-		if (documentEntry == null) {
-			logger.error("Can't find document entry, are you sure it is not a share ? : " + docEntryUuid);
-			return null;
-		} else if (!documentEntry.getEntryOwner().equals(owner)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this document.");
-		} else {
-			return documentEntryBusinessService.getDocumentStream(documentEntry);
-		}
+	public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "document entry uuid is required.");
+		DocumentEntry entry = find(actor, owner, uuid);
+		checkDownloadPermission(actor, entry);
+		return documentEntryBusinessService.getDocumentStream(entry);
 	}
 
 	@Override
@@ -496,46 +493,22 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	}
 
 	@Override
-	public DocumentEntry findById(Account actor, String currentDocEntryUuid) throws BusinessException {
-		DocumentEntry entry = documentEntryBusinessService.findById(currentDocEntryUuid);
-		if (entry == null) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Can not find document entry with uuid : " + currentDocEntryUuid);
-
-		}
-		if (!isOwnerOrAdmin(actor, entry.getEntryOwner())) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this document. current actor is : " + actor.getAccountReprentation());
-		}
-		return entry;
-	}
-
-	@Override
-	public List<DocumentEntry> findAllMyDocumentEntries(Account actor, User owner) throws BusinessException {
-		if (!isOwnerOrAdmin(actor, owner)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get these documents.");
-		}
-		List<DocumentEntry> entry = documentEntryBusinessService.findAllMyDocumentEntries(owner);
-		return entry;
-	}
-
-	@Override
-	public void renameDocumentEntry(Account actor, String docEntryUuid, String newName) throws BusinessException {
-		DocumentEntry entry = documentEntryBusinessService.findById(docEntryUuid);
-		if (!actor.hasSuperAdminRole() && !actor.hasSystemAccountRole()) {
-			if (!entry.getEntryOwner().equals(actor)) {
-				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to rename this document.");
-			}
-		}
+	public void renameDocumentEntry(Account actor, Account owner, String uuid, String newName) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "document entry uuid is required.");
+		Validate.notEmpty(newName, "new name is required.");
+		DocumentEntry entry = find(actor, owner, uuid);
+		checkUpdatePermission(actor, entry);
 		documentEntryBusinessService.renameDocumentEntry(entry, newName);
 	}
 
 	@Override
-	public void updateFileProperties(Account actor, String docEntryUuid, String newName, String fileComment) throws BusinessException {
-		DocumentEntry entry = documentEntryBusinessService.findById(docEntryUuid);
-		if (!actor.hasSuperAdminRole() && !actor.hasSystemAccountRole()) {
-			if (!entry.getEntryOwner().equals(actor)) {
-				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to update this document.");
-			}
-		}
+	public void updateFileProperties(Account actor, Account owner, String uuid, String newName, String fileComment) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "document entry uuid is required.");
+		Validate.notEmpty(newName, "new name is required.");
+		DocumentEntry entry = find(actor, owner, uuid);
+		checkUpdatePermission(actor, entry);
 		documentEntryBusinessService.updateFileProperties(entry, newName, fileComment);
 	}
 
@@ -605,6 +578,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	}
 
 	// FIXME : code duplication
+	@Deprecated
 	private boolean isOwnerOrAdmin(Account actor, Account user) {
 		if (actor.equals(user)) {
 			return true;
@@ -629,16 +603,126 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		return false;
 	}
 
-	private boolean isAuthorized(Account actor, DocumentEntry documentEntry) {
-		if (actor.equals(documentEntry.getEntryOwner())) {
-			return true;
-		} else if (actor.hasAllRights()) {
-			return true;
-		} else if (actor.hasDelegationRole()) {
-			// TODO : Check delegations permissions.
-			return true;
+	protected void preChecks(Account actor, Account owner) {
+		Validate.notNull(actor, "Missing actor account");
+		Validate.notEmpty(actor.getLsUuid(), "Missing actor uuid");
+		Validate.notNull(owner, "Missing owner account");
+		Validate.notEmpty(owner.getLsUuid(), "Missing owner uuid");
+		if (logger.isDebugEnabled()) {
+			logger.debug("Current actor " + actor.getAccountReprentation());
+			logger.debug("Current owner " + actor.getAccountReprentation());
 		}
-		return false;
 	}
 
+	protected boolean hasReadPermission(Account actor) {
+		return hasPermission(actor,
+				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_GET);
+	}
+
+	protected boolean hasListPermission(Account actor) {
+		return this.hasPermission(actor,
+				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_LIST);
+	}
+
+	protected boolean hasDeletePermission(Account actor) {
+		return hasPermission(actor,
+				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_DELETE);
+	}
+
+	protected boolean hasCreatePermission(Account actor) {
+		return hasPermission(actor,
+				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_CREATE);
+	}
+
+	protected boolean hasUpdatePermission(Account actor) {
+		return hasPermission(actor,
+				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_UPDATE);
+	}
+
+	protected void checkReadPermission(Account actor, DocumentEntry entry) throws BusinessException {
+		Account owner = entry.getEntryOwner();
+		if (!isAuthorized(actor, owner, PermissionType.GET)) {
+			logger.error("Current actor " + actor.getAccountReprentation()
+					+ " is trying to acces to unauthorized document entry ("
+					+ entry.getUuid() + ") owned by : "
+					+ owner.getAccountReprentation());
+			throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN,
+					"You are not authorized to get this document. current actor is : "
+							+ actor.getAccountReprentation());
+		}
+	}
+
+	protected void checkListPermission(Account actor, Account owner) throws BusinessException {
+		if (!isAuthorized(actor, owner, PermissionType.LIST)) {
+			logger.error("Current actor " + actor.getAccountReprentation()
+					+ " is trying to access to unauthorized document entries owned by : "
+					+ owner.getAccountReprentation());
+			throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN,
+					"You are not authorized to list all documents. current actor is : "
+							+ actor.getAccountReprentation());
+		}
+	}
+
+	protected void checkCreatePermission(Account actor, Account owner) throws BusinessException {
+		if (!isAuthorized(actor, owner, PermissionType.CREATE)) {
+			logger.error("Current actor " + actor.getAccountReprentation()
+					+ " is trying to access to unauthorized document entries owned by : "
+					+ owner.getAccountReprentation());
+			throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN,
+					"You are not authorized to create a document. current actor is : "
+							+ actor.getAccountReprentation());
+		}
+	}
+
+	protected void checkUpdatePermission(Account actor, DocumentEntry entry) throws BusinessException {
+		Account owner = entry.getEntryOwner();
+		if (!isAuthorized(actor, owner, PermissionType.UPDATE)) {
+			logger.error("Current actor " + actor.getAccountReprentation()
+					+ " is trying to update document owned by : "
+					+ owner.getAccountReprentation());
+			throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN,
+					"You are not authorized to update this document. current actor is : "
+							+ actor.getAccountReprentation());
+		}
+	}
+
+	protected void checkDeletePermission(Account actor, DocumentEntry entry) throws BusinessException {
+		Account owner = entry.getEntryOwner();
+		if (!isAuthorized(actor, owner, PermissionType.UPDATE)) {
+			logger.error("Current actor " + actor.getAccountReprentation()
+					+ " is trying to delete document owned by : "
+					+ owner.getAccountReprentation());
+			throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN,
+					"You are not authorized to delete this document. current actor is : "
+							+ actor.getAccountReprentation());
+		}
+	}
+
+	protected void checkDownloadPermission(Account actor, DocumentEntry entry) throws BusinessException {
+		if (actor.hasDelegationRole()) {
+			if (!hasPermission(actor, TechnicalAccountPermissionType.DOCUMENTS_GET)) {
+				Account owner = entry.getEntryOwner();
+				logger.error("Current actor " + actor.getAccountReprentation()
+						+ " is trying to download document entry ("
+						+ entry.getUuid() + ") owned by : "
+						+ owner.getAccountReprentation());
+				throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN,
+						"You are not authorized to download this document.");
+			}
+		}
+	}
+
+	protected void checkThumbNailDownloadPermission(Account actor, DocumentEntry entry) throws BusinessException {
+		if (actor.hasDelegationRole()) {
+			if (!hasPermission(actor, TechnicalAccountPermissionType.DOCUMENTS_GET)) {
+				Account owner = entry.getEntryOwner();
+				logger.error("Current actor " + actor.getAccountReprentation()
+						+ " is trying to download document entry ("
+						+ entry.getUuid() + ") owned by : "
+						+ owner.getAccountReprentation());
+				throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN,
+						"You are not authorized to download the thumbnail of this document.");
+			}
+		}
+	}
 }

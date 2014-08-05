@@ -272,7 +272,7 @@ public class Upload {
 			String badFormatEmail = "";
 
 			for (String uuid : StringJoiner.split(uuids, ",")) {
-				DocumentVo d = documentFacade.getDocument(userVo.getLogin(),
+				DocumentVo d = documentFacade.getDocument(userVo,
 						uuid);
 
 				if (d == null) {
@@ -416,7 +416,7 @@ public class Upload {
 		}
 		return DEFAULT_MAX_FILE_SIZE;
 	}
-	
+
 	public boolean isEnableListTab() {
 		return functionalityFacade.isEnableListTab(userVo.getDomainIdentifier());
 	}

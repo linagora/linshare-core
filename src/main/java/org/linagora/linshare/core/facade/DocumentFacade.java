@@ -57,11 +57,12 @@ public interface DocumentFacade {
 
 	/**
 	 * Retrieve a DocumentVo given the user login and the id of the doc
-	 * @param login
+	 * @param actorVo
 	 * @param uuid
 	 * @return
+	 * @throws BusinessException 
 	 */
-	public DocumentVo getDocument(String login,String uuid);
+	public DocumentVo getDocument(UserVo actorVo,String uuid) throws BusinessException;
 
 
 	/** 
@@ -211,14 +212,6 @@ public interface DocumentFacade {
      * @return InputStream of the thumbnail
      */
     public InputStream getDocumentThumbnail(String actorUuid, String docEntryUuid);
-
-    /**
-     * Thumbnail of the document exists ?
-     * @param actorUuid : user uuid
-     * @param uuid the identifier of the document
-     * @return true if the thumbnail exists, false otherwise
-     */
-    public boolean documentHasThumbnail(String actorUuid, String docEntryUuid);
 
     /**
 	 * return true if the signature functionality is enabled

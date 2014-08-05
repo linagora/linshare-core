@@ -56,26 +56,26 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<DocumentEntry> implements DocumentEntryRepository {
-	
+
 	private final static int BEGIN = 0;
-	
+
 	private final static int END = 1;
-	
+
 	private final static int ANYWHERE = 2;
-	
-	
+
+
 	public DocumentEntryRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
-	
-	
+
+
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(DocumentEntry entry) {
 		DetachedCriteria det = DetachedCriteria.forClass(DocumentEntry.class).add(Restrictions.eq( "uuid", entry.getUuid()));
 		return det;
 	}
-	
-	
+
+
 	 /** Find a document using its id.
      * @param id
      * @return found document (null if no document found).
@@ -91,18 +91,14 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
             throw new IllegalStateException("Id must be unique");
         }
     }
-	
+
 
 	@Override
 	public List<DocumentEntry> findAllMyDocumentEntries(Account owner) {
-		List<DocumentEntry> entries = findByCriteria(Restrictions.eq("entryOwner", owner));
-        if (entries == null) {
-            return null;
-        }
-        return entries;
+		return findByCriteria(Restrictions.eq("entryOwner", owner));
 	}
 
-	
+
 	@Override
 	public DocumentEntry create(DocumentEntry entity) throws BusinessException {
 		entity.setCreationDate(new GregorianCalendar());
@@ -111,18 +107,18 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		return super.create(entity);
 	}
 
-	
+
 	@Override
 	public DocumentEntry update(DocumentEntry entity) throws BusinessException {
 		entity.setModificationDate(new GregorianCalendar());
 		return super.update(entity);
 	}
-	
+
 
 	@Override
 	public long getRelatedEntriesCount(final DocumentEntry documentEntry) {
 		long result  = 0 ;
-		
+
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session) throws HibernateException, SQLException {
 				final Query query = session.createQuery("select count(*) from ShareEntry s where s.documentEntry = :documentEntry");
@@ -131,7 +127,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 			}
 		};
 		Long shareResult = getHibernateTemplate().execute(action);
-		
+
 		action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session) throws HibernateException, SQLException {
 				final Query query = session.createQuery("select count(*) from AnonymousShareEntry s where s.documentEntry = :documentEntry");
@@ -140,15 +136,15 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 			}
 		};
 		Long anonymousShareResult = getHibernateTemplate().execute(action);
-		
+
 		result = anonymousShareResult + shareResult;
 		if(logger.isDebugEnabled())
 			logger.debug("related entries for document " + documentEntry.getUuid() + " :  (share=" + shareResult + ", anonymous=" + anonymousShareResult + " , sum=" + result + ")");
-		
+
 		return result;
 	}
-	
-	
+
+
 
 	@Override
 	public List<DocumentEntry> findAllExpiredEntries() {
@@ -159,12 +155,12 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
         }
         return entries;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DocumentEntry> retrieveUserDocumentEntriesWithMatchCriterion(SearchDocumentCriterion searchDocumentCriterion) {
 		final QueryParameter queryParameter = buildQuery(searchDocumentCriterion, ANYWHERE);
-		
+
 		return getHibernateTemplate().executeFind(new HibernateCallback<List<DocumentEntry>>() {
 			public List<DocumentEntry> doInHibernate(final Session session) throws HibernateException, SQLException {
 				StringBuilder queryString = new StringBuilder("select docEntry from DocumentEntry docEntry join docEntry.entryOwner account join docEntry.document doc ");
@@ -178,7 +174,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		});
 	}
 
-	
+
 	/**
 	 * Build the search query
 	 * @param searchDocumentCriterion
@@ -186,21 +182,21 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 	 * @return
 	 */
 	private QueryParameter buildQuery(final SearchDocumentCriterion searchDocumentCriterion, final int matcher) {
-		
+
 		QueryParameter queryParameter = new QueryParameter();
 		queryParameter.appendToQuery(" docEntry.entryOwner.lsUuid=:lsUuid " );
 		queryParameter.addParameter("lsUuid", searchDocumentCriterion.getUser().getLsUuid());
-		
+
 		if (null != searchDocumentCriterion.getName()) {
 			queryParameter.appendToQuery(" lower(docEntry.name) like lower(:name) " );
 			queryParameter.addParameter("name", createMatchingCriteria(matcher,searchDocumentCriterion.getName()));
 		}
-		
+
 		if (null != searchDocumentCriterion.getExtension()) {
 			queryParameter.appendToQuery(" lower(docEntry.name) like lower(:extension) " );
 			queryParameter.addParameter("extension", createMatchingCriteria(END,searchDocumentCriterion.getExtension()));
 		}
-		
+
 		if (null != searchDocumentCriterion.isShared()) {
 			if (searchDocumentCriterion.isShared()) {
 				queryParameter.appendToQuery(" (docEntry.id IN (SELECT de.id FROM ShareEntry se, DocumentEntry de WHERE de=se.documentEntry) OR docEntry.id IN (SELECT de.id FROM AnonymousShareEntry ase, DocumentEntry de WHERE de=ase.documentEntry))");
@@ -209,37 +205,37 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 				queryParameter.appendToQuery(" docEntry.id NOT IN (SELECT de.id FROM DocumentEntry de, AnonymousShareEntry ase WHERE de=ase.documentEntry) ");
 			}
 		}
-		
+
 		if (null != searchDocumentCriterion.getType() && !"".equals(searchDocumentCriterion.getType())) {
 			queryParameter.appendToQuery(" doc.type like :type " );
 			queryParameter.addParameter("type", createMatchingCriteria(matcher,searchDocumentCriterion.getType()));
 		}
-		
+
 		if (null != searchDocumentCriterion.getSizeMin()) {
 			queryParameter.appendToQuery(" doc.size>=:sizeMin " );
 			queryParameter.addParameter("sizeMin", searchDocumentCriterion.getSizeMin());
 		}
-		
+
 		if (null != searchDocumentCriterion.getSizeMax()) {
 			queryParameter.appendToQuery(" doc.size<=:sizeMax " );
 			queryParameter.addParameter("sizeMax", searchDocumentCriterion.getSizeMax());
 		}
-		
+
 		if (null != searchDocumentCriterion.getDateBegin()) {
 			queryParameter.appendToQuery(" docEntry.creationDate>=:creationDateBegin " );
 			queryParameter.addParameter("creationDateBegin", searchDocumentCriterion.getDateBegin());
-	
+
 		}
-		
+
 		if (null != searchDocumentCriterion.getDateEnd()) {
 			queryParameter.appendToQuery(" docEntry.creationDate<=:creationDateEnd " );
 			queryParameter.addParameter("creationDateEnd", searchDocumentCriterion.getDateEnd());
 
 		}
-		
+
 		return queryParameter;
 	}
-	
+
 
 	private String createMatchingCriteria(int matcher,String value ) {
 		switch (matcher) {
@@ -250,5 +246,5 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		return value;
 	}
 
-	
+
 }

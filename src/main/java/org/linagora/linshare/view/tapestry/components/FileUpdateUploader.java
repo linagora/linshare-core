@@ -83,13 +83,13 @@ public class FileUpdateUploader {
     /* ***********************************************************
      *                      Injected services
      ************************************************************ */
-	
+
 	@Inject
 	private DocumentFacade documentFacade;
-	
+
 	@Inject
 	private ShareFacade shareFacade;
-	
+
     @Inject
     private BusinessMessagesManagementService messagesManagementService;
 
@@ -101,34 +101,34 @@ public class FileUpdateUploader {
 
     @Inject
     private ComponentResources componentResources;
-    
+
     @Inject
     private Messages messages;
 
 	@Component(parameters = {"style=bluelighting", "show=false","width=600", "height=250"})
 	private WindowWithEffects windowUpdateDocUpload;
-    
-	
-	
+
+
+
 	/* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
-	
+
 	@SessionState
 	private UserVo userDetails;
 
 	@Persist
 	private String uuidDocToUpdate;
-	
-	
+
+
     /* ***********************************************************
      *                   Event handlers&processing
      ************************************************************ */
-	
+
 	@SetupRender
 	void setupRender() {
 	}
-	
+
     @AfterRender
     public void afterRender() {
     }
@@ -140,21 +140,21 @@ public class FileUpdateUploader {
 	 */
 	public void onPrepare() {
 	}
-	  
+
     @OnEvent(value = "fileUploaded")
     public void processFilesUploaded(Object[] context) {
     	boolean toUpdate = false;
 
         for (int i = 0; i < context.length; ++i) {
         	UploadedFile uploadedFile = (UploadedFile) context[i];
-            
+
             if (uploadedFile != null && i < 1) { //limit to one file (for update)
                 try {
-                	DocumentVo initialdocument = documentFacade.getDocument(userDetails.getLogin(), uuidDocToUpdate);
+                	DocumentVo initialdocument = documentFacade.getDocument(userDetails, uuidDocToUpdate);
                 	String filesizeTxt = FileUtils.getFriendlySize(initialdocument.getSize(), messages);
                     DocumentVo document  =  documentFacade.updateDocumentContent(uuidDocToUpdate, uploadedFile.getStream(), uploadedFile.getSize(),
                             uploadedFile.getFileName(), userDetails, filesizeTxt);
-                    
+
                     messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_UPDATE_FILE_CONTENT_OK,
                         MessageSeverity.INFO, initialdocument.getFileName(),uploadedFile.getFileName()));
                     // Notify the add of a file.
@@ -173,11 +173,11 @@ public class FileUpdateUploader {
         if (toUpdate) 
         	componentResources.triggerEvent("resetListFiles", null, null);
     }
-	
+
     /* ***********************************************************
      *                   Helpers
      ************************************************************ */
-	
+
     public long getUserFreeSpace() {
     	long res = 0;
         try {
@@ -202,7 +202,7 @@ public class FileUpdateUploader {
         }
         return maxFileSize;
     }
-    
+
     private void readFileStream(UploadedFile file) {
         try {
             // read the complete stream.

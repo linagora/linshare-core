@@ -124,7 +124,7 @@ public class ListDocument {
 	@Parameter(required = true, defaultPrefix = BindingConstants.PROP)
 	@Property
 	private List<DocumentVo> documents;
-    
+
     @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
     @Property
     private boolean inSearch;
@@ -145,22 +145,22 @@ public class ListDocument {
 
 	@Property
 	private Boolean valueCheck;
-	
+
 	@Property
 	private String action;
 
-	
+
 	private Map<String, String> tooltipValues;
 	private Map<String, String> tooltipGroupValues;
-	
+
 	private String tooltipValue;
 	@Property
 	private String tooltipTitle;
-	
+
 	private String tooltipGroupValue;
 	@Property
 	private String tooltipGroupTitle;
-	
+
 	/***************************************************************************
 	 * Service injection
 	 **************************************************************************/
@@ -172,27 +172,27 @@ public class ListDocument {
 	private DocumentFacade documentFacade;
 	@Inject
 	private AbstractDomainFacade domainFacade;
-	
+
 	@Inject 
 	private ShareFacade shareFacade;
-	
+
 	@Inject
 	private SecuredUrlFacade securedUrlFacade;
 
 	@Inject
 	private FunctionalityFacade functionalityFacade;
-	
+
 	@Inject
 	private ComponentResources componentResources;  
-	
+
 	@Inject
 	private Response response;
 
 
 	@InjectComponent
 	private UserDetailsDisplayer userDetailsDisplayer;
-	
-	
+
+
 	@Property(write = false)
 	@InjectComponent
 	private FileUpdateUploader fileUpdateUploader;
@@ -200,7 +200,7 @@ public class ListDocument {
 	@Property
 	@InjectComponent
 	private FileEditForm fileEdit;
-	
+
 	@Property(write = false)
 	@InjectComponent
 	private WarningDisplayer warningSignature;
@@ -217,7 +217,7 @@ public class ListDocument {
 	private PasswordCryptPopupSubmit passwordCryptPopupSubmit;
 	@InjectComponent
 	private PasswordDecryptPopupSubmit passwordDecryptPopupSubmit;
-	
+
 	@InjectComponent
     private Grid documentGrid;
 
@@ -226,22 +226,22 @@ public class ListDocument {
 
 	@Inject
 	private BeanModelSource beanModelSource;
-	
+
     @Inject
 	private Templating templating;
-	
+
 	@Inject
 	@Path("context:templates/tooltip.tml")
 	private Asset tooltipTemplate;
-	
+
 	@Inject
 	@Path("context:templates/tooltip_row.tml")
 	private Asset tooltipTemplateRow;
-	
+
 	@Inject
 	@Path("context:templates/tooltipGroup.tml")
 	private Asset tooltipTemplateGroup;
-	
+
 	@Inject
 	@Path("context:templates/tooltipGroup_row.tml")
 	private Asset tooltipTemplateGroupRow;
@@ -284,23 +284,23 @@ public class ListDocument {
 	@Persist
 	private String currentUuid;
 
-	
+
 	/**
 	 * Components Model.
 	 */
 	@Property
 	@Persist
 	private SorterModel<DocumentVo> sorterModel;
-	
-	
+
+
 	@Persist
 	private boolean refreshFlag;
-	
+
 	@Persist
 	private List<DocumentVo> docs;
 
     private Logger logger = LoggerFactory.getLogger(ListDocument.class);
-    
+
     @Property
     private boolean showUpd;
 
@@ -309,7 +309,7 @@ public class ListDocument {
 	@Property
 	private int paging;
 
-   
+
 	/***************************************************************************
 	 * Phase render
 	 **************************************************************************/
@@ -322,7 +322,7 @@ public class ListDocument {
 	 */
 	@SetupRender
 	public void initUserlogin() throws BusinessException {
-		
+
 		Collections.sort(documents);
 
 		listSelected = new ArrayList<DocumentVo>();
@@ -347,27 +347,27 @@ public class ListDocument {
 		tooltipGroupTitle = messages.get("components.listDocument.tooltipGroup.title");
 		tooltipValues = new HashedMap();
 		tooltipGroupValues = new HashedMap();
-		
+
 		try {
 			String templateContainer = templating.readFullyTemplateContent(tooltipTemplate.getResource().openStream());
 			String templateRow = templating.readFullyTemplateContent(tooltipTemplateRow.getResource().openStream());
 			String templateGroupContainer = templating.readFullyTemplateContent(tooltipTemplateGroup.getResource().openStream());
 			String templateGroupRow = templating.readFullyTemplateContent(tooltipTemplateGroupRow.getResource().openStream());
-			
+
 			Map<String,String> templateRowParams=new HashMap<String, String>();
 			String value = "";
 			String valueGroup = "";
-			
+
 			int i=0;
 			for (DocumentVo docVo : documents) {
-				
+
 				if (docVo.getShared()) {
 					StringBuffer tempBuf = new StringBuffer();
 					StringBuffer tempBufGroup = new StringBuffer();
 					Map<String,String> templateParams=new HashMap<String, String>();
-					
+
 					filleHeaderParams(templateParams);
-					
+
 					List<ShareDocumentVo> shares = shareFacade.getSharingsByUserAndFile(user, docVo);
 					Map<String, Calendar> securedUrls = shareFacade.getAnonymousSharingsByUserAndFile(user, docVo);
 
@@ -381,10 +381,10 @@ public class ListDocument {
 						fillRowParams(templateRowParams, " ", " ", entry.getKey(), formatter.format(entry.getValue().getTime()));
 						tempBuf.append(templating.getMessage(templateRow, templateRowParams));
 					}
-					
+
 					templateParams.put("${rows}", tempBuf.toString());
 					templateParams.put("${group_rows}", tempBufGroup.toString());
-					
+
 					value = templating.getMessage(templateContainer, templateParams);
 					valueGroup = templating.getMessage(templateGroupContainer, templateParams);
 				}
@@ -396,13 +396,13 @@ public class ListDocument {
 				tooltipGroupValues.put(docVo.getIdentifier(), valueGroup.toString().replaceAll("[\r\n]+", ""));
 				i++;
 			}
-			
+
 		} catch (IOException e) {
 			logger.error("Bad mail template", e);
 			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
 		}
 	}
-	
+
 	private void filleHeaderParams(Map<String,String> templateParams) {
 		templateParams.put("${header_user}", messages.get("components.listDocument.tooltip.table.user"));
 		templateParams.put("${header_group}", messages.get("components.listDocument.tooltip.table.group"));
@@ -410,14 +410,14 @@ public class ListDocument {
 		templateParams.put("${header_expiration}", messages.get("components.listDocument.tooltip.table.dateExpiration"));
 		templateParams.put("${description}", messages.get("components.listDocument.tooltip.description"));
 	}
-	
+
 	private void fillRowParams(Map<String,String> templateRowParams, String firstName, 
 			String lastName, String mail, String expiration) {
 		templateRowParams.put("${firstname}", firstName);
 		templateRowParams.put("${lastname}", lastName);
-		
+
 		String tmp_mail = mail; 
-		
+
 		if(mail.length() > 30){
 			tmp_mail = mail.substring(0,27);
 			tmp_mail += "...";
@@ -425,12 +425,12 @@ public class ListDocument {
 		templateRowParams.put("${mail}", tmp_mail);
 		templateRowParams.put("${expiration}", expiration);
 	}
-	
+
 	private void filleGroupRowParams(Map<String, String> templateRowParams, String name, String expiration) {
 		templateRowParams.put("${name}", name);
 		templateRowParams.put("${expiration}", expiration);
 	}
-	
+
 	/**
 	 * Returns the good tooltip content for the document pointed by
      * the user in the list of documents.
@@ -441,7 +441,7 @@ public class ListDocument {
 	public String getTooltipGroupValue() {
 		return tooltipGroupValues.get(document.getIdentifier());
 	}
-	
+
 	public String getTypeCSSClass() {
 		String ret = document.getType();
 		ret = ret.replace("/", "_");
@@ -522,7 +522,7 @@ public class ListDocument {
 		actionbutton = ActionFromBarDocument.CRYPT_ACTION;
 		passwordCryptPopup.getFormPassword().clearErrors(); // delete popup message
 	}
-	
+
 	/**
 	 * The action triggered when the user click on the icon include in the list for each document.
 	 * @param uuid the uuid of the document.
@@ -534,13 +534,13 @@ public class ListDocument {
 		actionbutton = ActionFromBarDocument.DECRYPT_ACTION;
 		passwordCryptPopup.getFormPassword().clearErrors(); // delete popup message
 	}
-	
-	
+
+
 	public void onActionFromUpdateDoc(String uuid) throws BusinessException {
 		currentUuid = uuid;
 		fileUpdateUploader.setUuidDocToUpdate(uuid);
 	}
-	
+
     public Zone onActionFromFileEditProperties(String uuid) throws BusinessException {
         currentUuid = uuid;
         fileEdit.setUuidDocToedit(uuid);
@@ -606,7 +606,7 @@ public class ListDocument {
 	public Zone onActionFromShowSignature(String docidentifier) throws BusinessException {
 		return signatureDetailsDisplayer.getShowSignature(docidentifier);
 	}
-	
+
 
 	public void onActionFromEncyphermentSubmit() {
 		actionbutton = ActionFromBarDocument.CRYPT_ACTION;
@@ -664,7 +664,7 @@ public class ListDocument {
 			refreshFlag=true;
 		}
 	}
-	
+
 	/**
 	 * This method is called when the form is submitted. If the form is
 	 * submitted by push on shared button. The method will trigger an event
@@ -676,15 +676,15 @@ public class ListDocument {
 	 * @return null
 	 */
 	public Object onSuccessFromSearch() {
-		
+
 		if (listSelected.size()<1) {
             businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.NOFILE_SELECTED,
                     MessageSeverity.WARNING));
     		return null;
 		}
-		
+
 		actionbutton =  ActionFromBarDocument.fromString(action);
-		
+
 		switch (actionbutton) {
 		case SHARED_ACTION:
 			componentResources.getContainer().getComponentResources()
@@ -731,7 +731,7 @@ public class ListDocument {
 
 		return null;
 	}
-	
+
 
 	/***************************************************************************
 	 * Other methods
@@ -777,7 +777,7 @@ public class ListDocument {
 	public String getFriendlySize() {
 		return FileUtils.getFriendlySize(document.getSize(), messages);
 	}
-	
+
 	/**
 	 * remove all carriage return for chenille kit tool tip
 	 * @return
@@ -846,13 +846,13 @@ public class ListDocument {
 		// add="fileProperties,actions,selectedValue,signed"
 		// reorder=fileProperties,shared,signed,actions
 
-		
+
 		model.add("fileProperties", null);
 		model.add("actions", null);
 		model.add("selectedValue", null);
 		model.add("updateDoc", null);
         model.add("fileEdit", null);
-		
+
 
 		List<String> reorderlist = new ArrayList<String>();
 		reorderlist.add("fileProperties");
@@ -871,7 +871,7 @@ public class ListDocument {
 		}
 
 		reorderlist.add("actions");
-		
+
 		model.reorder(reorderlist.toArray(new String[reorderlist.size()]));
 
 		return model;
@@ -885,7 +885,7 @@ public class ListDocument {
 	 * @throws BusinessException
 	 */
 	public Zone onValidateFormFromPasswordCryptPopup() throws BusinessException {
-		
+
 		if (passwordCryptPopup.getPassword().equals(passwordCryptPopup.getConfirm())) {
 			String pass = passwordCryptPopup.getPassword();
 
@@ -905,7 +905,7 @@ public class ListDocument {
 			return passwordCryptPopup.formFail();
 		}
 	}
-	
+
 	/**
 	 * this method is called when PasswordPopup for encipherment is called one
 	 * only one item
@@ -914,7 +914,7 @@ public class ListDocument {
 	 * @throws BusinessException
 	 */
 	public Zone onValidateFormFromPasswordDecryptPopup() throws BusinessException {
-		
+
 			String pass = passwordDecryptPopup.getPassword();
 
 			DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents,currentUuid);
@@ -929,8 +929,8 @@ public class ListDocument {
 
 			return passwordCryptPopup.formSuccess();
 	}
-	
-	
+
+
 
 	/**
 	 * this method is called when PasswordPopupSubmit for encipherment is called
@@ -946,7 +946,7 @@ public class ListDocument {
 			return passwordCryptPopupSubmit.formFail();
 		}
 	}
-	
+
 	/**
 	 * this method is called when PasswordPopupSubmit for encipherment is called
 	 * (list of files)
@@ -965,11 +965,11 @@ public class ListDocument {
 	public Link getThumbnailPath() {
         return componentResources.createEventLink("thumbnail", document.getIdentifier());
 	}
-	
+
 	public boolean getThumbnailExists() {
-		return documentFacade.documentHasThumbnail(userlogin, document.getIdentifier());
+		return document.isHasThumbnail();
 	}
-	
+
 	public void onThumbnail(String docID) {
 		InputStream stream = null;
 		DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents, docID);
@@ -1004,5 +1004,5 @@ public class ListDocument {
 
 		}
 	}
-	
+
 }

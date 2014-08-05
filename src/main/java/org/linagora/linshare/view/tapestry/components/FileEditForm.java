@@ -66,9 +66,9 @@ public class FileEditForm {
 	/* ***********************************************************
      *                         Parameters
      ************************************************************ */
-    
 
-    
+
+
 
     /* ***********************************************************
      *                      Injected services
@@ -87,7 +87,7 @@ public class FileEditForm {
 
 	@Inject
 	private ComponentResources componentResources;
-	
+
     @Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
 
@@ -95,32 +95,32 @@ public class FileEditForm {
 	/* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
-    
-	
+
+
     @Component(parameters = {"style=bluelighting", "show=false", "width=400", "height=200"})
     private WindowWithEffectsComponent fileEditWindow;
-    
+
     @InjectComponent
     private Zone fileEditTemplateZone;
-    
+
     @Retain
     private String _assignedZoneClientId;
-    
+
     @Environmental
     private JavaScriptSupport _pageRenderSupport;
-    
+
     /**
      * set explicitly the id for the component
      */
     @Parameter(required=true,value = "prop:componentResources.id", defaultPrefix = BindingConstants.LITERAL)
     private String id;
-    
-    
-    
+
+
+
     @Persist
     private String editFileWithUuid;
-    
-    
+
+
     @SessionState
     @Property
     private UserVo userLoggedIn;
@@ -133,10 +133,10 @@ public class FileEditForm {
 
     @Property
     private String fileComment;
-    
-    
+
+
     private boolean reset = false;
-    
+
 	private XSSFilter filter;
 
 	@Inject
@@ -148,7 +148,7 @@ public class FileEditForm {
      *                   Event handlers&processing
      ************************************************************ */
 
-    
+
     public boolean onValidateFormFromEditForm() {
     	logger.debug("onValidateFormFromEditForm");
     	if (editForm.getHasErrors()) {
@@ -158,10 +158,10 @@ public class FileEditForm {
     	if (fileName == null) {
     		return false;
     	}
-    	
+
         return true;
     }
-    
+
      public void onSelectedFromReset(){
     	 reset =  true;
      }
@@ -188,21 +188,21 @@ public class FileEditForm {
     public void onFailure() {
     	 shareSessionObjects.addError(messages.get("component.fileEditForm.action.update.error"));
     }
-    
-    
+
+
     @CleanupRender
     public void cleanupRender(){
     	editForm.clearErrors();
     }
-    
+
     public Zone getShowPopupWindow() {
         return fileEditTemplateZone;
     }
-    
+
     public String getJSONId(){
     	return fileEditWindow.getJSONId();
     }
-    
+
     /**
      * give the id of the window
      * use it to open the window
@@ -211,7 +211,7 @@ public class FileEditForm {
     public String getJavascriptOpenPopup(){
     	return fileEditWindow.getJavascriptOpenPopup();
     }
-    
+
     public String getZoneClientId()
     {
     	if(_assignedZoneClientId == null) {
@@ -220,15 +220,15 @@ public class FileEditForm {
     	return _assignedZoneClientId;
     }
 
-	public void setUuidDocToedit(String uuid) {
+	public void setUuidDocToedit(String uuid) throws BusinessException {
 		this.editFileWithUuid = uuid;
 		initFormToEdit();
 	}
-	
-    private void initFormToEdit(){
-		 
+
+    private void initFormToEdit() throws BusinessException{
+
 		if(editFileWithUuid != null){
-		    	DocumentVo doc = documentFacade.getDocument(userLoggedIn.getLogin(), editFileWithUuid);
+		    	DocumentVo doc = documentFacade.getDocument(userLoggedIn, editFileWithUuid);
 		    	fileName = doc.getFileName();
 		    	fileComment = doc.getFileComment();
 		}

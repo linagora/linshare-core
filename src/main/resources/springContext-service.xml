@@ -307,4 +307,9 @@
 		<constructor-arg ref="uploadPropositionFilterBusinessService" />
 		<constructor-arg ref="domainBusinessService" />
 	</bean>
+	<bean name="shareService" class="org.linagora.linshare.core.service.impl.ShareServiceImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="shareExpiryDateService" />
+		<constructor-arg ref="documentEntryService" />
+	</bean>
 </beans>

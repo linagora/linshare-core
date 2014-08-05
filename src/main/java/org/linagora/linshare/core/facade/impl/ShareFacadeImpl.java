@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -67,6 +66,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -81,7 +81,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-public class ShareFacadeImpl implements ShareFacade {
+public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacade {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(ShareFacadeImpl.class);
@@ -126,8 +126,9 @@ public class ShareFacadeImpl implements ShareFacade {
 			final AnonymousShareEntryService anonymousShareEntryService,
 			final SignatureTransformer signatureTransformer,
 			final GuestService guestService,
-			final ShareService shareService) {
-		super();
+			final ShareService shareService,
+			final AccountService accountService) {
+		super(accountService);
 		this.shareEntryTransformer = shareEntryTransformer;
 		this.userRepository = userRepository;
 		this.notifierService = notifierService;
@@ -227,10 +228,11 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
 	public List<ShareDocumentVo> getSharingsByUserAndFile(UserVo actorVo,
 			DocumentVo documentVo) {
-
 		DocumentEntry documentEntry;
 		try {
-			documentEntry = documentEntryService.findById(getActor(actorVo),
+			User actor = getActor(actorVo);
+			logger.debug("looking for document : " + documentVo.getIdentifier());
+			documentEntry = documentEntryService.find(actor, actor,
 					documentVo.getIdentifier());
 			return shareEntryTransformer
 					.disassembleList(new ArrayList<ShareEntry>(documentEntry
@@ -246,10 +248,12 @@ public class ShareFacadeImpl implements ShareFacade {
 	public Map<String, Calendar> getAnonymousSharingsByUserAndFile(
 			UserVo actorVo, DocumentVo documentVo) {
 
+		logger.debug("looking for document : " + documentVo.getIdentifier());
 		Map<String, Calendar> res = new HashMap<String, Calendar>();
 		DocumentEntry documentEntry;
 		try {
-			documentEntry = documentEntryService.findById(getActor(actorVo),
+			User actor = getActor(actorVo);
+			documentEntry = documentEntryService.find(actor, actor,
 					documentVo.getIdentifier());
 
 			for (AnonymousShareEntry entry : documentEntry
@@ -499,6 +503,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
 	public InputStream getShareThumbnailStream(UserVo actorVo,
 			String shareEntryUuid) throws BusinessException {
+		logger.debug("downloading thumbnail for share : " + shareEntryUuid);
 		try {
 			User actor = getActor(actorVo);
 			return shareEntryService.getThumbnailStream(actor,
@@ -623,20 +628,5 @@ public class ShareFacadeImpl implements ShareFacade {
 		sc.addRecipient(recipientsEmail);
 		List<ShareEntry> list = shareService.create(actor, actor, sc);
 		return shareEntryTransformer.disassembleList(list);
-	}
-
-	/*
-	 * Helpers
-	 */
-	private User getActor(UserVo userVo) throws BusinessException {
-		Validate.notEmpty(userVo.getLsUuid(), "Missing actor uuid");
-		User actor = userService.findByLsUuid(userVo.getLsUuid());
-		if (actor == null) {
-			logger.error("Can't find actor : " + userVo.getLsUuid());
-			throw new BusinessException(
-					BusinessErrorCode.USER_NOT_FOUND,
-					"You are not authorized to use this service");
-		}
-		return actor;
 	}
 }

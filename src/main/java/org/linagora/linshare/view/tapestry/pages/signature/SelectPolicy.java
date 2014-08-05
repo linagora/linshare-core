@@ -71,21 +71,21 @@ import org.slf4j.LoggerFactory;
 
 
 public class SelectPolicy {
-	
+
 	@Inject
 	private PageRenderLinkSource linkFactory;
-	
+
 	@Inject
 	private Messages messages;
-	
+
 	@Inject
 	private DocumentFacade documentFacade;
 	@Inject
 	private AbstractDomainFacade domainFacade;
 	@Inject
 	private ShareFacade shareFacade;
-	
-    
+
+
 	@Persist
 	@Property
 	private SignaturePolicyEncoder signaturePoliciesEncoder;
@@ -95,39 +95,39 @@ public class SelectPolicy {
 	@Persist
 	@Property
 	private SignaturePolicyVo selectedPolicy;
-    
-	
+
+
 	@SessionState
 	@Property
 	private UserSignature userSignature;
-	
+
 	@SessionState
 	private UserVo userVo;
-    
+
 	private Logger log = LoggerFactory.getLogger(SelectPolicy.class);
-	
+
 	/**
 	 * set to "/tmp/linSignDocuments";
 	 */
 	@Inject @Symbol("linshare.signature.tmp.dir")
     private String TEMP_SIGNATURE_DIR;
-	
+
 	private boolean stopWizard;
-	
-	
+
+
 	public Object onActivate(Object[] docIdentifiers) {
-		
+
 		stopWizard = false;
-		
-		
+
+
 		try {
 			//get the context can be sharedlist or the list of document (position 0)
 			//next get the files to sign from the list of document
-			
+
 			if (docIdentifiers.length>=2){
 				//list of documents or list of shared documents ??
 				DocToSignContext context = DocToSignContext.valueOf((String) docIdentifiers[0]);
-				
+
 				//signature activation is NOT activated so quit !
 				if (!documentFacade.isSignatureActive(userVo)){
 					if(context.equals(DocToSignContext.DOCUMENT)){
@@ -136,23 +136,23 @@ public class SelectPolicy {
 						return  linkFactory.createPageRenderLink("Index");
 					} else return null;
 				}
-				
+
 				List<DocumentVo> docTosign = new ArrayList<DocumentVo>(docIdentifiers.length-1);
-				
+
 				//retrieve info on doc to sign
-					
+
 					if(context.equals(DocToSignContext.DOCUMENT)){
 						for (int i = 1; i < docIdentifiers.length; i++) {
-							
-							DocumentVo doc =documentFacade.getDocument(userVo.getLogin(), (String) docIdentifiers[i]);
-							
+
+							DocumentVo doc =documentFacade.getDocument(userVo, (String) docIdentifiers[i]);
+
 							//in the this list of document it can be documentVO or shareddocumentVO
 							if(!doc.getOwnerLogin().equalsIgnoreCase(userVo.getLogin())){
 								//not the owner
 								// TO be fix ? but how ?
 //								doc = new ShareDocumentVo(doc,null,userVo,null,null,null,null,0); //sduprey: jamais accedé ?
 							}
-							
+
 							//want to sign only one time (moreover we do not want to sign encrypted doc)
 							if(!documentFacade.isSignedDocumentByCurrentUser(userVo, doc) && !doc.getEncrypted()){
 								docTosign.add(doc);
@@ -160,7 +160,7 @@ public class SelectPolicy {
 						}
 					} else {
 						for (int i = 1; i < docIdentifiers.length; i++) {
-							DocumentVo doc =documentFacade.getDocument(userVo.getLogin(), (String) docIdentifiers[i]);
+							DocumentVo doc =documentFacade.getDocument(userVo, (String) docIdentifiers[i]);
 //							ShareDocumentVo shareddoc = new ShareDocumentVo(doc,userVo,userVo,null,null,null);
 							ShareDocumentVo shareddoc = null;
 							List<ShareDocumentVo> docVos = shareFacade.getAllSharingReceivedByUser(userVo);
@@ -178,7 +178,7 @@ public class SelectPolicy {
 							}
 						}
 					}
-					
+
 					//if no document to sign return
 					if(docTosign.size()==0){
 						if(context.equals(DocToSignContext.DOCUMENT)){
@@ -187,17 +187,17 @@ public class SelectPolicy {
 							return  linkFactory.createPageRenderLink("Index");
 						} else return null;
 					}
-					
-				
+
+
 				userSignature = new UserSignature();
 				userSignature.setDocContext(context);
 				userSignature.setDocumentVos(docTosign);
 			}
-					
+
 			//prepare select box
 			availableSignaturePolicies = findAvailableSignaturePolicies();
 			signaturePoliciesEncoder = new SignaturePolicyEncoder(availableSignaturePolicies);
-			
+
 			//we go directly to select keystore if just one choice for policies (this is the case at this time)
 			if(availableSignaturePolicies.size()==1){
 				selectedPolicy = availableSignaturePolicies.get(0);
@@ -226,12 +226,12 @@ public class SelectPolicy {
 			log.error(e.toString(),e);
 			userSignature.setErrorMessage(messages.get("pages.signature.error.iOException"));
 		}
-		
+
 		if(stopWizard) return ExitSignatureWithError.class;
-		
+
 		return null;
 	}
-	
+
 	public void onValidateForm(){
 		userSignature.setOidSignaturePolicy(selectedPolicy.getOid());
 	}
@@ -239,7 +239,7 @@ public class SelectPolicy {
 	public Object onSuccess() {
 
 		stopWizard=false;
-		
+
 		try {
 			initSelectFiles();
 		} catch (BusinessException e) {
@@ -267,9 +267,9 @@ public class SelectPolicy {
 		if(stopWizard) return ExitSignatureWithError.class;
 		else return SelectKeystore.class;
 	}
-	
-	
-    
+
+
+
 	private List<SignaturePolicyVo> findAvailableSignaturePolicies() throws PolicyNotFoundException  {
 
 		Set<String> oids = SignaturePolicies.getInstance().getAvailableSignaturePolicyOID();
@@ -284,38 +284,38 @@ public class SelectPolicy {
 				throw e;
 			}
 		}
-		
+
 		return policiesSelect;
 	}
-	
-	
+
+
     private void initSelectFiles() throws PolicyNotFoundException, ObjectNotFoundException, CreateSignedDocumentContainerException, IOException, BusinessException {
     	//ckeck integrity on signed jar (linsign config and core)
     	SignaturePolicies.getInstance();
     	String oidPolicy = null;
     	InputStream is = null;
- 
+
     	try {
 			//get user policy selection
 			oidPolicy = userSignature.getOidSignaturePolicy();
 			String signatureUuid = userSignature.init(oidPolicy); //create signature instance to put file in it
-			
-			
+
+
 			String tempUserSignatureDir = TEMP_SIGNATURE_DIR + "/" + signatureUuid + "/";
 			File wdir = new File(tempUserSignatureDir);
 			if(!wdir.exists()) wdir.mkdirs();
-			
+
 			List<File> filetoSign = new ArrayList<File>(); 
-			
+
 			for (DocumentVo doc : userSignature.getDocumentVos()) {
 				//copy File to sign (use service to extract data with jack rabbit)
-				
+
 				File currentFile = new File(tempUserSignatureDir+doc.getFileName());
 				filetoSign.add(currentFile) ;
 				is = documentFacade.retrieveFileStream(doc, userVo);
 				copy(is, currentFile);
 			}
-			
+
 			userSignature.sendDocuments(filetoSign);
 		} catch (PolicyNotFoundException e) {
 			throw e;
@@ -337,8 +337,8 @@ public class SelectPolicy {
 			}
 		}
     }
-	
-	
+
+
     /**
      * Copies src file to dst file.
      * If the dst file does not exist, it is created
@@ -357,7 +357,7 @@ public class SelectPolicy {
     		// Transfer bytes from in to out
     		byte[] buf = new byte[2048];
     		int len;
-    		
+
     		while ((len = bif.read(buf)) > 0) {
     			bouf.write(buf, 0, len);
     		}

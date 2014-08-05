@@ -39,14 +39,13 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DocumentEntryService {
 
-	public DocumentEntry createDocumentEntry(Account actor, InputStream stream, String fileName) throws BusinessException;
+	public DocumentEntry createDocumentEntry(Account actor, Account owner, InputStream stream, String fileName) throws BusinessException;
 
-	public DocumentEntry updateDocumentEntry(Account actor, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException ;
+	public DocumentEntry updateDocumentEntry(Account actor, Account owner, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException ;
 
 	public DocumentEntry duplicateDocumentEntry(Account actor, String docEntryUuid) throws BusinessException;
 
@@ -81,22 +80,15 @@ public interface DocumentEntryService {
 
 	public long getTotalSize(Account account) throws BusinessException ;
 
-
-	 /**
-     * Thumbnail of the document exists ?
-     * @param docUuid the identifier of the document
-     * @return true if the thumbnail exists, false otherwise
-     */
-	public boolean documentHasThumbnail(Account owner, String docUuid);
-
 	 /**
      * Get the thumbnail (InputStream) of the document
-     * @param docEntryUuid the identifier of the document
+	 * @param actor TODO
+	 * @param uuid the identifier of the document
      * @return InputStream of the thumbnail
      */
-    public InputStream getDocumentThumbnailStream(Account owner, String docEntryUuid) throws BusinessException;
+    public InputStream getDocumentThumbnailStream(Account actor, Account owner, String uuid) throws BusinessException;
 
-    public InputStream getDocumentStream(Account owner, String docEntryUuid) throws BusinessException;
+    public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException;
 
 	/**
 	 * return true if the signature functionality is enabled
@@ -135,15 +127,24 @@ public interface DocumentEntryService {
 	 */
 	public Long getGlobalQuota(Account account) throws BusinessException;
 
-	public DocumentEntry find(Account actor, Account owner, String currentDocEntryUuid) throws BusinessException;
+	/**
+	 * looking for a document entry using the uuid parameter.
+	 * Owner and actor rights will be check. A {@link BusinessException} 
+	 * could be raise it the entry is not found or the actor is not allowed
+	 * to access to it. 
+	 * @param actor
+	 * @param owner
+	 * @param uuid
+	 * @return
+	 * @throws BusinessException
+	 */
+	public DocumentEntry find(Account actor, Account owner, String uuid) throws BusinessException;
 
-	public DocumentEntry findById(Account actor, String currentDocEntryUuid) throws BusinessException;
+	public List<DocumentEntry> findAll(Account actor, Account owner) throws BusinessException;
 
-	public List<DocumentEntry> findAllMyDocumentEntries(Account actor, User owner) throws BusinessException;
-
-	public void renameDocumentEntry(Account actor, String docEntryUuid, String newName) throws BusinessException ;
-
-	public void updateFileProperties(Account actor, String docEntryUuid, String newName, String fileComment) throws BusinessException;
+	public void renameDocumentEntry(Account actor, Account owner, String docEntryUuid, String newName) throws BusinessException ;
 
 	public boolean mimeTypeFilteringStatus(Account actor) throws BusinessException;
+
+	public void updateFileProperties(Account actor, Account owner, String uuid, String newName, String fileComment) throws BusinessException;
 }

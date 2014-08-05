@@ -114,7 +114,7 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		try {
-			documentEntry = documentEntryService.findById(actor, uuid);
+			documentEntry = documentEntryService.find(actor, actor, uuid);
 		} catch (BusinessException e) {
 			throw e;
 		}
@@ -182,7 +182,7 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 		DocumentEntry documentEntry;
 
 		for (String onefileid : uuid) {
-			documentEntry = documentEntryService.findById(actor, onefileid);
+			documentEntry = documentEntryService.find(actor, actor, onefileid);
 			DocumentVo documentVo = new DocumentVo(documentEntry);
 			listDoc.add(documentVo);
 		}
@@ -245,7 +245,8 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 		// and remove Vo when tapestry will be removed
 		for (ShareDto share : shares) {
 			// fetch the document
-			DocumentEntry documentEntry = documentEntryService.findById(actor,
+
+			DocumentEntry documentEntry = documentEntryService.find(actor, actor,
 					share.getDocumentDto().getUuid());
 
 			DocumentVo documentVo = new DocumentVo(documentEntry);
@@ -296,5 +297,5 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 		User actor = getAuthentication();
 		return shareEntryService.getThumbnailStream(actor, shareEntryUuid);
 	}
-	
+
 }

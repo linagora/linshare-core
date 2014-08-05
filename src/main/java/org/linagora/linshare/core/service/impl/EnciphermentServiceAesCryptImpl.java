@@ -57,34 +57,34 @@ import org.slf4j.LoggerFactory;
 
 
 public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(EnciphermentServiceAesCryptImpl.class);
 
 	private final static String EXTENSION_CRYPT=".aes";
-	
+
 	private final DocumentEntryService documentEntryService;
-	
+
     private final LogEntryService logEntryService;
-    
+
 	private final String workingDir;
-	
-	
+
+
 	public EnciphermentServiceAesCryptImpl(DocumentEntryService documentEntryService, LogEntryService logEntryService, String workingDir) {
 		super();
 		this.documentEntryService = documentEntryService;
 		this.logEntryService = logEntryService;
 		this.workingDir = workingDir; //linshare.encipherment.tmp.dir
-		
+
 		//test directory
 		File workingDirtest = new File(workingDir);
 		if(!workingDirtest.exists()) workingDirtest.mkdirs();
 	}
-	
-	
+
+
 
 	@Override
 	public DocumentEntry encryptDocument(Account actor, String documentEntryUuid, Account owner, String password) throws BusinessException {
-		DocumentEntry documentEntry = documentEntryService.findById(owner, documentEntryUuid);
+		DocumentEntry documentEntry = documentEntryService.find(actor, owner, documentEntryUuid);
 		return encryptDocument(actor, documentEntry, owner, password);
 	}
 
@@ -92,7 +92,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 
 	@Override
 	public DocumentEntry decryptDocument(Account actor, String documentEntryUuid, Account owner, String password) throws BusinessException {
-		DocumentEntry documentEntry = documentEntryService.findById(owner, documentEntryUuid);
+		DocumentEntry documentEntry = documentEntryService.find(actor, owner, documentEntryUuid);
 		return decryptDocument(actor, documentEntry, owner, password);
 	}
 
@@ -100,32 +100,32 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 
 	@Override
 	public DocumentEntry decryptDocument(Account actor, DocumentEntry documentEntry, Account owner, String password) throws BusinessException {
-		
+
 		InputStream in =  null;
 		OutputStream out = null; 
-		
+
 		FileInputStream inputStream = null;
 		File f = null;
 		DocumentEntry resdoc = null;
-		
+
 		try {
-			
-			in = documentEntryService.getDocumentStream(owner, documentEntry.getUuid());
-			
+
+			in = documentEntryService.getDocumentStream(actor, owner, documentEntry.getUuid());
+
 			f = new File(workingDir + "/" + UUID.randomUUID());
 			out = new FileOutputStream(f);
-			
+
 			AESCrypt aes = new AESCrypt(false, password);
 			aes.decrypt(in, out);
-			
+
 			out.flush();
 			out.close();
-			
+
 			inputStream = new FileInputStream(f);
-			
+
 			String finalFileName = changeDocumentExtension(documentEntry.getName());
-			
-			resdoc = documentEntryService.updateDocumentEntry(owner, documentEntry.getUuid(), inputStream, new Long(inputStream.available()), finalFileName);
+
+			resdoc = documentEntryService.updateDocumentEntry(owner, actor, documentEntry.getUuid(), inputStream, new Long(inputStream.available()), finalFileName);
 
 			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DECRYPT, "Decrypt file Content", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
 	        logEntryService.create(logEntry);
@@ -162,40 +162,40 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 				f.delete();
 			}
 		}
-		
+
 		return resdoc;
 	}
-	
+
 	@Override
 	public DocumentEntry encryptDocument(Account actor, DocumentEntry documentEntry, Account owner, String password) throws BusinessException {
 		InputStream in =  null;
 		OutputStream out = null; 
 		DocumentEntry resdoc = null;
-		
+
 		FileInputStream inputStream = null;
 		File f = null;
-		
+
 		try {
-			
-			in = documentEntryService.getDocumentStream(owner, documentEntry.getUuid());
+
+			in = documentEntryService.getDocumentStream(actor, owner, documentEntry.getUuid());
 			f = new File(workingDir+"/"+UUID.randomUUID());
 			out = new FileOutputStream(f);
-			
+
 			AESCrypt aes = new AESCrypt(false, password);
 			aes.encrypt(2,in, out);
-			
+
 			out.flush();
 			out.close();
-			
+
 			inputStream = new FileInputStream(f);
-			
+
 			String finalFileName =  changeDocumentExtension(documentEntry.getName());	
-			
-			resdoc = documentEntryService.updateDocumentEntry(owner, documentEntry.getUuid(), inputStream, new Long(inputStream.available()), finalFileName);
+
+			resdoc = documentEntryService.updateDocumentEntry(owner, actor, documentEntry.getUuid(), inputStream, new Long(inputStream.available()), finalFileName);
 
 			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_ENCRYPT, "Encrypt file Content", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
 	        logEntryService.create(logEntry);
-			
+
 		} catch (IOException e) {
 			logger.error(e.toString(),e);
 			throw new BusinessException(BusinessErrorCode.CANNOT_ENCRYPT_DOCUMENT,"can not encrypt documentEntry "+ documentEntry.getUuid());
@@ -228,7 +228,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 				f.delete();
 			}
 		}
-		
+
 		return resdoc;
 	}
 
@@ -240,15 +240,15 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			return getEncryptedExtension(docname.toLowerCase());
 	}
 
-	
+
 	private static String getEncryptedExtension(String originalFileName) {
 		return originalFileName + EXTENSION_CRYPT;
 	}
-	
-	
+
+
 	private static String getDecryptedExtension(String originalCryptedFileName) {
 		int pos = originalCryptedFileName.lastIndexOf(EXTENSION_CRYPT);
-		
+
 		if (pos==-1)
 			return  originalCryptedFileName;
 		else {

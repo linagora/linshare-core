@@ -82,7 +82,7 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 	public List<DocumentDto> getDocuments() throws BusinessException {
 		User actor = getAuthentication();
 		List<DocumentEntry> docs = documentEntryService
-				.findAllMyDocumentEntries(actor, actor);
+				.findAll(actor, actor);
 
 		if (docs == null)
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND,
@@ -93,11 +93,7 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 	@Override
 	public DocumentDto getDocument(String uuid) throws BusinessException {
 		User actor = getAuthentication();
-		DocumentEntry doc = documentEntryService.findById(actor, uuid);
-
-		if (doc == null)
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND,
-					"No such document");
+		DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
 		return new DocumentDto(doc);
 	}
 
@@ -105,11 +101,11 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 	public DocumentDto uploadfile(InputStream fi, String fileName,
 			String description) throws BusinessException {
 		User actor = getAuthentication();
-		DocumentEntry res = documentEntryService.createDocumentEntry(actor, fi,
-				fileName);
+		DocumentEntry res = documentEntryService.createDocumentEntry(actor, actor,
+				fi, fileName);
 
-		documentEntryService.updateFileProperties(actor, res.getUuid(),
-				res.getName(), description);
+		documentEntryService.updateFileProperties(actor, actor,
+				res.getUuid(), res.getName(), description);
 		return new DocumentDto(res);
 	}
 
@@ -122,13 +118,13 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 			InputStream in = dh.getInputStream();
 			String fileName = doca.getFilename();
 			DocumentEntry res = documentEntryService.createDocumentEntry(actor,
-					in, fileName);
+					actor, in, fileName);
 			// mandatory ?
 			String comment = (doca.getComment() == null) ? "" : doca
 					.getComment();
 
-			documentEntryService.updateFileProperties(actor, res.getUuid(),
-					res.getName(), comment);
+			documentEntryService.updateFileProperties(actor, actor,
+					res.getUuid(), res.getName(), comment);
 			return new DocumentDto(res);
 		} catch (IOException e) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
@@ -152,22 +148,24 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 
 	@Override
 	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException {
+		logger.debug("downloading for document : " + docEntryUuid);
 		User actor = getAuthentication();
-		return documentEntryService.getDocumentStream(actor, docEntryUuid);
+		return documentEntryService.getDocumentStream(actor, actor, docEntryUuid);
 	}
 
 	@Override
 	public InputStream getThumbnailStream(String docEntryUuid) throws BusinessException {
+		logger.debug("downloading thumbnail for document : " + docEntryUuid);
 		User actor = getAuthentication();
-		return documentEntryService.getDocumentThumbnailStream(actor, docEntryUuid);
+		return documentEntryService.getDocumentThumbnailStream(actor, actor, docEntryUuid);
 	}
 
 	@Override
 	public DocumentDto deleteFile(String uuid) throws BusinessException {
+		logger.debug("deleting for document : " + uuid);
 		try {
 			User actor = getAuthentication();
-			DocumentEntry doc = documentEntryService.findById(actor, uuid);
-
+			DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
 			documentEntryService.deleteDocumentEntry(actor, doc);
 			return new DocumentDto(doc);
 		} catch (BusinessException e) {
