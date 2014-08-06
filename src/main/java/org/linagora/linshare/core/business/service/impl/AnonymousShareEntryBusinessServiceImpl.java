@@ -34,7 +34,9 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
 import org.linagora.linshare.core.business.service.AnonymousUrlBusinessService;
@@ -44,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
@@ -59,11 +62,10 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 	private final AccountService accountService;
 	private final DocumentEntryRepository documentEntryRepository ;
 	private final ContactRepository contactRepository ;
-	private final AnonymousUrlBusinessService anonymousUrlBusinessService;
-	
-	
+	private final AnonymousUrlBusinessService businessService;
+
 	private static final Logger logger = LoggerFactory.getLogger(AnonymousShareEntryBusinessServiceImpl.class);
-	
+
 	public AnonymousShareEntryBusinessServiceImpl(AnonymousShareEntryRepository anonymousShareEntryRepository, AccountService accountService, DocumentEntryRepository documentEntryRepository, ContactRepository contactRepository,
 			AnonymousUrlBusinessService anonymousUrlBusinessService) {
 		super();
@@ -71,17 +73,14 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		this.accountService = accountService;
 		this.documentEntryRepository = documentEntryRepository;
 		this.contactRepository = contactRepository;
-		this.anonymousUrlBusinessService = anonymousUrlBusinessService;
+		this.businessService = anonymousUrlBusinessService;
 	}
-	
 
 	@Override
 	public AnonymousShareEntry findByUuid(String uuid) {
 		return anonymousShareEntryRepository.findById(uuid);
 	}
 
-	
-	
 	@Override
 	public AnonymousShareEntry findByUuidForDownload(String uuid) throws BusinessException {
 		AnonymousShareEntry shareEntry = anonymousShareEntryRepository.findById(uuid);
@@ -89,66 +88,87 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 			logger.error("Share not found : " + uuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + uuid);
 		}
-		
+
 		// update count
 		shareEntry.incrementDownload();
 		anonymousShareEntryRepository.update(shareEntry);
-		
+
 		return shareEntry;
 	}
 
-
 	private AnonymousShareEntry createAnonymousShare(DocumentEntry documentEntry, AnonymousUrl anonymousUrl, User sender, Contact contact, Calendar expirationDate) throws BusinessException {
-		
+
 		logger.debug("Creation of a new anonymous share between sender " + sender.getMail() + " and recipient " + contact.getMail());
 		AnonymousShareEntry share= new AnonymousShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), documentEntry, anonymousUrl , expirationDate);
 		AnonymousShareEntry anonymousShare = anonymousShareEntryRepository.create(share);
-		
+
 		// If the current document was previously shared, we need to rest its expiration date
 		documentEntry.setExpirationDate(null);
-		
+
 		documentEntry.getAnonymousShareEntries().add(anonymousShare);
 		sender.getEntries().add(anonymousShare);
 		documentEntryRepository.update(documentEntry);
 		accountService.update(sender);
-		
+
 		return anonymousShare;
 	}
 
-	
+	@Deprecated
 	@Override
 	public AnonymousUrl createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected) throws BusinessException {
-		
+
 		Contact contact = contactRepository.find(recipient);
 		if(contact == null) {
 			contact = contactRepository.create(recipient);
 		}
-		
-		AnonymousUrl anonymousUrl = anonymousUrlBusinessService.create(passwordProtected, contact);
-		
+
+		AnonymousUrl anonymousUrl = businessService.create(passwordProtected, contact);
+
 		for (DocumentEntry documentEntry : documentEntries) {
 			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expirationDate);
 			anonymousUrl.getAnonymousShareEntries().add(anonymousShareEntry);
 		}
-		anonymousUrlBusinessService.update(anonymousUrl);
-		
+		businessService.update(anonymousUrl);
+
 		return anonymousUrl;
 	}
 
-	
+	@Override
+	public AnonymousUrl create(
+			User sender,
+			Recipient recipient,
+			Set<DocumentEntry> documentEntries,
+			Date expirationDate,
+			Boolean passwordProtected) throws BusinessException {
+
+		Contact someContact = new Contact(recipient.getMail());
+		Contact contact = contactRepository.find(someContact);
+		if(contact == null) {
+			contact = contactRepository.create(someContact);
+		}
+		AnonymousUrl anonymousUrl = businessService.create(passwordProtected, contact);
+		for (DocumentEntry documentEntry : documentEntries) {
+			// FIXME : Calendar hack : temporary hack on expiry date
+			Calendar expiryCal = Calendar.getInstance();
+			expiryCal.setTime(expirationDate);
+			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expiryCal);
+			anonymousUrl.getAnonymousShareEntries().add(anonymousShareEntry);
+		}
+		businessService.update(anonymousUrl);
+		return anonymousUrl;
+	}
+
 	@Override
 	public void deleteAnonymousShare(AnonymousShareEntry anonymousShare) throws BusinessException {
 		anonymousShareEntryRepository.delete(anonymousShare);
-		
+
 		DocumentEntry documentEntry = anonymousShare.getDocumentEntry();
 		documentEntry.getAnonymousShareEntries().remove(anonymousShare);
-		
+
 		Account sender = anonymousShare.getEntryOwner();
 		sender.getEntries().remove(anonymousShare);
-		
+
 		documentEntryRepository.update(documentEntry);
 		accountService.update(sender);
 	}
-
-	
 }

@@ -722,21 +722,16 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	@Override
-	public List<AbstractDomain> getAllAuthorizedDomains(String domainIdentifier) {
+	public List<AbstractDomain> getAllAuthorizedDomains(String domainIdentifier) throws BusinessException {
 		logger.debug("Begin getAllAuthorizedDomains" + domainIdentifier);
-
-		AbstractDomain domain = retrieveDomain(domainIdentifier);
-		if (domain == null) {
-			logger.error("Impossible to find domain : " + domainIdentifier
-					+ ". This domain does not exist.");
-			return null;
-		}
+		AbstractDomain domain = findById(domainIdentifier);
 		List<AbstractDomain> domains = domainPolicyService
 				.getAllAuthorizedDomain(domain);
 		logger.debug("End getAllAuthorizedDomains");
 		return domains;
 	}
 
+	@Deprecated
 	@Override
 	public boolean hasRightsToShareWithExternals(User sender) {
 

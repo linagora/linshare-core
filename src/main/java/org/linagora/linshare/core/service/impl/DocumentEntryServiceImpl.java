@@ -78,7 +78,7 @@ import org.linagora.linshare.core.utils.DocumentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentEntryServiceImpl extends GenericService implements DocumentEntryService {
+public class DocumentEntryServiceImpl extends GenericEntryService implements DocumentEntryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryServiceImpl.class);
 
@@ -121,7 +121,7 @@ public class DocumentEntryServiceImpl extends GenericService implements Document
 			throw new BusinessException(
 					BusinessErrorCode.DOCUMENT_ENTRY_NOT_FOUND, message);
 		}
-		checkReadPermission(actor, entry);
+		checkReadPermission(actor, entry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		return entry;
 	}
 
@@ -129,7 +129,7 @@ public class DocumentEntryServiceImpl extends GenericService implements Document
 	public List<DocumentEntry> findAll(Account actor, Account owner)
 			throws BusinessException {
 		preChecks(actor, owner);
-		checkListPermission(actor, owner);
+		checkListPermission(actor, owner, EntryType.DOCUMENT, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		return documentEntryBusinessService.findAllMyDocumentEntries(owner);
 	}
 
@@ -137,7 +137,7 @@ public class DocumentEntryServiceImpl extends GenericService implements Document
 	public DocumentEntry createDocumentEntry(Account actor, Account owner, InputStream stream, String fileName) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(fileName, "fileName is required.");
-		checkCreatePermission(actor, owner);
+		checkCreatePermission(actor, owner, EntryType.DOCUMENT, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		fileName = sanitizeFileName(fileName); // throws
 
 		DocumentUtils util = new DocumentUtils();
@@ -203,7 +203,7 @@ public class DocumentEntryServiceImpl extends GenericService implements Document
 		Validate.notEmpty(docEntryUuid, "document entry uuid is required.");
 		Validate.notEmpty(fileName, "fileName is required.");
 		DocumentEntry originalEntry = find(actor, owner, docEntryUuid);
-		checkUpdatePermission(actor, originalEntry);
+		checkUpdatePermission(actor, originalEntry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		fileName = sanitizeFileName(fileName); // throws
 
 		DocumentUtils util = new DocumentUtils();
@@ -498,7 +498,7 @@ public class DocumentEntryServiceImpl extends GenericService implements Document
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		Validate.notEmpty(newName, "new name is required.");
 		DocumentEntry entry = find(actor, owner, uuid);
-		checkUpdatePermission(actor, entry);
+		checkUpdatePermission(actor, entry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		documentEntryBusinessService.renameDocumentEntry(entry, newName);
 	}
 
@@ -508,7 +508,7 @@ public class DocumentEntryServiceImpl extends GenericService implements Document
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		Validate.notEmpty(newName, "new name is required.");
 		DocumentEntry entry = find(actor, owner, uuid);
-		checkUpdatePermission(actor, entry);
+		checkUpdatePermission(actor, entry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		documentEntryBusinessService.updateFileProperties(entry, newName, fileComment);
 	}
 
@@ -603,99 +603,34 @@ public class DocumentEntryServiceImpl extends GenericService implements Document
 		return false;
 	}
 
-	protected void preChecks(Account actor, Account owner) {
-		Validate.notNull(actor, "Missing actor account");
-		Validate.notEmpty(actor.getLsUuid(), "Missing actor uuid");
-		Validate.notNull(owner, "Missing owner account");
-		Validate.notEmpty(owner.getLsUuid(), "Missing owner uuid");
-		if (logger.isDebugEnabled()) {
-			logger.debug("Current actor " + actor.getAccountReprentation());
-			logger.debug("Current owner " + actor.getAccountReprentation());
-		}
-	}
-
+	@Override
 	protected boolean hasReadPermission(Account actor) {
 		return hasPermission(actor,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_GET);
 	}
 
+	@Override
 	protected boolean hasListPermission(Account actor) {
 		return this.hasPermission(actor,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_LIST);
 	}
 
+	@Override
 	protected boolean hasDeletePermission(Account actor) {
 		return hasPermission(actor,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_DELETE);
 	}
 
+	@Override
 	protected boolean hasCreatePermission(Account actor) {
 		return hasPermission(actor,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_CREATE);
 	}
 
+	@Override
 	protected boolean hasUpdatePermission(Account actor) {
 		return hasPermission(actor,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_UPDATE);
-	}
-
-	protected void checkReadPermission(Account actor, DocumentEntry entry) throws BusinessException {
-		Account owner = entry.getEntryOwner();
-		if (!isAuthorized(actor, owner, PermissionType.GET)) {
-			logger.error("Current actor " + actor.getAccountReprentation()
-					+ " is trying to acces to unauthorized document entry ("
-					+ entry.getUuid() + ") owned by : "
-					+ owner.getAccountReprentation());
-			throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN,
-					"You are not authorized to get this document. current actor is : "
-							+ actor.getAccountReprentation());
-		}
-	}
-
-	protected void checkListPermission(Account actor, Account owner) throws BusinessException {
-		if (!isAuthorized(actor, owner, PermissionType.LIST)) {
-			logger.error("Current actor " + actor.getAccountReprentation()
-					+ " is trying to access to unauthorized document entries owned by : "
-					+ owner.getAccountReprentation());
-			throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN,
-					"You are not authorized to list all documents. current actor is : "
-							+ actor.getAccountReprentation());
-		}
-	}
-
-	protected void checkCreatePermission(Account actor, Account owner) throws BusinessException {
-		if (!isAuthorized(actor, owner, PermissionType.CREATE)) {
-			logger.error("Current actor " + actor.getAccountReprentation()
-					+ " is trying to access to unauthorized document entries owned by : "
-					+ owner.getAccountReprentation());
-			throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN,
-					"You are not authorized to create a document. current actor is : "
-							+ actor.getAccountReprentation());
-		}
-	}
-
-	protected void checkUpdatePermission(Account actor, DocumentEntry entry) throws BusinessException {
-		Account owner = entry.getEntryOwner();
-		if (!isAuthorized(actor, owner, PermissionType.UPDATE)) {
-			logger.error("Current actor " + actor.getAccountReprentation()
-					+ " is trying to update document owned by : "
-					+ owner.getAccountReprentation());
-			throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN,
-					"You are not authorized to update this document. current actor is : "
-							+ actor.getAccountReprentation());
-		}
-	}
-
-	protected void checkDeletePermission(Account actor, DocumentEntry entry) throws BusinessException {
-		Account owner = entry.getEntryOwner();
-		if (!isAuthorized(actor, owner, PermissionType.UPDATE)) {
-			logger.error("Current actor " + actor.getAccountReprentation()
-					+ " is trying to delete document owned by : "
-					+ owner.getAccountReprentation());
-			throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN,
-					"You are not authorized to delete this document. current actor is : "
-							+ actor.getAccountReprentation());
-		}
 	}
 
 	protected void checkDownloadPermission(Account actor, DocumentEntry entry) throws BusinessException {

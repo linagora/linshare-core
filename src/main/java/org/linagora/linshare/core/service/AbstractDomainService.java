@@ -80,8 +80,9 @@ public interface AbstractDomainService {
 	 * This used to filter communications between domains.
 	 * @param domain identifier
 	 * @return List of domains.
+	 * @throws BusinessException 
 	 */
-	public List<AbstractDomain> getAllAuthorizedDomains(String domainIdentifier);
+	public List<AbstractDomain> getAllAuthorizedDomains(String domainIdentifier) throws BusinessException;
 
 	/**
 	 * This method is designed to search in a particular domain and its SubDomain.

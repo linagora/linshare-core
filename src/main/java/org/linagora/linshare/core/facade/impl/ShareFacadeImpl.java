@@ -282,6 +282,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		return documentEntryTransformer.disassemble(documentEntry);
 	}
 
+	@Deprecated
 	@Override
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(
 			UserVo ownerVo, List<DocumentVo> documents,
@@ -293,6 +294,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 				documents, recipientsEmail, secureSharing, mailContainer, null);
 	}
 
+	@Deprecated
 	@Override
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(
 			UserVo actorVo, List<DocumentVo> documents,
@@ -300,110 +302,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 			MailContainer mailContainer, Calendar expiryDateSelected)
 			throws BusinessException {
 		logger.debug("createSharingWithMailUsingRecipientsEmail");
-
-		User sender = getActor(actorVo);
-		SuccessesAndFailsItems<ShareDocumentVo> result = new SuccessesAndFailsItems<ShareDocumentVo>();
-
-		List<UserVo> knownRecipients = new ArrayList<UserVo>();
-		List<Contact> unKnownRecipientsEmail = new ArrayList<Contact>();
-
-		logger.debug("The current user is : " + sender.getAccountReprentation());
-		logger.debug("recipientsEmailInput size : "
-				+ recipientsEmailInput.size());
-		List<String> recipientsEmail = new ArrayList<String>();
-		if (sender.getAccountType().equals(AccountType.GUEST)
-				&& ((Guest) sender).isRestricted()) {
-			Guest guest = guestService.findByLsUuid(sender, sender.getLsUuid());
-			Set<AllowedContact> contacts = guest.getRestrictedContacts();
-			List<String> guestAllowedContacts = Lists.newArrayList();
-			for (AllowedContact contact : contacts) {
-				guestAllowedContacts.add(contact.getContact().getMail());
-			}
-			logger.debug("guestAllowedContacts size : "
-					+ guestAllowedContacts.size());
-			for (String mailInput : recipientsEmailInput) {
-				if (guestAllowedContacts.contains(mailInput)) {
-					logger.debug("The current user is allowed to share with : "
-							+ mailInput);
-					recipientsEmail.add(mailInput);
-				} else {
-					logger.info("The current user is not allowed to share with : "
-							+ mailInput);
-					unKnownRecipientsEmail.add(new Contact(mailInput));
-				}
-			}
-			logger.debug("Only " + recipientsEmail.size()
-					+ " contacts are authorized for " + sender.getMail());
-		} else {
-			recipientsEmail.addAll(recipientsEmailInput);
-		}
-		logger.debug("recipientsEmail size : " + recipientsEmail.size());
-		logger.debug("unKnownRecipientsEmail size : "
-				+ unKnownRecipientsEmail.size());
-		logger.debug("unKnownRecipientsEmail  : "
-				+ unKnownRecipientsEmail.toString());
-
-		boolean isOneDocEncrypted = oneDocIsEncrypted(documents);
-
-		// find known and unknown recipients of the share
-		User tempRecipient = null;
-		for (String mail : recipientsEmail) {
-			try {
-				tempRecipient = userService.findOrCreateUserWithDomainPolicies(
-						mail, sender.getDomainId());
-				knownRecipients.add(new UserVo(tempRecipient));
-			} catch (BusinessException e) {
-				if (e.getErrorCode() == BusinessErrorCode.USER_NOT_FOUND) {
-					logger.debug("unKnownRecipientsEmail  : adding a new contact : "
-							+ mail.toString());
-					unKnownRecipientsEmail.add(new Contact(mail));
-				} else
-					throw e;
-			}
-		}
-
-		logger.debug("knownRecipients size : " + knownRecipients.size());
-		logger.debug("knownRecipients  : " + knownRecipients.toString());
-		logger.debug("unKnownRecipientsEmail size : "
-				+ unKnownRecipientsEmail.size());
-		logger.debug("unKnownRecipientsEmail  : "
-				+ unKnownRecipientsEmail.toString());
-
-		if (unKnownRecipientsEmail.size() > 0) { // secureUrl for these users
-													// (no need to have an
-													// account to activate
-													// sharing)
-
-			boolean hasRightsToShareWithExternals = abstractDomainService.hasRightsToShareWithExternals(sender);
-			if (hasRightsToShareWithExternals) {
-				List<DocumentEntry> documentEntries = documentEntryTransformer
-						.assembleList(documents);
-
-				for (Contact recipient : unKnownRecipientsEmail) {
-					anonymousShareEntryService.createAnonymousShare(
-							documentEntries, sender, recipient,
-							expiryDateSelected, secureSharing, mailContainer);
-
-				}
-			} else {
-				// Building all failed items for unkown recipients.
-				for (DocumentVo doc : documents) {
-					for (Contact oneContact : unKnownRecipientsEmail) {
-						UserVo recipient = new UserVo(oneContact.getMail(), "",
-								"", oneContact.getMail(), null);
-						ShareDocumentVo failSharing = new ShareDocumentVo(doc,
-								actorVo, recipient);
-						result.addFailItem(failSharing);
-					}
-				}
-			}
-		}
-
-		// keep old method to share with user referenced in db
-		result.addAll(createSharingWithMail(actorVo, documents,
-				knownRecipients, mailContainer, expiryDateSelected,
-				isOneDocEncrypted));
-		return result;
+		return null;
 	}
 
 	@Override
@@ -435,15 +334,6 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		results.setSuccessesItem(shareEntryTransformer
 				.disassembleList(successAndFails.getSuccessesItem()));
 		return results;
-	}
-
-	private boolean oneDocIsEncrypted(List<DocumentVo> docList) {
-		for (DocumentVo doc : docList) {
-			if (doc.getEncrypted()) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@Override
@@ -624,9 +514,11 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		User actor = getActor(actorVo);
 		ShareContainer sc = new ShareContainer(mailContainer.getSubject(),
 				mailContainer.getPersonalMessage(), secured);
-		sc.addDocumentsVo(documentVos);
-		sc.addRecipient(recipientsEmail);
-		List<ShareEntry> list = shareService.create(actor, actor, sc);
+		sc.addDocumentVos(documentVos);
+		sc.addMail(recipientsEmail);
+		shareService.create(actor, actor, sc);
+
+		List<ShareEntry> list = Lists.newArrayList();
 		return shareEntryTransformer.disassembleList(list);
 	}
 }

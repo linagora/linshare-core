@@ -293,9 +293,10 @@ public class UserServiceImpl implements UserService {
 	 * @param lastName
 	 *            : last name pattern. Not used if null.
 	 * @return
+	 * @throws BusinessException 
 	 */
 	private List<User> completionSearchOnGuest(User actor, String mail,
-			String firstName, String lastName) {
+			String firstName, String lastName) throws BusinessException {
 		List<User> result = new ArrayList<User>();
 		logger.debug("adding guests to the return list");
 
@@ -331,9 +332,10 @@ public class UserServiceImpl implements UserService {
 	 * @param lastName
 	 * @param currentUser
 	 * @return
+	 * @throws BusinessException 
 	 */
 	private List<User> completionSearchForGuest(String mail, String firstName,
-			String lastName, User currentUser) {
+			String lastName, User currentUser) throws BusinessException {
 		List<User> result = new ArrayList<User>();
 		logger.debug("adding guests to the return list");
 

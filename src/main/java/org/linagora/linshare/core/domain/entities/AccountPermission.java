@@ -70,10 +70,4 @@ public class AccountPermission {
 	public void setPermission(TechnicalAccountPermissionType permission) {
 		this.permission = permission;
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return ((AccountPermission)obj).getPermission().equals(this.getPermission());
-	}
-
 }

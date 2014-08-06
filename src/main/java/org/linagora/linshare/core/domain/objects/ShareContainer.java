@@ -2,14 +2,23 @@ package org.linagora.linshare.core.domain.objects;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class ShareContainer {
@@ -35,11 +44,31 @@ public class ShareContainer {
 	 */
 	protected boolean encrypted;
 
-	protected Set<String> externalRecipients = Sets.newHashSet();
+	protected Set<String> documentUuids = Sets.newHashSet();
 
-	protected Set<User> internalRecipients = Sets.newHashSet();
+	/**
+	 * recipients coming from out side world. Could me a mail, a mail and domain
+	 * or a uuid
+	 */
+	protected Set<Recipient> recipients = Sets.newHashSet();
+
+	/**
+	 * This list will contain real user account
+	 */
+	protected Set<User> shareRecipients = Sets.newHashSet();
+
+	/**
+	 * This list will contain only email addresses which do not match with
+	 * internal or external accounts.
+	 */
+	protected Set<Recipient> anonymousShareRecipients = Sets.newHashSet();
+
+	protected Map<String, Recipient> allowedRecipients = null;
 
 	protected Set<DocumentEntry> documents = Sets.newHashSet();
+
+	protected List<MailContainerWithRecipient> mailContainers = Lists
+			.newArrayList();
 
 	public ShareContainer(String subject, String message, Boolean secured) {
 		super();
@@ -107,28 +136,12 @@ public class ShareContainer {
 		return encrypted;
 	}
 
-	public Set<String> getExternalRecipients() {
-		return externalRecipients;
-	}
-
-	public void setExternalRecipients(Set<String> externalRecipients) {
-		this.externalRecipients = externalRecipients;
-	}
-
-	public Set<User> getInternalRecipients() {
-		return internalRecipients;
-	}
-
-	public void setInternalRecipients(Set<User> internalRecipients) {
-		this.internalRecipients = internalRecipients;
+	public Set<Recipient> getRecipients() {
+		return recipients;
 	}
 
 	public Set<DocumentEntry> getDocuments() {
 		return documents;
-	}
-
-	public void setDocuments(Set<DocumentEntry> documents) {
-		this.documents = documents;
 	}
 
 	public Date getExpiryDate() {
@@ -139,32 +152,102 @@ public class ShareContainer {
 		this.expiryDate = expiryDate;
 	}
 
-	public void addDocumentsVo(List<DocumentVo> documentVos) {
+	public Set<User> getShareRecipients() {
+		return shareRecipients;
+	}
+
+	public Set<Recipient> getAnonymousShareRecipients() {
+		return anonymousShareRecipients;
+	}
+
+	public Set<String> getDocumentUuids() {
+		return documentUuids;
+	}
+
+	public List<MailContainerWithRecipient> getMailContainers() {
+		return mailContainers;
+	}
+
+	public Map<String, Recipient> getAllowedRecipients() {
+		return allowedRecipients;
+	}
+
+	/*
+	 * Helpers
+	 */
+
+	public void addDocumentUuid(String uuid) {
+		Validate.notEmpty(uuid, "uuid must not be null.");
+		this.documentUuids.add(uuid);
+	}
+
+	public void addDocumentVos(List<DocumentVo> documentVos) {
 		Validate.notNull(documentVos, "documentVos list must not be null.");
-		for (DocumentVo documentVo : documentVos) {
-			DocumentEntry d = new DocumentEntry();
-			d.setUuid(documentVo.getIdentifier());
-			this.documents.add(d);
-
+		for (DocumentVo d : documentVos) {
+			this.addDocumentUuid(d.getIdentifier());
 		}
 	}
 
-	public void addDocumentsDto(Set<DocumentDto> documentsDto) {
-		Validate.notNull(documentsDto, "documentsDto list must not be null.");
-		for (DocumentDto documentDto : documentsDto) {
-			DocumentEntry d = new DocumentEntry();
-			d.setUuid(documentDto.getUuid());
-			this.documents.add(d);
+	public void addDocumentDtos(Set<DocumentDto> documentDtos) {
+		Validate.notNull(documentDtos, "documentDtos list must not be null.");
+		for (DocumentDto d : documentDtos) {
+			this.addDocumentUuid(d.getUuid());
 		}
 	}
 
-	public void addRecipient(List<String> recipientsEmail) {
-		Validate.notNull(recipientsEmail, "mails " + "list must not be null.");
-		for (String mail : recipientsEmail) {
-			externalRecipients.add(mail);
+	public void addDocumentEntry(DocumentEntry documentEntry) {
+		this.documents.add(documentEntry);
+	}
+
+	public void addMail(String mail) {
+		Validate.notEmpty(mail, "mail must not be null.");
+		this.recipients.add(new Recipient(mail));
+	}
+
+	public void addMail(List<String> mails) {
+		for (String mail : mails) {
+			this.addMail(mail);
 		}
 	}
-	
+
+	public void addUserVo(UserVo userVo) {
+		Validate.notNull(userVo, "user must not be null.");
+		this.recipients.add(new Recipient(userVo));
+	}
+
+	public void addUserVo(List<UserVo> usersVo) {
+		for (UserVo userVo : usersVo) {
+			this.addUserVo(userVo);
+		}
+	}
+
+	public void addShareRecipient(final User user) throws BusinessException {
+		Validate.notNull(user, "user must not be null.");
+		if (restrictedMode()) {
+			// In restricted mode, the current user is only allowed to create share with internals and guests.
+			if (allowedRecipients.get(user.getLsUuid()) == null) {
+				// The current user is not an allowed recipient.
+				throw new BusinessException(
+						BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN,
+						"You are not authorized to create anonymous share entries.");
+			}
+		}
+		this.shareRecipients.add(user);
+	}
+
+	public void addAnonymousShareRecipient(Recipient recipient) throws BusinessException {
+		Validate.notNull(recipient, "recipient must not be null.");
+		Validate.notEmpty(recipient.getMail(),
+				"recipient mail must not be null.");
+		if (restrictedMode()) {
+			// In restricted mode, the current user is only allowed to create share with internals and guests.
+			throw new BusinessException(
+					BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN,
+					"You are not authorized to create anonymous share entries.");
+		}
+		this.anonymousShareRecipients.add(recipient);
+	}
+
 	public void updateEncryptedStatus() {
 		this.encrypted = false;
 		for (DocumentEntry d : this.documents) {
@@ -173,5 +256,42 @@ public class ShareContainer {
 				break;
 			}
 		}
+	}
+
+	public boolean needAnonymousShares() {
+		return !anonymousShareRecipients.isEmpty();
+	}
+
+	public void addMailContainer(MailContainerWithRecipient mailContainer) {
+		Validate.notNull(mailContainer, "mailContainer must not be null.");
+		this.mailContainers.add(mailContainer);
+	}
+
+	public void resetAllowedRecipients() {
+		this.allowedRecipients = null;
+	}
+
+	public void addAllowedRecipient(User user) {
+		Validate.notNull(user, "recipient must not be null.");
+		Recipient recipient = new Recipient(user);
+		if (allowedRecipients == null) {
+			allowedRecipients = Maps.newHashMap();
+		}
+		allowedRecipients.put(recipient.getUuid(), recipient);
+	}
+
+	public void addAllowedRecipients(Set<AllowedContact> allowedContacts) {
+		Validate.notNull(allowedContacts, "allowedContacts must not be null.");
+		for (AllowedContact allowedContact : allowedContacts) {
+			this.addAllowedRecipient(allowedContact.getContact());
+		}
+	}
+
+	/*
+	 * Private helpers
+	 */
+
+	private boolean restrictedMode() {
+		return !(allowedRecipients == null);
 	}
 }

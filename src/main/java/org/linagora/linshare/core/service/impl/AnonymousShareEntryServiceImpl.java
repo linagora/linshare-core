@@ -36,7 +36,9 @@ package org.linagora.linshare.core.service.impl;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
@@ -50,6 +52,8 @@ import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
+import org.linagora.linshare.core.domain.objects.Recipient;
+import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
@@ -92,7 +96,6 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		this.documentEntryBusinessService = documentEntryBusinessService;
 	}
 
-
 	@Override
 	public AnonymousShareEntry findByUuid(Account actor, String shareUuid) throws BusinessException {
 		AnonymousShareEntry share = anonymousShareEntryBusinessService.findByUuid(shareUuid);
@@ -108,37 +111,47 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		}
 	}
 
-
+	@Deprecated
 	@Override
 	public List<AnonymousShareEntry> createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, MailContainer mailContainer) throws BusinessException {
+		return null;
+	}
+
+	@Override
+	public void create(Account actor,
+			User sender, ShareContainer sc)
+			throws BusinessException {
+		Date expiryDate = sc.getExpiryDate();
+		Boolean passwordProtected = sc.getSecured();
+
 		if(functionalityReadOnlyService.isSauMadatory(sender.getDomain().getIdentifier())) {
 			passwordProtected = true;
 		} else if(functionalityReadOnlyService.isSauForbidden(sender.getDomain().getIdentifier())) {
 			passwordProtected = false;
 		}
-		if (expirationDate == null) {
-			expirationDate = shareExpiryDateService.computeMinShareExpiryDateOfList(documentEntries, sender);
+		if (expiryDate == null) {
+			expiryDate = shareExpiryDateService.computeMinShareExpiryDateOfList(sc.getDocuments(), sender);
 		}
-		AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService.createAnonymousShare(documentEntries, sender, recipient, expirationDate, passwordProtected);
+		for (Recipient recipient : sc.getRecipients()) {
+			MailContainer mailContainer = new MailContainer(
+					recipient.getLocale(), sc.getMessage(), sc.getSubject());
+
+			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService.create(sender, recipient, sc.getDocuments(), expiryDate, passwordProtected);
+			sc.addMailContainer(mailContentBuildingService.buildMailNewSharingWithRecipient(mailContainer, anonymousUrl, sender));
+		}
+
 
 		// logs
-		for (DocumentEntry documentEntry : documentEntries) {
-			ShareLogEntry logEntry = new ShareLogEntry(sender, documentEntry, LogAction.FILE_SHARE, "Anonymous sharing of a file", expirationDate);
+		for (DocumentEntry documentEntry : sc.getDocuments()) {
+			ShareLogEntry logEntry = new ShareLogEntry(sender, documentEntry, LogAction.FILE_SHARE, "Anonymous sharing of a file", expiryDate);
 			logEntryService.create(logEntry);
 		}
-		notifierService.sendNotification(mailContentBuildingService.buildMailNewSharingWithRecipient(mailContainer, anonymousUrl, sender));
-		List<AnonymousShareEntry> anonymousShareEntries = new ArrayList<AnonymousShareEntry>(anonymousUrl.getAnonymousShareEntries());
-		return anonymousShareEntries;
-	}
+		// fred
+		notifierService.sendNotification();
+//		List<AnonymousShareEntry> anonymousShareEntries = new ArrayList<AnonymousShareEntry>(anonymousUrl.getAnonymousShareEntries());
+//		return anonymousShareEntries;
 
 
-	@Override
-	public List<AnonymousShareEntry> createAnonymousShare(List<DocumentEntry> documentEntries, User sender, List<Contact> recipients, Calendar expirationDate, Boolean passwordProtected, MailContainer mailContainer) throws BusinessException {
-		List<AnonymousShareEntry> anonymousShareEntries = new ArrayList<AnonymousShareEntry>();
-		for (Contact contact : recipients) {
-			anonymousShareEntries.addAll(createAnonymousShare(documentEntries, sender, contact, expirationDate, passwordProtected, mailContainer));
-		}
-		return anonymousShareEntries;
 	}
 
 
@@ -147,7 +160,6 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		AnonymousShareEntry shareEntry = findByUuid(actor, shareUuid);
 		this.deleteShare(actor, shareEntry);
 	}
-
 
 	@Override
 	public void deleteShare(Account actor, AnonymousShareEntry shareEntry) throws BusinessException {

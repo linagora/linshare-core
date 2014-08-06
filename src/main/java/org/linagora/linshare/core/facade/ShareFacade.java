@@ -91,6 +91,7 @@ public interface ShareFacade {
 	 * @return
 	 * @throws BusinessException
 	 */
+	@Deprecated
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(
 			UserVo owner, List<DocumentVo> documents,
 			List<String> recipientsEmail,
@@ -108,6 +109,7 @@ public interface ShareFacade {
 	 * @return
 	 * @throws BusinessException
 	 */
+	@Deprecated
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(
 			UserVo owner, List<DocumentVo> documents,
 			List<String> recipientsEmail,

@@ -34,8 +34,10 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -48,14 +50,14 @@ import org.slf4j.LoggerFactory;
 
 public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
 	private static final Logger logger = LoggerFactory.getLogger(ShareExpiryDateServiceImpl.class);
-	
+
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	public ShareExpiryDateServiceImpl(FunctionalityReadOnlyService functionalityService) {
 		this.functionalityReadOnlyService = functionalityService;
 	}
-	
-	
+
+
 	/**
      * Compute the expiration date of a document share
      * @param doc : the document to be shared
@@ -65,11 +67,11 @@ public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
 	public Calendar computeShareExpiryDate(DocumentEntry document, Account owner) {
 		TimeUnitBooleanValueFunctionality shareExpirationTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(owner.getDomain());
 		Calendar defaultExpiration = null;
-    	
+
 		if(shareExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
-				
+
 			List<ShareExpiryRule> shareRules = owner.getDomain().getShareExpiryRules();
-	
+
 			// set the default exp time
 			if (shareExpirationTimeFunctionality.getValue() != null) {
 				defaultExpiration = GregorianCalendar.getInstance();
@@ -78,7 +80,7 @@ public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
 			if ((shareRules == null) || (shareRules.size() == 0)) {
 				return defaultExpiration;
 			}
-	
+
 			// luckily, the shareExpiryRules are ordered according to the size,
 			// increasing
 			for (ShareExpiryRule shareExpiryRule : shareRules) {
@@ -93,29 +95,27 @@ public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
 		return defaultExpiration;
 	}
 
-
-	/**
-     * Compute the minimal expiration date of a list of documents
-     * @param doc : the list of documents
-     * @return the minimal expiration date
-     */
 	@Override
-	public Calendar computeMinShareExpiryDateOfList(List<DocumentEntry> documents, Account owner) {
-		Calendar expiryCalDate;
+	public Date computeMinShareExpiryDateOfList(
+			Set<DocumentEntry> documents, Account owner) {
+		Calendar expiryCalendar = null;
 		int docNumber = documents.size();
-		
+
 		if (docNumber == 0) {
-			expiryCalDate = Calendar.getInstance();
-		}
-		else {
-			expiryCalDate = computeShareExpiryDate(documents.get(0), owner);
-			logger.debug("Expiration date n°0 : "+expiryCalDate.getTime());
-			for (int i = 1; i < docNumber; i++) {
-				Calendar expiryCalDateAutre = computeShareExpiryDate(documents.get(i), owner);
-				logger.debug("Expiration date n°"+i+" : "+expiryCalDateAutre.getTime());
-				if (expiryCalDateAutre.before(expiryCalDate)) expiryCalDate = expiryCalDateAutre;
+			expiryCalendar = Calendar.getInstance();
+		} else {
+			for (DocumentEntry documentEntry : documents) {
+				if (expiryCalendar == null) {
+					expiryCalendar = computeShareExpiryDate(documentEntry, owner);
+				} else {
+					Calendar tempExpiryCalendar = computeShareExpiryDate(
+							documentEntry, owner);
+					if (tempExpiryCalendar.before(expiryCalendar)) {
+						expiryCalendar = tempExpiryCalendar;
+					}
+				}
 			}
 		}
-		return expiryCalDate;
+		return expiryCalendar.getTime();
 	}
 }

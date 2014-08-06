@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -76,5 +77,7 @@ public interface ShareEntryService {
 	public List<ShareEntry> findAllMyShareEntries(Account actor, User owner);
 
 	void sendUpcomingOutdatedShareEntryNotification(SystemAccount actor, ShareEntry shareEntry, Integer days);
+
+	public void create(Account actor, User owner, ShareContainer shareContainer);
 
 }

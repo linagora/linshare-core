@@ -53,7 +53,7 @@ public class DocumentEntry extends Entry implements Serializable {
 
 	protected UploadRequestEntry uploadRequestEntry;
 
-	public DocumentEntry() {
+	protected DocumentEntry() {
 	}
 
 	@Override
