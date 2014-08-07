@@ -34,11 +34,9 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
@@ -52,6 +50,7 @@ import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -59,6 +58,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
@@ -77,23 +77,31 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 
 	private final NotifierService notifierService;
 
-	private final MailContentBuildingService mailContentBuildingService;
+	private final MailBuildingService mailBuildingService;
+
+	private final MailContentBuildingService deprecatedMailBuildingService;
 
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
 	private static final Logger logger = LoggerFactory.getLogger(AnonymousShareEntryServiceImpl.class);
 
-	public AnonymousShareEntryServiceImpl(FunctionalityReadOnlyService functionalityService, AnonymousShareEntryBusinessService anonymousShareEntryBusinessService,
-			ShareExpiryDateService shareExpiryDateService, LogEntryService logEntryService, NotifierService notifierService, MailContentBuildingService mailElementsFactory,
-			DocumentEntryBusinessService documentEntryBusinessService) {
+	public AnonymousShareEntryServiceImpl(
+			final FunctionalityReadOnlyService functionalityService,
+			final AnonymousShareEntryBusinessService anonymousShareEntryBusinessService,
+			final ShareExpiryDateService shareExpiryDateService,
+			final LogEntryService logEntryService, NotifierService notifierService,
+			final MailBuildingService mailBuildingService,
+			final MailContentBuildingService deprecatedMailBuildingService,
+			final DocumentEntryBusinessService documentEntryBusinessService) {
 		super();
 		this.functionalityReadOnlyService = functionalityService;
 		this.anonymousShareEntryBusinessService = anonymousShareEntryBusinessService;
 		this.shareExpiryDateService = shareExpiryDateService;
 		this.logEntryService = logEntryService;
 		this.notifierService = notifierService;
-		this.mailContentBuildingService = mailElementsFactory;
+		this.mailBuildingService = mailBuildingService;
 		this.documentEntryBusinessService = documentEntryBusinessService;
+		this.deprecatedMailBuildingService = deprecatedMailBuildingService;
 	}
 
 	@Override
@@ -111,12 +119,6 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		}
 	}
 
-	@Deprecated
-	@Override
-	public List<AnonymousShareEntry> createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, MailContainer mailContainer) throws BusinessException {
-		return null;
-	}
-
 	@Override
 	public void create(Account actor,
 			User sender, ShareContainer sc)
@@ -132,26 +134,19 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		if (expiryDate == null) {
 			expiryDate = shareExpiryDateService.computeMinShareExpiryDateOfList(sc.getDocuments(), sender);
 		}
-		for (Recipient recipient : sc.getRecipients()) {
+		for (Recipient recipient : sc.getAnonymousShareRecipients()) {
 			MailContainer mailContainer = new MailContainer(
 					recipient.getLocale(), sc.getMessage(), sc.getSubject());
-
 			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService.create(sender, recipient, sc.getDocuments(), expiryDate, passwordProtected);
-			sc.addMailContainer(mailContentBuildingService.buildMailNewSharingWithRecipient(mailContainer, anonymousUrl, sender));
+			MailContainerWithRecipient mail = deprecatedMailBuildingService.buildMailNewSharingWithRecipient(mailContainer, anonymousUrl, sender);
+			sc.addMailContainer(mail);
 		}
 
-
-		// logs
+		// FIXME : Where does it log recipients ? 
 		for (DocumentEntry documentEntry : sc.getDocuments()) {
 			ShareLogEntry logEntry = new ShareLogEntry(sender, documentEntry, LogAction.FILE_SHARE, "Anonymous sharing of a file", expiryDate);
 			logEntryService.create(logEntry);
 		}
-		// fred
-		notifierService.sendNotification();
-//		List<AnonymousShareEntry> anonymousShareEntries = new ArrayList<AnonymousShareEntry>(anonymousUrl.getAnonymousShareEntries());
-//		return anonymousShareEntries;
-
-
 	}
 
 
@@ -201,7 +196,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		}
 		try {
 			//send a notification by mail to the owner
-			notifierService.sendNotification(mailContentBuildingService.buildMailAnonymousDownload(shareEntry));
+			notifierService.sendNotification(deprecatedMailBuildingService.buildMailAnonymousDownload(shareEntry));
 		} catch (BusinessException e) {
 			// TODO : FIXME : send the notification to the domain administration address. => a new functionality need to be add. 
 			if(e.getErrorCode().equals(BusinessErrorCode.RELAY_HOST_NOT_ENABLE)) {
@@ -225,7 +220,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 	@Override
 	public void sendDocumentEntryUpdateNotification(AnonymousShareEntry anonymousShareEntry, String friendlySize, String originalFileName) {
 		try {
-			notifierService.sendNotification(mailContentBuildingService.buildMailSharedDocumentUpdated(anonymousShareEntry, originalFileName, friendlySize));
+			notifierService.sendNotification(deprecatedMailBuildingService.buildMailSharedDocumentUpdated(anonymousShareEntry, originalFileName, friendlySize));
 		} catch (BusinessException e) {
 			logger.error("Error while trying to notify document update ", e);
 		}
@@ -235,7 +230,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 	@Override
 	public void sendUpcomingOutdatedShareEntryNotification(SystemAccount actor, AnonymousShareEntry shareEntry, Integer days) {
 		try {
-			notifierService.sendNotification(mailContentBuildingService.buildMailUpcomingOutdatedShare(shareEntry, days));
+			notifierService.sendNotification(deprecatedMailBuildingService.buildMailUpcomingOutdatedShare(shareEntry, days));
 		} catch (BusinessException e) {
 			logger.error("Error while trying to notify upcoming outdated share", e);
 		}

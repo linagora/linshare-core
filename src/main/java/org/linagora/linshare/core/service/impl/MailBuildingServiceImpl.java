@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
@@ -59,10 +60,8 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailConfigRepository;
@@ -546,7 +545,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildNewSharing(User sender,
 			MailContainer input, User recipient,
-			List<ShareDocumentVo> shares) throws BusinessException {
+			Set<ShareEntry> shares) throws BusinessException {
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
 		String url = getLinShareUrlForAUserRecipient(recipient);
@@ -558,12 +557,12 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 
 		StringBuffer names = new StringBuffer();
 		long shareSize = 0;
-		for (ShareDocumentVo share : shares) {
-			if (recipient.getLsUuid().equals(share.getReceiver().getLsUuid())) {
+		for (ShareEntry share : shares) {
+			if (recipient.getLsUuid().equals(share.getRecipient().getLsUuid())) {
 				shareSize += 1;
 				names.append("<li><a href='"
 						+ getDirectDownloadLink(recipient, share) + "'>"
-						+ share.getFileName() + "</a></li>");
+						+ share.getName() + "</a></li>");
 			}
 		}
 
@@ -631,7 +630,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	@Override
 	public MailContainerWithRecipient buildNewSharingCyphered(User sender,
 			MailContainer input, User recipient,
-			List<ShareDocumentVo> shares) throws BusinessException {
+			Set<ShareEntry> shares) throws BusinessException {
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
 		String url = getLinShareUrlForAUserRecipient(recipient);
@@ -643,12 +642,12 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 
 		StringBuffer names = new StringBuffer();
 		long shareSize = 0;
-		for (ShareDocumentVo share : shares) {
-			if (recipient.getLsUuid().equals(share.getReceiver().getLsUuid())) {
+		for (ShareEntry share : shares) {
+			if (recipient.getLsUuid().equals(share.getRecipient().getLsUuid())) {
 				shareSize += 1;
 				names.append("<li><a href='"
 						+ getDirectDownloadLink(recipient, share) + "'>"
-						+ share.getFileName() + "</a></li>");
+						+ share.getName() + "</a></li>");
 			}
 		}
 
@@ -1231,14 +1230,13 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		return buildAnonymousDownload(shareEntry);
 	}
 
+	@Deprecated
 	@Override
 	public MailContainerWithRecipient buildMailNewSharingWithRecipient(
 			User sender, MailContainer input, User recipient,
 			List<ShareDocumentVo> shares, boolean hasToDecrypt)
 			throws BusinessException {
-		if (hasToDecrypt)
-			return buildNewSharingCyphered(sender, input, recipient, shares);
-		return buildNewSharing(sender, input, recipient, shares);
+		return null;
 	}
 
 	@Override
@@ -1296,11 +1294,11 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.getCustomNotificationUrlFunctionality(senderDomain).getValue();
 	}
 
-	private String getDirectDownloadLink(User recipient, DocumentVo doc) {
+	private String getDirectDownloadLink(User recipient, ShareEntry share) {
 		String path = getLinShareUrlForAUserRecipient(recipient);
 		String sep = path.endsWith("/") ? "" : "/";
 		String dl = path + sep + "index.listshareddocument.download/";
-		return dl + doc.getIdentifier();
+		return dl + share.getUuid();
 	}
 
 	private String getJwsEncryptUrlString(String rootUrl) {

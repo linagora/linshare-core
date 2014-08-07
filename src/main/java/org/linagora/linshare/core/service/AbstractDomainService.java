@@ -157,7 +157,6 @@ public interface AbstractDomainService {
 
 	public boolean userCanCreateGuest(User user);
 	public boolean canCreateGuestDomain(AbstractDomain domain) ;
-	public boolean hasRightsToShareWithExternals(User sender);
 
 	/**
 	 * Retrieve the mail address for notifications (smtp sender)

@@ -52,6 +52,7 @@ import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.ShareEntryService;
+import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.webservice.dto.ShareDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,19 +65,22 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 
 	private final DocumentEntryService documentEntryService;
 
-	private final org.linagora.linshare.core.facade.ShareFacade tapestryShareFacade;
+	// To be removed
+	private org.linagora.linshare.core.facade.ShareFacade tapestryShareFacade;
 
 	private final ShareEntryService shareEntryService;
+
+	private final ShareService shareService;
 
 	public ShareFacadeImpl(
 			final DocumentEntryService documentEntryService,
 			final AccountService accountService, 
-			final org.linagora.linshare.core.facade.ShareFacade shareFacade,
-			final ShareEntryService shareEntryService) {
+			final ShareEntryService shareEntryService,
+			final ShareService shareService) {
 		super(accountService);
 		this.documentEntryService = documentEntryService;
-		this.tapestryShareFacade = shareFacade;
 		this.shareEntryService = shareEntryService;
+		this.shareService = shareService;
 	}
 
 	@Override

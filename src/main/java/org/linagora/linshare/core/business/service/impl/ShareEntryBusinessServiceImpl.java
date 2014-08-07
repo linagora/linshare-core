@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
@@ -43,9 +44,9 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.ShareEntryRepository;
-import org.linagora.linshare.core.service.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,16 +54,16 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 
 	private final ShareEntryRepository shareEntryRepository ;
 
-	private final AccountService accountService;
+	private final AccountRepository<Account> accountRepository;
 
 	private final DocumentEntryRepository documentEntryRepository ;
 
 	private static final Logger logger = LoggerFactory.getLogger(ShareEntryBusinessServiceImpl.class);
 
-	public ShareEntryBusinessServiceImpl(ShareEntryRepository shareEntryRepository, AccountService accountService, DocumentEntryRepository documentEntryRepository) {
+	public ShareEntryBusinessServiceImpl(ShareEntryRepository shareEntryRepository, AccountRepository<Account> accountRepository, DocumentEntryRepository documentEntryRepository) {
 		super();
 		this.shareEntryRepository = shareEntryRepository;
-		this.accountService = accountService;
+		this.accountRepository = accountRepository;
 		this.documentEntryRepository = documentEntryRepository;
 	}
 
@@ -72,54 +73,58 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 	}
 
 	@Override
-	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate) throws BusinessException {
+	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Date expirationDate) throws BusinessException {
 		ShareEntry shareEntity;
 		ShareEntry current_share = shareEntryRepository.getShareEntry(documentEntry, sender, recipient);
+		// FIXME : Calendar hack : temporary hack on expiry date
+		Calendar expiryCal = Calendar.getInstance();
+		expiryCal.setTime(expirationDate);
+
 		if(current_share == null) {
 			// if not, we create one
 			logger.debug("Creation of a new share between sender " + sender.getMail() + " and recipient " + recipient.getMail());
-			ShareEntry share= new ShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), recipient, documentEntry, expirationDate);
+			ShareEntry share= new ShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), recipient, documentEntry, expiryCal);
 			shareEntity = shareEntryRepository.create(share);
 		} else {
 			// if it does, we update the expiration date
 			logger.debug("The share (" + documentEntry.getUuid() +") between sender " + sender.getMail() + " and recipient " + recipient.getMail() + " already exists. Just updating expiration date.");
 			shareEntity = current_share;
-			shareEntity.setExpirationDate(expirationDate);
+			shareEntity.setExpirationDate(expiryCal);
 			shareEntryRepository.update(shareEntity);
 		}
-		
+
 		// If the current document was previously shared, we need to rest its expiration date
 		documentEntry.setExpirationDate(null);
-		
+
 		documentEntry.getShareEntries().add(shareEntity);
 		recipient.getShareEntries().add(shareEntity);
 		sender.getEntries().add(shareEntity);
-		
+
 		documentEntryRepository.update(documentEntry);
-		accountService.update(recipient);
-		accountService.update(sender);
-		
-		
+		accountRepository.update(recipient);
+		accountRepository.update(sender);
+
+
 		return shareEntity;
 	}
 
 	@Override
 	public void delete(ShareEntry share) throws BusinessException {
-		
+
 		shareEntryRepository.delete(share);
-		
+
 		DocumentEntry documentEntry = share.getDocumentEntry();
 		documentEntry.getShareEntries().remove(share);
-		
+
 		Account recipient = share.getRecipient();
 		recipient.getShareEntries().remove(share);
-		
+
 		Account sender = share.getEntryOwner();
 		sender.getEntries().remove(share);
-		
+
 		documentEntryRepository.update(documentEntry);
-		accountService.update(recipient);
-		accountService.update(sender);
+		accountRepository.update(recipient);
+		accountRepository.update(sender);
 	}
 
 	@Override
@@ -144,5 +149,4 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		shareEntry.incrementDownloaded();
 		return shareEntryRepository.update(shareEntry);
 	}
-
 }

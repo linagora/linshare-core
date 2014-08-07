@@ -35,7 +35,9 @@ package org.linagora.linshare.core.service.impl;
 
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
@@ -49,6 +51,9 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.MailContainer;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -57,12 +62,15 @@ import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 public class ShareEntryServiceImpl implements ShareEntryService {
 
@@ -84,51 +92,58 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 	private final NotifierService notifierService;
 
-    private final MailContentBuildingService mailContentBuildingService;
+	private final MailContentBuildingService deprecatedMailBuildingService;
+
+	private final MailBuildingService mailBuildingService;
 
 
-	public ShareEntryServiceImpl(GuestRepository guestRepository, FunctionalityReadOnlyService functionalityReadOnlyService, ShareEntryBusinessService shareEntryBusinessService,
-		ShareExpiryDateService shareExpiryDateService, LogEntryService logEntryService, DocumentEntryService documentEntryService, NotifierService notifierService,
-		MailContentBuildingService mailElementsFactory, DocumentEntryBusinessService documentEntryBusinessService) {
-	super();
-	this.guestRepository = guestRepository;
-	this.functionalityService = functionalityReadOnlyService;
-	this.shareEntryBusinessService = shareEntryBusinessService;
-	this.shareExpiryDateService = shareExpiryDateService;
-	this.logEntryService = logEntryService;
-	this.documentEntryService = documentEntryService;
-	this.notifierService = notifierService;
-	this.mailContentBuildingService = mailElementsFactory;
-	this.documentEntryBusinessService = documentEntryBusinessService;
-}
-
-	@Override
-	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate) throws BusinessException {
-
-		if (expirationDate == null) {
-			expirationDate = shareExpiryDateService.computeShareExpiryDate(documentEntry, sender);
-		}
-
-		ShareEntry createShare = shareEntryBusinessService.create(documentEntry, sender, recipient, expirationDate);
-		if (recipient.getAccountType().equals(AccountType.GUEST)) {
-			updateGuestExpirationDate(recipient, sender);
-		}
-
-		logEntryService.create(new ShareLogEntry(sender, createShare, LogAction.FILE_SHARE, "Sharing of a file"));
-		logEntryService.create(new ShareLogEntry(
-				recipient, LogAction.SHARE_RECEIVED, "Receiving a shared file", createShare, sender));
-		return createShare;
+public ShareEntryServiceImpl(GuestRepository guestRepository,
+			FunctionalityReadOnlyService functionalityService,
+			ShareEntryBusinessService shareEntryBusinessService,
+			ShareExpiryDateService shareExpiryDateService,
+			LogEntryService logEntryService,
+			DocumentEntryService documentEntryService,
+			DocumentEntryBusinessService documentEntryBusinessService,
+			NotifierService notifierService,
+			MailContentBuildingService deprecatedMailBuildingService,
+			MailBuildingService mailBuildingService) {
+		super();
+		this.guestRepository = guestRepository;
+		this.functionalityService = functionalityService;
+		this.shareEntryBusinessService = shareEntryBusinessService;
+		this.shareExpiryDateService = shareExpiryDateService;
+		this.logEntryService = logEntryService;
+		this.documentEntryService = documentEntryService;
+		this.documentEntryBusinessService = documentEntryBusinessService;
+		this.notifierService = notifierService;
+		this.deprecatedMailBuildingService = deprecatedMailBuildingService;
+		this.mailBuildingService = mailBuildingService;
 	}
 
 
-	private void updateGuestExpirationDate(User recipient, User sender) {
+//	public ShareEntryServiceImpl(GuestRepository guestRepository, FunctionalityReadOnlyService functionalityReadOnlyService, ShareEntryBusinessService shareEntryBusinessService,
+//		ShareExpiryDateService shareExpiryDateService, LogEntryService logEntryService, DocumentEntryService documentEntryService, NotifierService notifierService,
+//		MailContentBuildingService mailElementsFactory, DocumentEntryBusinessService documentEntryBusinessService) {
+//	super();
+//	this.guestRepository = guestRepository;
+//	this.functionalityService = functionalityReadOnlyService;
+//	this.shareEntryBusinessService = shareEntryBusinessService;
+//	this.shareExpiryDateService = shareExpiryDateService;
+//	this.logEntryService = logEntryService;
+//	this.documentEntryService = documentEntryService;
+//	this.notifierService = notifierService;
+//	this.deprecatedMailBuildingService = mailElementsFactory;
+//	this.documentEntryBusinessService = documentEntryBusinessService;
+//}
+
+	private void updateGuestExpiryDate(User recipient, User sender) {
 		// update guest account expiry date
-		if (recipient.getAccountType().equals(AccountType.GUEST)) {
+		if (recipient.isGuest()) {
 
 			// get new guest expiry date
 			Calendar guestExpiryDate = Calendar.getInstance();
 			TimeUnitValueFunctionality guestFunctionality = functionalityService.getGuestAccountExpiryTimeFunctionality(sender.getDomain());
-	        guestExpiryDate.add(guestFunctionality.toCalendarUnitValue(), guestFunctionality.getValue());
+			guestExpiryDate.add(guestFunctionality.toCalendarUnitValue(), guestFunctionality.getValue());
 
 			Guest guest = guestRepository.findByMail(recipient.getLogin());
 			guest.setExpirationDate(guestExpiryDate.getTime());
@@ -141,27 +156,6 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			}
 		}
 	}
-
-
-	@Override
-	public SuccessesAndFailsItems<ShareEntry> createShare(DocumentEntry documentEntry, User sender, List<User> recipients, Calendar expirationDate)  {
-
-		SuccessesAndFailsItems<ShareEntry> returnItems = new SuccessesAndFailsItems<ShareEntry>();
-
-		for (User recipient : recipients) {
-			try {
-				ShareEntry s = create(documentEntry, sender, recipient, expirationDate);
-				returnItems.addSuccessItem(s);
-
-			} catch (BusinessException e) {
-				ShareEntry failSharing = new ShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), recipient, documentEntry, expirationDate);
-				returnItems.addSuccessItem(failSharing);
-				logger.error("Could not create the sharing for owner " + sender.getLsUuid() + " to user " + recipient.getLsUuid() + " of doc " + documentEntry.getUuid(), e);
-			}
-		}
-		return returnItems;
-	}
-
 
 	@Override
 	public void delete(Account actor, String shareUuid) throws BusinessException {
@@ -185,7 +179,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			shareEntryBusinessService.delete(share);
 
 			if (share.getEntryOwner().equals(actor) || actor.hasSuperAdminRole() || actor.hasSystemAccountRole()) {
-				notifierService.sendNotification(mailContentBuildingService.buildMailSharedFileDeletedWithRecipient(
+				notifierService.sendNotification(deprecatedMailBuildingService.buildMailSharedFileDeletedWithRecipient(
 						actor, share));
 			}
 
@@ -212,17 +206,6 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 
 	@Override
-	public SuccessesAndFailsItems<ShareEntry> createShare(List<DocumentEntry> documentEntries, User sender, List<User> recipients, Calendar expirationDate) {
-		SuccessesAndFailsItems<ShareEntry> returnItems = new SuccessesAndFailsItems<ShareEntry>();
-
-		for (DocumentEntry documentEntry : documentEntries) {
-			returnItems.addAll(createShare(documentEntry, sender, recipients, expirationDate));
-		}
-		return returnItems;
-	}
-
-
-	@Override
 	public DocumentEntry copyDocumentFromShare(String shareUuid, User actor) throws BusinessException {
 
 		ShareEntry share = shareEntryBusinessService.find(shareUuid);
@@ -243,7 +226,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			logger.info("delete share : " + share.getUuid());
 
 			if (share.getDownloaded() < 1) {
-				notifierService.sendNotification(mailContentBuildingService.buildMailRegisteredDownloadWithOneRecipient(share));
+				notifierService.sendNotification(deprecatedMailBuildingService.buildMailRegisteredDownloadWithOneRecipient(share));
 			}
 			shareEntryBusinessService.delete(share);
 
@@ -351,7 +334,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	@Override
 	public void sendDocumentEntryUpdateNotification(ShareEntry shareEntry, String friendlySize, String originalFileName) {
 		try {
-			notifierService.sendNotification(mailContentBuildingService.buildMailSharedDocumentUpdated(shareEntry, originalFileName, friendlySize));
+			notifierService.sendNotification(deprecatedMailBuildingService.buildMailSharedDocumentUpdated(shareEntry, originalFileName, friendlySize));
 		} catch (BusinessException e) {
 			logger.error("Error while trying to notify document update ", e);
 		}
@@ -361,9 +344,44 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	@Override
 	public void sendUpcomingOutdatedShareEntryNotification(SystemAccount actor, ShareEntry shareEntry, Integer days) {
 		try {
-			notifierService.sendNotification(mailContentBuildingService.buildMailUpcomingOutdatedShare(shareEntry, days));
+			notifierService.sendNotification(deprecatedMailBuildingService.buildMailUpcomingOutdatedShare(shareEntry, days));
 		} catch (BusinessException e) {
 			logger.error("Error while trying to notify upcoming outdated share", e);
 		}
 	}
+
+	@Override
+	public void create(Account actor, User owner, ShareContainer sc) {
+		Date expiryDate = sc.getExpiryDate();
+		if (expiryDate == null) {
+			expiryDate = shareExpiryDateService
+					.computeMinShareExpiryDateOfList(sc.getDocuments(), owner);
+		}
+		for (User recipient : sc.getShareRecipients()) {
+			MailContainer mailContainer = new MailContainer(
+					recipient.getLocale(), sc.getMessage(), sc.getSubject());
+			Set<ShareEntry> shares = Sets.newHashSet();
+			for (DocumentEntry documentEntry : sc.getDocuments()) {
+				ShareEntry createShare = shareEntryBusinessService.create(documentEntry,
+						owner, recipient, expiryDate);
+				updateGuestExpiryDate(recipient, owner);
+				shares.add(createShare);
+				logEntryService.create(new ShareLogEntry(owner, createShare, LogAction.FILE_SHARE, "Sharing of a file"));
+				logEntryService.create(new ShareLogEntry(
+						recipient, LogAction.SHARE_RECEIVED, "Receiving a shared file", createShare, owner));
+			}
+			MailContainerWithRecipient mail = null;
+			if (sc.isEncrypted()) {
+				mail = mailBuildingService.buildNewSharingCyphered(owner,
+						mailContainer, recipient, shares);
+			} else {
+				mail = mailBuildingService.buildNewSharing(owner,
+						mailContainer, recipient, shares);
+			}
+			sc.addMailContainer(mail);
+		}
+//		recipientFavouriteFacade.increment(userVo, recipientsEmail);
+	}
+
+
 }

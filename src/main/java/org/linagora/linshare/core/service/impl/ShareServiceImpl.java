@@ -37,8 +37,6 @@ public class ShareServiceImpl extends GenericEntryService implements
 
 	private final UserService userService;
 
-	private final GuestService guestService;
-
 	private final AnonymousShareEntryService anonymousShareEntryService;
 
 	private final ShareEntryService shareEntryService;
@@ -50,7 +48,6 @@ public class ShareServiceImpl extends GenericEntryService implements
 			final ShareExpiryDateService shareExpiryDateService,
 			final DocumentEntryService documentEntryService,
 			final UserService userService,
-			final GuestService guestService,
 			final AnonymousShareEntryService anonymousShareEntryService,
 			final ShareEntryService shareEntryService,
 			final NotifierService notifierService) {
@@ -61,7 +58,6 @@ public class ShareServiceImpl extends GenericEntryService implements
 		this.userService = userService;
 		this.anonymousShareEntryService = anonymousShareEntryService;
 		this.shareEntryService = shareEntryService;
-		this.guestService = guestService;
 		this.notifierService = notifierService;
 	}
 
@@ -85,6 +81,12 @@ public class ShareServiceImpl extends GenericEntryService implements
 			}
 		}
 
+		if (!shareContainer.canShare()) {
+			throw new BusinessException(
+					BusinessErrorCode.SHARE_MISSING_RECIPIENTS,
+					"Can not share documents, missing recipients.");
+		}
+
 		// Check documents
 		transformDocuments(actor, owner, shareContainer);
 		shareContainer.updateEncryptedStatus();
@@ -93,8 +95,10 @@ public class ShareServiceImpl extends GenericEntryService implements
 		anonymousShareEntryService.create(actor, owner, shareContainer);
 		shareEntryService.create(actor, owner, shareContainer);
 
+//		recipientFavouriteFacade.increment(userVo, recipientsEmail);
+
 		// Notification
-//		notifierService.sendNotification(mailContainerWithRecipient);
+		notifierService.sendNotification(shareContainer.getMailContainers());
 
 	}
 
@@ -136,6 +140,7 @@ public class ShareServiceImpl extends GenericEntryService implements
 			}
 			// step 4
 			// It did not find a account related to the recipient object.
+			recipient.setLocale(owner.getExternalMailLocale());
 			shareContainer.addAnonymousShareRecipient(recipient);
 		}
 	}
@@ -181,7 +186,7 @@ public class ShareServiceImpl extends GenericEntryService implements
 
 	private boolean addUserByMail(ShareContainer shareContainer,
 			Recipient recipient, Account owner) throws BusinessException {
-		String mail = recipient.getUuid();
+		String mail = recipient.getMail();
 		if (mail != null) {
 			// step 3
 			logger.debug("step3:looking into the database and the ldap using only mail : "
@@ -204,9 +209,9 @@ public class ShareServiceImpl extends GenericEntryService implements
 
 	protected void transformDocuments(Account actor, User owner,
 			ShareContainer shareContainer) throws BusinessException {
-		for (DocumentEntry de : shareContainer.getDocuments()) {
+		for (String uuid : shareContainer.getDocumentUuids()) {
 			DocumentEntry doc = documentEntryService.find(actor, owner,
-					de.getUuid());
+					uuid);
 			shareContainer.addDocumentEntry(doc);
 		}
 	}

@@ -27,7 +27,7 @@
 
 	<bean id="shareEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.ShareEntryBusinessServiceImpl">
 		<constructor-arg ref="shareEntryRepository" />
-		<constructor-arg ref="accountService" />
+		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="documentEntryRepository" />
 	</bean>
 

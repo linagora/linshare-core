@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service;
 
 import java.io.InputStream;
-import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
@@ -43,18 +42,11 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
-import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ShareEntryService {
 
 	public ShareEntry find(User actor, String uuid)  throws BusinessException ;
-
-	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate) throws BusinessException;
-
-	public SuccessesAndFailsItems<ShareEntry> createShare(DocumentEntry documentEntry, User sender, List<User> recipients, Calendar expirationDate) ;
-
-	public SuccessesAndFailsItems<ShareEntry> createShare(List<DocumentEntry> documentEntries, User sender, List<User> recipients, Calendar expirationDate);
 
 	public void delete(Account actor, String shareUuid) throws BusinessException;
 

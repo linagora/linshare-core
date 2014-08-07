@@ -47,6 +47,7 @@ import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
@@ -88,8 +89,6 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 
 	private final ShareEntryTransformer shareEntryTransformer;
 
-	private final UserRepository<User> userRepository;
-
 	private final NotifierService notifierService;
 
 	private final MailContentBuildingService mailElementsFactory;
@@ -102,118 +101,32 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 
 	private final DocumentEntryService documentEntryService;
 
-	private final AbstractDomainService abstractDomainService;
-
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-
-	private final AnonymousShareEntryService anonymousShareEntryService;
 
 	private final SignatureTransformer signatureTransformer;
 
-	private final GuestService guestService;
-
 	private final ShareService shareService;
 
-	public ShareFacadeImpl(final ShareEntryTransformer shareEntryTransformer,
-			final UserRepository<User> userRepository,
+	public ShareFacadeImpl(AccountService accountService,
+			final ShareEntryTransformer shareEntryTransformer,
 			final NotifierService notifierService,
 			final MailContentBuildingService mailElementsFactory,
 			final UserService userService, ShareEntryService shareEntryService,
 			final DocumentEntryTransformer documentEntryTransformer,
 			final DocumentEntryService documentEntryService,
-			final AbstractDomainService abstractDomainService,
-			final FunctionalityReadOnlyService functionalityService,
-			final AnonymousShareEntryService anonymousShareEntryService,
-			final SignatureTransformer signatureTransformer,
-			final GuestService guestService,
-			final ShareService shareService,
-			final AccountService accountService) {
+			final FunctionalityReadOnlyService functionalityReadOnlyService,
+			final SignatureTransformer signatureTransformer, ShareService shareService) {
 		super(accountService);
 		this.shareEntryTransformer = shareEntryTransformer;
-		this.userRepository = userRepository;
 		this.notifierService = notifierService;
 		this.mailElementsFactory = mailElementsFactory;
 		this.userService = userService;
 		this.shareEntryService = shareEntryService;
 		this.documentEntryTransformer = documentEntryTransformer;
 		this.documentEntryService = documentEntryService;
-		this.abstractDomainService = abstractDomainService;
-		this.functionalityReadOnlyService = functionalityService;
-		this.anonymousShareEntryService = anonymousShareEntryService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.signatureTransformer = signatureTransformer;
-		this.guestService = guestService;
 		this.shareService = shareService;
-	}
-
-	private SuccessesAndFailsItems<ShareDocumentVo> createSharing(
-			UserVo actorVo, List<DocumentVo> documents,
-			List<UserVo> recipientsVo, Calendar expirationDate)
-			throws BusinessException {
-		logger.debug("createSharing:Begin");
-
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-
-		List<User> recipients = new ArrayList<User>();
-
-		for (UserVo userVo : recipientsVo) {
-			try {
-				recipients.add(userService.findOrCreateUserWithDomainPolicies(
-						userVo.getMail(), actorVo.getDomainIdentifier()));
-			} catch (BusinessException e) {
-				logger.error("Could not find the recipient " + userVo.getMail()
-						+ " in the database nor in the ldap");
-				throw e;
-			}
-		}
-
-		List<DocumentEntry> documentEntries = documentEntryTransformer
-				.assembleList(documents);
-
-		SuccessesAndFailsItems<ShareEntry> successAndFails = shareEntryService
-				.createShare(documentEntries, actor, recipients, expirationDate);
-
-		SuccessesAndFailsItems<ShareDocumentVo> results = disassembleShareResultList(successAndFails);
-
-		logger.debug("createSharing:End");
-		return results;
-	}
-
-	private SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(
-			UserVo owner, List<DocumentVo> documents, List<UserVo> recipients,
-			MailContainer mailContainer, Calendar expirationDate,
-			boolean isOneDocEncrypted) throws BusinessException {
-		logger.debug("createSharingWithMail:Begin");
-		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,
-				documents, recipients, expirationDate);
-
-		// Sending the mails
-		List<UserVo> successfullRecipient = new ArrayList<UserVo>();
-		for (ShareDocumentVo successfullSharing : result.getSuccessesItem()) {
-			logger.debug("share:result:" + result);
-			if (!successfullRecipient
-					.contains(successfullSharing.getReceiver())) {
-				successfullRecipient.add(successfullSharing.getReceiver());
-			}
-		}
-
-		User owner_ = userRepository.findByLsUuid(owner.getLogin());
-		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
-
-		for (UserVo userVo : successfullRecipient) {
-			logger.debug("Sending sharing notification to user "
-					+ userVo.getLogin());
-			User recipient = userRepository.findByLsUuid(userVo.getLogin());
-
-			mailContainerWithRecipient.add(mailElementsFactory
-					.buildMailNewSharingWithRecipient(owner_, mailContainer,
-							recipient, result.getSuccessesItem(),
-							isOneDocEncrypted));
-
-		}
-
-		notifierService.sendNotification(mailContainerWithRecipient);
-		logger.debug("createSharingWithMail:End");
-		return result;
 	}
 
 	@Override
@@ -289,18 +202,6 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 			List<String> recipientsEmail, boolean secureSharing,
 			MailContainer mailContainer) throws BusinessException {
 
-		logger.debug("createSharingWithMailUsingRecipientsEmail");
-		return createSharingWithMailUsingRecipientsEmailAndExpiryDate(ownerVo,
-				documents, recipientsEmail, secureSharing, mailContainer, null);
-	}
-
-	@Deprecated
-	@Override
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(
-			UserVo actorVo, List<DocumentVo> documents,
-			List<String> recipientsEmailInput, boolean secureSharing,
-			MailContainer mailContainer, Calendar expiryDateSelected)
-			throws BusinessException {
 		logger.debug("createSharingWithMailUsingRecipientsEmail");
 		return null;
 	}
@@ -507,7 +408,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	}
 
 	@Override
-	public List<ShareDocumentVo> share(UserVo actorVo,
+	public void share(UserVo actorVo,
 			List<DocumentVo> documentVos, List<String> recipientsEmail,
 			boolean secured, MailContainer mailContainer)
 			throws BusinessException {
@@ -517,8 +418,5 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		sc.addDocumentVos(documentVos);
 		sc.addMail(recipientsEmail);
 		shareService.create(actor, actor, sc);
-
-		List<ShareEntry> list = Lists.newArrayList();
-		return shareEntryTransformer.disassembleList(list);
 	}
 }

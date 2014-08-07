@@ -243,14 +243,14 @@ AbstractTransactionalJUnit4SpringContextTests {
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
-		
+
 		documentEntryRepository.delete(aDocumentEntry);
 		Jane.getEntries().clear();
 		userRepository.update(Jane);
 		fileRepository.removeFileByUUID(aDocument.getUuid());
 		documentRepository.delete(aDocument);
 		datas.deleteUsers();
-		
+
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -442,9 +442,9 @@ AbstractTransactionalJUnit4SpringContextTests {
 
 		for (DocumentEntry documentEntry : shareDocuments) {
 			shares.add(shareEntryBusinessService.create(documentEntry,
-					John, Jane, cldr));
+					John, Jane, cldr.getTime()));
 		}
-		
+
 		try {
 			// Shared criterion
 			Boolean shared = false;
@@ -491,7 +491,7 @@ AbstractTransactionalJUnit4SpringContextTests {
 
 		for (DocumentEntry documentEntry : shareDocuments) {
 			shares.add(shareEntryBusinessService.create(documentEntry,
-					John, Jane, cldr));
+					John, Jane, cldr.getTime()));
 		}
 
 		try {

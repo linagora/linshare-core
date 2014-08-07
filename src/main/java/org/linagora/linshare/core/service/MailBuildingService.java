@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.core.service;
 
-import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -50,7 +50,6 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailBuildingService {
@@ -81,7 +80,7 @@ public interface MailBuildingService {
 
 	MailContainerWithRecipient buildNewSharing(User sender,
 			MailContainer inputMailContainer, User recipient,
-			List<ShareDocumentVo> shares) throws BusinessException;
+			Set<ShareEntry> shares) throws BusinessException;
 
 	MailContainerWithRecipient buildNewSharingProtected(User sender,
 			MailContainer inputMailContainer, AnonymousUrl anonymousUrl)
@@ -89,7 +88,7 @@ public interface MailBuildingService {
 
 	MailContainerWithRecipient buildNewSharingCyphered(User sender,
 			MailContainer inputMailContainer, User recipient,
-			List<ShareDocumentVo> shares) throws BusinessException;
+			Set<ShareEntry> shares) throws BusinessException;
 
 	MailContainerWithRecipient buildNewSharingCypheredProtected(User sender,
 			MailContainer inputMailContainer, AnonymousUrl anonymousUrl)

@@ -262,6 +262,11 @@ public class ShareContainer {
 		return !anonymousShareRecipients.isEmpty();
 	}
 
+	public boolean canShare() {
+		return (!anonymousShareRecipients.isEmpty()) || (!shareRecipients.isEmpty());
+	}
+
+
 	public void addMailContainer(MailContainerWithRecipient mailContainer) {
 		Validate.notNull(mailContainer, "mailContainer must not be null.");
 		this.mailContainers.add(mailContainer);

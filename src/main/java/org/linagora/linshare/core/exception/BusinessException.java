@@ -40,7 +40,7 @@ import java.util.List;
 
 /** Catcheable exception raised in case of business error during process.
  */
-public class BusinessException extends Exception {
+public class BusinessException extends RuntimeException {
 
 	private static final long serialVersionUID = 711201641073090937L;
 
@@ -99,6 +99,10 @@ public class BusinessException extends Exception {
     public BusinessErrorCode getErrorCode() {
         return errorCode;
     }
+
+	public boolean equalErrCode(BusinessErrorCode code) {
+		return errorCode.equals(code);
+	}
 
     /** Get extra informations.
      * @return extra informations.

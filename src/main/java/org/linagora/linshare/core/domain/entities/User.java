@@ -217,4 +217,11 @@ public abstract class User extends Account {
 	public boolean isGuest() {
 		return this.getAccountType().equals(AccountType.GUEST);
 	}
+
+	@Override
+	public String toString() {
+		return "User [firstName=" + firstName + ", lastName=" + lastName
+				+ ", mail=" + mail + ", lsUuid=" + lsUuid + "]";
+	}
+
 }

@@ -113,4 +113,11 @@ public class Recipient {
 		this.locale = locale;
 	}
 
+
+	@Override
+	public String toString() {
+		return "Recipient [uuid=" + uuid + ", mail=" + mail
+				+ ", domainIdentifier=" + domainIdentifier + "]";
+	}
+
 }

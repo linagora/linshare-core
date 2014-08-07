@@ -49,72 +49,11 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface ShareFacade {
 
 
-//	/**
-//	 * Create a whole set of sharing
-//	 * The expiration date will be defined in the config
-//	 * @param owner : the document owner
-//	 * @param documents : the list of documents to be shared
-//	 * @param recipients : the recipients list
-//	 * @throws BusinessException if a recipient cannot be found in the db nor in the ldap
-//	 */
-//	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, Calendar expiryDate) throws BusinessException;
-//	
-//	
-//	/**
-//	 * Create a whole set of shared documents
-//	 * The expiration date will be defined in the config
-//	 * Send the email only to the recipients who really received an email
-//	 * @param owner : the document owner
-//	 * @param documents : the list of documents to be shared
-//	 * @param recipients : the recipients list
-//	 * @param mailContainer : the information to build notifications
-//	 * @param expirationDate : the expiration date selected by user
-//	 * @param docsEncrypted : if there is encrypted documents
-//	 * @param jwsEncryptUrlString : the url for jws service
-//	 * @return SuccessesAndFailsItems<SharedDocumentVo> : the list of sharing that succedded and failed
-//	 * @throws BusinessException if a recipient cannot be found in the db nor in the ldap
-//	 */
-//	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents,
-//			List<UserVo> recipients, MailContainer mailContainer,
-//			Calendar expirationDate, boolean docsEncrypted, String jwsEncryptUrlString)
-//			throws BusinessException;
-//
-//	
-//	
-	/**
-	 * same function as createSharingWithMail() BUT we give Recipients Emails which can be found or NOT FOUND in database.
-	 * @param owner
-	 * @param documents
-	 * @param recipientsEmail
-	 * @param secureSharing
-	 * @param mailContainer
-	 * @return
-	 * @throws BusinessException
-	 */
 	@Deprecated
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(
 			UserVo owner, List<DocumentVo> documents,
 			List<String> recipientsEmail,
 			boolean secureSharing, MailContainer mailContainer)
-			throws BusinessException;
-
-	/**
-	 * same function as createSharingWithMailUsingRecipientsEmail() BUT we give the expiration date selected by the user
-	 * @param owner
-	 * @param documents
-	 * @param recipientsEmail
-	 * @param secureSharing
-	 * @param mailContainer
-     * @param expiryDateSelected
-	 * @return
-	 * @throws BusinessException
-	 */
-	@Deprecated
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(
-			UserVo owner, List<DocumentVo> documents,
-			List<String> recipientsEmail,
-			boolean secureSharing, MailContainer mailContainer,
-			Calendar expiryDateSelected)
 			throws BusinessException;
 
 	/**
@@ -217,7 +156,7 @@ public interface ShareFacade {
 
 	public List<SignatureVo> getAllSignatures(UserVo actorVo, ShareDocumentVo documentVo);
 
-	public List<ShareDocumentVo> share(UserVo actorVo, List<DocumentVo> documentVos,
+	public void share(UserVo actorVo, List<DocumentVo> documentVos,
 			List<String> recipientsEmail,
 			boolean secured, MailContainer mailContainer)
 			throws BusinessException;

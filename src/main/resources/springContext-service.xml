@@ -124,6 +124,7 @@
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="mailContentBuildingService" />
 		<constructor-arg ref="documentEntryBusinessService" />
+		<constructor-arg ref="mailBuildingService" />
 	</bean>
 
 	<bean id="anonymousShareEntryService" class="org.linagora.linshare.core.service.impl.AnonymousShareEntryServiceImpl">
@@ -133,6 +134,7 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="mailContentBuildingService" />
+		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="documentEntryBusinessService" />
 	</bean>
 
@@ -311,5 +313,9 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="shareExpiryDateService" />
 		<constructor-arg ref="documentEntryService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="anonymousShareEntryService" />
+		<constructor-arg ref="shareEntryService" />
+		<constructor-arg ref="notifierService" />
 	</bean>
 </beans>

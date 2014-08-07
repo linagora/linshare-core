@@ -733,19 +733,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	@Deprecated
 	@Override
-	public boolean hasRightsToShareWithExternals(User sender) {
-
-		AbstractDomain domain = sender.getDomain();
-		if (domain != null) {
-			Functionality func = functionalityReadOnlyService
-					.getAnonymousUrlFunctionality(domain);
-			return func.getActivationPolicy().getStatus();
-		}
-		return false;
-	}
-
-	@Deprecated
-	@Override
 	public boolean userCanCreateGuest(User user) {
 
 		if (user.getAccountType() == AccountType.GUEST) {

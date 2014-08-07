@@ -283,28 +283,19 @@ public class Share {
 			}
 
 			// PROCESS SHARE
-
-			Boolean errorOnAddress = false;
-			// TODO FIXME: FMA
-			SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
-
 			try {
 				MailContainer mailContainer = new MailContainer(
 						userVo.getLocale(), textAreaValue, textAreaSubjectValue);
-//				sharing = shareFacade
-//						.createSharingWithMailUsingRecipientsEmailAndExpiryDate(
-//								userVo, documents, recipientsEmail,
-//								secureSharing, mailContainer, null);
 				shareFacade.share(userVo, documents, recipientsEmail, secureSharing, mailContainer);
-			} catch (BusinessException e1) {
+			} catch (BusinessException ex) {
 
 				// IF RELAY IS DISABLE ON SMTP SERVER
-				if (e1.getErrorCode() == BusinessErrorCode.RELAY_HOST_NOT_ENABLE) {
-					logger.error("Could not create sharing, relay host is disable : ", e1);
+				if (ex.equalErrCode(BusinessErrorCode.RELAY_HOST_NOT_ENABLE)) {
+					logger.error("Could not create sharing, relay host is disable : ", ex);
 
 					String buffer = "";
 					String sep = "";
-					for (String extra : e1.getExtras()) {
+					for (String extra : ex.getExtras()) {
 						buffer = buffer + sep + extra;
 						sep = ", ";
 					}
@@ -312,45 +303,22 @@ public class Share {
 							.notify(new BusinessUserMessage(
 									BusinessUserMessageType.UNREACHABLE_MAIL_ADDRESS,
 									MessageSeverity.ERROR, buffer));
-					errorOnAddress = true;
+				} else if (ex.equalErrCode(BusinessErrorCode.SHARE_MISSING_RECIPIENTS)) {
+					businessMessagesManagementService.notify(new BusinessUserMessage(
+							BusinessUserMessageType.QUICKSHARE_NOMAIL,
+							MessageSeverity.ERROR));
 				} else {
+					// TODO : Translate businessErrorCode into BusinessUserMessage.
 					logger.error("Could not create sharing, caught a BusinessException.");
-					logger.error(e1.getMessage());
-					businessMessagesManagementService.notify(e1);
-					return Upload.class;
+					logger.error(ex.getMessage());
+					businessMessagesManagementService.notify(ex);
+					return Index.class;
 				}
 			}
-
-			if (sharing.getFailsItem().size() > 0) {
-				businessMessagesManagementService
-						.notify(new BusinessUserMessage(
-								BusinessUserMessageType.QUICKSHARE_FAILED,
-								MessageSeverity.ERROR));
-			} else if (errorOnAddress) {
-				recipientFavouriteFacade.increment(userVo, recipientsEmail);
-				businessMessagesManagementService
-						.notify(new BusinessUserMessage(
-								BusinessUserMessageType.SHARE_WARNING_MAIL_ADDRESS,
-								MessageSeverity.WARNING));
-			} else {
-				if (recipientsEmail.size() > 0) {
-					recipientFavouriteFacade.increment(userVo, recipientsEmail);
-					businessMessagesManagementService
-							.notify(new BusinessUserMessage(
-									BusinessUserMessageType.QUICKSHARE_SUCCESS,
-									MessageSeverity.INFO));
-				} else {
-					businessMessagesManagementService
-							.notify(new BusinessUserMessage(
-									BusinessUserMessageType.QUICKSHARE_NOMAIL,
-									MessageSeverity.ERROR));
-				}
-			}
-
 		} catch (NullPointerException e3) {
-			logger.error("No Email in textarea", e3);
+			logger.error("NPE :" , e3);
 			businessMessagesManagementService.notify(new BusinessUserMessage(
-					BusinessUserMessageType.QUICKSHARE_NOMAIL,
+					BusinessUserMessageType.QUICKSHARE_FAILED,
 					MessageSeverity.ERROR));
 		}
 		return Index.class;
