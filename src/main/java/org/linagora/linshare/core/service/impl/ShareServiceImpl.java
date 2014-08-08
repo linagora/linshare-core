@@ -95,8 +95,6 @@ public class ShareServiceImpl extends GenericEntryService implements
 		anonymousShareEntryService.create(actor, owner, shareContainer);
 		shareEntryService.create(actor, owner, shareContainer);
 
-//		recipientFavouriteFacade.increment(userVo, recipientsEmail);
-
 		// Notification
 		notifierService.sendNotification(shareContainer.getMailContainers());
 

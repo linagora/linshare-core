@@ -63,7 +63,6 @@ import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
-import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
@@ -92,8 +91,6 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 	private final NotifierService notifierService;
 
-	private final MailContentBuildingService deprecatedMailBuildingService;
-
 	private final MailBuildingService mailBuildingService;
 
 	private final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository;
@@ -106,7 +103,6 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 			DocumentEntryService documentEntryService,
 			DocumentEntryBusinessService documentEntryBusinessService,
 			NotifierService notifierService,
-			MailContentBuildingService deprecatedMailBuildingService,
 			MailBuildingService mailBuildingService,
 			FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository
 			) {
@@ -119,7 +115,6 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 		this.documentEntryService = documentEntryService;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.notifierService = notifierService;
-		this.deprecatedMailBuildingService = deprecatedMailBuildingService;
 		this.mailBuildingService = mailBuildingService;
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
 	}
@@ -167,8 +162,8 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 			shareEntryBusinessService.delete(share);
 
 			if (share.getEntryOwner().equals(actor) || actor.hasSuperAdminRole() || actor.hasSystemAccountRole()) {
-				notifierService.sendNotification(deprecatedMailBuildingService.buildMailSharedFileDeletedWithRecipient(
-						actor, share));
+				MailContainerWithRecipient mail = mailBuildingService.buildSharedDocDeleted(actor, share);
+				notifierService.sendNotification(mail);
 			}
 
 		} else {
@@ -214,7 +209,8 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 			logger.info("delete share : " + share.getUuid());
 
 			if (share.getDownloaded() < 1) {
-				notifierService.sendNotification(deprecatedMailBuildingService.buildMailRegisteredDownloadWithOneRecipient(share));
+				MailContainerWithRecipient mail = mailBuildingService.buildRegisteredDownload(share);
+				notifierService.sendNotification(mail);
 			}
 			shareEntryBusinessService.delete(share);
 
@@ -322,19 +318,10 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 	@Override
 	public void sendDocumentEntryUpdateNotification(ShareEntry shareEntry, String friendlySize, String originalFileName) {
 		try {
-			notifierService.sendNotification(deprecatedMailBuildingService.buildMailSharedDocumentUpdated(shareEntry, originalFileName, friendlySize));
+			MailContainerWithRecipient mail = mailBuildingService.buildSharedDocUpdated(shareEntry, originalFileName, friendlySize);
+			notifierService.sendNotification(mail);
 		} catch (BusinessException e) {
 			logger.error("Error while trying to notify document update ", e);
-		}
-	}
-
-
-	@Override
-	public void sendUpcomingOutdatedShareEntryNotification(SystemAccount actor, ShareEntry shareEntry, Integer days) {
-		try {
-			notifierService.sendNotification(deprecatedMailBuildingService.buildMailUpcomingOutdatedShare(shareEntry, days));
-		} catch (BusinessException e) {
-			logger.error("Error while trying to notify upcoming outdated share", e);
 		}
 	}
 

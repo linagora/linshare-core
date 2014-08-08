@@ -128,6 +128,10 @@ public class MailNotifierServiceImpl implements NotifierService {
 	@Override
 	public void sendNotification(String smtpSender, String replyTo, String recipient, String subject, String htmlContent, String textContent, String inReplyTo, String references) throws SendFailedException {
 
+		if (smtpServer.equals("")) {
+			logger.warn("Mail notifications are disabled.");
+			return;
+		}
 		// get the mail session
 		Session session = getMailSession();
 

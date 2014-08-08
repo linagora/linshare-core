@@ -68,8 +68,6 @@ public interface ShareEntryService {
 
 	public List<ShareEntry> findAllMyShareEntries(Account actor, User owner);
 
-	void sendUpcomingOutdatedShareEntryNotification(SystemAccount actor, ShareEntry shareEntry, Integer days);
-
 	public void create(Account actor, User owner, ShareContainer shareContainer);
 
 }

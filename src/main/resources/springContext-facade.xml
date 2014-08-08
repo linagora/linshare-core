@@ -59,7 +59,6 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="shareEntryTransformer" />
 		<constructor-arg ref="notifierService" />
-		<constructor-arg ref="mailContentBuildingService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="shareEntryService" />
 		<constructor-arg ref="documentEntryTransformer" />

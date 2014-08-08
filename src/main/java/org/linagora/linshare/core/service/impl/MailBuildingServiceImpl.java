@@ -68,7 +68,6 @@ import org.linagora.linshare.core.repository.MailConfigRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MailBuildingService;
-import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +75,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 
-public class MailBuildingServiceImpl implements MailBuildingService, MailContentBuildingService {
+public class MailBuildingServiceImpl implements MailBuildingService {
 
 	private final static Logger logger = LoggerFactory
 			.getLogger(MailBuildingServiceImpl.class);
@@ -1182,91 +1181,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	}
 
 	/*
-	 * Adapters
-	 */
-
-	@Override
-	public MailContainerWithRecipient buildMailUpcomingOutdatedShare(
-			ShareEntry shareEntry, Integer days) throws BusinessException {
-		return buildSharedDocUpcomingOutdated(shareEntry, days);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildMailUpcomingOutdatedShare(
-			AnonymousShareEntry shareEntry, Integer days)
-			throws BusinessException {
-		return buildSharedDocUpcomingOutdated(shareEntry, days);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildMailUpcomingOutdatedDocument(
-			DocumentEntry document, Integer days) throws BusinessException {
-		return buildDocUpcomingOutdated(document, days);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildMailSharedDocumentUpdated(
-			AnonymousShareEntry shareEntry, String oldDocName,
-			String fileSizeTxt) throws BusinessException {
-		return buildSharedDocUpdated(shareEntry, oldDocName, fileSizeTxt);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildMailSharedDocumentUpdated(
-			ShareEntry shareEntry, String oldDocName, String fileSizeTxt)
-			throws BusinessException {
-		return buildSharedDocUpdated(shareEntry, oldDocName, fileSizeTxt);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(
-			Account actor, ShareEntry shareEntry) throws BusinessException {
-		return buildSharedDocDeleted(actor, shareEntry);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildMailAnonymousDownload(
-			AnonymousShareEntry shareEntry) throws BusinessException {
-		return buildAnonymousDownload(shareEntry);
-	}
-
-	@Deprecated
-	@Override
-	public MailContainerWithRecipient buildMailNewSharingWithRecipient(
-			User sender, MailContainer input, User recipient,
-			List<ShareDocumentVo> shares, boolean hasToDecrypt)
-			throws BusinessException {
-		return null;
-	}
-
-	@Override
-	public MailContainerWithRecipient buildMailNewSharingWithRecipient(
-			MailContainer input, AnonymousUrl anonUrl, User sender)
-			throws BusinessException {
-		if (anonUrl.oneDocumentIsEncrypted())
-			return buildNewSharingCypheredProtected(sender, input, anonUrl);
-		return buildNewSharingProtected(sender, input, anonUrl);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildMailResetPassword(Guest recipient,
-			String password) throws BusinessException {
-		return buildResetPassword(recipient, password);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildMailNewGuest(User sender,
-			User recipient, String password) throws BusinessException {
-		return buildNewGuest(sender, recipient, password);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildMailRegisteredDownloadWithOneRecipient(
-			ShareEntry shareEntry) throws BusinessException {
-		return buildRegisteredDownload(shareEntry);
-	}
-
-	/*
 	 * Helpers
 	 */
 
@@ -1377,9 +1291,9 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		container.setSubject(subject);
 		container.setContentHTML(layout);
 		container.setContentTXT(container.getContentHTML());
+		// Message IDs from Web service API (ex Plugin Thunerbird)
 		container.setInReplyTo(input.getInReplyTo());
 		container.setReferences(input.getReferences());
 		return container;
 	}
-
 }

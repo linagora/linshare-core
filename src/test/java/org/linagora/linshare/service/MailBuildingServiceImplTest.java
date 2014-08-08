@@ -64,7 +64,7 @@ import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
-import org.linagora.linshare.core.service.MailContentBuildingService;
+import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +109,7 @@ public class MailBuildingServiceImplTest extends AbstractTransactionalJUnit4Spri
 	private UserService userService;
 	
 	@Autowired
-	private MailContentBuildingService mailContentBuildingService;
+	private MailBuildingService mailBuildingService;
 	
 	@Autowired
 	private AnonymousShareEntryService anonymousShareEntryService;
@@ -227,7 +227,7 @@ public class MailBuildingServiceImplTest extends AbstractTransactionalJUnit4Spri
 		User recipient = jane;
 		
 		// buildMailNewGuest
-		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailNewGuest(actor, recipient, "password");
+		MailContainer mailContainerBuild =  mailBuildingService.buildNewGuest(actor, recipient, "password");
 		testMailGenerate(mailContainerBuild);
 
 		

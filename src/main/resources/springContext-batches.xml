@@ -33,7 +33,7 @@
         <constructor-arg ref="jackRabbitRepository"/>
         <constructor-arg value="${job.document.cleaner.activation}" />
         <constructor-arg ref="notifierService" />
-        <constructor-arg ref="mailContentBuildingService" />
+        <constructor-arg ref="mailBuildingService" />
         <constructor-arg ref="functionalityReadOnlyService" />
         <constructor-arg ref="entryService" />
         <constructor-arg ref="documentEntryBusinessService" />

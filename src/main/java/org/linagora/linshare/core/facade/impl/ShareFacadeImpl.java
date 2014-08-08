@@ -41,18 +41,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
-import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
-import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
@@ -65,22 +59,15 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ShareFacade;
-import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.core.service.GuestService;
-import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacade {
 
@@ -90,8 +77,6 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	private final ShareEntryTransformer shareEntryTransformer;
 
 	private final NotifierService notifierService;
-
-	private final MailContentBuildingService mailElementsFactory;
 
 	private final UserService userService;
 
@@ -110,7 +95,6 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	public ShareFacadeImpl(AccountService accountService,
 			final ShareEntryTransformer shareEntryTransformer,
 			final NotifierService notifierService,
-			final MailContentBuildingService mailElementsFactory,
 			final UserService userService, ShareEntryService shareEntryService,
 			final DocumentEntryTransformer documentEntryTransformer,
 			final DocumentEntryService documentEntryService,
@@ -119,7 +103,6 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		super(accountService);
 		this.shareEntryTransformer = shareEntryTransformer;
 		this.notifierService = notifierService;
-		this.mailElementsFactory = mailElementsFactory;
 		this.userService = userService;
 		this.shareEntryService = shareEntryService;
 		this.documentEntryTransformer = documentEntryTransformer;
@@ -213,8 +196,8 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 			// send a notification by mail to the owner
 			ShareEntry shareEntry = shareEntryService.find(getActor(actorVo),
 					sharedDocument.getIdentifier());
-			notifierService.sendNotification(mailElementsFactory
-					.buildMailRegisteredDownloadWithOneRecipient(shareEntry));
+//			notifierService.sendNotification(mailElementsFactory
+//					.buildMailRegisteredDownloadWithOneRecipient(shareEntry));
 		} catch (BusinessException e) {
 			// TODO : FIXME : send the notification to the domain administration
 			// address. => a new functionality need to be add.

@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -57,6 +58,8 @@ import org.linagora.linshare.core.repository.ShareEntryRepository;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.MailBuildingService;
+import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,30 +68,42 @@ import org.slf4j.LoggerFactory;
  */
 public class ShareManagementBatchImpl implements ShareManagementBatch {
 
-	private static final Logger logger = LoggerFactory.getLogger(ShareManagementBatchImpl.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(ShareManagementBatchImpl.class);
 
-    private final ShareEntryService shareEntryService;
+	private final ShareEntryService shareEntryService;
 
-    private final AnonymousShareEntryService anonymousShareEntryService;
+	private final AnonymousShareEntryService anonymousShareEntryService;
 
-    private final ShareEntryRepository shareEntryRepository;
+	private final ShareEntryRepository shareEntryRepository;
 
-    private final AnonymousShareEntryRepository anonymousShareEntryRepository;
+	private final AnonymousShareEntryRepository anonymousShareEntryRepository;
 
-    private final DocumentEntryRepository documentEntryRepository;
+	private final DocumentEntryRepository documentEntryRepository;
 
-    private final AccountRepository<Account> accountRepository;
+	private final AccountRepository<Account> accountRepository;
 
-    private final FunctionalityReadOnlyService functionalityReadOnlyService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-    private final DocumentEntryService documentEntryService;
+	private final DocumentEntryService documentEntryService;
 
-    private final AnonymousUrlRepository anonymousUrlRepository;
+	private final AnonymousUrlRepository anonymousUrlRepository;
 
+	private final NotifierService notifierService;
 
-	public ShareManagementBatchImpl(ShareEntryService shareEntryService, AnonymousShareEntryService anonymousShareEntryService, ShareEntryRepository shareEntryRepository,
-			AnonymousShareEntryRepository anonymousShareEntryRepository, DocumentEntryRepository documentEntryRepository, AccountRepository<Account> accountRepository,
-			FunctionalityReadOnlyService functionalityService, DocumentEntryService documentEntryService, AnonymousUrlRepository anonymousUrlRepository) {
+	private final MailBuildingService mailBuildingService;
+
+	public ShareManagementBatchImpl(ShareEntryService shareEntryService,
+			AnonymousShareEntryService anonymousShareEntryService,
+			ShareEntryRepository shareEntryRepository,
+			AnonymousShareEntryRepository anonymousShareEntryRepository,
+			DocumentEntryRepository documentEntryRepository,
+			AccountRepository<Account> accountRepository,
+			FunctionalityReadOnlyService functionalityReadOnlyService,
+			DocumentEntryService documentEntryService,
+			AnonymousUrlRepository anonymousUrlRepository,
+			NotifierService notifierService,
+			MailBuildingService mailBuildingService) {
 		super();
 		this.shareEntryService = shareEntryService;
 		this.anonymousShareEntryService = anonymousShareEntryService;
@@ -96,11 +111,12 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		this.anonymousShareEntryRepository = anonymousShareEntryRepository;
 		this.documentEntryRepository = documentEntryRepository;
 		this.accountRepository = accountRepository;
-		this.functionalityReadOnlyService = functionalityService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.documentEntryService = documentEntryService;
 		this.anonymousUrlRepository = anonymousUrlRepository;
+		this.notifierService = notifierService;
+		this.mailBuildingService = mailBuildingService;
 	}
-
 
 	@Override
 	public void cleanOutdatedShares() {
@@ -109,8 +125,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		removeAllExpiredAnonymousShareEntries();
 		removeAllExpiredAnonymousUrl();
 		logger.info("End clean outdated shares");
-    }
-
+	}
 
 	private void removeAllExpiredAnonymousShareEntries() {
 		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
@@ -140,7 +155,6 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 			}
 		}
 	}
-
 
 	private boolean documentSuppressionIsNeeded(DocumentEntry documentEntry) {
 		boolean doDeleteDoc = false;
@@ -208,7 +222,6 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		}
 	}
 
-
 	private void removeAllExpiredAnonymousUrl() {
 		List<AnonymousUrl> allExpiredUrl = anonymousUrlRepository.getAllExpiredUrl();
 		logger.info(allExpiredUrl.size() + " expired anonymous url(s) found to be delete.");
@@ -225,41 +238,61 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		}
 	}
 
-
-
 	@Override
-    public void notifyUpcomingOutdatedShares() {
+	public void notifyUpcomingOutdatedShares() {
 
 		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
 
-		StringValueFunctionality notificationBeforeExpirationFunctionality = functionalityReadOnlyService.getShareNotificationBeforeExpirationFunctionality(systemAccount.getDomain());
+		StringValueFunctionality notificationBeforeExpirationFunctionality = functionalityReadOnlyService
+				.getShareNotificationBeforeExpirationFunctionality(systemAccount
+						.getDomain());
 
 		List<Integer> datesForNotifyUpcomingOutdatedShares = new ArrayList<Integer>();
 
-        String[] dates = notificationBeforeExpirationFunctionality.getValue().split(",");
-        for (String date : dates) {
-        	datesForNotifyUpcomingOutdatedShares.add(Integer.parseInt(date));
+		String[] dates = notificationBeforeExpirationFunctionality.getValue()
+				.split(",");
+		for (String date : dates) {
+			datesForNotifyUpcomingOutdatedShares.add(Integer.parseInt(date));
 		}
 
-        for (Integer day : datesForNotifyUpcomingOutdatedShares) {
+		for (Integer day : datesForNotifyUpcomingOutdatedShares) {
 
-	        List<ShareEntry> shares = shareEntryRepository.findUpcomingExpiredEntries(day);
-	        logger.info(shares.size() + " upcoming (in "+ day.toString()+" days) outdated share(s) found to be notified.");
-	        for (ShareEntry share : shares) {
-	        	if (share.getDownloaded() < 1) {
-	        		shareEntryService.sendUpcomingOutdatedShareEntryNotification(systemAccount, share, day);
-	        	}
-	        }
-
-	        List<AnonymousShareEntry> anonymousShareEntries = anonymousShareEntryRepository.findUpcomingExpiredEntries(day);
-	        logger.info(anonymousShareEntries.size() + " upcoming (in "+day.toString()+" days) outdated anonymous share Url(s) found to be notified.");
-
-	        for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
-	        	if(anonymousShareEntry.getDownloaded() < 1) {
-	        		anonymousShareEntryService.sendUpcomingOutdatedShareEntryNotification(systemAccount, anonymousShareEntry, day);
-	        	}
+			List<ShareEntry> shares = shareEntryRepository
+					.findUpcomingExpiredEntries(day);
+			logger.info(shares.size() + " upcoming (in " + day.toString()
+					+ " days) outdated share(s) found to be notified.");
+			for (ShareEntry share : shares) {
+				if (share.getDownloaded() < 1) {
+					try {
+						MailContainerWithRecipient mail = mailBuildingService
+								.buildSharedDocUpcomingOutdated(share, day);
+						notifierService.sendNotification(mail);
+					} catch (BusinessException e) {
+						logger.error(
+								"Error while trying to notify upcoming outdated share",
+								e);
+					}
+				}
 			}
 
-        }
-    }
+			List<AnonymousShareEntry> anonymousShareEntries = anonymousShareEntryRepository
+					.findUpcomingExpiredEntries(day);
+			logger.info(anonymousShareEntries.size()
+					+ " upcoming (in "
+					+ day.toString()
+					+ " days) outdated anonymous share Url(s) found to be notified.");
+
+			for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
+				if (anonymousShareEntry.getDownloaded() < 1) {
+					try {
+						MailContainerWithRecipient mail = mailBuildingService
+								.buildSharedDocUpcomingOutdated(anonymousShareEntry, day);
+						notifierService.sendNotification(mail);
+					} catch (BusinessException e) {
+						logger.error("Error while trying to notify upcoming outdated share", e);
+					}
+				}
+			}
+		}
+	}
 }

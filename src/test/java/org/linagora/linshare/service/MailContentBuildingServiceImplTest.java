@@ -57,14 +57,12 @@ import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.FileInfo;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
-import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
@@ -74,7 +72,7 @@ import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
-import org.linagora.linshare.core.service.MailContentBuildingService;
+import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +80,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+
+import com.google.common.collect.Sets;
 
 @Ignore
 @ContextConfiguration(locations = { 
@@ -119,7 +119,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	private UserService userService;
 	
 	@Autowired
-	private MailContentBuildingService mailContentBuildingService;
+	private MailBuildingService mailBuildingService;
 	
 	@Autowired
 	private AnonymousShareEntryService anonymousShareEntryService;
@@ -263,11 +263,11 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService.createAnonymousShare(docs, actor, recipient, Calendar.getInstance(), true);
 		List<AnonymousShareEntry> shareEntries = new ArrayList<AnonymousShareEntry>(anonymousUrl.getAnonymousShareEntries());
 		
-		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailAnonymousDownload(shareEntries.get(0));
+		MailContainer mailContainerBuild =  mailBuildingService.buildAnonymousDownload(shareEntries.get(0));
 		testMailGenerate(mailContainerBuild);
 
 		// buildMailAnonymousDownloadWithOneRecipient
-		mailContainerBuild = mailContentBuildingService.buildMailNewSharingWithRecipient(mailContainer, anonymousUrl, actor);
+		mailContainerBuild = mailBuildingService.buildNewSharingProtected(actor, mailContainer, anonymousUrl);
 		testMailGenerate(mailContainerBuild);
 	
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -287,10 +287,9 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		User recipient = jane;
 		
 		// buildMailNewGuest
-		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailNewGuest(actor, recipient, "password");
+		MailContainer mailContainerBuild =  mailBuildingService.buildNewGuest(actor, recipient, "password");
 		testMailGenerate(mailContainerBuild);
 
-		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
@@ -317,7 +316,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		
 		
 		// buildMailResetPassword
-		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailResetPassword(guest,  "password");
+		MailContainer mailContainerBuild =  mailBuildingService.buildResetPassword(guest,  "password");
 		testMailGenerate(mailContainerBuild);
 		
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -331,11 +330,12 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
 		mailContainer.setLanguage(Language.FRENCH);
 		
-		List<ShareDocumentVo> shares = new ArrayList<ShareDocumentVo>();
-		shares.add(new ShareDocumentVo(new DocumentVo(aDocumentEntry),new UserVo(john),new UserVo(jane)));
+		Set<ShareEntry> shares = Sets.newHashSet();
+		shares.add(new ShareEntry(john, aDocumentEntry.getName(), "", jane, aDocumentEntry, Calendar.getInstance()));
 		
-		MailContainerWithRecipient mailContainerWithRecipientBuild =  mailContentBuildingService.buildMailNewSharingWithRecipient(actor,mailContainer,jane,shares,false);
 		
+		MailContainerWithRecipient mailContainerWithRecipientBuild =  mailBuildingService.buildNewSharing(actor, mailContainer, jane, shares);
+		mailBuildingService.buildNewSharing(actor, mailContainer, jane, shares);
 		
 		testMailGenerate(mailContainerWithRecipientBuild);
 		Assert.assertTrue(mailContainerWithRecipientBuild.getRecipient().equals(jane.getMail()));

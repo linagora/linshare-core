@@ -55,7 +55,7 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.EntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.core.service.MailContentBuildingService;
+import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.slf4j.Logger;
@@ -86,7 +86,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 
 	private final NotifierService notifierService;
 
-	private final MailContentBuildingService mailBuilder;
+	private final MailBuildingService mailBuilder;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
@@ -99,7 +99,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 	public DocumentManagementBatchImpl(DocumentRepository documentRepository,
 			DocumentEntryRepository documentEntryRepository, DocumentEntryService documentEntryService,
 			AccountRepository<Account> accountRepository, FileSystemDao fileSystemDao, boolean cronActivated,
-			NotifierService notifierService, MailContentBuildingService mailBuilder,
+			NotifierService notifierService, MailBuildingService mailBuilder,
 			FunctionalityReadOnlyService functionalityService, EntryService entryService,
 			DocumentEntryBusinessService documentEntryBusinessService, MimeTypeMagicNumberDao mimeTypeMagicNumberDao, ThreadEntryService threadEntryService) {
 		super();

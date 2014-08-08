@@ -56,7 +56,6 @@ public interface AnonymousShareEntryService {
 
 	public InputStream getAnonymousShareEntryStream(String shareUuid) throws BusinessException ;
 
+	@Deprecated
 	public void sendDocumentEntryUpdateNotification(AnonymousShareEntry anonymousShareEntry, String friendlySize, String originalFileName);
-
-	public void sendUpcomingOutdatedShareEntryNotification(SystemAccount actor, AnonymousShareEntry shareEntry, Integer days);
 }
