@@ -143,6 +143,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			this.lastName = StringUtils.trimToNull(user.getLastName());
 		}
 
+		@SuppressWarnings("unused")
 		public ContactRepresentation(Account account) {
 			this.mail = StringUtils
 					.trimToNull(account.getAccountReprentation());
@@ -384,7 +385,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				locale);
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -403,6 +404,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("urlparam", "");
 		container.setRecipient(recipient);
 		container.setFrom(getFromMailAddress(sender));
+		container.setReplyTo(sender.getMail());
 
 		return buildMailContainer(cfg, container, null,
 				MailContentType.SHARED_DOC_UPDATED, builder);
@@ -450,7 +452,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("documentName", fileName);
 		container.setRecipient(recipient);
 		container.setFrom(getFromMailAddress(sender));
-
+		container.setReplyTo(sender.getMail());
 		return buildMailContainer(cfg, container, null,
 				MailContentType.SHARED_DOC_DELETED, builder);
 	}
@@ -487,7 +489,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
+				locale);
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -504,6 +506,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("urlparam", "");
 		container.setRecipient(recipient);
 		container.setFrom(getFromMailAddress(sender));
+		container.setReplyTo(sender.getMail());
 
 		return buildMailContainer(cfg, container, null,
 				MailContentType.SHARED_DOC_UPCOMING_OUTDATED, builder);
@@ -579,6 +582,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("urlparam", "");
 		container.setRecipient(recipient);
 		container.setFrom(getFromMailAddress(sender));
+		container.setReplyTo(sender.getMail());
 
 		return buildMailContainer(cfg, container,
 				input.getPersonalMessage(), MailContentType.NEW_SHARING,
@@ -620,6 +624,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("urlparam", "");
 		container.setRecipient(email);
 		container.setFrom(getFromMailAddress(sender));
+		container.setReplyTo(sender.getMail());
 
 		return buildMailContainer(cfg, container,
 				input.getPersonalMessage(),
@@ -665,6 +670,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("urlparam", "");
 		container.setRecipient(recipient);
 		container.setFrom(getFromMailAddress(sender));
+		container.setReplyTo(sender.getMail());
 
 		return buildMailContainer(cfg, container,
 				input.getPersonalMessage(),
@@ -707,6 +713,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("urlparam", "");
 		container.setRecipient(email);
 		container.setFrom(getFromMailAddress(sender));
+		container.setReplyTo(sender.getMail());
 
 		return buildMailContainer(cfg, container,
 				input.getPersonalMessage(),
