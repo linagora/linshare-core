@@ -49,7 +49,6 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
-import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
@@ -104,9 +103,6 @@ public class ManageMailingList {
 
 	@Property
 	private int autocompleteMin = 3;
-
-	@Inject
-	private RecipientFavouriteFacade recipientFavouriteFacade;
 
 	@SetupRender
 	public void init() {

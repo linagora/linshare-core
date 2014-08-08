@@ -60,7 +60,6 @@ import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
-import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.SearchDocumentFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
@@ -110,9 +109,6 @@ public class SearchFile {
 
 	@Inject
 	private UserAutoCompleteFacade userAutoCompleteFacade;
-
-	@Inject
-	private RecipientFavouriteFacade recipientFavouriteFacade;
 
 	@Inject
 	private SearchDocumentFacade searchDocumentFacade;

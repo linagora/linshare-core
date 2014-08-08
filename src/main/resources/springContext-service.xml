@@ -39,7 +39,6 @@
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="guestRepository" />
-		<constructor-arg ref="recipientFavouriteService" />
 		<constructor-arg ref="allowedContactRepository" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="abstractDomainService" />
@@ -125,6 +124,7 @@
 		<constructor-arg ref="mailContentBuildingService" />
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="recipientFavouriteRepository" />
 	</bean>
 
 	<bean id="anonymousShareEntryService" class="org.linagora.linshare.core.service.impl.AnonymousShareEntryServiceImpl">
@@ -136,6 +136,7 @@
 		<constructor-arg ref="mailContentBuildingService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="documentEntryBusinessService" />
+		<constructor-arg ref="recipientFavouriteRepository" />
 	</bean>
 
 	<bean id="anonymousUrlService" class="org.linagora.linshare.core.service.impl.AnonymousUrlServiceImpl">
@@ -163,10 +164,6 @@
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg value="${linshare.encipherment.tmp.dir}" />
-	</bean>
-
-	<bean name="recipientFavouriteService" class="org.linagora.linshare.core.service.impl.RecipientFavouriteServiceImpl">
-		<constructor-arg ref="recipientFavouriteRepository" />
 	</bean>
 
 	<bean name="statisticsService" class="org.linagora.linshare.core.service.impl.StatisticsServiceImpl">

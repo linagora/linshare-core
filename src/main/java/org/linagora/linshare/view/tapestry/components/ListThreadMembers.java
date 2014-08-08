@@ -54,7 +54,6 @@ import org.linagora.linshare.core.domain.vo.ThreadMemberVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.slf4j.Logger;
@@ -124,10 +123,6 @@ public class ListThreadMembers {
 
 	@Inject
 	private UserFacade userFacade;
-
-	@Inject
-	private RecipientFavouriteFacade recipientFavouriteFacade;
-
 
 	@SetupRender
 	public void init() throws BusinessException {

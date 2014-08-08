@@ -34,9 +34,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.InputStream;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
@@ -44,8 +42,8 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
-import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -55,6 +53,7 @@ import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.FavouriteRepository;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -83,6 +82,8 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
+	private final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository;
+
 	private static final Logger logger = LoggerFactory.getLogger(AnonymousShareEntryServiceImpl.class);
 
 	public AnonymousShareEntryServiceImpl(
@@ -92,7 +93,8 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 			final LogEntryService logEntryService, NotifierService notifierService,
 			final MailBuildingService mailBuildingService,
 			final MailContentBuildingService deprecatedMailBuildingService,
-			final DocumentEntryBusinessService documentEntryBusinessService) {
+			final DocumentEntryBusinessService documentEntryBusinessService,
+			final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository) {
 		super();
 		this.functionalityReadOnlyService = functionalityService;
 		this.anonymousShareEntryBusinessService = anonymousShareEntryBusinessService;
@@ -102,6 +104,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		this.mailBuildingService = mailBuildingService;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.deprecatedMailBuildingService = deprecatedMailBuildingService;
+		this.recipientFavouriteRepository = recipientFavouriteRepository;
 	}
 
 	@Override
@@ -140,6 +143,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService.create(sender, recipient, sc.getDocuments(), expiryDate, passwordProtected);
 			MailContainerWithRecipient mail = deprecatedMailBuildingService.buildMailNewSharingWithRecipient(mailContainer, anonymousUrl, sender);
 			sc.addMailContainer(mail);
+			recipientFavouriteRepository.incAndCreate(sender, recipient.getMail());
 		}
 
 		// FIXME : Where does it log recipients ? 

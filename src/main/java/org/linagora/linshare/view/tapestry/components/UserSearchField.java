@@ -51,7 +51,6 @@ import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
-import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.enums.UserTypes;
@@ -81,8 +80,6 @@ public class UserSearchField {
 	@Inject
 	private Messages messages;
 
-	@Inject
-	private RecipientFavouriteFacade recipientFavouriteFacade;
 	/* ***********************************************************
 	 * Properties & injected symbol, ASO, etc
 	 * ***********************************************************
@@ -154,19 +151,15 @@ public class UserSearchField {
 	}
 
 	public List<String> onProvideCompletionsFromUserSearchPattern(String input) {
-		List<UserVo> searchResults;
-
 		List<String> elements = new ArrayList<String>();
 		try {
-			searchResults = recipientFavouriteFacade.recipientsOrderedByWeightDesc(performSearch(input), userVo);
-
+			List<UserVo> searchResults = performSearch(input);
 			for (UserVo user : searchResults) {
 				String completeName = user.getFirstName().trim() + " " + user.getLastName().trim();
 				if (!elements.contains(completeName)) {
 					elements.add(completeName);
 				}
 			}
-
 			return elements;
 		} catch (BusinessException e) {
 			logger.error("Error while trying to autocomplete", e);

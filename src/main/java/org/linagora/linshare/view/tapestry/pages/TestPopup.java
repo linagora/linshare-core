@@ -35,10 +35,7 @@ package org.linagora.linshare.view.tapestry.pages;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.apache.tapestry5.OptionGroupModel;
 import org.apache.tapestry5.OptionModel;
@@ -62,7 +59,6 @@ import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MailingListFacade;
-import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
@@ -220,9 +216,6 @@ public class TestPopup {
 	private UserFacade userFacade;
 
 	@Inject
-	private RecipientFavouriteFacade recipientFavouriteFacade;
-
-	@Inject
 	private SelectModelFactory selectModelFactory;
 
 	@Inject
@@ -287,46 +280,6 @@ public class TestPopup {
 				return arg0.getIdentifier();
 			}
 		};
-	}
-	
-	/**
-	 * Perform a user search using the user search pattern.
-	 * 
-	 * @param input
-	 *            user search pattern.
-	 * @return list of users.
-	 */
-	private List<UserVo> performSearch(String input) {
-		Set<UserVo> userSet = new HashSet<UserVo>();
-		List<UserVo> res = new ArrayList<UserVo>();
-
-		String firstName_ = null;
-		String lastName_ = null;
-		String input_ = input != null ? input.trim() : null;
-
-		if (input_.length() > 0) {
-			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
-			if (stringTokenizer.hasMoreTokens()) {
-				firstName_ = stringTokenizer.nextToken();
-				if (stringTokenizer.hasMoreTokens()) {
-					lastName_ = stringTokenizer.nextToken();
-				}
-			}
-		}
-		try {
-			userSet.addAll(userFacade.searchUser(input_, null, null, userVo));
-			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,
-					userVo));
-			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,
-					userVo));
-			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(
-					input.trim(), userVo));
-			res.addAll(recipientFavouriteFacade.recipientsOrderedByWeightDesc(
-					new ArrayList<UserVo>(userSet), userVo));
-		} catch (BusinessException e) {
-			logger.error("Error while searching user in QuickSharePopup", e);
-		}
-		return res;
 	}
 	
 	public void onSuccessFromDateTestForm() {

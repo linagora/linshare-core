@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.repository.FavouriteRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<RecipientFavourite> implements FavouriteRepository<String,User, RecipientFavourite> {
@@ -53,6 +54,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		super(hibernateTemplate);
 	}
 
+	@Override
 	public boolean existFavourite(User owner, String element) {
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", owner));
@@ -64,6 +66,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 
 	}
 
+	@Override
 	public String getElementWithMaxWeight(User u) throws LinShareNotSuchElementException {
 
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
@@ -79,7 +82,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		return listElement.get(0).getRecipient();
 	}
 
-
+	@Override
 	public List<String> getElementsOrderByWeight(User u) {
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", u));
@@ -89,6 +92,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		return transformRecipientFavouriteToRecipient(listElement);
 	}
 
+	@Override
 	public List<String> getElementsOrderByWeightDesc(User u) {
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", u));
@@ -99,6 +103,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		return transformRecipientFavouriteToRecipient(listElement);
 	}
 
+	@Override
 	public Long getWeight(String element,User u)  throws LinShareNotSuchElementException {
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", u));
@@ -110,20 +115,22 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		return listElement.get(0).getWeight();
 	}
 
-	public void inc(String element,User u)  throws LinShareNotSuchElementException,BusinessException {
+	@Override
+	public void incAndCreate(User u, String mail) throws BusinessException {
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", u));
-		det.add(Restrictions.eq("recipient", element));
-		List<RecipientFavourite> listElement=findByCriteria(det);
-		if(listElement==null || listElement.isEmpty() ){
-			throw new LinShareNotSuchElementException("the owner has no recipient associated ");
+		det.add(Restrictions.eq("recipient", mail));
+		RecipientFavourite recipient = DataAccessUtils
+				.singleResult(findByCriteria(det));
+		if (recipient == null) {
+			recipient = create(new RecipientFavourite(u, mail));
+		} else {
+			recipient.inc();
 		}
-		RecipientFavourite favourite=listElement.get(0);
-		favourite.inc();
-		super.update(favourite);
-
+		update(recipient);
 	}
 
+	@Override
 	public void inc(List<String> element,User u)  throws LinShareNotSuchElementException,BusinessException {
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", u));
@@ -142,8 +149,8 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 
 	}
 
-
-	public void incAndCreate(List<String> elements,User u)   throws LinShareNotSuchElementException,BusinessException{
+	@Override
+	public void incAndCreate(User u, List<String> elements)   throws LinShareNotSuchElementException,BusinessException{
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", u));
 		det.add(Restrictions.in("recipient", elements));
@@ -217,6 +224,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		return det;
 	}
 
+	@Override
 	public List<String> reorderElementsByWeightDesc(List<String> elements, User owner)
 			{
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
@@ -229,6 +237,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		
 	}
 
+	@Override
 	public List<String> findMatchElementsOrderByWeight(String matchStartWith, User owner) {
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", owner));
@@ -244,6 +253,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		return mails;
 	}
 
+	@Override
 	public void deleteFavoritesOfUser(User owner) throws IllegalArgumentException, BusinessException {
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", owner));

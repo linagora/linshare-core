@@ -42,11 +42,11 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -54,10 +54,10 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
-import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.FavouriteRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -96,6 +96,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 	private final MailBuildingService mailBuildingService;
 
+	private final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository;
 
 public ShareEntryServiceImpl(GuestRepository guestRepository,
 			FunctionalityReadOnlyService functionalityService,
@@ -106,7 +107,9 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 			DocumentEntryBusinessService documentEntryBusinessService,
 			NotifierService notifierService,
 			MailContentBuildingService deprecatedMailBuildingService,
-			MailBuildingService mailBuildingService) {
+			MailBuildingService mailBuildingService,
+			FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository
+			) {
 		super();
 		this.guestRepository = guestRepository;
 		this.functionalityService = functionalityService;
@@ -118,23 +121,8 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 		this.notifierService = notifierService;
 		this.deprecatedMailBuildingService = deprecatedMailBuildingService;
 		this.mailBuildingService = mailBuildingService;
+		this.recipientFavouriteRepository = recipientFavouriteRepository;
 	}
-
-
-//	public ShareEntryServiceImpl(GuestRepository guestRepository, FunctionalityReadOnlyService functionalityReadOnlyService, ShareEntryBusinessService shareEntryBusinessService,
-//		ShareExpiryDateService shareExpiryDateService, LogEntryService logEntryService, DocumentEntryService documentEntryService, NotifierService notifierService,
-//		MailContentBuildingService mailElementsFactory, DocumentEntryBusinessService documentEntryBusinessService) {
-//	super();
-//	this.guestRepository = guestRepository;
-//	this.functionalityService = functionalityReadOnlyService;
-//	this.shareEntryBusinessService = shareEntryBusinessService;
-//	this.shareExpiryDateService = shareExpiryDateService;
-//	this.logEntryService = logEntryService;
-//	this.documentEntryService = documentEntryService;
-//	this.notifierService = notifierService;
-//	this.deprecatedMailBuildingService = mailElementsFactory;
-//	this.documentEntryBusinessService = documentEntryBusinessService;
-//}
 
 	private void updateGuestExpiryDate(User recipient, User sender) {
 		// update guest account expiry date
@@ -366,6 +354,7 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 						owner, recipient, expiryDate);
 				updateGuestExpiryDate(recipient, owner);
 				shares.add(createShare);
+				recipientFavouriteRepository.incAndCreate(owner, recipient.getMail());
 				logEntryService.create(new ShareLogEntry(owner, createShare, LogAction.FILE_SHARE, "Sharing of a file"));
 				logEntryService.create(new ShareLogEntry(
 						recipient, LogAction.SHARE_RECEIVED, "Receiving a shared file", createShare, owner));
@@ -380,8 +369,5 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 			}
 			sc.addMailContainer(mail);
 		}
-//		recipientFavouriteFacade.increment(userVo, recipientsEmail);
 	}
-
-
 }

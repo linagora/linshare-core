@@ -101,4 +101,10 @@ public class RecipientFavourite extends AbstractFavourite<User>{
 		return this.getOwner().hashCode()+this.getRecipient().hashCode();
 	}
 
+	@Override
+	public String toString() {
+		return "RecipientFavourite [recipient=" + recipient + ", getWeight()="
+				+ getWeight() + "]";
+	}
+
 }

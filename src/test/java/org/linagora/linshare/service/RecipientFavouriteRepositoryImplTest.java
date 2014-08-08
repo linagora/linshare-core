@@ -41,6 +41,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
@@ -49,8 +51,6 @@ import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.repository.hibernate.RecipientFavouriteRepositoryImpl;
-import org.linagora.linshare.core.service.RecipientFavouriteService;
-import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,23 +58,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = { 
+@ContextConfiguration(locations={"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
-		"classpath:springContext-repository.xml",
-		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
-		"classpath:springContext-business-service.xml",
-		"classpath:springContext-facade.xml",
-		"classpath:springContext-startopendj.xml",
-		"classpath:springContext-jackRabbit.xml",
-		"classpath:springContext-test.xml"
-		})
-public class RecipientFavouriteServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
-	private static Logger logger = LoggerFactory.getLogger(RecipientFavouriteServiceImplTest.class);
+		"classpath:springContext-repository.xml"})
+public class RecipientFavouriteRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests{
+	private static Logger logger = LoggerFactory.getLogger(RecipientFavouriteRepositoryImplTest.class);
 
-	@Autowired
-	private RecipientFavouriteService recipientFavouriteService;
-	
 	@Qualifier("recipientFavouriteRepository")
 	@Autowired
 	private RecipientFavouriteRepositoryImpl favouriteRepository;	
@@ -91,24 +80,54 @@ public class RecipientFavouriteServiceImplTest extends AbstractTransactionalJUni
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
-	
-	@Autowired
-	private UserService userService;
-	
-	private LoadingServiceTestDatas datas;
 
+	
+	private User user1;  /* John Doe */
+	private User user2;	 /* Jane Smith */
+	private User user3;	 /* Foo Bar */
+	
+	public User getUser1() {
+		return user1;
+	}
+
+	public User getUser2() {
+		return user2;
+	}
+
+	public User getUser3() {
+		return user3;
+	}
+	
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
-		datas.loadUsers();
+
+		user1 = new Internal("John","Doe","user1@linpki.org", null);
+		user2 = new Internal("Jane","Smith","user2@linpki.org", null);
+		user3 = new Internal("Foo","Bar","user3@linpki.org", null); 
+
+		AbstractDomain userGuestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.guestDomainName1);
+		user1.setLocale(userGuestDomain.getDefaultTapestryLocale());
+		user2.setLocale(userGuestDomain.getDefaultTapestryLocale());
+		user3.setLocale(userGuestDomain.getDefaultTapestryLocale());
+
+		user1.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.topDomainName));
+		user2.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1));
+		user3.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.guestDomainName1));
+
+		user1 = userRepository.create(user1);		
+		user2 = userRepository.create(user2);
+		user3 = userRepository.create(user3);
+		
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		datas.deleteUsers();
+		userRepository.delete(user1);
+		userRepository.delete(user2);
+		userRepository.delete(user3);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
@@ -117,16 +136,16 @@ public class RecipientFavouriteServiceImplTest extends AbstractTransactionalJUni
 	public void testIncrement() throws LinShareNotSuchElementException, BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		User owner = datas.getUser1();
+		User owner = getUser1();
 		
-		String user2 = datas.getUser2().getLogin();
-		String user3 = datas.getUser3().getLogin();
+		String user2 = getUser2().getLogin();
+		String user3 = getUser3().getLogin();
 		
 		List<String> recipients = new ArrayList<String>();
 		recipients.add(user2);
 		recipients.add(user3);
 
-		recipientFavouriteService.increment(owner, recipients);
+		favouriteRepository.incAndCreate(owner, recipients);
 		
 		Assert.assertTrue(favouriteRepository.existFavourite(owner, user2));
 		Assert.assertTrue(favouriteRepository.existFavourite(owner, user3));
@@ -139,24 +158,26 @@ public class RecipientFavouriteServiceImplTest extends AbstractTransactionalJUni
 	public void testRecipientsOrderedByWeightDesc() throws LinShareNotSuchElementException, BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		User owner = datas.getUser1();
+		User owner = user1;
 		
-		String user2 = datas.getUser2().getLogin();
-		String user3 = datas.getUser3().getLogin();
+		String user2 = getUser2().getMail();
+		String user3 = getUser3().getMail();
 		
 		List<String> recipients = new ArrayList<String>();
 		recipients.add(user2);
 		recipients.add(user3);
 			
-		favouriteRepository.incAndCreate(recipients,owner);
-	
-		favouriteRepository.inc(user3, owner);
-
 		List<String> elementsOrderByWeightDesc = favouriteRepository.getElementsOrderByWeight(owner);
+		
+		favouriteRepository.incAndCreate(owner, recipients);
+	
+		elementsOrderByWeightDesc = favouriteRepository.getElementsOrderByWeight(owner);
+		favouriteRepository.incAndCreate(owner, user3);
+
+		elementsOrderByWeightDesc = favouriteRepository.getElementsOrderByWeight(owner);
 		Assert.assertTrue(elementsOrderByWeightDesc.get(1).equals(user3));
 		Assert.assertTrue(elementsOrderByWeightDesc.get(0).equals(user2));
-		
-		List<String> recipientsOrderedByWeightDesc = recipientFavouriteService.recipientsOrderedByWeightDesc(owner);
+		List<String> recipientsOrderedByWeightDesc = favouriteRepository.reorderElementsByWeightDesc(elementsOrderByWeightDesc, owner); 
 		Assert.assertTrue(recipientsOrderedByWeightDesc.get(1).equals(user2));
 		Assert.assertTrue(recipientsOrderedByWeightDesc.get(0).equals(user3));
 		
@@ -167,20 +188,20 @@ public class RecipientFavouriteServiceImplTest extends AbstractTransactionalJUni
 	public void testReorderRecipientsByWeightDesc() throws LinShareNotSuchElementException, BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		User owner = datas.getUser1();
+		User owner = getUser1();
 		
-		String user2 = datas.getUser2().getLogin();
-		String user3 = datas.getUser3().getLogin();
+		String user2 = getUser2().getLogin();
+		String user3 = getUser3().getLogin();
 		
 		List<String> recipients = new ArrayList<String>();
 		recipients.add(user2);
 		recipients.add(user3);
 
-		favouriteRepository.incAndCreate(recipients,owner);
+		favouriteRepository.incAndCreate(owner, recipients);
 		
-		favouriteRepository.inc(user3, owner);
+		favouriteRepository.incAndCreate(owner, user3);
 		
-		List<String> recipientsOrderedByWeightDesc = recipientFavouriteService.reorderRecipientsByWeightDesc(recipients,owner);
+		List<String> recipientsOrderedByWeightDesc = favouriteRepository.reorderElementsByWeightDesc(recipients, owner);
 		Assert.assertTrue(recipientsOrderedByWeightDesc.get(0).equals(user3));
 		Assert.assertTrue(recipientsOrderedByWeightDesc.get(1).equals(user2));
 		
@@ -195,20 +216,20 @@ public class RecipientFavouriteServiceImplTest extends AbstractTransactionalJUni
 	public void testFindRecipientFavorite() throws LinShareNotSuchElementException, BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		User owner = datas.getUser1();
+		User owner = getUser1();
 		
-		String user2 = datas.getUser2().getLogin();
-		String user3 = datas.getUser3().getLogin();
+		String user2 = getUser2().getLogin();
+		String user3 = getUser3().getLogin();
 		
 		List<String> recipients = new ArrayList<String>();
 		recipients.add(user2);
 		recipients.add(user3);
 
-		favouriteRepository.incAndCreate(recipients,owner);
+		favouriteRepository.incAndCreate(owner, recipients);
 		
-		favouriteRepository.inc(user3, owner);
-		Assert.assertFalse(recipientFavouriteService.findRecipientFavorite( datas.getUser3().getMail(), owner).isEmpty());
-		Assert.assertTrue(recipientFavouriteService.findRecipientFavorite( "failMail@mail.com", owner).isEmpty());
+		favouriteRepository.incAndCreate(owner, user3);
+		Assert.assertFalse(favouriteRepository.findMatchElementsOrderByWeight( getUser3().getMail(), owner).isEmpty());
+		Assert.assertTrue(favouriteRepository.findMatchElementsOrderByWeight( "failMail@mail.com", owner).isEmpty());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
@@ -216,18 +237,18 @@ public class RecipientFavouriteServiceImplTest extends AbstractTransactionalJUni
 	public void testDeleteFavoritesOfUser() throws LinShareNotSuchElementException, BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
-		User owner = datas.getUser1();
+		User owner = getUser1();
 		
-		String user3 = datas.getUser3().getLogin();
+		String user3 = getUser3().getLogin();
 		
 		List<String> recipients = new ArrayList<String>();
 		recipients.add(user3);
 
-		favouriteRepository.incAndCreate(recipients,owner);
+		favouriteRepository.incAndCreate(owner, recipients);
 		
-		Assert.assertFalse(recipientFavouriteService.findRecipientFavorite(datas.getUser3().getMail(), owner).isEmpty());
-		recipientFavouriteService.deleteFavoritesOfUser(owner);
-		Assert.assertTrue(recipientFavouriteService.findRecipientFavorite( datas.getUser3().getMail(), owner).isEmpty());
+		Assert.assertFalse(favouriteRepository.findMatchElementsOrderByWeight(getUser3().getMail(), owner).isEmpty());
+		favouriteRepository.deleteFavoritesOfUser(owner);
+		Assert.assertTrue(favouriteRepository.findMatchElementsOrderByWeight( getUser3().getMail(), owner).isEmpty());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

@@ -60,7 +60,7 @@ public interface FavouriteRepository<T,U,V> extends AbstractRepository<V>{
 	 * Increment the weight of an element.
 	 * @param element the element concerned by the increase of weight.
 	 */
-	public void inc(T element,U owner) throws LinShareNotSuchElementException,BusinessException;
+	public void incAndCreate(U owner, T element);
 	
 	/**
 	 * Increment the weight of an element.
@@ -70,12 +70,12 @@ public interface FavouriteRepository<T,U,V> extends AbstractRepository<V>{
 	
 	/**
 	 * Increment the weight of several elements, if they don't exist, there are created before.
-	 * @param elements
 	 * @param owner
+	 * @param elements
 	 * @throws LinShareNotSuchElementException
 	 * @throws BusinessException
 	 */
-	public void incAndCreate(List<T> elements,U owner) throws LinShareNotSuchElementException,BusinessException;
+	public void incAndCreate(U owner, List<T> elements) throws LinShareNotSuchElementException,BusinessException;
 	
 	/**
 	 * reorder elements by weight in desc order.

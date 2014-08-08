@@ -132,9 +132,9 @@ public class LoadingServiceTestDatas {
 		user2.setDomain(abstractDomainRepository.findById(subDomainName1));
 		user3.setDomain(abstractDomainRepository.findById(guestDomainName1));
 
-		userRepository.create(user1);		
-		userRepository.create(user2);
-		userRepository.create(user3);
+		user1 = userRepository.create(user1);		
+		user2 = userRepository.create(user2);
+		user3 = userRepository.create(user3);
 	}
 
 	public Guest getGuest1() {

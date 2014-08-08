@@ -62,7 +62,6 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.EntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
-import org.linagora.linshare.core.service.RecipientFavouriteService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
@@ -81,8 +80,6 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository<User> userRepository;
 
 	private final LogEntryService logEntryService;
-
-	private final RecipientFavouriteService recipientFavouriteService;
 
 	private final AbstractDomainService abstractDomainService;
 
@@ -103,7 +100,6 @@ public class UserServiceImpl implements UserService {
 			final UserRepository<User> userRepository,
 			final LogEntryService logEntryService,
 			final GuestRepository guestRepository,
-			final RecipientFavouriteService recipientFavouriteService,
 			final AllowedContactRepository allowedContactRepository,
 			final FunctionalityReadOnlyService functionalityService,
 			final AbstractDomainService abstractDomainService,
@@ -114,7 +110,6 @@ public class UserServiceImpl implements UserService {
 		this.userRepository = userRepository;
 		this.logEntryService = logEntryService;
 		this.guestRepository = guestRepository;
-		this.recipientFavouriteService = recipientFavouriteService;
 		this.allowedContactRepository = allowedContactRepository;
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityReadOnlyService = functionalityService;
@@ -232,7 +227,7 @@ public class UserServiceImpl implements UserService {
 					userToDelete);
 
 			// clearing the favorites
-			recipientFavouriteService.deleteFavoritesOfUser(userToDelete);
+//			recipientFavouriteService.deleteFavoritesOfUser(userToDelete);
 
 			// clearing allowed contacts
 			allowedContactRepository.deleteAllByUserBothSides(userToDelete);

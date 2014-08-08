@@ -80,11 +80,6 @@
 		<constructor-arg ref="userService" />
 	</bean>
 
-	<bean name="recipientFavouriteFacade" class="org.linagora.linshare.core.facade.impl.RecipientFavouriteFacadeImpl">
-		<constructor-arg ref="userService" />
-		<constructor-arg ref="recipientFavouriteService" />
-	</bean>
-
 	<!-- Definition of the transformers -->
 
 	<bean name="documentEntryTransformer" class="org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer">

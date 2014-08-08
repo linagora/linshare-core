@@ -49,7 +49,6 @@ import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MailingListFacade;
-import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.slf4j.Logger;
@@ -62,9 +61,6 @@ public class DisplayMailingList {
 	
 	@Inject
 	private MailingListFacade mailingListFacade;
-
-	@Inject
-	private RecipientFavouriteFacade recipientFavouriteFacade;
 
 	@Inject
 	private UserAutoCompleteFacade userAutoCompleteFacade;

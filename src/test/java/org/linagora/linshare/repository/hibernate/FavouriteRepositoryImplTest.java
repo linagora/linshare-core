@@ -115,7 +115,7 @@ public class FavouriteRepositoryImplTest extends AbstractTransactionalJUnit4Spri
 		array.add("jean.lechat@linagora.com");
 		array.add("pierre.lechat@linagora.com");
 		try {
-			favouriteRepository.incAndCreate(array, userRepo.findByMail("robert.lechat@linagora.com"));
+			favouriteRepository.incAndCreate(userRepo.findByMail("robert.lechat@linagora.com"), array);
 		} catch (LinShareNotSuchElementException e) {
 			Assert.fail();
 		} catch (BusinessException e) {
@@ -128,7 +128,7 @@ public class FavouriteRepositoryImplTest extends AbstractTransactionalJUnit4Spri
 			Assert.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(new Long(1)));
 			
 			//Check if it's incremented correctly.
-			favouriteRepository.incAndCreate(array, userRepo.findByMail("robert.lechat@linagora.com"));
+			favouriteRepository.incAndCreate(userRepo.findByMail("robert.lechat@linagora.com"), array);
 			Assert.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(new Long(2)));
 			Assert.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(new Long(2)));
 			
