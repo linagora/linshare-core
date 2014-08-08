@@ -255,24 +255,6 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 		return shareEntryBusinessService.update(share);
 	}
 
-
-	@Override
-	public boolean hasThumbnail(User actor, String shareEntryUuid) {
-		try {
-			ShareEntry shareEntry = find(actor, shareEntryUuid);
-			if (shareEntry.getRecipient().equals(actor)) {
-				String thmbUUID = shareEntry.getDocumentEntry().getDocument().getThmbUuid();
-				return (thmbUUID!=null && thmbUUID.length()>0);
-			} else {
-				logger.error("You don't own this share : " + shareEntryUuid);
-			}
-		} catch (BusinessException e) {
-			logger.error("Can't fin share for thumbnail : " + shareEntryUuid + " : " + e.getMessage());
-		}
-		return false;
-	}
-
-
 	@Override
 	public InputStream getThumbnailStream(User actor, String shareEntryUuid) throws BusinessException {
 		try {
@@ -287,7 +269,6 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 		}
 	}
 
-
 	@Override
 	public InputStream getStream(User actor, String shareEntryUuid) throws BusinessException {
 		try {
@@ -299,6 +280,10 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 			ShareLogEntry logEntryTarget = ShareLogEntry.aShareWasDownloaded(actor, shareEntry);
 			logEntryService.create(logEntryActor);
 			logEntryService.create(logEntryTarget);
+			if (shareEntry.getDownloaded() <=0) {
+				MailContainerWithRecipient mail = mailBuildingService.buildRegisteredDownload(shareEntry);
+				notifierService.sendNotification(mail);
+			}
 			shareEntryBusinessService.updateDownloadCounter(shareEntry.getUuid());
 			return documentEntryBusinessService.getDocumentStream(shareEntry.getDocumentEntry());
 		} catch (BusinessException e) {

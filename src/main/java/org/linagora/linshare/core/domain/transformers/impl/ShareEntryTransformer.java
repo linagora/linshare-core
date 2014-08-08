@@ -45,7 +45,7 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 public class ShareEntryTransformer implements Transformer<ShareEntry, ShareDocumentVo> {
 
 	private final ShareEntryBusinessService shareEntryBusinessService;
-	
+
 
 	public ShareEntryTransformer(ShareEntryBusinessService shareEntryService) {
 		super();
@@ -57,6 +57,7 @@ public class ShareEntryTransformer implements Transformer<ShareEntry, ShareDocum
 	public ShareDocumentVo disassemble(ShareEntry share) {
 		UserVo sender = new UserVo(share.getEntryOwner());
 		UserVo recipient = new UserVo(share.getRecipient());
+
 		boolean downloaded = false;
 		if (share.getDownloaded() >= 1)
 			downloaded = true;
@@ -74,7 +75,8 @@ public class ShareEntryTransformer implements Transformer<ShareEntry, ShareDocum
 				recipient,
 				share.getExpirationDate(),
 				share.getCreationDate(),
-				downloaded);
+				downloaded,
+				share.hasThumbnail());
 	}
 
 

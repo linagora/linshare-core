@@ -94,7 +94,7 @@ public class DocumentVo implements Serializable, Comparable {
 	private final String fileComment;
 
 	@NonVisual
-	private final boolean  hasThumbnail;
+	protected boolean  hasThumbnail;
 
 	public DocumentVo(DocumentEntry documentEntry) {
 		super();
@@ -199,7 +199,7 @@ public class DocumentVo implements Serializable, Comparable {
 		return fileComment;
 	}
 
-	public boolean isHasThumbnail() {
+	public boolean hasThumbnail() {
 		return hasThumbnail;
 	}
 

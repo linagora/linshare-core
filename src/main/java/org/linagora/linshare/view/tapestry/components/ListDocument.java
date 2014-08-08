@@ -967,7 +967,7 @@ public class ListDocument {
 	}
 
 	public boolean getThumbnailExists() {
-		return document.isHasThumbnail();
+		return document.hasThumbnail();
 	}
 
 	public void onThumbnail(String docID) {

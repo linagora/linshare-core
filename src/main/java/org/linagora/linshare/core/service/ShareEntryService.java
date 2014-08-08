@@ -58,8 +58,6 @@ public interface ShareEntryService {
 
 	public ShareEntry update(User actor, ShareEntry shareEntry) throws BusinessException;
 
-	public boolean hasThumbnail(User actor, String shareEntryUuid);
-
 	public InputStream getThumbnailStream(User actor, String shareEntryUuid) throws BusinessException;
 
 	public InputStream getStream(User actor, String shareEntryUuid) throws BusinessException;

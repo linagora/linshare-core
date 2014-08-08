@@ -101,16 +101,6 @@ public interface ShareFacade {
     public DocumentVo createLocalCopy(ShareDocumentVo shareDocumentVo, UserVo actorVo) throws BusinessException;
 
 
-
-    /**
-     * Send a notification to the owner of the shared document which has been downloaded
-     *
-     * @param sharedDocument
-     * @param currentUser
-     */
-    public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo actorVo) throws BusinessException;
-
-
 	/**
 	 * This method returns true if we can enable or disable manually on the IHM the checkbox 'Secured Anonymous URL'.
 	 * @param user domain identifier
@@ -140,9 +130,6 @@ public interface ShareFacade {
 	 * @throws BusinessException
 	 */
 	public void updateShareComment(UserVo actorVo, String uuid, String comment) throws IllegalArgumentException, BusinessException ;
-
-
-	public boolean shareHasThumbnail(UserVo actorVo, String shareEntryUuid);
 
 	public InputStream getShareThumbnailStream(UserVo actorVo, String shareEntryUuid) throws BusinessException;
 

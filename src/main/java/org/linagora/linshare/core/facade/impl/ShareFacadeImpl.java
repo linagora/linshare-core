@@ -167,14 +167,17 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	@Override
 	public void deleteSharing(ShareDocumentVo share, UserVo actorVo)
 			throws BusinessException {
-		shareEntryService.delete(getActor(actorVo), share.getIdentifier());
+		User actor = getActor(actorVo);
+		shareEntryService.delete(actor, share.getIdentifier());
 	}
 
+	// TODO FMA
 	@Override
 	public DocumentVo createLocalCopy(ShareDocumentVo shareDocumentVo,
 			UserVo actorVo) throws BusinessException {
+		User actor = getActor(actorVo);
 		DocumentEntry documentEntry = shareEntryService.copyDocumentFromShare(
-				shareDocumentVo.getIdentifier(), getActor(actorVo));
+				shareDocumentVo.getIdentifier(), actor);
 		return documentEntryTransformer.disassemble(documentEntry);
 	}
 
@@ -187,37 +190,6 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 
 		logger.debug("createSharingWithMailUsingRecipientsEmail");
 		return null;
-	}
-
-	@Override
-	public void sendDownloadNotification(ShareDocumentVo sharedDocument,
-			UserVo actorVo) throws BusinessException {
-		try {
-			// send a notification by mail to the owner
-			ShareEntry shareEntry = shareEntryService.find(getActor(actorVo),
-					sharedDocument.getIdentifier());
-//			notifierService.sendNotification(mailElementsFactory
-//					.buildMailRegisteredDownloadWithOneRecipient(shareEntry));
-		} catch (BusinessException e) {
-			// TODO : FIXME : send the notification to the domain administration
-			// address. => a new functionality need to be add.
-			if (e.getErrorCode()
-					.equals(BusinessErrorCode.RELAY_HOST_NOT_ENABLE)) {
-				logger.error("Can't send share downloaded notification ("
-						+ sharedDocument.getIdentifier()
-						+ ") to owner because : " + e.getMessage());
-			}
-		}
-	}
-
-	private SuccessesAndFailsItems<ShareDocumentVo> disassembleShareResultList(
-			SuccessesAndFailsItems<ShareEntry> successAndFails) {
-		SuccessesAndFailsItems<ShareDocumentVo> results = new SuccessesAndFailsItems<ShareDocumentVo>();
-		results.setFailsItem(shareEntryTransformer
-				.disassembleList(successAndFails.getFailsItem()));
-		results.setSuccessesItem(shareEntryTransformer
-				.disassembleList(successAndFails.getSuccessesItem()));
-		return results;
 	}
 
 	@Override
@@ -247,8 +219,9 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	@Override
 	public ShareDocumentVo getShareDocumentVoByUuid(UserVo actorVo, String uuid)
 			throws BusinessException {
+		User actor = getActor(actorVo);
 		return shareEntryTransformer.disassemble(shareEntryService.find(
-				getActor(actorVo), uuid));
+				actor, uuid));
 	}
 
 	@Override
@@ -259,19 +232,8 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		ShareEntry share = new ShareEntry();
 		share.setUuid(uuid);
 		share.setComment(comment);
-		shareEntryService.update(getActor(actorVo), share);
-	}
-
-	@Override
-	public boolean shareHasThumbnail(UserVo actorVo, String shareEntryUuid) {
-		try {
-			User actor = getActor(actorVo);
-			return shareEntryService.hasThumbnail(actor, shareEntryUuid);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			logger.debug(e.toString());
-			return false;
-		}
+		User actor = getActor(actorVo);
+		shareEntryService.update(actor, share);
 	}
 
 	@Override
@@ -293,31 +255,14 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	public InputStream getShareStream(UserVo actorVo, String shareEntryUuid)
 			throws BusinessException {
 		logger.debug("downloading share : " + shareEntryUuid);
-		String lsUid = actorVo.getLsUuid();
-		if (lsUid == null) {
-			logger.error("Can't find user with null parametter.");
-			return null;
-		}
-
-		User actor = userService.findByLsUuid(lsUid);
-		if (actor == null) {
-			logger.error("Can't find logged user.");
-			return null;
-		}
-
-		try {
-			return shareEntryService.getStream(actor, shareEntryUuid);
-		} catch (BusinessException e) {
-			logger.error("Can't get document thumbnail : " + shareEntryUuid
-					+ " : " + e.getMessage());
-			throw e;
-		}
+		User actor = getActor(actorVo);
+		return shareEntryService.getStream(actor, shareEntryUuid);
 	}
 
 	@Override
 	public boolean isSignedShare(UserVo actorVo, ShareDocumentVo shareVo) {
 		boolean res = false;
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+		User actor = getActor(actorVo);
 		try {
 			ShareEntry share = shareEntryService.find(actor,
 					shareVo.getIdentifier());
@@ -335,7 +280,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	@Override
 	public boolean isSignedShare(UserVo actorVo, String shareVoIdentifier) {
 		boolean res = false;
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+		User actor = getActor(actorVo);
 		try {
 			ShareEntry share = shareEntryService.find(actor,
 					shareVoIdentifier);
@@ -352,7 +297,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 
 	@Override
 	public SignatureVo getSignature(UserVo actorVo, ShareDocumentVo documentVo) {
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+		User actor = getActor(actorVo);
 		try {
 			ShareEntry share = shareEntryService.find(actor,
 					documentVo.getIdentifier());
@@ -376,7 +321,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	@Override
 	public List<SignatureVo> getAllSignatures(UserVo actorVo,
 			ShareDocumentVo documentVo) {
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+		User actor = getActor(actorVo);
 		try {
 			ShareEntry share = shareEntryService.find(actor,
 					documentVo.getIdentifier());

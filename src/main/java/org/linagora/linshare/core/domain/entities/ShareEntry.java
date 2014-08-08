@@ -44,12 +44,12 @@ import org.linagora.linshare.core.domain.constants.EntryType;
 public class ShareEntry extends Entry {
 
 	protected User recipient;
-	
+
 	protected DocumentEntry documentEntry;
-	
+
 	protected Long downloaded;
 
-	
+
 	public ShareEntry() {
 		super();
 	}
@@ -94,14 +94,21 @@ public class ShareEntry extends Entry {
 	public void incrementDownloaded() {
 		++downloaded;
 	}
-	
+
 	/* useful getters */
 	public long getSize() {
 		return documentEntry.getSize();
 	}
-	
+
 	public String getType() {
 		return documentEntry.getType();
 	}
-	
+
+	/*
+	 * helpers
+	 */
+	public boolean hasThumbnail() {
+		String thmbUUID = documentEntry.getDocument().getThmbUuid();
+		return (thmbUUID != null && thmbUUID.length() > 0);
+	}
 }

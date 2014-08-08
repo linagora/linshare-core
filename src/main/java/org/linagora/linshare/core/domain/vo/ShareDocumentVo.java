@@ -41,61 +41,46 @@ public class ShareDocumentVo extends DocumentVo {
 
 	/** the document's owner */
 	private final UserVo sender;
-	
+
 	/** the recipient of the document */
 	private final UserVo receiver;
-	
+
 	/** the expiration date of the share*/
 	private final Calendar shareExpirationDate;
-	
+
 	/** the date of the share*/
 	private final Calendar sharingDate;
-	
+
 	/** is the document has been downloaded */
 	private final Boolean downloaded;
-	
-	
-	
-	
+
+
+
+
 	public ShareDocumentVo(String identifier, String name, String fileComment, Calendar creationDate, Calendar expirationDate, String type,
 			String ownerLogin, Boolean encrypted, Boolean shared,
-			Long size, UserVo sender, UserVo receiver, Calendar shareExpirationDate, Calendar sharingDate, Boolean downloaded) {
+			Long size, UserVo sender, UserVo receiver, Calendar shareExpirationDate, Calendar sharingDate, Boolean downloaded, boolean hasThumbnail) {
 		super(identifier, name, fileComment, creationDate, expirationDate, type, ownerLogin, encrypted, shared, size);
 		this.sender = sender;
 		this.receiver = receiver;
 		this.shareExpirationDate = shareExpirationDate;
 		this.sharingDate = sharingDate;
 		this.downloaded = downloaded;
+		this.hasThumbnail = hasThumbnail;
 	}
-	
 
-//	public ShareDocumentVo(String identifier, String name, String fileComment,
-//			Calendar creationDate, Calendar expirationDate, String type,
-//			String ownerLogin, Boolean encrypted, Boolean shared, 
-//			Long size, UserVo sender, UserVo receiver,  Calendar shareExpirationDate,
-//			Boolean downloaded, String comment, Calendar sharingDate, long persistenceId) {
-//		super(identifier, name, fileComment, creationDate, expirationDate, type, ownerLogin,
-//				encrypted, shared, size);
-//		
-//		this.sender = sender; 
-//		this.receiver = receiver; 
-//		this.shareExpirationDate = shareExpirationDate;
-//		this.downloaded = downloaded;
-//		this.comment = comment;
-//		this.sharingDate = sharingDate;
-//		this.persistenceId = persistenceId;
-//	}
-//	
+
 	public ShareDocumentVo(DocumentVo doc, UserVo sender, UserVo receiver) {
-		
+
 		super(doc.getIdentifier(),doc.getFileName(),doc.getFileComment(),doc.getCreationDate(),doc.getExpirationDate(),doc.getType(), doc.getOwnerLogin(),
 				doc.getEncrypted(),doc.getShared(),doc.getSize());
-		
+
 		this.sender = sender; 
 		this.receiver = receiver; 
 		this.shareExpirationDate = null;
 		this.downloaded = null;
 		this.sharingDate = null;
+		this.hasThumbnail = doc.hasThumbnail();
 	}
 
 	public UserVo getSender() {

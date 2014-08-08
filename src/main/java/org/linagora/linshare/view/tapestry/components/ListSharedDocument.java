@@ -275,34 +275,16 @@ public class ListSharedDocument {
 		}
 
 		ShareDocumentVo currentSharedDocumentVo=searchDocumentVoByUUid(componentdocuments, uuid);
-
 		if (null == currentSharedDocumentVo) {
 			businessMessagesManagementService.notify(new BusinessException(
 					BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND,
 					"invalid uuid for this user"));
 			return null;
 		} else {
-			boolean alreadyDownloaded = currentSharedDocumentVo.getDownloaded();
 			InputStream stream = shareFacade.getShareStream(user, currentSharedDocumentVo.getIdentifier());
-
-			// send an email to the owner if it is the first time the document is downloaded
-			if (!alreadyDownloaded) {
-				logger.info("First download of this shar, notify the owner of it.");
-				notifyOwnerByEmail(currentSharedDocumentVo);
-				componentdocuments = shareFacade.getAllSharingReceivedByUser(user); // maj valeur downloaded dans le VO
-			}
 			return new FileStreamResponse(currentSharedDocumentVo, stream);
 		}
 
-	}
-
-	private void notifyOwnerByEmail(ShareDocumentVo currentSharedDocumentVo) {
-		try {
-			shareFacade.sendDownloadNotification(currentSharedDocumentVo, user);
-		} catch (BusinessException e) {
-			logger.error("Problem while sending mail", e);
-			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Problem while sending mail",e);
-		}		
 	}
 
 	public void onActionFromDelete(String uuid){
@@ -415,7 +397,6 @@ public class ListSharedDocument {
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
 		}else{
 	        boolean copyDone = false;
-	        boolean alreadyDownloaded = currentSharedDocumentVo.getDownloaded();
 
 	        //create the copy of the document and remove it from the received documents
 	        DocumentVo copyDoc = null;
@@ -426,10 +407,6 @@ public class ListSharedDocument {
 	            // process business exception. Can be thrown if no space left or wrong mime type.
 	            businessMessagesManagementService.notify(e);
 	        }
-
-	        //send an email to the owner if it is the first time the document is downloaded
-			if (!alreadyDownloaded) 
-				notifyOwnerByEmail(currentSharedDocumentVo);
 
 	        if (copyDone) {
 	            businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.LOCAL_COPY_OK,
@@ -676,7 +653,7 @@ public class ListSharedDocument {
 	}
 
 	public boolean getThumbnailExists() {
-		return shareFacade.shareHasThumbnail(user, shareDocument.getIdentifier());
+		return shareDocument.hasThumbnail();
 	}
 
 	public String getTypeCSSClass() {
