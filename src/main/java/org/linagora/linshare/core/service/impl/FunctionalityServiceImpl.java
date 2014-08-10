@@ -43,6 +43,7 @@ import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.FunctionalityService;
@@ -121,6 +122,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	@Override
 	public void deleteFunctionality(Account actor, String domainId, String functionalityId) throws IllegalArgumentException, BusinessException {
 		checkDomainRights(actor, domainId);
+		checkDeleteRights(domainId);
 		functionalityBusinessService.delete(domainId, functionalityId);
 	}
 
@@ -210,7 +212,17 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 
 	private void checkDomainRights(Account actor, String domainId) throws BusinessException {
 		if(!domainPermissionBusinessService.isAdminforThisDomain(actor, domainId)) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,"The current domain does not exist : domainId");
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,"The current domain does not exist : " + domainId);
+		}
+	}
+
+	private void checkDeleteRights(String domainId) throws BusinessException {
+		AbstractDomain domain = domainBusinessService.findById(domainId);
+		RootDomain rootDomain = domainBusinessService.getUniqueRootDomain();
+		if (domain.equals(rootDomain)) {
+			throw new BusinessException(
+					BusinessErrorCode.DOMAIN_INVALID_OPERATION,
+					"You are not authorized to delete a root functionality");
 		}
 	}
 }

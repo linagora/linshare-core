@@ -205,7 +205,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		AbstractDomain domain = abstractDomainService.retrieveDomain(id);
 
 		if (domain == null) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Domain " + id + "doesn't exist.");
 		}
 		return domain;

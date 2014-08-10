@@ -83,7 +83,7 @@ public class InconsistentUserServiceImpl implements InconsistentUserService {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
 					"Attempt to update an user entity failed : User not found.");
 		} else if (d == null) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Attempt to update an user entity failed : Domain does not exist.");
 		}
 		u.setDomain(d);

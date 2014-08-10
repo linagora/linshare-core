@@ -222,7 +222,7 @@ public class UserServiceImpl implements UserService {
 			return guest;
 		} else {
 			logger.error("Can not create guest : no guest domain created.");
-			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS, "Guest domain was not found");
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST, "Guest domain was not found");
 		}
 	}
 
