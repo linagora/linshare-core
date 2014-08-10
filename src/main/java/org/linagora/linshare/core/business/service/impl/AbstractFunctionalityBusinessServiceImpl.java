@@ -178,20 +178,20 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	@Override
-	public Set<T> getAllFunctionalities(String domain) {
-		AbstractDomain abstractDomain = abstractDomainRepository.findById(domain);
+	public Set<T> getAllFunctionalities(String domain) throws BusinessException {
+		AbstractDomain abstractDomain = findDomain(domain);
 		return getAllFunctionalities(abstractDomain);
 	}
 
 	@Override
-	public boolean activationPolicyIsMutable(T functionality, String domain) {
+	public boolean activationPolicyIsMutable(T functionality, String domain) throws BusinessException {
 		Assert.notNull(functionality);
 		Assert.notNull(domain);
 
 		// Check if the current functionality belong to the current domain.
 		if (functionality.getDomain().getIdentifier().equals(domain)) {
 			// The current functionality belong to the current domain.
-			AbstractDomain abstractDomain = abstractDomainRepository.findById(domain);
+			AbstractDomain abstractDomain = findDomain(domain);
 			T ancestorFunc = getParentFunctionality(abstractDomain, functionality.getIdentifier());
 			// We check if the parent domain allow the current domain to
 			// modify/override activation policy configuration.
@@ -214,14 +214,14 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	@Override
-	public boolean configurationPolicyIsMutable(T functionality, String domain) {
+	public boolean configurationPolicyIsMutable(T functionality, String domain) throws BusinessException {
 		Assert.notNull(functionality);
 		Assert.notNull(domain);
 
 		// Check if the current functionality belong to the current domain.
 		if (functionality.getDomain().getIdentifier().equals(domain)) {
 			// we have to check if we have the permission to modify the configuration status of this functionality
-			AbstractDomain abstractDomain = abstractDomainRepository.findById(domain);
+			AbstractDomain abstractDomain = findDomain(domain);
 			T ancestorFunc = getParentFunctionality(abstractDomain, functionality.getIdentifier());
 			// We check if the parent domain allow the current domain to
 			// modify/override activation policy configuration.
@@ -244,14 +244,14 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	@Override
-	public boolean parametersAreMutable(T functionality, String domain) {
+	public boolean parametersAreMutable(T functionality, String domain) throws BusinessException {
 		Assert.notNull(functionality);
 		Assert.notNull(domain);
 
 		// Check if the current functionality belong to the current domain.
 		if (functionality.getDomain().getIdentifier().equals(domain)) {
 			// we have to check if we have the permission to modify the configuration status of this functionality
-			AbstractDomain abstractDomain = abstractDomainRepository.findById(domain);
+			AbstractDomain abstractDomain = findDomain(domain);
 			T ancestorFunc = getParentFunctionality(abstractDomain, functionality.getIdentifier());
 			// We check if the parent domain allow the current domain to
 			// modify/override activation policy configuration.
@@ -326,12 +326,15 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	@Override
-	public T getFunctionality(String domainId, String functionalityId) {
+	public T getFunctionality(String domainId, String functionalityId) throws BusinessException {
 		Assert.notNull(domainId);
 		Assert.notNull(functionalityId);
 
-		AbstractDomain domain = abstractDomainRepository.findById(domainId);
+		AbstractDomain domain = findDomain(domainId);
 		T functionality = getFunctionalityEntityByIdentifiers(domain, functionalityId);
+		if (functionality == null) {
+			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_ENTITY_OUT_OF_DATE, "Functionality not found.");
+		}
 		// Never returns the entity when we try to modify the functionality.
 		// The current functionality returned could belong to a parent domain.
 		// In this case, the functionality will be clone, linked to the input domain.
@@ -345,7 +348,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	@Override
 	public T update(String domainId, T functionality) throws BusinessException {
 
-		AbstractDomain currentDomain = abstractDomainRepository.findById(domainId);
+		AbstractDomain currentDomain = findDomain(domainId);
 		T entity = getFunctionalityEntityByIdentifiers(currentDomain, functionality.getIdentifier());
 
 		if (entity.getDomain().getIdentifier().equals(functionality.getDomain().getIdentifier())) {
@@ -384,7 +387,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		Assert.notNull(domainId);
 		Assert.notNull(functionalityId);
 
-		AbstractDomain domain = abstractDomainRepository.findById(domainId);
+		AbstractDomain domain = findDomain(domainId);
 		T functionality = getFunctionalityEntityByIdentifiers(domain, functionalityId);
 
 		// The functionality belong to the current domain. We can delete it.
@@ -541,5 +544,13 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			return "InnerFunctionality : " + identifier + "(" + functionality.getDomain().getIdentifier() + ")";
 		}
 
+	}
+
+	private AbstractDomain findDomain(String domain) throws BusinessException {
+		AbstractDomain abstractDomain = abstractDomainRepository.findById(domain);
+		if (abstractDomain == null) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST, "The input domain does not exist.");
+		}
+		return abstractDomain;
 	}
 }

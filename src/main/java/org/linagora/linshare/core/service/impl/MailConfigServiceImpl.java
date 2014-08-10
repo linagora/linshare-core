@@ -494,7 +494,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 		AbstractDomain domain = abstractDomainService.retrieveDomain(id);
 
 		if (domain == null)
-			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Invalid domain identifier.");
 		return getParentDomains(domain);
 	}

@@ -137,7 +137,7 @@ public class MailContentBusinessServiceImpl implements
 		AbstractDomain domain = abstractDomainRepository.findById(domainId);
 
 		if (domain == null) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Cannot find mail content for domain: " + domainId
 							+ ". Domain doesn't exist.");
 		}

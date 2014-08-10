@@ -41,19 +41,19 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AbstractFunctionalityBusinessService<T> {
 
-	Set<T> getAllFunctionalities(AbstractDomain domain);
+	Set<T> getAllFunctionalities(AbstractDomain domain) throws BusinessException;
 
-	Set<T> getAllFunctionalities(String domain);
+	Set<T> getAllFunctionalities(String domain) throws BusinessException;
 
-	boolean activationPolicyIsMutable(T f, String domain);
+	boolean activationPolicyIsMutable(T f, String domain) throws BusinessException;
 
-	boolean configurationPolicyIsMutable(T f, String domain);
+	boolean configurationPolicyIsMutable(T f, String domain) throws BusinessException;
 
 	boolean delegationPolicyIsMutable(T f, String domain);
 
-	boolean parametersAreMutable(T f, String domain);
+	boolean parametersAreMutable(T f, String domain) throws BusinessException;
 
-	T getFunctionality(String domainId, String functionalityId);
+	T getFunctionality(String domainId, String functionalityId) throws BusinessException;
 
 	void delete(String domainId, String functionalityId)
 			throws IllegalArgumentException, BusinessException;

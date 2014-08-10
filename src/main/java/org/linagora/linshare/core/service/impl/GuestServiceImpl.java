@@ -135,7 +135,7 @@ public class GuestServiceImpl implements GuestService {
 					"Owner cannot create guest");
 		}
 		if (!hasGuestDomain(owner.getDomainId())) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Guest domain was not found");
 		}
 		GuestDomain guestDomain = abstractDomainService.getGuestDomain(owner
