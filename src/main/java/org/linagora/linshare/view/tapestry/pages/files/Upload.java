@@ -345,10 +345,9 @@ public class Upload {
 				}
 			}
 		} catch (NullPointerException e3) {
-			logger.error(e3.getMessage());
-			logger.error(e3.toString());
+			logger.error("NPE :" , e3);
 			businessMessagesManagementService.notify(new BusinessUserMessage(
-					BusinessUserMessageType.QUICKSHARE_NOMAIL,
+					BusinessUserMessageType.QUICKSHARE_FAILED,
 					MessageSeverity.ERROR));
 		}
 		return Index.class;
