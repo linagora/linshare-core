@@ -207,7 +207,7 @@ public class SignatureDetailsDisplayer {
 				map.put(shareDocumentVo.getFileName(), shareFacade.getShareStream(userVo, shareDocumentVo.getIdentifier()));
 				archiveName = "signed_" + shareDocumentVo.getFileName() + ".zip";
 			} else {
-				map.put(currentdoc.getFileName(), documentFacade.retrieveFileStream(currentdoc, userVo.getLogin()));
+				map.put(currentdoc.getFileName(), documentFacade.retrieveFileStream(currentdoc, userVo));
 				archiveName = "signed_" + currentdoc.getFileName() + ".zip";
 			}
 			for (SignatureVo oneSignature : signatures) {

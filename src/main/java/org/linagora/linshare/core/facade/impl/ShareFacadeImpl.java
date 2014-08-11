@@ -76,10 +76,6 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 
 	private final ShareEntryTransformer shareEntryTransformer;
 
-	private final NotifierService notifierService;
-
-	private final UserService userService;
-
 	private final ShareEntryService shareEntryService;
 
 	private final DocumentEntryTransformer documentEntryTransformer;
@@ -94,16 +90,13 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 
 	public ShareFacadeImpl(AccountService accountService,
 			final ShareEntryTransformer shareEntryTransformer,
-			final NotifierService notifierService,
-			final UserService userService, ShareEntryService shareEntryService,
+			final ShareEntryService shareEntryService,
 			final DocumentEntryTransformer documentEntryTransformer,
 			final DocumentEntryService documentEntryService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final SignatureTransformer signatureTransformer, ShareService shareService) {
 		super(accountService);
 		this.shareEntryTransformer = shareEntryTransformer;
-		this.notifierService = notifierService;
-		this.userService = userService;
 		this.shareEntryService = shareEntryService;
 		this.documentEntryTransformer = documentEntryTransformer;
 		this.documentEntryService = documentEntryService;
@@ -181,6 +174,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		return documentEntryTransformer.disassemble(documentEntry);
 	}
 
+	// TODO FMA
 	@Deprecated
 	@Override
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(
@@ -221,7 +215,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 			throws BusinessException {
 		User actor = getActor(actorVo);
 		return shareEntryTransformer.disassemble(shareEntryService.find(
-				actor, uuid));
+				actor, actor, uuid));
 	}
 
 	@Override
@@ -265,7 +259,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		User actor = getActor(actorVo);
 		try {
 			ShareEntry share = shareEntryService.find(actor,
-					shareVo.getIdentifier());
+					actor, shareVo.getIdentifier());
 			Set<Signature> signatures = share.getDocumentEntry().getDocument()
 					.getSignatures();
 			if (signatures != null && signatures.size() > 0)
@@ -283,7 +277,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		User actor = getActor(actorVo);
 		try {
 			ShareEntry share = shareEntryService.find(actor,
-					shareVoIdentifier);
+					actor, shareVoIdentifier);
 			Set<Signature> signatures = share.getDocumentEntry().getDocument()
 					.getSignatures();
 			if (signatures != null && signatures.size() > 0)
@@ -300,7 +294,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		User actor = getActor(actorVo);
 		try {
 			ShareEntry share = shareEntryService.find(actor,
-					documentVo.getIdentifier());
+					actor, documentVo.getIdentifier());
 
 			SignatureVo res = null;
 			for (Signature signature : share.getDocumentEntry().getDocument()
@@ -324,7 +318,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		User actor = getActor(actorVo);
 		try {
 			ShareEntry share = shareEntryService.find(actor,
-					documentVo.getIdentifier());
+					actor, documentVo.getIdentifier());
 			return signatureTransformer
 					.disassembleList(new ArrayList<Signature>(share
 							.getDocumentEntry().getDocument().getSignatures()));

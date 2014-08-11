@@ -19,8 +19,9 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 public abstract class GenericEntryService {
-	
-	protected static Logger logger = LoggerFactory.getLogger(GenericEntryService.class);
+
+	protected static Logger logger = LoggerFactory
+			.getLogger(GenericEntryService.class);
 
 	protected abstract boolean hasReadPermission(Account actor);
 
@@ -32,8 +33,14 @@ public abstract class GenericEntryService {
 
 	protected abstract boolean hasUpdatePermission(Account actor);
 
-	protected boolean isAuthorized(Account actor, Account owner, PermissionType permission) {
-		return this.isAuthorized(actor, owner, permission, null);
+	protected boolean isAuthorized(Account actor, Account owner,
+			PermissionType permission) {
+		return this.isAuthorized(actor, owner, permission, null, null);
+	}
+
+	protected boolean isAuthorized(Account actor, Account owner,
+			PermissionType permission, Object entry) {
+		return this.isAuthorized(actor, owner, permission, entry, null);
 	}
 
 	protected void preChecks(Account actor, Account owner) {
@@ -47,7 +54,8 @@ public abstract class GenericEntryService {
 		}
 	}
 
-	protected boolean isAuthorized(Account actor, Account owner, PermissionType permission, String resourceName) {
+	protected boolean isAuthorized(Account actor, Account owner,
+			PermissionType permission, Object entry, String resourceName) {
 		if (actor.equals(owner)) {
 			return true;
 		} else if (actor.hasAllRights()) {
@@ -56,13 +64,13 @@ public abstract class GenericEntryService {
 			Validate.notNull(permission);
 			if (permission.equals(PermissionType.GET)) {
 				return hasReadPermission(actor);
-			}else if (permission.equals(PermissionType.LIST)) {
+			} else if (permission.equals(PermissionType.LIST)) {
 				return hasListPermission(actor);
-			}else if (permission.equals(PermissionType.CREATE)) {
+			} else if (permission.equals(PermissionType.CREATE)) {
 				return hasCreatePermission(actor);
-			}else if (permission.equals(PermissionType.UPDATE)) {
+			} else if (permission.equals(PermissionType.UPDATE)) {
 				return hasUpdatePermission(actor);
-			}else if (permission.equals(PermissionType.DELETE)) {
+			} else if (permission.equals(PermissionType.DELETE)) {
 				return hasDeletePermission(actor);
 			}
 			return false;
@@ -92,20 +100,21 @@ public abstract class GenericEntryService {
 		return contains;
 	}
 
-	protected void checkReadPermission(Account actor, Entry entry, BusinessErrorCode errCode) throws BusinessException {
+	protected void checkReadPermission(Account actor, Entry entry,
+			BusinessErrorCode errCode) throws BusinessException {
 		Account owner = entry.getEntryOwner();
-		if (!isAuthorized(actor, owner, PermissionType.GET)) {
+		if (!isAuthorized(actor, owner, PermissionType.GET, entry)) {
 			logger.error(actor.getAccountReprentation()
 					+ " is not authorized to get the entry "
-					+ entry.getEntryType().toString() +
-					" (" + entry.getUuid() + ") owned by : "
-					+ owner.getAccountReprentation());
+					+ entry.getEntryType().toString() + " (" + entry.getUuid()
+					+ ") owned by : " + owner.getAccountReprentation());
 			throw new BusinessException(errCode,
 					"You are not authorized to get this entry.");
 		}
 	}
 
-	protected void checkListPermission(Account actor, Account owner, EntryType type, BusinessErrorCode errCode) throws BusinessException {
+	protected void checkListPermission(Account actor, Account owner,
+			EntryType type, BusinessErrorCode errCode) throws BusinessException {
 		if (!isAuthorized(actor, owner, PermissionType.LIST)) {
 			logger.error(actor.getAccountReprentation()
 					+ " is not authorized to list all entries "
@@ -116,39 +125,38 @@ public abstract class GenericEntryService {
 		}
 	}
 
-	protected void checkCreatePermission(Account actor, Account owner, EntryType type, BusinessErrorCode errCode) throws BusinessException {
+	protected void checkCreatePermission(Account actor, Account owner,
+			EntryType type, BusinessErrorCode errCode) throws BusinessException {
 		if (!isAuthorized(actor, owner, PermissionType.CREATE)) {
 			logger.error(actor.getAccountReprentation()
-					+ " is not authorized to create entry "
-					+ type.toString() +
-					" for user : "
-					+ owner.getAccountReprentation());
+					+ " is not authorized to create entry " + type.toString()
+					+ " for user : " + owner.getAccountReprentation());
 			throw new BusinessException(errCode,
 					"You are not authorized to create entry.");
 		}
 	}
 
-	protected void checkUpdatePermission(Account actor, Entry entry, BusinessErrorCode errCode) throws BusinessException {
+	protected void checkUpdatePermission(Account actor, Entry entry,
+			BusinessErrorCode errCode) throws BusinessException {
 		Account owner = entry.getEntryOwner();
-		if (!isAuthorized(actor, owner, PermissionType.UPDATE)) {
+		if (!isAuthorized(actor, owner, PermissionType.UPDATE, entry)) {
 			logger.error(actor.getAccountReprentation()
 					+ " is not authorized to update the entry "
-					+ entry.getEntryType().toString() +
-					" (" + entry.getUuid() + ") owned by : "
-					+ owner.getAccountReprentation());
+					+ entry.getEntryType().toString() + " (" + entry.getUuid()
+					+ ") owned by : " + owner.getAccountReprentation());
 			throw new BusinessException(errCode,
 					"You are not authorized to update this entry.");
 		}
 	}
 
-	protected void checkDeletePermission(Account actor, Entry entry, BusinessErrorCode errCode) throws BusinessException {
+	protected void checkDeletePermission(Account actor, Entry entry,
+			BusinessErrorCode errCode) throws BusinessException {
 		Account owner = entry.getEntryOwner();
-		if (!isAuthorized(actor, owner, PermissionType.DELETE)) {
+		if (!isAuthorized(actor, owner, PermissionType.DELETE, entry)) {
 			logger.error(actor.getAccountReprentation()
 					+ " is not authorized to delete the entry "
-					+ entry.getEntryType().toString() +
-					" (" + entry.getUuid() + ") owned by : "
-					+ owner.getAccountReprentation());
+					+ entry.getEntryType().toString() + " (" + entry.getUuid()
+					+ ") owned by : " + owner.getAccountReprentation());
 			throw new BusinessException(errCode,
 					"You are not authorized to delete this entry.");
 		}

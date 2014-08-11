@@ -43,8 +43,11 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.PermissionType;
+import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
@@ -71,7 +74,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-public class ShareEntryServiceImpl implements ShareEntryService {
+public class ShareEntryServiceImpl extends GenericEntryService implements ShareEntryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ShareEntryServiceImpl.class);
 
@@ -119,25 +122,22 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
 	}
 
-	private void updateGuestExpiryDate(User recipient, User sender) {
-		// update guest account expiry date
-		if (recipient.isGuest()) {
+	@Override
+	public ShareEntry find(User actor, User owner, String uuid) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "Missing share entry uuid");
 
-			// get new guest expiry date
-			Calendar guestExpiryDate = Calendar.getInstance();
-			TimeUnitValueFunctionality guestFunctionality = functionalityService.getGuestAccountExpiryTimeFunctionality(sender.getDomain());
-			guestExpiryDate.add(guestFunctionality.toCalendarUnitValue(), guestFunctionality.getValue());
-
-			Guest guest = guestRepository.findByMail(recipient.getLogin());
-			guest.setExpirationDate(guestExpiryDate.getTime());
-			try {
-				guestRepository.update(guest);
-			} catch (IllegalArgumentException e) {
-				logger.error("Can't update expiration date of guest : " + guest.getAccountReprentation() + ":" + e.getMessage());
-			} catch (BusinessException e) {
-				logger.error("Can't update expiration date of guest : " + guest.getAccountReprentation() + ":" + e.getMessage());
-			}
+		ShareEntry entry = shareEntryBusinessService.find(uuid);
+		if (entry == null) {
+			logger.error("Current actor " + actor.getAccountReprentation()
+					+ " is looking for a misssing share entry (" + uuid
+					+ ") owned by : " + owner.getAccountReprentation());
+			String message = "Can not find share entry with uuid : " + uuid;
+			throw new BusinessException(
+					BusinessErrorCode.SHARE_ENTRY_NOT_FOUND, message);
 		}
+		checkReadPermission(actor, entry, BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
+		return entry;
 	}
 
 	@Override
@@ -222,23 +222,6 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 
 	}
 
-
-	@Override
-	public ShareEntry find(User actor, String shareUuid) throws BusinessException {
-		ShareEntry share = shareEntryBusinessService.find(shareUuid);
-		if(share == null) {
-			logger.error("Share not found : " + shareUuid);
-			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
-		}
-		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.hasSuperAdminRole() || actor.hasSystemAccountRole()) {
-			return share;
-		} else {
-			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this share, it does not belong to you.");
-		}
-	}
-
-
 	@Override
 	public ShareEntry update(User actor, ShareEntry dto) throws BusinessException {
 		String shareUuid = dto.getUuid();
@@ -258,7 +241,7 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 	@Override
 	public InputStream getThumbnailStream(User actor, String shareEntryUuid) throws BusinessException {
 		try {
-			ShareEntry shareEntry = find(actor, shareEntryUuid);
+			ShareEntry shareEntry = find(actor, actor, shareEntryUuid);
 			if (!shareEntry.getRecipient().equals(actor)) {
 				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get thumbnail for this share.");
 			}
@@ -272,7 +255,7 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 	@Override
 	public InputStream getStream(User actor, String shareEntryUuid) throws BusinessException {
 		try {
-			ShareEntry shareEntry = find(actor, shareEntryUuid);
+			ShareEntry shareEntry = find(actor, actor, shareEntryUuid);
 			if (!shareEntry.getRecipient().equals(actor)) {
 				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this share.");
 			}
@@ -341,5 +324,69 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 			}
 			sc.addMailContainer(mail);
 		}
+	}
+
+	private void updateGuestExpiryDate(User recipient, User sender) {
+		// update guest account expiry date
+		if (recipient.isGuest()) {
+
+			// get new guest expiry date
+			Calendar guestExpiryDate = Calendar.getInstance();
+			TimeUnitValueFunctionality guestFunctionality = functionalityService.getGuestAccountExpiryTimeFunctionality(sender.getDomain());
+			guestExpiryDate.add(guestFunctionality.toCalendarUnitValue(), guestFunctionality.getValue());
+
+			Guest guest = guestRepository.findByMail(recipient.getLogin());
+			guest.setExpirationDate(guestExpiryDate.getTime());
+			try {
+				guestRepository.update(guest);
+			} catch (IllegalArgumentException e) {
+				logger.error("Can't update expiration date of guest : " + guest.getAccountReprentation() + ":" + e.getMessage());
+			} catch (BusinessException e) {
+				logger.error("Can't update expiration date of guest : " + guest.getAccountReprentation() + ":" + e.getMessage());
+			}
+		}
+	}
+
+	@Override
+	protected boolean isAuthorized(Account actor, Account owner,
+			PermissionType permission, Object entry, String resourceName) {
+		if (entry != null) {
+			ShareEntry s = (ShareEntry) entry;
+			if (actor.equals(s.getRecipient())) {
+				return true;
+			}
+		}
+		return super
+				.isAuthorized(actor, owner, permission, entry, resourceName);
+	}
+
+	@Override
+	protected boolean hasReadPermission(Account actor) {
+		return hasPermission(actor,
+				TechnicalAccountPermissionType.SHARES_GET);
+	}
+
+	@Override
+	protected boolean hasListPermission(Account actor) {
+		return this.hasPermission(actor,
+				TechnicalAccountPermissionType.SHARES_LIST);
+	}
+
+	@Override
+	protected boolean hasDeletePermission(Account actor) {
+		return hasPermission(actor,
+				TechnicalAccountPermissionType.SHARES_DELETE);
+	}
+
+	@Override
+	protected boolean hasCreatePermission(Account actor) {
+		return hasPermission(actor,
+				TechnicalAccountPermissionType.SHARES_CREATE);
+	}
+
+	@Override
+	protected boolean hasUpdatePermission(Account actor) {
+		return hasPermission(actor,
+				TechnicalAccountPermissionType.SHARES_UPDATE);
 	}
 }

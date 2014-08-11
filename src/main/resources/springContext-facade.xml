@@ -58,8 +58,6 @@
 	<bean name="shareFacade" class="org.linagora.linshare.core.facade.impl.ShareFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="shareEntryTransformer" />
-		<constructor-arg ref="notifierService" />
-		<constructor-arg ref="userService" />
 		<constructor-arg ref="shareEntryService" />
 		<constructor-arg ref="documentEntryTransformer" />
 		<constructor-arg ref="documentEntryService" />

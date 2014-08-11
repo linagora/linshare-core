@@ -82,14 +82,6 @@ public interface DocumentFacade {
 	public InputStream retrieveFileStream(DocumentVo doc, UserVo actor) throws BusinessException;
 
 	/**
-	 * Retrieve a stream of a Document 
-	 * @param doc the documentVo (or SharedDocumentVo)
-	 * @param actor the user who is acting
-	 * @return inputStream the stream of the document
-	 */
-	public InputStream retrieveFileStream(DocumentVo doc, String actor) throws BusinessException;
-
-	/**
 	 * insert a signature file in repository
 	 * @param file inputstream of the xml signature file
 	 * @param size size of the file
@@ -203,15 +195,15 @@ public interface DocumentFacade {
      */
 	public void renameFile(String userlogin, String docEntryUuid, String newName);
 
-    public void  updateFileProperties(String userlogin, String docEntryUuid, String newName, String comment);
+    public void  updateFileProperties(UserVo actorVo, String docEntryUuid, String newName, String comment);
 
     /**
      * Get the thumbnail (InputStream) of the document
-     * @param actorUuid : user uuid
-     * @param actorUuid the identifier of the document
+     * @param actorVo : user uuid
+     * @param actorVo the identifier of the document
      * @return InputStream of the thumbnail
      */
-    public InputStream getDocumentThumbnail(String actorUuid, String docEntryUuid);
+    public InputStream getDocumentThumbnail(UserVo actorVo, String docEntryUuid);
 
     /**
 	 * return true if the signature functionality is enabled

@@ -286,7 +286,7 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 	public ShareDto getReceivedShare(String shareEntryUuid)
 			throws BusinessException {
 		User actor = getAuthentication();
-		return ShareDto.getReceivedShare(shareEntryService.find(actor, shareEntryUuid));
+		return ShareDto.getReceivedShare(shareEntryService.find(actor, actor, shareEntryUuid));
 	}
 
 	@Override

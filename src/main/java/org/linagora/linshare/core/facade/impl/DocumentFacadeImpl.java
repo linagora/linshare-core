@@ -104,7 +104,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 	@Override
 	public DocumentVo insertFile(InputStream in, String fileName, UserVo owner) throws BusinessException {
 		logger.debug("insert files for document entries");
-		Account actor = accountService.findByLsUuid(owner.getLsUuid());
+		User actor = getActor(owner);
 		fileName = fileName.replace("\\", "_");
 		fileName = fileName.replace(":", "_");
 		DocumentEntry createDocumentEntry = documentEntryService.createDocumentEntry(actor, actor, in, fileName);
@@ -114,7 +114,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 
 	@Override
 	public void removeDocument(UserVo actorVo, DocumentVo document) throws BusinessException {
-		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
+		User actor = getActor(actorVo);
 		if(actor != null) {
 			entryService.deleteAllShareEntriesWithDocumentEntry(actor, actor, document.getIdentifier());
 		} else {
@@ -130,17 +130,10 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 			return documentEntryTransformer.disassemble(entry);
 	}
 
-
-	@Override
-	public InputStream retrieveFileStream(DocumentVo doc, String lsUid) throws BusinessException {
-		Account actor = accountService.findByLsUuid(lsUid);
-		return documentEntryService.getDocumentStream(actor, actor, doc.getIdentifier());
-	}
-
-
 	@Override
 	public InputStream retrieveFileStream(DocumentVo doc, UserVo actorVo) throws BusinessException {
-		return retrieveFileStream(doc, actorVo.getLsUuid());
+		User actor = getActor(actorVo);
+		return documentEntryService.getDocumentStream(actor, actor, doc.getIdentifier());
 	}
 
 
@@ -232,22 +225,21 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 
 	@Override
 	public Long getUserAvailableQuota(UserVo userVo) throws BusinessException {
-		Account account = accountService.findByLsUuid(userVo.getLsUuid());
-		return documentEntryService.getAvailableSize(account);
+		User actor = getActor(userVo);
+		return documentEntryService.getAvailableSize(actor);
 	}
 
 	@Override
 	public Long getUserMaxFileSize(UserVo userVo) throws BusinessException {
-		Account account = accountService.findByLsUuid(userVo.getLsUuid());
-		return documentEntryService.getUserMaxFileSize(account);
+		User actor = getActor(userVo);
+		return documentEntryService.getUserMaxFileSize(actor);
 	}
 
 	@Override
 	public Long getUserAvailableSize(UserVo userVo) throws BusinessException {
-		Account account = accountService.findByLsUuid(userVo.getLsUuid());
-
-		return Math.min(documentEntryService.getAvailableSize(account),
-				documentEntryService.getUserMaxFileSize(account));
+		User actor = getActor(userVo);
+		return Math.min(documentEntryService.getAvailableSize(actor),
+				documentEntryService.getUserMaxFileSize(actor));
 	}
 
 	// FIXME : ugly
@@ -286,7 +278,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 
 	@Override
 	public DocumentVo encryptDocument(DocumentVo docVo, UserVo userVo, String password) throws BusinessException{
-		Account actor = accountService.findByLsUuid(userVo.getLsUuid());
+		User actor = getActor(userVo);
 		DocumentEntry documentEntry = enciphermentService.encryptDocument(actor, docVo.getIdentifier(),actor, password);
 		return documentEntryTransformer.disassemble(documentEntry);
 	}
@@ -294,7 +286,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 
 	@Override
 	public DocumentVo decryptDocument(DocumentVo docVo, UserVo userVo,String password) throws BusinessException {
-		Account actor = accountService.findByLsUuid(userVo.getLsUuid());
+		User actor = getActor(userVo);
 		DocumentEntry documentEntry = enciphermentService.decryptDocument(actor, docVo.getIdentifier(),actor, password);
 		return documentEntryTransformer.disassemble(documentEntry);
 	}
@@ -302,8 +294,8 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 
 	@Override
 	public Long getUserTotalQuota(UserVo userVo) throws BusinessException {
-		Account account = accountService.findByLsUuid(userVo.getLsUuid());
-		return documentEntryService.getTotalSize(account);
+		User actor = getActor(userVo);
+		return documentEntryService.getTotalSize(actor);
 	}
 
 
@@ -323,19 +315,19 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 	}
 
 	@Override
-    public void renameFile(String userlogin, String docEntryUuid, String newName) {
+	public void renameFile(String userlogin, String docEntryUuid, String newName) {
 		Account actor = accountService.findByLsUuid(userlogin);
-        try {
+		try {
 			documentEntryService.renameDocumentEntry(actor, actor, docEntryUuid, newName);
 		} catch (BusinessException e) {
 			logger.error("Can't rename document : " + docEntryUuid + " : " + e.getMessage());
 		}
-    }
+	}
 
 
 	@Override
-    public void  updateFileProperties(String userlogin, String docEntryUuid, String newName, String comment){
-		Account actor = accountService.findByLsUuid(userlogin);
+    public void  updateFileProperties(UserVo actorVo, String docEntryUuid, String newName, String comment){
+		User actor = getActor(actorVo);
 		if(comment == null) {
 			comment = "";
 		}
@@ -348,18 +340,8 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 
 
 	@Override
-    public InputStream getDocumentThumbnail(String actorUuid, String docEntryUuid) {
-		if(actorUuid == null) {
-			logger.error("Can't find user with null parameter.");
-			return null;
-		}
-
-		Account actor = accountService.findByLsUuid(actorUuid);
-		if(actor == null) {
-			logger.error("Can't find logged user.");
-			return null;
-		}
-
+    public InputStream getDocumentThumbnail(UserVo actorVo, String docEntryUuid) {
+		User actor = getActor(actorVo);
 		try {
 			return documentEntryService.getDocumentThumbnailStream(actor, actor, docEntryUuid);
 		} catch (BusinessException e) {
@@ -370,33 +352,33 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 
 	@Override
 	public boolean isSignatureActive(UserVo userVo) {
-		Account actor = accountService.findByLsUuid(userVo.getLsUuid());
+		User actor = getActor(userVo);
 		return documentEntryService.isSignatureActive(actor);
 	}
 
 
 	@Override
 	public boolean isEnciphermentActive(UserVo userVo) {
-		Account actor = accountService.findByLsUuid(userVo.getLsUuid());
+		User actor = getActor(userVo);
 		return documentEntryService.isEnciphermentActive(actor);
 	}
 
 
 	@Override
 	public boolean isGlobalQuotaActive(UserVo userVo) throws BusinessException {
-		Account actor = accountService.findByLsUuid(userVo.getLsUuid());
+		User actor = getActor(userVo);
 		return documentEntryService.isGlobalQuotaActive(actor);
 	}
 
 	@Override
 	public boolean isUserQuotaActive(UserVo userVo) throws BusinessException {
-		Account actor = accountService.findByLsUuid(userVo.getLsUuid());
+		User actor = getActor(userVo);
 		return documentEntryService.isUserQuotaActive(actor);
 	}
 
 	@Override
 	public Long getGlobalQuota(UserVo userVo) throws BusinessException {
-		Account actor = accountService.findByLsUuid(userVo.getLsUuid());
+		User actor = getActor(userVo);
 		return documentEntryService.getGlobalQuota(actor);
 	}
 }

@@ -46,26 +46,26 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ShareEntryService {
 
-	public ShareEntry find(User actor, String uuid)  throws BusinessException ;
+	ShareEntry find(User actor, User owner, String uuid)  throws BusinessException ;
 
-	public void delete(Account actor, String shareUuid) throws BusinessException;
+	void delete(Account actor, String shareUuid) throws BusinessException;
 
-	public void deleteShare(Account actor, ShareEntry share) throws BusinessException;
+	void deleteShare(Account actor, ShareEntry share) throws BusinessException;
 
-	public void deleteShare(SystemAccount actor, ShareEntry share) throws BusinessException;
+	void deleteShare(SystemAccount actor, ShareEntry share) throws BusinessException;
 
-	public DocumentEntry copyDocumentFromShare(String shareUuid, User actor) throws BusinessException; 
+	DocumentEntry copyDocumentFromShare(String shareUuid, User actor) throws BusinessException;
 
-	public ShareEntry update(User actor, ShareEntry shareEntry) throws BusinessException;
+	ShareEntry update(User actor, ShareEntry shareEntry) throws BusinessException;
 
-	public InputStream getThumbnailStream(User actor, String shareEntryUuid) throws BusinessException;
+	InputStream getThumbnailStream(User actor, String shareEntryUuid) throws BusinessException;
 
-	public InputStream getStream(User actor, String shareEntryUuid) throws BusinessException;
+	InputStream getStream(User actor, String shareEntryUuid) throws BusinessException;
 
-	public void sendDocumentEntryUpdateNotification(ShareEntry shareEntry, String friendlySize, String originalFileName);
+	void sendDocumentEntryUpdateNotification(ShareEntry shareEntry, String friendlySize, String originalFileName);
 
-	public List<ShareEntry> findAllMyShareEntries(Account actor, User owner);
+	List<ShareEntry> findAllMyShareEntries(Account actor, User owner);
 
-	public void create(Account actor, User owner, ShareContainer shareContainer);
+	void create(Account actor, User owner, ShareContainer shareContainer);
 
 }
