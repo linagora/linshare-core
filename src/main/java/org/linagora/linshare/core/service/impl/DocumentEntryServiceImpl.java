@@ -46,9 +46,7 @@ import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.constants.PermissionType;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
@@ -67,6 +65,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.rac.DocumentEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.DocumentEntryService;
@@ -78,7 +77,7 @@ import org.linagora.linshare.core.utils.DocumentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentEntryServiceImpl extends GenericEntryService implements DocumentEntryService {
+public class DocumentEntryServiceImpl extends GenericServiceImpl<DocumentEntry> implements DocumentEntryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryServiceImpl.class);
 
@@ -91,11 +90,20 @@ public class DocumentEntryServiceImpl extends GenericEntryService implements Doc
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 	private final AntiSamyService antiSamyService;
 	private final DomainBusinessService domainBusinessService;
+	private final DocumentEntryResourceAccessControl documentEntryRac;
 
-	public DocumentEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityReadOnlyService functionalityReadOnlyService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService, MimeTypeMagicNumberDao mimeTypeIdentifier,
-			AntiSamyService antiSamyService, DomainBusinessService domainBusinessService) {
-		super();
+public DocumentEntryServiceImpl(
+			DocumentEntryBusinessService documentEntryBusinessService,
+			LogEntryService logEntryService,
+			AbstractDomainService abstractDomainService,
+			FunctionalityReadOnlyService functionalityReadOnlyService,
+			MimeTypeService mimeTypeService,
+			VirusScannerService virusScannerService,
+			MimeTypeMagicNumberDao mimeTypeIdentifier,
+			AntiSamyService antiSamyService,
+			DomainBusinessService domainBusinessService,
+			DocumentEntryResourceAccessControl documentEntryRac) {
+		super(documentEntryRac);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 		this.abstractDomainService = abstractDomainService;
@@ -105,6 +113,7 @@ public class DocumentEntryServiceImpl extends GenericEntryService implements Doc
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
 		this.antiSamyService = antiSamyService;
 		this.domainBusinessService = domainBusinessService;
+		this.documentEntryRac = documentEntryRac;
 	}
 
 	@Override
@@ -286,9 +295,7 @@ public class DocumentEntryServiceImpl extends GenericEntryService implements Doc
 		// throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED,
 		// "You are not authorized to update this document.");
 		// }
-
 		AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
-
 		checkSpace(documentEntry.getDocument().getSize(), documentEntry.getName(), actor);
 
 		// want a timestamp on doc ?
@@ -300,18 +307,16 @@ public class DocumentEntryServiceImpl extends GenericEntryService implements Doc
 
 		// We need to set an expiration date in case of file cleaner activation.
 		ret = documentEntryBusinessService.duplicateDocumentEntry(documentEntry, actor, timeStampingUrl, getDocumentExpirationDate(domain));
-
 		FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_UPLOAD, "Creation of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument()
 				.getType());
 		logEntryService.create(logEntry);
-
 		addDocSizeToGlobalUsedQuota(documentEntry.getDocument(), domain);
-
 		return ret;
 	}
 
 	@Override
 	public void deleteInconsistentDocumentEntry(SystemAccount actor, DocumentEntry documentEntry) throws BusinessException {
+		checkDeletePermission(actor, documentEntry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		Account owner = documentEntry.getEntryOwner();
 		try {
 
@@ -334,6 +339,7 @@ public class DocumentEntryServiceImpl extends GenericEntryService implements Doc
 
 	@Override
 	public void deleteExpiredDocumentEntry(SystemAccount actor, DocumentEntry documentEntry) throws BusinessException {
+		checkDeletePermission(actor, documentEntry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		Account owner = documentEntry.getEntryOwner();
 		try {
 
@@ -358,10 +364,8 @@ public class DocumentEntryServiceImpl extends GenericEntryService implements Doc
 	@Override
 	public void deleteDocumentEntry(Account actor, DocumentEntry documentEntry) throws BusinessException {
 		logger.debug("Actor: " + actor.getAccountReprentation() + " is trying to delete document entry: " + documentEntry.getUuid());
+		checkDeletePermission(actor, documentEntry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		try {
-			if (!isOwnerOrAdmin(actor, documentEntry.getEntryOwner())) {
-				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document.");
-			}
 			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
 				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document. There's still existing shares.");
 			}
@@ -384,9 +388,7 @@ public class DocumentEntryServiceImpl extends GenericEntryService implements Doc
 		// if user is not in one domain = BOUM
 		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getIdentifier());
 		SizeUnitValueFunctionality userMaxFileSizeFunctionality = functionalityReadOnlyService.getUserMaxFileSizeFunctionality(domain);
-
 		if (userMaxFileSizeFunctionality.getActivationPolicy().getStatus()) {
-
 			long maxSize = userMaxFileSizeFunctionality.getPlainSize();
 			if (maxSize < 0) {
 				maxSize = 0;
@@ -398,33 +400,24 @@ public class DocumentEntryServiceImpl extends GenericEntryService implements Doc
 
 	@Override
 	public long getAvailableSize(Account account) throws BusinessException {
-
 		// if user is not in one domain = BOUM
-
 		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getIdentifier());
-
 		SizeUnitValueFunctionality globalQuotaFunctionality = functionalityReadOnlyService.getGlobalQuotaFunctionality(domain);
 		SizeUnitValueFunctionality userQuotaFunctionality = functionalityReadOnlyService.getUserQuotaFunctionality(domain);
-
 		if (globalQuotaFunctionality.getActivationPolicy().getStatus()) {
-
 			long availableSize = globalQuotaFunctionality.getPlainSize() - domain.getUsedSpace().longValue();
 			if (availableSize < 0) {
 				availableSize = 0;
 			}
 			return availableSize;
-
 		} else if (userQuotaFunctionality.getActivationPolicy().getStatus()) {
-
 			long userQuota = userQuotaFunctionality.getPlainSize();
-
 			Set<Entry> entries = account.getEntries();
 			for (Entry entry : entries) {
 				if (entry.getEntryType().equals(EntryType.DOCUMENT)) {
 					userQuota -= ((DocumentEntry) entry).getSize();
 				}
 			}
-
 			return userQuota;
 		}
 		return LinShareConstants.defaultFreeSpace;
@@ -432,20 +425,14 @@ public class DocumentEntryServiceImpl extends GenericEntryService implements Doc
 
 	@Override
 	public long getTotalSize(Account account) throws BusinessException {
-
 		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getIdentifier());
-
 		SizeUnitValueFunctionality globalQuotaFunctionality = functionalityReadOnlyService.getGlobalQuotaFunctionality(domain);
 		SizeUnitValueFunctionality userQuotaFunctionality = functionalityReadOnlyService.getUserQuotaFunctionality(domain);
-
 		if (globalQuotaFunctionality.getActivationPolicy().getStatus()) {
 			return globalQuotaFunctionality.getPlainSize();
 		}
-
 		long userQuota = userQuotaFunctionality.getPlainSize();
-
 		return userQuota;
-
 	}
 
 	@Override
@@ -453,7 +440,7 @@ public class DocumentEntryServiceImpl extends GenericEntryService implements Doc
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		DocumentEntry entry = find(actor, owner, uuid);
-		checkThumbNailDownloadPermission(actor, entry);
+		documentEntryRac.checkThumbNailDownloadPermission(actor, entry);
 		return documentEntryBusinessService.getDocumentThumbnailStream(entry);
 	}
 
@@ -462,7 +449,7 @@ public class DocumentEntryServiceImpl extends GenericEntryService implements Doc
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		DocumentEntry entry = find(actor, owner, uuid);
-		checkDownloadPermission(actor, entry);
+		documentEntryRac.checkDownloadPermission(actor, entry);
 		return documentEntryBusinessService.getDocumentStream(entry);
 	}
 
@@ -575,89 +562,5 @@ public class DocumentEntryServiceImpl extends GenericEntryService implements Doc
 		long newUsedQuota = domain.getUsedSpace().longValue() - docSize;
 		domain.setUsedSpace(newUsedQuota);
 		domainBusinessService.update(domain);
-	}
-
-	// FIXME : code duplication
-	@Deprecated
-	private boolean isOwnerOrAdmin(Account actor, Account user) {
-		if (actor.equals(user)) {
-			return true;
-		} else if (actor.getRole().equals(Role.SUPERADMIN) || actor.getRole().equals(Role.SYSTEM)) {
-			return true;
-		} else if (actor.getRole().equals(Role.ADMIN)) {
-			List<String> allMyDomain = abstractDomainService.getAllMyDomainIdentifiers(actor.getDomain().getIdentifier());
-			for (String domain : allMyDomain) {
-				if (domain.equals(user.getDomainId())) {
-					return true;
-				}
-			}
-		}
-		if (user instanceof Guest) {
-			// At this point the actor object could be an entity or a proxy. No
-			// idea why it happens.
-			// That is why we compare IDs.
-			if (actor.getId() == ((Guest) user).getOwner().getId()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	protected boolean hasReadPermission(Account actor) {
-		return hasPermission(actor,
-				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_GET);
-	}
-
-	@Override
-	protected boolean hasListPermission(Account actor) {
-		return this.hasPermission(actor,
-				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_LIST);
-	}
-
-	@Override
-	protected boolean hasDeletePermission(Account actor) {
-		return hasPermission(actor,
-				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_DELETE);
-	}
-
-	@Override
-	protected boolean hasCreatePermission(Account actor) {
-		return hasPermission(actor,
-				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_CREATE);
-	}
-
-	@Override
-	protected boolean hasUpdatePermission(Account actor) {
-		return hasPermission(actor,
-				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_UPDATE);
-	}
-
-	protected void checkDownloadPermission(Account actor, DocumentEntry entry) throws BusinessException {
-		if (actor.hasDelegationRole()) {
-			if (!hasPermission(actor, TechnicalAccountPermissionType.DOCUMENTS_GET)) {
-				Account owner = entry.getEntryOwner();
-				logger.error("Current actor " + actor.getAccountReprentation()
-						+ " is trying to download document entry ("
-						+ entry.getUuid() + ") owned by : "
-						+ owner.getAccountReprentation());
-				throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN,
-						"You are not authorized to download this document.");
-			}
-		}
-	}
-
-	protected void checkThumbNailDownloadPermission(Account actor, DocumentEntry entry) throws BusinessException {
-		if (actor.hasDelegationRole()) {
-			if (!hasPermission(actor, TechnicalAccountPermissionType.DOCUMENTS_GET)) {
-				Account owner = entry.getEntryOwner();
-				logger.error("Current actor " + actor.getAccountReprentation()
-						+ " is trying to download document entry ("
-						+ entry.getUuid() + ") owned by : "
-						+ owner.getAccountReprentation());
-				throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN,
-						"You are not authorized to download the thumbnail of this document.");
-			}
-		}
 	}
 }

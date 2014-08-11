@@ -4,34 +4,31 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.EntryType;
-import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
-import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
 
-public class ShareServiceImpl extends GenericEntryService implements
+public class ShareServiceImpl extends GenericServiceImpl<ShareEntry> implements
 		ShareService {
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-
-	private final ShareExpiryDateService shareExpiryDateService;
 
 	private final DocumentEntryService documentEntryService;
 
@@ -45,15 +42,14 @@ public class ShareServiceImpl extends GenericEntryService implements
 
 	public ShareServiceImpl(
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
-			final ShareExpiryDateService shareExpiryDateService,
 			final DocumentEntryService documentEntryService,
 			final UserService userService,
 			final AnonymousShareEntryService anonymousShareEntryService,
 			final ShareEntryService shareEntryService,
-			final NotifierService notifierService) {
-		super();
+			final NotifierService notifierService,
+			final ShareEntryResourceAccessControl rac) {
+		super(rac);
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
-		this.shareExpiryDateService = shareExpiryDateService;
 		this.documentEntryService = documentEntryService;
 		this.userService = userService;
 		this.anonymousShareEntryService = anonymousShareEntryService;
@@ -212,33 +208,5 @@ public class ShareServiceImpl extends GenericEntryService implements
 					uuid);
 			shareContainer.addDocumentEntry(doc);
 		}
-	}
-
-	@Override
-	protected boolean hasReadPermission(Account actor) {
-		return hasPermission(actor, TechnicalAccountPermissionType.SHARES_GET);
-	}
-
-	@Override
-	protected boolean hasListPermission(Account actor) {
-		return hasPermission(actor, TechnicalAccountPermissionType.SHARES_LIST);
-	}
-
-	@Override
-	protected boolean hasDeletePermission(Account actor) {
-		return hasPermission(actor,
-				TechnicalAccountPermissionType.SHARES_DELETE);
-	}
-
-	@Override
-	protected boolean hasCreatePermission(Account actor) {
-		return hasPermission(actor,
-				TechnicalAccountPermissionType.SHARES_CREATE);
-	}
-
-	@Override
-	protected boolean hasUpdatePermission(Account actor) {
-		return hasPermission(actor,
-				TechnicalAccountPermissionType.SHARES_UPDATE);
 	}
 }

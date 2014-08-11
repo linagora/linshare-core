@@ -23,6 +23,8 @@
 		<constructor-arg ref="functionalityReadOnlyService"/>
 		<constructor-arg ref="documentEntryService"/>
 		<constructor-arg ref="anonymousUrlRepository"/>
+		<constructor-arg ref="notifierService"/>
+		<constructor-arg ref="mailBuildingService"/>
     </bean>
 
     <bean name="documentManagementBatch" class="org.linagora.linshare.core.batches.impl.DocumentManagementBatchImpl">

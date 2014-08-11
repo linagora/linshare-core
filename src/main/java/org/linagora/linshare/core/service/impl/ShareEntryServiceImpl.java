@@ -43,11 +43,8 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.constants.PermissionType;
-import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
@@ -60,6 +57,7 @@ import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
@@ -74,7 +72,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-public class ShareEntryServiceImpl extends GenericEntryService implements ShareEntryService {
+public class ShareEntryServiceImpl extends GenericServiceImpl<ShareEntry> implements ShareEntryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ShareEntryServiceImpl.class);
 
@@ -107,9 +105,10 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 			DocumentEntryBusinessService documentEntryBusinessService,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
-			FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository
+			FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository,
+			ShareEntryResourceAccessControl rac
 			) {
-		super();
+		super(rac);
 		this.guestRepository = guestRepository;
 		this.functionalityService = functionalityService;
 		this.shareEntryBusinessService = shareEntryBusinessService;
@@ -136,7 +135,7 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 			throw new BusinessException(
 					BusinessErrorCode.SHARE_ENTRY_NOT_FOUND, message);
 		}
-		checkReadPermission(actor, entry, BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
+		rac.checkReadPermission(actor, entry, BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
 		return entry;
 	}
 
@@ -345,48 +344,5 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 				logger.error("Can't update expiration date of guest : " + guest.getAccountReprentation() + ":" + e.getMessage());
 			}
 		}
-	}
-
-	@Override
-	protected boolean isAuthorized(Account actor, Account owner,
-			PermissionType permission, Object entry, String resourceName) {
-		if (entry != null) {
-			ShareEntry s = (ShareEntry) entry;
-			if (actor.equals(s.getRecipient())) {
-				return true;
-			}
-		}
-		return super
-				.isAuthorized(actor, owner, permission, entry, resourceName);
-	}
-
-	@Override
-	protected boolean hasReadPermission(Account actor) {
-		return hasPermission(actor,
-				TechnicalAccountPermissionType.SHARES_GET);
-	}
-
-	@Override
-	protected boolean hasListPermission(Account actor) {
-		return this.hasPermission(actor,
-				TechnicalAccountPermissionType.SHARES_LIST);
-	}
-
-	@Override
-	protected boolean hasDeletePermission(Account actor) {
-		return hasPermission(actor,
-				TechnicalAccountPermissionType.SHARES_DELETE);
-	}
-
-	@Override
-	protected boolean hasCreatePermission(Account actor) {
-		return hasPermission(actor,
-				TechnicalAccountPermissionType.SHARES_CREATE);
-	}
-
-	@Override
-	protected boolean hasUpdatePermission(Account actor) {
-		return hasPermission(actor,
-				TechnicalAccountPermissionType.SHARES_UPDATE);
 	}
 }
