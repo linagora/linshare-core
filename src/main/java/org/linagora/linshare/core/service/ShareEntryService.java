@@ -39,32 +39,27 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ShareEntryService {
 
-	ShareEntry find(User actor, User owner, String uuid)  throws BusinessException ;
+	ShareEntry find(Account actor, Account owner, String uuid)  throws BusinessException ;
 
-	void delete(Account actor, String shareUuid) throws BusinessException;
+	void delete(Account actor, Account owner, String uuid) throws BusinessException;
 
-	void deleteShare(Account actor, ShareEntry share) throws BusinessException;
+	DocumentEntry copy(Account actor, Account owner, String shareUuid) throws BusinessException;
 
-	void deleteShare(SystemAccount actor, ShareEntry share) throws BusinessException;
+	ShareEntry update(Account actor, Account owner, ShareEntry shareEntry) throws BusinessException;
 
-	DocumentEntry copyDocumentFromShare(String shareUuid, User actor) throws BusinessException;
+	InputStream getThumbnailStream(Account actor, Account owner, String shareEntryUuid) throws BusinessException;
 
-	ShareEntry update(User actor, ShareEntry shareEntry) throws BusinessException;
-
-	InputStream getThumbnailStream(User actor, String shareEntryUuid) throws BusinessException;
-
-	InputStream getStream(User actor, String shareEntryUuid) throws BusinessException;
+	InputStream getStream(Account actor, Account owner, String shareEntryUuid) throws BusinessException;
 
 	void sendDocumentEntryUpdateNotification(ShareEntry shareEntry, String friendlySize, String originalFileName);
 
-	List<ShareEntry> findAllMyShareEntries(Account actor, User owner);
+	List<ShareEntry> findAllMyShareEntries(Account actor, Account owner);
 
 	void create(Account actor, User owner, ShareContainer shareContainer);
 

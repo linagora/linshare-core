@@ -24,15 +24,24 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 	protected static Logger logger = LoggerFactory
 			.getLogger(AbstractResourceAccessControlImpl.class);
 
-	protected abstract boolean hasReadPermission(Account actor);
+	protected abstract boolean hasReadPermission(Account actor, O owner, E entry);
 
-	protected abstract boolean hasListPermission(Account actor);
+	protected abstract boolean hasListPermission(Account actor, O owner, E entry);
 
-	protected abstract boolean hasDeletePermission(Account actor);
+	protected abstract boolean hasDeletePermission(Account actor, O owner,
+			E entry);
 
-	protected abstract boolean hasCreatePermission(Account actor);
+	protected abstract boolean hasCreatePermission(Account actor, O owner,
+			E entry);
 
-	protected abstract boolean hasUpdatePermission(Account actor);
+	protected abstract boolean hasUpdatePermission(Account actor, O owner,
+			E entry);
+
+	protected abstract boolean hasDownloadPermission(Account actor, O owner,
+			E entry);
+
+	protected abstract boolean hasDownloadTumbnailPermission(Account actor,
+			O owner, E entry);
 
 	protected O getOwner(E entry) {
 		return null;
@@ -62,7 +71,7 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 		return this.isAuthorized(actor, owner, permission, entry, null);
 	}
 
-	private void appendOwner(O owner, StringBuilder sb) {
+	protected void appendOwner(O owner, StringBuilder sb) {
 		if (owner != null) {
 			String or = getOwnerRepresentation(owner);
 			if (or != null) {
@@ -72,7 +81,7 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 		}
 	}
 
-	private void appendForAccount(O owner, StringBuilder sb) {
+	protected void appendForAccount(O owner, StringBuilder sb) {
 		if (owner != null) {
 			String or = getOwnerRepresentation(owner);
 			if (or != null) {
@@ -82,7 +91,7 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 		}
 	}
 
-	private StringBuilder getActorStringBuilder(Account actor) {
+	protected StringBuilder getActorStringBuilder(Account actor) {
 		StringBuilder sb = new StringBuilder("Actor ");
 		sb.append(actor.getAccountReprentation());
 		return sb;
@@ -90,29 +99,30 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 
 	protected boolean isAuthorized(Account actor, O owner,
 			PermissionType permission, E entry, String resourceName) {
-		O recipient = getRecipient(entry);
-		if (owner != null && actor.equals(owner)) {
+		Validate.notNull(permission);
+		if (actor.hasAllRights()) {
 			return true;
-		} else if (recipient != null && actor.equals(recipient)) {
-			return true;
-		} else if (actor.hasAllRights()) {
-			return true;
-		} else if (actor.hasDelegationRole()) {
-			Validate.notNull(permission);
+		} else {
 			if (permission.equals(PermissionType.GET)) {
-				if (hasReadPermission(actor))
+				if (hasReadPermission(actor, owner, entry))
 					return true;
 			} else if (permission.equals(PermissionType.LIST)) {
-				if (hasListPermission(actor))
+				if (hasListPermission(actor, owner, entry))
 					return true;
 			} else if (permission.equals(PermissionType.CREATE)) {
-				if (hasCreatePermission(actor))
+				if (hasCreatePermission(actor, owner, entry))
 					return true;
 			} else if (permission.equals(PermissionType.UPDATE)) {
-				if (hasUpdatePermission(actor))
+				if (hasUpdatePermission(actor, owner, entry))
 					return true;
 			} else if (permission.equals(PermissionType.DELETE)) {
-				if (hasDeletePermission(actor))
+				if (hasDeletePermission(actor, owner, entry))
+					return true;
+			} else if (permission.equals(PermissionType.DOWNLOAD)) {
+				if (hasDownloadPermission(actor, owner, entry))
+					return true;
+			} else if (permission.equals(PermissionType.DOWNLOAD_THUMBNAIL)) {
+				if (hasDownloadTumbnailPermission(actor, owner, entry))
 					return true;
 			}
 		}
@@ -143,6 +153,29 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 		return contains;
 	}
 
+	/**
+	 * Only the entry owner has all rights (create, read, list, update, delete,
+	 * download and thumb nail download.
+	 * 
+	 * @param actor
+	 * @param owner
+	 * @param entry
+	 * @param permission
+	 * @return
+	 */
+	protected boolean defaultPermissionCheck(Account actor, Account owner,
+			E entry, TechnicalAccountPermissionType permission) {
+		if (actor.hasDelegationRole()) {
+			return hasPermission(actor, permission);
+		} else if (actor.isInternal() || actor.isGuest()) {
+			if (owner != null && actor.equals(owner)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public void checkReadPermission(Account actor, E entry,
 			BusinessErrorCode errCode) throws BusinessException {
 		O owner = getOwner(entry);
@@ -157,6 +190,7 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 		}
 	}
 
+	@Override
 	public void checkListPermission(Account actor, O owner, EntryType type,
 			BusinessErrorCode errCode) throws BusinessException {
 		if (!isAuthorized(actor, owner, PermissionType.LIST)) {
@@ -170,6 +204,7 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 		}
 	}
 
+	@Override
 	public void checkCreatePermission(Account actor, O owner, EntryType type,
 			BusinessErrorCode errCode) throws BusinessException {
 		if (!isAuthorized(actor, owner, PermissionType.CREATE)) {
@@ -183,6 +218,7 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 		}
 	}
 
+	@Override
 	public void checkUpdatePermission(Account actor, E entry,
 			BusinessErrorCode errCode) throws BusinessException {
 		O owner = getOwner(entry);
@@ -197,6 +233,7 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 		}
 	}
 
+	@Override
 	public void checkDeletePermission(Account actor, E entry,
 			BusinessErrorCode errCode) throws BusinessException {
 		O owner = getOwner(entry);
@@ -208,6 +245,37 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 			logger.error(sb.toString());
 			throw new BusinessException(errCode,
 					"You are not authorized to delete this entry.");
+		}
+	}
+
+	@Override
+	public void checkDownloadPermission(Account actor, E entry,
+			BusinessErrorCode errCode) throws BusinessException {
+		O owner = getOwner(entry);
+		if (!isAuthorized(actor, owner, PermissionType.DOWNLOAD, entry)) {
+			StringBuilder sb = getActorStringBuilder(actor);
+			sb.append(" is not authorized to download the entry ");
+			sb.append(getEntryRepresentation(entry));
+			appendOwner(owner, sb);
+			logger.error(sb.toString());
+			throw new BusinessException(errCode,
+					"You are not authorized to download this entry.");
+		}
+	}
+
+	@Override
+	public void checkThumbNailDownloadPermission(Account actor, E entry,
+			BusinessErrorCode errCode) throws BusinessException {
+		O owner = getOwner(entry);
+		if (!isAuthorized(actor, owner, PermissionType.DOWNLOAD_THUMBNAIL,
+				entry)) {
+			StringBuilder sb = getActorStringBuilder(actor);
+			sb.append(" is not authorized to get the thumbnail of the entry ");
+			sb.append(getEntryRepresentation(entry));
+			appendOwner(owner, sb);
+			logger.error(sb.toString());
+			throw new BusinessException(errCode,
+					"You are not authorized to get the thumbnail of this entry.");
 		}
 	}
 }

@@ -96,6 +96,15 @@ public class ShareServiceImpl extends GenericServiceImpl<ShareEntry> implements
 
 	}
 
+	@Override
+	public DocumentEntry copyShare(Account actor, Account recipient,
+			String shareEntryUuid) throws BusinessException {
+//		shareEntryService.find(actor, recipient, shareEntryUuid);
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	private boolean hasRightsToShareWithExternals(User sender) {
 		AbstractDomain domain = sender.getDomain();
 		if (domain != null) {

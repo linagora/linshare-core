@@ -293,13 +293,13 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 	public InputStream getDocumentStream(String shareEntryUuid)
 			throws BusinessException {
 		User actor = getAuthentication();
-		return shareEntryService.getStream(actor, shareEntryUuid);
+		return shareEntryService.getStream(actor, actor, shareEntryUuid);
 	}
 
 	@Override
 	public InputStream getThumbnailStream(String shareEntryUuid) throws BusinessException {
 		User actor = getAuthentication();
-		return shareEntryService.getThumbnailStream(actor, shareEntryUuid);
+		return shareEntryService.getThumbnailStream(actor, actor, shareEntryUuid);
 	}
 
 }

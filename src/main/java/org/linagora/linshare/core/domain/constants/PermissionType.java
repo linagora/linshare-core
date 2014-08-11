@@ -39,4 +39,6 @@ public enum PermissionType {
 	CREATE,
 	UPDATE,
 	DELETE,
+	DOWNLOAD,
+	DOWNLOAD_THUMBNAIL,
 }

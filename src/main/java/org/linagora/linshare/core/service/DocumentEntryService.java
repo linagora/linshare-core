@@ -47,7 +47,7 @@ public interface DocumentEntryService {
 
 	public DocumentEntry updateDocumentEntry(Account actor, Account owner, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException ;
 
-	public DocumentEntry duplicateDocumentEntry(Account actor, String docEntryUuid) throws BusinessException;
+	public DocumentEntry duplicateDocumentEntry(Account actor, Account owner, String docEntryUuid) throws BusinessException;
 
 	/**
 	 * Document suppression due to user action. 

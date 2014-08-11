@@ -130,7 +130,8 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 	@Override
 	public ShareEntry update(ShareEntry entry) throws BusinessException {
 		ShareEntry shareEntry = find(entry.getUuid());
-		shareEntry.setComment(entry.getComment()==null?"":entry.getComment());
+		shareEntry.setComment(entry.getComment() == null ? "" : entry
+				.getComment());
 		return shareEntryRepository.update(shareEntry);
 	}
 

@@ -161,7 +161,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	public void deleteSharing(ShareDocumentVo share, UserVo actorVo)
 			throws BusinessException {
 		User actor = getActor(actorVo);
-		shareEntryService.delete(actor, share.getIdentifier());
+		shareEntryService.delete(actor, actor, share.getIdentifier());
 	}
 
 	// TODO FMA
@@ -169,8 +169,8 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	public DocumentVo createLocalCopy(ShareDocumentVo shareDocumentVo,
 			UserVo actorVo) throws BusinessException {
 		User actor = getActor(actorVo);
-		DocumentEntry documentEntry = shareEntryService.copyDocumentFromShare(
-				shareDocumentVo.getIdentifier(), actor);
+		DocumentEntry documentEntry = shareEntryService.copy(
+				actor, actor, shareDocumentVo.getIdentifier());
 		return documentEntryTransformer.disassemble(documentEntry);
 	}
 
@@ -227,7 +227,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		share.setUuid(uuid);
 		share.setComment(comment);
 		User actor = getActor(actorVo);
-		shareEntryService.update(actor, share);
+		shareEntryService.update(actor, actor, share);
 	}
 
 	@Override
@@ -237,7 +237,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		try {
 			User actor = getActor(actorVo);
 			return shareEntryService.getThumbnailStream(actor,
-					shareEntryUuid);
+					actor, shareEntryUuid);
 		} catch (BusinessException e) {
 			logger.error("Can't get document thumbnail : " + shareEntryUuid
 					+ " : " + e.getMessage());
@@ -250,7 +250,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 			throws BusinessException {
 		logger.debug("downloading share : " + shareEntryUuid);
 		User actor = getActor(actorVo);
-		return shareEntryService.getStream(actor, shareEntryUuid);
+		return shareEntryService.getStream(actor, actor, shareEntryUuid);
 	}
 
 	@Override

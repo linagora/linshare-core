@@ -42,6 +42,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
+import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -49,7 +50,6 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -96,7 +96,7 @@ public class ShareEntryServiceImpl extends GenericServiceImpl<ShareEntry> implem
 
 	private final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository;
 
-public ShareEntryServiceImpl(GuestRepository guestRepository,
+	public ShareEntryServiceImpl(GuestRepository guestRepository,
 			FunctionalityReadOnlyService functionalityService,
 			ShareEntryBusinessService shareEntryBusinessService,
 			ShareExpiryDateService shareExpiryDateService,
@@ -122,7 +122,7 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 	}
 
 	@Override
-	public ShareEntry find(User actor, User owner, String uuid) throws BusinessException {
+	public ShareEntry find(Account actor, Account owner, String uuid) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 
@@ -135,60 +135,33 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 			throw new BusinessException(
 					BusinessErrorCode.SHARE_ENTRY_NOT_FOUND, message);
 		}
-		rac.checkReadPermission(actor, entry, BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
+		checkReadPermission(actor, entry, BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
 		return entry;
 	}
 
 	@Override
-	public void delete(Account actor, String shareUuid) throws BusinessException {
-		ShareEntry share = shareEntryBusinessService.find(shareUuid);
-		if(share == null) {
-			logger.error("Share not found : " + shareUuid);
-			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
-		}
-		deleteShare(actor, share);
-	}
+	public void delete(Account actor, Account owner, String uuid) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "Missing share entry uuid");
+		ShareEntry share = find(actor, owner, uuid);
+		checkDeletePermission(actor, share, BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
 
-
-	@Override
-	public void deleteShare(Account actor, ShareEntry share) throws BusinessException {
-		if (share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.hasSuperAdminRole()
-				|| actor.hasSystemAccountRole()) {
-			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Delete a sharing");
-			logEntryService.create(logEntry);
-
-			logger.info("delete share : " + share.getUuid());
-			shareEntryBusinessService.delete(share);
-
-			if (share.getEntryOwner().equals(actor) || actor.hasSuperAdminRole() || actor.hasSystemAccountRole()) {
-				MailContainerWithRecipient mail = mailBuildingService.buildSharedDocDeleted(actor, share);
-				notifierService.sendNotification(mail);
-			}
-
-		} else {
-			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + share.getUuid());
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-					"You are not authorized to delete this share, it does not belong to you.");
+		ShareLogEntry logEntry = new ShareLogEntry(owner, share,
+				LogAction.SHARE_DELETE, "Delete a sharing");
+		logEntryService.create(logEntry);
+		logger.info("Share deleted : " + share.getUuid());
+		shareEntryBusinessService.delete(share);
+		// No need to send a notification to the recipient if he is the current owner.
+		if (!share.getRecipient().equals(owner)) {
+			MailContainerWithRecipient mail = mailBuildingService
+					.buildSharedDocDeleted(share.getRecipient(), share);
+			notifierService.sendNotification(mail);
 		}
 	}
 
-
+	// TODO FMA - Refactoring shares
 	@Override
-	public void deleteShare(SystemAccount actor, ShareEntry share) throws BusinessException {
-		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.hasSuperAdminRole() || actor.hasSystemAccountRole()) {
-			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Delete a sharing");
-			logEntryService.create(logEntry);
-			logger.info("delete share : " + share.getUuid());
-			shareEntryBusinessService.delete(share);
-		} else {
-			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + share.getUuid());
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this share, it does not belong to you.");
-		}
-	}
-
-
-	@Override
-	public DocumentEntry copyDocumentFromShare(String shareUuid, User actor) throws BusinessException {
+	public DocumentEntry copy(Account actor, Account owner, String shareUuid) throws BusinessException {
 
 		ShareEntry share = shareEntryBusinessService.find(shareUuid);
 		if(share == null) {
@@ -201,7 +174,7 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 			ShareLogEntry logEntryShare = ShareLogEntry.hasCopiedAShare(actor, share);
 			logEntryService.create(logEntryShare);
 
-			DocumentEntry newDocumentEntry = documentEntryService.duplicateDocumentEntry(actor, share.getDocumentEntry().getUuid());
+			DocumentEntry newDocumentEntry = documentEntryService.duplicateDocumentEntry(actor, actor, share.getDocumentEntry().getUuid());
 
 			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Remove a received sharing (Copy of a sharing)"); 
 			logEntryService.create(logEntry);
@@ -222,66 +195,55 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 	}
 
 	@Override
-	public ShareEntry update(User actor, ShareEntry dto) throws BusinessException {
-		String shareUuid = dto.getUuid();
-		Validate.notEmpty(shareUuid);
-		ShareEntry share = shareEntryBusinessService.find(shareUuid);
-		if(share == null) {
-			logger.error("Share not found : " + shareUuid);
-			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
-		}
-		if(!share.getRecipient().equals(actor)) {
-			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to update comment on this share, it does not belong to you.");
-		}
+	public ShareEntry update(Account actor, Account owner, ShareEntry dto) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notNull(dto, "Missing share entry");
+		String uuid = dto.getUuid();
+		Validate.notEmpty(uuid, "Missing share entry uuid");
+		ShareEntry share = find(actor, owner, uuid);
+		/*
+		 * Actually the owner have the right to update his own shareEntry.
+		 * Is it really useful ?
+		 */
+		checkUpdatePermission(actor, share, BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
 		return shareEntryBusinessService.update(share);
 	}
 
 	@Override
-	public InputStream getThumbnailStream(User actor, String shareEntryUuid) throws BusinessException {
-		try {
-			ShareEntry shareEntry = find(actor, actor, shareEntryUuid);
-			if (!shareEntry.getRecipient().equals(actor)) {
-				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get thumbnail for this share.");
-			}
-			return documentEntryBusinessService.getDocumentThumbnailStream(shareEntry.getDocumentEntry());
-		} catch (BusinessException e) {
-			logger.error("Can't find share for thumbnail : " + shareEntryUuid + " : " + e.getMessage());
-			throw e;
-		}
+	public InputStream getThumbnailStream(Account actor, Account owner, String uuid) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "Missing share entry uuid");
+		ShareEntry share = find(actor, owner, uuid);
+		checkThumbNailDownloadPermission(actor, share, BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
+		return documentEntryBusinessService.getDocumentThumbnailStream(share.getDocumentEntry());
 	}
 
 	@Override
-	public InputStream getStream(User actor, String shareEntryUuid) throws BusinessException {
-		try {
-			ShareEntry shareEntry = find(actor, actor, shareEntryUuid);
-			if (!shareEntry.getRecipient().equals(actor)) {
-				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this share.");
-			}
-			ShareLogEntry logEntryActor = ShareLogEntry.hasDownloadedAShare(actor, shareEntry);
-			ShareLogEntry logEntryTarget = ShareLogEntry.aShareWasDownloaded(actor, shareEntry);
-			logEntryService.create(logEntryActor);
-			logEntryService.create(logEntryTarget);
-			if (shareEntry.getDownloaded() <=0) {
-				MailContainerWithRecipient mail = mailBuildingService.buildRegisteredDownload(shareEntry);
-				notifierService.sendNotification(mail);
-			}
-			shareEntryBusinessService.updateDownloadCounter(shareEntry.getUuid());
-			return documentEntryBusinessService.getDocumentStream(shareEntry.getDocumentEntry());
-		} catch (BusinessException e) {
-			logger.error("Can't find share for thumbnail : " + shareEntryUuid + " : " + e.getMessage());
-			throw e;
+	public InputStream getStream(Account actor, Account owner, String uuid) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "Missing share entry uuid");
+		ShareEntry share = find(actor, actor, uuid);
+		checkDownloadPermission(actor, share, BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
+		ShareLogEntry logEntryActor = ShareLogEntry.hasDownloadedAShare(actor, share);
+		ShareLogEntry logEntryTarget = ShareLogEntry.aShareWasDownloaded(actor, share);
+		logEntryService.create(logEntryActor);
+		logEntryService.create(logEntryTarget);
+		if (share.getDownloaded() <=0) {
+			MailContainerWithRecipient mail = mailBuildingService.buildRegisteredDownload(share);
+			notifierService.sendNotification(mail);
 		}
+		shareEntryBusinessService.updateDownloadCounter(share.getUuid());
+		return documentEntryBusinessService.getDocumentStream(share.getDocumentEntry());
 	}
-
 
 	@Override
-	public List<ShareEntry> findAllMyShareEntries(Account actor, User owner) {
-		// TODO check permissions
-		return shareEntryBusinessService.findAllMyShareEntries(owner);
+	public List<ShareEntry> findAllMyShareEntries(Account actor, Account owner) {
+		preChecks(actor, owner);
+		checkListPermission(actor, owner, EntryType.SHARE, BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
+		return shareEntryBusinessService.findAllMyShareEntries((User) owner);
 	}
 
-
+	// TODO FMA - Refactoring shares
 	@Override
 	public void sendDocumentEntryUpdateNotification(ShareEntry shareEntry, String friendlySize, String originalFileName) {
 		try {
@@ -294,6 +256,10 @@ public ShareEntryServiceImpl(GuestRepository guestRepository,
 
 	@Override
 	public void create(Account actor, User owner, ShareContainer sc) {
+		preChecks(actor, owner);
+		Validate.notNull(sc);
+		checkCreatePermission(actor, owner, EntryType.SHARE, BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
+
 		Date expiryDate = sc.getExpiryDate();
 		if (expiryDate == null) {
 			expiryDate = shareExpiryDateService

@@ -7,7 +7,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
 
 public class ShareEntryResourceAccessControlImpl extends
-		AbstractResourceAccessControlImpl<Account, ShareEntry> implements
+		EntryResourceAccessControlImpl<ShareEntry> implements
 		ShareEntryResourceAccessControl {
 
 	public ShareEntryResourceAccessControlImpl() {
@@ -49,31 +49,123 @@ public class ShareEntryResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor) {
-		return hasPermission(actor, TechnicalAccountPermissionType.SHARES_GET);
+	protected boolean hasReadPermission(Account actor, Account owner,
+			ShareEntry entry) {
+		if (actor.hasDelegationRole()) {
+			return hasPermission(actor,
+					TechnicalAccountPermissionType.SHARES_GET);
+		} else if (actor.isInternal() || actor.isGuest()) {
+			/*
+			 * The owner has the right to read his own shareEntry, and the
+			 * recipient has the right to read his received shareEntry because
+			 * it is same shared entity.
+			 */
+			if (owner != null && actor.equals(owner)) {
+				return true;
+			}
+			Account recipient = getRecipient(entry);
+			if (recipient != null && actor.equals(recipient)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor) {
-		return this.hasPermission(actor,
+	protected boolean hasListPermission(Account actor, Account owner,
+			ShareEntry entry) {
+		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.SHARES_LIST);
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor) {
-		return hasPermission(actor,
-				TechnicalAccountPermissionType.SHARES_DELETE);
+	protected boolean hasDeletePermission(Account actor, Account owner,
+			ShareEntry entry) {
+		if (actor.hasDelegationRole()) {
+			return hasPermission(actor,
+					TechnicalAccountPermissionType.SHARES_DELETE);
+		} else if (actor.isInternal() || actor.isGuest()) {
+			/*
+			 * The owner has the right to delete his own shareEntry, and the
+			 * recipient has the right to delete his received shareEntry because
+			 * it is same shared entity.
+			 */
+			if (owner != null && actor.equals(owner)) {
+				return true;
+			}
+			Account recipient = getRecipient(entry);
+			if (recipient != null && actor.equals(recipient)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor) {
-		return hasPermission(actor,
+	protected boolean hasCreatePermission(Account actor, Account owner,
+			ShareEntry entry) {
+		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.SHARES_CREATE);
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor) {
-		return hasPermission(actor,
-				TechnicalAccountPermissionType.SHARES_UPDATE);
+	protected boolean hasUpdatePermission(Account actor, Account owner,
+			ShareEntry entry) {
+		if (actor.hasDelegationRole()) {
+			return hasPermission(actor,
+					TechnicalAccountPermissionType.SHARES_UPDATE);
+		} else if (actor.isInternal() || actor.isGuest()) {
+			/*
+			 * The owner has the right to update his own shareEntry, and the
+			 * recipient has the right to update his received shareEntry because
+			 * it is same shared entity.
+			 */
+			if (owner != null && actor.equals(owner)) {
+				return true;
+			}
+			Account recipient = getRecipient(entry);
+			if (recipient != null && actor.equals(recipient)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	protected boolean hasDownloadPermission(Account actor, Account owner,
+			ShareEntry entry) {
+		if (actor.hasDelegationRole()) {
+			return hasPermission(actor,
+					TechnicalAccountPermissionType.SHARES_DOWNLOAD);
+		} else if (actor.isInternal() || actor.isGuest()) {
+			/*
+			 * Only the recipient has the right to download his received
+			 * shareEntry. It makes no sense for the owner.
+			 */
+			Account recipient = getRecipient(entry);
+			if (recipient != null && actor.equals(recipient)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	protected boolean hasDownloadTumbnailPermission(Account actor,
+			Account owner, ShareEntry entry) {
+		if (actor.hasDelegationRole()) {
+			return hasPermission(actor,
+					TechnicalAccountPermissionType.SHARES_DOWNLOAD_THUMBNAIL);
+		} else if (actor.isInternal() || actor.isGuest()) {
+			/*
+			 * Only the recipient has the right to download the thumb nail of
+			 * his received shareEntry. It makes no sense for the owner.
+			 */
+			Account recipient = getRecipient(entry);
+			if (recipient != null && actor.equals(recipient)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

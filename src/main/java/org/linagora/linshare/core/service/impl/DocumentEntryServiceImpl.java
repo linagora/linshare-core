@@ -90,7 +90,6 @@ public class DocumentEntryServiceImpl extends GenericServiceImpl<DocumentEntry> 
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 	private final AntiSamyService antiSamyService;
 	private final DomainBusinessService domainBusinessService;
-	private final DocumentEntryResourceAccessControl documentEntryRac;
 
 public DocumentEntryServiceImpl(
 			DocumentEntryBusinessService documentEntryBusinessService,
@@ -113,7 +112,6 @@ public DocumentEntryServiceImpl(
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
 		this.antiSamyService = antiSamyService;
 		this.domainBusinessService = domainBusinessService;
-		this.documentEntryRac = documentEntryRac;
 	}
 
 	@Override
@@ -286,7 +284,7 @@ public DocumentEntryServiceImpl(
 	}
 
 	@Override
-	public DocumentEntry duplicateDocumentEntry(Account actor, String docEntryUuid) throws BusinessException {
+	public DocumentEntry duplicateDocumentEntry(Account actor, Account owner, String docEntryUuid) throws BusinessException {
 		DocumentEntry documentEntry = documentEntryBusinessService.find(docEntryUuid);
 		DocumentEntry ret = null;
 		// TODO : Check the current doc entry id is shared with the actor (if
@@ -440,7 +438,7 @@ public DocumentEntryServiceImpl(
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		DocumentEntry entry = find(actor, owner, uuid);
-		documentEntryRac.checkThumbNailDownloadPermission(actor, entry);
+		checkThumbNailDownloadPermission(actor, entry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		return documentEntryBusinessService.getDocumentThumbnailStream(entry);
 	}
 
@@ -449,7 +447,7 @@ public DocumentEntryServiceImpl(
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		DocumentEntry entry = find(actor, owner, uuid);
-		documentEntryRac.checkDownloadPermission(actor, entry);
+		checkDownloadPermission(actor, entry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		return documentEntryBusinessService.getDocumentStream(entry);
 	}
 
