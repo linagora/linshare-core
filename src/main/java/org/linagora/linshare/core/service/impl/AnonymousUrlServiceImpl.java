@@ -72,7 +72,6 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 	@Override
 	public boolean exists(String uuid, String urlPath) {
 		try {
-			SystemAccount actor = anonymousUrlBusinessService.getAnonymousURLAccount();
 			AnonymousUrl anonymousUrl = anonymousUrlBusinessService.getAnonymousUrl(uuid);
 			if(anonymousUrl.getUrlPath().endsWith(urlPath)) {
 				return true;
@@ -127,10 +126,11 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 	public InputStream retrieveFileStream(String anonymousUrlUuid, String anonymousShareEntryUuid, String password) throws BusinessException {
 		AnonymousUrl anonymousUrl = anonymousUrlBusinessService.getAnonymousUrl(anonymousUrlUuid);
 		if(isValid(anonymousUrl, password)) {
+			SystemAccount actor = anonymousUrlBusinessService.getAnonymousURLAccount();
 			// anonymous share are not made with a thousand contacts, performance will not be poor most of the time.
 			for (AnonymousShareEntry anonymousShareEntry : anonymousUrl.getAnonymousShareEntries()) {
 				if(anonymousShareEntry.getUuid().equals(anonymousShareEntryUuid)) {
-					return anonymousShareEntryService.getAnonymousShareEntryStream(anonymousShareEntry.getUuid());
+					return anonymousShareEntryService.getAnonymousShareEntryStream(actor, anonymousShareEntry.getUuid());
 				}
 			}
 			String msg = "anonymousShareEntryUuid not found : " + anonymousShareEntryUuid;
@@ -149,8 +149,9 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 		if(isValid(anonymousUrl, password)) {
 			
 			Map<String,InputStream> map = new HashMap<String, InputStream>();
+			SystemAccount actor = anonymousUrlBusinessService.getAnonymousURLAccount();
 			for (AnonymousShareEntry anonymousShareEntry : anonymousUrl.getAnonymousShareEntries()) {
-				map.put(anonymousShareEntry.getName(), anonymousShareEntryService.getAnonymousShareEntryStream(anonymousShareEntry.getUuid()));
+				map.put(anonymousShareEntry.getName(), anonymousShareEntryService.getAnonymousShareEntryStream(actor, anonymousShareEntry.getUuid()));
 				// TODO : NEW FUNCTIONNALITY : just send one mail for all files, not one by by file.
 			}
 			

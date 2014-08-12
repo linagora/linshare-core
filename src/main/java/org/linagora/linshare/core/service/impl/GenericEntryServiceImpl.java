@@ -8,25 +8,25 @@ import org.linagora.linshare.core.rac.EntryResourceAccessControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GenericEntryServiceImpl<T extends Entry> extends
-		GenericServiceImpl<T> {
+public class GenericEntryServiceImpl<R, E extends Entry> extends
+		GenericServiceImpl<R, E> {
 
 	protected static Logger logger = LoggerFactory
 			.getLogger(GenericEntryServiceImpl.class);
 
-	protected final EntryResourceAccessControl<T> rac;
+	protected final EntryResourceAccessControl<R, E> rac;
 
-	public GenericEntryServiceImpl(EntryResourceAccessControl<T> rac) {
+	public GenericEntryServiceImpl(EntryResourceAccessControl<R, E> rac) {
 		super(rac);
 		this.rac = rac;
 	}
 
-	protected void checkDownloadPermission(Account actor, T entry,
+	protected void checkDownloadPermission(Account actor, E entry,
 			BusinessErrorCode errCode) throws BusinessException {
 		rac.checkDownloadPermission(actor, entry, errCode);
 	}
 
-	protected void checkThumbNailDownloadPermission(Account actor, T entry,
+	protected void checkThumbNailDownloadPermission(Account actor, E entry,
 			BusinessErrorCode errCode) throws BusinessException {
 		rac.checkThumbNailDownloadPermission(actor, entry, errCode);
 	}

@@ -57,6 +57,6 @@ public interface AnonymousShareEntryBusinessService {
 
 	public AnonymousUrl create(User sender, Recipient recipient, Set<DocumentEntry> documentEntries, Date expirationDate, Boolean passwordProtected) throws BusinessException;
 
-	public void deleteAnonymousShare(AnonymousShareEntry anonymousShare) throws BusinessException;
+	public void delete(AnonymousShareEntry anonymousShare) throws BusinessException;
 
 }

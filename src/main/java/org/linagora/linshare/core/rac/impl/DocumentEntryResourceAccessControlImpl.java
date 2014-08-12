@@ -6,7 +6,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.rac.DocumentEntryResourceAccessControl;
 
 public class DocumentEntryResourceAccessControlImpl extends
-		EntryResourceAccessControlImpl<DocumentEntry> implements
+		EntryResourceAccessControlImpl<Account, DocumentEntry> implements
 		DocumentEntryResourceAccessControl {
 
 	public DocumentEntryResourceAccessControlImpl() {

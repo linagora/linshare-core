@@ -45,6 +45,7 @@
 		<constructor-arg ref="anonymousUrlRepository" />
 		<constructor-arg value="download" />
 		<constructor-arg ref="passwordService" />
+		<constructor-arg ref="accountRepository" />
 	</bean>
 
 

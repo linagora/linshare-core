@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-public abstract class AbstractResourceAccessControlImpl<O, E> implements
-		AbstractResourceAccessControl<O, E> {
+public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
+		AbstractResourceAccessControl<O, R, E> {
 
 	protected static Logger logger = LoggerFactory
 			.getLogger(AbstractResourceAccessControlImpl.class);
@@ -45,7 +45,7 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 		return null;
 	}
 
-	protected O getRecipient(E entry) {
+	protected R getRecipient(E entry) {
 		return null;
 	}
 
@@ -94,7 +94,9 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 	protected boolean isAuthorized(Account actor, O owner,
 			PermissionType permission, E entry, String resourceName) {
 		Validate.notNull(permission);
-		if (actor.hasAllRights()) {
+		if (actor.hasSuperAdminRole()) {
+			return true;
+		} else if (actor.hasSystemAccountRole()) {
 			return true;
 		} else {
 			if (permission.equals(PermissionType.GET)) {

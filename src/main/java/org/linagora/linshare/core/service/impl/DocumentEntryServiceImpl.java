@@ -82,7 +82,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<DocumentEntry> implements DocumentEntryService {
+public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, DocumentEntry> implements DocumentEntryService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(DocumentEntryServiceImpl.class);
@@ -119,10 +119,10 @@ public DocumentEntryServiceImpl(
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
 			AntiSamyService antiSamyService,
 			DomainBusinessService domainBusinessService,
-			DocumentEntryResourceAccessControl documentEntryRac,
+			DocumentEntryResourceAccessControl rac,
 			MailBuildingService mailBuildingService,
 			NotifierService notifierService) {
-		super(documentEntryRac);
+		super(rac);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 		this.abstractDomainService = abstractDomainService;

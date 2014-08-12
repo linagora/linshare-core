@@ -8,9 +8,9 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.EntryResourceAccessControl;
 
-public abstract class EntryResourceAccessControlImpl<E extends Entry> extends
-		AbstractResourceAccessControlImpl<Account, E> implements
-		EntryResourceAccessControl<E> {
+public abstract class EntryResourceAccessControlImpl<R, E extends Entry> extends
+		AbstractResourceAccessControlImpl<Account, R, E> implements
+		EntryResourceAccessControl<R, E> {
 
 	protected abstract boolean hasDownloadPermission(Account actor,
 			Account owner, E entry);
@@ -42,7 +42,9 @@ public abstract class EntryResourceAccessControlImpl<E extends Entry> extends
 	protected boolean isAuthorized(Account actor, Account owner,
 			PermissionType permission, E entry, String resourceName) {
 		Validate.notNull(permission);
-		if (actor.hasAllRights()) {
+		if (actor.hasSuperAdminRole()) {
+			return true;
+		} else if (actor.hasSystemAccountRole()) {
 			return true;
 		} else {
 			if (permission.equals(PermissionType.GET)) {

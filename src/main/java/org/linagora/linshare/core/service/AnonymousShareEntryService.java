@@ -37,23 +37,21 @@ import java.io.InputStream;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AnonymousShareEntryService {
 
-	AnonymousShareEntry find(Account actor, Account owner, String shareUuid)  throws BusinessException ;
+	AnonymousShareEntry find(Account actor, Account owner, String shareUuid)
+			throws BusinessException;
 
-	void create(Account actor, User owner, ShareContainer shareContainer) throws BusinessException;
+	void create(Account actor, User owner, ShareContainer shareContainer)
+			throws BusinessException;
 
-	void delete(Account actor, Account owner, String shareUuid) throws BusinessException;
+	void delete(Account actor, Account owner, String shareUuid)
+			throws BusinessException;
 
-	void deleteShare(SystemAccount systemAccount, AnonymousShareEntry share) throws BusinessException;
-
-	InputStream getAnonymousShareEntryStream(String shareUuid) throws BusinessException ;
-
-	@Deprecated
-	public void sendDocumentEntryUpdateNotification(AnonymousShareEntry anonymousShareEntry, String friendlySize, String originalFileName);
+	InputStream getAnonymousShareEntryStream(Account actor, String shareUuid)
+			throws BusinessException;
 }

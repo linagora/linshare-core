@@ -5,7 +5,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface AbstractResourceAccessControl<O, E> {
+public interface AbstractResourceAccessControl<O, R, E> {
 
 	void checkReadPermission(Account actor, E entry, BusinessErrorCode errCode)
 			throws BusinessException;

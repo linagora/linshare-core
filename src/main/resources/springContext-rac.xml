@@ -9,4 +9,5 @@
 
 	<bean name="shareEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ShareEntryResourceAccessControlImpl"/>
 	<bean name="documentEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.DocumentEntryResourceAccessControlImpl"/>
+	<bean name="anonymousShareEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.AnonymousShareEntryResourceAccessControlImpl"/>
 </beans>

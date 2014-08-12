@@ -7,7 +7,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
 
 public class ShareEntryResourceAccessControlImpl extends
-		EntryResourceAccessControlImpl<ShareEntry> implements
+		EntryResourceAccessControlImpl<Account, ShareEntry> implements
 		ShareEntryResourceAccessControl {
 
 	public ShareEntryResourceAccessControlImpl() {
@@ -53,7 +53,7 @@ public class ShareEntryResourceAccessControlImpl extends
 			ShareEntry entry) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
-					TechnicalAccountPermissionType.SHARES_GET);
+					TechnicalAccountPermissionType.SHARE_ENTRIES_GET);
 		} else if (actor.isInternal() || actor.isGuest()) {
 			/*
 			 * The owner has the right to read his own shareEntry, and the
@@ -75,7 +75,7 @@ public class ShareEntryResourceAccessControlImpl extends
 	protected boolean hasListPermission(Account actor, Account owner,
 			ShareEntry entry) {
 		return defaultPermissionCheck(actor, owner, entry,
-				TechnicalAccountPermissionType.SHARES_LIST);
+				TechnicalAccountPermissionType.SHARE_ENTRIES_LIST);
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class ShareEntryResourceAccessControlImpl extends
 			ShareEntry entry) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
-					TechnicalAccountPermissionType.SHARES_DELETE);
+					TechnicalAccountPermissionType.SHARE_ENTRIES_DELETE);
 		} else if (actor.isInternal() || actor.isGuest()) {
 			/*
 			 * The owner has the right to delete his own shareEntry, and the
@@ -105,7 +105,7 @@ public class ShareEntryResourceAccessControlImpl extends
 	protected boolean hasCreatePermission(Account actor, Account owner,
 			ShareEntry entry) {
 		return defaultPermissionCheck(actor, owner, entry,
-				TechnicalAccountPermissionType.SHARES_CREATE);
+				TechnicalAccountPermissionType.SHARE_ENTRIES_CREATE);
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class ShareEntryResourceAccessControlImpl extends
 			ShareEntry entry) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
-					TechnicalAccountPermissionType.SHARES_UPDATE);
+					TechnicalAccountPermissionType.SHARE_ENTRIES_UPDATE);
 		} else if (actor.isInternal() || actor.isGuest()) {
 			/*
 			 * The owner has the right to update his own shareEntry, and the
@@ -136,7 +136,7 @@ public class ShareEntryResourceAccessControlImpl extends
 			ShareEntry entry) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
-					TechnicalAccountPermissionType.SHARES_DOWNLOAD);
+					TechnicalAccountPermissionType.SHARE_ENTRIES_DOWNLOAD);
 		} else if (actor.isInternal() || actor.isGuest()) {
 			/*
 			 * Only the recipient has the right to download his received
@@ -155,7 +155,7 @@ public class ShareEntryResourceAccessControlImpl extends
 			Account owner, ShareEntry entry) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
-					TechnicalAccountPermissionType.SHARES_DOWNLOAD_THUMBNAIL);
+					TechnicalAccountPermissionType.SHARE_ENTRIES_DOWNLOAD_THUMBNAIL);
 		} else if (actor.isInternal() || actor.isGuest()) {
 			/*
 			 * Only the recipient has the right to download the thumb nail of

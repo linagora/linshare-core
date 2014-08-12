@@ -138,6 +138,7 @@
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="recipientFavouriteRepository" />
+		<constructor-arg ref="anonymousShareEntryResourceAccessControl" />
 	</bean>
 
 	<bean id="anonymousUrlService" class="org.linagora.linshare.core.service.impl.AnonymousUrlServiceImpl">

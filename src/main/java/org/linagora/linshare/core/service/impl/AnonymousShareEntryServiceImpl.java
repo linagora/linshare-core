@@ -36,16 +36,18 @@ package org.linagora.linshare.core.service.impl;
 import java.io.InputStream;
 import java.util.Date;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -53,6 +55,7 @@ import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.AnonymousShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -63,7 +66,9 @@ import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryService {
+public class AnonymousShareEntryServiceImpl extends
+		GenericEntryServiceImpl<Contact, AnonymousShareEntry> implements
+		AnonymousShareEntryService {
 
 	private final FunctionalityReadOnlyService functionalityService;
 
@@ -81,17 +86,20 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 
 	private final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository;
 
-	private static final Logger logger = LoggerFactory.getLogger(AnonymousShareEntryServiceImpl.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(AnonymousShareEntryServiceImpl.class);
 
 	public AnonymousShareEntryServiceImpl(
 			final FunctionalityReadOnlyService functionalityService,
 			final AnonymousShareEntryBusinessService anonymousShareEntryBusinessService,
 			final ShareExpiryDateService shareExpiryDateService,
-			final LogEntryService logEntryService, NotifierService notifierService,
+			final LogEntryService logEntryService,
+			NotifierService notifierService,
 			final MailBuildingService mailBuildingService,
 			final DocumentEntryBusinessService documentEntryBusinessService,
-			final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository) {
-		super();
+			final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository,
+			final AnonymousShareEntryResourceAccessControl rac) {
+		super(rac);
 		this.functionalityService = functionalityService;
 		this.anonymousShareEntryBusinessService = anonymousShareEntryBusinessService;
 		this.shareExpiryDateService = shareExpiryDateService;
@@ -103,27 +111,34 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 	}
 
 	@Override
-	public AnonymousShareEntry find(Account actor, Account owner, String shareUuid) throws BusinessException {
-		AnonymousShareEntry share = anonymousShareEntryBusinessService.findByUuid(shareUuid);
-		if(share == null) {
+	public AnonymousShareEntry find(Account actor, Account owner,
+			String shareUuid) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(shareUuid, "Share uuid is required.");
+		AnonymousShareEntry share = anonymousShareEntryBusinessService
+				.findByUuid(shareUuid);
+		if (share == null) {
 			logger.error("Share not found : " + shareUuid);
-			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
+			throw new BusinessException(
+					BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_NOT_FOUND,
+					"Share entry not found : " + shareUuid);
 		}
-		if(owner.hasSystemAccountRole() || share.getEntryOwner().equals(owner) ) {
-			return share;
-		} else {
-			logger.error("Actor " + owner.getAccountReprentation() + " does not own the share : " + shareUuid);
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this share, it does not belong to you.");
-		}
+		checkReadPermission(actor, share,
+				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN);
+		return share;
 	}
 
 	// TODO FMA - Refactoring shares
 	@Override
 	public void create(Account actor, User owner, ShareContainer sc)
 			throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notNull(sc, "Share container is required.");
+		checkCreatePermission(actor, owner, EntryType.ANONYMOUS_SHARE,
+				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN);
+
 		Date expiryDate = sc.getExpiryDate();
 		Boolean passwordProtected = sc.getSecured();
-
 		if (functionalityService.isSauMadatory(owner.getDomain()
 				.getIdentifier())) {
 			passwordProtected = true;
@@ -159,75 +174,49 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		}
 	}
 
-	// TODO FMA - Refactoring shares
 	@Override
-	public void delete(Account actor, Account owner, String shareUuid) throws BusinessException {
-		// TODO : fix permissions
-//		if(shareEntry.getEntryOwner().equals(actor) || actor.equals(guestRepository.getSystemAccount()) || actor.getAccountType().equals(AccountType.ROOT) ) {
-//			
-//		} else {
-//			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareEntry.getUuid());
-//			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this anonymous share, it does not belong to you.");
-//		}
-
-		AnonymousShareEntry shareEntry = find(actor, owner, shareUuid);
-		anonymousShareEntryBusinessService.deleteAnonymousShare(shareEntry);
-		ShareLogEntry logEntry = new ShareLogEntry(owner, shareEntry, LogAction.SHARE_DELETE, "Deleting anonymous share" );
+	public void delete(Account actor, Account owner, String shareUuid)
+			throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(shareUuid, "Share uuid is required.");
+		AnonymousShareEntry share = find(actor, owner, shareUuid);
+		checkDeletePermission(actor, share,
+				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN);
+		anonymousShareEntryBusinessService.delete(share);
+		ShareLogEntry logEntry = new ShareLogEntry(owner, share,
+				LogAction.SHARE_DELETE, "Deleting anonymous share");
 		logEntryService.create(logEntry);
 
 		// TODO : anonymous share deletion notification
 		// notifierService.sendNotification();
 	}
 
-	// TODO FMA - Refactoring shares
 	@Override
-	public void deleteShare(SystemAccount systemAccount, AnonymousShareEntry shareEntry) throws BusinessException {
-		anonymousShareEntryBusinessService.deleteAnonymousShare(shareEntry);
-		ShareLogEntry logEntry = new ShareLogEntry(systemAccount, shareEntry, LogAction.SHARE_DELETE, "Deleting anonymous share" );
+	public InputStream getAnonymousShareEntryStream(Account actor,
+			String shareUuid) throws BusinessException {
+		preChecks(actor, null, true);
+		Validate.notEmpty(shareUuid, "Share uuid is required.");
+		AnonymousShareEntry shareEntry = anonymousShareEntryBusinessService
+				.findByUuid(shareUuid);
+		if (shareEntry == null) {
+			logger.error("Share not found : " + shareUuid);
+			throw new BusinessException(
+					BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_NOT_FOUND,
+					"Share entry not found : " + shareUuid);
+		}
+		checkDownloadPermission(actor, shareEntry,
+				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN);
+		ShareLogEntry logEntry = new ShareLogEntry(shareEntry.getEntryOwner(),
+				shareEntry, LogAction.ANONYMOUS_SHARE_DOWNLOAD,
+				"Anonymous user "
+						+ shareEntry.getEntryOwner().getAccountReprentation()
+						+ " downloaded a file");
 		logEntryService.create(logEntry);
-	}
-
-
-	@Override
-	public InputStream getAnonymousShareEntryStream(String shareUuid) throws BusinessException {
-		AnonymousShareEntry shareEntry;
-		try {
-			shareEntry = downloadAnonymousShareEntry(shareUuid);
-		} catch (BusinessException e) {
-			logger.error("Can't find anonymous share : " + shareUuid + " : " + e.getMessage());
-			throw e;
-		}
-		try {
-			//send a notification by mail to the owner
-			MailContainerWithRecipient mail = mailBuildingService.buildAnonymousDownload(shareEntry);
-			notifierService.sendNotification(mail);
-		} catch (BusinessException e) {
-			// TODO : FIXME : send the notification to the domain administration address. => a new functionality need to be add. 
-			if(e.getErrorCode().equals(BusinessErrorCode.RELAY_HOST_NOT_ENABLE)) {
-				logger.error("Can't send notification to anonymous share (" + shareUuid + ") owner because : " + e.getMessage());
-			}
-		}
-		return documentEntryBusinessService.getDocumentStream(shareEntry.getDocumentEntry());
-	}
-
-
-	private AnonymousShareEntry downloadAnonymousShareEntry(String shareUuid) throws BusinessException {
-		AnonymousShareEntry shareEntry = anonymousShareEntryBusinessService.findByUuidForDownload(shareUuid);
-
-		ShareLogEntry logEntry = new ShareLogEntry(shareEntry.getEntryOwner(), shareEntry, LogAction.ANONYMOUS_SHARE_DOWNLOAD,
-				"Anonymous user " + shareEntry.getEntryOwner().getAccountReprentation() +  " downloaded a file");
-		logEntryService.create(logEntry);
-		return shareEntry;
-	}
-
-	@Deprecated
-	@Override
-	public void sendDocumentEntryUpdateNotification(AnonymousShareEntry anonymousShareEntry, String friendlySize, String originalFileName) {
-		try {
-			MailContainerWithRecipient mail = mailBuildingService.buildSharedDocUpdated(anonymousShareEntry, originalFileName);
-			notifierService.sendNotification(mail);
-		} catch (BusinessException e) {
-			logger.error("Error while trying to notify document update ", e);
-		}
+		// send a notification by mail to the owner
+		MailContainerWithRecipient mail = mailBuildingService
+				.buildAnonymousDownload(shareEntry);
+		notifierService.sendNotification(mail);
+		return documentEntryBusinessService.getDocumentStream(shareEntry
+				.getDocumentEntry());
 	}
 }

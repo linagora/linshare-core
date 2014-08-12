@@ -139,11 +139,9 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 			// test if this functionality is enable for the current domain.
 			if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
 				try {
-
 					DocumentEntry documentEntry = shareEntry.getDocumentEntry();
 					boolean doDeleteDoc = documentSuppressionIsNeeded(documentEntry);
-
-					anonymousShareEntryService.deleteShare(systemAccount, shareEntry);
+					anonymousShareEntryService.delete(systemAccount, null, shareEntry.getUuid());
 					if(doDeleteDoc) {
 						documentEntryService.deleteExpiredDocumentEntry(systemAccount, documentEntry);
 					}

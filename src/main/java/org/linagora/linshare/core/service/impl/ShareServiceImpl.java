@@ -25,9 +25,14 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ShareServiceImpl extends GenericServiceImpl<ShareEntry> implements
+public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> implements
 		ShareService {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(ShareServiceImpl.class);
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 

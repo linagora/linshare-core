@@ -72,7 +72,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-public class ShareEntryServiceImpl extends GenericEntryServiceImpl<ShareEntry>
+public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, ShareEntry>
 		implements ShareEntryService {
 
 	private static final Logger logger = LoggerFactory

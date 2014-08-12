@@ -159,7 +159,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 	}
 
 	@Override
-	public void deleteAnonymousShare(AnonymousShareEntry anonymousShare) throws BusinessException {
+	public void delete(AnonymousShareEntry anonymousShare) throws BusinessException {
 		anonymousShareEntryRepository.delete(anonymousShare);
 
 		DocumentEntry documentEntry = anonymousShare.getDocumentEntry();
