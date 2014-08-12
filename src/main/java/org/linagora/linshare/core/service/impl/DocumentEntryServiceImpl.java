@@ -189,12 +189,12 @@ public DocumentEntryServiceImpl(
 				mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
 			}
 
-//			if (!forceAntivirusOff) {
+			if (!forceAntivirusOff) {
 				Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
 				if (antivirusFunctionality.getActivationPolicy().getStatus()) {
 					checkVirus(fileName, owner, tempFile);
 				}
-//			}
+			}
 
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
@@ -373,7 +373,7 @@ public DocumentEntryServiceImpl(
 	}
 
 	@Override
-	public void deleteDocumentEntry(Account actor, DocumentEntry documentEntry) throws BusinessException {
+	public void delete(Account actor, DocumentEntry documentEntry) throws BusinessException {
 		logger.debug("Actor: " + actor.getAccountReprentation() + " is trying to delete document entry: " + documentEntry.getUuid());
 		checkDeletePermission(actor, documentEntry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		try {

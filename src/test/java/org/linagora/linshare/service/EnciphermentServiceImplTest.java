@@ -279,7 +279,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug("inputStreamUuid : " + uuid);
 		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
 		printDocs(jane);
-		DocumentEntry encryptedDocumentEntry = enciphermentService.encryptDocument(jane, aDocumentEntry, jane, "password");
+		DocumentEntry encryptedDocumentEntry = enciphermentService.encryptDocument(jane, jane, aDocumentEntry, "password");
 		logger.debug("encryptedDoc.getIdentifier : " + encryptedDocumentEntry.getUuid());
 		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
 		logger.debug("inputStreamUuid : " + uuid);
@@ -309,7 +309,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		expirationDate.add(Calendar.YEAR, -2);
 		testEncipherDocument();
 		aDocument.setSignatures(new HashSet<Signature>());
-		DocumentEntry decryptedDocumentEntry = enciphermentService.decryptDocument(jane, aDocumentEntry, jane, "password");
+		DocumentEntry decryptedDocumentEntry = enciphermentService.decryptDocument(jane, jane, aDocumentEntry, "password");
 		Assert.assertFalse(decryptedDocumentEntry.getCiphered());
 		aDocumentEntry = decryptedDocumentEntry;
 		aDocument = decryptedDocumentEntry.getDocument();

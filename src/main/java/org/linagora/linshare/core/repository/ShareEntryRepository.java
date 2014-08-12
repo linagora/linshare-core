@@ -59,7 +59,7 @@ public interface ShareEntryRepository extends AbstractRepository<ShareEntry> {
 	public ShareEntry getShareEntry(DocumentEntry documentEntry, User sender,
 			User recipient);
 
-	public List<ShareEntry> findAllMyShareEntries(User owner);
+	public List<ShareEntry> findAllMyRecievedShareEntries(User owner);
 
 	public List<ShareEntry> findAllExpiredEntries();
 

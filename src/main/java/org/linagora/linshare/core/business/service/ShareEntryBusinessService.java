@@ -52,7 +52,7 @@ public interface ShareEntryBusinessService {
 
 	public ShareEntry update(ShareEntry entry) throws BusinessException;
 
-	public List<ShareEntry> findAllMyShareEntries(User owner);
+	public List<ShareEntry> findAllMyRecievedShareEntries(User owner);
 
 	public ShareEntry updateDownloadCounter(String uuid)
 			throws BusinessException;

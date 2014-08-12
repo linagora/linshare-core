@@ -80,26 +80,20 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 		if(!workingDirtest.exists()) workingDirtest.mkdirs();
 	}
 
-
-
 	@Override
-	public DocumentEntry encryptDocument(Account actor, String documentEntryUuid, Account owner, String password) throws BusinessException {
+	public DocumentEntry encryptDocument(Account actor, Account owner, String documentEntryUuid, String password) throws BusinessException {
 		DocumentEntry documentEntry = documentEntryService.find(actor, owner, documentEntryUuid);
-		return encryptDocument(actor, documentEntry, owner, password);
+		return encryptDocument(actor, owner, documentEntry, password);
 	}
 
-
-
 	@Override
-	public DocumentEntry decryptDocument(Account actor, String documentEntryUuid, Account owner, String password) throws BusinessException {
+	public DocumentEntry decryptDocument(Account actor, Account owner, String documentEntryUuid, String password) throws BusinessException {
 		DocumentEntry documentEntry = documentEntryService.find(actor, owner, documentEntryUuid);
-		return decryptDocument(actor, documentEntry, owner, password);
+		return decryptDocument(actor, owner, documentEntry, password);
 	}
 
-
-
 	@Override
-	public DocumentEntry decryptDocument(Account actor, DocumentEntry documentEntry, Account owner, String password) throws BusinessException {
+	public DocumentEntry decryptDocument(Account actor, Account owner, DocumentEntry documentEntry, String password) throws BusinessException {
 
 		InputStream in =  null;
 		OutputStream out = null; 
@@ -125,9 +119,9 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 
 			String finalFileName = changeDocumentExtension(documentEntry.getName());
 
-			resdoc = documentEntryService.update(owner, actor, documentEntry.getUuid(), inputStream, new Long(inputStream.available()), finalFileName);
+			resdoc = documentEntryService.update(actor, owner, documentEntry.getUuid(), inputStream, new Long(inputStream.available()), finalFileName);
 
-			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DECRYPT, "Decrypt file Content", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
+			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_DECRYPT, "Decrypt file Content", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
 	        logEntryService.create(logEntry);
 
 		} catch (IOException e) {
@@ -167,7 +161,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 	}
 
 	@Override
-	public DocumentEntry encryptDocument(Account actor, DocumentEntry documentEntry, Account owner, String password) throws BusinessException {
+	public DocumentEntry encryptDocument(Account actor, Account owner, DocumentEntry documentEntry, String password) throws BusinessException {
 		InputStream in =  null;
 		OutputStream out = null; 
 		DocumentEntry resdoc = null;
@@ -191,9 +185,9 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 
 			String finalFileName =  changeDocumentExtension(documentEntry.getName());	
 
-			resdoc = documentEntryService.update(owner, actor, documentEntry.getUuid(), inputStream, new Long(inputStream.available()), finalFileName);
+			resdoc = documentEntryService.update(actor, owner, documentEntry.getUuid(), inputStream, new Long(inputStream.available()), finalFileName);
 
-			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_ENCRYPT, "Encrypt file Content", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
+			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_ENCRYPT, "Encrypt file Content", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
 	        logEntryService.create(logEntry);
 
 		} catch (IOException e) {

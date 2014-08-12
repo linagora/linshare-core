@@ -56,19 +56,22 @@ import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.SignatureVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
-import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/*
+ * TODO
+ * - Signature methods (just burn everything)
+ * - getSharingsByUserAndFile
+ * - getAnonymousSharingsByUserAndFile
+ */
 public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacade {
 
 	private static final Logger logger = LoggerFactory
@@ -108,12 +111,11 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	@Override
 	public List<ShareDocumentVo> getAllSharingReceivedByUser(UserVo recipientVo) throws BusinessException {
 		User actor = getActor(recipientVo);
-		ArrayList<ShareEntry> arrayList = new ArrayList<ShareEntry>(
-				actor.getShareEntries());
-		logger.debug("AllSharingReceived size : " + arrayList.size());
-		return shareEntryTransformer.disassembleList(arrayList);
+		List<ShareEntry> shares = shareEntryService.findAllMyRecievedShareEntries(actor, actor);
+		return shareEntryTransformer.disassembleList(shares);
 	}
 
+	// TODO - Refactoring
 	@Override
 	public List<ShareDocumentVo> getSharingsByUserAndFile(UserVo actorVo,
 			DocumentVo documentVo) {
@@ -133,6 +135,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		return new ArrayList<ShareDocumentVo>();
 	}
 
+	// TODO - Refactoring
 	@Override
 	public Map<String, Calendar> getAnonymousSharingsByUserAndFile(
 			UserVo actorVo, DocumentVo documentVo) {
@@ -173,7 +176,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		return documentEntryTransformer.disassemble(documentEntry);
 	}
 
-	// TODO FMA
+	// TODO FMA - Refactoring shares
 	@Deprecated
 	@Override
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(

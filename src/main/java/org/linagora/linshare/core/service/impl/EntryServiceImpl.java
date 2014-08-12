@@ -79,7 +79,7 @@ public class EntryServiceImpl implements EntryService {
 
 			deleteAllShareEntries(actor, documentEntry);
 
-			documentEntryService.deleteDocumentEntry(actor, documentEntry);
+			documentEntryService.delete(actor, documentEntry);
 
 		} catch (BusinessException e) {
 			logger.error("can not delete document : " + docEntryUuid);
@@ -120,7 +120,6 @@ public class EntryServiceImpl implements EntryService {
 		}
 	}
 
-
 	@Override
 	public void deleteAllShareEntriesWithDocumentEntries( Account actor , User owner) throws BusinessException {
 		List<DocumentEntry> documentEntries = documentEntryService.findAll(actor, owner);
@@ -129,26 +128,10 @@ public class EntryServiceImpl implements EntryService {
 		}
 	}
 
-
 	@Override
 	public void deleteAllReceivedShareEntries(Account actor, User recipient) throws BusinessException {
-		for (ShareEntry shareEntry : shareEntryService.findAllMyShareEntries(actor, recipient)) {
+		for (ShareEntry shareEntry : shareEntryService.findAllMyRecievedShareEntries(actor, recipient)) {
 			shareEntryService.delete(actor, actor, shareEntry.getUuid());
 		}
 	}
-
-
-	@Override
-	public void sendSharedUpdateDocNotification(DocumentEntry documentEntry, String friendlySize, String originalFileName) {
-		if(documentEntry.isShared()) {
-			for (AnonymousShareEntry anonymousShareEntry : documentEntry.getAnonymousShareEntries()) {
-				anonymousShareEntryService.sendDocumentEntryUpdateNotification(anonymousShareEntry, friendlySize, originalFileName);
-			}
-
-			for (ShareEntry shareEntry : documentEntry.getShareEntries()) {
-				shareEntryService.sendDocumentEntryUpdateNotification(shareEntry, friendlySize, originalFileName);
-			}
-		}
-	}
-
 }

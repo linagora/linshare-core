@@ -240,12 +240,12 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<ShareEntry>
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "Missing share entry uuid");
-		ShareEntry share = find(actor, actor, uuid);
+		ShareEntry share = find(actor, owner, uuid);
 		checkDownloadPermission(actor, share,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
-		ShareLogEntry logEntryActor = ShareLogEntry.hasDownloadedAShare(actor,
+		ShareLogEntry logEntryActor = ShareLogEntry.hasDownloadedAShare(owner,
 				share);
-		ShareLogEntry logEntryTarget = ShareLogEntry.aShareWasDownloaded(actor,
+		ShareLogEntry logEntryTarget = ShareLogEntry.aShareWasDownloaded(owner,
 				share);
 		logEntryService.create(logEntryActor);
 		logEntryService.create(logEntryTarget);
@@ -260,24 +260,11 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<ShareEntry>
 	}
 
 	@Override
-	public List<ShareEntry> findAllMyShareEntries(Account actor, Account owner) {
+	public List<ShareEntry> findAllMyRecievedShareEntries(Account actor, Account owner) {
 		preChecks(actor, owner);
 		checkListPermission(actor, owner, EntryType.SHARE,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
-		return shareEntryBusinessService.findAllMyShareEntries((User) owner);
-	}
-
-	// TODO FMA - Refactoring shares
-	@Override
-	public void sendDocumentEntryUpdateNotification(ShareEntry shareEntry,
-			String friendlySize, String originalFileName) {
-		try {
-			MailContainerWithRecipient mail = mailBuildingService
-					.buildSharedDocUpdated(shareEntry, originalFileName);
-			notifierService.sendNotification(mail);
-		} catch (BusinessException e) {
-			logger.error("Error while trying to notify document update ", e);
-		}
+		return shareEntryBusinessService.findAllMyRecievedShareEntries((User) owner);
 	}
 
 	@Override

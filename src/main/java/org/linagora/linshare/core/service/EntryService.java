@@ -66,12 +66,4 @@ public interface EntryService {
 	 */
 	public void deleteAllReceivedShareEntries(Account actor, User recipient ) throws BusinessException;
 
-
-
-
-
-	public void sendSharedUpdateDocNotification(DocumentEntry documentEntry, String friendlySize, String originalFileName);
-
-
-
 }

@@ -112,7 +112,7 @@ public class ShareEntryRepositoryImpl extends
 	}
 
 	@Override
-	public List<ShareEntry> findAllMyShareEntries(User owner) {
+	public List<ShareEntry> findAllMyRecievedShareEntries(User owner) {
 		List<ShareEntry> entries = findByCriteria(Restrictions.eq("recipient",
 				owner));
 		if (entries == null) {

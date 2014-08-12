@@ -287,7 +287,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		createFunctionalities();
 		aDocumentEntry = documentEntryService.create(actor, actor, stream, fileName);
 		aDocumentEntry.getDocument().setSignatures(new HashSet<Signature>());
-		documentEntryService.deleteDocumentEntry(actor, aDocumentEntry);
+		documentEntryService.delete(actor, aDocumentEntry);
 		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) == null);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

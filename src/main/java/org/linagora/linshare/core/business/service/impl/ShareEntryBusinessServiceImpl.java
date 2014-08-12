@@ -136,8 +136,8 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 	}
 
 	@Override
-	public List<ShareEntry> findAllMyShareEntries(User owner) {
-		return shareEntryRepository.findAllMyShareEntries(owner);
+	public List<ShareEntry> findAllMyRecievedShareEntries(User owner) {
+		return shareEntryRepository.findAllMyRecievedShareEntries(owner);
 	}
 
 	@Override

@@ -166,7 +166,7 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 		try {
 			User actor = getAuthentication();
 			DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
-			documentEntryService.deleteDocumentEntry(actor, doc);
+			documentEntryService.delete(actor, doc);
 			return new DocumentDto(doc);
 		} catch (BusinessException e) {
 			throw e;

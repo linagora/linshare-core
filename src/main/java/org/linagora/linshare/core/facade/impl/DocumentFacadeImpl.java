@@ -63,7 +63,11 @@ import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+/*
+ * TODO :
+ *  - Signature methods (just burn everything)
+ *  - getAccountOccupationStat : WTF ? Why this code ? Why here ?
+ */
 public class DocumentFacadeImpl extends GenericTapestryFacade implements DocumentFacade {
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentFacadeImpl.class);
@@ -99,13 +103,10 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		this.shareService = shareService;
 	}
 
-
 	@Override
 	public DocumentVo insertFile(InputStream in, String fileName, UserVo owner) throws BusinessException {
 		logger.debug("insert files for document entries");
 		User actor = getActor(owner);
-		fileName = fileName.replace("\\", "_");
-		fileName = fileName.replace(":", "_");
 		DocumentEntry createDocumentEntry = documentEntryService.create(actor, actor, in, fileName);
 		return documentEntryTransformer.disassemble(createDocumentEntry);
 	}
@@ -114,9 +115,8 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 	public void removeDocument(UserVo actorVo, DocumentVo document) throws BusinessException {
 		User actor = getActor(actorVo);
 		DocumentEntry documentEntry = shareService.deleteAllShareEntries(actor, actor, document.getIdentifier());
-		documentEntryService.deleteDocumentEntry(actor, documentEntry);
+		documentEntryService.delete(actor, documentEntry);
 	}
-
 
 	@Override
 	public DocumentVo getDocument(UserVo actorVo, String uuid) throws BusinessException {
@@ -131,14 +131,12 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		return documentEntryService.getDocumentStream(actor, actor, doc.getIdentifier());
 	}
 
-
 	@Override
 	public void insertSignatureFile(InputStream file, long size, String fileName, UserVo ownerVo, DocumentVo documentVo, X509Certificate signerCertificate) throws BusinessException {
 		Account actor = getActor(ownerVo);
 		DocumentEntry documentEntry = documentEntryService.find(actor, actor, documentVo.getIdentifier());
 		signatureService.createSignature(actor, documentEntry.getDocument(), file, size, fileName, signerCertificate);
 	}
-
 
 	@Override
 	public List<SignatureVo> getAllSignatures(UserVo userVo, DocumentVo documentVo){
@@ -151,7 +149,6 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		}
 		return null;
 	}
-
 
 	@Override
 	public SignatureVo getSignature(UserVo currentSigner, DocumentVo documentVo) {
@@ -173,8 +170,6 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		return null;
 	}
 
-
-
 	@Override
 	public boolean isSignedDocument(String userLsUuid, DocumentVo documentVo){
 		// Fix me : just write a finder
@@ -190,7 +185,6 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		}
 		return res;
 	}
-
 
 	@Override
 	public boolean isSignedDocumentByCurrentUser(UserVo currentSigner, DocumentVo documentVo) throws BusinessException{
@@ -210,13 +204,11 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		return res;
 	}
 
-
 	@Override
 	public InputStream retrieveSignatureFileStream(SignatureVo signaturedoc){
 		Signature signature = signatureService.findByUuid(signaturedoc.getIdentifier());
 		return signatureService.getDocumentStream(signature);
 	}
-
 
 	@Override
 	public Long getUserAvailableQuota(UserVo userVo) throws BusinessException {
@@ -254,7 +246,6 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		return result;
 	}
 
-
 	private DisplayableAccountOccupationEntryVo getAccountStats(User user) throws BusinessException {
 		Long userAvailableQuota = documentEntryService.getAvailableSize(user);
 		Long userTotalQuota = documentEntryService.getTotalSize(user);
@@ -270,29 +261,29 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		return accountOccupation;
 	}
 
-
 	@Override
-	public DocumentVo encryptDocument(DocumentVo docVo, UserVo userVo, String password) throws BusinessException{
+	public DocumentVo encryptDocument(DocumentVo docVo, UserVo userVo,
+			String password) throws BusinessException {
 		User actor = getActor(userVo);
-		DocumentEntry documentEntry = enciphermentService.encryptDocument(actor, docVo.getIdentifier(),actor, password);
+		DocumentEntry documentEntry = enciphermentService.encryptDocument(
+				actor, actor, docVo.getIdentifier(), password);
 		return documentEntryTransformer.disassemble(documentEntry);
 	}
 
-
 	@Override
-	public DocumentVo decryptDocument(DocumentVo docVo, UserVo userVo,String password) throws BusinessException {
+	public DocumentVo decryptDocument(DocumentVo docVo, UserVo userVo,
+			String password) throws BusinessException {
 		User actor = getActor(userVo);
-		DocumentEntry documentEntry = enciphermentService.decryptDocument(actor, docVo.getIdentifier(),actor, password);
+		DocumentEntry documentEntry = enciphermentService.decryptDocument(
+				actor, actor, docVo.getIdentifier(), password);
 		return documentEntryTransformer.disassemble(documentEntry);
 	}
-
 
 	@Override
 	public Long getUserTotalQuota(UserVo userVo) throws BusinessException {
 		User actor = getActor(userVo);
 		return documentEntryService.getTotalSize(actor);
 	}
-
 
 	@Override
 	public DocumentVo updateDocument(String currentFileUUID, InputStream file, long size, String fileName, UserVo ownerVo) throws BusinessException {
@@ -311,31 +302,29 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		}
 	}
 
-
 	@Override
-    public void  updateFileProperties(UserVo actorVo, String docEntryUuid, String newName, String comment){
+	public void  updateFileProperties(UserVo actorVo, String docEntryUuid, String newName, String comment){
 		User actor = getActor(actorVo);
 		if(comment == null) {
 			comment = "";
 		}
-        try {
+		try {
 			documentEntryService.updateFileProperties(actor, actor, docEntryUuid, newName, comment);
 		} catch (BusinessException e) {
 			logger.error("Can't update file properties document : " + docEntryUuid + " : " + e.getMessage());
 		}
-    }
-
+	}
 
 	@Override
-    public InputStream getDocumentThumbnail(UserVo actorVo, String docEntryUuid) {
+	public InputStream getDocumentThumbnail(UserVo actorVo, String docEntryUuid) {
 		User actor = getActor(actorVo);
 		try {
 			return documentEntryService.getDocumentThumbnailStream(actor, actor, docEntryUuid);
 		} catch (BusinessException e) {
 			logger.error("Can't get document thumbnail : " + docEntryUuid + " : " + e.getMessage());
 		}
-    	return null;
-    }
+		return null;
+	}
 
 	@Override
 	public boolean isSignatureActive(UserVo userVo) {
@@ -343,13 +332,11 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		return documentEntryService.isSignatureActive(actor);
 	}
 
-
 	@Override
 	public boolean isEnciphermentActive(UserVo userVo) {
 		User actor = getActor(userVo);
 		return documentEntryService.isEnciphermentActive(actor);
 	}
-
 
 	@Override
 	public boolean isGlobalQuotaActive(UserVo userVo) throws BusinessException {

@@ -57,9 +57,7 @@ public interface ShareEntryService {
 
 	InputStream getStream(Account actor, Account owner, String shareEntryUuid) throws BusinessException;
 
-	void sendDocumentEntryUpdateNotification(ShareEntry shareEntry, String friendlySize, String originalFileName);
-
-	List<ShareEntry> findAllMyShareEntries(Account actor, Account owner);
+	List<ShareEntry> findAllMyRecievedShareEntries(Account actor, Account owner);
 
 	void create(Account actor, User owner, ShareContainer shareContainer);
 
