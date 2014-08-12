@@ -56,14 +56,4 @@ public class GenericServiceImpl<T> {
 			BusinessErrorCode errCode) throws BusinessException {
 		rac.checkDeletePermission(actor, entry, errCode);
 	}
-
-	protected void checkDownloadPermission(Account actor, T entry,
-			BusinessErrorCode errCode) throws BusinessException {
-		rac.checkDownloadPermission(actor, entry, errCode);
-	}
-
-	protected void checkThumbNailDownloadPermission(Account actor, T entry,
-			BusinessErrorCode errCode) throws BusinessException {
-		rac.checkThumbNailDownloadPermission(actor, entry, errCode);
-	}
 }

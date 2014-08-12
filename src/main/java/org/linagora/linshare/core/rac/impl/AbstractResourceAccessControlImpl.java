@@ -37,12 +37,6 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 	protected abstract boolean hasUpdatePermission(Account actor, O owner,
 			E entry);
 
-	protected abstract boolean hasDownloadPermission(Account actor, O owner,
-			E entry);
-
-	protected abstract boolean hasDownloadTumbnailPermission(Account actor,
-			O owner, E entry);
-
 	protected O getOwner(E entry) {
 		return null;
 	}
@@ -117,12 +111,6 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 					return true;
 			} else if (permission.equals(PermissionType.DELETE)) {
 				if (hasDeletePermission(actor, owner, entry))
-					return true;
-			} else if (permission.equals(PermissionType.DOWNLOAD)) {
-				if (hasDownloadPermission(actor, owner, entry))
-					return true;
-			} else if (permission.equals(PermissionType.DOWNLOAD_THUMBNAIL)) {
-				if (hasDownloadTumbnailPermission(actor, owner, entry))
 					return true;
 			}
 		}
@@ -245,37 +233,6 @@ public abstract class AbstractResourceAccessControlImpl<O, E> implements
 			logger.error(sb.toString());
 			throw new BusinessException(errCode,
 					"You are not authorized to delete this entry.");
-		}
-	}
-
-	@Override
-	public void checkDownloadPermission(Account actor, E entry,
-			BusinessErrorCode errCode) throws BusinessException {
-		O owner = getOwner(entry);
-		if (!isAuthorized(actor, owner, PermissionType.DOWNLOAD, entry)) {
-			StringBuilder sb = getActorStringBuilder(actor);
-			sb.append(" is not authorized to download the entry ");
-			sb.append(getEntryRepresentation(entry));
-			appendOwner(owner, sb);
-			logger.error(sb.toString());
-			throw new BusinessException(errCode,
-					"You are not authorized to download this entry.");
-		}
-	}
-
-	@Override
-	public void checkThumbNailDownloadPermission(Account actor, E entry,
-			BusinessErrorCode errCode) throws BusinessException {
-		O owner = getOwner(entry);
-		if (!isAuthorized(actor, owner, PermissionType.DOWNLOAD_THUMBNAIL,
-				entry)) {
-			StringBuilder sb = getActorStringBuilder(actor);
-			sb.append(" is not authorized to get the thumbnail of the entry ");
-			sb.append(getEntryRepresentation(entry));
-			appendOwner(owner, sb);
-			logger.error(sb.toString());
-			throw new BusinessException(errCode,
-					"You are not authorized to get the thumbnail of this entry.");
 		}
 	}
 }

@@ -21,10 +21,4 @@ public interface AbstractResourceAccessControl<O, E> {
 
 	void checkDeletePermission(Account actor, E entry, BusinessErrorCode errCode)
 			throws BusinessException;
-
-	void checkDownloadPermission(Account actor, E entry,
-			BusinessErrorCode errCode) throws BusinessException;
-
-	void checkThumbNailDownloadPermission(Account actor, E entry,
-			BusinessErrorCode errCode) throws BusinessException;
 }

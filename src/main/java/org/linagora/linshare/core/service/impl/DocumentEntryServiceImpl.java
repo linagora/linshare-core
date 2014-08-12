@@ -82,7 +82,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-public class DocumentEntryServiceImpl extends GenericServiceImpl<DocumentEntry> implements DocumentEntryService {
+public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<DocumentEntry> implements DocumentEntryService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(DocumentEntryServiceImpl.class);
