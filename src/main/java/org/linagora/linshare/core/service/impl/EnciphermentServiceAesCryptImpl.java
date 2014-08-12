@@ -125,7 +125,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 
 			String finalFileName = changeDocumentExtension(documentEntry.getName());
 
-			resdoc = documentEntryService.updateDocumentEntry(owner, actor, documentEntry.getUuid(), inputStream, new Long(inputStream.available()), finalFileName);
+			resdoc = documentEntryService.update(owner, actor, documentEntry.getUuid(), inputStream, new Long(inputStream.available()), finalFileName);
 
 			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DECRYPT, "Decrypt file Content", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
 	        logEntryService.create(logEntry);
@@ -191,7 +191,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 
 			String finalFileName =  changeDocumentExtension(documentEntry.getName());	
 
-			resdoc = documentEntryService.updateDocumentEntry(owner, actor, documentEntry.getUuid(), inputStream, new Long(inputStream.available()), finalFileName);
+			resdoc = documentEntryService.update(owner, actor, documentEntry.getUuid(), inputStream, new Long(inputStream.available()), finalFileName);
 
 			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_ENCRYPT, "Encrypt file Content", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
 	        logEntryService.create(logEntry);

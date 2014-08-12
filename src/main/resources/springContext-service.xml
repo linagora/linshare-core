@@ -86,6 +86,8 @@
 		<constructor-arg ref="antiSamyService" />
 		<constructor-arg ref="domainBusinessService" />
 		<constructor-arg ref="documentEntryResourceAccessControl" />
+		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="notifierService" />
 	</bean>
 
 	<bean id="threadEntryService" class="org.linagora.linshare.core.service.impl.ThreadEntryServiceImpl">

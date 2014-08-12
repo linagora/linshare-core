@@ -74,11 +74,7 @@ public interface DocumentEntryBusinessService {
 
 	public void updateFileProperties(DocumentEntry entry, String newName, String fileComment) throws BusinessException;
 
-	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl, Calendar expirationDate) throws BusinessException;
-
 	public long getRelatedEntriesCount(DocumentEntry documentEntry);
-
-
 
 	public ThreadEntry createThreadEntry(Thread owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException;
 

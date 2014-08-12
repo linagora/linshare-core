@@ -67,7 +67,7 @@ public interface MailBuildingService {
 			String password) throws BusinessException;
 
 	MailContainerWithRecipient buildSharedDocUpdated(Entry shareEntry,
-			String oldDocName, String fileSizeTxt) throws BusinessException;
+			String oldDocName) throws BusinessException;
 
 	MailContainerWithRecipient buildSharedDocDeleted(Account actor,
 			Entry shareEntry) throws BusinessException;

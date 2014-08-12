@@ -101,7 +101,7 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 	public DocumentDto uploadfile(InputStream fi, String fileName,
 			String description) throws BusinessException {
 		User actor = getAuthentication();
-		DocumentEntry res = documentEntryService.createDocumentEntry(actor, actor,
+		DocumentEntry res = documentEntryService.create(actor, actor,
 				fi, fileName);
 
 		documentEntryService.updateFileProperties(actor, actor,
@@ -117,7 +117,7 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 			DataHandler dh = doca.getDocument();
 			InputStream in = dh.getInputStream();
 			String fileName = doca.getFilename();
-			DocumentEntry res = documentEntryService.createDocumentEntry(actor,
+			DocumentEntry res = documentEntryService.create(actor,
 					actor, in, fileName);
 			// mandatory ?
 			String comment = (doca.getComment() == null) ? "" : doca

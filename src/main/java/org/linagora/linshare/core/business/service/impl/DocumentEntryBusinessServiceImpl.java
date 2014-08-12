@@ -292,30 +292,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 	}
 
-
-	@Override
-	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl, Calendar expirationDate ) throws BusinessException {
-		InputStream stream = getDocumentStream(originalEntry);
-
-		DocumentUtils util = new DocumentUtils();
-		File tempFile = util.getTempFile(stream, originalEntry.getName());
-		DocumentEntry documentEntry = null;
-
-		try {
-			documentEntry = createDocumentEntry(owner, tempFile , originalEntry.getDocument().getSize(), originalEntry.getName(), 
-					originalEntry.getCiphered(), timeStampingUrl, originalEntry.getDocument().getType(), expirationDate);
-		} finally {
-			try{
-				logger.debug("deleting temp file : " + tempFile.getName());
-				tempFile.delete(); // remove the temporary file
-			} catch (Exception e) {
-				logger.error("can not delete temp file : " + e.getMessage());
-			}
-		}
-		return documentEntry;
-	}
-
-
 	@Override
 	public void deleteDocumentEntry(DocumentEntry documentEntry) throws BusinessException {
 		if(documentEntry.isShared()) {

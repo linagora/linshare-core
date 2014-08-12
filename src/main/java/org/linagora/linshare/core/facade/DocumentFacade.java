@@ -177,11 +177,10 @@ public interface DocumentFacade {
 	 * @param size
 	 * @param fileName
 	 * @param owner
-	 * @param friendlySize 
 	 * @return
 	 * @throws BusinessException
 	 */
-	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, UserVo owner, String friendlySize) throws BusinessException;
+	public DocumentVo updateDocument(String currentFileUUID, InputStream file, long size, String fileName, UserVo owner) throws BusinessException;
 
 
 	public DocumentVo encryptDocument(DocumentVo doc,UserVo user,String password) throws BusinessException;

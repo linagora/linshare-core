@@ -43,11 +43,13 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DocumentEntryService {
 
-	public DocumentEntry createDocumentEntry(Account actor, Account owner, InputStream stream, String fileName) throws BusinessException;
+//	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName) throws BusinessException;
 
-	public DocumentEntry updateDocumentEntry(Account actor, Account owner, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException ;
+	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, boolean forceAntivirusOff) throws BusinessException;
 
-	public DocumentEntry duplicateDocumentEntry(Account actor, Account owner, String docEntryUuid) throws BusinessException;
+	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName) throws BusinessException;
+
+	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException ;
 
 	/**
 	 * Document suppression due to user action. 

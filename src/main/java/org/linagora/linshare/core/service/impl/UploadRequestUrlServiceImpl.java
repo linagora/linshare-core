@@ -163,7 +163,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		// HOOK : Extract owner for upload request URL
 		Account owner = requestUrl.getUploadRequest().getOwner();
 		// Store the file into the owner account.
-		DocumentEntry document = documentEntryService.createDocumentEntry(
+		DocumentEntry document = documentEntryService.create(
 				actor, owner, fi, fileName);
 		createBusinessCheck(requestUrl, document);
 		// Create the link between the document and the upload request URL.

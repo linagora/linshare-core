@@ -7,6 +7,7 @@ import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -57,9 +58,10 @@ public class ShareServiceImpl extends GenericServiceImpl<ShareEntry> implements
 		this.notifierService = notifierService;
 	}
 
+	// TODO FMA - Refactoring shares
 	@Override
-	public void create(Account actor, User owner,
-			ShareContainer shareContainer) throws BusinessException {
+	public void create(Account actor, User owner, ShareContainer shareContainer)
+			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(shareContainer);
 		checkCreatePermission(actor, owner, EntryType.SHARE,
@@ -96,10 +98,11 @@ public class ShareServiceImpl extends GenericServiceImpl<ShareEntry> implements
 
 	}
 
+	// TODO FMA - Refactoring shares
 	@Override
-	public DocumentEntry copyShare(Account actor, Account recipient,
+	public DocumentEntry copy(Account actor, Account recipient,
 			String shareEntryUuid) throws BusinessException {
-//		shareEntryService.find(actor, recipient, shareEntryUuid);
+		// shareEntryService.find(actor, recipient, shareEntryUuid);
 
 		// TODO Auto-generated method stub
 		return null;
@@ -213,9 +216,22 @@ public class ShareServiceImpl extends GenericServiceImpl<ShareEntry> implements
 	protected void transformDocuments(Account actor, User owner,
 			ShareContainer shareContainer) throws BusinessException {
 		for (String uuid : shareContainer.getDocumentUuids()) {
-			DocumentEntry doc = documentEntryService.find(actor, owner,
-					uuid);
+			DocumentEntry doc = documentEntryService.find(actor, owner, uuid);
 			shareContainer.addDocumentEntry(doc);
 		}
+	}
+
+	@Override
+	public DocumentEntry deleteAllShareEntries(Account actor, Account owner,
+			String docEntryUuid) throws BusinessException {
+		DocumentEntry entry = documentEntryService.find(actor, owner,
+				docEntryUuid);
+		for (AnonymousShareEntry share : entry.getAnonymousShareEntries()) {
+			anonymousShareEntryService.deleteShare(actor, share);
+		}
+		for (ShareEntry share : entry.getShareEntries()) {
+			shareEntryService.delete(actor, actor, share.getUuid());
+		}
+		return entry;
 	}
 }

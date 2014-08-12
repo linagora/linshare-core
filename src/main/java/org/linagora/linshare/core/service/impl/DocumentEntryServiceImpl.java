@@ -46,19 +46,20 @@ import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.LogEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -71,25 +72,42 @@ import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.MimeTypeService;
+import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.core.utils.DocumentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 public class DocumentEntryServiceImpl extends GenericServiceImpl<DocumentEntry> implements DocumentEntryService {
 
-	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryServiceImpl.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(DocumentEntryServiceImpl.class);
 
 	private final DocumentEntryBusinessService documentEntryBusinessService;
+
 	private final LogEntryService logEntryService;
+
 	private final AbstractDomainService abstractDomainService;
+
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+
 	private final MimeTypeService mimeTypeService;
+
 	private final VirusScannerService virusScannerService;
+
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
+
 	private final AntiSamyService antiSamyService;
+
 	private final DomainBusinessService domainBusinessService;
+
+	private final MailBuildingService mailBuildingService;
+
+	private final NotifierService notifierService;
 
 public DocumentEntryServiceImpl(
 			DocumentEntryBusinessService documentEntryBusinessService,
@@ -101,7 +119,9 @@ public DocumentEntryServiceImpl(
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
 			AntiSamyService antiSamyService,
 			DomainBusinessService domainBusinessService,
-			DocumentEntryResourceAccessControl documentEntryRac) {
+			DocumentEntryResourceAccessControl documentEntryRac,
+			MailBuildingService mailBuildingService,
+			NotifierService notifierService) {
 		super(documentEntryRac);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -112,6 +132,8 @@ public DocumentEntryServiceImpl(
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
 		this.antiSamyService = antiSamyService;
 		this.domainBusinessService = domainBusinessService;
+		this.mailBuildingService = mailBuildingService;
+		this.notifierService = notifierService;
 	}
 
 	@Override
@@ -141,7 +163,12 @@ public DocumentEntryServiceImpl(
 	}
 
 	@Override
-	public DocumentEntry createDocumentEntry(Account actor, Account owner, InputStream stream, String fileName) throws BusinessException {
+	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName) throws BusinessException {
+		return create(actor, owner, stream, fileName, false);
+	}
+
+	@Override
+	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, boolean forceAntivirusOff) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(fileName, "fileName is required.");
 		checkCreatePermission(actor, owner, EntryType.DOCUMENT, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
@@ -162,10 +189,12 @@ public DocumentEntryServiceImpl(
 				mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
 			}
 
-			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
-			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-				checkVirus(fileName, owner, tempFile);
-			}
+//			if (!forceAntivirusOff) {
+				Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
+				if (antivirusFunctionality.getActivationPolicy().getStatus()) {
+					checkVirus(fileName, owner, tempFile);
+				}
+//			}
 
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
@@ -205,11 +234,13 @@ public DocumentEntryServiceImpl(
 	}
 
 	@Override
-	public DocumentEntry updateDocumentEntry(Account actor, Account owner, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException {
+	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(docEntryUuid, "document entry uuid is required.");
 		Validate.notEmpty(fileName, "fileName is required.");
 		DocumentEntry originalEntry = find(actor, owner, docEntryUuid);
+		String originalFileName = originalEntry.getName();
+
 		checkUpdatePermission(actor, originalEntry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		fileName = sanitizeFileName(fileName); // throws
 
@@ -221,7 +252,6 @@ public DocumentEntryServiceImpl(
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 
 			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
-			String originalFileName = originalEntry.getName();
 
 			long oldDocSize = originalEntry.getDocument().getSize();
 			checkSpace(size, fileName, owner);
@@ -265,6 +295,18 @@ public DocumentEntryServiceImpl(
 			removeDocSizeFromGlobalUsedQuota(oldDocSize, domain);
 			addDocSizeToGlobalUsedQuota(documentEntry.getDocument(), domain);
 
+			if(documentEntry.isShared()){
+				//send email, file has been replaced ....
+				List<MailContainerWithRecipient> mails = Lists.newArrayList();
+				for (AnonymousShareEntry anonymousShareEntry : documentEntry.getAnonymousShareEntries()) {
+					mails.add(mailBuildingService.buildSharedDocUpdated(anonymousShareEntry, originalFileName));
+				}
+				for (ShareEntry shareEntry : documentEntry.getShareEntries()) {
+					mails.add(mailBuildingService.buildSharedDocUpdated(shareEntry, originalFileName));
+				}
+				notifierService.sendNotification(mails);
+			}
+
 		} finally {
 			try{
 				logger.debug("deleting temp file : " + tempFile.getName());
@@ -281,35 +323,6 @@ public DocumentEntryServiceImpl(
 		TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityReadOnlyService.getDefaultFileExpiryTimeFunctionality(domain);
 		expirationDate.add(fileExpirationTimeFunctionality.toCalendarUnitValue(), fileExpirationTimeFunctionality.getValue());
 		return expirationDate;
-	}
-
-	@Override
-	public DocumentEntry duplicateDocumentEntry(Account actor, Account owner, String docEntryUuid) throws BusinessException {
-		DocumentEntry documentEntry = documentEntryBusinessService.find(docEntryUuid);
-		DocumentEntry ret = null;
-		// TODO : Check the current doc entry id is shared with the actor (if
-		// not, you should not have the right to duplicate it)
-		// if (!documentEntry.getEntryOwner().equals(actor)) {
-		// throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED,
-		// "You are not authorized to update this document.");
-		// }
-		AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
-		checkSpace(documentEntry.getDocument().getSize(), documentEntry.getName(), actor);
-
-		// want a timestamp on doc ?
-		String timeStampingUrl = null;
-		StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService.getTimeStampingFunctionality(domain);
-		if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
-			timeStampingUrl = timeStampingFunctionality.getValue();
-		}
-
-		// We need to set an expiration date in case of file cleaner activation.
-		ret = documentEntryBusinessService.duplicateDocumentEntry(documentEntry, actor, timeStampingUrl, getDocumentExpirationDate(domain));
-		FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_UPLOAD, "Creation of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument()
-				.getType());
-		logEntryService.create(logEntry);
-		addDocSizeToGlobalUsedQuota(documentEntry.getDocument(), domain);
-		return ret;
 	}
 
 	@Override

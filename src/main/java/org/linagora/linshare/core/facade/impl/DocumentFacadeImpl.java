@@ -51,14 +51,13 @@ import org.linagora.linshare.core.domain.vo.DisplayableAccountOccupationEntryVo;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.SignatureVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.DocumentFacade;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.EnciphermentService;
-import org.linagora.linshare.core.service.EntryService;
+import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.SignatureService;
 import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
 import org.slf4j.Logger;
@@ -77,7 +76,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 
 	private final DocumentEntryService documentEntryService;
 
-	private final EntryService entryService;
+	private final ShareService shareService;
 
 	private final AccountService accountService;
 
@@ -88,7 +87,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 	public DocumentFacadeImpl(UserRepository<User> userRepository, SignatureTransformer signatureTransformer,
 			EnciphermentService enciphermentService, DocumentEntryService documentEntryService, AccountService accountService,
 			DocumentEntryTransformer documentEntryTransformer, SignatureService signatureService, 
-			EntryService entryService) {
+			ShareService shareService) {
 		super(accountService);
 		this.userRepository = userRepository;
 		this.signatureTransformer = signatureTransformer;
@@ -97,7 +96,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		this.accountService = accountService;
 		this.documentEntryTransformer = documentEntryTransformer;
 		this.signatureService = signatureService;
-		this.entryService = entryService;
+		this.shareService = shareService;
 	}
 
 
@@ -107,19 +106,15 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		User actor = getActor(owner);
 		fileName = fileName.replace("\\", "_");
 		fileName = fileName.replace(":", "_");
-		DocumentEntry createDocumentEntry = documentEntryService.createDocumentEntry(actor, actor, in, fileName);
+		DocumentEntry createDocumentEntry = documentEntryService.create(actor, actor, in, fileName);
 		return documentEntryTransformer.disassemble(createDocumentEntry);
 	}
-
 
 	@Override
 	public void removeDocument(UserVo actorVo, DocumentVo document) throws BusinessException {
 		User actor = getActor(actorVo);
-		if(actor != null) {
-			entryService.deleteAllShareEntriesWithDocumentEntry(actor, actor, document.getIdentifier());
-		} else {
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user couldn't be found");
-		}
+		DocumentEntry documentEntry = shareService.deleteAllShareEntries(actor, actor, document.getIdentifier());
+		documentEntryService.deleteDocumentEntry(actor, documentEntry);
 	}
 
 
@@ -300,17 +295,9 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 
 
 	@Override
-	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, UserVo ownerVo, String friendlySize) throws BusinessException {
+	public DocumentVo updateDocument(String currentFileUUID, InputStream file, long size, String fileName, UserVo ownerVo) throws BusinessException {
 		Account actor = getActor(ownerVo);
-		DocumentEntry originalEntry = documentEntryService.find(actor, actor, currentFileUUID);
-		String originalFileName = originalEntry.getName();
-
-		DocumentEntry documentEntry = documentEntryService.updateDocumentEntry(actor, actor, currentFileUUID, file, size, fileName);
-		if(documentEntry.isShared()){
-			//send email, file has been replaced ....
-			entryService.sendSharedUpdateDocNotification(documentEntry, friendlySize, originalFileName);
-		}
-
+		DocumentEntry documentEntry = documentEntryService.update(actor, actor, currentFileUUID, file, size, fileName);
 		return documentEntryTransformer.disassemble(documentEntry);
 	}
 

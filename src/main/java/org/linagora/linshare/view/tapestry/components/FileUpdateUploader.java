@@ -152,8 +152,8 @@ public class FileUpdateUploader {
                 try {
                 	DocumentVo initialdocument = documentFacade.getDocument(userDetails, uuidDocToUpdate);
                 	String filesizeTxt = FileUtils.getFriendlySize(initialdocument.getSize(), messages);
-                    DocumentVo document  =  documentFacade.updateDocumentContent(uuidDocToUpdate, uploadedFile.getStream(), uploadedFile.getSize(),
-                            uploadedFile.getFileName(), userDetails, filesizeTxt);
+                    DocumentVo document  =  documentFacade.updateDocument(uuidDocToUpdate, uploadedFile.getStream(), uploadedFile.getSize(),
+                            uploadedFile.getFileName(), userDetails);
 
                     messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_UPDATE_FILE_CONTENT_OK,
                         MessageSeverity.INFO, initialdocument.getFileName(),uploadedFile.getFileName()));

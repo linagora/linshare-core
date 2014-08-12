@@ -230,7 +230,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 	@Override
 	public void sendDocumentEntryUpdateNotification(AnonymousShareEntry anonymousShareEntry, String friendlySize, String originalFileName) {
 		try {
-			MailContainerWithRecipient mail = mailBuildingService.buildSharedDocUpdated(anonymousShareEntry, originalFileName, friendlySize);
+			MailContainerWithRecipient mail = mailBuildingService.buildSharedDocUpdated(anonymousShareEntry, originalFileName);
 			notifierService.sendNotification(mail);
 		} catch (BusinessException e) {
 			logger.error("Error while trying to notify document update ", e);

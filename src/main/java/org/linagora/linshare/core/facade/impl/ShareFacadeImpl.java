@@ -164,7 +164,6 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		shareEntryService.delete(actor, actor, share.getIdentifier());
 	}
 
-	// TODO FMA
 	@Override
 	public DocumentVo createLocalCopy(ShareDocumentVo shareDocumentVo,
 			UserVo actorVo) throws BusinessException {

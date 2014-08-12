@@ -11,6 +11,9 @@ public interface ShareService {
 	public void create(Account actor, User owner, ShareContainer shareContainer)
 			throws BusinessException;
 
-	public DocumentEntry copyShare(Account actor, Account recipient,
+	public DocumentEntry copy(Account actor, Account recipient,
 			String shareEntryUuid) throws BusinessException;
+
+	public DocumentEntry deleteAllShareEntries(Account actor, Account owner,
+			String docEntryUuid) throws BusinessException;
 }
