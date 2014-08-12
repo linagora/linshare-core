@@ -115,7 +115,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 	public void removeDocument(UserVo actorVo, DocumentVo document) throws BusinessException {
 		User actor = getActor(actorVo);
 		DocumentEntry documentEntry = shareService.deleteAllShareEntries(actor, actor, document.getIdentifier());
-		documentEntryService.delete(actor, documentEntry);
+		documentEntryService.delete(actor, actor, documentEntry.getUuid());
 	}
 
 	@Override

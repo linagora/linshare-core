@@ -35,10 +35,13 @@ package org.linagora.linshare.core.business.service.impl;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.linagora.linshare.core.business.service.AnonymousUrlBusinessService;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
 import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.utils.HashUtils;
@@ -48,21 +51,30 @@ public class AnonymousUrlBusinessServiceImpl implements AnonymousUrlBusinessServ
 	private final AnonymousUrlRepository anonymousUrlRepository;
 	private final String baseSecuredUrl;
 	private final PasswordService passwordService;
+	private final AccountRepository<Account> accountRepository;
 	
-	public AnonymousUrlBusinessServiceImpl(AnonymousUrlRepository anonymousUrlRepository, String baseSecuredUrl, PasswordService passwordService) {
+	public AnonymousUrlBusinessServiceImpl(
+			final AnonymousUrlRepository anonymousUrlRepository,
+			final String baseSecuredUrl,
+			final PasswordService passwordService,
+			final AccountRepository<Account> accountRepository) {
 		super();
 		this.anonymousUrlRepository = anonymousUrlRepository;
 		this.baseSecuredUrl = baseSecuredUrl;
 		this.passwordService = passwordService;
+		this.accountRepository = accountRepository;
 	}
 
+	@Override
+	public SystemAccount getAnonymousURLAccount() {
+		return accountRepository.getBatchSystemAccount();
+	}
 
 	@Override
 	public AnonymousUrl findByUuid(String uuid) {
 		return anonymousUrlRepository.findByUuid(uuid);
 	}
 
-	
 	@Override
 	public AnonymousUrl create(Boolean passwordProtected, Contact contact) throws BusinessException {
 		

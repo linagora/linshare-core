@@ -142,8 +142,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 				// Extract owner for upload request URL
 				Account owner = requestUrl.getUploadRequest().getOwner();
 				// Store the file into the owner account.
-				DocumentEntry documentEntry = documentEntryService.find(actor, owner, documentEntryUuid);
-				documentEntryService.delete(owner, documentEntry);
+				documentEntryService.delete(actor, owner, documentEntryUuid);
 			}
 			uploadRequestEntryBusinessService.delete(found);
 		} else {

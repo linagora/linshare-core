@@ -373,25 +373,22 @@ public DocumentEntryServiceImpl(
 	}
 
 	@Override
-	public void delete(Account actor, DocumentEntry documentEntry) throws BusinessException {
-		logger.debug("Actor: " + actor.getAccountReprentation() + " is trying to delete document entry: " + documentEntry.getUuid());
+	public void delete(Account actor, Account owner, String documentUuid) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(documentUuid, "documentUuid is required.");
+		logger.debug("Actor: " + actor.getAccountReprentation() + " is trying to delete document entry: " + documentUuid);
+		DocumentEntry documentEntry = find(actor, owner, documentUuid);
 		checkDeletePermission(actor, documentEntry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
-		try {
-			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
-				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document. There's still existing shares.");
-			}
-			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
-			removeDocSizeFromGlobalUsedQuota(documentEntry.getDocument().getSize(), domain);
-
-			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DELETE, "Deletion of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument()
-					.getType());
-
-			logEntryService.create(LogEntryService.INFO, logEntry);
-			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
-		} catch (IllegalArgumentException e) {
-			logger.error("Could not delete file " + documentEntry.getName() + " of user " + actor.getLsUuid() + ", reason : ", e);
-			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
+		if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document. There's still existing shares.");
 		}
+		AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
+		removeDocSizeFromGlobalUsedQuota(documentEntry.getDocument().getSize(), domain);
+
+		FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_DELETE, "Deletion of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument()
+				.getType());
+		logEntryService.create(LogEntryService.INFO, logEntry);
+		documentEntryBusinessService.deleteDocumentEntry(documentEntry);
 	}
 
 	@Override

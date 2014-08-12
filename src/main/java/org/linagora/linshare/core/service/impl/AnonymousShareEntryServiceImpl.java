@@ -103,70 +103,65 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 	}
 
 	@Override
-	public AnonymousShareEntry findByUuid(Account actor, String shareUuid) throws BusinessException {
+	public AnonymousShareEntry find(Account actor, Account owner, String shareUuid) throws BusinessException {
 		AnonymousShareEntry share = anonymousShareEntryBusinessService.findByUuid(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
 		}
-		if(actor.hasSystemAccountRole() || share.getEntryOwner().equals(actor) ) {
+		if(owner.hasSystemAccountRole() || share.getEntryOwner().equals(owner) ) {
 			return share;
 		} else {
-			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
+			logger.error("Actor " + owner.getAccountReprentation() + " does not own the share : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this share, it does not belong to you.");
 		}
 	}
 
+	// TODO FMA - Refactoring shares
 	@Override
-	public void create(Account actor, User sender, ShareContainer sc)
+	public void create(Account actor, User owner, ShareContainer sc)
 			throws BusinessException {
 		Date expiryDate = sc.getExpiryDate();
 		Boolean passwordProtected = sc.getSecured();
 
-		if (functionalityService.isSauMadatory(sender.getDomain()
+		if (functionalityService.isSauMadatory(owner.getDomain()
 				.getIdentifier())) {
 			passwordProtected = true;
-		} else if (functionalityService.isSauForbidden(sender.getDomain()
+		} else if (functionalityService.isSauForbidden(owner.getDomain()
 				.getIdentifier())) {
 			passwordProtected = false;
 		}
 		if (expiryDate == null) {
 			expiryDate = shareExpiryDateService
-					.computeMinShareExpiryDateOfList(sc.getDocuments(), sender);
+					.computeMinShareExpiryDateOfList(sc.getDocuments(), owner);
 		}
 		for (Recipient recipient : sc.getAnonymousShareRecipients()) {
 			MailContainer mailContainer = new MailContainer(
 					recipient.getLocale(), sc.getMessage(), sc.getSubject());
 			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService
-					.create(sender, recipient, sc.getDocuments(), expiryDate,
+					.create(owner, recipient, sc.getDocuments(), expiryDate,
 							passwordProtected);
 
 			MailContainerWithRecipient mail = mailBuildingService
-					.buildNewSharingProtected(sender, mailContainer,
+					.buildNewSharingProtected(owner, mailContainer,
 							anonymousUrl);
 			sc.addMailContainer(mail);
-			recipientFavouriteRepository.incAndCreate(sender,
+			recipientFavouriteRepository.incAndCreate(owner,
 					recipient.getMail());
 		}
 
 		// FIXME : recipients ?
 		for (DocumentEntry documentEntry : sc.getDocuments()) {
-			ShareLogEntry logEntry = new ShareLogEntry(sender, documentEntry,
+			ShareLogEntry logEntry = new ShareLogEntry(owner, documentEntry,
 					LogAction.FILE_SHARE, "Anonymous sharing of a file",
 					expiryDate);
 			logEntryService.create(logEntry);
 		}
 	}
 
-
+	// TODO FMA - Refactoring shares
 	@Override
-	public void deleteShare(Account actor, String shareUuid) throws BusinessException {
-		AnonymousShareEntry shareEntry = findByUuid(actor, shareUuid);
-		this.deleteShare(actor, shareEntry);
-	}
-
-	@Override
-	public void deleteShare(Account actor, AnonymousShareEntry shareEntry) throws BusinessException {
+	public void delete(Account actor, Account owner, String shareUuid) throws BusinessException {
 		// TODO : fix permissions
 //		if(shareEntry.getEntryOwner().equals(actor) || actor.equals(guestRepository.getSystemAccount()) || actor.getAccountType().equals(AccountType.ROOT) ) {
 //			
@@ -175,17 +170,16 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 //			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this anonymous share, it does not belong to you.");
 //		}
 
-
-
+		AnonymousShareEntry shareEntry = find(actor, owner, shareUuid);
 		anonymousShareEntryBusinessService.deleteAnonymousShare(shareEntry);
-		ShareLogEntry logEntry = new ShareLogEntry(actor, shareEntry, LogAction.SHARE_DELETE, "Deleting anonymous share" );
+		ShareLogEntry logEntry = new ShareLogEntry(owner, shareEntry, LogAction.SHARE_DELETE, "Deleting anonymous share" );
 		logEntryService.create(logEntry);
 
 		// TODO : anonymous share deletion notification
 		// notifierService.sendNotification();
 	}
 
-
+	// TODO FMA - Refactoring shares
 	@Override
 	public void deleteShare(SystemAccount systemAccount, AnonymousShareEntry shareEntry) throws BusinessException {
 		anonymousShareEntryBusinessService.deleteAnonymousShare(shareEntry);

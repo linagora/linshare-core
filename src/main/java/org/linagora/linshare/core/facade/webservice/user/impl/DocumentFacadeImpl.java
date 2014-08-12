@@ -163,14 +163,10 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 	@Override
 	public DocumentDto deleteFile(String uuid) throws BusinessException {
 		logger.debug("deleting for document : " + uuid);
-		try {
-			User actor = getAuthentication();
-			DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
-			documentEntryService.delete(actor, doc);
-			return new DocumentDto(doc);
-		} catch (BusinessException e) {
-			throw e;
-		}
+		User actor = getAuthentication();
+		DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
+		documentEntryService.delete(actor, actor, uuid);
+		return new DocumentDto(doc);
 	}
 
 	// ############# utility methods

@@ -217,10 +217,10 @@ public class ShareServiceImpl extends GenericServiceImpl<ShareEntry> implements
 		DocumentEntry entry = documentEntryService.find(actor, owner,
 				docEntryUuid);
 		for (AnonymousShareEntry share : entry.getAnonymousShareEntries()) {
-			anonymousShareEntryService.deleteShare(actor, share);
+			anonymousShareEntryService.delete(actor, owner, share.getUuid());
 		}
 		for (ShareEntry share : entry.getShareEntries()) {
-			shareEntryService.delete(actor, actor, share.getUuid());
+			shareEntryService.delete(actor, owner, share.getUuid());
 		}
 		return entry;
 	}

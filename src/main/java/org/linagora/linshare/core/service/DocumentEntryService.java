@@ -53,11 +53,12 @@ public interface DocumentEntryService {
 
 	/**
 	 * Document suppression due to user action. 
-	 * @param actor
+	 * @param actor TODO
+	 * @param owner
 	 * @param docEntryUuid
 	 * @throws BusinessException
 	 */
-	public void delete(Account actor, DocumentEntry documentEntry) throws BusinessException;
+	public void delete(Account actor, Account owner, String documentUuid) throws BusinessException;
 
 	/**
 	 * This method is designed inconsistent document, the document exists into the database only (no on the file system) 

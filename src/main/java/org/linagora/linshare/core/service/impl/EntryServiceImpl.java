@@ -71,35 +71,19 @@ public class EntryServiceImpl implements EntryService {
 		this.anonymousShareEntryService = anonymousShareEntryService;
 	}
 
-
 	@Override
 	public void deleteAllShareEntriesWithDocumentEntry(Account actor, Account owner, String docEntryUuid) throws BusinessException {
-		try {
-			DocumentEntry documentEntry = documentEntryService.find(actor, owner, docEntryUuid);
-
-			deleteAllShareEntries(actor, documentEntry);
-
-			documentEntryService.delete(actor, documentEntry);
-
-		} catch (BusinessException e) {
-			logger.error("can not delete document : " + docEntryUuid);
-			throw e;
-		}
+		DocumentEntry documentEntry = documentEntryService.find(actor, owner, docEntryUuid);
+		deleteAllShareEntries(actor, owner, documentEntry);
+		documentEntryService.delete(actor, owner, documentEntry.getUuid());
 	}
-
 
 	@Override
 	public void deleteAllInconsistentShareEntries(Account actor, DocumentEntry documentEntry) throws BusinessException {
-		try {
-			deleteAllShareEntries(actor, documentEntry);
-		} catch (BusinessException e) {
-			logger.error("can not delete all shares related to document : " + documentEntry.getUuid());
-			throw e;
-		}
+			deleteAllShareEntries(actor, documentEntry.getEntryOwner(), documentEntry);
 	}
 
-
-	private void deleteAllShareEntries(Account actor, DocumentEntry entry) throws BusinessException {
+	private void deleteAllShareEntries(Account actor, Account owner, DocumentEntry entry) throws BusinessException {
 		List<String> a = new ArrayList<String>();
 		List<String> b = new ArrayList<String>();
 
@@ -112,11 +96,11 @@ public class EntryServiceImpl implements EntryService {
 		}
 
 		for (String uuid : a) {
-			anonymousShareEntryService.deleteShare(actor, uuid);
+			anonymousShareEntryService.delete(actor, owner, uuid);
 		}
 
 		for (String uuid : b) {
-			shareEntryService.delete(actor, actor, uuid);
+			shareEntryService.delete(owner, owner, uuid);
 		}
 	}
 

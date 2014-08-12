@@ -44,17 +44,15 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AnonymousShareEntryService {
 
-	public AnonymousShareEntry findByUuid(Account actor, String shareUuid)  throws BusinessException ;
+	AnonymousShareEntry find(Account actor, Account owner, String shareUuid)  throws BusinessException ;
 
-	public void create(Account actor, User sender, ShareContainer shareContainer) throws BusinessException;
+	void create(Account actor, User owner, ShareContainer shareContainer) throws BusinessException;
 
-	public void deleteShare(Account actor, String shareUuid) throws BusinessException;
+	void delete(Account actor, Account owner, String shareUuid) throws BusinessException;
 
-	public void deleteShare(Account actor, AnonymousShareEntry share) throws BusinessException;
+	void deleteShare(SystemAccount systemAccount, AnonymousShareEntry share) throws BusinessException;
 
-	public void deleteShare(SystemAccount systemAccount, AnonymousShareEntry share) throws BusinessException;
-
-	public InputStream getAnonymousShareEntryStream(String shareUuid) throws BusinessException ;
+	InputStream getAnonymousShareEntryStream(String shareUuid) throws BusinessException ;
 
 	@Deprecated
 	public void sendDocumentEntryUpdateNotification(AnonymousShareEntry anonymousShareEntry, String friendlySize, String originalFileName);
