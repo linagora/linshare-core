@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
@@ -57,14 +58,14 @@ public class MailFooterLangFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MailFooterLangDto find(String uuid) throws BusinessException {
-		User actor = super.getAuthentication();
+		User actor = checkAuthentication(Role.ADMIN);
 
 		return new MailFooterLangDto(findFooterLang(actor, uuid));
 	}
 
 	@Override
 	public MailFooterLangDto create(MailFooterLangDto dto) throws BusinessException {
-		User actor = super.getAuthentication();
+		User actor = checkAuthentication(Role.ADMIN);
 		MailFooterLang footerLang = new MailFooterLang();
 
 		transform(actor, footerLang, dto);
@@ -73,7 +74,7 @@ public class MailFooterLangFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MailFooterLangDto update(MailFooterLangDto dto) throws BusinessException {
-		User actor = super.getAuthentication();
+		User actor = checkAuthentication(Role.ADMIN);
 		MailFooterLang footerLang = findFooterLang(actor, dto.getUuid());
 
 		transform(actor, footerLang, dto);
@@ -82,8 +83,7 @@ public class MailFooterLangFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
-		User actor = super.getAuthentication();
-
+		User actor = checkAuthentication(Role.ADMIN);
 		mailConfigService.deleteFooterLang(actor, uuid);
 	}
 

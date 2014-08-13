@@ -40,7 +40,6 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
@@ -94,7 +93,6 @@ public class SoapServiceImpl extends WebserviceBase implements SoapService {
 	// **soap
 	@Override
 	public List<DocumentDto> getDocuments() throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
 		return webServiceDocumentFacade.getDocuments();
 	}
 
@@ -102,7 +100,6 @@ public class SoapServiceImpl extends WebserviceBase implements SoapService {
 	// **soap
 	@Override
 	public SimpleLongValue getUserMaxFileSize() throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
 		return new SimpleLongValue(
 				webServiceDocumentFacade.getUserMaxFileSize());
 	}
@@ -111,7 +108,6 @@ public class SoapServiceImpl extends WebserviceBase implements SoapService {
 	// **soap
 	@Override
 	public SimpleLongValue getAvailableSize() throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
 		return new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
 	}
 
@@ -119,7 +115,6 @@ public class SoapServiceImpl extends WebserviceBase implements SoapService {
 	@Override
 	public void sharedocument(String targetMail, String uuid, int securedShare)
 			throws BusinessException {
-		webServiceShareFacade.checkAuthentication(); // raise exception
 		webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
 	}
 
@@ -127,7 +122,6 @@ public class SoapServiceImpl extends WebserviceBase implements SoapService {
 	// **soap
 	@Override
 	public List<ShareDto> getReceivedShares() throws BusinessException {
-		webServiceShareFacade.checkAuthentication();
 		return webServiceShareFacade.getReceivedShares();
 	}
 
@@ -143,22 +137,18 @@ public class SoapServiceImpl extends WebserviceBase implements SoapService {
 
 	@Override
 	public List<ThreadDto> getAllMyThread() throws BusinessException {
-		webServiceThreadFacade.checkAuthentication();
 		return webServiceThreadFacade.getAllMyThread();
 	}
 
 	@Override
 	public void addMember(ThreadMemberDto member) throws BusinessException {
-		User actor = webServiceThreadFacade.checkAuthentication();
-		webServiceThreadFacade.addMember(actor, member.getThreadUuid(),
-				member.getUserDomainId(), member.getUserMail(),
-				member.isReadonly());
+		webServiceThreadFacade.addMember(member.getThreadUuid(), member.getUserDomainId(),
+				member.getUserMail(), member.isReadonly());
 	}
 
 	// Users
 	@Override
 	public List<UserDto> getUsers() throws BusinessException {
-		webServiceUserFacade.checkAuthentication();
 		return webServiceUserFacade.getUsers();
 	}
 }

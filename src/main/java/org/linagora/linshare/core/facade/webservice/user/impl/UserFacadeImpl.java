@@ -68,20 +68,20 @@ public class UserFacadeImpl extends UserGenericFacadeImp
 
 	@Override
 	public User checkAuthentication() throws BusinessException {
-		User user = super.checkAuthentication();
+		User actor = super.checkAuthentication();
 		Functionality functionality = functionalityReadOnlyService
-				.getUserTabFunctionality(user.getDomain());
+				.getUserTabFunctionality(actor.getDomain());
 		if (!functionality.getActivationPolicy().getStatus()) {
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		}
-		return user;
+		return actor;
 	}
 
 	@Override
 	public List<UserDto> getUsers() throws BusinessException {
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
 		List<UserDto> res = new ArrayList<UserDto>();
 		// we return all users without any filters
 		List<User> users = userService

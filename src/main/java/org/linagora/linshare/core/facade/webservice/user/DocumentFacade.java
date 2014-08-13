@@ -36,7 +36,6 @@ package org.linagora.linshare.core.facade.webservice.user;
 import java.io.InputStream;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.DocumentDto;
@@ -54,6 +53,6 @@ public interface DocumentFacade extends GenericFacade {
 	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException;
 	public InputStream getThumbnailStream(String docEntryUuid) throws BusinessException;
 	public DocumentDto deleteFile(String uuid) throws BusinessException;
-	public Boolean isEnableMimeTypes(Account actor) throws BusinessException;
-	public List<MimeTypeDto> getMimeTypes(Account actor) throws BusinessException;
+	public Boolean isEnableMimeTypes() throws BusinessException;
+	public List<MimeTypeDto> getMimeTypes() throws BusinessException;
 }

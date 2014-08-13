@@ -47,8 +47,6 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryFacade;
@@ -99,14 +97,6 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "File name")
 			@Multipart(value = FILE_NAME, required = false) String fileName,
 			MultipartBody body) throws BusinessException {
-		User actor = null;
-
-		// Authentication, permission and error checking
-		actor = documentFacade.checkAuthentication();
-		if (actor instanceof Guest && !actor.getCanUpload()) {
-			throw giveRestException(HttpStatus.SC_FORBIDDEN,
-					"You are not authorized to use this service");
-		}
 		if (file == null) {
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST,
 					"Missing file (check parameter file)");
@@ -140,14 +130,6 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "File uuid", required = true)
 			@PathParam("uuid") String uuid)
 			throws BusinessException {
-		User actor = null;
-
-		// Authentication, permission and error checking
-		actor = documentFacade.checkAuthentication();
-		if (actor instanceof Guest && !actor.getCanUpload()) {
-			throw giveRestException(HttpStatus.SC_FORBIDDEN,
-					"You are not authorized to use this service");
-		}
 		if (uuid == null || uuid.isEmpty()) {
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST,
 					"Missing file (check parameter file)");
@@ -174,14 +156,6 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 			@ApiParam(value = FILE_NAME)
 			@Multipart(value = FILE_NAME, required = false) String fileName,
 			MultipartBody body) throws BusinessException {
-		User actor = null;
-
-		// Authentication, permission and error checking
-		actor = documentFacade.checkAuthentication();
-		if (actor instanceof Guest && !actor.getCanUpload()) {
-			throw giveRestException(HttpStatus.SC_FORBIDDEN,
-					"You are not authorized to use this service");
-		}
 		if (file == null) {
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST,
 					"Missing file (check parameter file)");

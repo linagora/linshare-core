@@ -36,10 +36,9 @@ package org.linagora.linshare.core.facade.webservice.user;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.webservice.dto.LogCriteriaDto;
 import org.linagora.linshare.webservice.dto.LogDto;
 
 public interface LogEntryFacade extends GenericFacade {
-	public List<LogDto> query(User actor, LogCriteriaDto criteria);
+	public List<LogDto> query(LogCriteriaDto criteria);
 }

@@ -68,18 +68,18 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements Threa
 
 	@Override
 	public User checkAuthentication() throws BusinessException {
-		User user = super.checkAuthentication();
-		Functionality functionality = functionalityReadOnlyService.getThreadTabFunctionality(user.getDomain());
+		User actor = super.checkAuthentication();
+		Functionality functionality = functionalityReadOnlyService.getThreadTabFunctionality(actor.getDomain());
 
 		if (!functionality.getActivationPolicy().getStatus()) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN, "You are not authorized to use this service");
 		}
-		return user;
+		return actor;
 	}
 
 	@Override
 	public ThreadEntryDto uploadfile(String threadUuid, InputStream fi, String fileName, String description) throws BusinessException {
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
 		Thread thread = threadService.findByLsUuid(threadUuid);
 		if (thread == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Current thread was not found : " + threadUuid);

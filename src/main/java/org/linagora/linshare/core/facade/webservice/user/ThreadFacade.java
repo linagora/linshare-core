@@ -35,7 +35,6 @@ package org.linagora.linshare.core.facade.webservice.user;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.ThreadDto;
 
@@ -45,6 +44,6 @@ public interface ThreadFacade extends GenericFacade {
 
 	public ThreadDto getThread(String uuid) throws BusinessException;
 
-	public void addMember(Account actor, String threadUuid, String domainId,
-			String mail, boolean readonly) throws BusinessException;
+	public void addMember(String threadUuid, String domainId, String mail,
+			boolean readonly) throws BusinessException;
 }

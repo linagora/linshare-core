@@ -113,7 +113,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	 */
 	private Set<UserDto> searchUsers(String firstName, String lastName,
 			String mail, AccountType type) throws BusinessException {
-		User currentUser = super.checkAuthentication();
+		User currentUser = super.checkAuthentication(Role.ADMIN);
 
 		Set<UserDto> usersDto = new HashSet<UserDto>();
 		Set<User> users = new HashSet<User>();

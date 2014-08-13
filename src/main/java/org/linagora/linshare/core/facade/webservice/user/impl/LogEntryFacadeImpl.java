@@ -65,13 +65,12 @@ public class LogEntryFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public List<LogDto> query(User actor, LogCriteriaDto criteria) {
+	public List<LogDto> query(LogCriteriaDto criteria) {
+		User actor = checkAuthentication();
 		Calendar before = Calendar.getInstance();
 		Calendar after = Calendar.getInstance();
-
 		before.setTime(criteria.getBeforeDate());
 		after.setTime(criteria.getAfterDate());
-
 		LogCriteriaBean crit = new LogCriteriaBean(Lists.newArrayList(actor
 				.getMail()), criteria.getActorFirstName(),
 				criteria.getActorLastName(), criteria.getActorDomain(),
@@ -79,7 +78,6 @@ public class LogEntryFacadeImpl extends UserGenericFacadeImp implements
 				criteria.getTargetLastName(), criteria.getTargetDomain(),
 				before, after, criteria.getLogActions(),
 				criteria.getFileName(), criteria.getFileExtension());
-
 		return Lists.transform(logEntryService.findByCriteria(actor, crit),
 				new Function<LogEntry, LogDto>() {
 					public LogDto apply(LogEntry input) {
@@ -93,5 +91,4 @@ public class LogEntryFacadeImpl extends UserGenericFacadeImp implements
 					}
 				});
 	}
-
 }

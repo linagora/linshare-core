@@ -68,7 +68,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 
 	@Override
 	public List<ShareDto> getReceivedShares() throws BusinessException {
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
 		List<ShareEntry> shares = shareEntryService.findAllMyRecievedShareEntries(
 				actor, actor);
 		return Lists.transform(shares, ShareDto.toVo());
@@ -77,7 +77,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	@Override
 	public void sharedocument(String targetMail, String uuid, int securedShare)
 			throws BusinessException {
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
 		if ((actor.isGuest() && !actor.getCanUpload()))
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
@@ -103,7 +103,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	public void multiplesharedocuments(List<String> mails, List<String> documentUuids,
 			int securedShare, String messageOpt, String inReplyToOpt,
 			String referencesOpt) throws BusinessException {
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
 		if ((actor.isGuest() && !actor.getCanUpload()))
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
@@ -121,7 +121,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	@Override
 	public void multiplesharedocuments(List<ShareDto> shares, boolean secured,
 			String message) throws BusinessException {
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
 		if ((actor.isGuest() && !actor.getCanUpload()))
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
@@ -139,20 +139,20 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	@Override
 	public ShareDto getReceivedShare(String shareEntryUuid)
 			throws BusinessException {
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
 		return ShareDto.getReceivedShare(shareEntryService.find(actor, actor, shareEntryUuid));
 	}
 
 	@Override
 	public InputStream getDocumentStream(String shareEntryUuid)
 			throws BusinessException {
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
 		return shareEntryService.getStream(actor, actor, shareEntryUuid);
 	}
 
 	@Override
 	public InputStream getThumbnailStream(String shareEntryUuid) throws BusinessException {
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
 		return shareEntryService.getThumbnailStream(actor, actor, shareEntryUuid);
 	}
 }

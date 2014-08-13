@@ -76,7 +76,6 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<ShareDto> getReceivedShares() throws BusinessException {
-		webServiceShareFacade.checkAuthentication();
 		return webServiceShareFacade.getReceivedShares();
 	}
 
@@ -85,7 +84,6 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@Override
 	public void sharedocument(@PathParam("targetMail") String targetMail, @PathParam("uuid") String uuid,
 			@DefaultValue("0") @QueryParam("securedShare") int securedShare) throws BusinessException {
-		webServiceShareFacade.checkAuthentication();
 		webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
 	}
 
@@ -95,7 +93,6 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@Override
 	public void multiplesharedocuments(ArrayList<ShareDto> shares, @QueryParam("secured") boolean secured, @QueryParam("message") String message)
 			throws BusinessException {
-		webServiceShareFacade.checkAuthentication();
 		webServiceShareFacade.multiplesharedocuments(shares, secured, message);
 	}
 
@@ -103,7 +100,6 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@GET
 	@Override
 	public Response getDocumentStream(@PathParam("uuid") String shareUuid) throws BusinessException {
-		webServiceShareFacade.checkAuthentication();
 		ShareDto shareDto = webServiceShareFacade.getReceivedShare(shareUuid);
 		InputStream documentStream = webServiceShareFacade.getDocumentStream(shareUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, shareDto.getName(), shareDto.getType(),
@@ -115,7 +111,6 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@GET
 	@Override
 	public Response getThumbnailStream(@PathParam("uuid") String shareUuid) throws BusinessException {
-		webServiceShareFacade.checkAuthentication();
 		InputStream documentStream = webServiceShareFacade.getThumbnailStream(shareUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream);
 		return response.build();

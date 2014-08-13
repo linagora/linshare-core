@@ -84,7 +84,6 @@ public class MTOMUploadSoapServiceImpl implements MTOMUploadSoapService {
 	@Override
 	public DocumentDto addDocumentXop(DocumentAttachement doca)
 			throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
 		return webServiceDocumentFacade.addDocumentXop(doca);
 	}
 

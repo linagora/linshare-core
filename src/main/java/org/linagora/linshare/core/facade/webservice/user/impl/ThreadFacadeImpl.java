@@ -36,7 +36,6 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
@@ -81,7 +80,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements ThreadFaca
 
 	@Override
 	public List<ThreadDto> getAllMyThread() throws BusinessException {
-		User actor = super.checkAuthentication();
+		User actor = checkAuthentication();
 		List<ThreadDto> res = new ArrayList<ThreadDto>();
 
 		for (Thread thread : threadService.findAllWhereMember(actor)) {
@@ -92,16 +91,16 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements ThreadFaca
 
 	@Override
 	public ThreadDto getThread(String uuid) throws BusinessException {
+		checkAuthentication();
 		Thread thread = threadService.findByLsUuid(uuid);
-
 		return new ThreadDto(thread, thread.getMyMembers());
 	}
 
 	@Override
-	public void addMember(Account actor, String threadUuid, String domainId, String mail, boolean readonly) throws BusinessException {
+	public void addMember(String threadUuid, String domainId, String mail, boolean readonly) throws BusinessException {
+		User actor = checkAuthentication();
 		Thread thread = threadService.findByLsUuid(threadUuid);
 		User user = userService.findOrCreateUserWithDomainPolicies(mail, domainId, actor.getDomainId());
-
 		threadService.addMember(actor, thread, user, false, !readonly);
 	}
 

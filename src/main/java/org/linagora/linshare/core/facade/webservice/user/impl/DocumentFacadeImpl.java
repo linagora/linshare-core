@@ -40,7 +40,6 @@ import java.util.Set;
 
 import javax.activation.DataHandler;
 
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.User;
@@ -79,14 +78,14 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 
 	@Override
 	public List<DocumentDto> getDocuments() throws BusinessException {
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
 		List<DocumentEntry> docs = documentEntryService.findAll(actor, actor);
 		return Lists.transform(docs, DocumentDto.toVo());
 	}
 
 	@Override
 	public DocumentDto getDocument(String uuid) throws BusinessException {
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
 		DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
 		return new DocumentDto(doc);
 	}
@@ -94,7 +93,11 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 	@Override
 	public DocumentDto uploadfile(InputStream fi, String fileName,
 			String description) throws BusinessException {
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
+		if ((actor.isGuest() && !actor.getCanUpload()))
+			throw new BusinessException(
+					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+					"You are not authorized to use this service");
 		DocumentEntry res = documentEntryService.create(actor, actor,
 				fi, fileName);
 
@@ -107,7 +110,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 	public DocumentDto addDocumentXop(DocumentAttachement doca)
 			throws BusinessException {
 		try {
-			User actor = getAuthentication();
+			User actor = checkAuthentication();
 			DataHandler dh = doca.getDocument();
 			InputStream in = dh.getInputStream();
 			String fileName = doca.getFilename();
@@ -128,43 +131,42 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 
 	@Override
 	public Long getUserMaxFileSize() throws BusinessException {
-		User actor = getAuthentication();
-
+		User actor = checkAuthentication();
 		return documentEntryService.getUserMaxFileSize(actor);
 	}
 
 	@Override
 	public Long getAvailableSize() throws BusinessException {
-		User actor = getAuthentication();
-
+		User actor = checkAuthentication();
 		return documentEntryService.getAvailableSize(actor);
 	}
 
 	@Override
 	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException {
 		logger.debug("downloading for document : " + docEntryUuid);
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
 		return documentEntryService.getDocumentStream(actor, actor, docEntryUuid);
 	}
 
 	@Override
 	public InputStream getThumbnailStream(String docEntryUuid) throws BusinessException {
 		logger.debug("downloading thumbnail for document : " + docEntryUuid);
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
 		return documentEntryService.getDocumentThumbnailStream(actor, actor, docEntryUuid);
 	}
 
 	@Override
 	public DocumentDto deleteFile(String uuid) throws BusinessException {
 		logger.debug("deleting for document : " + uuid);
-		User actor = getAuthentication();
+		User actor = checkAuthentication();
 		DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
 		documentEntryService.delete(actor, actor, uuid);
 		return new DocumentDto(doc);
 	}
 
 	@Override
-	public List<MimeTypeDto> getMimeTypes(Account actor) throws BusinessException {
+	public List<MimeTypeDto> getMimeTypes() throws BusinessException {
+		User actor = checkAuthentication();
 		List<MimeTypeDto> res = Lists.newArrayList();
 		Set<MimeType> mimeTypes = mimePolicyService.findAllMyMimeTypes(actor);
 		for (MimeType mimeType : mimeTypes) {
@@ -176,7 +178,8 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public Boolean isEnableMimeTypes(Account actor) throws BusinessException {
+	public Boolean isEnableMimeTypes() throws BusinessException {
+		User actor = checkAuthentication();
 		return documentEntryService.mimeTypeFilteringStatus(actor);
 	}
 }

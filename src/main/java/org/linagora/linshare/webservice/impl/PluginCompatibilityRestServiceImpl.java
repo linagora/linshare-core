@@ -50,8 +50,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
@@ -90,11 +88,6 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 			@FormParam("securedShare") @DefaultValue("0") int securedShare, @FormParam("message") @DefaultValue("") String message,
 			@FormParam("inReplyTo") @DefaultValue("") String inReplyTo, @FormParam("references") @DefaultValue("") String references)
 			throws BusinessException {
-		User actor;
-
-		actor = webServiceShareFacade.checkAuthentication();
-		if ((actor instanceof Guest && !actor.getCanUpload()))
-			throw giveRestException(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
 		CollectionUtils.filter(uuid, StringPredicates.isNotBlank());
 		if (uuid.isEmpty())
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing parameter file");
@@ -112,13 +105,8 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile,
 			@Multipart(value = "description", required = false) String description,
 			@Multipart(value = "filename", required = false) String givenFileName, MultipartBody body) throws BusinessException {
-		User actor = webServiceDocumentFacade.checkAuthentication();
 		String fileName;
 		String comment = (description == null) ? "" : description;
-
-		if ((actor instanceof Guest && !actor.getCanUpload())) {
-			throw giveRestException(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
-		}
 		if (theFile == null) {
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
 		}

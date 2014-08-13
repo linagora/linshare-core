@@ -50,8 +50,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
@@ -74,7 +72,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@GET
 	@Override
 	public Response getDocumentStream(@PathParam("uuid") String uuid) throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
 		DocumentDto documentDto = webServiceDocumentFacade.getDocument(uuid);
 		InputStream documentStream = webServiceDocumentFacade.getDocumentStream(uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName(),
@@ -86,7 +83,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@GET
 	@Override
 	public Response getThumbnailStream(@PathParam("uuid") String docUuid) throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
 		DocumentDto documentDto = webServiceDocumentFacade.getDocument(docUuid);
 		InputStream documentStream = webServiceDocumentFacade.getThumbnailStream(docUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName() + "_thumb.png",
@@ -104,7 +100,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<DocumentDto> getDocuments() throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
 		return webServiceDocumentFacade.getDocuments();
 	}
 
@@ -119,13 +114,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile,
 			@Multipart(value = "description", required = false) String description,
 			@Multipart(value = "filename", required = false) String givenFileName, MultipartBody body) throws BusinessException {
-		User actor = webServiceDocumentFacade.checkAuthentication();
 		String fileName;
 		String comment = (description == null) ? "" : description;
-
-		if ((actor instanceof Guest && !actor.getCanUpload())) {
-			throw giveRestException(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
-		}
 		if (theFile == null) {
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
 		}
@@ -152,7 +142,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication(); // raise exception
 		return webServiceDocumentFacade.addDocumentXop(doca);
 	}
 
@@ -161,7 +150,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public SimpleLongValue getUserMaxFileSize() throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
 		return new SimpleLongValue(webServiceDocumentFacade.getUserMaxFileSize());
 	}
 
@@ -170,7 +158,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public SimpleLongValue getAvailableSize() throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
 		return new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
 	}
 
@@ -179,8 +166,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public SimpleLongValue getUserAvailableSize() throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
-
 		return new SimpleLongValue(Math.min(
 				webServiceDocumentFacade.getUserMaxFileSize(),
 				webServiceDocumentFacade.getAvailableSize()));
@@ -191,7 +176,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public DocumentDto delete(@PathParam("uuid") String uuid) throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
 		return webServiceDocumentFacade.deleteFile(uuid);
 	}
 
@@ -200,8 +184,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<MimeTypeDto> getMimeTypes() throws BusinessException {
-		User actor = webServiceDocumentFacade.checkAuthentication();
-		return webServiceDocumentFacade.getMimeTypes(actor);
+		return webServiceDocumentFacade.getMimeTypes();
 	}
 
 	@GET
@@ -209,8 +192,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public Boolean getMimeTypeStatus() throws BusinessException {
-		User actor = webServiceDocumentFacade.checkAuthentication();
-		return webServiceDocumentFacade.isEnableMimeTypes(actor);
+		return webServiceDocumentFacade.isEnableMimeTypes();
 	}
 
 }

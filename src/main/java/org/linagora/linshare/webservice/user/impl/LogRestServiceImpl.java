@@ -42,7 +42,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.LogEntryFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
@@ -74,9 +73,7 @@ public class LogRestServiceImpl extends WebserviceBase implements
 	public List<LogDto> query(
 			@ApiParam(value = "Criteria to search for.", required = true) LogCriteriaDto criteria)
 			throws BusinessException {
-		User actor = logEntryFacade.checkAuthentication();
-
-		return logEntryFacade.query(actor, criteria);
+		return logEntryFacade.query(criteria);
 	}
 
 }

@@ -43,7 +43,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadMemberFacade;
@@ -67,8 +66,7 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements Threa
 	@Override
 	public void addMember(@PathParam("threadUuid") String threadUuid, @PathParam("domainId") String domainId, @PathParam("mail") String mail,
 			@DefaultValue("false") @QueryParam("readonly") boolean readonly) throws BusinessException {
-		User actor = webServiceThreadFacade.checkAuthentication();
-		webServiceThreadFacade.addMember(actor, threadUuid, domainId, mail, readonly);
+		webServiceThreadFacade.addMember(threadUuid, domainId, mail, readonly);
 	}
 
 	@Path("/{threadUuid}/")
@@ -76,7 +74,6 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements Threa
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<ThreadMemberDto> getAllThreadMembers(@PathParam("threadUuid") String threadUuid) throws BusinessException {
-		webServiceThreadFacade.checkAuthentication();
 		return webServiceThreadMemberFacade.getAllThreadMembers(threadUuid);
 	}
 }

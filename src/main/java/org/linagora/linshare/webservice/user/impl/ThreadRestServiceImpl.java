@@ -63,7 +63,6 @@ public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestS
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<ThreadDto> getAllMyThread() throws BusinessException {
-		webServiceThreadFacade.checkAuthentication();
 		return webServiceThreadFacade.getAllMyThread();
 	}
 
@@ -72,7 +71,6 @@ public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestS
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public ThreadDto getThread(@PathParam("uuid") String uuid) throws BusinessException {
-		webServiceThreadFacade.checkAuthentication();
 		return webServiceThreadFacade.getThread(uuid);
 	}
 
