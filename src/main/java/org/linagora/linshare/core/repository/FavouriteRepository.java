@@ -119,6 +119,8 @@ public interface FavouriteRepository<T,U,V> extends AbstractRepository<V>{
 	 */
 	public List<T> findMatchElementsOrderByWeight(T matchStartWith,U owner);
 	
+	public List<V> findMatchElementsOrderByWeight(T matchStartWith,U owner, int limit);
+	
 	/**
 	 * delete all the elements of the owner
 	 * @param owner

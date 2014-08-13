@@ -51,12 +51,12 @@ public interface UserService {
 	 * Search a user on ldap and database for completion ONLY.
 	 * Search a user using pattern as mail, or the concatenation of first name fragment and last name fragment. 
 	 * The method is using space to split pattern in order to build first name and last name 
-	 * @param currentActorUuid
+	 * @param actor
 	 * @param pattern
 	 * @return
 	 * @throws BusinessException
 	 */
-	public List<User> autoCompleteUser(String currentActorUuid, String pattern) throws BusinessException;
+	public List<User> autoCompleteUser(Account actor, String pattern) throws BusinessException;
 
 	/** Search a user.
 	 * @param mail user email.

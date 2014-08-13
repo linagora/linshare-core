@@ -54,9 +54,11 @@ public class AutocompleteFacadeImpl extends AdminGenericFacadeImpl implements Au
 
 	final private static int AUTO_COMPLETE_LIMIT = 20;
 
-	private UserService userService;
+	private final UserService userService;
 
-	public AutocompleteFacadeImpl(final AccountService accountService, final UserService userService) {
+	public AutocompleteFacadeImpl(
+			final AccountService accountService,
+			final UserService userService) {
 		super(accountService);
 		this.userService = userService;
 	}
@@ -64,25 +66,8 @@ public class AutocompleteFacadeImpl extends AdminGenericFacadeImpl implements Au
 	@Override
 	public Set<UserDto> findUser(String pattern) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		List<User> users = userService.autoCompleteUser(actor.getLogin(), pattern);
+		List<User> users = userService.autoCompleteUser(actor, pattern);
 		logger.debug("nb result for completion : " + users.size());
-		// TODO : FMA : Use database configuration for auto complete limit
-		return getUserDtoList(users);
-	}
-
-	@Override
-	public Set<UserDto> getUserSortedByFavorites(String pattern) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		Validate.notEmpty(pattern, "pattern must be set.");
-		List<User> users = userService.autoCompleteUser(actor.getLogin(), pattern);
-		logger.debug("nb result for completion : " + users.size());
-
-		// TODO : FIXME : FMA : add favorite sort.
-		// userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input,
-		// userVo));
-		// return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new
-		// ArrayList<UserVo>(userSet), userVo);
-
 		// TODO : FMA : Use database configuration for auto complete limit
 		return getUserDtoList(users);
 	}
@@ -91,7 +76,7 @@ public class AutocompleteFacadeImpl extends AdminGenericFacadeImpl implements Au
 	public Set<String> getMail(String pattern) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(pattern, "pattern must be set.");
-		List<User> users = userService.autoCompleteUser(actor.getLogin(), pattern);
+		List<User> users = userService.autoCompleteUser(actor, pattern);
 		logger.debug("nb result for completion : " + users.size());
 		// TODO : FMA : Use database configuration for auto complete limit
 		return getMailList(users, AUTO_COMPLETE_LIMIT);

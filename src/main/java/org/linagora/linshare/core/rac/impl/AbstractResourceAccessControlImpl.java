@@ -135,7 +135,7 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 				new Predicate<AccountPermission>() {
 					@Override
 					public boolean apply(final AccountPermission input) {
-						return input.getPermission() == permissionType;
+						return input.getPermission().equals(permissionType);
 					}
 				});
 		logger.debug(permissionType.toString() + " : "

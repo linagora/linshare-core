@@ -243,14 +243,22 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		det.add(Restrictions.eq("owner", owner));
 		det.add(Restrictions.ilike("recipient", matchStartWith,MatchMode.ANYWHERE));
 		det.addOrder(Order.desc("weight"));
-		List<RecipientFavourite> recipients=findByCriteria(det);
-		
+		List<RecipientFavourite> recipients = findByCriteria(det);
 		ArrayList<String> mails=new ArrayList<String>();
-		
 		for(RecipientFavourite recipientFavour: recipients){
 			mails.add(recipientFavour.getRecipient());
 		}
 		return mails;
+	}
+
+	@Override
+	public List<RecipientFavourite> findMatchElementsOrderByWeight(
+			String matchStartWith, User owner, int limit) {
+		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
+		det.add(Restrictions.eq("owner", owner));
+		det.add(Restrictions.ilike("recipient", matchStartWith,MatchMode.ANYWHERE));
+		det.addOrder(Order.desc("weight"));
+		return findByCriteria(det, limit);
 	}
 
 	@Override

@@ -290,7 +290,7 @@ public class UserServiceImpl implements UserService {
 	 * @return
 	 * @throws BusinessException 
 	 */
-	private List<User> completionSearchOnGuest(User actor, String mail,
+	private List<User> completionSearchOnGuest(Account actor, String mail,
 			String firstName, String lastName) throws BusinessException {
 		List<User> result = new ArrayList<User>();
 		logger.debug("adding guests to the return list");
@@ -399,7 +399,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<User> autoCompleteUser(String currentActorUuid, String pattern)
+	public List<User> autoCompleteUser(Account actor, String pattern)
 			throws BusinessException {
 		logger.debug("Begin autoCompleteUser");
 
@@ -407,7 +407,6 @@ public class UserServiceImpl implements UserService {
 		pattern = StringUtils.trim(pattern);
 
 		List<User> users = new ArrayList<User>();
-		User currentActor = this.findUser(currentActorUuid);
 
 		// building search parameters.
 		String mail = pattern;
@@ -426,25 +425,25 @@ public class UserServiceImpl implements UserService {
 
 		// TODO : Only guest could be restricted ? why some internal could not
 		// be ?
-		if (currentActor.getAccountType() == AccountType.GUEST) {
+		if (actor.isGuest()) {
 			// RESTRICTED GUEST MUST NOT SEE ALL USERS
-			if (currentActor.isRestricted()) {
-				return completionSearchForRestrictedGuest((Guest) currentActor,
+			if (((Guest)actor).isRestricted()) {
+				return completionSearchForRestrictedGuest((Guest) actor,
 						pattern, firstName, lastName);
 			}
 		}
 
 		// completion on database for guests
-		users.addAll(completionSearchOnGuest(currentActor, mail, firstName,
+		users.addAll(completionSearchOnGuest(actor, mail, firstName,
 				lastName));
 
 		// completion on LDAP directory for internals
 		if (lastName == null) {
 			logger.debug("completionSearchOnInternal: mail");
-			users.addAll(completionSearchOnInternal(currentActor, mail));
+			users.addAll(completionSearchOnInternal((User)actor, mail));
 		} else {
 			logger.debug("completionSearchOnInternal: first name and last name");
-			users.addAll(completionSearchOnInternal(currentActor, firstName,
+			users.addAll(completionSearchOnInternal((User)actor, firstName,
 					lastName));
 		}
 

@@ -203,7 +203,7 @@ public class DisplayMailingList {
 	}
 
 	public void onSuccessFromSearchUserForm() throws BusinessException {
-		results = userAutoCompleteFacade.autoCompleteUser(loginUser, recipientsSearch);
+		results = userAutoCompleteFacade.autoCompleteUserSortedByFavorites(loginUser, recipientsSearch);
 		displayGrid = true;
 	}
 

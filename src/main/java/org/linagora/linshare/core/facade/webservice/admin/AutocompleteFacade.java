@@ -44,9 +44,6 @@ public interface AutocompleteFacade {
 	Set<UserDto> findUser(String pattern)
 			throws BusinessException;
 
-	Set<UserDto> getUserSortedByFavorites(String pattern)
-			throws BusinessException;
-
 	Set<String> getMail(String pattern)
 			throws BusinessException;
 }
