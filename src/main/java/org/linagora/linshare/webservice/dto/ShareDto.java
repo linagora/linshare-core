@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 
+import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -248,5 +249,17 @@ public class ShareDto {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<ShareEntry, ShareDto> toVo() {
+		return new Function<ShareEntry, ShareDto>() {
+			@Override
+			public ShareDto apply(ShareEntry arg0) {
+				return ShareDto.getReceivedShare(arg0);
+			}
+		};
 	}
 }

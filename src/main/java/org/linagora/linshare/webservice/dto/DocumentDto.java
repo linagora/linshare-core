@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 
+import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -169,5 +170,16 @@ public class DocumentDto {
 	public String toString() {
 		return "Document [id=" + uuid + ", name=" + name + ", creation="
 				+ creationDate + "]";
+	}
+	/*
+	 * Transformers
+	 */
+	public static Function<DocumentEntry, DocumentDto> toVo() {
+		return new Function<DocumentEntry, DocumentDto>() {
+			@Override
+			public DocumentDto apply(DocumentEntry arg0) {
+				return new DocumentDto(arg0);
+			}
+		};
 	}
 }

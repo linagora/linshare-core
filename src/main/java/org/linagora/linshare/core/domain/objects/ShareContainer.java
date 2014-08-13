@@ -14,9 +14,8 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DocumentDto;
+import org.linagora.linshare.webservice.dto.UserDto;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -89,6 +88,12 @@ public class ShareContainer {
 	}
 
 	public void setSubject(String subject) {
+		if (subject != null) {
+			subject = subject.trim();
+			if (subject.isEmpty()) {
+				subject = null;
+			}
+		}
 		this.subject = subject;
 	}
 
@@ -97,6 +102,12 @@ public class ShareContainer {
 	}
 
 	public void setMessage(String message) {
+		if (message != null) {
+			message = message.trim();
+			if (message.isEmpty()) {
+				message = null;
+			}
+		}
 		this.message = message;
 	}
 
@@ -121,6 +132,12 @@ public class ShareContainer {
 	}
 
 	public void setInReplyTo(String inReplyTo) {
+		if (inReplyTo != null) {
+			inReplyTo = inReplyTo.trim();
+			if (inReplyTo.isEmpty()) {
+				inReplyTo = null;
+			}
+		}
 		this.inReplyTo = inReplyTo;
 	}
 
@@ -129,6 +146,12 @@ public class ShareContainer {
 	}
 
 	public void setReferences(String references) {
+		if (references != null) {
+			references = references.trim();
+			if (references.isEmpty()) {
+				references = null;
+			}
+		}
 		this.references = references;
 	}
 
@@ -181,6 +204,13 @@ public class ShareContainer {
 		this.documentUuids.add(uuid);
 	}
 
+	public void addDocumentUuid(List<String> uuids) {
+		Validate.notNull(uuids, "uuid list must not be null.");
+		for (String uuid : uuids) {
+			this.documentUuids.add(uuid);
+		}
+	}
+
 	public void addDocumentVos(List<DocumentVo> documentVos) {
 		Validate.notNull(documentVos, "documentVos list must not be null.");
 		for (DocumentVo d : documentVos) {
@@ -208,6 +238,11 @@ public class ShareContainer {
 		for (String mail : mails) {
 			this.addMail(mail);
 		}
+	}
+
+	public void addUserDto(UserDto userDto) {
+		Validate.notNull(userDto, "user must not be null.");
+		this.recipients.add(new Recipient(userDto));
 	}
 
 	public void addUserVo(UserVo userVo) {

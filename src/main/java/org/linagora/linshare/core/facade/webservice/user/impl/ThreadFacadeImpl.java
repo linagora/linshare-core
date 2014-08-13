@@ -51,7 +51,7 @@ import org.linagora.linshare.webservice.dto.ThreadDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ThreadFacadeImpl extends GenericFacadeImpl implements ThreadFacade {
+public class ThreadFacadeImpl extends UserGenericFacadeImp implements ThreadFacade {
 
 	private static final Logger logger = LoggerFactory.getLogger(ThreadFacadeImpl.class);
 

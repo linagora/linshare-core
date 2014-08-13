@@ -48,7 +48,6 @@ import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
-import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
 import org.linagora.linshare.core.domain.transformers.impl.ShareEntryTransformer;
 import org.linagora.linshare.core.domain.transformers.impl.SignatureTransformer;
@@ -174,18 +173,6 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		DocumentEntry documentEntry = shareEntryService.copy(
 				actor, actor, shareDocumentVo.getIdentifier());
 		return documentEntryTransformer.disassemble(documentEntry);
-	}
-
-	// TODO FMA - Refactoring shares
-	@Deprecated
-	@Override
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(
-			UserVo ownerVo, List<DocumentVo> documents,
-			List<String> recipientsEmail, boolean secureSharing,
-			MailContainer mailContainer) throws BusinessException {
-
-		logger.debug("createSharingWithMailUsingRecipientsEmail");
-		return null;
 	}
 
 	@Override

@@ -37,48 +37,31 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.MailContainer;
-import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
-import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.webservice.dto.ShareDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ShareFacadeImpl extends GenericFacadeImpl
+import com.google.common.collect.Lists;
+
+public class ShareFacadeImpl extends UserGenericFacadeImp
 		implements ShareFacade {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(ShareFacadeImpl.class);
-
-	private final DocumentEntryService documentEntryService;
-
-	// To be removed
-	private org.linagora.linshare.core.facade.ShareFacade tapestryShareFacade;
 
 	private final ShareEntryService shareEntryService;
 
 	private final ShareService shareService;
 
 	public ShareFacadeImpl(
-			final DocumentEntryService documentEntryService,
 			final AccountService accountService, 
 			final ShareEntryService shareEntryService,
 			final ShareService shareService) {
 		super(accountService);
-		this.documentEntryService = documentEntryService;
 		this.shareEntryService = shareEntryService;
 		this.shareService = shareService;
 	}
@@ -88,80 +71,22 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 		User actor = getAuthentication();
 		List<ShareEntry> shares = shareEntryService.findAllMyRecievedShareEntries(
 				actor, actor);
-
-		if (shares == null)
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND,
-					"No such share");
-		return convertReceivedShareEntryList(shares);
-	}
-
-	private static List<ShareDto> convertReceivedShareEntryList(List<ShareEntry> input) {
-		if (input == null)
-			return null;
-
-		List<ShareDto> output = new ArrayList<ShareDto>();
-
-		for (ShareEntry var : input) {
-			output.add(ShareDto.getReceivedShare(var));
-		}
-		return output;
+		return Lists.transform(shares, ShareDto.toVo());
 	}
 
 	@Override
 	public void sharedocument(String targetMail, String uuid, int securedShare)
 			throws BusinessException {
 		User actor = getAuthentication();
-		DocumentEntry documentEntry;
-
-		if ((actor instanceof Guest && !actor.getCanUpload()))
+		if ((actor.isGuest() && !actor.getCanUpload()))
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
-		try {
-			documentEntry = documentEntryService.find(actor, actor, uuid);
-		} catch (BusinessException e) {
-			throw e;
-		}
-		if (documentEntry == null) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND,
-					"Document not found");
-		}
-
-		DocumentVo docVo = new DocumentVo(documentEntry.getUuid(),
-				documentEntry.getName(), documentEntry.getComment(),
-				documentEntry.getCreationDate(),
-				documentEntry.getExpirationDate(), documentEntry.getType(),
-				documentEntry.getEntryOwner().getLsUuid(),
-				documentEntry.getCiphered(), documentEntry.getShareEntries()
-						.size() > 0, documentEntry.getSize());
-
-		List<DocumentVo> listDoc = new ArrayList<DocumentVo>();
-		listDoc.add(docVo);
-
-		List<String> listRecipient = new ArrayList<String>();
-		listRecipient.add(targetMail);
-
-		SuccessesAndFailsItems<ShareDocumentVo> successes;
-
-		// give personal message and subject in WS in the future? null at this
-		// time
-		String message = null;
-		String subject = null;
-		MailContainer mailContainer = new MailContainer(
-				actor.getExternalMailLocale(), message, subject);
-
-		UserVo uo = new UserVo(actor);
-
-		successes = tapestryShareFacade.createSharingWithMailUsingRecipientsEmail(
-				uo, listDoc, listRecipient, (securedShare == 1), mailContainer);
-
-
-		if ((successes.getSuccessesItem() == null) ||
-			((successes.getFailsItem() != null) &&
-			(successes.getFailsItem().size() > 0))) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
-					"Could not share the document");
-		}
+		ShareContainer sc = new ShareContainer();
+		sc.addDocumentUuid(uuid);
+		sc.addMail(targetMail);
+		sc.setSecured((securedShare == 1));
+		shareService.create(actor, actor, sc);
 	}
 
 	@Override
@@ -175,111 +100,40 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 	}
 
 	@Override
-	public void multiplesharedocuments(List<String> mails, List<String> uuid,
+	public void multiplesharedocuments(List<String> mails, List<String> documentUuids,
 			int securedShare, String messageOpt, String inReplyToOpt,
 			String referencesOpt) throws BusinessException {
 		User actor = getAuthentication();
-
-		List<DocumentVo> listDoc = new ArrayList<DocumentVo>();
-
-		// fetch the document
-		DocumentEntry documentEntry;
-
-		for (String onefileid : uuid) {
-			documentEntry = documentEntryService.find(actor, actor, onefileid);
-			DocumentVo documentVo = new DocumentVo(documentEntry);
-			listDoc.add(documentVo);
-		}
-
-		// give personal message and subject in WS in the future? null at this
-		// time
-		String message = (messageOpt == null) ? "" : messageOpt;
-
-		String inReplyTo = inReplyToOpt;
-		if (inReplyToOpt != null) {
-			if ("".equals(inReplyToOpt)) {
-				inReplyTo = null;
-			}
-		}
-		String references = referencesOpt;
-		if (referencesOpt != null) {
-			if ("".equals(referencesOpt)) {
-				references = null;
-			}
-		}
-
-		String subject = null;
-		MailContainer mailContainer = new MailContainer(
-				actor.getExternalMailLocale(), message, subject);
-		// Useful for Thunderbird plugin.
-		mailContainer.setReferences(references);
-		mailContainer.setInReplyTo(inReplyTo);
-
-		UserVo actorVo = new UserVo(actor);
-
-		SuccessesAndFailsItems<ShareDocumentVo> successes;
-
-		try {
-			successes = tapestryShareFacade
-					.createSharingWithMailUsingRecipientsEmail(actorVo,
-							listDoc, mails, (securedShare == 1), mailContainer);
-		} catch (BusinessException e) {
-			throw e;
-		}
-
-		if ((successes.getSuccessesItem() == null)
-				|| ((successes.getFailsItem() != null) && (successes
-						.getFailsItem().size() > 0))) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
-					"Could not share the document");
-		}
-
+		if ((actor.isGuest() && !actor.getCanUpload()))
+			throw new BusinessException(
+					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+					"You are not authorized to use this service");
+		ShareContainer sc = new ShareContainer();
+		sc.addDocumentUuid(documentUuids);
+		sc.addMail(mails);
+		sc.setSecured((securedShare == 1));
+		sc.setInReplyTo(inReplyToOpt);
+		sc.setReferences(referencesOpt);
+		sc.setMessage(messageOpt);
+		shareService.create(actor, actor, sc);
 	}
 
 	@Override
 	public void multiplesharedocuments(List<ShareDto> shares, boolean secured,
 			String message) throws BusinessException {
 		User actor = getAuthentication();
-		UserVo actorVo = new UserVo(actor);
-
-		ArrayList<DocumentVo> listDoc = new ArrayList<DocumentVo>();
-		ArrayList<String> mails = new ArrayList<String>();
-
-		// FIXME XXX TODO HACK : Workaround to re-use tapestry facade. Refactor
-		// and remove Vo when tapestry will be removed
+		if ((actor.isGuest() && !actor.getCanUpload()))
+			throw new BusinessException(
+					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+					"You are not authorized to use this service");
+		ShareContainer sc = new ShareContainer();
 		for (ShareDto share : shares) {
-			// fetch the document
-
-			DocumentEntry documentEntry = documentEntryService.find(actor, actor,
-					share.getDocumentDto().getUuid());
-
-			DocumentVo documentVo = new DocumentVo(documentEntry);
-			listDoc.add(documentVo);
-
-			// give personal message and subject in WS in the future? null at
-			// this
-			// time
-
-			mails.add(share.getRecipient().getUuid());
+			sc.addDocumentUuid(share.getDocumentDto().getUuid());
+			sc.addUserDto(share.getRecipient());
 		}
-		String subject = null;
-		MailContainer mailContainer = new MailContainer(
-				actor.getExternalMailLocale(), message, subject);
-		SuccessesAndFailsItems<ShareDocumentVo> successes;
-		try {
-			successes = tapestryShareFacade.createSharingWithMailUsingRecipientsEmail(
-					actorVo, listDoc, mails, secured, mailContainer);
-		} catch (BusinessException e) {
-			throw e;
-		}
-
-		if ((successes.getSuccessesItem() == null)
-				|| ((successes.getFailsItem() != null) && (successes
-						.getFailsItem().size() > 0))) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
-					"Could not share the document");
-		}
-
+		sc.setSecured(secured);
+		sc.setMessage(message);
+		shareService.create(actor, actor, sc);
 	}
 
 	@Override
@@ -301,5 +155,4 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 		User actor = getAuthentication();
 		return shareEntryService.getThumbnailStream(actor, actor, shareEntryUuid);
 	}
-
 }

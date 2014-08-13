@@ -35,7 +35,6 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -59,7 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-public class DocumentFacadeImpl extends GenericFacadeImpl
+public class DocumentFacadeImpl extends UserGenericFacadeImp
 		implements DocumentFacade {
 
 	private static final Logger logger = LoggerFactory
@@ -81,13 +80,8 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 	@Override
 	public List<DocumentDto> getDocuments() throws BusinessException {
 		User actor = getAuthentication();
-		List<DocumentEntry> docs = documentEntryService
-				.findAll(actor, actor);
-
-		if (docs == null)
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND,
-					"No such document");
-		return convertDocumentEntryList(docs);
+		List<DocumentEntry> docs = documentEntryService.findAll(actor, actor);
+		return Lists.transform(docs, DocumentDto.toVo());
 	}
 
 	@Override
@@ -167,19 +161,6 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 		DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
 		documentEntryService.delete(actor, actor, uuid);
 		return new DocumentDto(doc);
-	}
-
-	// ############# utility methods
-	private static List<DocumentDto> convertDocumentEntryList(
-			List<DocumentEntry> input) {
-		if (input == null)
-			return null;
-
-		List<DocumentDto> output = new ArrayList<DocumentDto>();
-		for (DocumentEntry var : input) {
-			output.add(new DocumentDto(var));
-		}
-		return output;
 	}
 
 	@Override

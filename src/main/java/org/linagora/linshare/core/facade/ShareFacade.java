@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.linagora.linshare.core.domain.objects.MailContainer;
-import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.SignatureVo;
@@ -47,14 +46,6 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ShareFacade {
-
-
-	@Deprecated
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(
-			UserVo owner, List<DocumentVo> documents,
-			List<String> recipientsEmail,
-			boolean secureSharing, MailContainer mailContainer)
-			throws BusinessException;
 
 	/**
 	 * Retrieve all the sharing received by a user
@@ -64,7 +55,6 @@ public interface ShareFacade {
 	 */
 	public List<ShareDocumentVo> getAllSharingReceivedByUser(UserVo recipient) throws BusinessException;
 
-
 	/**
 	 * Retrieve all the sharings of a file by a user
 	 * @param sender the user
@@ -72,7 +62,6 @@ public interface ShareFacade {
 	 * @return
 	 */
 	public List<ShareDocumentVo> getSharingsByUserAndFile(UserVo sender, DocumentVo document);
-
 
 	/**
 	 * Retrieve all the sharing urls of a file by a user (email)
@@ -82,7 +71,6 @@ public interface ShareFacade {
 	 */
 	public Map<String, Calendar> getAnonymousSharingsByUserAndFile(UserVo senderVo, DocumentVo documentVo);
 
-
 	/**
 	 * Delete a sharing
 	 * @param share
@@ -91,7 +79,6 @@ public interface ShareFacade {
 	 */
 	void deleteSharing(ShareDocumentVo share, UserVo actor) throws BusinessException;
 
-
     /** Create a local copy of a shared document.
      * @param shareDocumentVo shared document.
      * @param actorVo user that the document belongs to.
@@ -99,7 +86,6 @@ public interface ShareFacade {
      * @throws BusinessException if document is too large for user account or forbidden mime type.
      */
     public DocumentVo createLocalCopy(ShareDocumentVo shareDocumentVo, UserVo actorVo) throws BusinessException;
-
 
 	/**
 	 * This method returns true if we can enable or disable manually on the IHM the checkbox 'Secured Anonymous URL'.

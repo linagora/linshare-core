@@ -48,7 +48,7 @@ import org.linagora.linshare.webservice.dto.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UserFacadeImpl extends GenericFacadeImpl
+public class UserFacadeImpl extends UserGenericFacadeImp
 		implements UserFacade {
 
 	private static final Logger logger = LoggerFactory

@@ -46,7 +46,7 @@ import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ThreadMemberFacadeImpl extends GenericFacadeImpl implements
+public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		ThreadMemberFacade {
 
 	private static final Logger logger = LoggerFactory

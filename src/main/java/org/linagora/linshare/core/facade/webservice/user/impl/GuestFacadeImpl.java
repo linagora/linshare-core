@@ -45,7 +45,7 @@ import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.webservice.dto.GenericUserDto;
 import org.linagora.linshare.webservice.dto.GuestDto;
 
-public class GuestFacadeImpl extends GenericFacadeImpl implements GuestFacade {
+public class GuestFacadeImpl extends UserGenericFacadeImp implements GuestFacade {
 
 	private final GuestService guestService;
 

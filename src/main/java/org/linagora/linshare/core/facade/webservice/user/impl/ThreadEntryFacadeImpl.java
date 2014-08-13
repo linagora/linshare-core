@@ -51,10 +51,10 @@ import org.linagora.linshare.webservice.dto.ThreadEntryDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ThreadEntryFacadeImpl extends GenericFacadeImpl implements ThreadEntryFacade {
+public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements ThreadEntryFacade {
 
 	private static final Logger logger = LoggerFactory.getLogger(ThreadFacadeImpl.class);
-	
+
 	private final ThreadEntryService threadEntryService;
 	private final ThreadService threadService;
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
@@ -65,7 +65,7 @@ public class ThreadEntryFacadeImpl extends GenericFacadeImpl implements ThreadEn
 		this.threadEntryService = threadEntryService;
 		this.functionalityReadOnlyService = functionalityService;
 	}
-	
+
 	@Override
 	public User checkAuthentication() throws BusinessException {
 		User user = super.checkAuthentication();

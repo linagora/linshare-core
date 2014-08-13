@@ -53,7 +53,7 @@ import org.linagora.linshare.webservice.dto.LogDto;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-public class LogEntryFacadeImpl extends GenericFacadeImpl implements
+public class LogEntryFacadeImpl extends UserGenericFacadeImp implements
 		LogEntryFacade {
 
 	private final LogEntryService logEntryService;
