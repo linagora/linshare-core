@@ -10,12 +10,12 @@
 		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="matchAll" column="match_all" type="boolean" not-null="true" lazy="false"/>
 		<property name="enable" column="enable" type="boolean" not-null="true" lazy="false"/>
-		<list name="uploadPropositionRules" lazy="true" cascade="lock" inverse="false">
+		<list name="uploadPropositionRules" lazy="true" cascade="all" inverse="false">
 			<key column="upload_proposition_filter_id" not-null="true"/>
 			<index column="upload_proposition_filter_index" type="integer"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadPropositionRule"/>
 		</list>
-		<list name="uploadPropositionActions" lazy="true" cascade="lock" inverse="false">
+		<list name="uploadPropositionActions" lazy="true" cascade="all" inverse="false">
 			<key column="upload_proposition_filter_id" not-null="true"/>
 			<index column="upload_proposition_filterIndex" type="integer"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadPropositionAction"/>

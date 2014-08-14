@@ -300,4 +300,7 @@
 		<constructor-arg ref="uploadRequestUrlService" />
 		<constructor-arg ref="userService" />
 	</bean>
+	<bean id="uploadPropositionFilterService" class="org.linagora.linshare.core.service.impl.UploadPropositionFilterServiceImpl">
+		<constructor-arg ref="uploadPropositionFilterBusinessService" />
+	</bean>
 </beans>

@@ -32,49 +32,30 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.uploadproposition.dto;
+package org.linagora.linshare.webservice.dto;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
-import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
+import org.linagora.linshare.core.domain.constants.UploadPropositionRuleFieldType;
+import org.linagora.linshare.core.domain.constants.UploadPropositionRuleOperatorType;
 import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Function;
 
-public class UploadPropositionFilterDto {
+public class UploadPropositionRuleDto {
 
 	protected String uuid;
 
-	protected String name;
+	protected String operator;
 
-	protected boolean matchAll;
+	protected String field;
 
-	protected List<UploadPropositionRuleDto> uploadPropositionRules = Lists.newArrayList();
+	protected String value;
 
-	protected List<UploadPropositionActionDto> uploadPropositionActions = Lists.newArrayList();
-
-
-	//Tests only 
-	public UploadPropositionFilterDto(String uuid, String name,
-			boolean matchAll) {
-		super();
-		this.uuid = uuid;
-		this.name = name;
-		this.matchAll = matchAll;
-	}
-
-	public UploadPropositionFilterDto(UploadPropositionFilter entity) {
+	public UploadPropositionRuleDto(UploadPropositionRule entity) {
 		super();
 		this.uuid = entity.getUuid();
-		this.name = entity.getName();
-		this.matchAll = entity.isMatchAll();
-		for (UploadPropositionAction action : entity.getUploadPropositionActions()) {
-			this.uploadPropositionActions.add(new UploadPropositionActionDto(action)); 
-		}
-		for (UploadPropositionRule rule : entity.getUploadPropositionRules()) {
-			this.uploadPropositionRules.add(new UploadPropositionRuleDto(rule)); 
-		}
+		this.operator = entity.getOperator().name();
+		this.field = entity.getField().name();
+		this.value = entity.getValue();
 	}
 
 	public String getUuid() {
@@ -85,37 +66,53 @@ public class UploadPropositionFilterDto {
 		this.uuid = uuid;
 	}
 
-	public String getName() {
-		return name;
+	public String getOperator() {
+		return operator;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setOperator(String operator) {
+		this.operator = operator;
 	}
 
-	public boolean isMatchAll() {
-		return matchAll;
+	public String getField() {
+		return field;
 	}
 
-	public void setMatchAll(boolean matchAll) {
-		this.matchAll = matchAll;
+	public void setField(String field) {
+		this.field = field;
 	}
 
-	public List<UploadPropositionRuleDto> getUploadPropositionRules() {
-		return uploadPropositionRules;
+	public String getValue() {
+		return value;
 	}
 
-	public void setUploadPropositionRules(
-			List<UploadPropositionRuleDto> uploadPropositionRules) {
-		this.uploadPropositionRules = uploadPropositionRules;
+	public void setValue(String value) {
+		this.value = value;
+	}
+	
+	/*
+	 * Transformers
+	 */
+	public static Function<UploadPropositionRule, UploadPropositionRuleDto> toVo() {
+		return new Function<UploadPropositionRule, UploadPropositionRuleDto>() {
+			@Override
+			public UploadPropositionRuleDto apply(UploadPropositionRule entity) {
+				return new UploadPropositionRuleDto(entity);
+			}
+		};
 	}
 
-	public List<UploadPropositionActionDto> getUploadPropositionActions() {
-		return uploadPropositionActions;
-	}
-
-	public void setUploadPropositionActions(
-			List<UploadPropositionActionDto> uploadPropositionActions) {
-		this.uploadPropositionActions = uploadPropositionActions;
+	public static Function<UploadPropositionRuleDto, UploadPropositionRule> toEntity() {
+		return new Function<UploadPropositionRuleDto, UploadPropositionRule>() {
+			@Override
+			public UploadPropositionRule apply(UploadPropositionRuleDto dto) {
+				UploadPropositionRule rule = new UploadPropositionRule();
+				rule.setUuid(dto.getUuid());
+				rule.setValue(dto.getValue());
+				rule.setOperator(UploadPropositionRuleOperatorType.fromString(dto.getOperator()));
+				rule.setField(UploadPropositionRuleFieldType.fromString(dto.getField()));
+				return rule;
+			}
+		};
 	}
 }

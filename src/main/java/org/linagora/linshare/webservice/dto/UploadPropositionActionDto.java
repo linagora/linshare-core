@@ -32,49 +32,26 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.uploadproposition.dto;
+package org.linagora.linshare.webservice.dto;
 
-import java.util.List;
-
+import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
-import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
-import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Function;
 
-public class UploadPropositionFilterDto {
+public class UploadPropositionActionDto {
 
 	protected String uuid;
 
-	protected String name;
+	protected String action;
 
-	protected boolean matchAll;
+	protected String data;
 
-	protected List<UploadPropositionRuleDto> uploadPropositionRules = Lists.newArrayList();
-
-	protected List<UploadPropositionActionDto> uploadPropositionActions = Lists.newArrayList();
-
-
-	//Tests only 
-	public UploadPropositionFilterDto(String uuid, String name,
-			boolean matchAll) {
-		super();
-		this.uuid = uuid;
-		this.name = name;
-		this.matchAll = matchAll;
-	}
-
-	public UploadPropositionFilterDto(UploadPropositionFilter entity) {
+	public UploadPropositionActionDto(UploadPropositionAction entity) {
 		super();
 		this.uuid = entity.getUuid();
-		this.name = entity.getName();
-		this.matchAll = entity.isMatchAll();
-		for (UploadPropositionAction action : entity.getUploadPropositionActions()) {
-			this.uploadPropositionActions.add(new UploadPropositionActionDto(action)); 
-		}
-		for (UploadPropositionRule rule : entity.getUploadPropositionRules()) {
-			this.uploadPropositionRules.add(new UploadPropositionRuleDto(rule)); 
-		}
+		this.action = entity.getActionType().name();
+		this.data = entity.getData();
 	}
 
 	public String getUuid() {
@@ -85,37 +62,46 @@ public class UploadPropositionFilterDto {
 		this.uuid = uuid;
 	}
 
-	public String getName() {
-		return name;
+	public String getAction() {
+		return action;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setAction(String action) {
+		this.action = action;
 	}
 
-	public boolean isMatchAll() {
-		return matchAll;
+	public String getData() {
+		return data;
 	}
 
-	public void setMatchAll(boolean matchAll) {
-		this.matchAll = matchAll;
+	public void setData(String data) {
+		this.data = data;
 	}
 
-	public List<UploadPropositionRuleDto> getUploadPropositionRules() {
-		return uploadPropositionRules;
+	/*
+	 * Transformers
+	 */
+	public static Function<UploadPropositionAction, UploadPropositionActionDto> toVo() {
+		return new Function<UploadPropositionAction, UploadPropositionActionDto>() {
+			@Override
+			public UploadPropositionActionDto apply(
+					UploadPropositionAction entity) {
+				return new UploadPropositionActionDto(entity);
+			}
+		};
 	}
 
-	public void setUploadPropositionRules(
-			List<UploadPropositionRuleDto> uploadPropositionRules) {
-		this.uploadPropositionRules = uploadPropositionRules;
-	}
-
-	public List<UploadPropositionActionDto> getUploadPropositionActions() {
-		return uploadPropositionActions;
-	}
-
-	public void setUploadPropositionActions(
-			List<UploadPropositionActionDto> uploadPropositionActions) {
-		this.uploadPropositionActions = uploadPropositionActions;
+	public static Function<UploadPropositionActionDto, UploadPropositionAction> toEntity() {
+		return new Function<UploadPropositionActionDto, UploadPropositionAction>() {
+			@Override
+			public UploadPropositionAction apply(UploadPropositionActionDto dto) {
+				UploadPropositionAction action = new UploadPropositionAction();
+				action.setUuid(dto.getUuid());
+				action.setData(dto.getData());
+				action.setActionType(UploadPropositionActionType.fromString(dto
+						.getAction()));
+				return action;
+			}
+		};
 	}
 }

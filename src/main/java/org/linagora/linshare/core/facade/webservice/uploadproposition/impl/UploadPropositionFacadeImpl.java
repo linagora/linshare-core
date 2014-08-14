@@ -85,8 +85,7 @@ public class UploadPropositionFacadeImpl extends
 		UploadPropositionRuleDto rule = new UploadPropositionRuleDto(
 				"3f52d026-9719-4f0b-bf4b-f5e9252a71a7",
 				UploadPropositionRuleOperatorType.TRUE,
-				UploadPropositionRuleFieldType.NONE,
-				null);
+				UploadPropositionRuleFieldType.NONE, null);
 
 		UploadPropositionFilterDto filter = new UploadPropositionFilterDto(
 				"5724946a-eebe-450b-bb84-0d8af480f3f6", "default filter 1",
@@ -129,7 +128,8 @@ public class UploadPropositionFacadeImpl extends
 	}
 
 	@Override
-	public boolean checkIfValidRecipeint(String userMail, String userDomain) throws BusinessException {
+	public boolean checkIfValidRecipeint(String userMail, String userDomain)
+			throws BusinessException {
 		this.checkAuthentication();
 		List<String> list = Lists.newArrayList();
 		list.add("bart.simpson@int1.linshare.dev");
@@ -143,7 +143,8 @@ public class UploadPropositionFacadeImpl extends
 	public void create(UploadPropositionDto dto) throws BusinessException {
 		this.checkAuthentication();
 		logger.debug(dto.toString());
-		UploadPropositionActionType actionType = UploadPropositionActionType.fromString(dto.getAction());
+		UploadPropositionActionType actionType = UploadPropositionActionType
+				.fromString(dto.getAction());
 		uploadPropositionService.create(dto.toEntity(dto), actionType);
 	}
 }

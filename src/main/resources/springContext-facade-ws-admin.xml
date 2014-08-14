@@ -130,8 +130,13 @@
 		<constructor-arg ref="technicalAccountPermissionService" />
 	</bean>
 	<bean id="wsAdminUploadRequestFacade"
-		  class="org.linagora.linshare.core.facade.webservice.admin.impl.UploadRequestFacadeImpl">
+		class="org.linagora.linshare.core.facade.webservice.admin.impl.UploadRequestFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="uploadRequestService" />
+	</bean>
+	<bean id="wsAdminUploadPropositionFilterFacade"
+		class="org.linagora.linshare.core.facade.webservice.admin.impl.UploadPropositionFilterFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="uploadPropositionFilterService" />
 	</bean>
 </beans>
