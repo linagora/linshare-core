@@ -11,8 +11,13 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="accountService" />
 	</bean>
-	
+
 	<bean id="wsDelegationGenericFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.DelegationGenericFacadeImpl">
 		<constructor-arg ref="accountService" />
+	</bean>
+
+	<bean id="wsDelegationDocumentFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.DocumentFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="documentEntryService" />
 	</bean>
 </beans>

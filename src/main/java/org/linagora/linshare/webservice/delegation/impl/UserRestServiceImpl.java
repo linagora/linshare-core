@@ -1,7 +1,5 @@
 package org.linagora.linshare.webservice.delegation.impl;
 
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -11,6 +9,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.delegation.UserFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegation.UserRestService;
 import org.linagora.linshare.webservice.dto.GenericUserDto;
@@ -29,6 +28,14 @@ import com.wordnik.swagger.annotations.ApiResponses;
 public class UserRestServiceImpl extends WebserviceBase implements
 		UserRestService {
 
+	private final UserFacade userFacade;
+
+	public UserRestServiceImpl(
+			final UserFacade userFacade) {
+		super();
+		this.userFacade = userFacade;
+	}
+
 	@Path("/{mail}")
 	@GET
 	@ApiOperation(value = "Find a user.", response = GenericUserDto.class, responseContainer = "Set")
@@ -37,11 +44,10 @@ public class UserRestServiceImpl extends WebserviceBase implements
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public List<GenericUserDto> findUsers(
+	public GenericUserDto getUser(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("mail") String mail,
 			@ApiParam(value = "The owner (user) uuid.", required = false) @QueryParam("domainId") String domainId)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return userFacade.getUser(mail, domainId);
 	}
 }

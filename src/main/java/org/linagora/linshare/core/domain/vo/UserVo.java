@@ -243,6 +243,14 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		return role;
 	}
 
+	public boolean hasDelegationRole() {
+		return Role.DELEGATION.equals(role);
+	}
+
+	public boolean hasUploadPropositionRole() {
+		return Role.UPLOAD_PROPOSITION.equals(role);
+	}
+
 	public boolean isAdministrator() {
 		return Role.ADMIN.equals(role) || isSuperAdmin();
 	}
@@ -254,6 +262,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 	public boolean isGuest() {
 		return AccountType.GUEST.equals(userType);
 	}
+
 
 	public boolean isUpload() {
 		return upload;

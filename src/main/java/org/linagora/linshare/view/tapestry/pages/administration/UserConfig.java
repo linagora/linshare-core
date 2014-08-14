@@ -74,116 +74,116 @@ public class UserConfig {
     @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
-	
+
  	/* ***********************************************************
 	 *                         Parameters
 	 ************************************************************ */
 
-	
+
 	/* ***********************************************************
 	 *                      Injected services
 	 ************************************************************ */
-	
+
 	@Inject
 	private BusinessMessagesManagementService businessMessagesManagementService;
-	
+
 	@Inject
 	private SymbolSource symbolSource;
-	
+
 	@Inject
 	private Messages messages;
-	
+
 	@Inject
 	private UserFacade userFacade;
-	
+
     @Inject
     private AbstractDomainFacade domainFacade;
-	
+
 	@Inject
 	private PersistentLocale persistentLocale;
-	
-	
+
+
     @InjectComponent
     private Form changePassword;
-    
-	
+
+
 	/* ***********************************************************
 	 *                Properties & injected symbol, ASO, etc
 	 ************************************************************ */
-	
+
 	@SessionState
 	@Property
 	private UserVo userVo;
-	
+
 	@Property
 	private List<String> locales;
-	
+
 	@Property
 	private String currentLocale;
-	
+
 	@Property
 	private String oldUserPassword;
-	
+
 	@Property
 	private String newUserPassword;
-	
+
 	@Property
 	private String confirmNewUserPassword;
-	
+
 	@Persist
 	@Property
 	private SimpleSelectModel<String> model;
-	 
+
 	/* ***********************************************************
 	 *                       Phase processing
 	 ************************************************************ */
-	 
+
 	@SetupRender
 	public void initLanguage() throws BusinessException{
 		if(null==locales || locales.size()==0){
 			if(null!=symbolSource.valueForSymbol(SymbolConstants.SUPPORTED_LOCALES)){
 				String stringLocales=symbolSource.valueForSymbol(SymbolConstants.SUPPORTED_LOCALES);
 				String[]listLocales=stringLocales.split(",");
-				
+
 				locales=this.getSupportedLocales(listLocales);		
 			}
 		}
-		
+
 		if (userVo.getLocale() !=null) {
 			currentLocale = userVo.getLocale();
-			
+
 		}
-		
+
 		model = new SimpleSelectModel<String>(locales, messages, "pages.administration.userconfig.select");
 
 	}
-	
+
 	public boolean getDisplayChangePassword() {
-		return userVo.isGuest() || userVo.isSuperAdmin();
+		return userVo.isGuest() || userVo.isSuperAdmin() || userVo.hasDelegationRole() || userVo.hasUploadPropositionRole();
 	}
-	
+
 	/* ***********************************************************
 	 *                   Event handlers&processing
 	 ************************************************************ */
-	
+
 	void onSuccessFromConfigUserform() throws BusinessException {
 		userFacade.updateUserLocale(userVo,currentLocale);
 		userVo = userFacade.findUserByLsUuid(userVo, userVo.getLsUuid());
 		userVo = userFacade.findUserInDb(userVo.getMail(), userVo.getDomainIdentifier());
 		persistentLocale.set(LocaleUtils.toLocale(currentLocale));
 	}
-	
-    
+
+
     public boolean onValidateFormFromChangePassword() {
     	if (changePassword.getHasErrors()) {
     		return false;
     	}
-    	
+
     	if (!newUserPassword.equals(confirmNewUserPassword)) {
     		changePassword.recordError(messages.get("pages.administration.userconfig.error.password"));
     		return false;
     	}
-    	
+
     	try {
 			userFacade.changePassword(userVo, oldUserPassword, newUserPassword);
 		} catch (BusinessException e) {
@@ -194,18 +194,18 @@ public class UserConfig {
 		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.PASSWORD_CHANGE_SUCCESS, MessageSeverity.INFO));
         return true;
     }
-    
-    
+
+
     @CleanupRender
     public void cleanupRender(){
     	changePassword.clearErrors();
     }
-	
-	
+
+
 	/* ***********************************************************
 	 *                          Helpers
 	 ************************************************************ */
-	
+
 	private List<String> getSupportedLocales(String[]locales){
 		ArrayList<String> newLocales=new ArrayList<String>();
 		for(String currentLocale:locales){

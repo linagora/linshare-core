@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.delegation.DocumentFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegation.DocumentRestService;
 import org.linagora.linshare.webservice.delegation.dto.DocumentDto;
@@ -31,6 +32,13 @@ import com.wordnik.swagger.annotations.ApiResponses;
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 public class DocumentRestServiceImpl extends WebserviceBase implements
 		DocumentRestService {
+
+	private final DocumentFacade documentFacade;
+
+	public DocumentRestServiceImpl(DocumentFacade documentFacade) {
+		super();
+		this.documentFacade = documentFacade;
+	}
 
 	@Path("/{ownerUuid}/documents")
 	@POST
@@ -85,8 +93,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	public List<DocumentDto> getAll(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return documentFacade.getAll(ownerUuid);
 	}
 
 	@Path("/{ownerUuid}/documents/{uuid}")

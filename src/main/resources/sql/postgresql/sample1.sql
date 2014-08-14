@@ -69,12 +69,23 @@ INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date,
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST)
 	VALUES (40, null, 'Technical Account for test', 'bart.simpson@int1.linshare.dev', false, '', false, false);
 
+-- Technical account with Delegation Role for delegation API.
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id)
+	VALUES (5, 4, '59236bed-7e4d-4f98-99d9-5c1dd6b503d4', now(),now(), 4, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+INSERT INTO users(account_id, first_name, last_name, mail, can_upload, comment, restricted, can_create_guest)
+	VALUES (5, null, 'Delegation Account', 'bart.simpson@int1.linshare.dev', false, '', false, false);
+
+-- Technical account permission for delegation account.
 INSERT INTO technical_account_permission (id, uuid, creation_date, modification_date) VALUES (40, 'fbba4e41-ca60-4f09-8d59-fbfe052acb82', current_timestamp(3), current_timestamp(3));
 
+-- Technical account permissions
+INSERT INTO account_permission VALUES (1, 40, 'DOCUMENT_ENTRIES_LIST');
 
-INSERT INTO technical_account_permission (id, uuid, creation_date, modification_date) VALUES (50, 'fbba4e41-ca60-4f09-8d59-fbfe052acb83', current_timestamp(3), current_timestamp(3));
+-- Association between delegation account and delegationpermissions
+UPDATE account SET technical_account_permission_id = 40 where id=5;
 
-// 765f1ee6-4df7-420c-b8a5-ad63ae258dd8
+
+
 
 -- Users
 -- bart simpson
@@ -116,8 +127,6 @@ INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modi
 
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (4, 54, true, true, current_timestamp(3), current_timestamp(3), 50); 
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (5, 54, false, true, current_timestamp(3), current_timestamp(3), 53); 
-
-
 
 
 

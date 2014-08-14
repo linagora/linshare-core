@@ -35,6 +35,7 @@ package org.linagora.linshare.view.tapestry.pages;
 
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.vo.UserVo;
 
 /**
@@ -50,13 +51,20 @@ public class StartingPage {
 	@SessionState
     @Property
     private UserVo userVo;
-    
+
 	Object onActivate() {
-		if (userVoExists && userVo.isSuperAdmin()) {
-			return org.linagora.linshare.view.tapestry.pages.administration.Index.class;
+		if (userVoExists) {
+			if (userVo.isSuperAdmin()) {
+				return org.linagora.linshare.view.tapestry.pages.administration.Index.class;
+			}
+			if (userVo.hasDelegationRole()
+					|| userVo.hasUploadPropositionRole()
+					) {
+				return org.linagora.linshare.view.tapestry.pages.administration.UserConfig.class;
+			}
 		}
 		return Index.class;
 	}
 
-	
+
 }

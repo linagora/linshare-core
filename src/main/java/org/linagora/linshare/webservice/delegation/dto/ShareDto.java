@@ -45,6 +45,7 @@ import org.linagora.linshare.webservice.dto.GenericUserDto;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+
 @XmlRootElement(name = "Share")
 @ApiModel(value = "Share", description = "A document can be shared between users.")
 public class ShareDto {

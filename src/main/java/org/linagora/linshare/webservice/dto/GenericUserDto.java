@@ -47,6 +47,10 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 		+ "This is usefull for a multi-domain LinShare instance.")
 public class GenericUserDto {
 
+	public GenericUserDto() {
+		super();
+	}
+
 	@ApiModelProperty(value = "User uuid")
 	protected String uuid = null;
 

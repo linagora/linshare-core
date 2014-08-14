@@ -84,8 +84,6 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements Threa
 		if (thread == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Current thread was not found : " + threadUuid);
 		}
-		fileName = fileName.replace("\\", "_");
-		fileName = fileName.replace(":", "_");
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor, thread, fi, fileName);
 		threadEntryService.updateFileProperties(actor, threadEntry.getUuid(), description);
 		return new ThreadEntryDto(threadEntry);

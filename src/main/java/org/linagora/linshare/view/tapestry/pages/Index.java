@@ -58,6 +58,7 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
@@ -158,8 +159,16 @@ public class Index {
 		if (shareSessionObjects != null)
 			shareSessionObjects
 					.checkDocumentsTypeIntegrity(ShareDocumentVo.class);
-		if (userVoExists && userVo.isSuperAdmin()) {
-			return org.linagora.linshare.view.tapestry.pages.administration.Index.class;
+
+		if (userVoExists) {
+			if (userVo.isSuperAdmin()) {
+				return org.linagora.linshare.view.tapestry.pages.administration.Index.class;
+			}
+			if (userVo.hasDelegationRole()
+					|| userVo.hasUploadPropositionRole()
+					) {
+				return org.linagora.linshare.view.tapestry.pages.administration.UserConfig.class;
+			}
 		}
 		if (finishForwarding) {
 			share.setSelectedDocuments(shareSessionObjects.getDocuments());

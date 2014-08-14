@@ -296,12 +296,15 @@ public class UserFacadeImpl implements UserFacade {
 
 	public void changePassword(UserVo user, String oldPassword,
 			String newPassword) throws BusinessException {
-		if (!(user.getUserType().equals(AccountType.GUEST) || user.getRole()
-				.equals(Role.SUPERADMIN))) {
+		if (!(
+				user.isGuest()
+				|| user.isSuperAdmin()
+				|| user.hasDelegationRole()
+				|| user.hasUploadPropositionRole()
+			)) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
 					"Only a guest or superadmin may change its password");
 		}
-
 		userService.changePassword(user.getLsUuid(), user.getMail(),
 				oldPassword, newPassword);
 
@@ -322,7 +325,7 @@ public class UserFacadeImpl implements UserFacade {
 
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		Guest guest = guestService.findByLsUuid(actor, lsUuid);
-		
+
 		for (String mail : mailContacts) {
 			User user = userService.findUnkownUserInDB(mail);
 			guest.addContact(new AllowedContact(guest, user));

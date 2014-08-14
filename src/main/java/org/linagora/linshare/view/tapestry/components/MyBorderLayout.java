@@ -275,11 +275,13 @@ public class MyBorderLayout {
 		MenuEntry auditMenu;
 		MenuEntry helpMenu;
 		MenuEntry listMenu;
+		MenuEntry configMenu;
 
 
 		// Menu : Home / File 
 		homeMenu = new MenuEntry(response.encodeURL("index"),messages.get("components.myborderlayout.home.title"),null,null,"home");
 		fileMenu = new MenuEntry(response.encodeURL("files/index"),messages.get("components.myborderlayout.file.title"),null,null,"files");
+		configMenu = new MenuEntry(response.encodeURL("administration/userconfig"),messages.get("components.myborderlayout.userconfig.title"),null,null,"home");
 
 		// Menu : User
 		userMenu = new MenuEntry(response.encodeURL("user/index"),messages.get("components.myborderlayout.user.title"),null,null,"user");
@@ -330,9 +332,9 @@ public class MyBorderLayout {
 				if (showHelpTab())
 					menu.addMenuEntry(helpMenu);
 			} else if (userVo.getRole().equals(Role.DELEGATION)) {
-				menu.addMenuEntry(homeMenu);
+				menu.addMenuEntry(configMenu);
 			} else if (userVo.getRole().equals(Role.UPLOAD_PROPOSITION)) {
-				menu.addMenuEntry(homeMenu);
+				menu.addMenuEntry(configMenu);
 			} else {
 				// users : Accueil / Fichiers / List / Threads / Users / History / help
 				// admin : Accueil / Fichiers / List / Threads / Users/ Admin /History / help

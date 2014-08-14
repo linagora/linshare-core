@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -720,6 +721,8 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User findOrCreateUserWithDomainPolicies(String domainId,
 			String mail, String actorDomainId) throws BusinessException {
+		Validate.notEmpty(mail, "domainmail is required");
+		Validate.notEmpty(domainId, "domainId is required");
 		User user = null;
 
 		if (actorDomainId == null) {

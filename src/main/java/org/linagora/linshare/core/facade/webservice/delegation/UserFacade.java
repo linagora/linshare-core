@@ -35,10 +35,12 @@
 package org.linagora.linshare.core.facade.webservice.delegation;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.GenericUserDto;
 import org.linagora.linshare.webservice.dto.PasswordDto;
 
-public interface UserFacade {
+public interface UserFacade extends DelegationGenericFacade{
 
 	void changePassword(PasswordDto password) throws BusinessException;
 
+	GenericUserDto getUser(String mail, String domainId) throws BusinessException;
 }

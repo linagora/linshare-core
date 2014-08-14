@@ -39,6 +39,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.delegation.UserFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.webservice.dto.GenericUserDto;
 import org.linagora.linshare.webservice.dto.PasswordDto;
 
 public class UserFacadeImpl extends DelegationGenericFacadeImpl implements
@@ -56,5 +57,16 @@ public class UserFacadeImpl extends DelegationGenericFacadeImpl implements
 		User actor = checkAuthentication();
 		userService.changePassword(actor.getLsUuid(), actor.getMail(),
 				password.getOldPwd(), password.getNewPwd());
+	}
+
+	@Override
+	public GenericUserDto getUser(String mail, String domainId)
+			throws BusinessException {
+		User actor = checkAuthentication();
+		if(domainId == null) {
+			domainId = actor.getDomainId();
+		}
+		User user = userService.findOrCreateUserWithDomainPolicies(mail, domainId);
+		return new GenericUserDto(user);
 	}
 }

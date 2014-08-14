@@ -20,9 +20,19 @@
 		<constructor-arg ref="wsDelegationUserFacade" />
 	</bean>
 
+	<bean id="delegationUserRestService" class="org.linagora.linshare.webservice.delegation.impl.UserRestServiceImpl">
+		<constructor-arg ref="wsDelegationUserFacade" />
+	</bean>
+
+	<bean id="delegationDocumentRestService" class="org.linagora.linshare.webservice.delegation.impl.DocumentRestServiceImpl">
+		<constructor-arg ref="wsDelegationDocumentFacade" />
+	</bean>
+
 	<jaxrs:server id="restDelegationContainer" address="/rest/delegation">
 		<jaxrs:serviceBeans>
 			<ref bean="delegationAuthenticationRestService" />
+			<ref bean="delegationUserRestService" />
+			<ref bean="delegationDocumentRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
