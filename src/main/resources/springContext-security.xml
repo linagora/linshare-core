@@ -32,6 +32,7 @@
 			<sec:filter-chain pattern="/**/fr" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
 			<sec:filter-chain pattern="/**/nl" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
 			<sec:filter-chain pattern="/**/vi" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
+			<sec:filter-chain pattern="/**/mq" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
 
 			<sec:filter-chain pattern="/download/**" filters="none" />
 			<sec:filter-chain pattern="/**/download.passwordpopup.formpassword" filters="none" />
