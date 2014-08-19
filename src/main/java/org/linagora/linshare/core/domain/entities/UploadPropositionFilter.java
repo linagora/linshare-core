@@ -36,6 +36,8 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.UploadPropositionMatchType;
+
 public class UploadPropositionFilter {
 
 	private long id;
@@ -44,7 +46,7 @@ public class UploadPropositionFilter {
 
 	private String name;
 
-	private boolean matchAll;
+	private UploadPropositionMatchType match;
 
 	private boolean enable;
 
@@ -83,12 +85,12 @@ public class UploadPropositionFilter {
 		this.name = name;
 	}
 
-	public boolean isMatchAll() {
-		return matchAll;
+	public UploadPropositionMatchType getMatch() {
+		return match;
 	}
 
-	public void setMatchAll(boolean matchAll) {
-		this.matchAll = matchAll;
+	public void setMatch(UploadPropositionMatchType match) {
+		this.match = match;
 	}
 
 	public boolean isEnable() {

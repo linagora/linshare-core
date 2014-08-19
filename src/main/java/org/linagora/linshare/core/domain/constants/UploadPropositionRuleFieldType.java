@@ -43,8 +43,7 @@ public enum UploadPropositionRuleFieldType {
 	SENDER_EMAIL,
 	RECIPIENT_EMAIL,
 	RECIPIENT_DOMAIN,
-	SUBJECT,
-	NONE;
+	SUBJECT;
 
 	public static UploadPropositionRuleFieldType fromString(String s) {
 		try {

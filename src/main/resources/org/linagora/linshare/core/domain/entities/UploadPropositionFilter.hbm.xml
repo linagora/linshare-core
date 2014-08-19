@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadPropositionMatchType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadPropositionMatchType</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
 	<class name="org.linagora.linshare.core.domain.entities.UploadPropositionFilter" table="upload_proposition_filter" lazy="false">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
@@ -8,7 +14,7 @@
 		</id>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>
-		<property name="matchAll" column="match_all" type="boolean" not-null="true" lazy="false"/>
+		<property name="match" column="match" type="uploadPropositionMatchType" not-null="true" lazy="false"/>
 		<property name="enable" column="enable" type="boolean" not-null="true" lazy="false"/>
 		<list name="uploadPropositionRules" lazy="true" cascade="all" inverse="false">
 			<key column="upload_proposition_filter_id" not-null="true"/>

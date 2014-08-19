@@ -2,6 +2,7 @@ package org.linagora.linshare.webservice.dto;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.UploadPropositionMatchType;
 import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
 import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
 import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
@@ -15,7 +16,7 @@ public class UploadPropositionFilterDto {
 
 	protected String name;
 
-	protected boolean matchAll;
+	protected String match;
 
 	protected boolean enable;
 
@@ -30,7 +31,7 @@ public class UploadPropositionFilterDto {
 		this.uuid = entity.getUuid();
 		this.name = entity.getName();
 		this.enable = entity.isEnable();
-		this.matchAll = entity.isMatchAll();
+		this.match= entity.getMatch().name();
 		for (UploadPropositionAction action : entity
 				.getUploadPropositionActions()) {
 			this.uploadPropositionActions.add(new UploadPropositionActionDto(
@@ -57,12 +58,12 @@ public class UploadPropositionFilterDto {
 		this.name = name;
 	}
 
-	public boolean isMatchAll() {
-		return matchAll;
+	public String getMatch() {
+		return match;
 	}
 
-	public void setMatchAll(boolean matchAll) {
-		this.matchAll = matchAll;
+	public void setMatch(String match) {
+		this.match = match;
 	}
 
 	public List<UploadPropositionRuleDto> getUploadPropositionRules() {
@@ -109,7 +110,7 @@ public class UploadPropositionFilterDto {
 			public UploadPropositionFilter apply(UploadPropositionFilterDto dto) {
 				UploadPropositionFilter filter = new UploadPropositionFilter();
 				filter.setUuid(dto.getUuid());
-				filter.setMatchAll(dto.isMatchAll());
+				filter.setMatch(UploadPropositionMatchType.fromString(dto.getMatch()));
 				filter.setName(dto.getName());
 				filter.setEnable(dto.isEnable());
 				filter.setUploadPropositionActions(Lists.transform(

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.uploadproposition.dto;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.UploadPropositionMatchType;
 import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
 import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
 import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
@@ -48,7 +49,7 @@ public class UploadPropositionFilterDto {
 
 	protected String name;
 
-	protected boolean matchAll;
+	protected String match;
 
 	protected List<UploadPropositionRuleDto> uploadPropositionRules = Lists.newArrayList();
 
@@ -57,18 +58,18 @@ public class UploadPropositionFilterDto {
 
 	//Tests only 
 	public UploadPropositionFilterDto(String uuid, String name,
-			boolean matchAll) {
+			UploadPropositionMatchType match) {
 		super();
 		this.uuid = uuid;
 		this.name = name;
-		this.matchAll = matchAll;
+		this.match = match.name();
 	}
 
 	public UploadPropositionFilterDto(UploadPropositionFilter entity) {
 		super();
 		this.uuid = entity.getUuid();
 		this.name = entity.getName();
-		this.matchAll = entity.isMatchAll();
+		this.match= entity.getMatch().name();
 		for (UploadPropositionAction action : entity.getUploadPropositionActions()) {
 			this.uploadPropositionActions.add(new UploadPropositionActionDto(action)); 
 		}
@@ -93,12 +94,12 @@ public class UploadPropositionFilterDto {
 		this.name = name;
 	}
 
-	public boolean isMatchAll() {
-		return matchAll;
+	public String getMatch() {
+		return match;
 	}
 
-	public void setMatchAll(boolean matchAll) {
-		this.matchAll = matchAll;
+	public void setMatch(String match) {
+		this.match = match;
 	}
 
 	public List<UploadPropositionRuleDto> getUploadPropositionRules() {

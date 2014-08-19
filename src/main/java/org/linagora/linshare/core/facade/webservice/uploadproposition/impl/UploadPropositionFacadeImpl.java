@@ -37,6 +37,7 @@ package org.linagora.linshare.core.facade.webservice.uploadproposition.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
+import org.linagora.linshare.core.domain.constants.UploadPropositionMatchType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionRuleFieldType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionRuleOperatorType;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -82,16 +83,10 @@ public class UploadPropositionFacadeImpl extends
 		UploadPropositionActionDto action = new UploadPropositionActionDto(
 				"ee1bf0ab-21ad-4a69-914d-d792eb2b36d7",
 				UploadPropositionActionType.ACCEPT, null);
-		UploadPropositionRuleDto rule = new UploadPropositionRuleDto(
-				"3f52d026-9719-4f0b-bf4b-f5e9252a71a7",
-				UploadPropositionRuleOperatorType.TRUE,
-				UploadPropositionRuleFieldType.NONE, null);
-
 		UploadPropositionFilterDto filter = new UploadPropositionFilterDto(
 				"5724946a-eebe-450b-bb84-0d8af480f3f6", "default filter 1",
-				true);
+				UploadPropositionMatchType.TRUE);
 		filter.getUploadPropositionActions().add(action);
-		filter.getUploadPropositionRules().add(rule);
 		return filter;
 	}
 
@@ -105,7 +100,7 @@ public class UploadPropositionFacadeImpl extends
 				UploadPropositionRuleFieldType.RECIPIENT_EMAIL,
 				"bart.simpson@int1.linshare.dev");
 		UploadPropositionFilterDto filter = new UploadPropositionFilterDto(
-				"5724946a-eebe-450b-bb84-0d8af480f3f7", filterName, true);
+				"5724946a-eebe-450b-bb84-0d8af480f3f7", filterName, UploadPropositionMatchType.ANY);
 		filter.getUploadPropositionActions().add(action);
 		filter.getUploadPropositionRules().add(rule);
 		return filter;
@@ -121,7 +116,7 @@ public class UploadPropositionFacadeImpl extends
 				UploadPropositionRuleFieldType.RECIPIENT_EMAIL,
 				"homer.simpson@int1.linshare.dev");
 		UploadPropositionFilterDto filter = new UploadPropositionFilterDto(
-				"5724946a-eebe-450b-bb84-0d8af480f3f8", filterName, true);
+				"5724946a-eebe-450b-bb84-0d8af480f3f8", filterName, UploadPropositionMatchType.ANY);
 		filter.getUploadPropositionActions().add(action);
 		filter.getUploadPropositionRules().add(rule);
 		return filter;
