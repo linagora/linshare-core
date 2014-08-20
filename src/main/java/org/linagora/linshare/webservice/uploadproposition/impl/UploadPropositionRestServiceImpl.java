@@ -57,7 +57,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/")
-@Api(value = "/rest/uploadproposition/filters", description = "filters API")
+@Api(value = "/rest/uploadproposition", description = "Upload proposition API for linshare-uploadproposition.jar")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadPropositionRestServiceImpl implements

@@ -47,11 +47,21 @@ public class UploadPropositionActionDto {
 
 	protected String data;
 
-	public UploadPropositionActionDto(UploadPropositionAction entity) {
+	public UploadPropositionActionDto() {
+		super();
+	}
+
+
+		public UploadPropositionActionDto(UploadPropositionAction entity) {
 		super();
 		this.uuid = entity.getUuid();
 		this.action = entity.getActionType().name();
 		this.data = entity.getData();
+	}
+
+	public UploadPropositionActionDto(String action) {
+		super();
+		this.action = action;
 	}
 
 	public String getUuid() {

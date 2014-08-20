@@ -1,4 +1,3 @@
-SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
 SET client_min_messages = warning;
 SET default_with_oids = false;
@@ -494,7 +493,8 @@ CREATE TABLE upload_proposition_filter (
   match_all          bool NOT NULL, 
   enable             bool NOT NULL, 
   creation_date      timestamp(6) NOT NULL, 
-  modification_date  timestamp(6) NOT NULL, 
+  modification_date  timestamp(6) NOT NULL,
+  sort_order         int4 NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE upload_proposition_rule (
   id                               int8 NOT NULL, 

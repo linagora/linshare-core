@@ -58,6 +58,10 @@ public class UploadPropositionFilter {
 
 	private Date modificationDate;
 
+	private int order;
+
+	private AbstractDomain domain;
+
 	public UploadPropositionFilter() {
 	}
 
@@ -133,5 +137,21 @@ public class UploadPropositionFilter {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	public int getOrder() {
+		return order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
+	public AbstractDomain getDomain() {
+		return domain;
+	}
+
+	public void setDomain(AbstractDomain domain) {
+		this.domain = domain;
 	}
 }

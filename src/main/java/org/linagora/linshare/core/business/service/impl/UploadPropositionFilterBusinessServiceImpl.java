@@ -36,6 +36,7 @@ public class UploadPropositionFilterBusinessServiceImpl implements
 	@Override
 	public UploadPropositionFilter create(UploadPropositionFilter entity)
 			throws BusinessException {
+		entity.setOrder(findAll().size());
 		return repository.create(entity);
 	}
 

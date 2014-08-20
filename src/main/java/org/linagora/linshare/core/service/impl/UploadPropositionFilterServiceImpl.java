@@ -3,6 +3,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionFilterBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
@@ -18,9 +19,12 @@ public class UploadPropositionFilterServiceImpl implements UploadPropositionFilt
 	
 	private final UploadPropositionFilterBusinessService businessService;
 
-	public UploadPropositionFilterServiceImpl(UploadPropositionFilterBusinessService businessService) {
+	private final DomainBusinessService domainBusinessService;
+
+	public UploadPropositionFilterServiceImpl(UploadPropositionFilterBusinessService businessService, DomainBusinessService domainBusinessService) {
 		super();
 		this.businessService = businessService;
+		this.domainBusinessService = domainBusinessService;
 	}
 
 	@Override
@@ -45,7 +49,7 @@ public class UploadPropositionFilterServiceImpl implements UploadPropositionFilt
 	public UploadPropositionFilter create(Account actor, UploadPropositionFilter dto) throws BusinessException {
 		preChecks(actor);
 		Validate.notNull(dto, "filter is required");
-		Validate.notEmpty(dto.getUuid(), "filter uuid is required");
+		dto.setDomain(domainBusinessService.getUniqueRootDomain());
 		return businessService.create(dto);
 	}
 

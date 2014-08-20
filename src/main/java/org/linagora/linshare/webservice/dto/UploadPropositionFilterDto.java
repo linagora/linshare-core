@@ -20,11 +20,17 @@ public class UploadPropositionFilterDto {
 
 	protected boolean enable;
 
+	private int order;
+
 	protected List<UploadPropositionRuleDto> uploadPropositionRules = Lists
 			.newArrayList();
 
 	protected List<UploadPropositionActionDto> uploadPropositionActions = Lists
 			.newArrayList();
+
+	public UploadPropositionFilterDto() {
+		super();
+	}
 
 	public UploadPropositionFilterDto(UploadPropositionFilter entity) {
 		super();
@@ -32,6 +38,7 @@ public class UploadPropositionFilterDto {
 		this.name = entity.getName();
 		this.enable = entity.isEnable();
 		this.match= entity.getMatch().name();
+		this.order = entity.getOrder();
 		for (UploadPropositionAction action : entity
 				.getUploadPropositionActions()) {
 			this.uploadPropositionActions.add(new UploadPropositionActionDto(
@@ -90,6 +97,14 @@ public class UploadPropositionFilterDto {
 
 	public void setEnable(boolean enable) {
 		this.enable = enable;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
+	public int getOrder() {
+		return order;
 	}
 
 	/*

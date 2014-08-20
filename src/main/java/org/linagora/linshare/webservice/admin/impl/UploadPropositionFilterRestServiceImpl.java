@@ -44,7 +44,7 @@ public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all filters.", response = UploadPropositionFilterDto.class, responseContainer = "Set")
+	@ApiOperation(value = "Find all filters.", response = UploadPropositionFilterDto.class, responseContainer = "List")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin.") })
 	@Override
 	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
