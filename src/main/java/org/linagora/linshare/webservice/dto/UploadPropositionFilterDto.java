@@ -40,11 +40,11 @@ public class UploadPropositionFilterDto {
 		this.match= entity.getMatch().name();
 		this.order = entity.getOrder();
 		for (UploadPropositionAction action : entity
-				.getUploadPropositionActions()) {
+				.getActions()) {
 			this.uploadPropositionActions.add(new UploadPropositionActionDto(
 					action));
 		}
-		for (UploadPropositionRule rule : entity.getUploadPropositionRules()) {
+		for (UploadPropositionRule rule : entity.getRules()) {
 			this.uploadPropositionRules.add(new UploadPropositionRuleDto(rule));
 		}
 	}
@@ -128,10 +128,10 @@ public class UploadPropositionFilterDto {
 				filter.setMatch(UploadPropositionMatchType.fromString(dto.getMatch()));
 				filter.setName(dto.getName());
 				filter.setEnable(dto.isEnable());
-				filter.setUploadPropositionActions(Lists.transform(
+				filter.setActions(Lists.transform(
 						dto.getUploadPropositionActions(),
 						UploadPropositionActionDto.toEntity()));
-				filter.setUploadPropositionRules(Lists.transform(
+				filter.setRules(Lists.transform(
 						dto.getUploadPropositionRules(),
 						UploadPropositionRuleDto.toEntity()));
 				return filter;

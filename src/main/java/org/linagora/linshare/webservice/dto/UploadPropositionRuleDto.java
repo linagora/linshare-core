@@ -89,7 +89,7 @@ public class UploadPropositionRuleDto {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 	/*
 	 * Transformers
 	 */
@@ -106,12 +106,12 @@ public class UploadPropositionRuleDto {
 		return new Function<UploadPropositionRuleDto, UploadPropositionRule>() {
 			@Override
 			public UploadPropositionRule apply(UploadPropositionRuleDto dto) {
-				UploadPropositionRule rule = new UploadPropositionRule();
-				rule.setUuid(dto.getUuid());
-				rule.setValue(dto.getValue());
-				rule.setOperator(UploadPropositionRuleOperatorType.fromString(dto.getOperator()));
-				rule.setField(UploadPropositionRuleFieldType.fromString(dto.getField()));
-				return rule;
+				UploadPropositionRule entity = new UploadPropositionRule();
+				entity.setUuid(dto.getUuid());
+				entity.setValue(dto.getValue());
+				entity.setOperator(UploadPropositionRuleOperatorType.fromString(dto.getOperator()));
+				entity.setField(UploadPropositionRuleFieldType.fromString(dto.getField()));
+				return entity;
 			}
 		};
 	}

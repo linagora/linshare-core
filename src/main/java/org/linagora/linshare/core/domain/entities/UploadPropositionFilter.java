@@ -38,6 +38,8 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.UploadPropositionMatchType;
 
+import com.google.common.collect.Lists;
+
 public class UploadPropositionFilter {
 
 	private long id;
@@ -50,9 +52,9 @@ public class UploadPropositionFilter {
 
 	private boolean enable;
 
-	private List<UploadPropositionRule> uploadPropositionRules;
+	private List<UploadPropositionRule> rules = Lists.newArrayList();
 
-	private List<UploadPropositionAction> uploadPropositionActions;
+	private List<UploadPropositionAction> actions = Lists.newArrayList();
 
 	private Date creationDate;
 
@@ -63,6 +65,13 @@ public class UploadPropositionFilter {
 	private AbstractDomain domain;
 
 	public UploadPropositionFilter() {
+	}
+
+	@Override
+	public String toString() {
+		return "UploadPropositionFilter [uuid=" + uuid + ", name=" + name
+				+ ", match=" + match + ", enable=" + enable + ", order="
+				+ order + "]";
 	}
 
 	public long getId() {
@@ -105,22 +114,22 @@ public class UploadPropositionFilter {
 		this.enable = enable;
 	}
 
-	public List<UploadPropositionRule> getUploadPropositionRules() {
-		return uploadPropositionRules;
+	public List<UploadPropositionRule> getRules() {
+		return rules;
 	}
 
-	public void setUploadPropositionRules(
-			List<UploadPropositionRule> uploadPropositionRules) {
-		this.uploadPropositionRules = uploadPropositionRules;
+	public void setRules(
+			List<UploadPropositionRule> rules) {
+		this.rules = rules;
 	}
 
-	public List<UploadPropositionAction> getUploadPropositionActions() {
-		return uploadPropositionActions;
+	public List<UploadPropositionAction> getActions() {
+		return actions;
 	}
 
-	public void setUploadPropositionActions(
-			List<UploadPropositionAction> uploadPropositionActions) {
-		this.uploadPropositionActions = uploadPropositionActions;
+	public void setActions(
+			List<UploadPropositionAction> actions) {
+		this.actions = actions;
 	}
 
 	public Date getCreationDate() {

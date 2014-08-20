@@ -54,7 +54,15 @@ public class UploadPropositionRule {
 
 	protected Date modificationDate;
 
+	protected UploadPropositionFilter filter;
+
 	public UploadPropositionRule() {
+	}
+
+	@Override
+	public String toString() {
+		return "UploadPropositionRule [uuid=" + uuid + ", operator=" + operator
+				+ ", field=" + field + ", value=" + value + "]";
 	}
 
 	public long getId() {
@@ -111,5 +119,13 @@ public class UploadPropositionRule {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	public UploadPropositionFilter getFilter() {
+		return filter;
+	}
+
+	public void setFilter(UploadPropositionFilter filter) {
+		this.filter = filter;
 	}
 }

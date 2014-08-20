@@ -19,12 +19,12 @@
 		<property name="match" column="match" type="uploadPropositionMatchType" not-null="true" lazy="false"/>
 		<property name="enable" column="enable" type="boolean" not-null="true" lazy="false"/>
 		<property name="order" column="sort_order" type="int" not-null="true" lazy="false"/>
-		<list name="uploadPropositionRules" lazy="true" cascade="all" inverse="false">
+		<list name="rules" lazy="true" cascade="lock" inverse="true">
 			<key column="upload_proposition_filter_id" not-null="true"/>
 			<index column="upload_proposition_filter_index" type="integer"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadPropositionRule"/>
 		</list>
-		<list name="uploadPropositionActions" lazy="true" cascade="all" inverse="false">
+		<list name="actions" lazy="true" cascade="lock" inverse="true">
 			<key column="upload_proposition_filter_id" not-null="true"/>
 			<index column="upload_proposition_filterIndex" type="integer"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadPropositionAction"/>

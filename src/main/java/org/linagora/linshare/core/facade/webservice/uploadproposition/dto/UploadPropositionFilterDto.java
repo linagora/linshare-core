@@ -70,10 +70,10 @@ public class UploadPropositionFilterDto {
 		this.uuid = entity.getUuid();
 		this.name = entity.getName();
 		this.match= entity.getMatch().name();
-		for (UploadPropositionAction action : entity.getUploadPropositionActions()) {
+		for (UploadPropositionAction action : entity.getActions()) {
 			this.uploadPropositionActions.add(new UploadPropositionActionDto(action)); 
 		}
-		for (UploadPropositionRule rule : entity.getUploadPropositionRules()) {
+		for (UploadPropositionRule rule : entity.getRules()) {
 			this.uploadPropositionRules.add(new UploadPropositionRuleDto(rule)); 
 		}
 	}

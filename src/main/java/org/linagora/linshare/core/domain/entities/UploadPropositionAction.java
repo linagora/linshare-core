@@ -51,7 +51,15 @@ public class UploadPropositionAction {
 
 	protected Date modificationDate;
 
+	protected UploadPropositionFilter filter;
+
 	public UploadPropositionAction() {
+	}
+
+	@Override
+	public String toString() {
+		return "UploadPropositionAction [uuid=" + uuid + ", actionType="
+				+ actionType + ", data=" + data + "]";
 	}
 
 	public long getId() {
@@ -100,5 +108,13 @@ public class UploadPropositionAction {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	public UploadPropositionFilter getFilter() {
+		return filter;
+	}
+
+	public void setFilter(UploadPropositionFilter filter) {
+		this.filter = filter;
 	}
 }

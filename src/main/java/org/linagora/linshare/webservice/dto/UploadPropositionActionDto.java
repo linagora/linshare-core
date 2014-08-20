@@ -105,12 +105,12 @@ public class UploadPropositionActionDto {
 		return new Function<UploadPropositionActionDto, UploadPropositionAction>() {
 			@Override
 			public UploadPropositionAction apply(UploadPropositionActionDto dto) {
-				UploadPropositionAction action = new UploadPropositionAction();
-				action.setUuid(dto.getUuid());
-				action.setData(dto.getData());
-				action.setActionType(UploadPropositionActionType.fromString(dto
+				UploadPropositionAction entity = new UploadPropositionAction();
+				entity.setUuid(dto.getUuid());
+				entity.setData(dto.getData());
+				entity.setActionType(UploadPropositionActionType.fromString(dto
 						.getAction()));
-				return action;
+				return entity;
 			}
 		};
 	}

@@ -193,4 +193,10 @@
 	<bean name="uploadPropositionFilterRepository" class="org.linagora.linshare.core.repository.hibernate.UploadPropositionFilterRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+	<bean name="uploadPropositionActionRepository" class="org.linagora.linshare.core.repository.hibernate.UploadPropositionActionRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	<bean name="uploadPropositionRuleRepository" class="org.linagora.linshare.core.repository.hibernate.UploadPropositionRuleRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>
