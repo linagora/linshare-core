@@ -53,4 +53,6 @@ public interface UploadPropositionService {
 
 	UploadProposition update(Account actor, UploadProposition propositionDto) throws BusinessException;
 
+	void checkIfValidRecipient(Account actor, String mail, String domainId) throws BusinessException;
+
 }

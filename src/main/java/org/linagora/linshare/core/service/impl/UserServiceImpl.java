@@ -128,6 +128,7 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findByMailAndDomain(domain, mail);
 	}
 
+	@Deprecated
 	@Override
 	public User findUnkownUserInDB(String mail) {
 		return userRepository.findByMail(mail);
@@ -730,7 +731,7 @@ public class UserServiceImpl implements UserService {
 		}
 		List<AbstractDomain> allAuthorizedDomains = abstractDomainService
 				.getAllAuthorizedDomains(actorDomainId);
-		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
+		AbstractDomain domain = abstractDomainService.findById(domainId);
 
 		if (allAuthorizedDomains.contains(domain)) {
 			user = findOrCreateUserWithoutRestriction(domain, mail);

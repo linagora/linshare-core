@@ -36,16 +36,15 @@ package org.linagora.linshare.core.facade.webservice.uploadproposition.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionMatchType;
-import org.linagora.linshare.core.domain.constants.UploadPropositionRuleFieldType;
-import org.linagora.linshare.core.domain.constants.UploadPropositionRuleOperatorType;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.UploadPropositionFacade;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionActionDto;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionDto;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionFilterDto;
-import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionRuleDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UploadPropositionService;
@@ -73,8 +72,6 @@ public class UploadPropositionFacadeImpl extends
 	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
 		this.checkAuthentication();
 		List<UploadPropositionFilterDto> filters = Lists.newArrayList();
-		filters.add(addBartFilter("default filter 1"));
-		filters.add(addHomerFilter("default filter 2"));
 		filters.add(addDefaultFilter());
 		return filters;
 	}
@@ -90,48 +87,13 @@ public class UploadPropositionFacadeImpl extends
 		return filter;
 	}
 
-	private UploadPropositionFilterDto addBartFilter(String filterName) {
-		UploadPropositionActionDto action = new UploadPropositionActionDto(
-				"ee1bf0ab-21ad-4a69-914d-d792eb2b36d8",
-				UploadPropositionActionType.ACCEPT, null);
-		UploadPropositionRuleDto rule = new UploadPropositionRuleDto(
-				"3f52d026-9719-4f0b-bf4b-f5e9252a71a8",
-				UploadPropositionRuleOperatorType.EQUAL,
-				UploadPropositionRuleFieldType.RECIPIENT_EMAIL,
-				"bart.simpson@int1.linshare.dev");
-		UploadPropositionFilterDto filter = new UploadPropositionFilterDto(
-				"5724946a-eebe-450b-bb84-0d8af480f3f7", filterName, UploadPropositionMatchType.ANY);
-		filter.getUploadPropositionActions().add(action);
-		filter.getUploadPropositionRules().add(rule);
-		return filter;
-	}
-
-	private UploadPropositionFilterDto addHomerFilter(String filterName) {
-		UploadPropositionActionDto action = new UploadPropositionActionDto(
-				"ee1bf0ab-21ad-4a69-914d-d792eb2b36d9",
-				UploadPropositionActionType.REJECT, null);
-		UploadPropositionRuleDto rule = new UploadPropositionRuleDto(
-				"3f52d026-9719-4f0b-bf4b-f5e9252a71a9",
-				UploadPropositionRuleOperatorType.EQUAL,
-				UploadPropositionRuleFieldType.RECIPIENT_EMAIL,
-				"homer.simpson@int1.linshare.dev");
-		UploadPropositionFilterDto filter = new UploadPropositionFilterDto(
-				"5724946a-eebe-450b-bb84-0d8af480f3f8", filterName, UploadPropositionMatchType.ANY);
-		filter.getUploadPropositionActions().add(action);
-		filter.getUploadPropositionRules().add(rule);
-		return filter;
-	}
-
 	@Override
-	public boolean checkIfValidRecipeint(String userMail, String userDomain)
+	public void checkIfValidRecipient(String userMail, String userDomain)
 			throws BusinessException {
-		this.checkAuthentication();
-		List<String> list = Lists.newArrayList();
-		list.add("bart.simpson@int1.linshare.dev");
-		list.add("lisa.simpson@int1.linshare.dev");
-		list.add("homer.simpson@int1.linshare.dev");
-		list.add("marge.simpson@int1.linshare.dev");
-		return list.contains(userMail);
+		Validate.notEmpty(userMail, "User user mail is required.");
+		User actor = checkAuthentication();
+		uploadPropositionService.checkIfValidRecipient(actor, userMail,
+				userDomain);
 	}
 
 	@Override

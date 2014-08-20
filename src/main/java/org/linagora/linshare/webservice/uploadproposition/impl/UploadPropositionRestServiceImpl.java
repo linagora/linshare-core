@@ -82,14 +82,14 @@ public class UploadPropositionRestServiceImpl implements
 	}
 
 	@GET
-	@Path("/recipient/{userMail}}")
+	@Path("/recipients/{userMail}")
 	@ApiOperation(value = "Check if it is a valid user.", response = Boolean.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
 	@Override
-	public Boolean checkIfValidRecipient(
+	public void checkIfValidRecipient(
 			@PathParam(value = "userMail") String userMail,
 			@QueryParam(value = "userDomain") String userDomain) throws BusinessException {
-		return uploadPropositionFacade.checkIfValidRecipeint(userMail,
+		uploadPropositionFacade.checkIfValidRecipient(userMail,
 				userDomain);
 	}
 

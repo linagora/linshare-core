@@ -41,6 +41,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -50,6 +51,7 @@ import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.UploadPropositionService;
 import org.linagora.linshare.core.service.UploadRequestService;
@@ -62,7 +64,6 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(UploadPropositionServiceImpl.class);
-
 
 	private final UploadPropositionBusinessService uploadPropositionBusinessService;
 
@@ -103,31 +104,39 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			User owner = null;
 			try {
 				if (proposition.getDomaineSource() != null) {
-					owner = userService.findOrCreateUser(proposition.getRecipientMail(), proposition.getDomaineSource());
+					owner = userService.findOrCreateUser(
+							proposition.getRecipientMail(),
+							proposition.getDomaineSource());
 				} else {
-					owner = userService.findOrCreateUser(proposition.getRecipientMail(), rootDomain.getIdentifier());
+					owner = userService.findOrCreateUser(
+							proposition.getRecipientMail(),
+							rootDomain.getIdentifier());
 				}
 			} catch (BusinessException e) {
-				logger.error("The recipient of the upload proposition can't be found : " + created.getUuid() + ": " + proposition.getRecipientMail());
+				logger.error("The recipient of the upload proposition can't be found : "
+						+ created.getUuid()
+						+ ": "
+						+ proposition.getRecipientMail());
 				return null;
 			}
 
 			// TODO functionalityFacade
 			UploadRequestGroup grp = new UploadRequestGroup(created);
-//			Account actor = accountRepository.getUploadRequestSystemAccount();
+			// Account actor =
+			// accountRepository.getUploadRequestSystemAccount();
 			grp = uploadRequestService.createRequestGroup(owner, grp);
-
 
 			UploadRequest e = new UploadRequest();
 			e.setOwner(owner);
 			e.setAbstractDomain(owner.getDomain());
-			e.setNotificationDate(e.getExpiryDate()); // FIXME functionalityFacade
+			e.setNotificationDate(e.getExpiryDate()); // FIXME
+														// functionalityFacade
 			e.setUploadRequestGroup(grp);
 
 			e.setUploadPropositionRequestUuid(created.getUuid());
 			e.setMaxFileCount(3);
-			e.setMaxDepositSize(new Long(30*1024*1024));
-			e.setMaxFileSize(new Long(3*1024*1024));
+			e.setMaxDepositSize(new Long(30 * 1024 * 1024));
+			e.setMaxFileSize(new Long(3 * 1024 * 1024));
 			e.setActivationDate(new Date());
 			e.setNotificationDate(new Date());
 
@@ -178,5 +187,24 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		Validate.notEmpty(propositionDto.getUuid(),
 				"UploadProposition identifier must be set.");
 		return uploadPropositionBusinessService.update(propositionDto);
+	}
+
+	@Override
+	public void checkIfValidRecipient(Account actor, String mail,
+			String domainId) throws BusinessException {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notEmpty(mail, "Mail must be set.");
+		if (!actor.hasUploadPropositionRole()) {
+			logger.equals(actor.getAccountReprentation() + " is using an unauthorized api");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to use this method.");
+		}
+		if (domainId == null) {
+			domainId = LinShareConstants.rootDomainIdentifier;
+		}
+		try {
+			userService.findOrCreateUserWithDomainPolicies(mail, domainId);
+		} catch (BusinessException ex) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Recipient not found.");
+		}
 	}
 }
