@@ -327,8 +327,6 @@ public class MyBorderLayout {
 				menu.addMenuEntry(homeMenu);
 				if (showThreadTab())
 					menu.addMenuEntry(threadMenu);
-				if (showRequestTab())
-					menu.addMenuEntry(requestMenu);
 				if (showHelpTab())
 					menu.addMenuEntry(helpMenu);
 			} else if (userVo.getRole().equals(Role.DELEGATION)) {
