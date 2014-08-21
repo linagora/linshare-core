@@ -352,6 +352,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("firstName", sender.getFirstName())
 				.add("lastName", sender.getLastName())
 				.add("fileName", fileName)
+				.add("fileSize", fileSizeTxt)
 				.add("fileOldName", oldDocName)
 				.add("mimeType", mimeType)
 				.add("url", url)
