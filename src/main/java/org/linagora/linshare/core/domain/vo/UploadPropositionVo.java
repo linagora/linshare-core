@@ -31,17 +31,23 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.domain.vo;
 
 import java.util.Date;
 
+import org.apache.tapestry5.beaneditor.NonVisual;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
+import org.linagora.linshare.core.domain.entities.UploadProposition;
 
-public class UploadProposition {
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
+
+public class UploadPropositionVo {
 
 	private long id;
 
-	private AbstractDomain domain;
+	private String domain;
 
 	private String uuid;
 
@@ -57,7 +63,7 @@ public class UploadProposition {
 
 	private String lastName;
 
-	private String domainSource;
+	private String domaineSource;
 
 	private String recipientMail;
 
@@ -65,7 +71,25 @@ public class UploadProposition {
 
 	private Date modificationDate;
 
-	public UploadProposition() {
+	public UploadPropositionVo() {
+		super();
+	}
+
+	public UploadPropositionVo(UploadProposition p) {
+		super();
+		this.id = p.getId();
+		this.domain = p.getDomain().getIdentifier();
+		this.uuid = p.getUuid();
+		this.status = p.getStatus();
+		this.subject = p.getSubject();
+		this.body = p.getBody();
+		this.mail = p.getMail();
+		this.firstName = p.getFirstName();
+		this.lastName = p.getLastName();
+		this.domaineSource = p.getDomainSource();
+		this.recipientMail = p.getRecipientMail();
+		this.creationDate = p.getCreationDate();
+		this.modificationDate = p.getModificationDate();
 	}
 
 	public long getId() {
@@ -76,11 +100,11 @@ public class UploadProposition {
 		this.id = id;
 	}
 
-	public AbstractDomain getDomain() {
+	public String getDomain() {
 		return domain;
 	}
 
-	public void setDomain(AbstractDomain domain) {
+	public void setDomain(String domain) {
 		this.domain = domain;
 	}
 
@@ -140,12 +164,12 @@ public class UploadProposition {
 		this.lastName = lastName;
 	}
 
-	public String getDomainSource() {
-		return domainSource;
+	public String getDomaineSource() {
+		return domaineSource;
 	}
 
-	public void setDomainSource(String domainSource) {
-		this.domainSource = domainSource;
+	public void setDomaineSource(String domaineSource) {
+		this.domaineSource = domaineSource;
 	}
 
 	public String getRecipientMail() {
@@ -172,14 +196,52 @@ public class UploadProposition {
 		this.modificationDate = modificationDate;
 	}
 
+	/*
+	 * Transformer
+	 */
+	public UploadProposition toEntity() {
+		UploadProposition ret = new UploadProposition();
+
+		return ret;
+	}
+
 	@Override
-	public String toString() {
-		return "UploadProposition [id=" + id + ", domain=" + domain + ", uuid="
-				+ uuid + ", status=" + status + ", subject=" + subject
-				+ ", body=" + body + ", mail=" + mail + ", firstName="
-				+ firstName + ", lastName=" + lastName + ", domainSource="
-				+ domainSource + ", recipientMail=" + recipientMail
-				+ ", creationDate=" + creationDate + ", modificationDate="
-				+ modificationDate + "]";
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof UploadPropositionVo))
+			return false;
+		UploadPropositionVo other = (UploadPropositionVo) obj;
+		if (uuid == null) {
+			if (other.uuid != null)
+				return false;
+		} else if (!uuid.equals(other.uuid))
+			return false;
+		return true;
+	}
+
+	@NonVisual
+	public boolean isPending() {
+		return this.getStatus().equals(UploadPropositionStatus.SYSTEM_PENDING);
+	}
+
+	/*
+	 * Filters
+	 */
+	public static Predicate<? super UploadPropositionVo> equalTo(String uuid) {
+		UploadPropositionVo test = new UploadPropositionVo();
+
+		test.setUuid(uuid);
+		return Predicates.equalTo(test);
 	}
 }

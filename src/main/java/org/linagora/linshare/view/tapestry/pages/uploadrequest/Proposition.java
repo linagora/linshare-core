@@ -31,57 +31,85 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service.impl;
+package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
 import java.util.List;
 
-import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
-import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
-import org.linagora.linshare.core.domain.entities.UploadProposition;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Log;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.domain.vo.UploadPropositionVo;
+import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.UploadPropositionRepository;
+import org.linagora.linshare.core.facade.FunctionalityFacade;
+import org.linagora.linshare.core.facade.UploadPropositionFacade;
+import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.slf4j.Logger;
 
-public class UploadPropositionBusinessServiceImpl implements
-		UploadPropositionBusinessService {
+import com.google.common.collect.Iterables;
 
-	private final UploadPropositionRepository uploadPropositionRepository;
+public class Proposition {
 
-	public UploadPropositionBusinessServiceImpl(
-			final UploadPropositionRepository uploadRequestRepository) {
-		super();
-		this.uploadPropositionRepository = uploadRequestRepository;
-	}
+	/*
+	 * Tapestry properties
+	 */
 
-	@Override
-	public List<UploadProposition> findAll(List<UploadPropositionStatus> status) {
-		// return uploadPropositionRepository.findByStatus(status);
+	@SessionState
+	@Property
+	private ShareSessionObjects shareSessionObjects;
+
+	@SessionState
+	@Property
+	private UserVo userVo;
+
+	@Persist
+	@Property
+	private List<UploadPropositionVo> propositions;
+
+	@Property
+	private UploadPropositionVo current;
+
+	/*
+	 * Injected beans
+	 */
+
+	@Inject
+	private Logger logger;
+
+	@Inject
+	private Messages messages;
+
+	@Inject
+	private FunctionalityFacade functionalityFacade;
+
+	@Inject
+	private UploadPropositionFacade uploadPropositionFacade;
+
+	public Object onActivate() {
+		if (!functionalityFacade.isEnableUploadProposition(userVo
+				.getDomainIdentifier()))
+			return org.linagora.linshare.view.tapestry.pages.Index.class;
 		return null;
 	}
 
-	@Override
-	public List<UploadProposition> findAllByMail(String mail) {
-		return uploadPropositionRepository.findAllByMail(mail);
+	@SetupRender
+	public void init() throws BusinessException {
+		propositions = uploadPropositionFacade.findAllVisibles(userVo);
 	}
 
-	@Override
-	public UploadProposition findByUuid(String uuid) {
-		return uploadPropositionRepository.findByUuid(uuid);
-	}
+	/*
+	 * Exception Handling
+	 */
 
-	@Override
-	public UploadProposition create(UploadProposition proposition)
-			throws BusinessException {
-		return uploadPropositionRepository.create(proposition);
-	}
-
-	@Override
-	public UploadProposition update(UploadProposition proposition)
-			throws BusinessException {
-		return uploadPropositionRepository.update(proposition);
-	}
-
-	@Override
-	public void delete(UploadProposition proposition) throws BusinessException {
-		uploadPropositionRepository.delete(proposition);
+	public Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
 	}
 }

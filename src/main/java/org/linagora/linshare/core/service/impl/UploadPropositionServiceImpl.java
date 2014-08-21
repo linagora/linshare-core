@@ -38,6 +38,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
@@ -103,15 +104,10 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			created = uploadPropositionBusinessService.create(proposition);
 			User owner = null;
 			try {
-				if (proposition.getDomaineSource() != null) {
-					owner = userService.findOrCreateUser(
-							proposition.getRecipientMail(),
-							proposition.getDomaineSource());
-				} else {
-					owner = userService.findOrCreateUser(
-							proposition.getRecipientMail(),
-							rootDomain.getIdentifier());
-				}
+				owner = userService.findOrCreateUser(proposition
+						.getRecipientMail(), StringUtils.defaultString(
+						proposition.getDomainSource(),
+						rootDomain.getIdentifier()));
 			} catch (BusinessException e) {
 				logger.error("The recipient of the upload proposition can't be found : "
 						+ created.getUuid()
@@ -173,10 +169,10 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 	}
 
 	@Override
-	public List<UploadProposition> findAll(Account actor)
+	public List<UploadProposition> findAll(User actor)
 			throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
-		return uploadPropositionBusinessService.findAll(null);
+		return uploadPropositionBusinessService.findAllByMail(actor.getMail());
 	}
 
 	@Override

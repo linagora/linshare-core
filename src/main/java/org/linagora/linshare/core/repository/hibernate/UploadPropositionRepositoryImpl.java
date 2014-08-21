@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -79,5 +80,10 @@ public class UploadPropositionRepositoryImpl extends
 			throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
+	}
+
+	@Override
+	public List<UploadProposition> findAllByMail(String mail) {
+		return findByCriteria(Restrictions.eq("recipientMail", mail));
 	}
 }

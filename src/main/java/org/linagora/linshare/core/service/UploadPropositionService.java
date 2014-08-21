@@ -39,6 +39,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadPropositionService {
@@ -49,7 +50,7 @@ public interface UploadPropositionService {
 
 	UploadProposition find(Account actor, String uuid) throws BusinessException;
 
-	List<UploadProposition> findAll(Account actor) throws BusinessException;
+	List<UploadProposition> findAll(User actor) throws BusinessException;
 
 	UploadProposition update(Account actor, UploadProposition propositionDto) throws BusinessException;
 

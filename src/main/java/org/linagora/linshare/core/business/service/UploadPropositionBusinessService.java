@@ -43,6 +43,8 @@ public interface UploadPropositionBusinessService {
 
 	List<UploadProposition> findAll(List<UploadPropositionStatus> status);
 
+	List<UploadProposition> findAllByMail(String mail);
+
 	UploadProposition findByUuid(String uuid);
 
 	UploadProposition create(UploadProposition proposition) throws BusinessException;

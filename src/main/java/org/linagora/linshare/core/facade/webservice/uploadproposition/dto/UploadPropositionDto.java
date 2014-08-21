@@ -87,7 +87,7 @@ public class UploadPropositionDto {
 	public UploadProposition toEntity(UploadPropositionDto dto) {
 		UploadProposition entity = new UploadProposition();
 		entity.setBody(dto.getBody());
-		entity.setDomaineSource(dto.getRecipientDomain());
+		entity.setDomainSource(dto.getRecipientDomain());
 		entity.setFirstName(dto.getFirstName());
 		entity.setLastName(dto.getLastName());
 		entity.setSubject(dto.getSubject());

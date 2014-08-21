@@ -46,6 +46,7 @@ public interface FunctionalityFacade {
 	boolean isEnableCreateThread(String domainIdentifier);
 	boolean isEnableCustomLogoLink(String domainIdentifier);
 	boolean isEnableUploadRequest(String domainIdentifier);
+	boolean isEnableUploadProposition(String domainIdentifier);
 	
 	boolean getDefaultRestrictedGuestValue(String domainIdentifier);
 	boolean isRestrictedGuestEnabled(String domainIdentifier);

@@ -213,6 +213,20 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	}
 
 	@Override
+	public boolean isEnableUploadProposition(String domainIdentifier) {
+		AbstractDomain domain = abstractDomainService
+				.retrieveDomain(domainIdentifier);
+		if (domain == null) {
+			logger.error("Can't find upload proposition functionality for domain : "
+					+ domainIdentifier);
+			return false;
+		}
+		Functionality func = functionalityReadOnlyService
+				.getUploadPropositionFunctionality(domain);
+		return func.getActivationPolicy().getStatus();
+	}
+
+	@Override
 	public boolean isEnableGuest(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainService
 				.retrieveDomain(domainIdentifier);

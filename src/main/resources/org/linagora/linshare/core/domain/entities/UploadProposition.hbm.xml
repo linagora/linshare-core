@@ -22,7 +22,7 @@
 		<property name="mail" column="mail" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="firstName" column="first_name" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="lastName" column="last_name" type="string" length="255" not-null="true" lazy="false"/>
-		<property name="domaineSource" column="domaine_source" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="domainSource" column="domain_source" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="recipientMail" column="recipient_mail" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp" length="6" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" length="6" not-null="true" lazy="false"/>

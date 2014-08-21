@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 
 public interface UploadPropositionRepository extends
@@ -45,4 +47,6 @@ public interface UploadPropositionRepository extends
 	 * @return found UploadProposition (null if no UploadProposition found).
 	 */
 	UploadProposition findByUuid(String uuid);
+
+	List<UploadProposition> findAllByMail(String mail);
 }

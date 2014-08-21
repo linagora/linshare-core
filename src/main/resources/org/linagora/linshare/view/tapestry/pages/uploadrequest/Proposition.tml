@@ -1,0 +1,46 @@
+<t:MyBorderLayout t:title="message:pages.uploadrequest.index.title" t:identifier="uploadrequest" t:currentHighlight="uploadrequest"
+		  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+		  xmlns:p="tapestry:parameter">
+  
+  <!-- Main content -->
+  <div id="content">
+    <h1 title="${message:pages.uploadrequest.index.title}"><span class="truncate">${message:pages.uploadrequest.index.title}</span></h1>
+
+    <t:messagePanel />
+    <t:businessMessagesDisplayer />
+    
+    <!-- Action bar -->
+    <div id="actionBar">
+      <h4>Actions</h4>
+      <ul>
+        <t:pageLink page="uploadrequest/index" class="button" title="${message:pages.uploadrequest.back.button}">
+	  <span>${message:pages.uploadrequest.back.button}</span>
+        </t:pageLink>
+      </ul>
+    </div><!-- id="actionBar" -->
+
+    <div id="pageContent">
+      <h2> ${message:pages.uploadrequest.index.grid}</h2>
+      <t:grid source="propositions" row="current" rowsPerPage="10"
+	      include="subject, body, modificationDate, status"
+	      t:mixins="defaultSort" sort="modificationDate" descending="true">
+        <p:subjectCell>
+	  <span class="truncate">${current.subject}</span>
+        </p:subjectCell>
+        <p:bodyCell>
+	  <span class="truncate">${current.body}</span>
+        </p:bodyCell>
+	<p:creationDateCell>
+	  <t:output format="${message:global.pattern.timestamp}" value="current.creationDate" />
+	</p:creationDateCell>
+	<p:modificationDateCell>
+	  <t:output format="${message:global.pattern.timestamp}" value="current.modificationDate" />
+	</p:modificationDateCell>
+        <p:empty>
+          ${message:pages.uploadrequest.index.empty}
+        </p:empty>
+      </t:grid>
+    </div>
+
+  </div><!-- id="content" -->
+</t:MyBorderLayout>

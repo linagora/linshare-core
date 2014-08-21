@@ -71,10 +71,6 @@ public class Index {
 	@Property
 	private List<UploadRequestVo> requests;
 
-	@Persist
-	@Property
-	private String pattern;
-
 	@Property
 	private UploadRequestVo current;
 

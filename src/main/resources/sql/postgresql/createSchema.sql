@@ -576,7 +576,7 @@ CREATE TABLE upload_proposition (
   mail               varchar(255) NOT NULL, 
   first_name         varchar(255) NOT NULL, 
   last_name          varchar(255) NOT NULL, 
-  domaine_source     varchar(255), 
+  domain_source      varchar(255), 
   recipient_mail     varchar(255) NOT NULL, 
   creation_date      timestamp(6) NOT NULL, 
   modification_date  timestamp(6) NOT NULL, 
