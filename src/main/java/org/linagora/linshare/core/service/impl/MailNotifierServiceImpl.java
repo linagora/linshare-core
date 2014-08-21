@@ -166,12 +166,6 @@ public class MailNotifierServiceImpl implements NotifierService {
 			// it will contain two part BodyPart 1 and 2
 			Multipart mp = new MimeMultipart("alternative");
 
-			// BodyPart 1 is text file
-			BodyPart alt_bp1 = new MimeBodyPart();
-			alt_bp1.setDataHandler(new DataHandler(new ByteArrayDataSource(
-					textContent, "text/plain")));
-			mp.addBodyPart(alt_bp1);
-
 			// BodyPart 2
 			// content type is multipart/related
 			// A multipart/related is used to indicate that message parts should
