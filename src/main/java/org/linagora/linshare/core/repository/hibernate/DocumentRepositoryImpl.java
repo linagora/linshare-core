@@ -50,9 +50,9 @@ public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> imp
 	}
 	
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(Document aDoc) {
-		DetachedCriteria det = DetachedCriteria.forClass( Document.class )
-		.add(Restrictions.eq( "uuid", aDoc.getUuid() ) );
+	protected DetachedCriteria getNaturalKeyCriteria(Document doc) {
+		DetachedCriteria det = DetachedCriteria.forClass(Document.class)
+			.add(Restrictions.eq("uuid", doc.getUuid()));
 		return det;
 	}
 	

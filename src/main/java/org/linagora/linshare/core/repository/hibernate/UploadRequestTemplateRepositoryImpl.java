@@ -55,9 +55,9 @@ public class UploadRequestTemplateRepositoryImpl extends
 	}
 
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(UploadRequestTemplate aDoc) {
+	protected DetachedCriteria getNaturalKeyCriteria(UploadRequestTemplate template) {
 		DetachedCriteria det = DetachedCriteria.forClass(Entry.class).add(
-				Restrictions.eq("uuid", aDoc.getUuid()));
+				Restrictions.eq("uuid", template.getUuid()));
 		return det;
 	}
 

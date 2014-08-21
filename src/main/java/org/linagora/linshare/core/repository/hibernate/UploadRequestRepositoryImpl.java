@@ -57,9 +57,9 @@ public class UploadRequestRepositoryImpl extends
 	}
 
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(UploadRequest aDoc) {
+	protected DetachedCriteria getNaturalKeyCriteria(UploadRequest req) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass())
-				.add(Restrictions.eq("uuid", aDoc.getUuid()));
+				.add(Restrictions.eq("uuid", req.getUuid()));
 		return det;
 	}
 

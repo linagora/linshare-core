@@ -55,9 +55,9 @@ public class UploadRequestHistoryRepositoryImpl extends
 	}
 
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(UploadRequestHistory aDoc) {
+	protected DetachedCriteria getNaturalKeyCriteria(UploadRequestHistory hist) {
 		DetachedCriteria det = DetachedCriteria.forClass(Entry.class).add(
-				Restrictions.eq("uuid", aDoc.getUuid()));
+				Restrictions.eq("uuid", hist.getUuid()));
 		return det;
 	}
 

@@ -54,9 +54,9 @@ public class UploadRequestGroupRepositoryImpl extends
 	}
 
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(UploadRequestGroup aDoc) {
+	protected DetachedCriteria getNaturalKeyCriteria(UploadRequestGroup group) {
 		DetachedCriteria det = DetachedCriteria.forClass(Entry.class).add(
-				Restrictions.eq("uuid", aDoc.getUuid()));
+				Restrictions.eq("uuid", group.getUuid()));
 		return det;
 	}
 

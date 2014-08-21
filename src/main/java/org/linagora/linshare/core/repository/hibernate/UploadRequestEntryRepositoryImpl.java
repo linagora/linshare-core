@@ -54,9 +54,9 @@ public class UploadRequestEntryRepositoryImpl extends
 	}
 
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(UploadRequestEntry aDoc) {
+	protected DetachedCriteria getNaturalKeyCriteria(UploadRequestEntry entry) {
 		DetachedCriteria det = DetachedCriteria.forClass(Entry.class).add(
-				Restrictions.eq("uuid", aDoc.getUuid()));
+				Restrictions.eq("uuid", entry.getUuid()));
 		return det;
 	}
 

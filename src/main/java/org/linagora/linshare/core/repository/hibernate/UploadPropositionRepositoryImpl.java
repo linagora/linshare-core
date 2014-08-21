@@ -53,9 +53,9 @@ public class UploadPropositionRepositoryImpl extends
 	}
 
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(UploadProposition aDoc) {
+	protected DetachedCriteria getNaturalKeyCriteria(UploadProposition prop) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass())
-				.add(Restrictions.eq("uuid", aDoc.getUuid()));
+				.add(Restrictions.eq("uuid", prop.getUuid()));
 		return det;
 	}
 
