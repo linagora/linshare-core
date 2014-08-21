@@ -58,12 +58,9 @@ public class UploadPropositionFilterServiceImpl implements UploadPropositionFilt
 		preChecks(actor);
 		Validate.notNull(dto, "filter is required");
 		Validate.notEmpty(dto.getUuid(), "filter uuid is required");
-		UploadPropositionFilter filter = find(actor, dto.getUuid());
-		filter.setMatch(dto.getMatch());
-		filter.setName(dto.getName());
-		filter.setEnable(dto.isEnable());
-		// TODO : Actions ? rules ?
-		return businessService.update(filter);
+		// permission check
+		find(actor, dto.getUuid());
+		return businessService.update(dto);
 	}
 
 	@Override

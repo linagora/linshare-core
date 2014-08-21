@@ -89,5 +89,4 @@ public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
 	public void delete(UploadPropositionFilterDto filter) throws BusinessException {
 		uploadPropositionFilterFacade.delete(filter.getUuid());
 	}
-
 }

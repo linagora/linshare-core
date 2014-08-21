@@ -48,6 +48,7 @@ public class UploadPropositionFilterBusinessServiceImpl implements
 	@Override
 	public UploadPropositionFilter create(UploadPropositionFilter dto)
 			throws BusinessException {
+		logger.debug(dto.toString());
 		UploadPropositionFilter filter = new UploadPropositionFilter();
 		filter.setEnable(dto.isEnable());
 		filter.setMatch(dto.getMatch());
@@ -70,8 +71,14 @@ public class UploadPropositionFilterBusinessServiceImpl implements
 	}
 
 	@Override
-	public UploadPropositionFilter update(UploadPropositionFilter entity)
+	public UploadPropositionFilter update(UploadPropositionFilter dto)
 			throws BusinessException {
+		logger.debug(dto.toString());
+		UploadPropositionFilter entity = find(dto.getUuid());
+		entity.setEnable(dto.isEnable());
+		entity.setMatch(dto.getMatch());
+		entity.setName(dto.getName());
+		entity.setOrder(dto.getOrder());
 		return repository.update(entity);
 	}
 
