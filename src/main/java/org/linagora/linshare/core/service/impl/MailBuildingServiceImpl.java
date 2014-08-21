@@ -875,7 +875,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
         }
         return footer;
 	}
-	
+
 	private MailContainerWithRecipient buildMailContainer(MailConfig cfg,
 			User sender, final MailContainerWithRecipient input, String pm,
 			MailContentType type, MailContainerBuilder builder)
@@ -890,7 +890,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		String greetings = mailContent.getGreetings();
 		String body = mailContent.getBody();
 		MailFooter f = cfg.findFooter(lang);
-		String footer = formatFooter(cfg.findFooter(lang).getFooter(), lang);
+		String footer = formatFooter(f.getFooter(), lang);
 		String layout = cfg.getMailLayoutHtml().getLayout();
 
 		pm = formatPersonalMessage(pm, lang);
@@ -904,6 +904,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("greetings", greetings)
 				.add("body", body)
 				.add("footer", footer)
+				.add("mailSubject", subject)
 				.build(layout);
 
 		container.setSubject(subject);

@@ -60,6 +60,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,16 +91,16 @@ public class MailNotifierServiceImpl implements NotifierService {
 
 	/** Mail charset. */
 	private final String charset;
-	
+
 	/** Display LinShare logo ? */
 	private final boolean displayLogo;
-	
+
 	/** Display LinShare logo ? */
 	private final boolean displayLicenceLogo;
 
 	/** Class logger */
 	private static final Logger logger = LoggerFactory.getLogger(MailNotifierServiceImpl.class);
-	
+
 	private static final CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder();
 
 	/**
@@ -122,7 +123,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	public static boolean isPureAscii(String v) {
 		return asciiEncoder.canEncode(v);
 	}
-	  
+
 	@Override
 	public void sendNotification(String smtpSender, String replyTo, String recipient, String subject, String htmlContent, String textContent, String inReplyTo, String references) throws SendFailedException {
 
@@ -143,21 +144,18 @@ public class MailNotifierServiceImpl implements NotifierService {
 
 			messageMim.addRecipient(javax.mail.Message.RecipientType.TO,
 					new InternetAddress(recipient));
-
 			if (inReplyTo != null && inReplyTo != "") {
 				// This field should contain only ASCCI character (RFC 822)
 				if(isPureAscii(inReplyTo)) {
 					messageMim.setHeader("In-Reply-To", inReplyTo);
 				}
 			}
-			
 			if (references != null && references != "") {
 				// This field should contain only ASCCI character (RFC 822)  
 				if(isPureAscii(references)) {
 					messageMim.setHeader("References", references);
 				}
 			}
-			
 			messageMim.setSubject(subject, charset);
 
 			// Create a "related" Multipart message
@@ -165,11 +163,11 @@ public class MailNotifierServiceImpl implements NotifierService {
 			// it will contain two part BodyPart 1 and 2
 			Multipart mp = new MimeMultipart("alternative");
 
-			// BodyPart 1 is text file
-			BodyPart alt_bp1 = new MimeBodyPart();
-			alt_bp1.setDataHandler(new DataHandler(new ByteArrayDataSource(
-					textContent, "text/plain")));
-			mp.addBodyPart(alt_bp1);
+//			// BodyPart 1 is text file
+//			BodyPart alt_bp1 = new MimeBodyPart();
+//			alt_bp1.setDataHandler(new DataHandler(new ByteArrayDataSource(
+//					textContent, "text/plain")));
+//			mp.addBodyPart(alt_bp1);
 
 			// BodyPart 2
 			// content type is multipart/related
@@ -193,7 +191,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 			if (displayLogo || displayLicenceLogo ) {
 				String cid = "image.part.1@linshare.org";
 				MimeBodyPart rel_bpi = new MimeBodyPart();
-			
+
 				// Initialize and add the image file to the html body part
 				rel_bpi.setFileName("mail_logo.png");
 				rel_bpi.setText("linshare");
@@ -221,11 +219,11 @@ public class MailNotifierServiceImpl implements NotifierService {
 			mp.addBodyPart(alt_bp2);
 
 			messageMim.setContent(mp);
-			
+
 			// RFC 822 "Date" header field
 			// Indicates that the message is complete and ready for delivery
 			messageMim.setSentDate(new GregorianCalendar().getTime());
-			
+
 			// Since we used html tags, the content must be marker as text/html
 			// messageMim.setContent(content,"text/html; charset="+charset);
 
@@ -268,7 +266,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 		} else {
 			props.put("mail.smtp.auth", "false");
 		}
-		
+
 		// create some properties and get the default Session
 		Session session = Session.getInstance(props, null);
 		if (logger.isDebugEnabled()) {
@@ -288,18 +286,18 @@ public class MailNotifierServiceImpl implements NotifierService {
 		sendNotification(smtpSender, replyTo, recipient, mailContainer.getSubject(), mailContainer.getContentHTML(), mailContainer.getContentTXT(), mailContainer.getInReplyTo(), mailContainer.getReferences());
 
 	}
-	
-	
+
+
 	/**
 	 * Send multiple notifications giving a mailContainerWithRecipient object.
 	 */	
 	@Override
 	public void sendAllNotifications(List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException {
-		
+
 		if(mailContainerWithRecipient != null) { 
-			
+
 			List<String> unknownRecipients = new ArrayList<String>();	
-			
+
 			for (MailContainerWithRecipient mailContainer : mailContainerWithRecipient) {
 				try {
 					sendNotification(mailContainer.getFrom(), mailContainer.getReplyTo(), mailContainer.getRecipient(), mailContainer);
@@ -308,7 +306,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 					logger.debug(e.toString());
 				}
 			}
-			
+
 			if(!unknownRecipients.isEmpty()){
 				logger.error("Addresses unreachables : " + unknownRecipients.toString());
 				throw new BusinessException(BusinessErrorCode.RELAY_HOST_NOT_ENABLE, "Address Unreachable", unknownRecipients);
@@ -317,8 +315,8 @@ public class MailNotifierServiceImpl implements NotifierService {
 			logger.error("can not send mails, input list empty");
 		} 
 	}	
-	
-	
+
+
 	@Override
 	public void sendAllNotification(MailContainerWithRecipient mailContainer) throws BusinessException {
 		if(mailContainer== null) { 
