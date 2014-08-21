@@ -72,7 +72,7 @@ public class UploadPropositionFacadeImpl extends
 	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
 		this.checkAuthentication();
 		List<UploadPropositionFilterDto> filters = Lists.newArrayList();
-		filters.add(addDefaultFilter());
+		//filters.add(addDefaultFilter());
 		return filters;
 	}
 
@@ -100,8 +100,8 @@ public class UploadPropositionFacadeImpl extends
 	public void create(UploadPropositionDto dto) throws BusinessException {
 		this.checkAuthentication();
 		logger.debug(dto.toString());
-		UploadPropositionActionType actionType = UploadPropositionActionType
-				.fromString(dto.getAction());
+		UploadPropositionActionType actionType = dto.getAction() == null ? UploadPropositionActionType.MANUAL
+				: UploadPropositionActionType.fromString(dto.getAction());
 		uploadPropositionService.create(dto.toEntity(dto), actionType);
 	}
 }

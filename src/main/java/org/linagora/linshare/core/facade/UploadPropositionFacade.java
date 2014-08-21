@@ -10,4 +10,10 @@ public interface UploadPropositionFacade {
 
 	List<UploadPropositionVo> findAllVisibles(UserVo actorVo)
 			throws BusinessException;
+
+	void accept(UserVo actorVo, UploadPropositionVo prop)
+			throws BusinessException;
+
+	void reject(UserVo actorVo, UploadPropositionVo prop)
+			throws BusinessException;
 }

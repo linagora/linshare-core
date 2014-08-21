@@ -35,7 +35,6 @@ package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
 import java.util.List;
 
-import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -100,6 +99,22 @@ public class Proposition {
 	@SetupRender
 	public void init() throws BusinessException {
 		propositions = uploadPropositionFacade.findAllVisibles(userVo);
+	}
+
+	@Log
+	public void onActionFromOk(String uuid) throws BusinessException {
+		UploadPropositionVo res = Iterables.find(propositions,
+				UploadPropositionVo.equalTo(uuid));
+
+		uploadPropositionFacade.accept(userVo, res);
+	}
+
+	@Log
+	public void onActionFromKo(String uuid) throws BusinessException {
+		UploadPropositionVo res = Iterables.find(propositions,
+				UploadPropositionVo.equalTo(uuid));
+
+		uploadPropositionFacade.reject(userVo, res);
 	}
 
 	/*

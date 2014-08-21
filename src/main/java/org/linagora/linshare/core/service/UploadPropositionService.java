@@ -46,14 +46,17 @@ public interface UploadPropositionService {
 
 	UploadProposition create(UploadProposition proposition, UploadPropositionActionType action) throws BusinessException;
 
-	void delete(Account actor, UploadProposition proposition) throws BusinessException;
+	void delete(Account actor, UploadProposition prop) throws BusinessException;
 
 	UploadProposition find(Account actor, String uuid) throws BusinessException;
 
 	List<UploadProposition> findAll(User actor) throws BusinessException;
 
-	UploadProposition update(Account actor, UploadProposition propositionDto) throws BusinessException;
+	UploadProposition update(Account actor, UploadProposition prop) throws BusinessException;
 
 	void checkIfValidRecipient(Account actor, String mail, String domainId) throws BusinessException;
 
+	void accept(User actor, UploadProposition e) throws BusinessException;
+
+	void reject(User actor, UploadProposition e) throws BusinessException;
 }

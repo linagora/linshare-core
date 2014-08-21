@@ -182,4 +182,8 @@ public class UploadProposition {
 				+ ", creationDate=" + creationDate + ", modificationDate="
 				+ modificationDate + "]";
 	}
+
+	public boolean isPending() {
+		return status.equals(UploadPropositionStatus.SYSTEM_PENDING);
+	}
 }

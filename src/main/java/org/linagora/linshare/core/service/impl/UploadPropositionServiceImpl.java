@@ -115,7 +115,82 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 						+ proposition.getRecipientMail());
 				return null;
 			}
+			acceptHook(owner, created);
+		} else {
+			created = uploadPropositionBusinessService.create(proposition);
+		}
+		return created;
+	}
 
+	@Override
+	public void delete(Account actor, UploadProposition prop)
+			throws BusinessException {
+		Validate.notNull(actor, "Actor must be set.");
+		uploadPropositionBusinessService.delete(prop);
+	}
+
+	@Override
+	public UploadProposition find(Account actor, String uuid)
+			throws BusinessException {
+		Validate.notNull(actor, "Actor must be set.");
+		return uploadPropositionBusinessService.findByUuid(uuid);
+	}
+
+	@Override
+	public List<UploadProposition> findAll(User actor)
+			throws BusinessException {
+		Validate.notNull(actor, "Actor must be set.");
+		return uploadPropositionBusinessService.findAllByMail(actor.getMail());
+	}
+
+	@Override
+	public UploadProposition update(Account actor,
+			UploadProposition prop) throws BusinessException {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(prop, "UploadProposition must be set.");
+		Validate.notEmpty(prop.getUuid(),
+				"UploadProposition identifier must be set.");
+		return uploadPropositionBusinessService.update(prop);
+	}
+
+	@Override
+	public void checkIfValidRecipient(Account actor, String mail,
+			String domainId) throws BusinessException {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notEmpty(mail, "Mail must be set.");
+		if (!actor.hasUploadPropositionRole()) {
+			logger.equals(actor.getAccountReprentation() + " is using an unauthorized api");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to use this method.");
+		}
+		if (domainId == null) {
+			domainId = LinShareConstants.rootDomainIdentifier;
+		}
+		try {
+			userService.findOrCreateUserWithDomainPolicies(mail, domainId);
+		} catch (BusinessException ex) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Recipient not found.");
+		}
+	}
+
+	@Override
+	public void accept(User actor, UploadProposition e)
+			throws BusinessException {
+		logger.debug("Accepting proposition: " + e.getUuid());
+		e.setStatus(UploadPropositionStatus.USER_ACCEPTED);
+		e = uploadPropositionBusinessService.update(e);
+		acceptHook(actor, e);
+	}
+
+	@Override
+	public void reject(User actor, UploadProposition e)
+			throws BusinessException {
+		logger.debug("Rejecting proposition: " + e.getUuid());
+		e.setStatus(UploadPropositionStatus.USER_REJECTED);
+		uploadPropositionBusinessService.update(e);
+	}
+
+	public void acceptHook(User owner, UploadProposition created)
+			throws BusinessException {
 			// TODO functionalityFacade
 			UploadRequestGroup grp = new UploadRequestGroup(created);
 			// Account actor =
@@ -146,61 +221,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			e.setLocale("fr");
 			e.setSecured(true);
 
-			Contact contact = new Contact(proposition.getRecipientMail());
+			Contact contact = new Contact(created.getRecipientMail());
 			uploadRequestService.createRequest(owner, e, contact);
-		} else {
-			created = uploadPropositionBusinessService.create(proposition);
-		}
-		return created;
-	}
-
-	@Override
-	public void delete(Account actor, UploadProposition proposition)
-			throws BusinessException {
-		Validate.notNull(actor, "Actor must be set.");
-		uploadPropositionBusinessService.delete(proposition);
-	}
-
-	@Override
-	public UploadProposition find(Account actor, String uuid)
-			throws BusinessException {
-		Validate.notNull(actor, "Actor must be set.");
-		return uploadPropositionBusinessService.findByUuid(uuid);
-	}
-
-	@Override
-	public List<UploadProposition> findAll(User actor)
-			throws BusinessException {
-		Validate.notNull(actor, "Actor must be set.");
-		return uploadPropositionBusinessService.findAllByMail(actor.getMail());
-	}
-
-	@Override
-	public UploadProposition update(Account actor,
-			UploadProposition propositionDto) throws BusinessException {
-		Validate.notNull(actor, "Actor must be set.");
-		Validate.notNull(propositionDto, "UploadProposition must be set.");
-		Validate.notEmpty(propositionDto.getUuid(),
-				"UploadProposition identifier must be set.");
-		return uploadPropositionBusinessService.update(propositionDto);
-	}
-
-	@Override
-	public void checkIfValidRecipient(Account actor, String mail,
-			String domainId) throws BusinessException {
-		Validate.notNull(actor, "Actor must be set.");
-		Validate.notEmpty(mail, "Mail must be set.");
-		if (!actor.hasUploadPropositionRole()) {
-			logger.equals(actor.getAccountReprentation() + " is using an unauthorized api");
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to use this method.");
-		}
-		if (domainId == null) {
-			domainId = LinShareConstants.rootDomainIdentifier;
-		}
-		try {
-			userService.findOrCreateUserWithDomainPolicies(mail, domainId);
-		} catch (BusinessException ex) {
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Recipient not found.");
-		}
 	}
 }

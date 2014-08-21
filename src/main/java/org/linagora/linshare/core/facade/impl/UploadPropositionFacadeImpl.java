@@ -10,10 +10,15 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.UploadPropositionFacade;
 import org.linagora.linshare.core.service.UploadPropositionService;
 import org.linagora.linshare.core.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 public class UploadPropositionFacadeImpl implements UploadPropositionFacade {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(UploadPropositionFacadeImpl.class);
 
 	private final UserService userService;
 	private final UploadPropositionService uploadPropositionService;
@@ -32,8 +37,32 @@ public class UploadPropositionFacadeImpl implements UploadPropositionFacade {
 		List<UploadProposition> res = uploadPropositionService.findAll(actor);
 		List<UploadPropositionVo> ret = Lists.newArrayList();
 		for (UploadProposition e : res) {
-			ret.add(new UploadPropositionVo(e));
+			if (e.isPending()) {
+				ret.add(new UploadPropositionVo(e));
+			}
 		}
 		return ret;
+	}
+
+	@Override
+	public void accept(UserVo actorVo, UploadPropositionVo prop)
+			throws BusinessException {
+		logger.debug("actorVo: " + actorVo, ", prop: " + prop.getUuid());
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+		UploadProposition e = uploadPropositionService.find(actor,
+				prop.getUuid());
+
+		uploadPropositionService.accept(actor, e);
+	}
+
+	@Override
+	public void reject(UserVo actorVo, UploadPropositionVo prop)
+			throws BusinessException {
+		logger.debug("actorVo: " + actorVo, ", prop: " + prop.getUuid());
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+		UploadProposition e = uploadPropositionService.find(actor,
+				prop.getUuid());
+
+		uploadPropositionService.reject(actor, e);
 	}
 }

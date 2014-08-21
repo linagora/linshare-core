@@ -41,7 +41,6 @@ import org.linagora.linshare.core.domain.entities.UploadProposition;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 
 public class UploadPropositionVo {
 
@@ -232,7 +231,7 @@ public class UploadPropositionVo {
 
 	@NonVisual
 	public boolean isPending() {
-		return this.getStatus().equals(UploadPropositionStatus.SYSTEM_PENDING);
+		return status.equals(UploadPropositionStatus.SYSTEM_PENDING);
 	}
 
 	/*

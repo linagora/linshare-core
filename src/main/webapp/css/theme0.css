@@ -4022,6 +4022,15 @@ input.ck-kaptcha {
 	vertical-align: bottom;
 }
 
+.truncate-small {
+	display: inline-block;
+	width: 10em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: bottom;
+}
+
 #history #bigPalette .t-palette-available div.t-palette-title,
 #history #bigPalette .t-palette-selected div.t-palette-title,
 #audit #bigPalette .t-palette-available div.t-palette-title,

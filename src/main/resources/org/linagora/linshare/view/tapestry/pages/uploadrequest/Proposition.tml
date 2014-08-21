@@ -23,12 +23,13 @@
       <h2> ${message:pages.uploadrequest.index.grid}</h2>
       <t:grid source="propositions" row="current" rowsPerPage="10"
 	      include="subject, body, modificationDate, status"
+	      add="action"
 	      t:mixins="defaultSort" sort="modificationDate" descending="true">
         <p:subjectCell>
-	  <span class="truncate">${current.subject}</span>
+	  <span class="truncate-small" title="${current.subject}">${current.subject}</span>
         </p:subjectCell>
         <p:bodyCell>
-	  <span class="truncate">${current.body}</span>
+	  <span class="truncate" title="${current.body}">${current.body}</span>
         </p:bodyCell>
 	<p:creationDateCell>
 	  <t:output format="${message:global.pattern.timestamp}" value="current.creationDate" />
@@ -36,6 +37,14 @@
 	<p:modificationDateCell>
 	  <t:output format="${message:global.pattern.timestamp}" value="current.modificationDate" />
 	</p:modificationDateCell>
+	<p:actionCell>
+	  <t:actionLink t:id="ok" context="current.uuid" class="button" title="OK">
+	    OK
+	  </t:actionLink>
+	  <t:actionLink t:id="ko" context="current.uuid" class="button" title="KO">
+	    KO
+	  </t:actionLink>
+	</p:actionCell>
         <p:empty>
           ${message:pages.uploadrequest.index.empty}
         </p:empty>
