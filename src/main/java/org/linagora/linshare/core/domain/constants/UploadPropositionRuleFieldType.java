@@ -42,7 +42,8 @@ public enum UploadPropositionRuleFieldType {
 
 	SENDER_EMAIL,
 	RECIPIENT_EMAIL,
-	RECIPIENT_DOMAIN,
+	// TODO : Not implemented yet.
+//	RECIPIENT_DOMAIN,
 	SUBJECT;
 
 	public static UploadPropositionRuleFieldType fromString(String s) {

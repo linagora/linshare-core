@@ -36,11 +36,11 @@ package org.linagora.linshare.core.facade.webservice.uploadproposition.dto;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.UploadPropositionMatchType;
 import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
 import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
 import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class UploadPropositionFilterDto {
@@ -51,30 +51,23 @@ public class UploadPropositionFilterDto {
 
 	protected String match;
 
-	protected List<UploadPropositionRuleDto> uploadPropositionRules = Lists.newArrayList();
+	protected List<UploadPropositionRuleDto> uploadPropositionRules = Lists
+			.newArrayList();
 
-	protected List<UploadPropositionActionDto> uploadPropositionActions = Lists.newArrayList();
-
-
-	//Tests only 
-	public UploadPropositionFilterDto(String uuid, String name,
-			UploadPropositionMatchType match) {
-		super();
-		this.uuid = uuid;
-		this.name = name;
-		this.match = match.name();
-	}
+	protected List<UploadPropositionActionDto> uploadPropositionActions = Lists
+			.newArrayList();
 
 	public UploadPropositionFilterDto(UploadPropositionFilter entity) {
 		super();
 		this.uuid = entity.getUuid();
 		this.name = entity.getName();
-		this.match= entity.getMatch().name();
+		this.match = entity.getMatch().name();
 		for (UploadPropositionAction action : entity.getActions()) {
-			this.uploadPropositionActions.add(new UploadPropositionActionDto(action)); 
+			this.uploadPropositionActions.add(new UploadPropositionActionDto(
+					action));
 		}
 		for (UploadPropositionRule rule : entity.getRules()) {
-			this.uploadPropositionRules.add(new UploadPropositionRuleDto(rule)); 
+			this.uploadPropositionRules.add(new UploadPropositionRuleDto(rule));
 		}
 	}
 
@@ -118,5 +111,17 @@ public class UploadPropositionFilterDto {
 	public void setUploadPropositionActions(
 			List<UploadPropositionActionDto> uploadPropositionActions) {
 		this.uploadPropositionActions = uploadPropositionActions;
+	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<UploadPropositionFilter, UploadPropositionFilterDto> toVo() {
+		return new Function<UploadPropositionFilter, UploadPropositionFilterDto>() {
+			@Override
+			public UploadPropositionFilterDto apply(UploadPropositionFilter arg0) {
+				return new UploadPropositionFilterDto(arg0);
+			}
+		};
 	}
 }

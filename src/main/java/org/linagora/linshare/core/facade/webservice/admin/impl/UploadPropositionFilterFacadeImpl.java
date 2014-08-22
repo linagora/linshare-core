@@ -11,6 +11,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadPropositionFilterService;
 import org.linagora.linshare.webservice.dto.UploadPropositionFilterDto;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class UploadPropositionFilterFacadeImpl extends AdminGenericFacadeImpl
@@ -28,7 +29,7 @@ public class UploadPropositionFilterFacadeImpl extends AdminGenericFacadeImpl
 	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		List<UploadPropositionFilter> all = service.findAll(actor);
-		return Lists.transform(all, UploadPropositionFilterDto.toVo());
+		return Lists.transform(ImmutableList.copyOf(all), UploadPropositionFilterDto.toVo());
 	}
 
 	@Override

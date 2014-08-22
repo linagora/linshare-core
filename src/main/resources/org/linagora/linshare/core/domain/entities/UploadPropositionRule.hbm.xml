@@ -7,14 +7,20 @@
 		<param name="identifierMethod">name</param>
 		<param name="valueOfMethod">fromString</param>
 	</typedef>
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadPropositionRuleFieldType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadPropositionRuleFieldType</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
 	<class name="org.linagora.linshare.core.domain.entities.UploadPropositionRule" table="upload_proposition_rule" lazy="false">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>
 		</id>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
-		<property access="field"  name="operator" column="operator" type="uploadPropositionRuleOperatorType" length="255" not-null="true" lazy="false" />
-		<property access="field"  name="field" column="field" type="uploadPropositionRuleOperatorType" length="255" not-null="true" lazy="false" />
+		<property access="field" name="operator" column="operator" type="uploadPropositionRuleOperatorType" length="255" not-null="true" lazy="false" />
+		<property access="field" name="field" column="field" type="uploadPropositionRuleFieldType" length="255" not-null="true" lazy="false" />
 		<property name="value" column="value" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp"
 			length="6" not-null="true" lazy="false" />

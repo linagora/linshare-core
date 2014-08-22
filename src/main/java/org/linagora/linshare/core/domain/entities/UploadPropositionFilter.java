@@ -34,11 +34,11 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.UploadPropositionMatchType;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class UploadPropositionFilter {
 
@@ -52,9 +52,9 @@ public class UploadPropositionFilter {
 
 	private boolean enable;
 
-	private List<UploadPropositionRule> rules = Lists.newArrayList();
+	private Set<UploadPropositionRule> rules = Sets.newHashSet();
 
-	private List<UploadPropositionAction> actions = Lists.newArrayList();
+	private Set<UploadPropositionAction> actions = Sets.newHashSet();
 
 	private Date creationDate;
 
@@ -114,21 +114,21 @@ public class UploadPropositionFilter {
 		this.enable = enable;
 	}
 
-	public List<UploadPropositionRule> getRules() {
+	public Set<UploadPropositionRule> getRules() {
 		return rules;
 	}
 
 	public void setRules(
-			List<UploadPropositionRule> rules) {
+			Set<UploadPropositionRule> rules) {
 		this.rules = rules;
 	}
 
-	public List<UploadPropositionAction> getActions() {
+	public Set<UploadPropositionAction> getActions() {
 		return actions;
 	}
 
 	public void setActions(
-			List<UploadPropositionAction> actions) {
+			Set<UploadPropositionAction> actions) {
 		this.actions = actions;
 	}
 

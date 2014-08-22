@@ -15,5 +15,6 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="uploadPropositionService" />
+		<constructor-arg ref="uploadPropositionFilterService" />
 	</bean>
 </beans>

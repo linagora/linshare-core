@@ -34,9 +34,9 @@
 
 package org.linagora.linshare.core.facade.webservice.uploadproposition.dto;
 
-import org.linagora.linshare.core.domain.constants.UploadPropositionRuleFieldType;
-import org.linagora.linshare.core.domain.constants.UploadPropositionRuleOperatorType;
 import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
+
+import com.google.common.base.Function;
 
 public class UploadPropositionRuleDto {
 
@@ -47,16 +47,6 @@ public class UploadPropositionRuleDto {
 	protected String field;
 
 	protected String value;
-
-	// Tests only
-	public UploadPropositionRuleDto(String uuid, UploadPropositionRuleOperatorType operator, UploadPropositionRuleFieldType field,
-			String value) {
-		super();
-		this.uuid = uuid;
-		this.operator = operator.name();
-		this.field = field.name();
-		this.value = value;
-	}
 
 	public UploadPropositionRuleDto(UploadPropositionRule entity) {
 		super();
@@ -96,5 +86,17 @@ public class UploadPropositionRuleDto {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<UploadPropositionRule, UploadPropositionRuleDto> toVo() {
+		return new Function<UploadPropositionRule, UploadPropositionRuleDto>() {
+			@Override
+			public UploadPropositionRuleDto apply(UploadPropositionRule entity) {
+				return new UploadPropositionRuleDto(entity);
+			}
+		};
 	}
 }

@@ -8,6 +8,7 @@ import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
 import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
 
 import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 
 public class UploadPropositionFilterDto {
@@ -37,10 +38,9 @@ public class UploadPropositionFilterDto {
 		this.uuid = entity.getUuid();
 		this.name = entity.getName();
 		this.enable = entity.isEnable();
-		this.match= entity.getMatch().name();
+		this.match = entity.getMatch().name();
 		this.order = entity.getOrder();
-		for (UploadPropositionAction action : entity
-				.getActions()) {
+		for (UploadPropositionAction action : entity.getActions()) {
 			this.uploadPropositionActions.add(new UploadPropositionActionDto(
 					action));
 		}
@@ -125,15 +125,19 @@ public class UploadPropositionFilterDto {
 			public UploadPropositionFilter apply(UploadPropositionFilterDto dto) {
 				UploadPropositionFilter filter = new UploadPropositionFilter();
 				filter.setUuid(dto.getUuid());
-				filter.setMatch(UploadPropositionMatchType.fromString(dto.getMatch()));
+				filter.setMatch(UploadPropositionMatchType.fromString(dto
+						.getMatch()));
 				filter.setName(dto.getName());
 				filter.setEnable(dto.isEnable());
-				filter.setActions(Lists.transform(
-						dto.getUploadPropositionActions(),
-						UploadPropositionActionDto.toEntity()));
-				filter.setRules(Lists.transform(
-						dto.getUploadPropositionRules(),
-						UploadPropositionRuleDto.toEntity()));
+				filter.setOrder(dto.getOrder());
+				filter.setActions(FluentIterable
+						.from(dto.getUploadPropositionActions())
+						.transform(UploadPropositionActionDto.toEntity())
+						.toSet());
+				filter.setRules(FluentIterable
+						.from(dto.getUploadPropositionRules())
+						.transform(UploadPropositionRuleDto.toEntity())
+						.toSet());
 				return filter;
 			}
 		};

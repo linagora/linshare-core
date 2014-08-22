@@ -50,6 +50,10 @@ public class UploadPropositionRuleDto {
 
 	protected String value;
 
+	public UploadPropositionRuleDto() {
+		super();
+	}
+
 	public UploadPropositionRuleDto(UploadPropositionRule entity) {
 		super();
 		this.uuid = entity.getUuid();

@@ -95,7 +95,7 @@ public class UploadPropositionRestServiceImpl implements
 
 	@POST
 	@Path("/propositions")
-	@ApiOperation(value = "Check if it is a valid user.")
+	@ApiOperation(value = "Create a new upload proposition.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
 	@Override
 	public void create(UploadPropositionDto dto) throws BusinessException {

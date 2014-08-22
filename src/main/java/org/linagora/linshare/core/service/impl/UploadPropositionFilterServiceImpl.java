@@ -7,16 +7,17 @@ import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionFilterBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.UploadPropositionFilterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UploadPropositionFilterServiceImpl implements UploadPropositionFilterService {
-	
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(UploadPropositionFilterServiceImpl.class);
-	
+
 	private final UploadPropositionFilterBusinessService businessService;
 
 	private final DomainBusinessService domainBusinessService;
@@ -42,7 +43,11 @@ public class UploadPropositionFilterServiceImpl implements UploadPropositionFilt
 	@Override
 	public List<UploadPropositionFilter> findAll(Account actor) throws BusinessException {
 		preChecks(actor);
-		return businessService.findAll();
+		if (actor.hasSuperAdminRole() || actor.hasUploadPropositionRole()) {
+			return businessService.findAll();
+		} else {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get these filters.");
+		}
 	}
 
 	@Override

@@ -38,19 +38,20 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
-import org.linagora.linshare.core.domain.constants.UploadPropositionMatchType;
+import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.UploadPropositionFacade;
-import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionActionDto;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionDto;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionFilterDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.UploadPropositionFilterService;
 import org.linagora.linshare.core.service.UploadPropositionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class UploadPropositionFacadeImpl extends
@@ -61,30 +62,25 @@ public class UploadPropositionFacadeImpl extends
 
 	private final UploadPropositionService uploadPropositionService;
 
-	public UploadPropositionFacadeImpl(AccountService accountService,
-			UploadPropositionService uploadPropositionService,
-			FunctionalityReadOnlyService functionalityService) {
+	private final UploadPropositionFilterService uploadPropositionFilterService;
+
+	public UploadPropositionFacadeImpl(
+			final AccountService accountService,
+			final UploadPropositionService uploadPropositionService,
+			final FunctionalityReadOnlyService functionalityService,
+			final UploadPropositionFilterService uploadPropositionFilterService) {
 		super(accountService, functionalityService);
 		this.uploadPropositionService = uploadPropositionService;
+		this.uploadPropositionFilterService = uploadPropositionFilterService;
 	}
 
 	@Override
 	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
-		this.checkAuthentication();
-		List<UploadPropositionFilterDto> filters = Lists.newArrayList();
-		//filters.add(addDefaultFilter());
-		return filters;
-	}
-
-	private UploadPropositionFilterDto addDefaultFilter() {
-		UploadPropositionActionDto action = new UploadPropositionActionDto(
-				"ee1bf0ab-21ad-4a69-914d-d792eb2b36d7",
-				UploadPropositionActionType.ACCEPT, null);
-		UploadPropositionFilterDto filter = new UploadPropositionFilterDto(
-				"5724946a-eebe-450b-bb84-0d8af480f3f6", "default filter 1",
-				UploadPropositionMatchType.TRUE);
-		filter.getUploadPropositionActions().add(action);
-		return filter;
+		User actor = checkAuthentication();
+		List<UploadPropositionFilter> all = uploadPropositionFilterService.findAll(actor);
+		List<UploadPropositionFilterDto> transform = Lists.transform(all, UploadPropositionFilterDto.toVo());
+		ImmutableList<UploadPropositionFilterDto> res = ImmutableList.copyOf(transform);
+		return res;
 	}
 
 	@Override

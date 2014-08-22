@@ -55,7 +55,8 @@ public class UploadPropositionFilterBusinessServiceImpl implements
 		filter.setName(dto.getName());
 		filter.setOrder(dto.getOrder());
 		filter.setDomain(dto.getDomain());
-		filter.setOrder(findAll().size());
+		int size = findAll().size();
+		filter.setOrder(size);
 		UploadPropositionFilter entity = repository.create(filter);
 		for (UploadPropositionRule rule : dto.getRules()) {
 			rule.setFilter(entity);
@@ -79,12 +80,37 @@ public class UploadPropositionFilterBusinessServiceImpl implements
 		entity.setMatch(dto.getMatch());
 		entity.setName(dto.getName());
 		entity.setOrder(dto.getOrder());
-		return repository.update(entity);
+		entity = repository.update(entity);
+
+		resetRulesAndActions(entity);
+		entity = repository.update(entity);
+		for (UploadPropositionRule rule : dto.getRules()) {
+			rule.setFilter(entity);
+			entity.getRules().add(rule);
+			ruleRepository.create(rule);
+		}
+		for (UploadPropositionAction action : dto.getActions()) {
+			action.setFilter(entity);
+			entity.getActions().add(action);
+			actionRepository.create(action);
+		}
+		return entity;
 	}
 
 	@Override
 	public void delete(UploadPropositionFilter entity) throws BusinessException {
+		resetRulesAndActions(entity);
 		repository.delete(entity);
+	}
+
+	private void resetRulesAndActions(UploadPropositionFilter entity)
+			throws BusinessException {
+		for (UploadPropositionRule rule : entity.getRules()) {
+			ruleRepository.delete(rule);
+		}
+		for (UploadPropositionAction action : entity.getActions()) {
+			actionRepository.delete(action);
+		}
 	}
 
 }
