@@ -42,4 +42,7 @@
 	left:451px !important;
 }
 
+#list td.fileProperties div {
+	ms-text-overflow:ellipsis;
+}
 /***************************************************************************/

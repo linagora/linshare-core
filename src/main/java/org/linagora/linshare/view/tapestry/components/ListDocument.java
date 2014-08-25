@@ -51,6 +51,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
@@ -312,6 +313,8 @@ public class ListDocument {
 	@Symbol("linshare.tapestry.paging")
 	@Property
 	private int paging;
+	
+	private final Integer truncatedValue=40;
 
    
 	/***************************************************************************
@@ -792,6 +795,11 @@ public class ListDocument {
 		return result;
 	}
 
+	public String getTruncatedFileName() {
+		String result = StringUtils.abbreviate(document.getFileName(), truncatedValue);
+		return result;
+	}
+	
 	/**
 	 * This method is called when the form is submitted.
 	 * 
