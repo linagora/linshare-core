@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.dto;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AccountPermission;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
@@ -54,6 +55,9 @@ public class TechnicalAccountDto extends AccountDto {
 	@ApiModelProperty(value = "Permissions")
 	private List<String> permissions = Lists.newArrayList();
 
+	@ApiModelProperty(value = "Role")
+	private Role role;
+
 	public TechnicalAccountDto() {
 		super();
 	}
@@ -62,6 +66,7 @@ public class TechnicalAccountDto extends AccountDto {
 		super(account, false);
 		this.name = account.getLastName();
 		this.mail = account.getMail();
+		this.role = account.getRole();
 		TechnicalAccountPermission permission = account.getPermission();
 		if (permission != null) {
 			for (AccountPermission p : permission.getAccountPermissions()) {
@@ -92,5 +97,13 @@ public class TechnicalAccountDto extends AccountDto {
 
 	public void setPermissions(List<String> permissions) {
 		this.permissions = permissions;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
 	}
 }
