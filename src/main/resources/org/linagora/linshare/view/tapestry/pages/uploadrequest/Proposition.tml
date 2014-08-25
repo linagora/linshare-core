@@ -38,11 +38,11 @@
 	  <t:output format="${message:global.pattern.timestamp}" value="current.modificationDate" />
 	</p:modificationDateCell>
 	<p:actionCell>
-	  <t:actionLink t:id="ok" context="current.uuid" class="button" title="OK">
-	    OK
+	  <t:actionLink t:id="accept" context="current.uuid" class="button" title="${message:pages.uploadrequest.accept.button}">
+	    <span><img src="${asset:context:images/icons/validate-mini.png}" alt=""/>${message:pages.uploadrequest.accept.button}</span>
 	  </t:actionLink>
-	  <t:actionLink t:id="ko" context="current.uuid" class="button" title="KO">
-	    KO
+	  <t:actionLink t:id="reject" context="current.uuid" class="button" title="${message:pages.uploadrequest.reject.button}">
+	    <span><img src="${asset:context:images/icons/absent-small.png}" alt=""/>${message:pages.uploadrequest.reject.button}</span>
 	  </t:actionLink>
 	</p:actionCell>
         <p:empty>

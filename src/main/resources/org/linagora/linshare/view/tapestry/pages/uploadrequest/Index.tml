@@ -16,7 +16,13 @@
         <t:pageLink page="uploadrequest/journal/index" class="button" title="${message:pages.uploadrequest.history.button}">
 	  <span><img src="${asset:context:images/icons/icon-list-mini.png}" alt=""/> ${message:pages.uploadrequest.history.button}</span>
         </t:pageLink>
-      </ul><ul>
+      </ul>
+      <ul>
+        <t:pageLink page="uploadrequest/proposition" class="button" title="${message:pages.uploadrequest.uploadproposition.button}">
+	  <span><img src="${asset:context:images/icons/validate-mini.png}" alt=""/> ${message:pages.uploadrequest.uploadproposition.button}</span>
+        </t:pageLink>
+      </ul>
+      <ul>
         <t:actionLink t:id="create" class="button" title="${message:pages.uploadrequest.create.button}">
 	  <span><img src="${asset:context:images/icons/edit-button.png}" alt=""/> ${message:pages.uploadrequest.create.button}</span>
         </t:actionLink>

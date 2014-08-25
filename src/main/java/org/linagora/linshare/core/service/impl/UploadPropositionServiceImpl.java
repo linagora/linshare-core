@@ -34,26 +34,35 @@
 
 package org.linagora.linshare.core.service.impl;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
+import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UploadPropositionService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
@@ -76,18 +85,26 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 
 	private final UserService userService;
 
+	private final AbstractDomainService abstractDomainService;
+
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+
 	public UploadPropositionServiceImpl(
 			final UploadPropositionBusinessService uploadPropositionBusinessService,
 			final DomainBusinessService domainBusinessService,
 			final UploadRequestService uploadRequestService,
 			final UploadRequestUrlService uploadRequestUrlService,
-			final UserService userService) {
+			final UserService userService,
+			final AbstractDomainService abstractDomainService,
+			final FunctionalityReadOnlyService functionalityReadOnlyService) {
 		super();
 		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
 		this.domainBusinessService = domainBusinessService;
 		this.uploadRequestService = uploadRequestService;
 		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.userService = userService;
+		this.abstractDomainService = abstractDomainService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
 	@Override
@@ -137,15 +154,14 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 	}
 
 	@Override
-	public List<UploadProposition> findAll(User actor)
-			throws BusinessException {
+	public List<UploadProposition> findAll(User actor) throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		return uploadPropositionBusinessService.findAllByMail(actor.getMail());
 	}
 
 	@Override
-	public UploadProposition update(Account actor,
-			UploadProposition prop) throws BusinessException {
+	public UploadProposition update(Account actor, UploadProposition prop)
+			throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(prop, "UploadProposition must be set.");
 		Validate.notEmpty(prop.getUuid(),
@@ -159,8 +175,10 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notEmpty(mail, "Mail must be set.");
 		if (!actor.hasUploadPropositionRole()) {
-			logger.equals(actor.getAccountReprentation() + " is using an unauthorized api");
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to use this method.");
+			logger.equals(actor.getAccountReprentation()
+					+ " is using an unauthorized api");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					"You are not authorized to use this method.");
 		}
 		if (domainId == null) {
 			domainId = LinShareConstants.rootDomainIdentifier;
@@ -168,7 +186,8 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		try {
 			userService.findOrCreateUserWithDomainPolicies(mail, domainId);
 		} catch (BusinessException ex) {
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Recipient not found.");
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
+					"Recipient not found.");
 		}
 	}
 
@@ -191,37 +210,72 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 
 	public void acceptHook(User owner, UploadProposition created)
 			throws BusinessException {
-			// TODO functionalityFacade
-			UploadRequestGroup grp = new UploadRequestGroup(created);
-			// Account actor =
-			// accountRepository.getUploadRequestSystemAccount();
-			grp = uploadRequestService.createRequestGroup(owner, grp);
+		AbstractDomain domain = owner.getDomain();
+		UploadRequest e = new UploadRequest();
+		UploadRequestGroup grp = new UploadRequestGroup(created);
 
-			UploadRequest e = new UploadRequest();
-			e.setOwner(owner);
-			e.setAbstractDomain(owner.getDomain());
-			e.setNotificationDate(e.getExpiryDate()); // FIXME
-														// functionalityFacade
-			e.setUploadRequestGroup(grp);
+		grp = uploadRequestService.createRequestGroup(owner, grp);
+		e.setOwner(owner);
+		e.setAbstractDomain(owner.getDomain());
+		e.setNotificationDate(e.getExpiryDate());
+		e.setUploadRequestGroup(grp);
+		e.setUploadPropositionRequestUuid(created.getUuid());
+		e.setActivationDate(new Date());
+		e.setCanDelete(true);
+		e.setCanClose(true);
+		e.setCanEditExpiryDate(true);
+		e.setSecured(false);
 
-			e.setUploadPropositionRequestUuid(created.getUuid());
-			e.setMaxFileCount(3);
-			e.setMaxDepositSize(new Long(30 * 1024 * 1024));
-			e.setMaxFileSize(new Long(3 * 1024 * 1024));
-			e.setActivationDate(new Date());
-			e.setNotificationDate(new Date());
+		TimeUnitValueFunctionality expiryDateFunc = functionalityReadOnlyService
+				.getUploadRequestExpiryTimeFunctionality(domain);
 
-			Calendar a = Calendar.getInstance();
-			a.add(Calendar.MONTH, 3);
-			e.setExpiryDate(a.getTime());
+		if (expiryDateFunc.getActivationPolicy().getStatus()) {
+			logger.debug("expiryDateFunc is activated");
+			@SuppressWarnings("deprecation")
+			Date expiryDate = DateUtils.add(new Date(),
+					expiryDateFunc.toCalendarUnitValue(),
+					expiryDateFunc.getValue());
+			e.setExpiryDate(expiryDate);
+		}
 
-			e.setCanDelete(true);
-			e.setCanClose(true);
-			e.setCanEditExpiryDate(true);
-			e.setLocale("fr");
-			e.setSecured(true);
+		SizeUnitValueFunctionality maxDepositSizeFunc = functionalityReadOnlyService
+				.getUploadRequestMaxDepositSizeFunctionality(domain);
 
-			Contact contact = new Contact(created.getRecipientMail());
-			uploadRequestService.createRequest(owner, e, contact);
+		if (maxDepositSizeFunc.getActivationPolicy().getStatus()) {
+			logger.debug("maxDepositSizeFunc is activated");
+			long maxDepositSize = ((FileSizeUnitClass) maxDepositSizeFunc
+					.getUnit()).getPlainSize(maxDepositSizeFunc.getValue());
+			e.setMaxDepositSize(maxDepositSize);
+		}
+
+		IntegerValueFunctionality maxFileCountFunc = functionalityReadOnlyService
+				.getUploadRequestMaxFileCountFunctionality(domain);
+
+		if (maxFileCountFunc.getActivationPolicy().getStatus()) {
+			logger.debug("maxFileCountFunc is activated");
+			int maxFileCount = maxFileCountFunc.getValue();
+			e.setMaxFileCount(maxFileCount);
+		}
+
+		SizeUnitValueFunctionality maxFileSizeFunc = functionalityReadOnlyService
+				.getUploadRequestMaxFileSizeFunctionality(domain);
+
+		if (maxFileSizeFunc.getActivationPolicy().getStatus()) {
+			logger.debug("maxFileSizeFunc is activated");
+			long maxFileSize = ((FileSizeUnitClass) maxFileSizeFunc.getUnit())
+					.getPlainSize(maxFileSizeFunc.getValue());
+			e.setMaxFileSize(maxFileSize);
+		}
+
+		StringValueFunctionality notificationLangFunc = functionalityReadOnlyService
+				.getUploadRequestNotificationLanguageFunctionality(domain);
+
+		if (notificationLangFunc.getActivationPolicy().getStatus()) {
+			logger.debug("notificationLangFunc is activated");
+			e.setLocale(notificationLangFunc.getValue());
+		}
+
+		Contact contact = new Contact(created.getRecipientMail());
+		uploadRequestService.createRequest(owner, e, contact);
 	}
 }

@@ -102,7 +102,7 @@ public class Proposition {
 	}
 
 	@Log
-	public void onActionFromOk(String uuid) throws BusinessException {
+	public void onActionFromAccept(String uuid) throws BusinessException {
 		UploadPropositionVo res = Iterables.find(propositions,
 				UploadPropositionVo.equalTo(uuid));
 
@@ -110,7 +110,7 @@ public class Proposition {
 	}
 
 	@Log
-	public void onActionFromKo(String uuid) throws BusinessException {
+	public void onActionFromReject(String uuid) throws BusinessException {
 		UploadPropositionVo res = Iterables.find(propositions,
 				UploadPropositionVo.equalTo(uuid));
 
