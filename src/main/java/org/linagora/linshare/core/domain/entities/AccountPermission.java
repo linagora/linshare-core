@@ -46,6 +46,10 @@ public class AccountPermission {
 		this.permission = perm;
 	}
 
+	public AccountPermission() {
+		super();
+	}
+
 	public AccountPermission(String perm) {
 		super();
 		this.permission = TechnicalAccountPermissionType.valueOf(perm);

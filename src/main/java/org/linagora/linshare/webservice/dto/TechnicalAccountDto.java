@@ -34,8 +34,13 @@
 
 package org.linagora.linshare.webservice.dto;
 
-import org.linagora.linshare.core.domain.entities.TechnicalAccount;
+import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.AccountPermission;
+import org.linagora.linshare.core.domain.entities.TechnicalAccount;
+import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
+
+import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class TechnicalAccountDto extends AccountDto {
@@ -46,15 +51,23 @@ public class TechnicalAccountDto extends AccountDto {
 	@ApiModelProperty(value = "Mail")
 	private String mail;
 
-	@ApiModelProperty(value = "TechnicalAccountPermissionUuid")
-	private String technicalAccountPermissionUuid;
+	@ApiModelProperty(value = "Permissions")
+	private List<String> permissions = Lists.newArrayList();
+
+	public TechnicalAccountDto() {
+		super();
+	}
 
 	public TechnicalAccountDto(TechnicalAccount account) {
 		super(account, false);
 		this.name = account.getLastName();
 		this.mail = account.getMail();
-		if (account.getPermission() != null)
-			this.technicalAccountPermissionUuid = account.getPermission().getUuid();
+		TechnicalAccountPermission permission = account.getPermission();
+		if (permission != null) {
+			for (AccountPermission p : permission.getAccountPermissions()) {
+				permissions.add(p.getPermission().name());
+			}
+		}
 	}
 
 	public String getName() {
@@ -73,12 +86,11 @@ public class TechnicalAccountDto extends AccountDto {
 		this.mail = mail;
 	}
 
-	public String getTechnicalAccountPermissionUuid() {
-		return technicalAccountPermissionUuid;
+	public List<String> getPermissions() {
+		return permissions;
 	}
 
-	public void setTechnicalAccountPermissionUuid(
-			String technicalAccountPermissionUuid) {
-		this.technicalAccountPermissionUuid = technicalAccountPermissionUuid;
+	public void setPermissions(List<String> permissions) {
+		this.permissions = permissions;
 	}
 }
