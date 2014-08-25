@@ -33,11 +33,14 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
 
 public class TechnicalAccount extends User {
 
+	@SuppressWarnings("unused")
 	private TechnicalAccount() {
 		super();
 	}
@@ -53,6 +56,12 @@ public class TechnicalAccount extends User {
 		this.enable = true;
 		this.externalMailLocale = "en";
 		this.locale = "en";
+		List<String> permissions = dto.getPermissions();
+		if (permissions != null) {
+			for (String perm : permissions) {
+				this.permission.addPermission(perm);
+			}
+		}
 	}
 
 	@Override

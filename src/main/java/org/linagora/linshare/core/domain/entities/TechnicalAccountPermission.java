@@ -121,4 +121,15 @@ public class TechnicalAccountPermission {
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
+
+	/*
+	 * Helpers
+	 */
+
+	public void addPermission(AccountPermission permission) {
+		this.accountPermissions.add(permission);
+	}
+	public void addPermission(String permission) {
+		this.accountPermissions.add(new AccountPermission(permission));
+	}
 }

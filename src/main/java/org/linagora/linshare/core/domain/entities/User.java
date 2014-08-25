@@ -61,8 +61,6 @@ public abstract class User extends Account {
 
 	protected boolean canUpload;
 
-	protected TechnicalAccountPermission technicalAccountPermission;
-
 	/** If the user is allowed to create guest */
 	protected boolean canCreateGuest;
 
@@ -170,14 +168,6 @@ public abstract class User extends Account {
 
 	public boolean isRestricted() {
 		return false;
-	}
-
-	public void setTechnicalAccountPermission(TechnicalAccountPermission value) {
-		this.technicalAccountPermission = value;
-	}
-
-	public TechnicalAccountPermission getTechnicalAccountPermission() {
-		return technicalAccountPermission;
 	}
 
 	public Set<ThreadMember> getMyThreads() {

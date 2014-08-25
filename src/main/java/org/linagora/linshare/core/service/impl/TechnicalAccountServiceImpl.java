@@ -36,31 +36,41 @@ package org.linagora.linshare.core.service.impl;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.TechnicalAccountBusinessService;
+import org.linagora.linshare.core.business.service.TechnicalAccountPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountPermission;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
+import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.TechnicalAccountPermissionService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
 
 public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 
 	private final TechnicalAccountBusinessService technicalAccountBusinessService;
 
+	private final TechnicalAccountPermissionService technicalAccountPermissionService;
+
 	private final AccountService accountService;
 
 	public TechnicalAccountServiceImpl(
 			final TechnicalAccountBusinessService technicalAccountBusinessService,
-			final AccountService accountService) {
+			final AccountService accountService,
+			final TechnicalAccountPermissionService technicalAccountPermissionService) {
 		super();
 		this.technicalAccountBusinessService = technicalAccountBusinessService;
 		this.accountService = accountService;
+		this.technicalAccountPermissionService = technicalAccountPermissionService;
 	}
 
 	@Override
 	public TechnicalAccount create(Account actor, TechnicalAccount account) throws BusinessException {
 		// TODO : check rights, log actions.
+		TechnicalAccountPermission accountPermission = technicalAccountPermissionService.create(actor, new TechnicalAccountPermission());
+		account.setPermission(accountPermission);
 		return technicalAccountBusinessService.create(LinShareConstants.rootDomainIdentifier, account);
 	}
 
@@ -69,6 +79,7 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 			throws BusinessException {
 		// TODO : check rights, log actions.
 		technicalAccountBusinessService.delete(account);
+		technicalAccountPermissionService.delete(actor, account.getPermission());
 	}
 
 	@Override
@@ -97,7 +108,11 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 		TechnicalAccount technicalAccount = technicalAccountBusinessService.find(accountDto.getLsUuid());
 		technicalAccount.setLastName(accountDto.getLastName());
 		technicalAccount.setMail(accountDto.getMail());
-		technicalAccount.setEnable(accountDto.isEnable());
+		// TODO
+//		technicalAccount.setEnable(accountDto.isEnable());
+		TechnicalAccountPermission accountPermission = technicalAccount.getPermission();
+		accountPermission.setAccountPermissions(accountDto.getPermission().getAccountPermissions());
+		technicalAccountPermissionService.update(actor, accountPermission);
 		return technicalAccountBusinessService.update(technicalAccount);
 	}
 }

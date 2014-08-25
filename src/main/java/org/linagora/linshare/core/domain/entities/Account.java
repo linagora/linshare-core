@@ -72,11 +72,11 @@ public abstract class Account {
 
 	protected Set<Signature> signatures = new HashSet<Signature>();
 
-	private TechnicalAccountPermission permission;
+	protected TechnicalAccountPermission permission;
 
-	private Set<UploadRequestTemplate> uploadRequestTemplates;
+	protected Set<UploadRequestTemplate> uploadRequestTemplates;
 
-	private Set<UploadRequest> uploadRequests;
+	protected Set<UploadRequest> uploadRequests;
 
 	public Account() {
 		setCreationDate(new Date());

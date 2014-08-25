@@ -279,6 +279,7 @@
 	<bean name="technicalAccountService" class="org.linagora.linshare.core.service.impl.TechnicalAccountServiceImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="technicalAccountBusinessService" />
+		<constructor-arg ref="technicalAccountPermissionService" />
 	</bean>
 
 	<bean id="technicalAccountPermissionService" class="org.linagora.linshare.core.service.impl.TechnicalAccountPermissionServiceImpl">
@@ -304,6 +305,6 @@
 	</bean>
 	<bean id="uploadPropositionFilterService" class="org.linagora.linshare.core.service.impl.UploadPropositionFilterServiceImpl">
 		<constructor-arg ref="uploadPropositionFilterBusinessService" />
-        <constructor-arg ref="domainBusinessService" />
+		<constructor-arg ref="domainBusinessService" />
 	</bean>
 </beans>
