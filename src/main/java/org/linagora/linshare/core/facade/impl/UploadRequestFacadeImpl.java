@@ -57,6 +57,7 @@ import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.vo.UploadRequestEntryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestHistoryVo;
+import org.linagora.linshare.core.domain.vo.UploadRequestTemplateVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -422,5 +423,17 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				+ StringUtils.join(include, "\n\t\t"));
 		beanModel.include(include);
 		return beanModel;
+	}
+
+	@Override
+	public List<UploadRequestTemplateVo> findAllTemplates(UserVo userVo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UploadRequestTemplateVo findTemplateByUuid(String id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

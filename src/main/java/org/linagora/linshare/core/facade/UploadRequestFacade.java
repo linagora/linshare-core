@@ -39,6 +39,7 @@ import java.util.List;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.linagora.linshare.core.domain.vo.UploadRequestEntryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestHistoryVo;
+import org.linagora.linshare.core.domain.vo.UploadRequestTemplateVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -80,4 +81,8 @@ public interface UploadRequestFacade {
 
 	BeanModel<UploadRequestVo> getEditModel(UserVo actorVo,
 			BeanModel<UploadRequestVo> beanModel) throws BusinessException;
+
+	List<UploadRequestTemplateVo> findAllTemplates(UserVo userVo);
+
+	UploadRequestTemplateVo findTemplateByUuid(String id);
 }

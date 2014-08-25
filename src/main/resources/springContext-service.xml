@@ -299,7 +299,6 @@
 		<constructor-arg ref="uploadRequestService" />
 		<constructor-arg ref="uploadRequestUrlService" />
 		<constructor-arg ref="userService" />
-		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 	<bean id="uploadPropositionFilterService" class="org.linagora.linshare.core.service.impl.UploadPropositionFilterServiceImpl">
