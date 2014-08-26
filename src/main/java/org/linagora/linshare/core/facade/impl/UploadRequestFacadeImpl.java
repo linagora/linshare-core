@@ -52,16 +52,23 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
+import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.vo.UploadRequestEntryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestHistoryVo;
+import org.linagora.linshare.core.domain.vo.UploadRequestTemplateVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
-import org.linagora.linshare.core.service.*;
+import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.DocumentEntryService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.UploadRequestService;
+import org.linagora.linshare.core.service.UploadRequestUrlService;
+import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -422,5 +429,26 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				+ StringUtils.join(include, "\n\t\t"));
 		beanModel.include(include);
 		return beanModel;
+	}
+
+	@Override
+	public List<UploadRequestTemplateVo> findAllTemplates(UserVo actorVo)
+			throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+
+		List<UploadRequestTemplateVo> ret = Lists.newArrayList();
+		for (UploadRequestTemplate t : actor.getUploadRequestTemplates()) {
+			ret.add(new UploadRequestTemplateVo(t));
+		}
+		return ret;
+	}
+
+	@Override
+	public UploadRequestTemplateVo findTemplateByUuid(UserVo actorVo, String uuid)
+			throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+
+		return new UploadRequestTemplateVo(
+				uploadRequestService.findRequestTemplateByUuid(actor, uuid));
 	}
 }

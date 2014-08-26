@@ -33,7 +33,12 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import com.google.common.collect.Lists;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
@@ -60,11 +65,7 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.Lists;
 
 public class UploadRequestServiceImpl implements UploadRequestService {
 

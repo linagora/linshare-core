@@ -42,7 +42,6 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
-import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
@@ -50,7 +49,6 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
@@ -61,7 +59,6 @@ import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UploadPropositionService;
 import org.linagora.linshare.core.service.UploadRequestService;
@@ -85,8 +82,6 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 
 	private final UserService userService;
 
-	private final AbstractDomainService abstractDomainService;
-
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	public UploadPropositionServiceImpl(
@@ -95,7 +90,6 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			final UploadRequestService uploadRequestService,
 			final UploadRequestUrlService uploadRequestUrlService,
 			final UserService userService,
-			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService) {
 		super();
 		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
@@ -103,7 +97,6 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		this.uploadRequestService = uploadRequestService;
 		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.userService = userService;
-		this.abstractDomainService = abstractDomainService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 

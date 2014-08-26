@@ -39,12 +39,14 @@ import java.util.List;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.linagora.linshare.core.domain.vo.UploadRequestEntryVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestHistoryVo;
+import org.linagora.linshare.core.domain.vo.UploadRequestTemplateVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestFacade {
-	List<UploadRequestVo> findAllVisibles(UserVo actorVo) throws BusinessException;
+	List<UploadRequestVo> findAllVisibles(UserVo actorVo)
+			throws BusinessException;
 
 	List<UploadRequestVo> findAllNotDeleted(UserVo actorVo)
 			throws BusinessException;
@@ -70,7 +72,8 @@ public interface UploadRequestFacade {
 	List<UploadRequestEntryVo> findAllEntries(UserVo actorVo,
 			UploadRequestVo req) throws BusinessException;
 
-	List<UploadRequestHistoryVo> findHistory(UserVo actorVo, UploadRequestVo req) throws BusinessException;
+	List<UploadRequestHistoryVo> findHistory(UserVo actorVo, UploadRequestVo req)
+			throws BusinessException;
 
 	InputStream getFileStream(UserVo actorVo, UploadRequestEntryVo entry)
 			throws BusinessException;
@@ -80,4 +83,10 @@ public interface UploadRequestFacade {
 
 	BeanModel<UploadRequestVo> getEditModel(UserVo actorVo,
 			BeanModel<UploadRequestVo> beanModel) throws BusinessException;
+
+	List<UploadRequestTemplateVo> findAllTemplates(UserVo actorVo)
+			throws BusinessException;
+
+	UploadRequestTemplateVo findTemplateByUuid(UserVo actorVo, String uuid)
+			throws BusinessException;
 }

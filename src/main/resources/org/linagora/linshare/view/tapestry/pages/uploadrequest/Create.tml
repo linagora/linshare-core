@@ -1,7 +1,7 @@
 <t:MyBorderLayout t:title="message:pages.uploadrequest.index.title" t:identifier="uploadrequest" t:currentHighlight="uploadrequest"
-		  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
-		  xmlns:p="tapestry:parameter">
-  
+                  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+                  xmlns:p="tapestry:parameter">
+
   <!-- Main content -->
   <div id="content">
     <h1 title="${message:pages.uploadrequest.create.title}"><span class="truncate">${message:pages.uploadrequest.create.title}</span></h1>
@@ -17,12 +17,17 @@
 
     <!-- Page content -->
     <div id="pageContent">
-      <t:bsBeanEditForm t:object="current" submitlabel="message:global.button.validate" model="model">
-	<p:body>
-	  <t:label for="body" />
-	  <t:textarea t:id="body" value="current.body" />
-	</p:body>
-      </t:bsBeanEditForm>
+      <t:zone t:id="reload" update="show">
+        <t:form t:id="template">
+            <t:select t:id="selected" t:zone="reload" t:model="selectModel"/>
+        </t:form>
+        <t:bsBeanEditForm t:object="current" submitlabel="message:global.button.validate" model="model">
+          <p:body>
+            <t:label for="body" />
+            <t:textarea t:id="body" value="current.body" />
+          </p:body>
+        </t:bsBeanEditForm>
+      </t:zone>
     </div>
   </div><!-- id="content" -->
 

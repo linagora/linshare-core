@@ -33,14 +33,20 @@
  */
 package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
+import java.util.List;
+
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.linagora.linshare.core.domain.vo.UploadRequestTemplateVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -67,15 +73,21 @@ public class Create {
 	@Property
 	private UploadRequestVo current;
 
+	@Property
+	private UploadRequestTemplateVo selected;
+
+	@InjectComponent
+	private Zone reload;
+
+	@InjectPage
+	private Content content;
+
 	/*
 	 * Injected beans
 	 */
 
 	@Inject
 	private Logger logger;
-
-	@InjectPage
-	private Content content;
 
 	@Inject
 	private BeanModelSource beanModelSource;
@@ -121,8 +133,42 @@ public class Create {
 		return Index.class;
 	}
 
+	@Log
+	public Object onValueChanged() {
+		current = selected.toValue();
+		return reload;
+	}
+
+	/*
+	 * Models + ValueEncoder
+	 */
+
 	public BeanModel<UploadRequestVo> getModel() {
 		return current.getModel();
+	}
+
+	public List<UploadRequestTemplateVo> getSelectModel()
+			throws BusinessException {
+		return uploadRequestFacade.findAllTemplates(userVo);
+	}
+
+	public ValueEncoder<UploadRequestTemplateVo> getUploadRequestModelEncoder() {
+		return new ValueEncoder<UploadRequestTemplateVo>() {
+			@Override
+			public String toClient(UploadRequestTemplateVo value) {
+				return value.getUuid();
+			}
+ 
+			@Override
+			public UploadRequestTemplateVo toValue(String id) {
+				try {
+					return uploadRequestFacade.findTemplateByUuid(userVo, id);
+				} catch (BusinessException e) {
+					logger.error("Could not find UploadRequestTemplate: " + id);
+					return null;
+				}
+			}
+		};
 	}
 
 	/*
