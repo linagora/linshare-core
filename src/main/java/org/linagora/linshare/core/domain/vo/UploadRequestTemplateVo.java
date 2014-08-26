@@ -1,5 +1,7 @@
 package org.linagora.linshare.core.domain.vo;
 
+import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
+
 public class UploadRequestTemplateVo {
 
 	private String uuid;
@@ -8,6 +10,11 @@ public class UploadRequestTemplateVo {
 
 	public UploadRequestTemplateVo() {
 		super();
+	}
+
+	public UploadRequestTemplateVo(UploadRequestTemplate t) {
+		uuid = t.getUuid();
+		name = t.getName();
 	}
 
 	public String getUuid() {

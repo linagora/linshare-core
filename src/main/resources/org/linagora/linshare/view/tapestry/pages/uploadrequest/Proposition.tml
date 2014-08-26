@@ -1,20 +1,20 @@
 <t:MyBorderLayout t:title="message:pages.uploadrequest.index.title" t:identifier="uploadrequest" t:currentHighlight="uploadrequest"
-		  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
-		  xmlns:p="tapestry:parameter">
-  
+                  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+                  xmlns:p="tapestry:parameter">
+
   <!-- Main content -->
   <div id="content">
     <h1 title="${message:pages.uploadrequest.index.title}"><span class="truncate">${message:pages.uploadrequest.index.title}</span></h1>
 
     <t:messagePanel />
     <t:businessMessagesDisplayer />
-    
+
     <!-- Action bar -->
     <div id="actionBar">
       <h4>Actions</h4>
       <ul>
         <t:pageLink page="uploadrequest/index" class="button" title="${message:pages.uploadrequest.back.button}">
-	  <span>${message:pages.uploadrequest.back.button}</span>
+          <span>${message:pages.uploadrequest.back.button}</span>
         </t:pageLink>
       </ul>
     </div><!-- id="actionBar" -->
@@ -22,29 +22,26 @@
     <div id="pageContent">
       <h2> ${message:pages.uploadrequest.index.grid}</h2>
       <t:grid source="propositions" row="current" rowsPerPage="10"
-	      include="subject, body, modificationDate, status"
-	      add="action"
-	      t:mixins="defaultSort" sort="modificationDate" descending="true">
+              include="subject, body, creationDate, status"
+              add="action"
+              t:mixins="defaultSort" sort="creationDate" descending="true">
         <p:subjectCell>
-	  <span class="truncate-small" title="${current.subject}">${current.subject}</span>
+          <span class="truncate-small" title="${current.subject}">${current.subject}</span>
         </p:subjectCell>
         <p:bodyCell>
-	  <span class="truncate" title="${current.body}">${current.body}</span>
+          <span class="truncate" title="${current.body}">${current.body}</span>
         </p:bodyCell>
-	<p:creationDateCell>
-	  <t:output format="${message:global.pattern.timestamp}" value="current.creationDate" />
-	</p:creationDateCell>
-	<p:modificationDateCell>
-	  <t:output format="${message:global.pattern.timestamp}" value="current.modificationDate" />
-	</p:modificationDateCell>
-	<p:actionCell>
-	  <t:actionLink t:id="accept" context="current.uuid" class="button" title="${message:pages.uploadrequest.accept.button}">
-	    <span><img src="${asset:context:images/icons/validate-mini.png}" alt=""/>${message:pages.uploadrequest.accept.button}</span>
-	  </t:actionLink>
-	  <t:actionLink t:id="reject" context="current.uuid" class="button" title="${message:pages.uploadrequest.reject.button}">
-	    <span><img src="${asset:context:images/icons/absent-small.png}" alt=""/>${message:pages.uploadrequest.reject.button}</span>
-	  </t:actionLink>
-	</p:actionCell>
+        <p:creationDateCell>
+          <t:output format="${message:global.pattern.timestamp}" value="current.creationDate" />
+        </p:creationDateCell>
+        <p:actionCell>
+          <t:actionLink t:id="accept" context="current.uuid" class="button" title="${message:pages.uploadrequest.accept.button}">
+            <span><img src="${asset:context:images/icons/validate-mini.png}" alt=""/>${message:pages.uploadrequest.accept.button}</span>
+          </t:actionLink>
+          <t:actionLink t:id="reject" context="current.uuid" class="button" title="${message:pages.uploadrequest.reject.button}">
+            <span><img src="${asset:context:images/icons/absent-small.png}" alt=""/>${message:pages.uploadrequest.reject.button}</span>
+          </t:actionLink>
+        </p:actionCell>
         <p:empty>
           ${message:pages.uploadrequest.index.empty}
         </p:empty>

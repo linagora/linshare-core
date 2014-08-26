@@ -35,7 +35,6 @@ package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
 import java.util.List;
 
-import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
@@ -47,7 +46,6 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
-import org.apache.tapestry5.services.SelectModelFactory;
 import org.linagora.linshare.core.domain.vo.UploadRequestTemplateVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -79,7 +77,7 @@ public class Create {
 	private UploadRequestTemplateVo selected;
 
 	@InjectComponent
-	private Zone reloadZone;
+	private Zone reload;
 
 	@InjectPage
 	private Content content;
@@ -138,7 +136,7 @@ public class Create {
 	@Log
 	public Object onValueChanged() {
 		current = selected.toValue();
-		return reloadZone;
+		return reload;
 	}
 
 	/*
@@ -163,7 +161,12 @@ public class Create {
  
 			@Override
 			public UploadRequestTemplateVo toValue(String id) {
-				return uploadRequestFacade.findTemplateByUuid(id);
+				try {
+					return uploadRequestFacade.findTemplateByUuid(userVo, id);
+				} catch (BusinessException e) {
+					logger.error("Could not find UploadRequestTemplate: " + id);
+					return null;
+				}
 			}
 		};
 	}

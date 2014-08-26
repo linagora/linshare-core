@@ -1,7 +1,7 @@
 <t:MyBorderLayout t:title="message:pages.uploadrequest.index.title" t:identifier="uploadrequest" t:currentHighlight="uploadrequest"
-		  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
-		  xmlns:p="tapestry:parameter">
-  
+                  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+                  xmlns:p="tapestry:parameter">
+
   <!-- Main content -->
   <div id="content">
     <h1 title="${selected.subject}"><span class="truncate">${selected.subject}</span></h1>
@@ -17,33 +17,33 @@
       <ul>
         <li>
           <t:actionLink t:id="back" class="button" title="${message:pages.uploadrequest.back.button}">
-	    <span>${message:pages.uploadrequest.back.button}</span>
+            <span>${message:pages.uploadrequest.back.button}</span>
           </t:actionLink>
         </li>
         <li>
           <t:actionLink t:id="history" class="button" title="${message:pages.uploadrequest.history.button}">
-	    <span><img src="${asset:context:images/icons/icon-list-mini.png}" alt=""/> ${message:pages.uploadrequest.history.button}</span>
+            <span><img src="${asset:context:images/icons/icon-list-mini.png}" alt=""/> ${message:pages.uploadrequest.history.button}</span>
           </t:actionLink>
         </li>
-	<t:if test="selected.closed">
+        <t:if test="selected.closed">
           <li>
             <t:actionLink t:id="delete" class="button" title="${message:pages.uploadrequest.archive.button}">
-	      <span><img src="${asset:context:images/icons/delete-small.png}" alt="" /> ${message:pages.uploadrequest.archive.button}</span>
+              <span><img src="${asset:context:images/icons/delete-small.png}" alt="" /> ${message:pages.uploadrequest.archive.button}</span>
             </t:actionLink>
           </li>
-	  <p:else>
+          <p:else>
             <li>
               <t:actionLink t:id="close" class="button" title="${message:pages.uploadrequest.close.button}">
-		<span><img src="${asset:context:images/icons/icon-refresh.png}" alt="" /> ${message:pages.uploadrequest.close.button}</span>
+                <span><img src="${asset:context:images/icons/icon-refresh.png}" alt="" /> ${message:pages.uploadrequest.close.button}</span>
               </t:actionLink>
             </li>
             <li>
               <t:actionLink t:id="edit" class="button" title="${message:pages.uploadrequest.edit.button}">
-		<span><img src="${asset:context:images/icons/edit-button.png}" alt=""/> ${message:pages.uploadrequest.edit.button}</span>
+                <span><img src="${asset:context:images/icons/edit-button.png}" alt=""/> ${message:pages.uploadrequest.edit.button}</span>
               </t:actionLink>
             </li>
-	  </p:else>
-	</t:if>
+          </p:else>
+        </t:if>
       </ul>
     </div><!-- id="actionBar" -->
 
@@ -51,23 +51,23 @@
     <div id="pageContent">
       <h2> ${message:pages.uploadrequest.detail.title}</h2>
       <div style="float: left;">
-	<t:bsbeandisplay object="selected" include="body,status,size,canDelete,canClose,locale,secured"/>
+        <t:bsbeandisplay object="selected" include="body,status,size,canDelete,canClose,locale,secured"/>
       </div>
       <div style="float: left;">
-	<t:bsbeandisplay object="selected" include="maxFileCount,maxDepositSize,maxFileSize,activationDate,creationDate,modificationDate,expiryDate">
-	  <p:creationDate>
-	    <t:output format="${message:global.pattern.timestamp}" value="selected.creationDate" />
-	  </p:creationDate>
-	  <p:modificationDate>
-	    <t:output format="${message:global.pattern.timestamp}" value="selected.modificationDate" />
-	  </p:modificationDate>
-	  <p:maxDepositSize>
-	    ${getFileSize(selected.maxDepositSize)}
-	  </p:maxDepositSize>
-	  <p:maxFileSize>
-	    ${getFileSize(selected.maxFileSize)}
-	  </p:maxFileSize>
-	</t:bsbeandisplay>
+        <t:bsbeandisplay object="selected" include="maxFileCount,maxDepositSize,maxFileSize,activationDate,creationDate,modificationDate,expiryDate">
+          <p:creationDate>
+            <t:output format="${message:global.pattern.timestamp}" value="selected.creationDate" />
+          </p:creationDate>
+          <p:modificationDate>
+            <t:output format="${message:global.pattern.timestamp}" value="selected.modificationDate" />
+          </p:modificationDate>
+          <p:maxDepositSize>
+            ${getFileSize(selected.maxDepositSize)}
+          </p:maxDepositSize>
+          <p:maxFileSize>
+            ${getFileSize(selected.maxFileSize)}
+          </p:maxFileSize>
+        </t:bsbeandisplay>
       </div>
       <div style="clear: both;"></div>
     </div>
