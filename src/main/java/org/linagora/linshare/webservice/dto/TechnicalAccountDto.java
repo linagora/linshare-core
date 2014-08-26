@@ -46,6 +46,12 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class TechnicalAccountDto extends AccountDto {
 
+	@ApiModelProperty(value = "Password, only set at creation")
+	private String password = "";
+
+	@ApiModelProperty(value = "Enable")
+	private boolean enable;
+
 	@ApiModelProperty(value = "Name")
 	private String name;
 
@@ -67,6 +73,7 @@ public class TechnicalAccountDto extends AccountDto {
 		this.name = account.getLastName();
 		this.mail = account.getMail();
 		this.role = account.getRole();
+		this.enable = account.isEnable();
 		TechnicalAccountPermission permission = account.getPermission();
 		if (permission != null) {
 			for (AccountPermission p : permission.getAccountPermissions()) {
@@ -105,5 +112,21 @@ public class TechnicalAccountDto extends AccountDto {
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	public boolean isEnable() {
+		return enable;
+	}
+
+	public void setEnable(boolean enable) {
+		this.enable = enable;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }
