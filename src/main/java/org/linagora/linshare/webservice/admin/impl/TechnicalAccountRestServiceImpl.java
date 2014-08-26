@@ -49,6 +49,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.TechnicalAccountFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.TechnicalAccountRestService;
+import org.linagora.linshare.webservice.dto.PasswordDto;
 import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
 
 import com.wordnik.swagger.annotations.Api;
@@ -107,6 +108,15 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 	public TechnicalAccountDto create(TechnicalAccountDto account)
 			throws BusinessException {
 		return technicalAccountFacade.create(account);
+	}
+
+	@Path("/{uuid}/change_password")
+	@POST
+	@ApiOperation(value = "Change the password of a technical account.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Override
+	public void changePassword(@PathParam(value = "uuid") String uuid, PasswordDto password) throws BusinessException {
+		technicalAccountFacade.changePassword(uuid, password);
 	}
 
 	@Path("/")

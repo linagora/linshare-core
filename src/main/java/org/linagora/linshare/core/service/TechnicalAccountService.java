@@ -53,4 +53,6 @@ public interface TechnicalAccountService {
 
 	TechnicalAccount update(Account actor, TechnicalAccount accountDto)
 			throws BusinessException;
+
+	void changePassword(String uuid, String oldPwd, String newPwd) throws BusinessException;
 }

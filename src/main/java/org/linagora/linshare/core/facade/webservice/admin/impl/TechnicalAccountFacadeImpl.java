@@ -44,9 +44,11 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.TechnicalAccountFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
+import org.linagora.linshare.webservice.dto.PasswordDto;
 import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
 
 import com.google.common.collect.Sets;
+import sun.security.util.Password;
 
 public class TechnicalAccountFacadeImpl extends AdminGenericFacadeImpl
 		implements TechnicalAccountFacade {
@@ -115,6 +117,14 @@ public class TechnicalAccountFacadeImpl extends AdminGenericFacadeImpl
 		TechnicalAccount account = technicalAccountService.update(actor,
 				new TechnicalAccount(dto));
 		return new TechnicalAccountDto(account);
+	}
+
+	@Override
+	public void changePassword(String uuid, PasswordDto password)
+			throws BusinessException {
+		checkAuth();
+		Validate.notEmpty(uuid, "uuid must be set.");
+		technicalAccountService.changePassword(uuid, password.getOldPwd(), password.getNewPwd());
 	}
 
 	/**

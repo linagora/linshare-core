@@ -44,9 +44,12 @@ import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.exception.TechnicalErrorCode;
+import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.TechnicalAccountPermissionService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
+import org.linagora.linshare.core.utils.HashUtils;
 
 public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 
@@ -114,5 +117,24 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 		accountPermission.setAccountPermissions(accountDto.getPermission().getAccountPermissions());
 		technicalAccountPermissionService.update(actor, accountPermission);
 		return technicalAccountBusinessService.update(technicalAccount);
+	}
+
+	@Override
+	public void changePassword(String uuid, String oldPassword,
+							   String newPassword) throws BusinessException {
+		TechnicalAccount account = technicalAccountBusinessService.find(uuid);
+		if (account == null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
+					"Could not find a user with the uuid " + uuid);
+		}
+
+		if (!account.getPassword().equals(
+				HashUtils.hashSha1withBase64(oldPassword.getBytes()))) {
+			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_ERROR,
+					"The supplied password is invalid");
+		}
+
+		account.setPassword(HashUtils.hashSha1withBase64(newPassword.getBytes()));
+		technicalAccountBusinessService.update(account);
 	}
 }

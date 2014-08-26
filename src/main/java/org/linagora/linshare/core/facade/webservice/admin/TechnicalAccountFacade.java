@@ -37,6 +37,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.delegation.DelegationGenericFacade;
+import org.linagora.linshare.webservice.dto.PasswordDto;
 import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
 
 public interface TechnicalAccountFacade extends DelegationGenericFacade {
@@ -54,5 +55,6 @@ public interface TechnicalAccountFacade extends DelegationGenericFacade {
 	void delete(String uuid) throws BusinessException;
 	
 	void delete(TechnicalAccountDto dto) throws BusinessException;
-	
+
+	void changePassword(String uuid, PasswordDto password) throws BusinessException;
 }
