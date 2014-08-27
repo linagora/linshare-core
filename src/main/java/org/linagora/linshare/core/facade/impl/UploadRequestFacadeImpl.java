@@ -142,20 +142,16 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	}
 
 	@Override
-	public UploadRequestVo createRequest(UserVo actorVo, UploadRequestVo req)
+	public UploadRequestVo createRequest(UserVo actorVo, UploadRequestVo reqVo)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		UploadRequestGroup grp = new UploadRequestGroup(req);
-		UploadRequest e = req.toEntity();
-
-		grp = uploadRequestService.createRequestGroup(actor, grp);
-
-		e.setActivationDate(new Date()); // FIXME handle activationDate
-		e.setUploadRequestGroup(grp);
-
-		// TODO manage multiple contacts and group functionality
-		Contact contact = new Contact(req.getRecipient());
-		return new UploadRequestVo(uploadRequestService.createRequest(actor, e, contact));
+		List<Contact> contacts = Lists.newArrayList();
+		for (String contact : reqVo.getRecipient().split(",")) {
+			contacts.add(new Contact(contact));
+		}
+		UploadRequest req = reqVo.toEntity();
+		UploadRequest request = uploadRequestService.createRequest(actor, actor, req, contacts, reqVo.getSubject(), reqVo.getBody());
+		return new UploadRequestVo(request);
 	}
 
 	@Override

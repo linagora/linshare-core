@@ -12,6 +12,8 @@ public interface UploadPropositionFilterService {
 
 	List<UploadPropositionFilter> findAll(Account actor) throws BusinessException;
 
+	List<UploadPropositionFilter> findAllEnabledFilters(Account actor) throws BusinessException;
+
 	UploadPropositionFilter create(Account actor, UploadPropositionFilter dto) throws BusinessException;
 
 	UploadPropositionFilter update(Account actor, UploadPropositionFilter dto) throws BusinessException;

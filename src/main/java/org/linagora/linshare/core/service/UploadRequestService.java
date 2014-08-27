@@ -54,9 +54,9 @@ public interface UploadRequestService {
 
 	UploadRequest findRequestByUuid(Account actor, String uuid) throws BusinessException;
 
-	UploadRequest createRequest(Account actor, UploadRequest req, Contact contact) throws BusinessException;
+	UploadRequest createRequest(Account actor, User owner, UploadRequest req, Contact contact, String subject, String body) throws BusinessException;
 
-	UploadRequest createRequest(Account actor, UploadRequest req, List<Contact> contacts)
+	UploadRequest createRequest(Account actor, User owner, UploadRequest req, List<Contact> contacts, String subject, String body)
 			throws BusinessException;
 
 	UploadRequest updateRequest(Account actor, UploadRequest req)
@@ -67,9 +67,6 @@ public interface UploadRequestService {
 	void deleteRequest(Account actor, UploadRequest req) throws BusinessException;
 
 	UploadRequestGroup findRequestGroupByUuid(Account actor, String uuid);
-
-	UploadRequestGroup createRequestGroup(Account actor, UploadRequestGroup group)
-			throws BusinessException;
 
 	UploadRequestGroup updateRequestGroup(Account actor, UploadRequestGroup group)
 			throws BusinessException;

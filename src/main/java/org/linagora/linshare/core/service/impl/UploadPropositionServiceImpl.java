@@ -34,12 +34,10 @@
 
 package org.linagora.linshare.core.service.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
@@ -48,15 +46,9 @@ import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
-import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
-import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
-import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
-import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -193,73 +185,9 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 
 	public void acceptHook(User owner, UploadProposition created)
 			throws BusinessException {
-		AbstractDomain domain = owner.getDomain();
-		UploadRequest e = new UploadRequest();
-		UploadRequestGroup grp = new UploadRequestGroup(created);
-
-		grp = uploadRequestService.createRequestGroup(owner, grp);
-		e.setOwner(owner);
-		e.setAbstractDomain(owner.getDomain());
-		e.setUploadRequestGroup(grp);
-		e.setUploadPropositionRequestUuid(created.getUuid());
-		e.setActivationDate(new Date());
-		e.setNotificationDate(new Date());
-		e.setCanDelete(true);
-		e.setCanClose(true);
-		e.setCanEditExpiryDate(true);
-		e.setSecured(false);
-
-		TimeUnitValueFunctionality expiryDateFunc = functionalityReadOnlyService
-				.getUploadRequestExpiryTimeFunctionality(domain);
-
-		if (expiryDateFunc.getActivationPolicy().getStatus()) {
-			logger.debug("expiryDateFunc is activated");
-			@SuppressWarnings("deprecation")
-			Date expiryDate = DateUtils.add(new Date(),
-					expiryDateFunc.toCalendarUnitValue(),
-					expiryDateFunc.getValue());
-			e.setExpiryDate(expiryDate);
-		}
-		e.setNotificationDate(e.getExpiryDate());
-
-		SizeUnitValueFunctionality maxDepositSizeFunc = functionalityReadOnlyService
-				.getUploadRequestMaxDepositSizeFunctionality(domain);
-
-		if (maxDepositSizeFunc.getActivationPolicy().getStatus()) {
-			logger.debug("maxDepositSizeFunc is activated");
-			long maxDepositSize = ((FileSizeUnitClass) maxDepositSizeFunc
-					.getUnit()).getPlainSize(maxDepositSizeFunc.getValue());
-			e.setMaxDepositSize(maxDepositSize);
-		}
-
-		IntegerValueFunctionality maxFileCountFunc = functionalityReadOnlyService
-				.getUploadRequestMaxFileCountFunctionality(domain);
-
-		if (maxFileCountFunc.getActivationPolicy().getStatus()) {
-			logger.debug("maxFileCountFunc is activated");
-			int maxFileCount = maxFileCountFunc.getValue();
-			e.setMaxFileCount(maxFileCount);
-		}
-
-		SizeUnitValueFunctionality maxFileSizeFunc = functionalityReadOnlyService
-				.getUploadRequestMaxFileSizeFunctionality(domain);
-
-		if (maxFileSizeFunc.getActivationPolicy().getStatus()) {
-			logger.debug("maxFileSizeFunc is activated");
-			long maxFileSize = ((FileSizeUnitClass) maxFileSizeFunc.getUnit())
-					.getPlainSize(maxFileSizeFunc.getValue());
-			e.setMaxFileSize(maxFileSize);
-		}
-
-		StringValueFunctionality notificationLangFunc = functionalityReadOnlyService
-				.getUploadRequestNotificationLanguageFunctionality(domain);
-
-		if (notificationLangFunc.getActivationPolicy().getStatus()) {
-			logger.debug("notificationLangFunc is activated");
-			e.setLocale(notificationLangFunc.getValue());
-		}
-
+		UploadRequest req = new UploadRequest();
+		req.setUploadPropositionRequestUuid(created.getUuid());
 		Contact contact = new Contact(created.getRecipientMail());
-		uploadRequestService.createRequest(owner, e, contact);
+		uploadRequestService.createRequest(owner, owner, req, contact, created.getSubject(), created.getBody());
 	}
 }

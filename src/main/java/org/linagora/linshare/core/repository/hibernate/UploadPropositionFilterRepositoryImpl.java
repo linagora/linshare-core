@@ -52,4 +52,9 @@ public class UploadPropositionFilterRepositoryImpl extends
 		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
+
+	@Override
+	public List<UploadPropositionFilter> findAllEnabledFilters() {
+		return findByCriteria(Restrictions.eq("enable", true));
+	}
 }

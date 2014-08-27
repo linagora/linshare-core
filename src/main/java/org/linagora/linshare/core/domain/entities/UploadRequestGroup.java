@@ -36,8 +36,6 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.vo.UploadRequestVo;
-
 import com.google.common.collect.Sets;
 
 public class UploadRequestGroup {
@@ -60,10 +58,10 @@ public class UploadRequestGroup {
 		super();
 	}
 
-	public UploadRequestGroup(UploadRequestVo req) {
+	public UploadRequestGroup(String subject, String body) {
 		super();
-		subject = req.getSubject();
-		body = req.getBody();
+		this.subject = subject;
+		this.body = body;
 	}
 
 	public UploadRequestGroup(UploadProposition proposition) {

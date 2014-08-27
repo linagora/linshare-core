@@ -46,6 +46,11 @@ public class UploadPropositionFilterBusinessServiceImpl implements
 	}
 
 	@Override
+	public List<UploadPropositionFilter> findAllEnabledFilters() {
+		return repository.findAllEnabledFilters();
+	}
+
+	@Override
 	public UploadPropositionFilter create(UploadPropositionFilter dto)
 			throws BusinessException {
 		logger.debug(dto.toString());

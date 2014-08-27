@@ -264,6 +264,7 @@
 		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
 	<bean name="guestService" class="org.linagora.linshare.core.service.impl.GuestServiceImpl">

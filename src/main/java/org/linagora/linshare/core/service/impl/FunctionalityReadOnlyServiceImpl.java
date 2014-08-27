@@ -296,6 +296,12 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public Functionality getUploadRequestCanCloseFunctionality(
+			AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__CAN_CLOSE);
+	}
+
+	@Override
 	public Functionality getUploadRequestProlongationFunctionality(
 			AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__PROLONGATION);

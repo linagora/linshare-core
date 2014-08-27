@@ -51,6 +51,16 @@ public class UploadPropositionFilterServiceImpl implements UploadPropositionFilt
 	}
 
 	@Override
+	public List<UploadPropositionFilter> findAllEnabledFilters(Account actor) throws BusinessException {
+		preChecks(actor);
+		if (actor.hasSuperAdminRole() || actor.hasUploadPropositionRole()) {
+			return businessService.findAllEnabledFilters();
+		} else {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get these filters.");
+		}
+	}
+
+	@Override
 	public UploadPropositionFilter create(Account actor, UploadPropositionFilter dto) throws BusinessException {
 		preChecks(actor);
 		Validate.notNull(dto, "filter is required");

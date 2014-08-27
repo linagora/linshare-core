@@ -1,9 +1,9 @@
 /*
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
- *
+ * 
  * Copyright (C) 2014 LINAGORA
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,12 +19,12 @@
  * refrain from infringing Linagora intellectual property rights over its
  * trademarks and commercial brands. Other Additional Terms apply, see
  * <http://www.linagora.com/licenses/> for more details.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
@@ -50,24 +50,36 @@ import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 public class UploadRequestServiceImpl implements UploadRequestService {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(UploadRequestServiceImpl.class);
 
 	private final AccountRepository<Account> accountRepository;
 	private final UploadRequestBusinessService uploadRequestBusinessService;
@@ -78,6 +90,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
 	private final MailBuildingService mailBuildingService;
 	private final NotifierService notifierService;
+	private final FunctionalityReadOnlyService functionalityService;
 
 	public UploadRequestServiceImpl(
 			final AccountRepository<Account> accountRepository,
@@ -88,7 +101,8 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 			final UploadRequestUrlService uploadRequestUrlService,
 			final DomainPermissionBusinessService domainPermissionBusinessService,
 			final MailBuildingService mailBuildingService,
-			final NotifierService notifierService) {
+			final NotifierService notifierService,
+			final FunctionalityReadOnlyService functionalityReadOnlyService) {
 		this.accountRepository = accountRepository;
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
 		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
@@ -98,6 +112,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
+		this.functionalityService = functionalityReadOnlyService;
 	}
 
 	@Override
@@ -119,33 +134,325 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequest createRequest(Account actor, UploadRequest req, Contact contact) throws BusinessException {
-		return createRequest(actor, req, Lists.newArrayList(contact));
-	}
-	@Override
-	public UploadRequest createRequest(Account actor, UploadRequest req, List<Contact> contacts)
+	public UploadRequest createRequest(Account actor, User owner,
+			UploadRequest req, Contact contact, String subject, String body)
 			throws BusinessException {
+		return createRequest(actor, owner, req, Lists.newArrayList(contact),
+				subject, body);
+	}
+
+	@Override
+	public UploadRequest createRequest(Account actor, User owner,
+			UploadRequest req, List<Contact> contacts, String subject,
+			String body) throws BusinessException {
+		UploadRequestGroup group = uploadRequestGroupBusinessService
+				.create(new UploadRequestGroup(subject, body));
+		AbstractDomain domain = owner.getDomain();
+		req.setOwner(owner);
 		req.setStatus(UploadRequestStatus.STATUS_CREATED);
+		req.setAbstractDomain(domain);
+		req.setUploadRequestGroup(group);
+
+		checkActivationDate(domain, req);
+		checkExpiryAndNoticationDate(domain, req);
+		checkMaxDepositSize(domain, req);
+		checkMaxFileCount(domain, req);
+		checkMaxFileSize(domain, req);
+		checkNotificationLanguage(domain, req);
+		checkCanDelete(domain, req);
+		checkCanClose(domain, req);
+		checkSecuredUrl(domain, req);
+
+		Functionality func = functionalityService.getUploadRequestProlongationFunctionality(domain);
+		req.setCanEditExpiryDate(func.getActivationPolicy().getStatus());
+
 		UploadRequestHistory hist = new UploadRequestHistory(req,
 				UploadRequestHistoryEventType.EVENT_CREATED);
 		req.getUploadRequestHistory().add(hist);
-		req.setOwner(actor);
-		req.setAbstractDomain(actor.getDomain());
 		req = uploadRequestBusinessService.create(req);
 		List<MailContainerWithRecipient> mails = Lists.newArrayList();
-		for (Contact c: contacts) {
-			UploadRequestUrl requestUrl = uploadRequestUrlService.create(req, c);
-			mails.add(mailBuildingService.buildCreateUploadRequest((User) req.getOwner(), requestUrl));
+		for (Contact c : contacts) {
+			UploadRequestUrl requestUrl = uploadRequestUrlService
+					.create(req, c);
+			mails.add(mailBuildingService.buildCreateUploadRequest(
+					(User) req.getOwner(), requestUrl));
 		}
 		notifierService.sendNotification(mails);
 		return req;
 	}
 
+	private void checkSecuredUrl(AbstractDomain domain, UploadRequest req) {
+		Functionality func = functionalityService
+				.getUploadRequestSecureUrlFunctionality(domain);
+		boolean secure = checkActivation(func, req.isSecured());
+		req.setSecured(secure);
+	}
+
+	private void checkCanDelete(AbstractDomain domain, UploadRequest req) {
+		Functionality func = functionalityService
+				.getUploadRequestDepositOnlyFunctionality(domain);
+		boolean canDelete = checkActivation(func, req.isCanDelete());
+		req.setCanDelete(canDelete);
+	}
+
+	private void checkCanClose(AbstractDomain domain, UploadRequest req) {
+		Functionality func = functionalityService
+				.getUploadRequestCanCloseFunctionality(domain);
+		boolean canClose = checkActivation(func, req.isCanClose());
+		req.setCanClose(canClose);
+	}
+
+	private void checkActivationDate(AbstractDomain domain, UploadRequest req) {
+		TimeUnitValueFunctionality func = functionalityService
+				.getUploadRequestActivationTimeFunctionality(domain);
+		Date checkDate = checkDate(func, req.getActivationDate());
+		if (checkDate == null) {
+			checkDate = new Date();
+		}
+		req.setActivationDate(checkDate);
+	}
+
+	private void checkExpiryAndNoticationDate(AbstractDomain domain,
+			UploadRequest req) {
+		TimeUnitValueFunctionality func = functionalityService
+				.getUploadRequestExpiryTimeFunctionality(domain);
+		Date checkDate = checkDate(func, req.getExpiryDate());
+		req.setExpiryDate(checkDate);
+		req.setNotificationDate(checkDate);
+	}
+
+	private void checkNotificationLanguage(AbstractDomain domain,
+			UploadRequest req) {
+		StringValueFunctionality func = functionalityService
+				.getUploadRequestNotificationLanguageFunctionality(domain);
+		String checkString = checkString(func, req.getLocale());
+		req.setLocale(checkString);
+	}
+
+	private void checkMaxFileSize(AbstractDomain domain, UploadRequest req) {
+		SizeUnitValueFunctionality func = functionalityService
+				.getUploadRequestMaxFileSizeFunctionality(domain);
+		Long checkSize = checkSize(func, req.getMaxFileSize());
+		req.setMaxFileSize(checkSize);
+	}
+
+	private void checkMaxFileCount(AbstractDomain domain, UploadRequest req) {
+		IntegerValueFunctionality func = functionalityService
+				.getUploadRequestMaxFileCountFunctionality(domain);
+		Integer checkInteger = checkInteger(func, req.getMaxFileCount());
+		req.setMaxFileCount(checkInteger);
+	}
+
+	private void checkMaxDepositSize(AbstractDomain domain, UploadRequest req) {
+		SizeUnitValueFunctionality func = functionalityService
+				.getUploadRequestMaxDepositSizeFunctionality(domain);
+		Long checkSize = checkSize(func, req.getMaxDepositSize());
+		req.setMaxDepositSize(checkSize);
+	}
+
+	private Long checkSize(SizeUnitValueFunctionality func, Long currentSize) {
+		if (func.getActivationPolicy().getStatus()) {
+			logger.debug(func.getIdentifier() + " is activated");
+			long maxSize = ((FileSizeUnitClass) func.getUnit())
+					.getPlainSize(func.getValue());
+			if (func.getDelegationPolicy() != null
+					&& func.getDelegationPolicy().getStatus()) {
+				logger.debug(func.getIdentifier() + " has a delegation policy");
+				if (currentSize != null) {
+					if (!(currentSize > 0 && currentSize <= maxSize)) {
+						logger.warn("the current value " + currentSize.toString()
+								+ " is out of range : " + func.toString());
+						return maxSize;
+					}
+					return currentSize;
+				}
+				return maxSize;
+			} else {
+				// there is no delegation, the current value should be the
+				// system value or null
+				logger.debug(func.getIdentifier()
+						+ " does not have a delegation policy");
+				if (currentSize != null) {
+					if (!currentSize.equals(maxSize)) {
+						logger.warn("the current value "
+								+ currentSize.toString()
+								+ " is different than system value " + maxSize);
+					}
+				}
+				return maxSize;
+			}
+		} else {
+			logger.debug(func.getIdentifier() + " is not activated");
+			if (currentSize != null) {
+				logger.warn("the current value " + currentSize.toString()
+						+ " should be null for the functionality "
+						+ func.toString());
+			}
+			return null;
+		}
+	}
+
+	private String checkString(StringValueFunctionality func,
+			String current) {
+		if (func.getActivationPolicy().getStatus()) {
+			logger.debug(func.getIdentifier() + " is activated");
+			String defaultValue = func.getValue();
+			if (func.getDelegationPolicy() != null
+					&& func.getDelegationPolicy().getStatus()) {
+				logger.debug(func.getIdentifier() + " has a delegation policy");
+				if (current != null) {
+					return current;
+				}
+				return defaultValue;
+			} else {
+				// there is no delegation, the current value should be the
+				// system value or null
+				logger.debug(func.getIdentifier()
+						+ " does not have a delegation policy");
+				if (current != null) {
+					if (!current.equals(defaultValue)) {
+						logger.warn("the current value "
+								+ current.toString()
+								+ " is different than system value " + defaultValue);
+					}
+				}
+				return defaultValue;
+			}
+		} else {
+			logger.debug(func.getIdentifier() + " is not activated");
+			if (current != null) {
+				logger.warn("the current value " + current.toString()
+						+ " should be null for the functionality "
+						+ func.toString());
+			}
+			return null;
+		}
+	}
+
+	private Integer checkInteger(IntegerValueFunctionality func,
+			Integer currentSize) {
+		if (func.getActivationPolicy().getStatus()) {
+			logger.debug(func.getIdentifier() + " is activated");
+			int maxSize = func.getValue();
+			if (func.getDelegationPolicy() != null
+					&& func.getDelegationPolicy().getStatus()) {
+				logger.debug(func.getIdentifier() + " has a delegation policy");
+				if (currentSize != null) {
+					if (!(currentSize > 0 && currentSize <= maxSize)) {
+						logger.warn("the current value " + currentSize.toString()
+								+ " is out of range : " + func.toString());
+						return maxSize;
+					}
+					return currentSize;
+				}
+				return maxSize;
+			} else {
+				// there is no delegation, the current value should be the
+				// system value or null
+				logger.debug(func.getIdentifier()
+						+ " does not have a delegation policy");
+				if (currentSize != null) {
+					if (!currentSize.equals(maxSize)) {
+						logger.warn("the current value "
+								+ currentSize.toString()
+								+ " is different than system value " + maxSize);
+					}
+				}
+				return maxSize;
+			}
+		} else {
+			logger.debug(func.getIdentifier() + " is not activated");
+			if (currentSize != null) {
+				logger.warn("the current value " + currentSize.toString()
+						+ " should be null for the functionality "
+						+ func.toString());
+			}
+			return null;
+		}
+	}
+
+	private Date checkDate(TimeUnitValueFunctionality func, Date currentDate) {
+		if (func.getActivationPolicy().getStatus()) {
+			logger.debug(func.getIdentifier() + " is activated");
+			@SuppressWarnings("deprecation")
+			Date maxDate = DateUtils.add(new Date(),
+					func.toCalendarUnitValue(), func.getValue());
+			if (func.getDelegationPolicy() != null
+					&& func.getDelegationPolicy().getStatus()) {
+				logger.debug(func.getIdentifier() + " has a delegation policy");
+				// TODO check range
+				// if (!(currentDate > 0 && currentDate <= maxSize)) {
+				// logger.warn("the current value " + currentDate.toString()
+				// + " is out of range : " + func.toString());
+				// return maxSize;
+				// }
+				return currentDate;
+			} else {
+				// there is no delegation, the current value should be the
+				// system value or null
+				logger.debug(func.getIdentifier()
+						+ " does not have a delegation policy");
+				if (currentDate != null) {
+					if (!currentDate.equals(maxDate)) {
+						logger.warn("the current value "
+								+ currentDate.toString()
+								+ " is different than system value " + maxDate);
+					}
+				}
+				return maxDate;
+			}
+		} else {
+			logger.debug(func.getIdentifier() + " is not activated");
+			if (currentDate != null) {
+				logger.warn("the current value " + currentDate.toString()
+						+ " should be null for the functionality "
+						+ func.toString());
+			}
+			return null;
+		}
+	}
+
+	private boolean checkActivation(Functionality func, Boolean current) {
+		if (func.getActivationPolicy().getStatus()) {
+			logger.debug(func.getIdentifier() + " is activated");
+			Boolean defaultValue = false;
+			if (func.getDelegationPolicy() != null
+					&& func.getDelegationPolicy().getStatus()) {
+				logger.debug(func.getIdentifier() + " has a delegation policy");
+				if (current == null) {
+					current = false;
+				}
+				return current;
+			} else {
+				// there is no delegation, the current value should be the
+				// system value or null
+				logger.debug(func.getIdentifier()
+						+ " does not have a delegation policy");
+				if (current != null) {
+					if (!current.equals(defaultValue)) {
+						logger.warn("the current value " + current.toString()
+								+ " is different than system value "
+								+ defaultValue);
+					}
+				}
+				return defaultValue;
+			}
+		} else {
+			logger.debug(func.getIdentifier() + " is not activated");
+			if (current != null) {
+				logger.warn("the current value " + current.toString()
+						+ " should be null for the functionality "
+						+ func.toString());
+			}
+			return false;
+		}
+	}
+
 	@Override
 	public UploadRequest updateRequest(Account actor, UploadRequest req)
 			throws BusinessException {
-		UploadRequestHistory last = Collections
-				.max(Lists.newArrayList(req.getUploadRequestHistory()));
+		UploadRequestHistory last = Collections.max(Lists.newArrayList(req
+				.getUploadRequestHistory()));
 		UploadRequestHistory hist = new UploadRequestHistory(req,
 				UploadRequestHistoryEventType.fromStatus(req.getStatus()),
 				!last.getStatus().equals(req.getStatus()));
@@ -154,21 +461,25 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequest closeRequestByRecipient(UploadRequestUrl url) throws BusinessException {
+	public UploadRequest closeRequestByRecipient(UploadRequestUrl url)
+			throws BusinessException {
 		Account actor = accountRepository.getUploadRequestSystemAccount();
 		UploadRequest req = url.getUploadRequest();
 		if (req.getStatus().equals(UploadRequestStatus.STATUS_CLOSED)) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-					"Closing an already closed upload request url : " + req.getUuid());
+					"Closing an already closed upload request url : "
+							+ req.getUuid());
 		}
-		if (!domainPermissionBusinessService.isAdminForThisUploadRequest(actor, req)) {
+		if (!domainPermissionBusinessService.isAdminForThisUploadRequest(actor,
+				req)) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"you do not have the right to close this upload request url : "
 							+ req.getUuid());
 		}
 		req.updateStatus(UploadRequestStatus.STATUS_CLOSED);
 		UploadRequest update = updateRequest(actor, req);
-		MailContainerWithRecipient mail = mailBuildingService.buildCloseUploadRequestByRecipient((User) req.getOwner(), url);
+		MailContainerWithRecipient mail = mailBuildingService
+				.buildCloseUploadRequestByRecipient((User) req.getOwner(), url);
 		notifierService.sendNotification(mail);
 		return update;
 	}
@@ -182,20 +493,6 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	@Override
 	public UploadRequestGroup findRequestGroupByUuid(Account actor, String uuid) {
 		return uploadRequestGroupBusinessService.findByUuid(uuid);
-	}
-
-	@Override
-	public UploadRequestGroup createRequestGroup(Account actor,
-			UploadRequestGroup group) throws BusinessException {
-		UploadRequestGroup requestGroup = uploadRequestGroupBusinessService.create(group);
-		List<MailContainerWithRecipient> mails = Lists.newArrayList();
-		for (UploadRequest request : requestGroup.getUploadRequests()) {
-			for (UploadRequestUrl url : request.getUploadRequestURLs()) {
-				mails.add(mailBuildingService.buildCreateUploadRequest((User) request.getOwner(), url));
-			}
-		}
-		notifierService.sendNotification(mails);
-		return requestGroup;
 	}
 
 	@Override
@@ -215,7 +512,8 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 			String uploadRequestUuid) throws BusinessException {
 		UploadRequest request = findRequestByUuid(actor, uploadRequestUuid);
 
-		if (!domainPermissionBusinessService.isAdminForThisUploadRequest(actor, request)) {
+		if (!domainPermissionBusinessService.isAdminForThisUploadRequest(actor,
+				request)) {
 			throw new BusinessException(
 					BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
 					"Upload request history search forbidden");
@@ -225,7 +523,8 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 
 	@Override
 	public Set<UploadRequest> findAll(Account actor,
-			List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException {
+			List<UploadRequestStatus> status, Date afterDate, Date beforeDate)
+			throws BusinessException {
 		if (!actor.hasSuperAdminRole()) {
 			throw new BusinessException(
 					BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
@@ -248,7 +547,8 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequestHistory findRequestHistoryByUuid(Account actor, String uuid) {
+	public UploadRequestHistory findRequestHistoryByUuid(Account actor,
+			String uuid) {
 		return uploadRequestHistoryBusinessService.findByUuid(uuid);
 	}
 
@@ -295,8 +595,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public void deleteTemplate(Account actor, UploadRequestTemplate template)
-			throws BusinessException {
+	public void deleteTemplate(Account actor, UploadRequestTemplate template) throws BusinessException {
 		uploadRequestTemplateBusinessService.delete(template);
 	}
 }

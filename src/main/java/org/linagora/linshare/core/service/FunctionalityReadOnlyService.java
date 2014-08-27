@@ -96,6 +96,7 @@ public interface FunctionalityReadOnlyService {
 	Functionality getUploadRequestSecureUrlFunctionality(AbstractDomain domain);
 	Functionality getUploadRequestProlongationFunctionality(AbstractDomain domain);
 	Functionality getUploadRequestDepositOnlyFunctionality(AbstractDomain domain);
+	Functionality getUploadRequestCanCloseFunctionality(AbstractDomain domain);
 	TimeUnitValueFunctionality getUploadRequestNotificationTimeFunctionality(AbstractDomain domain);
 
 	// UPLOAD PROPOSITION

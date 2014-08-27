@@ -8,8 +8,10 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface UploadPropositionFilterBusinessService {
 
 	UploadPropositionFilter find(String uuid);
-	
+
 	List<UploadPropositionFilter> findAll();
+
+	List<UploadPropositionFilter> findAllEnabledFilters();
 
 	UploadPropositionFilter create(UploadPropositionFilter entity)
 			throws BusinessException;

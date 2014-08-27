@@ -24,7 +24,7 @@
 		<property name="activationDate" column="activation_date"
 			type="timestamp" length="6" not-null="true" lazy="false" />
 		<property name="expiryDate" column="expiry_date" type="timestamp"
-			length="6" not-null="true" lazy="false" />
+			length="6" lazy="false" />
 		<property name="notificationDate" column="notification_date"
 			type="timestamp" length="6" lazy="false" />
 		<property name="maxDepositSize" column="max_deposit_size"
