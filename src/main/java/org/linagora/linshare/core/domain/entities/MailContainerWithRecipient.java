@@ -45,7 +45,7 @@ import org.linagora.linshare.core.domain.constants.Language;
  *
  */
 public class MailContainerWithRecipient extends MailContainer {
-	
+
 	private String recipient;
 	private String replyTo;
 	private String from;
@@ -53,14 +53,14 @@ public class MailContainerWithRecipient extends MailContainer {
 	private StringBuffer bufferTXT = new StringBuffer();
 	private StringBuffer bufferHTML = new StringBuffer();
 
-	
+
 	public MailContainerWithRecipient(MailContainerWithRecipient mailContainer) {
 		super(mailContainer);
 		this.recipient		=	mailContainer.getRecipient();
 		this.replyTo 		=	mailContainer.getReplyTo();
 		this.from			=	mailContainer.getFrom();
 	}
-	
+
 	/**
 	 * Copy constructor
 	 * 
@@ -76,13 +76,21 @@ public class MailContainerWithRecipient extends MailContainer {
 	public MailContainerWithRecipient(String locale) {
 		super(locale);
 	}
-	
+
 	public MailContainerWithRecipient(Language language) {
 		super(language);
 	}
 
 	public String getRecipient() {
 		return recipient;
+	}
+
+	public void setRecipient(Contact c) {
+		this.recipient = c.getMail();
+	}
+
+	public void setRecipient(User u) {
+		this.recipient = u.getMail();
 	}
 
 	public void setRecipient(String recipient) {
@@ -93,10 +101,18 @@ public class MailContainerWithRecipient extends MailContainer {
 		return replyTo;
 	}
 
+	public void setReplyTo(User u) {
+		this.replyTo = u.getMail();
+	}
+
+	public void setReplyTo(Contact c) {
+		this.replyTo = c.getMail();
+	}
+
 	public void setReplyTo(String replyTo) {
 		this.replyTo = replyTo;
 	}
-	
+
 	public String getFrom() {
 		return from;
 	}
@@ -105,17 +121,17 @@ public class MailContainerWithRecipient extends MailContainer {
 		this.from = from;
 	}
 
-	
+
 	/**
 	 * Stuffs 
 	 */
-	
-	
+
+
 	public void appendTemplate(MailTemplate template) {
 		bufferTXT.append(template.getContentTXT() + "\n");
 		bufferHTML.append(template.getContentHTML() + "<br/>");
 	}
-	
+
 	@Override
 	public String getContentTXT() {
 		contentTXT = bufferTXT.toString();
@@ -127,7 +143,7 @@ public class MailContainerWithRecipient extends MailContainer {
 		contentHTML= bufferHTML.toString();
 		return super.getContentHTML();
 	}
-	
+
 	public void setMailSubject(MailSubject mailSubject) {
 		this.subject = mailSubject.getContent();
 	}
@@ -143,5 +159,5 @@ public class MailContainerWithRecipient extends MailContainer {
 		this.bufferHTML = new StringBuffer(contentHTML);
 		super.setContentHTML(contentHTML);
 	}
-	
+
 }

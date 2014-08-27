@@ -135,7 +135,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 		List<MailContainerWithRecipient> mails = Lists.newArrayList();
 		for (Contact c: contacts) {
 			UploadRequestUrl requestUrl = uploadRequestUrlService.create(req, c);
-			mails.add(mailBuildingService.buildNewUploadRequest((User) req.getOwner(), requestUrl));
+			mails.add(mailBuildingService.buildCreateUploadRequest((User) req.getOwner(), requestUrl));
 		}
 		notifierService.sendNotification(mails);
 		return req;
