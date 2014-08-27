@@ -152,9 +152,10 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 
 		e.setActivationDate(new Date()); // FIXME handle activationDate
 		e.setUploadRequestGroup(grp);
-		uploadRequestUrlService.create(e, new Contact(req.getRecipient()));
 
-		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
+		// TODO manage multiple contacts and group functionality
+		Contact contact = new Contact(req.getRecipient());
+		return new UploadRequestVo(uploadRequestService.createRequest(actor, e, contact));
 	}
 
 	@Override

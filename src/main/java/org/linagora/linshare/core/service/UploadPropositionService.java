@@ -52,8 +52,6 @@ public interface UploadPropositionService {
 
 	List<UploadProposition> findAll(User actor) throws BusinessException;
 
-	UploadProposition update(Account actor, UploadProposition prop) throws BusinessException;
-
 	void checkIfValidRecipient(Account actor, String mail, String domainId) throws BusinessException;
 
 	void accept(User actor, UploadProposition e) throws BusinessException;

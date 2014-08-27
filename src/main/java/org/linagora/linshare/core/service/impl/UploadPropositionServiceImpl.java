@@ -153,16 +153,6 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 	}
 
 	@Override
-	public UploadProposition update(Account actor, UploadProposition prop)
-			throws BusinessException {
-		Validate.notNull(actor, "Actor must be set.");
-		Validate.notNull(prop, "UploadProposition must be set.");
-		Validate.notEmpty(prop.getUuid(),
-				"UploadProposition identifier must be set.");
-		return uploadPropositionBusinessService.update(prop);
-	}
-
-	@Override
 	public void checkIfValidRecipient(Account actor, String mail,
 			String domainId) throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
@@ -210,10 +200,10 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		grp = uploadRequestService.createRequestGroup(owner, grp);
 		e.setOwner(owner);
 		e.setAbstractDomain(owner.getDomain());
-		e.setNotificationDate(e.getExpiryDate());
 		e.setUploadRequestGroup(grp);
 		e.setUploadPropositionRequestUuid(created.getUuid());
 		e.setActivationDate(new Date());
+		e.setNotificationDate(new Date());
 		e.setCanDelete(true);
 		e.setCanClose(true);
 		e.setCanEditExpiryDate(true);
@@ -230,6 +220,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 					expiryDateFunc.getValue());
 			e.setExpiryDate(expiryDate);
 		}
+		e.setNotificationDate(e.getExpiryDate());
 
 		SizeUnitValueFunctionality maxDepositSizeFunc = functionalityReadOnlyService
 				.getUploadRequestMaxDepositSizeFunctionality(domain);
