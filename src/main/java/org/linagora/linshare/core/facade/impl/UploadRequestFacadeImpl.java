@@ -444,11 +444,20 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	}
 
 	@Override
-	public UploadRequestTemplateVo findTemplateByUuid(UserVo actorVo, String uuid)
-			throws BusinessException {
+	public UploadRequestTemplateVo findTemplateByUuid(UserVo actorVo,
+			String uuid) throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 
 		return new UploadRequestTemplateVo(
-				uploadRequestService.findRequestTemplateByUuid(actor, uuid));
+				uploadRequestService.findTemplateByUuid(actor, uuid));
+	}
+
+	@Override
+	public UploadRequestTemplateVo createTemplate(UserVo actorVo,
+			UploadRequestTemplateVo vo) throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+
+		return new UploadRequestTemplateVo(
+				uploadRequestService.createTemplate(actor, vo.toEntity()));
 	}
 }

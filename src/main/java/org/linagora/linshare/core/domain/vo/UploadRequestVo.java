@@ -354,4 +354,8 @@ public class UploadRequestVo {
 		test.setUuid(uuid);
 		return Predicates.equalTo(test);
 	}
+
+	public void fromTemplate(UploadRequestTemplateVo template) {
+		subject = template.getName(); // TODO XXX FIXME
+	}
 }

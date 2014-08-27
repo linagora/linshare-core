@@ -17,17 +17,8 @@
 
     <!-- Page content -->
     <div id="pageContent">
-      <t:zone t:id="reload" update="show">
-        <t:form t:id="template">
-            <t:select t:id="selected" t:zone="reload" t:model="selectModel" encoder="templateEncoder"/>
-        </t:form>
-        <t:bsBeanEditForm t:object="current" submitlabel="message:global.button.validate" model="requestModel">
-          <p:body>
-            <t:label for="body" />
-            <t:textarea t:id="body" value="current.body" />
-          </p:body>
+        <t:bsBeanEditForm t:object="current" submitlabel="message:global.button.validate" include="name">
         </t:bsBeanEditForm>
-      </t:zone>
     </div>
   </div><!-- id="content" -->
 

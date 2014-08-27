@@ -13,9 +13,11 @@
     <div id="actionBar">
       <h4>Actions</h4>
       <ul>
-        <t:pageLink page="uploadrequest/index" class="button" title="${message:pages.uploadrequest.back.button}">
-          <span>${message:pages.uploadrequest.back.button}</span>
-        </t:pageLink>
+        <li>
+          <t:pageLink page="uploadrequest/index" class="button" title="${message:pages.uploadrequest.back.button}">
+            <span>${message:pages.uploadrequest.back.button}</span>
+          </t:pageLink>
+        </li>
       </ul>
     </div><!-- id="actionBar" -->
 

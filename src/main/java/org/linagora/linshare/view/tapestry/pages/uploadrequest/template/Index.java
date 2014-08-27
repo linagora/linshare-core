@@ -31,34 +31,27 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.view.tapestry.pages.uploadrequest;
+package org.linagora.linshare.view.tapestry.pages.uploadrequest.template;
 
 import java.util.List;
 
-import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
-import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.beaneditor.RelativePosition;
-import org.apache.tapestry5.corelib.components.Zone;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.BeanModelSource;
 import org.linagora.linshare.core.domain.vo.UploadRequestTemplateVo;
-import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 
-public class Create {
+
+public class Index {
 
 	/*
 	 * Tapestry properties
@@ -72,15 +65,12 @@ public class Create {
 	@Property
 	private UserVo userVo;
 
+	@Persist
 	@Property
-	private UploadRequestVo current;
+	private List<UploadRequestTemplateVo> templates;
 
 	@Property
-	@Persist(PersistenceConstants.FLASH)
-	private UploadRequestTemplateVo selected;
-
-	@InjectComponent
-	private Zone reload;
+	private UploadRequestTemplateVo current;
 
 	/*
 	 * Injected beans
@@ -90,13 +80,7 @@ public class Create {
 	private Logger logger;
 
 	@Inject
-	private BeanModelSource beanModelSource;
-
-	@Inject
 	private Messages messages;
-
-	@Inject
-	private BusinessMessagesManagementService businessMessagesManagementService;
 
 	@Inject
 	private FunctionalityFacade functionalityFacade;
@@ -106,70 +90,20 @@ public class Create {
 
 	public Object onActivate() {
 		if (!functionalityFacade.isEnableUploadRequest(userVo
-				.getDomainIdentifier())) {
+				.getDomainIdentifier()))
 			return org.linagora.linshare.view.tapestry.pages.Index.class;
-		}
-		try {
-			BeanModel<UploadRequestVo> model = beanModelSource.createEditModel(
-					UploadRequestVo.class, messages);
-			current = uploadRequestFacade.getDefaultValue(userVo, model);
-		} catch (BusinessException e) {
-			logger.error("Cannot get default upload request value for user "
-					+ userVo.getLsUuid());
-			businessMessagesManagementService.notify(e);
-			return Index.class;
-		}
 		return null;
 	}
 
-	@Log
-	public Object onSuccess() throws BusinessException {
-		uploadRequestFacade.createRequest(userVo, current);
-		return Index.class;
+	@SetupRender
+	public void init() throws BusinessException {
+		templates = uploadRequestFacade.findAllTemplates(userVo);
 	}
 
-	@Log
-	public Object onCanceled() throws BusinessException {
-		return Index.class;
-	}
-
-	@Log
-	public Object onValueChangedFromSelected(UploadRequestTemplateVo vo) {
-		current.fromTemplate(vo);
-		return reload;
-	}
-
-	/*
-	 * Models + ValueEncoder
-	 */
-
-	public BeanModel<UploadRequestVo> getRequestModel() {
-		return current.getModel();
-	}
-
-	public List<UploadRequestTemplateVo> getSelectModel()
-			throws BusinessException {
-		return uploadRequestFacade.findAllTemplates(userVo);
-	}
-
-	public ValueEncoder<UploadRequestTemplateVo> getTemplateEncoder() {
-		return new ValueEncoder<UploadRequestTemplateVo>() {
-			@Override
-			public String toClient(UploadRequestTemplateVo value) {
-				return value.getUuid();
-			}
- 
-			@Override
-			public UploadRequestTemplateVo toValue(String uuid) {
-				try {
-					return uploadRequestFacade.findTemplateByUuid(userVo, uuid);
-				} catch (BusinessException e) {
-					logger.error("Could not find UploadRequestTemplate: " + uuid);
-					return null;
-				}
-			}
-		};
-	}
+    @Log
+    public Object onActionFromCreate() {
+		return Create.class;
+    }
 
 	/*
 	 * Exception Handling

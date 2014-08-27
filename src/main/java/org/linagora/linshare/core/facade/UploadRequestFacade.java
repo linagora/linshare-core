@@ -89,4 +89,7 @@ public interface UploadRequestFacade {
 
 	UploadRequestTemplateVo findTemplateByUuid(UserVo actorVo, String uuid)
 			throws BusinessException;
+
+	UploadRequestTemplateVo createTemplate(UserVo actorVo,
+			UploadRequestTemplateVo vo) throws BusinessException;
 }

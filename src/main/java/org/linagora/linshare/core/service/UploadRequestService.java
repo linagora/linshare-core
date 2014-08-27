@@ -88,15 +88,15 @@ public interface UploadRequestService {
 	void deleteRequestHistory(Account actor, UploadRequestHistory history)
 			throws BusinessException;
 
-	UploadRequestTemplate findRequestTemplateByUuid(Account actor, String uuid);
+	UploadRequestTemplate findTemplateByUuid(Account actor, String uuid) throws BusinessException;
 
-	UploadRequestTemplate createRequestTemplate(Account actor,
+	UploadRequestTemplate createTemplate(Account actor,
 												UploadRequestTemplate template) throws BusinessException;
 
-	UploadRequestTemplate updateRequestTemplate(Account actor,
+	UploadRequestTemplate updateTemplate(Account actor,
 												UploadRequestTemplate template) throws BusinessException;
 
-	void deleteRequestTemplate(Account actor, UploadRequestTemplate template)
+	void deleteTemplate(Account actor, UploadRequestTemplate template)
 			throws BusinessException;
 
 	Set<UploadRequestHistory> findAllRequestHistory(Account actor, String uploadRequestUuid) throws BusinessException;

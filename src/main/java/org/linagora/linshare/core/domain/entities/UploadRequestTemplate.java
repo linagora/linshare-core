@@ -75,6 +75,8 @@ public class UploadRequestTemplate {
 
 	private Date creationDate;
 
+	private Account owner;
+
 	public UploadRequestTemplate() {
 		super();
 	}
@@ -229,5 +231,13 @@ public class UploadRequestTemplate {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public Account getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Account owner) {
+		this.owner = owner;
 	}
 }

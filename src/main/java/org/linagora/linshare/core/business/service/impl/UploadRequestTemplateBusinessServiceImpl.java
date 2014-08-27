@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import org.linagora.linshare.core.business.service.UploadRequestTemplateBusinessService;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestTemplateRepository;
@@ -55,8 +56,9 @@ public class UploadRequestTemplateBusinessServiceImpl implements
 	}
 
 	@Override
-	public UploadRequestTemplate create(UploadRequestTemplate template)
+	public UploadRequestTemplate create(Account actor, UploadRequestTemplate template)
 			throws BusinessException {
+		template.setOwner(actor);
 		return uploadRequestTemplateRepository.create(template);
 	}
 

@@ -44,7 +44,7 @@
 			<key column="account_id" not-null="true"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadRequest"/>
 		</set>
-		<set name="uploadRequestTemplates" lazy="true" cascade="save-update,lock" inverse="false">
+		<set name="uploadRequestTemplates" lazy="true" cascade="save-update,lock" inverse="true">
 			<key column="account_id" not-null="true"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadRequestTemplate"/>
 		</set>

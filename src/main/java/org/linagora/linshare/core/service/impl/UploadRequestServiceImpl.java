@@ -271,25 +271,31 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequestTemplate findRequestTemplateByUuid(Account actor,
-			String uuid) {
-		return uploadRequestTemplateBusinessService.findByUuid(uuid);
+	public UploadRequestTemplate findTemplateByUuid(Account actor,
+			String uuid) throws BusinessException {
+		UploadRequestTemplate ret = uploadRequestTemplateBusinessService
+				.findByUuid(uuid);
+		if (ret == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
+					"UploadRequestTemplate with uuid: " + uuid);
+		}
+		return ret;
 	}
 
 	@Override
-	public UploadRequestTemplate createRequestTemplate(Account actor,
+	public UploadRequestTemplate createTemplate(Account actor,
 			UploadRequestTemplate template) throws BusinessException {
-		return uploadRequestTemplateBusinessService.create(template);
+		return uploadRequestTemplateBusinessService.create(actor, template);
 	}
 
 	@Override
-	public UploadRequestTemplate updateRequestTemplate(Account actor,
+	public UploadRequestTemplate updateTemplate(Account actor,
 			UploadRequestTemplate template) throws BusinessException {
 		return uploadRequestTemplateBusinessService.update(template);
 	}
 
 	@Override
-	public void deleteRequestTemplate(Account actor, UploadRequestTemplate template)
+	public void deleteTemplate(Account actor, UploadRequestTemplate template)
 			throws BusinessException {
 		uploadRequestTemplateBusinessService.delete(template);
 	}

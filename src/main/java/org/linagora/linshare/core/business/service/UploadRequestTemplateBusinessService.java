@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.business.service;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -40,7 +41,7 @@ public interface UploadRequestTemplateBusinessService {
 
 	UploadRequestTemplate findByUuid(String uuid);
 
-	UploadRequestTemplate create(UploadRequestTemplate template)
+	UploadRequestTemplate create(Account actor, UploadRequestTemplate template)
 			throws BusinessException;
 
 	UploadRequestTemplate update(UploadRequestTemplate template)
