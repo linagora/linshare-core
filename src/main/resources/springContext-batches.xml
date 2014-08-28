@@ -45,6 +45,8 @@
         <constructor-arg ref="uploadRequestRepository" />
         <constructor-arg ref="mailBuildingService" />
         <constructor-arg ref="notifierService" />
+        <constructor-arg ref="uploadRequestService" />
+        <constructor-arg ref="accountRepository" />
     </bean>
 
 	<!-- Don't use that with Jackrabbit 1.4 !! -->

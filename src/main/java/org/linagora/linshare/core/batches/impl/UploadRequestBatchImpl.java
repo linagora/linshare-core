@@ -33,47 +33,62 @@
  */
 package org.linagora.linshare.core.batches.impl;
 
-import com.google.common.collect.Lists;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.batches.UploadRequestBatch;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UploadRequestRepository;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.UploadRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.List;
+import com.google.common.collect.Lists;
 
 public class UploadRequestBatchImpl implements UploadRequestBatch {
 
 	private static final Logger logger = LoggerFactory.getLogger(UploadRequestBatchImpl.class);
 
 	private final UploadRequestRepository uploadRequestRepository;
+	private final UploadRequestService uploadRequestService;
 	private final MailBuildingService mailBuildingService;
 	private final NotifierService notifierService;
+	private final AccountRepository<Account> accountRepository;
 
-	public UploadRequestBatchImpl(UploadRequestRepository uploadRequestRepository, MailBuildingService mailBuildingService, NotifierService notifierService) {
+	public UploadRequestBatchImpl(
+			final UploadRequestRepository uploadRequestRepository,
+			final MailBuildingService mailBuildingService,
+			final NotifierService notifierService,
+			final UploadRequestService uploadRequestService,
+			final AccountRepository<Account> accountRepository) {
 		this.uploadRequestRepository = uploadRequestRepository;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
+		this.uploadRequestService = uploadRequestService;
+		this.accountRepository = accountRepository;
 	}
 
 	@Override
 	public void updateStatus() {
+		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
 		logger.info("Update upload request status");
 		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
 		for (UploadRequest r : uploadRequestRepository.findByStatus(UploadRequestStatus.STATUS_CREATED)) {
 			if (r.getActivationDate().before(new Date())) {
 				try {
 					r.updateStatus(UploadRequestStatus.STATUS_ENABLED);
-					uploadRequestRepository.update(r);
+					r = uploadRequestService.updateRequest(systemAccount, r);
 					for (UploadRequestUrl u: r.getUploadRequestURLs()) {
 						notifications.add(mailBuildingService.buildActivateUploadRequest((User) r.getOwner(), u));
 					}
@@ -96,7 +111,7 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 			if (r.getExpiryDate().before(new Date())) {
 				try {
 					r.updateStatus(UploadRequestStatus.STATUS_CLOSED);
-					uploadRequestRepository.update(r);
+					r = uploadRequestService.updateRequest(systemAccount, r);
 					for (UploadRequestUrl u: r.getUploadRequestURLs()) {
 						notifications.add(mailBuildingService.buildUploadRequestExpiryWarnRecipient((User) r.getOwner(), u));
 					}
