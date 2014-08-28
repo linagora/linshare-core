@@ -364,8 +364,8 @@ public class UploadRequestVo implements Cloneable {
 		if (t.getDepositMode() != null) {
 			canDelete = !t.getDepositMode();
 		}
-		if (t.getMaxFile() != null) {
-			maxFileCount = t.getMaxFile().intValue();
+		if (t.getMaxFileCount() != null) {
+			maxFileCount = t.getMaxFileCount().intValue();
 		}
 		if (t.getMaxFileSize() != null) {
 			maxFileSize = t.getMaxFileSize();

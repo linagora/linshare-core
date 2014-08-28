@@ -74,6 +74,8 @@ public enum Language {
 	}
 
 	public static Language fromTapestryLocale(String locale) {
+		if (locale == null)
+			return null;
 		return Language.fromLocale(new Locale(locale));
 	}
 

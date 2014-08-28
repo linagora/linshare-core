@@ -66,7 +66,7 @@ public class UploadRequestTemplateVo {
 
 	private Boolean depositMode;
 
-	private Long maxFile;
+	private Long maxFileCount;
 
 	private Long maxFileSize;
 
@@ -96,12 +96,14 @@ public class UploadRequestTemplateVo {
 		uuid = t.getUuid();
 		description = t.getDescription();
 		durationBeforeActivation = t.getDurationBeforeActivation();
-		unitBeforeActivation = TimeUnit.fromInt(t.getUnitBeforeActivation());
+		unitBeforeActivation = t.getUnitBeforeActivation() == null ? TimeUnit.DAY
+				: TimeUnit.fromInt(t.getUnitBeforeActivation());
 		durationBeforeExpiry = t.getDurationBeforeExpiry();
-		unitBeforeExpiry = TimeUnit.fromInt(t.getUnitBeforeExpiry());
+		unitBeforeExpiry = t.getUnitBeforeExpiry() == null ? TimeUnit.DAY
+				: TimeUnit.fromInt(t.getUnitBeforeExpiry());
 		groupMode = t.getGroupMode();
 		depositMode = t.getDepositMode();
-		maxFile = t.getMaxFile();
+		maxFileCount = t.getMaxFile();
 		maxFileSize = t.getMaxFileSize();
 		maxDepositSize = t.getMaxDepositSize();
 		locale = Language.fromTapestryLocale(t.getLocale());
@@ -176,12 +178,12 @@ public class UploadRequestTemplateVo {
 		this.depositMode = depositMode;
 	}
 
-	public Long getMaxFile() {
-		return maxFile;
+	public Long getMaxFileCount() {
+		return maxFileCount;
 	}
 
-	public void setMaxFile(Long maxFile) {
-		this.maxFile = maxFile;
+	public void setMaxFileCount(Long maxFile) {
+		this.maxFileCount = maxFile;
 	}
 
 	public Long getMaxFileSize() {
@@ -279,10 +281,12 @@ public class UploadRequestTemplateVo {
 		}
 		ret.setGroupMode(groupMode);
 		ret.setDepositMode(depositMode);
-		ret.setMaxFile(maxFile);
+		ret.setMaxFile(maxFileCount);
 		ret.setMaxFileSize(maxFileSize);
 		ret.setMaxDepositSize(maxDepositSize);
-		ret.setLocale(locale.toString());
+		if (locale != null) {
+			ret.setLocale(locale.toString());
+		}
 		ret.setSecured(secured);
 		ret.setDayBeforeNotification(dayBeforeNotification);
 		ret.setProlongationMode(prolongationMode);
