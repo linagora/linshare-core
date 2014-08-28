@@ -490,7 +490,7 @@ CREATE TABLE upload_proposition_filter (
   uuid               varchar(255) NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
   name               varchar(255) NOT NULL, 
-  match_all          bool NOT NULL, 
+  match              varchar(255) NOT NULL, 
   enable             bool NOT NULL, 
   creation_date      timestamp(6) NOT NULL, 
   modification_date  timestamp(6) NOT NULL,
