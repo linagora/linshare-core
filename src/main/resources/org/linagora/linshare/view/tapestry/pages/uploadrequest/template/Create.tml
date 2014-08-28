@@ -1,10 +1,10 @@
-<t:MyBorderLayout t:title="message:pages.uploadrequest.index.title" t:identifier="uploadrequest" t:currentHighlight="uploadrequest"
+<t:MyBorderLayout t:title="message:pages.uploadrequest.template.create.title" t:identifier="uploadrequest" t:currentHighlight="uploadrequest"
                   xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
                   xmlns:p="tapestry:parameter">
 
   <!-- Main content -->
   <div id="content">
-    <h1 title="${message:pages.uploadrequest.create.title}"><span class="truncate">${message:pages.uploadrequest.create.title}</span></h1>
+    <h1 title="${message:pages.uploadrequest.template.create.title}"><span class="truncate">${message:pages.uploadrequest.template.create.title}</span></h1>
 
     <t:messagePanel />
     <t:businessMessagesDisplayer />

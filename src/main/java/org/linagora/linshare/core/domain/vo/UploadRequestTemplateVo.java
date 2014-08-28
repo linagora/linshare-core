@@ -36,12 +36,15 @@ package org.linagora.linshare.core.domain.vo;
 import java.util.Date;
 
 import org.apache.tapestry5.beaneditor.NonVisual;
+import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.TimeUnit;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 
 public class UploadRequestTemplateVo {
 
+    @Validate("required")
 	private String name;
 
 	@NonVisual
@@ -51,10 +54,12 @@ public class UploadRequestTemplateVo {
 
 	private Long durationBeforeActivation;
 
+    @Validate("required")
 	private TimeUnit unitBeforeActivation;
 
 	private Long durationBeforeExpiry;
 
+    @Validate("required")
 	private TimeUnit unitBeforeExpiry;
 
 	private Boolean groupMode;
@@ -67,7 +72,7 @@ public class UploadRequestTemplateVo {
 
 	private Long maxDepositSize;
 
-	private String locale;
+	private Language locale;
 
 	private Boolean secured;
 
@@ -99,7 +104,7 @@ public class UploadRequestTemplateVo {
 		maxFile = t.getMaxFile();
 		maxFileSize = t.getMaxFileSize();
 		maxDepositSize = t.getMaxDepositSize();
-		locale = t.getLocale();
+		locale = Language.fromTapestryLocale(t.getLocale());
 		secured = t.getSecured();
 		dayBeforeNotification = t.getDayBeforeNotification();
 		prolongationMode = t.getProlongationMode();
@@ -195,11 +200,11 @@ public class UploadRequestTemplateVo {
 		this.maxDepositSize = maxDepositSize;
 	}
 
-	public String getLocale() {
+	public Language getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(Language locale) {
 		this.locale = locale;
 	}
 
@@ -277,7 +282,7 @@ public class UploadRequestTemplateVo {
 		ret.setMaxFile(maxFile);
 		ret.setMaxFileSize(maxFileSize);
 		ret.setMaxDepositSize(maxDepositSize);
-		ret.setLocale(locale);
+		ret.setLocale(locale.toString());
 		ret.setSecured(secured);
 		ret.setDayBeforeNotification(dayBeforeNotification);
 		ret.setProlongationMode(prolongationMode);

@@ -374,7 +374,7 @@ public class UploadRequestVo implements Cloneable {
 			maxDepositSize = t.getMaxDepositSize();
 		}
 		if (t.getLocale() != null) {
-			locale = Language.fromTapestryLocale(t.getLocale());
+			locale = t.getLocale();
 		}
 		if (t.getSecured() != null) {
 			secured = t.getSecured();
