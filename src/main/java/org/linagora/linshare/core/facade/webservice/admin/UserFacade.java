@@ -58,4 +58,6 @@ public interface UserFacade extends AdminGenericFacade {
 	void updateInconsistent(UserDto userDto) throws BusinessException;
 
 	void changePassword(PasswordDto password) throws BusinessException;
+
+	UserDto findUser(String uuid) throws BusinessException;
 }

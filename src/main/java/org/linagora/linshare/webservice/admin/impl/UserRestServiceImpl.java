@@ -132,6 +132,15 @@ public class UserRestServiceImpl extends WebserviceBase implements
 			throws BusinessException {
 		return autocompleteFacade.findUser(pattern);
 	}
+	@Path("/{uuid}")
+	@GET
+	@ApiOperation(value = "Find a user.", response = UserDto.class)
+	@Override
+	public UserDto find(
+			@ApiParam(value = "User uuid.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
+		return userFacade.findUser(uuid);
+	}
 
 	@Path("/")
 	@PUT

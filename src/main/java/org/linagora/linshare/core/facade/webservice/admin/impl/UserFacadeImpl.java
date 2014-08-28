@@ -200,4 +200,10 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		userService.changePassword(actor.getLsUuid(), actor.getMail(),
 				password.getOldPwd(), password.getNewPwd());
 	}
+
+	@Override
+	public UserDto findUser(String uuid) throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+		return UserDto.getFull(userService.findByLsUuid(uuid));
+	}
 }
