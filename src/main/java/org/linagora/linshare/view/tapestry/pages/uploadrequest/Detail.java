@@ -164,7 +164,10 @@ public class Detail {
 	/*
 	 * TODO: ugly
 	 */
-	public String getFileSize(int bytes) {
+	public String getFileSize(Integer bytes) {
+		if (bytes == null)
+			return "-";
+
 		boolean si = !persistentLocale.get().equals(Locale.ENGLISH);
 		int unit = si ? 1000 : 1024;
 		if (bytes < unit) return bytes + " B";

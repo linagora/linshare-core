@@ -26,6 +26,21 @@
             <t:label for="body" />
             <t:textarea t:id="body" value="current.body" />
           </p:body>
+          <p:maxDepositsize>
+            <t:label for="maxDepositsize" />
+            <t:textfield t:id="maxDepositsize" value="current.maxDepositsize"
+                         validate="prop:maxDepositSizeValidator" />
+          </p:maxDepositsize>
+          <p:maxFileCount>
+            <t:label for="maxFileCount" />
+            <t:textfield t:id="maxFileCount" value="current.maxFileCount"
+                         validate="prop:maxFileCountValidator" />
+          </p:maxFileCount>
+          <p:maxFileSize>
+            <t:label for="maxFileSize" />
+            <t:textfield t:id="maxFileSize" value="current.maxFileSize"
+                         validate="prop:maxFileSizeValidator" />
+          </p:maxFileSize>
         </t:bsBeanEditForm>
       </t:zone>
     </div>

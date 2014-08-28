@@ -35,6 +35,7 @@ package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
 import java.util.List;
 
+import org.apache.tapestry5.FieldValidator;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -43,11 +44,12 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.beaneditor.RelativePosition;
+import org.apache.tapestry5.corelib.components.TextField;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.FieldValidatorSource;
 import org.linagora.linshare.core.domain.vo.UploadRequestTemplateVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -82,9 +84,21 @@ public class Create {
 	@InjectComponent
 	private Zone reload;
 
+	@InjectComponent
+	private TextField maxFileCount;
+
+	@InjectComponent
+	private TextField maxFileSize;
+
+	@InjectComponent
+	private TextField maxDepositSize;
+
 	/*
 	 * Injected beans
 	 */
+
+	@Inject
+	private FieldValidatorSource source;
 
 	@Inject
 	private Logger logger;
@@ -104,7 +118,13 @@ public class Create {
 	@Inject
 	private UploadRequestFacade uploadRequestFacade;
 
-	public Object onActivate() {
+	private Long _d;
+
+	private Long _s;
+
+	private Integer _c;
+
+	public Object onActivate() throws Exception {
 		if (!functionalityFacade.isEnableUploadRequest(userVo
 				.getDomainIdentifier())) {
 			return org.linagora.linshare.view.tapestry.pages.Index.class;
@@ -113,6 +133,10 @@ public class Create {
 			BeanModel<UploadRequestVo> model = beanModelSource.createEditModel(
 					UploadRequestVo.class, messages);
 			current = uploadRequestFacade.getDefaultValue(userVo, model);
+			// initialize validators
+			_d = current.getMaxDepositSize();
+			_s = current.getMaxFileSize();
+			_c = current.getMaxFileCount();
 		} catch (BusinessException e) {
 			logger.error("Cannot get default upload request value for user "
 					+ userVo.getLsUuid());
@@ -140,6 +164,22 @@ public class Create {
 	}
 
 	/*
+	 * Dynamic validation
+	 */
+
+	public FieldValidator<?> getMaxFileCountValidator() {
+		return source.createValidators(maxFileCount, "required, max=" + _c);
+	}
+
+	public FieldValidator<?> getMaxFileSizeValidator() {
+		return source.createValidators(maxFileSize, "required, max=" + _s);
+	}
+
+	public FieldValidator<?> getMaxDepositSizeValidator() {
+		return source.createValidators(maxDepositSize, "required, max=" + _d);
+	}
+
+	/*
 	 * Models + ValueEncoder
 	 */
 
@@ -158,13 +198,14 @@ public class Create {
 			public String toClient(UploadRequestTemplateVo value) {
 				return value.getUuid();
 			}
- 
+
 			@Override
 			public UploadRequestTemplateVo toValue(String uuid) {
 				try {
 					return uploadRequestFacade.findTemplateByUuid(userVo, uuid);
 				} catch (BusinessException e) {
-					logger.error("Could not find UploadRequestTemplate: " + uuid);
+					logger.error("Could not find UploadRequestTemplate: "
+							+ uuid);
 					return null;
 				}
 			}

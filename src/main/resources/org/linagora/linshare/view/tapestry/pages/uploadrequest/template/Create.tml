@@ -17,7 +17,8 @@
 
     <!-- Page content -->
     <div id="pageContent">
-        <t:bsBeanEditForm t:object="current" submitlabel="message:global.button.validate" include="name">
+        <t:bsBeanEditForm t:object="current" submitlabel="message:global.button.validate"
+                          exclude="creationDate,modificationDate">
         </t:bsBeanEditForm>
     </div>
   </div><!-- id="content" -->

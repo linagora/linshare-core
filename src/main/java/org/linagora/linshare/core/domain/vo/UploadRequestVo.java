@@ -33,10 +33,13 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.NonVisual;
+import org.apache.tapestry5.beaneditor.Validate;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -45,10 +48,11 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 
-public class UploadRequestVo {
+public class UploadRequestVo implements Cloneable {
 
 	private String uuid;
 
+	@Validate(value = "required")
 	private String subject;
 
 	private String body;
@@ -85,6 +89,7 @@ public class UploadRequestVo {
 
 	private UserVo owner;
 
+	@Validate(value = "required")
 	private String recipient;
 
 	@NonVisual
@@ -285,29 +290,6 @@ public class UploadRequestVo {
 		this.model = model;
 	}
 
-	/*
-	 * Transformer
-	 */
-	public UploadRequest toEntity() {
-		UploadRequest ret = new UploadRequest();
-
-		// ret.setUploadRequestGroup(uploadRequestGroup); // FIXME TODO
-		ret.setMaxFileCount(maxFileCount);
-		ret.setMaxDepositSize(maxDepositSize);
-		ret.setMaxFileSize(maxFileSize);
-		ret.setActivationDate(activationDate);
-		ret.setCreationDate(creationDate);
-		ret.setModificationDate(modificationDate);
-		ret.setNotificationDate(notificationDate);
-		ret.setExpiryDate(expiryDate);
-		ret.setCanDelete(canDelete);
-		ret.setCanClose(canClose);
-		ret.setCanEditExpiryDate(canEditExpiryDate); // TODO functionality
-		ret.setLocale(locale.getTapestryLocale());
-		ret.setSecured(secured);
-		return ret;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -355,7 +337,70 @@ public class UploadRequestVo {
 		return Predicates.equalTo(test);
 	}
 
-	public void fromTemplate(UploadRequestTemplateVo template) {
-		subject = template.getName(); // TODO XXX FIXME
+	/*
+	 * Transformers
+	 */
+	public UploadRequest toEntity() {
+		UploadRequest ret = new UploadRequest();
+
+		// ret.setUploadRequestGroup(uploadRequestGroup); // FIXME TODO
+		ret.setMaxFileCount(maxFileCount);
+		ret.setMaxDepositSize(maxDepositSize);
+		ret.setMaxFileSize(maxFileSize);
+		ret.setActivationDate(activationDate);
+		ret.setCreationDate(creationDate);
+		ret.setModificationDate(modificationDate);
+		ret.setNotificationDate(notificationDate);
+		ret.setExpiryDate(expiryDate);
+		ret.setCanDelete(canDelete);
+		ret.setCanClose(canClose);
+		ret.setCanEditExpiryDate(canEditExpiryDate); // TODO functionality
+		ret.setLocale(locale.getTapestryLocale());
+		ret.setSecured(secured);
+		return ret;
+	}
+
+	public void fromTemplate(UploadRequestTemplateVo t) {
+		if (t.getDepositMode() != null) {
+			canDelete = !t.getDepositMode();
+		}
+		if (t.getMaxFile() != null) {
+			maxFileCount = t.getMaxFile().intValue();
+		}
+		if (t.getMaxFileSize() != null) {
+			maxFileSize = t.getMaxFileSize();
+		}
+		if (t.getMaxDepositSize() != null) {
+			maxDepositSize = t.getMaxDepositSize();
+		}
+		if (t.getLocale() != null) {
+			locale = Language.fromTapestryLocale(t.getLocale());
+		}
+		if (t.getSecured() != null) {
+			secured = t.getSecured();
+		}
+		if (t.getProlongationMode() != null) {
+			canEditExpiryDate = t.getProlongationMode();
+		}
+
+		Calendar d;
+
+		if (t.getDurationBeforeActivation() != null) {
+			d = GregorianCalendar.getInstance();
+			d.add(t.getUnitBeforeActivation().toCalendarValue(), t
+					.getDurationBeforeActivation().intValue());
+			activationDate = d.getTime();
+		}
+		if (t.getDurationBeforeExpiry() != null) {
+			d = GregorianCalendar.getInstance();
+			d.add(t.getUnitBeforeExpiry().toCalendarValue(), t
+					.getDurationBeforeExpiry().intValue());
+			expiryDate = d.getTime();
+		}
+		if (t.getDayBeforeNotification() != null) {
+			d = GregorianCalendar.getInstance();
+			d.add(Calendar.DATE, t.getDayBeforeNotification().intValue());
+			notificationDate = d.getTime();
+		}
 	}
 }

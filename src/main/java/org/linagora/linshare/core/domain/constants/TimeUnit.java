@@ -35,37 +35,57 @@ package org.linagora.linshare.core.domain.constants;
 
 import java.util.Calendar;
 
-/** Defines a unit of time.
+import scala.Int;
+
+/**
+ * Defines a unit of time.
  */
 public enum TimeUnit {
-    DAY(0), WEEK(1), MONTH(2);
+	DAY(0), WEEK(1), MONTH(2);
 
-    private int value;
+	private int value;
 
+	private TimeUnit(int value) {
+		this.value = value;
+	}
 
-    private TimeUnit(int value) {
-        this.value = value;
-    }
-    
+	public int toInt() {
+		return value;
+	}
 
-    public int toInt() {
-        return value;
-    }
+	public long toLong() {
+		return (long) toInt();
+	}
 
-    public int toCalendarValue() {
-    	switch(this) {
-    	case DAY : return Calendar.DATE;
-    	case WEEK : return Calendar.WEEK_OF_MONTH;
-    	case MONTH : return Calendar.MONTH;
-    	default : throw new IllegalArgumentException("Doesn't match an existing TimeUnit");
-    	}
-    }
-    public static TimeUnit fromInt(int value) {
+	public int toCalendarValue() {
+		switch (this) {
+		case DAY:
+			return Calendar.DATE;
+		case WEEK:
+			return Calendar.WEEK_OF_MONTH;
+		case MONTH:
+			return Calendar.MONTH;
+		default:
+			throw new IllegalArgumentException(
+					"Doesn't match an existing TimeUnit");
+		}
+	}
+
+	public static TimeUnit fromInt(int value) {
 		for (TimeUnit unit : values()) {
 			if (unit.value == value) {
 				return unit;
 			}
 		}
-        throw new IllegalArgumentException("Doesn't match an existing TimeUnit");
-    }
+		throw new IllegalArgumentException("Doesn't match an existing TimeUnit");
+	}
+
+	public static TimeUnit fromInt(long value) {
+		if (value > Int.MaxValue()) {
+			throw new IllegalArgumentException(
+					"Doesn't match an existing TimeUnit");
+		}
+		return fromInt((int) value);
+	}
+
 }
