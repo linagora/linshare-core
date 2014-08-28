@@ -170,6 +170,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 				UploadRequestHistoryEventType.EVENT_CREATED);
 		req.getUploadRequestHistory().add(hist);
 		req = uploadRequestBusinessService.create(req);
+
 		List<MailContainerWithRecipient> mails = Lists.newArrayList();
 		for (Contact c : contacts) {
 			UploadRequestUrl requestUrl = uploadRequestUrlService

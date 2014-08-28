@@ -22,11 +22,11 @@
 		<property name="uuid" column="uuid" unique="true" type="string"
 			length="255" not-null="true" lazy="false" />
 		<property name="maxFileCount" column="max_file" type="integer"
-			not-null="true" lazy="false" />
+			lazy="false" />
 		<property name="maxDepositSize" column="max_deposit_size" type="long"
-			not-null="true" lazy="false" />
+			lazy="false" />
 		<property name="maxFileSize" column="max_file_size" type="long"
-			not-null="true" lazy="false" />
+			lazy="false" />
 		<property access="field" name="status" column="status"
 			not-null="true" lazy="false" type="uploadRequestStatus" />
 		<property name="activationDate" column="activation_date"
@@ -42,15 +42,15 @@
 		<property name="uploadPropositionRequestUuid" column="upload_proposition_request_uuid"
 			type="string" length="255" not-null="false" lazy="false" />
 		<property name="canDelete" column="can_delete" type="boolean"
-			not-null="true" lazy="false" />
+			lazy="false" />
 		<property name="canClose" column="can_close" type="boolean"
-			not-null="true" lazy="false" />
+			lazy="false" />
 		<property name="canEditExpiryDate" column="can_edit_expiry_date"
-			type="boolean" not-null="true" lazy="false" />
+			type="boolean" lazy="false" />
 		<property name="locale" column="locale" type="string" length="255"
 			not-null="false" lazy="false" />
 		<property name="secured" column="secured" type="boolean"
-			not-null="true" lazy="false" />
+			lazy="false" />
 		<property name="mailMessageId" column="mail_message_id" type="string"
 			length="255" not-null="false" lazy="false" />
 		<set name="uploadRequestURLs" lazy="true" cascade="lock" inverse="true">

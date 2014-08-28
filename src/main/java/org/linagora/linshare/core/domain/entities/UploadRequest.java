@@ -69,15 +69,15 @@ public class UploadRequest {
 
 	private String uploadPropositionRequestUuid;
 
-	private boolean canDelete;
+	private Boolean canDelete;
 
-	private boolean canClose;
+	private Boolean canClose;
 
-	private boolean canEditExpiryDate;
+	private Boolean canEditExpiryDate;
 
 	private String locale;
 
-	private boolean secured;
+	private Boolean secured;
 
 	private String mailMessageId;
 
@@ -117,30 +117,6 @@ public class UploadRequest {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
-	}
-
-	public Integer getMaxFileCount() {
-		return maxFileCount;
-	}
-
-	public void setMaxFileCount(Integer maxFileCount) {
-		this.maxFileCount = maxFileCount;
-	}
-
-	public Long getMaxDepositSize() {
-		return maxDepositSize;
-	}
-
-	public void setMaxDepositSize(Long maxDepositSize) {
-		this.maxDepositSize = maxDepositSize;
-	}
-
-	public Long getMaxFileSize() {
-		return maxFileSize;
-	}
-
-	public void setMaxFileSize(Long maxFileSize) {
-		this.maxFileSize = maxFileSize;
 	}
 
 	public UploadRequestStatus getStatus() {
@@ -204,44 +180,12 @@ public class UploadRequest {
 		this.uploadPropositionRequestUuid = uploadPropositionRequestUuid;
 	}
 
-	public boolean isCanDelete() {
-		return canDelete;
-	}
-
-	public void setCanDelete(boolean canDelete) {
-		this.canDelete = canDelete;
-	}
-
-	public boolean isCanClose() {
-		return canClose;
-	}
-
-	public void setCanClose(boolean canClose) {
-		this.canClose = canClose;
-	}
-
-	public boolean isCanEditExpiryDate() {
-		return canEditExpiryDate;
-	}
-
-	public void setCanEditExpiryDate(boolean canEditExpiryDate) {
-		this.canEditExpiryDate = canEditExpiryDate;
-	}
-
 	public String getLocale() {
 		return locale;
 	}
 
 	public void setLocale(String locale) {
 		this.locale = locale;
-	}
-
-	public boolean isSecured() {
-		return secured;
-	}
-
-	public void setSecured(boolean secured) {
-		this.secured = secured;
 	}
 
 	public String getMailMessageId() {
@@ -292,5 +236,61 @@ public class UploadRequest {
 
 	public void setAbstractDomain(AbstractDomain abstractDomain) {
 		this.abstractDomain = abstractDomain;
+	}
+
+	public Integer getMaxFileCount() {
+		return maxFileCount;
+	}
+
+	public void setMaxFileCount(Integer maxFileCount) {
+		this.maxFileCount = maxFileCount;
+	}
+
+	public Long getMaxDepositSize() {
+		return maxDepositSize;
+	}
+
+	public void setMaxDepositSize(Long maxDepositSize) {
+		this.maxDepositSize = maxDepositSize;
+	}
+
+	public Long getMaxFileSize() {
+		return maxFileSize;
+	}
+
+	public void setMaxFileSize(Long maxFileSize) {
+		this.maxFileSize = maxFileSize;
+	}
+
+	public Boolean isCanDelete() {
+		return canDelete;
+	}
+
+	public void setCanDelete(Boolean canDelete) {
+		this.canDelete = canDelete;
+	}
+
+	public Boolean isCanClose() {
+		return canClose;
+	}
+
+	public void setCanClose(Boolean canClose) {
+		this.canClose = canClose;
+	}
+
+	public Boolean isCanEditExpiryDate() {
+		return canEditExpiryDate;
+	}
+
+	public void setCanEditExpiryDate(Boolean canEditExpiryDate) {
+		this.canEditExpiryDate = canEditExpiryDate;
+	}
+
+	public Boolean isSecured() {
+		return secured;
+	}
+
+	public void setSecured(Boolean secured) {
+		this.secured = secured;
 	}
 }

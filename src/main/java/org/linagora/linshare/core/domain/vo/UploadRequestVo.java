@@ -53,13 +53,13 @@ public class UploadRequestVo {
 
 	private String body;
 
-	private int size;
+	private Integer size;
 
-	private int maxFileCount;
+	private Integer maxFileCount;
 
-	private long maxDepositSize;
+	private Long maxDepositSize;
 
-	private long maxFileSize;
+	private Long maxFileSize;
 
 	private UploadRequestStatus status;
 
@@ -73,15 +73,15 @@ public class UploadRequestVo {
 
 	private Date expiryDate;
 
-	private boolean canDelete;
+	private Boolean canDelete;
 
-	private boolean canClose;
+	private Boolean canClose;
 
-	private boolean canEditExpiryDate;
+	private Boolean canEditExpiryDate;
 
 	private Language locale = Language.ENGLISH;
 
-	private boolean secured;
+	private Boolean secured;
 
 	private UserVo owner;
 
@@ -149,38 +149,6 @@ public class UploadRequestVo {
 		this.recipient = recipient;
 	}
 
-	public int getSize() {
-		return size;
-	}
-
-	public void setSize(int size) {
-		this.size = size;
-	}
-
-	public int getMaxFileCount() {
-		return maxFileCount;
-	}
-
-	public void setMaxFileCount(int maxFileCount) {
-		this.maxFileCount = maxFileCount;
-	}
-
-	public long getMaxDepositSize() {
-		return maxDepositSize;
-	}
-
-	public void setMaxDepositSize(long maxDepositSize) {
-		this.maxDepositSize = maxDepositSize;
-	}
-
-	public long getMaxFileSize() {
-		return maxFileSize;
-	}
-
-	public void setMaxFileSize(long maxFileSize) {
-		this.maxFileSize = maxFileSize;
-	}
-
 	public UploadRequestStatus getStatus() {
 		return status;
 	}
@@ -229,28 +197,68 @@ public class UploadRequestVo {
 		this.expiryDate = expiryDate;
 	}
 
-	public boolean isCanDelete() {
+	public Integer getSize() {
+		return size;
+	}
+
+	public void setSize(Integer size) {
+		this.size = size;
+	}
+
+	public Integer getMaxFileCount() {
+		return maxFileCount;
+	}
+
+	public void setMaxFileCount(Integer maxFileCount) {
+		this.maxFileCount = maxFileCount;
+	}
+
+	public Long getMaxDepositSize() {
+		return maxDepositSize;
+	}
+
+	public void setMaxDepositSize(Long maxDepositSize) {
+		this.maxDepositSize = maxDepositSize;
+	}
+
+	public Long getMaxFileSize() {
+		return maxFileSize;
+	}
+
+	public void setMaxFileSize(Long maxFileSize) {
+		this.maxFileSize = maxFileSize;
+	}
+
+	public Boolean getCanDelete() {
 		return canDelete;
 	}
 
-	public void setCanDelete(boolean canDelete) {
+	public void setCanDelete(Boolean canDelete) {
 		this.canDelete = canDelete;
 	}
 
-	public boolean isCanClose() {
+	public Boolean getCanClose() {
 		return canClose;
 	}
 
-	public void setCanClose(boolean canClose) {
+	public void setCanClose(Boolean canClose) {
 		this.canClose = canClose;
 	}
 
-	public boolean isCanEditExpiryDate() {
+	public Boolean getCanEditExpiryDate() {
 		return canEditExpiryDate;
 	}
 
-	public void setCanEditExpiryDate(boolean canEditExpiryDate) {
+	public void setCanEditExpiryDate(Boolean canEditExpiryDate) {
 		this.canEditExpiryDate = canEditExpiryDate;
+	}
+
+	public Boolean getSecured() {
+		return secured;
+	}
+
+	public void setSecured(Boolean secured) {
+		this.secured = secured;
 	}
 
 	public Language getLocale() {
@@ -259,14 +267,6 @@ public class UploadRequestVo {
 
 	public void setLocale(Language locale) {
 		this.locale = locale;
-	}
-
-	public boolean isSecured() {
-		return secured;
-	}
-
-	public void setSecured(boolean secured) {
-		this.secured = secured;
 	}
 
 	public UserVo getOwner() {
