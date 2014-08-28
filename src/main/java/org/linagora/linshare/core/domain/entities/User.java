@@ -106,6 +106,26 @@ public abstract class User extends Account {
 		this.externalMailLocale = userDto.getLocale();
 	}
 
+	@Override
+	public String getFullName() {
+		StringBuffer b = new StringBuffer();
+		boolean bf = (firstName!=null && !firstName.equals(""));
+		boolean bl = (lastName!=null && !lastName.equals(""));
+		if (bf || bl){
+			if (bf){
+				b.append(firstName);
+				b.append(" ");
+			}
+			if (bl){
+				b.append(lastName);
+			}
+		} else {
+			b.append(mail);
+		}
+		return b.toString();
+	}
+
+
 	public void setFirstName(String value) {
 		this.firstName = StringUtils.capitalize(value);
 	}

@@ -85,6 +85,7 @@ public class UploadRequestUrlBusinessServiceImpl implements
 			url.setTemporaryPlainTextPassword(password);
 			url.setPassword(HashUtils.hashSha1withBase64(password.getBytes()));
 		}
+		request.getUploadRequestURLs().add(url);
 		return uploadRequestUrlRepository.create(url);
 	}
 

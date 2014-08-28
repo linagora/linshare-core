@@ -53,4 +53,8 @@ public class SystemAccount extends Account {
 		return this.lsUuid;
 	}
 
+	@Override
+	public String getFullName() {
+		return this.lsUuid;
+	}
 }

@@ -41,6 +41,10 @@ import org.linagora.linshare.webservice.dto.UserDto;
 /**
  * Internal user.
  */
+/**
+ * @author fred
+ *
+ */
 public class Internal extends User {
 
 	/** Default constructor for hibernate. */
@@ -81,5 +85,4 @@ public class Internal extends User {
 		return this.firstName + " " + this.lastName + "(" + lsUuid + ", "
 				+ this.ldapUid + ")";
 	}
-
 }

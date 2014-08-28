@@ -111,7 +111,8 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		public String getContactRepresentation() {
 			if (this.firstName == null || this.lastName == null)
 				return this.mail;
-			return firstName + ' ' + lastName + " (" + mail + ')';
+			return firstName + ' ' + lastName;
+//			return firstName + ' ' + lastName + " (" + mail + ')';
 		}
 	}
 
@@ -810,7 +811,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
-				.add("actorRepresentation", request.getContact().getMail())
+				.add("actorRepresentation", new ContactRepresentation(owner).getContactRepresentation())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
 				.add("firstName", request.getContact().getMail())

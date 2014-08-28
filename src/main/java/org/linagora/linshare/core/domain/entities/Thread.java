@@ -40,14 +40,14 @@ import org.linagora.linshare.core.domain.constants.AccountType;
 public class Thread extends Account {
 
 	protected String name;
-	
+
 	protected Set<ThreadMember> myMembers = new java.util.HashSet<ThreadMember>();
-	
+
 	public Thread() {
 		super();
 	}
-	
-	public Thread(AbstractDomain domain, Account owner , String name) {
+
+	public Thread(AbstractDomain domain, Account owner, String name) {
 		super();
 		this.name = name;
 		this.domain = domain;
@@ -60,11 +60,11 @@ public class Thread extends Account {
 	public void setName(String value) {
 		this.name = value;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	@Override
 	public AccountType getAccountType() {
 		return AccountType.THREAD;
@@ -74,14 +74,17 @@ public class Thread extends Account {
 		return myMembers;
 	}
 
-
 	public void setMyMembers(Set<ThreadMember> myMembers) {
 		this.myMembers = myMembers;
 	}
 
-
 	@Override
 	public String getAccountReprentation() {
 		return "Thread name : " + name + "(" + lsUuid + ")";
+	}
+
+	@Override
+	public String getFullName() {
+		return this.name;
 	}
 }

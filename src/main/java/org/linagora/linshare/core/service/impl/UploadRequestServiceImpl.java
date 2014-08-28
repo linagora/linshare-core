@@ -179,6 +179,20 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 					(User) req.getOwner(), requestUrl));
 		}
 		notifierService.sendNotification(mails);
+		mails.clear();
+		req = uploadRequestBusinessService.findByUuid(req.getUuid());
+		if (req.getActivationDate().before(new Date())) {
+			try {
+				req.updateStatus(UploadRequestStatus.STATUS_ENABLED);
+				updateRequest(actor, req);
+				for (UploadRequestUrl u: req.getUploadRequestURLs()) {
+					mails.add(mailBuildingService.buildActivateUploadRequest((User) req.getOwner(), u));
+				}
+				notifierService.sendNotification(mails);
+			} catch (BusinessException e) {
+				logger.error("Fail to update upload request status of the request : " + req.getUuid());
+			}
+		}
 		return req;
 	}
 
