@@ -32,6 +32,13 @@
         <property name="value" column="integer_value" type="integer"/>
     </joined-subclass>
     
+    <joined-subclass name="BooleanValueFunctionality" table="functionality_boolean">
+    	<key>
+     		<column name="functionality_id" not-null="true" index="index_functionality_boolean_id"/>
+    	</key>
+        <property name="value" column="boolean_value" type="boolean"/>
+    </joined-subclass>
+    
     <joined-subclass name="UnitValueFunctionality" table="functionality_unit">
     	<key>
      		<column name="functionality_id" not-null="true" index="index_functionality_unit_id"/>

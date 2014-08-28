@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
@@ -261,8 +262,8 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Functionality getUploadRequestGroupedFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__GROUPED_MODE);
+	public BooleanValueFunctionality getUploadRequestGroupedFunctionality(AbstractDomain domain) {
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__GROUPED_MODE);
 	}
 
 	@Override
@@ -290,27 +291,27 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Functionality getUploadRequestSecureUrlFunctionality(
+	public BooleanValueFunctionality getUploadRequestSecureUrlFunctionality(
 			AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__SECURED_URL);
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__SECURED_URL);
 	}
 
 	@Override
-	public Functionality getUploadRequestCanCloseFunctionality(
+	public BooleanValueFunctionality getUploadRequestCanCloseFunctionality(
 			AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__CAN_CLOSE);
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__CAN_CLOSE);
 	}
 
 	@Override
-	public Functionality getUploadRequestProlongationFunctionality(
+	public BooleanValueFunctionality getUploadRequestProlongationFunctionality(
 			AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__PROLONGATION);
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__PROLONGATION);
 	}
 
 	@Override
-	public Functionality getUploadRequestDepositOnlyFunctionality(
+	public BooleanValueFunctionality getUploadRequestCandDeleteFileFunctionality(
 			AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__DEPOSIT_ONLY);
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__CAN_DELETE);
 	}
 
 	@Override

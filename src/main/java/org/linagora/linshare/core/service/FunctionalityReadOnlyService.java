@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
@@ -51,8 +52,8 @@ public interface FunctionalityReadOnlyService {
 	 */
 
 	SizeUnitValueFunctionality getGlobalQuotaFunctionality (AbstractDomain domain);
-    SizeUnitValueFunctionality getUserQuotaFunctionality (AbstractDomain domain);
-    SizeUnitValueFunctionality getUserMaxFileSizeFunctionality (AbstractDomain domain);
+	SizeUnitValueFunctionality getUserQuotaFunctionality (AbstractDomain domain);
+	SizeUnitValueFunctionality getUserMaxFileSizeFunctionality (AbstractDomain domain);
 	TimeUnitBooleanValueFunctionality getDefaultShareExpiryTimeFunctionality (AbstractDomain domain);
 	TimeUnitValueFunctionality getDefaultFileExpiryTimeFunctionality (AbstractDomain domain);
 
@@ -88,15 +89,15 @@ public interface FunctionalityReadOnlyService {
 	StringValueFunctionality getUploadRequestFunctionality(AbstractDomain domain);
 	TimeUnitValueFunctionality getUploadRequestActivationTimeFunctionality(AbstractDomain domain);
 	TimeUnitValueFunctionality getUploadRequestExpiryTimeFunctionality(AbstractDomain domain);
-	Functionality getUploadRequestGroupedFunctionality(AbstractDomain domain);
+	BooleanValueFunctionality getUploadRequestGroupedFunctionality(AbstractDomain domain);
 	IntegerValueFunctionality getUploadRequestMaxFileCountFunctionality(AbstractDomain domain);
 	SizeUnitValueFunctionality getUploadRequestMaxFileSizeFunctionality(AbstractDomain domain);
 	SizeUnitValueFunctionality getUploadRequestMaxDepositSizeFunctionality(AbstractDomain domain);
 	StringValueFunctionality getUploadRequestNotificationLanguageFunctionality(AbstractDomain domain);
-	Functionality getUploadRequestSecureUrlFunctionality(AbstractDomain domain);
-	Functionality getUploadRequestProlongationFunctionality(AbstractDomain domain);
-	Functionality getUploadRequestDepositOnlyFunctionality(AbstractDomain domain);
-	Functionality getUploadRequestCanCloseFunctionality(AbstractDomain domain);
+	BooleanValueFunctionality getUploadRequestSecureUrlFunctionality(AbstractDomain domain);
+	BooleanValueFunctionality getUploadRequestProlongationFunctionality(AbstractDomain domain);
+	BooleanValueFunctionality getUploadRequestCandDeleteFileFunctionality(AbstractDomain domain);
+	BooleanValueFunctionality getUploadRequestCanCloseFunctionality(AbstractDomain domain);
 	TimeUnitValueFunctionality getUploadRequestNotificationTimeFunctionality(AbstractDomain domain);
 
 	// UPLOAD PROPOSITION

@@ -43,6 +43,7 @@ import org.apache.tapestry5.beaneditor.BeanModel;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -50,7 +51,6 @@ import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.User;
@@ -327,7 +327,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 			ret.setLocale(locale);
 		}
 
-		Functionality secureUrlFunc = functionalityReadOnlyService
+		BooleanValueFunctionality secureUrlFunc = functionalityReadOnlyService
 				.getUploadRequestSecureUrlFunctionality(domain);
 
 		if (secureUrlFunc.getActivationPolicy().getStatus()) {
@@ -337,12 +337,34 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				logger.debug("secureUrlFunc has a delegation policy");
 				includes.add("secured");
 			}
-			ret.setSecured(false);
+			ret.setSecured(secureUrlFunc.getValue());
 		}
 
-		includes.add("canDelete");
-		includes.add("canClose");
+		BooleanValueFunctionality canDeleteFunc = functionalityReadOnlyService
+				.getUploadRequestCandDeleteFileFunctionality(domain);
 
+		if (canDeleteFunc.getActivationPolicy().getStatus()) {
+			logger.debug("depositFunc is activated");
+			if (canDeleteFunc.getDelegationPolicy() != null
+					&& canDeleteFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("depositFunc has a delegation policy");
+				includes.add("canDelete");
+			}
+			ret.setCanDelete(canDeleteFunc.getValue());
+		}
+
+		BooleanValueFunctionality canCloseFunc = functionalityReadOnlyService
+				.getUploadRequestCanCloseFunctionality(domain);
+
+		if (canCloseFunc.getActivationPolicy().getStatus()) {
+			logger.debug("canCloseFunc  is activated");
+			if (canCloseFunc .getDelegationPolicy() != null
+					&& canCloseFunc .getDelegationPolicy().getStatus()) {
+				logger.debug("canCloseFunc  has a delegation policy");
+				includes.add("canClose");
+			}
+			ret.setCanClose(canCloseFunc.getValue());
+		}
 		String[] include = includes.toArray(new String[includes.size()]);
 
 		logger.debug("Create BeanModel includes :\n\t\t"

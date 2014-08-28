@@ -49,6 +49,7 @@ import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -197,23 +198,23 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	private void checkSecuredUrl(AbstractDomain domain, UploadRequest req) {
-		Functionality func = functionalityService
+		BooleanValueFunctionality func = functionalityService
 				.getUploadRequestSecureUrlFunctionality(domain);
-		boolean secure = checkActivation(func, req.isSecured());
+		boolean secure = checkBoolean(func, req.isSecured());
 		req.setSecured(secure);
 	}
 
 	private void checkCanDelete(AbstractDomain domain, UploadRequest req) {
-		Functionality func = functionalityService
-				.getUploadRequestDepositOnlyFunctionality(domain);
-		boolean canDelete = checkActivation(func, req.isCanDelete());
+		BooleanValueFunctionality func = functionalityService
+				.getUploadRequestCandDeleteFileFunctionality(domain);
+		boolean canDelete = checkBoolean(func, req.isCanDelete());
 		req.setCanDelete(canDelete);
 	}
 
 	private void checkCanClose(AbstractDomain domain, UploadRequest req) {
-		Functionality func = functionalityService
+		BooleanValueFunctionality func = functionalityService
 				.getUploadRequestCanCloseFunctionality(domain);
-		boolean canClose = checkActivation(func, req.isCanClose());
+		boolean canClose = checkBoolean(func, req.isCanClose());
 		req.setCanClose(canClose);
 	}
 
@@ -395,12 +396,14 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 			if (func.getDelegationPolicy() != null
 					&& func.getDelegationPolicy().getStatus()) {
 				logger.debug(func.getIdentifier() + " has a delegation policy");
-				// TODO check range
-				// if (!(currentDate > 0 && currentDate <= maxSize)) {
-				// logger.warn("the current value " + currentDate.toString()
-				// + " is out of range : " + func.toString());
-				// return maxSize;
-				// }
+				if(currentDate!=null) {
+					if (!(currentDate.before(maxDate))) {
+						//	if (!(currentDate.after(new Date()) && currentDate.before(maxDate))) {
+						logger.warn("the current value " + currentDate.toString()
+								+ " is out of range : " + func.toString());
+						return maxDate;
+					}
+				}
 				return currentDate;
 			} else {
 				// there is no delegation, the current value should be the
@@ -427,17 +430,17 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 		}
 	}
 
-	private boolean checkActivation(Functionality func, Boolean current) {
+	private boolean checkBoolean(BooleanValueFunctionality func, Boolean current) {
 		if (func.getActivationPolicy().getStatus()) {
 			logger.debug(func.getIdentifier() + " is activated");
-			Boolean defaultValue = false;
+			Boolean defaultValue = func.getValue();
 			if (func.getDelegationPolicy() != null
 					&& func.getDelegationPolicy().getStatus()) {
 				logger.debug(func.getIdentifier() + " has a delegation policy");
-				if (current == null) {
-					current = false;
+				if (current != null) {
+					return current;
 				}
-				return current;
+				return defaultValue;
 			} else {
 				// there is no delegation, the current value should be the
 				// system value or null
