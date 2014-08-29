@@ -127,7 +127,7 @@ public class UploadRequestVo implements Cloneable {
 
 		recipients = Lists.newArrayList();
 		for (UploadRequestUrl u: req.getUploadRequestURLs()) {
-			recipients.add(u.getContact.getMail());
+			recipients.add(u.getContact().getMail());
 		}
 	}
 
