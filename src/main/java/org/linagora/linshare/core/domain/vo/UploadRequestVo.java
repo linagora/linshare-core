@@ -44,6 +44,7 @@ import org.apache.tapestry5.beaneditor.Validate;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
