@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.tapestry5.annotations.InjectPage;
@@ -68,6 +69,13 @@ public class Detail {
 	@Property
 	@Persist
 	private UploadRequestVo selected;
+
+	@Property
+	@Persist
+	private List<String> recipients;
+
+	@Property
+	private String current;
 
 	@InjectPage
 	private Edit edit;

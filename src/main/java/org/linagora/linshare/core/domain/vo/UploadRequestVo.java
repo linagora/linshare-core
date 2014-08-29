@@ -36,6 +36,7 @@ package org.linagora.linshare.core.domain.vo;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.NonVisual;
@@ -92,6 +93,8 @@ public class UploadRequestVo implements Cloneable {
 	@Validate(value = "required")
 	private String recipient;
 
+	private List<String> recipients;
+
 	@NonVisual
 	private BeanModel<UploadRequestVo> model;
 
@@ -119,6 +122,11 @@ public class UploadRequestVo implements Cloneable {
 		locale = Language.fromTapestryLocale(req.getLocale());
 		secured = req.isSecured();
 		owner = new UserVo(req.getOwner());
+
+		recipients = Lists.newArrayList();
+		for (UploadRequestUrl u: req.getUploadRequestURLs()) {
+			recipients.add(u.getContact.getMail());
+		}
 	}
 
 	@NonVisual
@@ -288,6 +296,14 @@ public class UploadRequestVo implements Cloneable {
 
 	public void setModel(BeanModel<UploadRequestVo> model) {
 		this.model = model;
+	}
+
+	public List<String> getRecipients() {
+		return recipients;
+	}
+
+	public void setModel(List<String> recipients) {
+		this.recipients = recipients;
 	}
 
 	@Override
