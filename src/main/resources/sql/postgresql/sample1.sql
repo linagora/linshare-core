@@ -174,6 +174,6 @@ UPDATE policy SET status=true , system=false , default_status=true where id=45;
 UPDATE policy SET status=true , policy=1 where id=98; -- fixme
 
 -- enable upload request
-UPDATE policy SET status=true , policy=1 where id=61;
+UPDATE policy SET status=true , policy=1 where id=63;
 
 COMMIT;
