@@ -52,6 +52,9 @@
       <h2> ${message:pages.uploadrequest.detail.title}</h2>
       <div>
         <t:grid source="selected.recipients" row="current">
+          <p:empty>
+            -
+          </p:empty>
         </t:grid>
       </div>
       <div style="float: left;">

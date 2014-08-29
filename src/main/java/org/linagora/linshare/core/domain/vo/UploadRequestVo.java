@@ -304,7 +304,7 @@ public class UploadRequestVo implements Cloneable {
 		return recipients;
 	}
 
-	public void setModel(List<String> recipients) {
+	public void setRecipients(List<String> recipients) {
 		this.recipients = recipients;
 	}
 
