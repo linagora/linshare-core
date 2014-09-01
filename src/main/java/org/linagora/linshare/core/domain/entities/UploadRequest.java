@@ -250,20 +250,12 @@ public class UploadRequest {
 		return maxDepositSize;
 	}
 
-	public Long getBusinessMaxDepositSize() {
-		return maxDepositSize * 1000000; // MiB
-	}
-
 	public void setMaxDepositSize(Long maxDepositSize) {
 		this.maxDepositSize = maxDepositSize;
 	}
 
 	public Long getMaxFileSize() {
 		return maxFileSize;
-	}
-
-	public Long getBusinessMaxFileSize() {
-		return maxFileSize * 1000000; // MiB
 	}
 
 	public void setMaxFileSize(Long maxFileSize) {

@@ -232,7 +232,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 							+ requestUrl.getUuid());
 		}
 		if (request.getMaxFileSize() != null) {
-			if (document.getSize() > request.getBusinessMaxFileSize()) {
+			if (document.getSize() > request.getMaxFileSize()) {
 				throw new BusinessException(
 						BusinessErrorCode.UPLOAD_REQUEST_FILE_TOO_LARGE,
 						"You already have reached the uploaded file limit.");
@@ -253,7 +253,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 				totalSize += entry.getSize();
 			}
 			totalSize += document.getSize();
-			if (totalSize >= request.getBusinessMaxDepositSize()) {
+			if (totalSize >= request.getMaxDepositSize()) {
 				throw new BusinessException(
 						BusinessErrorCode.UPLOAD_REQUEST_TOTAL_DEPOSIT_SIZE_TOO_LARGE,
 						"You already have reached the limit of your quota.");

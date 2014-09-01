@@ -248,7 +248,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	private void checkMaxFileSize(AbstractDomain domain, UploadRequest req) {
 		SizeUnitValueFunctionality func = functionalityService
 				.getUploadRequestMaxFileSizeFunctionality(domain);
-		Long checkSize = checkSize(func, req.getBusinessMaxFileSize());
+		Long checkSize = checkSize(func, req.getMaxFileSize());
 		req.setMaxFileSize(checkSize);
 	}
 
@@ -262,7 +262,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	private void checkMaxDepositSize(AbstractDomain domain, UploadRequest req) {
 		SizeUnitValueFunctionality func = functionalityService
 				.getUploadRequestMaxDepositSizeFunctionality(domain);
-		Long checkSize = checkSize(func, req.getBusinessMaxDepositSize());
+		Long checkSize = checkSize(func, req.getMaxDepositSize());
 		req.setMaxDepositSize(checkSize);
 	}
 
