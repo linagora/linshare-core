@@ -49,14 +49,15 @@
 
     <!-- Page content -->
     <div id="pageContent">
-      <h2> ${message:pages.uploadrequest.detail.title}</h2>
+      <h2> ${message:pages.uploadrequest.detail.recipients}</h2>
       <div>
-        <t:grid source="selected.recipients" row="current">
+        <t:grid source="selected.recipients" row="current" include="mail">
           <p:empty>
             -
           </p:empty>
         </t:grid>
       </div>
+      <h2> ${message:pages.uploadrequest.detail.title}</h2>
       <div style="float: left;">
         <t:bsbeandisplay object="selected" include="body,status,size,canDelete,canClose,locale,secured"/>
       </div>

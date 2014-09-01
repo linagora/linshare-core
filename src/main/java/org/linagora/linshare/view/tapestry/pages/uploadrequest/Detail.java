@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.apache.tapestry5.annotations.InjectPage;
@@ -44,6 +43,7 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -71,11 +71,7 @@ public class Detail {
 	private UploadRequestVo selected;
 
 	@Property
-	@Persist
-	private List<String> recipients;
-
-	@Property
-	private String current;
+	private Contact current;
 
 	@InjectPage
 	private Edit edit;
@@ -130,6 +126,7 @@ public class Detail {
 					MessageSeverity.ERROR));
 			return Index.class;
 		}
+		logger.debug("selected: " + selected.getUuid());
 		return null;
 	}
 

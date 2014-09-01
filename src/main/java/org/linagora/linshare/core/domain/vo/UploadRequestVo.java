@@ -95,7 +95,7 @@ public class UploadRequestVo implements Cloneable {
 	@Validate(value = "required")
 	private String recipient;
 
-	private List<String> recipients;
+	private List<Contact> recipients = Lists.newArrayList();
 
 	@NonVisual
 	private BeanModel<UploadRequestVo> model;
@@ -125,9 +125,8 @@ public class UploadRequestVo implements Cloneable {
 		secured = req.isSecured();
 		owner = new UserVo(req.getOwner());
 
-		recipients = Lists.newArrayList();
 		for (UploadRequestUrl u: req.getUploadRequestURLs()) {
-			recipients.add(u.getContact().getMail());
+			recipients.add(new Contact(u.getContact().getMail()));
 		}
 	}
 
@@ -292,20 +291,20 @@ public class UploadRequestVo implements Cloneable {
 		this.owner = owner;
 	}
 
+	public List<Contact> getRecipients() {
+		return recipients;
+	}
+
+	public void setRecipients(List<Contact> recipients) {
+		this.recipients = recipients;
+	}
+
 	public BeanModel<UploadRequestVo> getModel() {
 		return model;
 	}
 
 	public void setModel(BeanModel<UploadRequestVo> model) {
 		this.model = model;
-	}
-
-	public List<String> getRecipients() {
-		return recipients;
-	}
-
-	public void setRecipients(List<String> recipients) {
-		this.recipients = recipients;
 	}
 
 	@Override
