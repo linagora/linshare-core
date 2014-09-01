@@ -64,7 +64,8 @@ import org.slf4j.LoggerFactory;
 
 public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 
-	final private static Logger logger = LoggerFactory.getLogger(UploadRequestUrlServiceImpl.class);
+	final private static Logger logger = LoggerFactory
+			.getLogger(UploadRequestUrlServiceImpl.class);
 
 	private final UploadRequestUrlBusinessService uploadRequestUrlBusinessService;
 
@@ -110,7 +111,8 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	}
 
 	@Override
-	public UploadRequestUrl create(UploadRequest request, Contact contact) throws BusinessException {
+	public UploadRequestUrl create(UploadRequest request, Contact contact)
+			throws BusinessException {
 		return uploadRequestUrlBusinessService.create(request, false, contact);
 	}
 
@@ -140,7 +142,8 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 				// Actor should be used instead of owner
 				Account owner = requestUrl.getUploadRequest().getOwner();
 				// Store the file into the owner account.
-				DocumentEntry documentEntry = documentEntryService.findById(owner, documentEntryUuid);
+				DocumentEntry documentEntry = documentEntryService.findById(
+						owner, documentEntryUuid);
 				documentEntryService.deleteDocumentEntry(owner, documentEntry);
 			}
 			uploadRequestEntryBusinessService.delete(found);
@@ -167,8 +170,11 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		// Create the link between the document and the upload request URL.
 		UploadRequestEntry uploadRequestEntry = new UploadRequestEntry(
 				document, requestUrl.getUploadRequest());
-		UploadRequestEntry requestEntry = uploadRequestEntryBusinessService.create(uploadRequestEntry);
-		MailContainerWithRecipient mail = mailBuildingService.buildAckUploadRequest((User) requestUrl.getUploadRequest().getOwner(), requestUrl, requestEntry);
+		UploadRequestEntry requestEntry = uploadRequestEntryBusinessService
+				.create(uploadRequestEntry);
+		MailContainerWithRecipient mail = mailBuildingService
+				.buildAckUploadRequest((User) requestUrl.getUploadRequest()
+						.getOwner(), requestUrl, requestEntry);
 		notifierService.sendNotification(mail);
 		return requestEntry;
 	}
@@ -188,14 +194,14 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 			String password) throws BusinessException {
 		UploadRequest request = requestUrl.getUploadRequest();
 		if (!isValidPassword(requestUrl, password)) {
-			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_URL_FORBIDDEN,
+			throw new BusinessException(
+					BusinessErrorCode.UPLOAD_REQUEST_URL_FORBIDDEN,
 					"You do not have the right to get this upload request url : "
 							+ requestUrl.getUuid());
 		}
 
-		if (!(request.getStatus().equals(UploadRequestStatus.STATUS_ENABLED)
-				|| request.getStatus().equals(UploadRequestStatus.STATUS_CLOSED)
-				)) {
+		if (!(request.getStatus().equals(UploadRequestStatus.STATUS_ENABLED) || request
+				.getStatus().equals(UploadRequestStatus.STATUS_CLOSED))) {
 			throw new BusinessException(
 					BusinessErrorCode.UPLOAD_REQUEST_READONLY_MODE,
 					"The current upload request url is not available : "
@@ -205,20 +211,20 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		Calendar now = GregorianCalendar.getInstance();
 		Calendar compare = GregorianCalendar.getInstance();
 		compare.setTime(request.getActivationDate());
-		if (now.before(
-				compare)) {
+		if (now.before(compare)) {
 			throw new BusinessException(
 					BusinessErrorCode.UPLOAD_REQUEST_NOT_ENABLE_YET,
 					"The current upload request url is not enable yet : "
 							+ requestUrl.getUuid());
 		}
-		compare.setTime(request.getExpiryDate());
-		if (now.after(
-				compare)) {
-			throw new BusinessException(
-					BusinessErrorCode.UPLOAD_REQUEST_NOT_ENABLE_YET,
-					"The current upload request url is no more available now. : "
-							+ requestUrl.getUuid());
+		if (request.getExpiryDate() != null) {
+			compare.setTime(request.getExpiryDate());
+			if (now.after(compare)) {
+				throw new BusinessException(
+						BusinessErrorCode.UPLOAD_REQUEST_NOT_ENABLE_YET,
+						"The current upload request url is no more available now. : "
+								+ requestUrl.getUuid());
+			}
 		}
 	}
 
@@ -261,7 +267,8 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		}
 	}
 
-	private void deleteBusinessCheck(UploadRequestUrl requestUrl) throws BusinessException {
+	private void deleteBusinessCheck(UploadRequestUrl requestUrl)
+			throws BusinessException {
 		UploadRequest request = requestUrl.getUploadRequest();
 		if (!request.getStatus().equals(UploadRequestStatus.STATUS_ENABLED)) {
 			throw new BusinessException(
