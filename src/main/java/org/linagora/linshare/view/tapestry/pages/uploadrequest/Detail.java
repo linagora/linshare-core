@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
-import java.util.Locale;
-
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
@@ -164,21 +162,6 @@ public class Detail {
 
 	public void setMySelected(UploadRequestVo selected) {
 		this.selected = selected;
-	}
-
-	/*
-	 * TODO: ugly
-	 */
-	public String getFileSize(Integer bytes) {
-		if (bytes == null)
-			return "-";
-
-		boolean si = !persistentLocale.get().equals(Locale.ENGLISH);
-		int unit = si ? 1000 : 1024;
-		if (bytes < unit) return bytes + " B";
-		int exp = (int) (Math.log(bytes) / Math.log(unit));
-		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
-		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 
 	/*
