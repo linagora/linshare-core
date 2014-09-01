@@ -24,7 +24,7 @@
     <div id="pageContent">
       <h2> ${message:pages.uploadrequest.index.grid}</h2>
       <t:grid source="propositions" row="current" rowsPerPage="10"
-              include="subject, body, creationDate, status"
+              include="subject, body, creationDate"
               add="action"
               t:mixins="defaultSort" sort="creationDate" descending="true">
         <p:subjectCell>
