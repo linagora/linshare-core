@@ -70,6 +70,12 @@
           <p:modificationDate>
             <t:output format="${message:global.pattern.timestamp}" value="selected.modificationDate" />
           </p:modificationDate>
+          <p:maxFileSize>
+            <t:filesizedisplay t:value="selected.maxFileSize" />
+          </p:maxFileSize>
+          <p:maxDepositSize>
+            <t:filesizedisplay t:value="selected.maxDepositSize" />
+          </p:maxDepositSize>
         </t:bsbeandisplay>
       </div>
       <div style="clear: both;"></div>

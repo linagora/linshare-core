@@ -42,36 +42,31 @@ public enum FileSizeUnit {
     MEGA(1),
     GIGA(2);
 
-    private int value;
+	private int value;
 
-    private FileSizeUnit(final int value) {
-        this.value = value;
-    }
+	private FileSizeUnit(final int value) {
+		this.value = value;
+	}
 
-    public int toInt() {
-        return value;
-    }
+	public int toInt() {
+		return value;
+	}
 
-    public static FileSizeUnit fromInt(final int value) {
-    	FileSizeUnit ret = null;
-    	switch(value) {
-            case 0 : ret = KILO; break;
-            case 1 : ret = MEGA; break;
-            case 2 : ret = GIGA; break;
-            default : throw new IllegalArgumentException("Doesn't match an existing Role");
-        }
-    	return ret;
-    }
+	public static FileSizeUnit fromInt(final int value) {
+		for (FileSizeUnit unit : values()) {
+			if (unit.value == value) {
+				return unit;
+			}
+		}
+		throw new IllegalArgumentException(
+				"Doesn't match an existing FileSizeUnit");
+	}
 
-    public long getPlainSize(final long size) {       
-        long ret = 0L;
-        switch (value) {
-            case 0 : ret = size * BigInteger.valueOf(2).pow(10).longValue(); break;
-            case 1 : ret = size * BigInteger.valueOf(2).pow(20).longValue(); break;
-            case 2 : ret = size * BigInteger.valueOf(2).pow(30).longValue(); break;
-            default : ret = size; break;
-        }
-        
-        return ret; 
-    }
+	public long getPlainSize(final long size) {
+		return size * BigInteger.valueOf(2).pow(10 * (value + 1)).longValue();
+	}
+
+	public long getSiSize(final long size) {
+		return size * BigInteger.valueOf(1000).pow(value + 1).longValue();
+	}
 }

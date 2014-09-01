@@ -31,24 +31,45 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.view.tapestry.components;
 
-import junit.framework.TestCase;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.PersistenceConstants;
+import org.apache.tapestry5.annotations.Log;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.domain.vo.FileSizeVo;
+import org.slf4j.Logger;
 
-public class FileSizeUnitTest extends TestCase {
+public class FileSizeEdit {
 
-	public void testGetPlainSize() {
-		assertEquals(FileSizeUnit.KILO.getPlainSize(1), 1024L);
-		assertEquals(FileSizeUnit.MEGA.getPlainSize(1), 1048576L);
-		assertEquals(FileSizeUnit.GIGA.getPlainSize(1), 1073741824L);
+	@Parameter(required = true, defaultPrefix = BindingConstants.PROP)
+	@Property
+	private Long value;
 
+	@Property
+	@Persist(PersistenceConstants.FLASH)
+	private Long display;
+
+	@Property
+	@Persist(PersistenceConstants.FLASH)
+	private FileSizeVo unit;
+
+	@Inject
+	private Messages messages;
+
+	@Inject
+	private Logger logger;
+
+	@Log
+	public void beginRender() {
+		if (display == null) {
+			display = value;
+			unit = FileSizeVo.BYTE;
+		}
+		value = unit.getSiSize(display);
 	}
-
-	public void testGetSiSize() {
-		assertEquals(FileSizeUnit.KILO.getSiSize(1), 1000L);
-		assertEquals(FileSizeUnit.MEGA.getSiSize(1), 1000000L);
-		assertEquals(FileSizeUnit.GIGA.getSiSize(1), 1000000000L);
-
-	}
-
 }
