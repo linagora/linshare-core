@@ -72,6 +72,10 @@ import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableSet;
+
 public class MailBuildingServiceImpl implements MailBuildingService, MailContentBuildingService {
 
 	private final static Logger logger = LoggerFactory
@@ -89,11 +93,37 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 
 	private static final String LINSHARE_LOGO = "<img src='cid:image.part.1@linshare.org' /><br/><br/>";
 
+	private class FileRepresentation {
+
+		private String name;
+
+		private Long size;
+
+		@SuppressWarnings("unused")
+		public FileRepresentation(String name, Long size) {
+			super();
+			this.name = name;
+			this.size = size;
+		}
+
+		public FileRepresentation(UploadRequestEntry entry) {
+			super();
+			this.name = entry.getDocumentEntry().getName();
+			this.size = entry.getDocumentEntry().getSize();
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+	}
+
 	private class ContactRepresentation {
 		private String mail;
 		private String firstName;
 		private String lastName;
 
+		@SuppressWarnings("unused")
 		public ContactRepresentation(String mail, String firstName,
 				String lastName) {
 			super();
@@ -867,8 +897,9 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("lastName", "")
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
+				.add("fileSize", String.valueOf(entry.getDocumentEntry().getSize()))
 				.add("fileName", entry.getDocumentEntry().getName())
-				.add("depositDate", entry.getCreationDate().toString());
+				.add("depositDate", entry.getCreationDate().getTime().toString());
 		container.setRecipient(owner.getMail());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(contact);
@@ -1032,12 +1063,15 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
-		Collection entries = CollectionUtils.transformedCollection(request.getUploadRequest().getUploadRequestEntries(), new Transformer() {
-			@Override
-			public Object transform(Object input) {
-				return ((UploadRequestEntry) input).getDocumentEntry().getName();
-			}
-		});
+		ImmutableSet<FileRepresentation> files = FluentIterable
+				.from(request.getUploadRequest().getUploadRequestEntries())
+				.transform(new Function<UploadRequestEntry, FileRepresentation>() {
+					@Override
+					public FileRepresentation apply(UploadRequestEntry arg0) {
+						return new FileRepresentation(arg0);
+					}})
+				.toSet();
+
 		builder.getSubjectChain()
 				.add("actorRepresentation", request.getContact().getMail())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
@@ -1049,7 +1083,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("lastName", "")
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("files", entries.toString());
+				.add("files", files.toString());
 		container.setRecipient(owner);
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(request.getContact());
@@ -1066,12 +1100,15 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
-		Collection entries = CollectionUtils.transformedCollection(request.getUploadRequest().getUploadRequestEntries(), new Transformer() {
+		ImmutableSet<FileRepresentation> files = FluentIterable
+		.from(request.getUploadRequest().getUploadRequestEntries())
+		.transform(new Function<UploadRequestEntry, FileRepresentation>() {
 			@Override
-			public Object transform(Object input) {
-				return ((UploadRequestEntry) input).getDocumentEntry().getName();
-			}
-		});
+			public FileRepresentation apply(UploadRequestEntry arg0) {
+				return new FileRepresentation(arg0);
+			}})
+		.toSet();
+
 		builder.getSubjectChain()
 				.add("actorRepresentation", new ContactRepresentation(owner).getContactRepresentation())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
@@ -1083,7 +1120,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("lastName", owner.getLastName())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("files", entries.toString());
+				.add("files", files.toString());
 		container.setRecipient(request.getContact());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);

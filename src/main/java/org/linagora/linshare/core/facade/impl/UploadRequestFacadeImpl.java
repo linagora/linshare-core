@@ -65,6 +65,7 @@ import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.core.service.UserService;
@@ -439,6 +440,30 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 					&& notificationLangFunc.getDelegationPolicy().getStatus()) {
 				logger.debug("notificationLangFunc has a delegation policy");
 				includes.add("locale");
+			}
+		}
+
+		BooleanValueFunctionality canDeleteFunc = functionalityReadOnlyService
+				.getUploadRequestCandDeleteFileFunctionality(domain);
+
+		if (canDeleteFunc.getActivationPolicy().getStatus()) {
+			logger.debug("depositFunc is activated");
+			if (canDeleteFunc.getDelegationPolicy() != null
+					&& canDeleteFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("depositFunc has a delegation policy");
+				includes.add("canDelete");
+			}
+		}
+
+		BooleanValueFunctionality canCloseFunc = functionalityReadOnlyService
+				.getUploadRequestCanCloseFunctionality(domain);
+
+		if (canCloseFunc.getActivationPolicy().getStatus()) {
+			logger.debug("canCloseFunc  is activated");
+			if (canCloseFunc .getDelegationPolicy() != null
+					&& canCloseFunc .getDelegationPolicy().getStatus()) {
+				logger.debug("canCloseFunc  has a delegation policy");
+				includes.add("canClose");
 			}
 		}
 
