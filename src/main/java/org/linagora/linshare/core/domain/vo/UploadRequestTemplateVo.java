@@ -292,4 +292,28 @@ public class UploadRequestTemplateVo {
 		ret.setProlongationMode(prolongationMode);
 		return ret;
 	}
+
+	public UploadRequestTemplate toEntity(UploadRequestTemplate t) {
+		t.setDescription(description);
+		t.setDurationBeforeActivation(durationBeforeActivation);
+		if (unitBeforeActivation != null) {
+			t.setUnitBeforeActivation(unitBeforeActivation.toLong());
+		}
+		t.setDurationBeforeExpiry(durationBeforeExpiry);
+		if (unitBeforeExpiry != null) {
+			t.setUnitBeforeExpiry(unitBeforeExpiry.toLong());
+		}
+		t.setGroupMode(groupMode);
+		t.setDepositMode(depositMode);
+		t.setMaxFile(maxFileCount);
+		t.setMaxFileSize(maxFileSize);
+		t.setMaxDepositSize(maxDepositSize);
+		if (locale != null) {
+			t.setLocale(locale.toString());
+		}
+		t.setSecured(secured);
+		t.setDayBeforeNotification(dayBeforeNotification);
+		t.setProlongationMode(prolongationMode);
+		return t;
+	}
 }

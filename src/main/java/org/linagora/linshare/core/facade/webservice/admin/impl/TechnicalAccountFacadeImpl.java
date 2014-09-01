@@ -48,7 +48,6 @@ import org.linagora.linshare.webservice.dto.PasswordDto;
 import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
 
 import com.google.common.collect.Sets;
-import sun.security.util.Password;
 
 public class TechnicalAccountFacadeImpl extends AdminGenericFacadeImpl
 		implements TechnicalAccountFacade {

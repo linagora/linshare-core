@@ -35,6 +35,7 @@
 package org.linagora.linshare.view.tapestry.pages.uploadrequest.template;
 
 import org.apache.tapestry5.annotations.Log;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
@@ -48,7 +49,7 @@ import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 
-public class Create {
+public class Edit {
 
 	/*
 	 * Tapestry properties
@@ -63,6 +64,7 @@ public class Create {
 	private UserVo userVo;
 
 	@Property
+	@Persist
 	private UploadRequestTemplateVo current;
 
 	/*
@@ -84,21 +86,32 @@ public class Create {
 	@Inject
 	private UploadRequestFacade uploadRequestFacade;
 
+	public Object onActivate(String uuid) {
+		try {
+			current = uploadRequestFacade.findTemplateByUuid(userVo, uuid);
+		} catch (BusinessException e) {
+			// TODO notify user of the error
+			return Index.class;
+		}
+		return null;
+	}
+
 	public Object onActivate() {
 		if (!functionalityFacade.isEnableUploadRequest(userVo
 				.getDomainIdentifier())) {
 			return org.linagora.linshare.view.tapestry.pages.Index.class;
 		}
+		if (current == null) {
+			logger.info("No upload request template selected, abort");
+			return Index.class;
+		}
+		// TODO test if user is owner
 		return null;
-	}
-
-	public void setupRender() {
-		current = new UploadRequestTemplateVo();
 	}
 
 	@Log
 	public Object onSuccess() throws BusinessException {
-		uploadRequestFacade.createTemplate(userVo, current);
+		uploadRequestFacade.updateTemplate(userVo, current);
 		return Index.class;
 	}
 
@@ -106,10 +119,6 @@ public class Create {
 	public Object onCanceled() throws BusinessException {
 		return Index.class;
 	}
-
-	/*
-	 * Models + ValueEncoder
-	 */
 
 	/*
 	 * Exception Handling

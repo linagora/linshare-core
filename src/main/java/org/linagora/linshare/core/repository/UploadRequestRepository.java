@@ -33,13 +33,13 @@
  */
 package org.linagora.linshare.core.repository;
 
+import java.util.Date;
+import java.util.List;
+
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
-
-import java.util.Date;
-import java.util.List;
 
 public interface UploadRequestRepository extends
 		AbstractRepository<UploadRequest> {

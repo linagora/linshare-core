@@ -35,12 +35,8 @@ package org.linagora.linshare.webservice.admin;
 
 import java.util.Set;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.UserDto;
 import org.linagora.linshare.webservice.dto.UserSearchDto;

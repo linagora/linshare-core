@@ -34,11 +34,12 @@
 
 package org.linagora.linshare.webservice.dto;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import java.util.Date;
+
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 
-import java.util.Date;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class UploadRequestDto {
 

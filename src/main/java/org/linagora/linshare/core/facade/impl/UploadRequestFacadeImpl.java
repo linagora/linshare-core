@@ -46,7 +46,6 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -150,7 +149,8 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 			contacts.add(new Contact(contact));
 		}
 		UploadRequest req = reqVo.toEntity();
-		UploadRequest request = uploadRequestService.createRequest(actor, actor, req, contacts, reqVo.getSubject(), reqVo.getBody());
+		UploadRequest request = uploadRequestService.createRequest(actor,
+				actor, req, contacts, reqVo.getSubject(), reqVo.getBody());
 		return new UploadRequestVo(request);
 	}
 
@@ -358,8 +358,8 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 
 		if (canCloseFunc.getActivationPolicy().getStatus()) {
 			logger.debug("canCloseFunc  is activated");
-			if (canCloseFunc .getDelegationPolicy() != null
-					&& canCloseFunc .getDelegationPolicy().getStatus()) {
+			if (canCloseFunc.getDelegationPolicy() != null
+					&& canCloseFunc.getDelegationPolicy().getStatus()) {
 				logger.debug("canCloseFunc  has a delegation policy");
 				includes.add("canClose");
 			}
@@ -476,7 +476,18 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 			UploadRequestTemplateVo vo) throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 
-		return new UploadRequestTemplateVo(
-				uploadRequestService.createTemplate(actor, vo.toEntity()));
+		return new UploadRequestTemplateVo(uploadRequestService.createTemplate(
+				actor, vo.toEntity()));
+	}
+
+	@Override
+	public UploadRequestTemplateVo updateTemplate(UserVo actorVo,
+			UploadRequestTemplateVo vo) throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+		UploadRequestTemplate e = uploadRequestService.findTemplateByUuid(
+				actor, vo.getUuid());
+
+		return new UploadRequestTemplateVo(uploadRequestService.updateTemplate(
+				actor, vo.toEntity(e)));
 	}
 }

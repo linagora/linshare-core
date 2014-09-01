@@ -35,7 +35,6 @@ package org.linagora.linshare.view.tapestry.pages.uploadrequest.template;
 
 import java.util.List;
 
-import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -99,11 +98,6 @@ public class Index {
 	public void init() throws BusinessException {
 		templates = uploadRequestFacade.findAllTemplates(userVo);
 	}
-
-    @Log
-    public Object onActionFromCreate() {
-		return Create.class;
-    }
 
 	/*
 	 * Exception Handling

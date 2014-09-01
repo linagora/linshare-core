@@ -34,6 +34,9 @@
 
 package org.linagora.linshare.core.facade.webservice.uploadrequest.impl;
 
+import java.io.InputStream;
+import java.util.Set;
+
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MimeType;
@@ -45,9 +48,6 @@ import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequ
 import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
-
-import java.io.InputStream;
-import java.util.Set;
 
 public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 

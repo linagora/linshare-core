@@ -92,4 +92,7 @@ public interface UploadRequestFacade {
 
 	UploadRequestTemplateVo createTemplate(UserVo actorVo,
 			UploadRequestTemplateVo vo) throws BusinessException;
+
+	UploadRequestTemplateVo updateTemplate(UserVo actorVo,
+			UploadRequestTemplateVo vo) throws BusinessException;
 }

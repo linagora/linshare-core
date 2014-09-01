@@ -34,11 +34,12 @@
 
 package org.linagora.linshare.webservice.dto;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.User;
+
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class ContactDto {
 

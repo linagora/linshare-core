@@ -34,14 +34,16 @@
 
 package org.linagora.linshare.webservice.dto;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement(name = "UploadRequestHistoryCriteria")
 @ApiModel(value = "UploadRequestHistoryCriteria", description = "Criteria of an upload request history")

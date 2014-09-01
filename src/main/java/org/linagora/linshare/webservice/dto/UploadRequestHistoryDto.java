@@ -33,12 +33,14 @@
  */
 package org.linagora.linshare.webservice.dto;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
-import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
+import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Date;
+
+import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
+
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement(name = "UploadRequestHistory")
 @ApiModel(value = "UploadRequestHistory", description = "History of an upload request")

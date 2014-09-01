@@ -38,7 +38,6 @@ import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestUrlRepository;
@@ -55,7 +54,7 @@ public class UploadRequestUrlRepositoryImpl extends
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(UploadRequestUrl url) {
-		DetachedCriteria det = DetachedCriteria.forClass(Entry.class).add(
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass()).add(
 				Restrictions.eq("uuid", url.getUuid()));
 		return det;
 	}

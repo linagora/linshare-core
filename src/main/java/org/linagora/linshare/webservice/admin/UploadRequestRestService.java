@@ -34,12 +34,12 @@
 
 package org.linagora.linshare.webservice.admin;
 
+import java.util.Set;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.UploadRequestCriteriaDto;
 import org.linagora.linshare.webservice.dto.UploadRequestDto;
 import org.linagora.linshare.webservice.dto.UploadRequestHistoryDto;
-
-import java.util.Set;
 
 public interface UploadRequestRestService {
 

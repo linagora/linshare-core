@@ -36,10 +36,8 @@ package org.linagora.linshare.core.service.impl;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.TechnicalAccountBusinessService;
-import org.linagora.linshare.core.business.service.TechnicalAccountPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AccountPermission;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import org.linagora.linshare.core.exception.BusinessErrorCode;

@@ -38,7 +38,6 @@ import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestHistoryRepository;
@@ -56,7 +55,7 @@ public class UploadRequestHistoryRepositoryImpl extends
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(UploadRequestHistory hist) {
-		DetachedCriteria det = DetachedCriteria.forClass(Entry.class).add(
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass()).add(
 				Restrictions.eq("uuid", hist.getUuid()));
 		return det;
 	}

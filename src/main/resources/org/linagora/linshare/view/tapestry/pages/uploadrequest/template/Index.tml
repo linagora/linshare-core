@@ -29,6 +29,14 @@
       <t:grid source="templates" row="current" rowsPerPage="10"
               include="name, creationDate, modificationDate"
               t:mixins="defaultSort" sort="modificationDate" descending="true">
+        <p:nameCell>
+          <span class="truncate">
+            <t:pagelink page="uploadrequest/template/edit" title="${current.name}"
+                        context="current.uuid">
+              ${current.name}
+            </t:pagelink>
+          </span>
+        </p:nameCell>
         <p:creationDateCell>
           <t:output format="${message:global.pattern.timestamp}" value="current.creationDate" />
         </p:creationDateCell>
