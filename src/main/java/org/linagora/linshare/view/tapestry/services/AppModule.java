@@ -55,8 +55,10 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.AliasContribution;
 import org.apache.tapestry5.services.ApplicationStateContribution;
 import org.apache.tapestry5.services.ApplicationStateManager;
+import org.apache.tapestry5.services.BeanBlockContribution;
 import org.apache.tapestry5.services.ComponentSource;
 import org.apache.tapestry5.services.Dispatcher;
+import org.apache.tapestry5.services.DisplayBlockContribution;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestExceptionHandler;
@@ -348,7 +350,13 @@ public class AppModule
 
 		return new UserLocaleDispatcher(persistentLocale, stateManager, symbolSource, "fr");
 	}
-    
+
+	public static void contributeBeanBlockSource(
+			Configuration<BeanBlockContribution> configuration) {
+		configuration.add(new DisplayBlockContribution("boolean",
+				"BooleanDisplayBlock", "boolean"));
+	}
+
 //    ****************************
 //    * webservice part
 //    ****************************/

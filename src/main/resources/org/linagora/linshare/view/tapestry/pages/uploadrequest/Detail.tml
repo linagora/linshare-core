@@ -60,15 +60,6 @@
       <h2> ${message:pages.uploadrequest.detail.title}</h2>
       <div style="float: left;">
         <t:bsbeandisplay object="selected" include="body,status,size,locale,canDelete,canClose,secured">
-          <p:secured>
-            <t:rocheckbox value="selected.secured" />
-          </p:secured>
-          <p:canDelete>
-            <t:rocheckbox value="selected.canDelete" />
-          </p:canDelete>
-          <p:canClose>
-            <t:rocheckbox value="selected.canClose" />
-          </p:canClose>
         </t:bsbeandisplay>
       </div>
       <div style="float: left;">
