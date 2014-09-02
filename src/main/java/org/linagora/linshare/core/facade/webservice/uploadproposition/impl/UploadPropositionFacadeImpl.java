@@ -86,7 +86,7 @@ public class UploadPropositionFacadeImpl extends
 	@Override
 	public void checkIfValidRecipient(String userMail, String userDomain)
 			throws BusinessException {
-		Validate.notEmpty(userMail, "User user mail is required.");
+		Validate.notEmpty(userMail, "User mail is required.");
 		User actor = checkAuthentication();
 		uploadPropositionService.checkIfValidRecipient(actor, userMail,
 				userDomain);
@@ -95,6 +95,9 @@ public class UploadPropositionFacadeImpl extends
 	@Override
 	public void create(UploadPropositionDto dto) throws BusinessException {
 		this.checkAuthentication();
+		Validate.notNull(dto, "Upload proposition is required.");
+		Validate.notEmpty(dto.getMail(), "Mail is required.");
+		Validate.notEmpty(dto.getRecipientMail(), "Recipient mail is required.");
 		logger.debug(dto.toString());
 		UploadPropositionActionType actionType = dto.getAction() == null ? UploadPropositionActionType.MANUAL
 				: UploadPropositionActionType.fromString(dto.getAction());

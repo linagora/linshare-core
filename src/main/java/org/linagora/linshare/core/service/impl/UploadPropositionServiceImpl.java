@@ -187,7 +187,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			throws BusinessException {
 		UploadRequest req = new UploadRequest();
 		req.setUploadPropositionRequestUuid(created.getUuid());
-		Contact contact = new Contact(created.getRecipientMail());
+		Contact contact = new Contact(created.getMail());
 		uploadRequestService.createRequest(owner, owner, req, contact, created.getSubject(), created.getBody());
 	}
 }
