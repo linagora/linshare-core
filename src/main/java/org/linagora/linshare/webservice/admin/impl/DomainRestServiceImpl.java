@@ -118,4 +118,13 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 		domainFacade.delete(domain);
 	}
 
+	@Path("/{domainId}")
+	@DELETE
+	@ApiOperation(value = "Delete a domain.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Override
+	public void delete(@PathParam(value = "domainId") String domainId) throws BusinessException {
+		domainFacade.delete(domainId);
+	}
+
 }

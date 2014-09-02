@@ -50,4 +50,5 @@ public interface DomainRestService {
 
 	void delete(DomainDto domain) throws BusinessException;
 
+	void delete(String domainId) throws BusinessException;
 }

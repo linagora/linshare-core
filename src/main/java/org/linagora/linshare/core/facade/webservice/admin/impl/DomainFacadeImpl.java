@@ -156,6 +156,14 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		userAndDomainMultiService.deleteDomainAndUsers(actor, domainDto.getIdentifier());
 	}
 
+	@Override
+	public void delete(String domainId) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
+		Validate.notEmpty(domainId,
+				"domain identifier must be set.");
+		userAndDomainMultiService.deleteDomainAndUsers(actor, domainId);
+	}
+
 	private AbstractDomain getDomain(DomainDto domainDto)
 			throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
