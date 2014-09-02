@@ -2,6 +2,19 @@
                   xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
                   xmlns:p="tapestry:parameter">
 
+  <script type="text/javascript">
+    var up = function(id) {
+        var input = document.getElementById(id);
+        input.nextSibling.innerHTML = filesize(input.value, { suffixes:
+            {
+                B: "${message:global.byte}",
+                kB: "${message:global.kilobyte}",
+                MB: "${message:global.megabyte}",
+                GB: "${message:global.gigabyte}"
+            }});
+    };
+  </script>
+
   <!-- Main content -->
   <div id="content">
     <h1 title="${selected.subject}"><span class="truncate">${selected.subject}</span></h1>
@@ -12,6 +25,26 @@
     <!-- Page content -->
     <div id="pageContent">
       <t:bsBeanEditForm t:object="selected" submitlabel="message:global.button.validate" model="model">
+        <p:maxFileSize>
+          <t:label for="maxFileSize" />
+          <t:textfield t:id="maxFileSize" value="selected.maxFileSize"
+                       type="number" />
+          <span>
+            <script type="text/javascript">
+              setInterval(function() { up("maxFileSize"); }, 200);
+            </script>
+          </span>
+        </p:maxFileSize>
+        <p:maxDepositSize>
+          <t:label for="maxDepositSize" />
+          <t:textfield t:id="maxDepositSize" value="selected.maxDepositSize"
+                       type="number" />
+          <span>
+            <script type="text/javascript">
+              setInterval(function() { up("maxDepositSize"); }, 200);
+            </script>
+          </span>
+        </p:maxDepositSize>
       </t:bsBeanEditForm>
     </div>
   </div><!-- id="content" -->

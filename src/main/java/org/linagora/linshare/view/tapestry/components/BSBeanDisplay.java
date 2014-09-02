@@ -38,7 +38,7 @@ import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.BeanDisplay;
 
-@Import(library = { "bootstrap/js/bootstrap.js" })
+@Import(library = { "bootstrap/js/bootstrap.js", "filesize/filesize.min.js" })
 @SupportsInformalParameters
 public class BSBeanDisplay extends BeanDisplay {
 

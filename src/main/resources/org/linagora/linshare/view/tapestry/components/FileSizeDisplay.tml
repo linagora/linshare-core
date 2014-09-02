@@ -1,4 +1,14 @@
 <t:container
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-  <span>${display}</span>
+  <span>
+    <script type="text/javascript">
+      document.write(filesize(${value}, { suffixes:
+        {
+            B: "${message:global.byte}",
+            kB: "${message:global.kilobyte}",
+            MB: "${message:global.megabyte}",
+            GB: "${message:global.gigabyte}",
+        }}));
+    </script>
+  </span>
 </t:container>

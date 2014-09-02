@@ -43,7 +43,7 @@ import org.apache.tapestry5.dom.Visitor;
 
 import com.google.common.collect.Sets;
 
-@Import(library = { "bootstrap/js/bootstrap.js" })
+@Import(library = { "bootstrap/js/bootstrap.js", "filesize/filesize.min.js" })
 @SupportsInformalParameters
 public class BSBeanEditForm extends BeanEditForm {
 
@@ -68,6 +68,9 @@ public class BSBeanEditForm extends BeanEditForm {
 					e.addClassName("control-label");
 				} else if (isInput(e) && !has(e, "type", "submit")) {
 					controls = e.wrap("div", "class", "controls");
+				} else if (is(e, "span")) {
+					e.moveToBottom(controls);
+					e.addClassName("help-block");
 				} else if (is(e, "img")
 						&& has(e, "class", "t-calendar-trigger")) {
 					e.moveToBottom(controls);
