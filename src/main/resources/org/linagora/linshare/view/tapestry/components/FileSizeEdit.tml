@@ -1,8 +1,0 @@
-<t:container
-	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-  <div>
-    <t:label for="filesizeedit" />
-    <t:textfield t:id="filesizeedit" t:value="display" />
-    <t:select value="unit" style="float:left" />
-  </div>
-</t:container>
