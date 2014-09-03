@@ -2,19 +2,6 @@
                   xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
                   xmlns:p="tapestry:parameter">
 
-  <script type="text/javascript">
-    var up = function(id) {
-        var input = document.getElementById(id);
-        input.nextSibling.innerHTML = filesize(input.value, { suffixes:
-            {
-                B: "${message:global.byte}",
-                kB: "${message:global.kilobyte}",
-                MB: "${message:global.megabyte}",
-                GB: "${message:global.gigabyte}"
-            }});
-    };
-  </script>
-
   <!-- Main content -->
   <div id="content">
     <h1 title="${message:pages.uploadrequest.create.title}"><span class="truncate">${message:pages.uploadrequest.create.title}</span></h1>
@@ -32,7 +19,7 @@
     <div id="pageContent">
       <t:zone t:id="reload" update="show">
         <t:form t:id="template">
-            <t:select t:id="selected" t:zone="reload" t:model="selectModel" encoder="templateEncoder"/>
+          <t:select t:id="selected" t:zone="reload" t:model="selectModel" encoder="templateEncoder"/>
         </t:form>
         <t:bsBeanEditForm t:object="current" submitlabel="message:global.button.validate" model="requestModel">
           <p:body>
@@ -41,13 +28,8 @@
           </p:body>
           <p:maxDepositsize>
             <t:label for="maxDepositsize" />
-            <t:textfield t:id="maxDepositsize" value="current.maxDepositsize"
-                         validate="prop:maxDepositSizeValidator" />
-            <span>
-              <script type="text/javascript">
-                setInterval(function() { up("maxDepositSize"); }, 200);
-              </script>
-            </span>
+            <t:filesizeedit t:id="maxDepositSize" t:value="selected.maxDepositSize"
+                            validate="prop:maxDepositSizeValidator" />
           </p:maxDepositsize>
           <p:maxFileCount>
             <t:label for="maxFileCount" />
@@ -56,13 +38,8 @@
           </p:maxFileCount>
           <p:maxFileSize>
             <t:label for="maxFileSize" />
-            <t:textfield t:id="maxFileSize" value="current.maxFileSize"
-                         validate="prop:maxFileSizeValidator" />
-            <span>
-              <script type="text/javascript">
-                setInterval(function() { up("maxFileSize"); }, 200);
-              </script>
-            </span>
+            <t:filesizeedit t:id="maxFileSize" t:value="current.maxFileSize"
+                            validate="prop:maxFileSizeValidator" />
           </p:maxFileSize>
         </t:bsBeanEditForm>
       </t:zone>

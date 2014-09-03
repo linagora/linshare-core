@@ -57,8 +57,10 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.components.FileSizeEdit;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
+
 
 public class Create {
 
@@ -88,10 +90,10 @@ public class Create {
 	private TextField maxFileCount;
 
 	@InjectComponent
-	private TextField maxFileSize;
+	private FileSizeEdit maxFileSize;
 
 	@InjectComponent
-	private TextField maxDepositSize;
+	private FileSizeEdit maxDepositSize;
 
 	/*
 	 * Injected beans

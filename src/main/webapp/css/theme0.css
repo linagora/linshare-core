@@ -1373,7 +1373,7 @@ select, textarea {
 }
 
 input[type="text"], input[type="password"], input[type="file"],
-input[type="reset"], input[type="button"],
+input[type="reset"], input[type="button"], input[type="number"],
 select, textarea {
 	border: 1px solid #DDD;
 }

@@ -33,14 +33,18 @@
  */
 package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.corelib.components.TextField;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.FieldValidatorSource;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -48,6 +52,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.components.FileSizeEdit;
 import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
@@ -86,6 +91,24 @@ public class Edit {
 	@Inject
 	private BusinessMessagesManagementService businessMessagesManagementService;
 
+	@Inject
+	private FieldValidatorSource source;
+
+	@InjectComponent
+	private TextField maxFileCount;
+
+	@InjectComponent
+	private FileSizeEdit maxFileSize;
+
+	@InjectComponent
+	private FileSizeEdit maxDepositSize;
+
+	private Long _d;
+
+	private Long _s;
+
+	private Integer _c;
+
 	public Object onActivate(String uuid) {
 		logger.debug("Upload Request uuid: " + uuid);
 		try {
@@ -117,6 +140,19 @@ public class Edit {
 					MessageSeverity.ERROR));
 			return Index.class;
 		}
+		UploadRequestVo def;
+		try {
+			def = uploadRequestFacade.getDefaultValue(userVo, beanModelSource
+					.createEditModel(UploadRequestVo.class, messages));
+			_d = def.getMaxDepositSize();
+			_s = def.getMaxFileSize();
+			_c = def.getMaxFileCount();
+		} catch (BusinessException e) {
+			logger.error("Cannot get default upload request value for user "
+					+ userVo.getLsUuid());
+			businessMessagesManagementService.notify(e);
+			return Index.class;
+		}
 		return null;
 	}
 
@@ -139,10 +175,34 @@ public class Edit {
 		this.selected = selected;
 	}
 
+	/*
+	 * Model
+	 */
+
 	public BeanModel<UploadRequestVo> getModel() throws BusinessException {
 		return uploadRequestFacade.getEditModel(userVo, beanModelSource
 				.createEditModel(UploadRequestVo.class, messages));
 	}
+
+	/*
+	 * Dynamic validation
+	 */
+
+	public FieldValidator<?> getMaxFileCountValidator() {
+		return source.createValidators(maxFileCount, "required, max=" + _c);
+	}
+
+	public FieldValidator<?> getMaxFileSizeValidator() {
+		return source.createValidators(maxFileSize, "required, max=" + _s);
+	}
+
+	public FieldValidator<?> getMaxDepositSizeValidator() {
+		return source.createValidators(maxDepositSize, "required, max=" + _d);
+	}
+
+	/*
+	 * Exception Handling
+	 */
 
 	Object onException(Throwable cause) {
 		shareSessionObjects.addError(messages.get("global.exception.message"));
