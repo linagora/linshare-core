@@ -45,6 +45,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
@@ -239,7 +240,7 @@ public class ListSharedDocument {
 	@InjectComponent
 	private ShareEditForm shareEditForm;
 	
-	
+	private final Integer truncatedValue=40;
 	
 	/*********************************
 	 * Phase render
@@ -596,7 +597,11 @@ public class ListSharedDocument {
 		return null;
 	}
 	
-	
+
+	public String getTruncatedFileName() {
+		String result = StringUtils.abbreviate(shareDocument.getFileName(), truncatedValue);
+		return result;
+	}	
 	
 	@SuppressWarnings("unchecked")
 	@OnEvent(value="eventReorderList")

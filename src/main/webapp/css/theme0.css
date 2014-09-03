@@ -1517,6 +1517,9 @@ table.t-data-grid {
 #home #pageContent #list {
 }
 
+#home #list td.fileProperties{
+	max-width: 300px;
+}
 #home #list td.fileProperties div {
 	overflow: hidden;
 	min-width: 300px;
@@ -1555,6 +1558,9 @@ table.t-data-grid {
 	vertical-align: middle;
 }
 
+#list td.fileProperties div { /* truncate text name in lists (home and file page) */
+	text-overflow:ellipsis;
+}
 
 /*--------------------------------------------------------------------------
 * Pages > Files

@@ -20,6 +20,8 @@
 	width: 430px !important;
 }
 
-
+#list td.fileProperties div {
+	ms-text-overflow:ellipsis;
+}
 
 /***************************************************************************/

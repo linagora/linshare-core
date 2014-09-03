@@ -71,7 +71,9 @@ table.t-data-grid thead tr th {		/* Impossible to style 'tr' tags (5.5, 6, 7) */
 	bottom: .25em;
 }
 
-
+#list td.fileProperties div {
+	ms-text-overflow:ellipsis;
+}
 
 /***************************************************************************
 * PAGES
