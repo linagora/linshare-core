@@ -47,6 +47,7 @@ public interface UserProviderService {
 	public List<String> findAllUserDomainPatternIdentifiers();
 	public List<String> findAllSystemDomainPatternIdentifiers();
 	public List<DomainPattern> findAllDomainPattern() throws BusinessException;
+	public DomainPattern findDomainPattern(String id) throws BusinessException;
 	public List<DomainPattern> findAllUserDomainPattern() throws BusinessException;
 	public List<DomainPattern> findAllSystemDomainPattern() throws BusinessException;
 	public DomainPattern createDomainPattern(DomainPattern domainPattern) throws BusinessException;
@@ -56,6 +57,7 @@ public interface UserProviderService {
 
 	public List<String> findAllLDAPConnectionIdentifiers();
 	public List<LDAPConnection> findAllLDAPConnections() throws BusinessException;
+	public LDAPConnection findLDAPConnection(String id) throws BusinessException;
 	public LDAPConnection createLDAPConnection(LDAPConnection ldapConnection) throws BusinessException;
 	public LDAPConnection retrieveLDAPConnection(String identifier) throws BusinessException;
 	public LDAPConnection updateLDAPConnection(LDAPConnection ldapConnection) throws BusinessException;

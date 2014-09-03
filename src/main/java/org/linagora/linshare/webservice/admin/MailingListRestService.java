@@ -52,6 +52,8 @@ public interface MailingListRestService {
 
 	void delete(MailingListDto dto) throws BusinessException;
 
+	void delete(String uuid) throws BusinessException;
+
 	void createContact(String uuid, MailingListContactDto dto)
 			throws BusinessException;
 

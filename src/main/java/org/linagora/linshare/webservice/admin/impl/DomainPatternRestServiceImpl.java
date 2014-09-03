@@ -41,9 +41,11 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPatternFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
@@ -76,6 +78,15 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 	@Override
 	public Set<DomainPatternDto> findAll() throws BusinessException {
 		return domainPatternFacade.findAll();
+	}
+
+	@Path("/{id}")
+	@GET
+	@ApiOperation(value = "Find a domain pattern.", response = DomainPatternDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public DomainPatternDto find(@PathParam(value = "id") String id) throws BusinessException {
+		return domainPatternFacade.find(id);
 	}
 
 	@Path("/models")

@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -63,6 +64,13 @@ public class LDAPConnectionFacadeImpl extends AdminGenericFacadeImpl implements 
 			ldapConnectionsDto.add(new LDAPConnectionDto(ldapConnection));
 		}
 		return ldapConnectionsDto;
+	}
+
+	@Override
+	public LDAPConnectionDto find(String id) throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+		Validate.notEmpty(id, "ldap connection id must be set.");
+		return new LDAPConnectionDto(userProviderService.findLDAPConnection(id));
 	}
 
 	@Override

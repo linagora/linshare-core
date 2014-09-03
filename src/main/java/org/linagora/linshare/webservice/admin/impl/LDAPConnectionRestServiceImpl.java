@@ -41,6 +41,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -77,6 +78,16 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 	public Set<LDAPConnectionDto> findAll() throws BusinessException {
 		return ldapConnectionFacade.findAll();
 	}
+
+	@Path("/{id}")
+	@GET
+	@ApiOperation(value = "Find a LDAP connection.", response = LDAPConnectionDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Override
+	public LDAPConnectionDto find(@PathParam(value = "id") String id) throws BusinessException {
+		return ldapConnectionFacade.find(id);
+	}
+
 
 	@Path("/")
 	@POST

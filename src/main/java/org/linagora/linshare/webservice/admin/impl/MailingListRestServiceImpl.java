@@ -120,6 +120,16 @@ public class MailingListRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Delete a mailing list.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
+	public void delete(@PathParam(value = "Mailing list to delete.") String uuid)
+			throws BusinessException {
+		mailingListFacade.delete(uuid);
+	}
+
+	@Path("/")
+	@DELETE
+	@ApiOperation(value = "Delete a mailing list.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
 	public void delete(
 			@ApiParam(value = "Mailing list to delete.", required = true) MailingListDto dto)
 			throws BusinessException {

@@ -202,6 +202,11 @@ public class UserProviderServiceImpl implements UserProviderService {
 	}
 
 	@Override
+	public DomainPattern findDomainPattern(String id) throws BusinessException {
+		return domainPatternRepository.findById(id);
+	}
+
+	@Override
 	public List<DomainPattern> findAllUserDomainPattern()
 			throws BusinessException {
 		return domainPatternRepository.findAllUserDomainPattern();
@@ -219,6 +224,10 @@ public class UserProviderServiceImpl implements UserProviderService {
 		return ldapConnectionRepository.findAll();
 	}
 
+	@Override
+	public LDAPConnection findLDAPConnection(String id) throws BusinessException {
+		return ldapConnectionRepository.findById(id);
+	}
 	@Override
 	public LDAPConnection updateLDAPConnection(LDAPConnection ldapConnection)
 			throws BusinessException {
