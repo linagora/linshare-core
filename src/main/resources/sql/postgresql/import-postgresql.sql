@@ -2,28 +2,6 @@ SET client_encoding = 'UTF8';
 SET client_min_messages = warning;
 
 
-INSERT INTO messages_configuration (messages_configuration_id) VALUES (1);
-
-
--- LOCALE en
--- Welcome texts
--- Welcome to LinShare, THE Secure, Open-Source File Sharing Tool.
-INSERT INTO welcome_texts (messages_configuration_id, welcome_text, language_id) VALUES (1, E'Welcome to LinShare, THE Secure, Open-Source File Sharing Tool.', 0);
-
-
--- LOCALE fr
--- Welcome texts
--- Welcome to LinShare, the Open Source secure files sharing system
-INSERT INTO welcome_texts (messages_configuration_id, welcome_text, language_id) VALUES (1, E'Bienvenue dans LinShare, le logiciel libre de partage de fichiers sécurisé.', 1);
-
-
--- LOCALE nl
--- Welcome texts
--- Welcome to LinShare, the Open Source secure files sharing system
-INSERT INTO welcome_texts (messages_configuration_id, welcome_text, language_id) VALUES (1, E'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 2);
-
-
-
 -- default domain policy
 INSERT INTO domain_access_policy(id) VALUES (1);
 INSERT INTO domain_access_rule(id, domain_access_rule_type, regexp, domain_id, domain_access_policy_id, rule_index) VALUES (1, 0, '', null, 1,0);
