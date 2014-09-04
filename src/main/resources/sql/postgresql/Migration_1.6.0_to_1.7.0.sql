@@ -23,24 +23,6 @@ CREATE TABLE account_permission (
 	permission varchar(255) NOT NULL
 );
 
-CREATE TABLE statistic_event (
-	id int8 NOT NULL,
-	event_type int4 NOT NULL,
-	event_action int4 NOT NULL,
-	event_source int4 NOT NULL,
-	event_actor_type int4 NOT NULL,
-	action_count int8,
-	description text,
-	transfer_size int8,
-	transfer_duration int8,
-	transfer_rate int8,
-	recipient_count int8,
-	document_count int8,
-	secured bool,
-	daily int4,
-	creation_date timestamp(6) NOT NULL
-);
-
 CREATE TABLE upload_proposition (
 	id int8 NOT NULL,
 	uuid varchar(255) NOT NULL,
@@ -200,9 +182,6 @@ ALTER TABLE technical_account_permission
 
 ALTER TABLE account_permission
 	ADD CONSTRAINT account_permission_pkey PRIMARY KEY (id);
-
-ALTER TABLE statistic_event
-	ADD CONSTRAINT statistic_event_pkey PRIMARY KEY (id);
 
 ALTER TABLE upload_proposition
 	ADD CONSTRAINT upload_proposition_pkey PRIMARY KEY (id);
