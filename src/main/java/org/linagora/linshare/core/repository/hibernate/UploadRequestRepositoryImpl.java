@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -83,10 +84,13 @@ public class UploadRequestRepositoryImpl extends
 	public List<UploadRequest> findByDomainsAndStatus(
 			List<AbstractDomain> domains, List<UploadRequestStatus> status,
 			Date after, Date before) {
-		return findByCriteria(Restrictions.conjunction()
-				.add(Restrictions.in("abstractDomain", domains))
-				.add(Restrictions.in("status", status))
-				.add(Restrictions.between("creationDate", after, before)));
+		Junction add = Restrictions.conjunction()
+						.add(Restrictions.in("abstractDomain", domains))
+						.add(Restrictions.between("creationDate", after, before));
+		if (!status.isEmpty()) {
+			add.add(Restrictions.in("status", status));
+		}
+		return findByCriteria(add);
 	}
 
 	@Override
