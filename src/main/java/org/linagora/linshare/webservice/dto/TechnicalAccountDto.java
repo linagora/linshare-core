@@ -74,6 +74,8 @@ public class TechnicalAccountDto extends AccountDto {
 		this.mail = account.getMail();
 		this.role = account.getRole();
 		this.enable = account.isEnable();
+		this.creationDate = account.getCreationDate();
+		this.modificationDate = account.getModificationDate();
 		TechnicalAccountPermission permission = account.getPermission();
 		if (permission != null) {
 			for (AccountPermission p : permission.getAccountPermissions()) {
