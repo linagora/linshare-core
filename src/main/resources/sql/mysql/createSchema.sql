@@ -329,9 +329,10 @@ CREATE TABLE technical_account_permission_domain_abstract (
   PRIMARY KEY (technical_account_permission_id,
   domain_abstract_id)) CHARACTER SET UTF8;
 CREATE TABLE technical_account_permission (
-  id              bigint(8) NOT NULL AUTO_INCREMENT,
-  `write`           bit NOT NULL,
-  all_permissions bit NOT NULL,
+  id                bigint(8) NOT NULL AUTO_INCREMENT, 
+  uuid              varchar(255) NOT NULL UNIQUE, 
+  creation_date     date NOT NULL, 
+  modification_date date NOT NULL, 
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE contact (
   id   bigint(8) NOT NULL AUTO_INCREMENT,
@@ -417,10 +418,127 @@ CREATE TABLE mail_content_lang (
   mail_content_type int(4) NOT NULL, 
   uuid              varchar(255) NOT NULL, 
   PRIMARY KEY (id)) CHARACTER SET UTF8;
+CREATE TABLE upload_request (
+  id                              bigint(8) NOT NULL AUTO_INCREMENT, 
+  domain_abstract_id              bigint(8) NOT NULL, 
+  account_id                      bigint(8) NOT NULL, 
+  upload_request_group_id         bigint(8) NOT NULL, 
+  uuid                            varchar(255) NOT NULL UNIQUE, 
+  max_file                        int(4), 
+  max_deposit_size                bigint(8), 
+  max_file_size                   bigint(8), 
+  status                          varchar(255) NOT NULL, 
+  activation_date                 timestamp NOT NULL, 
+  creation_date                   timestamp NOT NULL, 
+  modification_date               timestamp NOT NULL, 
+  notification_date               timestamp NOT NULL, 
+  expiry_date                     timestamp NOT NULL, 
+  upload_proposition_request_uuid varchar(255), 
+  can_delete                      bit NOT NULL, 
+  can_close                       bit NOT NULL, 
+  can_edit_expiry_date            bit NOT NULL, 
+  locale                          varchar(255), 
+  secured                         bit NOT NULL, 
+  mail_message_id                 varchar(255), 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
+CREATE TABLE upload_request_url (
+  id                bigint(8) NOT NULL AUTO_INCREMENT, 
+  contact_id        bigint(8) NOT NULL, 
+  upload_request_id bigint(8) NOT NULL, 
+  uuid              varchar(255) NOT NULL UNIQUE, 
+  path              varchar(255) NOT NULL, 
+  password          varchar(255), 
+  creation_date     timestamp NOT NULL, 
+  modification_date timestamp NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
+CREATE TABLE upload_request_group (
+  id                bigint(8) NOT NULL AUTO_INCREMENT, 
+  subject           text NOT NULL, 
+  body              text NOT NULL, 
+  uuid              varchar(255) NOT NULL, 
+  creation_date     timestamp NOT NULL, 
+  modification_date timestamp NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
+CREATE TABLE upload_request_history (
+  id                              bigint(8) NOT NULL AUTO_INCREMENT, 
+  upload_request_id               bigint(8) NOT NULL, 
+  status                          varchar(255) NOT NULL, 
+  status_updated                  bit NOT NULL, 
+  event_type                      varchar(255) NOT NULL, 
+  uuid                            varchar(255) NOT NULL UNIQUE, 
+  activation_date                 timestamp NOT NULL, 
+  expiry_date                     timestamp NOT NULL, 
+  notification_date               timestamp NOT NULL, 
+  max_deposit_size                bigint(8), 
+  max_file_count                  int(4), 
+  max_file_size                   bigint(8), 
+  upload_proposition_request_uuid varchar(255), 
+  can_delete                      bit NOT NULL, 
+  can_close                       bit NOT NULL, 
+  can_edit_expiry_date            bit NOT NULL, 
+  locale                          varchar(255) NOT NULL, 
+  secured                         bit NOT NULL, 
+  creation_date                   timestamp NOT NULL, 
+  modification_date               timestamp NOT NULL, 
+  mail_message_id                 varchar(255), 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
+CREATE TABLE upload_request_entry (
+  entry_id                bigint(8) NOT NULL, 
+  document_entry_entry_id bigint(8), 
+  upload_request_id       bigint(8) NOT NULL, 
+  `size`                  bigint(8) NOT NULL, 
+  PRIMARY KEY (entry_id)) CHARACTER SET UTF8;
+CREATE TABLE upload_proposition_filter (
+  id                 bigint(8) NOT NULL AUTO_INCREMENT, 
+  domain_abstract_id bigint(8) NOT NULL, 
+  uuid               varchar(255) NOT NULL, 
+  name               varchar(255) NOT NULL, 
+  `match`            varchar(255) NOT NULL, 
+  enable             bit NOT NULL, 
+  creation_date      timestamp NOT NULL, 
+  modification_date  timestamp NOT NULL, 
+  sort_order         int(4) NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
+CREATE TABLE upload_proposition_rule (
+  id                           bigint(8) NOT NULL AUTO_INCREMENT, 
+  uuid                         varchar(255) NOT NULL, 
+  upload_proposition_filter_id bigint(8) NOT NULL, 
+  operator                     varchar(255) NOT NULL, 
+  field                        varchar(255) NOT NULL, 
+  value                        varchar(255), 
+  creation_date                timestamp NOT NULL, 
+  modification_date            timestamp NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
+CREATE TABLE upload_proposition_action (
+  id                           bigint(8) NOT NULL AUTO_INCREMENT, 
+  uuid                         varchar(255) NOT NULL, 
+  upload_proposition_filter_id bigint(8) NOT NULL, 
+  action_type                  varchar(255) NOT NULL, 
+  data                         text, 
+  creation_date                timestamp NOT NULL, 
+  modification_date            timestamp NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE functionality_boolean (
   id               int(4) NOT NULL AUTO_INCREMENT, 
   functionality_id bigint(8) NOT NULL, 
   boolean_value    bit NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
+CREATE TABLE statistic_event (
+  id                bigint(8) NOT NULL AUTO_INCREMENT, 
+  event_type        int(4) NOT NULL, 
+  event_action      int(4) NOT NULL, 
+  event_source      int(4) NOT NULL, 
+  event_actor_type  int(4) NOT NULL, 
+  action_count      bigint(8), 
+  description       text, 
+  transfer_size     bigint(8), 
+  transfer_duration bigint(8), 
+  transfer_rate     bigint(8), 
+  recipient_count   bigint(8), 
+  document_count    bigint(8), 
+  secured           bit, 
+  daily             int(10), 
+  creation_date     timestamp NOT NULL, 
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mailing_list (
   id                  bigint(8) NOT NULL AUTO_INCREMENT,
@@ -445,6 +563,43 @@ CREATE TABLE mailing_list_contact (
   mailing_list_contact_index int(4) NOT NULL, 
   PRIMARY KEY (id), 
   INDEX (uuid)) CHARACTER SET UTF8;
+CREATE TABLE upload_request_template (
+  id                         bigint(8) NOT NULL AUTO_INCREMENT, 
+  uuid                       varchar(255) NOT NULL, 
+  account_id                 bigint(8) NOT NULL, 
+  name                       varchar(255) NOT NULL, 
+  description                varchar(255), 
+  duration_before_activation bigint(8), 
+  unit_before_activation     bigint(8), 
+  duration_before_expiry     bigint(8), 
+  unit_before_expiry         bigint(8), 
+  group_mode                 bit, 
+  deposit_mode               bit, 
+  max_file                   bigint(8), 
+  max_file_size              bigint(8), 
+  max_deposit_size           bigint(8), 
+  locale                     varchar(255), 
+  secured                    bit, 
+  day_before_notification    bigint(8), 
+  prolongation_mode          bit, 
+  creation_date              timestamp NOT NULL, 
+  modification_date          timestamp NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
+CREATE TABLE upload_proposition (
+  id                 bigint(8) NOT NULL AUTO_INCREMENT, 
+  uuid               varchar(255) NOT NULL, 
+  domain_abstract_id bigint(8) NOT NULL, 
+  status             varchar(255) NOT NULL, 
+  subject            varchar(255) NOT NULL, 
+  body               text, 
+  mail               varchar(255) NOT NULL, 
+  first_name         varchar(255) NOT NULL, 
+  last_name          varchar(255) NOT NULL, 
+  domain_source      varchar(255), 
+  recipient_mail     varchar(255) NOT NULL, 
+  creation_date      timestamp NOT NULL, 
+  modification_date  timestamp NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mime_policy (
   id                bigint(8) NOT NULL AUTO_INCREMENT, 
   domain_id         bigint(8) NOT NULL, 
@@ -465,6 +620,11 @@ CREATE TABLE mime_type (
   displayable       bit NOT NULL, 
   creation_date     timestamp NOT NULL, 
   modification_date timestamp NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
+CREATE TABLE account_permission (
+  id                              bigint(8) NOT NULL AUTO_INCREMENT, 
+  technical_account_permission_id bigint(8) NOT NULL, 
+  permission                      varchar(255) NOT NULL, 
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 ALTER TABLE domain_abstract ADD INDEX fk449bc2ec4e302e7 (user_provider_id), ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD INDEX fk449bc2ec59e1e332 (domain_policy_id), ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
@@ -530,6 +690,15 @@ ALTER TABLE mail_content_lang ADD INDEX FKmail_conte910199 (mail_config_id), ADD
 ALTER TABLE mail_content_lang ADD INDEX FKmail_conte33952 (mail_content_id), ADD CONSTRAINT FKmail_conte33952 FOREIGN KEY (mail_content_id) REFERENCES mail_content (id);
 ALTER TABLE mail_config ADD INDEX FKmail_confi541299 (mail_layout_html_id), ADD CONSTRAINT FKmail_confi541299 FOREIGN KEY (mail_layout_html_id) REFERENCES mail_layout (id);
 ALTER TABLE mail_config ADD INDEX FKmail_confi612314 (mail_layout_text_id), ADD CONSTRAINT FKmail_confi612314 FOREIGN KEY (mail_layout_text_id) REFERENCES mail_layout (id);
+ALTER TABLE upload_request_url ADD INDEX FKupload_req833645 (upload_request_id), ADD CONSTRAINT FKupload_req833645 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
+ALTER TABLE upload_request ADD INDEX FKupload_req916400 (upload_request_group_id), ADD CONSTRAINT FKupload_req916400 FOREIGN KEY (upload_request_group_id) REFERENCES upload_request_group (id);
+ALTER TABLE upload_request_url ADD INDEX FKupload_req601912 (contact_id), ADD CONSTRAINT FKupload_req601912 FOREIGN KEY (contact_id) REFERENCES contact (id);
+ALTER TABLE upload_request_history ADD INDEX FKupload_req678768 (upload_request_id), ADD CONSTRAINT FKupload_req678768 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
+ALTER TABLE upload_request_entry ADD INDEX FKupload_req220981 (upload_request_id), ADD CONSTRAINT FKupload_req220981 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
+ALTER TABLE upload_request_entry ADD INDEX FKupload_req254795 (entry_id), ADD CONSTRAINT FKupload_req254795 FOREIGN KEY (entry_id) REFERENCES entry (id);
+ALTER TABLE upload_request_entry ADD INDEX FKupload_req11781 (document_entry_entry_id), ADD CONSTRAINT FKupload_req11781 FOREIGN KEY (document_entry_entry_id) REFERENCES document_entry (entry_id);
+ALTER TABLE upload_proposition_rule ADD INDEX FKupload_pro672390 (upload_proposition_filter_id), ADD CONSTRAINT FKupload_pro672390 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
+ALTER TABLE upload_proposition_action ADD INDEX FKupload_pro841666 (upload_proposition_filter_id), ADD CONSTRAINT FKupload_pro841666 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
 ALTER TABLE functionality ADD INDEX FKfunctional788903 (policy_delegation_id), ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
 ALTER TABLE functionality_boolean ADD INDEX FKfunctional171577 (functionality_id), ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE mailing_list ADD INDEX FKmailing_li478123 (user_id), ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
@@ -539,6 +708,10 @@ ALTER TABLE mail_notification ADD INDEX FKmail_notif791766 (configuration_policy
 ALTER TABLE mime_type ADD INDEX FKmime_type145742 (mime_policy_id), ADD CONSTRAINT FKmime_type145742 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
 ALTER TABLE mime_policy ADD INDEX FKmime_polic613419 (domain_id), ADD CONSTRAINT FKmime_polic613419 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
 ALTER TABLE domain_abstract ADD INDEX FKdomain_abs809928 (mime_policy_id), ADD CONSTRAINT FKdomain_abs809928 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
+ALTER TABLE account_permission ADD INDEX FKaccount_pe759382 (technical_account_permission_id), ADD CONSTRAINT FKaccount_pe759382 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
+ALTER TABLE upload_request ADD INDEX FKupload_req220337 (account_id), ADD CONSTRAINT FKupload_req220337 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE upload_request ADD INDEX FKupload_req840249 (domain_abstract_id), ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE upload_proposition_filter ADD INDEX FKupload_pro316142 (domain_abstract_id), ADD CONSTRAINT FKupload_pro316142 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 CREATE UNIQUE INDEX account_lsuid_index 
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid 
