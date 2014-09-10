@@ -7,7 +7,7 @@ SET default_with_oids = false;
 
 -- Jeu de données de tests
 
-INSERT INTO ldap_connection(ldap_connection_id, identifier, provider_url, security_auth, security_principal, security_credentials) VALUES (1, 'linshare-obm', 'ldap://linshare-obm2.linagora.dc1:389', 'simple', '', '');
+INSERT INTO ldap_connection(ldap_connection_id, identifier, provider_url, security_auth, security_principal, security_credentials) VALUES (1, 'linshare-obm', 'ldap://linshare-obm.linagora.dc1:389', 'simple', '', '');
 
 
 -- system domain pattern
