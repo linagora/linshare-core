@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -46,26 +47,30 @@ import org.slf4j.LoggerFactory;
 public class UserAndDomainMultiServiceImpl implements UserAndDomainMultiService {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserAndDomainMultiServiceImpl.class);
-	
+
 	private final AbstractDomainService abstractDomainService;
 	private final UserService userService;
-	
+
 	public UserAndDomainMultiServiceImpl(
 			AbstractDomainService abstractDomainService, UserService userService) {
 		super();
 		this.abstractDomainService = abstractDomainService;
 		this.userService = userService;
 	}
-	
+
 	@Override
 	public void deleteDomainAndUsers(User actor, String domainIdentifier) throws BusinessException {
 		logger.debug("deleteDomainAndUsers: begin");
-		
+
 		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
 		if (domain == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
 					"Domain identifier no found.");
 		}
+		if (domain.getDomainType().equals(DomainType.ROOTDOMAIN)) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "No one is authorized to delete root domain.");
+		}
+
 		logger.debug("Delete all subdomains users");
 		for (AbstractDomain subDomain : domain.getSubdomain()) {
 			userService.deleteAllUsersFromDomain(actor,
