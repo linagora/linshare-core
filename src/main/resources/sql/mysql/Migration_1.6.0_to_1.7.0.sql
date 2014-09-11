@@ -15,160 +15,159 @@ DROP INDEX mailing_list_contact_index ON mailing_list_contact;
 DROP TABLE technical_account_permission_account;
 
 CREATE TABLE account_permission (
-	id int8 NOT NULL AUTO INCREMENT,
-	technical_account_permission_id int8 NOT NULL,
-	permission varchar(255) NOT NULL
-);
+  id                              bigint(8) NOT NULL AUTO_INCREMENT, 
+  technical_account_permission_id bigint(8) NOT NULL, 
+  permission                      varchar(255) NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
 
 CREATE TABLE upload_proposition (
-	id int8 NOT NULL AUTO INCREMENT,
-	uuid varchar(255) NOT NULL,
-	domain_abstract_id int8 NOT NULL,
-	status varchar(255) NOT NULL,
-	subject varchar(255) NOT NULL,
-	body text,
-	mail varchar(255) NOT NULL,
-	first_name varchar(255) NOT NULL,
-	last_name varchar(255) NOT NULL,
-	domain_source varchar(255),
-	recipient_mail varchar(255) NOT NULL,
-	creation_date timestamp(6) NOT NULL,
-	modification_date timestamp(6) NOT NULL
-);
+  id                 bigint(8) NOT NULL AUTO_INCREMENT, 
+  uuid               varchar(255) NOT NULL, 
+  domain_abstract_id bigint(8) NOT NULL, 
+  status             varchar(255) NOT NULL, 
+  subject            varchar(255) NOT NULL, 
+  body               text, 
+  mail               varchar(255) NOT NULL, 
+  first_name         varchar(255) NOT NULL, 
+  last_name          varchar(255) NOT NULL, 
+  domain_source      varchar(255), 
+  recipient_mail     varchar(255) NOT NULL, 
+  creation_date      timestamp NOT NULL, 
+  modification_date  timestamp NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
 
 CREATE TABLE upload_proposition_action (
-	id int8 NOT NULL AUTO INCREMENT,
-	uuid varchar(255) NOT NULL,
-	upload_proposition_filter_id int8 NOT NULL,
-	action_type varchar(255) NOT NULL,
-	`data` text,
-	creation_date timestamp(6) NOT NULL,
-	modification_date timestamp(6) NOT NULL
-);
+  id                           bigint(8) NOT NULL AUTO_INCREMENT, 
+  uuid                         varchar(255) NOT NULL, 
+  upload_proposition_filter_id bigint(8) NOT NULL, 
+  action_type                  varchar(255) NOT NULL, 
+  data                         text, 
+  creation_date                timestamp NOT NULL, 
+  modification_date            timestamp NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
 
 CREATE TABLE upload_proposition_filter (
-	id int8 NOT NULL AUTO INCREMENT,
-	domain_abstract_id int8 NOT NULL,
-	uuid varchar(255) NOT NULL,
-	name varchar(255) NOT NULL,
-	`match` varchar(255) NOT NULL,
-	enable bool NOT NULL,
-	creation_date timestamp(6) NOT NULL,
-	modification_date timestamp(6) NOT NULL,
-	sort_order int4 NOT NULL
-);
+  id                 bigint(8) NOT NULL AUTO_INCREMENT, 
+  domain_abstract_id bigint(8) NOT NULL, 
+  uuid               varchar(255) NOT NULL, 
+  name               varchar(255) NOT NULL, 
+  `match`            varchar(255) NOT NULL, 
+  enable             bit NOT NULL, 
+  creation_date      timestamp NOT NULL, 
+  modification_date  timestamp NOT NULL, 
+  sort_order         int(4) NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
 
 CREATE TABLE upload_proposition_rule (
-	id int8 NOT NULL AUTO INCREMENT,
-	uuid varchar(255) NOT NULL,
-	upload_proposition_filter_id int8 NOT NULL,
-	operator varchar(255) NOT NULL,
-	field varchar(255) NOT NULL,
-	`value` varchar(255),
-	creation_date timestamp(6) NOT NULL,
-	modification_date timestamp(6) NOT NULL
-);
+  id                           bigint(8) NOT NULL AUTO_INCREMENT, 
+  uuid                         varchar(255) NOT NULL, 
+  upload_proposition_filter_id bigint(8) NOT NULL, 
+  operator                     varchar(255) NOT NULL, 
+  field                        varchar(255) NOT NULL, 
+  value                        varchar(255), 
+  creation_date                timestamp NOT NULL, 
+  modification_date            timestamp NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
 
 CREATE TABLE upload_request (
-	id int8 NOT NULL AUTO INCREMENT,
-	domain_abstract_id int8 NOT NULL,
-	account_id int8 NOT NULL,
-	upload_request_group_id int8 NOT NULL,
-	uuid varchar(255) NOT NULL,
-	max_file int4,
-	max_deposit_size int8,
-	max_file_size int8,
-	status varchar(255) NOT NULL,
-	activation_date timestamp(6) NOT NULL,
-	creation_date timestamp(6) NOT NULL,
-	modification_date timestamp(6) NOT NULL,
-	notification_date timestamp(6) NOT NULL,
-	expiry_date timestamp(6) NOT NULL,
-	upload_proposition_request_uuid varchar(255),
-	can_delete bool NOT NULL,
-	can_close bool NOT NULL,
-	can_edit_expiry_date bool NOT NULL,
-	locale varchar(255),
-	secured bool NOT NULL,
-	mail_message_id varchar(255)
-);
+  id                              bigint(8) NOT NULL AUTO_INCREMENT, 
+  domain_abstract_id              bigint(8) NOT NULL, 
+  account_id                      bigint(8) NOT NULL, 
+  upload_request_group_id         bigint(8) NOT NULL, 
+  uuid                            varchar(255) NOT NULL UNIQUE, 
+  max_file                        int(4), 
+  max_deposit_size                bigint(8), 
+  max_file_size                   bigint(8), 
+  status                          varchar(255) NOT NULL, 
+  activation_date                 timestamp NOT NULL, 
+  creation_date                   timestamp NOT NULL, 
+  modification_date               timestamp NOT NULL, 
+  notification_date               timestamp NOT NULL, 
+  expiry_date                     timestamp NOT NULL, 
+  upload_proposition_request_uuid varchar(255), 
+  can_delete                      bit NOT NULL, 
+  can_close                       bit NOT NULL, 
+  can_edit_expiry_date            bit NOT NULL, 
+  locale                          varchar(255), 
+  secured                         bit NOT NULL, 
+  mail_message_id                 varchar(255), 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
 
 CREATE TABLE upload_request_entry (
-	entry_id int8 NOT NULL,
-	document_entry_entry_id int8,
-	upload_request_id int8 NOT NULL,
-	`size` int8 NOT NULL
-);
+  entry_id                bigint(8) NOT NULL, 
+  document_entry_entry_id bigint(8), 
+  upload_request_id       bigint(8) NOT NULL, 
+  `size`                  bigint(8) NOT NULL, 
+  PRIMARY KEY (entry_id)) CHARACTER SET UTF8;
 
 CREATE TABLE upload_request_group (
-	id int8 NOT NULL AUTO INCREMENT,
-	subject text NOT NULL,
-	body text NOT NULL,
-	uuid varchar(255) NOT NULL,
-	creation_date timestamp(6) NOT NULL,
-	modification_date timestamp(6) NOT NULL
-);
+  id                bigint(8) NOT NULL AUTO_INCREMENT, 
+  subject           text NOT NULL, 
+  body              text NOT NULL, 
+  uuid              varchar(255) NOT NULL, 
+  creation_date     timestamp NOT NULL, 
+  modification_date timestamp NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
 
 CREATE TABLE upload_request_history (
-	id int8 NOT NULL AUTO INCREMENT,
-	upload_request_id int8 NOT NULL,
-	status varchar(255) NOT NULL,
-	status_updated bool NOT NULL,
-	event_type varchar(255) NOT NULL,
-	uuid varchar(255) NOT NULL,
-	activation_date timestamp(6) NOT NULL,
-	expiry_date timestamp(6) NOT NULL,
-	notification_date timestamp(6) NOT NULL,
-	max_deposit_size int8,
-	max_file_count int4,
-	max_file_size int8,
-	upload_proposition_request_uuid varchar(255),
-	can_delete bool NOT NULL,
-	can_close bool NOT NULL,
-	can_edit_expiry_date bool NOT NULL,
-	locale varchar(255) NOT NULL,
-	secured bool NOT NULL,
-	creation_date timestamp(6) NOT NULL,
-	modification_date timestamp(6) NOT NULL,
-	mail_message_id varchar(255)
-);
+  id                              bigint(8) NOT NULL AUTO_INCREMENT, 
+  upload_request_id               bigint(8) NOT NULL, 
+  status                          varchar(255) NOT NULL, 
+  status_updated                  bit NOT NULL, 
+  event_type                      varchar(255) NOT NULL, 
+  uuid                            varchar(255) NOT NULL UNIQUE, 
+  activation_date                 timestamp NOT NULL, 
+  expiry_date                     timestamp NOT NULL, 
+  notification_date               timestamp NOT NULL, 
+  max_deposit_size                bigint(8), 
+  max_file_count                  int(4), 
+  max_file_size                   bigint(8), 
+  upload_proposition_request_uuid varchar(255), 
+  can_delete                      bit NOT NULL, 
+  can_close                       bit NOT NULL, 
+  can_edit_expiry_date            bit NOT NULL, 
+  locale                          varchar(255) NOT NULL, 
+  secured                         bit NOT NULL, 
+  creation_date                   timestamp NOT NULL, 
+  modification_date               timestamp NOT NULL, 
+  mail_message_id                 varchar(255), 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
 
 CREATE TABLE upload_request_template (
-	id int8 NOT NULL AUTO INCREMENT,
-	uuid varchar(255) NOT NULL,
-	account_id int8 NOT NULL,
-	name varchar(255) NOT NULL,
-	description varchar(255),
-	duration_before_activation int8,
-	unit_before_activation int8,
-	duration_before_expiry int8,
-	unit_before_expiry int8,
-	group_mode bool,
-	deposit_mode bool,
-	max_file int8,
-	max_file_size int8,
-	max_deposit_size int8,
-	locale varchar(255),
-	secured bool,
-	day_before_notification int8,
-	prolongation_mode bool,
-	creation_date timestamp(6) NOT NULL,
-	modification_date timestamp(6) NOT NULL
-);
+  id                         bigint(8) NOT NULL AUTO_INCREMENT, 
+  uuid                       varchar(255) NOT NULL, 
+  account_id                 bigint(8) NOT NULL, 
+  name                       varchar(255) NOT NULL, 
+  description                varchar(255), 
+  duration_before_activation bigint(8), 
+  unit_before_activation     bigint(8), 
+  duration_before_expiry     bigint(8), 
+  unit_before_expiry         bigint(8), 
+  group_mode                 bit, 
+  deposit_mode               bit, 
+  max_file                   bigint(8), 
+  max_file_size              bigint(8), 
+  max_deposit_size           bigint(8), 
+  locale                     varchar(255), 
+  secured                    bit, 
+  day_before_notification    bigint(8), 
+  prolongation_mode          bit, 
+  creation_date              timestamp NOT NULL, 
+  modification_date          timestamp NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
 
 CREATE TABLE upload_request_url (
-	id int8 NOT NULL AUTO INCREMENT,
-	contact_id int8 NOT NULL,
-	upload_request_id int8 NOT NULL,
-	uuid varchar(255) NOT NULL,
-	`path` varchar(255) NOT NULL,
-	password varchar(255),
-	creation_date timestamp(6) NOT NULL,
-	modification_date timestamp(6) NOT NULL
-);
+  id                bigint(8) NOT NULL AUTO_INCREMENT, 
+  contact_id        bigint(8) NOT NULL, 
+  upload_request_id bigint(8) NOT NULL, 
+  uuid              varchar(255) NOT NULL UNIQUE, 
+  path              varchar(255) NOT NULL, 
+  password          varchar(255), 
+  creation_date     timestamp NOT NULL, 
+  modification_date timestamp NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
 
-ALTER TABLE users
-	ALTER COLUMN restricted DROP NOT NULL;
+ALTER TABLE users MODIFY restricted bit NULL DEFAULT NULL;
 
 ALTER TABLE technical_account_permission
 	DROP COLUMN `write`,
@@ -234,9 +233,9 @@ ALTER TABLE upload_request_url
 ALTER TABLE upload_request_url
 	ADD CONSTRAINT fkupload_req833645 FOREIGN KEY (upload_request_id) REFERENCES upload_request(id);
 
-CREATE INDEX mailing_list_uuid ON mailing_list USING btree (uuid);
+CREATE INDEX mailing_list_index ON mailing_list (uuid);
 
-CREATE INDEX mailing_list_contact_uuid ON mailing_list_contact USING btree (uuid);
+CREATE INDEX mailing_list_contact_index ON mailing_list_contact (uuid);
 
 
 -- LinShare version
@@ -372,70 +371,70 @@ TRUNCATE mail_content_lang;
 UPDATE mail_content SET id = id + 38 WHERE id >= 13;
 
 -- UPLOAD_PROPOSITION_CREATED
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (13, 'dd7d6a36-03b6-48e8-bfb5-3c2d8dc227fd', 1, 0, 12, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'New upload proposition', E'A user ${actorRepresentation} has send to you an upload proposition: ${subject}', E'<strong>${firstName} ${lastName}</strong> has just send to you an upload request: ${subject}<br/>${body}<br/>You need to activate or reject this request <br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (13, 'dd7d6a36-03b6-48e8-bfb5-3c2d8dc227fd', 1, 0, 12, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'New upload proposition', 'A user ${actorRepresentation} has send to you an upload proposition: ${subject}', '<strong>${firstName} ${lastName}</strong> has just send to you an upload request: ${subject}<br/>${body}<br/>You need to activate or reject this request <br/><br/>');
 -- UPLOAD_PROPOSITION_REJECTED
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (14, '62af93dd-0b19-4376-bc76-08b7a97fc0f2', 1, 0, 13, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload proposition rejected', E'A user ${actorRepresentation} has rejected your upload proposition: ${subject}', E'<strong>${firstName} ${lastName}</strong> has just rejected your upload proposition: ${subject}<br/>${body}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (14, '62af93dd-0b19-4376-bc76-08b7a97fc0f2', 1, 0, 13, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload proposition rejected', 'A user ${actorRepresentation} has rejected your upload proposition: ${subject}', '<strong>${firstName} ${lastName}</strong> has just rejected your upload proposition: ${subject}<br/>${body}<br/><br/>');
 -- UPLOAD_REQUEST_UPDATED
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (15, '40f36a3b-39ea-4723-a292-9c86e2ee8f94', 1, 0, 14, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request updated', E'A user ${actorRepresentation} has updated upload request: ${subject}', E'<strong>${firstName} ${lastName}</strong> has just updated the upload request: ${subject}<br/>${body}<br/>New settings can be found here: <a href="${url}">${url}</a><br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (15, '40f36a3b-39ea-4723-a292-9c86e2ee8f94', 1, 0, 14, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request updated', 'A user ${actorRepresentation} has updated upload request: ${subject}', '<strong>${firstName} ${lastName}</strong> has just updated the upload request: ${subject}<br/>${body}<br/>New settings can be found here: <a href="${url}">${url}</a><br/><br/>');
 -- UPLOAD_REQUEST_ACTIVATED
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (16, '817ae032-9022-4c22-97a3-cfb5ce50817c', 1, 0, 15, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request activated', E'A user ${actorRepresentation} has activated upload request: ${subject}', E'<strong>${firstName} ${lastName}</strong> has just activate the upload request: ${subject}<br/>${body}<br/>To upload files, simply click on the following link or copy/paste it into your favorite browser: <a href="${url}">${url}</a><br/><p>Upload request may be <b>encrypted</b>, use <em>password</em>: <code>${password}</code><br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (16, '817ae032-9022-4c22-97a3-cfb5ce50817c', 1, 0, 15, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request activated', 'A user ${actorRepresentation} has activated upload request: ${subject}', '<strong>${firstName} ${lastName}</strong> has just activate the upload request: ${subject}<br/>${body}<br/>To upload files, simply click on the following link or copy/paste it into your favorite browser: <a href="${url}">${url}</a><br/><p>Upload request may be <b>encrypted</b>, use <em>password</em>: <code>${password}</code><br/><br/>');
 -- UPLOAD_PROPOSITION_AUTO_FILTER
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (17, 'd692674c-e797-49f1-a415-1df7ea5c8fee', 1, 0, 16, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload proposition filtered', E'An upload proposition has been filtered: ${subject}', E'A new upload proposition has been filtered.<br/>Subject: ${subject}<br/>${body}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (17, 'd692674c-e797-49f1-a415-1df7ea5c8fee', 1, 0, 16, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload proposition filtered', 'An upload proposition has been filtered: ${subject}', 'A new upload proposition has been filtered.<br/>Subject: ${subject}<br/>${body}<br/><br/>');
 -- UPLOAD_REQUEST_CREATED
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (18, '40a74e4e-a663-4ad2-98ef-1e5d70d3536c', 1, 0, 17, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request created', E'A user ${actorRepresentation} has created upload request: ${subject}', E'<strong>${firstName} ${lastName}</strong> has just made you an upload request: ${subject}.<br/>${body}<br/>It will be activated ${activationDate}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (18, '40a74e4e-a663-4ad2-98ef-1e5d70d3536c', 1, 0, 17, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request created', 'A user ${actorRepresentation} has created upload request: ${subject}', '<strong>${firstName} ${lastName}</strong> has just made you an upload request: ${subject}.<br/>${body}<br/>It will be activated ${activationDate}<br/><br/>');
 -- UPLOAD_REQUEST_ACKNOWLEDGMENT
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (19, '5ea27e5b-9260-4ce1-b1bd-27372c5b653d', 1, 0, 18, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request acknowledgment', E'A user ${actorRepresentation} has upload a file for upload request: ${subject}', E'<strong>${firstName} ${lastName}</strong> has upload a file.<br/>File name: ${fileName}<br/>Deposit date: ${depositDate}<br/>File size: ${fileSize}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (19, '5ea27e5b-9260-4ce1-b1bd-27372c5b653d', 1, 0, 18, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request acknowledgment', 'A user ${actorRepresentation} has upload a file for upload request: ${subject}', '<strong>${firstName} ${lastName}</strong> has upload a file.<br/>File name: ${fileName}<br/>Deposit date: ${depositDate}<br/>File size: ${fileSize}<br/><br/>');
 -- UPLOAD_REQUEST_REMINDER
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (20, '0d87e08d-d102-42b9-8ced-4d49c21ce126', 1, 0, 19, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request reminder', E'A user ${actorRepresentation} reminds you have an upload request: ${subject}', E'<strong>${firstName} ${lastName}</strong> reminds you have got an upload request : ${subject}.<br/>${body}<br/>To upload files, simply click on the following link or copy/paste it into your favorite browser: <a href="${url}">${url}</a><br/><p>Upload request may be <b>encrypted</b>, use <em>password</em>: <code>${password}</code><br/><br/><br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (20, '0d87e08d-d102-42b9-8ced-4d49c21ce126', 1, 0, 19, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request reminder', 'A user ${actorRepresentation} reminds you have an upload request: ${subject}', '<strong>${firstName} ${lastName}</strong> reminds you have got an upload request : ${subject}.<br/>${body}<br/>To upload files, simply click on the following link or copy/paste it into your favorite browser: <a href="${url}">${url}</a><br/><p>Upload request may be <b>encrypted</b>, use <em>password</em>: <code>${password}</code><br/><br/><br/><br/>');
 -- UPLOAD_REQUEST_WARN_OWNER_BEFORE_EXPIRY
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (21, 'd43b22d6-d915-41cc-99e4-9c9db66c5aac', 1, 0, 20, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request will be expired', E'The upload request: ${subject}, will expire', E'Expiry date approaching for upload request: ${subject}<br/>${body}<br/>Be sure that the request is complete<br/>Files already uploaded: ${files}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (21, 'd43b22d6-d915-41cc-99e4-9c9db66c5aac', 1, 0, 20, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request will be expired', 'The upload request: ${subject}, will expire', 'Expiry date approaching for upload request: ${subject}<br/>${body}<br/>Be sure that the request is complete<br/>Files already uploaded: ${files}<br/><br/>');
 -- UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (22, '0bea7e7c-e2e9-44ff-bbb3-7e28967a4d67', 1, 0, 21, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request will be expired', E'The upload request: ${subject}, will expire', E'Expiry date approaching for upload request: ${subject}<br/>${body}<br/>Files already uploaded: ${files}<br/>To upload files, simply click on the following link or copy/paste it into your favorite browser: <a href="${url}">${url}</a><br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (22, '0bea7e7c-e2e9-44ff-bbb3-7e28967a4d67', 1, 0, 21, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request will be expired', 'The upload request: ${subject}, will expire', 'Expiry date approaching for upload request: ${subject}<br/>${body}<br/>Files already uploaded: ${files}<br/>To upload files, simply click on the following link or copy/paste it into your favorite browser: <a href="${url}">${url}</a><br/><br/>');
 -- UPLOAD_REQUEST_WARN_OWNER_EXPIRY
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (23, '0cd705f3-f1f5-450d-bfcd-f2f5a60c57f8', 1, 0, 22, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request is expired', E'The upload request: ${subject}, is expired', E'Expiration of the upload request: ${subject}<br/>${body}<br/>Files uploaded: ${files}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (23, '0cd705f3-f1f5-450d-bfcd-f2f5a60c57f8', 1, 0, 22, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request is expired', 'The upload request: ${subject}, is expired', 'Expiration of the upload request: ${subject}<br/>${body}<br/>Files uploaded: ${files}<br/><br/>');
 -- UPLOAD_REQUEST_WARN_RECIPIENT_EXPIRY
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (24, '7412940b-870b-4f58-877c-9955a423a5f3', 1, 0, 23, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request is expired', E'The upload request: ${subject}, is expired', E'Expiration of the upload request: ${subject}<br/>${body}<br/>Files uploaded: ${files}<br/>You will not be able to upload file anymore<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (24, '7412940b-870b-4f58-877c-9955a423a5f3', 1, 0, 23, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request is expired', 'The upload request: ${subject}, is expired', 'Expiration of the upload request: ${subject}<br/>${body}<br/>Files uploaded: ${files}<br/>You will not be able to upload file anymore<br/><br/>');
 -- UPLOAD_REQUEST_CLOSED_BY_RECIPIENT
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (25, '6c0c1214-0a77-46d0-92c5-c41d225bf9aa', 1, 0, 24, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request closed', E'A user ${actorRepresentation} has just closed upload request: ${subject}', E'<strong>${firstName} ${lastName}</strong> has just closed the upload request: ${subject}<br/>${body}<br/>Files uploaded: ${files}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (25, '6c0c1214-0a77-46d0-92c5-c41d225bf9aa', 1, 0, 24, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request closed', 'A user ${actorRepresentation} has just closed upload request: ${subject}', '<strong>${firstName} ${lastName}</strong> has just closed the upload request: ${subject}<br/>${body}<br/>Files uploaded: ${files}<br/><br/>');
 -- UPLOAD_REQUEST_CLOSED_BY_OWNER
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (26, '1956ca27-5127-4f42-a41d-81a72a325aae', 1, 0, 25, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request closed', E'A user ${actorRepresentation} has just closed upload request: ${subject}', E'<strong>${firstName} ${lastName}</strong> has just closed the upload request: ${subject}<br/>${body}<br/>Files uploaded: ${files}<br/>You will not be able to upload file anymore<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (26, '1956ca27-5127-4f42-a41d-81a72a325aae', 1, 0, 25, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request closed', 'A user ${actorRepresentation} has just closed upload request: ${subject}', '<strong>${firstName} ${lastName}</strong> has just closed the upload request: ${subject}<br/>${body}<br/>Files uploaded: ${files}<br/>You will not be able to upload file anymore<br/><br/>');
 -- UPLOAD_REQUEST_DELETED_BY_OWNER
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (27, '690f1bbc-4f99-4e70-a6cd-44388e3e2c86', 1, 0, 26, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request deleted', E'A user ${actorRepresentation} has just deleted an upload request', E'<strong>${firstName} ${lastName}</strong> has just deleted the upload request: ${subject}<br/>${body}<br/>You will not be able to upload file anymore<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (27, '690f1bbc-4f99-4e70-a6cd-44388e3e2c86', 1, 0, 26, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request deleted', 'A user ${actorRepresentation} has just deleted an upload request', '<strong>${firstName} ${lastName}</strong> has just deleted the upload request: ${subject}<br/>${body}<br/>You will not be able to upload file anymore<br/><br/>');
 -- UPLOAD_REQUEST_NO_SPACE_LEFT
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (28, '48fee30b-b2d3-4f85-b9ee-22044f9dbb4d', 1, 0, 27, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request error: no space left', E'A user ${actorRepresentation} has just tried to upload a file but server had no space left', E'<strong>${firstName} ${lastName}</strong> has just tried to upload in the upload request: ${subject}<br/>${body}<br>Please free space and notify the recipient to retry is upload<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (28, '48fee30b-b2d3-4f85-b9ee-22044f9dbb4d', 1, 0, 27, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request error: no space left', 'A user ${actorRepresentation} has just tried to upload a file but server had no space left', '<strong>${firstName} ${lastName}</strong> has just tried to upload in the upload request: ${subject}<br/>${body}<br>Please free space and notify the recipient to retry is upload<br/><br/>');
 
 -- UPLOAD_PROPOSITION_CREATED
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (63, '3cbc9145-4fc9-43bc-9417-a157bdda2575', 1, 1, 12, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Nouvelle demande d’invitation de partage', E'${actorRepresentation} vous a envoyé une demande invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> vous a envoyé une demande d’invitation de dépôt.<br/>Vous devez activer ou rejeter cette demande.<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (63, '3cbc9145-4fc9-43bc-9417-a157bdda2575', 1, 1, 12, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Nouvelle demande d’invitation de partage', '${actorRepresentation} vous a envoyé une demande invitation de dépôt: ${subject}', '<strong>${firstName} ${lastName}</strong> vous a envoyé une demande d’invitation de dépôt.<br/>Vous devez activer ou rejeter cette demande.<br/><br/>');
 -- UPLOAD_PROPOSITION_REJECTED
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (64, 'c8ba5fd5-b3b1-463f-b24a-ef113e7df294', 1, 1, 13, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Demande d’invitation de partage rejetée', E'${actorRepresentation} a rejeté votre invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> a rejeté votre invitation de dépôt: ${subject}<br/>${body}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (64, 'c8ba5fd5-b3b1-463f-b24a-ef113e7df294', 1, 1, 13, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Demande d’invitation de partage rejetée', '${actorRepresentation} a rejeté votre invitation de dépôt: ${subject}', '<strong>${firstName} ${lastName}</strong> a rejeté votre invitation de dépôt: ${subject}<br/>${body}<br/><br/>');
 -- UPLOAD_REQUEST_UPDATED
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (65, 'c8ba5fd5-b3b1-463f-b24a-ef113e7df294', 1, 1, 14, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Invitation de partage modifiée', E'${actorRepresentation} a mis à jour l’invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> a mis à jour l’invitation de dépôt: ${subject}<br/>${body}<br/>La nouvelle configuration est disponible ici: <a href="${url}">${url}</a><br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (65, 'c8ba5fd5-b3b1-463f-b24a-ef113e7df294', 1, 1, 14, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Invitation de partage modifiée', '${actorRepresentation} a mis à jour l’invitation de dépôt: ${subject}', '<strong>${firstName} ${lastName}</strong> a mis à jour l’invitation de dépôt: ${subject}<br/>${body}<br/>La nouvelle configuration est disponible ici: <a href="${url}">${url}</a><br/><br/>');
 -- UPLOAD_REQUEST_ACTIVATED
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (66, '24c92194-4291-4deb-9fb7-2c6b6fb40e18', 1, 1, 15, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Invitation de partage activée', E'${actorRepresentation} a activé l’invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> a activé l’invitation de dépôt: ${subject}<br/>${body}<br/>Pour déposer des fichiers, cliquer sur le lien suivant ou copier/coller ce dernier dans votre navigateur favori: <a href="${url}">${url}</a><br/>L’invitation de dépôt peut être <b>protégée</b>, utiliser le <em>mot de passe</em> suivant: <code>${password}</code><br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (66, '24c92194-4291-4deb-9fb7-2c6b6fb40e18', 1, 1, 15, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Invitation de partage activée', '${actorRepresentation} a activé l’invitation de dépôt: ${subject}', '<strong>${firstName} ${lastName}</strong> a activé l’invitation de dépôt: ${subject}<br/>${body}<br/>Pour déposer des fichiers, cliquer sur le lien suivant ou copier/coller ce dernier dans votre navigateur favori: <a href="${url}">${url}</a><br/>L’invitation de dépôt peut être <b>protégée</b>, utiliser le <em>mot de passe</em> suivant: <code>${password}</code><br/><br/>');
 -- UPLOAD_REQUEST_AUTO_FILTER
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (67, 'aac3fd67-043c-46b2-9fe6-7aa89d12c099', 1, 1, 16, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Invitation de dépôt filtrée', E'Une invitation de dépôt a été filtrée: ${subject}', E'Une nouvelle demande d’invitation de dépôt à été filtrée.<br/>Subject: ${subject}<br/>${body}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (67, 'aac3fd67-043c-46b2-9fe6-7aa89d12c099', 1, 1, 16, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Invitation de dépôt filtrée', 'Une invitation de dépôt a été filtrée: ${subject}', 'Une nouvelle demande d’invitation de dépôt à été filtrée.<br/>Subject: ${subject}<br/>${body}<br/><br/>');
 -- UPLOAD_REQUEST_CREATED
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (68, '6d821746-e481-4eb1-84f8-0d64a0b8f526', 1, 1, 17, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Nouvelle invitation de dépôt', E'${actorRepresentation} a créé une invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> a créé l’invitation de dépôt: ${subject}<br/>${body}<br/>Elle sera active le ${activationDate}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (68, '6d821746-e481-4eb1-84f8-0d64a0b8f526', 1, 1, 17, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Nouvelle invitation de dépôt', '${actorRepresentation} a créé une invitation de dépôt: ${subject}', '<strong>${firstName} ${lastName}</strong> a créé l’invitation de dépôt: ${subject}<br/>${body}<br/>Elle sera active le ${activationDate}<br/><br/>');
 -- UPLOAD_REQUEST_ACKNOWLEDGMENT
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (69, '879ea2d3-68e4-465b-b6ce-4ee58998e441', 1, 1, 18, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Accusé de reception d’invitation de dépôt', E'${actorRepresentation} a déposé un fichier pour l’invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> a déposé un fichier.<br/>Nom du fichier: ${fileName}<br/>Date de dépôt: ${depositDate}<br/>Taille du fichier: ${fileSize}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (69, '879ea2d3-68e4-465b-b6ce-4ee58998e441', 1, 1, 18, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Accusé de reception d’invitation de dépôt', '${actorRepresentation} a déposé un fichier pour l’invitation de dépôt: ${subject}', '<strong>${firstName} ${lastName}</strong> a déposé un fichier.<br/>Nom du fichier: ${fileName}<br/>Date de dépôt: ${depositDate}<br/>Taille du fichier: ${fileSize}<br/><br/>');
 -- UPLOAD_REQUEST_REMINDER
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (70, '7a1baafb-1db3-4e9b-b39f-2f770d9e848b', 1, 1, 19, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Rappel d’invitation de dépôt', E'${actorRepresentation} vous rappelle l’invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> vous rappelle l’invitation de dépôt: ${subject}<br/>${body}<br/>Pour déposer des fichiers, cliquer sur le lien suivant ou copier/coller ce dernier dans votre navigateur favoris: <a href="${url}">${url}</a><br/>L’invitation de dépôt peu être <b>protégée</b>, utiliser le <em>nouveau mot de passe</em> suivant: <code>${password}</code><br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (70, '7a1baafb-1db3-4e9b-b39f-2f770d9e848b', 1, 1, 19, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Rappel d’invitation de dépôt', '${actorRepresentation} vous rappelle l’invitation de dépôt: ${subject}', '<strong>${firstName} ${lastName}</strong> vous rappelle l’invitation de dépôt: ${subject}<br/>${body}<br/>Pour déposer des fichiers, cliquer sur le lien suivant ou copier/coller ce dernier dans votre navigateur favoris: <a href="${url}">${url}</a><br/>L’invitation de dépôt peu être <b>protégée</b>, utiliser le <em>nouveau mot de passe</em> suivant: <code>${password}</code><br/><br/>');
 -- UPLOAD_REQUEST_WARN_OWNER_BEFORE_EXPIRY
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (71, '259b20a2-48a9-4282-bac9-07b6673062c4', 1, 1, 20, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Invitation de dépôt bientôt expirée', E'L’invitation de dépôt: ${subject}, va expirée', E'La date d’expiraton approche pour l’invitation de dépôt: ${subject}<br/>${body}<br/>Vérifier que l’invitation est complêtée<br/>Fichiers déjà déposés: ${files}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (71, '259b20a2-48a9-4282-bac9-07b6673062c4', 1, 1, 20, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Invitation de dépôt bientôt expirée', 'L’invitation de dépôt: ${subject}, va expirée', 'La date d’expiraton approche pour l’invitation de dépôt: ${subject}<br/>${body}<br/>Vérifier que l’invitation est complêtée<br/>Fichiers déjà déposés: ${files}<br/><br/>');
 -- UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (72, '44c650a5-084d-4821-9e87-d0c54ec4db77', 1, 1, 21, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Invitation de dépôt bientôt expirée', E'L’invitation de dépôt: ${subject}, va expirée', E'La date d’expiration approche pour l’invitation de dépôt: ${subject}<br/>${body}<br/>Fichiers déjà déposés: ${files}<br/>Pour déposer des fichiers, cliquer sur le lien suivant ou copier/coller ce dernier dans votre navigateur favoris: <a href="${url}">${url}</a><br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (72, '44c650a5-084d-4821-9e87-d0c54ec4db77', 1, 1, 21, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Invitation de dépôt bientôt expirée', 'L’invitation de dépôt: ${subject}, va expirée', 'La date d’expiration approche pour l’invitation de dépôt: ${subject}<br/>${body}<br/>Fichiers déjà déposés: ${files}<br/>Pour déposer des fichiers, cliquer sur le lien suivant ou copier/coller ce dernier dans votre navigateur favoris: <a href="${url}">${url}</a><br/><br/>');
 -- UPLOAD_REQUEST_WARN_OWNER_EXPIRY
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (73, '5ae69e7f-cbf7-4958-a069-6e74135810d4', 1, 1, 22, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Invitation de dépôt expirée', E'L’invitation de dépôt: ${subject}, est expirée', E'Expiration de l’invitation de dépôt: ${subject}<br/>${body}<br/>Fichiers déposés: ${files}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (73, '5ae69e7f-cbf7-4958-a069-6e74135810d4', 1, 1, 22, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Invitation de dépôt expirée', 'L’invitation de dépôt: ${subject}, est expirée', 'Expiration de l’invitation de dépôt: ${subject}<br/>${body}<br/>Fichiers déposés: ${files}<br/><br/>');
 -- UPLOAD_REQUEST_WARN_RECIPIENT_EXPIRY
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (74, '52d97982-ea1e-43b6-8012-39ba1578f0be', 1, 1, 23, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Invitation de dépôt expirée', E'L’invitation de dépôt: ${subject}, est expirée', E'Expiration de l’invitation de dépôt: ${subject}<br/>${body}</br>Fichiers déposés: ${files}<br/>Vous ne serez plus en mesure d’y déposer des fichiers<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (74, '52d97982-ea1e-43b6-8012-39ba1578f0be', 1, 1, 23, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Invitation de dépôt expirée', 'L’invitation de dépôt: ${subject}, est expirée', 'Expiration de l’invitation de dépôt: ${subject}<br/>${body}</br>Fichiers déposés: ${files}<br/>Vous ne serez plus en mesure d’y déposer des fichiers<br/><br/>');
 -- UPLOAD_REQUEST_CLOSED_BY_RECIPIENT
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (75, '7f0fb9f5-6215-4e1f-946f-d7532e390684', 1, 1, 24, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Invitation de dépôt clôturée', E'${actorRepresentation} a clôturé l’invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> a clôturé l’invitation de dépôt: ${subject}<br/>${body}<br/>Fichiers déposés: ${files}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (75, '7f0fb9f5-6215-4e1f-946f-d7532e390684', 1, 1, 24, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Invitation de dépôt clôturée', '${actorRepresentation} a clôturé l’invitation de dépôt: ${subject}', '<strong>${firstName} ${lastName}</strong> a clôturé l’invitation de dépôt: ${subject}<br/>${body}<br/>Fichiers déposés: ${files}<br/><br/>');
 -- UPLOAD_REQUEST_CLOSED_BY_OWNER
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (76, 'ce8256c9-bdf5-45fa-ad1d-51d2b546273e', 1, 1, 25, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Invitation de dépôt clôturée', E'${actorRepresentation} a clôturé l’invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> a clôturé l’invitation de dépôt: ${subject}<br/>${body}<br/>Fichiers déposés: ${files}<br/>Vous ne serez plus en mesure d’y déposer des fichiers<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (76, 'ce8256c9-bdf5-45fa-ad1d-51d2b546273e', 1, 1, 25, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Invitation de dépôt clôturée', '${actorRepresentation} a clôturé l’invitation de dépôt: ${subject}', '<strong>${firstName} ${lastName}</strong> a clôturé l’invitation de dépôt: ${subject}<br/>${body}<br/>Fichiers déposés: ${files}<br/>Vous ne serez plus en mesure d’y déposer des fichiers<br/><br/>');
 -- UPLOAD_REQUEST_DELETED_BY_OWNER
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (77, '1ebf231f-ab5e-469a-9487-c460db735e96', 1, 1, 26, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Invitation de dépôt supprimée', E'${actorRepresentation} a supprimé l’invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> a supprimé une invitation de dépôt: ${subject}<br/>${body}<br/>Vous ne serez plus en mesure d’y déposer des fichiers<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (77, '1ebf231f-ab5e-469a-9487-c460db735e96', 1, 1, 26, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Invitation de dépôt supprimée', '${actorRepresentation} a supprimé l’invitation de dépôt: ${subject}', '<strong>${firstName} ${lastName}</strong> a supprimé une invitation de dépôt: ${subject}<br/>${body}<br/>Vous ne serez plus en mesure d’y déposer des fichiers<br/><br/>');
 -- UPLOAD_REQUEST_NO_SPACE_LEFT
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (78, 'a89afcb4-2bef-431c-9967-e2cf4de38933', 1, 1, 27, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Erreur sur une d’invitation de dépôt: espace disque insuffisant', E'${actorRepresentation} a essayé de déposer un fichier mais le serveur n’a pas suffisamment d’espace', E'<strong>${firstName} ${lastName}</strong> a tenté de déposer un fichier dans l’invitation de dépôt: ${subject}<br/>${body}<br/>Veuiller libérer de l’espace puis notifier le destinataire d’exécuter son dépôt à nouveau<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (78, 'a89afcb4-2bef-431c-9967-e2cf4de38933', 1, 1, 27, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Erreur sur une d’invitation de dépôt: espace disque insuffisant', '${actorRepresentation} a essayé de déposer un fichier mais le serveur n’a pas suffisamment d’espace', '<strong>${firstName} ${lastName}</strong> a tenté de déposer un fichier dans l’invitation de dépôt: ${subject}<br/>${body}<br/>Veuiller libérer de l’espace puis notifier le destinataire d’exécuter son dépôt à nouveau<br/><br/>');
 
 
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (1, 1, 0, 1, 0, 'd6868568-f5bd-4677-b4e2-9d6924a58871');

@@ -296,7 +296,7 @@ CREATE TABLE users (
   not_before            timestamp NULL,
   can_upload            bit NOT NULL,
   comment               text,
-  restricted            bit NOT NULL,
+  restricted            bit,
   expiration_date       timestamp NULL,
   ldap_uid              varchar(255),
   can_create_guest      bit NOT NULL,
