@@ -856,6 +856,9 @@ public class UserServiceImpl implements UserService {
 
 		user.setFirstName(updatedUser.getFirstName());
 		user.setLastName(updatedUser.getLastName());
+		if (!(updatedUser.getRole().equals(Role.SIMPLE) || updatedUser.getRole().equals(Role.ADMIN))) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Role not authorized.");
+		}
 		user.setRole(updatedUser.getRole());
 		user.setCanCreateGuest(updatedUser.getCanCreateGuest());
 		user.setCanUpload(updatedUser.getCanUpload());
