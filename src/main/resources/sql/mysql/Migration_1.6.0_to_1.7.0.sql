@@ -8,12 +8,9 @@ SET AUTOCOMMIT=0;
 START TRANSACTION;
 
 
-ALTER TABLE domain_abstract
-	DROP CONSTRAINT fk449bc2ec126ff4f2;
+DROP INDEX mailing_list_index ON mailing_list;
 
-DROP INDEX mailing_list_index;
-
-DROP INDEX mailing_list_contact_index;
+DROP INDEX mailing_list_contact_index ON mailing_list_contact;
 
 DROP TABLE technical_account_permission_account;
 
