@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.webservice.delegation.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -47,6 +48,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.delegation.GuestFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegation.GuestRestService;
 import org.linagora.linshare.webservice.dto.GuestDto;
@@ -59,14 +61,21 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 
 
-@Path("/")
+@Path("{ownerUuid}/guests")
 @Api(value = "/rest/delegation/{ownerUuid}/guests", basePath = "/rest/delegation/", description = "Guests service.",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class GuestRestServiceImpl extends WebserviceBase implements GuestRestService {
 
-	@Path("/{ownerUuid}/guests")
+	private GuestFacade guestFacade;
+
+	public GuestRestServiceImpl(GuestFacade guestFacade) {
+		super();
+		this.guestFacade = guestFacade;
+	}
+
+	@Path("/")
 	@POST
 	@ApiOperation(value = "Create a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
@@ -79,11 +88,10 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "Guest to create.", required = true) GuestDto guest)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return guestFacade.create(ownerUuid, guest);
 	}
 
-	@Path("/{ownerUuid}/guests/{uuid}")
+	@Path("/{uuid}")
 	@GET
 	@ApiOperation(value = "Get a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
@@ -96,11 +104,12 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The guest uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return guestFacade.find(ownerUuid, uuid);
 	}
 
-	@Path("/{ownerUuid}/guests")
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Path("/")
 	@GET
 	@ApiOperation(value = "Get all guests.", response = GuestDto.class, responseContainer = "Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
@@ -111,11 +120,10 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 	@Override
 	public List<GuestDto> getAll(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return guestFacade.findAll(ownerUuid);
 	}
 
-	@Path("/{ownerUuid}/guests")
+	@Path("/")
 	@PUT
 	@ApiOperation(value = "Update a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
@@ -128,11 +136,10 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "Guest to update.", required = true) GuestDto guest)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return guestFacade.update(ownerUuid, guest);
 	}
 
-	@Path("/{ownerUuid}/guests")
+	@Path("/")
 	@DELETE
 	@ApiOperation(value = "Delete a guest.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
@@ -145,11 +152,10 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "Guest to delete.", required = true) GuestDto guest)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-
+		guestFacade.delete(ownerUuid, guest);
 	}
 
-	@Path("/{ownerUuid}/guests/{uuid}")
+	@Path("/{uuid}")
 	@DELETE
 	@ApiOperation(value = "Delete a guest.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
@@ -162,8 +168,7 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid, 
 			@ApiParam(value = "The guest uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-
+		guestFacade.delete(ownerUuid, uuid);
 	}
 
 }

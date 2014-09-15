@@ -104,13 +104,13 @@ public class GuestRepositoryImplTest extends
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
-	
+
 	private AbstractDomain domain;
 
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		
+
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		String encpass = HashUtils.hashSha1withBase64(PASSWORD.getBytes());
 		if (!flag) {
@@ -118,14 +118,14 @@ public class GuestRepositoryImplTest extends
 			u1.setLocale(domain.getDefaultTapestryLocale());
 			u1.setDomain(domain);
 			guestRepository.create(u1);
-			
+
 			Guest u2 = new Guest(FIRST_NAME3, LAST_NAME3, MAIL3, encpass, true, "comment");
 			u2.setLocale(domain.getDefaultTapestryLocale());
 			u2.setDomain(domain);
 			guestRepository.create(u2);
 			flag = true;
 		}
-		
+
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -232,31 +232,31 @@ public class GuestRepositoryImplTest extends
 
 		guestRepository.create(u);
 
-		results = guestRepository.searchGuest(null, null, null, owner);
+		results = guestRepository.searchGuest(owner, null, null, null);
 		assertNotNull(results);
 		assertFalse(results.isEmpty());
 		assertEquals(results.size(), 1);
 		results = null;
 
-		results = guestRepository.searchGuest(null, null, LAST_NAME, null);
+		results = guestRepository.searchGuest(null, null, null, LAST_NAME);
 		assertNotNull(results);
 		assertFalse(results.isEmpty());
 		assertEquals(results.size(), 1);
 		results = null;
 
-		results = guestRepository.searchGuest(null, FIRST_NAME, null, null);
+		results = guestRepository.searchGuest(null, null, FIRST_NAME, null);
 		assertNotNull(results);
 		assertFalse(results.isEmpty());
 		assertEquals(results.size(), 1);
 		results = null;
 
-		results = guestRepository.searchGuest(MAIL, null, null, null);
+		results = guestRepository.searchGuest(null, MAIL, null, null);
 		assertNotNull(results);
 		assertFalse(results.isEmpty());
 		assertEquals(results.size(), 1);
 		results = null;
 
-		results = guestRepository.searchGuest("foo@", null, null, null);
+		results = guestRepository.searchGuest(null, "foo@", null, null);
 		assertNotNull(results);
 		assertFalse(results.isEmpty());
 		assertEquals(results.size(), 2);

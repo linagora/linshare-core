@@ -39,8 +39,8 @@ import java.util.List;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
@@ -58,7 +58,6 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 
 	/**
 	 * Search some guests. If given agument is null, it's not considered.
-	 * 
 	 * @param mail
 	 *            user mail.
 	 * @param firstName
@@ -67,9 +66,10 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 	 *            user last name.
 	 * @param ownerLogin
 	 *            login of the user who creates the searched guest(s).
+	 * 
 	 * @return a list of matching users.
 	 */
-	public List<Guest> searchGuest(String mail, String firstName, String lastName, User owner) {
+	public List<Guest> searchGuest(Account owner, String mail, String firstName, String lastName) {
 
 		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
 		criteria.add(Restrictions.eq("destroyed", false));

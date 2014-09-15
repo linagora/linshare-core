@@ -58,42 +58,34 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements GuestFacade
 	@Override
 	public GuestDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication();
-		return GuestDto.getFull(guestService.findByLsUuid(actor, uuid));
-	}
-
-	@Override
-	public GuestDto create(GuestDto guestDto, String ownerUuid)
-			throws BusinessException {
-		User actor = checkAuthentication();
-		Guest guest = retreiveGuest(guestDto);
-		return GuestDto.getFull(guestService.create(actor, guest, ownerUuid));
+		return GuestDto.getFull(guestService.find(actor, actor, uuid));
 	}
 
 	@Override
 	public GuestDto create(GuestDto guestDto) throws BusinessException {
 		User actor = checkAuthentication();
 		Guest guest = retreiveGuest(guestDto);
-		return GuestDto.getFull(guestService.create(actor, guest,
-				actor.getLsUuid()));
+		return GuestDto.getFull(guestService.create(actor, actor,
+				guest));
 	}
 
 	@Override
 	public GuestDto update(GuestDto guestDto) throws BusinessException {
 		User actor = checkAuthentication();
-		return GuestDto.getFull(guestService.update(actor, new Guest(guestDto),
-				guestDto.getOwner().getUuid()));
+		return GuestDto.getFull(guestService.update(actor, actor,
+				new Guest(guestDto)));
 	}
 
 	@Override
 	public void delete(GuestDto guestDto) throws BusinessException {
 		User actor = checkAuthentication();
-		guestService.delete(actor, guestDto.getUuid());
+		guestService.delete(actor, actor, guestDto.getUuid());
 	}
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication();
-		guestService.delete(actor, uuid);
+		guestService.delete(actor, actor, uuid);
 	}
 
 	/**

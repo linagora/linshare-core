@@ -41,8 +41,6 @@ public interface GuestFacade {
 
 	GuestDto find(String uuid) throws BusinessException;
 
-	GuestDto create(GuestDto guest, String ownerUuid) throws BusinessException;
-
 	GuestDto create(GuestDto guest) throws BusinessException;
 
 	GuestDto update(GuestDto guest) throws BusinessException;

@@ -266,9 +266,9 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="userService" />
-		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="guestResourceAccessControl" />
 	</bean>
 
 	<bean name="technicalAccountService" class="org.linagora.linshare.core.service.impl.TechnicalAccountServiceImpl">

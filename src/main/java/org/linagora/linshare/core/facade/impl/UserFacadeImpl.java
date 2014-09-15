@@ -39,6 +39,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
@@ -137,7 +138,7 @@ public class UserFacadeImpl implements UserFacade {
 		Guest guest = new Guest(firstName,lastName, mail);
 		guest.setCanUpload(canUpload);
 		guest.setComment(comment);
-		return new UserVo(guestService.create(actor, guest, owner.getLsUuid()));
+		return new UserVo(guestService.create(actor, actor, guest));
 	}
 
 	@Override
@@ -146,12 +147,12 @@ public class UserFacadeImpl implements UserFacade {
 			Boolean canCreateGuest, UserVo owner) throws BusinessException {
 
 		User actor = userService.findByLsUuid(owner.getLsUuid());
-		Guest guest = guestService.findByLsUuid(actor, guestUuid);
+		Guest guest = guestService.find(actor, actor, guestUuid);
 		guest.setMail(mail);
 		guest.setFirstName(firstName);
 		guest.setLastName(lastName);
 		guest.setCanUpload(canUpload);
-		guestService.update(actor, guest, owner.getLsUuid());
+		guestService.update(actor, actor, guest);
 	}
 
 	@Override
@@ -197,10 +198,9 @@ public class UserFacadeImpl implements UserFacade {
 	 */
 	@Override
 	public List<UserVo> searchGuest(UserVo actorVo) {
-		User owner = (User) accountService.findByLsUuid(actorVo.getLsUuid());
-
+		Account owner = accountService.findByLsUuid(actorVo.getLsUuid());
 		List<Guest> users = guestRepository
-				.searchGuest(null, null, null, owner);
+				.searchGuest(owner, null, null, null);
 		return getUserVoListFromGuest(users);
 	}
 
@@ -324,37 +324,37 @@ public class UserFacadeImpl implements UserFacade {
 			List<String> mailContacts) throws BusinessException {
 
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		Guest guest = guestService.findByLsUuid(actor, lsUuid);
+		Guest guest = guestService.find(actor, actor, lsUuid);
 
 		for (String mail : mailContacts) {
 			User user = userService.findUnkownUserInDB(mail);
 			guest.addContact(new AllowedContact(guest, user));
 		}
-		guestService.update(actor, guest, actor.getLsUuid());
+		guestService.update(actor, actor, guest);
 	}
 
 	@Override
 	public void removeGuestContactRestriction(UserVo actorVo, String lsUuid)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		Guest guest = guestService.findByLsUuid(actor, lsUuid);
+		Guest guest = guestService.find(actor, actor, lsUuid);
 		guest.setRestricted(true);
-		guestService.update(actor, guest, actor.getLsUuid());
+		guestService.update(actor, actor, guest);
 	}
 
 	public void addGuestContactRestriction(UserVo actorVo, String ownerLsUuid, String guestLsUuid)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		Guest guest = guestService.findByLsUuid(actor, guestLsUuid);
+		Guest guest = guestService.find(actor, actor, guestLsUuid);
 
 		guest.addContact(new AllowedContact(guest, actor));
-		guestService.update(actor, guest, ownerLsUuid);
+		guestService.update(actor, actor, guest);
 	}
 
 	public List<UserVo> fetchGuestContacts(UserVo actorVo, String lsUuid)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		Guest guest = guestService.findByLsUuid(actor, lsUuid);
+		Guest guest = guestService.find(actor, actor, lsUuid);
 		Set<AllowedContact> contacts = guest.getRestrictedContacts();
 		// compatibility
 		if (contacts.isEmpty()) {

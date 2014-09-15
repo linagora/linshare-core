@@ -80,6 +80,8 @@ INSERT INTO technical_account_permission (id, uuid, creation_date, modification_
 
 -- Technical account permissions
 INSERT INTO account_permission VALUES (1, 40, 'DOCUMENT_ENTRIES_LIST');
+INSERT INTO account_permission VALUES (nextval('hibernate_sequence'), 40, 'GUESTS_LIST');
+
 
 -- Association between delegation account and delegationpermissions
 UPDATE account SET technical_account_permission_id = 40 where id=5;

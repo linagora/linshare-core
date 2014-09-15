@@ -302,25 +302,27 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	@Override
-	public MailContainerWithRecipient buildNewGuest(User sender,
+	public MailContainerWithRecipient buildNewGuest(Account s,
 			User recipient, String password) throws BusinessException {
+		User recipientUser = (User)recipient;
+		User sender = (User) s;
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				recipient.getExternalMailLocale());
+				recipientUser.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getGreetingsChain()
-				.add("firstName", recipient.getFirstName())
-				.add("lastName", recipient.getLastName());
+				.add("firstName", recipientUser.getFirstName())
+				.add("lastName", recipientUser.getLastName());
 		builder.getBodyChain()
-				.add("url", getLinShareUrlForAUserRecipient(recipient))
+				.add("url", getLinShareUrlForAUserRecipient(recipientUser))
 				.add("ownerFirstName", sender.getFirstName())
 				.add("ownerLastName", sender.getLastName())
-				.add("mail", recipient.getMail())
+				.add("mail", recipientUser.getMail())
 				.add("password", password);
-		container.setRecipient(recipient);
+		container.setRecipient(recipientUser);
 		container.setReplyTo(sender);
-		container.setFrom(getFromMailAddress(recipient));
+		container.setFrom(getFromMailAddress(recipientUser));
 
 		return buildMailContainer(cfg, container, null,
 				MailContentType.NEW_GUEST, builder);

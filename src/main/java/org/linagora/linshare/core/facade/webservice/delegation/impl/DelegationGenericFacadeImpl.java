@@ -39,27 +39,43 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.delegation.DelegationGenericFacade;
 import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DelegationGenericFacadeImpl extends GenericFacadeImpl implements DelegationGenericFacade {
+public class DelegationGenericFacadeImpl extends GenericFacadeImpl implements
+		DelegationGenericFacade {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(DelegationGenericFacadeImpl.class);
 
-	public DelegationGenericFacadeImpl(AccountService accountService) {
+	protected final UserService userService;
+
+	public DelegationGenericFacadeImpl(
+			final AccountService accountService,
+			final UserService userService) {
 		super(accountService);
+		this.userService = userService;
 	}
 
 	@Override
 	public User checkAuthentication() throws BusinessException {
 		User actor = super.checkAuthentication();
 		if (!actor.hasDelegationRole()) {
-			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountReprentation());
-			throw new BusinessException(
-					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+			logger.error("Current actor is trying to access to a forbbiden api : "
+					+ actor.getAccountReprentation());
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		}
 		return actor;
+	}
+
+	protected User getOwner(String ownerUuid) {
+		User owner = userService.findByLsUuid(ownerUuid);
+		if (owner == null) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
+					"Owner not found");
+		}
+		return owner;
 	}
 }

@@ -38,14 +38,12 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -92,10 +90,9 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@ApiOperation(value = "Create a guest.")
 	@Override
 	public GuestDto create(
-			@ApiParam(value = "Guest to create.", required = true) GuestDto guest,
-			@ApiParam(value = "Guest owner lsuuid.") @QueryParam("ownerLsUuid") @DefaultValue("null") String ownerLsUuid)
+			@ApiParam(value = "Guest to create.", required = true) GuestDto guest)
 			throws BusinessException {
-		return guestFacade.create(guest, ownerLsUuid);
+		return guestFacade.create(guest);
 	}
 
 	@Path("/")

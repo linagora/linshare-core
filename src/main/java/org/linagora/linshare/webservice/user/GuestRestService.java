@@ -45,7 +45,7 @@ public interface GuestRestService {
 
 	List<GuestDto> findAll(String ownerLsUuid) throws BusinessException;
 
-	GuestDto create(GuestDto guest, String ownerLsUuid) throws BusinessException;
+	GuestDto create(GuestDto guest) throws BusinessException;
 
 	GuestDto update(GuestDto guest) throws BusinessException;
 

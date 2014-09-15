@@ -61,7 +61,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/")
+@Path("/{ownerUuid}/documents")
 @Api(value = "/rest/delegation/{ownerUuid}/documents", basePath = "/rest/delegation/", description = "Documents service.",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 public class DocumentRestServiceImpl extends WebserviceBase implements
@@ -74,7 +74,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		this.documentFacade = documentFacade;
 	}
 
-	@Path("/{ownerUuid}/documents")
+	@Path("/")
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -96,7 +96,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		return null;
 	}
 
-	@Path("/{ownerUuid}/documents/{uuid}")
+	@Path("/{uuid}")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Get a document.", response = DocumentDto.class)
@@ -114,7 +114,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		return null;
 	}
 
-	@Path("/{ownerUuid}/documents")
+	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Get all documents.", response = DocumentDto.class, responseContainer = "Set")
@@ -130,7 +130,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		return documentFacade.getAll(ownerUuid);
 	}
 
-	@Path("/{ownerUuid}/documents/{uuid}")
+	@Path("/{uuid}")
 	@PUT()
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -151,7 +151,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		return null;
 	}
 
-	@Path("/{ownerUuid}/documents/{uuid}/upload")
+	@Path("/{uuid}/upload")
 	@PUT()
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -175,7 +175,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	}
 
 	@DELETE
-	@Path("/{ownerUuid}/documents/{uuid}")
+	@Path("/{uuid}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Delete a document.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
@@ -191,7 +191,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		// TODO Auto-generated method stub
 	}
 
-	@Path("/{ownerUuid}/documents/{uuid}/download")
+	@Path("/{uuid}/download")
 	@GET
 	@ApiOperation(value = "Download a file.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
@@ -208,7 +208,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		return null;
 	}
 
-	@Path("/{ownerUuid}/documents/{uuid}/thumbnail")
+	@Path("/{uuid}/thumbnail")
 	@GET
 	@ApiOperation(value = "Download the thumbnail of a file.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),

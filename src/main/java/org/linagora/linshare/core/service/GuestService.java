@@ -34,6 +34,9 @@
 
 package org.linagora.linshare.core.service;
 
+import java.util.List;
+
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -43,15 +46,18 @@ public interface GuestService {
 
 	/**
 	 * Find a guest by is lsUuid
-	 * 
-	 * @param actor
+	 * @param actor TODO
+	 * @param owner
 	 *            who trigger the action
 	 * @param lsUuid
 	 *            guest lsUuid
+	 * 
 	 * @return guest found otherwise return null
 	 * @throws BusinessException
 	 */
-	Guest findByLsUuid(User actor, String lsUuid) throws BusinessException;
+	Guest find(Account actor, Account owner, String lsUuid) throws BusinessException;
+
+	List<Guest> findAllMyGuests(Account actor, Account owner) throws BusinessException;
 
 	/**
 	 * 
@@ -63,42 +69,40 @@ public interface GuestService {
 
 	/**
 	 * Create a guest
-	 * 
-	 * @param actor
+	 * @param actor TODO
+	 * @param owner
 	 *            who triggered the action
 	 * @param guest
 	 *            guest to create
-	 * @param ownerLsUuid
 	 * @return created guest
 	 * @throws BusinessException
 	 */
-	Guest create(User actor, Guest guest, String ownerLsUuid)
+	Guest create(Account actor, Account owner, Guest guest)
 			throws BusinessException;
 
 	/**
 	 * Update a guest
-	 * 
-	 * @param actor
+	 * @param actor TODO
+	 * @param owner
 	 *            who triggered the action
 	 * @param guest
 	 *            guest to update
-	 * @param ownerLsUuid
-	 *            optional. Required only if owner needs to be updated
 	 * @return updated guest
 	 * @throws BusinessException
 	 */
-	Guest update(User actor, Guest guest, String ownerLsUuid)
+	Guest update(Account actor, User owner, Guest guest)
 			throws BusinessException;
 
 	/**
 	 * 
-	 * @param actor
+	 * @param actor TODO
+	 * @param owner
 	 *            who triggered the action
 	 * @param lsUuid
 	 *            guest lsUuid
 	 * @throws BusinessException
 	 */
-	void delete(User actor, String lsUuid) throws BusinessException;
+	void delete(Account actor, User owner, String lsUuid) throws BusinessException;
 
 	/**
 	 * Clean outdated guest accounts

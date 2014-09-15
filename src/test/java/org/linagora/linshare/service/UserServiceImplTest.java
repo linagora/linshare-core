@@ -178,7 +178,7 @@ public class UserServiceImplTest extends
 
 		try {
 			Guest guest = new Guest("Guest", "Doe", "guest1@linpki.org");
-			guestService.create(user, guest, user.getLsUuid());
+			guestService.create(user, user, guest);
 		} catch (TechnicalException e) {
 			logger.info("Impossible to send mail, normal in test environment");
 		}
@@ -347,7 +347,7 @@ public class UserServiceImplTest extends
 		userService.saveOrUpdateUser(user);
 
 		Guest guest = new Guest("Guest", "Doe", "guest1@linpki.org");
-		guestService.create(user, guest, user.getLsUuid());
+		guestService.create(user, user, guest);
 		Assert.assertNotNull(userRepository.findByMail("guest1@linpki.org"));
 
 		DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -418,10 +418,10 @@ public class UserServiceImplTest extends
 		guest = guestRepository.create(guest);
 
 		guest.setCanCreateGuest(false);
-		guestService.update(user2, guest, user2.getLsUuid());
+		guestService.update(user2, user2, guest);
 		Assert.assertFalse(guest.getCanCreateGuest());
 		guest.setCanCreateGuest(true);
-		guestService.update(user2, guest, user2.getLsUuid());
+		guestService.update(user2, user2, guest);
 		Assert.assertTrue(guest.getCanCreateGuest());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -542,7 +542,7 @@ public class UserServiceImplTest extends
 
 		Assert.assertTrue(guest.isRestricted());
 		guest.setRestricted(false);
-		guest = guestService.update(user1, guest, null);
+		guest = guestService.update(user1, user1, guest);
 		Assert.assertFalse(guest.isRestricted());
 
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -585,7 +585,7 @@ public class UserServiceImplTest extends
 		guest = guestRepository.create(guest);
 
 		guest.addContact(new AllowedContact(guest, guest2));
-		guestService.update(user1, guest, null);
+		guestService.update(user1, user1, guest);
 		List<AllowedContact> listAllowedContact = allowedContactRepository
 				.findByOwner(guest);
 		boolean test = false;
@@ -637,7 +637,7 @@ public class UserServiceImplTest extends
 		guest = guestRepository.create(guest);
 
 		guest.addContact(new AllowedContact(guest, guest2));
-		guest = guestService.update(user1, guest, null);
+		guest = guestService.update(user1, user1, guest);
 		List<AllowedContact> listAllowedContact = allowedContactRepository
 				.findByOwner(guest);
 		boolean test = false;
@@ -687,7 +687,7 @@ public class UserServiceImplTest extends
 		guest = guestRepository.create(guest);
 
 		guest.addContact(new AllowedContact(guest, guest2));
-		guest = guestService.update(user1, guest, null);
+		guest = guestService.update(user1, user1, guest);
 		Set<AllowedContact> guestContacts = guest.getRestrictedContacts();
 		boolean contain = false;
 		for (AllowedContact contact : guestContacts) {
@@ -735,7 +735,7 @@ public class UserServiceImplTest extends
 		Guest createGuest = guestRepository.create(guest);
 
 		createGuest.addContact(new AllowedContact(createGuest, createGuest2));
-		guest = guestService.update(user1, createGuest, null);
+		guest = guestService.update(user1, user1, createGuest);
 		Set<AllowedContact> guestContacts = guest.getRestrictedContacts();
 		boolean contain = false;
 		for (AllowedContact contact : guestContacts) {

@@ -123,8 +123,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			UserDto userDto = UserDto.getFull(user);
 
 			if (user.isGuest() && user.isRestricted()) {
-				Guest guest = guestService.findByLsUuid(currentUser,
-						user.getLsUuid());
+				Guest guest = guestService.find(currentUser,
+						currentUser, user.getLsUuid());
 				Set<AllowedContact> contacts = guest.getRestrictedContacts();
 				for (AllowedContact contact : contacts) {
 					userDto.getRestrictedContacts().add(
@@ -151,8 +151,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		User user = getUser(userDto);
 		User update;
 		if (userDto.isGuest()) {
-			update = guestService.update(actor, (Guest) user, user.getOwner()
-					.getLsUuid());
+			update = guestService.update(actor, actor, (Guest) user);
 		} else {
 			update = userService.updateUser(actor, user, userDto.getDomain());
 		}

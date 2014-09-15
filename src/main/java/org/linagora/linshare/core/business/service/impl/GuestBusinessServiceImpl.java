@@ -77,10 +77,17 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	@Override
 	public Guest findByLsUuid(String lsUuid) throws BusinessException {
 		Guest guest = guestRepository.findByLsUuid(lsUuid);
-		if (guest.isRestricted()) {
-			guest.addContacts(allowedContactRepository.findByOwner(guest));
+		if (guest != null) {
+			if (guest.isRestricted()) {
+				guest.addContacts(allowedContactRepository.findByOwner(guest));
+			}
 		}
 		return guest;
+	}
+
+	@Override
+	public List<Guest> findAllMyGuests(Account owner) {
+		return guestRepository.searchGuest(owner, null, null, null);
 	}
 
 	@Override
@@ -106,7 +113,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public GuestWithMetadata create(Guest guest, User owner,
+	public GuestWithMetadata create(Guest guest, Account owner,
 			GuestDomain domain, Date expiryDate) throws BusinessException {
 		String password = passwordService.generatePassword();
 		String hashedPassword = HashUtils.hashSha1withBase64(password
@@ -128,22 +135,27 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public Guest update(Guest guest, Account owner, AbstractDomain domain)
+	public Guest update(Account owner, Guest guest, AbstractDomain domain)
 			throws BusinessException {
 		try {
-			guest.setOwner(owner);
-			guest.setDomain(domain);
-			Guest update = guestRepository.update(guest);
+			Guest entity = guestRepository.findByLsUuid(guest.getLsUuid());
+			entity.setOwner(owner);
+			entity.setDomain(domain);
+			entity.setCanUpload(guest.getCanUpload());
+			entity.setComment(guest.getComment());
+			entity.setRestricted(guest.isRestricted());
+			entity.setLocale(guest.getLocale());
+			Guest update = guestRepository.update(entity);
 			if (update.isRestricted()) {
 				try {
 					allowedContactRepository.purge(update);
 				} catch (IllegalArgumentException e) {
 					throw new TechnicalException(
 							TechnicalErrorCode.USER_INCOHERENCE, "Guest "
-									+ guest.getLsUuid()
+									+ entity.getLsUuid()
 									+ " contacts cannot be purge");
 				}
-				for (AllowedContact c : guest.getRestrictedContacts()) {
+				for (AllowedContact c : entity.getRestrictedContacts()) {
 					allowedContactRepository.create(c);
 				}
 			}

@@ -35,27 +35,27 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.User;
 
 
 public interface GuestRepository extends UserRepository<Guest> {
 	 /** Search some guests.
 	  * (start matching)
-     * @param mail user mail.
-     * @param firstName user first name.
-     * @param lastName user last name.
-     * @param ownerLogin login of the user who creates the searched guest(s).
+	 * @param mail user mail.
+	 * @param firstName user first name.
+	 * @param lastName user last name.
+	 * @param ownerLogin login of the user who creates the searched guest(s).
      * @return a list of matching users.
      */
-    List<Guest> searchGuest(String mail, String firstName, String lastName, User owner);
-    
+    List<Guest> searchGuest(Account owner, String mail, String firstName, String lastName);
+
     /** Find outdated guest accounts.
      * @return a list of outdated guests (null if no one found).
      */
     List<Guest> findOutdatedGuests();
 
-    
+
 	 /** Search some guests.
 	  * anyWhere matching
      * @param mail user mail.
@@ -65,6 +65,6 @@ public interface GuestRepository extends UserRepository<Guest> {
      * @return a list of matching users.
      */
     List<Guest> searchGuestAnyWhere(String mail, String firstName, String lastName);
-    
-    
+
+
 }

@@ -27,12 +27,17 @@
 	<bean id="delegationDocumentRestService" class="org.linagora.linshare.webservice.delegation.impl.DocumentRestServiceImpl">
 		<constructor-arg ref="wsDelegationDocumentFacade" />
 	</bean>
+	
+	<bean id="delegationGuestRestService" class="org.linagora.linshare.webservice.delegation.impl.GuestRestServiceImpl">
+		<constructor-arg ref="wsDelegationGuestFacade" />
+	</bean>
 
 	<jaxrs:server id="restDelegationContainer" address="/rest/delegation">
 		<jaxrs:serviceBeans>
 			<ref bean="delegationAuthenticationRestService" />
 			<ref bean="delegationUserRestService" />
 			<ref bean="delegationDocumentRestService" />
+			<ref bean="delegationGuestRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
@@ -48,7 +53,7 @@
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 		<jaxrs:features>
-<!-- 			<cxf:logging /> -->
+			<cxf:logging />
 		</jaxrs:features>
 		<jaxrs:inInterceptors>
 			<!-- For debug only : print input message -->

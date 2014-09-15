@@ -38,11 +38,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.business.service.impl.GuestBusinessServiceImpl.GuestWithMetadata;
-import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
@@ -52,6 +50,7 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.GuestResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
@@ -60,9 +59,8 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
-public class GuestServiceImpl implements GuestService {
+public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> implements GuestService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(GuestServiceImpl.class);
@@ -75,8 +73,6 @@ public class GuestServiceImpl implements GuestService {
 
 	private final UserService userService;
 
-	private final DomainPermissionBusinessService domainPermissionBusinessService;
-
 	private final NotifierService notifierService;
 
 	private final MailBuildingService mailBuildingService;
@@ -86,30 +82,40 @@ public class GuestServiceImpl implements GuestService {
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final UserService userService,
-			final DomainPermissionBusinessService domainPermissionBusinessService,
 			final NotifierService notifierService,
-			final MailBuildingService mailBuildingService) {
+			final MailBuildingService mailBuildingService,
+			final GuestResourceAccessControl rac) {
+		super(rac);
 		this.guestBusinessService = guestBusinessService;
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.userService = userService;
-		this.domainPermissionBusinessService = domainPermissionBusinessService;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
 	}
 
 	@Override
-	public Guest findByLsUuid(User actor, String lsUuid)
+	public Guest find(Account actor, Account owner, String lsUuid)
 			throws BusinessException {
-		Assert.notNull(actor);
+		preChecks(actor, owner);
 		Guest guest = guestBusinessService.findByLsUuid(lsUuid);
-
-		if (guest != null
-				&& !domainPermissionBusinessService.isAdminForThisUser(actor,
-						guest))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
-					+ actor + " cannot see this guest : " + guest.getLsUuid());
+		if (guest == null) {
+			logger.error("Current actor " + owner.getAccountReprentation()
+					+ " is looking for a misssing guest : " + lsUuid);
+			String message = "Can not find guest with uuid : " + lsUuid;
+			throw new BusinessException(
+					BusinessErrorCode.GUEST_NOT_FOUND, message);
+		}
+		checkReadPermission(owner, guest, BusinessErrorCode.GUEST_FORBIDDEN);
 		return guest;
+	}
+
+	@Override
+	public List<Guest> findAllMyGuests(Account actor, Account owner)
+			throws BusinessException {
+		preChecks(actor, owner);
+		checkListPermission(actor, owner, Guest.class, BusinessErrorCode.GUEST_FORBIDDEN);
+		return guestBusinessService.findAllMyGuests(owner);
 	}
 
 	@Override
@@ -118,26 +124,17 @@ public class GuestServiceImpl implements GuestService {
 	}
 
 	@Override
-	public Guest create(User actor, Guest guest, String ownerLsUuid)
+	public Guest create(Account actor, Account owner, Guest guest)
 			throws BusinessException {
-		Assert.notNull(actor);
-		Assert.notNull(guest);
-		Assert.notNull(ownerLsUuid);
-		User owner = retrieveOwner(ownerLsUuid);
-		Date expiryDate = calculateUserExpiryDate(owner);
-		if (userService.findByLsUuid(ownerLsUuid) == null) {
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
-					"Owner not found");
-		}
-		if (!canCreateGuest(owner)) {
-			throw new BusinessException(
-					BusinessErrorCode.USER_CANNOT_CREATE_GUEST,
-					"Owner cannot create guest");
-		}
+		preChecks(actor, owner);
+		Validate.notNull(guest);
+		// TODO : Null ??
+		checkCreatePermission(actor, owner, Guest.class, BusinessErrorCode.USER_CANNOT_CREATE_GUEST);
 		if (!hasGuestDomain(owner.getDomainId())) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Guest domain was not found");
 		}
+		Date expiryDate = calculateUserExpiryDate(owner);
 		GuestDomain guestDomain = abstractDomainService.getGuestDomain(owner
 				.getDomainId());
 		if (!guestBusinessService.exist(guestDomain.getIdentifier(),
@@ -154,25 +151,11 @@ public class GuestServiceImpl implements GuestService {
 	}
 
 	@Override
-	public Guest update(User actor, Guest guest, String ownerLsUuid)
+	public Guest update(Account actor, User owner, Guest guest)
 			throws BusinessException {
-		Assert.notNull(actor);
-		Assert.notNull(guest);
-		if (!exist(guest.getLsUuid())) {
-			throw new BusinessException(BusinessErrorCode.GUEST_ALREADY_EXISTS,
-					"Guest does not exist");
-		}
-		if (!domainPermissionBusinessService.isAdminForThisUser(actor, guest)) {
-			throw new BusinessException(
-					BusinessErrorCode.USER_CANNOT_CREATE_GUEST,
-					"Actor cannot update guest");
-		}
-		// update directly if update does not concern owner
-		if (ownerLsUuid == null) {
-			return guestBusinessService.update(guest, guest.getOwner(),
-					guest.getDomain());
-		}
-		User owner = retrieveOwner(ownerLsUuid);
+		preChecks(actor, owner);
+		Guest original = find(actor, owner, guest.getLsUuid());
+		checkUpdatePermission(actor, original, BusinessErrorCode.CANNOT_UPDATE_USER);
 		GuestDomain guestDomain = abstractDomainService.getGuestDomain(owner
 				.getDomainId());
 		if (guestDomain == null) {
@@ -180,24 +163,16 @@ public class GuestServiceImpl implements GuestService {
 					BusinessErrorCode.USER_CANNOT_CREATE_GUEST,
 					"New owner doesn't have guest domain");
 		}
-		return guestBusinessService.update(guest, owner, guestDomain);
+		return guestBusinessService.update(owner, guest, guestDomain);
 	}
 
 	@Override
-	public void delete(User actor, String lsUuid) throws BusinessException {
-		Assert.notNull(actor);
-		Assert.notNull(lsUuid);
-		Guest guest = guestBusinessService.findByLsUuid(lsUuid);
-		if (guest == null) {
-			throw new BusinessException(BusinessErrorCode.GUEST_ALREADY_EXISTS,
-					"Guest does not exist");
-		}
-		if (!domainPermissionBusinessService.isAdminForThisUser(actor, guest)) {
-			throw new BusinessException(
-					BusinessErrorCode.USER_CANNOT_DELETE_GUEST,
-					"Actor cannot delete guest");
-		}
-		guestBusinessService.delete(guest);
+	public void delete(Account actor, User owner, String lsUuid) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(lsUuid);
+		Guest original = find(actor, owner, lsUuid);
+		checkDeletePermission(actor, original, BusinessErrorCode.CANNOT_DELETE_USER);
+		guestBusinessService.delete(original);
 	}
 
 	@Override
@@ -218,7 +193,7 @@ public class GuestServiceImpl implements GuestService {
 
 	@Override
 	public void resetPassword(String lsUuid) throws BusinessException {
-		Assert.notNull(lsUuid);
+		Validate.notEmpty(lsUuid);
 		Guest guest = retrieveGuest(lsUuid);
 		GuestWithMetadata update = guestBusinessService.resetPassword(guest);
 		MailContainerWithRecipient mail = mailBuildingService
@@ -239,29 +214,8 @@ public class GuestServiceImpl implements GuestService {
 		return guest;
 	}
 
-	private User retrieveOwner(String ownerLsUuid) throws BusinessException {
-		User owner = userService.findByLsUuid(ownerLsUuid);
-		if (owner == null) {
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
-					"Owner was not found");
-		}
-		return owner;
-	}
-
 	private boolean hasGuestDomain(String topDomainId) {
 		return abstractDomainService.getGuestDomain(topDomainId) != null;
-	}
-
-	private boolean canCreateGuest(User user) {
-		if (user.getAccountType() == AccountType.GUEST) {
-			return false;
-		}
-		return guestFunctionalityStatus(user.getDomain());
-	}
-
-	private boolean guestFunctionalityStatus(AbstractDomain domain) {
-		return functionalityReadOnlyService.getGuestFunctionality(domain)
-				.getActivationPolicy().getStatus();
 	}
 
 	private Date calculateUserExpiryDate(Account owner) {

@@ -56,6 +56,7 @@ public class TechnicalAccount extends User {
 		this.enable = true;
 		this.externalMailLocale = "en";
 		this.locale = "en";
+		this.permission = new TechnicalAccountPermission();
 		List<String> permissions = dto.getPermissions();
 		if (permissions != null) {
 			for (String perm : permissions) {

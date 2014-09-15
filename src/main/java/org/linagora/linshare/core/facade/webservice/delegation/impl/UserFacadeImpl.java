@@ -45,11 +45,8 @@ import org.linagora.linshare.webservice.dto.PasswordDto;
 public class UserFacadeImpl extends DelegationGenericFacadeImpl implements
 		UserFacade {
 
-	private final UserService userService;
-
 	public UserFacadeImpl(AccountService accountService, UserService userService) {
-		super(accountService);
-		this.userService = userService;
+		super(accountService, userService);
 	}
 
 	@Override
