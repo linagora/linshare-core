@@ -31,44 +31,9 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.user.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+package org.linagora.linshare.core.rac;
 
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.ThreadMemberFacade;
-import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.ThreadService;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public interface ThreadEntryResourceAccessControl {
 
-public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
-		ThreadMemberFacade {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(ThreadMemberFacadeImpl.class);
-
-	private final ThreadService threadService;
-
-	public ThreadMemberFacadeImpl(ThreadService threadService,
-			AccountService accountService) {
-		super(accountService);
-		this.threadService = threadService;
-	}
-
-	@Override
-	public List<ThreadMemberDto> getAllThreadMembers(String uuid)
-			throws BusinessException {
-		Thread thread = threadService.findByLsUuid(null, null, uuid);
-		List<ThreadMemberDto> res = new ArrayList<ThreadMemberDto>();
-
-		for (ThreadMember member : thread.getMyMembers()) {
-			res.add(new ThreadMemberDto(member));
-		}
-		return res;
-	}
 }

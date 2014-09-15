@@ -42,7 +42,6 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
-import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -262,7 +261,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	@Override
 	public List<ShareEntry> findAllMyRecievedShareEntries(Account actor, Account owner) {
 		preChecks(actor, owner);
-		checkListPermission(actor, owner, EntryType.SHARE,
+		checkListPermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
 		return shareEntryBusinessService.findAllMyRecievedShareEntries((User) owner);
 	}
@@ -271,7 +270,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	public void create(Account actor, User owner, ShareContainer sc) {
 		preChecks(actor, owner);
 		Validate.notNull(sc);
-		checkCreatePermission(actor, owner, EntryType.SHARE,
+		checkCreatePermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
 
 		Date expiryDate = sc.getExpiryDate();

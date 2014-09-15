@@ -35,7 +35,6 @@
 package org.linagora.linshare.core.service.impl;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -80,13 +79,13 @@ public class GenericServiceImpl<R, E> {
 	}
 
 	protected void checkListPermission(Account actor, Account owner,
-			EntryType type, BusinessErrorCode errCode) throws BusinessException {
-		rac.checkListPermission(actor, owner, type, errCode);
+			Class<?> clazz, BusinessErrorCode errCode) throws BusinessException {
+		rac.checkListPermission(actor, owner, clazz, errCode);
 	}
 
 	protected void checkCreatePermission(Account actor, Account owner,
-			EntryType type, BusinessErrorCode errCode) throws BusinessException {
-		rac.checkCreatePermission(actor, owner, type, errCode);
+			Class<?> clazz, BusinessErrorCode errCode) throws BusinessException {
+		rac.checkCreatePermission(actor, owner, clazz, errCode);
 	}
 
 	protected void checkUpdatePermission(Account actor, E entry,
@@ -96,6 +95,6 @@ public class GenericServiceImpl<R, E> {
 
 	protected void checkDeletePermission(Account actor, E entry,
 			BusinessErrorCode errCode) throws BusinessException {
-		rac.checkDeletePermission(actor, entry, errCode);
+		rac.checkDeletePermission(actor, null, entry, errCode);
 	}
 }

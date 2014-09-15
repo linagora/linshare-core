@@ -35,7 +35,6 @@ package org.linagora.linshare.view.tapestry.pages;
 
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.vo.UserVo;
 
 /**

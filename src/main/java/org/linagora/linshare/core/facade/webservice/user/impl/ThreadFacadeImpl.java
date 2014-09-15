@@ -92,14 +92,14 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements ThreadFaca
 	@Override
 	public ThreadDto getThread(String uuid) throws BusinessException {
 		checkAuthentication();
-		Thread thread = threadService.findByLsUuid(uuid);
+		Thread thread = threadService.findByLsUuid(null, null, uuid);
 		return new ThreadDto(thread, thread.getMyMembers());
 	}
 
 	@Override
 	public void addMember(String threadUuid, String domainId, String mail, boolean readonly) throws BusinessException {
 		User actor = checkAuthentication();
-		Thread thread = threadService.findByLsUuid(threadUuid);
+		Thread thread = threadService.findByLsUuid(null, null, threadUuid);
 		User user = userService.findOrCreateUserWithDomainPolicies(mail, domainId, actor.getDomainId());
 		threadService.addMember(actor, thread, user, false, !readonly);
 	}

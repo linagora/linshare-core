@@ -39,7 +39,6 @@ import java.util.Date;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
-import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -134,7 +133,7 @@ public class AnonymousShareEntryServiceImpl extends
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(sc, "Share container is required.");
-		checkCreatePermission(actor, owner, EntryType.ANONYMOUS_SHARE,
+		checkCreatePermission(actor, owner, AnonymousShareEntry.class,
 				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN);
 
 		Date expiryDate = sc.getExpiryDate();

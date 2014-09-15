@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.view.tapestry.components;
 
-import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Parameter;
 

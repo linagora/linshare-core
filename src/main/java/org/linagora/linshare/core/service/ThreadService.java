@@ -44,11 +44,11 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ThreadService {
 	
-	public Thread findByLsUuid(String uuid);
+	public Thread findByLsUuid(Account actor, Account owner, String uuid);
 
-	public List<Thread> findAll();
+	public List<Thread> findAll(Account actor, Account owner);
 
-	public Boolean create(Account actor, String name) throws BusinessException;
+	public Boolean create(Account actor, Account owner, String name) throws BusinessException;
 	
 	public ThreadMember getThreadMemberById(long id) throws BusinessException;
 	
@@ -82,9 +82,9 @@ public interface ThreadService {
 
 	public void deleteAllUserMemberships(Account actor, User user) throws BusinessException;
 
-	public void deleteThread(User actor, Thread thread) throws BusinessException;
+	public void deleteThread(User actor, Account owner, Thread thread) throws BusinessException;
 
-	public Thread rename(User actor, Thread thread, String threadName) throws BusinessException;
+	public Thread rename(User actor, Account owner, Thread thread, String threadName) throws BusinessException;
 
 	public List<Thread> searchByName(User actor, String pattern);
 

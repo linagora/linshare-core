@@ -127,11 +127,6 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	}
 
 	@Override
-	public List<ThreadVo> getAllThread() {
-		return toThreadVo(threadService.findAll());
-	}
-
-	@Override
 	public List<ThreadVo> getAllMyThread(UserVo actorVo)
 			throws BusinessException {
 		return toThreadVo(threadService.findAllWhereMember(findUser(actorVo)));
@@ -276,13 +271,15 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	@Override
 	public void createThread(UserVo actorVo, String name)
 			throws BusinessException {
-		threadService.create(findUser(actorVo), name);
+		User actor = findUser(actorVo);
+		threadService.create(actor, actor, name);
 	}
 
 	@Override
 	public void deleteThread(UserVo actorVo, ThreadVo threadVo)
 			throws BusinessException {
-		threadService.deleteThread(findUser(actorVo), findThread(threadVo));
+		User actor = findUser(actorVo);
+		threadService.deleteThread(actor, actor, findThread(threadVo));
 	}
 
 	@Override
@@ -314,7 +311,8 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	@Override
 	public void renameThread(UserVo actorVo, ThreadVo threadVo, String threadName)
 			throws BusinessException {
-		threadService.rename(findUser(actorVo), findThread(threadVo), threadName);
+		User actor = findUser(actorVo);
+		threadService.rename(actor, actor, findThread(threadVo), threadName);
 	}
 
 	@Override
@@ -411,7 +409,7 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	}
 
 	private Thread findThread(ThreadVo threadVo) throws BusinessException {
-		Thread t = threadService.findByLsUuid(threadVo.getLsUuid());
+		Thread t = threadService.findByLsUuid(null, null, threadVo.getLsUuid());
 
 		if (t == null) {
 			throw new BusinessException(BusinessErrorCode.THREAD_NOT_FOUND,
@@ -624,7 +622,8 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 		List<ThreadVo> lists = new ArrayList<ThreadVo>();
 
 		if (actor.isSuperAdmin()) {
-			lists = this.getAllThread();
+			// NOTREACHED
+			lists = lists;
 		} else {
 			try {
 				lists = this.getAllMyThread(actor);

@@ -57,8 +57,6 @@ public interface ThreadEntryFacade {
 
 	public ThreadVo getThread(String uuid) throws BusinessException;
 
-	public List<ThreadVo> getAllThread();
-
 	public List<ThreadVo> getAllMyThread(UserVo actorVo) throws BusinessException;
 
 	public List<ThreadVo> getAllMyThreadWhereCanUpload(UserVo actorVo) throws BusinessException;

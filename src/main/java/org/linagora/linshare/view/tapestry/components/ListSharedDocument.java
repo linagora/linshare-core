@@ -73,8 +73,6 @@ import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.DocumentFacade;
 import org.linagora.linshare.core.facade.ShareFacade;

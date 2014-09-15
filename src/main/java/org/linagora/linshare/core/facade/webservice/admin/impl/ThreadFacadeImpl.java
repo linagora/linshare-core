@@ -65,7 +65,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Set<ThreadDto> ret = new HashSet<ThreadDto>();
 
-		for (Thread t : threadService.findAll())
+		for (Thread t : threadService.findAll(actor, actor))
 			ret.add(new ThreadDto(t));
 		return ret;
 	}
@@ -74,7 +74,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	public ThreadDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
-		return new ThreadDto(threadService.findByLsUuid(uuid));
+		return new ThreadDto(threadService.findByLsUuid(null, null, uuid));
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(uuid, "uuid must be set.");
 		Set<ThreadMemberDto> ret = new HashSet<ThreadMemberDto>();
 
-		for (ThreadMember m : threadService.findByLsUuid(uuid).getMyMembers())
+		for (ThreadMember m : threadService.findByLsUuid(null, null, uuid).getMyMembers())
 			ret.add(new ThreadMemberDto(m));
 		return ret;
 	}
@@ -92,17 +92,17 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	public ThreadDto update(ThreadDto threadDto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(threadDto, "thread must be set.");
-		Thread thread = threadService.findByLsUuid(threadDto.getUuid());
+		Thread thread = threadService.findByLsUuid(null, null, threadDto.getUuid());
 
-		return new ThreadDto(threadService.rename(actor, thread, threadDto.getName()));
+		return new ThreadDto(threadService.rename(actor, actor, thread, threadDto.getName()));
 	}
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
-		Thread thread = threadService.findByLsUuid(uuid);
+		Thread thread = threadService.findByLsUuid(null, null, uuid);
 
-		threadService.deleteThread(actor, thread);
+		threadService.deleteThread(actor, actor, thread);
 	}
 }

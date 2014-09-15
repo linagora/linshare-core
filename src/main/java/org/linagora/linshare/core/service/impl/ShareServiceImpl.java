@@ -37,7 +37,6 @@ package org.linagora.linshare.core.service.impl;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -103,7 +102,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(shareContainer);
-		checkCreatePermission(actor, owner, EntryType.SHARE,
+		checkCreatePermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.FORBIDDEN);
 
 		// Check functionalities

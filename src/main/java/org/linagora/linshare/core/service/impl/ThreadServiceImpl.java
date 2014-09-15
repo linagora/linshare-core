@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -48,6 +47,7 @@ import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.ThreadResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -70,59 +70,68 @@ public class ThreadServiceImpl implements ThreadService {
 
 	private final LogEntryService logEntryService;
 
-	public ThreadServiceImpl(ThreadRepository threadRepository, ThreadMemberRepository threadMemberRepository,
-			DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService,FunctionalityReadOnlyService functionalityService) {
+	private final ThreadResourceAccessControl threadAC;
+
+	public ThreadServiceImpl(
+			ThreadRepository threadRepository,
+			ThreadMemberRepository threadMemberRepository,
+			DocumentEntryBusinessService documentEntryBusinessService,
+			LogEntryService logEntryService,
+			FunctionalityReadOnlyService functionalityService,
+			ThreadResourceAccessControl threadResourceAccessControl) {
 		super();
 		this.threadRepository = threadRepository;
 		this.threadMemberRepository = threadMemberRepository;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 		this.functionalityReadOnlyService = functionalityService;
+		this.threadAC = threadResourceAccessControl;
 	}
 
 	@Override
-	public Thread findByLsUuid(String uuid) {
+	public Thread findByLsUuid(Account actor, Account owner, String uuid) {
 		Thread thread = threadRepository.findByLsUuid(uuid);
 
 		if (thread == null) {
 			logger.error("Can't find thread  : " + uuid);
 		}
+		threadAC.checkReadPermission(actor, thread,
+				BusinessErrorCode.THREAD_FORBIDDEN);
 		return thread;
 	}
 
 	@Override
-	public List<Thread> findAll() {
+	public List<Thread> findAll(Account actor, Account owner) {
+		threadAC.checkListPermission(actor, owner, Thread.class,
+				BusinessErrorCode.THREAD_FORBIDDEN);
 		return threadRepository.findAll();
 	}
 
 	@Override
-	public Boolean create(Account actor, String name) throws BusinessException {
-		boolean isGuest = actor.getAccountType().equals(AccountType.GUEST);
-		Functionality creation = functionalityReadOnlyService.getThreadCreationPermissionFunctionality(actor.getDomain());
+	public Boolean create(Account actor, Account owner, String name) throws BusinessException {
+		threadAC.checkCreatePermission(actor, owner, Thread.class,
+				BusinessErrorCode.THREAD_FORBIDDEN);
+		Functionality creation = functionalityReadOnlyService.getThreadCreationPermissionFunctionality(owner.getDomain());
 
-		if (creation.getActivationPolicy().getStatus() && !isGuest){
+		if (creation.getActivationPolicy().getStatus()){
 			Thread thread = null;
 			ThreadMember member = null;
 
-			logger.debug("User " + actor.getAccountReprentation() + " trying to create new thread named " + name);
-			thread = new Thread(actor.getDomain(), actor, name);
+			logger.debug("User " + owner.getAccountReprentation() + " trying to create new thread named " + name);
+			thread = new Thread(owner.getDomain(), owner, name);
 			threadRepository.create(thread);
-			logEntryService.create(new ThreadLogEntry(actor, thread, LogAction.THREAD_CREATE, "Creation of a new thread."));
+			logEntryService.create(new ThreadLogEntry(owner, thread, LogAction.THREAD_CREATE, "Creation of a new thread."));
 
 			// creator = first member = default admin
-			member = new ThreadMember(true, true, (User) actor, thread);
+			member = new ThreadMember(true, true, (User) owner, thread);
 			thread.getMyMembers().add(member);
 			threadRepository.update(thread);
-			logEntryService.create(new ThreadLogEntry(actor, member, LogAction.THREAD_ADD_MEMBER,
+			logEntryService.create(new ThreadLogEntry(owner, member, LogAction.THREAD_ADD_MEMBER,
 					"Creating the first member of the newly created thread."));
 			return true;
 		} else {
 			logger.error("You can not create thread, you are not authorized.");
-			if (isGuest) {
-				logger.error("Guests are not authorized to create a thread.");
-			} else {
-				logger.error("The current domain does not allow you to create a thread.");
-			}
+			logger.error("The current domain does not allow you to create a thread.");
 			return false;
 		}
 	}
@@ -255,11 +264,13 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public void deleteThread(User actor, Thread thread) throws BusinessException {
-		// permission check
-		checkUserIsAdmin(actor, thread);
+	public void deleteThread(User actor, Account owner, Thread thread)
+			throws BusinessException {
+		threadAC.checkDeletePermission(actor, owner, thread,
+				BusinessErrorCode.THREAD_FORBIDDEN);
 
-		ThreadLogEntry log = new ThreadLogEntry(actor, thread, LogAction.THREAD_DELETE, "Deleting a thread.");
+		ThreadLogEntry log = new ThreadLogEntry(actor, thread,
+				LogAction.THREAD_DELETE, "Deleting a thread.");
 		// Delete all entries
 		documentEntryBusinessService.deleteSetThreadEntry(thread.getEntries());
 		thread.setEntries(null);
@@ -272,16 +283,18 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public Thread rename(User actor, Thread thread, String threadName) throws BusinessException {
-		// permission check
-		checkUserIsAdmin(actor, thread);
+	public Thread rename(User actor, Account owner, Thread thread,
+			String threadName) throws BusinessException {
+		threadAC.checkUpdatePermission(actor, thread,
+				BusinessErrorCode.THREAD_FORBIDDEN);
 
 		String oldname = thread.getName();
 		thread.setName(threadName);
 		Thread update = threadRepository.update(thread);
 
 		logEntryService.create(new ThreadLogEntry(actor, thread,
-				LogAction.THREAD_RENAME, "Renamed thread from " + oldname + " to " + threadName));
+				LogAction.THREAD_RENAME, "Renamed thread from " + oldname
+						+ " to " + threadName));
 		return update;
 	}
 

@@ -158,7 +158,7 @@ public DocumentEntryServiceImpl(
 	public List<DocumentEntry> findAll(Account actor, Account owner)
 			throws BusinessException {
 		preChecks(actor, owner);
-		checkListPermission(actor, owner, EntryType.DOCUMENT, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+		checkListPermission(actor, owner, DocumentEntry.class, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		return documentEntryBusinessService.findAllMyDocumentEntries(owner);
 	}
 
@@ -171,7 +171,7 @@ public DocumentEntryServiceImpl(
 	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, boolean forceAntivirusOff) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(fileName, "fileName is required.");
-		checkCreatePermission(actor, owner, EntryType.DOCUMENT, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+		checkCreatePermission(actor, owner, DocumentEntry.class, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		fileName = sanitizeFileName(fileName); // throws
 
 		DocumentUtils util = new DocumentUtils();

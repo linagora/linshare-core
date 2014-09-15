@@ -65,7 +65,6 @@ import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -76,7 +75,6 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.ThreadEntryRepository;
 import org.linagora.linshare.core.service.TimeStampingService;
 import org.linagora.linshare.core.utils.AESCrypt;
-import org.linagora.linshare.core.utils.DocumentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

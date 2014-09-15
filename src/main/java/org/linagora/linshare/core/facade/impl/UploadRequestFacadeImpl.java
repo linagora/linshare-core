@@ -65,7 +65,6 @@ import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.core.service.UserService;

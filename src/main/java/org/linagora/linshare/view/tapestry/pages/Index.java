@@ -58,7 +58,6 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
 import org.linagora.linshare.core.domain.vo.DocumentVo;

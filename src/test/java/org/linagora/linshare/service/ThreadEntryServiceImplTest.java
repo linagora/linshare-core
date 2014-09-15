@@ -220,7 +220,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		}
 		
 		this.createAllThreads();
-		threads = threadService.findAll();
+		threads = threadService.findAll(john, john);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 	
@@ -240,15 +240,15 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	 */
 	
 	private void createAllThreads() throws BusinessException {
-		threadService.create(john, ThreadEntryServiceImplTest.THREAD_2);
-		threadService.create(jane, ThreadEntryServiceImplTest.THREAD_1);
+		threadService.create(john, john, ThreadEntryServiceImplTest.THREAD_2);
+		threadService.create(jane, jane, ThreadEntryServiceImplTest.THREAD_1);
 	}
 	
 	private void deleteAllThreads() throws BusinessException {
 		for (Thread thread : threads) {
 			for (ThreadMember m : thread.getMyMembers()) {
 				if (m.getAdmin()) {
-					threadService.deleteThread(m.getUser(), thread);
+					threadService.deleteThread(m.getUser(), m.getUser(), thread);
 				}
 			}
 		}
@@ -266,9 +266,9 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		int count;
 		Assert.assertEquals(threads.size(), 2);
 		for (count = threads.size(); count < 10; ++count) {
-			threadService.create(john, ThreadEntryServiceImplTest.THREAD_1 + "_" + count);
+			threadService.create(john, john, ThreadEntryServiceImplTest.THREAD_1 + "_" + count);
 		}
-		threads = threadService.findAll();
+		threads = threadService.findAll(john, john);
 		Assert.assertEquals(threads.size(), count);
 		
 		logger.info(LinShareTestConstants.END_TEST);
@@ -279,7 +279,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		Thread original = threads.get(0);
-		Thread found = threadService.findByLsUuid(original.getLsUuid());
+		Thread found = threadService.findByLsUuid(null, null, original.getLsUuid());
 		Assert.assertEquals(found, original);
 		
 		logger.info(LinShareTestConstants.END_TEST);
@@ -291,7 +291,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 
 		Assert.assertTrue(threadService.hasAnyWhereAdmin(john));
 		Assert.assertEquals(threadService.findAllWhereAdmin(john).size(), 1);
-		threadService.create(datas.getUser1(), ThreadEntryServiceImplTest.THREAD_1 + "_" + 1);
+		threadService.create(datas.getUser1(), datas.getUser1(), ThreadEntryServiceImplTest.THREAD_1 + "_" + 1);
 		Assert.assertEquals(threadService.findAllWhereAdmin(john).size(), 2);
 
 		logger.info(LinShareTestConstants.END_TEST);

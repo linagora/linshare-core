@@ -37,7 +37,6 @@ package org.linagora.linshare.core.rac.impl;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.PermissionType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -215,12 +214,12 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 	}
 
 	@Override
-	public void checkListPermission(Account actor, O owner, EntryType type,
+	public void checkListPermission(Account actor, O owner, Class<?> clazz,
 			BusinessErrorCode errCode) throws BusinessException {
 		if (!isAuthorized(actor, owner, PermissionType.LIST)) {
 			StringBuilder sb = getActorStringBuilder(actor);
 			sb.append(" is not authorized to list all entries ");
-			sb.append(type.toString());
+			sb.append(clazz.getSimpleName());
 			appendOwner(owner, sb);
 			logger.error(sb.toString());
 			throw new BusinessException(errCode,
@@ -229,12 +228,12 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 	}
 
 	@Override
-	public void checkCreatePermission(Account actor, O owner, EntryType type,
+	public void checkCreatePermission(Account actor, O owner, Class<?> clazz,
 			BusinessErrorCode errCode) throws BusinessException {
 		if (!isAuthorized(actor, owner, PermissionType.CREATE)) {
 			StringBuilder sb = getActorStringBuilder(actor);
 			sb.append(" is not authorized to create entry ");
-			sb.append(type.toString());
+			sb.append(clazz.getSimpleName());
 			appendForAccount(owner, sb);
 			logger.error(sb.toString());
 			throw new BusinessException(errCode,
@@ -258,9 +257,10 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 	}
 
 	@Override
-	public void checkDeletePermission(Account actor, E entry,
-			BusinessErrorCode errCode) throws BusinessException {
-		O owner = getOwner(entry);
+	public void checkDeletePermission(Account actor, O owner,
+			E entry, BusinessErrorCode errCode) throws BusinessException {
+		if (owner == null)
+			owner = getOwner(entry);
 		if (!isAuthorized(actor, owner, PermissionType.DELETE, entry)) {
 			StringBuilder sb = getActorStringBuilder(actor);
 			sb.append(" is not authorized to delete the entry ");
