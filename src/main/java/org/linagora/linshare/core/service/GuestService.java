@@ -57,6 +57,8 @@ public interface GuestService {
 	 */
 	Guest find(Account actor, Account owner, String lsUuid) throws BusinessException;
 
+	Guest find(Account actor, Account owner, String domainId, String mail) throws BusinessException;
+
 	List<Guest> findAllMyGuests(Account actor, Account owner) throws BusinessException;
 
 	/**

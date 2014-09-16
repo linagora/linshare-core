@@ -43,7 +43,7 @@ public interface GuestRestService {
 
 	GuestDto create(String ownerUuid, GuestDto guest) throws BusinessException;
 
-	GuestDto get(String ownerUuid, String uuid) throws BusinessException;
+	GuestDto get(String ownerUuid, String identifier, Boolean isMail, String domain) throws BusinessException;
 
 	List<GuestDto> getAll(String ownerUuid) throws BusinessException;
 

@@ -34,17 +34,18 @@
 
 package org.linagora.linshare.webservice.delegation.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -91,7 +92,7 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 		return guestFacade.create(ownerUuid, guest);
 	}
 
-	@Path("/{uuid}")
+	@Path("/{identifier}")
 	@GET
 	@ApiOperation(value = "Get a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
@@ -102,9 +103,14 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 	@Override
 	public GuestDto get(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The guest uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "The guest identifier, could be uuid or mail.", required = true) @PathParam("identifier") String identifier,
+			@ApiParam(value = "Domain identifier. Restrict the search to a specific domain and its children.") @DefaultValue("false") @QueryParam("mail") Boolean isMail,
+			@ApiParam(value = "Domain identifier. Restrict the search to a specific domain and its children.") @QueryParam("domain") String domain)
 			throws BusinessException {
-		return guestFacade.find(ownerUuid, uuid);
+		if (isMail) {
+			return guestFacade.find(ownerUuid, domain, identifier);
+		}
+		return guestFacade.find(ownerUuid, identifier);
 	}
 
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

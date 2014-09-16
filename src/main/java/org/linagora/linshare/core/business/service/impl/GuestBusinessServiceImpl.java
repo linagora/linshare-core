@@ -86,6 +86,18 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
+	public Guest find(AbstractDomain domain, String mail)
+			throws BusinessException {
+		Guest guest = guestRepository.findByMailAndDomain(domain.getIdentifier(), mail);
+		if (guest != null) {
+			if (guest.isRestricted()) {
+				guest.addContacts(allowedContactRepository.findByOwner(guest));
+			}
+		}
+		return guest;
+	}
+
+	@Override
 	public List<Guest> findAllMyGuests(Account owner) {
 		return guestRepository.searchGuest(owner, null, null, null);
 	}

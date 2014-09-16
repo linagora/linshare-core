@@ -38,6 +38,16 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
+	public GuestDto find(String ownerUuid, String domain, String mail)
+			throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(mail, "Missing required guest mail");
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+		return GuestDto.getFull(guestService.find(actor, owner, domain, mail));
+	}
+
+	@Override
 	public List<GuestDto> findAll(String ownerUuid) throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		User actor = checkAuthentication();

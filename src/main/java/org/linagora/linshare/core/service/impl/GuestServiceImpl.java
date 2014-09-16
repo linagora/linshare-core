@@ -41,6 +41,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.business.service.impl.GuestBusinessServiceImpl.GuestWithMetadata;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
@@ -111,6 +112,18 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 	}
 
 	@Override
+	public Guest find(Account actor, Account owner, String domainId,
+			String mail) throws BusinessException {
+		if (domainId == null) {
+			domainId = owner.getDomainId();
+		}
+		// Ugly. getGuestDomain should check if input domain exists. if not, an exception should be throw
+		AbstractDomain domain = abstractDomainService.findById(domainId);
+		domain = abstractDomainService.getGuestDomain(domain.getIdentifier());
+		return guestBusinessService.find(domain, mail);
+	}
+
+	@Override
 	public List<Guest> findAllMyGuests(Account actor, Account owner)
 			throws BusinessException {
 		preChecks(actor, owner);
@@ -128,7 +141,6 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(guest);
-		// TODO : Null ??
 		checkCreatePermission(actor, owner, Guest.class, BusinessErrorCode.USER_CANNOT_CREATE_GUEST);
 		if (!hasGuestDomain(owner.getDomainId())) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,

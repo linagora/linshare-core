@@ -48,6 +48,8 @@ public interface GuestBusinessService {
 
 	Guest findByLsUuid(String lsUuid) throws BusinessException;
 
+	Guest find(AbstractDomain domain, String mail) throws BusinessException;
+
 	List<Guest> findAll();
 
 	List<Guest> findAllMyGuests(Account owner);
