@@ -95,6 +95,8 @@
                 }
             });
 
+            // XXX HACK : css is for losers ;]
+            jQuery(".qq-upload-button").attr("class", "btn btn-primary");
             fixDropzoneInit(jQuery(".qq-upload-drop-area"));
         });
     </script>
