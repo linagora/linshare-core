@@ -54,7 +54,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.DocumentFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
-import org.linagora.linshare.core.utils.FileUtils;
 import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
@@ -151,7 +150,6 @@ public class FileUpdateUploader {
             if (uploadedFile != null && i < 1) { //limit to one file (for update)
                 try {
                 	DocumentVo initialdocument = documentFacade.getDocument(userDetails, uuidDocToUpdate);
-                	String filesizeTxt = FileUtils.getFriendlySize(initialdocument.getSize(), messages);
                     DocumentVo document  =  documentFacade.updateDocument(uuidDocToUpdate, uploadedFile.getStream(), uploadedFile.getSize(),
                             uploadedFile.getFileName(), userDetails);
 

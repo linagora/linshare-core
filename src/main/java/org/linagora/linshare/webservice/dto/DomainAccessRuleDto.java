@@ -65,6 +65,9 @@ public class DomainAccessRuleDto {
 		case DENY:
 			this.domain = DomainDto.getSimple(((DenyDomain) rule).getDomain());
 			break;
+		default:
+			this.domain = null;
+			break;
 		}
 	}
 
