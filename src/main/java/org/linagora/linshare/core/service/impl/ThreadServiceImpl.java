@@ -47,6 +47,7 @@ import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.ThreadMemberResourceAccessControl;
 import org.linagora.linshare.core.rac.ThreadResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
@@ -72,13 +73,16 @@ public class ThreadServiceImpl implements ThreadService {
 
 	private final ThreadResourceAccessControl threadAC;
 
+	private final ThreadMemberResourceAccessControl threadMemberAC;
+
 	public ThreadServiceImpl(
 			ThreadRepository threadRepository,
 			ThreadMemberRepository threadMemberRepository,
 			DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
 			FunctionalityReadOnlyService functionalityService,
-			ThreadResourceAccessControl threadResourceAccessControl) {
+			ThreadResourceAccessControl threadResourceAccessControl,
+			ThreadMemberResourceAccessControl threadMemberResourceAccessControl) {
 		super();
 		this.threadRepository = threadRepository;
 		this.threadMemberRepository = threadMemberRepository;
@@ -86,6 +90,7 @@ public class ThreadServiceImpl implements ThreadService {
 		this.logEntryService = logEntryService;
 		this.functionalityReadOnlyService = functionalityService;
 		this.threadAC = threadResourceAccessControl;
+		this.threadMemberAC = threadMemberResourceAccessControl;
 	}
 
 	@Override
@@ -147,11 +152,10 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public Set<ThreadMember> getMembers(User actor, Thread thread)
+	public Set<ThreadMember> getMembers(Account actor, User owner, Thread thread)
 			throws BusinessException {
-		if (getMemberFromUser(thread, actor) == null && !actor.hasSuperAdminRole())
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-					"Actor is not a member of the thread.");
+		threadMemberAC.checkListPermission(actor, owner, ThreadMember.class,
+				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN);
 		return thread.getMyMembers();
 	}
 
@@ -191,13 +195,14 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public ThreadMember addMember(Account actor, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException {
-		// permission check
-		checkUserIsAdmin(actor, thread);
+	public ThreadMember addMember(Account actor, Account owner, Thread thread,
+			User user, boolean admin, boolean canUpload)
+			throws BusinessException {
+		ThreadMember member = new ThreadMember(canUpload, admin, user, thread);
 
-		ThreadMember member = getMemberFromUser(thread, user);
-
-		if (member != null) {
+		threadMemberAC.checkCreatePermission(actor, owner, ThreadMember.class,
+				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN);
+		if (getMemberFromUser(thread, user) != null) {
 			logger.warn("The current " + user.getAccountReprentation()
 					+ " user is already member of the thread : "
 					+ thread.getAccountReprentation());
@@ -205,11 +210,10 @@ public class ThreadServiceImpl implements ThreadService {
 					"You are not authorized to add member to this thread. Already exists.");
 		}
 
-		member = new ThreadMember(canUpload, admin, user, thread);
 		thread.getMyMembers().add(member);
 		threadRepository.update(thread);
 
-		logEntryService.create(new ThreadLogEntry(actor, member,
+		logEntryService.create(new ThreadLogEntry(owner, member,
 				LogAction.THREAD_ADD_MEMBER,
 				"Adding a new member to a thread : "
 						+ member.getUser().getAccountReprentation()));
@@ -217,9 +221,11 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public ThreadMember updateMember(Account actor, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException {
-		// permission check
-		checkUserIsAdmin(actor, member.getThread());
+	public ThreadMember updateMember(Account actor, Account owner,
+			ThreadMember member, boolean admin, boolean canUpload)
+			throws BusinessException {
+		threadMemberAC.checkUpdatePermission(actor, member,
+				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN);
 
 		member.setAdmin(admin);
 		member.setCanUpload(canUpload);
@@ -227,15 +233,15 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public void deleteMember(Account actor, Thread thread, ThreadMember member) throws BusinessException {
-		// permission check
-		checkUserIsAdmin(actor, thread);
+	public void deleteMember(Account actor, Account owner, Thread thread, ThreadMember member) throws BusinessException {
+		threadMemberAC.checkDeletePermission(actor, owner, member,
+				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN);
 
 		thread.getMyMembers().remove(member);
 		threadRepository.update(thread);
 		threadMemberRepository.delete(member);
 
-		logEntryService.create(new ThreadLogEntry(actor, member,
+		logEntryService.create(new ThreadLogEntry(owner, member,
 				LogAction.THREAD_REMOVE_MEMBER,
 				"Deleting a member in a thread."));
 	}
@@ -259,7 +265,7 @@ public class ThreadServiceImpl implements ThreadService {
 	public void deleteAllUserMemberships(Account actor, User user) throws BusinessException {
 		List<ThreadMember> memberships = threadMemberRepository.findAllUserMemberships(user);
 		for (ThreadMember threadMember : memberships) {
-			deleteMember(actor, threadMember.getThread(), threadMember);
+			deleteMember(actor, actor, threadMember.getThread(), threadMember);
 		}
 	}
 

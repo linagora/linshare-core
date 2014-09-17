@@ -34,18 +34,16 @@
 
 package org.linagora.linshare.core.rac.impl;
 
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.rac.ThreadMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 
 public class ThreadMemberResourceAccessControlImpl extends
-		AbstractResourceAccessControlImpl<Account, Account, ThreadMember> implements
-		ThreadMemberResourceAccessControl {
+		AbstractResourceAccessControlImpl<Account, Account, ThreadMember>
+		implements ThreadMemberResourceAccessControl {
 
 	private final ThreadMemberRepository threadMemberRepository;
 
@@ -104,7 +102,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 		if (actor.hasAllRights()) {
 			return true;
 		}
-		return !owner.getAccountType().equals(AccountType.GUEST);
+		return isUserAdmin(owner, entry);
 	}
 
 	@Override
@@ -127,12 +125,12 @@ public class ThreadMemberResourceAccessControlImpl extends
 	}
 
 	private boolean isUserMember(Account user, ThreadMember member) {
-		Thread thread = member.getThread();
-		return threadMemberRepository.findUserThreadMember(thread, (User) user) != null;
+		return threadMemberRepository.findUserThreadMember(member.getThread(),
+				(User) user) != null;
 	}
 
 	private boolean isUserAdmin(Account user, ThreadMember member) {
-		Thread thread = member.getThread();
-		return threadMemberRepository.isUserAdmin((User) user, thread);
+		return threadMemberRepository.isUserAdmin((User) user,
+				member.getThread());
 	}
 }

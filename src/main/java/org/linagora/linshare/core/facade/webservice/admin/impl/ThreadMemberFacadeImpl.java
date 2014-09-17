@@ -89,7 +89,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		boolean admin = dto.isAdmin();
 		boolean canUpload = !dto.isReadonly();
 
-		return new ThreadMemberDto(threadService.addMember(actor, thread, user, admin, canUpload));
+		return new ThreadMemberDto(threadService.addMember(actor, actor, thread, user, admin, canUpload));
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		boolean admin = dto.isAdmin();
 		boolean readonly = dto.isReadonly();
 
-		return new ThreadMemberDto(this.threadService.updateMember(actor, member, admin, !readonly));
+		return new ThreadMemberDto(this.threadService.updateMember(actor, actor, member, admin, !readonly));
 	}
 
 	@Override
@@ -111,6 +111,6 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(dto.getId(), "thread member id must be set.");
 		ThreadMember member = threadService.getThreadMemberById(dto.getId());
 
-		this.threadService.deleteMember(actor, member.getThread(), member);
+		this.threadService.deleteMember(actor, actor, member.getThread(), member);
 	}
 }

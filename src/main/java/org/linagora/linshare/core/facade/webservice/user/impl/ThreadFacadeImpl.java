@@ -101,7 +101,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements ThreadFaca
 		User actor = checkAuthentication();
 		Thread thread = threadService.findByLsUuid(null, null, threadUuid);
 		User user = userService.findOrCreateUserWithDomainPolicies(mail, domainId, actor.getDomainId());
-		threadService.addMember(actor, thread, user, false, !readonly);
+		threadService.addMember(actor, actor, thread, user, false, !readonly);
 	}
 
 }

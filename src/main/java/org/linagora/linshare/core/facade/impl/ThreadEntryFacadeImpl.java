@@ -233,16 +233,20 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	@Override
 	public List<ThreadMemberVo> getThreadMembers(UserVo actorVo,
 			ThreadVo threadVo) throws BusinessException {
+		User actor = findUser(actorVo);
+
 		return Ordering.natural().immutableSortedCopy(
-				toThreadMemberVo(threadService.getMembers(findUser(actorVo),
-						findThread(threadVo))));
+				toThreadMemberVo(threadService.getMembers(actor,
+						actor, findThread(threadVo))));
 	}
 
 	@Override
 	public void addMember(UserVo actorVo, ThreadVo threadVo, UserVo newMember,
 			boolean readOnly) throws BusinessException {
-		threadService.addMember(findUser(actorVo), findThread(threadVo),
-				findOrCreateUser(newMember), false, !readOnly);
+		User actor = findUser(actorVo);
+
+		threadService.addMember(actor, actor,
+				findThread(threadVo), findOrCreateUser(newMember), false, !readOnly);
 	}
 
 	@Override
@@ -253,7 +257,7 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 		User user = findUser(memberVo.getUser());
 		ThreadMember member = findMember(thread, user);
 
-		threadService.deleteMember(actor, thread, member);
+		threadService.deleteMember(actor, actor, thread, member);
 	}
 
 	@Override
@@ -264,8 +268,8 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 		User user = findUser(memberVo.getUser());
 		ThreadMember member = findMember(thread, user);
 
-		threadService.updateMember(actor, member, memberVo.isAdmin(),
-				memberVo.isCanUpload());
+		threadService.updateMember(actor, actor, member,
+				memberVo.isAdmin(), memberVo.isCanUpload());
 	}
 
 	@Override
@@ -319,8 +323,10 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	public void addMember(UserVo actorVo, ThreadVo threadVo,
 			String domain, String mail) throws BusinessException {
 		User user = userService.findOrCreateUser(mail, domain);
+		User actor = findUser(actorVo);
 
-		threadService.addMember(findUser(actorVo), findThread(threadVo), user, false, true);
+		threadService.addMember(actor, actor, findThread(threadVo), user,
+				false, true);
 	}
 
 	@Override
@@ -330,7 +336,7 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 		User actor = findUser(actorVo);
 		ThreadMember member = findMember(thread, findUser(userVo));
 
-		threadService.deleteMember(actor, thread, member);
+		threadService.deleteMember(actor, actor, thread, member);
 	}
 
 	@Override

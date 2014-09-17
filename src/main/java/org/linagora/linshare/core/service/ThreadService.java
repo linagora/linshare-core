@@ -54,7 +54,7 @@ public interface ThreadService {
 	
 	public ThreadMember getMemberFromUser(Thread thread, User user) throws BusinessException;
 
-	public Set<ThreadMember> getMembers(User actor, Thread thread) throws BusinessException;
+	public Set<ThreadMember> getMembers(Account actor, User owner, Thread thread) throws BusinessException;
 
 	public List<Thread> findAllWhereMember(User user);
 	
@@ -72,11 +72,11 @@ public interface ThreadService {
 
 	public int countEntries(Thread thread);
 
-	public ThreadMember addMember(Account actor, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException;
+	public ThreadMember addMember(Account actor, Account owner, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException;
 
-	public ThreadMember updateMember(Account actor, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException;
+	public ThreadMember updateMember(Account actor, Account owner, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException;
 
-	public void deleteMember(Account actor, Thread thread, ThreadMember member) throws BusinessException;
+	public void deleteMember(Account actor, Account owner, Thread thread, ThreadMember member) throws BusinessException;
 	
 	public void deleteAllMembers(Account actor, Thread thread) throws BusinessException;
 
