@@ -862,7 +862,9 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	}
 
 	private String formatPersonalMessage(String pm, Language lang) {
-		return StringUtils.isBlank(pm) ? "" : pm + "<hr/><br/>";
+		if (StringUtils.isBlank(pm))
+			return "";
+		return "<p>" + pm.replace("\n", "<br/>") + "</p><hr/><br/>";
 	}
 
 	private String formatFooter(String footer, Language lang) {
