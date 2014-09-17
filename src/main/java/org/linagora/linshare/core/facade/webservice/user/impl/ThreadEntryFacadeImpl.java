@@ -80,7 +80,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements Threa
 	@Override
 	public ThreadEntryDto uploadfile(String threadUuid, InputStream fi, String fileName, String description) throws BusinessException {
 		User actor = checkAuthentication();
-		Thread thread = threadService.findByLsUuid(null, null, threadUuid);
+		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
 		if (thread == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Current thread was not found : " + threadUuid);
 		}

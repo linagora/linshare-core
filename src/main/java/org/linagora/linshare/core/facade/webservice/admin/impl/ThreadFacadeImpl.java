@@ -74,7 +74,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	public ThreadDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
-		return new ThreadDto(threadService.findByLsUuid(null, null, uuid));
+		return new ThreadDto(threadService.findByLsUuid(actor, actor, uuid));
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	public void delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
-		Thread thread = threadService.findByLsUuid(null, null, uuid);
+		Thread thread = threadService.findByLsUuid(actor, actor, uuid);
 
 		threadService.deleteThread(actor, actor, thread);
 	}
