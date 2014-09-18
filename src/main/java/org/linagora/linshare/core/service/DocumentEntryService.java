@@ -142,4 +142,6 @@ public interface DocumentEntryService {
 	public void renameDocumentEntry(Account actor, String docEntryUuid, String newName) throws BusinessException ;
 
 	public void updateFileProperties(Account actor, String docEntryUuid, String newName, String fileComment) throws BusinessException;
+
+	public boolean mimeTypeFilteringStatus(Account actor) throws BusinessException;
 }

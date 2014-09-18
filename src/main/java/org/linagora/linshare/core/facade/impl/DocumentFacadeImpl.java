@@ -85,7 +85,6 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	private final SignatureService signatureService;
 
-
 	public DocumentFacadeImpl(UserRepository<User> userRepository, SignatureTransformer signatureTransformer,
 			EnciphermentService enciphermentService, DocumentEntryService documentEntryService, AccountService accountService,
 			DocumentEntryTransformer documentEntryTransformer, SignatureService signatureService, 
@@ -420,7 +419,6 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		Account actor = accountService.findByLsUuid(userVo.getLsUuid());
 		return documentEntryService.isUserQuotaActive(actor);
 	}
-
 
 	@Override
 	public Long getGlobalQuota(UserVo userVo) throws BusinessException {

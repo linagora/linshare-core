@@ -10,6 +10,7 @@
 	<bean id="wsDocumentFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.DocumentFacadeImpl">
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="accountService" />
+		<constructor-arg ref="mimePolicyService" />
 	</bean>
 	<bean id="wsLogEntryFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.LogEntryFacadeImpl">
 		<constructor-arg ref="accountService" />

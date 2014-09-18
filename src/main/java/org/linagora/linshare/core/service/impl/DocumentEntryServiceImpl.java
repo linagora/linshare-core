@@ -120,8 +120,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 			// check if the file MimeType is allowed
 			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
-			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
-			if (mimeFunctionality.getActivationPolicy().getStatus()) {
+			if (mimeTypeFilteringStatus(actor)) {
 				mimeTypeService.checkFileMimeType(actor, fileName, mimeType);
 			}
 
@@ -158,6 +157,13 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			}
 		}
 		return docEntry;
+	}
+
+	@Override
+	public boolean mimeTypeFilteringStatus(Account actor) throws BusinessException {
+		AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
+		Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
+		return mimeFunctionality.getActivationPolicy().getStatus();
 	}
 
 	@Override

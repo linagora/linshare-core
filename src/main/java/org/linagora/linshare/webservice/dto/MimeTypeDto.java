@@ -51,13 +51,13 @@ public class MimeTypeDto {
 
 	@ApiModelProperty(value = "mimeType")
 	private String mimeType;
-	
+
 	@ApiModelProperty(value = "Extensions")
 	private String extensions;
 
 	@ApiModelProperty(value = "Enable")
 	private boolean enable;
-	
+
 	@ApiModelProperty(value = "Creation date")
 	private Date creationDate;
 
@@ -71,6 +71,18 @@ public class MimeTypeDto {
 		this.enable = m.getEnable();
 		this.creationDate = m.getCreationDate();
 		this.modificationDate = m.getModificationDate();
+	}
+
+	public MimeTypeDto(final MimeType m, boolean light) {
+		this.mimeType = m.getMimeType();
+		this.extensions = m.getExtensions();
+		this.enable = m.getEnable();
+		if (!light) {
+			this.uuid = m.getUuid();
+			this.enable = m.getEnable();
+			this.creationDate = m.getCreationDate();
+			this.modificationDate = m.getModificationDate();
+		}
 	}
 
 	public MimeTypeDto() {

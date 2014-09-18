@@ -57,6 +57,7 @@ import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.DocumentDto;
+import org.linagora.linshare.webservice.dto.MimeTypeDto;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
 import org.linagora.linshare.webservice.user.DocumentRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
@@ -192,6 +193,24 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	public DocumentDto delete(@PathParam("uuid") String uuid) throws BusinessException {
 		webServiceDocumentFacade.checkAuthentication();
 		return webServiceDocumentFacade.deleteFile(uuid);
+	}
+
+	@GET
+	@Path("/mimetypes")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public List<MimeTypeDto> getMimeTypes() throws BusinessException {
+		User actor = webServiceDocumentFacade.checkAuthentication();
+		return webServiceDocumentFacade.getMimeTypes(actor);
+	}
+
+	@GET
+	@Path("/mimetypestatus")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public Boolean getMimeTypeStatus() throws BusinessException {
+		User actor = webServiceDocumentFacade.checkAuthentication();
+		return webServiceDocumentFacade.isEnableMimeTypes(actor);
 	}
 
 }

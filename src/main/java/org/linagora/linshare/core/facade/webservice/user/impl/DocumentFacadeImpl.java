@@ -37,20 +37,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.activation.DataHandler;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
+import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.DocumentDto;
+import org.linagora.linshare.webservice.dto.MimeTypeDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 public class DocumentFacadeImpl extends GenericFacadeImpl
 		implements DocumentFacade {
@@ -60,11 +67,15 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 
 	private final DocumentEntryService documentEntryService;
 
+	private final MimePolicyService mimePolicyService;
+
 	public DocumentFacadeImpl(
 			final DocumentEntryService documentEntryService,
-			final AccountService accountService) {
+			final AccountService accountService,
+			final MimePolicyService mimePolicyService) {
 		super(accountService);
 		this.documentEntryService = documentEntryService;
+		this.mimePolicyService = mimePolicyService;
 	}
 
 	@Override
@@ -156,7 +167,7 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 		try {
 			User actor = getAuthentication();
 			DocumentEntry doc = documentEntryService.findById(actor, uuid);
-		
+
 			documentEntryService.deleteDocumentEntry(actor, doc);
 			return new DocumentDto(doc);
 		} catch (BusinessException e) {
@@ -177,4 +188,20 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 		return output;
 	}
 
+	@Override
+	public List<MimeTypeDto> getMimeTypes(Account actor) throws BusinessException {
+		List<MimeTypeDto> res = Lists.newArrayList();
+		Set<MimeType> mimeTypes = mimePolicyService.findAllMyMimeTypes(actor);
+		for (MimeType mimeType : mimeTypes) {
+			if (mimeType.getEnable()) {
+				res.add(new MimeTypeDto(mimeType, true));
+			}
+		}
+		return res;
+	}
+
+	@Override
+	public Boolean isEnableMimeTypes(Account actor) throws BusinessException {
+		return documentEntryService.mimeTypeFilteringStatus(actor);
+	}
 }
