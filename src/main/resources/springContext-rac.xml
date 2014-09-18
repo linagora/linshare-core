@@ -14,7 +14,7 @@
 	<bean name="threadResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ThreadResourceAccessControlImpl">
 		<constructor-arg ref="threadMemberRepository" />
 	</bean>
-	<bean name="threadResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ThreadResourceAccessControlImpl">
+	<bean name="threadMemberResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ThreadMemberResourceAccessControlImpl">
 		<constructor-arg ref="threadMemberRepository" />
 	</bean>
 	<bean name="guestResourceAccessControl" class="org.linagora.linshare.core.rac.impl.GuestResourceAccessControlImpl">
