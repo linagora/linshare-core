@@ -14,7 +14,7 @@ INSERT INTO welcome_texts (messages_configuration_id, welcome_text, language_id)
 
 -- default domain policy
 INSERT INTO domain_access_policy(id) VALUES (1);
-INSERT INTO domain_access_rule(id, domain_access_rule_type, regexp, domain_id, domain_access_policy_id, rule_index) VALUES (1, 0, '', null, 1,0);
+INSERT INTO domain_access_rule(id, domain_access_rule_type, domain_id, domain_access_policy_id, rule_index) VALUES (1, 0, null, 1,0);
 INSERT INTO domain_policy(id, identifier, domain_access_policy_id) VALUES (1, 'DefaultDomainPolicy', 1);
 
 
@@ -377,7 +377,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 
 -- default domain policy
 INSERT INTO domain_access_policy(id) VALUES (100001);
-INSERT INTO domain_access_rule(id, domain_access_rule_type, regexp, domain_id, domain_access_policy_id, rule_index) VALUES (100001, 0, '', null, 100001,0);
+INSERT INTO domain_access_rule(id, domain_access_rule_type, domain_id, domain_access_policy_id, rule_index) VALUES (100001, 0, null, 100001,0);
 INSERT INTO domain_policy(id, identifier, domain_access_policy_id) VALUES (100001, 'TestAccessPolicy0-test', 100001);
 
 
