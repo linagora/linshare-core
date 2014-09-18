@@ -90,6 +90,7 @@ import org.subethamail.wiser.Wiser;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
+		"classpath:springContext-rac.xml",
 		"classpath:springContext-startopendj.xml",
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml" })
@@ -519,7 +520,7 @@ public class UserServiceImplTest extends
 			throws IllegalArgumentException, BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain rootDomain = abstractDomainRepository
-				.findById(LoadingServiceTestDatas.sqlRootDomain);
+				.findById(LoadingServiceTestDatas.sqlDomain);
 		User user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
@@ -553,7 +554,7 @@ public class UserServiceImplTest extends
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
 		AbstractDomain rootDomain = abstractDomainRepository
-				.findById(LoadingServiceTestDatas.sqlRootDomain);
+				.findById(LoadingServiceTestDatas.sqlDomain);
 		User user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
@@ -605,7 +606,7 @@ public class UserServiceImplTest extends
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
 		AbstractDomain rootDomain = abstractDomainRepository
-				.findById(LoadingServiceTestDatas.sqlRootDomain);
+				.findById(LoadingServiceTestDatas.sqlDomain);
 		User user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
@@ -658,7 +659,7 @@ public class UserServiceImplTest extends
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
 		AbstractDomain rootDomain = abstractDomainRepository
-				.findById(LoadingServiceTestDatas.sqlRootDomain);
+				.findById(LoadingServiceTestDatas.sqlDomain);
 		User user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
@@ -706,7 +707,7 @@ public class UserServiceImplTest extends
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
 		AbstractDomain rootDomain = abstractDomainRepository
-				.findById(LoadingServiceTestDatas.sqlRootDomain);
+				.findById(LoadingServiceTestDatas.sqlDomain);
 		User user1 = new Internal("John", "Doe", "user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);

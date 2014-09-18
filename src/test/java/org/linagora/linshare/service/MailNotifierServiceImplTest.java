@@ -66,6 +66,7 @@ import org.subethamail.wiser.WiserMessage;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
+		"classpath:springContext-rac.xml",
 		"classpath:springContext-startopendj.xml",
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"

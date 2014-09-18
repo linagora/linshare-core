@@ -39,6 +39,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -67,6 +68,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
+@Ignore
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -74,6 +76,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
+		"classpath:springContext-rac.xml",
 		"classpath:springContext-startopendj.xml",
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
