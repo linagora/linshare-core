@@ -34,8 +34,10 @@
 
 package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
+import java.io.InputStream;
 import java.util.List;
 
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -66,5 +68,15 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		User owner = getOwner(ownerUuid);
 		List<DocumentEntry> list = documentEntryService.findAll(actor, owner);
 		return Lists.transform(list, DocumentDto.toDelegationVo());
+	}
+
+	@Override
+	public DocumentDto create(String ownerUuid, InputStream theFile,
+			String description, String givenFileName, MultipartBody body)
+			throws BusinessException {
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+		DocumentEntry doc = documentEntryService.create(actor, owner, theFile, givenFileName);
+		return new  DocumentDto(doc);
 	}
 }

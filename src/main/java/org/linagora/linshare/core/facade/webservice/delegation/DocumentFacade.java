@@ -34,13 +34,19 @@
 
 package org.linagora.linshare.core.facade.webservice.delegation;
 
+import java.io.InputStream;
 import java.util.List;
 
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.delegation.dto.DocumentDto;
 
 public interface DocumentFacade extends DelegationGenericFacade {
 
 	List<DocumentDto> getAll(String ownerUuid) throws BusinessException;
+
+	DocumentDto create(String ownerUuid, InputStream theFile,
+			String description, String givenFileName, MultipartBody body)
+			throws BusinessException;
 
 }

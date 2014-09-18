@@ -92,8 +92,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The given file name of the uploaded file.", required = true) String givenFileName,
 			MultipartBody body)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return documentFacade.create(ownerUuid, theFile, description, givenFileName, body);
 	}
 
 	@Path("/{uuid}")
