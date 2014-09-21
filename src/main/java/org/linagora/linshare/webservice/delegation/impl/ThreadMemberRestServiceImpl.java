@@ -85,12 +85,9 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 	public ThreadMemberDto create(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
-			@ApiParam(value = "The user domain identifier.", required = true) @PathParam("domainId") String domainId,
-			@ApiParam(value = "The user mail.", required = true) @PathParam("threadUuid") String mail,
-			@ApiParam(value = "To create a readonly member.", required = true) @PathParam("readonly") boolean readonly,
-			@ApiParam(value = "To give admin rights to the new member.", required = true) @PathParam("admin") boolean admin)
+			@ApiParam(value = "The user domain identifier.", required = true) ThreadMemberDto threadMember)
 					throws BusinessException {
-		return threadMemberFacade.create(ownerUuid, threadUuid, domainId, mail, readonly, admin);
+		return threadMemberFacade.create(ownerUuid, threadUuid, threadMember.getUserDomainId(), threadMember.getUserMail(), threadMember.isReadonly(), threadMember.isAdmin());
 	}
 
 	@Path("/")

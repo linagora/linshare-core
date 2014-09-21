@@ -41,7 +41,7 @@ import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 public interface ThreadMemberRestService {
 
 	ThreadMemberDto create(String ownerUuid, String threadUuid,
-			String domainId, String mail, boolean readonly, boolean admin)
+			ThreadMemberDto threadMember)
 			throws BusinessException;
 
 	public List<ThreadMemberDto> findAll(String ownerUuid, String threadUuid)
