@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.User;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -51,6 +52,20 @@ public class GenericUserDto {
 		super();
 	}
 
+	public GenericUserDto(Contact contact) {
+		super();
+		this.mail = contact.getMail();
+	}
+
+	public GenericUserDto(User u) {
+		super();
+		setUuid(u.getLsUuid());
+		setDomain(u.getDomainId());
+		setMail(u.getMail());
+		setFirstName(u.getFirstName());
+		setLastName(u.getLastName());
+	}
+
 	@ApiModelProperty(value = "User uuid")
 	protected String uuid = null;
 
@@ -65,15 +80,6 @@ public class GenericUserDto {
 
 	@ApiModelProperty(value = "Mail")
 	private String mail = null;
-
-	public GenericUserDto(User u) {
-		super();
-		setUuid(u.getLsUuid());
-		setDomain(u.getDomainId());
-		setMail(u.getMail());
-		setFirstName(u.getFirstName());
-		setLastName(u.getLastName());
-	}
 
 	public String getUuid() {
 		return uuid;

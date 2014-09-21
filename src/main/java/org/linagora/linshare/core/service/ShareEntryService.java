@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -59,6 +60,6 @@ public interface ShareEntryService {
 
 	List<ShareEntry> findAllMyRecievedShareEntries(Account actor, Account owner);
 
-	void create(Account actor, User owner, ShareContainer shareContainer);
+	Set<ShareEntry> create(Account actor, User owner, ShareContainer shareContainer);
 
 }

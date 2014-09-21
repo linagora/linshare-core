@@ -34,27 +34,61 @@
 
 package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
+import java.util.Set;
+
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.ShareContainer;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.delegation.ShareFacade;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.webservice.delegation.dto.ShareCreationDto;
+import org.linagora.linshare.webservice.delegation.dto.ShareDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 public class ShareFacadeImpl extends DelegationGenericFacadeImpl implements
 		ShareFacade {
 
-	private final ShareEntryService shareEntryService;
+	private static final Logger logger = LoggerFactory.getLogger(ShareFacadeImpl.class);
 
 	private final ShareService shareService;
 
 	public ShareFacadeImpl(
 			final AccountService accountService,
-			final ShareEntryService shareEntryService,
 			final ShareService shareService,
 			final UserService userService) {
 		super(accountService, userService);
-		this.shareEntryService = shareEntryService;
 		this.shareService = shareService;
 	}
 
+	@Override
+	public Set<ShareDto> create(String ownerUuid, ShareCreationDto createDto) {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+		if ((actor.isGuest() && !actor.getCanUpload()))
+			throw new BusinessException(
+					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+					"You are not authorized to use this service");
+		ShareContainer sc = new ShareContainer();
+		sc.addDocumentUuid(createDto.getDocuments());
+		sc.setSubject(createDto.getSubject());
+		sc.setMessage(createDto.getMessage());
+		sc.setSecured(createDto.getSecured());
+		sc.setExpiryDate(createDto.getExpirationDate());
+		sc.addGenericUserDto(createDto.getRecipients());
+		Set<Entry> shares = shareService.create(actor, owner, sc);
+		Set<ShareDto> sharesDto = Sets.newHashSet();
+		for (Entry entry : shares) {
+			sharesDto.add(ShareDto.getSentShare(entry));
+		}
+		return sharesDto;
+	}
 }

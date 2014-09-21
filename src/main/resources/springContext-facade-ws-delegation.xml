@@ -40,4 +40,10 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="threadService" />
 	</bean>
+
+	<bean id="wsDelegationShareFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.ShareFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="shareService" />
+	</bean>
 </beans>

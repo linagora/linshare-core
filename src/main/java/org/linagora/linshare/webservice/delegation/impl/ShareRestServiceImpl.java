@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.webservice.delegation.impl;
 
+import java.util.Set;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -42,6 +44,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.delegation.ShareFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegation.ShareRestService;
 import org.linagora.linshare.webservice.delegation.dto.ShareCreationDto;
@@ -60,20 +63,26 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class ShareRestServiceImpl extends WebserviceBase implements ShareRestService {
 
+	private final ShareFacade shareFacade;
+
+	public ShareRestServiceImpl(ShareFacade shareFacade) {
+		super();
+		this.shareFacade = shareFacade;
+	}
+
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a share.", response = ShareDto.class)
+	@ApiOperation(value = "Create a share.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 					@ApiResponse(code = 404, message = "Owner not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public ShareDto create(
+	public Set<ShareDto> create(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			ShareCreationDto createDto)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return shareFacade.create(ownerUuid, createDto);
 	}
 }

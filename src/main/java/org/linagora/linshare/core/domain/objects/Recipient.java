@@ -37,6 +37,7 @@ package org.linagora.linshare.core.domain.objects;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.webservice.dto.GenericUserDto;
 import org.linagora.linshare.webservice.dto.UserDto;
 
 public class Recipient {
@@ -91,6 +92,15 @@ public class Recipient {
 	}
 
 	public Recipient(UserDto userDto) {
+		super();
+		this.uuid = userDto.getUuid();
+		this.mail = userDto.getMail();
+		this.firstName = userDto.getFirstName();
+		this.lastName = userDto.getLastName();
+		this.domainIdentifier = userDto.getDomain();
+	}
+
+	public Recipient(GenericUserDto userDto) {
 		super();
 		this.uuid = userDto.getUuid();
 		this.mail = userDto.getMail();

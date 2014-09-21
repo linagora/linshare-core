@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
@@ -64,6 +65,8 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 public class AnonymousShareEntryServiceImpl extends
 		GenericEntryServiceImpl<Contact, AnonymousShareEntry> implements
@@ -129,15 +132,17 @@ public class AnonymousShareEntryServiceImpl extends
 
 	// TODO FMA - Refactoring shares
 	@Override
-	public void create(Account actor, User owner, ShareContainer sc)
+	public Set<AnonymousShareEntry> create(Account actor, User owner, ShareContainer sc)
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(sc, "Share container is required.");
 		checkCreatePermission(actor, owner, AnonymousShareEntry.class,
 				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN);
 
+		Set<AnonymousShareEntry> entries = Sets.newHashSet();
 		Date expiryDate = sc.getExpiryDate();
 		Boolean passwordProtected = sc.getSecured();
+		if (passwordProtected == null) passwordProtected = false;
 		if (functionalityService.isSauMadatory(owner.getDomain()
 				.getIdentifier())) {
 			passwordProtected = true;
@@ -162,8 +167,8 @@ public class AnonymousShareEntryServiceImpl extends
 			sc.addMailContainer(mail);
 			recipientFavouriteRepository.incAndCreate(owner,
 					recipient.getMail());
+			entries.addAll(anonymousUrl.getAnonymousShareEntries());
 		}
-
 		// FIXME : recipients ?
 		for (DocumentEntry documentEntry : sc.getDocuments()) {
 			ShareLogEntry logEntry = new ShareLogEntry(owner, documentEntry,
@@ -171,6 +176,7 @@ public class AnonymousShareEntryServiceImpl extends
 					expiryDate);
 			logEntryService.create(logEntry);
 		}
+		return entries;
 	}
 
 	@Override

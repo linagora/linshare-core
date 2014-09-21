@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
@@ -60,6 +61,8 @@ import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> implements
 		ShareService {
@@ -98,7 +101,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 	// TODO FMA - Refactoring shares
 	@Override
-	public void create(Account actor, User owner, ShareContainer shareContainer)
+	public Set<Entry> create(Account actor, User owner, ShareContainer shareContainer)
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(shareContainer);
@@ -128,12 +131,13 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		shareContainer.updateEncryptedStatus();
 
 		// Creation
-		anonymousShareEntryService.create(actor, owner, shareContainer);
-		shareEntryService.create(actor, owner, shareContainer);
+		Set<Entry> entries = Sets.newHashSet();
+		entries.addAll(anonymousShareEntryService.create(actor, owner, shareContainer));
+		entries.addAll(shareEntryService.create(actor, owner, shareContainer));
 
 		// Notification
 		notifierService.sendNotification(shareContainer.getMailContainers());
-
+		return entries;
 	}
 
 	private boolean hasRightsToShareWithExternals(User sender) {

@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service;
 
 import java.io.InputStream;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -46,7 +47,7 @@ public interface AnonymousShareEntryService {
 	AnonymousShareEntry find(Account actor, Account owner, String shareUuid)
 			throws BusinessException;
 
-	void create(Account actor, User owner, ShareContainer shareContainer)
+	Set<AnonymousShareEntry> create(Account actor, User owner, ShareContainer shareContainer)
 			throws BusinessException;
 
 	void delete(Account actor, Account owner, String shareUuid)

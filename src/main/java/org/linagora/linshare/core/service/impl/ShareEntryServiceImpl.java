@@ -267,7 +267,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	}
 
 	@Override
-	public void create(Account actor, User owner, ShareContainer sc) {
+	public Set<ShareEntry> create(Account actor, User owner, ShareContainer sc) {
 		preChecks(actor, owner);
 		Validate.notNull(sc);
 		checkCreatePermission(actor, owner, ShareEntry.class,
@@ -278,6 +278,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			expiryDate = shareExpiryDateService
 					.computeMinShareExpiryDateOfList(sc.getDocuments(), owner);
 		}
+		Set<ShareEntry> entries = Sets.newHashSet();
 		for (User recipient : sc.getShareRecipients()) {
 			MailContainer mailContainer = new MailContainer(
 					recipient.getLocale(), sc.getMessage(), sc.getSubject());
@@ -295,6 +296,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 						LogAction.SHARE_RECEIVED, "Receiving a shared file",
 						createShare, owner));
 			}
+			entries.addAll(shares);
 			MailContainerWithRecipient mail = null;
 			if (sc.isEncrypted()) {
 				mail = mailBuildingService.buildNewSharingCyphered(owner,
@@ -305,6 +307,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			}
 			sc.addMailContainer(mail);
 		}
+		return entries;
 	}
 
 	private void updateGuestExpiryDate(User recipient, User sender) {

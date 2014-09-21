@@ -48,6 +48,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.delegation.DocumentFacade;
@@ -87,12 +89,25 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@Override
 	public DocumentDto create(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "File stream.", required = true) InputStream theFile,
-			@ApiParam(value = "An optional description of a document.") String description,
-			@ApiParam(value = "The given file name of the uploaded file.", required = true) String givenFileName,
+			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream theFile,
+			@ApiParam(value = "An optional description of a document.") @Multipart(value = "description", required = false) String description,
+			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
 			MultipartBody body)
 					throws BusinessException {
-		return documentFacade.create(ownerUuid, theFile, description, givenFileName, body);
+		String fileName;
+		String comment = (description == null) ? "" : description;
+		if (theFile == null) {
+			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
+		}
+		if (givenFileName == null || givenFileName.isEmpty()) {
+			// parameter givenFileName is optional
+			// so need to search this information in the header of the
+			// attachement (with id file)
+			fileName = body.getAttachment("file").getContentDisposition().getParameter("filename");
+		} else {
+			fileName = givenFileName;
+		}
+		return documentFacade.create(ownerUuid, theFile, comment, fileName);
 	}
 
 	@Path("/{uuid}")

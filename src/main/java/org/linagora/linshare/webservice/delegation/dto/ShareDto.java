@@ -38,6 +38,9 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.EntryType;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.webservice.dto.GenericUserDto;
@@ -113,6 +116,35 @@ public class ShareDto {
 		}
 	}
 
+	protected ShareDto(Entry entry) {
+		this.uuid = entry.getUuid();
+		this.name = entry.getName();
+		this.creationDate = entry.getCreationDate().getTime();
+		this.modificationDate = entry.getModificationDate().getTime();
+		this.expirationDate = entry.getExpirationDate().getTime();
+
+		EntryType entryType = entry.getEntryType();
+		if (entryType.equals(EntryType.SHARE)) {
+			ShareEntry shareEntry = (ShareEntry) entry;
+			this.documentDto = new DocumentDto(shareEntry.getDocumentEntry());
+			this.recipient = new GenericUserDto((User) shareEntry.getRecipient());
+			this.size = shareEntry.getDocumentEntry().getSize();
+			this.type = shareEntry.getDocumentEntry().getType();
+			this.ciphered = shareEntry.getDocumentEntry().getCiphered();
+			this.downloaded = shareEntry.getDownloaded();
+			this.sender = new GenericUserDto((User) shareEntry.getEntryOwner());
+		} else if (entryType.equals(EntryType.ANONYMOUS_SHARE)) {
+			AnonymousShareEntry shareEntry = (AnonymousShareEntry) entry;
+			this.documentDto = new DocumentDto(shareEntry.getDocumentEntry());
+			this.recipient = new GenericUserDto(shareEntry.getAnonymousUrl().getContact());
+			this.size = shareEntry.getDocumentEntry().getSize();
+			this.type = shareEntry.getDocumentEntry().getType();
+			this.ciphered = shareEntry.getDocumentEntry().getCiphered();
+			this.downloaded = shareEntry.getDownloaded();
+			this.sender = new GenericUserDto((User) shareEntry.getEntryOwner());
+		}
+	}
+
 	public ShareDto() {
 		super();
 	}
@@ -123,6 +155,10 @@ public class ShareDto {
 
 	public static ShareDto getSentShare(ShareEntry shareEntry) {
 		return new ShareDto(shareEntry, false);
+	}
+
+	public static ShareDto getSentShare(Entry entry) {
+		return new ShareDto(entry);
 	}
 
 	public String getUuid() {

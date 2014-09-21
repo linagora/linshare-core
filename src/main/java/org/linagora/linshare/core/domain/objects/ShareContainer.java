@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DocumentDto;
+import org.linagora.linshare.webservice.dto.GenericUserDto;
 import org.linagora.linshare.webservice.dto.UserDto;
 
 import com.google.common.collect.Lists;
@@ -279,6 +280,11 @@ public class ShareContainer {
 		this.recipients.add(new Recipient(userDto));
 	}
 
+	public void addUserDto(GenericUserDto userDto) {
+		Validate.notNull(userDto, "user must not be null.");
+		this.recipients.add(new Recipient(userDto));
+	}
+
 	public void addUserVo(UserVo userVo) {
 		Validate.notNull(userVo, "user must not be null.");
 		this.recipients.add(new Recipient(userVo));
@@ -287,6 +293,18 @@ public class ShareContainer {
 	public void addUserVo(List<UserVo> usersVo) {
 		for (UserVo userVo : usersVo) {
 			this.addUserVo(userVo);
+		}
+	}
+
+	public void addGenericUserDto(List<GenericUserDto> usersDto) {
+		for (GenericUserDto userDto : usersDto) {
+			this.addUserDto(userDto);
+		}
+	}
+
+	public void addUserDto(List<UserDto> usersDto) {
+		for (UserDto userDto : usersDto) {
+			this.addUserDto(userDto);
 		}
 	}
 

@@ -49,9 +49,6 @@ public class ShareCreationDto {
 	@ApiModelProperty(value = "Document uuids")
 	protected List<String> documents;
 
-	@ApiModelProperty(value = "Description")
-	protected String description;
-
 	@ApiModelProperty(value = "Secured")
 	protected Boolean secured;
 
@@ -60,8 +57,55 @@ public class ShareCreationDto {
 
 	@ApiModelProperty(value = "Subject")
 	protected String subject;
-	
+
 	@ApiModelProperty(value = "Message")
 	protected String message;
 
+	public List<GenericUserDto> getRecipients() {
+		return recipients;
+	}
+
+	public void setRecipients(List<GenericUserDto> recipients) {
+		this.recipients = recipients;
+	}
+
+	public List<String> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<String> documents) {
+		this.documents = documents;
+	}
+
+	public Boolean getSecured() {
+		return secured;
+	}
+
+	public void setSecured(Boolean secured) {
+		this.secured = secured;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
 }
