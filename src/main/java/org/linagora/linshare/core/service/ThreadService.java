@@ -48,7 +48,7 @@ public interface ThreadService {
 
 	public List<Thread> findAll(Account actor, Account owner);
 
-	public Boolean create(Account actor, Account owner, String name) throws BusinessException;
+	public Thread create(Account actor, Account owner, String name) throws BusinessException;
 	
 	public ThreadMember getThreadMemberById(long id) throws BusinessException;
 	

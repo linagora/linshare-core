@@ -47,6 +47,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.delegation.ThreadMemberFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegation.ThreadMemberRestService;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
@@ -66,6 +67,12 @@ import com.wordnik.swagger.annotations.ApiResponses;
 public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 		ThreadMemberRestService {
 
+	private final ThreadMemberFacade threadMemberFacade;
+
+	public ThreadMemberRestServiceImpl(final ThreadMemberFacade threadMemberFacade) {
+		this.threadMemberFacade = threadMemberFacade;
+	}
+
 	@Path("/")
 	@POST
 	@ApiOperation(value = "Create a thread member.", response = ThreadMemberDto.class)
@@ -83,26 +90,7 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "To create a readonly member.", required = true) @PathParam("readonly") boolean readonly,
 			@ApiParam(value = "To give admin rights to the new member.", required = true) @PathParam("admin") boolean admin)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Path("/{uuid}")
-	@GET
-	@ApiOperation(value = "Get a thread member.", response = ThreadMemberDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
-	@Override
-	public ThreadMemberDto find(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
-			@ApiParam(value = "The thread member uuid.", required = true) @PathParam("uuid") String uuid)
-					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return threadMemberFacade.create(ownerUuid, threadUuid, domainId, mail, readonly, admin);
 	}
 
 	@Path("/")
@@ -118,8 +106,7 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid)
 				throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return threadMemberFacade.findAll(ownerUuid, threadUuid);
 	}
 
 	@Path("/")
@@ -136,7 +123,6 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread member to update.", required = true) ThreadMemberDto threadMember)
 					throws BusinessException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -154,8 +140,7 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread member to delete.", required = true) ThreadMemberDto threadMember)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		
+		threadMemberFacade.delete(ownerUuid, threadUuid, threadMember.getUserUuid());
 	}
 
 	@Path("/{uuid}")
@@ -170,10 +155,9 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 	public void delete(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
-			@ApiParam(value = "The thread member uuid to delete.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "The user uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		
+		threadMemberFacade.delete(ownerUuid, threadUuid, uuid);
 	}
 
 }

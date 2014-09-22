@@ -31,83 +31,79 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.user.impl;
+
+package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Functionality;
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
+import org.linagora.linshare.core.facade.webservice.delegation.ThreadFacade;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.ThreadDto;
 
 import com.google.common.collect.Lists;
 
-public class ThreadFacadeImpl extends UserGenericFacadeImp implements
+public class ThreadFacadeImpl extends DelegationGenericFacadeImpl implements
 		ThreadFacade {
 
 	private final ThreadService threadService;
 
-	private final UserService userService;
-
-	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-
 	public ThreadFacadeImpl(
-			final ThreadService threadService,
 			final AccountService accountService,
 			final UserService userService,
-			final FunctionalityReadOnlyService functionalityService) {
-		super(accountService);
+			final ThreadService threadService) {
+		super(accountService, userService);
 		this.threadService = threadService;
-		this.functionalityReadOnlyService = functionalityService;
-		this.userService = userService;
 	}
 
 	@Override
-	public User checkAuthentication() throws BusinessException {
-		User user = super.checkAuthentication();
-		Functionality functionality = functionalityReadOnlyService
-				.getThreadTabFunctionality(user.getDomain());
-
-		if (!functionality.getActivationPolicy().getStatus()) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
-					"You are not authorized to use this service");
-		}
-		return user;
-	}
-
-	@Override
-	public List<ThreadDto> getAllMyThread() throws BusinessException {
+	public ThreadDto find(String ownerUuid, String uuid)
+			throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(uuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
-		List<ThreadDto> res = Lists.newArrayList();
+		User owner = getOwner(ownerUuid);
+		return new ThreadDto(threadService.findByLsUuid(actor, owner, uuid));
+	}
 
-		for (Thread thread : threadService.findAllWhereMember(actor)) {
+	@Override
+	public List<ThreadDto> findAll(String ownerUuid) throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+		List<ThreadDto> res = Lists.newArrayList();
+		List<Thread> threads = threadService.findAll(actor, owner);
+		for (Thread thread : threads) {
 			res.add(new ThreadDto(thread));
 		}
 		return res;
 	}
 
 	@Override
-	public ThreadDto getThread(String uuid) throws BusinessException {
+	public ThreadDto create(String ownerUuid, ThreadDto threadDto)
+			throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notNull(threadDto, "Missing required thread dto");
 		User actor = checkAuthentication();
-		Thread thread = threadService.findByLsUuid(actor, actor, uuid);
-		return new ThreadDto(thread, thread.getMyMembers());
+		User owner = getOwner(ownerUuid);
+		return new ThreadDto(threadService.create(actor, owner, threadDto.getName()));
+
 	}
 
 	@Override
-	public void addMember(String threadUuid, String domainId, String mail,
-			boolean readonly) throws BusinessException {
+	public void delete(String ownerUuid, ThreadDto threadDto)
+			throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notNull(threadDto, "Missing required thread dto");
+		Validate.notEmpty(threadDto.getUuid(), "Missing required thread dto uuid");
 		User actor = checkAuthentication();
-		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
-		User user = userService.findOrCreateUserWithDomainPolicies(mail,
-				domainId, actor.getDomainId());
-		threadService.addMember(actor, actor, thread, user, false, !readonly);
+		User owner = getOwner(ownerUuid);
+		Thread thread = threadService.findByLsUuid(actor, owner, threadDto.getUuid());
+		threadService.deleteThread(actor, owner, thread);
 	}
-
 }

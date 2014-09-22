@@ -28,4 +28,16 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="guestService" />
 	</bean>
+
+	<bean id="wsDelegationThreadFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.ThreadFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="threadService" />
+	</bean>
+
+	<bean id="wsDelegationThreadMemberFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.ThreadMemberFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="threadService" />
+	</bean>
 </beans>

@@ -32,6 +32,14 @@
 		<constructor-arg ref="wsDelegationGuestFacade" />
 	</bean>
 
+	<bean id="delegationThreadRestService" class="org.linagora.linshare.webservice.delegation.impl.ThreadRestServiceImpl">
+		<constructor-arg ref="wsDelegationThreadFacade" />
+	</bean>
+
+	<bean id="delegationThreadMemberRestService" class="org.linagora.linshare.webservice.delegation.impl.ThreadMemberRestServiceImpl">
+		<constructor-arg ref="wsDelegationThreadMemberFacade" />
+	</bean>
+
 	<jaxrs:server id="restDelegationContainer" address="/rest/delegation">
 		<jaxrs:serviceBeans>
 			<ref bean="delegationAuthenticationRestService" />

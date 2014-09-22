@@ -113,7 +113,7 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public Boolean create(Account actor, Account owner, String name) throws BusinessException {
+	public Thread create(Account actor, Account owner, String name) throws BusinessException {
 		threadAC.checkCreatePermission(actor, owner, Thread.class,
 				BusinessErrorCode.THREAD_FORBIDDEN);
 		Functionality creation = functionalityReadOnlyService.getThreadCreationPermissionFunctionality(owner.getDomain());
@@ -130,14 +130,14 @@ public class ThreadServiceImpl implements ThreadService {
 			// creator = first member = default admin
 			member = new ThreadMember(true, true, (User) owner, thread);
 			thread.getMyMembers().add(member);
-			threadRepository.update(thread);
+			thread = threadRepository.update(thread);
 			logEntryService.create(new ThreadLogEntry(owner, member, LogAction.THREAD_ADD_MEMBER,
 					"Creating the first member of the newly created thread."));
-			return true;
+			return thread;
 		} else {
 			logger.error("You can not create thread, you are not authorized.");
 			logger.error("The current domain does not allow you to create a thread.");
-			return false;
+			return null;
 		}
 	}
 

@@ -40,13 +40,13 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.delegation.ThreadFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegation.ThreadRestService;
 import org.linagora.linshare.webservice.dto.ThreadDto;
@@ -65,6 +65,12 @@ import com.wordnik.swagger.annotations.ApiResponses;
 public class ThreadRestServiceImpl extends WebserviceBase implements
 		ThreadRestService {
 
+	private final ThreadFacade threadFacade;
+
+	public ThreadRestServiceImpl(final ThreadFacade threadFacade) {
+		this.threadFacade = threadFacade;
+	}
+
 	@Path("/")
 	@POST
 	@ApiOperation(value = "Create a thread.", response = ThreadDto.class)
@@ -78,8 +84,7 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "Thread to create.", required = true) ThreadDto thread)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return threadFacade.create(ownerUuid, thread);
 	}
 
 	@Path("/{uuid}")
@@ -95,8 +100,7 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return threadFacade.find(ownerUuid, uuid);
 	}
 
 	@Path("/")
@@ -111,25 +115,7 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 	public List<ThreadDto> findAll(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Path("/")
-	@PUT
-	@ApiOperation(value = "Update a thread.", response = ThreadDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner or thread not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
-	@Override
-	public ThreadDto update(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "Thread to update.", required = true) ThreadDto thread)
-					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return threadFacade.findAll(ownerUuid);
 	}
 
 	@Path("/")
@@ -145,8 +131,7 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "Thread to delete.", required = true) ThreadDto thread)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		
+		threadFacade.delete(ownerUuid, thread);
 	}
 
 	@Path("/{uuid}")
@@ -162,8 +147,9 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-
+		ThreadDto tmp = new ThreadDto();
+		tmp.setUuid(uuid);
+		threadFacade.delete(ownerUuid, tmp);
 	}
 
 }

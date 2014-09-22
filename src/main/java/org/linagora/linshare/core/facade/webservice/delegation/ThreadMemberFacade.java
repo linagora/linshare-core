@@ -31,28 +31,24 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.delegation;
+
+package org.linagora.linshare.core.facade.webservice.delegation;
 
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
-public interface ThreadMemberRestService {
+public interface ThreadMemberFacade {
+
+	List<ThreadMemberDto> findAll(String ownerUuid, String threadUuid)
+			throws BusinessException;
 
 	ThreadMemberDto create(String ownerUuid, String threadUuid,
 			String domainId, String mail, boolean readonly, boolean admin)
 			throws BusinessException;
 
-	public List<ThreadMemberDto> findAll(String ownerUuid, String threadUuid)
+	void delete(String ownerUuid, String threadUuid, String userUuid)
 			throws BusinessException;
 
-	public ThreadMemberDto update(String ownerUuid, String threadUuid, ThreadMemberDto threadMember)
-			throws BusinessException;
-
-	public void delete(String ownerUuid, String threadUuid, ThreadMemberDto threadMember)
-			throws BusinessException;
-
-	public void delete(String ownerUuid, String threadUuid, String uuid)
-			throws BusinessException;
 }
