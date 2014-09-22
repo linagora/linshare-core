@@ -83,7 +83,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(uuid, "uuid must be set.");
 		Set<ThreadMemberDto> ret = new HashSet<ThreadMemberDto>();
 
-		for (ThreadMember m : threadService.findByLsUuid(null, null, uuid).getMyMembers())
+		for (ThreadMember m : threadService.findByLsUuid(actor, actor, uuid).getMyMembers())
 			ret.add(new ThreadMemberDto(m));
 		return ret;
 	}
@@ -92,7 +92,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	public ThreadDto update(ThreadDto threadDto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(threadDto, "thread must be set.");
-		Thread thread = threadService.findByLsUuid(null, null, threadDto.getUuid());
+		Thread thread = threadService.findByLsUuid(actor, actor, threadDto.getUuid());
 
 		return new ThreadDto(threadService.rename(actor, actor, thread, threadDto.getName()));
 	}
