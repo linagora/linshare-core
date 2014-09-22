@@ -121,7 +121,7 @@ public class ThreadContent {
 
 	public Object onActivate(String uuid) {
 		try {
-			this.selectedThread = threadEntryFacade.getThread(uuid);
+			this.selectedThread = threadEntryFacade.getThread(userVo, uuid);
 		} catch (BusinessException e) {
 			businessMessagesManagementService.notify(new BusinessUserMessage(
 					BusinessUserMessageType.THREAD_NOT_FOUND,

@@ -106,6 +106,16 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
+	public Thread findByLsUuidUnprotected(String uuid) {
+		Thread thread = threadRepository.findByLsUuid(uuid);
+
+		if (thread == null) {
+			logger.error("Can't find thread  : " + uuid);
+		}
+		return thread;
+	}
+
+	@Override
 	public List<Thread> findAll(Account actor, Account owner) {
 		threadAC.checkListPermission(actor, owner, Thread.class,
 				BusinessErrorCode.THREAD_FORBIDDEN);

@@ -122,8 +122,10 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	}
 
 	@Override
-	public ThreadVo getThread(String uuid) throws BusinessException {
-		return new ThreadVo(findThread(new ThreadVo(uuid, "")));
+	public ThreadVo getThread(UserVo actorVo, String uuid)
+			throws BusinessException {
+		User actor = getActor(actorVo);
+		return new ThreadVo(threadService.findByLsUuid(actor, actor, uuid));
 	}
 
 	@Override
@@ -415,7 +417,7 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	}
 
 	private Thread findThread(ThreadVo threadVo) throws BusinessException {
-		Thread t = threadService.findByLsUuid(null, null, threadVo.getLsUuid());
+		Thread t = threadService.findByLsUuidUnprotected(threadVo.getLsUuid());
 
 		if (t == null) {
 			throw new BusinessException(BusinessErrorCode.THREAD_NOT_FOUND,

@@ -55,7 +55,7 @@ public interface ThreadEntryFacade {
 	public void createThread(UserVo actorVo, String name)
 			throws BusinessException;
 
-	public ThreadVo getThread(String uuid) throws BusinessException;
+	public ThreadVo getThread(UserVo actorVo, String uuid) throws BusinessException;
 
 	public List<ThreadVo> getAllMyThread(UserVo actorVo) throws BusinessException;
 
