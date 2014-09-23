@@ -84,11 +84,11 @@
 						<!-- 						<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" /> -->
 					</t:linkit.Comment>
 					<t:if t:test="${thumbnailExists}">
-						<div t:type="chenillekit/Tooltip" title="${shareDocument.fileName}" value="&lt;img src=&quot;${thumbnailPath}&quot; /&gt;">
+						<div t:type="chenillekit/Tooltip" title="${truncatedFileName}" value="&lt;img src=&quot;${thumbnailPath}&quot; /&gt;">
 							${shareDocument.fileName}										<!--  <img src="${thumbnailPath}" /> -->
 						</div>
 						<t:parameter name="else">
-							<div t:type="chenillekit/Tooltip" title="${shareDocument.fileName}" value="${message:components.listDocument.noThumb}">
+							<div t:type="chenillekit/Tooltip" title="${truncatedFileName}}" value="${message:components.listDocument.noThumb}">
 								${shareDocument.fileName}
 							</div>
 						</t:parameter>

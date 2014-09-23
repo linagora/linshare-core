@@ -51,6 +51,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
@@ -309,6 +310,7 @@ public class ListDocument {
 	@Property
 	private int paging;
 
+	private final Integer truncatedValue = 40;
    
 	/***************************************************************************
 	 * Phase render
@@ -785,6 +787,11 @@ public class ListDocument {
 	public String getFormatedComment() {
 		String result = document.getFileComment().replaceAll("\r","");
 		result = result.replaceAll("\n", " ");
+		return result;
+	}
+	
+	public String getTruncatedFileName() {
+		String result = StringUtils.abbreviate(document.getFileName(), truncatedValue);
 		return result;
 	}
 
