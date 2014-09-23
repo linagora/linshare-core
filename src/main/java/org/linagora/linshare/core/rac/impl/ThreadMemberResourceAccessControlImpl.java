@@ -36,6 +36,7 @@ package org.linagora.linshare.core.rac.impl;
 
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.rac.ThreadMemberResourceAccessControl;
@@ -55,7 +56,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasReadPermission(Account actor, Account owner,
-			ThreadMember entry) {
+			ThreadMember entry, Object... opt) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_GET);
@@ -68,7 +69,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasListPermission(Account actor, Account owner,
-			ThreadMember entry) {
+			ThreadMember entry, Object... opt) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_LIST);
@@ -76,12 +77,16 @@ public class ThreadMemberResourceAccessControlImpl extends
 		if (actor.hasAllRights()) {
 			return true;
 		}
-		return isUserMember(owner, entry);
+		if (opt.length > 0 && opt[0] instanceof Thread) {
+			return threadMemberRepository.findUserThreadMember((Thread) opt[0],
+					(User) owner) != null;
+		}
+		return false;
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account actor, Account owner,
-			ThreadMember entry) {
+			ThreadMember entry, Object... opt) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_DELETE);
@@ -94,7 +99,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasCreatePermission(Account actor, Account owner,
-			ThreadMember entry) {
+			ThreadMember entry, Object... opt) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_CREATE);
@@ -107,7 +112,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasUpdatePermission(Account actor, Account owner,
-			ThreadMember entry) {
+			ThreadMember entry, Object... opt) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_UPDATE);

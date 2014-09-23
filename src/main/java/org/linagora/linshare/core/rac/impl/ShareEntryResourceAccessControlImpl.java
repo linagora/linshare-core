@@ -84,7 +84,7 @@ public class ShareEntryResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasReadPermission(Account actor, Account owner,
-			ShareEntry entry) {
+			ShareEntry entry, Object... opt) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.SHARE_ENTRIES_GET);
@@ -107,14 +107,14 @@ public class ShareEntryResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasListPermission(Account actor, Account owner,
-			ShareEntry entry) {
+			ShareEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.SHARE_ENTRIES_LIST);
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account actor, Account owner,
-			ShareEntry entry) {
+			ShareEntry entry, Object... opt) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.SHARE_ENTRIES_DELETE);
@@ -137,14 +137,14 @@ public class ShareEntryResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasCreatePermission(Account actor, Account owner,
-			ShareEntry entry) {
+			ShareEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.SHARE_ENTRIES_CREATE);
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account actor, Account owner,
-			ShareEntry entry) {
+			ShareEntry entry, Object... opt) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.SHARE_ENTRIES_UPDATE);
@@ -167,7 +167,7 @@ public class ShareEntryResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasDownloadPermission(Account actor, Account owner,
-			ShareEntry entry) {
+			ShareEntry entry, Object... opt) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.SHARE_ENTRIES_DOWNLOAD);
@@ -186,9 +186,10 @@ public class ShareEntryResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasDownloadTumbnailPermission(Account actor,
-			Account owner, ShareEntry entry) {
+			Account owner, ShareEntry entry, Object... opt) {
 		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+			return hasPermission(
+					actor,
 					TechnicalAccountPermissionType.SHARE_ENTRIES_DOWNLOAD_THUMBNAIL);
 		} else if (actor.isInternal() || actor.isGuest()) {
 			/*

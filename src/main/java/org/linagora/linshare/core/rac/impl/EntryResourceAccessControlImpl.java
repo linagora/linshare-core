@@ -42,15 +42,15 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.EntryResourceAccessControl;
 
-public abstract class EntryResourceAccessControlImpl<R, E extends Entry> extends
-		AbstractResourceAccessControlImpl<Account, R, E> implements
+public abstract class EntryResourceAccessControlImpl<R, E extends Entry>
+		extends AbstractResourceAccessControlImpl<Account, R, E> implements
 		EntryResourceAccessControl<R, E> {
 
 	protected abstract boolean hasDownloadPermission(Account actor,
-			Account owner, E entry);
+			Account owner, E entry, Object... opt);
 
 	protected abstract boolean hasDownloadTumbnailPermission(Account actor,
-			Account owner, E entry);
+			Account owner, E entry, Object... opt);
 
 	@Override
 	protected String getEntryRepresentation(E entry) {
@@ -74,35 +74,33 @@ public abstract class EntryResourceAccessControlImpl<R, E extends Entry> extends
 
 	@Override
 	protected boolean isAuthorized(Account actor, Account owner,
-			PermissionType permission, E entry, String resourceName) {
+			PermissionType permission, E entry, String resourceName,
+			Object... opt) {
 		Validate.notNull(permission);
-		if (actor.hasSuperAdminRole()) {
+
+		if (actor.hasSuperAdminRole() && actor.hasSystemAccountRole())
 			return true;
-		} else if (actor.hasSystemAccountRole()) {
-			return true;
-		} else {
-			if (permission.equals(PermissionType.GET)) {
-				if (hasReadPermission(actor, owner, entry))
-					return true;
-			} else if (permission.equals(PermissionType.LIST)) {
-				if (hasListPermission(actor, owner, entry))
-					return true;
-			} else if (permission.equals(PermissionType.CREATE)) {
-				if (hasCreatePermission(actor, owner, entry))
-					return true;
-			} else if (permission.equals(PermissionType.UPDATE)) {
-				if (hasUpdatePermission(actor, owner, entry))
-					return true;
-			} else if (permission.equals(PermissionType.DELETE)) {
-				if (hasDeletePermission(actor, owner, entry))
-					return true;
-			} else if (permission.equals(PermissionType.DOWNLOAD)) {
-				if (hasDownloadPermission(actor, owner, entry))
-					return true;
-			} else if (permission.equals(PermissionType.DOWNLOAD_THUMBNAIL)) {
-				if (hasDownloadTumbnailPermission(actor, owner, entry))
-					return true;
-			}
+		if (permission.equals(PermissionType.GET)) {
+			if (hasReadPermission(actor, owner, entry, opt))
+				return true;
+		} else if (permission.equals(PermissionType.LIST)) {
+			if (hasListPermission(actor, owner, entry, opt))
+				return true;
+		} else if (permission.equals(PermissionType.CREATE)) {
+			if (hasCreatePermission(actor, owner, entry, opt))
+				return true;
+		} else if (permission.equals(PermissionType.UPDATE)) {
+			if (hasUpdatePermission(actor, owner, entry, opt))
+				return true;
+		} else if (permission.equals(PermissionType.DELETE)) {
+			if (hasDeletePermission(actor, owner, entry, opt))
+				return true;
+		} else if (permission.equals(PermissionType.DOWNLOAD)) {
+			if (hasDownloadPermission(actor, owner, entry, opt))
+				return true;
+		} else if (permission.equals(PermissionType.DOWNLOAD_THUMBNAIL)) {
+			if (hasDownloadTumbnailPermission(actor, owner, entry, opt))
+				return true;
 		}
 		if (resourceName != null) {
 			StringBuilder sb = getActorStringBuilder(actor);
@@ -116,9 +114,9 @@ public abstract class EntryResourceAccessControlImpl<R, E extends Entry> extends
 
 	@Override
 	public void checkDownloadPermission(Account actor, E entry,
-			BusinessErrorCode errCode) throws BusinessException {
+			BusinessErrorCode errCode, Object... opt) throws BusinessException {
 		Account owner = getOwner(entry);
-		if (!isAuthorized(actor, owner, PermissionType.DOWNLOAD, entry)) {
+		if (!isAuthorized(actor, owner, PermissionType.DOWNLOAD, entry, opt)) {
 			StringBuilder sb = getActorStringBuilder(actor);
 			sb.append(" is not authorized to download the entry ");
 			sb.append(getEntryRepresentation(entry));
@@ -131,10 +129,10 @@ public abstract class EntryResourceAccessControlImpl<R, E extends Entry> extends
 
 	@Override
 	public void checkThumbNailDownloadPermission(Account actor, E entry,
-			BusinessErrorCode errCode) throws BusinessException {
+			BusinessErrorCode errCode, Object... opt) throws BusinessException {
 		Account owner = getOwner(entry);
 		if (!isAuthorized(actor, owner, PermissionType.DOWNLOAD_THUMBNAIL,
-				entry)) {
+				entry, opt)) {
 			StringBuilder sb = getActorStringBuilder(actor);
 			sb.append(" is not authorized to get the thumbnail of the entry ");
 			sb.append(getEntryRepresentation(entry));

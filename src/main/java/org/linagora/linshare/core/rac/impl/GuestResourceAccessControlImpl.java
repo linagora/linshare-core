@@ -75,14 +75,14 @@ public class GuestResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasReadPermission(Account actor, Account owner,
-			Guest entry) {
+			Guest entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.GUESTS_GET);
 	}
 
 	@Override
 	protected boolean hasListPermission(Account actor, Account owner,
-			Guest entry) {
+			Guest entry, Object... opt) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.GUESTS_LIST);
@@ -96,7 +96,7 @@ public class GuestResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasDeletePermission(Account actor, Account owner,
-			Guest entry) {
+			Guest entry, Object... opt) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.GUESTS_DELETE);
@@ -113,7 +113,7 @@ public class GuestResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasCreatePermission(Account actor, Account owner,
-			Guest entry) {
+			Guest entry, Object... opt) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.GUESTS_CREATE);
@@ -131,7 +131,7 @@ public class GuestResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasUpdatePermission(Account actor, Account owner,
-			Guest entry) {
+			Guest entry, Object... opt) {
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.GUESTS_UPDATE);

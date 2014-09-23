@@ -54,18 +54,20 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 	protected static Logger logger = LoggerFactory
 			.getLogger(AbstractResourceAccessControlImpl.class);
 
-	protected abstract boolean hasReadPermission(Account actor, O owner, E entry);
+	protected abstract boolean hasReadPermission(Account actor, O owner,
+			E entry, Object... opt);
 
-	protected abstract boolean hasListPermission(Account actor, O owner, E entry);
+	protected abstract boolean hasListPermission(Account actor, O owner,
+			E entry, Object... opt);
 
 	protected abstract boolean hasDeletePermission(Account actor, O owner,
-			E entry);
+			E entry, Object... opt);
 
 	protected abstract boolean hasCreatePermission(Account actor, O owner,
-			E entry);
+			E entry, Object... opt);
 
 	protected abstract boolean hasUpdatePermission(Account actor, O owner,
-			E entry);
+			E entry, Object... opt);
 
 	protected O getOwner(E entry) {
 		return null;
@@ -86,13 +88,13 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 	protected abstract String getEntryRepresentation(E entry);
 
 	protected boolean isAuthorized(Account actor, O owner,
-			PermissionType permission) {
-		return this.isAuthorized(actor, owner, permission, null, null);
+			PermissionType permission, Object... opt) {
+		return this.isAuthorized(actor, owner, permission, null, null, opt);
 	}
 
 	protected boolean isAuthorized(Account actor, O owner,
-			PermissionType permission, E entry) {
-		return this.isAuthorized(actor, owner, permission, entry, null);
+			PermissionType permission, E entry, Object... opt) {
+		return this.isAuthorized(actor, owner, permission, entry, null, opt);
 	}
 
 	protected void appendOwner(O owner, StringBuilder sb) {
@@ -122,25 +124,26 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 	}
 
 	protected boolean isAuthorized(Account actor, O owner,
-			PermissionType permission, E entry, String resourceName) {
+			PermissionType permission, E entry, String resourceName,
+			Object... opt) {
 		Validate.notNull(permission);
 
 		if (actor.hasSuperAdminRole() && actor.hasSystemAccountRole())
 			return true;
 		if (permission.equals(PermissionType.GET)) {
-			if (hasReadPermission(actor, owner, entry))
+			if (hasReadPermission(actor, owner, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.LIST)) {
-			if (hasListPermission(actor, owner, entry))
+			if (hasListPermission(actor, owner, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.CREATE)) {
-			if (hasCreatePermission(actor, owner, entry))
+			if (hasCreatePermission(actor, owner, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.UPDATE)) {
-			if (hasUpdatePermission(actor, owner, entry))
+			if (hasUpdatePermission(actor, owner, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.DELETE)) {
-			if (hasDeletePermission(actor, owner, entry))
+			if (hasDeletePermission(actor, owner, entry, opt))
 				return true;
 		}
 		if (resourceName != null) {
@@ -186,10 +189,10 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 
 	@Override
 	public void checkReadPermission(Account actor, O owner, E entry,
-			BusinessErrorCode errCode) throws BusinessException {
+			BusinessErrorCode errCode, Object... opt) throws BusinessException {
 		if (owner == null)
 			owner = getOwner(entry);
-		if (!isAuthorized(actor, owner, PermissionType.GET, entry)) {
+		if (!isAuthorized(actor, owner, PermissionType.GET, entry, opt)) {
 			StringBuilder sb = getActorStringBuilder(actor);
 			sb.append(" is not authorized to get the entry ");
 			sb.append(getEntryRepresentation(entry));
@@ -202,8 +205,8 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 
 	@Override
 	public void checkListPermission(Account actor, O owner, Class<?> clazz,
-			BusinessErrorCode errCode) throws BusinessException {
-		if (!isAuthorized(actor, owner, PermissionType.LIST)) {
+			BusinessErrorCode errCode, Object... opt) throws BusinessException {
+		if (!isAuthorized(actor, owner, PermissionType.LIST, opt)) {
 			StringBuilder sb = getActorStringBuilder(actor);
 			sb.append(" is not authorized to list all entries ");
 			sb.append(clazz.getSimpleName());
@@ -216,8 +219,8 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 
 	@Override
 	public void checkCreatePermission(Account actor, O owner, Class<?> clazz,
-			BusinessErrorCode errCode) throws BusinessException {
-		if (!isAuthorized(actor, owner, PermissionType.CREATE)) {
+			BusinessErrorCode errCode, Object... opt) throws BusinessException {
+		if (!isAuthorized(actor, owner, PermissionType.CREATE, opt)) {
 			StringBuilder sb = getActorStringBuilder(actor);
 			sb.append(" is not authorized to create entry ");
 			sb.append(clazz.getSimpleName());
@@ -230,9 +233,9 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 
 	@Override
 	public void checkUpdatePermission(Account actor, E entry,
-			BusinessErrorCode errCode) throws BusinessException {
+			BusinessErrorCode errCode, Object... opt) throws BusinessException {
 		O owner = getOwner(entry);
-		if (!isAuthorized(actor, owner, PermissionType.UPDATE, entry)) {
+		if (!isAuthorized(actor, owner, PermissionType.UPDATE, entry, opt)) {
 			StringBuilder sb = getActorStringBuilder(actor);
 			sb.append(" is not authorized to create entry ");
 			sb.append(getEntryRepresentation(entry));
@@ -245,10 +248,10 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 
 	@Override
 	public void checkDeletePermission(Account actor, O owner, E entry,
-			BusinessErrorCode errCode) throws BusinessException {
+			BusinessErrorCode errCode, Object... opt) throws BusinessException {
 		if (owner == null)
 			owner = getOwner(entry);
-		if (!isAuthorized(actor, owner, PermissionType.DELETE, entry)) {
+		if (!isAuthorized(actor, owner, PermissionType.DELETE, entry, opt)) {
 			StringBuilder sb = getActorStringBuilder(actor);
 			sb.append(" is not authorized to delete the entry ");
 			sb.append(getEntryRepresentation(entry));

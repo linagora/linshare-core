@@ -43,8 +43,8 @@ public interface EntryResourceAccessControl<R, E extends Entry> extends
 		AbstractResourceAccessControl<Account, R, E> {
 
 	void checkDownloadPermission(Account actor, E entry,
-			BusinessErrorCode errCode) throws BusinessException;
+			BusinessErrorCode errCode, Object... opt) throws BusinessException;
 
 	void checkThumbNailDownloadPermission(Account actor, E entry,
-			BusinessErrorCode errCode) throws BusinessException;
+			BusinessErrorCode errCode, Object... opt) throws BusinessException;
 }

@@ -67,48 +67,55 @@ public class ThreadEntryResourceAccessControlImpl extends
 		return owner.getAccountReprentation();
 	}
 
-
 	@Override
-	protected boolean hasReadPermission(Account actor, Account owner, ThreadEntry entry) {
+	protected boolean hasReadPermission(Account actor, Account owner,
+			ThreadEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.THREAD_ENTRIES_GET);
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account owner, ThreadEntry entry) {
+	protected boolean hasListPermission(Account actor, Account owner,
+			ThreadEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.THREAD_ENTRIES_LIST);
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account owner, ThreadEntry entry) {
+	protected boolean hasDeletePermission(Account actor, Account owner,
+			ThreadEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.THREAD_ENTRIES_CREATE);
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account owner, ThreadEntry entry) {
+	protected boolean hasCreatePermission(Account actor, Account owner,
+			ThreadEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.THREAD_ENTRIES_CREATE);
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account owner, ThreadEntry entry) {
+	protected boolean hasUpdatePermission(Account actor, Account owner,
+			ThreadEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.THREAD_ENTRIES_UPDATE);
 	}
 
 	@Override
 	protected boolean hasDownloadPermission(Account actor, Account owner,
-			ThreadEntry entry) {
+			ThreadEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD);
 	}
 
 	@Override
 	protected boolean hasDownloadTumbnailPermission(Account actor,
-			Account owner, ThreadEntry entry) {
-		return defaultPermissionCheck(actor, owner, entry,
+			Account owner, ThreadEntry entry, Object... opt) {
+		return defaultPermissionCheck(
+				actor,
+				owner,
+				entry,
 				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD_THUMBNAIL);
 	}
 }

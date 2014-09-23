@@ -67,48 +67,55 @@ public class DocumentEntryResourceAccessControlImpl extends
 		return owner.getAccountReprentation();
 	}
 
-
 	@Override
-	protected boolean hasReadPermission(Account actor, Account owner, DocumentEntry entry) {
+	protected boolean hasReadPermission(Account actor, Account owner,
+			DocumentEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_GET);
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account owner, DocumentEntry entry) {
+	protected boolean hasListPermission(Account actor, Account owner,
+			DocumentEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_LIST);
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account owner, DocumentEntry entry) {
+	protected boolean hasDeletePermission(Account actor, Account owner,
+			DocumentEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_CREATE);
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account owner, DocumentEntry entry) {
+	protected boolean hasCreatePermission(Account actor, Account owner,
+			DocumentEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_CREATE);
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account owner, DocumentEntry entry) {
+	protected boolean hasUpdatePermission(Account actor, Account owner,
+			DocumentEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_UPDATE);
 	}
 
 	@Override
 	protected boolean hasDownloadPermission(Account actor, Account owner,
-			DocumentEntry entry) {
+			DocumentEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_DOWNLOAD);
 	}
 
 	@Override
 	protected boolean hasDownloadTumbnailPermission(Account actor,
-			Account owner, DocumentEntry entry) {
-		return defaultPermissionCheck(actor, owner, entry,
+			Account owner, DocumentEntry entry, Object... opt) {
+		return defaultPermissionCheck(
+				actor,
+				owner,
+				entry,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_DOWNLOAD_THUMBNAIL);
 	}
 }

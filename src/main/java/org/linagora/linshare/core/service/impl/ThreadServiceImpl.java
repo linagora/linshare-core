@@ -165,7 +165,7 @@ public class ThreadServiceImpl implements ThreadService {
 	public Set<ThreadMember> getMembers(Account actor, User owner, Thread thread)
 			throws BusinessException {
 		threadMemberAC.checkListPermission(actor, owner, ThreadMember.class,
-				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN);
+				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, thread);
 		return thread.getMyMembers();
 	}
 

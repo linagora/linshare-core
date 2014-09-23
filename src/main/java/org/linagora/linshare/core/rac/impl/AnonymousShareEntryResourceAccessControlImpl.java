@@ -70,42 +70,42 @@ public class AnonymousShareEntryResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasReadPermission(Account actor, Account owner,
-			AnonymousShareEntry entry) {
+			AnonymousShareEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_GET);
 	}
 
 	@Override
 	protected boolean hasListPermission(Account actor, Account owner,
-			AnonymousShareEntry entry) {
+			AnonymousShareEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_LIST);
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account actor, Account owner,
-			AnonymousShareEntry entry) {
+			AnonymousShareEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_DELETE);
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account actor, Account owner,
-			AnonymousShareEntry entry) {
+			AnonymousShareEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_CREATE);
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account actor, Account owner,
-			AnonymousShareEntry entry) {
+			AnonymousShareEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_UPDATE);
 	}
 
 	@Override
 	protected boolean hasDownloadPermission(Account actor, Account owner,
-			AnonymousShareEntry entry) {
+			AnonymousShareEntry entry, Object... opt) {
 		/*
 		 * The owner has not the right to download his own anonymousShareEntry,
 		 * neither account with delegation role.
@@ -115,7 +115,7 @@ public class AnonymousShareEntryResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasDownloadTumbnailPermission(Account actor,
-			Account owner, AnonymousShareEntry entry) {
+			Account owner, AnonymousShareEntry entry, Object... opt) {
 		/*
 		 * The owner has not the right to download his own anonymousShareEntry,
 		 * neither account with delegation role.

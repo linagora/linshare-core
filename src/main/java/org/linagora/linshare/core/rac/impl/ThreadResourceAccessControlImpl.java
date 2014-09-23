@@ -57,7 +57,7 @@ public class ThreadResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasReadPermission(Account actor, Account owner,
-			Thread entry) {
+			Thread entry, Object... opt) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);
 		Validate.notNull(entry);
@@ -74,7 +74,7 @@ public class ThreadResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasListPermission(Account actor, Account owner,
-			Thread entry) {
+			Thread entry, Object... opt) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);
 		Validate.notNull(entry);
@@ -91,7 +91,7 @@ public class ThreadResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasDeletePermission(Account actor, Account owner,
-			Thread entry) {
+			Thread entry, Object... opt) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);
 		Validate.notNull(entry);
@@ -108,7 +108,7 @@ public class ThreadResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasCreatePermission(Account actor, Account owner,
-			Thread entry) {
+			Thread entry, Object... opt) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);
 		Validate.notNull(entry);
@@ -125,7 +125,7 @@ public class ThreadResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasUpdatePermission(Account actor, Account owner,
-			Thread entry) {
+			Thread entry, Object... opt) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);
 		Validate.notNull(entry);
