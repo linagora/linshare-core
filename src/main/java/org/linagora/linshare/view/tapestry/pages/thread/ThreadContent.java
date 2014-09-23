@@ -122,10 +122,12 @@ public class ThreadContent {
 	public Object onActivate(String uuid) {
 		try {
 			this.selectedThread = threadEntryFacade.getThread(userVo, uuid);
-		} catch (BusinessException e) {
+		} catch (Exception e) {
 			businessMessagesManagementService.notify(new BusinessUserMessage(
 					BusinessUserMessageType.THREAD_NOT_FOUND,
 					MessageSeverity.ERROR));
+			logger.error(e.getMessage());
+			e.printStackTrace();
 			return Index.class;
 		}
 		return null;

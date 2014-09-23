@@ -75,7 +75,7 @@ public class GenericServiceImpl<R, E> {
 
 	protected void checkReadPermission(Account actor, E entry,
 			BusinessErrorCode errCode) {
-		rac.checkReadPermission(actor, entry, errCode);
+		rac.checkReadPermission(actor, null, entry, errCode);
 	}
 
 	protected void checkListPermission(Account actor, Account owner,

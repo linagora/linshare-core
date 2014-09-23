@@ -309,4 +309,9 @@ public abstract class Account {
 	public boolean isInternal() {
 		return this.getAccountType().equals(AccountType.INTERNAL);
 	}
+
+	@Override
+	public String toString() {
+		return getAccountReprentation();
+	}
 }

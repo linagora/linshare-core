@@ -100,8 +100,8 @@ public class ThreadServiceImpl implements ThreadService {
 		if (thread == null) {
 			logger.error("Can't find thread  : " + uuid);
 		}
-		threadAC.checkReadPermission(actor, thread,
-				BusinessErrorCode.THREAD_FORBIDDEN);
+		threadAC.checkReadPermission(actor, owner,
+				thread, BusinessErrorCode.THREAD_FORBIDDEN);
 		return thread;
 	}
 

@@ -40,7 +40,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AbstractResourceAccessControl<O, R, E> {
 
-	void checkReadPermission(Account actor, E entry, BusinessErrorCode errCode)
+	void checkReadPermission(Account actor, O owner, E entry, BusinessErrorCode errCode)
 			throws BusinessException;
 
 	void checkListPermission(Account actor, O owner, Class<?> clazz,

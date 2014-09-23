@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.core.rac.impl;
 
-import java.util.Set;
+import java.util.Iterator;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.PermissionType;
@@ -47,9 +47,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 		AbstractResourceAccessControl<O, R, E> {
@@ -127,27 +124,24 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 	protected boolean isAuthorized(Account actor, O owner,
 			PermissionType permission, E entry, String resourceName) {
 		Validate.notNull(permission);
-		if (actor.hasSuperAdminRole()) {
+
+		if (actor.hasSuperAdminRole() && actor.hasSystemAccountRole())
 			return true;
-		} else if (actor.hasSystemAccountRole()) {
-			return true;
-		} else {
-			if (permission.equals(PermissionType.GET)) {
-				if (hasReadPermission(actor, owner, entry))
-					return true;
-			} else if (permission.equals(PermissionType.LIST)) {
-				if (hasListPermission(actor, owner, entry))
-					return true;
-			} else if (permission.equals(PermissionType.CREATE)) {
-				if (hasCreatePermission(actor, owner, entry))
-					return true;
-			} else if (permission.equals(PermissionType.UPDATE)) {
-				if (hasUpdatePermission(actor, owner, entry))
-					return true;
-			} else if (permission.equals(PermissionType.DELETE)) {
-				if (hasDeletePermission(actor, owner, entry))
-					return true;
-			}
+		if (permission.equals(PermissionType.GET)) {
+			if (hasReadPermission(actor, owner, entry))
+				return true;
+		} else if (permission.equals(PermissionType.LIST)) {
+			if (hasListPermission(actor, owner, entry))
+				return true;
+		} else if (permission.equals(PermissionType.CREATE)) {
+			if (hasCreatePermission(actor, owner, entry))
+				return true;
+		} else if (permission.equals(PermissionType.UPDATE)) {
+			if (hasUpdatePermission(actor, owner, entry))
+				return true;
+		} else if (permission.equals(PermissionType.DELETE)) {
+			if (hasDeletePermission(actor, owner, entry))
+				return true;
 		}
 		if (resourceName != null) {
 			StringBuilder sb = getActorStringBuilder(actor);
@@ -161,18 +155,13 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 
 	protected boolean hasPermission(Account actor,
 			final TechnicalAccountPermissionType permissionType) {
-		TechnicalAccountPermission permission = actor.getPermission();
-		Set<AccountPermission> accountPermissions = permission
-				.getAccountPermissions();
-		boolean contains = Iterables.any(accountPermissions,
-				new Predicate<AccountPermission>() {
-					@Override
-					public boolean apply(final AccountPermission input) {
-						return input.getPermission().equals(permissionType);
-					}
-				});
-		logger.debug(permissionType.toString() + " : "
-				+ String.valueOf(contains));
+		TechnicalAccountPermission p = actor.getPermission();
+		boolean contains = false;
+
+		Iterator<AccountPermission> it = p.getAccountPermissions().iterator();
+		while (!contains && it.hasNext())
+			contains = it.next().getPermission().equals(p);
+		logger.debug(permissionType.toString() + " : " + contains);
 		return contains;
 	}
 
@@ -188,20 +177,18 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 	 */
 	protected boolean defaultPermissionCheck(Account actor, Account owner,
 			E entry, TechnicalAccountPermissionType permission) {
-		if (actor.hasDelegationRole()) {
+		if (actor.hasDelegationRole())
 			return hasPermission(actor, permission);
-		} else if (actor.isInternal() || actor.isGuest()) {
-			if (owner != null && actor.equals(owner)) {
-				return true;
-			}
-		}
+		if (actor.isInternal() || actor.isGuest())
+			return (owner != null && actor.equals(owner));
 		return false;
 	}
 
 	@Override
-	public void checkReadPermission(Account actor, E entry,
+	public void checkReadPermission(Account actor, O owner, E entry,
 			BusinessErrorCode errCode) throws BusinessException {
-		O owner = getOwner(entry);
+		if (owner == null)
+			owner = getOwner(entry);
 		if (!isAuthorized(actor, owner, PermissionType.GET, entry)) {
 			StringBuilder sb = getActorStringBuilder(actor);
 			sb.append(" is not authorized to get the entry ");
@@ -257,8 +244,8 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 	}
 
 	@Override
-	public void checkDeletePermission(Account actor, O owner,
-			E entry, BusinessErrorCode errCode) throws BusinessException {
+	public void checkDeletePermission(Account actor, O owner, E entry,
+			BusinessErrorCode errCode) throws BusinessException {
 		if (owner == null)
 			owner = getOwner(entry);
 		if (!isAuthorized(actor, owner, PermissionType.DELETE, entry)) {

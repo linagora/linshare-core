@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.rac.impl;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -57,6 +58,10 @@ public class ThreadResourceAccessControlImpl extends
 	@Override
 	protected boolean hasReadPermission(Account actor, Account owner,
 			Thread entry) {
+		Validate.notNull(actor);
+		Validate.notNull(owner);
+		Validate.notNull(entry);
+
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREADS_GET);
@@ -70,6 +75,10 @@ public class ThreadResourceAccessControlImpl extends
 	@Override
 	protected boolean hasListPermission(Account actor, Account owner,
 			Thread entry) {
+		Validate.notNull(actor);
+		Validate.notNull(owner);
+		Validate.notNull(entry);
+
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREADS_LIST);
@@ -83,6 +92,10 @@ public class ThreadResourceAccessControlImpl extends
 	@Override
 	protected boolean hasDeletePermission(Account actor, Account owner,
 			Thread entry) {
+		Validate.notNull(actor);
+		Validate.notNull(owner);
+		Validate.notNull(entry);
+
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREADS_DELETE);
@@ -96,6 +109,10 @@ public class ThreadResourceAccessControlImpl extends
 	@Override
 	protected boolean hasCreatePermission(Account actor, Account owner,
 			Thread entry) {
+		Validate.notNull(actor);
+		Validate.notNull(owner);
+		Validate.notNull(entry);
+
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREADS_CREATE);
@@ -109,6 +126,10 @@ public class ThreadResourceAccessControlImpl extends
 	@Override
 	protected boolean hasUpdatePermission(Account actor, Account owner,
 			Thread entry) {
+		Validate.notNull(actor);
+		Validate.notNull(owner);
+		Validate.notNull(entry);
+
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREADS_UPDATE);
@@ -125,10 +146,15 @@ public class ThreadResourceAccessControlImpl extends
 	}
 
 	private boolean isUserMember(Account user, Thread thread) {
-		return threadMemberRepository.findUserThreadMember(thread, (User) user) != null;
+		boolean ret = threadMemberRepository.findUserThreadMember(thread,
+				(User) user) != null;
+		logger.debug(user + " member of " + thread + " : " + ret);
+		return ret;
 	}
 
 	private boolean isUserAdmin(Account user, Thread thread) {
-		return threadMemberRepository.isUserAdmin((User) user, thread);
+		boolean ret = threadMemberRepository.isUserAdmin((User) user, thread);
+		logger.debug(user + " admin of " + thread + " : " + ret);
+		return ret;
 	}
 }

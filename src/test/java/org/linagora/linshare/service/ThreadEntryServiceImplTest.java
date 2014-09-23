@@ -282,7 +282,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		Thread original = threads.get(0);
-		Thread found = threadService.findByLsUuid(null, null, original.getLsUuid());
+		Thread found = threadService.findByLsUuidUnprotected(original.getLsUuid());
 		Assert.assertEquals(found, original);
 		
 		logger.info(LinShareTestConstants.END_TEST);

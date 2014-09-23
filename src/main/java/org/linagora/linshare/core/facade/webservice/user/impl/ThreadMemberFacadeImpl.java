@@ -63,7 +63,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 	@Override
 	public List<ThreadMemberDto> getAllThreadMembers(String uuid)
 			throws BusinessException {
-		Thread thread = threadService.findByLsUuid(null, null, uuid);
+		Thread thread = threadService.findByLsUuidUnprotected(uuid);
 		List<ThreadMemberDto> res = new ArrayList<ThreadMemberDto>();
 
 		for (ThreadMember member : thread.getMyMembers()) {
