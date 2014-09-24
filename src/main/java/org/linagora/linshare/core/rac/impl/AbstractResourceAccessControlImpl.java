@@ -128,7 +128,7 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 			Object... opt) {
 		Validate.notNull(permission);
 
-		if (actor.hasSuperAdminRole() && actor.hasSystemAccountRole())
+		if (actor.hasSuperAdminRole() || actor.hasSystemAccountRole())
 			return true;
 		if (permission.equals(PermissionType.GET)) {
 			if (hasReadPermission(actor, owner, entry, opt))
