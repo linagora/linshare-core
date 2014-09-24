@@ -163,7 +163,7 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 
 		Iterator<AccountPermission> it = p.getAccountPermissions().iterator();
 		while (!contains && it.hasNext())
-			contains = it.next().getPermission().equals(p);
+			contains = it.next().getPermission().equals(permissionType);
 		logger.debug(permissionType.toString() + " : " + contains);
 		return contains;
 	}
