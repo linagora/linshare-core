@@ -70,4 +70,9 @@ public class AccountPermission {
 	public void setPermission(TechnicalAccountPermissionType permission) {
 		this.permission = permission;
 	}
+
+	@Override
+	public String toString() {
+		return "AccountPermission [permission=" + permission + "]";
+	}
 }
