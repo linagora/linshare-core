@@ -39,9 +39,9 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.constants.TimeUnit;
@@ -68,7 +68,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-@Ignore
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -223,7 +222,9 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		}
 		
 		this.createAllThreads();
-		threads = threadService.findAll(john, john);
+		User root = userService.findOrCreateUser("root@localhost.localdomain",
+				LinShareConstants.rootDomainIdentifier);
+		threads = threadService.findAll(root, root);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 	
@@ -271,7 +272,9 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		for (count = threads.size(); count < 10; ++count) {
 			threadService.create(john, john, ThreadEntryServiceImplTest.THREAD_1 + "_" + count);
 		}
-		threads = threadService.findAll(john, john);
+		User root = userService.findOrCreateUser("root@localhost.localdomain",
+				LinShareConstants.rootDomainIdentifier);
+		threads = threadService.findAll(root, root);
 		Assert.assertEquals(threads.size(), count);
 		
 		logger.info(LinShareTestConstants.END_TEST);
