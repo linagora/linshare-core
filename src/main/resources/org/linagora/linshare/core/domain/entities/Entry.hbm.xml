@@ -13,6 +13,7 @@
 		<property name="expirationDate" column="expiration_date" type="calendar" not-null="false" lazy="false"/>
 		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="comment" column="comment" type="text" not-null="true" lazy="false"/>
+		<property name="metaData" column="meta_data" type="text" lazy="false"/>
 		<property name="uuid" column="uuid" type="string" not-null="true" lazy="false" unique="true"/>
 
 		<joined-subclass name="org.linagora.linshare.core.domain.entities.AnonymousShareEntry" table="anonymous_share_entry" lazy="false">

@@ -88,9 +88,10 @@ public class Document implements Serializable {
 	private DocumentEntry documentEntry;
 
 	private ThreadEntry threadEntry;
-	
 
+	protected String sha1sum;
 	
+	protected String sha256sum;
 	
 	
 	/* Constructors */
@@ -233,5 +234,21 @@ public class Document implements Serializable {
 
 	public void setCheckMimeType(Boolean checkMimeType) {
 		this.checkMimeType = checkMimeType;
+	}
+
+	public String getSha1sum() {
+		return sha1sum;
+	}
+
+	public void setSha1sum(String sha1sum) {
+		this.sha1sum = sha1sum;
+	}
+
+	public String getSha256sum() {
+		return sha256sum;
+	}
+
+	public void setSha256sum(String sha256sum) {
+		this.sha256sum = sha256sum;
 	}
 }

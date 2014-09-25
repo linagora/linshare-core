@@ -15,6 +15,8 @@
 		<property name="checkMimeType" column="check_mime_type" type="boolean" not-null="true" lazy="false" />
 		<property name="size" column="size" type="long" not-null="true" lazy="false" />
 		<property name="thmbUuid" column="thmb_uuid" type="string" length="255" not-null="false" lazy="false" />
+		<property name="sha1sum" column="sha1sum" type="string" length="255" lazy="false"/>
+		<property name="sha256sum" column="sha256sum" type="string" length="255" lazy="false"/>
 		<property access="field" column="timestamp" name="timeStamp" type="binary" length="65535" />
 		<one-to-one name="threadEntry" class="org.linagora.linshare.core.domain.entities.ThreadEntry" cascade="save-update,lock"
 			property-ref="document" lazy="no-proxy" />

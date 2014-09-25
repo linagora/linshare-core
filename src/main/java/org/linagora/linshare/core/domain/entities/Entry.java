@@ -55,6 +55,8 @@ public abstract class Entry {
 	
 	protected String uuid;
 	
+	protected String metaData;
+
 	public Entry() {
 	}
 	
@@ -128,6 +130,14 @@ public abstract class Entry {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public String getMetaData() {
+		return metaData;
+	}
+
+	public void setMetaData(String metaData) {
+		this.metaData = metaData;
 	}
 
 	@Override
