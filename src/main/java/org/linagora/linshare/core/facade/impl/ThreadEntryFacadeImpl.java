@@ -103,8 +103,9 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	public ThreadEntryVo insertFile(UserVo actorVo, ThreadVo threadVo,
 			InputStream stream, Long size, String fileName)
 			throws BusinessException {
+		User actor = findUser(actorVo);
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(
-				findUser(actorVo), findThread(threadVo), stream, fileName);
+				actor, actor, findThread(threadVo), stream, fileName);
 
 		return new ThreadEntryVo(threadEntry);
 	}

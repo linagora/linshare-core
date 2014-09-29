@@ -34,6 +34,10 @@
 
 package org.linagora.linshare.core.rac;
 
-public interface ThreadEntryResourceAccessControl {
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.ThreadEntry;
+
+public interface ThreadEntryResourceAccessControl extends
+		EntryResourceAccessControl<Account, ThreadEntry> {
 
 }

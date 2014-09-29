@@ -57,6 +57,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.rac.ThreadEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
@@ -84,10 +85,19 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	private final ThreadMemberRepository threadMemberRepository;
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 	private final AntiSamyService antiSamyService;
+	private final ThreadEntryResourceAccessControl threadEntryAC;
 
-	public ThreadEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityReadOnlyService functionalityReadOnlyService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService,
-			ThreadMemberRepository threadMemberRepository, MimeTypeMagicNumberDao mimeTypeIdentifier, AntiSamyService antiSamyService) {
+	public ThreadEntryServiceImpl(
+			DocumentEntryBusinessService documentEntryBusinessService,
+			LogEntryService logEntryService,
+			AbstractDomainService abstractDomainService,
+			FunctionalityReadOnlyService functionalityReadOnlyService,
+			MimeTypeService mimeTypeService, AccountService accountService,
+			VirusScannerService virusScannerService,
+			ThreadMemberRepository threadMemberRepository,
+			MimeTypeMagicNumberDao mimeTypeIdentifier,
+			AntiSamyService antiSamyService,
+			ThreadEntryResourceAccessControl threadEntryAC) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -99,10 +109,13 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		this.threadMemberRepository = threadMemberRepository;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
 		this.antiSamyService = antiSamyService;
+		this.threadEntryAC = threadEntryAC;
 	}
 
 	@Override
-	public ThreadEntry createThreadEntry(Account actor, Thread thread, InputStream stream, String filename) throws BusinessException {
+	public ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, InputStream stream, String filename) throws BusinessException {
+		threadEntryAC.checkCreatePermission(actor, owner, ThreadEntry.class, BusinessErrorCode.THREAD_ENTRY_FORBIDDEN);
+
 		filename = sanitizeFileName(filename); // throws
 
 		DocumentUtils util = new DocumentUtils();
@@ -112,17 +125,17 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 
 		try {
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
-			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
+			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
 
 			// check if the file MimeType is allowed
 			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
 			if (mimeFunctionality.getActivationPolicy().getStatus()) {
-				mimeTypeService.checkFileMimeType(actor, filename, mimeType);
+				mimeTypeService.checkFileMimeType(owner, filename, mimeType);
 			}
 
 			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-				 checkVirus(filename, actor, tempFile);
+				 checkVirus(filename, owner, tempFile);
 			}
 
 			// want a timestamp on doc ?
@@ -136,7 +149,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
 
 			threadEntry = documentEntryBusinessService.createThreadEntry(thread, tempFile, size, filename, checkIfIsCiphered, timeStampingUrl, mimeType);
-			logEntryService.create(new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_UPLOAD_ENTRY, "Uploading a file in a thread."));
+			logEntryService.create(new ThreadLogEntry(owner, threadEntry, LogAction.THREAD_UPLOAD_ENTRY, "Uploading a file in a thread."));
 		} finally {
 			try{
 				logger.debug("deleting temp file : " + tempFile.getName());

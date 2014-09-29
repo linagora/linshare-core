@@ -31,38 +31,52 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+
+package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
 import java.io.InputStream;
-import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
-import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.facade.webservice.delegation.ThreadEntryFacade;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.ThreadEntryService;
+import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.webservice.dto.ThreadEntryDto;
 
-public interface ThreadEntryService {
+public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl implements
+		ThreadEntryFacade {
 
-	
-	public ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, InputStream stream, String filename) throws BusinessException;
-	
-	public ThreadEntry findById(Account actor, String threadEntryUuid) throws BusinessException;
-	
-	public void deleteThreadEntry(Account actor, ThreadEntry threadEntry) throws BusinessException;
-	
-	public void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException;
-	
-	public List<ThreadEntry> findAllThreadEntries(Account actor, Thread thread) throws BusinessException;
+	private final ThreadService threadService;
 
-	public InputStream getDocumentStream(Account actor, String uuid) throws BusinessException;
+	private final ThreadEntryService threadEntryService;
 
-	public boolean documentHasThumbnail(Account actor, String identifier);
+	public ThreadEntryFacadeImpl(
+			final AccountService accountService,
+			final UserService userService,
+			final ThreadService threadService,
+			final ThreadEntryService threadEntryService) {
+		super(accountService, userService);
+		this.threadService = threadService;
+		this.threadEntryService = threadEntryService;
+	}
 
-	public InputStream getDocumentThumbnailStream(Account owner, String uuid) throws BusinessException;
+	@Override
+	public ThreadEntryDto create(String ownerUuid, String threadUuid,
+			InputStream theFile, String comment, String fileName) {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notNull(threadUuid, "Missing required thread uuid");
+		Validate.notNull(theFile, "Missing required file");
+		Validate.notNull(fileName, "Missing required fileName");
 
-	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Account actor, Thread thread, String[] names);
-
-	public void updateFileProperties(Account actor, String threadEntryUuid, String fileComment) throws BusinessException;
-	
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
+		ThreadEntry threadEntry = threadEntryService.createThreadEntry(
+				actor, owner, thread, theFile, fileName);
+		return new ThreadEntryDto(threadEntry);
+	}
 }

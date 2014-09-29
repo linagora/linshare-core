@@ -48,8 +48,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.delegation.ThreadEntryFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegation.ThreadEntryRestService;
 import org.linagora.linshare.webservice.dto.ThreadEntryDto;
@@ -69,6 +71,13 @@ import com.wordnik.swagger.annotations.ApiResponses;
 public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		ThreadEntryRestService {
 
+	private final ThreadEntryFacade threadEntryFacade;
+
+	public ThreadEntryRestServiceImpl(ThreadEntryFacade threadEntryFacade) {
+		super();
+		this.threadEntryFacade = threadEntryFacade;
+	}
+
 	@Path("/")
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -87,8 +96,21 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The given file name of the uploaded file.", required = true) String givenFileName,
 			MultipartBody body)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		String fileName;
+		String comment = (description == null) ? "" : description;
+
+		if (theFile == null) {
+			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
+		}
+		if (givenFileName == null || givenFileName.isEmpty()) {
+			// parameter givenFileName is optional
+			// so need to search this information in the header of the
+			// attachement (with id file)
+			fileName = body.getAttachment("file").getContentDisposition().getParameter("filename");
+		} else {
+			fileName = givenFileName;
+		}
+		return threadEntryFacade.create(ownerUuid, threadUuid, theFile, comment, fileName);
 	}
 
 	@Path("/{uuid}")

@@ -10,6 +10,7 @@
 	<bean name="shareEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ShareEntryResourceAccessControlImpl"/>
 	<bean name="documentEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.DocumentEntryResourceAccessControlImpl"/>
 	<bean name="anonymousShareEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.AnonymousShareEntryResourceAccessControlImpl"/>
+	<bean name="threadEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ThreadEntryResourceAccessControlImpl"/>
 
 	<bean name="threadResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ThreadResourceAccessControlImpl">
 		<constructor-arg ref="threadMemberRepository" />

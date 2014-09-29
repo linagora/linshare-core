@@ -103,6 +103,7 @@
 		<constructor-arg ref="threadMemberRepository" />
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
 		<constructor-arg ref="antiSamyService" />
+		<constructor-arg ref="threadEntryResourceAccessControl" />
 	</bean>
 
 	<bean id="shareExpiryDateService" class="org.linagora.linshare.core.service.impl.ShareExpiryDateServiceImpl">

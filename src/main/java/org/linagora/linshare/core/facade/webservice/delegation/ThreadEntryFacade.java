@@ -31,38 +31,16 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+
+package org.linagora.linshare.core.facade.webservice.delegation;
 
 import java.io.InputStream;
-import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadEntry;
-import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.ThreadEntryDto;
 
-public interface ThreadEntryService {
+public interface ThreadEntryFacade {
 
-	
-	public ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, InputStream stream, String filename) throws BusinessException;
-	
-	public ThreadEntry findById(Account actor, String threadEntryUuid) throws BusinessException;
-	
-	public void deleteThreadEntry(Account actor, ThreadEntry threadEntry) throws BusinessException;
-	
-	public void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException;
-	
-	public List<ThreadEntry> findAllThreadEntries(Account actor, Thread thread) throws BusinessException;
+	ThreadEntryDto create(String ownerUuid, String threadUuid,
+			InputStream theFile, String comment, String fileName);
 
-	public InputStream getDocumentStream(Account actor, String uuid) throws BusinessException;
-
-	public boolean documentHasThumbnail(Account actor, String identifier);
-
-	public InputStream getDocumentThumbnailStream(Account owner, String uuid) throws BusinessException;
-
-	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Account actor, Thread thread, String[] names);
-
-	public void updateFileProperties(Account actor, String threadEntryUuid, String fileComment) throws BusinessException;
-	
 }

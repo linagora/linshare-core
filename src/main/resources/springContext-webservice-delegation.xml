@@ -36,6 +36,10 @@
 		<constructor-arg ref="wsDelegationThreadFacade" />
 	</bean>
 
+	<bean id="delegationThreadEntryRestService" class="org.linagora.linshare.webservice.delegation.impl.ThreadEntryRestServiceImpl">
+		<constructor-arg ref="wsDelegationThreadEntryFacade" />
+	</bean>
+
 	<bean id="delegationThreadMemberRestService" class="org.linagora.linshare.webservice.delegation.impl.ThreadMemberRestServiceImpl">
 		<constructor-arg ref="wsDelegationThreadMemberFacade" />
 	</bean>
@@ -51,6 +55,7 @@
 			<ref bean="delegationDocumentRestService" />
 			<ref bean="delegationGuestRestService" />
 			<ref bean="delegationThreadRestService" />
+			<ref bean="delegationThreadEntryRestService" />
 			<ref bean="delegationThreadMemberRestService" />
 			<ref bean="delegationShareRestService" />
 		</jaxrs:serviceBeans>
