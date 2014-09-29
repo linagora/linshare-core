@@ -91,9 +91,17 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final DocumentRepository documentRepository;
 	private final AccountRepository<Account> accountRepository; 
 	private final SignatureBusinessService signatureBusinessService;
+	private final boolean thumbnailEnabled;
 	
-	public DocumentEntryBusinessServiceImpl(FileSystemDao fileSystemDao, TimeStampingService timeStampingService, DocumentEntryRepository documentEntryRepository, DocumentRepository documentRepository, 
-			AccountRepository<Account> accountRepository, SignatureBusinessService signatureBusinessService, ThreadEntryRepository threadEntryRepository) {
+	public DocumentEntryBusinessServiceImpl(
+			FileSystemDao fileSystemDao,
+			TimeStampingService timeStampingService,
+			DocumentEntryRepository documentEntryRepository,
+			DocumentRepository documentRepository,
+			AccountRepository<Account> accountRepository,
+			SignatureBusinessService signatureBusinessService,
+			ThreadEntryRepository threadEntryRepository,
+			boolean thumbnailEnabled) {
 		super();
 		this.fileSystemDao = fileSystemDao;
 		this.timeStampingService = timeStampingService;
@@ -102,6 +110,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.accountRepository = accountRepository;
 		this.signatureBusinessService = signatureBusinessService;
 		this.threadEntryRepository = threadEntryRepository;
+		this.thumbnailEnabled = thumbnailEnabled;
 	}
 
 	@Override
@@ -456,6 +465,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 	
 	private String generateThumbnailIntoJCR(String fileName, String path, File tempFile) {
+		if (!thumbnailEnabled) {
+			logger.warn("Thumbnail generation is disabled.");
+			return null;
+		}
+
 		FileResourceFactory fileResourceFactory = FileResourceFactory.getInstance();
 		FileResource fileResource = fileResourceFactory.getFileResource(tempFile);
 		InputStream fisThmb = null;
