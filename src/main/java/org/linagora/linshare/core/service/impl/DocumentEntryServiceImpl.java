@@ -109,7 +109,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 	private final NotifierService notifierService;
 
-public DocumentEntryServiceImpl(
+	public DocumentEntryServiceImpl(
 			DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
 			AbstractDomainService abstractDomainService,

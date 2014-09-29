@@ -92,10 +92,18 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final AccountRepository<Account> accountRepository; 
 	private final SignatureBusinessService signatureBusinessService;
 	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
+	private final boolean thumbnailEnabled;
 
-	public DocumentEntryBusinessServiceImpl(FileSystemDao fileSystemDao, TimeStampingService timeStampingService, DocumentEntryRepository documentEntryRepository, DocumentRepository documentRepository, 
-			AccountRepository<Account> accountRepository, SignatureBusinessService signatureBusinessService, ThreadEntryRepository threadEntryRepository,
-			UploadRequestEntryBusinessService uploadRequestEntryBusinessService) {
+	public DocumentEntryBusinessServiceImpl(
+			final FileSystemDao fileSystemDao,
+			final TimeStampingService timeStampingService,
+			final DocumentEntryRepository documentEntryRepository,
+			final DocumentRepository documentRepository,
+			final AccountRepository<Account> accountRepository,
+			final SignatureBusinessService signatureBusinessService,
+			final ThreadEntryRepository threadEntryRepository,
+			final UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
+			final boolean thumbnailEnabled) {
 		super();
 		this.fileSystemDao = fileSystemDao;
 		this.timeStampingService = timeStampingService;
@@ -105,6 +113,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.signatureBusinessService = signatureBusinessService;
 		this.threadEntryRepository = threadEntryRepository;
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
+		this.thumbnailEnabled = thumbnailEnabled;
 	}
 
 	@Override
@@ -438,6 +447,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 
 	private String generateThumbnailIntoJCR(String fileName, String path, File tempFile) {
+		if (!thumbnailEnabled) {
+			logger.warn("Thumbnail generation is disabled.");
+			return null;
+		}
+
 		FileResourceFactory fileResourceFactory = FileResourceFactory.getInstance();
 		FileResource fileResource = fileResourceFactory.getFileResource(tempFile);
 		InputStream fisThmb = null;
