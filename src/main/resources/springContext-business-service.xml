@@ -21,7 +21,7 @@
 		<constructor-arg ref="signatureBusinessService" />
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="threadEntryRepository" />
-		<constructor-arg value="${linshare.documents.thumbnail.enable}" />
+		<constructor-arg value="${linshare.documents.thumbnail.pdf.enable}" />
 	</bean>
 
 
