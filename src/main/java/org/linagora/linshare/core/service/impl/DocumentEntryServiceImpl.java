@@ -453,11 +453,19 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	}
 
 	@Override
-	public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException {
+	public InputStream getDocumentStream(Account actor, Account owner,
+			String uuid) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		DocumentEntry entry = find(actor, owner, uuid);
-		checkDownloadPermission(actor, entry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+		return getDocumentStream(actor, entry);
+	}
+
+	@Override
+	public InputStream getDocumentStream(Account actor, DocumentEntry entry)
+			throws BusinessException {
+		checkDownloadPermission(actor, entry,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		return documentEntryBusinessService.getDocumentStream(entry);
 	}
 

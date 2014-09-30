@@ -37,11 +37,13 @@ package org.linagora.linshare.core.facade.webservice.delegation.impl;
 import java.io.InputStream;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.facade.webservice.delegation.ThreadEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
@@ -54,21 +56,25 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl implement
 
 	private final ThreadEntryService threadEntryService;
 
+	private final DocumentEntryService documentEntryService;
+
 	public ThreadEntryFacadeImpl(
 			final AccountService accountService,
 			final UserService userService,
 			final ThreadService threadService,
-			final ThreadEntryService threadEntryService) {
+			final ThreadEntryService threadEntryService,
+			final DocumentEntryService documentEntryService) {
 		super(accountService, userService);
 		this.threadService = threadService;
 		this.threadEntryService = threadEntryService;
+		this.documentEntryService = documentEntryService;
 	}
 
 	@Override
 	public ThreadEntryDto create(String ownerUuid, String threadUuid,
 			InputStream theFile, String comment, String fileName) {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
-		Validate.notNull(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(theFile, "Missing required file");
 		Validate.notNull(fileName, "Missing required fileName");
 
@@ -77,6 +83,24 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl implement
 		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(
 				actor, owner, thread, theFile, fileName);
+		return new ThreadEntryDto(threadEntry);
+	}
+
+	@Override
+	public ThreadEntryDto copy(String ownerUuid, String threadUuid,
+			String entryUuid) {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(entryUuid, "Missing required entry uuid");
+
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
+		DocumentEntry doc = documentEntryService.find(actor, owner, entryUuid);
+		InputStream stream = documentEntryService.getDocumentStream(actor,
+				owner, entryUuid);
+		ThreadEntry threadEntry = threadEntryService.createThreadEntry(
+				actor, owner, thread, stream, doc.getName());
 		return new ThreadEntryDto(threadEntry);
 	}
 }

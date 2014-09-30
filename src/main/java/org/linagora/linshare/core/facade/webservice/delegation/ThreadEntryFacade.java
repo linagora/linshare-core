@@ -36,11 +36,15 @@ package org.linagora.linshare.core.facade.webservice.delegation;
 
 import java.io.InputStream;
 
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.ThreadEntryDto;
 
 public interface ThreadEntryFacade {
 
 	ThreadEntryDto create(String ownerUuid, String threadUuid,
-			InputStream theFile, String comment, String fileName);
+			InputStream theFile, String comment, String fileName)
+			throws BusinessException;
+
+	ThreadEntryDto copy(String ownerUuid, String threadUuid, String entryUuid);
 
 }

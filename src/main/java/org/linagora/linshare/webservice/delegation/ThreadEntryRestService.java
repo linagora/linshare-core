@@ -49,6 +49,9 @@ public interface ThreadEntryRestService {
 			InputStream theFile, String description, String givenFileName,
 			MultipartBody body) throws BusinessException;
 
+	ThreadEntryDto copy(String ownerUuid, String threadUuid, String entryUuid)
+			throws BusinessException;
+
 	public ThreadEntryDto find(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
 

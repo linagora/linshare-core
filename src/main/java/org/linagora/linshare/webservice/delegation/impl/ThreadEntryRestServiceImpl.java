@@ -49,6 +49,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.delegation.ThreadEntryFacade;
@@ -97,7 +98,6 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			MultipartBody body)
 					throws BusinessException {
 		String fileName;
-		String comment = (description == null) ? "" : description;
 
 		if (theFile == null) {
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
@@ -110,7 +110,26 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		} else {
 			fileName = givenFileName;
 		}
-		return threadEntryFacade.create(ownerUuid, threadUuid, theFile, comment, fileName);
+		return threadEntryFacade.create(ownerUuid, threadUuid, theFile,
+				StringUtils.defaultString(description), fileName);
+	}
+
+	@Path("/copy")
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@ApiOperation(value = "Create a thread entry which will contain the uploaded file.", response = ThreadEntryDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "Owner not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public ThreadEntryDto copy(
+			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
+			@ApiParam(value = "The document entry uuid.", required = true) @PathParam("entryUuid")  String entryUuid)
+					throws BusinessException {
+		return threadEntryFacade.copy(ownerUuid, threadUuid, entryUuid);
 	}
 
 	@Path("/{uuid}")
