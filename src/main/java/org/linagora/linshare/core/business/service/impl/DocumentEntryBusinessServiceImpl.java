@@ -91,6 +91,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final DocumentRepository documentRepository;
 	private final AccountRepository<Account> accountRepository; 
 	private final SignatureBusinessService signatureBusinessService;
+	private final boolean thumbEnabled;
 	private final boolean pdfThumbEnabled;
 	
 	public DocumentEntryBusinessServiceImpl(
@@ -101,6 +102,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			AccountRepository<Account> accountRepository,
 			SignatureBusinessService signatureBusinessService,
 			ThreadEntryRepository threadEntryRepository,
+			final boolean thumbEnabled,
 			boolean pdfThumbEnabled) {
 		super();
 		this.fileSystemDao = fileSystemDao;
@@ -110,6 +112,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.accountRepository = accountRepository;
 		this.signatureBusinessService = signatureBusinessService;
 		this.threadEntryRepository = threadEntryRepository;
+		this.thumbEnabled = thumbEnabled;
 		this.pdfThumbEnabled = pdfThumbEnabled;
 	}
 
@@ -465,7 +468,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 
 	private String generateThumbnailIntoJCR(String fileName, String path, File tempFile, String mimeType) {
-		if (!pdfThumbEnabled && mimeType.contains("pdf")) {
+		if (thumbEnabled || (!pdfThumbEnabled && mimeType.contains("pdf"))) {
 			logger.warn("Thumbnail generation is disabled.");
 			return null;
 		}
