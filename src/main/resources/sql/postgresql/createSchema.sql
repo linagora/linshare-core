@@ -37,7 +37,9 @@ CREATE TABLE cookie (
     PRIMARY KEY (cookie_id));
 CREATE TABLE document (
   id               int8 NOT NULL, 
-  uuid            varchar(255) NOT NULL UNIQUE, 
+  uuid            varchar(255) NOT NULL UNIQUE,
+  sha1sum            varchar(255),
+  sha256sum            varchar(255),
   creation_date   timestamp(6) NOT NULL, 
   type            varchar(255) NOT NULL, 
   "size"          int8 NOT NULL, 
@@ -114,6 +116,7 @@ CREATE TABLE entry (
   creation_date     timestamp(6) NOT NULL, 
   modification_date timestamp(6) NOT NULL, 
   name              varchar(255) NOT NULL, 
+  meta_data           text,
   comment           text NOT NULL, 
   expiration_date   timestamp(6), 
   uuid              varchar(255) NOT NULL UNIQUE, 
