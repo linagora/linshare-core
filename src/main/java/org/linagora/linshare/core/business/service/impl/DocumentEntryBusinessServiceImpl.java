@@ -468,7 +468,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 
 	private String generateThumbnailIntoJCR(String fileName, String path, File tempFile, String mimeType) {
-		if (thumbEnabled || (!pdfThumbEnabled && mimeType.contains("pdf"))) {
+		if (!thumbEnabled || (!pdfThumbEnabled && mimeType.contains("pdf"))) {
 			logger.warn("Thumbnail generation is disabled.");
 			return null;
 		}
