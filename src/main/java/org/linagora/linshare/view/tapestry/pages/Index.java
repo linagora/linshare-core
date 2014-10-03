@@ -185,15 +185,7 @@ public class Index {
 					persistentLocale.get(), request.getLocale(), null);
 			shares = new ArrayList<ShareDocumentVo>();
 			welcomeText = "";
-			// welcomeText =
-			// WelcomeMessageUtils.getWelcomeText(parameterVo.getWelcomeTexts(),
-			// language,
-			// UserType.INTERNAL).getWelcomeText();
-
 		} else {
-			AbstractDomainVo domain = domainFacade.retrieveDomain(userVo
-					.getDomainIdentifier());
-
 			Locale userLocale = null;
 			if (((userVo.getLocale()) != null)
 					&& (!userVo.getLocale().equals(""))) {
@@ -205,12 +197,11 @@ public class Index {
 			if (!flag) {
 				shares = shareFacade.getAllSharingReceivedByUser(userVo);
 			}
-
 			welcomeText = WelcomeMessageUtils.getWelcomeText(
-					domainFacade.getMessages(domain.getIdentifier())
-							.getWelcomeTexts(), language, userVo.getUserType())
+					domainFacade.getWelcomeMessages(),
+					language,
+					userVo.getUserType())
 					.getWelcomeText();
-
 		}
 
 	}

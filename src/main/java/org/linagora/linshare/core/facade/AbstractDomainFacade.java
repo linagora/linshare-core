@@ -34,9 +34,11 @@
 package org.linagora.linshare.core.facade;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
 import org.linagora.linshare.core.domain.entities.ShareExpiryRule;
+import org.linagora.linshare.core.domain.entities.WelcomeText;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.GuestDomainVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -102,4 +104,6 @@ public interface AbstractDomainFacade {
 	 * call to crypt function.
 	 */
 	public boolean checkPlatformEncryptSupportedAlgo();
+
+	Set<WelcomeText> getWelcomeMessages();
 }

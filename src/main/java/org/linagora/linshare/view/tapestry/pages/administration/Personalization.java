@@ -140,13 +140,16 @@ public class Personalization {
     	}
 		
 		
-		messagesConfiguration  = abstractDomainFacade.getMessages(identifier);
+		messagesConfiguration = abstractDomainFacade.getMessages(identifier);
+		messagesConfiguration = new MessagesConfiguration();
+		messagesConfiguration.setWelcomeTexts(abstractDomainFacade.getWelcomeMessages());
+
 		welcomeTexts = messagesConfiguration.getWelcomeTexts();
 		mailTemplates = messagesConfiguration.getMailTemplates();
 		mailSubjects = messagesConfiguration.getMailSubjects();
 		return null;
 	}
-    
+
     public Object onSubmitFormUpdateDomain() {
     	return this;
     }

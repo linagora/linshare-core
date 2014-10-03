@@ -40,6 +40,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -50,6 +51,7 @@ import org.linagora.linshare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WelcomeText;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.GuestDomainVo;
 import org.linagora.linshare.core.domain.vo.SubDomainVo;
@@ -57,6 +59,7 @@ import org.linagora.linshare.core.domain.vo.TopDomainVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
@@ -66,18 +69,21 @@ import org.slf4j.LoggerFactory;
 
 public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 
-    private final AbstractDomainService abstractDomainService;
-    private final FunctionalityReadOnlyService functionalityReadOnlyService;
-    private final UserAndDomainMultiService userAndDomainMultiService;
+	private final AbstractDomainService abstractDomainService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+	private final UserAndDomainMultiService userAndDomainMultiService;
+	// Dirty hack. Will be removed with tapestry ! :)
+	private final AbstractDomainRepository abstractDomainRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractDomainFacadeImpl.class);
 
     public AbstractDomainFacadeImpl(AbstractDomainService abstractDomainService, FunctionalityReadOnlyService functionalityReadOnlyService,
-            UserAndDomainMultiService userAndDomainMultiService) {
+            UserAndDomainMultiService userAndDomainMultiService, AbstractDomainRepository abstractDomainRepository) {
         super();
         this.abstractDomainService = abstractDomainService;
         this.functionalityReadOnlyService = functionalityReadOnlyService;
         this.userAndDomainMultiService = userAndDomainMultiService;
+        this.abstractDomainRepository = abstractDomainRepository;
     }
 
 
@@ -256,8 +262,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
             // Stuff to be compatible with old shit.
             MessagesConfiguration m = new MessagesConfiguration(messages);
             domain.setMessagesConfiguration(m);
-            User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
-            abstractDomainService.updateDomain(actor, domain);
+            abstractDomainRepository.update(domain);
         } else {
             throw new BusinessException("You are not authorized to update messages.");
         }
@@ -295,4 +300,10 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     public List<String> getAllDomainIdentifiers(UserVo actorVo) throws BusinessException {
         return abstractDomainService.getAllMyDomainIdentifiers(actorVo.getDomainIdentifier());
     }
+
+
+	@Override
+	public Set<WelcomeText> getWelcomeMessages() {
+		return abstractDomainService.getUniqueRootDomain().getMessagesConfiguration().getWelcomeTexts();
+	}
 }
