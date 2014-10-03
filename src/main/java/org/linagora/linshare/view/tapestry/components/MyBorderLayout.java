@@ -353,8 +353,6 @@ public class MyBorderLayout {
 						menu.addMenuEntry(threadMenu);
 					if (showRequestTab())
 						menu.addMenuEntry(requestMenu);
-					if (admin)
-						menu.addMenuEntry(adminMenu);
 					if (showAuditTab())
 						menu.addMenuEntry(auditMenu);
 					if (showHelpTab())

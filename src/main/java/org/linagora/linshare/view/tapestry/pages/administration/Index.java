@@ -110,11 +110,10 @@ public class Index {
     	
     	superadmin = loginUser.isSuperAdmin();
     	admin = loginUser.isAdministrator();
-    	    	    	
-    	if (superadmin||admin) {
-    		domains = domainFacade.getAllDomainIdentifiers(loginUser);
-    	}
-    	
+
+		if (superadmin) {
+			domains = domainFacade.getAllDomainIdentifiers(loginUser);
+		}
     	if (domains == null || domains.isEmpty()) {
     		
     		noDomain = true;

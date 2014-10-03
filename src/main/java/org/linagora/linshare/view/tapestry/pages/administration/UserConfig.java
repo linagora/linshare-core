@@ -33,8 +33,10 @@
  */
 package org.linagora.linshare.view.tapestry.pages.administration;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.CleanupRender;
@@ -218,6 +220,25 @@ public class UserConfig {
 	 *                      Getters & Setters
 	 ************************************************************ */ 
 
+	public String getVersion() {
+		Properties prop = new Properties();
+		try {
+			if (this.getClass().getResourceAsStream("/version.properties") != null) {
+				prop.load(this.getClass().getResourceAsStream(
+						"/version.properties"));
+			} else {
+				logger.debug("Impossible to load version.properties, Is this a dev environnement?");
+			}
+		} catch (IOException e) {
+			logger.debug("Impossible to load version.properties, Is this a dev environnement?");
+			logger.debug(e.toString());
+		}
+		if (prop.getProperty("Implementation-Version") != null) {
+			return prop.getProperty("Implementation-Version");
+		} else {
+			return "trunk";
+		}
+	}
 
     Object onException(Throwable cause) {
     	shareSessionObjects.addError(messages.get("global.exception.message"));
