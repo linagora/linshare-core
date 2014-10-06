@@ -136,6 +136,16 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/inconsistent")
+	@DELETE
+	@ApiOperation(value = "Delete an inconsistent user.")
+	@Override
+	public void deleteInconsistent(
+			@ApiParam(value = "User to delete.", required = true) UserDto userDto)
+			throws BusinessException {
+		userFacade.delete(userDto);
+	}
+	
+	@Path("/inconsistent")
 	@GET
 	@ApiOperation(value = "Find all inconsistent users.", response = UserDto.class, responseContainer = "Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
