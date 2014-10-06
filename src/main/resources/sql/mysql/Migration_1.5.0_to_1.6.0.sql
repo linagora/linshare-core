@@ -326,6 +326,11 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pa
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (12, 'user_uid', 'uid', false, true, true, 3, false);
 
 
+CREATE INDEX mailing_list_index 
+  ON mailing_list (uuid);
+CREATE INDEX mailing_list_contact_index 
+  ON mailing_list_contact (uuid);
+
 ALTER TABLE version CHANGE description version varchar(255);
 
 
