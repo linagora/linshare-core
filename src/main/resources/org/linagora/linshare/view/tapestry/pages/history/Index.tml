@@ -217,7 +217,7 @@
 					
 					<t:parameter name="fileNameCell">
 						<span t:type="ck/Tooltip" title="message:pages.history.index.result.fileNameTooltip" 
-							value="${fileSize} ${logEntry.fileType}">
+							value="${fileSize} ${logEntry.fileType} \n ${truncatedFileName}">
 							${logEntry.fileName}
 							<sup></sup>
 						</span>
