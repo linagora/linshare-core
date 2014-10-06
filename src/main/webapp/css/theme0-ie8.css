@@ -24,6 +24,11 @@
 	ms-text-overflow:ellipsis;
 }
 
-
+/*
+* History 
+*/
+table.t-data-grid tbody td {
+	ms-text-overflow:ellipsis;
+}
 
 /***************************************************************************/
