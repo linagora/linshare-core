@@ -146,8 +146,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return threadEntryFacade.find(ownerUuid, threadUuid, uuid);
 	}
 
 	@Path("/")
@@ -163,8 +162,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return threadEntryFacade.findAll(ownerUuid, threadUuid);
 	}
 
 	@Path("/")
@@ -181,8 +179,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry to update.", required = true) ThreadEntryDto threadEntry)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return threadEntryFacade.update(ownerUuid, threadUuid, threadEntry);
 	}
 
 	@Path("/")
@@ -199,8 +196,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry to delete.", required = true) ThreadEntryDto threadEntry)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		
+		threadEntryFacade.delete(ownerUuid, threadUuid, threadEntry);
 	}
 
 	@Path("/{uuid}")
@@ -217,8 +213,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid to delete.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		
+		threadEntryFacade.delete(ownerUuid, threadUuid, uuid);
 	}
 
 	@Path("/{ownerUuid}/documents/{uuid}/download")
@@ -235,8 +230,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return threadEntryFacade.download(ownerUuid, threadUuid, uuid);
 	}
 
 	@Path("/{ownerUuid}/documents/{uuid}/thumbnail")
@@ -253,8 +247,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return threadEntryFacade.thumbnail(ownerUuid, threadUuid, uuid);
 	}
 
 }

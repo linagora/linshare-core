@@ -115,7 +115,12 @@ public abstract class EntryResourceAccessControlImpl<R, E extends Entry>
 	@Override
 	public void checkDownloadPermission(Account actor, E entry,
 			BusinessErrorCode errCode, Object... opt) throws BusinessException {
-		Account owner = getOwner(entry);
+		checkDownloadPermission(actor, getOwner(entry), entry, errCode, opt);
+	}
+
+	@Override
+	public void checkDownloadPermission(Account actor, Account owner, E entry,
+			BusinessErrorCode errCode, Object... opt) throws BusinessException {
 		if (!isAuthorized(actor, owner, PermissionType.DOWNLOAD, entry, opt)) {
 			StringBuilder sb = getActorStringBuilder(actor);
 			sb.append(" is not authorized to download the entry ");

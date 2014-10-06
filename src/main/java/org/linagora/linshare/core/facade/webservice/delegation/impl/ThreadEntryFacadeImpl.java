@@ -35,12 +35,16 @@
 package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
 import java.io.InputStream;
+import java.util.List;
+
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.delegation.ThreadEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
@@ -49,8 +53,8 @@ import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.ThreadEntryDto;
 
-public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl implements
-		ThreadEntryFacade {
+public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
+		implements ThreadEntryFacade {
 
 	private final ThreadService threadService;
 
@@ -58,10 +62,8 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl implement
 
 	private final DocumentEntryService documentEntryService;
 
-	public ThreadEntryFacadeImpl(
-			final AccountService accountService,
-			final UserService userService,
-			final ThreadService threadService,
+	public ThreadEntryFacadeImpl(final AccountService accountService,
+			final UserService userService, final ThreadService threadService,
 			final ThreadEntryService threadEntryService,
 			final DocumentEntryService documentEntryService) {
 		super(accountService, userService);
@@ -81,8 +83,8 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl implement
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
-		ThreadEntry threadEntry = threadEntryService.createThreadEntry(
-				actor, owner, thread, theFile, fileName);
+		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
+				owner, thread, theFile, fileName);
 		return new ThreadEntryDto(threadEntry);
 	}
 
@@ -99,8 +101,70 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl implement
 		DocumentEntry doc = documentEntryService.find(actor, owner, entryUuid);
 		InputStream stream = documentEntryService.getDocumentStream(actor,
 				owner, entryUuid);
-		ThreadEntry threadEntry = threadEntryService.createThreadEntry(
-				actor, owner, thread, stream, doc.getName());
+		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
+				owner, thread, stream, doc.getName());
 		return new ThreadEntryDto(threadEntry);
+	}
+
+	@Override
+	public ThreadEntryDto find(String ownerUuid, String threadUuid,
+			String entryUuid) throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(entryUuid, "Missing required entry uuid");
+
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
+		DocumentEntry doc = documentEntryService.find(actor, owner, entryUuid);
+		InputStream stream = documentEntryService.getDocumentStream(actor,
+				owner, entryUuid);
+		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
+				owner, thread, stream, doc.getName());
+		return new ThreadEntryDto(threadEntry);
+	}
+
+	@Override
+	public List<ThreadEntryDto> findAll(String ownerUuid, String threadUuid)
+			throws BusinessException {
+		return null;
+	}
+
+	@Override
+	public ThreadEntryDto update(String ownerUuid, String threadUuid,
+			ThreadEntryDto threadEntry) throws BusinessException {
+		return null;
+	}
+
+	@Override
+	public void delete(String ownerUuid, String threadUuid,
+			ThreadEntryDto threadEntry) throws BusinessException {
+		delete(ownerUuid, threadUuid, threadEntry.getUuid());
+	}
+
+	@Override
+	public void delete(String ownerUuid, String threadUuid, String uuid)
+			throws BusinessException {
+	}
+
+	@Override
+	public Response download(String ownerUuid, String threadUuid,
+			String entryUuid) throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(entryUuid, "Missing required entry uuid");
+
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+
+		return Response.ok(
+				threadEntryService.getDocumentStream(actor, owner, entryUuid))
+				.build();
+	}
+
+	@Override
+	public Response thumbnail(String ownerUuid, String threadUuid, String uuid)
+			throws BusinessException {
+		return null;
 	}
 }

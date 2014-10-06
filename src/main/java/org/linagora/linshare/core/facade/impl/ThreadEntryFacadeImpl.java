@@ -170,7 +170,8 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	@Override
 	public InputStream retrieveFileStream(UserVo actorVo, ThreadEntryVo entry)
 			throws BusinessException {
-		return threadEntryService.getDocumentStream(findUser(actorVo),
+		Account actor = findUser(actorVo);
+		return threadEntryService.getDocumentStream(actor, actor,
 				entry.getIdentifier());
 	}
 

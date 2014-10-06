@@ -37,6 +37,7 @@ package org.linagora.linshare.core.rac.impl;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.rac.ThreadEntryResourceAccessControl;
 
 public class ThreadEntryResourceAccessControlImpl extends
@@ -117,5 +118,10 @@ public class ThreadEntryResourceAccessControlImpl extends
 				owner,
 				entry,
 				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD_THUMBNAIL);
+	}
+
+	@Override
+	public void checkDownloadPermission(Account actor, Account owner,
+			Class<ThreadEntry> class1, BusinessErrorCode threadEntryForbidden) {
 	}
 }

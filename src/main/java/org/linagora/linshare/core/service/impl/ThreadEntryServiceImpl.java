@@ -219,7 +219,9 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	}
 
 	@Override
-	public InputStream getDocumentStream(Account actor, String uuid) throws BusinessException {
+	public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException {
+		threadEntryAC.checkDownloadPermission(actor, owner, ThreadEntry.class, BusinessErrorCode.THREAD_ENTRY_FORBIDDEN);
+
 		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(uuid);
 		if (threadEntry == null) {
 			logger.error("Can't find document entry, are you sure it is not a share ? : " + uuid);

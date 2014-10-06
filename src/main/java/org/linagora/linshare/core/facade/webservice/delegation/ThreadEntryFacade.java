@@ -35,6 +35,9 @@
 package org.linagora.linshare.core.facade.webservice.delegation;
 
 import java.io.InputStream;
+import java.util.List;
+
+import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.ThreadEntryDto;
@@ -45,6 +48,28 @@ public interface ThreadEntryFacade {
 			InputStream theFile, String comment, String fileName)
 			throws BusinessException;
 
-	ThreadEntryDto copy(String ownerUuid, String threadUuid, String entryUuid);
+	ThreadEntryDto copy(String ownerUuid, String threadUuid, String entryUuid)
+			throws BusinessException;
+
+	ThreadEntryDto find(String ownerUuid, String threadUuid, String uuid)
+			throws BusinessException;
+
+	List<ThreadEntryDto> findAll(String ownerUuid, String threadUuid)
+			throws BusinessException;
+
+	ThreadEntryDto update(String ownerUuid, String threadUuid,
+			ThreadEntryDto threadEntry) throws BusinessException;
+
+	void delete(String ownerUuid, String threadUuid, ThreadEntryDto threadEntry)
+			throws BusinessException;
+
+	void delete(String ownerUuid, String threadUuid, String uuid)
+			throws BusinessException;
+
+	Response download(String ownerUuid, String threadUuid, String uuid)
+			throws BusinessException;
+
+	Response thumbnail(String ownerUuid, String threadUuid, String uuid)
+			throws BusinessException;
 
 }
