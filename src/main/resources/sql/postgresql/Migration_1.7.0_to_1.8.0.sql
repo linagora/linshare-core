@@ -1,11 +1,11 @@
--- MySQL migration script : 1.7.0 to 1.8.0
+-- Postgresql migration script : 1.7.0 to 1.8.0
 
-SET storage_engine=INNODB;
-SET NAMES UTF8 COLLATE utf8_general_ci;
-SET CHARACTER SET UTF8;
+BEGIN;
 
-SET AUTOCOMMIT=0;
-START TRANSACTION;
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET client_min_messages = warning;
+SET default_with_oids = false;
 
 ALTER TABLE document
 	ADD COLUMN sha1sum varchar(255),
@@ -19,4 +19,3 @@ INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence'))
 
 
 COMMIT;
-SET AUTOCOMMIT=1;

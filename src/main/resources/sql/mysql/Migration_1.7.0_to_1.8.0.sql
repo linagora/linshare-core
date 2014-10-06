@@ -13,8 +13,7 @@ ALTER TABLE document
 
 ALTER TABLE entry
 	ADD COLUMN meta_data text;
-	
-	
+
 -- LinShare version
 INSERT INTO version (version) VALUES ('1.8.0');
 
