@@ -20,6 +20,16 @@
 	width: 430px !important;
 }
 
+#list td.fileProperties div {
+	ms-text-overflow:ellipsis;
+}
+
+/*
+* History 
+*/
+table.t-data-grid tbody td {
+	ms-text-overflow:ellipsis;
+}
 
 
 /***************************************************************************/
