@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
@@ -152,6 +153,8 @@ public class Index {
 	
 	@Inject
 	private FunctionalityFacade functionalityFacade;
+	
+	private final Integer truncatedValue = 70;
 	
 	
 	/* ***********************************************************
@@ -286,6 +289,11 @@ public class Index {
 	public String getActionDate() {
 		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
 		return formatter.format(logEntry.getActionDate().getTime());
+	}
+	
+	public String getTruncatedFileName() {
+		String result = StringUtils.abbreviate(logEntry.getFileName(), truncatedValue);
+		return result;
 	}
 
 	public CriterionMatchMode getFileNameMatchModeStart() { return CriterionMatchMode.START; }

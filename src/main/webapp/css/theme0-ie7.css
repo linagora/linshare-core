@@ -101,7 +101,12 @@ table.t-data-grid thead tr th {		/* Impossible to style 'tr' tags (5.5, 6, 7) */
 	width: 430px !important;
 }
 
-
+/*
+* History 
+*/
+table.t-data-grid tbody td {
+	ms-text-overflow:ellipsis;
+}
 
 /***************************************************************************
 * CONTENTS

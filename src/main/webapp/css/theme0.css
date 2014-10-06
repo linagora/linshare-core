@@ -1061,6 +1061,8 @@ table.t-data-grid tbody td {
 	border-width: 0px !important;
 	vertical-align: middle !important;
 	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 
@@ -2028,6 +2030,7 @@ DIV.t-palette-controls BUTTON {
 #history #pageContent table.t-data-grid,
 #audit #pageContent table.t-data-grid {
 	margin-top: 1em;
+	table-layout: fixed;
 }
 
 /*--------------------------------------------------------------------------
