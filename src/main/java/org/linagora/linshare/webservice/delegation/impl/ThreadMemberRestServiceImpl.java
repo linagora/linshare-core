@@ -120,7 +120,7 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread member to update.", required = true) ThreadMemberDto threadMember)
 					throws BusinessException {
-		return null;
+		return threadMemberFacade.update(ownerUuid, threadUuid, threadMember);
 	}
 
 	@Path("/")

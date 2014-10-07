@@ -98,6 +98,21 @@ public class ThreadMemberFacadeImpl extends DelegationGenericFacadeImpl
 	}
 
 	@Override
+	public ThreadMemberDto update(String ownerUuid, String threadUuid,
+			ThreadMemberDto threadMember) {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notNull(threadMember, "Missing required thread member");
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
+		User user = userService.findByLsUuid(threadMember.getUserUuid());
+		ThreadMember member = threadService.getMemberFromUser(thread, user);
+		return new ThreadMemberDto(threadService.updateMember(actor, owner,
+				member, threadMember.isAdmin(), !threadMember.isReadonly()));
+	}
+
+	@Override
 	public void delete(String ownerUuid, String threadUuid, String userUuid)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");

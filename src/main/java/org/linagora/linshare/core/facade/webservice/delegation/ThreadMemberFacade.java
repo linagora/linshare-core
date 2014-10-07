@@ -48,6 +48,9 @@ public interface ThreadMemberFacade {
 			String domainId, String mail, boolean readonly, boolean admin)
 			throws BusinessException;
 
+	ThreadMemberDto update(String ownerUuid, String threadUuid,
+			ThreadMemberDto threadMember);
+
 	void delete(String ownerUuid, String threadUuid, String userUuid)
 			throws BusinessException;
 
