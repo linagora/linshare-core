@@ -1,306 +1,10 @@
 INSERT INTO messages_configuration (messages_configuration_id) VALUES (1);
 
-
--- LOCALE en
--- Mail subjects
--- Subject ANONYMOUS_DOWNLOAD
--- LinShare: An unknown user has just downloaded a file you made available for sharing
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 0, 'LinShare: An unknown user has just downloaded a file you made available for sharing', 0);
-
--- Subject REGISTERED_DOWNLOAD
--- LinShare: A user has just downloaded a file you made available for sharing
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 1, 'LinShare: A user has just downloaded a file you made available for sharing', 0);
-
--- Subject NEW_GUEST
--- LinShare: Your LinShare account has been successfully created
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 2, 'LinShare: Your LinShare account has been sucessfully created', 0);
-
--- Subject RESET_PASSWORD
--- LinShare: Your password has been reset
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 3, 'LinShare: Your password has been reset', 0);
-
--- Subject NEW_SHARING
--- LinShare: A user has just made a file available to you!
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'LinShare: A user has just made a file available to you!', 0);
-
--- Subject NEW_SHARING_WITH_ACTOR
--- LinShare: sharing file with personal message.
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} from ${actorRepresentation}', 0);
-
--- Subject SHARED_DOC_UPDATED
--- LinShare: A user has just modified a shared file you still have access to
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'LinShare: A user has just modified a shared file you still have access to', 0);
-
--- Subject SHARED_DOC_DELETED
--- LinShare: A user has just deleted a shared file you had access to!
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 10, 'LinShare: A user has just deleted a shared file you had access to!', 0);
-
--- Subject SHARED_DOC_UPCOMING_OUTDATED
--- LinShare: A LinShare workspace is about to be deleted
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 11, 'LinShare: A LinShare workspace is about to be deleted', 0);
-
--- Subject DOC_UPCOMING_OUTDATED
--- LinShare: A shared file is about to be deleted!
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 12, 'LinShare: A shared file is about to be deleted!', 0);
-
--- Mail templates
--- Template GREETINGS
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 0, 'Hello ${firstName} ${lastName},', 'Hello ${firstName} ${lastName},<br/><br/>', 0);
-
--- Template FOOTER
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 1, '<a href="http://linshare.org/" title="LinShare"><strong>LinShare</strong></a> - THE Secure, Open-Source File Sharing Tool', 'LinShare - http://linshare.org - THE Secure, Open-Source File Sharing Tool', 0);
-
--- Template CONFIRM_DOWNLOAD_ANONYMOUS
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 2, 'An unknown user ${email} has just downloaded the following file(s) you made available via LinShare:<ul>${documentNames}</ul>', 'An unknown user ${email} has just downloaded the following file(s) you made available via LinShare:\n${documentNamesTxt}', 0);
-
--- Template CONFIRM_DOWNLOAD_REGISTERED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 3, '${recipientFirstName} ${recipientLastName} has just downloaded the following file(s) you made available to her/him via LinShare:<ul>${documentNames}</ul>', '${recipientFirstName} ${recipientLastName} has just downloaded the following file(s) you made available to her/him via LinShare:\n${documentNamesTxt}', 0);
-
--- Template LINSHARE_URL
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 4, 'To login, please go to: <a href="${url}">${url}</a><br/>', 'To login, please go to: ${url}', 0);
-
--- Template FILE_DOWNLOAD_URL
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 5, 'To download the file(s), simply click on the following link or copy/paste it into your favorite browser: <a href="${url}${urlparam}">${url}${urlparam}</a>', 'To download the file(s), symply click on the following link or copy/paste it into your favorite browser:\n${url}${urlparam}', 0);
-
--- Template DECRYPT_URL
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 6, '<p>One or more received files are <b>encrypted</b>. After download is complete, make sure to decrypt them locally by using the application:<br/><a href="${jwsEncryptUrl}">${jwsEncryptUrl}</a><br/>You must use the <i>password</i> granted to you by the user who made the file(s) available for sharing.</p><br/>', 'One or more received files are encrypted. After download is complete, make sure to decrypt them locally by using the application:\n${jwsEncryptUrl}\nYou have to use the <i>password</i> granted to you by the user who made the file(s) available for sharing.\n', 0);
-
--- Template PRIVATE_MESSAGE
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 7, '<strong>You have a new Private Message, from ${ownerFirstName} ${ownerLastName}, made available to you via LinShare</strong><pre>${message}</pre><hr/>', 'You have a new Private Message, from ${ownerFirstName} ${ownerLastName}, made available to you via LinShare\n\n${message}\n\n--------------------------------------------------------------', 0);
-
--- Template GUEST_INVITATION
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 8, '<strong>${ownerFirstName} ${ownerLastName}</strong> invites you to use and enjoy LinShare!<br/>', '${ownerFirstName} ${ownerLastName} invites you to use and enjoy LinShare!', 0);
-
--- Template ACCOUNT_DESCRIPTION
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 9, 'Your LinShare account:<ul><li>Login: <code>${mail}</code> &nbsp;(your e-mail address)</li><li>Password: <code>${password}</code></li></ul>', 'Your LinShare account:\n- Login: ${mail}  (your e-mail address)\n- Password: ${password}', 0);
-
--- Template SHARE_NOTIFICATION
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 10, '<strong>${firstName} ${lastName}</strong> has just shared with you ${number} file(s):<ul>${documentNames}</ul>', '${firstName} ${lastName} has just shared with you ${number} file(s):\n\n${documentNamesTxt}', 0);
-
--- Template PASSWORD_GIVING
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 11, 'The password to be used is: <code>${password}</code><br/>', 'The password to be used is: ${password}', 0);
-
--- Template FILE_UPDATED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 12, '<strong>${firstName} ${lastName}</strong> has just modified the following shared file <strong>${fileOldName}</strong>:<ul><li>New file name: ${fileName}</li><li>File size: ${fileSize}</li><li>MIME type: <code>${mimeType}</code></li></ul>', '${firstName} ${lastName} has just modified the following shared file ${fileOldName}:\n- New file name: ${fileName}\n- File size: ${fileSize}\n- MIME type: ${mimeType}\n', 0);
-
--- Template SHARED_FILE_DELETED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 17, '<strong>${firstName} ${lastName}</strong> has just deleted a previously shared file <strong>${documentName}</strong>.', '${firstName} ${lastName} has just deleted a previously shared file ${documentName}.', 0);
-
--- Template SECURED_URL_UPCOMING_OUTDATED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 18, 'The LinShare workspace created by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download the shared files before!', 'The LinShare workspace created by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download the shared files before!', 0);
-
--- Template SHARED_DOC_UPCOMING_OUTDATED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 19, 'Your access to the shared file ${documentName}, granted by ${firstName} ${lastName}, will expire in ${nbDays} days. Remember to download it before!', 'Your access to the shared file ${documentName}, granted by ${firstName} ${lastName}, will expire in ${nbDays} days. Remember to download it before!', 0);
-
--- Template DOC_UPCOMING_OUTDATED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 20, 'Your access to the file <strong>${documentName}</strong> will expire in ${nbDays} days!', 'Your access to the file ${documentName} will expire in ${nbDays} days!', 0);
-
--- Welcome texts
--- Welcome texts
-
 -- Welcome to LinShare, THE Secure, Open-Source File Sharing Tool.
 INSERT INTO welcome_texts (messages_configuration_id, welcome_text, language_id) VALUES (1, 'Welcome to LinShare, THE Secure, Open-Source File Sharing Tool.', 0);
 
-
-
-
--- LOCALE fr
--- Mail subjects
--- Subject ANONYMOUS_DOWNLOAD
--- LinShare: An anonymous user downloaded the file you shared
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 0, 'LinShare : Un utilisateur anonyme a téléchargé des fichiers en partage', 1);
-
--- Subject REGISTERED_DOWNLOAD
--- LinShare: An user downloaded the file you shared
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 1, 'LinShare : Un utilisateur a téléchargé des fichiers en partage', 1);
-
--- Subject NEW_GUEST
--- LinShare: Your account on LinShare has been created
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 2, 'LinShare : Votre compte LinShare a été créé', 1);
-
--- Subject RESET_PASSWORD
--- LinShare: Your password was reset
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 3, 'LinShare : Votre nouveau mot de passe', 1);
-
--- Subject NEW_SHARING
--- LinShare: A user deposited files in sharing for you
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'LinShare : Un utilisateur vous a déposé des fichiers en partage', 1);
-
--- Subject NEW_SHARING_WITH_ACTOR
--- LinShare: sharing file with personal message.
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} de la part de ${actorRepresentation}', 1);
-
--- Subject SHARED_DOC_UPDATED
--- LinShare: An user has updated a shared file
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'LinShare : Un utilisateur a mis à jour un fichier partagé', 1);
-
--- Subject SHARED_DOC_DELETED
--- LinShare: An user has deleted a shared file
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 10, 'LinShare : Un utilisateur a supprimé un fichier partagé', 1);
-
--- Subject SHARED_DOC_UPCOMING_OUTDATED
--- LinShare: A sharing will be soon deleted
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 11, 'LinShare : Un partage va bientôt expirer', 1);
-
--- Subject DOC_UPCOMING_OUTDATED
--- LinShare: A sharing will be soon deleted
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 12, 'LinShare : Un fichier va bientôt être supprimé', 1);
-
--- Mail templates
--- Template GREETINGS
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 0, 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Bonjour ${firstName} ${lastName},', 1);
-
--- Template FOOTER
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 1, '<a href="http://www.linshare.org/" title="LinShare"><strong>LinShare</strong></a> - Logiciel libre de partage de fichiers sécurisé', 'LinShare - http://www.linshare.org/ - Logiciel libre de partage de fichiers sécurisé', 1);
-
--- Template CONFIRM_DOWNLOAD_ANONYMOUS
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 2, 'L’utilisateur anonyme ${email} a téléchargé le(s) fichier(s) que vous avez mis en partage via LinShare&nbsp;:<ul>${documentNames}</ul>', 'L’utilisateur anonyme ${email} a téléchargé le(s) fichier(s) que vous avez mis en partage via LinShare :\n${documentNamesTxt}', 1);
-
--- Template CONFIRM_DOWNLOAD_REGISTERED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 3, '${recipientFirstName} ${recipientLastName} a téléchargé le(s) fichier(s) que vous lui avez mis en partage via LinShare&nbsp;:<ul>${documentNames}</ul>', '${recipientFirstName} ${recipientLastName} a téléchargé le(s) fichier(s) que vous lui avez mis en partage via LinShare :\n${documentNamesTxt}', 1);
-
--- Template LINSHARE_URL
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 4, 'Vous pouvez vous connecter à cette adresse&nbsp;: <a href="${url}">${url}</a><br/>', 'Vous pouvez vous connecter à cette adresse : ${url}', 1);
-
--- Template FILE_DOWNLOAD_URL
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 5, 'Pour télécharger les fichiers, cliquez sur le lien ou copiez le dans votre navigateur&nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a>', 'Pour télécharger les fichiers, cliquez sur le lien ou copiez le dans votre navigateur :\n${url}${urlparam}', 1);
-
--- Template DECRYPT_URL
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 6, '<p>Certains de vos fichiers sont <strong>chiffrés</strong>. Après le téléchargement, vous devez les déchiffrer localement avec l’application&nbsp;:<br/><a href="${jwsEncryptUrl}">${jwsEncryptUrl}</a><br/>Vous devez vous munir du <em>mot de passe de déchiffrement</em> qui a dû vous être communiqué par l’expéditeur des fichiers.</p>', 'Certains de vos fichiers sont chiffrés. Après le téléchargement, vous devez les déchiffrer localement avec l’application :\n${jwsEncryptUrl}\nVous devez vous munir du mot de passe de déchiffrement qui a dû vous être communiqué par l’expéditeur des fichiers.\n', 1);
-
--- Template PERSONAL_MESSAGE
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 7, '<strong>Message personnel de ${ownerFirstName} ${ownerLastName}, via LinShare</strong><pre>${message}</pre><hr/>', 'Message personnel de ${ownerFirstName} ${ownerLastName}, via LinShare\n\n${message}\n\n--------------------------------------------------------------', 1);
-
--- Template GUEST_INVITATION
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 8, '<strong>${ownerFirstName} ${ownerLastName}</strong> vous invite à utiliser LinShare.<br/>', '${ownerFirstName} ${ownerLastName} vous invite à utiliser LinShare.', 1);
-
--- Template ACCOUNT_DESCRIPTION
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 9, 'Votre compte LinShare&nbsp;:<ul><li>Identifiant&nbsp;: <code>${mail}</code> &nbsp;(votre adresse électronique)</li><li>Mot de passe&nbsp;: <code>${password}</code></li></ul>', 'Votre compte LinShare : \n- identifiant : ${mail}  (votre adresse électronique) \n- mot de passe : ${password}', 1);
-
--- Template SHARE_NOTIFICATION
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 10, '<strong>${firstName} ${lastName}</strong> a mis en partage ${number} fichier(s) à votre attention&nbsp;:<ul>${documentNames}</ul>', '${firstName} ${lastName} a mis en partage ${number} fichier(s) à votre attention :\n\n${documentNamesTxt}', 1);
-
--- Template PASSWORD_GIVING
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 11, 'Le mot de passe à utiliser est&nbsp;: <code>${password}</code><br/>', 'Le mot de passe à utiliser est : ${password}', 1);
-
--- Template FILE_UPDATED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 12, '<strong>${firstName} ${lastName}</strong> a mis à jour le fichier partagé <strong>${fileOldName}</strong>&nbsp;:<ul><li>Nom du nouveau fichier&nbsp;: ${fileName}</li><li>Taille du fichier&nbsp;: ${fileSize}</li><li>Type MIME&nbsp;: <code>${mimeType}</code></li></ul>', '${firstName} ${lastName} a mis à jour le fichier partagé ${fileOldName} : \n- nom du nouveau fichier : ${fileName}\n- taille du fichier : ${fileSize}\n- type MIME : ${mimeType}\n', 1);
-
--- Template SHARED_FILE_DELETED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 17, '<strong>${firstName} ${lastName}</strong> a supprimé le fichier partagé <strong>${documentName}</strong>.', '${firstName} ${lastName} a supprimé le fichier partagé ${documentName}.', 1);
-
--- Template SECURED_URL_UPCOMING_OUTDATED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 18, 'Un partage provenant de <strong>${firstName} ${lastName}</strong> va expirer dans ${nbDays} jours. Pensez à télécharger les fichiers avant leur expiration.', 'Un partage provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger les fichiers avant leur expiration.', 1);
-
--- Template SHARED_DOC_UPCOMING_OUTDATED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 19, 'Le partage du fichier ${documentName} provenant de <strong>${firstName} ${lastName}</strong> va expirer dans ${nbDays} jours. Pensez à télécharger ou copier ce fichier avant son expiration.', 'Le partage du fichier ${documentName} provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger ou copier ce fichier avant son expiration.', 1);
-
--- Template DOC_UPCOMING_OUTDATED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 20, 'Le fichier <strong>${documentName}</strong> va expirer dans ${nbDays} jours.', 'Le fichier ${documentName} va expirer dans ${nbDays} jours.', 1);
-
--- Welcome texts
--- Welcome texts
-
 -- Welcome to LinShare, the Open Source secure files sharing system
 INSERT INTO welcome_texts (messages_configuration_id, welcome_text, language_id) VALUES (1, 'Bienvenue dans LinShare, le logiciel libre de partage de fichiers sécurisé.', 1);
-
-
-
--- LOCALE nl
--- Mail subjects
--- Subject ANONYMOUS_DOWNLOAD
--- LinShare: An anonymous user downloaded the file you shared
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 0, 'LinShare : Een anonieme gebruiker heeft het door u gedeelde bestand gedownload', 2);
-
--- Subject REGISTERED_DOWNLOAD
--- LinShare: An user downloaded the file you shared
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 1, 'LinShare : Een gebruiker heeft het door u gedeelde bestand gedownload', 2);
-
--- Subject NEW_GUEST
--- LinShare: Your account on LinShare has been created
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 2, 'LinShare : Uw LinShare account werd aangemaakt.', 2);
-
--- Subject RESET_PASSWORD
--- LinShare: Your password was reset
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 3, 'LinShare : Uw nieuwe wachtwoord', 2);
-
--- Subject NEW_SHARING
--- LinShare: A user deposited files in sharing for you
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'LinShare : Een gebruiker heeft te delen bestanden voor u klaargezet.', 2);
-
--- Subject NEW_SHARING_WITH_ACTOR
--- LinShare: sharing file with personal message.
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} from ${actorRepresentation}', 2);
-
--- Subject SHARED_DOC_UPDATED
--- LinShare: An user has updated a shared file
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'LinShare : Een gebruiker heeft een gedeeld bestand bijgewerkt', 2);
-
--- Subject SHARED_DOC_DELETED
--- LinShare: An user has deleted a shared file
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 10, 'LinShare : Een gebruiker heeft een gedeeld bestand gewist', 2);
-
--- Subject SHARED_DOC_UPCOMING_OUTDATED
--- LinShare: A sharing will be soon deleted
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 11, 'LinShare : Een share zal binnenkort gewist worden.', 2);
-
--- Subject DOC_UPCOMING_OUTDATED
--- LinShare: A sharing will be soon deleted
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 12, 'LinShare : Een bestand zal binnenkort gewist worden.', 2);
-
--- Mail templates
--- Template GREETINGS
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 0, 'Hallo ${firstName} ${lastName},<br/><br/>', 'Hallo ${firstName} ${lastName},', 2);
-
--- Template FOOTER
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 1, '<a href="http://linshare.org/" title="LinShare"><strong>LinShare</strong></a> - Open Source toepassing voor het beveiligd delen van bestanden', 'LinShare - http://linshare.org - Open Source toepassing voor het beveiligd delen van bestanden', 2);
-
--- Template CONFIRM_DOWNLOAD_ANONYMOUS
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 2, 'Een anonieme gebruiker ${email} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare&nbsp;:<ul>${documentNames}</ul>', 'Een anonieme gebruiker ${email} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare :\n${documentNamesTxt}', 2);
-
--- Template CONFIRM_DOWNLOAD_REGISTERED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 3, '${recipientFirstName} ${recipientLastName} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare&nbsp;:<ul>${documentNames}</ul>', '${recipientFirstName} ${recipientLastName} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare :\n${documentNamesTxt}', 2);
-
--- Template LINSHARE_URL
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 4, 'U kan inloggen op dit adres&nbsp;: <a href="${url}">${url}</a><br/>', 'U kan inloggen op dit adres : ${url}', 2);
-
--- Template FILE_DOWNLOAD_URL
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 5, 'Om de bestanden te downloaden, klik op de link of kopieer de link naar uw browser&nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a>', 'Om de bestanden te downloaden, klik op de link of kopieer de link naar uw browser :\n${url}${urlparam}', 2);
-
--- Template DECRYPT_URL
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 6, '<p>Sommige ontvangen bestanden zijn <b>versleuteld</b>. Na het downloaden moet u ze plaatselijk ontsleutelen met de toepassing:<br/><a href="${jwsEncryptUrl}">${jwsEncryptUrl}</a><br/>U moet in het bezit zijn van het <i>versleutelwachtwoord</i> dat u gekregen hebt van de persoon die u de bestanden stuurt.</p><br/>', 'Sommige ontvangen bestanden zijn versleuteld. Na het downloaden moet u ze plaatselijk ontsleutelen met de toepassing:\n${jwsEncryptUrl}\nU moet in het bezit zijn van het versleutelwachtwoord dat u gekregen hebt van de persoon die u de bestanden stuurt.\n', 2);
-
--- Template PERSONAL_MESSAGE
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 7, '<strong>Persoonlijke boodschap van ${ownerFirstName} ${ownerLastName}, via LinShare</strong><pre>${message}</pre><hr/>', '<strong>Persoonlijke boodschap van ${ownerFirstName} ${ownerLastName}, via LinShare\n\n${message}\n\n--------------------------------------------------------------', 2);
-
--- Template GUEST_INVITATION
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 8, '<strong>${ownerFirstName} ${ownerLastName}</strong> nodigt u uit gebruik te maken van LinShare.<br/>', '${ownerFirstName} ${ownerLastName} nodigt u uit gebruik te maken van LinShare.', 2);
-
--- Template ACCOUNT_DESCRIPTION
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 9, 'Uw LinShare account&nbsp;:<ul><li>Identificatie&nbsp;: <code>${mail}</code> &nbsp;(uw e-mailadres)</li><li>Wachtwoord&nbsp;: <code>${password}</code></li></ul>', 'Uw LinShare account :\n- Identificatie : ${mail} (uw e-mailadres)\n- Wachtwoord : ${password}', 2);
-
--- Template SHARE_NOTIFICATION
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 10, '<strong>${firstName} ${lastName}</strong> heeft ${number} te delen bestand(en) voor u klaargezet&nbsp;:<ul>${documentNames}</ul>', '${firstName} ${lastName} heeft ${number} te delen bestand(en) voor u klaargezet :\n\n${documentNamesTxt}', 2);
-
--- Template PASSWORD_GIVING
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 11, 'Het bijbehorende wachtwoord dat u moet gebruiken, is&nbsp;: <code>${password}</code><br/>', 'Het bijbehorende wachtwoord dat u moet gebruiken, is : ${password}', 2);
-
--- Template FILE_UPDATED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 12, '<strong>${firstName} ${lastName}</strong> heeft het gedeelde bestand bijgewerkt <strong>${fileOldName}</strong>&nbsp;:<ul><li>Nieuwe bestandsnaam&nbsp;: ${fileName}</li><li>Grootte van het bestand&nbsp;: ${fileSize}</li><li>Type MIME&nbsp;: <code>${mimeType}</code></li></ul>', '${firstName} ${lastName} heeft het gedeelde bestand bijgewerkt ${fileOldName} :\n- Nieuwe bestandsnaam : ${fileName}\n- Grootte van het bestand : ${fileSize}\n- Type MIME : ${mimeType}\n', 2);
-
--- Template SHARED_FILE_DELETED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 17, '<strong>${firstName} ${lastName}</strong> heeft het gedeelde bestand <strong>${documentName}</strong> gewist.', '${firstName} ${lastName} heeft het gedeelde bestand ${documentName} gewist.', 2);
-
--- Template SECURED_URL_UPCOMING_OUTDATED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 18, 'Een share van ${firstName} ${lastName} zal verlopen binnen ${nbDays} dagen. Denk eraan de bestanden vóór die datum te downloaden.', 'Een share van ${firstName} ${lastName} zal verlopen binnen ${nbDays} dagen. Denk eraan de bestanden vóór die datum te downloaden.', 2);
-
--- Template SHARED_DOC_UPCOMING_OUTDATED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 19, 'Het delen van het bestand ${documentName} afkomstig van ${firstName} ${lastName} zal verlopen binnen ${nbDays} dagen. Denk eraan dit bestand te downloaden of te kopiëren.', 'Het delen van het bestand ${documentName} afkomstig van ${firstName} ${lastName} zal verlopen binnen ${nbDays} dagen. Denk eraan dit bestand te downloaden of te kopiëren.', 2);
-
--- Template DOC_UPCOMING_OUTDATED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 20, 'Het bestand <strong>${documentName}</strong> zal verlopen binnen ${nbDays} dagen.', 'Het bestand ${documentName} zal verlopen binnen ${nbDays} dagen.', 2);
-
--- Welcome texts
 
 -- Welcome to LinShare, the Open Source secure files sharing system
 INSERT INTO welcome_texts (messages_configuration_id, welcome_text, language_id) VALUES (1, 'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 2);
@@ -316,6 +20,10 @@ INSERT INTO domain_policy(id, identifier, domain_access_policy_id) VALUES (1, 'D
 
 -- Root domain (application domain)
 INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, messages_configuration_id, mailconfig_id) VALUES (1, 0, 'LinShareRootDomain', 'LinShareRootDomain', true, false, 'The root application domain', 3, 'en', 0, null, 1, null, 1, null);
+
+-- Default mime policy
+INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, creation_date, modification_date) VALUES(1, 1, '3d6d8800-e0f7-11e3-8ec0-080027c0eef0', 'Default Mime Policy', 0, 0, now(), now());
+UPDATE domain_abstract SET mime_policy_id=1 WHERE id < 100000;
 
 INSERT INTO ldap_connection(ldap_connection_id, identifier, provider_url, security_auth, security_principal, security_credentials) VALUES (1, 'baseLDAP', 'ldap://localhost:33389', 'simple', '', '');
 
@@ -348,10 +56,6 @@ INSERT INTO domain_abstract(id, type , identifier, label, enable, template, desc
 INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, messages_configuration_id, auth_show_order, mailconfig_id) VALUES (4, 3, 'GuestDomain', 'GuestDomain', true, false, 'a simple description', 0, 'en', 0, null, 1, 2, 1, 4, null);
 
 
-
--- Default mime policy
-INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, creation_date, modification_date) VALUES(1, 1, '3d6d8800-e0f7-11e3-8ec0-080027c0eef0', 'Default Mime Policy', 0, 0, now(), now());
-UPDATE domain_abstract SET mime_policy_id=1 WHERE id < 100000;
 
 
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
@@ -558,6 +262,126 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (62, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(30, false, 'NOTIFICATION_URL', 61, 62, 1); 
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'http://localhost:8080/linshare/');
 
+-- Functionality : UPLOAD_REQUEST
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (63, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (64, true, true, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(31, false, 'UPLOAD_REQUEST', 63, 64, 1);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (31, 'http://linshare-upload-request.local');
+
+-- Functionality : UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (65, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (66, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (67, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(32, false, 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION', 65, 66, 67, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO unit(id, unit_type, unit_value) VALUES (7, 0, 2);
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (32, 0, 7);
+
+-- Functionality : UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (68, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (69, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (70, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(33, false, 'UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION', 68, 69, 70, 1, 'UPLOAD_REQUEST', true);
+-- time unit : month
+ INSERT INTO unit(id, unit_type, unit_value) VALUES (8, 0, 2);
+-- month : 1 month
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (33, 1, 8);
+
+-- Functionality : UPLOAD_REQUEST__GROUPED_MODE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (71, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (72, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (73, false, false, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(34, false, 'UPLOAD_REQUEST__GROUPED_MODE', 71, 72, 73, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (34, false);
+
+-- Functionality : UPLOAD_REQUEST__MAXIMUM_FILE_COUNT
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (74, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (75, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (76, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(35, false, 'UPLOAD_REQUEST__MAXIMUM_FILE_COUNT', 74, 75, 76, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_integer(functionality_id, integer_value) VALUES (35, 3);
+
+-- Functionality : UPLOAD_REQUEST__MAXIMUM_FILE_SIZE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (77, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (78, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (79, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(36, false, 'UPLOAD_REQUEST__MAXIMUM_FILE_SIZE', 77, 78, 79, 1, 'UPLOAD_REQUEST', true);
+ -- file size unit : Mega
+INSERT INTO unit(id, unit_type, unit_value) VALUES (9, 1, 1);
+-- size : 10 Mega
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (36, 10, 9);
+
+-- Functionality : UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (80, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (81, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (82, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(37, false, 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE', 80, 81, 82, 1, 'UPLOAD_REQUEST', true);
+ -- file size unit : Mega
+INSERT INTO unit(id, unit_type, unit_value) VALUES (10, 1, 1);
+-- size : 30 Mega
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (37, 30, 10);
+
+-- Functionality : UPLOAD_REQUEST__NOTIFICATION_LANGUAGE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (83, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (84, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (85, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(38, false, 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE', 83, 84, 85, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (38, 'en');
+
+-- Functionality : UPLOAD_REQUEST__SECURED_URL
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (86, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (87, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (88, false, false, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(39, false, 'UPLOAD_REQUEST__SECURED_URL', 86, 87, 88, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (39, false);
+
+-- Functionality : UPLOAD_REQUEST__PROLONGATION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (89, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (90, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (91, false, false, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(40, false, 'UPLOAD_REQUEST__PROLONGATION', 89, 90, 91, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (40, false);
+
+-- Functionality : UPLOAD_REQUEST__CAN_DELETE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (92, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (93, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (94, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(41, false, 'UPLOAD_REQUEST__CAN_DELETE', 92, 93, 94, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (41, true);
+
+-- Functionality : UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (95, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (96, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (97, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(42, false, 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION', 95, 96, 97, 1, 'UPLOAD_REQUEST', true);
+-- time unit : day
+INSERT INTO unit(id, unit_type, unit_value) VALUES (11, 0, 0);
+-- time : 7 days
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (42, 7, 11);
+
+-- Functionality : UPLOAD_REQUEST__CAN_CLOSE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (98, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (99, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (100, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(43, false, 'UPLOAD_REQUEST__CAN_CLOSE', 98, 99, 100, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (43, true);
+
+ -- Functionality : UPLOAD_PROPOSITION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (101, false, false, 2, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (102, true, true, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id)
+ VALUES(44, false, 'UPLOAD_PROPOSITION', 101, 102, 1);
 
 
 
