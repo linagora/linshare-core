@@ -14,6 +14,12 @@ DROP INDEX mailing_list_contact_index ON mailing_list_contact;
 
 DROP TABLE technical_account_permission_account;
 
+CREATE TABLE functionality_boolean (
+  id               int(4) NOT NULL AUTO_INCREMENT, 
+  functionality_id bigint(8) NOT NULL, 
+  boolean_value    bit NOT NULL, 
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
+
 CREATE TABLE account_permission (
   id                              bigint(8) NOT NULL AUTO_INCREMENT, 
   technical_account_permission_id bigint(8) NOT NULL, 
