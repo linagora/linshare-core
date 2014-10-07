@@ -827,5 +827,5 @@ INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mai
 UPDATE domain_abstract SET mailconfig_id = 1;
 
 -- LinShare version
-INSERT INTO version (id,version) VALUES (1,'1.6.0');
+INSERT INTO version (id,version) VALUES (1,'1.7.0');
 
