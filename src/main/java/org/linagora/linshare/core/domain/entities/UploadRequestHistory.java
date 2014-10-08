@@ -73,7 +73,7 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 
 	private String locale;
 
-	private Boolean secured;
+	private boolean secured;
 
 	private Date creationDate;
 
@@ -246,11 +246,11 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 		this.locale = locale;
 	}
 
-	public Boolean isSecured() {
+	public boolean isSecured() {
 		return secured;
 	}
 
-	public void setSecured(Boolean secured) {
+	public void setSecured(boolean secured) {
 		this.secured = secured;
 	}
 
