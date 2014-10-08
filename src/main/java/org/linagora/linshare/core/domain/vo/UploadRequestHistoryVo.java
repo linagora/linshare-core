@@ -57,19 +57,19 @@ public class UploadRequestHistoryVo {
 
 	private Date notificationDate;
 
-	private long maxDepositSize;
+	private Long maxDepositSize;
 
-	private int maxFileCount;
+	private Integer maxFileCount;
 
-	private long maxFileSize;
+	private Long maxFileSize;
 
 	private String uploadPropositionUuid;
 
-	private boolean canDelete;
+	private Boolean canDelete;
 
-	private boolean canClose;
+	private Boolean canClose;
 
-	private boolean canEditExpiryDate;
+	private Boolean canEditExpiryDate;
 
 	private Language locale;
 
@@ -159,7 +159,7 @@ public class UploadRequestHistoryVo {
 		this.notificationDate = notificationDate;
 	}
 
-	public long getMaxDepositSize() {
+	public Long getMaxDepositSize() {
 		return maxDepositSize;
 	}
 
@@ -167,7 +167,7 @@ public class UploadRequestHistoryVo {
 		this.maxDepositSize = maxDepositSize;
 	}
 
-	public int getMaxFileCount() {
+	public Integer getMaxFileCount() {
 		return maxFileCount;
 	}
 
@@ -175,7 +175,7 @@ public class UploadRequestHistoryVo {
 		this.maxFileCount = maxFileCount;
 	}
 
-	public long getMaxFileSize() {
+	public Long getMaxFileSize() {
 		return maxFileSize;
 	}
 
@@ -191,7 +191,7 @@ public class UploadRequestHistoryVo {
 		this.uploadPropositionUuid = uploadPropositionUuid;
 	}
 
-	public boolean isCanDelete() {
+	public Boolean isCanDelete() {
 		return canDelete;
 	}
 
@@ -199,7 +199,7 @@ public class UploadRequestHistoryVo {
 		this.canDelete = canDelete;
 	}
 
-	public boolean isCanClose() {
+	public Boolean isCanClose() {
 		return canClose;
 	}
 
@@ -207,7 +207,7 @@ public class UploadRequestHistoryVo {
 		this.canClose = canClose;
 	}
 
-	public boolean isCanEditExpiryDate() {
+	public Boolean isCanEditExpiryDate() {
 		return canEditExpiryDate;
 	}
 

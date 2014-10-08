@@ -88,7 +88,7 @@ public class UploadRequestVo implements Cloneable {
 
 	private Language locale = Language.ENGLISH;
 
-	private Boolean secured;
+	private boolean secured;
 
 	private UserVo owner;
 
@@ -267,11 +267,11 @@ public class UploadRequestVo implements Cloneable {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
 
-	public Boolean getSecured() {
+	public boolean getSecured() {
 		return secured;
 	}
 
-	public void setSecured(Boolean secured) {
+	public void setSecured(boolean secured) {
 		this.secured = secured;
 	}
 

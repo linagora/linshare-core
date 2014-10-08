@@ -77,7 +77,7 @@ public class UploadRequest {
 
 	private String locale;
 
-	private Boolean secured;
+	private boolean secured;
 
 	private String mailMessageId;
 
@@ -286,11 +286,11 @@ public class UploadRequest {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
 
-	public Boolean isSecured() {
+	public boolean isSecured() {
 		return secured;
 	}
 
-	public void setSecured(Boolean secured) {
+	public void setSecured(boolean secured) {
 		this.secured = secured;
 	}
 }
