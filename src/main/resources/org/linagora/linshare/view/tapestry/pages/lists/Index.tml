@@ -53,6 +53,11 @@
 					 title="${list.identifier}">${list.identifier}</t:pageLink>
 			     </span>
 			 </t:parameter>
+			 <t:parameter name="descriptionCell">
+			     <div class="truncate">
+			         ${list.description}
+			     </div>
+			 </t:parameter>
 			 <t:parameter name="isPublicCell">
 			 	<t:if test="isPublic">
 			 	${message:pages.lists.radioGroupPub}
