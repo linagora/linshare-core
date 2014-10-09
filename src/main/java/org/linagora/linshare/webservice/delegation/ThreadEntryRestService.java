@@ -58,9 +58,6 @@ public interface ThreadEntryRestService {
 	public List<ThreadEntryDto> findAll(String ownerUuid, String threadUuid)
 			throws BusinessException;
 
-	public ThreadEntryDto update(String ownerUuid, String threadUuid,
-			ThreadEntryDto threadEntry) throws BusinessException;
-
 	public void delete(String ownerUuid, String threadUuid,
 			ThreadEntryDto threadEntry) throws BusinessException;
 

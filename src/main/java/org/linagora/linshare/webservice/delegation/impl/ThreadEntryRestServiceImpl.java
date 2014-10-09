@@ -166,23 +166,6 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/")
-	@PUT
-	@ApiOperation(value = "Update a thread entry.", response = ThreadEntryDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner or thread entry not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
-	@Override
-	public ThreadEntryDto update(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
-			@ApiParam(value = "The thread entry to update.", required = true) ThreadEntryDto threadEntry)
-					throws BusinessException {
-		return threadEntryFacade.update(ownerUuid, threadUuid, threadEntry);
-	}
-
-	@Path("/")
 	@DELETE
 	@ApiOperation(value = "Delete a thread entry.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,

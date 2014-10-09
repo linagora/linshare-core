@@ -207,7 +207,7 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 		User actor = findUser(actorVo);
 		ThreadEntry threadEntry = findEntry(actor, entryVo.getIdentifier());
 
-		threadEntryService.deleteThreadEntry(actor, threadEntry);
+		threadEntryService.deleteThreadEntry(actor, actor, threadEntry);
 	}
 
 	@Override
@@ -443,7 +443,7 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 
 	private ThreadEntry findEntry(User actor, String entryUuid)
 			throws BusinessException {
-		ThreadEntry e = threadEntryService.findById(actor, entryUuid);
+		ThreadEntry e = threadEntryService.findById(actor, actor, entryUuid);
 
 		if (e == null) {
 			throw new BusinessException(BusinessErrorCode.THREAD_ENTRY_NOT_FOUND,

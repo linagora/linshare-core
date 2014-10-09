@@ -57,9 +57,6 @@ public interface ThreadEntryFacade {
 	List<ThreadEntryDto> findAll(String ownerUuid, String threadUuid)
 			throws BusinessException;
 
-	ThreadEntryDto update(String ownerUuid, String threadUuid,
-			ThreadEntryDto threadEntry) throws BusinessException;
-
 	void delete(String ownerUuid, String threadUuid, ThreadEntryDto threadEntry)
 			throws BusinessException;
 

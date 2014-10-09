@@ -118,11 +118,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
-		DocumentEntry doc = documentEntryService.find(actor, owner, entryUuid);
-		InputStream stream = documentEntryService.getDocumentStream(actor,
-				owner, entryUuid);
-		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
-				owner, thread, stream, doc.getName());
+		ThreadEntry threadEntry = threadEntryService.findById(actor, actor, entryUuid);
 		return new ThreadEntryDto(threadEntry);
 	}
 
@@ -144,12 +140,6 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 	}
 
 	@Override
-	public ThreadEntryDto update(String ownerUuid, String threadUuid,
-			ThreadEntryDto threadEntry) throws BusinessException {
-		return null;
-	}
-
-	@Override
 	public void delete(String ownerUuid, String threadUuid,
 			ThreadEntryDto threadEntry) throws BusinessException {
 		delete(ownerUuid, threadUuid, threadEntry.getUuid());
@@ -158,6 +148,13 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 	@Override
 	public void delete(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(uuid, "Missing required entry uuid");
+
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+		ThreadEntry threadEntry = threadEntryService.findById(actor, actor, uuid);
+		threadEntryService.deleteThreadEntry(actor, owner, threadEntry);
 	}
 
 	@Override

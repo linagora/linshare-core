@@ -163,27 +163,35 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	}
 
 	@Override
-	public ThreadEntry findById(Account actor, String threadEntryUuid) throws BusinessException {
-		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(threadEntryUuid);
-		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User) actor)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document.");
-		}
+	public ThreadEntry findById(Account actor, Account owner, String threadEntryUuid) throws BusinessException {
+		ThreadEntry threadEntry = documentEntryBusinessService
+				.findThreadEntryById(threadEntryUuid);
+
+		threadEntryAC.checkReadPermission(actor, owner, threadEntry,
+				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN);
 		return threadEntry;
 	}
 
 	@Override
-	public void deleteThreadEntry(Account actor, ThreadEntry threadEntry) throws BusinessException {
-		Thread owner = (Thread)threadEntry.getEntryOwner();
+	public void deleteThreadEntry(Account actor, Account owner, ThreadEntry threadEntry) throws BusinessException {
+		Thread thread = (Thread) threadEntry.getEntryOwner();
 		try {
-			if (!this.isAdmin(owner, (User) actor)) {
-				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document.");
-			}
-			ThreadLogEntry log = new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_REMOVE_ENTRY, "Deleting a thread entry.");
+			threadEntryAC.checkDeletePermission(actor, owner, threadEntry,
+					BusinessErrorCode.THREAD_ENTRY_FORBIDDEN);
+
+			ThreadLogEntry log = new ThreadLogEntry(owner, threadEntry,
+					LogAction.THREAD_REMOVE_ENTRY, "Deleting a thread entry.");
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
 			logEntryService.create(log);
 		} catch (IllegalArgumentException e) {
-			logger.error("Could not delete thread entry " + threadEntry.getUuid() + " in thread " + owner.getLsUuid() + " by account " + actor.getLsUuid()+ ", reason : ", e);
-			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
+			logger.error(
+					"Could not delete thread entry " + threadEntry.getUuid()
+							+ " in thread " + thread.getLsUuid()
+							+ " by account " + owner.getLsUuid()
+							+ ", reason : ", e);
+			throw new TechnicalException(
+					TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT,
+					"Could not delete document");
 		}
 	}
 

@@ -47,9 +47,9 @@ public interface ThreadEntryService {
 	
 	public ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, InputStream stream, String filename) throws BusinessException;
 	
-	public ThreadEntry findById(Account actor, String threadEntryUuid) throws BusinessException;
+	public ThreadEntry findById(Account actor, Account owner, String threadEntryUuid) throws BusinessException;
 	
-	public void deleteThreadEntry(Account actor, ThreadEntry threadEntry) throws BusinessException;
+	public void deleteThreadEntry(Account actor, Account owner, ThreadEntry threadEntry) throws BusinessException;
 	
 	public void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException;
 	
