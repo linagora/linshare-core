@@ -419,6 +419,14 @@ table.t-data-grid tbody td {
 	width: 41em;
 }
 
-
-
+div#rights {
+	background-color: #dddddd; /* used to simulate transparency */
+	border: solid 1px #ffffff;
+	zoom: 1;
+   	filter: progid:DXImageTransform.Microsoft.Shadow(Color=#555555, Strength=0, Direction=0), /* Shadow on the top*/
+            progid:DXImageTransform.Microsoft.Shadow(Color=#555555, Strength=2, Direction=90), /* Shadow on the right*/
+            progid:DXImageTransform.Microsoft.Shadow(Color=#555555, Strength=2, Direction=180), /* Shadow on the bottom*/ 
+            progid:DXImageTransform.Microsoft.Shadow(Color=#555555, Strength=2, Direction=270), /* Shadow on the left*/
+            progid:DXImageTransform.Microsoft.Chroma(Color='#dddddd'); /* delete background color to simulate transparency*/
+}
 /***************************************************************************/
