@@ -103,7 +103,7 @@ public class MailCompletionService {
 	 * @return
 	 */
 	public static List<String> parseEmails(final String recipientsList) {
-		String[] recipients = recipientsList.replaceAll(";", ",").split(",");
+		String[] recipients = recipientsList.split(",");
 		ArrayList<String> emails = new ArrayList<String> ();
 		
 		for (String oneUser : recipients) {
