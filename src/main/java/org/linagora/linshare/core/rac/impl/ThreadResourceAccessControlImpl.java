@@ -77,7 +77,6 @@ public class ThreadResourceAccessControlImpl extends
 			Thread entry, Object... opt) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);
-		Validate.notNull(entry);
 
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,

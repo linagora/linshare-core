@@ -60,15 +60,6 @@ UPDATE domain_abstract SET mailconfig_id = 1;
 UPDATE domain_abstract SET mime_policy_id=1;
 
 
-
-
-
-
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id)
-	VALUES (40, 4, 'fff38827-490a-4654-86a6-57b61611b42d', now(),now(), 4, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
-INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST)
-	VALUES (40, null, 'Technical Account for test', 'delegation.test@int1.linshare.dev', false, '', false, false);
-
 -- Technical account with Delegation Role for delegation API.
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id)
 	VALUES (5, 4, '59236bed-7e4d-4f98-99d9-5c1dd6b503d4', now(),now(), 4, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
@@ -76,17 +67,57 @@ INSERT INTO users(account_id, first_name, last_name, mail, can_upload, comment, 
 	VALUES (5, null, 'Delegation Account', 'delegation@int1.linshare.dev', false, '', false, false);
 
 -- Technical account permission for delegation account.
-INSERT INTO technical_account_permission (id, uuid, creation_date, modification_date) VALUES (40, 'fbba4e41-ca60-4f09-8d59-fbfe052acb82', current_timestamp(3), current_timestamp(3));
+INSERT INTO technical_account_permission (id, uuid, creation_date, modification_date) VALUES (40, 'fbba4e41-ca60-4f09-8d59-fbfe052acb82', now(), now());
 
--- Technical account permissions
-INSERT INTO account_permission VALUES (1, 40, 'DOCUMENT_ENTRIES_LIST');
-INSERT INTO account_permission VALUES (nextval('hibernate_sequence'), 40, 'GUESTS_LIST');
-
-
--- Association between delegation account and delegationpermissions
-UPDATE account SET technical_account_permission_id = 40 where id=5;
-
-
+UPDATE account SET technical_account_permission_id = 40 where id = 5;
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'GUESTS_LIST');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'GUESTS_GET');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'GUESTS_CREATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'GUESTS_UPDATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'GUESTS_DELETE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'DOCUMENT_ENTRIES_LIST');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'DOCUMENT_ENTRIES_GET');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'DOCUMENT_ENTRIES_CREATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'DOCUMENT_ENTRIES_UPDATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'DOCUMENT_ENTRIES_DELETE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'DOCUMENT_ENTRIES_DOWNLOAD');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'DOCUMENT_ENTRIES_DOWNLOAD_THUMBNAIL');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'SHARE_ENTRIES_LIST');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'SHARE_ENTRIES_GET');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'SHARE_ENTRIES_CREATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'SHARE_ENTRIES_UPDATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'SHARE_ENTRIES_DELETE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'SHARE_ENTRIES_DOWNLOAD');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'SHARE_ENTRIES_DOWNLOAD_THUMBNAIL');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'ANONYMOUS_SHARE_ENTRIES_LIST');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'ANONYMOUS_SHARE_ENTRIES_GET');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'ANONYMOUS_SHARE_ENTRIES_CREATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'ANONYMOUS_SHARE_ENTRIES_UPDATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'ANONYMOUS_SHARE_ENTRIES_DELETE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'ANONYMOUS_SHARE_ENTRIES_DOWNLOAD');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'ANONYMOUS_SHARE_ENTRIES_DOWNLOAD_THUMBNAIL');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREADS_LIST');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREADS_GET');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREADS_CREATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREADS_UPDATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREADS_DELETE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREAD_MEMBERS_LIST');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREAD_MEMBERS_GET');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREAD_MEMBERS_CREATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREAD_MEMBERS_UPDATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREAD_MEMBERS_DELETE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREAD_ENTRIES_LIST');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREAD_ENTRIES_GET');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREAD_ENTRIES_CREATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREAD_ENTRIES_UPDATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREAD_ENTRIES_DELETE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREAD_ENTRIES_DOWNLOAD');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'THREAD_ENTRIES_DOWNLOAD_THUMBNAIL');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'LISTS_LIST');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'LISTS_GET');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'LISTS_CREATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'LISTS_UPDATE');
+INSERT INTO account_permission (id, technical_account_permission_id, permission) VALUES ((SELECT nextVal('hibernate_sequence')), 40, 'LISTS_DELETE');
 
 
 -- Users
