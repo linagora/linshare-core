@@ -36,6 +36,7 @@ package org.linagora.linshare.view.tapestry.pages.lists;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
@@ -137,6 +138,8 @@ public class DisplayMailingList {
 
 	@InjectPage
 	private org.linagora.linshare.view.tapestry.pages.lists.Index index;
+	
+	private final Integer truncatedValue = 40;
 
 	@SetupRender
 	public void init() throws BusinessException {
@@ -266,5 +269,10 @@ public class DisplayMailingList {
 
 	public boolean isInModify() {
 		return inModify;
+	}
+	
+	public String getTruncatedMailingListIdentifier() {
+		String result = StringUtils.abbreviate(mailingListVo.getIdentifier(), truncatedValue);
+		return result;
 	}
 }
