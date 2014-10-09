@@ -163,8 +163,9 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	@Override
 	public List<ThreadEntryVo> getAllThreadEntryVo(UserVo actorVo,
 			ThreadVo threadVo) throws BusinessException {
-		return toThreadEntryVo(threadEntryService.findAllThreadEntries(
-				findUser(actorVo), findThread(threadVo)));
+		Account actor = findUser(actorVo);
+		return toThreadEntryVo(threadEntryService.findAllThreadEntries(actor,
+				actor, findThread(threadVo)));
 	}
 
 	@Override

@@ -201,9 +201,12 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	}
 
 	@Override
-	public List<ThreadEntry> findAllThreadEntries(Account actor, Thread thread) throws BusinessException {
-		if (!this.isThreadMember(thread, (User) actor)) {
-			if(!actor.hasSuperAdminRole()) {
+	public List<ThreadEntry> findAllThreadEntries(Account actor, Account owner, Thread thread) throws BusinessException {
+		threadEntryAC.checkListPermission(actor, owner, ThreadEntry.class,
+				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN);
+
+		if (!this.isThreadMember(thread, (User) owner)) {
+			if(!owner.hasSuperAdminRole()) {
 				return new ArrayList<ThreadEntry>();
 			}
 		}

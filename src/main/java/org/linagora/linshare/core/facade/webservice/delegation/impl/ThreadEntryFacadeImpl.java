@@ -53,6 +53,8 @@ import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.ThreadEntryDto;
 
+import com.google.common.collect.Lists;
+
 public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		implements ThreadEntryFacade {
 
@@ -127,7 +129,18 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 	@Override
 	public List<ThreadEntryDto> findAll(String ownerUuid, String threadUuid)
 			throws BusinessException {
-		return null;
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
+		List<ThreadEntryDto> ret = Lists.newArrayList();
+
+		for (ThreadEntry t : threadEntryService.findAllThreadEntries(actor, owner, thread)) {
+			ret.add(new ThreadEntryDto(t));
+		}
+		return ret;
 	}
 
 	@Override

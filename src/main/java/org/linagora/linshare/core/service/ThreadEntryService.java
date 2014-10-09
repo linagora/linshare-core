@@ -53,7 +53,7 @@ public interface ThreadEntryService {
 	
 	public void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException;
 	
-	public List<ThreadEntry> findAllThreadEntries(Account actor, Thread thread) throws BusinessException;
+	public List<ThreadEntry> findAllThreadEntries(Account actor, Account owner, Thread thread) throws BusinessException;
 
 	public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException;
 
