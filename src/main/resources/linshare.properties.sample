@@ -45,15 +45,6 @@ linshare.db.hbm2ddl.auto=validate
 
 
 #******************** GENERAL PROPERTIES
-
-#max input type file slots in upload form
-linshare.default.maxUpload=10
-#Maximum size (in bytes) of a single upload request Defaults to -1 (no limit).
-linshare.default.maxUploadSize=-1
-#linshare url which is used in mail templates. give a different internal url if internal
-# user connect with a different url (e.g. CAS url)
-#directory of the jws application to decrypt document (jwsDecrypt.jar)
-javawebstart.decrypt.url.suffixcodebase=applet
 #set to true in tapestry production environnement
 linshare.productionMode=true
 #local work directory to encrypt/decrypt data
@@ -78,19 +69,11 @@ webservice.attachment-directory=/tmp/
 
 
 #******************** SSO 
-sso.button.hide=true
-# extra config for CAS sso (disable springContext-security and use configuration springContext-securityCAS.xml)
-sso.cas.url=http://localhost:8081/cas-server-webapp-3.3.5
-sso.cas.url.login=http://localhost:8081/cas-server-webapp-3.3.5/login
-sso.cas.url.serviceId=http://localhost:8080/linshare/j_spring_cas_security_check
+# sso.button.hide=true
 # LemonLDAP::NG / SiteMinder HTTP request authenticator
 sso.header.user=Auth-User
 # comma separated list of ip address to be trusted :  
 sso.header.allowfrom=127.0.0.1
-
-
-#******** TSA Authority (optional)
-tsa.url=http://localhost:8080/signserver/tsa?signerId=1
 
 
 #******************** Syntax for CRON
