@@ -909,7 +909,10 @@ div#rights a {
 #searchWidget > div form input[type="submit"][name="resetSimple"] {
 	background-image: url('../images/icons/reset-small.png');
 }
-
+#searchWidget #sharedFrom{
+  width:100%;
+  display: block;
+}
 
 /* Specific > Files */
 
