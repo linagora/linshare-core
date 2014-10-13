@@ -317,7 +317,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public TimeUnitValueFunctionality getUploadRequestNotificationTimeFunctionality(
 			AbstractDomain domain) {
-		return (TimeUnitValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION);
+		return new TimeUnitValueFunctionality((UnitValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION));
 	}
 
 	@Override

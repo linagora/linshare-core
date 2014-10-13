@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -230,11 +231,14 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 
 	private void checkExpiryAndNoticationDate(AbstractDomain domain,
 			UploadRequest req) {
-		TimeUnitValueFunctionality func = functionalityService
+		TimeUnitValueFunctionality funcExpiry = functionalityService
 				.getUploadRequestExpiryTimeFunctionality(domain);
-		Date checkDate = checkDate(func, req.getExpiryDate());
-		req.setExpiryDate(checkDate);
-		req.setNotificationDate(checkDate);
+		TimeUnitValueFunctionality funcNotify = functionalityService
+				.getUploadRequestNotificationTimeFunctionality(domain);
+		Date expiryDate = checkDate(funcExpiry, req.getExpiryDate());
+		req.setExpiryDate(expiryDate);
+		Date notifDate =  checkDate(funcNotify, req.getExpiryDate()); // Must have a setted value in order to return a value not null
+		req.setNotificationDate(notifDate);
 	}
 
 	private void checkNotificationLanguage(AbstractDomain domain,
@@ -469,12 +473,22 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	@Override
 	public UploadRequest updateRequest(Account actor, UploadRequest req)
 			throws BusinessException {
-		UploadRequestHistory last = Collections.max(Lists.newArrayList(req
-				.getUploadRequestHistory()));
+		if(req.getUploadRequestHistory() != null && Lists.newArrayList(req
+				.getUploadRequestHistory()) != null && ! Lists.newArrayList(req
+						.getUploadRequestHistory()).isEmpty()) {
+			UploadRequestHistory last = Collections.max(Lists.newArrayList(req
+					.getUploadRequestHistory()));
 		UploadRequestHistory hist = new UploadRequestHistory(req,
 				UploadRequestHistoryEventType.fromStatus(req.getStatus()),
 				!last.getStatus().equals(req.getStatus()));
 		req.getUploadRequestHistory().add(hist);
+		}
+		else {
+			UploadRequestHistory hist = new UploadRequestHistory(req,
+					UploadRequestHistoryEventType.fromStatus(req.getStatus()),
+					false);
+			req.getUploadRequestHistory().add(hist);
+		}
 		return uploadRequestBusinessService.update(req);
 	}
 

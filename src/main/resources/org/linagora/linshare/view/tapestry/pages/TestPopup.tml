@@ -116,7 +116,8 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"> -->
 	<br/>
 	<t:actionlink t:id="checkDocumentsMimeType">checkDocumentsMimeType</t:actionlink>
 	<br/>
-	
+	<t:actionlink t:id="uploadRequestUpdateStatus">uploadRequestUpdateStatus</t:actionlink>
+	<br/>
     <t:form t:id="dateTest">
         <t:datefield t:id="date" />       
     </t:form>
