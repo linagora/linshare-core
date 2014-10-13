@@ -54,6 +54,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.SelectModelFactory;
 import org.linagora.linshare.core.batches.DocumentManagementBatch;
 import org.linagora.linshare.core.batches.ShareManagementBatch;
+import org.linagora.linshare.core.batches.UploadRequestBatch;
 import org.linagora.linshare.core.batches.UserManagementBatch;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -173,6 +174,9 @@ public class TestPopup {
 	@Inject
 	private DocumentManagementBatch documentManagementBatch;
 	
+	@Inject
+	private UploadRequestBatch uploadRequestBatch;
+
 	void onActionFromCleanOutDatedShares()
 	{
 		logger.debug("begin method onActionFromCleanOutDatedShares");
@@ -201,6 +205,12 @@ public class TestPopup {
 		logger.debug("endmethod onActionFromCheckDocumentsMimeType");
 	}
 
+	void onActionFromUploadRequestUpdateStatus()
+	{
+		logger.debug("begin method onActionFromUploadRequestUpdateStatus");
+		uploadRequestBatch.updateStatus();
+		logger.debug("endmethod onActionFromUploadRequestUpdateStatus");
+	}
 
 	/**
 	 * Testing tapestry-tagselect

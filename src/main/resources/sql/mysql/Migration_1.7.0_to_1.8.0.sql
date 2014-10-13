@@ -17,6 +17,7 @@ ALTER TABLE entry
 -- LinShare version
 INSERT INTO version (version) VALUES ('1.8.0');
 
+UPDATE mail_content set subject='L’invitation de dépôt: ${subject}, va expirer' WHERE id=71 OR id=72;
 
 COMMIT;
 SET AUTOCOMMIT=1;
