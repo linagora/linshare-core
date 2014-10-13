@@ -191,7 +191,7 @@ public class UploadRequestHistoryVo {
 		this.uploadPropositionUuid = uploadPropositionUuid;
 	}
 
-	public Boolean isCanDelete() {
+	public Boolean getCanDelete() {
 		return canDelete;
 	}
 
@@ -199,7 +199,7 @@ public class UploadRequestHistoryVo {
 		this.canDelete = canDelete;
 	}
 
-	public Boolean isCanClose() {
+	public Boolean getCanClose() {
 		return canClose;
 	}
 
