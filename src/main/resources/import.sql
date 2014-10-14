@@ -23,7 +23,6 @@ INSERT INTO domain_abstract(id, type , identifier, label, enable, template, desc
 
 -- Default mime policy
 INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, creation_date, modification_date) VALUES(1, 1, '3d6d8800-e0f7-11e3-8ec0-080027c0eef0', 'Default Mime Policy', 0, 0, now(), now());
-UPDATE domain_abstract SET mime_policy_id=1 WHERE id < 100000;
 
 INSERT INTO ldap_connection(ldap_connection_id, identifier, provider_url, security_auth, security_principal, security_credentials) VALUES (1, 'baseLDAP', 'ldap://localhost:33389', 'simple', '', '');
 
@@ -55,6 +54,7 @@ INSERT INTO domain_abstract(id, type , identifier, label, enable, template, desc
 -- Guest domain (example domain)
 INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, messages_configuration_id, auth_show_order, mailconfig_id) VALUES (4, 3, 'GuestDomain', 'GuestDomain', true, false, 'a simple description', 0, 'en', 0, null, 1, 2, 1, 4, null);
 
+UPDATE domain_abstract SET mime_policy_id=1 WHERE id < 100000;
 
 
 
@@ -79,6 +79,7 @@ INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date,
 -- Functionality : FILESIZE_MAX
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (1, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (2, true, true, 1, false);
+-- if a functionality is system, you will not be able see/modify its parameters
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (1, false, 'FILESIZE_MAX', 1, 2, 1);
 INSERT INTO unit(id, unit_type, unit_value) VALUES (1, 1, 1);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (1, 10, 1);
@@ -204,8 +205,7 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (37, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (38, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (19, true, 'TAB_USER', 37, 38, 1);
 
-
--- Functionality : SECURE_URL
+-- Functionality : SECURED_ANONYMOUS_URL
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (41, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (42, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (21, true, 'SECURED_ANONYMOUS_URL', 41, 42, 1);
@@ -217,11 +217,10 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (44, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (22, false, 'SHARE_NOTIFICATION_BEFORE_EXPIRATION', 43, 44, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (22, '2,7');
 
-
 -- Functionality : TAB_THREAD
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (45, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (46, false, false, 1, true);
--- if a functionality is system, you will not be hable see/modify its parameters
+-- if a functionality is system, you will not be able see/modify its parameters
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (23, true, 'TAB_THREAD', 45, 46, 1);
 
 -- Functionality : RESTRICTED_GUEST

@@ -149,7 +149,7 @@ INSERT INTO users(account_id, first_name, last_name, mail, can_upload, comment, 
 -- Functionality : FILESIZE_MAX
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (1, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (2, true, true, 1, false);
--- if a functionality is system, you will not be hable see/modify its parameters
+-- if a functionality is system, you will not be able see/modify its parameters
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (1, false, 'FILESIZE_MAX', 1, 2, 1);
 INSERT INTO unit(id, unit_type, unit_value) VALUES (1, 1, 1);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (1, 10, 1);
@@ -280,7 +280,6 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (41, false
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (42, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (21, true, 'SECURED_ANONYMOUS_URL', 41, 42, 1);
 
-
 -- Functionality : SHARE_NOTIFICATION_BEFORE_EXPIRATION
 -- Policies : MANDATORY(0), ALLOWED(1), FORBIDDEN(2)
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (43, true, true, 0, true);
@@ -293,7 +292,6 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (45, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (46, false, false, 1, true);
 -- if a functionality is system, you will not be able see/modify its parameters
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (23, true, 'TAB_THREAD', 45, 46, 1);
-
 
 -- Functionality : RESTRICTED_GUEST
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (47, false, false, 1, false);
@@ -333,14 +331,11 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (62, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(30, false, 'NOTIFICATION_URL', 61, 62, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'http://localhost:8080/linshare/');
 
-
 -- Functionality : UPLOAD_REQUEST
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (63, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (64, true, true, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(31, false, 'UPLOAD_REQUEST', 63, 64, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (31, 'http://linshare-upload-request.local');
-
-
 
 -- Functionality : UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (65, true, true, 1, false);
