@@ -60,6 +60,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                                 <t:checkbox t:id="secureSharing" />
                                 <span class="help-inline">
                                 ${message:pages.files.upload.secureSharing.description}</span>
+                                <p class="help-block">${message:pages.files.upload.message.secureSharing.help}</p>
                             </label>
                         </div>
                     </t:if>
