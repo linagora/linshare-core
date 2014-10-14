@@ -239,6 +239,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                                 <span class="help-inline">
                                 ${message:pages.files.upload.secureSharing.description}</span>
                             </label>
+                            <p class="help-block">${message:pages.files.upload.message.secureSharing.help}</p>
                         </div>
                     </t:if>
                 </div>
