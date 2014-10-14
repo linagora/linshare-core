@@ -43,6 +43,7 @@ import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.user.AuthenticationRestService;
 
+@Path("/authentication")
 public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
 
 	private final UserFacade webServiceUserFacade;

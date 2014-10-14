@@ -38,8 +38,6 @@ import java.util.Set;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
 
-import javax.ws.rs.PathParam;
-
 public interface LDAPConnectionRestService {
 
 	Set<LDAPConnectionDto> findAll() throws BusinessException;
