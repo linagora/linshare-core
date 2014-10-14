@@ -47,9 +47,9 @@ import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.dto.GenericUserDto;
-import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

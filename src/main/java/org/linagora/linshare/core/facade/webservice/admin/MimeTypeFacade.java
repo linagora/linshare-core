@@ -34,7 +34,7 @@
 package org.linagora.linshare.core.facade.webservice.admin;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.MimeTypeDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 
 public interface MimeTypeFacade extends AdminGenericFacade {
 

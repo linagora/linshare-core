@@ -35,7 +35,7 @@
 package org.linagora.linshare.core.facade.webservice.user;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.GuestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 
 public interface GuestFacade {
 

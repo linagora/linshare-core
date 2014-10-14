@@ -48,10 +48,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailingListFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailingListRestService;
-import org.linagora.linshare.webservice.dto.MailingListContactDto;
-import org.linagora.linshare.webservice.dto.MailingListDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

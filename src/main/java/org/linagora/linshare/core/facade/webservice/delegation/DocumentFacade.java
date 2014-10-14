@@ -38,7 +38,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.delegation.dto.DocumentDto;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.DocumentDto;
 
 public interface DocumentFacade extends DelegationGenericFacade {
 

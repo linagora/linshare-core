@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.linagora.linshare.core.domain.vo.DomainPatternVo;
-import org.linagora.linshare.webservice.dto.DomainPatternDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPatternDto;
 
 public class DomainPattern {
     /**

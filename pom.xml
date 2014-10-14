@@ -1331,7 +1331,7 @@
 						<configuration>
 							<apiSources>
 								<apiSource>
-									<locations>org.linagora.linshare.webservice.dto;org.linagora.linshare.webservice</locations>
+									<locations>org.linagora.linshare.core.facade.webservice.common.dto;org.linagora.linshare.webservice</locations>
 									<apiVersion>v1</apiVersion>
 									<basePath>http://localhost:8080/linshare/webservice</basePath>
 									<outputTemplate>

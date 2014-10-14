@@ -51,12 +51,12 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
+import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.SimpleLongValue;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.dto.MimeTypeDto;
-import org.linagora.linshare.webservice.dto.SimpleLongValue;
 import org.linagora.linshare.webservice.user.DocumentRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 

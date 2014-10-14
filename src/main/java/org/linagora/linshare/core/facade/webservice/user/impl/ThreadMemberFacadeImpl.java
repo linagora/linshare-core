@@ -39,10 +39,10 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
 import org.linagora.linshare.core.facade.webservice.user.ThreadMemberFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ThreadService;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

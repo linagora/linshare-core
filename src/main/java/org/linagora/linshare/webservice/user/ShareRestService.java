@@ -41,7 +41,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.ShareDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 
 /**
  * Interface for the Share service REST jaxRS interface Allows for creation of a

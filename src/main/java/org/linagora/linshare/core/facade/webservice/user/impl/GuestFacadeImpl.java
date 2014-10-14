@@ -39,11 +39,11 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
-import org.linagora.linshare.webservice.dto.GenericUserDto;
-import org.linagora.linshare.webservice.dto.GuestDto;
 
 public class GuestFacadeImpl extends UserGenericFacadeImp implements GuestFacade {
 

@@ -49,11 +49,11 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailConfigFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailConfigDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailFooterDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailConfigRestService;
-import org.linagora.linshare.webservice.dto.MailConfigDto;
-import org.linagora.linshare.webservice.dto.MailContentDto;
-import org.linagora.linshare.webservice.dto.MailFooterDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

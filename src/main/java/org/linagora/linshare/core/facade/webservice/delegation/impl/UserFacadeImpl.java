@@ -36,11 +36,11 @@ package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.delegation.UserFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.webservice.dto.GenericUserDto;
-import org.linagora.linshare.webservice.dto.PasswordDto;
 
 public class UserFacadeImpl extends DelegationGenericFacadeImpl implements
 		UserFacade {

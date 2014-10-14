@@ -40,7 +40,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.delegation.dto.DocumentDto;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.DocumentDto;
 
 /**
  * REST jaxRS interface

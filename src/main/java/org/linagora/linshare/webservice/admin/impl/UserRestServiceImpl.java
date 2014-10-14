@@ -49,10 +49,10 @@ import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UserRestService;
-import org.linagora.linshare.webservice.dto.UserDto;
-import org.linagora.linshare.webservice.dto.UserSearchDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

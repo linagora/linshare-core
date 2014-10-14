@@ -46,8 +46,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ThreadMemberFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
 import org.linagora.linshare.webservice.admin.ThreadMemberRestService;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

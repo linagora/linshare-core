@@ -48,9 +48,9 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPatternFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPatternDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.DomainPatternRestService;
-import org.linagora.linshare.webservice.dto.DomainPatternDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

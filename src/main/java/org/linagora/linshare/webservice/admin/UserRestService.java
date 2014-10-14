@@ -38,8 +38,8 @@ import java.util.Set;
 import javax.ws.rs.Path;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.UserDto;
-import org.linagora.linshare.webservice.dto.UserSearchDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 
 @Path("/users")
 public interface UserRestService {

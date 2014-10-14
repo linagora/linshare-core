@@ -42,10 +42,10 @@ import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.TechnicalAccountFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
-import org.linagora.linshare.webservice.dto.PasswordDto;
-import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
 
 import com.google.common.collect.Sets;
 

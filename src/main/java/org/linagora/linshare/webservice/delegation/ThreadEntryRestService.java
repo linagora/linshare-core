@@ -41,7 +41,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.ThreadEntryDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
 
 public interface ThreadEntryRestService {
 

@@ -43,10 +43,10 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailFooterFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailFooterDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
-import org.linagora.linshare.webservice.dto.MailFooterDto;
 
 public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 		MailFooterFacade {

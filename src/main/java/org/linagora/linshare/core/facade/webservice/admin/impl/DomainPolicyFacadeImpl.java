@@ -50,11 +50,11 @@ import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPolicyFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.DomainAccessPolicyDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.DomainAccessRuleDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPolicyDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
-import org.linagora.linshare.webservice.dto.DomainAccessPolicyDto;
-import org.linagora.linshare.webservice.dto.DomainAccessRuleDto;
-import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
 public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		DomainPolicyFacade {

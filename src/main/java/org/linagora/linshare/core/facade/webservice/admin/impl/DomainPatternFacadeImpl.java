@@ -42,9 +42,9 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPatternFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPatternDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserProviderService;
-import org.linagora.linshare.webservice.dto.DomainPatternDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

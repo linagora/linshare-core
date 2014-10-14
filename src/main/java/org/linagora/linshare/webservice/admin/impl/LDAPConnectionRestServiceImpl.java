@@ -47,9 +47,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.LDAPConnectionFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPConnectionDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.LDAPConnectionRestService;
-import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

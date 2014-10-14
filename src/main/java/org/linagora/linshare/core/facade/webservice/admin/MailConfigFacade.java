@@ -36,9 +36,9 @@ package org.linagora.linshare.core.facade.webservice.admin;
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.MailConfigDto;
-import org.linagora.linshare.webservice.dto.MailContentDto;
-import org.linagora.linshare.webservice.dto.MailFooterDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailConfigDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailFooterDto;
 
 public interface MailConfigFacade extends AdminGenericFacade {
 

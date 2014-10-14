@@ -41,10 +41,10 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.dto.MimeTypeDto;
-import org.linagora.linshare.webservice.dto.SimpleLongValue;
+import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
+import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.SimpleLongValue;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 /**
  * REST jaxRS interface

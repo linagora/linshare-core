@@ -37,7 +37,7 @@ import java.io.InputStream;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.FineUploaderDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.FineUploaderDto;
 
 public interface FineUploaderService {
 

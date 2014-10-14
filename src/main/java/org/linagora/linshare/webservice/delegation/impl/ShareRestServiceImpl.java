@@ -45,10 +45,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.delegation.ShareFacade;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegation.ShareRestService;
-import org.linagora.linshare.webservice.delegation.dto.ShareCreationDto;
-import org.linagora.linshare.webservice.delegation.dto.ShareDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

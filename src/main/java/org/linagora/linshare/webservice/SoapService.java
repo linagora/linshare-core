@@ -38,12 +38,12 @@ import java.util.List;
 import javax.jws.WebService;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.dto.ShareDto;
-import org.linagora.linshare.webservice.dto.SimpleLongValue;
-import org.linagora.linshare.webservice.dto.ThreadDto;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
-import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.SimpleLongValue;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 /**
  * Soap interface

@@ -36,7 +36,7 @@ package org.linagora.linshare.core.facade.webservice.user;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 public interface UserFacade extends GenericFacade {
 

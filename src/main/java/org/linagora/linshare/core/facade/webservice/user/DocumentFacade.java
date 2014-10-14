@@ -37,9 +37,9 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.dto.MimeTypeDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
+import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 
 public interface DocumentFacade extends GenericFacade {

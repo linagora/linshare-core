@@ -37,7 +37,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.ShareDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 
 
 public interface ShareFacade extends GenericFacade {

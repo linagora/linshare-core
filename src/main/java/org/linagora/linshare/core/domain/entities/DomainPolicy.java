@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.webservice.dto.DomainPolicyDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPolicyDto;
 
 public class DomainPolicy {
 

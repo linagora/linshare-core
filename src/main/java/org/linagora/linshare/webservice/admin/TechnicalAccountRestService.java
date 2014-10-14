@@ -36,8 +36,8 @@ package org.linagora.linshare.webservice.admin;
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.PasswordDto;
-import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountDto;
 
 public interface TechnicalAccountRestService {
 

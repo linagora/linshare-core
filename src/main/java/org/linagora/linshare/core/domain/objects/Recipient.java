@@ -37,8 +37,8 @@ package org.linagora.linshare.core.domain.objects;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.webservice.dto.GenericUserDto;
-import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 public class Recipient {
 

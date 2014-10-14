@@ -51,13 +51,13 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.SimpleStringValue;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.utils.StringPredicates;
 import org.linagora.linshare.webservice.PluginCompatibilityRestService;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.dto.SimpleStringValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

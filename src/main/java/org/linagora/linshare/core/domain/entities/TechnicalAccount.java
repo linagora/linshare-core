@@ -36,7 +36,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountDto;
 
 public class TechnicalAccount extends User {
 

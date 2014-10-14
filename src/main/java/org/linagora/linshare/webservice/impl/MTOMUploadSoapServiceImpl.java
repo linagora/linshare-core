@@ -41,11 +41,11 @@ import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.ws.soap.MTOM;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.webservice.MTOMUploadSoapService;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
 
 /**
  * All CXF Outbound Message will be using multipart format.

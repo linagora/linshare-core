@@ -38,7 +38,7 @@ import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
-import org.linagora.linshare.webservice.dto.DomainDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
 
 public enum DomainType {
 

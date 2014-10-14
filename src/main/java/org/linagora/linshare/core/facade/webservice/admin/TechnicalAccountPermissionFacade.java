@@ -34,8 +34,8 @@
 package org.linagora.linshare.core.facade.webservice.admin;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountPermissionDto;
 import org.linagora.linshare.core.facade.webservice.delegation.DelegationGenericFacade;
-import org.linagora.linshare.webservice.dto.TechnicalAccountPermissionDto;
 
 public interface TechnicalAccountPermissionFacade extends DelegationGenericFacade {
 

@@ -38,7 +38,7 @@ import java.util.Properties;
 import javax.naming.Context;
 
 import org.linagora.linshare.core.domain.vo.LDAPConnectionVo;
-import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPConnectionDto;
 
 public class LDAPConnection {
 	/**

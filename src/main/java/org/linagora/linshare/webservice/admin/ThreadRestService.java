@@ -37,8 +37,8 @@ package org.linagora.linshare.webservice.admin;
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.ThreadDto;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
 
 public interface ThreadRestService {
 

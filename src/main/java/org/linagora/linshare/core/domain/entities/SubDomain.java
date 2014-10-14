@@ -36,7 +36,7 @@ package org.linagora.linshare.core.domain.entities;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.vo.SubDomainVo;
-import org.linagora.linshare.webservice.dto.DomainDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
 
 public class SubDomain extends AbstractDomain {
 

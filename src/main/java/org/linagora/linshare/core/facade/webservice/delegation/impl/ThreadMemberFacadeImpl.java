@@ -41,11 +41,11 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
 import org.linagora.linshare.core.facade.webservice.delegation.ThreadMemberFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
 import com.google.common.collect.Lists;
 

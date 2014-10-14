@@ -44,10 +44,10 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.AuthenticationRestService;
-import org.linagora.linshare.webservice.dto.PasswordDto;
-import org.linagora.linshare.webservice.dto.UserDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

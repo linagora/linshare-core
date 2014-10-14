@@ -43,9 +43,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailContentLangFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentLangDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailContentLangRestService;
-import org.linagora.linshare.webservice.dto.MailContentLangDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

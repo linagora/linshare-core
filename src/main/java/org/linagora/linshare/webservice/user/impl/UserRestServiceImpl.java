@@ -41,9 +41,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.dto.UserDto;
 import org.linagora.linshare.webservice.user.UserRestService;
 
 public class UserRestServiceImpl extends WebserviceBase implements UserRestService {

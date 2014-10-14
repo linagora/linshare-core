@@ -42,9 +42,9 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.LDAPConnectionFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPConnectionDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserProviderService;
-import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
 
 public class LDAPConnectionFacadeImpl extends AdminGenericFacadeImpl implements LDAPConnectionFacade {
 

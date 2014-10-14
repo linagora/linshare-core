@@ -43,9 +43,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.TechnicalAccountPermissionFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountPermissionDto;
 import org.linagora.linshare.webservice.admin.TechnicalAccountPermissionRestService;
-import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
-import org.linagora.linshare.webservice.dto.TechnicalAccountPermissionDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

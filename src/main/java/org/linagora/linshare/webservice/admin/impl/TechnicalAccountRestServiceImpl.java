@@ -47,10 +47,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.TechnicalAccountFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.TechnicalAccountRestService;
-import org.linagora.linshare.webservice.dto.PasswordDto;
-import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

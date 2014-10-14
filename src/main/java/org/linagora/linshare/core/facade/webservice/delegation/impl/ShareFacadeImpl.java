@@ -43,11 +43,11 @@ import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.delegation.ShareFacade;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.webservice.delegation.dto.ShareCreationDto;
-import org.linagora.linshare.webservice.delegation.dto.ShareDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

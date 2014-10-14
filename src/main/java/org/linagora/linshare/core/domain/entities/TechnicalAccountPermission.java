@@ -36,7 +36,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 import java.util.Set;
 
-import org.linagora.linshare.webservice.dto.TechnicalAccountPermissionDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountPermissionDto;
 
 import com.google.common.collect.Sets;
 

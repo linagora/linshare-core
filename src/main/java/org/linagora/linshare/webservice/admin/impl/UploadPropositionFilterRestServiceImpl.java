@@ -48,9 +48,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UploadPropositionFilterFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadPropositionFilterDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UploadPropositionFilterRestService;
-import org.linagora.linshare.webservice.dto.UploadPropositionFilterDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

@@ -34,7 +34,7 @@
 package org.linagora.linshare.webservice.delegation;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.GenericUserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 
 
 public interface UserRestService {

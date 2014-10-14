@@ -37,8 +37,8 @@ package org.linagora.linshare.webservice.delegation;
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.delegation.dto.ShareCreationDto;
-import org.linagora.linshare.webservice.delegation.dto.ShareDto;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareDto;
 
 public interface ShareRestService {
 

@@ -37,7 +37,7 @@ package org.linagora.linshare.core.facade.webservice.delegation;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
 
 public interface ThreadMemberFacade {
 

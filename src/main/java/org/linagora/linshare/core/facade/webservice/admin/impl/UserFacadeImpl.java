@@ -45,13 +45,13 @@ import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.webservice.dto.PasswordDto;
-import org.linagora.linshare.webservice.dto.UserDto;
-import org.linagora.linshare.webservice.dto.UserSearchDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

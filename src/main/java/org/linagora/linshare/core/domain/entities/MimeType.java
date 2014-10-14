@@ -35,7 +35,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 
-import org.linagora.linshare.webservice.dto.MimeTypeDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 
 public class MimeType {
 

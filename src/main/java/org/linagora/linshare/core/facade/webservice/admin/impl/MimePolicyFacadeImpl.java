@@ -41,9 +41,9 @@ import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MimePolicyFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.MimePolicyDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MimePolicyService;
-import org.linagora.linshare.webservice.dto.MimePolicyDto;
 
 import com.google.common.collect.Sets;
 

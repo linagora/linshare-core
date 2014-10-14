@@ -39,9 +39,9 @@ import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MimeTypeFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MimeTypeService;
-import org.linagora.linshare.webservice.dto.MimeTypeDto;
 
 public class MimeTypeFacadeImpl extends AdminGenericFacadeImpl implements
 		MimeTypeFacade {

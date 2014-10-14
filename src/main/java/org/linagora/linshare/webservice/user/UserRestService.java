@@ -38,7 +38,7 @@ import java.util.List;
 import javax.ws.rs.Path;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 @Path("/users")
 public interface UserRestService {

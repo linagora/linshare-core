@@ -45,11 +45,11 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UploadRequestFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCriteriaDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestHistoryDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UploadRequestRestService;
-import org.linagora.linshare.webservice.dto.UploadRequestCriteriaDto;
-import org.linagora.linshare.webservice.dto.UploadRequestDto;
-import org.linagora.linshare.webservice.dto.UploadRequestHistoryDto;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

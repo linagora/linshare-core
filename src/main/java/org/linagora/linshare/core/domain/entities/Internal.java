@@ -36,8 +36,8 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.UUID;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.webservice.dto.GenericUserDto;
-import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 /**
  * Internal user.

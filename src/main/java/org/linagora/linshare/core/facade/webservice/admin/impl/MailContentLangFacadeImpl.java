@@ -41,9 +41,9 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailContentLangFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentLangDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
-import org.linagora.linshare.webservice.dto.MailContentLangDto;
 
 public class MailContentLangFacadeImpl extends AdminGenericFacadeImpl implements
 		MailContentLangFacade {

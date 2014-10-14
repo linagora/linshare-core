@@ -36,9 +36,9 @@ package org.linagora.linshare.core.facade.webservice.admin;
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountDto;
 import org.linagora.linshare.core.facade.webservice.delegation.DelegationGenericFacade;
-import org.linagora.linshare.webservice.dto.PasswordDto;
-import org.linagora.linshare.webservice.dto.TechnicalAccountDto;
 
 public interface TechnicalAccountFacade extends DelegationGenericFacade {
 

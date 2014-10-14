@@ -41,9 +41,9 @@ import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UploadPropositionFilterFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadPropositionFilterDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadPropositionFilterService;
-import org.linagora.linshare.webservice.dto.UploadPropositionFilterDto;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;

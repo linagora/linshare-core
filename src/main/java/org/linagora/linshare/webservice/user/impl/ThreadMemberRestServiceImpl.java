@@ -44,10 +44,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
 import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadMemberFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 import org.linagora.linshare.webservice.user.ThreadMemberRestService;
 
 public class ThreadMemberRestServiceImpl extends WebserviceBase implements ThreadMemberRestService {

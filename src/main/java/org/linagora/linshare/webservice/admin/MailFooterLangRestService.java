@@ -34,7 +34,7 @@
 package org.linagora.linshare.webservice.admin;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.MailFooterLangDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailFooterLangDto;
 
 public interface MailFooterLangRestService {
 

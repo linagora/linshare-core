@@ -40,10 +40,10 @@ import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.TechnicalAccountPermissionFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountPermissionDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.TechnicalAccountPermissionService;
-import org.linagora.linshare.webservice.dto.TechnicalAccountPermissionDto;
 
 public class TechnicalAccountPermissionFacadeImpl extends AdminGenericFacadeImpl
 		implements TechnicalAccountPermissionFacade {

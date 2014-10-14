@@ -36,8 +36,8 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
-import org.linagora.linshare.webservice.dto.FunctionalityDto;
-import org.linagora.linshare.webservice.dto.ParameterDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.FunctionalityDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 
 public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 

@@ -50,9 +50,9 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.dto.SimpleLongValue;
+import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
+import org.linagora.linshare.core.facade.webservice.common.dto.SimpleLongValue;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 
 @Ignore

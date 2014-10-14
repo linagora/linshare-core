@@ -37,7 +37,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.linagora.linshare.webservice.dto.MimePolicyDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.MimePolicyDto;
 
 public class MimePolicy {
 

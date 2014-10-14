@@ -40,8 +40,8 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
-import org.linagora.linshare.webservice.dto.MailingListContactDto;
-import org.linagora.linshare.webservice.dto.MailingListDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 
 public class MailingList {
 

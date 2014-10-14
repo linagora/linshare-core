@@ -36,7 +36,7 @@ package org.linagora.linshare.webservice.admin;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.FunctionalityDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.FunctionalityDto;
 
 public interface FunctionalityRestService {
 

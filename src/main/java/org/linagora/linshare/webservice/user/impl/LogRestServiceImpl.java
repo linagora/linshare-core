@@ -43,10 +43,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.LogCriteriaDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.LogDto;
 import org.linagora.linshare.core.facade.webservice.user.LogEntryFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.dto.LogCriteriaDto;
-import org.linagora.linshare.webservice.dto.LogDto;
 import org.linagora.linshare.webservice.user.LogRestService;
 
 import com.wordnik.swagger.annotations.Api;

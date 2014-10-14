@@ -44,10 +44,10 @@ import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UploadRequestFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestHistoryDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadRequestService;
-import org.linagora.linshare.webservice.dto.UploadRequestDto;
-import org.linagora.linshare.webservice.dto.UploadRequestHistoryDto;
 
 import com.google.common.collect.Sets;
 

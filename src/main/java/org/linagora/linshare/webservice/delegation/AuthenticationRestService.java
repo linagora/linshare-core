@@ -34,8 +34,8 @@
 package org.linagora.linshare.webservice.delegation;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.delegation.dto.AccountDto;
-import org.linagora.linshare.webservice.dto.PasswordDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.AccountDto;
 
 public interface AuthenticationRestService {
 

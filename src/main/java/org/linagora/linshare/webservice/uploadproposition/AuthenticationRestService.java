@@ -34,7 +34,7 @@
 package org.linagora.linshare.webservice.uploadproposition;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 public interface AuthenticationRestService {
 

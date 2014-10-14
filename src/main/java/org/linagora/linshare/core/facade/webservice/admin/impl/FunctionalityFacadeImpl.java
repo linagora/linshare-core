@@ -48,9 +48,9 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.FunctionalityDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityService;
-import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
 import com.google.common.collect.Ordering;
 

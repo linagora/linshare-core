@@ -47,8 +47,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
-import org.linagora.linshare.webservice.dto.GuestDto;
 import org.linagora.linshare.webservice.user.GuestRestService;
 
 import com.wordnik.swagger.annotations.Api;

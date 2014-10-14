@@ -36,8 +36,8 @@ package org.linagora.linshare.webservice;
 import javax.jws.WebService;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 /**
  * This interface was create to support MTOM (XOP) upload. When MTOM is

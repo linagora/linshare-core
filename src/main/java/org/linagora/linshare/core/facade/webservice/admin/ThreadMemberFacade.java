@@ -35,7 +35,7 @@
 package org.linagora.linshare.core.facade.webservice.admin;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
 
 public interface ThreadMemberFacade extends AdminGenericFacade {
 	

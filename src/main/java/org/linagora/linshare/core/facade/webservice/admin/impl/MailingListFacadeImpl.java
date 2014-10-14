@@ -46,10 +46,10 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailingListFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailingListService;
-import org.linagora.linshare.webservice.dto.MailingListContactDto;
-import org.linagora.linshare.webservice.dto.MailingListDto;
 
 public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 		MailingListFacade {
