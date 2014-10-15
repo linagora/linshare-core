@@ -46,10 +46,12 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
@@ -242,6 +244,15 @@ public class ThreadContent {
 
 	public long getMaxFileSize() {
 		return DEFAULT_MAX_FILE_SIZE;
+	}
+
+	public JSONObject getErrorCatalog() {
+		JSONObject catalog = new JSONObject();
+		for (BusinessErrorCode k : BusinessErrorCode.values()) {
+			String prop = "error.code." + k.name();
+			catalog.put(k.name(), messages.get(prop));
+		}
+		return catalog;
 	}
 
 	Object onException(Throwable cause) {

@@ -48,6 +48,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.SelectModelFactory;
 import org.linagora.linshare.core.domain.objects.MailContainer;
@@ -419,6 +420,15 @@ public class Upload {
 			}
 		}
 		return StringJoiner.join(elements, " ");
+	}
+
+	public JSONObject getErrorCatalog() {
+		JSONObject catalog = new JSONObject();
+		for (BusinessErrorCode k : BusinessErrorCode.values()) {
+			String prop = "error.code." + k.name();
+			catalog.put(k.name(), messages.get(prop));
+		}
+		return catalog;
 	}
 
 	/** Perform a user search using the user search pattern.

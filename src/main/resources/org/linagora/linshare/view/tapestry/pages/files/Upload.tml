@@ -182,6 +182,15 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                 }
             });
 
+            var it = uploader.__proto__._controlFailureTextDisplay;
+            uploader.__proto__._controlFailureTextDisplay = function(id, response) {
+                /* advice before */
+
+                if (response.error)
+                    response.error = ${errorCatalog}[response.error];
+                return it.apply(this, arguments);
+            };
+
             // XXX HACK : css is for losers ;]
             jQuery(".qq-upload-button").attr("class", "btn btn-primary");
             fixDropzoneInit(jQuery(".qq-upload-drop-area"));
