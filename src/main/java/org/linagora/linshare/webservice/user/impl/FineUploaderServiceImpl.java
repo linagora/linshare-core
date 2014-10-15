@@ -127,7 +127,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 			DocumentDto doc = documentFacade.uploadfile(file, fileName, "");
 			return new FineUploaderDto(true, doc.getUuid());
 		} catch (BusinessException e) {
-			return new FineUploaderDto(e));
+			return new FineUploaderDto(e);
 		}
 	}
 
