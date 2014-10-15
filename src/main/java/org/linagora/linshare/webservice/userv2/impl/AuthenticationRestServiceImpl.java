@@ -31,42 +31,34 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.delegation.impl;
+package org.linagora.linshare.webservice.userv2.impl;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
-import org.linagora.linshare.core.facade.webservice.delegation.DelegationGenericFacade;
-import org.linagora.linshare.core.facade.webservice.delegation.UserFacade;
-import org.linagora.linshare.core.facade.webservice.delegation.dto.AccountDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.delegation.AuthenticationRestService;
+import org.linagora.linshare.webservice.userv2.AuthenticationRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/authentication")
-@Api(value = "/rest/delegation/authentication", basePath = "/rest/delegation/", description = "Authentication delegation API",
+@Api(value = "/rest/user/authentication", basePath = "/rest/user/", description = "Authentication API",
 produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
-
-	private final DelegationGenericFacade delegationGenericFacade;
+public class AuthenticationRestServiceImpl extends WebserviceBase implements
+		AuthenticationRestService {
 
 	private final UserFacade userFacade;
 
-	public AuthenticationRestServiceImpl(final DelegationGenericFacade delegationFacade, final UserFacade userFacade) {
-		this.delegationGenericFacade = delegationFacade;
+	public AuthenticationRestServiceImpl(final UserFacade userFacade) {
 		this.userFacade = userFacade;
 	}
 
@@ -80,19 +72,10 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/authorized")
 	@GET
-	@ApiOperation(value = "Check if user is authorized.", response = AccountDto.class)
+	@ApiOperation(value = "Check if user is authorized.", response = UserDto.class)
 	@Override
-	public AccountDto isAuthorized() throws BusinessException {
-		return new AccountDto(delegationGenericFacade.checkAuthentication());
-	}
-
-	@Path("/change_password")
-	@POST
-	@ApiOperation(value = "Change the password of the current user.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
-	@Override
-	public void changePassword(@ApiParam(value = "New password.", required = true) PasswordDto password) throws BusinessException {
-		userFacade.changePassword(password);
+	public UserDto isAuthorized() throws BusinessException {
+		return UserDto.getFull(userFacade.checkAuthentication());
 	}
 
 	@Path("/logout")
@@ -100,7 +83,8 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	@ApiOperation(value = "Logout the current user.")
 	@Override
 	public void logout() {
-		// This code is never reach because the URL will be catch by spring security before.
+		// This code is never reach because the URL will be catch by spring
+		// security before.
 		// This function was created just to show the logout URL into WADL.
 	}
 }

@@ -31,7 +31,8 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.user;
+
+package org.linagora.linshare.webservice.userv2;
 
 import java.io.InputStream;
 import java.util.List;
@@ -40,36 +41,28 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
-import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.SimpleLongValue;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
-
-/**
- * REST jaxRS interface
- */
 
 public interface DocumentRestService {
 
-	List<DocumentDto> getDocuments() throws BusinessException;
+	DocumentDto create(InputStream theFile,
+			String description, String givenFileName, MultipartBody body)
+			throws BusinessException;
 
-	SimpleLongValue getUserMaxFileSize() throws BusinessException;
+	DocumentDto get(String uuid) throws BusinessException;
 
-	SimpleLongValue getAvailableSize() throws BusinessException;
+	List<DocumentDto> getAll() throws BusinessException;
 
-	List<MimeTypeDto> getMimeTypes() throws BusinessException;
+	DocumentDto update(String uuid, String description,
+			String fileName) throws BusinessException;
 
-	Boolean getMimeTypeStatus() throws BusinessException;
+	void delete(String uuid) throws BusinessException;
 
-	SimpleLongValue getUserAvailableSize() throws BusinessException;
+	Response download(String uuid) throws BusinessException;
 
-	DocumentDto uploadfile(InputStream theFile, String description, String givenFileName, MultipartBody body) throws BusinessException;
+	Response thumbnail(String uuid) throws BusinessException;
 
-	DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException;
-
-	Response getDocumentStream(String uuid) throws BusinessException;
-
-	Response getThumbnailStream(String uuid) throws BusinessException;
-
-	DocumentDto delete(String uuid) throws BusinessException;
+	DocumentDto updateFile(String uuid, InputStream theFile,
+			String description, String givenFileName, MultipartBody body)
+			throws BusinessException;
 }

@@ -31,45 +31,17 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.user;
 
-import java.io.InputStream;
-import java.util.List;
+package org.linagora.linshare.webservice.userv2;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
-import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.SimpleLongValue;
-import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
-/**
- * REST jaxRS interface
- */
+public interface EnumRestService {
 
-public interface DocumentRestService {
+	Response findAll(UriInfo info) throws BusinessException;
 
-	List<DocumentDto> getDocuments() throws BusinessException;
-
-	SimpleLongValue getUserMaxFileSize() throws BusinessException;
-
-	SimpleLongValue getAvailableSize() throws BusinessException;
-
-	List<MimeTypeDto> getMimeTypes() throws BusinessException;
-
-	Boolean getMimeTypeStatus() throws BusinessException;
-
-	SimpleLongValue getUserAvailableSize() throws BusinessException;
-
-	DocumentDto uploadfile(InputStream theFile, String description, String givenFileName, MultipartBody body) throws BusinessException;
-
-	DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException;
-
-	Response getDocumentStream(String uuid) throws BusinessException;
-
-	Response getThumbnailStream(String uuid) throws BusinessException;
-
-	DocumentDto delete(String uuid) throws BusinessException;
+	Response options(String enumName) throws BusinessException;
 }

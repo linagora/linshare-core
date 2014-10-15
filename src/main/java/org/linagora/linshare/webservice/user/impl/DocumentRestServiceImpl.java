@@ -60,6 +60,7 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.user.DocumentRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
+@Path("/documents")
 public class DocumentRestServiceImpl extends WebserviceBase implements DocumentRestService {
 
 	private final DocumentFacade webServiceDocumentFacade;
