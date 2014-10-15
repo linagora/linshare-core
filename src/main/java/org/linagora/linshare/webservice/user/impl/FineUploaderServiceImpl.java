@@ -117,7 +117,8 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 			DocumentDto doc = documentFacade.uploadfile(file, fileName, "");
 			return new FineUploaderDto(true, doc.getUuid());
 		} catch (BusinessException e) {
-			return new FineUploaderDto(false);
+			return new FineUploaderDto(this.getErrorCatalog().get(
+					e.getErrorCode()));
 		}
 	}
 
@@ -138,7 +139,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 			documentFacade.deleteFile(uuid);
 			return new FineUploaderDto(true);
 		} catch (BusinessException e) {
-			return new FineUploaderDto(false);
+			return new FineUploaderDto(e);
 		}
 	}
 
@@ -181,7 +182,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 					fileName, "");
 			return new FineUploaderDto(true, doc.getUuid());
 		} catch (BusinessException e) {
-			return new FineUploaderDto(false);
+			return new FineUploaderDto(e);
 		}
 	}
 }
