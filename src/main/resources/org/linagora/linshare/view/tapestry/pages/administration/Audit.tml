@@ -165,7 +165,7 @@
 				</fieldset>
 				
 
-				<fieldset class="title_criteria_zone" id="actionCriterion" style="clear: both; width: 840px;">
+				<fieldset class="title_criteria_zone" id="actionCriterion" style="clear: both; width: 860px;">
 					<legend align="top" class="palette">${message:pages.administration.audit.form.actionCriterion}</legend>
 					<table>
 					
