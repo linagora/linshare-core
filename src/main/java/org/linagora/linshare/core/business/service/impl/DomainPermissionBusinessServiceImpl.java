@@ -72,7 +72,6 @@ public class DomainPermissionBusinessServiceImpl implements
 
 	@Override
 	public boolean isAdminforThisDomain(Account actor, AbstractDomain domain) {
-
 		if (!(actor.hasSuperAdminRole() || actor.hasSystemAccountRole())) {
 			if (!domain.isManagedBy(actor)) {
 				return false;
