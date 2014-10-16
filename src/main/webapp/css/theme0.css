@@ -4084,5 +4084,10 @@ input.ck-kaptcha {
     margin-right: 4px;
 }
 
+.well textarea#body {
+    width: 70%;
+    min-height: 10em;
+}
+
 /***************************************************************************/
 /* EOF */
