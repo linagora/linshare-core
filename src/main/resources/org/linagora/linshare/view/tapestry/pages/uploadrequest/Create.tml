@@ -18,8 +18,13 @@
     <!-- Page content -->
     <div id="pageContent">
       <t:zone t:id="reload" update="show">
-        <t:form t:id="template">
-          <t:select t:id="selected" t:zone="reload" t:model="selectModel" encoder="templateEncoder"/>
+        <t:form t:id="template" class="form-horizontal">
+          <div class="control-group">
+            <t:label class="control-label" for="selected">${message:pages.uploadrequest.create.selected}</t:label>
+            <div class="controls">
+              <t:select t:id="selected" t:zone="reload" t:model="selectModel" encoder="templateEncoder"/>
+            </div>
+          </div>
         </t:form>
         <t:bsBeanEditForm t:object="current" submitlabel="message:global.button.validate" model="requestModel">
           <p:body>
