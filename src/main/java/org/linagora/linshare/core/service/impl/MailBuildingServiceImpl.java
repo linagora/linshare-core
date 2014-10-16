@@ -580,7 +580,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("urlparam", "");
 		container.setRecipient(recipient);
 		container.setFrom(getFromMailAddress(sender));
-		container.setReplyTo(sender);
+		container.setReplyTo(sender.getMail());
 
 		return buildMailContainer(cfg, container,
 				input.getPersonalMessage(), MailContentType.NEW_SHARING,
@@ -622,7 +622,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("urlparam", "");
 		container.setRecipient(email);
 		container.setFrom(getFromMailAddress(sender));
-		container.setReplyTo(sender);
+		container.setReplyTo(sender.getMail());
 
 		return buildMailContainer(cfg, container,
 				input.getPersonalMessage(),
@@ -668,7 +668,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("urlparam", "");
 		container.setRecipient(recipient);
 		container.setFrom(getFromMailAddress(sender));
-		container.setReplyTo(sender);
+		container.setReplyTo(sender.getMail());
 
 		return buildMailContainer(cfg, container,
 				input.getPersonalMessage(),
@@ -711,7 +711,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("urlparam", "");
 		container.setRecipient(email);
 		container.setFrom(getFromMailAddress(sender));
-		container.setReplyTo(sender);
+		container.setReplyTo(sender.getMail());
 
 		return buildMailContainer(cfg, container,
 				input.getPersonalMessage(),
