@@ -1946,21 +1946,19 @@ DIV.t-palette-controls BUTTON {
 
 #history #pageContent fieldset#actorCriterion,
 #audit #pageContent fieldset#actorCriterion {
-	width: 25%;
-	min-width: 275px;
+	width: 700px;
 }
 #history #pageContent fieldset#targetCriterion,
 #audit #pageContent fieldset#targetCriterion {
-	width: 25%;
-	min-width: 275px;
+	width: 700px;
 }
 #history #pageContent fieldset#fileCriterion,
 #audit #pageContent fieldset#fileCriterion {
-	width: 532px;
+	width: 700px;
 }
 #history #pageContent fieldset#actionCriterion,
 #audit #pageContent fieldset#actionCriterion {
-	width: 532px;
+	width: 840px;
 }
 
 #history #pageContent #formReport legend,
@@ -1972,6 +1970,12 @@ DIV.t-palette-controls BUTTON {
 #audit #pageContent fieldset.title_criteria_zone table {
 	width: 100%;
 }
+
+fieldset.title_criteria_zone input[type="text"],
+fieldset.title_criteria_zone textarea {
+	width: 60%;
+}
+
 
 #history #pageContent fieldset#fileCriterion table td,
 #audit #pageContent fieldset#fileCriterion table td {
