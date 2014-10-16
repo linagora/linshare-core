@@ -89,7 +89,11 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 
 	protected boolean isAuthorized(Account actor, O owner,
 			PermissionType permission, Object... opt) {
-		return this.isAuthorized(actor, owner, permission, null, null, opt);
+		E entry = null;
+		if (opt != null && opt.length > 0) {
+			entry = (E) opt[0];
+		}
+		return this.isAuthorized(actor, owner, permission, entry, opt);
 	}
 
 	protected boolean isAuthorized(Account actor, O owner,
