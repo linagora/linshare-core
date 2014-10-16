@@ -137,6 +137,9 @@ INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, 
 
 -- system account :
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (2, 7, 'system', current_date,current_date, 3, 'en', 'en', true, false, 1);
+-- system account for upload-request:
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (3, 7, 'system-account-uploadrequest', current_date, current_date, 3, 'en', 'en', true, false, 1);
+
 
 
 -- unit type : TIME(0), SIZE(1)

@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.util.Assert;
 
@@ -149,14 +150,8 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		DetachedCriteria det = DetachedCriteria.forClass(SystemAccount.class)
 				.add(Restrictions.eq("lsUuid", "system-account-uploadrequest"));
 
-		List<U> users = findByCriteria(det);
-		if (users == null || users.isEmpty()) {
-			return null;
-		} else if (users.size() == 1) {
-			return (SystemAccount) users.get(0);
-		} else {
-			throw new IllegalStateException("lsUuid must be unique");
-		}
+		return (SystemAccount) DataAccessUtils
+				.singleResult(findByCriteria(det));
 	}
 
 	@Override
@@ -167,8 +162,6 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 
 	@Override
 	public List<U> findAllDestroyedAccounts() {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("destroyed", true));
-		return findByCriteria(criteria);
+		return findByCriteria(Restrictions.eq("destroyed", true));
 	}
 }
