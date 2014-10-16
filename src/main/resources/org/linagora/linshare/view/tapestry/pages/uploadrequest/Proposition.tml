@@ -4,7 +4,7 @@
 
   <!-- Main content -->
   <div id="content">
-    <h1 title="${message:pages.uploadrequest.index.title}"><span class="truncate">${message:pages.uploadrequest.index.title}</span></h1>
+    <h1 title="${message:pages.uploadproposition.title}"><span class="truncate">${message:pages.uploadproposition.title}</span></h1>
 
     <t:messagePanel />
     <t:businessMessagesDisplayer />
