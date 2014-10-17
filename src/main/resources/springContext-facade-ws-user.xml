@@ -32,10 +32,12 @@
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="threadEntryService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="documentEntryService" />
 	</bean>
 	<bean id="wsThreadMemberFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ThreadMemberFacadeImpl">
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userService" />
 	</bean>
 	<bean id="wsUserFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UserFacadeImpl">
 		<constructor-arg ref="userService" />
