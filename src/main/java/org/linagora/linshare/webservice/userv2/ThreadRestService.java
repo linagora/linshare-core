@@ -31,47 +31,24 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.user.impl;
+package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
-import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
-import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.user.ThreadRestService;
 
-public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestService {
+public interface ThreadRestService {
 
-	private final ThreadFacade webServiceThreadFacade;
+	ThreadDto create(ThreadDto thread)
+			throws BusinessException;
 
-	public ThreadRestServiceImpl(final ThreadFacade webServiceThreadFacade) {
-		this.webServiceThreadFacade = webServiceThreadFacade;
-	}
+	ThreadDto find(String uuid) throws BusinessException;
 
-	/**
-	 * get the files of the user
-	 */
-	@Path("/")
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public List<ThreadDto> getAllMyThread() throws BusinessException {
-		return webServiceThreadFacade.findAll();
-	}
+	List<ThreadDto> findAll() throws BusinessException;
 
-	@Path("/{uuid}")
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public ThreadDto getThread(@PathParam("uuid") String uuid) throws BusinessException {
-		return webServiceThreadFacade.find(uuid);
-	}
+	void delete(ThreadDto thread)
+			throws BusinessException;
 
+	void delete(String uuid) throws BusinessException;
 }

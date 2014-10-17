@@ -40,10 +40,14 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
 
 public interface ThreadFacade extends GenericFacade {
 
-	public List<ThreadDto> getAllMyThread() throws BusinessException;
+	List<ThreadDto> findAll() throws BusinessException;
 
-	public ThreadDto getThread(String uuid) throws BusinessException;
-
-	public void addMember(String threadUuid, String domainId, String mail,
+	void addMember(String threadUuid, String domainId, String mail,
 			boolean readonly) throws BusinessException;
+
+	ThreadDto create(ThreadDto threadDto) throws BusinessException;
+
+	ThreadDto find(String uuid) throws BusinessException;
+
+	void delete(ThreadDto thread) throws BusinessException;
 }

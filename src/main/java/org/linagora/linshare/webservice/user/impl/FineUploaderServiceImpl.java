@@ -177,7 +177,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 			logger.error("Can not encode file name " + e1.getMessage());
 		}
 		try {
-			ThreadEntryDto doc = threadEntryFacade.uploadfile(threadUuid, file,
+			ThreadEntryDto doc = threadEntryFacade.create(threadUuid, file,
 					fileName, "");
 			return new FineUploaderDto(true, doc.getUuid());
 		} catch (BusinessException e) {

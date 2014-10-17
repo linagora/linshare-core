@@ -35,10 +35,23 @@ package org.linagora.linshare.core.facade.webservice.user;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
 
 public interface ThreadMemberFacade extends GenericFacade {
 
-	public List<ThreadMemberDto> getAllThreadMembers(String uuid) throws BusinessException;
+	List<ThreadMemberDto> findAll(String uuid) throws BusinessException;
+
+	ThreadMemberDto find(String threadUuid, String threadMemberUuid)
+			throws BusinessException;
+
+	ThreadMemberDto create(String threadUuid, String domainId, String userMail,
+			boolean readOnly, boolean admin) throws BusinessException;
+
+	ThreadMemberDto update(String threadUuid, ThreadMemberDto threadMember)
+			throws BusinessException;
+
+	void delete(String threadUuid, String userUuid)
+			throws BusinessException;
 }

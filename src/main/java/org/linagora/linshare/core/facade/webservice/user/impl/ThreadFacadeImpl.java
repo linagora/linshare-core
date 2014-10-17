@@ -35,6 +35,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
@@ -58,10 +59,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	public ThreadFacadeImpl(
-			final ThreadService threadService,
-			final AccountService accountService,
-			final UserService userService,
+	public ThreadFacadeImpl(final ThreadService threadService,
+			final AccountService accountService, final UserService userService,
 			final FunctionalityReadOnlyService functionalityService) {
 		super(accountService);
 		this.threadService = threadService;
@@ -83,10 +82,11 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public List<ThreadDto> getAllMyThread() throws BusinessException {
+	public List<ThreadDto> findAll() throws BusinessException {
+		
 		User actor = checkAuthentication();
-		List<ThreadDto> res = Lists.newArrayList();
 
+		List<ThreadDto> res = Lists.newArrayList();
 		for (Thread thread : threadService.findAllWhereMember(actor)) {
 			res.add(new ThreadDto(thread));
 		}
@@ -94,8 +94,11 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public ThreadDto getThread(String uuid) throws BusinessException {
+	public ThreadDto find(String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "Missing required thread uuid");
+
 		User actor = checkAuthentication();
+		
 		Thread thread = threadService.findByLsUuid(actor, actor, uuid);
 		return new ThreadDto(thread, thread.getMyMembers());
 	}
@@ -103,11 +106,41 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	@Override
 	public void addMember(String threadUuid, String domainId, String mail,
 			boolean readonly) throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(domainId, "Missing required domain id");
+		Validate.notEmpty(mail, "Missing required mail");
+
 		User actor = checkAuthentication();
+
 		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
 		User user = userService.findOrCreateUserWithDomainPolicies(mail,
 				domainId, actor.getDomainId());
 		threadService.addMember(actor, actor, thread, user, false, !readonly);
+	}
+
+	@Override
+	public ThreadDto create(ThreadDto threadDto) throws BusinessException {
+		Validate.notNull(threadDto, "Missing required thread");
+		Validate.notEmpty(threadDto.getName(), "Missing required thread dto name");
+		
+		User actor = checkAuthentication();
+		
+		return new ThreadDto(threadService.create(actor, actor,
+				threadDto.getName()));
+
+	}
+
+	@Override
+	public void delete(ThreadDto threadDto) throws BusinessException {
+		Validate.notNull(threadDto, "Missing required thread dto");
+		Validate.notEmpty(threadDto.getUuid(),
+				"Missing required thread dto uuid");
+		
+		User actor = checkAuthentication();
+		
+		Thread thread = threadService.findByLsUuid(actor, actor,
+				threadDto.getUuid());
+		threadService.deleteThread(actor, actor, thread);
 	}
 
 }

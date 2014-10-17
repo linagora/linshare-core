@@ -31,47 +31,28 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.user.impl;
+package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
-import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
-import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.user.ThreadRestService;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
 
-public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestService {
+public interface ThreadMemberRestService {
 
-	private final ThreadFacade webServiceThreadFacade;
+	ThreadMemberDto create(String threadUuid,
+			ThreadMemberDto threadMember)
+			throws BusinessException;
 
-	public ThreadRestServiceImpl(final ThreadFacade webServiceThreadFacade) {
-		this.webServiceThreadFacade = webServiceThreadFacade;
-	}
+	public List<ThreadMemberDto> findAll(String threadUuid)
+			throws BusinessException;
 
-	/**
-	 * get the files of the user
-	 */
-	@Path("/")
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public List<ThreadDto> getAllMyThread() throws BusinessException {
-		return webServiceThreadFacade.findAll();
-	}
+	public ThreadMemberDto update(String threadUuid, ThreadMemberDto threadMember)
+			throws BusinessException;
 
-	@Path("/{uuid}")
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public ThreadDto getThread(@PathParam("uuid") String uuid) throws BusinessException {
-		return webServiceThreadFacade.find(uuid);
-	}
+	public void delete(String threadUuid, ThreadMemberDto threadMember)
+			throws BusinessException;
 
+	public void delete(String threadUuid, String uuid)
+			throws BusinessException;
 }

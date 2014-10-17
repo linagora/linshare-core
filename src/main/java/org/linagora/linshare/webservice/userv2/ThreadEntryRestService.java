@@ -31,47 +31,43 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.user.impl;
 
+package org.linagora.linshare.webservice.userv2;
+
+import java.io.InputStream;
 import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
-import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
-import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.user.ThreadRestService;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
 
-public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestService {
+public interface ThreadEntryRestService {
 
-	private final ThreadFacade webServiceThreadFacade;
+	ThreadEntryDto create(String threadUuid,
+			InputStream theFile, String description, String givenFileName,
+			MultipartBody body) throws BusinessException;
 
-	public ThreadRestServiceImpl(final ThreadFacade webServiceThreadFacade) {
-		this.webServiceThreadFacade = webServiceThreadFacade;
-	}
+	ThreadEntryDto copy(String threadUuid, String entryUuid)
+			throws BusinessException;
 
-	/**
-	 * get the files of the user
-	 */
-	@Path("/")
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public List<ThreadDto> getAllMyThread() throws BusinessException {
-		return webServiceThreadFacade.findAll();
-	}
+	ThreadEntryDto find(String threadUuid, String uuid)
+			throws BusinessException;
 
-	@Path("/{uuid}")
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public ThreadDto getThread(@PathParam("uuid") String uuid) throws BusinessException {
-		return webServiceThreadFacade.find(uuid);
-	}
+	List<ThreadEntryDto> findAll(String threadUuid)
+			throws BusinessException;
+
+	void delete(String threadUuid,
+			ThreadEntryDto threadEntry) throws BusinessException;
+
+	void delete(String threadUuid,
+			String uuid) throws BusinessException;
+
+	Response download(String threadUuid, String uuid)
+			throws BusinessException;
+
+	Response thumbnail(String threadUuid, String uuid)
+			throws BusinessException;
 
 }

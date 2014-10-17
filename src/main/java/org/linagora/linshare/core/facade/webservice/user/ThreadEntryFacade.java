@@ -35,12 +35,35 @@
 package org.linagora.linshare.core.facade.webservice.user;
 
 import java.io.InputStream;
+import java.util.List;
+
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
 
+import com.wordnik.swagger.annotations.ApiParam;
+
 public interface ThreadEntryFacade extends GenericFacade {
+
+	ThreadEntryDto create(String threadUuid, InputStream fi,
+			String filename, String description) throws BusinessException;
+
+	ThreadEntryDto copy(String threadUuid, String entryUuid)
+			throws BusinessException;
+
+	ThreadEntryDto find(String threadUuid, String uuid)
+			throws BusinessException;
+
+	List<ThreadEntryDto> findAll(String threadUuid) throws BusinessException;
+
+	void delete(String threadUuid, String threadEntryUuid) throws BusinessException;
 	
-	public ThreadEntryDto uploadfile(String threadUuid, InputStream fi, String filename, String description) throws BusinessException;
+	void delete(String threadUuid, ThreadEntryDto threadEntry) throws BusinessException;
+
+	Response download(String threadUuid, String uuid) throws BusinessException;
+
+	Response thumbnail(String threadUuid, String uuid) throws BusinessException;
 
 }

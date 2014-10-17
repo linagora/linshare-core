@@ -137,7 +137,7 @@ public class SoapServiceImpl extends WebserviceBase implements SoapService {
 
 	@Override
 	public List<ThreadDto> getAllMyThread() throws BusinessException {
-		return webServiceThreadFacade.getAllMyThread();
+		return webServiceThreadFacade.findAll();
 	}
 
 	@Override

@@ -74,6 +74,6 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements Threa
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<ThreadMemberDto> getAllThreadMembers(@PathParam("threadUuid") String threadUuid) throws BusinessException {
-		return webServiceThreadMemberFacade.getAllThreadMembers(threadUuid);
+		return webServiceThreadMemberFacade.findAll(threadUuid);
 	}
 }

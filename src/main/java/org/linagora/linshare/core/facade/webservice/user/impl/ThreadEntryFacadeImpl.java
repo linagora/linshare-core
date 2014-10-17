@@ -35,58 +35,178 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.io.InputStream;
+import java.util.List;
 
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements ThreadEntryFacade {
+import com.google.common.collect.Lists;
 
-	private static final Logger logger = LoggerFactory.getLogger(ThreadFacadeImpl.class);
+public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
+		ThreadEntryFacade {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(ThreadFacadeImpl.class);
 
 	private final ThreadEntryService threadEntryService;
 	private final ThreadService threadService;
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+	private final DocumentEntryService documentEntryService;
 
-	public ThreadEntryFacadeImpl(AccountService accountService, ThreadService threadService, ThreadEntryService threadEntryService, FunctionalityReadOnlyService functionalityService) {
+	public ThreadEntryFacadeImpl(AccountService accountService,
+			ThreadService threadService, ThreadEntryService threadEntryService,
+			FunctionalityReadOnlyService functionalityService,
+			DocumentEntryService documentEntryService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.threadEntryService = threadEntryService;
 		this.functionalityReadOnlyService = functionalityService;
+		this.documentEntryService = documentEntryService;
 	}
 
 	@Override
 	public User checkAuthentication() throws BusinessException {
 		User actor = super.checkAuthentication();
-		Functionality functionality = functionalityReadOnlyService.getThreadTabFunctionality(actor.getDomain());
+		Functionality functionality = functionalityReadOnlyService
+				.getThreadTabFunctionality(actor.getDomain());
 
 		if (!functionality.getActivationPolicy().getStatus()) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN, "You are not authorized to use this service");
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+					"You are not authorized to use this service");
 		}
 		return actor;
 	}
 
 	@Override
-	public ThreadEntryDto uploadfile(String threadUuid, InputStream fi, String fileName, String description) throws BusinessException {
+	public ThreadEntryDto create(String threadUuid, InputStream fi,
+			String fileName, String description) throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(fileName, "Missing required file name");
+		Validate.notEmpty(description, "Missing required file description");
+		Validate.notNull(fi, "Missing required input file stream");
+		
 		User actor = checkAuthentication();
+		
 		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
 		if (thread == null) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Current thread was not found : " + threadUuid);
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
+					"Current thread was not found : " + threadUuid);
 		}
-		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor, actor, thread, fi, fileName);
-		threadEntryService.updateFileProperties(actor, threadEntry.getUuid(), description);
+		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
+				actor, thread, fi, fileName);
+		threadEntryService.updateFileProperties(actor, threadEntry.getUuid(),
+				description);
 		return new ThreadEntryDto(threadEntry);
+	}
+
+	@Override
+	public ThreadEntryDto copy(String threadUuid, String entryUuid)
+			throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(entryUuid, "Missing required entry uuid");
+
+		User actor = checkAuthentication();
+		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		DocumentEntry doc = documentEntryService.find(actor, actor, entryUuid);
+		InputStream stream = documentEntryService.getDocumentStream(actor,
+				actor, entryUuid);
+		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
+				actor, thread, stream, doc.getName());
+		return new ThreadEntryDto(threadEntry);
+	}
+
+	@Override
+	public ThreadEntryDto find(String threadUuid, String uuid)
+			throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(uuid, "Missing required entry uuid");
+
+		User actor = checkAuthentication();
+		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
+				uuid);
+		return new ThreadEntryDto(threadEntry);
+	}
+
+	@Override
+	public List<ThreadEntryDto> findAll(String threadUuid)
+			throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+
+		User actor = checkAuthentication();
+		List<ThreadEntryDto> res = Lists.newArrayList();
+
+		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		for (ThreadEntry threadEntry : threadEntryService.findAllThreadEntries(
+				actor, actor, thread)) {
+			res.add(new ThreadEntryDto(threadEntry));
+		}
+		return res;
+	}
+
+	@Override
+	public void delete(String threadUuid, ThreadEntryDto threadEntry)
+			throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notNull(threadEntry, "Missing required thread entry");
+		Validate.notEmpty(threadEntry.getUuid(), "Missing required thread entry");
+		
+		// Checking user in delete(String, String) method
+		delete(threadUuid, threadEntry.getUuid());
+	}
+
+	@Override
+	public void delete(String threadUuid, String threadEntryUuid)
+			throws BusinessException {
+		Validate.notNull(threadEntryUuid, "Missing required thread uuid");
+		Validate.notEmpty(threadEntryUuid, "Missing required thread entry uuid");
+
+		User actor = checkAuthentication();
+		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
+				threadEntryUuid);
+
+		threadEntryService.deleteThreadEntry(actor, actor, threadEntry);
+	}
+
+	@Override
+	public Response download(String threadUuid, String uuid)
+			throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(uuid, "Missing required entry uuid");
+
+		User actor = checkAuthentication();
+
+		return Response.ok(
+				threadEntryService.getDocumentStream(actor, actor, uuid))
+				.build();
+	}
+
+	@Override
+	public Response thumbnail(String threadUuid, String uuid)
+			throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(uuid, "Missing required entry uuid");
+
+		User actor = checkAuthentication();
+		return null;
 	}
 
 }

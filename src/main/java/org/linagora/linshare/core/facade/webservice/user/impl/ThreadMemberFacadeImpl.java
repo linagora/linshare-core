@@ -36,15 +36,20 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
 import org.linagora.linshare.core.facade.webservice.user.ThreadMemberFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		ThreadMemberFacade {
@@ -54,21 +59,89 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 
 	private final ThreadService threadService;
 
+	private final UserService userService;
+
 	public ThreadMemberFacadeImpl(ThreadService threadService,
-			AccountService accountService) {
+			AccountService accountService, UserService userService) {
 		super(accountService);
 		this.threadService = threadService;
+		this.userService = userService;
 	}
 
 	@Override
-	public List<ThreadMemberDto> getAllThreadMembers(String uuid)
+	public List<ThreadMemberDto> findAll(String threadUuid)
 			throws BusinessException {
-		Thread thread = threadService.findByLsUuidUnprotected(uuid);
-		List<ThreadMemberDto> res = new ArrayList<ThreadMemberDto>();
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 
-		for (ThreadMember member : thread.getMyMembers()) {
-			res.add(new ThreadMemberDto(member));
+		User actor = checkAuthentication();
+
+		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		List<ThreadMemberDto> res = Lists.newArrayList();
+
+		for (ThreadMember m : threadService.getMembers(actor, actor, thread)) {
+			res.add(new ThreadMemberDto(m));
 		}
 		return res;
+	}
+
+	@Override
+	public ThreadMemberDto find(String threadUuid, String threadMemberUuid)
+			throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(threadMemberUuid,
+				"Missing required thread member uuid");
+
+		User actor = checkAuthentication();
+
+		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+
+		return new ThreadMemberDto(threadService.getMemberFromUser(thread,
+				userService.findByLsUuid(threadMemberUuid)));
+	}
+
+	@Override
+	public ThreadMemberDto create(String threadUuid, String domainId,
+			String userMail, boolean readOnly, boolean admin)
+			throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(domainId, "Missing required domain id");
+		Validate.notEmpty(userMail, "Missing required mail");
+
+		User actor = checkAuthentication();
+
+		User user = userService.findOrCreateUser(userMail, domainId);
+		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		return new ThreadMemberDto(threadService.addMember(actor, actor,
+				thread, user, admin, !readOnly));
+	}
+
+	@Override
+	public ThreadMemberDto update(String threadUuid,
+			ThreadMemberDto threadMember) throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notNull(threadMember, "Missing required thread member");
+
+		User actor = checkAuthentication();
+
+		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		User user = userService.findByLsUuid(threadMember.getUserUuid());
+		ThreadMember member = threadService.getMemberFromUser(thread, user);
+		return new ThreadMemberDto(threadService.updateMember(actor, actor,
+				member, threadMember.isAdmin(), !threadMember.isReadonly()));
+	}
+
+	@Override
+	public void delete(String threadUuid, String userUuid)
+			throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(userUuid, "Missing required user uuid");
+
+		User actor = checkAuthentication();
+
+		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		ThreadMember member = threadService.getMemberFromUser(thread,
+				userService.findByLsUuid(userUuid));
+		threadService.deleteMember(actor, actor, thread, member);
+
 	}
 }
