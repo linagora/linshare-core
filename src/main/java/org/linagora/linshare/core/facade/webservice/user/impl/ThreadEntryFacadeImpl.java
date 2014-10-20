@@ -64,7 +64,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		ThreadEntryFacade {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(ThreadFacadeImpl.class);
+			.getLogger(ThreadEntryFacadeImpl.class);
 
 	private final ThreadEntryService threadEntryService;
 	private final ThreadService threadService;
@@ -163,14 +163,14 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public void delete(String threadUuid, ThreadEntryDto threadEntry)
+	public void delete(String threadUuid, ThreadEntryDto threadEntryDto)
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
-		Validate.notNull(threadEntry, "Missing required thread entry");
-		Validate.notEmpty(threadEntry.getUuid(), "Missing required thread entry");
+		Validate.notNull(threadEntryDto, "Missing required thread entry");
+		Validate.notEmpty(threadEntryDto.getUuid(), "Missing required thread entry");
 		
-		// Checking user in delete(String, String) method
-		delete(threadUuid, threadEntry.getUuid());
+		// Checking user in delete(String, String
+		delete(threadUuid, threadEntryDto.getUuid());
 	}
 
 	@Override

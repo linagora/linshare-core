@@ -83,7 +83,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 
 	@Override
 	public List<ThreadDto> findAll() throws BusinessException {
-		
+
 		User actor = checkAuthentication();
 
 		List<ThreadDto> res = Lists.newArrayList();
@@ -98,7 +98,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(uuid, "Missing required thread uuid");
 
 		User actor = checkAuthentication();
-		
+
 		Thread thread = threadService.findByLsUuid(actor, actor, uuid);
 		return new ThreadDto(thread, thread.getMyMembers());
 	}
@@ -121,10 +121,11 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	@Override
 	public ThreadDto create(ThreadDto threadDto) throws BusinessException {
 		Validate.notNull(threadDto, "Missing required thread");
-		Validate.notEmpty(threadDto.getName(), "Missing required thread dto name");
-		
+		Validate.notEmpty(threadDto.getName(),
+				"Missing required thread dto name");
+
 		User actor = checkAuthentication();
-		
+
 		return new ThreadDto(threadService.create(actor, actor,
 				threadDto.getName()));
 
@@ -135,11 +136,18 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notNull(threadDto, "Missing required thread dto");
 		Validate.notEmpty(threadDto.getUuid(),
 				"Missing required thread dto uuid");
-		
+		delete(threadDto.getUuid());
+
+	}
+
+	@Override
+	public void delete(String threadUuid) throws BusinessException {
+		// TODO Auto-generated method stub
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+
 		User actor = checkAuthentication();
-		
-		Thread thread = threadService.findByLsUuid(actor, actor,
-				threadDto.getUuid());
+
+		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
 		threadService.deleteThread(actor, actor, thread);
 	}
 
