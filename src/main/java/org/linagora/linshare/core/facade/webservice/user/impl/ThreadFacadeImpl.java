@@ -136,8 +136,12 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notNull(threadDto, "Missing required thread dto");
 		Validate.notEmpty(threadDto.getUuid(),
 				"Missing required thread dto uuid");
-		delete(threadDto.getUuid());
 
+		User actor = checkAuthentication();
+		Thread thread = threadService.findByLsUuid(actor, actor,
+				threadDto.getUuid());
+
+		threadService.deleteThread(actor, actor, thread);
 	}
 
 	@Override
