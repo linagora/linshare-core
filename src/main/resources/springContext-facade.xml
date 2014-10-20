@@ -11,6 +11,7 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="userProviderService" />
 	</bean>
 
 	<bean name="userAutoCompleteFacade" class="org.linagora.linshare.core.facade.impl.UserAutoCompleteFacadeImpl">

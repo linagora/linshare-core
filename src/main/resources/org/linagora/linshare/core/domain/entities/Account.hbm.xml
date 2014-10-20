@@ -23,8 +23,10 @@
 		<property name="password" column="password" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="destroyed" column="destroyed" type="boolean" not-null="true" lazy="false"/>
 
-		<many-to-one name="owner" column="owner_id" class="org.linagora.linshare.core.domain.entities.Account" />
-		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true" lazy="false" access="field"></many-to-one>
+		<many-to-one name="owner" column="owner_id" class="org.linagora.linshare.core.domain.entities.Account" lazy="proxy"/>
+		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true"
+			lazy="false" access="field">
+		</many-to-one>
 		<set name="entries" lazy="true" inverse="true">
 			<key column="owner_id" not-null="true"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.Entry"/>
@@ -49,7 +51,8 @@
 			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadRequestTemplate"/>
 		</set>
 
-		<many-to-one name="permission" cascade="lock" column="technical_account_permission_id" class="org.linagora.linshare.core.domain.entities.TechnicalAccountPermission" not-null="false">
+		<many-to-one name="permission" cascade="lock" column="technical_account_permission_id"
+			class="org.linagora.linshare.core.domain.entities.TechnicalAccountPermission" not-null="false" lazy="proxy">
 		</many-to-one>
 
 		<subclass name="org.linagora.linshare.core.domain.entities.User" discriminator-value="1" lazy="false">

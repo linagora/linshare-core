@@ -43,6 +43,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
 
 public class AuthentificationFacadeImpl implements AuthentificationFacade {
@@ -53,12 +54,15 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 
 	private final AbstractDomainService abstractDomainService;
 
+	private final UserProviderService userProviderService;
+
 	public AuthentificationFacadeImpl(UserService userService, LogEntryService logEntryService,
-			AbstractDomainService abstractDomainService) {
+			AbstractDomainService abstractDomainService, UserProviderService userProviderService) {
 		super();
 		this.userService = userService;
 		this.logEntryService = logEntryService;
 		this.abstractDomainService = abstractDomainService;
+		this.userProviderService = userProviderService;
 	}
 
 	@Override
@@ -100,5 +104,19 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	@Override
 	public List<AbstractDomain> getAllDomains() {
 		return abstractDomainService.getAllDomains();
+	}
+
+	@Override
+	public User ldapAuth(String domainIdentifier, String login,
+			String userPasswd) throws BusinessException {
+		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+		return userProviderService.auth(domain.getUserProvider(), login, userPasswd);
+	}
+
+	@Override
+	public User ldapSearchForAuth(String domainIdentifier, String login)
+			throws BusinessException {
+		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+		return userProviderService.searchForAuth(domain.getUserProvider(), login);
 	}
 }

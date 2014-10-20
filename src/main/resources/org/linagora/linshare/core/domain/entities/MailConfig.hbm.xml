@@ -6,18 +6,18 @@
 			<generator class="native">
 			</generator>
 		</id>
-		<many-to-one name="mailLayoutHtml" cascade="lock" column="mail_layout_html_id" class="org.linagora.linshare.core.domain.entities.MailLayout" not-null="true" lazy="no-proxy">
+		<many-to-one name="mailLayoutHtml" cascade="lock" column="mail_layout_html_id" class="org.linagora.linshare.core.domain.entities.MailLayout" not-null="true" lazy="proxy">
 		</many-to-one>
-		<many-to-one name="domain" cascade="lock" column="domain_abstract_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true" lazy="no-proxy">
+		<many-to-one name="domain" cascade="lock" column="domain_abstract_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true" lazy="proxy">
 		</many-to-one>
 		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="visible" column="visible" type="boolean" not-null="true" lazy="false"/>
-		<many-to-one name="mailLayoutText" cascade="lock" column="mail_layout_text_id" class="org.linagora.linshare.core.domain.entities.MailLayout" not-null="true" lazy="no-proxy">
+		<many-to-one name="mailLayoutText" cascade="lock" column="mail_layout_text_id" class="org.linagora.linshare.core.domain.entities.MailLayout" not-null="true" lazy="proxy">
 		</many-to-one>
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
-		<map name="mailFooters" lazy="false" cascade="all" inverse="false">
+		<map name="mailFooters" lazy="true" cascade="all" inverse="false">
 			<key column="mail_config_id" not-null="true"/>
 			<map-key  column="language" type="integer"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.MailFooterLang"/>
