@@ -58,13 +58,14 @@ import org.linagora.linshare.core.repository.LDAPConnectionRepository;
 import org.linagora.linshare.core.repository.MessagesRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 @ContextConfiguration(locations={"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class AbstractDomainRepositoryImplTest extends AbstractJUnit4SpringContextTests {
+public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	private static String rootDomainName = "Domain0";
 	private static String topDomainName = "Domain0.1";
@@ -190,50 +191,6 @@ public class AbstractDomainRepositoryImplTest extends AbstractJUnit4SpringContex
 
 		abstractDomainRepository.delete(rootDomain);
 		logger.debug("End testTopDomainCreation");
-	}
-
-	@Test
-	public void testSubDomainCreation() throws BusinessException{
-		logger.debug(" testSubDomainCreation ");
-
-		AbstractDomain rootDomain = createATestRootDomain();
-		AbstractDomain currentTopDomain = createATestTopDomain(rootDomain);
-
-		rootDomain.addSubdomain(currentTopDomain);
-		abstractDomainRepository.update(rootDomain);
-
-		LDAPConnection ldapconnexion  = new LDAPConnection(identifier, providerUrl, securityAuth);
-		ldapConnectionRepository.create(ldapconnexion);
-		logger.debug("Current ldapconnexion object: " + ldapconnexion.toString());
-
-
-		DomainPattern domainPattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", null);
-		domainPatternRepository.create(domainPattern);
-		logger.debug("Current pattern object: " + domainPattern.toString());
-
-		LdapUserProvider provider = new LdapUserProvider("",ldapconnexion,domainPattern);
-		userProviderRepository.create(provider);
-
-		SubDomain subDomain= new SubDomain(subDomainName,"My root domain",(TopDomain)currentTopDomain);
-		currentTopDomain.addSubdomain(subDomain);
-		subDomain.setUserProvider(provider);
-		subDomain.setPolicy(defaultPolicy);
-		abstractDomainRepository.create(subDomain);
-		logger.debug("Current SubDomain object: " + subDomain.toString());
-
-
-		AbstractDomain entityTopDomain = abstractDomainRepository.findById(topDomainName);
-		logger.debug("entityTopDomain.getSubdomain().size():"+entityTopDomain.getSubdomain().size());
-		Assert.assertEquals(1, entityTopDomain.getSubdomain().size());
-
-		Assert.assertEquals(rootDomainName,subDomain.getParentDomain().getParentDomain().getIdentifier());
-		Assert.assertNull(subDomain.getParentDomain().getParentDomain().getParentDomain());
-
-		subDomain.setUserProvider(null);
-		abstractDomainRepository.update(subDomain);
-		userProviderRepository.delete(provider);
-		abstractDomainRepository.delete(rootDomain);
-
 	}
 
 	@Test
