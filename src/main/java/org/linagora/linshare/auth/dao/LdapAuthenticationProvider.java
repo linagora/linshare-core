@@ -103,7 +103,7 @@ public class LdapAuthenticationProvider extends
 			foundUser = ldapUserDetailsProvider.retrieveUser(domainIdentifier, login);
 
 			try {
-				ldapUserDetailsProvider.auth(foundUser.getDomain().getUserProvider(),
+				ldapUserDetailsProvider.auth(foundUser.getDomainId(),
 						foundUser.getMail(), password);
 			} catch (BadCredentialsException e1) {
 				logger.debug("Authentication failed: password does not match stored value");

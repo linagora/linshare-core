@@ -40,12 +40,10 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.repository.InternalRepository;
-import org.linagora.linshare.core.service.UserProviderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -58,14 +56,10 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 
 	private InternalRepository internalRepository;
 
-	private UserProviderService userProviderService;
-
 	public LdapUserDetailsProvider(AuthentificationFacade authentificationFacade,
-			InternalRepository internalRepository,
-			UserProviderService userProviderService) {
+			InternalRepository internalRepository) {
 		super(authentificationFacade);
 		this.internalRepository = internalRepository;
-		this.userProviderService = userProviderService;
 	}
 
 	/**
@@ -132,16 +126,16 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 		else {
 			logger.debug("Can't find the user in the DB. Searching in LDAP.");
 			// searching in LDAP
-			foundUser = userProviderService.searchForAuth(
-					domain.getUserProvider(), login);
+			foundUser = authentificationFacade.ldapSearchForAuth(
+					domain.getIdentifier(), login);
 			if (foundUser != null) {
 				// if found we set the domain which belong the user.
 				foundUser.setDomain(domain);
 			} else {
 				Set<AbstractDomain> subdomains = domain.getSubdomain();
 				for (AbstractDomain subdomain : subdomains) {
-					foundUser = userProviderService.searchForAuth(
-							subdomain.getUserProvider(), login);
+					foundUser = authentificationFacade.ldapSearchForAuth(
+							subdomain.getIdentifier(), login);
 					if (foundUser != null) {
 						// if found we set the domain which belong the user.
 						foundUser.setDomain(subdomain);
@@ -181,8 +175,8 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 			List<AbstractDomain> domains = authentificationFacade
 					.getAllDomains();
 			for (AbstractDomain loopedDomain : domains) {
-				foundUser = userProviderService.searchForAuth(
-							loopedDomain.getUserProvider(), login);
+				foundUser = authentificationFacade.ldapSearchForAuth(
+						loopedDomain.getIdentifier(), login);
 				if (foundUser != null) {
 					foundUser.setDomain(loopedDomain);
 					logger.debug("User found in domain "
@@ -212,8 +206,8 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 				+ foundUser.getAccountReprentation());
 		logger.debug("The user domain stored in DB was : "
 				+ foundUser.getDomainId());
-		if(userProviderService.searchForAuth(
-				foundUser.getDomain().getUserProvider(), login) == null) {
+		if(authentificationFacade.ldapSearchForAuth(
+				foundUser.getDomainId(), login) == null) {
 			// The previous user found into the database does not exists anymore into the LDAP directory.
 			// We must not use him.
 			logger.warn("authentication process : the current user does not exist anymore into the LDAP directory : " + foundUser.getAccountReprentation());
@@ -222,9 +216,9 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 		return foundUser;
 	}
 
-	public User auth(LdapUserProvider userProvider, String login,
+	public User auth(String domainIdentifier, String login,
 			String userPasswd) throws NamingException, IOException , BusinessException {
-		return userProviderService.auth(userProvider, login, userPasswd);
+		return authentificationFacade.ldapAuth(domainIdentifier, login, userPasswd);
 	}
 
 	public User findOrCreateUser(String domainIdentifier, String mail) throws BusinessException {

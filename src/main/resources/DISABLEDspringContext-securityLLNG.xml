@@ -249,7 +249,6 @@
 	<bean id="ldapUserDetailsProvider" class="org.linagora.linshare.auth.dao.LdapUserDetailsProvider">
 		<constructor-arg ref="authentificationFacade" />
 		<constructor-arg ref="internalRepository" />
-		<constructor-arg ref="userProviderService" />
 	</bean>
 
 	<bean id="ldapAuthenticationProvider" class="org.linagora.linshare.auth.dao.LdapAuthenticationProvider">
