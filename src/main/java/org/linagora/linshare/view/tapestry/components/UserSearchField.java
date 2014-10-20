@@ -182,15 +182,19 @@ public class UserSearchField {
 		} else {
 			componentResources.triggerEvent("inUserSearch", null, null);
 			try {
-				String[] split = userSearchPattern.split(" ");
-				if (split.length == 1) {
-					users = userFacade.searchUser(userSearchPattern, null, null, null, userVo);
-				} else if (split.length == 2) {
-					users = userFacade.searchUser(null, split[0], split[1], null, userVo);
+				if(userSearchPattern != null) {
+					String[] split = userSearchPattern.split(" ");
+					if (split.length == 1) {
+						users = userFacade.searchUser(userSearchPattern, null, null, null, userVo);
+					} else if (split.length == 2) {
+						users = userFacade.searchUser(null, split[0], split[1], null, userVo);
+					} else {
+						logger.debug("Search aborted : search input pattern : " + userSearchPattern);
+						logger.warn("Search aborted : search input pattern split length : " + String.valueOf(split.length));
+						users = new ArrayList<UserVo>();
+					}
 				} else {
-					logger.debug("Search aborted : search input pattern : " + userSearchPattern);
-					logger.warn("Search aborted : search input pattern split length : " + String.valueOf(split.length));
-					users = new ArrayList<UserVo>();
+					users = userFacade.searchUser(null, null, null, null, userVo);
 				}
 			} catch (BusinessException e) {
 				logger.debug(e.toString());
