@@ -77,8 +77,8 @@ public class ThreadMemberResourceAccessControlImpl extends
 		if (actor.hasAllRights()) {
 			return true;
 		}
-		if (opt.length > 0 && opt[0] instanceof Thread) {
-			return threadMemberRepository.findUserThreadMember((Thread) opt[0],
+		if (opt.length > 1 && opt[1] instanceof Thread) {
+			return threadMemberRepository.findUserThreadMember((Thread) opt[1],
 					(User) owner) != null;
 		}
 		return false;
