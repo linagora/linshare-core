@@ -52,13 +52,14 @@ import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
 import org.linagora.linshare.core.repository.DomainAccessRuleRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 @ContextConfiguration(locations={"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringContextTests {
+public class DomainAccessRuleRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	@Autowired
 	private DomainAccessRuleRepository domainAccessRuleRepository;
@@ -115,8 +116,10 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 
 	private void deleteTestRootDomain(AbstractDomain currentDomain) throws BusinessException {
 		DomainPolicy p = currentDomain.getPolicy();
-		abstractDomainRepository.delete(currentDomain);
+//		currentDomain.setPolicy(null);
 		domainPolicyRepository.delete(p);
+		currentDomain = abstractDomainRepository.update(currentDomain);
+		abstractDomainRepository.delete(currentDomain);
 	}
 
 	@Test
@@ -157,6 +160,7 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 		logger.debug("End testCreateDenyAllDomainRule");
 	}
 
+	@DirtiesContext
 	@Test
 	public void testCreateDenyDomainRule() throws BusinessException{
 		logger.debug("Begin testCreateDenyDomainRule");
@@ -167,7 +171,7 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 		currentDomain.getDomainAccessRules().add(rule);
 
 		domainAccessPolicyRepository.update(policy);
-		abstractDomainRepository.update(currentDomain);
+		currentDomain = abstractDomainRepository.update(currentDomain);
 		Assert.assertNotNull(rule.getPersistenceId());
 
 		logger.debug("Current object: " + rule.toString());
@@ -177,17 +181,10 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 
 		Assert.assertTrue(entityRule instanceof DenyDomain );
 
-
-		logger.debug("policy.getRules().size() : " + policy.getRules().size());
-		deleteTestRootDomain(currentDomain);
-
-		DomainAccessPolicy p = domainAccessPolicyRepository.findById(policy.getPersistenceId());
-		Assert.assertEquals(0, p.getRules().size());
-
-		logger.debug("p.getRules().size() : " + p.getRules().size());
 		logger.debug("End testCreateDenyDomainRule");
 	}
 
+	@DirtiesContext
 	@Test
 	public void testCreateAllowDomainRule() throws BusinessException{
 		logger.debug("Begin testCreateAllowDomainRule");
@@ -199,7 +196,7 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 		currentDomain.getDomainAccessRules().add(rule);
 
 		domainAccessPolicyRepository.update(policy);
-		abstractDomainRepository.update(currentDomain);
+		currentDomain = abstractDomainRepository.update(currentDomain);
 		Assert.assertNotNull(rule.getPersistenceId());
 
 		logger.debug("Current object: " + rule.toString());
@@ -211,17 +208,10 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 
 		logger.debug("currentDomain.getDomainAccessRules().size() : " + currentDomain.getDomainAccessRules().size());
 
-
-		logger.debug("policy.getRules().size() : " + policy.getRules().size());
-		deleteTestRootDomain(currentDomain);
-
-		DomainAccessPolicy p = domainAccessPolicyRepository.findById(policy.getPersistenceId());
-		Assert.assertEquals(0, p.getRules().size());
-
-		logger.debug("p.getRules().size() : " + p.getRules().size());
 		logger.debug("End testCreateAllowDomainRule");
 	}
 
+	@DirtiesContext
 	@Test
 	public void testCreateDomainWhiteListRule() throws BusinessException{
 		logger.debug("Begin testCreateDomainWhiteListRule");
@@ -237,7 +227,7 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 		currentDomain.getDomainAccessRules().add(endRule);
 
 		domainAccessPolicyRepository.update(policy);
-		abstractDomainRepository.update(currentDomain);
+		currentDomain = abstractDomainRepository.update(currentDomain);
 		Assert.assertNotNull(rule.getPersistenceId());
 
 		logger.debug("Current object: " + rule.toString());
@@ -249,9 +239,6 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 
 		logger.debug("currentDomain.getDomainAccessRules().size() : " + currentDomain.getDomainAccessRules().size());
 		Assert.assertEquals(2, currentDomain.getDomainAccessRules().size());
-
-		logger.debug("policy.getRules().size() : " + policy.getRules().size());
-		deleteTestRootDomain(currentDomain);
 
 		logger.debug("End testCreateDomainWhiteListRule");
 	}
