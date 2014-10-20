@@ -192,7 +192,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		threadEntryFacade.delete(threadUuid, uuid);
 	}
 
-	@Path("/{ownerUuid}/documents/{uuid}/download")
+	@Path("/{uuid}/download")
 	@GET
 	@ApiOperation(value = "Download a file.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
@@ -208,7 +208,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		return threadEntryFacade.download(threadUuid, uuid);
 	}
 
-	@Path("/{ownerUuid}/documents/{uuid}/thumbnail")
+	@Path("/{uuid}/thumbnail")
 	@GET
 	@ApiOperation(value = "Download the thumbnail of a file.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
