@@ -169,8 +169,10 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notNull(threadEntryDto, "Missing required thread entry");
 		Validate.notEmpty(threadEntryDto.getUuid(), "Missing required thread entry");
 		
-		// Checking user in delete(String, String
-		delete(threadUuid, threadEntryDto.getUuid());
+		User actor = checkAuthentication();
+		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
+				threadEntryDto.getUuid());
+		threadEntryService.deleteThreadEntry(actor, actor, threadEntry);
 	}
 
 	@Override
