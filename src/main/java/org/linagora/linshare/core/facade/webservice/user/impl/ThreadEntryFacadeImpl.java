@@ -112,8 +112,6 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		}
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
 				actor, thread, fi, fileName);
-		threadEntryService.updateFileProperties(actor, threadEntry.getUuid(),
-				description);
 		return new ThreadEntryDto(threadEntry);
 	}
 
