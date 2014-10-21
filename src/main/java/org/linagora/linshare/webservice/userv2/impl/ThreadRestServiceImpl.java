@@ -142,9 +142,7 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 	public void delete(
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		ThreadDto tmp = new ThreadDto();
-		tmp.setUuid(uuid);
-		threadFacade.delete(tmp);
+		threadFacade.delete(uuid);
 	}
 
 }
