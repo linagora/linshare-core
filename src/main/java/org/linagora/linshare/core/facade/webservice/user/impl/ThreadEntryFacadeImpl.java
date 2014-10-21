@@ -102,9 +102,9 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(fileName, "Missing required file name");
 		Validate.notEmpty(description, "Missing required file description");
 		Validate.notNull(fi, "Missing required input file stream");
-		
+
 		User actor = checkAuthentication();
-		
+
 		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
 		if (thread == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
@@ -167,8 +167,9 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadEntryDto, "Missing required thread entry");
-		Validate.notEmpty(threadEntryDto.getUuid(), "Missing required thread entry");
-		
+		Validate.notEmpty(threadEntryDto.getUuid(),
+				"Missing required thread entry");
+
 		User actor = checkAuthentication();
 		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
 				threadEntryDto.getUuid());
@@ -208,7 +209,10 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(uuid, "Missing required entry uuid");
 
 		User actor = checkAuthentication();
-		return null;
+
+		return Response.ok(
+				threadEntryService.getDocumentThumbnailStream(actor, uuid))
+				.build();
 	}
 
 }
