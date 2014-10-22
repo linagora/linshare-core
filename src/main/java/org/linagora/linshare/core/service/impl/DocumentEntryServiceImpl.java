@@ -90,9 +90,11 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	private final AntiSamyService antiSamyService;
 	private final DomainBusinessService domainBusinessService;
 
+	private final Long virusscannerLimitFilesize;
+
 	public DocumentEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
 			FunctionalityReadOnlyService functionalityReadOnlyService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService, MimeTypeMagicNumberDao mimeTypeIdentifier,
-			AntiSamyService antiSamyService, DomainBusinessService domainBusinessService) {
+			AntiSamyService antiSamyService, DomainBusinessService domainBusinessService, Long virusscannerLimitFilesize) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -103,6 +105,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
 		this.antiSamyService = antiSamyService;
 		this.domainBusinessService = domainBusinessService;
+		this.virusscannerLimitFilesize = virusscannerLimitFilesize;
 	}
 
 	@Override
@@ -126,7 +129,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-				checkVirus(fileName, actor, tempFile);
+				checkVirus(fileName, actor, tempFile, size);
 			}
 
 			// want a timestamp on doc ?
@@ -196,7 +199,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-				checkVirus(fileName, actor, tempFile);
+				checkVirus(fileName, actor, tempFile, size);
 			}
 
 			// want a timestamp on doc ?
@@ -550,11 +553,17 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		return fileName;
 	}
 
-	private Boolean checkVirus(String fileName, Account owner, File file) throws BusinessException {
+	private Boolean checkVirus(String fileName, Account owner, File file, Long size) throws BusinessException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("antivirus activation:" + !virusScannerService.isDisabled());
 		}
-
+		if (virusscannerLimitFilesize != null
+				&& size > virusscannerLimitFilesize) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("antivirus skipped.");
+			}
+			return true;
+		}
 		boolean checkStatus = false;
 		try {
 			checkStatus = virusScannerService.check(file);
