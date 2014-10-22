@@ -109,6 +109,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 	private final NotifierService notifierService;
 
+	private final Long virusscannerLimitFilesize;
+
 	public DocumentEntryServiceImpl(
 			DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
@@ -121,7 +123,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			DomainBusinessService domainBusinessService,
 			DocumentEntryResourceAccessControl rac,
 			MailBuildingService mailBuildingService,
-			NotifierService notifierService) {
+			NotifierService notifierService,
+			Long virusscannerLimitFilesize) {
 		super(rac);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -134,6 +137,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		this.domainBusinessService = domainBusinessService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
+		this.virusscannerLimitFilesize = virusscannerLimitFilesize;
 	}
 
 	@Override
@@ -192,7 +196,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			if (!forceAntivirusOff) {
 				Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
 				if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-					checkVirus(fileName, owner, tempFile);
+					checkVirus(fileName, owner, tempFile, size);
 				}
 			}
 
@@ -264,7 +268,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-				checkVirus(fileName, owner, tempFile);
+				checkVirus(fileName, owner, tempFile, size);
 			}
 
 			// want a timestamp on doc ?
@@ -540,11 +544,17 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		return fileName;
 	}
 
-	private Boolean checkVirus(String fileName, Account owner, File file) throws BusinessException {
+	private Boolean checkVirus(String fileName, Account owner, File file, Long size) throws BusinessException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("antivirus activation:" + !virusScannerService.isDisabled());
 		}
-
+		if (virusscannerLimitFilesize != null
+				&& size > virusscannerLimitFilesize) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("antivirus skipped.");
+			}
+			return true;
+		}
 		boolean checkStatus = false;
 		try {
 			checkStatus = virusScannerService.check(file);
