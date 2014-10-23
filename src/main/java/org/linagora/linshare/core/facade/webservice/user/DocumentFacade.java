@@ -41,18 +41,37 @@ import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttacheme
 import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
-
 public interface DocumentFacade extends GenericFacade {
 
 	public List<DocumentDto> getDocuments() throws BusinessException;
+
 	public DocumentDto getDocument(String uuid) throws BusinessException;
-	public DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException;
+
+	public DocumentDto addDocumentXop(DocumentAttachement doca)
+			throws BusinessException;
+
 	public Long getUserMaxFileSize() throws BusinessException;
+
 	public Long getAvailableSize() throws BusinessException;
-	public DocumentDto uploadfile(InputStream fi, String fileName, String description) throws BusinessException;
-	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException;
-	public InputStream getThumbnailStream(String docEntryUuid) throws BusinessException;
+
+	public DocumentDto uploadfile(InputStream fi, String fileName,
+			String description) throws BusinessException;
+
+	public InputStream getDocumentStream(String docEntryUuid)
+			throws BusinessException;
+
+	public InputStream getThumbnailStream(String docEntryUuid)
+			throws BusinessException;
+
 	public DocumentDto deleteFile(String uuid) throws BusinessException;
+
 	public Boolean isEnableMimeTypes() throws BusinessException;
+
 	public List<MimeTypeDto> getMimeTypes() throws BusinessException;
+
+	DocumentDto update(String description, String givenFileName,
+			String documentUuid) throws BusinessException;
+
+	DocumentDto updateFile(InputStream theFile, String description,
+			String givenFileName, String documentUuid) throws BusinessException;
 }

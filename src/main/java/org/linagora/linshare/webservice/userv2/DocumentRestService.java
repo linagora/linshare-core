@@ -49,9 +49,9 @@ public interface DocumentRestService {
 			String description, String givenFileName, MultipartBody body)
 			throws BusinessException;
 
-	DocumentDto get(String uuid) throws BusinessException;
+	DocumentDto find(String uuid) throws BusinessException;
 
-	List<DocumentDto> getAll() throws BusinessException;
+	List<DocumentDto> findAll() throws BusinessException;
 
 	DocumentDto update(String uuid, String description,
 			String fileName) throws BusinessException;

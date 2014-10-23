@@ -40,6 +40,7 @@ import java.util.Set;
 
 import javax.activation.DataHandler;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.User;
@@ -85,6 +86,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 
 	@Override
 	public DocumentDto getDocument(String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "Missing required document uuid");
 		User actor = checkAuthentication();
 		DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
 		return new DocumentDto(doc);
@@ -93,6 +95,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 	@Override
 	public DocumentDto uploadfile(InputStream fi, String fileName,
 			String description) throws BusinessException {
+		Validate.notNull(fi, "Missing required file");
 		User actor = checkAuthentication();
 		if ((actor.isGuest() && !actor.getCanUpload()))
 			throw new BusinessException(
@@ -143,6 +146,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 
 	@Override
 	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException {
+		Validate.notEmpty(docEntryUuid, "Missing required document uuid");
 		logger.debug("downloading for document : " + docEntryUuid);
 		User actor = checkAuthentication();
 		return documentEntryService.getDocumentStream(actor, actor, docEntryUuid);
@@ -150,6 +154,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 
 	@Override
 	public InputStream getThumbnailStream(String docEntryUuid) throws BusinessException {
+		Validate.notEmpty(docEntryUuid, "Missing required document uuid");
 		logger.debug("downloading thumbnail for document : " + docEntryUuid);
 		User actor = checkAuthentication();
 		return documentEntryService.getDocumentThumbnailStream(actor, actor, docEntryUuid);
@@ -157,6 +162,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 
 	@Override
 	public DocumentDto deleteFile(String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "Missing required document uuid");
 		logger.debug("deleting for document : " + uuid);
 		User actor = checkAuthentication();
 		DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
@@ -181,5 +187,43 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 	public Boolean isEnableMimeTypes() throws BusinessException {
 		User actor = checkAuthentication();
 		return documentEntryService.mimeTypeFilteringStatus(actor);
+	}
+
+	@Override
+	public DocumentDto update(String description,
+			String givenFileName, String documentUuid) throws BusinessException {
+
+		Validate.notEmpty(documentUuid, "Missing required document uuid");
+
+		User actor = checkAuthentication();
+
+		documentEntryService.updateFileProperties(actor, actor, documentUuid,
+				givenFileName, description);
+		return new DocumentDto(documentEntryService.find(actor, actor,
+				documentUuid));
+	}
+
+	@Override
+	public DocumentDto updateFile(InputStream theFile,
+			String description, String givenFileName, String documentUuid)
+			throws BusinessException {
+		Validate.notEmpty(documentUuid, "Missing required document uuid");
+		Validate.notNull(theFile, "Missing required File stream");
+
+		User actor = checkAuthentication();
+
+		DocumentDto doc = new DocumentDto(documentEntryService.find(actor,
+				actor, documentUuid));
+		if (description == null || description.isEmpty()) {
+			description = doc.getDescription();
+		}
+		if (givenFileName == null || givenFileName.isEmpty()) {
+			givenFileName = doc.getName();
+		}
+
+		documentEntryService.update(actor, actor, documentUuid, theFile, null,
+				givenFileName);
+		return new DocumentDto(documentEntryService.find(actor, actor,
+				documentUuid));
 	}
 }
