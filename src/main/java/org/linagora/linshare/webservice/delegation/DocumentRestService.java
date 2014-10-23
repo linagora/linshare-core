@@ -52,9 +52,9 @@ public interface DocumentRestService {
 			String description, String givenFileName, MultipartBody body)
 			throws BusinessException;
 
-	DocumentDto get(String ownerUuid, String uuid) throws BusinessException;
+	DocumentDto find(String ownerUuid, String uuid) throws BusinessException;
 
-	List<DocumentDto> getAll(String ownerUuid) throws BusinessException;
+	List<DocumentDto> findAll(String ownerUuid) throws BusinessException;
 
 	DocumentDto update(String ownerUuid, String uuid, String description,
 			String fileName) throws BusinessException;

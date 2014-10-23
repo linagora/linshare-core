@@ -49,6 +49,8 @@ public interface DocumentEntryService {
 
 	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException ;
 
+	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, InputStream stream, String fileName) throws BusinessException ;
+
 	/**
 	 * Document suppression due to user action. 
 	 * @param actor TODO

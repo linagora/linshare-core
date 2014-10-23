@@ -238,6 +238,18 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	}
 
 	@Override
+	public DocumentEntry update(Account actor, Account owner,
+			String docEntryUuid, InputStream stream, String fileName)
+			throws BusinessException {
+		fileName = sanitizeFileName(fileName); // throws
+
+		DocumentUtils util = new DocumentUtils();
+		File tempFile = util.getTempFile(stream, fileName);
+		Long size = tempFile.length();
+		return update(actor, owner, docEntryUuid, stream, size, fileName);
+	}
+
+	@Override
 	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(docEntryUuid, "document entry uuid is required.");
@@ -500,12 +512,15 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	}
 
 	@Override
-	public void renameDocumentEntry(Account actor, Account owner, String uuid, String newName) throws BusinessException {
+	public void renameDocumentEntry(Account actor, Account owner, String uuid,
+			String newName) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		Validate.notEmpty(newName, "new name is required.");
 		DocumentEntry entry = find(actor, owner, uuid);
-		checkUpdatePermission(actor, entry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+
+		checkUpdatePermission(actor, entry,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		documentEntryBusinessService.renameDocumentEntry(entry, newName);
 	}
 

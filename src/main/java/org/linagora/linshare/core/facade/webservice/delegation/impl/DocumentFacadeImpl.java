@@ -37,6 +37,9 @@ package org.linagora.linshare.core.facade.webservice.delegation.impl;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -53,8 +56,7 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 
 	private final DocumentEntryService documentEntryService;
 
-	public DocumentFacadeImpl(
-			final AccountService accountService,
+	public DocumentFacadeImpl(final AccountService accountService,
 			final DocumentEntryService documentEntryService,
 			final UserService userService) {
 		super(accountService, userService);
@@ -62,20 +64,138 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<DocumentDto> getAll(String ownerUuid) throws BusinessException {
+	public List<DocumentDto> findAll(String ownerUuid) throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
+
 		List<DocumentEntry> list = documentEntryService.findAll(actor, owner);
 		return Lists.transform(list, DocumentDto.toDelegationVo());
 	}
 
 	@Override
 	public DocumentDto create(String ownerUuid, InputStream theFile,
-			String description, String givenFileName)
-			throws BusinessException {
+			String description, String givenFileName) throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notNull(theFile, "Missing required file");
+
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		DocumentEntry doc = documentEntryService.create(actor, owner, theFile, givenFileName);
-		return new  DocumentDto(doc);
+		DocumentEntry doc = documentEntryService.create(actor, owner, theFile,
+				givenFileName);
+		return new DocumentDto(doc);
+	}
+
+	@Override
+	public DocumentDto find(String ownerUuid, String documentUuid)
+			throws BusinessException {
+		Validate.notEmpty(ownerUuid, "");
+		Validate.notEmpty(documentUuid, "");
+
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+
+		return new DocumentDto(documentEntryService.find(actor, owner,
+				documentUuid));
+	}
+
+	@Override
+	public void delete(String ownerUuid, DocumentDto documentDto)
+			throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notNull(documentDto, "Missing required file");
+		Validate.notEmpty(documentDto.getUuid(),
+				"Missing required document uuid");
+
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+
+		documentEntryService.delete(actor, owner, documentDto.getUuid());
+
+	}
+
+	@Override
+	public void delete(String ownerUuid, String documentUuid)
+			throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(documentUuid, "Missing required document uuid");
+
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+
+		documentEntryService.delete(actor, owner, documentUuid);
+
+	}
+
+	@Override
+	public Response download(String ownerUuid, String documentUuid)
+			throws BusinessException {
+
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(documentUuid, "Missing required document uuid");
+
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+
+		return Response.ok(
+				documentEntryService.getDocumentStream(actor, owner,
+						documentUuid)).build();
+	}
+
+	@Override
+	public Response thumbnail(String ownerUuid, String documentUuid)
+			throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(documentUuid, "Missing required document uuid");
+
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+
+		return Response.ok(
+				documentEntryService.getDocumentThumbnailStream(actor, owner,
+						documentUuid)).build();
+	}
+
+	@Override
+	public DocumentDto update(String ownerUuid, String description,
+			String givenFileName, String documentUuid) throws BusinessException {
+
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(documentUuid, "Missing required document uuid");
+
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+
+		documentEntryService.updateFileProperties(actor, owner, documentUuid,
+				givenFileName, description);
+		return new DocumentDto(documentEntryService.find(actor, owner,
+				documentUuid));
+	}
+
+	@Override
+	public DocumentDto updateFile(String ownerUuid, InputStream theFile,
+			String description, String givenFileName, String documentUuid)
+			throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(documentUuid, "Missing required document uuid");
+		Validate.notNull(theFile, "Missing required File stream");
+
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+
+		DocumentDto doc = new DocumentDto(documentEntryService.find(actor,
+				owner, documentUuid));
+		if (description == null || description.isEmpty()) {
+			description = doc.getDescription();
+		}
+		if (givenFileName == null || givenFileName.isEmpty()) {
+			givenFileName = doc.getName();
+		}
+
+		documentEntryService.update(actor, owner, documentUuid, theFile, null,
+				givenFileName);
+		return new DocumentDto(documentEntryService.find(actor, owner,
+				documentUuid));
 	}
 }

@@ -64,8 +64,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/{ownerUuid}/documents")
-@Api(value = "/rest/delegation/{ownerUuid}/documents", basePath = "/rest/delegation/", description = "Documents service.",
-	produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Api(value = "/rest/delegation/{ownerUuid}/documents", basePath = "/rest/delegation/", description = "Documents service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 public class DocumentRestServiceImpl extends WebserviceBase implements
 		DocumentRestService {
 
@@ -81,29 +80,30 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Create a document which will contain the uploaded file.", response = DocumentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Owner not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public DocumentDto create(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream theFile,
 			@ApiParam(value = "An optional description of a document.") @Multipart(value = "description", required = false) String description,
 			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
-			MultipartBody body)
-					throws BusinessException {
+			MultipartBody body) throws BusinessException {
 		String fileName;
 		String comment = (description == null) ? "" : description;
 		if (theFile == null) {
-			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
+			throw giveRestException(HttpStatus.SC_BAD_REQUEST,
+					"Missing file (check parameter file)");
 		}
 		if (givenFileName == null || givenFileName.isEmpty()) {
 			// parameter givenFileName is optional
 			// so need to search this information in the header of the
 			// attachement (with id file)
-			fileName = body.getAttachment("file").getContentDisposition().getParameter("filename");
+			fileName = body.getAttachment("file").getContentDisposition()
+					.getParameter("filename");
 		} else {
 			fileName = givenFileName;
 		}
@@ -114,34 +114,33 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Get a document.", response = DocumentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Owner not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public DocumentDto get(
+	public DocumentDto find(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
-					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+			throws BusinessException {
+		return documentFacade.find(ownerUuid, uuid);
 	}
 
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Get all documents.", response = DocumentDto.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Owner not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public List<DocumentDto> getAll(
+	public List<DocumentDto> findAll(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid)
 			throws BusinessException {
-		return documentFacade.getAll(ownerUuid);
+		return documentFacade.findAll(ownerUuid);
 	}
 
 	@Path("/{uuid}")
@@ -149,11 +148,11 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Update a document.", response = DocumentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Owner not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public DocumentDto update(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
@@ -161,8 +160,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "An optional description of the document.") String description,
 			@ApiParam(value = "Document new file name.") String fileName)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return documentFacade.update(ownerUuid, description, fileName, uuid);
 	}
 
 	@Path("/{uuid}/upload")
@@ -170,11 +168,11 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Update the file inside the document.", response = DocumentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Owner not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public DocumentDto updateFile(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
@@ -182,61 +180,59 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "File stream.", required = true) InputStream theFile,
 			@ApiParam(value = "An optional description of a document.") String description,
 			@ApiParam(value = "The given file name of the uploaded file.", required = true) String givenFileName,
-			MultipartBody body)
-					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+			MultipartBody body) throws BusinessException {
+
+		return documentFacade.updateFile(ownerUuid, theFile, description,
+				givenFileName, uuid);
 	}
 
 	@DELETE
 	@Path("/{uuid}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Delete a document.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Owner not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public void delete(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
-					throws BusinessException {
-		// TODO Auto-generated method stub
+			throws BusinessException {
+		documentFacade.delete(ownerUuid, uuid);
 	}
 
 	@Path("/{uuid}/download")
 	@GET
 	@ApiOperation(value = "Download a file.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Owner not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public Response download(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
-					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+			throws BusinessException {
+		return documentFacade.download(ownerUuid, uuid);
 	}
 
 	@Path("/{uuid}/thumbnail")
 	@GET
 	@ApiOperation(value = "Download the thumbnail of a file.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Owner not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public Response thumbnail(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
-					throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+			throws BusinessException {
+		return documentFacade.thumbnail(ownerUuid, uuid);
 	}
 
 }
