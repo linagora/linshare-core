@@ -76,7 +76,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 
 	@Override
 	public ThreadEntryDto create(String ownerUuid, String threadUuid,
-			InputStream theFile, String comment, String fileName) {
+			InputStream theFile, String fileName) {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(theFile, "Missing required file");

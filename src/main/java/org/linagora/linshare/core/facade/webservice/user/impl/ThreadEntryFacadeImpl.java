@@ -48,7 +48,6 @@ import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
@@ -99,10 +98,9 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 
 	@Override
 	public ThreadEntryDto create(String threadUuid, InputStream fi,
-			String fileName, String description) throws BusinessException {
+			String fileName) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(fileName, "Missing required file name");
-		Validate.notEmpty(description, "Missing required file description");
 		Validate.notNull(fi, "Missing required input file stream");
 
 		User actor = checkAuthentication();
@@ -209,7 +207,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(uuid, "Missing required entry uuid");
 
 		User actor = checkAuthentication();
-		DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
+		ThreadEntry doc = threadEntryService.findById(actor, actor, uuid);
 		InputStream documentStream = threadEntryService
 				.getDocumentThumbnailStream(actor, uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
@@ -219,4 +217,15 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		return response.build();
 	}
 
+	@Override
+	public ThreadEntryDto update(String threadUuid, String threadEntryUuid, String description) throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(threadEntryUuid, "Missing required thread entry uuid");
+
+		User actor = checkAuthentication();
+
+		threadEntryService.updateFileProperties(actor, threadEntryUuid, description);
+		return new ThreadEntryDto(threadEntryService.findById(actor, actor,
+				threadEntryUuid));
+	}
 }

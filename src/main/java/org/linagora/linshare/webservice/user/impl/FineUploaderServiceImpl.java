@@ -178,7 +178,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 		}
 		try {
 			ThreadEntryDto doc = threadEntryFacade.create(threadUuid, file,
-					fileName, "");
+					fileName);
 			return new FineUploaderDto(true, doc.getUuid());
 		} catch (BusinessException e) {
 			return new FineUploaderDto(e);

@@ -59,7 +59,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	public ThreadFacadeImpl(final ThreadService threadService,
+	public ThreadFacadeImpl(
+			final ThreadService threadService,
 			final AccountService accountService, final UserService userService,
 			final FunctionalityReadOnlyService functionalityService) {
 		super(accountService);

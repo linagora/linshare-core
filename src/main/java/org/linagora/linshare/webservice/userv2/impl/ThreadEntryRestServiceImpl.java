@@ -48,7 +48,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
@@ -108,8 +107,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		} else {
 			fileName = givenFileName;
 		}
-		return threadEntryFacade.create(threadUuid, theFile,
-				StringUtils.defaultString(description), fileName);
+		return threadEntryFacade.create(threadUuid, theFile, fileName);
 	}
 
 	@Path("/copy")

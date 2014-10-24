@@ -45,7 +45,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
 public interface ThreadEntryFacade {
 
 	ThreadEntryDto create(String ownerUuid, String threadUuid,
-			InputStream theFile, String comment, String fileName)
+			InputStream theFile, String fileName)
 			throws BusinessException;
 
 	ThreadEntryDto copy(String ownerUuid, String threadUuid, String entryUuid)

@@ -64,5 +64,4 @@ public interface ThreadEntryService {
 	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Account actor, Thread thread, String[] names);
 
 	public void updateFileProperties(Account actor, String threadEntryUuid, String fileComment) throws BusinessException;
-	
 }
