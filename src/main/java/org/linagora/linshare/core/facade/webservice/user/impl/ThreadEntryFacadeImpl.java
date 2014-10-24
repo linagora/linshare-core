@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -55,6 +56,7 @@ import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -207,10 +209,14 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(uuid, "Missing required entry uuid");
 
 		User actor = checkAuthentication();
+		DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
+		InputStream documentStream = threadEntryService
+				.getDocumentThumbnailStream(actor, uuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder
+				.getDocumentResponseBuilder(documentStream, doc.getName()
+						+ "_thumb.png", "image/png");
 
-		return Response.ok(
-				threadEntryService.getDocumentThumbnailStream(actor, uuid))
-				.build();
+		return response.build();
 	}
 
 }

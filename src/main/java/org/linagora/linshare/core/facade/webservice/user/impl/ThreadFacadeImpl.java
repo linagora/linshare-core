@@ -128,7 +128,6 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 
 		return new ThreadDto(threadService.create(actor, actor,
 				threadDto.getName()));
-
 	}
 
 	@Override
@@ -146,7 +145,6 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 
 	@Override
 	public void delete(String threadUuid) throws BusinessException {
-		// TODO Auto-generated method stub
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 
 		User actor = checkAuthentication();
