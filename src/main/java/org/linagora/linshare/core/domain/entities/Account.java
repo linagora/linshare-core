@@ -164,6 +164,12 @@ public abstract class Account {
 		this.locale = locale;
 	}
 
+	public void setBusinessLocale(String locale) {
+		if (locale != null) {
+			this.locale = locale;
+		}
+	}
+
 	public boolean isEnable() {
 		return enable;
 	}
@@ -239,6 +245,12 @@ public abstract class Account {
 
 	public void setExternalMailLocale(String externalMailLocale) {
 		this.externalMailLocale = externalMailLocale;
+	}
+
+	public void setBusinessExternalMailLocale(String externalMailLocale) {
+		if (externalMailLocale != null) {
+			this.externalMailLocale = externalMailLocale;
+		}
 	}
 
 	public TechnicalAccountPermission getPermission() {

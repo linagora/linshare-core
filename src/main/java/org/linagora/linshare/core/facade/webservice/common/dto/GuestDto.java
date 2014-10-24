@@ -99,6 +99,21 @@ public class GuestDto extends AccountDto {
 		}
 	}
 
+	public Guest toUserObject() {
+		Guest guest = new Guest();
+		guest.setLsUuid(getUuid());
+		guest.setCanUpload(isCanUpload());
+		guest.setComment(getComment());
+		guest.setLocale(getLocale());
+		guest.setExternalMailLocale(getLocale());
+		guest.setExpirationDate(getExpirationDate());
+		guest.setFirstName(getFirstName());
+		guest.setLastName(getLastName());
+		guest.setMail(getMail());
+		guest.setRestricted(isRestricted());
+		return guest;
+	}
+
 	public static GuestDto getSimple(Guest user) {
 		return new GuestDto(user, false);
 	}

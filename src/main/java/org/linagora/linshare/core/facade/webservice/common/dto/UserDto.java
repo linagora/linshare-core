@@ -40,6 +40,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 
 import com.google.common.collect.Lists;
@@ -76,10 +77,9 @@ public class UserDto extends AccountDto {
 
 	@ApiModelProperty(value = "Expiration date")
 	private Date expirationDate;
-	
+
 	@ApiModelProperty(value = "RestrictedContacts")
 	private List<UserDto> restrictedContacts = Lists.newArrayList();
-	
 
 	public UserDto() {
 		super();
@@ -94,18 +94,46 @@ public class UserDto extends AccountDto {
 		this.accountType = u.getAccountType().toString();
 		if (full) {
 			if (this.isGuest()) {
-				Guest g = (Guest)u;
+				Guest g = (Guest) u;
 				this.restricted = g.isRestricted();
 				this.comment = g.getComment();
 				this.expirationDate = g.getExpirationDate();
 				if (g.isRestricted()) {
 					for (AllowedContact contact : g.getRestrictedContacts()) {
-						this.restrictedContacts.add(getSimple(contact.getContact()));
+						this.restrictedContacts.add(getSimple(contact
+								.getContact()));
 					}
 				}
 			}
 			this.canUpload = u.getCanUpload();
 			this.canCreateGuest = u.getCanCreateGuest();
+		}
+	}
+
+	public User toUserObject(boolean isGuest) {
+		if (isGuest) {
+			Guest guest = new Guest();
+			guest.setLsUuid(getUuid());
+			guest.setCanUpload(getCanUpload());
+			guest.setComment(getComment());
+			guest.setLocale(getLocale());
+			guest.setExternalMailLocale(getLocale());
+			guest.setExpirationDate(getExpirationDate());
+			guest.setFirstName(getFirstName());
+			guest.setLastName(getLastName());
+			guest.setMail(getMail());
+			guest.setRestricted(isRestricted());
+			return guest;
+		} else {
+			Internal internal = new Internal();
+			internal.setLsUuid(getUuid());
+			internal.setCanUpload(getCanUpload());
+			internal.setLocale(getLocale());
+			internal.setExternalMailLocale(getLocale());
+			internal.setFirstName(getFirstName());
+			internal.setLastName(getLastName());
+//			internal.setMail(getMail());
+			return internal;
 		}
 	}
 
@@ -201,7 +229,7 @@ public class UserDto extends AccountDto {
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
 	}
-	
+
 	public List<UserDto> getRestrictedContacts() {
 		return restrictedContacts;
 	}

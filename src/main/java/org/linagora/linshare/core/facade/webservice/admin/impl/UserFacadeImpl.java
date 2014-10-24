@@ -41,8 +41,8 @@ import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
@@ -123,8 +123,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			UserDto userDto = UserDto.getFull(user);
 
 			if (user.isGuest() && user.isRestricted()) {
-				Guest guest = guestService.find(currentUser,
-						currentUser, user.getLsUuid());
+				Guest guest = guestService.find(currentUser, currentUser,
+						user.getLsUuid());
 				Set<AllowedContact> contacts = guest.getRestrictedContacts();
 				for (AllowedContact contact : contacts) {
 					userDto.getRestrictedContacts().add(
@@ -147,13 +147,23 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public UserDto update(UserDto userDto) throws BusinessException {
+		Validate.notNull(userDto, "user must be set.");
+		Validate.notEmpty(userDto.getUuid(), "uuid must be set.");
+		Validate.notEmpty(userDto.getLocale(), "uuid must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
-		User user = getUser(userDto);
+		User entity = userService.findByLsUuid(userDto.getUuid());
+		if (entity == null) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
+					"Can not find user");
+		}
+		User userToUpdate = userDto.toUserObject(entity.isGuest());
 		User update;
-		if (userDto.isGuest()) {
-			update = guestService.update(actor, actor, (Guest) user);
+		if (entity.isGuest()) {
+			update = guestService.update(actor, (User) entity.getOwner(),
+					(Guest) userToUpdate);
 		} else {
-			update = userService.updateUser(actor, user, userDto.getDomain());
+			update = userService.updateUser(actor, userToUpdate,
+					userDto.getDomain());
 		}
 		return UserDto.getSimple(update);
 	}
@@ -164,15 +174,6 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		String uuid = userDto.getUuid();
 		Validate.notEmpty(uuid, "user unique identifier must be set.");
 		userService.deleteUser(actor, uuid);
-	}
-
-	private User getUser(UserDto userDto) {
-		Validate.notEmpty(userDto.getUuid(),
-				"user unique identifier must be set.");
-		if (userDto.isGuest()) {
-			return new Guest(userDto);
-		}
-		return new Internal(userDto);
 	}
 
 	@Override

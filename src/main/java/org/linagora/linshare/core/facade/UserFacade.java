@@ -58,7 +58,7 @@ public interface UserFacade {
      */
 	UserVo createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment,
     		UserVo owner) throws BusinessException;
-    
+
     /**
      * update a guest (edit)
      * @param guestUuid 
@@ -69,8 +69,8 @@ public interface UserFacade {
      * @param owner
      * @throws BusinessException
      */
-    public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException;
-    
+    public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, UserVo owner) throws BusinessException;
+
     /**
      * update an user (only the role)
      * @param userUuid 
@@ -80,7 +80,7 @@ public interface UserFacade {
      * @throws BusinessException
      */
     public void updateUserRole(String userUuid, String domain, String mail, Role role, UserVo owner) throws BusinessException;
-    
+
 
     /** Search a user.
      * @param mail user email.
@@ -90,7 +90,7 @@ public interface UserFacade {
      */
     List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser) throws BusinessException;
 
-    
+
     /** Search a user.
      * @param mail user email.
      * @param firstName user first name.
@@ -105,16 +105,16 @@ public interface UserFacade {
      * @return the list of guests created by their owner.
      */
     List<UserVo> searchGuest(UserVo actorVo);
-    
+
     /** Delete a guest, purge an internal user.
      * @param login login of the user to delete.
      * @param owner : the actor that has to be the guest creator or an admin of the application
      */
     void deleteUser(String login, UserVo actor);
-    
-    
+
+
     List<String> findMails(String beginWith);
-    
+
 	/**
 	 * Update a user locale
 	 * @param user
@@ -122,8 +122,8 @@ public interface UserFacade {
 	 * @throws BusinessException 
 	 */
 	public void updateUserLocale(UserVo user, String locale) throws BusinessException;
-	
-	
+
+
     /** Load a User.
      * If the user doesn't exist in database, search informations in LDAP and create a user entry before returning it.
      * @param login user login.
@@ -136,7 +136,7 @@ public interface UserFacade {
      * @return password or null if empty or null.
      */
     String getPassword(String login);
-    
+
     /**
      * Change a user password
      * @param user
@@ -145,14 +145,14 @@ public interface UserFacade {
      * @throws BusinessException  AUTHENTICATION_ERROR if the password supplied is wrong
      */
     void changePassword(UserVo user, String oldPassword, String newPassword) throws BusinessException;
-    
+
     /**
      * Set a new password to a guest 
      * @param guest
      * @param actor
      */
     void resetPassword(UserVo guest) throws BusinessException;
-    
+
     /**
 	 * Update a guest as restricted and set his list of contacts
      * @param actorVo 
@@ -161,7 +161,7 @@ public interface UserFacade {
 	 * @param mailContacts
 	 */
 	void setGuestContactRestriction(UserVo actorVo, String login, List<String> mailContacts) throws BusinessException;
-	
+
     /**
 	 * Set a guest as not restricted and remove his list of contacts
      * @param actorVo 
@@ -169,7 +169,7 @@ public interface UserFacade {
 	 * @param login
 	 */
 	public void removeGuestContactRestriction(UserVo actorVo, String login) throws BusinessException;
-	
+
 	/**
 	 * Add one contact to a restricted guest
 	 * @param actorVo
@@ -178,7 +178,7 @@ public interface UserFacade {
 	 * @param contactUuid
 	 */
 	public void addGuestContactRestriction(UserVo actorVo, String ownerUuid, String contactUuid) throws BusinessException;
-    
+
 	/**
 	 * Retrieve the list of contacts of the guest
 	 * @param actorVo 
@@ -198,8 +198,8 @@ public interface UserFacade {
 	 * @return
 	 */
 	List<UserVo> searchAllBreakedUsers(UserVo userLoggedIn);
-	
-	
+
+
 	/**
 	 * Search a guest with his mail and the user logged in if he's his owner.
 	 * 
@@ -208,13 +208,13 @@ public interface UserFacade {
 	 * @return User entity
 	 */
 	UserVo findGuestWithMailAndUserLoggedIn(UserVo userLoggedIn, String mail);
-	
+
 	UserVo findGuestByLsUuid(UserVo actorVo, String guestUuid);
-	
+
 	UserVo findUserByLsUuid(UserVo actorVo, String uuid);
-	
-	
-	
+
+
+
 	/**
 	 * This method is design to find an user in the database from its mail and domain. 
 	 * The communication rules are used to determine all authorized domains you are allowed to search in, the domainId parameter is the starting point.
@@ -224,7 +224,7 @@ public interface UserFacade {
 	 * @return User entity
 	 */
 	UserVo findUserFromAuthorizedDomainOnly(String domainId, String mail);
-	
+
 	/**
 	 * This method search a particular guest in the database. The domainId parameter is optional, if it is null, the guest is search in all existing domain except root domain.
 	 * @param mail
@@ -232,16 +232,16 @@ public interface UserFacade {
 	 * @return User entity
 	 */
 	UserVo findUserForResetPassordForm(String mail, String optionalDomainId);
-	
-	
+
+
 	 /** Search a user using its mail.
      * @param mail user mail.
      * @return founded user.
      */
     UserVo findUserInDb(String mail, String domain);
     UserVo findUser(String domain, String mail) throws BusinessException;
-    
-    
+
+
     /**
 	 * Check if the actorVo is authorized to manage the second user (actorVo).
 	 * @param actorVo
@@ -249,5 +249,5 @@ public interface UserFacade {
 	 * @return
 	 */
 	public boolean isAdminForThisUser(UserVo actorVo, UserVo userToManageVo) throws BusinessException ;
-    
+
 }

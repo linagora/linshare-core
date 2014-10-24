@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
@@ -45,7 +46,8 @@ import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
 
-public class GuestFacadeImpl extends UserGenericFacadeImp implements GuestFacade {
+public class GuestFacadeImpl extends UserGenericFacadeImp implements
+		GuestFacade {
 
 	private final GuestService guestService;
 
@@ -57,33 +59,39 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements GuestFacade
 
 	@Override
 	public GuestDto find(String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "guest uuid is required");
 		User actor = checkAuthentication();
 		return GuestDto.getFull(guestService.find(actor, actor, uuid));
 	}
 
 	@Override
 	public GuestDto create(GuestDto guestDto) throws BusinessException {
+		Validate.notNull(guestDto, "guest dto is required");
 		User actor = checkAuthentication();
 		Guest guest = retreiveGuest(guestDto);
-		return GuestDto.getFull(guestService.create(actor, actor,
-				guest));
+		return GuestDto.getFull(guestService.create(actor, actor, guest));
 	}
 
 	@Override
 	public GuestDto update(GuestDto guestDto) throws BusinessException {
+		Validate.notNull(guestDto, "guest dto is required");
+		Validate.notEmpty(guestDto.getUuid(), "guest uuid is required");
 		User actor = checkAuthentication();
-		return GuestDto.getFull(guestService.update(actor, actor,
-				new Guest(guestDto)));
+		Guest guest = guestDto.toUserObject();
+		return GuestDto.getFull(guestService.update(actor, actor, guest));
 	}
 
 	@Override
 	public void delete(GuestDto guestDto) throws BusinessException {
+		Validate.notNull(guestDto, "guest dto is required");
+		Validate.notEmpty(guestDto.getUuid(), "guest uuid is required");
 		User actor = checkAuthentication();
 		guestService.delete(actor, actor, guestDto.getUuid());
 	}
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "guest uuid is required");
 		User actor = checkAuthentication();
 		guestService.delete(actor, actor, uuid);
 	}
@@ -91,13 +99,12 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements GuestFacade
 	/**
 	 * HELPERS
 	 */
-
 	private Guest retreiveGuest(GuestDto guestDto) {
-		Guest guest = new Guest(guestDto);
+		Guest guest = guestDto.toUserObject();
 		if (guest.isRestricted()) {
 			for (GenericUserDto contactDto : guestDto.getRestrictedContacts()) {
-				guest.addContact(new AllowedContact(guest,
-						new Internal(contactDto)));
+				guest.addContact(new AllowedContact(guest, new Internal(
+						contactDto)));
 			}
 		}
 		return guest;

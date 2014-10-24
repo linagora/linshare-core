@@ -109,14 +109,14 @@ public abstract class User extends Account {
 	@Override
 	public String getFullName() {
 		StringBuffer b = new StringBuffer();
-		boolean bf = (firstName!=null && !firstName.equals(""));
-		boolean bl = (lastName!=null && !lastName.equals(""));
-		if (bf || bl){
-			if (bf){
+		boolean bf = (firstName != null && !firstName.equals(""));
+		boolean bl = (lastName != null && !lastName.equals(""));
+		if (bf || bl) {
+			if (bf) {
 				b.append(firstName);
 				b.append(" ");
 			}
-			if (bl){
+			if (bl) {
 				b.append(lastName);
 			}
 		} else {
@@ -125,9 +125,14 @@ public abstract class User extends Account {
 		return b.toString();
 	}
 
-
 	public void setFirstName(String value) {
 		this.firstName = StringUtils.capitalize(value);
+	}
+
+	public void setBusinessFirstName(String value) {
+		if (value != null) {
+			this.firstName = StringUtils.capitalize(value);
+		}
 	}
 
 	public String getFirstName() {
@@ -138,12 +143,24 @@ public abstract class User extends Account {
 		this.lastName = StringUtils.capitalize(value);
 	}
 
+	public void setBusinessLastName(String value) {
+		if (value != null) {
+			this.lastName = StringUtils.capitalize(value);
+		}
+	}
+
 	public String getLastName() {
 		return lastName;
 	}
 
 	public void setMail(String value) {
 		this.mail = value;
+	}
+
+	public void setBusinessMail(String value) {
+		if (value != null) {
+			this.mail = value;
+		}
 	}
 
 	public String getMail() {

@@ -88,7 +88,8 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	@Override
 	public Guest find(AbstractDomain domain, String mail)
 			throws BusinessException {
-		Guest guest = guestRepository.findByMailAndDomain(domain.getIdentifier(), mail);
+		Guest guest = guestRepository.findByMailAndDomain(
+				domain.getIdentifier(), mail);
 		if (guest != null) {
 			if (guest.isRestricted()) {
 				guest.addContacts(allowedContactRepository.findByOwner(guest));
@@ -153,10 +154,16 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 			Guest entity = guestRepository.findByLsUuid(guest.getLsUuid());
 			entity.setOwner(owner);
 			entity.setDomain(domain);
+			// fields that can not be null
 			entity.setCanUpload(guest.getCanUpload());
-			entity.setComment(guest.getComment());
 			entity.setRestricted(guest.isRestricted());
-			entity.setLocale(guest.getLocale());
+			// fields that can be null.
+			entity.setComment(guest.getComment());
+			entity.setBusinessLocale(guest.getLocale());
+			entity.setBusinessExternalMailLocale(guest.getLocale());
+			entity.setBusinessLastName(guest.getLastName());
+			entity.setBusinessFirstName(guest.getFirstName());
+			entity.setBusinessMail(guest.getMail());
 			Guest update = guestRepository.update(entity);
 			if (update.isRestricted()) {
 				try {

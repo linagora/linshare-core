@@ -101,9 +101,8 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notNull(guestDto, "Missing required guest dto");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Guest guest = new Guest(guestDto);
+		Guest guest = guestDto.toUserObject();
 		return GuestDto.getFull(guestService.create(actor, owner, guest));
-
 	}
 
 	@Override
@@ -114,7 +113,7 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notEmpty(guestDto.getUuid(), "Missing required guest dto uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Guest guest = new Guest(guestDto);
+		Guest guest = guestDto.toUserObject();
 		return GuestDto.getFull(guestService.update(actor, owner, guest));
 	}
 

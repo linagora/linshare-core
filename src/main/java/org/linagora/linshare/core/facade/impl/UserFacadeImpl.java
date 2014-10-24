@@ -49,6 +49,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.facade.UserFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -144,14 +145,11 @@ public class UserFacadeImpl implements UserFacade {
 	@Override
 	public void updateGuest(String guestUuid, String domain, String mail,
 			String firstName, String lastName, Boolean canUpload,
-			Boolean canCreateGuest, UserVo owner) throws BusinessException {
-
+			UserVo owner) throws BusinessException {
 		User actor = userService.findByLsUuid(owner.getLsUuid());
-		Guest guest = guestService.find(actor, actor, guestUuid);
-		guest.setMail(mail);
-		guest.setFirstName(firstName);
-		guest.setLastName(lastName);
+		Guest guest = new Guest(firstName, lastName, mail);
 		guest.setCanUpload(canUpload);
+		guest.setLsUuid(guestUuid);
 		guestService.update(actor, actor, guest);
 	}
 
@@ -324,8 +322,9 @@ public class UserFacadeImpl implements UserFacade {
 			List<String> mailContacts) throws BusinessException {
 
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		Guest guest = guestService.find(actor, actor, lsUuid);
-
+		GuestDto dto = GuestDto.getFull(guestService.find(actor, actor, lsUuid));
+		Guest guest = dto.toUserObject();
+		guest.setRestricted(true);
 		for (String mail : mailContacts) {
 			User user = userService.findUnkownUserInDB(mail);
 			guest.addContact(new AllowedContact(guest, user));
@@ -337,16 +336,18 @@ public class UserFacadeImpl implements UserFacade {
 	public void removeGuestContactRestriction(UserVo actorVo, String lsUuid)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		Guest guest = guestService.find(actor, actor, lsUuid);
-		guest.setRestricted(true);
+		GuestDto dto = GuestDto.getFull(guestService.find(actor, actor, lsUuid));
+		Guest guest = dto.toUserObject();
+		guest.setRestricted(false);
 		guestService.update(actor, actor, guest);
 	}
 
 	public void addGuestContactRestriction(UserVo actorVo, String ownerLsUuid, String guestLsUuid)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		Guest guest = guestService.find(actor, actor, guestLsUuid);
-
+		GuestDto dto = GuestDto.getFull(guestService.find(actor, actor, guestLsUuid));
+		Guest guest = dto.toUserObject();
+		guest.setRestricted(true);
 		guest.addContact(new AllowedContact(guest, actor));
 		guestService.update(actor, actor, guest);
 	}

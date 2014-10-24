@@ -51,6 +51,7 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.rac.GuestResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -61,7 +62,8 @@ import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> implements GuestService {
+public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
+		implements GuestService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(GuestServiceImpl.class);
@@ -78,8 +80,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 
 	private final MailBuildingService mailBuildingService;
 
-	public GuestServiceImpl(
-			final GuestBusinessService guestBusinessService,
+	public GuestServiceImpl(final GuestBusinessService guestBusinessService,
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final UserService userService,
@@ -104,20 +105,21 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 			logger.error("Current actor " + owner.getAccountReprentation()
 					+ " is looking for a misssing guest : " + lsUuid);
 			String message = "Can not find guest with uuid : " + lsUuid;
-			throw new BusinessException(
-					BusinessErrorCode.GUEST_NOT_FOUND, message);
+			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND,
+					message);
 		}
 		checkReadPermission(owner, guest, BusinessErrorCode.GUEST_FORBIDDEN);
 		return guest;
 	}
 
 	@Override
-	public Guest find(Account actor, Account owner, String domainId,
-			String mail) throws BusinessException {
+	public Guest find(Account actor, Account owner, String domainId, String mail)
+			throws BusinessException {
 		if (domainId == null) {
 			domainId = owner.getDomainId();
 		}
-		// Ugly. getGuestDomain should check if input domain exists. if not, an exception should be throw
+		// Ugly. getGuestDomain should check if input domain exists. if not, an
+		// exception should be throw
 		AbstractDomain domain = abstractDomainService.findById(domainId);
 		domain = abstractDomainService.getGuestDomain(domain.getIdentifier());
 		return guestBusinessService.find(domain, mail);
@@ -127,7 +129,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 	public List<Guest> findAllMyGuests(Account actor, Account owner)
 			throws BusinessException {
 		preChecks(actor, owner);
-		checkListPermission(actor, owner, Guest.class, BusinessErrorCode.GUEST_FORBIDDEN);
+		checkListPermission(actor, owner, Guest.class,
+				BusinessErrorCode.GUEST_FORBIDDEN);
 		return guestBusinessService.findAllMyGuests(owner);
 	}
 
@@ -141,7 +144,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(guest);
-		checkCreatePermission(actor, owner, Guest.class, BusinessErrorCode.USER_CANNOT_CREATE_GUEST);
+		checkCreatePermission(actor, owner, Guest.class,
+				BusinessErrorCode.USER_CANNOT_CREATE_GUEST);
 		if (!hasGuestDomain(owner.getDomainId())) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Guest domain was not found");
@@ -162,12 +166,21 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 		return create.getGuest();
 	}
 
+	void updateValidation(Guest guest) {
+		Validate.notNull(guest, "Guest object is required");
+		Validate.notEmpty(guest.getLsUuid(), "Guest uuid is required");
+		guest.setOwner(null);
+		guest.setDomain(null);
+	}
+
 	@Override
 	public Guest update(Account actor, User owner, Guest guest)
 			throws BusinessException {
 		preChecks(actor, owner);
+		updateValidation(guest);
 		Guest original = find(actor, owner, guest.getLsUuid());
-		checkUpdatePermission(actor, original, BusinessErrorCode.CANNOT_UPDATE_USER);
+		checkUpdatePermission(actor, original,
+				BusinessErrorCode.CANNOT_UPDATE_USER);
 		GuestDomain guestDomain = abstractDomainService.getGuestDomain(owner
 				.getDomainId());
 		if (guestDomain == null) {
@@ -179,11 +192,13 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 	}
 
 	@Override
-	public void delete(Account actor, User owner, String lsUuid) throws BusinessException {
+	public void delete(Account actor, User owner, String lsUuid)
+			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(lsUuid);
 		Guest original = find(actor, owner, lsUuid);
-		checkDeletePermission(actor, original, BusinessErrorCode.CANNOT_DELETE_USER);
+		checkDeletePermission(actor, original,
+				BusinessErrorCode.CANNOT_DELETE_USER);
 		guestBusinessService.delete(original);
 	}
 

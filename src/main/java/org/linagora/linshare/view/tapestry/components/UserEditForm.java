@@ -78,11 +78,11 @@ public class UserEditForm {
     @Parameter(required = true, defaultPrefix = BindingConstants.PROP)
     @Property
     private List<UserVo> users;
-    
+
     @Parameter(required = true, defaultPrefix = BindingConstants.PROP)
     @Property
     private String editUserWithMail;
-    
+
 
     /* ***********************************************************
      *                      Injected services
@@ -101,7 +101,7 @@ public class UserEditForm {
 
     @Inject
     private ComponentResources componentResources;
-	
+
     @Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
 
@@ -117,9 +117,9 @@ public class UserEditForm {
     @Property
     @Persist
     private UserVo currentUser;
-    
-    
-    
+
+
+
     @SessionState
     private ShareSessionObjects shareSessionObjects;
 
@@ -137,84 +137,84 @@ public class UserEditForm {
 
     @Property
     private boolean uploadGranted;
-    
+
     @Property
     private boolean createGuestGranted;
 
     @Property
     private SelectableRole role;
-    
+
     @Property
     private AccountType usertype;
 
     @Persist
     private boolean userGuest;
-    
+
     @Persist
     private String userDomain;
-    
+
     @Property
 	@Persist
     private boolean restrictedEditGuest;
-    
+
     @Property
     private boolean showRestricted;
-    
+
     @Property
 	@Persist
     private boolean userRestrictedGuest;
-	
+
 	@Persist("flash")
 	private List<String> recipientsEmail;
-	
+
 	@Persist("flash")
 	@Property
 	private String recipientsSearch;
-	
+
 	@Persist
 	private String intialContacts;
 
     @Inject
     private PropertyAccess access;
-    
+
     @Property
 	private int autocompleteMin;
-	
+
 	@Inject
 	private FunctionalityFacade functionalityFacade;
-	
+
 	@Inject
 	private UserAutoCompleteFacade userAutoCompleteFacade;
-	
-	
+
+
 	private XSSFilter filter;
 
 	@Inject
 	private Policy antiSamyPolicy;
-	
-    
+
+
     /* ***********************************************************
      *                   Event handlers&processing
      ************************************************************ */
-    
+
     @SetupRender
     public void init(){
 
     	autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
 		recipientsSearch = MailCompletionService.formatLabel(userLoggedIn);
-    		 
+
 		currentUser=null;
 		userGuest = true;
-		
+
 		if(editUserWithMail!=null){
-		
+
 			for (UserVo oneUser : users) {
 				if(oneUser.getLsUuid().equals(editUserWithMail)) {
 					currentUser = userFacade.loadUserDetails(oneUser.getMail(), oneUser.getDomainIdentifier());
 					break;
 				}
 			}
-			
+
 			if(currentUser!=null){    		
 	    		mail = currentUser.getMail();
 	    		firstName = currentUser.getFirstName();
@@ -253,8 +253,8 @@ public class UserEditForm {
     		renderSupport.addScript(String.format("$('allowedContactsBlock').style.display = 'none';"));
     	}
     }
-    
-    
+
+
 	public List<String> onProvideCompletionsFromRecipientsPatternEditForm(String input) throws BusinessException {
 		List<UserVo> searchResults = performSearch(input);
 
@@ -268,7 +268,7 @@ public class UserEditForm {
 
 		return elements;
 	}
-	
+
 	/** Perform a user search using the user search pattern.
 	 * @param input user search pattern.
 	 * @return list of users.
@@ -281,20 +281,20 @@ public class UserEditForm {
 		}
 		return new ArrayList<UserVo>();
 	}
-    
-    
+
+
     public boolean isUserGuest(){
     	return userGuest;
     }
-    
+
     public boolean isAdmin(){
     	return userLoggedIn.isAdministrator();
     }
-    
+
     public boolean isUserRestrictedGuest() {
     	return userLoggedIn.isRestricted();
     }
-    
+
     public boolean onValidateFormFromUserForm() {
     	if (userForm.getHasErrors()) {
     		return false;
@@ -306,17 +306,17 @@ public class UserEditForm {
 
     	if (restrictedEditGuest || userLoggedIn.isRestricted()) {
         	boolean sendErrors = false;
-        	
+
 	    	List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
 	    	String badFormatEmail =  "";
-			
+
 	    	for (String recipient : recipients) {
 	        	if (!MailCompletionService.MAILREGEXP.matcher(recipient.toUpperCase()).matches()){
 	            	badFormatEmail = badFormatEmail + recipient + " ";
 	            	sendErrors = true;
 	            }
 	    	}
-			
+
 	    	if(sendErrors) {
 	    		userForm.recordError(String.format(messages.get("components.confirmSharePopup.validate.email"), badFormatEmail));
 	        }
@@ -345,28 +345,28 @@ public class UserEditForm {
 
         try {
         	if(userGuest) {    	
-        		userFacade.updateGuest(currentUser.getLsUuid(), userDomain, mail, firstName, lastName,uploadGranted,createGuestGranted, userLoggedIn);
+                userFacade.updateGuest(currentUser.getLsUuid(), userDomain, mail, firstName, lastName,uploadGranted,userLoggedIn);
         	} else {
-        		userFacade.updateUserRole(currentUser.getLsUuid(), userDomain, mail, SelectableRole.fromSelectableRole(role), userLoggedIn);
+                userFacade.updateUserRole(currentUser.getLsUuid(), userDomain, mail, SelectableRole.fromSelectableRole(role), userLoggedIn);
         	}
         } catch (BusinessException e) {
             // should never occur.
             logger.error(e.toString());
         }
-		
+
 		if (userGuest) {
 			try {
-				
+
 				UserVo guest = userFacade.findGuestByLsUuid(userLoggedIn, currentUser.getLsUuid());
 				logger.debug("current guest : " + guest);
-				
-				
+
+
 				if (restrictedEditGuest && !guest.isRestricted()) { //toogle restricted to true
 					userFacade.setGuestContactRestriction(userLoggedIn, guest.getLsUuid(), recipientsEmail);
-					
+
 				} else if (!restrictedEditGuest && guest.isRestricted()) { //toogle restricted to false
 					userFacade.removeGuestContactRestriction(userLoggedIn, guest.getLsUuid());
-					
+
 				} else if (restrictedEditGuest && guest.isRestricted()) { //maybe user add new contact
 					if (intialContacts != null && !intialContacts.equalsIgnoreCase(recipientsSearch)) {
 						userFacade.setGuestContactRestriction(userLoggedIn, guest.getLsUuid(), recipientsEmail);
@@ -384,13 +384,13 @@ public class UserEditForm {
 
     public void onFailure() {
     	 shareSessionObjects.addError(messages.get("components.userEditForm.action.update.error"));
-    	
+
     }
-    
+
     @CleanupRender
     public void cleanupRender(){
     	userForm.clearErrors();
     }
-    
-    
+
+
 }

@@ -39,8 +39,6 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 import com.google.common.collect.Sets;
 
@@ -57,45 +55,33 @@ public class Guest extends User {
 	private Set<AllowedContact> contacts = Sets.newHashSet();
 
 	/** Default constructor for hibernate. */
-	private Guest() {
-        super();
-    }
-
-	public Guest(String firstName, String lastName, String mail, String password, Boolean canUpload, String comment) {
-        super(firstName, lastName, mail);
-        this.canUpload = canUpload;
-        this.password = password;
-        this.comment = comment;
-        this.restricted = false;
-        this.canCreateGuest = false;
-        this.role = Role.SIMPLE;
-    }
-
-	public Guest(String firstName, String lastName, String mail) {
-        super(firstName, lastName, mail);
-        this.restricted = false;
-        this.comment = "";
-        this.canCreateGuest = false;
-        this.role = Role.SIMPLE;
-    }
-
-	public Guest(UserDto guestDto) {
-		super(guestDto.getFirstName(), guestDto.getLastName(), guestDto.getMail());
-		this.restricted = guestDto.isRestricted();
-		this.comment = guestDto.getComment();
-		this.expirationDate = guestDto.getExpirationDate();
-		this.canUpload = guestDto.getCanUpload();
+	public Guest() {
+		super();
+		this.comment = "";
+		this.canUpload = false;
+		this.restricted = false;
 		this.canCreateGuest = false;
 		this.role = Role.SIMPLE;
 	}
 
-	public Guest(GuestDto guestDto) {
-		super(guestDto.getFirstName(), guestDto.getLastName(), guestDto.getMail());
-		this.restricted = guestDto.isRestricted();
-		this.comment = guestDto.getComment();
-		this.expirationDate = guestDto.getExpirationDate();
-		this.canUpload = guestDto.isCanUpload();
+	/** Constructor for tests*/
+	public Guest(String firstName, String lastName, String mail,
+			String password, Boolean canUpload, String comment) {
+		super(firstName, lastName, mail);
+		this.canUpload = canUpload;
+		this.password = password;
+		this.comment = comment;
+		this.restricted = false;
 		this.canCreateGuest = false;
+		this.role = Role.SIMPLE;
+	}
+
+	public Guest(String firstName, String lastName, String mail) {
+		super(firstName, lastName, mail);
+		this.restricted = false;
+		this.comment = "";
+		this.canCreateGuest = false;
+		this.role = Role.SIMPLE;
 	}
 
 	@Override
