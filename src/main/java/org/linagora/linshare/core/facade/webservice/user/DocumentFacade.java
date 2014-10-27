@@ -69,8 +69,7 @@ public interface DocumentFacade extends GenericFacade {
 
 	List<MimeTypeDto> getMimeTypes() throws BusinessException;
 
-	DocumentDto update(String description, String givenFileName,
-			String documentUuid) throws BusinessException;
+	DocumentDto update(String documentUuid, DocumentDto documentDto) throws BusinessException;
 
 	DocumentDto updateFile(InputStream theFile, String description,
 			String givenFileName, String documentUuid) throws BusinessException;

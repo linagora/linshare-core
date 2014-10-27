@@ -53,8 +53,7 @@ public interface DocumentRestService {
 
 	List<DocumentDto> findAll() throws BusinessException;
 
-	DocumentDto update(String uuid, String description,
-			String fileName) throws BusinessException;
+	DocumentDto update(String uuid, DocumentDto documentDto) throws BusinessException;
 
 	void delete(String uuid) throws BusinessException;
 

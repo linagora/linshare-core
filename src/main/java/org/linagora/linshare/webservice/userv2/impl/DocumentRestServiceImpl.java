@@ -150,10 +150,9 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@Override
 	public DocumentDto update(
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "An optional description of the document.") String description,
-			@ApiParam(value = "Document new file name.") String fileName)
+			@ApiParam(value = "The document uuid.", required = true) DocumentDto documentDto)
 			throws BusinessException {
-		return documentFacade.update(description, fileName, uuid);
+		return documentFacade.update(uuid, documentDto);
 	}
 
 	@DELETE

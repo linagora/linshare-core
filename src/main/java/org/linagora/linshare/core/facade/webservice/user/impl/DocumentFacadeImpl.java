@@ -190,15 +190,17 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public DocumentDto update(String description,
-			String givenFileName, String documentUuid) throws BusinessException {
+	public DocumentDto update(String documentUuid,
+			DocumentDto documentDto) throws BusinessException {
 
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
+		Validate.notNull(documentDto, "Missing required DocumentDto");
+		Validate.notEmpty(documentDto.getName(), "Missing required fileName");
 
 		User actor = checkAuthentication();
 
 		documentEntryService.updateFileProperties(actor, actor, documentUuid,
-				givenFileName, description);
+				documentDto.getName(),documentDto.getDescription());
 		return new DocumentDto(documentEntryService.find(actor, actor,
 				documentUuid));
 	}
