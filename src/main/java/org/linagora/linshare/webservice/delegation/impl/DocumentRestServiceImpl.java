@@ -176,7 +176,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "File stream.", required = true) InputStream theFile,
-			@ApiParam(value = "An optional description of a document.") String description,
 			@ApiParam(value = "The given file name of the uploaded file.", required = true) String givenFileName,
 			@Multipart(value = "filename", required = false) MultipartBody body) throws BusinessException {
 
@@ -190,8 +189,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		} else {
 			fileName = givenFileName;
 		}
-		return documentFacade.updateFile(ownerUuid, theFile, description,
-				fileName, uuid);
+		return documentFacade.updateFile(ownerUuid, theFile, fileName,
+				uuid);
 	}
 
 	@DELETE

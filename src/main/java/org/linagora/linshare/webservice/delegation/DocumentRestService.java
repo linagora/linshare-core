@@ -66,6 +66,6 @@ public interface DocumentRestService {
 	Response thumbnail(String ownerUuid, String uuid) throws BusinessException;
 
 	DocumentDto updateFile(String ownerUuid, String uuid, InputStream theFile,
-			String description, String givenFileName, MultipartBody body)
+			String givenFileName, MultipartBody body)
 					throws BusinessException;
 }

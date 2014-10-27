@@ -184,7 +184,7 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 
 	@Override
 	public DocumentDto updateFile(String ownerUuid, InputStream theFile,
-			String description, String givenFileName, String documentUuid)
+			String givenFileName, String documentUuid)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
@@ -195,9 +195,6 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 
 		DocumentDto doc = new DocumentDto(documentEntryService.find(actor,
 				owner, documentUuid));
-		if (description == null || description.isEmpty()) {
-			description = doc.getDescription();
-		}
 		if (givenFileName == null || givenFileName.isEmpty()) {
 			givenFileName = doc.getName();
 		}
