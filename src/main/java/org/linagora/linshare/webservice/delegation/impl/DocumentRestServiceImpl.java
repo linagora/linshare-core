@@ -178,10 +178,20 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "File stream.", required = true) InputStream theFile,
 			@ApiParam(value = "An optional description of a document.") String description,
 			@ApiParam(value = "The given file name of the uploaded file.", required = true) String givenFileName,
-			MultipartBody body) throws BusinessException {
+			@Multipart(value = "filename", required = false) MultipartBody body) throws BusinessException {
 
+		String fileName;
+		if (givenFileName == null || givenFileName.isEmpty()) {
+			// parameter givenFileName is optional
+			// so need to search this information in the header of the
+			// attachement (with id file)
+			fileName = body.getAttachment("file").getContentDisposition()
+					.getParameter("filename");
+		} else {
+			fileName = givenFileName;
+		}
 		return documentFacade.updateFile(ownerUuid, theFile, description,
-				givenFileName, uuid);
+				fileName, uuid);
 	}
 
 	@DELETE
