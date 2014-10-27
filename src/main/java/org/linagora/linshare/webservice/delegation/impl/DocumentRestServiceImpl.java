@@ -155,10 +155,9 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	public DocumentDto update(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "An optional description of the document.") String description,
-			@ApiParam(value = "Document new file name.") String fileName)
+			@ApiParam(value = "The documentDto with updated values.") DocumentDto documentDto)
 			throws BusinessException {
-		return documentFacade.update(ownerUuid, description, fileName, uuid);
+		return documentFacade.update(ownerUuid, uuid, documentDto);
 	}
 
 	@Path("/{uuid}/upload")
@@ -189,8 +188,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		} else {
 			fileName = givenFileName;
 		}
-		return documentFacade.updateFile(ownerUuid, theFile, fileName,
-				uuid);
+		return documentFacade.updateFile(ownerUuid, uuid, theFile,
+				fileName);
 	}
 
 	@DELETE

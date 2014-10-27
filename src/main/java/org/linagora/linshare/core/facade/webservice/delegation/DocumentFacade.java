@@ -53,11 +53,11 @@ public interface DocumentFacade extends DelegationGenericFacade {
 	DocumentDto create(String ownerUuid, InputStream theFile,
 			String description, String givenFileName) throws BusinessException;
 
-	DocumentDto update(String ownerUuid, String description,
-			String givenFileName, String documentUuid) throws BusinessException;
+	DocumentDto update(String ownerUuid, String documentUuid,
+			DocumentDto documentDto) throws BusinessException;
 
-	DocumentDto updateFile(String ownerUuid, InputStream theFile,
-			String givenFileName, String documentUuid)
+	DocumentDto updateFile(String ownerUuid, String documentUuid,
+			InputStream theFile, String givenFileName)
 			throws BusinessException;
 
 	void delete(String ownerUuid, DocumentDto documentDto)

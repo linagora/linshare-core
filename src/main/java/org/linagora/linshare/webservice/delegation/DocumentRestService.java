@@ -56,8 +56,7 @@ public interface DocumentRestService {
 
 	List<DocumentDto> findAll(String ownerUuid) throws BusinessException;
 
-	DocumentDto update(String ownerUuid, String uuid, String description,
-			String fileName) throws BusinessException;
+	DocumentDto update(String ownerUuid, String uuid, DocumentDto documentDto) throws BusinessException;
 
 	void delete(String ownerUuid, String uuid) throws BusinessException;
 
