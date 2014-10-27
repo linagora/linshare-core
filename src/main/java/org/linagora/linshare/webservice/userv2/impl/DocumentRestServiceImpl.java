@@ -95,10 +95,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			MultipartBody body) throws BusinessException {
 		String fileName;
 		String comment = (description == null) ? "" : description;
-		if (theFile == null) {
-			throw giveRestException(HttpStatus.SC_BAD_REQUEST,
-					"Missing file (check parameter file)");
-		}
 		if (givenFileName == null || givenFileName.isEmpty()) {
 			// parameter givenFileName is optional
 			// so need to search this information in the header of the

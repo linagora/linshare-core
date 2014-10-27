@@ -95,7 +95,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 	@Override
 	public DocumentDto uploadfile(InputStream fi, String fileName,
 			String description) throws BusinessException {
-		Validate.notNull(fi, "Missing required file");
+		Validate.notNull(fi, "Missing required file (check parameter named file)");
 		User actor = checkAuthentication();
 		if ((actor.isGuest() && !actor.getCanUpload()))
 			throw new BusinessException(
@@ -221,8 +221,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 			givenFileName = doc.getName();
 		}
 
-		documentEntryService.update(actor, actor, documentUuid, theFile, null,
-				givenFileName);
+		documentEntryService.update(actor, actor, documentUuid, theFile, givenFileName);
 		return new DocumentDto(documentEntryService.find(actor, actor,
 				documentUuid));
 	}

@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -48,6 +49,7 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
 import com.google.common.collect.Lists;
 
@@ -104,7 +106,7 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 	public void delete(String ownerUuid, DocumentDto documentDto)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
-		Validate.notNull(documentDto, "Missing required file");
+		Validate.notNull(documentDto, "Missing required documentDto");
 		Validate.notEmpty(documentDto.getUuid(),
 				"Missing required document uuid");
 
@@ -138,9 +140,11 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
-		return Response.ok(
-				documentEntryService.getDocumentStream(actor, owner,
-						documentUuid)).build();
+		InputStream documentStream = documentEntryService.getDocumentStream(
+				actor, owner, documentUuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder
+				.getThumbnailResponseBuilder(documentStream);
+		return response.build();
 	}
 
 	@Override
@@ -152,9 +156,14 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
-		return Response.ok(
-				documentEntryService.getDocumentThumbnailStream(actor, owner,
-						documentUuid)).build();
+		DocumentEntry doc = documentEntryService.find(actor, actor,
+				documentUuid);
+		InputStream file = documentEntryService.getDocumentStream(actor, owner,
+				documentUuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder
+				.getDocumentResponseBuilder(file, doc.getName() + "_thumb.png",
+						"image/png");
+		return response.build();
 	}
 
 	@Override
@@ -193,8 +202,7 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 			givenFileName = doc.getName();
 		}
 
-		documentEntryService.update(actor, owner, documentUuid, theFile, null,
-				givenFileName);
+		documentEntryService.update(actor, owner, documentUuid, theFile, givenFileName);
 		return new DocumentDto(documentEntryService.find(actor, owner,
 				documentUuid));
 	}

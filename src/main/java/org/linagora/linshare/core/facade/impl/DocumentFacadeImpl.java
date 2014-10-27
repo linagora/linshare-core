@@ -288,7 +288,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 	@Override
 	public DocumentVo updateDocument(String currentFileUUID, InputStream file, long size, String fileName, UserVo ownerVo) throws BusinessException {
 		Account actor = getActor(ownerVo);
-		DocumentEntry documentEntry = documentEntryService.update(actor, actor, currentFileUUID, file, size, fileName);
+		DocumentEntry documentEntry = documentEntryService.update(actor, actor, currentFileUUID, file, fileName);
 		return documentEntryTransformer.disassemble(documentEntry);
 	}
 

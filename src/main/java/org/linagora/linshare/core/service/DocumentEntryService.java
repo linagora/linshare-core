@@ -47,8 +47,6 @@ public interface DocumentEntryService {
 
 	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName) throws BusinessException;
 
-	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException ;
-
 	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, InputStream stream, String fileName) throws BusinessException ;
 
 	/**

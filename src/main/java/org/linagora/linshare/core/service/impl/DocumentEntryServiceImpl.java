@@ -238,19 +238,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	}
 
 	@Override
-	public DocumentEntry update(Account actor, Account owner,
-			String docEntryUuid, InputStream stream, String fileName)
-			throws BusinessException {
-		fileName = sanitizeFileName(fileName); // throws
-
-		DocumentUtils util = new DocumentUtils();
-		File tempFile = util.getTempFile(stream, fileName);
-		Long size = tempFile.length();
-		return update(actor, owner, docEntryUuid, stream, size, fileName);
-	}
-
-	@Override
-	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException {
+	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, InputStream stream, String fileName) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(docEntryUuid, "document entry uuid is required.");
 		Validate.notEmpty(fileName, "fileName is required.");
@@ -262,6 +250,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 		DocumentUtils util = new DocumentUtils();
 		File tempFile = util.getTempFile(stream, fileName);
+		Long size = tempFile.length();
 		DocumentEntry documentEntry = null;
 
 		try {
