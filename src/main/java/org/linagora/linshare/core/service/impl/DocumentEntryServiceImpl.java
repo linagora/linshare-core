@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
 import java.io.InputStream;
+import java.security.MessageDigest;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
@@ -182,8 +183,10 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		File tempFile = util.getTempFile(stream, fileName);
 		Long size = tempFile.length(); 
 		DocumentEntry docEntry = null;
-
 		try {
+			
+			String sha256sum = SHACheckSumFileStream(stream);
+			
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 			checkSpace(size, fileName, owner);
 
@@ -212,7 +215,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 			// We need to set an expiration date in case of file cleaner
 			// activation.
-			docEntry = documentEntryBusinessService.createDocumentEntry(owner, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, getDocumentExpirationDate(domain));
+			docEntry = documentEntryBusinessService.createDocumentEntry(owner, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, getDocumentExpirationDate(domain), sha256sum);
 
 			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_UPLOAD, "Creation of a file", docEntry.getName(), docEntry.getDocument().getSize(), docEntry.getDocument().getType());
 			logEntryService.create(logEntry);
@@ -228,6 +231,32 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			}
 		}
 		return docEntry;
+	}
+	
+	/**
+	 * 
+	 * @param fileStream
+	 * @return String SHA256SUM of fileStream
+	 */
+	private String SHACheckSumFileStream(InputStream fileStream) {
+		StringBuffer hexString = new StringBuffer();
+		try{
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] dataBytes = new byte[1024];
+			
+			int nread = 0; 
+		    while ((nread = fileStream.read(dataBytes)) != -1) {
+		    	md.update(dataBytes, 0, nread);
+		    }
+		    byte[] mdbytes = md.digest();
+		    
+	    	for (int i=0;i<mdbytes.length;i++) {
+	    	  hexString.append(Integer.toHexString(0xFF & mdbytes[i]));
+	    	}
+		} catch(Exception e) {
+			logger.error("can not delete temp file : " + e.getMessage());
+		}
+    	return hexString.toString();
 	}
 
 	@Override
@@ -254,6 +283,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		DocumentEntry documentEntry = null;
 
 		try {
+			String sha256sum = SHACheckSumFileStream(stream);
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 
 			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
@@ -284,7 +314,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 			// We need to set an expiration date in case of file cleaner activation.
 			documentEntry = documentEntryBusinessService.updateDocumentEntry(owner, originalEntry, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType,
-					getDocumentExpirationDate(domain));
+					getDocumentExpirationDate(domain), sha256sum);
 
 			// put new file name in log
 			// if the file is updated/replaced with a new file (new file name)

@@ -73,6 +73,12 @@ public class DocumentDto {
 
 	@ApiModelProperty(value = "Size")
 	protected Long size;
+	
+	@ApiModelProperty(value = "MetaData")
+	protected String metaData;
+	
+	@ApiModelProperty(value = "Sha256sum")
+	protected String sha256sum;
 
 	public DocumentDto(DocumentEntry de) {
 		if (de == null)
@@ -164,6 +170,34 @@ public class DocumentDto {
 
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
+	}
+
+	/**
+	 * @return the metaData
+	 */
+	public String getMetaData() {
+		return metaData;
+	}
+
+	/**
+	 * @param metaData the metaData to set
+	 */
+	public void setMetaData(String metaData) {
+		this.metaData = metaData;
+	}
+
+	/**
+	 * @return the sha256sum
+	 */
+	public String getSha256sum() {
+		return sha256sum;
+	}
+
+	/**
+	 * @param sha256sum the sha256sum to set
+	 */
+	public void setSha256sum(String sha256sum) {
+		this.sha256sum = sha256sum;
 	}
 
 	@Override

@@ -50,12 +50,13 @@ public interface DocumentEntryBusinessService {
 
 	/**
 	 * Compute the MimeType from a file input stream 
+	 * @param sha256sum TODO
 	 * @param theFileStream
 	 * @return
 	 */
-	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException;
+	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate, String sha256sum) throws BusinessException;
 
-	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException ;
+	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate, String sha256sum) throws BusinessException ;
 
 	public void deleteDocumentEntry(DocumentEntry documentEntry) throws BusinessException ;
 

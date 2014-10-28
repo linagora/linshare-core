@@ -120,12 +120,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException {
+	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate, String sha256sum) throws BusinessException {
 
 		// add an entry for the file in DB
 		DocumentEntry entity = null;
 		try {
-			Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType);
+			Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType, sha256sum);
 
 			DocumentEntry docEntry = new DocumentEntry(owner, fileName, document);
 			// We need to set an expiration date in case of file cleaner activation.
@@ -252,6 +252,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		fileSystemDao.renameFile(uuid, newName);
 		entry.setName(newName);
 		entry.setComment(fileComment);
+		entry.setMetaData(meta);
         return documentEntryRepository.update(entry);
 	}
 
@@ -262,7 +263,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException {
+	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate, String sha256sum) throws BusinessException {
 
 		//create and insert the thumbnail into the JCR
 		String uuidThmb = generateThumbnailIntoJCR(fileName, owner.getLsUuid(), myFile, mimeType);
@@ -278,7 +279,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 			Document document = new Document(uuid, mimeType, size);
 			document.setThmbUuid(uuidThmb);
-
+			document.setSha256sum(sha256sum);
 			document.setTimeStamp(timestampToken);
 			documentRepository.create(document);
 
@@ -330,7 +331,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		// add an entry for the file in DB
 		ThreadEntry entity = null;
 		try {
-			Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType);
+			Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType, null);
 			ThreadEntry docEntry = new ThreadEntry(owner, fileName, document);
 
 			//aes encrypt ? check headers
@@ -384,7 +385,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 
-	private Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType) throws BusinessException {
+	private Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType, String sha256sum) throws BusinessException {
 		//create and insert the thumbnail into the JCR
 		String uuidThmb = generateThumbnailIntoJCR(fileName, owner.getLsUuid(), myFile, mimeType);
 
