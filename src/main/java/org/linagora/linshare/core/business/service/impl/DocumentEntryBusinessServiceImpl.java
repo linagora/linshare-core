@@ -247,12 +247,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 
 	@Override
-	public void updateFileProperties(DocumentEntry entry, String newName, String fileComment) throws BusinessException {
+	public DocumentEntry updateFileProperties(DocumentEntry entry, String newName, String fileComment, String meta) throws BusinessException {
 		String uuid = entry.getDocument().getUuid();
 		fileSystemDao.renameFile(uuid, newName);
 		entry.setName(newName);
 		entry.setComment(fileComment);
-        documentEntryRepository.update(entry);
+        return documentEntryRepository.update(entry);
 	}
 
 	@Override

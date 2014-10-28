@@ -104,7 +104,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		} else {
 			fileName = givenFileName;
 		}
-		return documentFacade.uploadfile(theFile, comment, fileName);
+		return documentFacade.create(theFile, comment, fileName);
 	}
 
 	@Path("/{uuid}")
@@ -120,7 +120,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	public DocumentDto find(
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return documentFacade.getDocument(uuid);
+		return documentFacade.find(uuid);
 	}
 
 	@Path("/")
@@ -134,7 +134,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public List<DocumentDto> findAll() throws BusinessException {
-		return documentFacade.getDocuments();
+		return documentFacade.findAll();
 	}
 
 	@Path("/{uuid}")
@@ -168,7 +168,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	public void delete(
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		documentFacade.deleteFile(uuid);
+		documentFacade.delete(uuid);
 	}
 
 	@Path("/{uuid}/upload")
@@ -200,7 +200,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@Override
 	public Response download(@PathParam("uuid") String uuid)
 			throws BusinessException {
-		DocumentDto documentDto = documentFacade.getDocument(uuid);
+		DocumentDto documentDto = documentFacade.find(uuid);
 		InputStream documentStream = documentFacade.getDocumentStream(uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(documentStream,
@@ -219,7 +219,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public Response thumbnail(String uuid) throws BusinessException {
-		DocumentDto documentDto = documentFacade.getDocument(uuid);
+		DocumentDto documentDto = documentFacade.find(uuid);
 		InputStream documentStream = documentFacade.getThumbnailStream(uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(documentStream,

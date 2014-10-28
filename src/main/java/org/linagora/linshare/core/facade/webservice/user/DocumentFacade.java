@@ -43,9 +43,9 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 public interface DocumentFacade extends GenericFacade {
 
-	List<DocumentDto> getDocuments() throws BusinessException;
+	List<DocumentDto> findAll() throws BusinessException;
 
-	DocumentDto getDocument(String uuid) throws BusinessException;
+	DocumentDto find(String uuid) throws BusinessException;
 
 	DocumentDto addDocumentXop(DocumentAttachement doca)
 			throws BusinessException;
@@ -54,7 +54,7 @@ public interface DocumentFacade extends GenericFacade {
 
 	Long getAvailableSize() throws BusinessException;
 
-	DocumentDto uploadfile(InputStream fi, String fileName,
+	DocumentDto create(InputStream fi, String fileName,
 			String description) throws BusinessException;
 
 	InputStream getDocumentStream(String docEntryUuid)
@@ -63,7 +63,7 @@ public interface DocumentFacade extends GenericFacade {
 	InputStream getThumbnailStream(String docEntryUuid)
 			throws BusinessException;
 
-	DocumentDto deleteFile(String uuid) throws BusinessException;
+	DocumentDto delete(String uuid) throws BusinessException;
 
 	Boolean isEnableMimeTypes() throws BusinessException;
 

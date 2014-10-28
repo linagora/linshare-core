@@ -128,6 +128,6 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 		
 
 		// comment can not be null ?
-		return webServiceDocumentFacade.uploadfile(theFile, fileName, comment);
+		return webServiceDocumentFacade.create(theFile, fileName, comment);
 	}
 }

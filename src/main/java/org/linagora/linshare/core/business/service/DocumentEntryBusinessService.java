@@ -71,7 +71,7 @@ public interface DocumentEntryBusinessService {
 
 	public void renameDocumentEntry(DocumentEntry entry, String newName) throws BusinessException;
 
-	public void updateFileProperties(DocumentEntry entry, String newName, String fileComment) throws BusinessException;
+	public DocumentEntry updateFileProperties(DocumentEntry entry, String newName, String fileComment, String meta) throws BusinessException;
 
 	public long getRelatedEntriesCount(DocumentEntry documentEntry);
 

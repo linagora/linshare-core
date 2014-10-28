@@ -73,7 +73,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@GET
 	@Override
 	public Response getDocumentStream(@PathParam("uuid") String uuid) throws BusinessException {
-		DocumentDto documentDto = webServiceDocumentFacade.getDocument(uuid);
+		DocumentDto documentDto = webServiceDocumentFacade.find(uuid);
 		InputStream documentStream = webServiceDocumentFacade.getDocumentStream(uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName(),
 				documentDto.getType(), documentDto.getSize());
@@ -84,7 +84,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@GET
 	@Override
 	public Response getThumbnailStream(@PathParam("uuid") String docUuid) throws BusinessException {
-		DocumentDto documentDto = webServiceDocumentFacade.getDocument(docUuid);
+		DocumentDto documentDto = webServiceDocumentFacade.find(docUuid);
 		InputStream documentStream = webServiceDocumentFacade.getThumbnailStream(docUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName() + "_thumb.png",
 				"image/png");
@@ -101,7 +101,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<DocumentDto> getDocuments() throws BusinessException {
-		return webServiceDocumentFacade.getDocuments();
+		return webServiceDocumentFacade.findAll();
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			fileName = givenFileName;
 		}
 
-		return webServiceDocumentFacade.uploadfile(theFile, fileName, comment);
+		return webServiceDocumentFacade.create(theFile, fileName, comment);
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public DocumentDto delete(@PathParam("uuid") String uuid) throws BusinessException {
-		return webServiceDocumentFacade.deleteFile(uuid);
+		return webServiceDocumentFacade.delete(uuid);
 	}
 
 	@GET

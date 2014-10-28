@@ -309,7 +309,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 			comment = "";
 		}
 		try {
-			documentEntryService.updateFileProperties(actor, actor, docEntryUuid, newName, comment);
+			documentEntryService.updateFileProperties(actor, actor, docEntryUuid, newName, comment, null);
 		} catch (BusinessException e) {
 			logger.error("Can't update file properties document : " + docEntryUuid + " : " + e.getMessage());
 		}

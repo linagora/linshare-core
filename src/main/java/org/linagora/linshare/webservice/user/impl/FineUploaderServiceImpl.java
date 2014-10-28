@@ -114,7 +114,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 			logger.error("Can not encode file name " + e1.getMessage());
 		}
 		try {
-			DocumentDto doc = documentFacade.uploadfile(file, fileName, "");
+			DocumentDto doc = documentFacade.create(file, fileName, "");
 			return new FineUploaderDto(true, doc.getUuid());
 		} catch (BusinessException e) {
 			return new FineUploaderDto(e);
@@ -135,7 +135,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 					"Missing file (check parameter file)");
 		}
 		try {
-			documentFacade.deleteFile(uuid);
+			documentFacade.delete(uuid);
 			return new FineUploaderDto(true);
 		} catch (BusinessException e) {
 			return new FineUploaderDto(e);

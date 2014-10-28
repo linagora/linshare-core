@@ -93,7 +93,7 @@ public class SoapServiceImpl extends WebserviceBase implements SoapService {
 	// **soap
 	@Override
 	public List<DocumentDto> getDocuments() throws BusinessException {
-		return webServiceDocumentFacade.getDocuments();
+		return webServiceDocumentFacade.findAll();
 	}
 
 	@WebMethod(operationName = "getUserMaxFileSize")

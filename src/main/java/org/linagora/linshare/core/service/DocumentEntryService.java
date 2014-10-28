@@ -148,5 +148,5 @@ public interface DocumentEntryService {
 
 	public boolean mimeTypeFilteringStatus(Account actor) throws BusinessException;
 
-	public void updateFileProperties(Account actor, Account owner, String uuid, String newName, String fileComment) throws BusinessException;
+	public DocumentEntry updateFileProperties(Account actor, Account owner, String uuid, String newName, String fileComment, String meta) throws BusinessException;
 }

@@ -78,14 +78,14 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public List<DocumentDto> getDocuments() throws BusinessException {
+	public List<DocumentDto> findAll() throws BusinessException {
 		User actor = checkAuthentication();
 		List<DocumentEntry> docs = documentEntryService.findAll(actor, actor);
 		return Lists.transform(docs, DocumentDto.toVo());
 	}
 
 	@Override
-	public DocumentDto getDocument(String uuid) throws BusinessException {
+	public DocumentDto find(String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing required document uuid");
 		User actor = checkAuthentication();
 		DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
@@ -93,7 +93,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public DocumentDto uploadfile(InputStream fi, String fileName,
+	public DocumentDto create(InputStream fi, String fileName,
 			String description) throws BusinessException {
 		Validate.notNull(fi, "Missing required file (check parameter named file)");
 		User actor = checkAuthentication();
@@ -105,7 +105,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 				fi, fileName);
 
 		documentEntryService.updateFileProperties(actor, actor,
-				res.getUuid(), res.getName(), description);
+				res.getUuid(), res.getName(), description, null);
 		return new DocumentDto(res);
 	}
 
@@ -124,7 +124,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 					.getComment();
 
 			documentEntryService.updateFileProperties(actor, actor,
-					res.getUuid(), res.getName(), comment);
+					res.getUuid(), res.getName(), comment, null);
 			return new DocumentDto(res);
 		} catch (IOException e) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
@@ -161,7 +161,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public DocumentDto deleteFile(String uuid) throws BusinessException {
+	public DocumentDto delete(String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing required document uuid");
 		logger.debug("deleting for document : " + uuid);
 		User actor = checkAuthentication();
@@ -198,11 +198,9 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 		Validate.notEmpty(documentDto.getName(), "Missing required fileName");
 
 		User actor = checkAuthentication();
-
-		documentEntryService.updateFileProperties(actor, actor, documentUuid,
-				documentDto.getName(),documentDto.getDescription());
-		return new DocumentDto(documentEntryService.find(actor, actor,
-				documentUuid));
+		//TODO: Add meta field in documentDto object
+		return new DocumentDto(documentEntryService.updateFileProperties(actor, actor, documentUuid,
+				documentDto.getName(),documentDto.getDescription(), null));
 	}
 
 	@Override
@@ -223,8 +221,6 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 			givenFileName = doc.getName();
 		}
 
-		documentEntryService.update(actor, actor, documentUuid, theFile, givenFileName);
-		return new DocumentDto(documentEntryService.find(actor, actor,
-				documentUuid));
+		return new DocumentDto(documentEntryService.update(actor, actor, documentUuid, theFile, givenFileName));
 	}
 }

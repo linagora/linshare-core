@@ -514,13 +514,13 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	}
 
 	@Override
-	public void updateFileProperties(Account actor, Account owner, String uuid, String newName, String fileComment) throws BusinessException {
+	public DocumentEntry updateFileProperties(Account actor, Account owner, String uuid, String newName, String fileComment, String meta) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		Validate.notEmpty(newName, "new name is required.");
 		DocumentEntry entry = find(actor, owner, uuid);
 		checkUpdatePermission(actor, entry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
-		documentEntryBusinessService.updateFileProperties(entry, newName, fileComment);
+		return documentEntryBusinessService.updateFileProperties(entry, newName, fileComment, meta);
 	}
 
 	private void checkSpace(long size, String fileName, Account owner) throws BusinessException {

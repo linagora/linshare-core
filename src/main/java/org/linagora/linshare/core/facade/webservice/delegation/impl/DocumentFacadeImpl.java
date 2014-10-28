@@ -140,10 +140,14 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
-		InputStream documentStream = documentEntryService.getDocumentStream(
-				actor, owner, documentUuid);
+		DocumentEntry doc = documentEntryService.find(actor, actor,
+				documentUuid);
+
+		InputStream file = documentEntryService.getDocumentStream(actor, owner,
+				documentUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getThumbnailResponseBuilder(documentStream);
+				.getDocumentResponseBuilder(file, doc.getName(), doc.getType(),
+						doc.getSize());
 		return response.build();
 	}
 
@@ -161,8 +165,7 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		InputStream file = documentEntryService.getDocumentStream(actor, owner,
 				documentUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getDocumentResponseBuilder(file, doc.getName() + "_thumb.png",
-						"image/png");
+				.getThumbnailResponseBuilder(file);
 		return response.build();
 	}
 
@@ -178,15 +181,14 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		User owner = getOwner(ownerUuid);
 
 		documentEntryService.updateFileProperties(actor, owner, documentUuid,
-				documentDto.getName(), documentDto.getDescription());
+				documentDto.getName(), documentDto.getDescription(), null);
 		return new DocumentDto(documentEntryService.find(actor, owner,
 				documentUuid));
 	}
 
 	@Override
 	public DocumentDto updateFile(String ownerUuid, String documentUuid,
-			InputStream theFile, String givenFileName)
-			throws BusinessException {
+			InputStream theFile, String givenFileName) throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
 		Validate.notNull(theFile, "Missing required File stream");
@@ -200,7 +202,8 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 			givenFileName = doc.getName();
 		}
 
-		documentEntryService.update(actor, owner, documentUuid, theFile, givenFileName);
+		documentEntryService.update(actor, owner, documentUuid, theFile,
+				givenFileName);
 		return new DocumentDto(documentEntryService.find(actor, owner,
 				documentUuid));
 	}
