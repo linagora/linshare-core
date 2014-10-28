@@ -183,7 +183,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public DocumentDto updateFile(String uuid, InputStream theFile,
-			String description, String givenFileName, MultipartBody body)
+			String givenFileName, MultipartBody body)
 			throws BusinessException {
 		// TODO Auto-generated method stub
 		return null;
