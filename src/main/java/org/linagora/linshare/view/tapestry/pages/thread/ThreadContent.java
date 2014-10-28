@@ -230,7 +230,7 @@ public class ThreadContent {
 			threadEntryFacade.removeDocument(userVo, selectedVo);
 			shareSessionObjects.removeDocument(selectedVo);
 			shareSessionObjects.addMessage(String.format(
-					messages.get("pages.index.message.fileRemoved"),
+					messages.get("pages.index.message.onefileRemoved"),
 					selectedVo.getFileName()));
 		} catch (BusinessException e) {
 			shareSessionObjects.addError(String.format(
