@@ -67,4 +67,7 @@ public interface DocumentRestService {
 	DocumentDto updateFile(String ownerUuid, String uuid, InputStream theFile,
 			String givenFileName, MultipartBody body)
 					throws BusinessException;
+
+	void delete(String ownerUuid, DocumentDto documentDto)
+			throws BusinessException;
 }

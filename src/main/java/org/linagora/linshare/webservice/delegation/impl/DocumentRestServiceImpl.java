@@ -93,7 +93,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream theFile,
 			@ApiParam(value = "An optional description of a document.") @Multipart(value = "description", required = false) String description,
 			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
-			MultipartBody body) throws BusinessException {
+			@ApiParam(value = "The given attachment datas.", required = true) MultipartBody body)
+			throws BusinessException {
 		String fileName;
 		String comment = (description == null) ? "" : description;
 		if (givenFileName == null || givenFileName.isEmpty()) {
@@ -175,8 +176,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "File stream.", required = true) InputStream theFile,
-			@ApiParam(value = "The given file name of the uploaded file.", required = true) String givenFileName,
-			@Multipart(value = "filename", required = false) MultipartBody body) throws BusinessException {
+			@ApiParam(value = "The given file name of the uploaded file.", required = true) @Multipart(value = "filename", required = false) String givenFileName,
+
+			@ApiParam(value = "The given datas.", required = true) MultipartBody body)
+			throws BusinessException {
 
 		String fileName;
 		if (givenFileName == null || givenFileName.isEmpty()) {
@@ -188,8 +191,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		} else {
 			fileName = givenFileName;
 		}
-		return documentFacade.updateFile(ownerUuid, uuid, theFile,
-				fileName);
+		return documentFacade.updateFile(ownerUuid, uuid, theFile, fileName);
 	}
 
 	@DELETE
@@ -207,6 +209,23 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		documentFacade.delete(ownerUuid, uuid);
+	}
+
+	@DELETE
+	@Path("/")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Delete a document.")
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public void delete(
+			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The document to delete.", required = true) DocumentDto documentDto)
+			throws BusinessException {
+		documentFacade.delete(ownerUuid, documentDto);
 	}
 
 	@Path("/{uuid}/download")
