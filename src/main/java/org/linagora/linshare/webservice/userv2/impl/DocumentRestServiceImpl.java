@@ -139,7 +139,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@PUT()
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Update a document.", response = DocumentDto.class)
 	@ApiResponses({
