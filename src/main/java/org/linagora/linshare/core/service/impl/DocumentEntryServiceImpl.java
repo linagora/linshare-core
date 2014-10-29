@@ -34,6 +34,8 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.Calendar;
@@ -184,8 +186,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		Long size = tempFile.length(); 
 		DocumentEntry docEntry = null;
 		try {
-			
-			String sha256sum = SHACheckSumFileStream(stream);
+			FileInputStream fis = new FileInputStream(tempFile);
+			String sha256sum = SHACheckSumFileStream(fis);
 			
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 			checkSpace(size, fileName, owner);
@@ -222,6 +224,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 			addDocSizeToGlobalUsedQuota(docEntry.getDocument(), domain);
 
+		} catch (FileNotFoundException e) {
+			logger.error("File not found exception :" + e.getMessage());
 		} finally {
 			try{
 				logger.debug("deleting temp file : " + tempFile.getName());
@@ -238,7 +242,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	 * @param fileStream
 	 * @return String SHA256SUM of fileStream
 	 */
-	private String SHACheckSumFileStream(InputStream fileStream) {
+	private String SHACheckSumFileStream(FileInputStream fileStream) {
 		StringBuffer hexString = new StringBuffer();
 		try{
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -283,7 +287,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		DocumentEntry documentEntry = null;
 
 		try {
-			String sha256sum = SHACheckSumFileStream(stream);
+			FileInputStream fis = new FileInputStream(tempFile);
+			String sha256sum = SHACheckSumFileStream(fis);
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 
 			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
@@ -342,6 +347,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 				notifierService.sendNotification(mails);
 			}
 
+		} catch (FileNotFoundException e) {
+			logger.error("File not found exception : " + e.getMessage());
 		} finally {
 			try{
 				logger.debug("deleting temp file : " + tempFile.getName());

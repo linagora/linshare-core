@@ -400,6 +400,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 			// add an document for the file in DB
 			Document document = new Document(uuid, mimeType, size);
+			document.setSha256sum(sha256sum);
 			document.setThmbUuid(uuidThmb);
 			document.setTimeStamp(timestampToken);
 			documentRepository.create(document);

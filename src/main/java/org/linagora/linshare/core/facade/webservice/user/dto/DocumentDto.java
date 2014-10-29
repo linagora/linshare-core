@@ -94,6 +94,8 @@ public class DocumentDto {
 		this.ciphered = de.getCiphered();
 		this.type = de.getDocument().getType();
 		this.size = de.getDocument().getSize();
+		this.metaData = de.getMetaData();
+		this.sha256sum = de.getDocument().getSha256sum();
 	}
 
 	public DocumentDto() {

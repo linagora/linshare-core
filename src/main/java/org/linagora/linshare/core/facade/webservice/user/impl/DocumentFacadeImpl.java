@@ -200,12 +200,12 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 		User actor = checkAuthentication();
 		//TODO: Add meta field in documentDto object
 		return new DocumentDto(documentEntryService.updateFileProperties(actor, actor, documentUuid,
-				documentDto.getName(),documentDto.getDescription(), null));
+				documentDto.getName(),documentDto.getDescription(), documentDto.getMetaData()));
 	}
 
 	@Override
 	public DocumentDto updateFile(InputStream theFile,
-			String description, String givenFileName, String documentUuid)
+			String givenFileName, String documentUuid)
 			throws BusinessException {
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
 		Validate.notNull(theFile, "Missing required File stream");
@@ -214,9 +214,6 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 
 		DocumentDto doc = new DocumentDto(documentEntryService.find(actor,
 				actor, documentUuid));
-		if (description == null || description.isEmpty()) {
-			description = doc.getDescription();
-		}
 		if (givenFileName == null || givenFileName.isEmpty()) {
 			givenFileName = doc.getName();
 		}

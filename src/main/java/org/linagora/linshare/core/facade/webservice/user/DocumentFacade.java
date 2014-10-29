@@ -71,6 +71,6 @@ public interface DocumentFacade extends GenericFacade {
 
 	DocumentDto update(String documentUuid, DocumentDto documentDto) throws BusinessException;
 
-	DocumentDto updateFile(InputStream theFile, String description,
-			String givenFileName, String documentUuid) throws BusinessException;
+	DocumentDto updateFile(InputStream theFile, String givenFileName,
+			String documentUuid) throws BusinessException;
 }

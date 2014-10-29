@@ -138,7 +138,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/{uuid}")
-	@PUT()
+	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Update a document.", response = DocumentDto.class)
@@ -150,7 +150,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@Override
 	public DocumentDto update(
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "The document uuid.", required = true) DocumentDto documentDto)
+			@ApiParam(value = "The document dto.", required = true) DocumentDto documentDto)
 			throws BusinessException {
 		return documentFacade.update(uuid, documentDto);
 	}
@@ -172,7 +172,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	}
 
 	@Path("/{uuid}/upload")
-	@PUT()
+	@PUT
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Update the file inside the document.", response = DocumentDto.class)
@@ -182,11 +182,13 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public DocumentDto updateFile(String uuid, InputStream theFile,
-			String givenFileName, MultipartBody body)
+	public DocumentDto updateFile(
+			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
+			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream theFile,
+			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
+			MultipartBody body)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		return documentFacade.updateFile(theFile, givenFileName, uuid);
 	}
 
 	@Path("/{uuid}/download")
