@@ -154,9 +154,10 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                         trySubmit();
                     }
                 },
+                /*
                 failedUploadTextDisplay: {
                     mode: 'custom'
-                },
+                },*/
                 deleteFile: {
                     enabled: true,
                     forceConfirm: true,
@@ -182,14 +183,15 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                 }
             });
 
+			/*
             var it = uploader.__proto__._controlFailureTextDisplay;
             uploader.__proto__._controlFailureTextDisplay = function(id, response) {
-                /* advice before */
+                // advice before 
 
                 if (response.error)
                     response.error = ${errorCatalog}[response.error];
                 return it.apply(this, arguments);
-            };
+            };*/
 
             // XXX HACK : css is for losers ;]
             jQuery(".qq-upload-button").attr("class", "btn btn-primary");
