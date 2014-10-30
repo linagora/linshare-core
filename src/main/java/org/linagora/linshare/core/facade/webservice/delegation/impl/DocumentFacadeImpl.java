@@ -162,8 +162,7 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 
 		DocumentEntry doc = documentEntryService.find(actor, owner,
 				documentUuid);
-		InputStream file = documentEntryService.getDocumentStream(actor, owner,
-				documentUuid);
+		InputStream file = documentEntryService.getDocumentThumbnailStream(actor, owner, documentUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(file, doc.getName() + "_thumb.png", "image/png");
 		return response.build();

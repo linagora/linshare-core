@@ -211,9 +211,6 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 
 		User actor = checkAuthentication();
 
-		DocumentDto doc = new DocumentDto(documentEntryService.find(actor,
-				actor, documentUuid));
-
 		return new DocumentDto(documentEntryService.update(actor, actor, documentUuid, theFile, givenFileName));
 	}
 }

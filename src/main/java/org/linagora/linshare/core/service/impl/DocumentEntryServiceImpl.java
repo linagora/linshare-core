@@ -34,10 +34,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.security.MessageDigest;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
