@@ -140,7 +140,7 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
-		DocumentEntry doc = documentEntryService.find(actor, actor,
+		DocumentEntry doc = documentEntryService.find(actor, owner,
 				documentUuid);
 
 		InputStream file = documentEntryService.getDocumentStream(actor, owner,
@@ -160,7 +160,7 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
-		DocumentEntry doc = documentEntryService.find(actor, actor,
+		DocumentEntry doc = documentEntryService.find(actor, owner,
 				documentUuid);
 		InputStream file = documentEntryService.getDocumentStream(actor, owner,
 				documentUuid);
