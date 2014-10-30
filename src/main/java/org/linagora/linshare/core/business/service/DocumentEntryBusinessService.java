@@ -93,6 +93,6 @@ public interface DocumentEntryBusinessService {
 
 	public void deleteSetThreadEntry(Set<Entry> setThreadEntry) throws BusinessException;
 
-	public void updateFileProperties(ThreadEntry entry, String fileComment) throws BusinessException;
+	public ThreadEntry updateFileProperties(ThreadEntry entry, String fileComment, String metaData) throws BusinessException;
 
 }

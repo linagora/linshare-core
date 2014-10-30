@@ -274,12 +274,16 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	}
 
 	@Override
-	public void updateFileProperties(Account actor, String threadEntryUuid, String fileComment) throws BusinessException {
+	public ThreadEntry updateFileProperties(Account actor, String threadEntryUuid, String fileComment, String metaData) throws BusinessException {
 		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(threadEntryUuid);
+		// Avoid overwritting metadata in database to null when update threadEntry from interface.
+		if (metaData == null) {
+			metaData = threadEntry.getMetaData();
+		}
 		if (!this.canUpload((Thread) threadEntry.getEntryOwner(), (User) actor)) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to update this document.");
 		}
-		documentEntryBusinessService.updateFileProperties(threadEntry, fileComment);
+		return documentEntryBusinessService.updateFileProperties(threadEntry, fileComment, metaData);
 	}
 
 	private String sanitizeFileName(String fileName) throws BusinessException {

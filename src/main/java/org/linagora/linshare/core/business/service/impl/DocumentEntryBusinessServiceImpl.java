@@ -258,9 +258,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public void updateFileProperties(ThreadEntry entry, String fileComment) throws BusinessException {
+	public ThreadEntry updateFileProperties(ThreadEntry entry, String fileComment, String metaData) throws BusinessException {
 		entry.setComment(fileComment);
-        threadEntryRepository.update(entry);
+        return threadEntryRepository.update(entry);
 	}
 
 	@Override

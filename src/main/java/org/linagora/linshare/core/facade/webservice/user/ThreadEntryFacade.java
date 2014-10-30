@@ -64,5 +64,5 @@ public interface ThreadEntryFacade extends GenericFacade {
 
 	Response thumbnail(String threadUuid, String uuid) throws BusinessException;
 
-	ThreadEntryDto update(String threadUuid, String threadEntryUuid, String description) throws BusinessException;
+	ThreadEntryDto update(String threadUuid, String threadEntryUuid, ThreadEntryDto threadEntryDto) throws BusinessException;
 }

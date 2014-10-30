@@ -41,6 +41,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -222,4 +223,21 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		return threadEntryFacade.thumbnail(threadUuid, uuid);
 	}
 
+	@Path("/{uuid}")
+	@PUT
+	@ApiOperation(value = "Update a thread entry.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "Owner or thread entry not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public ThreadEntryDto update(
+			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
+			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String threadEntryUuid,
+			ThreadEntryDto threadEntryDto) throws BusinessException {
+
+		return threadEntryFacade.update(threadUuid, threadEntryUuid,
+				threadEntryDto);
+	}
 }

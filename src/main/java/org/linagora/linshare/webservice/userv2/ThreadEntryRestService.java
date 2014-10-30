@@ -70,4 +70,5 @@ public interface ThreadEntryRestService {
 	Response thumbnail(String threadUuid, String uuid)
 			throws BusinessException;
 
+	ThreadEntryDto update(String threadUuid, String threadEntryUuid, ThreadEntryDto threadEntryDto) throws BusinessException;
 }

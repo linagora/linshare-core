@@ -218,14 +218,15 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public ThreadEntryDto update(String threadUuid, String threadEntryUuid, String description) throws BusinessException {
+	public ThreadEntryDto update(String threadUuid, String threadEntryUuid,
+			ThreadEntryDto threadEntryDto) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(threadEntryUuid, "Missing required thread entry uuid");
 
 		User actor = checkAuthentication();
 
-		threadEntryService.updateFileProperties(actor, threadEntryUuid, description);
-		return new ThreadEntryDto(threadEntryService.findById(actor, actor,
-				threadEntryUuid));
+		return new ThreadEntryDto(threadEntryService.updateFileProperties(
+				actor, threadEntryUuid, threadEntryDto.getDescription(),
+				threadEntryDto.getMetaData()));
 	}
 }
