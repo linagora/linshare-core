@@ -281,6 +281,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			Document document = new Document(uuid, mimeType, size);
 			document.setThmbUuid(uuidThmb);
 			document.setTimeStamp(timestampToken);
+			try {
+				document.setSha256sum(SHACheckSumFileStream(new FileInputStream(myFile)));
+			} catch (FileNotFoundException e) {
+				logger.error("Can not find document" + e.getMessage());
+			}
 			documentRepository.create(document);
 
 
