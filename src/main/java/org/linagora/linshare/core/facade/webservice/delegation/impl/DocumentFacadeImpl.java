@@ -164,7 +164,8 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 				documentUuid);
 		InputStream file = documentEntryService.getDocumentThumbnailStream(actor, owner, documentUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getDocumentResponseBuilder(file, doc.getName() + "_thumb.png", "image/png");
+				.getDocumentResponseBuilder(file, doc.getName() + "_thumb.png",
+						"image/png");
 		return response.build();
 	}
 
@@ -180,7 +181,8 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		User owner = getOwner(ownerUuid);
 
 		documentEntryService.updateFileProperties(actor, owner, documentUuid,
-				documentDto.getName(), documentDto.getDescription(), documentDto.getMetaData());
+				documentDto.getName(), documentDto.getDescription(),
+				documentDto.getMetaData());
 		return new DocumentDto(documentEntryService.find(actor, owner,
 				documentUuid));
 	}
@@ -195,9 +197,7 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
-		documentEntryService.update(actor, owner, documentUuid, theFile,
-				givenFileName);
-		return new DocumentDto(documentEntryService.find(actor, owner,
-				documentUuid));
+		return new DocumentDto(documentEntryService.update(actor, owner,
+				documentUuid, theFile, givenFileName));
 	}
 }

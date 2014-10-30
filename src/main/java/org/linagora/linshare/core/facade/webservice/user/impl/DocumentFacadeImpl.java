@@ -58,8 +58,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-public class DocumentFacadeImpl extends UserGenericFacadeImp
-		implements DocumentFacade {
+public class DocumentFacadeImpl extends UserGenericFacadeImp implements
+		DocumentFacade {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(DocumentFacade.class);
@@ -68,8 +68,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 
 	private final MimePolicyService mimePolicyService;
 
-	public DocumentFacadeImpl(
-			final DocumentEntryService documentEntryService,
+	public DocumentFacadeImpl(final DocumentEntryService documentEntryService,
 			final AccountService accountService,
 			final MimePolicyService mimePolicyService) {
 		super(accountService);
@@ -95,17 +94,17 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 	@Override
 	public DocumentDto create(InputStream fi, String fileName,
 			String description) throws BusinessException {
-		Validate.notNull(fi, "Missing required file (check parameter named file)");
+		Validate.notNull(fi,
+				"Missing required file (check parameter named file)");
 		User actor = checkAuthentication();
 		if ((actor.isGuest() && !actor.getCanUpload()))
-			throw new BusinessException(
-					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
-		DocumentEntry res = documentEntryService.create(actor, actor,
-				fi, fileName);
+		DocumentEntry res = documentEntryService.create(actor, actor, fi,
+				fileName);
 
-		documentEntryService.updateFileProperties(actor, actor,
-				res.getUuid(), res.getName(), description, null);
+		documentEntryService.updateFileProperties(actor, actor, res.getUuid(),
+				res.getName(), description, null);
 		return new DocumentDto(res);
 	}
 
@@ -117,8 +116,8 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 			DataHandler dh = doca.getDocument();
 			InputStream in = dh.getInputStream();
 			String fileName = doca.getFilename();
-			DocumentEntry res = documentEntryService.create(actor,
-					actor, in, fileName);
+			DocumentEntry res = documentEntryService.create(actor, actor, in,
+					fileName);
 			// mandatory ?
 			String comment = (doca.getComment() == null) ? "" : doca
 					.getComment();
@@ -145,19 +144,23 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException {
+	public InputStream getDocumentStream(String docEntryUuid)
+			throws BusinessException {
 		Validate.notEmpty(docEntryUuid, "Missing required document uuid");
 		logger.debug("downloading for document : " + docEntryUuid);
 		User actor = checkAuthentication();
-		return documentEntryService.getDocumentStream(actor, actor, docEntryUuid);
+		return documentEntryService.getDocumentStream(actor, actor,
+				docEntryUuid);
 	}
 
 	@Override
-	public InputStream getThumbnailStream(String docEntryUuid) throws BusinessException {
+	public InputStream getThumbnailStream(String docEntryUuid)
+			throws BusinessException {
 		Validate.notEmpty(docEntryUuid, "Missing required document uuid");
 		logger.debug("downloading thumbnail for document : " + docEntryUuid);
 		User actor = checkAuthentication();
-		return documentEntryService.getDocumentThumbnailStream(actor, actor, docEntryUuid);
+		return documentEntryService.getDocumentThumbnailStream(actor, actor,
+				docEntryUuid);
 	}
 
 	@Override
@@ -190,27 +193,28 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public DocumentDto update(String documentUuid,
-			DocumentDto documentDto) throws BusinessException {
+	public DocumentDto update(String documentUuid, DocumentDto documentDto)
+			throws BusinessException {
 
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
 		Validate.notNull(documentDto, "Missing required DocumentDto");
 		Validate.notEmpty(documentDto.getName(), "Missing required fileName");
 
 		User actor = checkAuthentication();
-		return new DocumentDto(documentEntryService.updateFileProperties(actor, actor, documentUuid,
-				documentDto.getName(),documentDto.getDescription(), documentDto.getMetaData()));
+		return new DocumentDto(documentEntryService.updateFileProperties(actor,
+				actor, documentUuid, documentDto.getName(),
+				documentDto.getDescription(), documentDto.getMetaData()));
 	}
 
 	@Override
-	public DocumentDto updateFile(InputStream theFile,
-			String givenFileName, String documentUuid)
-			throws BusinessException {
+	public DocumentDto updateFile(InputStream theFile, String givenFileName,
+			String documentUuid) throws BusinessException {
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
 		Validate.notNull(theFile, "Missing required File stream");
 
 		User actor = checkAuthentication();
 
-		return new DocumentDto(documentEntryService.update(actor, actor, documentUuid, theFile, givenFileName));
+		return new DocumentDto(documentEntryService.update(actor, actor,
+				documentUuid, theFile, givenFileName));
 	}
 }
