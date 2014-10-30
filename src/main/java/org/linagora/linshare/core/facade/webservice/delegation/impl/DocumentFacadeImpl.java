@@ -196,12 +196,6 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
-		DocumentDto doc = new DocumentDto(documentEntryService.find(actor,
-				owner, documentUuid));
-		if (givenFileName == null || givenFileName.isEmpty()) {
-			givenFileName = doc.getName();
-		}
-
 		documentEntryService.update(actor, owner, documentUuid, theFile,
 				givenFileName);
 		return new DocumentDto(documentEntryService.find(actor, owner,

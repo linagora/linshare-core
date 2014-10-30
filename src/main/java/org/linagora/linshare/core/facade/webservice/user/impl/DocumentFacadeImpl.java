@@ -213,9 +213,6 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 
 		DocumentDto doc = new DocumentDto(documentEntryService.find(actor,
 				actor, documentUuid));
-		if (givenFileName == null || givenFileName.isEmpty()) {
-			givenFileName = doc.getName();
-		}
 
 		return new DocumentDto(documentEntryService.update(actor, actor, documentUuid, theFile, givenFileName));
 	}

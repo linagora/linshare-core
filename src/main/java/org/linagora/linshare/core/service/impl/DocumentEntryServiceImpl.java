@@ -242,9 +242,11 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, InputStream stream, String fileName) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(docEntryUuid, "document entry uuid is required.");
-		Validate.notEmpty(fileName, "fileName is required.");
 		DocumentEntry originalEntry = find(actor, owner, docEntryUuid);
 		String originalFileName = originalEntry.getName();
+		if (fileName == null || fileName.isEmpty()) {
+			fileName = originalFileName;
+		}
 
 		checkUpdatePermission(actor, originalEntry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		fileName = sanitizeFileName(fileName); // throws
