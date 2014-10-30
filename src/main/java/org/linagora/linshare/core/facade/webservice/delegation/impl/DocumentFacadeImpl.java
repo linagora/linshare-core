@@ -180,11 +180,9 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
-		documentEntryService.updateFileProperties(actor, owner, documentUuid,
+		return new DocumentDto(documentEntryService.updateFileProperties(actor, owner, documentUuid,
 				documentDto.getName(), documentDto.getDescription(),
-				documentDto.getMetaData());
-		return new DocumentDto(documentEntryService.find(actor, owner,
-				documentUuid));
+				documentDto.getMetaData()));
 	}
 
 	@Override
