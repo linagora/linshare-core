@@ -165,7 +165,7 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		InputStream file = documentEntryService.getDocumentStream(actor, owner,
 				documentUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getThumbnailResponseBuilder(file);
+				.getDocumentResponseBuilder(file, doc.getName() + "_thumb.png", "image/png");
 		return response.build();
 	}
 
