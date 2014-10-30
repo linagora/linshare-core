@@ -519,6 +519,11 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		Validate.notEmpty(newName, "new name is required.");
 		DocumentEntry entry = find(actor, owner, uuid);
+		// on Tapestry interface update event, we have to check the value
+		// of the metadata field to avoid overwriting the database value to null
+		if (meta == null) {
+			meta = entry.getMetaData();
+		}
 		checkUpdatePermission(actor, entry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
 		return documentEntryBusinessService.updateFileProperties(entry, newName, fileComment, meta);
 	}
