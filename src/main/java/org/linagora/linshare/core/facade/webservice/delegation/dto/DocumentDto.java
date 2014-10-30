@@ -50,10 +50,11 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
  * JaxB does not allow this.
  * That's why we have to set the name space to Delegation.
  */
-@XmlType(namespace="Delegation")
+@XmlType(namespace = "Delegation")
 @XmlRootElement(name = "Document")
 @ApiModel(value = "Document", description = "A Document")
-public class DocumentDto extends org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto {
+public class DocumentDto extends
+		org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto {
 
 	@ApiModelProperty(value = "Owner")
 	protected GenericUserDto owner;

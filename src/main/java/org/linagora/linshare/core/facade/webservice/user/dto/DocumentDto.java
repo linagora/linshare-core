@@ -73,10 +73,10 @@ public class DocumentDto {
 
 	@ApiModelProperty(value = "Size")
 	protected Long size;
-	
+
 	@ApiModelProperty(value = "MetaData")
 	protected String metaData;
-	
+
 	@ApiModelProperty(value = "Sha256sum")
 	protected String sha256sum;
 
@@ -182,7 +182,8 @@ public class DocumentDto {
 	}
 
 	/**
-	 * @param metaData the metaData to set
+	 * @param metaData
+	 *            the metaData to set
 	 */
 	public void setMetaData(String metaData) {
 		this.metaData = metaData;
@@ -196,7 +197,8 @@ public class DocumentDto {
 	}
 
 	/**
-	 * @param sha256sum the sha256sum to set
+	 * @param sha256sum
+	 *            the sha256sum to set
 	 */
 	public void setSha256sum(String sha256sum) {
 		this.sha256sum = sha256sum;
@@ -207,6 +209,7 @@ public class DocumentDto {
 		return "Document [id=" + uuid + ", name=" + name + ", creation="
 				+ creationDate + "]";
 	}
+
 	/*
 	 * Transformers
 	 */
