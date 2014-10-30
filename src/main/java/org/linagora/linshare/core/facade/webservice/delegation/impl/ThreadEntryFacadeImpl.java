@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -52,6 +53,7 @@ import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
 import com.google.common.collect.Lists;
 
@@ -170,14 +172,27 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
-		return Response.ok(
-				threadEntryService.getDocumentStream(actor, owner, entryUuid))
-				.build();
+		ThreadEntry threadEntry = threadEntryService.findById(actor, owner, entryUuid);
+		InputStream stream = threadEntryService.getDocumentStream(actor, owner, entryUuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(stream, threadEntry.getName(), threadEntry.getType(), threadEntry.getSize());
+
+		return response.build();
 	}
 
 	@Override
-	public Response thumbnail(String ownerUuid, String threadUuid, String uuid)
+	public Response thumbnail(String ownerUuid, String threadUuid, String threadEntryUuid)
 			throws BusinessException {
-		return null;
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(threadUuid, "Missing required document uuid");
+		Validate.notEmpty(threadEntryUuid, "Missing required document uuid");
+
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+
+		InputStream file = threadEntryService.getDocumentStream(actor, owner,
+				threadEntryUuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder
+				.getThumbnailResponseBuilder(file);
+		return response.build();
 	}
 }

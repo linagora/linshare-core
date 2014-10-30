@@ -71,6 +71,12 @@ public class ThreadEntryDto {
 	@ApiModelProperty(value = "Size")
 	protected Long size;
 
+	@ApiModelProperty(value = "MetaData")
+	protected String metaData;
+
+	@ApiModelProperty(value = "Sha256sum")
+	protected String sha256sum;
+
 	public ThreadEntryDto(ThreadEntry te) {
 		super();
 		if (te == null) {
@@ -84,6 +90,24 @@ public class ThreadEntryDto {
 		this.ciphered = te.getCiphered();
 		this.type = te.getDocument().getType();
 		this.size = te.getDocument().getSize();
+		this.metaData = te.getMetaData();
+		this.sha256sum = te.getDocument().getSha256sum();
+	}
+
+	public String getSha256sum() {
+		return sha256sum;
+	}
+
+	public void setSha256sum(String sha256sum) {
+		this.sha256sum = sha256sum;
+	}
+
+	public String getMetaData() {
+		return metaData;
+	}
+
+	public void setMetaData(String metaData) {
+		this.metaData = metaData;
 	}
 
 	public ThreadEntryDto() {
