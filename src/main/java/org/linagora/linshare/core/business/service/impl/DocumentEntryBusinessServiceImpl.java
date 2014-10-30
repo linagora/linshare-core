@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
@@ -120,12 +121,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate, String sha256sum) throws BusinessException {
+	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException {
 
 		// add an entry for the file in DB
 		DocumentEntry entity = null;
 		try {
-			Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType, sha256sum);
+			Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType);
 
 			DocumentEntry docEntry = new DocumentEntry(owner, fileName, document);
 			// We need to set an expiration date in case of file cleaner activation.
@@ -263,7 +264,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate, String sha256sum) throws BusinessException {
+	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException {
 
 		//create and insert the thumbnail into the JCR
 		String uuidThmb = generateThumbnailIntoJCR(fileName, owner.getLsUuid(), myFile, mimeType);
@@ -279,7 +280,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 			Document document = new Document(uuid, mimeType, size);
 			document.setThmbUuid(uuidThmb);
-			document.setSha256sum(sha256sum);
 			document.setTimeStamp(timestampToken);
 			documentRepository.create(document);
 
@@ -331,7 +331,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		// add an entry for the file in DB
 		ThreadEntry entity = null;
 		try {
-			Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType, null);
+			Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType);
 			ThreadEntry docEntry = new ThreadEntry(owner, fileName, document);
 
 			//aes encrypt ? check headers
@@ -385,7 +385,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 
-	private Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType, String sha256sum) throws BusinessException {
+	private Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType) throws BusinessException {
 		//create and insert the thumbnail into the JCR
 		String uuidThmb = generateThumbnailIntoJCR(fileName, owner.getLsUuid(), myFile, mimeType);
 
@@ -400,7 +400,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 			// add an document for the file in DB
 			Document document = new Document(uuid, mimeType, size);
-			document.setSha256sum(sha256sum);
+			try {
+				document.setSha256sum(SHACheckSumFileStream(new FileInputStream(myFile)));
+			} catch (FileNotFoundException e) {
+				logger.error("Can not find document" + e.getMessage());
+			}
 			document.setThmbUuid(uuidThmb);
 			document.setTimeStamp(timestampToken);
 			documentRepository.create(document);
@@ -596,5 +600,31 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 //			documentRepository.update(doc);
 //			deleteDocument(doc);
 //		}
+	}
+
+	/**
+	 *
+	 * @param fileStream
+	 * @return String SHA256SUM of fileStream
+	 */
+	private String SHACheckSumFileStream(FileInputStream fs) {
+		StringBuffer hexString = new StringBuffer();
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] dataBytes = new byte[1024];
+
+			int nread = 0;
+			while ((nread = fs.read(dataBytes)) != -1) {
+				md.update(dataBytes, 0, nread);
+			}
+			byte[] mdbytes = md.digest();
+
+			for (int i = 0; i < mdbytes.length; i++) {
+				hexString.append(Integer.toHexString(0xFF & mdbytes[i]));
+			}
+		} catch (Exception e) {
+			logger.error("can not delete temp file : " + e.getMessage());
+		}
+		return hexString.toString();
 	}
 }
