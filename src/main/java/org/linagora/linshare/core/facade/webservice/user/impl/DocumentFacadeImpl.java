@@ -124,7 +124,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 					.getComment();
 
 			documentEntryService.updateFileProperties(actor, actor,
-					res.getUuid(), res.getName(), comment, null);
+					res.getUuid(), res.getName(), comment, res.getMetaData());
 			return new DocumentDto(res);
 		} catch (IOException e) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
@@ -198,7 +198,6 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp
 		Validate.notEmpty(documentDto.getName(), "Missing required fileName");
 
 		User actor = checkAuthentication();
-		//TODO: Add meta field in documentDto object
 		return new DocumentDto(documentEntryService.updateFileProperties(actor, actor, documentUuid,
 				documentDto.getName(),documentDto.getDescription(), documentDto.getMetaData()));
 	}
