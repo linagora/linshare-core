@@ -1337,7 +1337,7 @@
 									<outputTemplate>
 											${basedir}/src/docs/resources/strapdown.html.mustache
 									</outputTemplate>
-									<outputPath>generated/strapdown.html</outputPath>
+									<outputPath>generated/index.html</outputPath>
 									<swaggerDirectory>generated/apidocs</swaggerDirectory>
 									<mustacheFileRoot>${basedir}/src/docs/resources/mustache/</mustacheFileRoot>
 								</apiSource>
@@ -1370,12 +1370,10 @@
 									<locations>org.linagora.linshare.webservice.delegation</locations>
 									<apiVersion>v1</apiVersion>
 									<basePath>http://localhost:8080/linshare/webservice/rest/delegation</basePath>
-									<outputTemplate>
-										${basedir}/src/docs/resources/strapdown.html.mustache
-									</outputTemplate>
-									<outputPath>generated-delegation/strapdown.html</outputPath>
+									<outputTemplate>${basedir}/src/docs/resources/delegation/strapdown.html.mustache</outputTemplate>
+									<outputPath>generated-delegation/index.html</outputPath>
 									<swaggerDirectory>generated-delegation/apidocs</swaggerDirectory>
-									<mustacheFileRoot>${basedir}/src/docs/resources/mustache/</mustacheFileRoot>
+									<mustacheFileRoot>${basedir}/src/docs/resources/delegation/mustache/</mustacheFileRoot>
 								</apiSource>
 							</apiSources>
 						</configuration>
@@ -1406,12 +1404,77 @@
 									<locations>org.linagora.linshare.webservice.delegation</locations>
 									<apiVersion>v1</apiVersion>
 									<basePath>http://localhost:8080/linshare/webservice/rest/delegation</basePath>
-									<outputTemplate>
-											${basedir}/src/docs/resources/html.mustache
-									</outputTemplate>
-									<outputPath>generated-delegation2/strapdown.html</outputPath>
+									<outputTemplate>${basedir}/src/docs/resources/delegation/html.mustache</outputTemplate>
+									<outputPath>generated-delegation2/index.html</outputPath>
 									<swaggerDirectory>generated-delegation2/apidocs</swaggerDirectory>
-									<mustacheFileRoot>${basedir}/src/docs/resources/mustache/</mustacheFileRoot>
+									<mustacheFileRoot>${basedir}/src/docs/resources/delegation/mustache/</mustacheFileRoot>
+								</apiSource>
+							</apiSources>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>swagger-userv2</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.github.kongchen</groupId>
+						<artifactId>swagger-maven-plugin</artifactId>
+						<version>2.2</version>
+						<configuration>
+							<apiSources>
+								<apiSource>
+									<locations>org.linagora.linshare.webservice.userv2</locations>
+									<apiVersion>v1</apiVersion>
+									<basePath>http://localhost:8080/linshare/webservice/rest/user</basePath>
+									<outputTemplate>${basedir}/src/docs/resources/userv2/strapdown.html.mustache</outputTemplate>
+									<outputPath>generated-userv2/index.html</outputPath>
+									<swaggerDirectory>generated-userv2/apidocs</swaggerDirectory>
+									<mustacheFileRoot>${basedir}/src/docs/resources/userv2/mustache/</mustacheFileRoot>
+								</apiSource>
+							</apiSources>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>swagger-userv2-strapdown</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.github.kongchen</groupId>
+						<artifactId>swagger-maven-plugin</artifactId>
+						<version>2.2</version>
+						<configuration>
+							<apiSources>
+								<apiSource>
+									<locations>org.linagora.linshare.webservice.userv2</locations>
+									<apiVersion>v1</apiVersion>
+									<basePath>http://localhost:8080/linshare/webservice/rest/user</basePath>
+									<outputTemplate>${basedir}/src/docs/resources/userv2/html.mustache</outputTemplate>
+									<outputPath>generated-userv2-strapdown/index.html</outputPath>
+									<swaggerDirectory>generated-userv2-strapdown/apidocs</swaggerDirectory>
+									<mustacheFileRoot>${basedir}/src/docs/resources/userv2/mustache/</mustacheFileRoot>
 								</apiSource>
 							</apiSources>
 						</configuration>
