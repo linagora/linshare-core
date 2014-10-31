@@ -44,51 +44,51 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ThreadService {
 	
-	public Thread findByLsUuid(Account actor, Account owner, String uuid);
+	Thread findByLsUuid(Account actor, Account owner, String uuid);
 
-	public List<Thread> findAll(Account actor, Account owner);
+	List<Thread> findAll(Account actor, Account owner);
 
-	public Thread create(Account actor, Account owner, String name) throws BusinessException;
+	Thread create(Account actor, Account owner, String name) throws BusinessException;
 	
-	public ThreadMember getThreadMemberById(long id) throws BusinessException;
+	ThreadMember getThreadMemberById(long id) throws BusinessException;
 	
-	public ThreadMember getMemberFromUser(Thread thread, User user) throws BusinessException;
+	ThreadMember getMemberFromUser(Thread thread, User user) throws BusinessException;
 
-	public Set<ThreadMember> getMembers(Account actor, User owner, Thread thread) throws BusinessException;
+	Set<ThreadMember> getMembers(Account actor, User owner, Thread thread) throws BusinessException;
 
-	public List<Thread> findAllWhereMember(User user);
+	List<Thread> findAllWhereMember(User user);
 	
-	public List<Thread> findAllWhereAdmin(User user);
+	List<Thread> findAllWhereAdmin(User user);
 
-	public List<Thread> findAllWhereCanUpload(User user);
+	List<Thread> findAllWhereCanUpload(User user);
 	
-	public List<Thread> findLatestWhereMember(User actor, int limit);
+	List<Thread> findLatestWhereMember(User actor, int limit);
 
-	public boolean hasAnyWhereAdmin(User user);
+	boolean hasAnyWhereAdmin(User user);
 
-	public boolean isUserAdmin(User user, Thread thread);
+	boolean isUserAdmin(User user, Thread thread);
 
-	public int countMembers(Thread thread);
+	int countMembers(Thread thread);
 
-	public int countEntries(Thread thread);
+	int countEntries(Thread thread);
 
-	public ThreadMember addMember(Account actor, Account owner, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException;
+	ThreadMember addMember(Account actor, Account owner, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException;
 
-	public ThreadMember updateMember(Account actor, Account owner, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException;
+	ThreadMember updateMember(Account actor, Account owner, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException;
 
-	public void deleteMember(Account actor, Account owner, Thread thread, ThreadMember member) throws BusinessException;
+	void deleteMember(Account actor, Account owner, Thread thread, ThreadMember member) throws BusinessException;
 	
-	public void deleteAllMembers(Account actor, Thread thread) throws BusinessException;
+	void deleteAllMembers(Account actor, Thread thread) throws BusinessException;
 
-	public void deleteAllUserMemberships(Account actor, User user) throws BusinessException;
+	void deleteAllUserMemberships(Account actor, User user) throws BusinessException;
 
-	public void deleteThread(User actor, Account owner, Thread thread) throws BusinessException;
+	void deleteThread(User actor, Account owner, Thread thread) throws BusinessException;
 
-	public Thread rename(User actor, Account owner, Thread thread, String threadName) throws BusinessException;
+	Thread rename(User actor, Account owner, Thread thread, String threadName) throws BusinessException;
 
-	public List<Thread> searchByName(User actor, String pattern);
+	List<Thread> searchByName(User actor, String pattern);
 
-	public List<Thread> searchByMembers(User actor, String pattern);
+	List<Thread> searchByMembers(User actor, String pattern);
 
 	Thread findByLsUuidUnprotected(String uuid);
 

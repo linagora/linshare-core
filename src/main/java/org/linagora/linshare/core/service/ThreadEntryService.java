@@ -45,23 +45,23 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface ThreadEntryService {
 
 	
-	public ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, InputStream stream, String filename) throws BusinessException;
+	ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, InputStream stream, String filename) throws BusinessException;
 	
-	public ThreadEntry findById(Account actor, Account owner, String threadEntryUuid) throws BusinessException;
+	ThreadEntry findById(Account actor, Account owner, String threadEntryUuid) throws BusinessException;
 	
-	public void deleteThreadEntry(Account actor, Account owner, ThreadEntry threadEntry) throws BusinessException;
+	void deleteThreadEntry(Account actor, Account owner, ThreadEntry threadEntry) throws BusinessException;
 	
-	public void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException;
+	void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException;
 	
-	public List<ThreadEntry> findAllThreadEntries(Account actor, Account owner, Thread thread) throws BusinessException;
+	List<ThreadEntry> findAllThreadEntries(Account actor, Account owner, Thread thread) throws BusinessException;
 
-	public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException;
+	InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException;
 
-	public boolean documentHasThumbnail(Account actor, String identifier);
+	boolean documentHasThumbnail(Account actor, String identifier);
 
-	public InputStream getDocumentThumbnailStream(Account owner, String uuid) throws BusinessException;
+	InputStream getDocumentThumbnailStream(Account owner, String uuid) throws BusinessException;
 
-	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Account actor, Thread thread, String[] names);
+	List<ThreadEntry> findAllThreadEntriesTaggedWith(Account actor, Thread thread, String[] names);
 
-	public ThreadEntry updateFileProperties(Account actor, String threadEntryUuid, String fileComment, String metaData) throws BusinessException;
+	ThreadEntry updateFileProperties(Account actor, String threadEntryUuid, String fileComment, String metaData) throws BusinessException;
 }
