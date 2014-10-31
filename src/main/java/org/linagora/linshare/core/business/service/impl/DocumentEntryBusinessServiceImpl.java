@@ -184,7 +184,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				logger.error(e.toString());
 			}
 		}
-
 		return timestampToken ;
 	}
 
@@ -243,7 +242,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		String uuid = entry.getDocument().getUuid();
 		fileSystemDao.renameFile(uuid, newName);
 		entry.setName(newName);
-        documentEntryRepository.update(entry);
+		documentEntryRepository.update(entry);
 	}
 
 
@@ -254,13 +253,14 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		entry.setName(newName);
 		entry.setComment(fileComment);
 		entry.setMetaData(meta);
-        return documentEntryRepository.update(entry);
+		return documentEntryRepository.update(entry);
 	}
 
 	@Override
 	public ThreadEntry updateFileProperties(ThreadEntry entry, String fileComment, String metaData) throws BusinessException {
 		entry.setComment(fileComment);
-        return threadEntryRepository.update(entry);
+		entry.setMetaData(metaData);
+		return threadEntryRepository.update(entry);
 	}
 
 	@Override
