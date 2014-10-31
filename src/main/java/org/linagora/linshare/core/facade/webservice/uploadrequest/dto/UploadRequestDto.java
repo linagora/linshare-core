@@ -88,6 +88,8 @@ public class UploadRequestDto {
 
 	Set<String> extensions = Sets.newHashSet();
 
+	private String locale;
+
 	public UploadRequestDto() {
 		super();
 	}
@@ -116,6 +118,7 @@ public class UploadRequestDto {
 			this.usedSpace += entry.getSize();
 		}
 		this.protectedByPassword = false;
+		this.locale = entity.getLocale();
 	}
 
 	public UploadRequestDto(UploadRequestUrl requestUrl) {
@@ -259,6 +262,14 @@ public class UploadRequestDto {
 
 	public void setExtensions(Set<String> extensions) {
 		this.extensions = extensions;
+	}
+
+	public String getLocale() {
+		return locale;
+	}
+
+	public void setLocale(String locale) {
+		this.locale = locale;
 	}
 
 	/**
