@@ -61,8 +61,8 @@ public interface ThreadEntryRestService {
 	public void delete(String ownerUuid, String threadUuid,
 			ThreadEntryDto threadEntry) throws BusinessException;
 
-	public void delete(String ownerUuid, String threadUuid,
-			String uuid) throws BusinessException;
+	public void delete(String ownerUuid, String threadUuid, String uuid)
+			throws BusinessException;
 
 	Response download(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
@@ -70,4 +70,7 @@ public interface ThreadEntryRestService {
 	Response thumbnail(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
+	ThreadEntryDto update(String ownerUuid, String threadUuid,
+			String threadEntryuuid, ThreadEntryDto threadEntryDto)
+			throws BusinessException;
 }

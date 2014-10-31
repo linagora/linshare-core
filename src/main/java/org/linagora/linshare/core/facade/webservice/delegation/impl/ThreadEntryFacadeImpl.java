@@ -199,4 +199,19 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 						threadEntry.getName() + "_thumb.png", "image/png");
 		return response.build();
 	}
+
+	@Override
+	public ThreadEntryDto update(String ownerUuid, String threadUuid,
+			String threadEntryUuid, ThreadEntryDto threadEntryDto)
+			throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(threadUuid, "Missing required document uuid");
+		Validate.notEmpty(threadEntryUuid, "Missing required document uuid");
+		Validate.notNull(threadEntryDto, "Missing required threadEntryDto");
+
+		User actor = checkAuthentication();
+		return new ThreadEntryDto(threadEntryService.updateFileProperties(
+				actor, threadEntryUuid, threadEntryDto.getDescription(),
+				threadEntryDto.getMetaData()));
+	}
 }

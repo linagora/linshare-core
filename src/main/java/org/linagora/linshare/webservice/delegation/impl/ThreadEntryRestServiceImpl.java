@@ -41,6 +41,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -229,6 +230,24 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		return threadEntryFacade.thumbnail(ownerUuid, threadUuid, uuid);
+	}
+
+	@Path("/{ownerUuid}/documents/{uuid}")
+	@PUT
+	@ApiOperation(value = "Update the thread entry properties.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "Owner not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public ThreadEntryDto update(
+			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
+			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String threadEntryuuid,
+			@ApiParam(value = "The Thread Entry.", required = true) ThreadEntryDto threadEntryDto)
+			throws BusinessException {
+		return threadEntryFacade.update(ownerUuid, threadUuid, threadEntryuuid, threadEntryDto);
 	}
 
 }
