@@ -119,7 +119,6 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
 		ThreadEntry threadEntry = threadEntryService.findById(actor, owner, entryUuid);
 		return new ThreadEntryDto(threadEntry);
 	}
