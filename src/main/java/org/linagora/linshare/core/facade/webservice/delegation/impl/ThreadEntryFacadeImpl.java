@@ -172,9 +172,13 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
-		ThreadEntry threadEntry = threadEntryService.findById(actor, owner, entryUuid);
-		InputStream stream = threadEntryService.getDocumentStream(actor, owner, entryUuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(stream, threadEntry.getName(), threadEntry.getType(), threadEntry.getSize());
+		ThreadEntry threadEntry = threadEntryService.findById(actor, owner,
+				entryUuid);
+		InputStream stream = threadEntryService.getDocumentStream(actor, owner,
+				entryUuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder
+				.getDocumentResponseBuilder(stream, threadEntry.getName(),
+						threadEntry.getType(), threadEntry.getSize());
 
 		return response.build();
 	}
@@ -190,8 +194,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User owner = getOwner(ownerUuid);
 
 		ThreadEntry threadEntry = threadEntryService.findById(actor, owner, threadEntryUuid);
-		InputStream file = threadEntryService.getDocumentStream(actor, owner,
-				threadEntryUuid);
+		InputStream file = threadEntryService.getDocumentThumbnailStream(owner, threadEntryUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(file,
 						threadEntry.getName() + "_thumb.png", "image/png");
