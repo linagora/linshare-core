@@ -124,9 +124,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notNull(threadDto, "Missing required thread");
 		Validate.notEmpty(threadDto.getName(),
 				"Missing required thread dto name");
-
 		User actor = checkAuthentication();
-
 		return new ThreadDto(threadService.create(actor, actor,
 				threadDto.getName()));
 	}
@@ -154,4 +152,16 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		threadService.deleteThread(actor, actor, thread);
 	}
 
+	@Override
+	public ThreadDto update(String threadUuid, ThreadDto threadDto)
+			throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notNull(threadDto, "Missing required ThreadDto");
+		Validate.notEmpty(threadDto.getName(), "Missing required thread name");
+
+		User actor = checkAuthentication();
+		Thread oldThread = threadService.findByLsUuid(actor, actor, threadUuid);
+		return new ThreadDto(threadService.update(actor, actor, oldThread,
+				threadDto.getName()));
+	}
 }

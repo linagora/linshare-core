@@ -84,7 +84,7 @@ public interface ThreadService {
 
 	void deleteThread(User actor, Account owner, Thread thread) throws BusinessException;
 
-	Thread rename(User actor, Account owner, Thread thread, String threadName) throws BusinessException;
+	Thread update(User actor, Account owner, Thread thread, String threadName) throws BusinessException;
 
 	List<Thread> searchByName(User actor, String pattern);
 

@@ -321,7 +321,7 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	public void renameThread(UserVo actorVo, ThreadVo threadVo, String threadName)
 			throws BusinessException {
 		User actor = findUser(actorVo);
-		threadService.rename(actor, actor, findThread(threadVo), threadName);
+		threadService.update(actor, actor, findThread(threadVo), threadName);
 	}
 
 	@Override

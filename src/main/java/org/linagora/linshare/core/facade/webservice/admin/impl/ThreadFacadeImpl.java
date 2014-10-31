@@ -94,7 +94,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(threadDto, "thread must be set.");
 		Thread thread = threadService.findByLsUuid(actor, actor, threadDto.getUuid());
 
-		return new ThreadDto(threadService.rename(actor, actor, thread, threadDto.getName()));
+		return new ThreadDto(threadService.update(actor, actor, thread, threadDto.getName()));
 	}
 
 	@Override

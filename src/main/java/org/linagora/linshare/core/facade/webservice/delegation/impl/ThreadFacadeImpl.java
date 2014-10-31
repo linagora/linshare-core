@@ -106,4 +106,18 @@ public class ThreadFacadeImpl extends DelegationGenericFacadeImpl implements
 		Thread thread = threadService.findByLsUuid(actor, owner, threadDto.getUuid());
 		threadService.deleteThread(actor, owner, thread);
 	}
+
+	@Override
+	public ThreadDto update(String ownerUuid, String threadUuid,
+			ThreadDto threadDto) throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notNull(threadDto, "Missing required ThreadDto");
+		Validate.notEmpty(threadDto.getName(), "Missing required thread name");
+
+		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
+		Thread oldThread = threadService.findByLsUuid(actor, actor, threadUuid);
+		return new ThreadDto(threadService.update(actor, owner, oldThread,
+				threadDto.getName()));
+	}
 }

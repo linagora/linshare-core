@@ -299,7 +299,7 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public Thread rename(User actor, Account owner, Thread thread,
+	public Thread update(User actor, Account owner, Thread thread,
 			String threadName) throws BusinessException {
 		threadAC.checkUpdatePermission(actor, thread,
 				BusinessErrorCode.THREAD_FORBIDDEN);
@@ -328,7 +328,6 @@ public class ThreadServiceImpl implements ThreadService {
 	public List<Thread> searchByMembers(User actor, String pattern) {
 		return threadRepository.searchAmongMembers(actor, pattern);
 	}
-
 
     /* ***********************************************************
      *                   Helpers

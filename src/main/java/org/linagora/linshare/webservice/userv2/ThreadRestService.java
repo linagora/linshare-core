@@ -40,15 +40,16 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
 
 public interface ThreadRestService {
 
-	ThreadDto create(ThreadDto thread)
-			throws BusinessException;
+	ThreadDto create(ThreadDto thread) throws BusinessException;
 
 	ThreadDto find(String uuid) throws BusinessException;
 
 	List<ThreadDto> findAll() throws BusinessException;
 
-	void delete(ThreadDto thread)
-			throws BusinessException;
+	void delete(ThreadDto thread) throws BusinessException;
 
 	void delete(String uuid) throws BusinessException;
+
+	ThreadDto update(String threadUuid, ThreadDto threadDto)
+			throws BusinessException;
 }

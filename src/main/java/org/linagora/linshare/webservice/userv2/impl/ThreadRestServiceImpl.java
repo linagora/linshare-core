@@ -40,6 +40,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -143,6 +144,22 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		threadFacade.delete(uuid);
+	}
+
+	@Path("/{uuid}")
+	@PUT
+	@ApiOperation(value = "Update a thread.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "Owner or thread not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public ThreadDto update(
+			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String threadUuid,
+			@ApiParam(value = "Thread to create.", required = true) ThreadDto threadDto)
+			throws BusinessException {
+		return threadFacade.update(threadUuid, threadDto);
 	}
 
 }

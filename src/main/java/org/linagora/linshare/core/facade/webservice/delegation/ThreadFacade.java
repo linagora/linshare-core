@@ -49,4 +49,7 @@ public interface ThreadFacade {
 
 	void delete(String ownerUuid, ThreadDto threadDto) throws BusinessException;
 
+	ThreadDto update(String ownerUuid, String threadUuid, ThreadDto threadDto)
+			throws BusinessException;
+
 }
