@@ -92,9 +92,20 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 	private final Long virusscannerLimitFilesize;
 
-	public DocumentEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityReadOnlyService functionalityReadOnlyService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService, MimeTypeMagicNumberDao mimeTypeIdentifier,
-			AntiSamyService antiSamyService, DomainBusinessService domainBusinessService, Long virusscannerLimitFilesize) {
+	private final boolean jpgThumbEnabled;
+
+	public DocumentEntryServiceImpl(
+			DocumentEntryBusinessService documentEntryBusinessService,
+			LogEntryService logEntryService,
+			AbstractDomainService abstractDomainService,
+			FunctionalityReadOnlyService functionalityReadOnlyService,
+			MimeTypeService mimeTypeService,
+			VirusScannerService virusScannerService,
+			MimeTypeMagicNumberDao mimeTypeIdentifier,
+			AntiSamyService antiSamyService,
+			DomainBusinessService domainBusinessService,
+			Long virusscannerLimitFilesize,
+			final boolean jpgThumbEnabled) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -106,6 +117,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		this.antiSamyService = antiSamyService;
 		this.domainBusinessService = domainBusinessService;
 		this.virusscannerLimitFilesize = virusscannerLimitFilesize;
+		this.jpgThumbEnabled = jpgThumbEnabled;
 	}
 
 	@Override
@@ -118,7 +130,21 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		DocumentEntry docEntry = null;
 
 		try {
-			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
+			String mimeType;
+			// TODO FIXME : Very ugly hack.
+			if (!jpgThumbEnabled) {
+				if (fileName.length() > 3) {
+					if (fileName.substring(fileName.length() - 3, fileName.length()).equals("jpg")) {
+						mimeType = "image/jpeg ";
+					} else {
+						mimeType = mimeTypeIdentifier.getMimeType(tempFile);
+					}
+				} else {
+					mimeType = mimeTypeIdentifier.getMimeType(tempFile);
+				}
+			} else {
+				mimeType = mimeTypeIdentifier.getMimeType(tempFile);
+			}
 			checkSpace(size, fileName, actor);
 
 			// check if the file MimeType is allowed
