@@ -111,6 +111,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 	private final Long virusscannerLimitFilesize;
 
+	private final boolean jpgThumbEnabled;
+
 	public DocumentEntryServiceImpl(
 			DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
@@ -124,7 +126,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			DocumentEntryResourceAccessControl rac,
 			MailBuildingService mailBuildingService,
 			NotifierService notifierService,
-			Long virusscannerLimitFilesize) {
+			Long virusscannerLimitFilesize,
+			final boolean jpgThumbEnabled) {
 		super(rac);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -138,6 +141,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.virusscannerLimitFilesize = virusscannerLimitFilesize;
+		this.jpgThumbEnabled = jpgThumbEnabled;
 	}
 
 	@Override
@@ -183,7 +187,21 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		Long size = tempFile.length(); 
 		DocumentEntry docEntry = null;
 		try {
-			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
+			String mimeType;
+			// TODO FIXME : Very ugly hack.
+			if (!jpgThumbEnabled) {
+				if (fileName.length() > 3) {
+					if (fileName.substring(fileName.length() - 3, fileName.length()).equals("jpg")) {
+						mimeType = "image/jpeg ";
+					} else {
+						mimeType = mimeTypeIdentifier.getMimeType(tempFile);
+					}
+				} else {
+					mimeType = mimeTypeIdentifier.getMimeType(tempFile);
+				}
+			} else {
+				mimeType = mimeTypeIdentifier.getMimeType(tempFile);
+			}
 			checkSpace(size, fileName, owner);
 
 			// check if the file MimeType is allowed

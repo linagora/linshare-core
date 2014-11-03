@@ -24,6 +24,7 @@
 		<constructor-arg ref="uploadRequestEntryBusinessService" />
 		<constructor-arg value="${linshare.documents.thumbnail.enable}" />
 		<constructor-arg value="${linshare.documents.thumbnail.pdf.enable}" />
+		<constructor-arg value="${linshare.documents.thumbnail.jpg.enable}" />
 	</bean>
 
 

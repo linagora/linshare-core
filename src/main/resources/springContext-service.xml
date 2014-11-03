@@ -91,6 +91,7 @@
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg value="${virusscanner.limit.filesize}" />
+		<constructor-arg value="${linshare.documents.thumbnail.jpg.enable}" />
 	</bean>
 
 	<bean id="threadEntryService" class="org.linagora.linshare.core.service.impl.ThreadEntryServiceImpl">
