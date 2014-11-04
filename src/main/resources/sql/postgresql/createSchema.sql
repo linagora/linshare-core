@@ -517,10 +517,9 @@ CREATE TABLE upload_proposition_action (
   modification_date            timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE functionality_boolean (
-  id                SERIAL NOT NULL, 
   functionality_id int8 NOT NULL, 
   boolean_value    bool NOT NULL, 
-  PRIMARY KEY (id));
+  PRIMARY KEY (functionality_id));
 CREATE TABLE mailing_list (
   id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 

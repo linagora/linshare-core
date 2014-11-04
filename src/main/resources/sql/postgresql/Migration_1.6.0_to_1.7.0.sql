@@ -14,11 +14,11 @@ DROP INDEX mailing_list_contact_index;
 
 DROP TABLE technical_account_permission_account;
 
+DROP TABLE IF EXISTS functionality_boolean;
 CREATE TABLE functionality_boolean (
-	id               int8 NOT NULL, 
 	functionality_id int8 NOT NULL, 
 	boolean_value    bool NOT NULL, 
-	PRIMARY KEY (id));
+	PRIMARY KEY (functionality_id));
 
 CREATE TABLE account_permission (
 	id int8 NOT NULL,
