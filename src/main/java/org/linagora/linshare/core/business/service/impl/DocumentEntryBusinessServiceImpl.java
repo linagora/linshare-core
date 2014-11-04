@@ -95,7 +95,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
 	private final boolean thumbEnabled;
 	private final boolean pdfThumbEnabled;
-	private final boolean jpgThumbEnabled;
 
 	public DocumentEntryBusinessServiceImpl(
 			final FileSystemDao fileSystemDao,
@@ -107,8 +106,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			final ThreadEntryRepository threadEntryRepository,
 			final UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
 			final boolean thumbEnabled,
-			final boolean pdfThumbEnabled,
-			final boolean jpgThumbEnabled) {
+			final boolean pdfThumbEnabled) {
 		super();
 		this.fileSystemDao = fileSystemDao;
 		this.timeStampingService = timeStampingService;
@@ -120,7 +118,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.thumbEnabled = thumbEnabled;
 		this.pdfThumbEnabled = pdfThumbEnabled;
-		this.jpgThumbEnabled = jpgThumbEnabled;
 	}
 
 	@Override
@@ -464,8 +461,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 
 	private String generateThumbnailIntoJCR(String fileName, String path, File tempFile, String mimeType) {
-		logger.debug("mimeType : " + mimeType);
-		if (!thumbEnabled || (!pdfThumbEnabled && mimeType.contains("pdf")) || (!jpgThumbEnabled && mimeType.contains("jpeg"))) {
+		if (!thumbEnabled || (!pdfThumbEnabled && mimeType.contains("pdf"))) {
 			logger.warn("Thumbnail generation is disabled.");
 			return null;
 		}
