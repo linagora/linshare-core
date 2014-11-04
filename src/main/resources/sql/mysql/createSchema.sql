@@ -522,10 +522,10 @@ CREATE TABLE upload_proposition_action (
   modification_date            timestamp NOT NULL, 
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE functionality_boolean (
-  id               int(4) NOT NULL AUTO_INCREMENT, 
   functionality_id bigint(8) NOT NULL, 
   boolean_value    bit NOT NULL, 
-  PRIMARY KEY (id)) CHARACTER SET UTF8;
+  CONSTRAINT linshare_functionality_boolean_pkey
+    PRIMARY KEY (functionality_id)) CHARACTER SET UTF8;
 CREATE TABLE statistic_event (
   id                bigint(8) NOT NULL AUTO_INCREMENT, 
   event_type        int(4) NOT NULL, 

@@ -14,11 +14,13 @@ DROP INDEX mailing_list_contact_index;
 
 DROP TABLE technical_account_permission_account;
 
+DROP TABLE IF EXISTS functionality_boolean;
 CREATE TABLE functionality_boolean (
-	id               int8 NOT NULL, 
 	functionality_id int8 NOT NULL, 
 	boolean_value    bool NOT NULL, 
-	PRIMARY KEY (id));
+	PRIMARY KEY (functionality_id));
+ALTER TABLE functionality_boolean DROP CONSTRAINT IF EXISTS FKfunctional171577;
+ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 
 CREATE TABLE account_permission (
 	id int8 NOT NULL,
