@@ -526,7 +526,6 @@ ALTER TABLE mail_content_lang ADD INDEX FKmail_conte33952 (mail_content_id), ADD
 ALTER TABLE mail_config ADD INDEX FKmail_confi541299 (mail_layout_html_id), ADD CONSTRAINT FKmail_confi541299 FOREIGN KEY (mail_layout_html_id) REFERENCES mail_layout (id);
 ALTER TABLE mail_config ADD INDEX FKmail_confi612314 (mail_layout_text_id), ADD CONSTRAINT FKmail_confi612314 FOREIGN KEY (mail_layout_text_id) REFERENCES mail_layout (id);
 ALTER TABLE functionality ADD INDEX FKfunctional788903 (policy_delegation_id), ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
-ALTER TABLE functionality_boolean ADD INDEX FKfunctional171577 (functionality_id), ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE mailing_list ADD INDEX FKmailing_li478123 (user_id), ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
 ALTER TABLE mailing_list ADD INDEX FKmailing_li335663 (domain_abstract_id), ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mailing_list_contact ADD INDEX FKMailingLis595962 (mailing_list_id), ADD CONSTRAINT FKMailingLis595962 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);

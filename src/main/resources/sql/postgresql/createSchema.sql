@@ -528,7 +528,6 @@ ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte33952 FOREIGN KEY (mail
 ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi541299 FOREIGN KEY (mail_layout_html_id) REFERENCES mail_layout (id);
 ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi612314 FOREIGN KEY (mail_layout_text_id) REFERENCES mail_layout (id);
 ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
-ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingLis595962 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
