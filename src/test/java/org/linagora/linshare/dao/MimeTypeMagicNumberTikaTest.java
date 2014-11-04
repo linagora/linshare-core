@@ -78,8 +78,7 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Set<MimeType> allSupportedMimeType = mimeTypeService.getAllMimeType();
 		logger.debug("allSupportedMimeType size : " + allSupportedMimeType.size());
-		// old library : 161, new one : 1385
-		Assert.assertEquals(1385, allSupportedMimeType.size());
+		Assert.assertEquals(1444, allSupportedMimeType.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -167,6 +166,25 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 			logger.debug("filename " + f.getName());
 			String mime = mimeTypeService.getMimeType(f);
 			Assert.assertEquals("application/pdf", mime);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			logger.debug(e.getCause().toString());
+			Assert.assertEquals(true, false);
+		}
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testMimeTypeDetection6() {
+
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		try {
+
+			URL url = Thread.currentThread().getContextClassLoader().getResource("fichier.test.1.jpg");
+			File f = new File(url.getPath());
+			logger.debug("filename " + f.getName());
+			String mime = mimeTypeService.getMimeType(f);
+			Assert.assertEquals("image/jpeg", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.debug(e.getCause().toString());
