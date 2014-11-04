@@ -417,11 +417,6 @@ CREATE TABLE mail_content_lang (
   mail_content_type int(4) NOT NULL, 
   uuid              varchar(255) NOT NULL, 
   PRIMARY KEY (id)) CHARACTER SET UTF8;
-CREATE TABLE functionality_boolean (
-  id               int(4) NOT NULL AUTO_INCREMENT, 
-  functionality_id bigint(8) NOT NULL, 
-  boolean_value    bit NOT NULL, 
-  PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mailing_list (
   id                  bigint(8) NOT NULL AUTO_INCREMENT,
   domain_abstract_id bigint(8) NOT NULL,

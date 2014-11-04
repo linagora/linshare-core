@@ -420,11 +420,6 @@ CREATE TABLE mail_content_lang (
   mail_content_type int4 NOT NULL, 
   uuid              varchar(255) NOT NULL, 
   PRIMARY KEY (id));
-CREATE TABLE functionality_boolean (
-  id                SERIAL NOT NULL, 
-  functionality_id int8 NOT NULL, 
-  boolean_value    bool NOT NULL, 
-  PRIMARY KEY (id));
 CREATE TABLE mailing_list (
   id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
