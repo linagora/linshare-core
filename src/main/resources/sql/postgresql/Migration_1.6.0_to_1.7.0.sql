@@ -19,6 +19,8 @@ CREATE TABLE functionality_boolean (
 	functionality_id int8 NOT NULL, 
 	boolean_value    bool NOT NULL, 
 	PRIMARY KEY (functionality_id));
+ALTER TABLE functionality_boolean DROP CONSTRAINT IF EXISTS FKfunctional171577;
+ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 
 CREATE TABLE account_permission (
 	id int8 NOT NULL,
