@@ -46,6 +46,10 @@
             <t:filesizeedit t:id="maxFileSize" t:value="current.maxFileSize"
                             validate="prop:maxFileSizeValidator" />
           </p:maxFileSize>
+          <p:expiryDate>
+          	<t:label for="expiryDate" />
+          	<t:datefield t:id="expiryDate" t:value="current.expiryDate" />
+          </p:expiryDate>
         </t:bsBeanEditForm>
       </t:zone>
     </div>
