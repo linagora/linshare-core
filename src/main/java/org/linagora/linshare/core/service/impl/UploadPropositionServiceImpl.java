@@ -49,9 +49,12 @@ import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.MailBuildingService;
+import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadPropositionService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
@@ -76,13 +79,19 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
+	private final MailBuildingService mailBuildingService;
+
+	private final NotifierService notifierService;
+
 	public UploadPropositionServiceImpl(
 			final UploadPropositionBusinessService uploadPropositionBusinessService,
 			final DomainBusinessService domainBusinessService,
 			final UploadRequestService uploadRequestService,
 			final UploadRequestUrlService uploadRequestUrlService,
 			final UserService userService,
-			final FunctionalityReadOnlyService functionalityReadOnlyService) {
+			final FunctionalityReadOnlyService functionalityReadOnlyService,
+			final MailBuildingService mailBuildingService,
+			final NotifierService notifierService) {
 		super();
 		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
 		this.domainBusinessService = domainBusinessService;
@@ -90,6 +99,8 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.userService = userService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
+		this.mailBuildingService = mailBuildingService;
+		this.notifierService = notifierService;
 	}
 
 	@Override
@@ -101,26 +112,29 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		proposition.setDomain(rootDomain);
 
 		UploadProposition created;
-		if (action.equals(UploadPropositionActionType.ACCEPT)) {
+		boolean accept = action.equals(UploadPropositionActionType.ACCEPT);
+		if (accept) {
 			proposition.setStatus(UploadPropositionStatus.SYSTEM_ACCEPTED);
-			created = uploadPropositionBusinessService.create(proposition);
-			User owner = null;
-			try {
-				owner = userService.findOrCreateUser(proposition
-						.getRecipientMail(), StringUtils.defaultString(
-						proposition.getDomainSource(),
-						rootDomain.getIdentifier()));
-			} catch (BusinessException e) {
-				logger.error("The recipient of the upload proposition can't be found : "
-						+ created.getUuid()
-						+ ": "
-						+ proposition.getRecipientMail());
-				return null;
-			}
-			acceptHook(owner, created);
-		} else {
-			created = uploadPropositionBusinessService.create(proposition);
 		}
+		created = uploadPropositionBusinessService.create(proposition);
+		User owner = null;
+		try {
+			owner = userService.findOrCreateUser(proposition
+					.getRecipientMail(), StringUtils.defaultString(
+					proposition.getDomainSource(),
+					rootDomain.getIdentifier()));
+		} catch (BusinessException e) {
+			logger.error("The recipient of the upload proposition can't be found : "
+					+ created.getUuid()
+					+ ": "
+					+ proposition.getRecipientMail());
+			return null;
+		}
+		if (accept) {
+			acceptHook(owner, created);
+		}
+		MailContainerWithRecipient mail = mailBuildingService.buildCreateUploadProposition(owner, proposition);
+		notifierService.sendNotification(mail);
 		return created;
 	}
 

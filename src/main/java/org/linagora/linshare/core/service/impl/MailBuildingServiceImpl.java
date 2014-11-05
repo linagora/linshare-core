@@ -720,7 +720,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				MailContentType.NEW_SHARING_PROTECTED, builder);
 	}
 
-	// TODO : to be use
 	@Override
 	public MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadProposition proposition)
 			throws BusinessException {
@@ -739,13 +738,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("firstName", proposition.getFirstName())
 				.add("lastName", proposition.getLastName());
 		container.setRecipient(recipient.getMail());
-//		TODO 
-//		container.setFrom(getFromMailAddress(owner));
-//		container.setReplyTo(request.getContact().getMail());
-
-//		container.setFrom(proposition.getMail());
-		container.setFrom(abstractDomainService.getDomainMail(recipient.getOwner()
-				.getDomain()));
+		container.setFrom(getFromMailAddress(recipient));
+		container.setFrom(abstractDomainService.getDomainMail(recipient.getDomain()));
 
 		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_PROPOSITION_CREATED, builder);
 	}

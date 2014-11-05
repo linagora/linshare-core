@@ -299,6 +299,8 @@
 		<constructor-arg ref="uploadRequestUrlService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="notifierService" />
 	</bean>
 	<bean id="uploadPropositionFilterService" class="org.linagora.linshare.core.service.impl.UploadPropositionFilterServiceImpl">
 		<constructor-arg ref="uploadPropositionFilterBusinessService" />
