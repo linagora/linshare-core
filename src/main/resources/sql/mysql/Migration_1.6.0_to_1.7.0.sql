@@ -246,7 +246,6 @@ CREATE INDEX mailing_list_index ON mailing_list (uuid);
 
 CREATE INDEX mailing_list_contact_index ON mailing_list_contact (uuid);
 
-
 -- LinShare version
 INSERT INTO version (version) VALUES ('1.7.0');
 
@@ -503,6 +502,15 @@ INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mai
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (76, 1, 1, 76, 25, 'a7994bd1-bd67-4cc6-93f3-be935c1cdb67');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (77, 1, 1, 77, 26, '5e1fb460-1efc-497c-96d8-6adf162cbc4e');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (78, 1, 1, 78, 27, '2daaea2a-1b13-48b4-89a6-032f7e034a2d');
+
+-- system account for upload-request:
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (3, 7, 'system-account-uploadrequest', now(),now(), 3, 'en', 'en', true, false, 1);
+
+-- system account for upload-proposition
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id)
+	VALUES (4, 4, '89877610-574a-4e79-aeef-5606b96bde35', now(),now(), 5, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+INSERT INTO users(account_id, first_name, last_name, mail, can_upload, comment, restricted, can_create_guest)
+	VALUES (4, null, 'Technical Account for upload proposition', 'linshare-noreply@linagora.com', false, '', false, false);
 
 COMMIT;
 SET AUTOCOMMIT=1;
