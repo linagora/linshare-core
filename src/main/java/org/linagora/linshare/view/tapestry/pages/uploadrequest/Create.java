@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.view.tapestry.pages.uploadrequest;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.tapestry5.FieldValidator;
@@ -50,6 +52,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.FieldValidatorSource;
+import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.vo.UploadRequestTemplateVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -57,6 +60,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.components.BSBeanEditForm;
 import org.linagora.linshare.view.tapestry.components.FileSizeEdit;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
@@ -94,7 +98,10 @@ public class Create {
 
 	@InjectComponent
 	private FileSizeEdit maxDepositSize;
-
+	
+	@InjectComponent
+	private BSBeanEditForm bsBeanEditForm;
+	
 	/*
 	 * Injected beans
 	 */
@@ -112,6 +119,9 @@ public class Create {
 	private Messages messages;
 
 	@Inject
+	private PersistentLocale persistentLocale;
+	
+	@Inject
 	private BusinessMessagesManagementService businessMessagesManagementService;
 
 	@Inject
@@ -125,6 +135,8 @@ public class Create {
 	private Long _s;
 
 	private Integer _c;
+	
+	private Date _expiration;
 
 	public Object onActivate() throws Exception {
 		if (!functionalityFacade.isEnableUploadRequest(userVo
@@ -139,6 +151,7 @@ public class Create {
 			_d = current.getMaxDepositSize();
 			_s = current.getMaxFileSize();
 			_c = current.getMaxFileCount();
+			_expiration = current.getExpiryDate();
 		} catch (BusinessException e) {
 			logger.error("Cannot get default upload request value for user "
 					+ userVo.getLsUuid());
@@ -148,6 +161,14 @@ public class Create {
 		return null;
 	}
 
+	@Log
+	public void onValidateFromExpiryDate(Date toValidate) throws BusinessException {
+		if (toValidate.after(_expiration)) {
+			String localizedExpirationDate = DateFormat.getDateInstance(DateFormat.SHORT, persistentLocale.get()).format(_expiration);
+			bsBeanEditForm.recordError(messages.format("pages.uploadrequest.validation.expiryDate", localizedExpirationDate));
+		}
+	}
+	
 	@Log
 	public Object onSuccess() throws BusinessException {
 		uploadRequestFacade.createRequest(userVo, current);
@@ -180,7 +201,7 @@ public class Create {
 	public FieldValidator<?> getMaxDepositSizeValidator() {
 		return source.createValidators(maxDepositSize, "required, max=" + _d);
 	}
-
+	
 	/*
 	 * Models + ValueEncoder
 	 */
