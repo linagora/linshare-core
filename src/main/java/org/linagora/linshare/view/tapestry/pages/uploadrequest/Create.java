@@ -165,7 +165,11 @@ public class Create {
 	public void onValidateFromExpiryDate(Date toValidate) throws BusinessException {
 		if (toValidate.after(_expiration)) {
 			String localizedExpirationDate = DateFormat.getDateInstance(DateFormat.SHORT, persistentLocale.get()).format(_expiration);
-			bsBeanEditForm.recordError(messages.format("pages.uploadrequest.validation.expiryDate", localizedExpirationDate));
+			bsBeanEditForm.recordError(messages.format("pages.uploadrequest.validation.expiryDateTooLate", localizedExpirationDate));
+		}
+		Date now = new Date();
+		if (toValidate.before(now)) {
+			bsBeanEditForm.recordError(messages.get("pages.uploadrequest.validation.expiryDateBeforeNow"));
 		}
 	}
 	
