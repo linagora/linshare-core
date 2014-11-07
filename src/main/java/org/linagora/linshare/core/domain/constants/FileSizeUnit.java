@@ -77,4 +77,14 @@ public enum FileSizeUnit {
 	public long fromSiSize(final long size) {
 		return size / BigInteger.valueOf(1000).pow(value + 1).longValue();
 	}
+
+	public static FileSizeUnit getMaxExactPlainSizeUnit(final long size) {
+		FileSizeUnit maxUnit = FileSizeUnit.KILO;
+		for (FileSizeUnit unit: FileSizeUnit.values()) {
+			if (size % BigInteger.valueOf(2).pow(10 * (unit.value + 1)).longValue() == 0) {
+				maxUnit = unit;
+			}
+		}
+		return maxUnit;
+	}
 }
