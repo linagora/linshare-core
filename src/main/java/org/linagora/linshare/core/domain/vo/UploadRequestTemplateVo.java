@@ -50,7 +50,7 @@ public class UploadRequestTemplateVo {
 	@NonVisual
 	private String uuid;
 
-	private String description;
+	private String description2;
 
 	private Long durationBeforeActivation;
 
@@ -78,6 +78,7 @@ public class UploadRequestTemplateVo {
 
 	private Long dayBeforeNotification;
 
+	@NonVisual
 	private Boolean prolongationMode;
 
 	private Date creationDate;
@@ -94,7 +95,7 @@ public class UploadRequestTemplateVo {
 	public UploadRequestTemplateVo(UploadRequestTemplate t) {
 		name = t.getName();
 		uuid = t.getUuid();
-		description = t.getDescription();
+		description2 = t.getDescription();
 		durationBeforeActivation = t.getDurationBeforeActivation();
 		unitBeforeActivation = t.getUnitBeforeActivation() == null ? TimeUnit.DAY
 				: TimeUnit.fromInt(t.getUnitBeforeActivation());
@@ -122,12 +123,12 @@ public class UploadRequestTemplateVo {
 		this.name = name;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getDescription2() {
+		return description2;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setDescription2(String description) {
+		this.description2 = description;
 	}
 
 	public Long getDurationBeforeActivation() {
@@ -270,7 +271,7 @@ public class UploadRequestTemplateVo {
 		UploadRequestTemplate ret = new UploadRequestTemplate();
 
 		ret.setName(name);
-		ret.setDescription(description);
+		ret.setDescription(description2);
 		ret.setDurationBeforeActivation(durationBeforeActivation);
 		if (unitBeforeActivation != null) {
 			ret.setUnitBeforeActivation(unitBeforeActivation.toLong());
@@ -294,7 +295,7 @@ public class UploadRequestTemplateVo {
 	}
 
 	public UploadRequestTemplate toEntity(UploadRequestTemplate t) {
-		t.setDescription(description);
+		t.setDescription(description2);
 		t.setDurationBeforeActivation(durationBeforeActivation);
 		if (unitBeforeActivation != null) {
 			t.setUnitBeforeActivation(unitBeforeActivation.toLong());
