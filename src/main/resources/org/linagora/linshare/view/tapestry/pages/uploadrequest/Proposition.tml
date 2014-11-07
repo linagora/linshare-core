@@ -4,7 +4,7 @@
 
   <!-- Main content -->
   <div id="content">
-    <h1 title="${message:pages.uploadproposition.title}"><span class="truncate">${message:pages.uploadproposition.title}</span></h1>
+    <h1 title="${message:pages.uploadrequest.uploadproposition.title}"><span class="truncate">${message:pages.uploadrequest.uploadproposition.title}</span></h1>
 
     <t:messagePanel />
     <t:businessMessagesDisplayer />
@@ -22,7 +22,7 @@
     </div><!-- id="actionBar" -->
 
     <div id="pageContent">
-      <h2> ${message:pages.uploadrequest.index.grid}</h2>
+      <h2> ${message:pages.uploadrequest.uploadproposition.index.grid}</h2>
       <t:grid source="propositions" row="current" rowsPerPage="10"
               include="firstName, lastName, mail, subject, body, creationDate"
               add="action"
@@ -45,7 +45,7 @@
           </t:actionLink>
         </p:actionCell>
         <p:empty>
-          ${message:pages.uploadrequest.index.empty}
+          ${message:pages.uploadrequest.uploadproposition.index.empty}
         </p:empty>
       </t:grid>
     </div>
