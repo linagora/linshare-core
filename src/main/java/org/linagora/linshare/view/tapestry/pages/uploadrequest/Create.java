@@ -62,7 +62,6 @@ import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.components.BSBeanEditForm;
-import org.linagora.linshare.view.tapestry.components.FileSizeEdit;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 
@@ -98,7 +97,7 @@ public class Create {
 	private TextField maxFileSize;
 
 	@InjectComponent
-	private FileSizeEdit maxDepositSize;
+	private TextField maxDepositSize;
 
 	@InjectComponent
 	private BSBeanEditForm bsBeanEditForm;
@@ -139,6 +138,10 @@ public class Create {
 
 	private Date _expiration;
 
+	private FileSizeUnit maxDepositSizeUnit;
+
+	private Long maxDepositSizeValue;
+
 	private FileSizeUnit maxFileSizeUnit;
 
 	private Long maxFileSizeValue;
@@ -147,6 +150,9 @@ public class Create {
 		if (!functionalityFacade.isEnableUploadRequest(userVo
 				.getDomainIdentifier())) {
 			return org.linagora.linshare.view.tapestry.pages.Index.class;
+		}
+		if (maxDepositSizeUnit == null) {
+			maxDepositSizeUnit = FileSizeUnit.MEGA;
 		}
 		if (maxFileSizeUnit == null) {
 			maxFileSizeUnit = FileSizeUnit.MEGA;
@@ -182,6 +188,14 @@ public class Create {
 	}
 
 	@Log
+	public void onValidateFromMaxDepositSizeUnit(FileSizeUnit unit) throws BusinessException {
+		long plainSize = unit.getPlainSize(maxDepositSizeValue);
+		if (plainSize > _d) {
+			bsBeanEditForm.recordError(messages.format("max-integer", _d, maxDepositSize.getLabel()));
+		}
+	}
+
+	@Log
 	public void onValidateFromMaxFileSizeUnit(FileSizeUnit unit) throws BusinessException {
 		long plainSize = unit.getPlainSize(maxFileSizeValue);
 		if (plainSize > _s) {
@@ -209,6 +223,23 @@ public class Create {
 	public Object onValueChangedFromSelected(UploadRequestTemplateVo vo) {
 		current.fromTemplate(vo);
 		return reload;
+	}
+
+	public Long getMaxDepositSize() {
+		return maxDepositSizeUnit.fromPlainSize(current.getMaxDepositSize().longValue());
+	}
+
+	public void setMaxDepositSize(Long maxDepositSize) {
+		this.maxDepositSizeValue = maxDepositSize;
+	}
+
+	public FileSizeUnit getMaxDepositSizeUnit() {
+		return maxDepositSizeUnit;
+	}
+
+	public void setMaxDepositSizeUnit(FileSizeUnit fileSizeUnit) {
+		maxDepositSizeUnit = fileSizeUnit;
+		current.setMaxDepositSize(maxDepositSizeUnit.getPlainSize(maxDepositSizeValue));
 	}
 
 	public Long getMaxFileSize() {

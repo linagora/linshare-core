@@ -49,6 +49,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -57,7 +58,6 @@ import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.UploadRequestFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.components.BSBeanEditForm;
-import org.linagora.linshare.view.tapestry.components.FileSizeEdit;
 import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
@@ -106,10 +106,10 @@ public class Edit {
 	private TextField maxFileCount;
 
 	@InjectComponent
-	private FileSizeEdit maxFileSize;
+	private TextField maxFileSize;
 
 	@InjectComponent
-	private FileSizeEdit maxDepositSize;
+	private TextField maxDepositSize;
 
 	@InjectComponent
 	private BSBeanEditForm bsBeanEditForm;
@@ -121,6 +121,14 @@ public class Edit {
 	private Integer _c;
 	
 	private Date _expiration;
+
+	private FileSizeUnit maxDepositSizeUnit;
+
+	private Long maxDepositSizeValue;
+
+	private FileSizeUnit maxFileSizeUnit;
+
+	private Long maxFileSizeValue;
 
 	public Object onActivate(String uuid) {
 		logger.debug("Upload Request uuid: " + uuid);
@@ -152,6 +160,12 @@ public class Edit {
 					BusinessUserMessageType.UPLOAD_REQUEST_NOT_FOUND,
 					MessageSeverity.ERROR));
 			return Index.class;
+		}
+		if (maxDepositSizeUnit == null) {
+			maxDepositSizeUnit = FileSizeUnit.getMaxExactPlainSizeUnit(selected.getMaxDepositSize());
+		}
+		if (maxFileSizeUnit == null) {
+			maxFileSizeUnit = FileSizeUnit.getMaxExactPlainSizeUnit(selected.getMaxFileSize());
 		}
 		UploadRequestVo def;
 		try {
@@ -187,6 +201,22 @@ public class Edit {
 	}
 	
 	@Log
+	public void onValidateFromMaxDepositSizeUnit(FileSizeUnit unit) throws BusinessException {
+		long plainSize = unit.getPlainSize(maxDepositSizeValue);
+		if (plainSize > _d) {
+			bsBeanEditForm.recordError(messages.format("max-integer", _d, maxDepositSize.getLabel()));
+		}
+	}
+
+	@Log
+	public void onValidateFromMaxFileSizeUnit(FileSizeUnit unit) throws BusinessException {
+		long plainSize = unit.getPlainSize(maxFileSizeValue);
+		if (plainSize > _s) {
+			bsBeanEditForm.recordError(messages.format("max-integer", _s, maxFileSize.getLabel()));
+		}
+	}
+
+	@Log
 	public Object onSuccess() throws BusinessException {
 		uploadRequestFacade.updateRequest(userVo, selected);
 		return Detail.class;
@@ -199,6 +229,40 @@ public class Edit {
 
 	public void setMySelected(UploadRequestVo selected) {
 		this.selected = selected;
+	}
+
+	public Long getMaxDepositSize() {
+		return maxDepositSizeUnit.fromPlainSize(selected.getMaxDepositSize().longValue());
+	}
+
+	public void setMaxDepositSize(Long maxDepositSize) {
+		this.maxDepositSizeValue = maxDepositSize;
+	}
+
+	public FileSizeUnit getMaxDepositSizeUnit() {
+		return maxDepositSizeUnit;
+	}
+
+	public void setMaxDepositSizeUnit(FileSizeUnit fileSizeUnit) {
+		maxDepositSizeUnit = fileSizeUnit;
+		selected.setMaxDepositSize(maxDepositSizeUnit.getPlainSize(maxDepositSizeValue));
+	}
+
+	public Long getMaxFileSize() {
+		return maxFileSizeUnit.fromPlainSize(selected.getMaxFileSize().longValue());
+	}
+
+	public void setMaxFileSize(Long maxFileSize) {
+		this.maxFileSizeValue = maxFileSize;
+	}
+
+	public FileSizeUnit getMaxFileSizeUnit() {
+		return maxFileSizeUnit;
+	}
+
+	public void setMaxFileSizeUnit(FileSizeUnit fileSizeUnit) {
+		maxFileSizeUnit = fileSizeUnit;
+		selected.setMaxFileSize(maxFileSizeUnit.getPlainSize(maxFileSizeValue));
 	}
 
 	/*
