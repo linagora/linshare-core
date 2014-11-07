@@ -39,7 +39,7 @@ INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date,
 INSERT INTO users(account_id, first_name, last_name, mail, can_upload, comment, restricted, can_create_guest)
 	SELECT 4, null, 'Technical Account for upload proposition', 'linshare-noreply@linagora.com', false, '', false, false from users
 	WHERE NOT EXISTS (SELECT account_id FROM users WHERE account_id=4) LIMIT 1;
-
+UPDATE users set mail ='linshare-noreply@linagora.com' where account_id=4 and mail = 'bart.simpson@int1.linshare.dev';
 
 COMMIT;
 SET AUTOCOMMIT=1;
