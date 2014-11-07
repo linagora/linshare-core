@@ -43,8 +43,8 @@
           </p:maxFileCount>
           <p:maxFileSize>
             <t:label for="maxFileSize" />
-            <t:filesizeedit t:id="maxFileSize" t:value="current.maxFileSize"
-                            validate="prop:maxFileSizeValidator" />
+			<t:textfield t:id="maxFileSize" t:type="number" t:validate="required" t:value="maxFileSize" style="float:left"/>
+			<t:select t:id="maxFileSizeUnit" t:value="maxFileSizeUnit" t:validate="required"/>
           </p:maxFileSize>
           <p:expiryDate>
           	<t:label for="expiryDate" />
