@@ -736,6 +736,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("firstName", recipient.getFirstName())
 				.add("lastName", recipient.getLastName());
 		builder.getBodyChain()
+				.add("subject", proposition.getSubject())
+				.add("body", proposition.getBody())
 				.add("firstName", proposition.getFirstName())
 				.add("lastName", proposition.getLastName());
 		container.setRecipient(recipient.getMail());
