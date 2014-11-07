@@ -29,7 +29,7 @@
         <t:bsBeanEditForm t:object="current" submitlabel="message:global.button.validate" model="requestModel">
           <p:body>
             <t:label for="body" />
-            <t:textarea t:id="body" value="current.body" />
+            <t:textarea t:id="body" value="current.body" t:validate="required" />
           </p:body>
           <p:maxDepositsize>
             <t:label for="maxDepositsize" />
