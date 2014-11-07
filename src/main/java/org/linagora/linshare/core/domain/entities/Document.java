@@ -40,6 +40,8 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.linagora.linshare.core.utils.DocumentUtils;
+
 public class Document implements Serializable {
 	
 	private static final long serialVersionUID = 2877902686906612071L;
@@ -135,7 +137,11 @@ public class Document implements Serializable {
 			return false;
 		}
 	}
-	
+
+	public String getHumanReadableSize(boolean si) {
+		return DocumentUtils.humanReadableByteCount(this.getSize(), si);
+	}
+
 	@Override
 	public int hashCode(){
 		return this.uuid.hashCode();

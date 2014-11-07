@@ -66,6 +66,7 @@ import org.linagora.linshare.core.repository.MailConfigRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MailBuildingService;
+import org.linagora.linshare.core.utils.DocumentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -897,7 +898,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("lastName", "")
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("fileSize", String.valueOf(entry.getDocumentEntry().getSize()))
+				.add("fileSize", DocumentUtils.humanReadableByteCount(entry.getDocumentEntry().getSize(), true))
 				.add("fileName", entry.getDocumentEntry().getName())
 				.add("depositDate", entry.getCreationDate().getTime().toString());
 		container.setRecipient(owner.getMail());
