@@ -175,8 +175,13 @@ public class Create {
 	
 	@Log
 	public Object onSuccess() throws BusinessException {
-		uploadRequestFacade.createRequest(userVo, current);
-		return Index.class;
+		try {
+			uploadRequestFacade.createRequest(userVo, current);
+			return Index.class;
+		} catch (BusinessException e) {
+			businessMessagesManagementService.notify(e);
+			return Create.class;
+		}
 	}
 
 	@Log
