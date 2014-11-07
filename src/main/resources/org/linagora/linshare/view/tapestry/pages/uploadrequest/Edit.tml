@@ -15,7 +15,8 @@
         <p:maxDepositsize>
           <t:label for="maxDepositsize" />
 		  <t:textfield t:id="maxDepositSize" t:type="number" t:validate="required,min=0" t:value="maxDepositSize" style="float:left"/>
-		  <t:select t:id="maxDepositSizeUnit" t:value="maxDepositSizeUnit" t:validate="required"/>
+		  <t:select t:id="maxDepositSizeUnit" t:value="maxDepositSizeUnit" t:validate="required" style="float:left"/>
+		  ${maxDepositSizeInformation}
         </p:maxDepositsize>
         <p:maxFileCount>
           <t:label for="maxFileCount" />
@@ -25,7 +26,8 @@
         <p:maxFileSize>
           <t:label for="maxFileSize" />
 		  <t:textfield t:id="maxFileSize" t:type="number" t:validate="required,min=0" t:value="maxFileSize" style="float:left"/>
-		  <t:select t:id="maxFileSizeUnit" t:value="maxFileSizeUnit" t:validate="required"/>
+		  <t:select t:id="maxFileSizeUnit" t:value="maxFileSizeUnit" t:validate="required" style="float:left"/>
+		  ${maxFileSizeInformation}
         </p:maxFileSize>
         <p:expiryDate>
           <t:label for="expiryDate" />

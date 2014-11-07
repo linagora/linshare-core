@@ -191,7 +191,7 @@ public class Create {
 	public void onValidateFromMaxDepositSizeUnit(FileSizeUnit unit) throws BusinessException {
 		long plainSize = unit.getPlainSize(maxDepositSizeValue);
 		if (plainSize > _d) {
-			bsBeanEditForm.recordError(messages.format("max-integer", _d, maxDepositSize.getLabel()));
+			bsBeanEditForm.recordError(messages.format("pages.uploadrequest.validation.sizeMax", formatSizeValue(_d), maxDepositSize.getLabel()));
 		}
 	}
 
@@ -199,7 +199,7 @@ public class Create {
 	public void onValidateFromMaxFileSizeUnit(FileSizeUnit unit) throws BusinessException {
 		long plainSize = unit.getPlainSize(maxFileSizeValue);
 		if (plainSize > _s) {
-			bsBeanEditForm.recordError(messages.format("max-integer", _s, maxFileSize.getLabel()));
+			bsBeanEditForm.recordError(messages.format("pages.uploadrequest.validation.sizeMax", formatSizeValue(_s), maxFileSize.getLabel()));
 		}
 	}
 
@@ -259,16 +259,25 @@ public class Create {
 		current.setMaxFileSize(maxFileSizeUnit.getPlainSize(maxFileSizeValue));
 	}
 
+	public String getMaxDepositSizeInformation() {
+		return messages.format("pages.uploadrequest.validation.max-label", formatSizeValue(_d));
+	}
+
+	public String getMaxFileSizeInformation() {
+		return messages.format("pages.uploadrequest.validation.max-label", formatSizeValue(_s));
+	}
+
+	private String formatSizeValue(long value) {
+		FileSizeUnit unit = FileSizeUnit.getMaxExactPlainSizeUnit(_s);
+		return String.format("%d %s", unit.fromPlainSize(value), messages.get("FileSizeUnit." + unit.name() + ".short"));
+	}
+
 	/*
 	 * Dynamic validation
 	 */
 
 	public FieldValidator<?> getMaxFileCountValidator() {
 		return source.createValidators(maxFileCount, "required, max=" + _c);
-	}
-
-	public FieldValidator<?> getMaxDepositSizeValidator() {
-		return source.createValidators(maxDepositSize, "required, max=" + _d);
 	}
 
 	/*
