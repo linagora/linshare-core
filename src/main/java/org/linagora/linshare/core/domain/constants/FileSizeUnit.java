@@ -69,4 +69,12 @@ public enum FileSizeUnit {
 	public long getSiSize(final long size) {
 		return size * BigInteger.valueOf(1000).pow(value + 1).longValue();
 	}
+
+	public long fromPlainSize(final long size) {
+		return size / BigInteger.valueOf(2).pow(10 * (value + 1)).longValue();
+	}
+
+	public long fromSiSize(final long size) {
+		return size / BigInteger.valueOf(1000).pow(value + 1).longValue();
+	}
 }

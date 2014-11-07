@@ -53,6 +53,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.vo.UploadRequestTemplateVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -94,14 +95,14 @@ public class Create {
 	private TextField maxFileCount;
 
 	@InjectComponent
-	private FileSizeEdit maxFileSize;
+	private TextField maxFileSize;
 
 	@InjectComponent
 	private FileSizeEdit maxDepositSize;
-	
+
 	@InjectComponent
 	private BSBeanEditForm bsBeanEditForm;
-	
+
 	/*
 	 * Injected beans
 	 */
@@ -120,7 +121,7 @@ public class Create {
 
 	@Inject
 	private PersistentLocale persistentLocale;
-	
+
 	@Inject
 	private BusinessMessagesManagementService businessMessagesManagementService;
 
@@ -135,13 +136,20 @@ public class Create {
 	private Long _s;
 
 	private Integer _c;
-	
+
 	private Date _expiration;
+
+	private FileSizeUnit maxFileSizeUnit;
+
+	private Long maxFileSizeValue;
 
 	public Object onActivate() throws Exception {
 		if (!functionalityFacade.isEnableUploadRequest(userVo
 				.getDomainIdentifier())) {
 			return org.linagora.linshare.view.tapestry.pages.Index.class;
+		}
+		if (maxFileSizeUnit == null) {
+			maxFileSizeUnit = FileSizeUnit.MEGA;
 		}
 		try {
 			BeanModel<UploadRequestVo> model = beanModelSource.createEditModel(
@@ -172,7 +180,15 @@ public class Create {
 			bsBeanEditForm.recordError(messages.get("pages.uploadrequest.validation.expiryDateBeforeNow"));
 		}
 	}
-	
+
+	@Log
+	public void onValidateFromMaxFileSizeUnit(FileSizeUnit unit) throws BusinessException {
+		long plainSize = unit.getPlainSize(maxFileSizeValue);
+		if (plainSize > _s) {
+			bsBeanEditForm.recordError(messages.format("max-integer", _s, maxFileSize.getLabel()));
+		}
+	}
+
 	@Log
 	public Object onSuccess() throws BusinessException {
 		try {
@@ -195,6 +211,23 @@ public class Create {
 		return reload;
 	}
 
+	public Long getMaxFileSize() {
+		return maxFileSizeUnit.fromPlainSize(current.getMaxFileSize().longValue());
+	}
+
+	public void setMaxFileSize(Long maxFileSize) {
+		this.maxFileSizeValue = maxFileSize;
+	}
+
+	public FileSizeUnit getMaxFileSizeUnit() {
+		return maxFileSizeUnit;
+	}
+
+	public void setMaxFileSizeUnit(FileSizeUnit fileSizeUnit) {
+		maxFileSizeUnit = fileSizeUnit;
+		current.setMaxFileSize(maxFileSizeUnit.getPlainSize(maxFileSizeValue));
+	}
+
 	/*
 	 * Dynamic validation
 	 */
@@ -203,14 +236,10 @@ public class Create {
 		return source.createValidators(maxFileCount, "required, max=" + _c);
 	}
 
-	public FieldValidator<?> getMaxFileSizeValidator() {
-		return source.createValidators(maxFileSize, "required, max=" + _s);
-	}
-
 	public FieldValidator<?> getMaxDepositSizeValidator() {
 		return source.createValidators(maxDepositSize, "required, max=" + _d);
 	}
-	
+
 	/*
 	 * Models + ValueEncoder
 	 */
