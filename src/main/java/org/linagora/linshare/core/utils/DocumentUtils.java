@@ -46,7 +46,8 @@ import org.slf4j.LoggerFactory;
 
 public class DocumentUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(DocumentUtils.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(DocumentUtils.class);
 
     public File getTempFile(InputStream stream, String fileName) {
         // Copy the input stream to a temporary file for safe use
@@ -81,27 +82,43 @@ public class DocumentUtils {
             }
             bof.flush();
 
-        } catch (IOException e) {
-            if (tempFile != null && tempFile.exists())
-                tempFile.delete();
-            throw new TechnicalException(TechnicalErrorCode.GENERIC, "couldn't create a temporary file");
-        }
-        finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (bof != null) {
-                try {
-                    bof.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return tempFile;
-    }
+		} catch (IOException e) {
+			if (tempFile != null && tempFile.exists())
+				tempFile.delete();
+			throw new TechnicalException(TechnicalErrorCode.GENERIC,
+					"couldn't create a temporary file");
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (bof != null) {
+				try {
+					bof.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return tempFile;
+	}
+
+	/**
+	 *
+	 * @param bytes Long size of file to format
+	 * @param si International unit system (if true 1Kb 1000b, if not 1Kb = 1024b)
+	 * @return String in human readable format
+	 */
+	public static String humanReadableByteCount(long bytes, boolean si) {
+		int unit = si ? 1000 : 1024;
+		if (bytes < unit)
+			return bytes + " B";
+		int exp = (int) (Math.log(bytes) / Math.log(unit));
+		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1)
+				+ (si ? "" : "i");
+		return String.format("%.2f %sB", bytes / Math.pow(unit, exp), pre);
+	}
 }
