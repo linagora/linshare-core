@@ -384,6 +384,18 @@ public class Upload {
 		}
 		return DEFAULT_MAX_FILE_SIZE;
 	}
+	
+	private String convertSize(long size, boolean si){
+		int tresh = si ?1000 : 1024;
+		if (size < tresh) return size + " B";
+		int exp = (int)(Math.log(size)/ Math.log(tresh));
+		String suffix = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1)+(si ? "" : "i");
+		return String.format("%.1f %sB", size /Math.pow(tresh, exp), suffix);
+	}
+
+	public String getMyReadablesize(){
+		return convertSize(getMaxFileSize(), true).replace(',', '.');
+	}
 
 	public boolean isEnableListTab() {
 		return functionalityFacade.isEnableListTab(userVo.getDomainIdentifier());
