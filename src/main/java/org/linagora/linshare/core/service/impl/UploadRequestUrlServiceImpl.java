@@ -113,7 +113,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	@Override
 	public UploadRequestUrl create(UploadRequest request, Contact contact)
 			throws BusinessException {
-		return uploadRequestUrlBusinessService.create(request, false, contact);
+		return uploadRequestUrlBusinessService.create(request, request.isSecured(), contact);
 	}
 
 	@Override
