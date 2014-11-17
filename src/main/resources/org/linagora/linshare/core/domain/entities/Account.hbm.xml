@@ -116,6 +116,8 @@
 					</key>
 					<property name="lastName" column="last_name" type="string" length="255" not-null="false" lazy="false"/>
 					<property name="mail" column="mail" type="string" length="255" not-null="true" lazy="false"/>
+					<property name="canUpload" column="can_upload" type="boolean" not-null="true" lazy="false"/>
+					<property name="canCreateGuest" column="can_create_guest" type="boolean" not-null="true" lazy="false"/>
 				</join>
 			</subclass>
 		</subclass>
