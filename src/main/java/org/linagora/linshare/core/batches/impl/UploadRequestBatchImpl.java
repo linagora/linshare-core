@@ -98,7 +98,7 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 			}
 		}
 		for (UploadRequest r : uploadRequestRepository.findByStatus(UploadRequestStatus.STATUS_ENABLED)) {
-			if (DateUtils.isSameDay(r.getNotificationDate(), new Date())) {
+			if (DateUtils.isSameDay(r.getNotificationDate(), new Date()) && !DateUtils.isSameDay(r.getNotificationDate(), r.getExpiryDate())) {
 				logger.debug("date de notification == today..." + r.getExpiryDate() + " == " + new Date());
 				try {
 					for (UploadRequestUrl u: r.getUploadRequestURLs()) {
