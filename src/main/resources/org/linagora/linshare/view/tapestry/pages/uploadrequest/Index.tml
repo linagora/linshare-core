@@ -48,6 +48,9 @@
             </t:actionlink>
           </span>
         </p:subjectCell>
+        <p:sizeHeader>
+            ${message:pages.uploadrequest.index.uploadrequestsize}
+        </p:sizeHeader>
         <p:creationDateCell>
           <t:output format="${message:global.pattern.timestamp}" value="current.creationDate" />
         </p:creationDateCell>
