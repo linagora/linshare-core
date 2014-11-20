@@ -162,7 +162,9 @@ public class Edit {
 			return Index.class;
 		}
 		if (maxDepositSizeUnit == null) {
-			maxDepositSizeUnit = FileSizeUnit.getMaxExactPlainSizeUnit(selected.getMaxDepositSize());
+			if (selected.getMaxDepositSize() != null) {
+				maxDepositSizeUnit = FileSizeUnit.getMaxExactPlainSizeUnit(selected.getMaxDepositSize());
+			}
 		}
 		if (maxFileSizeUnit == null) {
 			maxFileSizeUnit = FileSizeUnit.getMaxExactPlainSizeUnit(selected.getMaxFileSize());
