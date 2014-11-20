@@ -79,7 +79,10 @@ public class Index {
     
 	@SetupRender
 	public void init(){
-		showHelp = userVo.isSuperAdmin() | functionalityFacade.isEnableHelpTab(userVo.getDomainIdentifier());
+		showHelp = false;
+		if (userVo != null) {
+			showHelp = userVo.isSuperAdmin() | functionalityFacade.isEnableHelpTab(userVo.getDomainIdentifier());
+		}
 		helpsASO=null;
 	}
 	
