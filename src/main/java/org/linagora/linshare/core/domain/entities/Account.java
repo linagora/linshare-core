@@ -35,6 +35,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
@@ -234,6 +235,18 @@ public abstract class Account {
 		// TODO : add ihm for external mail locale value. For now, using user
 		// locale.
 		// return externalMailLocale;
+		return locale;
+	}
+
+	public Locale getJavaExternalMailLocale() {
+		Locale locale = Locale.ENGLISH;
+		switch (getExternalMailLocale()) {
+		case "fr":
+			locale = Locale.FRANCE;
+			break;
+		default:
+			break;
+		}
 		return locale;
 	}
 

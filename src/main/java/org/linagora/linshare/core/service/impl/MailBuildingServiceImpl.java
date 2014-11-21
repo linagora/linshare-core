@@ -33,8 +33,10 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.text.DateFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -240,6 +242,12 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		this.insertLicenceTerm = insertLicenceTerm;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mailConfigRepository = mailConfigRepository;
+	}
+
+	private String formatCreationDate(Account account, Entry entry) {
+		Locale locale = account.getJavaExternalMailLocale();
+		DateFormat formatter = DateFormat.getDateInstance(DateFormat.FULL, locale);
+		return formatter.format(entry.getCreationDate().getTime());
 	}
 
 	@Override
@@ -897,7 +905,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
 				.add("fileSize", DocumentUtils.humanReadableByteCount(entry.getDocumentEntry().getSize(), true))
 				.add("fileName", entry.getDocumentEntry().getName())
-				.add("depositDate", entry.getCreationDate().getTime().toString());
+				.add("depositDate", formatCreationDate(owner, entry));
 		container.setRecipient(owner.getMail());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(contact);
