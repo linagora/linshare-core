@@ -33,13 +33,12 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.Collection;
+import java.text.DateFormat;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
@@ -241,6 +240,12 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		this.insertLicenceTerm = insertLicenceTerm;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mailConfigRepository = mailConfigRepository;
+	}
+
+	private String formatCreationDate(Account account, Entry entry) {
+		Locale locale = account.getJavaExternalMailLocale();
+		DateFormat formatter = DateFormat.getDateInstance(DateFormat.FULL, locale);
+		return formatter.format(entry.getCreationDate().getTime());
 	}
 
 	@Override
@@ -902,7 +907,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
 				.add("fileSize", DocumentUtils.humanReadableByteCount(entry.getDocumentEntry().getSize(), true))
 				.add("fileName", entry.getDocumentEntry().getName())
-				.add("depositDate", entry.getCreationDate().getTime().toString());
+				.add("depositDate", formatCreationDate(owner, entry));
 		container.setRecipient(owner.getMail());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(contact);
