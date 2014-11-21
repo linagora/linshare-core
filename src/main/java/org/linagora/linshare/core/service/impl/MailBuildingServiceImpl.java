@@ -940,14 +940,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
-		ImmutableSet<FileRepresentation> files = FluentIterable
-				.from(request.getUploadRequestEntries())
-				.transform(new Function<UploadRequestEntry, FileRepresentation>() {
-					@Override
-					public FileRepresentation apply(UploadRequestEntry arg0) {
-						return new FileRepresentation(arg0);
-					}})
-				.toSet();
 		builder.getSubjectChain()
 				.add("subject", request.getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
@@ -956,12 +948,28 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		builder.getBodyChain()
 				.add("subject", request.getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequestGroup().getBody())
-				.add("files", files.toString());
+				.add("files", getFileRepresentation(request));
 		container.setRecipient(owner.getMail());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
 
 		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_OWNER_BEFORE_EXPIRY, builder);
+	}
+
+	private String getFileRepresentation(
+			UploadRequest request) {
+		ImmutableSet<FileRepresentation> files = FluentIterable
+				.from(request.getUploadRequestEntries())
+				.transform(new Function<UploadRequestEntry, FileRepresentation>() {
+					@Override
+					public FileRepresentation apply(UploadRequestEntry arg0) {
+						return new FileRepresentation(arg0);
+					}})
+				.toSet();
+		if (files.size() > 0) {
+			return files.toString();
+		}
+		return " - ";
 	}
 
 	@Override
@@ -971,15 +979,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
-
-		ImmutableSet<FileRepresentation> files = FluentIterable
-				.from(request.getUploadRequest().getUploadRequestEntries())
-				.transform(new Function<UploadRequestEntry, FileRepresentation>() {
-					@Override
-					public FileRepresentation apply(UploadRequestEntry arg0) {
-						return new FileRepresentation(arg0);
-					}})
-				.toSet();
 		builder.getSubjectChain()
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
@@ -988,7 +987,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		builder.getBodyChain()
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("files", files.toString())
+				.add("files", getFileRepresentation(request.getUploadRequest()))
 				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(owner)));
 		container.setRecipient(request.getContact().getMail());
 		container.setFrom(getFromMailAddress(owner));
@@ -1004,14 +1003,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
-		ImmutableSet<FileRepresentation> files = FluentIterable
-				.from(request.getUploadRequestEntries())
-				.transform(new Function<UploadRequestEntry, FileRepresentation>() {
-					@Override
-					public FileRepresentation apply(UploadRequestEntry arg0) {
-						return new FileRepresentation(arg0);
-					}})
-				.toSet();
 		builder.getSubjectChain()
 				.add("subject", request.getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
@@ -1020,7 +1011,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		builder.getBodyChain()
 				.add("subject", request.getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequestGroup().getBody())
-				.add("files", files.toString());
+				.add("files", getFileRepresentation(request));
 		container.setRecipient(owner.getMail());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
@@ -1035,15 +1026,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
-
-		ImmutableSet<FileRepresentation> files = FluentIterable
-				.from(request.getUploadRequest().getUploadRequestEntries())
-				.transform(new Function<UploadRequestEntry, FileRepresentation>() {
-					@Override
-					public FileRepresentation apply(UploadRequestEntry arg0) {
-						return new FileRepresentation(arg0);
-					}})
-				.toSet();
 		builder.getSubjectChain()
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
 		builder.getGreetingsChain()
@@ -1052,7 +1034,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		builder.getBodyChain()
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("files", files.toString());
+				.add("files", getFileRepresentation(request.getUploadRequest()));
 		container.setRecipient(request.getContact().getMail());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
@@ -1067,16 +1049,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
-
-		ImmutableSet<FileRepresentation> files = FluentIterable
-				.from(request.getUploadRequest().getUploadRequestEntries())
-				.transform(new Function<UploadRequestEntry, FileRepresentation>() {
-					@Override
-					public FileRepresentation apply(UploadRequestEntry arg0) {
-						return new FileRepresentation(arg0);
-					}})
-				.toSet();
-
 		builder.getSubjectChain()
 				.add("actorRepresentation", request.getContact().getMail())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
@@ -1088,7 +1060,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("lastName", "")
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("files", files.toString());
+				.add("files", getFileRepresentation(request.getUploadRequest()));
 		container.setRecipient(owner);
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(request.getContact());
@@ -1104,16 +1076,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
-
-		ImmutableSet<FileRepresentation> files = FluentIterable
-		.from(request.getUploadRequest().getUploadRequestEntries())
-		.transform(new Function<UploadRequestEntry, FileRepresentation>() {
-			@Override
-			public FileRepresentation apply(UploadRequestEntry arg0) {
-				return new FileRepresentation(arg0);
-			}})
-		.toSet();
-
 		builder.getSubjectChain()
 				.add("actorRepresentation", new ContactRepresentation(owner).getContactRepresentation())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
@@ -1125,7 +1087,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("lastName", owner.getLastName())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("files", files.toString());
+				.add("files", getFileRepresentation(request.getUploadRequest()));
 		container.setRecipient(request.getContact());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
