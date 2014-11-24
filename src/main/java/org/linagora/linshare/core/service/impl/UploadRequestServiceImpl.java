@@ -177,8 +177,10 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 		for (Contact c : contacts) {
 			UploadRequestUrl requestUrl = uploadRequestUrlService
 					.create(req, c);
-			mails.add(mailBuildingService.buildCreateUploadRequest(
-					(User) req.getOwner(), requestUrl));
+			if (!DateUtils.isSameDay(req.getActivationDate(), req.getCreationDate())) {
+				mails.add(mailBuildingService.buildCreateUploadRequest(
+						(User) req.getOwner(), requestUrl));
+			}
 		}
 		notifierService.sendNotification(mails);
 		mails.clear();
