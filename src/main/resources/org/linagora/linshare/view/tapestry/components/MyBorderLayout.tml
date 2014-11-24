@@ -46,6 +46,7 @@
         <t:outputraw value="ie8Css" />
         <t:outputraw value="ie7Css" />
         <t:outputraw value="ie6Css" />
+        <t:outputraw value="customCss" />
 		<link rel="shortcut icon" href="${asset:context:images/favicon.ico}" type="image/x-icon" />
 		<link rel="icon" href="${asset:context:images/favicon.png}" type="image/png" />
     </t:parameter>
