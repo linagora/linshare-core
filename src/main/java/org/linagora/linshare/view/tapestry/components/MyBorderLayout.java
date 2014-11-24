@@ -134,6 +134,10 @@ public class MyBorderLayout {
 	private Asset ie6CssAsset;
 
 	@Inject
+	@Path("context:css/custom.css")
+	private Asset customCssAsset;
+
+	@Inject
 	@Path("context:css/theme0.css")
 	private Asset defaultCssAsset;
 
@@ -196,6 +200,9 @@ public class MyBorderLayout {
 
 	@Property
 	private String defaultCss;
+
+	@Property
+	private String customCss;
 
     @Property(write=false)
     private String customLogoUrl;
@@ -261,6 +268,8 @@ public class MyBorderLayout {
 //				+ "<script src='"+ie6DDPNGAsset.toClientURL()+"' ></script><script>DD_belatedPNG.fix('img, h1, a.button, a.button span');</script><![endif]--> ";
 
 		defaultCss = "<link href='"+defaultCssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/>";
+		customCss = "<link href='"+customCssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/>";
+
 		includeLocales = new ArrayList<Locale>();
 		includeLocales.add(Locale.FRENCH);
 		includeLocales.add(Locale.ENGLISH);
