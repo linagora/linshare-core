@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.io.File;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
@@ -99,6 +100,9 @@ public class MailNotifierServiceImpl implements NotifierService {
 	/** Display LinShare logo ? */
 	private final boolean displayLicenceLogo;
 
+	/** External logo to display */
+	private final String externalLogo;
+
 	/** Class logger */
 	private static final Logger logger = LoggerFactory.getLogger(MailNotifierServiceImpl.class);
 	
@@ -110,7 +114,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 */
 	public MailNotifierServiceImpl(String smtpServer, int smtpPort,
 			String smtpUser, String smtpPassword, boolean needsAuth,
-			String charset, boolean displayLogo, boolean displayLicenceLogo) {
+			String charset, boolean displayLogo, boolean displayLicenceLogo, String externalLogo) {
 		this.smtpServer = smtpServer;
 		this.smtpPort = smtpPort;
 		this.smtpUser = smtpUser;
@@ -119,6 +123,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 		this.charset = charset;
 		this.displayLogo = displayLogo;
 		this.displayLicenceLogo = displayLicenceLogo;
+		this.externalLogo = externalLogo;
 	}
 
 	public static boolean isPureAscii(String v) {
@@ -198,10 +203,20 @@ public class MailNotifierServiceImpl implements NotifierService {
 				rel_bpi.setFileName("mail_logo.png");
 				rel_bpi.setText("linshare");
 				URL resource  = null;
-				if(displayLicenceLogo) {
+				if (displayLicenceLogo) {
 					resource = getClass().getResource("/org/linagora/linshare/core/service/mail_logo_licence.png");
 				} else {
-					resource = getClass().getResource("/org/linagora/linshare/core/service/mail_logo.png");
+					if (externalLogo != null) {
+						File file = new File(externalLogo);
+						if (file.canRead()) {
+							resource = file.toURI().toURL();
+						} else {
+							logger.error("Can not read your personal logo.");
+						}
+					}
+					if (resource == null) {
+						resource = getClass().getResource("/org/linagora/linshare/core/service/mail_logo.png");
+					}
 				}
 				if(resource == null) {
 					logger.error("Embedded logo was not found.");
