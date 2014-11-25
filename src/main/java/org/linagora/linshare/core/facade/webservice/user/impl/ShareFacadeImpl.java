@@ -48,6 +48,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class ShareFacadeImpl extends UserGenericFacadeImp
@@ -71,7 +72,8 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		User actor = checkAuthentication();
 		List<ShareEntry> shares = shareEntryService.findAllMyRecievedShareEntries(
 				actor, actor);
-		return Lists.transform(shares, ShareDto.toVo());
+		return ImmutableList.copyOf(Lists.transform(shares,
+				ShareDto.toVo()));
 	}
 
 	@Override
