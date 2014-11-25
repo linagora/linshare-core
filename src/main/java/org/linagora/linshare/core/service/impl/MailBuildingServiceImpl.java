@@ -781,7 +781,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
+				request.getLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -807,7 +807,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
+				request.getLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -839,7 +839,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
+				request.getLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -862,7 +862,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
+				request.getLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -890,7 +890,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
+				request.getLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		String contact = request.getContact().getMail();
@@ -919,7 +919,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
+				request.getLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -947,7 +947,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
+				request.getLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -971,7 +971,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
+				request.getLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -996,7 +996,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
+				request.getLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -1020,7 +1020,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
+				request.getLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -1044,7 +1044,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
+				request.getLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -1088,7 +1088,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
+				request.getLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -1115,7 +1115,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
+				request.getLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
@@ -1142,7 +1142,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
+				request.getLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()

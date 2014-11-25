@@ -158,4 +158,12 @@ public class UploadRequestUrl {
 		httpUrlBase.append(getUuid());
 		return httpUrlBase.toString();
 	}
+
+	/**
+	 * Helpers
+	 */
+
+	public String getLocale() {
+		return this.getUploadRequest().getLocale();
+	}
 }
