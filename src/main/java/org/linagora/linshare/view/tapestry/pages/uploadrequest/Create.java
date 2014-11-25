@@ -277,7 +277,7 @@ public class Create {
 	 */
 
 	public FieldValidator<?> getMaxFileCountValidator() {
-		return source.createValidators(maxFileCount, "required, max=" + _c);
+		return source.createValidators(maxFileCount, "required, max=" + _c + ", min=1");
 	}
 
 	/*
