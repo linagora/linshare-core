@@ -86,6 +86,7 @@ public class UploadRequestVo implements Cloneable {
 
 	private Boolean canEditExpiryDate;
 
+	@Validate(value = "required")
 	private Language locale = Language.ENGLISH;
 
 	private boolean secured;
