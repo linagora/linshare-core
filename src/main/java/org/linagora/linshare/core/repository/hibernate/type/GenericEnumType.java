@@ -41,8 +41,9 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import org.hibernate.HibernateException;
-import org.hibernate.type.NullableType;
-import org.hibernate.type.TypeFactory;
+import org.hibernate.type.AbstractSingleColumnStandardBasicType;
+import org.hibernate.type.AbstractStandardBasicType;
+import org.hibernate.type.TypeResolver;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 
@@ -107,7 +108,7 @@ public class GenericEnumType implements UserType, ParameterizedType {
     private Class<?> identifierType;
     private Method identifierMethod;
     private Method valueOfMethod;
-    private NullableType type;
+    private AbstractStandardBasicType<? extends Object> type;
     private int[] sqlTypes;
 
     public void setParameterValues(Properties parameters) {
@@ -127,13 +128,13 @@ public class GenericEnumType implements UserType, ParameterizedType {
             throw new HibernateException("Failed to obtain identifier method", e);
         }
 
-        type = (NullableType) TypeFactory.basic(identifierType.getName());
+        type = (AbstractSingleColumnStandardBasicType<? extends Object>) new TypeResolver().heuristicType(identifierType.getName(), parameters);
 
         if (type == null) {
             throw new HibernateException("Unsupported identifier type " + identifierType.getName());
         }
 
-        sqlTypes = new int[]{type.sqlType()};
+        sqlTypes = new int[]{((AbstractSingleColumnStandardBasicType<?>)type).sqlType()};
 
         String valueOfMethodName = parameters.getProperty("valueOfMethod", DEFAULT_VALUE_OF_METHOD_NAME);
 
@@ -144,12 +145,12 @@ public class GenericEnumType implements UserType, ParameterizedType {
         }
     }
 
-    public Class returnedClass() {
+    public Class<? extends Enum> returnedClass() {
         return enumClass;
     }
 
     public Object nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
-        Object identifier = type.get(rs, names[0]);
+        Object identifier = type.get(rs, names[0], null);
         if (rs.wasNull()) {
             return null;
         }
@@ -165,10 +166,10 @@ public class GenericEnumType implements UserType, ParameterizedType {
     public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
         try {
             if (value == null) {
-                st.setNull(index, type.sqlType());
+                st.setNull(index, ((AbstractSingleColumnStandardBasicType<?>) type).sqlType());
             } else {
                 Object identifier = identifierMethod.invoke(value, new Object[0]);
-                type.set(st, identifier, index);
+                type.nullSafeSet(st, identifier, index, null);
             }
         } catch (Exception e) {
             throw new HibernateException("Exception while invoking identifierMethod '" + identifierMethod.getName() + "' of " +
