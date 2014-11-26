@@ -401,7 +401,7 @@ INSERT INTO unit(id, unit_type, unit_value) VALUES (10, 1, 1);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (37, 30, 10);
 
 -- Functionality : UPLOAD_REQUEST__NOTIFICATION_LANGUAGE
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (83, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (83, true, true, 1, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (84, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (85, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
