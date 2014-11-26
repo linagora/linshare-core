@@ -32,6 +32,10 @@ INSERT INTO users(account_id, first_name, last_name, mail, can_upload, comment, 
 update mail_content set body = replace(body, 'cliquez sur le lien ou copiez le', 'cliquez sur le lien ou copiez-le')
  WHERE body like '%cliquez sur le lien ou copiez le%';
 
+ALTER TABLE upload_request ALTER COLUMN expiry_date DROP NOT NULL;
+ALTER TABLE upload_request ALTER COLUMN locale SET NOT NULL;
+UPDATE policy SET system = true where id=83;
+
 -- LinShare version
 INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence')),'1.9.0');
 
