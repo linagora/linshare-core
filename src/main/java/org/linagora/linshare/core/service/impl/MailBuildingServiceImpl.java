@@ -250,6 +250,12 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		return formatter.format(entry.getCreationDate().getTime());
 	}
 
+	private String formatActivationDate(Account account, UploadRequest uploadRequest) {
+		Locale locale = account.getJavaExternalMailLocale();
+		DateFormat formatter = DateFormat.getDateInstance(DateFormat.FULL, locale);
+		return formatter.format(uploadRequest.getActivationDate().getTime());
+	}
+
 	@Override
 	public MailContainerWithRecipient buildAnonymousDownload(
 			AnonymousShareEntry shareEntry) throws BusinessException {
@@ -874,7 +880,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("lastName", owner.getLastName())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("activationDate", request.getUploadRequest().getActivationDate().toString());
+				.add("activationDate", formatActivationDate(owner, request.getUploadRequest()));
 		container.setRecipient(request.getContact().getMail());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
