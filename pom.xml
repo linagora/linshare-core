@@ -1658,11 +1658,6 @@
 	</profiles>
 
 	<repositories>
-		<!-- This can be commented out when the tapestry-release-version is a not a snapshot. The non-snapshot Tapestry artifacts are distributed 
-			through the central repository at ibiblio. -->
-
-		<!-- <repository> <id>tapestry-snapshots</id> <url>http://tapestry.formos.com/maven-snapshot-repository/</url> <snapshots> <enabled>true</enabled> 
-			</snapshots> </repository> -->
 		<repository>
 			<id>linagora</id>
 			<url>http://repo.linpki.org/nexus/content/repositories/public/</url>
@@ -1707,13 +1702,6 @@
 			</snapshots>
 		</repository>
 
-		<repository>
-			<id>IBiblio-mirror</id>
-			<url>http://www.ibiblio.org/pub/mirrors/maven/mule/dependencies/maven2/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
 		<repository>
 			<id>openqa-releases</id>
 			<name>Openqa Release Repository</name>
