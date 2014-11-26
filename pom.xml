@@ -162,14 +162,19 @@
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate</artifactId>
-			<version>3.2.7.ga</version>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>3.6.10.Final</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-ehcache</artifactId>
+			<version>3.6.10.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
