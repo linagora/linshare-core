@@ -374,7 +374,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public int countThreadEntries(Thread thread) {
+	public long countThreadEntries(Thread thread) {
 		return threadEntryRepository.count(thread);
 	}
 

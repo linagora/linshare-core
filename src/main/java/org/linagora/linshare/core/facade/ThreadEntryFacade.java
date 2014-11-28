@@ -75,7 +75,7 @@ public interface ThreadEntryFacade {
 	public void removeDocument(UserVo userVo, ThreadEntryVo entryVo)
 			throws BusinessException;
 
-	public int countEntries(ThreadVo threadVo)
+	public long countEntries(ThreadVo threadVo)
 			throws BusinessException;
 
 	public ThreadEntryVo findById(UserVo user, String entryUuid)
@@ -152,7 +152,7 @@ public interface ThreadEntryFacade {
 	public List<ThreadVo> getLatestThreads(UserVo actorVo, int limit)
 			throws BusinessException;
 
-	public int countMembers(UserVo actorVo, ThreadVo threadVo)
+	public long countMembers(UserVo actorVo, ThreadVo threadVo)
 			throws BusinessException;
 
 	public boolean memberIsDeletable(UserVo actorVo, ThreadVo threadVo)
