@@ -68,9 +68,9 @@ public interface ThreadService {
 
 	public boolean isUserAdmin(User user, Thread thread);
 
-	public int countMembers(Thread thread);
+	public long countMembers(Thread thread);
 
-	public int countEntries(Thread thread);
+	public long countEntries(Thread thread);
 
 	public ThreadMember addMember(Account actor, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException;
 

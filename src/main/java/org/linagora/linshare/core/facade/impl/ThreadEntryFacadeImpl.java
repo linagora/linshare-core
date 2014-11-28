@@ -213,7 +213,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	}
 	
 	@Override
-	public int countEntries(ThreadVo threadVo) throws BusinessException {
+	public long countEntries(ThreadVo threadVo) throws BusinessException {
 		return threadService.countEntries(findThread(threadVo));
 	}
 
@@ -345,7 +345,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	}
 
 	@Override
-	public int countMembers(UserVo actorVo, ThreadVo threadVo)
+	public long countMembers(UserVo actorVo, ThreadVo threadVo)
 			throws BusinessException {
 		return threadService.countMembers(findThread(threadVo));
 	}

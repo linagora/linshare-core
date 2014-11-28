@@ -50,5 +50,5 @@ public interface ThreadEntryRepository extends AbstractRepository<ThreadEntry> {
 
 	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names);
 
-	public int count(Thread thread);
+	public long count(Thread thread);
 }

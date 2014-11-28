@@ -172,12 +172,12 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public int countMembers(Thread thread) {
+	public long countMembers(Thread thread) {
 		return threadMemberRepository.count(thread);
 	}
 
 	@Override
-	public int countEntries(Thread thread) {
+	public long countEntries(Thread thread) {
 		return documentEntryBusinessService.countThreadEntries(thread);
 	}
 

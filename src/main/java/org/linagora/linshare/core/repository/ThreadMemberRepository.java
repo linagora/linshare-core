@@ -97,5 +97,5 @@ public interface ThreadMemberRepository extends AbstractRepository<ThreadMember>
 	 * @param thread
 	 * @return the amount of members
 	 */
-	public int count(Thread thread);
+	public long count(Thread thread);
 }

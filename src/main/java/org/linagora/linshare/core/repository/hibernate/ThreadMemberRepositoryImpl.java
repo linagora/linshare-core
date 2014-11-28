@@ -113,11 +113,11 @@ public class ThreadMemberRepositoryImpl extends
 	}
 
 	@Override
-	public int count(Thread thread) {
+	public long count(Thread thread) {
 		DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
 
 		det.add(Restrictions.eq("thread", thread));
 		det.setProjection(Projections.rowCount());
-		return DataAccessUtils.intResult(findByCriteria(det));
+		return DataAccessUtils.longResult(findByCriteria(det));
 	}
 }

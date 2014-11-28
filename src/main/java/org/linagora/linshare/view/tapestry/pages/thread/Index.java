@@ -146,7 +146,7 @@ public class Index {
 				.getDomainIdentifier());
 	}
 
-	public int getCount() {
+	public long getCount() {
 		try {
 			return threadEntryFacade.countEntries(current);
 		} catch (BusinessException e) {

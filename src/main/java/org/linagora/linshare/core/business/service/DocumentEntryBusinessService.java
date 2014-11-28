@@ -88,7 +88,7 @@ public interface DocumentEntryBusinessService {
 
 	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names);
 
-	public int countThreadEntries(Thread thread);
+	public long countThreadEntries(Thread thread);
 
 	public InputStream getDocumentStream(ThreadEntry entry);
 

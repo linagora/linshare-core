@@ -97,12 +97,12 @@ public class ThreadEntryRepositoryImpl extends
 	}
 
 	@Override
-	public int count(Thread thread) {
+	public long count(Thread thread) {
 		DetachedCriteria det = DetachedCriteria.forClass(ThreadEntry.class);
 
 		det.add(Restrictions.eq("entryOwner", thread));
 		det.setProjection(Projections.rowCount());
-		return DataAccessUtils.intResult(findByCriteria(det));
+		return DataAccessUtils.longResult(findByCriteria(det));
 	}
 
 	@Deprecated
