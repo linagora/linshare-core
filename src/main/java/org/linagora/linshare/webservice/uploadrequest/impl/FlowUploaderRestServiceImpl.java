@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.uploadrequest.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -48,9 +49,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
@@ -68,7 +71,7 @@ import com.wordnik.swagger.annotations.Api;
 
 @Path("/flow/upload")
 @Api(value = "/rest/uploadrequest/flow/upload", description = "upload_requests API")
-@Produces({"application/json", "application/xml"})
+@Produces({ "application/json", "application/xml" })
 public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 		FlowUploaderRestService {
 
@@ -85,10 +88,12 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	private static final String FILE = "file";
 	private static final String PASSWORD = "password";
 	private static final String REQUEST_URL_UUID = "requestUrlUuid";
+	private static final String IEFILENAME = "filename";
 
 	private final UploadRequestUrlFacade uploadRequestUrlFacade;
 
-	private static final ConcurrentMap<String, ChunkedFile> chunkedFiles = Maps.newConcurrentMap();
+	private static final ConcurrentMap<String, ChunkedFile> chunkedFiles = Maps
+			.newConcurrentMap();
 
 	private class ChunkedFile {
 
@@ -126,18 +131,19 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	@GET
 	@Override
 	public Response testChunk(@QueryParam(CHUNK_NUMBER) long chunkNumber,
-							  @QueryParam(TOTAL_CHUNKS) long totalChunks,
-							  @QueryParam(CHUNK_SIZE) long chunkSize,
-							  @QueryParam(TOTAL_SIZE) long totalSize,
-							  @QueryParam(IDENTIFIER) String identifier,
-							  @QueryParam(FILENAME) String filename,
-							  @QueryParam(RELATIVE_PATH) String relativePath) {
+			@QueryParam(TOTAL_CHUNKS) long totalChunks,
+			@QueryParam(CHUNK_SIZE) long chunkSize,
+			@QueryParam(TOTAL_SIZE) long totalSize,
+			@QueryParam(IDENTIFIER) String identifier,
+			@QueryParam(FILENAME) String filename,
+			@QueryParam(RELATIVE_PATH) String relativePath) {
 
 		identifier = cleanIdentifier(identifier);
 		Validate.isTrue(isValid(chunkNumber, chunkSize, totalSize, identifier,
 				filename));
 
-		if (chunkedFiles.containsKey(identifier) && chunkedFiles.get(identifier).hasChunk(chunkNumber)) {
+		if (chunkedFiles.containsKey(identifier)
+				&& chunkedFiles.get(identifier).hasChunk(chunkNumber)) {
 			return Response.ok().build();
 		}
 		return Response.status(Status.NOT_FOUND).build();
@@ -148,16 +154,15 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	@Consumes("multipart/form-data")
 	@Override
 	public Response uploadChunk(@Multipart(CHUNK_NUMBER) long chunkNumber,
-								@Multipart(TOTAL_CHUNKS) long totalChunks,
-								@Multipart(CHUNK_SIZE) long chunkSize,
-								@Multipart(TOTAL_SIZE) long totalSize,
-								@Multipart(IDENTIFIER) String identifier,
-								@Multipart(FILENAME) String filename,
-								@Multipart(RELATIVE_PATH) String relativePath,
-								@Multipart(FILE) InputStream file, MultipartBody body,
-								@Multipart(REQUEST_URL_UUID) String uploadRequestUrlUuid,
-								@Multipart(PASSWORD) String password)
-			throws BusinessException {
+			@Multipart(TOTAL_CHUNKS) long totalChunks,
+			@Multipart(CHUNK_SIZE) long chunkSize,
+			@Multipart(TOTAL_SIZE) long totalSize,
+			@Multipart(IDENTIFIER) String identifier,
+			@Multipart(FILENAME) String filename,
+			@Multipart(RELATIVE_PATH) String relativePath,
+			@Multipart(FILE) InputStream file, MultipartBody body,
+			@Multipart(REQUEST_URL_UUID) String uploadRequestUrlUuid,
+			@Multipart(PASSWORD) String password) throws BusinessException {
 
 		logger.debug("upload chunk number : " + chunkNumber);
 		identifier = cleanIdentifier(identifier);
@@ -166,16 +171,18 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 		try {
 			logger.debug("writing chunk number : " + chunkNumber);
 			java.nio.file.Path tempFile = getTempFile(identifier);
-			FileChannel fc = FileChannel.open(tempFile, StandardOpenOption.CREATE,
-					StandardOpenOption.APPEND);
+			FileChannel fc = FileChannel.open(tempFile,
+					StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 			byte[] byteArray = IOUtils.toByteArray(file);
 			fc.write(ByteBuffer.wrap(byteArray), (chunkNumber - 1) * chunkSize);
 			fc.close();
 			chunkedFiles.get(identifier).addChunk(chunkNumber);
 			if (isUploadFinished(identifier, chunkSize, totalSize)) {
 				logger.debug("upload finished ");
-				InputStream inputStream = Files.newInputStream(tempFile, StandardOpenOption.READ);
-				uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid, password, inputStream, filename);
+				InputStream inputStream = Files.newInputStream(tempFile,
+						StandardOpenOption.READ);
+				uploadRequestUrlFacade.addUploadRequestEntry(
+						uploadRequestUrlUuid, password, inputStream, filename);
 				ChunkedFile remove = chunkedFiles.remove(identifier);
 				Files.deleteIfExists(remove.getPath());
 				return Response.ok("upload success").build();
@@ -193,11 +200,45 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			throws IOException {
 		ChunkedFile chunkedFile = chunkedFiles.get(identifier);
 		if (chunkedFile == null) {
-			java.nio.file.Path path = Files.createTempFile("ls-chunks-" + identifier, ".temp");
+			java.nio.file.Path path = Files.createTempFile("ls-chunks-"
+					+ identifier, ".temp");
 			chunkedFiles.putIfAbsent(identifier, new ChunkedFile(path));
 			chunkedFile = chunkedFiles.get(identifier);
 		}
 		return chunkedFile.getPath();
+	}
+
+	/**
+	 * UPLOAD FOR IE
+	 */
+
+	@Path("/iexplorer")
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.TEXT_PLAIN)
+	@Override
+	public Response uploadForIe9(@Multipart(value = FILE) InputStream file,
+			MultipartBody body,
+			@Multipart(REQUEST_URL_UUID) String uploadRequestUrlUuid,
+			@Multipart(PASSWORD) String password) throws BusinessException {
+		if (file == null) {
+			throw giveRestException(HttpStatus.SC_BAD_REQUEST,
+					"Missing file (check parameter file)");
+		}
+		// Ensure fileName and description aren't null
+		String fileName = body.getAttachment(FILE).getContentDisposition()
+				.getParameter(IEFILENAME);
+
+		try {
+			byte[] bytes = fileName.getBytes("ISO-8859-1");
+			fileName = new String(bytes, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			logger.error("Can not encode file name " + e1.getMessage());
+		}
+
+		uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid,
+				password, file, fileName);
+		return Response.ok("upload success").build();
 	}
 
 	/**
@@ -209,7 +250,7 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	}
 
 	private boolean isValid(long chunkNumber, long chunkSize, long totalSize,
-							String identifier, String filename) {
+			String identifier, String filename) {
 		// Check if the request is sane
 		if (chunkNumber == 0 || chunkSize == 0 || totalSize == 0
 				|| identifier.length() == 0 || filename.length() == 0) {
@@ -226,7 +267,8 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 		return Math.max(Math.floor(totalSize / chunkSize), 1);
 	}
 
-	private boolean isUploadFinished(String identifier, long chunkSize, long totalSize) {
+	private boolean isUploadFinished(String identifier, long chunkSize,
+			long totalSize) {
 		double numberOfChunks = computeNumberOfChunks(chunkSize, totalSize);
 		return chunkedFiles.get(identifier).getChunks().size() == numberOfChunks;
 	}
