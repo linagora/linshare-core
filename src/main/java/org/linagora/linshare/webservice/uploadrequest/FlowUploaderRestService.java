@@ -44,11 +44,15 @@ public interface FlowUploaderRestService {
 
 	Response uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
 			long totalSize, String identifier, String filename,
-			String relativePath, InputStream file, MultipartBody body, String uploadRequestUrlUuid, String password)
+			String relativePath, InputStream file, MultipartBody body,
+			String uploadRequestUrlUuid, String password)
 			throws BusinessException;
 
 	Response testChunk(long chunkNumber, long totalChunks, long chunkSize,
-						long totalSize, String identifier, String filename,
-						String relativePath);
+			long totalSize, String identifier, String filename,
+			String relativePath);
 
+	Response uploadForIe9(InputStream file, MultipartBody body,
+			String uploadRequestUrlUuid, String password)
+			throws BusinessException;
 }
