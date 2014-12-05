@@ -37,12 +37,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
-import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -51,7 +49,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -389,15 +386,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		} else if (userQuotaFunctionality.getActivationPolicy().getStatus()) {
 
 			long userQuota = userQuotaFunctionality.getPlainSize();
-
-			Set<Entry> entries = account.getEntries();
-			for (Entry entry : entries) {
-				if (entry.getEntryType().equals(EntryType.DOCUMENT)) {
-					userQuota -= ((DocumentEntry) entry).getSize();
-				}
-			}
-
-			return userQuota;
+			long usedSpace = documentEntryBusinessService.getUsedSpace(account);
+			return userQuota - usedSpace;
 		}
 		return LinShareConstants.defaultFreeSpace;
 	}

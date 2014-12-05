@@ -622,4 +622,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 //			deleteDocument(doc);
 //		}
 	}
+
+	@Override
+	public long getUsedSpace(Account owner) throws BusinessException {
+		return documentEntryRepository.getUsedSpace(owner);
+	}
 }

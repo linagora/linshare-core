@@ -38,20 +38,27 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
+import org.linagora.linshare.core.exception.BusinessException;
 
-public interface DocumentEntryRepository extends AbstractRepository<DocumentEntry>{
-	
-	 /** Find a document using its uuid.
-     * @param  uuid
-     * @return found document (null if no document found).
-     */
-	public DocumentEntry findById(String uuid);
-	
-	public List<DocumentEntry> findAllMyDocumentEntries(Account owner);
-	
-	public long getRelatedEntriesCount(DocumentEntry documentEntry);
-	
-	public List<DocumentEntry> findAllExpiredEntries();
-	
-	public List<DocumentEntry> retrieveUserDocumentEntriesWithMatchCriterion(final SearchDocumentCriterion searchDocumentCriterion);
+public interface DocumentEntryRepository extends
+		AbstractRepository<DocumentEntry> {
+
+	/**
+	 * Find a document using its uuid.
+	 *
+	 * @param uuid
+	 * @return found document (null if no document found).
+	 */
+	DocumentEntry findById(String uuid);
+
+	List<DocumentEntry> findAllMyDocumentEntries(Account owner);
+
+	long getRelatedEntriesCount(DocumentEntry documentEntry);
+
+	List<DocumentEntry> findAllExpiredEntries();
+
+	List<DocumentEntry> retrieveUserDocumentEntriesWithMatchCriterion(
+			final SearchDocumentCriterion searchDocumentCriterion);
+
+	long getUsedSpace(Account owner) throws BusinessException;
 }

@@ -100,4 +100,5 @@ public interface DocumentEntryBusinessService {
 
 	public void updateFileProperties(ThreadEntry entry, String fileComment) throws BusinessException;
 
+	long getUsedSpace(Account owner) throws BusinessException;
 }
