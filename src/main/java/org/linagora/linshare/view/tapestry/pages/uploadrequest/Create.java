@@ -38,7 +38,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.PersistenceConstants;
+import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Log;
@@ -53,7 +55,9 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.apache.tapestry5.util.EnumSelectModel;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.vo.UploadRequestTemplateVo;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -64,6 +68,9 @@ import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.components.BSBeanEditForm;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 
 public class Create {
@@ -121,6 +128,9 @@ public class Create {
 	@Inject
 	private PersistentLocale persistentLocale;
 
+	@Property
+	private SelectModel languageModel;
+
 	@Inject
 	private BusinessMessagesManagementService businessMessagesManagementService;
 
@@ -166,6 +176,14 @@ public class Create {
 			_s = current.getMaxFileSize();
 			_c = current.getMaxFileCount();
 			_expiration = current.getExpiryDate();
+			languageModel = new EnumSelectModel(Language.class, messages);
+			Iterables.removeIf(languageModel.getOptions(),
+					new Predicate<OptionModel>() {
+						@Override
+						public boolean apply(OptionModel input) {
+							return input.getValue().equals(Language.DUTCH);
+						}
+					});
 		} catch (BusinessException e) {
 			logger.error("Cannot get default upload request value for user "
 					+ userVo.getLsUuid());

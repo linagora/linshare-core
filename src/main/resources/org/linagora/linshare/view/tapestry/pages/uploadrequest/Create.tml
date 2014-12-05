@@ -52,6 +52,10 @@
             <t:label for="expiryDate" />
             <t:datefield t:id="expiryDate" t:value="current.expiryDate" t:validate="required" />
           </p:expiryDate>
+             <p:locale>
+             <t:label for="locale" />
+             <t:select t:id="locale" t:value="current.locale" t:validate="required" model="languageModel" />
+          </p:locale>
         </t:bsBeanEditForm>
       </t:zone>
     </div>
