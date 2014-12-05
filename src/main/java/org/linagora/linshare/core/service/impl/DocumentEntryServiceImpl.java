@@ -424,13 +424,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			return availableSize;
 		} else if (userQuotaFunctionality.getActivationPolicy().getStatus()) {
 			long userQuota = userQuotaFunctionality.getPlainSize();
-			Set<Entry> entries = account.getEntries();
-			for (Entry entry : entries) {
-				if (entry.getEntryType().equals(EntryType.DOCUMENT)) {
-					userQuota -= ((DocumentEntry) entry).getSize();
-				}
-			}
-			return userQuota;
+			long usedSpace = documentEntryBusinessService.getUsedSpace(account);
+			return userQuota - usedSpace;
 		}
 		return LinShareConstants.defaultFreeSpace;
 	}

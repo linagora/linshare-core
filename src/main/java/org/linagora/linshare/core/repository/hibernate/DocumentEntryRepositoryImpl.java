@@ -45,6 +45,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -52,6 +54,7 @@ import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.utils.QueryParameter;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
@@ -174,6 +177,16 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		});
 	}
 
+	@Override
+	public long getUsedSpace(Account owner) throws BusinessException {
+		DetachedCriteria det = DetachedCriteria.forClass(DocumentEntry.class);
+		det.add(Restrictions.eq("entryOwner", owner));
+		det.createAlias("document", "doc");
+		ProjectionList columns = Projections.projectionList()
+				.add(Projections.sum("doc.size"));
+		det.setProjection(columns);
+		return DataAccessUtils.longResult(findByCriteria(det));
+	}
 
 	/**
 	 * Build the search query
