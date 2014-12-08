@@ -51,6 +51,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.httpclient.HttpStatus;
@@ -61,6 +62,7 @@ import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
+import org.linagora.linshare.webservice.dto.ErrorDto;
 import org.linagora.linshare.webservice.uploadrequest.FlowUploaderRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -236,9 +238,19 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			logger.error("Can not encode file name " + e1.getMessage());
 		}
 
-		uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid,
-				password, file, fileName);
-		return Response.ok("upload success").build();
+		ErrorDto errorDto;
+		try {
+			uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid,
+					password, file, fileName);
+			errorDto = new ErrorDto(0, "upload success");
+		} catch (BusinessException exception) {
+			logger.error(exception.getMessage());
+			errorDto = new ErrorDto(exception.getErrorCode().getCode(),
+					exception.getMessage());
+		}
+		ResponseBuilder response = Response.status(Status.OK);
+		response.entity(errorDto);
+		return response.build();
 	}
 
 	/**
