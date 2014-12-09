@@ -308,7 +308,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("documentNames", documentName);
 		container.setRecipient(sender);
 		container.setFrom(getFromMailAddress(sender));
-
+		container.setReplyTo(shareEntry.getRecipient());
 		return buildMailContainer(cfg, container, null,
 				MailContentType.REGISTERED_DOWNLOAD, builder);
 	}
@@ -740,6 +740,14 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				recipient.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
+		String baseUrl = getLinShareUrlForAUserRecipient(recipient);
+		StringBuffer uploadPropositionUrl = new StringBuffer();
+		uploadPropositionUrl.append(baseUrl);
+		if (!baseUrl.endsWith("/")) {
+			uploadPropositionUrl.append('/');
+		}
+		uploadPropositionUrl.append("uploadrequest/proposition");
+		uploadPropositionUrl.toString();
 		builder.getSubjectChain()
 				.add("actorRepresentation", proposition.getMail())
 				.add("subject", proposition.getSubject());
@@ -750,7 +758,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("subject", proposition.getSubject())
 				.add("body", proposition.getBody())
 				.add("firstName", proposition.getFirstName())
-				.add("lastName", proposition.getLastName());
+				.add("lastName", proposition.getLastName())
+				.add("uploadPropositionUrl", uploadPropositionUrl.toString());
 		container.setRecipient(recipient.getMail());
 		container.setFrom(getFromMailAddress(recipient));
 		container.setFrom(abstractDomainService.getDomainMail(recipient.getDomain()));
