@@ -62,7 +62,7 @@ import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.dto.ErrorDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
 import org.linagora.linshare.webservice.uploadrequest.FlowUploaderRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
