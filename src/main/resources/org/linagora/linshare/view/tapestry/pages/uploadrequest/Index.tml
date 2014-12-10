@@ -23,11 +23,13 @@
             <span><img src="${asset:context:images/icons/validate-mini.png}" alt=""/> ${message:pages.uploadrequest.uploadproposition.button}</span>
           </t:pageLink>
         </li>
+        <t:if test="templatesEnable">
         <li>
           <t:pageLink page="uploadrequest/template" class="button" title="${message:pages.uploadrequest.template.button}">
             <span><img src="${asset:context:images/icons/mimetype/txt.png}" alt=""/> ${message:pages.uploadrequest.template.button}</span>
           </t:pageLink>
         </li>
+        </t:if>
         <li>
           <t:actionLink t:id="create" class="button" title="${message:pages.uploadrequest.create.button}">
             <span><img src="${asset:context:images/icons/edit-button.png}" alt=""/> ${message:pages.uploadrequest.create.button}</span>

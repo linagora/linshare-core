@@ -18,6 +18,7 @@
     <!-- Page content -->
     <div id="pageContent">
       <t:zone t:id="reload" update="show">
+       <t:if test="templatesEnable">
         <t:form t:id="template" class="form-horizontal">
           <div class="control-group">
             <t:label class="control-label" for="selected">${message:pages.uploadrequest.create.selected}</t:label>
@@ -26,6 +27,7 @@
             </div>
           </div>
         </t:form>
+        </t:if>
         <t:bsBeanEditForm t:object="current" submitlabel="message:global.button.validate" model="requestModel">
           <p:body>
             <t:label for="body" />
