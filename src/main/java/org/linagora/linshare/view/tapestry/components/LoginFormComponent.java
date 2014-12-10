@@ -110,9 +110,14 @@ public class LoginFormComponent {
 	@Property
 	private List<String> availableDomains;
 
-    @Property
-    private String availableDomain;
-    
+	@Property
+	private String availableDomain;
+
+	@Inject
+	@Symbol("linshare.home.password.reset.link.newpage")
+	@Property
+	private boolean newPage;
+
 
     /* ***********************************************************
      *                   Event handlers&processing
