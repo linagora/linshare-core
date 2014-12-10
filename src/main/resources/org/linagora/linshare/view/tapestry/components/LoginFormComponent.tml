@@ -17,9 +17,13 @@
 			</t:if>
 		</div>
 	<t:parameter name="else">
-		<t:pagelink page="password/reset">${message:pages.index.link.password}</t:pagelink>
-
-        <form id="linshareLoginForm" method="post" action="${request.contextPath}/j_security_check">
+		<t:if test="newPage">
+			<t:pagelink page="password/reset" target="_blank" >${message:pages.index.link.password}</t:pagelink>
+		<t:parameter name="else">
+			<t:pagelink page="password/reset" >${message:pages.index.link.password}</t:pagelink>
+		</t:parameter>
+		</t:if>
+		<form id="linshareLoginForm" method="post" action="${request.contextPath}/j_security_check">
 			<label for="login">${message:pages.login.form.loginLabel}</label>
 				<input id="login" type="text" name="login" title="${message:pages.login.form.loginLabel}"/>
 			<label for="password">${message:pages.login.form.passwordLabel}</label>
