@@ -154,10 +154,22 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		}
 
 		public String getContactRepresentation() {
+			return getContactRepresentation(false);
+		}
+
+		public String getContactRepresentation(boolean includeMail) {
 			if (this.firstName == null || this.lastName == null)
 				return this.mail;
-			return firstName + ' ' + lastName;
-//			return firstName + ' ' + lastName + " (" + mail + ')';
+			StringBuilder res = new StringBuilder();
+			res.append(firstName);
+			res.append(" ");
+			res.append(lastName);
+			if (includeMail) {
+				res.append(" (");
+				res.append(mail);
+				res.append(")");
+			}
+			return res.toString();
 		}
 	}
 
@@ -252,6 +264,12 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		Locale locale = account.getJavaExternalMailLocale();
 		DateFormat formatter = DateFormat.getDateInstance(DateFormat.FULL, locale);
 		return formatter.format(uploadRequest.getActivationDate().getTime());
+	}
+
+	private String formatExpirationDate(Account account, UploadRequest uploadRequest) {
+		Locale locale = account.getJavaExternalMailLocale();
+		DateFormat formatter = DateFormat.getDateInstance(DateFormat.FULL, locale);
+		return formatter.format(uploadRequest.getExpiryDate().getTime());
 	}
 
 	@Override
@@ -838,7 +856,13 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
 				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(owner)))
+				.add("expirationDate", formatExpirationDate(owner, request.getUploadRequest()))
+				.add("ownerFirstName", owner.getFirstName())
+				.add("ownerLastName", owner.getLastName())
+				.add("ownerMail", owner.getMail())
+				.add("maxFileCount", request.getUploadRequest().getMaxFileCount().toString())
 				.add("password", request.getTemporaryPlainTextPassword());
+		
 		container.setRecipient(contact);
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
