@@ -185,7 +185,11 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		ProjectionList columns = Projections.projectionList()
 				.add(Projections.sum("doc.size"));
 		det.setProjection(columns);
-		return DataAccessUtils.longResult(findByCriteria(det));
+		List<DocumentEntry> result = findByCriteria(det);
+		if (result == null || result.isEmpty() || result.get(0) == null) {
+			return 0;
+		}
+		return DataAccessUtils.longResult(result);
 	}
 
 	/**
