@@ -765,7 +765,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			uploadPropositionUrl.append('/');
 		}
 		uploadPropositionUrl.append("uploadrequest/proposition");
-		uploadPropositionUrl.toString();
 		builder.getSubjectChain()
 				.add("actorRepresentation", proposition.getMail())
 				.add("subject", proposition.getSubject());
@@ -777,6 +776,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("body", proposition.getBody())
 				.add("firstName", proposition.getFirstName())
 				.add("lastName", proposition.getLastName())
+				.add("mail", proposition.getMail())
 				.add("uploadPropositionUrl", uploadPropositionUrl.toString());
 		container.setRecipient(recipient.getMail());
 		container.setFrom(getFromMailAddress(recipient));
