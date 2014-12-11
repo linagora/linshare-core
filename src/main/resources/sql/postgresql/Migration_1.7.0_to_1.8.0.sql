@@ -13,6 +13,10 @@ ALTER TABLE functionality_boolean ADD PRIMARY KEY(functionality_id);
 ALTER TABLE functionality_boolean DROP CONSTRAINT IF EXISTS FKfunctional171577;
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 
+ALTER TABLE mime_type DROP CONSTRAINT IF EXISTS unicity_type_and_policy;
+-- If this command failed, you should delete all mime_type to apply this constraint.
+ALTER TABLE mime_type ADD  CONSTRAINT unicity_type_and_policy  UNIQUE (mime_policy_id, mime_type);
+
 ALTER TABLE document
 	ADD COLUMN sha1sum varchar(255),
 	ADD COLUMN sha256sum varchar(255);
@@ -20,7 +24,9 @@ ALTER TABLE document
 ALTER TABLE entry
 	ADD COLUMN meta_data text;
 
-	-- system account for upload-request:
+UPDATE mail_content SET subject='L’invitation de dépôt: ${subject}, va expirer' WHERE id=71 OR id=72;
+
+-- system account for upload-request:
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id)
 	SELECT 3, 7, 'system-account-uploadrequest', now(),now(), 3, 'en', 'en', true, false, 1 FROM account
 	WHERE NOT EXISTS (SELECT id FROM account WHERE id=3) LIMIT 1;

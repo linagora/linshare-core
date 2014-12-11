@@ -13,6 +13,10 @@ ALTER TABLE functionality_boolean ADD PRIMARY KEY(functionality_id);
 ALTER TABLE functionality_boolean DROP CONSTRAINT IF EXISTS FKfunctional171577;
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 
+ALTER TABLE mime_type DROP CONSTRAINT IF EXISTS unicity_type_and_policy;
+-- If this command failed, you should delete all mime_type to apply this constraint.
+ALTER TABLE mime_type ADD  CONSTRAINT unicity_type_and_policy  UNIQUE (mime_policy_id, mime_type);
+
 -- system account for upload-request:
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id)
 	SELECT 3, 7, 'system-account-uploadrequest', now(),now(), 3, 'en', 'en', true, false, 1 FROM account

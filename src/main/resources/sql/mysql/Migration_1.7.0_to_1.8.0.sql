@@ -13,6 +13,9 @@ ALTER TABLE functionality_boolean ADD PRIMARY KEY(functionality_id);
 ALTER TABLE functionality_boolean DROP CONSTRAINT IF EXISTS FKfunctional171577;
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 
+-- If this command failed, you should delete all mime_type to apply this constraint.
+ALTER TABLE mime_type ADD  CONSTRAINT unicity_type_and_policy  UNIQUE (mime_policy_id, mime_type);
+
 ALTER TABLE document
 	ADD COLUMN sha1sum varchar(255),
 	ADD COLUMN sha256sum varchar(255);
@@ -20,11 +23,7 @@ ALTER TABLE document
 ALTER TABLE entry
 	ADD COLUMN meta_data text;
 
--- LinShare version
-INSERT INTO version (version) VALUES ('1.8.0');
-
 UPDATE mail_content set subject='L’invitation de dépôt: ${subject}, va expirer' WHERE id=71 OR id=72;
-
 
 -- system account for upload-request:
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id)
@@ -39,7 +38,14 @@ INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date,
 INSERT INTO users(account_id, first_name, last_name, mail, can_upload, comment, restricted, can_create_guest)
 	SELECT 4, null, 'Technical Account for upload proposition', 'linshare-noreply@linagora.com', false, '', false, false from users
 	WHERE NOT EXISTS (SELECT account_id FROM users WHERE account_id=4) LIMIT 1;
+
+ALTER TABLE upload_request ALTER COLUMN expiry_date DROP NOT NULL;
+ALTER TABLE upload_request ALTER COLUMN locale SET NOT NULL;
+UPDATE policy SET system = true where id=83;
 UPDATE users set mail ='linshare-noreply@linagora.com' where account_id=4 and mail = 'bart.simpson@int1.linshare.dev';
+-- LinShare version
+INSERT INTO version (version) VALUES ('1.8.0');
+
 
 COMMIT;
 SET AUTOCOMMIT=1;

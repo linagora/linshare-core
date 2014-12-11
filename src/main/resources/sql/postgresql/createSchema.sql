@@ -37,15 +37,15 @@ CREATE TABLE cookie (
     PRIMARY KEY (cookie_id));
 CREATE TABLE document (
   id               int8 NOT NULL, 
-  uuid            varchar(255) NOT NULL UNIQUE,
-  sha1sum            varchar(255),
-  sha256sum            varchar(255),
+  uuid            varchar(255) NOT NULL UNIQUE, 
   creation_date   timestamp(6) NOT NULL, 
   type            varchar(255) NOT NULL, 
   "size"          int8 NOT NULL, 
   thmb_uuid       varchar(255), 
   timestamp       bytea, 
   check_mime_type bool DEFAULT 'false' NOT NULL, 
+  sha1sum         varchar(255), 
+  sha256sum       varchar(255), 
   CONSTRAINT linshare_document_pkey 
     PRIMARY KEY (id));
 CREATE TABLE document_entry (
@@ -116,10 +116,10 @@ CREATE TABLE entry (
   creation_date     timestamp(6) NOT NULL, 
   modification_date timestamp(6) NOT NULL, 
   name              varchar(255) NOT NULL, 
-  meta_data           text,
   comment           text NOT NULL, 
   expiration_date   timestamp(6), 
   uuid              varchar(255) NOT NULL UNIQUE, 
+  meta_data         text, 
   PRIMARY KEY (id));
 CREATE TABLE functionality (
   id                       int8 NOT NULL, 
@@ -497,8 +497,8 @@ CREATE TABLE upload_proposition_filter (
   match              varchar(255) NOT NULL, 
   enable             bool NOT NULL, 
   creation_date      timestamp(6) NOT NULL, 
-  modification_date  timestamp(6) NOT NULL,
-  sort_order         int4 NOT NULL,
+  modification_date  timestamp(6) NOT NULL, 
+  sort_order         int4 NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE upload_proposition_rule (
   id                            int8 NOT NULL, 
@@ -602,7 +602,9 @@ CREATE TABLE mime_type (
   displayable       bool NOT NULL, 
   creation_date     timestamp(6) NOT NULL, 
   modification_date timestamp(6) NOT NULL, 
-  PRIMARY KEY (id));
+  PRIMARY KEY (id), 
+  CONSTRAINT unicity_type_and_policy 
+    UNIQUE (mime_policy_id, mime_type));
 CREATE TABLE account_permission (
   id                               int8 NOT NULL, 
   technical_account_permission_id int8 NOT NULL, 
@@ -772,7 +774,6 @@ ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req11781 FOREIGN KEY (d
 ALTER TABLE upload_proposition_rule ADD CONSTRAINT FKupload_pro672390 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
 ALTER TABLE upload_proposition_action ADD CONSTRAINT FKupload_pro841666 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
 ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
-ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingLis595962 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
@@ -786,6 +787,7 @@ ALTER TABLE account_permission ADD CONSTRAINT FKaccount_pe759382 FOREIGN KEY (te
 ALTER TABLE upload_request ADD CONSTRAINT FKupload_req220337 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE upload_request ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE upload_proposition_filter ADD CONSTRAINT FKupload_pro316142 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 
 CREATE INDEX welcome_texts_i 
   ON welcome_texts (messages_configuration_id);
