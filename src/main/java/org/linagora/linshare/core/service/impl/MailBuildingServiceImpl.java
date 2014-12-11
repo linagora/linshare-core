@@ -850,6 +850,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		builder.getGreetingsChain()
 				.add("firstName", contact)
 				.add("lastName", "");
+		//  Why first name and last name ?
 		builder.getBodyChain()
 				.add("firstName", owner.getFirstName())
 				.add("lastName", owner.getLastName())
@@ -862,7 +863,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("ownerMail", owner.getMail())
 				.add("maxFileCount", request.getUploadRequest().getMaxFileCount().toString())
 				.add("password", request.getTemporaryPlainTextPassword());
-		
 		container.setRecipient(contact);
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
@@ -915,6 +915,11 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("lastName", owner.getLastName())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
+				.add("expirationDate", formatExpirationDate(owner, request.getUploadRequest()))
+				.add("ownerFirstName", owner.getFirstName())
+				.add("ownerLastName", owner.getLastName())
+				.add("ownerMail", owner.getMail())
+				.add("maxFileCount", request.getUploadRequest().getMaxFileCount().toString())
 				.add("activationDate", formatActivationDate(owner, request.getUploadRequest()));
 		container.setRecipient(request.getContact().getMail());
 		container.setFrom(getFromMailAddress(owner));
