@@ -222,6 +222,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	public void resetPassword(String lsUuid) throws BusinessException {
 		Validate.notEmpty(lsUuid);
 		Guest guest = retrieveGuest(lsUuid);
+		// TODO : create a log entry for this action
 		GuestWithMetadata update = guestBusinessService.resetPassword(guest);
 		MailContainerWithRecipient mail = mailBuildingService
 				.buildResetPassword(update.getGuest(), update.getPassword());
