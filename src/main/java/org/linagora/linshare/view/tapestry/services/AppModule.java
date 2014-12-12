@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.view.tapestry.services;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -43,6 +44,7 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -78,6 +80,7 @@ import org.linagora.linshare.view.tapestry.objects.BusinessInformativeContentBun
 import org.linagora.linshare.view.tapestry.objects.HelpsASO;
 import org.linagora.linshare.view.tapestry.services.impl.AssetProtectionDispatcher;
 import org.linagora.linshare.view.tapestry.services.impl.BusinessMessagesManagementServiceImpl;
+import org.linagora.linshare.view.tapestry.services.impl.LocalFileResource;
 import org.linagora.linshare.view.tapestry.services.impl.MyMultipartDecoderImpl;
 import org.linagora.linshare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.linagora.linshare.view.tapestry.services.impl.UserAccessAuthentity;
@@ -403,4 +406,18 @@ public class AppModule
 			}
 		};
 	}
+
+	/**
+	 * Allow to externalize some translations files
+	 * Don't forget to create file.properties and matching locale files: file_fr.properties, etc.
+	 */
+	public void contributeComponentMessagesSource(OrderedConfiguration<Resource> configuration,
+			@InjectService("PropertiesSymbolProvider") PropertiesSymbolProvider provider) {
+		String translationsFileName = provider.valueForSymbol("linshare.translations.file");
+		if (translationsFileName != null && new File(translationsFileName).exists()) {
+			Resource resource = new LocalFileResource(translationsFileName);
+			configuration.add(translationsFileName, resource, "after:appCatalog");
+		}
+	}
+
 }
