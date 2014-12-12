@@ -35,14 +35,14 @@ CREATE TABLE cookie (
 CREATE TABLE document (
   id              bigint(8) NOT NULL AUTO_INCREMENT,
   uuid            varchar(255) NOT NULL UNIQUE,
-  sha1sum            varchar(255),
-  sha256sum            varchar(255),
   creation_date   timestamp NOT NULL,
   type            varchar(255) NOT NULL,
   `size`          bigint(8) NOT NULL,
   thmb_uuid       varchar(255),
   timestamp       blob,
   check_mime_type bit DEFAULT false NOT NULL,
+  sha1sum         varchar(255),
+  sha256sum       varchar(255),
   CONSTRAINT linshare_document_pkey
     PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE document_entry (
@@ -114,9 +114,9 @@ CREATE TABLE entry (
   modification_date timestamp NOT NULL,
   name              varchar(255) NOT NULL,
   comment           text NOT NULL,
-  meta_data           text,
   expiration_date   timestamp NULL,
   uuid              varchar(255) NOT NULL UNIQUE,
+  meta_data         text,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE functionality (
   id                      bigint(8) NOT NULL AUTO_INCREMENT,
@@ -341,11 +341,6 @@ CREATE TABLE contact (
   id   bigint(8) NOT NULL AUTO_INCREMENT,
   mail varchar(255) NOT NULL UNIQUE,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
-CREATE TABLE technical_account_permission_account (
-  technical_account_permission_id bigint(8) NOT NULL,
-  account_id                      bigint(8) NOT NULL,
-  PRIMARY KEY (technical_account_permission_id,
-  account_id)) CHARACTER SET UTF8;
 CREATE TABLE mail_notification (
   id                      bigint(8) NOT NULL AUTO_INCREMENT,
   configuration_policy_id bigint(8) NOT NULL,
@@ -434,13 +429,13 @@ CREATE TABLE upload_request (
   activation_date                 timestamp NOT NULL,
   creation_date                   timestamp NOT NULL,
   modification_date               timestamp NOT NULL,
-  notification_date               timestamp NOT NULL,
-  expiry_date                     timestamp NOT NULL,
+  notification_date               timestamp NULL,
+  expiry_date                     timestamp NULL,
   upload_proposition_request_uuid varchar(255),
   can_delete                      bit NOT NULL,
   can_close                       bit NOT NULL,
   can_edit_expiry_date            bit NOT NULL,
-  locale                          varchar(255),
+  locale                          varchar(255) NOT NULL,
   secured                         bit NOT NULL,
   mail_message_id                 varchar(255),
   PRIMARY KEY (id)) CHARACTER SET UTF8;
@@ -470,8 +465,8 @@ CREATE TABLE upload_request_history (
   event_type                      varchar(255) NOT NULL,
   uuid                            varchar(255) NOT NULL UNIQUE,
   activation_date                 timestamp NOT NULL,
-  expiry_date                     timestamp NOT NULL,
-  notification_date               timestamp NOT NULL,
+  expiry_date                     timestamp NULL,
+  notification_date               timestamp NULL,
   max_deposit_size                bigint(8),
   max_file_count                  int(4),
   max_file_size                   bigint(8),
@@ -524,8 +519,7 @@ CREATE TABLE upload_proposition_action (
 CREATE TABLE functionality_boolean (
   functionality_id bigint(8) NOT NULL,
   boolean_value    bit NOT NULL,
-  CONSTRAINT linshare_functionality_boolean_pkey
-    PRIMARY KEY (functionality_id)) CHARACTER SET UTF8;
+  PRIMARY KEY (functionality_id)) CHARACTER SET UTF8;
 CREATE TABLE statistic_event (
   id                bigint(8) NOT NULL AUTO_INCREMENT,
   event_type        int(4) NOT NULL,
@@ -544,7 +538,7 @@ CREATE TABLE statistic_event (
   creation_date     timestamp NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mailing_list (
-  id                  bigint(8) NOT NULL AUTO_INCREMENT,
+  id                 bigint(8) NOT NULL AUTO_INCREMENT,
   domain_abstract_id bigint(8) NOT NULL,
   user_id            bigint(8) NOT NULL,
   is_public          bool NOT NULL,
@@ -553,7 +547,8 @@ CREATE TABLE mailing_list (
   uuid               varchar(255) NOT NULL,
   creation_date      timestamp NOT NULL,
   modification_date  timestamp NOT NULL,
-  PRIMARY KEY (id));
+  PRIMARY KEY (id),
+  INDEX (uuid)) CHARACTER SET UTF8;
 CREATE TABLE mailing_list_contact (
   id                         bigint(8) NOT NULL AUTO_INCREMENT,
   mailing_list_id            bigint(8) NOT NULL,
@@ -623,104 +618,16 @@ CREATE TABLE mime_type (
   displayable       bit NOT NULL,
   creation_date     timestamp NOT NULL,
   modification_date timestamp NOT NULL,
-  PRIMARY KEY (id)) CHARACTER SET UTF8;
+  PRIMARY KEY (id),
+  CONSTRAINT unicity_type_and_policy
+    UNIQUE (mime_policy_id, mime_type)) CHARACTER SET UTF8;
 CREATE TABLE account_permission (
   id                              bigint(8) NOT NULL AUTO_INCREMENT,
   technical_account_permission_id bigint(8) NOT NULL,
   permission                      varchar(255) NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
-ALTER TABLE domain_abstract ADD INDEX fk449bc2ec4e302e7 (user_provider_id), ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE domain_abstract ADD INDEX fk449bc2ec59e1e332 (domain_policy_id), ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE domain_abstract ADD INDEX fk449bc2ec9083e725 (parent_id), ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE domain_abstract ADD INDEX fk449bc2ec126ff4f2 (messages_configuration_id), ADD CONSTRAINT fk449bc2ec126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE domain_access_rule ADD INDEX fkf75719ed3c036ccb (domain_id), ADD CONSTRAINT fkf75719ed3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE domain_access_rule ADD INDEX fkf75719ed85924e31 (domain_access_policy_id), ADD CONSTRAINT fkf75719ed85924e31 FOREIGN KEY (domain_access_policy_id) REFERENCES domain_access_policy (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE domain_policy ADD INDEX fk49c9a27c85924e31 (domain_access_policy_id), ADD CONSTRAINT fk49c9a27c85924e31 FOREIGN KEY (domain_access_policy_id) REFERENCES domain_access_policy (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality ADD INDEX fk7430c53a58fe5398 (policy_activation_id), ADD CONSTRAINT fk7430c53a58fe5398 FOREIGN KEY (policy_activation_id) REFERENCES policy (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality ADD INDEX fk7430c53a71796372 (policy_configuration_id), ADD CONSTRAINT fk7430c53a71796372 FOREIGN KEY (policy_configuration_id) REFERENCES policy (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality ADD INDEX fk7430c53a3c036ccb (domain_id), ADD CONSTRAINT fk7430c53a3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality_integer ADD INDEX fk8662133910439d2b (functionality_id), ADD CONSTRAINT fk8662133910439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality_string ADD INDEX fkb2a122b610439d2b (functionality_id), ADD CONSTRAINT fkb2a122b610439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality_unit ADD INDEX fk3ced016910439d2b (functionality_id), ADD CONSTRAINT fk3ced016910439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality_unit ADD INDEX fk3ced0169f329e0c9 (unit_id), ADD CONSTRAINT fk3ced0169f329e0c9 FOREIGN KEY (unit_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality_unit_boolean ADD INDEX fk3ced016910439d2c (functionality_id), ADD CONSTRAINT fk3ced016910439d2c FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality_unit_boolean ADD INDEX fk3ced0169f329e0d9 (unit_id), ADD CONSTRAINT fk3ced0169f329e0d9 FOREIGN KEY (unit_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE mail_subjects ADD INDEX fk1c97f3be126ff4f2 (messages_configuration_id), ADD CONSTRAINT fk1c97f3be126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE mail_templates ADD INDEX fkdd1b7f22126ff4f2 (messages_configuration_id), ADD CONSTRAINT fkdd1b7f22126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE share_expiry_rules ADD INDEX fkfda1673c3c036ccb (domain_id), ADD CONSTRAINT fkfda1673c3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE signature ADD INDEX fk81c9a1a7c0bbd6f (document_id), ADD CONSTRAINT fk81c9a1a7c0bbd6f FOREIGN KEY (document_id) REFERENCES document (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE user_provider_ldap ADD INDEX fk409cafb2372a0802 (domain_pattern_id), ADD CONSTRAINT fk409cafb2372a0802 FOREIGN KEY (domain_pattern_id) REFERENCES domain_pattern (domain_pattern_id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE user_provider_ldap ADD INDEX fk409cafb23834018 (ldap_connection_id), ADD CONSTRAINT fk409cafb23834018 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (ldap_connection_id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE welcome_texts ADD INDEX fk36a0c738126ff4f2 (messages_configuration_id), ADD CONSTRAINT fk36a0c738126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE thread ADD INDEX inheritance_account_thread (account_id), ADD CONSTRAINT inheritance_account_thread FOREIGN KEY (account_id) REFERENCES account (id);
-ALTER TABLE document_entry ADD INDEX FKdocument_e594117 (document_id), ADD CONSTRAINT FKdocument_e594117 FOREIGN KEY (document_id) REFERENCES document (id);
-ALTER TABLE share_entry ADD INDEX FKshare_entr708932 (document_entry_id), ADD CONSTRAINT FKshare_entr708932 FOREIGN KEY (document_entry_id) REFERENCES document_entry (entry_id);
-ALTER TABLE anonymous_share_entry ADD INDEX FKanonymous_138106 (document_entry_id), ADD CONSTRAINT FKanonymous_138106 FOREIGN KEY (document_entry_id) REFERENCES document_entry (entry_id);
-ALTER TABLE recipient_favourite ADD INDEX FKrecipient_90791 (user_id), ADD CONSTRAINT FKrecipient_90791 FOREIGN KEY (user_id) REFERENCES users (account_id);
-ALTER TABLE anonymous_share_entry ADD INDEX FKanonymous_732508 (anonymous_url_id), ADD CONSTRAINT FKanonymous_732508 FOREIGN KEY (anonymous_url_id) REFERENCES anonymous_url (id);
-ALTER TABLE share_entry ADD INDEX FKshare_entr87036 (recipient_id), ADD CONSTRAINT FKshare_entr87036 FOREIGN KEY (recipient_id) REFERENCES account (id);
-ALTER TABLE account ADD INDEX FKaccount400616 (domain_id), ADD CONSTRAINT FKaccount400616 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
-ALTER TABLE ldap_attribute ADD INDEX FKldap_attri687153 (domain_pattern_id), ADD CONSTRAINT FKldap_attri687153 FOREIGN KEY (domain_pattern_id) REFERENCES domain_pattern (domain_pattern_id);
-ALTER TABLE allowed_contact ADD INDEX FKallowed_co409962 (account_id), ADD CONSTRAINT FKallowed_co409962 FOREIGN KEY (account_id) REFERENCES users (account_id);
-ALTER TABLE allowed_contact ADD INDEX FKallowed_co620678 (contact_id), ADD CONSTRAINT FKallowed_co620678 FOREIGN KEY (contact_id) REFERENCES users (account_id);
-ALTER TABLE account ADD INDEX FKaccount487511 (owner_id), ADD CONSTRAINT FKaccount487511 FOREIGN KEY (owner_id) REFERENCES account (id);
-ALTER TABLE users ADD INDEX FKusers71760 (account_id), ADD CONSTRAINT FKusers71760 FOREIGN KEY (account_id) REFERENCES account (id);
-ALTER TABLE thread_member ADD INDEX FKthread_mem280144 (thread_id), ADD CONSTRAINT FKthread_mem280144 FOREIGN KEY (thread_id) REFERENCES thread (account_id);
-ALTER TABLE thread_member ADD INDEX FKthread_mem565048 (user_id), ADD CONSTRAINT FKthread_mem565048 FOREIGN KEY (user_id) REFERENCES users (account_id);
-ALTER TABLE technical_account_permission_domain_abstract ADD INDEX FKtechnical_303831 (technical_account_permission_id), ADD CONSTRAINT FKtechnical_303831 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
-ALTER TABLE technical_account_permission_domain_abstract ADD INDEX FKtechnical_231219 (domain_abstract_id), ADD CONSTRAINT FKtechnical_231219 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE anonymous_share_entry ADD INDEX FKanonymous_621478 (entry_id), ADD CONSTRAINT FKanonymous_621478 FOREIGN KEY (entry_id) REFERENCES entry (id);
-ALTER TABLE document_entry ADD INDEX FKdocument_e19140 (entry_id), ADD CONSTRAINT FKdocument_e19140 FOREIGN KEY (entry_id) REFERENCES entry (id);
-ALTER TABLE share_entry ADD INDEX FKshare_entr50652 (entry_id), ADD CONSTRAINT FKshare_entr50652 FOREIGN KEY (entry_id) REFERENCES entry (id);
-ALTER TABLE thread_entry ADD INDEX FKthread_ent715634 (entry_id), ADD CONSTRAINT FKthread_ent715634 FOREIGN KEY (entry_id) REFERENCES entry (id);
-ALTER TABLE entry ADD INDEX FKentry500391 (owner_id), ADD CONSTRAINT FKentry500391 FOREIGN KEY (owner_id) REFERENCES account (id);
-ALTER TABLE anonymous_url ADD INDEX FKanonymous_877695 (contact_id), ADD CONSTRAINT FKanonymous_877695 FOREIGN KEY (contact_id) REFERENCES contact (id);
-ALTER TABLE signature ADD INDEX FKsignature417918 (owner_id), ADD CONSTRAINT FKsignature417918 FOREIGN KEY (owner_id) REFERENCES account (id);
-ALTER TABLE technical_account_permission_account ADD INDEX FKtechnical_69967 (technical_account_permission_id), ADD CONSTRAINT FKtechnical_69967 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
-ALTER TABLE technical_account_permission_account ADD INDEX FKtechnical_622557 (account_id), ADD CONSTRAINT FKtechnical_622557 FOREIGN KEY (account_id) REFERENCES account (id);
-ALTER TABLE account ADD INDEX FKaccount693567 (technical_account_permission_id), ADD CONSTRAINT FKaccount693567 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
-ALTER TABLE thread_entry ADD INDEX FKthread_ent140657 (document_id), ADD CONSTRAINT FKthread_ent140657 FOREIGN KEY (document_id) REFERENCES document (id);
-ALTER TABLE mail_notification ADD INDEX FKmail_notif244118 (activation_policy_id), ADD CONSTRAINT FKmail_notif244118 FOREIGN KEY (activation_policy_id) REFERENCES policy (id);
-ALTER TABLE mail_notification ADD INDEX FKmail_notif777760 (domain_abstract_id), ADD CONSTRAINT FKmail_notif777760 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mail_layout ADD INDEX FKmail_layou627738 (domain_abstract_id), ADD CONSTRAINT FKmail_layou627738 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mail_footer ADD INDEX FKmail_foote767112 (domain_abstract_id), ADD CONSTRAINT FKmail_foote767112 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mail_footer_lang ADD INDEX FKmail_foote801249 (mail_footer_id), ADD CONSTRAINT FKmail_foote801249 FOREIGN KEY (mail_footer_id) REFERENCES mail_footer (id);
-ALTER TABLE domain_abstract ADD INDEX FKdomain_abs160138 (mailconfig_id), ADD CONSTRAINT FKdomain_abs160138 FOREIGN KEY (mailconfig_id) REFERENCES mail_config (id);
-ALTER TABLE mail_config ADD INDEX FKmail_confi697783 (domain_abstract_id), ADD CONSTRAINT FKmail_confi697783 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mail_footer_lang ADD INDEX FKmail_foote321102 (mail_config_id), ADD CONSTRAINT FKmail_foote321102 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
-ALTER TABLE mail_content ADD INDEX FKmail_conte385227 (domain_abstract_id), ADD CONSTRAINT FKmail_conte385227 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mail_content_lang ADD INDEX FKmail_conte910199 (mail_config_id), ADD CONSTRAINT FKmail_conte910199 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
-ALTER TABLE mail_content_lang ADD INDEX FKmail_conte33952 (mail_content_id), ADD CONSTRAINT FKmail_conte33952 FOREIGN KEY (mail_content_id) REFERENCES mail_content (id);
-ALTER TABLE mail_config ADD INDEX FKmail_confi541299 (mail_layout_html_id), ADD CONSTRAINT FKmail_confi541299 FOREIGN KEY (mail_layout_html_id) REFERENCES mail_layout (id);
-ALTER TABLE mail_config ADD INDEX FKmail_confi612314 (mail_layout_text_id), ADD CONSTRAINT FKmail_confi612314 FOREIGN KEY (mail_layout_text_id) REFERENCES mail_layout (id);
-ALTER TABLE upload_request_url ADD INDEX FKupload_req833645 (upload_request_id), ADD CONSTRAINT FKupload_req833645 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
-ALTER TABLE upload_request ADD INDEX FKupload_req916400 (upload_request_group_id), ADD CONSTRAINT FKupload_req916400 FOREIGN KEY (upload_request_group_id) REFERENCES upload_request_group (id);
-ALTER TABLE upload_request_url ADD INDEX FKupload_req601912 (contact_id), ADD CONSTRAINT FKupload_req601912 FOREIGN KEY (contact_id) REFERENCES contact (id);
-ALTER TABLE upload_request_history ADD INDEX FKupload_req678768 (upload_request_id), ADD CONSTRAINT FKupload_req678768 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
-ALTER TABLE upload_request_entry ADD INDEX FKupload_req220981 (upload_request_id), ADD CONSTRAINT FKupload_req220981 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
-ALTER TABLE upload_request_entry ADD INDEX FKupload_req254795 (entry_id), ADD CONSTRAINT FKupload_req254795 FOREIGN KEY (entry_id) REFERENCES entry (id);
-ALTER TABLE upload_request_entry ADD INDEX FKupload_req11781 (document_entry_entry_id), ADD CONSTRAINT FKupload_req11781 FOREIGN KEY (document_entry_entry_id) REFERENCES document_entry (entry_id);
-ALTER TABLE upload_proposition_rule ADD INDEX FKupload_pro672390 (upload_proposition_filter_id), ADD CONSTRAINT FKupload_pro672390 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
-ALTER TABLE upload_proposition_action ADD INDEX FKupload_pro841666 (upload_proposition_filter_id), ADD CONSTRAINT FKupload_pro841666 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
-ALTER TABLE functionality ADD INDEX FKfunctional788903 (policy_delegation_id), ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
-ALTER TABLE functionality_boolean ADD INDEX FKfunctional171577 (functionality_id), ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
-ALTER TABLE mailing_list ADD INDEX FKmailing_li478123 (user_id), ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
-ALTER TABLE mailing_list ADD INDEX FKmailing_li335663 (domain_abstract_id), ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mailing_list_contact ADD INDEX FKMailingLis595962 (mailing_list_id), ADD CONSTRAINT FKMailingLis595962 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
-ALTER TABLE mail_notification ADD INDEX FKmail_notif791766 (configuration_policy_id), ADD CONSTRAINT FKmail_notif791766 FOREIGN KEY (configuration_policy_id) REFERENCES policy (id);
-ALTER TABLE mime_type ADD INDEX FKmime_type145742 (mime_policy_id), ADD CONSTRAINT FKmime_type145742 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
-ALTER TABLE mime_policy ADD INDEX FKmime_polic613419 (domain_id), ADD CONSTRAINT FKmime_polic613419 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
-ALTER TABLE domain_abstract ADD INDEX FKdomain_abs809928 (mime_policy_id), ADD CONSTRAINT FKdomain_abs809928 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
-ALTER TABLE account_permission ADD INDEX FKaccount_pe759382 (technical_account_permission_id), ADD CONSTRAINT FKaccount_pe759382 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
-ALTER TABLE upload_request ADD INDEX FKupload_req220337 (account_id), ADD CONSTRAINT FKupload_req220337 FOREIGN KEY (account_id) REFERENCES account (id);
-ALTER TABLE upload_request ADD INDEX FKupload_req840249 (domain_abstract_id), ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE upload_proposition_filter ADD INDEX FKupload_pro316142 (domain_abstract_id), ADD CONSTRAINT FKupload_pro316142 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
-CREATE UNIQUE INDEX account_ls_uuid
-  ON account (ls_uuid);
-CREATE INDEX account_account_type
-  ON account (account_type);
 CREATE INDEX cookie2
   ON cookie (identifier);
 CREATE INDEX cookie_i
@@ -807,9 +714,92 @@ CREATE INDEX unit_index
   ON unit (id);
 CREATE INDEX user_provider_ldap_index
   ON user_provider_ldap (id);
+ALTER TABLE domain_abstract ADD INDEX fk449bc2ec4e302e7 (user_provider_id), ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE domain_abstract ADD INDEX fk449bc2ec59e1e332 (domain_policy_id), ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE domain_abstract ADD INDEX fk449bc2ec9083e725 (parent_id), ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE domain_access_rule ADD INDEX fkf75719ed3c036ccb (domain_id), ADD CONSTRAINT fkf75719ed3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE domain_access_rule ADD INDEX fkf75719ed85924e31 (domain_access_policy_id), ADD CONSTRAINT fkf75719ed85924e31 FOREIGN KEY (domain_access_policy_id) REFERENCES domain_access_policy (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE domain_policy ADD INDEX fk49c9a27c85924e31 (domain_access_policy_id), ADD CONSTRAINT fk49c9a27c85924e31 FOREIGN KEY (domain_access_policy_id) REFERENCES domain_access_policy (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality ADD INDEX fk7430c53a58fe5398 (policy_activation_id), ADD CONSTRAINT fk7430c53a58fe5398 FOREIGN KEY (policy_activation_id) REFERENCES policy (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality ADD INDEX fk7430c53a71796372 (policy_configuration_id), ADD CONSTRAINT fk7430c53a71796372 FOREIGN KEY (policy_configuration_id) REFERENCES policy (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality ADD INDEX fk7430c53a3c036ccb (domain_id), ADD CONSTRAINT fk7430c53a3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_integer ADD INDEX fk8662133910439d2b (functionality_id), ADD CONSTRAINT fk8662133910439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_string ADD INDEX fkb2a122b610439d2b (functionality_id), ADD CONSTRAINT fkb2a122b610439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_unit ADD INDEX fk3ced016910439d2b (functionality_id), ADD CONSTRAINT fk3ced016910439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_unit ADD INDEX fk3ced0169f329e0c9 (unit_id), ADD CONSTRAINT fk3ced0169f329e0c9 FOREIGN KEY (unit_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_unit_boolean ADD INDEX fk3ced016910439d2c (functionality_id), ADD CONSTRAINT fk3ced016910439d2c FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_unit_boolean ADD INDEX fk3ced0169f329e0d9 (unit_id), ADD CONSTRAINT fk3ced0169f329e0d9 FOREIGN KEY (unit_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE share_expiry_rules ADD INDEX fkfda1673c3c036ccb (domain_id), ADD CONSTRAINT fkfda1673c3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE signature ADD INDEX fk81c9a1a7c0bbd6f (document_id), ADD CONSTRAINT fk81c9a1a7c0bbd6f FOREIGN KEY (document_id) REFERENCES document (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE user_provider_ldap ADD INDEX fk409cafb2372a0802 (domain_pattern_id), ADD CONSTRAINT fk409cafb2372a0802 FOREIGN KEY (domain_pattern_id) REFERENCES domain_pattern (domain_pattern_id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE user_provider_ldap ADD INDEX fk409cafb23834018 (ldap_connection_id), ADD CONSTRAINT fk409cafb23834018 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (ldap_connection_id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE thread ADD INDEX inheritance_account_thread (account_id), ADD CONSTRAINT inheritance_account_thread FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE document_entry ADD INDEX FKdocument_e594117 (document_id), ADD CONSTRAINT FKdocument_e594117 FOREIGN KEY (document_id) REFERENCES document (id);
+ALTER TABLE share_entry ADD INDEX FKshare_entr708932 (document_entry_id), ADD CONSTRAINT FKshare_entr708932 FOREIGN KEY (document_entry_id) REFERENCES document_entry (entry_id);
+ALTER TABLE anonymous_share_entry ADD INDEX FKanonymous_138106 (document_entry_id), ADD CONSTRAINT FKanonymous_138106 FOREIGN KEY (document_entry_id) REFERENCES document_entry (entry_id);
+ALTER TABLE recipient_favourite ADD INDEX FKrecipient_90791 (user_id), ADD CONSTRAINT FKrecipient_90791 FOREIGN KEY (user_id) REFERENCES users (account_id);
+ALTER TABLE anonymous_share_entry ADD INDEX FKanonymous_732508 (anonymous_url_id), ADD CONSTRAINT FKanonymous_732508 FOREIGN KEY (anonymous_url_id) REFERENCES anonymous_url (id);
+ALTER TABLE share_entry ADD INDEX FKshare_entr87036 (recipient_id), ADD CONSTRAINT FKshare_entr87036 FOREIGN KEY (recipient_id) REFERENCES account (id);
+ALTER TABLE account ADD INDEX FKaccount400616 (domain_id), ADD CONSTRAINT FKaccount400616 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
+ALTER TABLE ldap_attribute ADD INDEX FKldap_attri687153 (domain_pattern_id), ADD CONSTRAINT FKldap_attri687153 FOREIGN KEY (domain_pattern_id) REFERENCES domain_pattern (domain_pattern_id);
+ALTER TABLE allowed_contact ADD INDEX FKallowed_co409962 (account_id), ADD CONSTRAINT FKallowed_co409962 FOREIGN KEY (account_id) REFERENCES users (account_id);
+ALTER TABLE allowed_contact ADD INDEX FKallowed_co620678 (contact_id), ADD CONSTRAINT FKallowed_co620678 FOREIGN KEY (contact_id) REFERENCES users (account_id);
+ALTER TABLE account ADD INDEX FKaccount487511 (owner_id), ADD CONSTRAINT FKaccount487511 FOREIGN KEY (owner_id) REFERENCES account (id);
+ALTER TABLE users ADD INDEX FKusers71760 (account_id), ADD CONSTRAINT FKusers71760 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE thread_member ADD INDEX FKthread_mem280144 (thread_id), ADD CONSTRAINT FKthread_mem280144 FOREIGN KEY (thread_id) REFERENCES thread (account_id);
+ALTER TABLE thread_member ADD INDEX FKthread_mem565048 (user_id), ADD CONSTRAINT FKthread_mem565048 FOREIGN KEY (user_id) REFERENCES users (account_id);
+ALTER TABLE technical_account_permission_domain_abstract ADD INDEX FKtechnical_303831 (technical_account_permission_id), ADD CONSTRAINT FKtechnical_303831 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
+ALTER TABLE technical_account_permission_domain_abstract ADD INDEX FKtechnical_231219 (domain_abstract_id), ADD CONSTRAINT FKtechnical_231219 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE anonymous_share_entry ADD INDEX FKanonymous_621478 (entry_id), ADD CONSTRAINT FKanonymous_621478 FOREIGN KEY (entry_id) REFERENCES entry (id);
+ALTER TABLE document_entry ADD INDEX FKdocument_e19140 (entry_id), ADD CONSTRAINT FKdocument_e19140 FOREIGN KEY (entry_id) REFERENCES entry (id);
+ALTER TABLE share_entry ADD INDEX FKshare_entr50652 (entry_id), ADD CONSTRAINT FKshare_entr50652 FOREIGN KEY (entry_id) REFERENCES entry (id);
+ALTER TABLE thread_entry ADD INDEX FKthread_ent715634 (entry_id), ADD CONSTRAINT FKthread_ent715634 FOREIGN KEY (entry_id) REFERENCES entry (id);
+ALTER TABLE entry ADD INDEX FKentry500391 (owner_id), ADD CONSTRAINT FKentry500391 FOREIGN KEY (owner_id) REFERENCES account (id);
+ALTER TABLE anonymous_url ADD INDEX FKanonymous_877695 (contact_id), ADD CONSTRAINT FKanonymous_877695 FOREIGN KEY (contact_id) REFERENCES contact (id);
+ALTER TABLE signature ADD INDEX FKsignature417918 (owner_id), ADD CONSTRAINT FKsignature417918 FOREIGN KEY (owner_id) REFERENCES account (id);
+ALTER TABLE account ADD INDEX FKaccount693567 (technical_account_permission_id), ADD CONSTRAINT FKaccount693567 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
+ALTER TABLE thread_entry ADD INDEX FKthread_ent140657 (document_id), ADD CONSTRAINT FKthread_ent140657 FOREIGN KEY (document_id) REFERENCES document (id);
+ALTER TABLE mail_notification ADD INDEX FKmail_notif244118 (activation_policy_id), ADD CONSTRAINT FKmail_notif244118 FOREIGN KEY (activation_policy_id) REFERENCES policy (id);
+ALTER TABLE mail_notification ADD INDEX FKmail_notif777760 (domain_abstract_id), ADD CONSTRAINT FKmail_notif777760 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_layout ADD INDEX FKmail_layou627738 (domain_abstract_id), ADD CONSTRAINT FKmail_layou627738 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_footer ADD INDEX FKmail_foote767112 (domain_abstract_id), ADD CONSTRAINT FKmail_foote767112 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_footer_lang ADD INDEX FKmail_foote801249 (mail_footer_id), ADD CONSTRAINT FKmail_foote801249 FOREIGN KEY (mail_footer_id) REFERENCES mail_footer (id);
+ALTER TABLE domain_abstract ADD INDEX FKdomain_abs160138 (mailconfig_id), ADD CONSTRAINT FKdomain_abs160138 FOREIGN KEY (mailconfig_id) REFERENCES mail_config (id);
+ALTER TABLE mail_config ADD INDEX FKmail_confi697783 (domain_abstract_id), ADD CONSTRAINT FKmail_confi697783 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_footer_lang ADD INDEX FKmail_foote321102 (mail_config_id), ADD CONSTRAINT FKmail_foote321102 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
+ALTER TABLE mail_content ADD INDEX FKmail_conte385227 (domain_abstract_id), ADD CONSTRAINT FKmail_conte385227 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_content_lang ADD INDEX FKmail_conte910199 (mail_config_id), ADD CONSTRAINT FKmail_conte910199 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
+ALTER TABLE mail_content_lang ADD INDEX FKmail_conte33952 (mail_content_id), ADD CONSTRAINT FKmail_conte33952 FOREIGN KEY (mail_content_id) REFERENCES mail_content (id);
+ALTER TABLE mail_config ADD INDEX FKmail_confi541299 (mail_layout_html_id), ADD CONSTRAINT FKmail_confi541299 FOREIGN KEY (mail_layout_html_id) REFERENCES mail_layout (id);
+ALTER TABLE mail_config ADD INDEX FKmail_confi612314 (mail_layout_text_id), ADD CONSTRAINT FKmail_confi612314 FOREIGN KEY (mail_layout_text_id) REFERENCES mail_layout (id);
+ALTER TABLE upload_request_url ADD INDEX FKupload_req833645 (upload_request_id), ADD CONSTRAINT FKupload_req833645 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
+ALTER TABLE upload_request ADD INDEX FKupload_req916400 (upload_request_group_id), ADD CONSTRAINT FKupload_req916400 FOREIGN KEY (upload_request_group_id) REFERENCES upload_request_group (id);
+ALTER TABLE upload_request_url ADD INDEX FKupload_req601912 (contact_id), ADD CONSTRAINT FKupload_req601912 FOREIGN KEY (contact_id) REFERENCES contact (id);
+ALTER TABLE upload_request_history ADD INDEX FKupload_req678768 (upload_request_id), ADD CONSTRAINT FKupload_req678768 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
+ALTER TABLE upload_request_entry ADD INDEX FKupload_req220981 (upload_request_id), ADD CONSTRAINT FKupload_req220981 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
+ALTER TABLE upload_request_entry ADD INDEX FKupload_req254795 (entry_id), ADD CONSTRAINT FKupload_req254795 FOREIGN KEY (entry_id) REFERENCES entry (id);
+ALTER TABLE upload_request_entry ADD INDEX FKupload_req11781 (document_entry_entry_id), ADD CONSTRAINT FKupload_req11781 FOREIGN KEY (document_entry_entry_id) REFERENCES document_entry (entry_id);
+ALTER TABLE upload_proposition_rule ADD INDEX FKupload_pro672390 (upload_proposition_filter_id), ADD CONSTRAINT FKupload_pro672390 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
+ALTER TABLE upload_proposition_action ADD INDEX FKupload_pro841666 (upload_proposition_filter_id), ADD CONSTRAINT FKupload_pro841666 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
+ALTER TABLE functionality ADD INDEX FKfunctional788903 (policy_delegation_id), ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
+ALTER TABLE mailing_list ADD INDEX FKmailing_li478123 (user_id), ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
+ALTER TABLE mailing_list ADD INDEX FKmailing_li335663 (domain_abstract_id), ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mailing_list_contact ADD INDEX FKMailingLis595962 (mailing_list_id), ADD CONSTRAINT FKMailingLis595962 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
+ALTER TABLE upload_request_template ADD INDEX FKupload_req618325 (account_id), ADD CONSTRAINT FKupload_req618325 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE mail_notification ADD INDEX FKmail_notif791766 (configuration_policy_id), ADD CONSTRAINT FKmail_notif791766 FOREIGN KEY (configuration_policy_id) REFERENCES policy (id);
+ALTER TABLE upload_proposition ADD INDEX FKupload_pro226633 (domain_abstract_id), ADD CONSTRAINT FKupload_pro226633 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mime_type ADD INDEX FKmime_type145742 (mime_policy_id), ADD CONSTRAINT FKmime_type145742 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
+ALTER TABLE mime_policy ADD INDEX FKmime_polic613419 (domain_id), ADD CONSTRAINT FKmime_polic613419 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
+ALTER TABLE domain_abstract ADD INDEX FKdomain_abs809928 (mime_policy_id), ADD CONSTRAINT FKdomain_abs809928 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
+ALTER TABLE account_permission ADD INDEX FKaccount_pe759382 (technical_account_permission_id), ADD CONSTRAINT FKaccount_pe759382 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
+ALTER TABLE upload_request ADD INDEX FKupload_req220337 (account_id), ADD CONSTRAINT FKupload_req220337 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE upload_request ADD INDEX FKupload_req840249 (domain_abstract_id), ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE upload_proposition_filter ADD INDEX FKupload_pro316142 (domain_abstract_id), ADD CONSTRAINT FKupload_pro316142 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE functionality_boolean ADD INDEX FKfunctional171577 (functionality_id), ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
+
+ALTER TABLE domain_abstract ADD INDEX fk449bc2ec126ff4f2 (messages_configuration_id), ADD CONSTRAINT fk449bc2ec126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE welcome_texts ADD INDEX fk36a0c738126ff4f2 (messages_configuration_id), ADD CONSTRAINT fk36a0c738126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE mail_subjects ADD INDEX fk1c97f3be126ff4f2 (messages_configuration_id), ADD CONSTRAINT fk1c97f3be126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE mail_templates ADD INDEX fkdd1b7f22126ff4f2 (messages_configuration_id), ADD CONSTRAINT fkdd1b7f22126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
 CREATE INDEX welcome_texts_i
   ON welcome_texts (messages_configuration_id);
-CREATE INDEX mailing_list_index
-  ON mailing_list (uuid);
-CREATE INDEX mailing_list_contact_index
-  ON mailing_list_contact (uuid);

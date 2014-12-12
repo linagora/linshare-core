@@ -29,7 +29,14 @@ sed -i -e 's/tinyint[(1)]*/bit/g' output.sql
 # escaping keywords
 sed -i -e 's/regexp/`regexp`/g' output.sql
 sed -i -e 's/write/`write`/g' output.sql
+sed -i -e 's/match  /`match`/g' output.sql
 sed -i -e 's/ ENGINE=InnoDB//g' output.sql
+
+
+# To be fixed
+sed -i -e 's/description               text NOT NULL/description               varchar(255) NOT NULL/' output.sql
+sed -i -e 's/version text NOT NULL UNIQUE/version varchar(255) NOT NULL UNIQUE/' output.sql
+sed -i -e 's/is_public          bit NOT NULL/is_public          bool NOT NULL/' output.sql
 
 # cleanup
 sed -i -e 's///g' output.sql
