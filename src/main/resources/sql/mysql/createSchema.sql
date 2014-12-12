@@ -1,22 +1,22 @@
 SET storage_engine=INNODB;
 CREATE TABLE account (
-  id                              bigint(8) NOT NULL AUTO_INCREMENT, 
-  domain_id                       bigint(8) NOT NULL, 
-  technical_account_permission_id bigint(8), 
-  owner_id                        bigint(8), 
-  ls_uuid                         varchar(255) NOT NULL, 
-  creation_date                   timestamp NOT NULL, 
-  modification_date               timestamp NOT NULL, 
-  role_id                         int(4) NOT NULL, 
-  locale                          varchar(255) NOT NULL, 
-  external_mail_locale            varchar(255) NOT NULL, 
-  enable                          bit NOT NULL, 
-  account_type                    int(4) NOT NULL, 
-  password                        varchar(255), 
-  destroyed                       bit NOT NULL, 
-  CONSTRAINT account_pkey 
-    PRIMARY KEY (id), 
-  UNIQUE INDEX (ls_uuid), 
+  id                              bigint(8) NOT NULL AUTO_INCREMENT,
+  domain_id                       bigint(8) NOT NULL,
+  technical_account_permission_id bigint(8),
+  owner_id                        bigint(8),
+  ls_uuid                         varchar(255) NOT NULL,
+  creation_date                   timestamp NOT NULL,
+  modification_date               timestamp NOT NULL,
+  role_id                         int(4) NOT NULL,
+  locale                          varchar(255) NOT NULL,
+  external_mail_locale            varchar(255) NOT NULL,
+  enable                          bit NOT NULL,
+  account_type                    int(4) NOT NULL,
+  password                        varchar(255),
+  destroyed                       bit NOT NULL,
+  CONSTRAINT account_pkey
+    PRIMARY KEY (id),
+  UNIQUE INDEX (ls_uuid),
   INDEX (account_type)) CHARACTER SET UTF8;
 CREATE TABLE anonymous_share_entry (
   entry_id          bigint(8) NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE document (
   `size`          bigint(8) NOT NULL,
   thmb_uuid       varchar(255),
   timestamp       blob,
-  check_mime_type bit DEFAULT false NOT NULL, 
+  check_mime_type bit DEFAULT false NOT NULL,
   CONSTRAINT linshare_document_pkey
     PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE document_entry (
@@ -53,24 +53,24 @@ CREATE TABLE document_entry (
   CONSTRAINT `unique document entry`
     UNIQUE (entry_id, document_id)) CHARACTER SET UTF8;
 CREATE TABLE domain_abstract (
-  id                        bigint(8) NOT NULL AUTO_INCREMENT, 
-  mime_policy_id            bigint(8), 
-  mailconfig_id             bigint(8), 
-  type                      int(4) NOT NULL, 
-  identifier                varchar(255) NOT NULL, 
-  label                     varchar(255) NOT NULL, 
-  enable                    bit NOT NULL, 
-  template                  bit NOT NULL, 
-  description               varchar(255) NOT NULL, 
-  default_role              int(4) NOT NULL, 
-  default_locale            varchar(255), 
-  used_space                bigint(8) NOT NULL, 
-  user_provider_id          bigint(8), 
-  domain_policy_id          bigint(8) NOT NULL, 
-  parent_id                 bigint(8), 
-  messages_configuration_id bigint(8) NOT NULL, 
-  auth_show_order           bigint(8) NOT NULL, 
-  CONSTRAINT linshare_domain_abstract_pkey 
+  id                        bigint(8) NOT NULL AUTO_INCREMENT,
+  mime_policy_id            bigint(8),
+  mailconfig_id             bigint(8),
+  type                      int(4) NOT NULL,
+  identifier                varchar(255) NOT NULL,
+  label                     varchar(255) NOT NULL,
+  enable                    bit NOT NULL,
+  template                  bit NOT NULL,
+  description               varchar(255) NOT NULL,
+  default_role              int(4) NOT NULL,
+  default_locale            varchar(255),
+  used_space                bigint(8) NOT NULL,
+  user_provider_id          bigint(8),
+  domain_policy_id          bigint(8) NOT NULL,
+  parent_id                 bigint(8),
+  messages_configuration_id bigint(8) NOT NULL,
+  auth_show_order           bigint(8) NOT NULL,
+  CONSTRAINT linshare_domain_abstract_pkey
     PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE domain_access_policy (
   id bigint(8) NOT NULL AUTO_INCREMENT,
@@ -119,21 +119,21 @@ CREATE TABLE entry (
   uuid              varchar(255) NOT NULL UNIQUE,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE functionality (
-  id                      bigint(8) NOT NULL AUTO_INCREMENT, 
-  system                  bit NOT NULL, 
-  identifier              varchar(255) NOT NULL, 
-  policy_activation_id    bigint(8) NOT NULL, 
-  policy_configuration_id bigint(8) NOT NULL, 
-  policy_delegation_id    bigint(8), 
-  domain_id               bigint(8) NOT NULL, 
-  param                   bit DEFAULT false NOT NULL, 
-  parent_identifier       varchar(255), 
-  CONSTRAINT linshare_functionality_pkey 
+  id                      bigint(8) NOT NULL AUTO_INCREMENT,
+  system                  bit NOT NULL,
+  identifier              varchar(255) NOT NULL,
+  policy_activation_id    bigint(8) NOT NULL,
+  policy_configuration_id bigint(8) NOT NULL,
+  policy_delegation_id    bigint(8),
+  domain_id               bigint(8) NOT NULL,
+  param                   bit DEFAULT false NOT NULL,
+  parent_identifier       varchar(255),
+  CONSTRAINT linshare_functionality_pkey
     PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE functionality_integer (
-  functionality_id bigint(8) NOT NULL, 
-  integer_value    int(4), 
-  CONSTRAINT linshare_functionality_integer_pkey 
+  functionality_id bigint(8) NOT NULL,
+  integer_value    int(4),
+  CONSTRAINT linshare_functionality_integer_pkey
     PRIMARY KEY (functionality_id)) CHARACTER SET UTF8;
 CREATE TABLE functionality_string (
   functionality_id bigint(8) NOT NULL,
@@ -332,216 +332,216 @@ CREATE TABLE technical_account_permission_domain_abstract (
   PRIMARY KEY (technical_account_permission_id,
   domain_abstract_id)) CHARACTER SET UTF8;
 CREATE TABLE technical_account_permission (
-  id                bigint(8) NOT NULL AUTO_INCREMENT, 
-  uuid              varchar(255) NOT NULL UNIQUE, 
-  creation_date     date NOT NULL, 
-  modification_date date NOT NULL, 
+  id                bigint(8) NOT NULL AUTO_INCREMENT,
+  uuid              varchar(255) NOT NULL UNIQUE,
+  creation_date     date NOT NULL,
+  modification_date date NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE contact (
   id   bigint(8) NOT NULL AUTO_INCREMENT,
   mail varchar(255) NOT NULL UNIQUE,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE technical_account_permission_account (
-  technical_account_permission_id bigint(8) NOT NULL, 
-  account_id                      bigint(8) NOT NULL, 
-  PRIMARY KEY (technical_account_permission_id, 
+  technical_account_permission_id bigint(8) NOT NULL,
+  account_id                      bigint(8) NOT NULL,
+  PRIMARY KEY (technical_account_permission_id,
   account_id)) CHARACTER SET UTF8;
 CREATE TABLE mail_notification (
-  id                      bigint(8) NOT NULL AUTO_INCREMENT, 
-  configuration_policy_id bigint(8) NOT NULL, 
-  domain_abstract_id      bigint(8) NOT NULL, 
-  activation_policy_id    bigint(8) NOT NULL, 
-  identifier              varchar(255) NOT NULL, 
-  system                  bit NOT NULL, 
-  creation_date           timestamp NOT NULL, 
-  modification_date       timestamp NOT NULL, 
-  uuid                    varchar(255) NOT NULL, 
+  id                      bigint(8) NOT NULL AUTO_INCREMENT,
+  configuration_policy_id bigint(8) NOT NULL,
+  domain_abstract_id      bigint(8) NOT NULL,
+  activation_policy_id    bigint(8) NOT NULL,
+  identifier              varchar(255) NOT NULL,
+  system                  bit NOT NULL,
+  creation_date           timestamp NOT NULL,
+  modification_date       timestamp NOT NULL,
+  uuid                    varchar(255) NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mail_config (
-  id                  bigint(8) NOT NULL AUTO_INCREMENT, 
-  mail_layout_html_id bigint(8) NOT NULL, 
-  domain_abstract_id  bigint(8) NOT NULL, 
-  name                varchar(255) NOT NULL, 
-  visible             bit NOT NULL, 
-  mail_layout_text_id bigint(8) NOT NULL, 
-  uuid                varchar(255) NOT NULL, 
-  creation_date       timestamp NOT NULL, 
-  modification_date   timestamp NOT NULL, 
+  id                  bigint(8) NOT NULL AUTO_INCREMENT,
+  mail_layout_html_id bigint(8) NOT NULL,
+  domain_abstract_id  bigint(8) NOT NULL,
+  name                varchar(255) NOT NULL,
+  visible             bit NOT NULL,
+  mail_layout_text_id bigint(8) NOT NULL,
+  uuid                varchar(255) NOT NULL,
+  creation_date       timestamp NOT NULL,
+  modification_date   timestamp NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mail_layout (
-  id                 bigint(8) NOT NULL AUTO_INCREMENT, 
-  domain_abstract_id bigint(8) NOT NULL, 
-  name               varchar(255) NOT NULL, 
-  visible            bit NOT NULL, 
-  layout             text NOT NULL, 
-  creation_date      timestamp NOT NULL, 
-  modification_date  timestamp NOT NULL, 
-  uuid               varchar(255) NOT NULL, 
-  plaintext          bit NOT NULL, 
+  id                 bigint(8) NOT NULL AUTO_INCREMENT,
+  domain_abstract_id bigint(8) NOT NULL,
+  name               varchar(255) NOT NULL,
+  visible            bit NOT NULL,
+  layout             text NOT NULL,
+  creation_date      timestamp NOT NULL,
+  modification_date  timestamp NOT NULL,
+  uuid               varchar(255) NOT NULL,
+  plaintext          bit NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mail_footer (
-  id                 bigint(8) NOT NULL AUTO_INCREMENT, 
-  domain_abstract_id bigint(8) NOT NULL, 
-  name               varchar(255) NOT NULL, 
-  visible            bit NOT NULL, 
-  language           int(4) NOT NULL, 
-  footer             text NOT NULL, 
-  creation_date      timestamp NOT NULL, 
-  modification_date  timestamp NOT NULL, 
-  uuid               varchar(255) NOT NULL, 
-  plaintext          bit NOT NULL, 
+  id                 bigint(8) NOT NULL AUTO_INCREMENT,
+  domain_abstract_id bigint(8) NOT NULL,
+  name               varchar(255) NOT NULL,
+  visible            bit NOT NULL,
+  language           int(4) NOT NULL,
+  footer             text NOT NULL,
+  creation_date      timestamp NOT NULL,
+  modification_date  timestamp NOT NULL,
+  uuid               varchar(255) NOT NULL,
+  plaintext          bit NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mail_footer_lang (
-  id             bigint(8) NOT NULL AUTO_INCREMENT, 
-  mail_config_id bigint(8) NOT NULL, 
-  mail_footer_id bigint(8) NOT NULL, 
-  language       int(4) NOT NULL, 
-  uuid           varchar(255) NOT NULL, 
+  id             bigint(8) NOT NULL AUTO_INCREMENT,
+  mail_config_id bigint(8) NOT NULL,
+  mail_footer_id bigint(8) NOT NULL,
+  language       int(4) NOT NULL,
+  uuid           varchar(255) NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mail_content (
-  id                 bigint(8) NOT NULL AUTO_INCREMENT, 
-  domain_abstract_id bigint(8) NOT NULL, 
-  name               varchar(255) NOT NULL, 
-  visible            bit NOT NULL, 
-  mail_content_type  int(4) NOT NULL, 
-  language           int(4) NOT NULL, 
-  subject            text NOT NULL, 
-  greetings          text NOT NULL, 
-  body               text NOT NULL, 
-  uuid               varchar(255) NOT NULL, 
-  plaintext          bit NOT NULL, 
-  creation_date      timestamp NOT NULL, 
-  modification_date  timestamp NOT NULL, 
+  id                 bigint(8) NOT NULL AUTO_INCREMENT,
+  domain_abstract_id bigint(8) NOT NULL,
+  name               varchar(255) NOT NULL,
+  visible            bit NOT NULL,
+  mail_content_type  int(4) NOT NULL,
+  language           int(4) NOT NULL,
+  subject            text NOT NULL,
+  greetings          text NOT NULL,
+  body               text NOT NULL,
+  uuid               varchar(255) NOT NULL,
+  plaintext          bit NOT NULL,
+  creation_date      timestamp NOT NULL,
+  modification_date  timestamp NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mail_content_lang (
-  id                bigint(8) NOT NULL AUTO_INCREMENT, 
-  language          int(4) NOT NULL, 
-  mail_content_id   bigint(8) NOT NULL, 
-  mail_config_id    bigint(8) NOT NULL, 
-  mail_content_type int(4) NOT NULL, 
-  uuid              varchar(255) NOT NULL, 
+  id                bigint(8) NOT NULL AUTO_INCREMENT,
+  language          int(4) NOT NULL,
+  mail_content_id   bigint(8) NOT NULL,
+  mail_config_id    bigint(8) NOT NULL,
+  mail_content_type int(4) NOT NULL,
+  uuid              varchar(255) NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE upload_request (
-  id                              bigint(8) NOT NULL AUTO_INCREMENT, 
-  domain_abstract_id              bigint(8) NOT NULL, 
-  account_id                      bigint(8) NOT NULL, 
-  upload_request_group_id         bigint(8) NOT NULL, 
-  uuid                            varchar(255) NOT NULL UNIQUE, 
-  max_file                        int(4), 
-  max_deposit_size                bigint(8), 
-  max_file_size                   bigint(8), 
-  status                          varchar(255) NOT NULL, 
-  activation_date                 timestamp NOT NULL, 
-  creation_date                   timestamp NOT NULL, 
-  modification_date               timestamp NOT NULL, 
-  notification_date               timestamp NOT NULL, 
-  expiry_date                     timestamp NOT NULL, 
-  upload_proposition_request_uuid varchar(255), 
-  can_delete                      bit NOT NULL, 
-  can_close                       bit NOT NULL, 
-  can_edit_expiry_date            bit NOT NULL, 
-  locale                          varchar(255), 
-  secured                         bit NOT NULL, 
-  mail_message_id                 varchar(255), 
+  id                              bigint(8) NOT NULL AUTO_INCREMENT,
+  domain_abstract_id              bigint(8) NOT NULL,
+  account_id                      bigint(8) NOT NULL,
+  upload_request_group_id         bigint(8) NOT NULL,
+  uuid                            varchar(255) NOT NULL UNIQUE,
+  max_file                        int(4),
+  max_deposit_size                bigint(8),
+  max_file_size                   bigint(8),
+  status                          varchar(255) NOT NULL,
+  activation_date                 timestamp NOT NULL,
+  creation_date                   timestamp NOT NULL,
+  modification_date               timestamp NOT NULL,
+  notification_date               timestamp NOT NULL,
+  expiry_date                     timestamp NOT NULL,
+  upload_proposition_request_uuid varchar(255),
+  can_delete                      bit NOT NULL,
+  can_close                       bit NOT NULL,
+  can_edit_expiry_date            bit NOT NULL,
+  locale                          varchar(255),
+  secured                         bit NOT NULL,
+  mail_message_id                 varchar(255),
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE upload_request_url (
-  id                bigint(8) NOT NULL AUTO_INCREMENT, 
-  contact_id        bigint(8) NOT NULL, 
-  upload_request_id bigint(8) NOT NULL, 
-  uuid              varchar(255) NOT NULL UNIQUE, 
-  path              varchar(255) NOT NULL, 
-  password          varchar(255), 
-  creation_date     timestamp NOT NULL, 
-  modification_date timestamp NOT NULL, 
+  id                bigint(8) NOT NULL AUTO_INCREMENT,
+  contact_id        bigint(8) NOT NULL,
+  upload_request_id bigint(8) NOT NULL,
+  uuid              varchar(255) NOT NULL UNIQUE,
+  path              varchar(255) NOT NULL,
+  password          varchar(255),
+  creation_date     timestamp NOT NULL,
+  modification_date timestamp NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE upload_request_group (
-  id                bigint(8) NOT NULL AUTO_INCREMENT, 
-  subject           text NOT NULL, 
-  body              text NOT NULL, 
-  uuid              varchar(255) NOT NULL, 
-  creation_date     timestamp NOT NULL, 
-  modification_date timestamp NOT NULL, 
+  id                bigint(8) NOT NULL AUTO_INCREMENT,
+  subject           text NOT NULL,
+  body              text NOT NULL,
+  uuid              varchar(255) NOT NULL,
+  creation_date     timestamp NOT NULL,
+  modification_date timestamp NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE upload_request_history (
-  id                              bigint(8) NOT NULL AUTO_INCREMENT, 
-  upload_request_id               bigint(8) NOT NULL, 
-  status                          varchar(255) NOT NULL, 
-  status_updated                  bit NOT NULL, 
-  event_type                      varchar(255) NOT NULL, 
-  uuid                            varchar(255) NOT NULL UNIQUE, 
-  activation_date                 timestamp NOT NULL, 
-  expiry_date                     timestamp NOT NULL, 
-  notification_date               timestamp NOT NULL, 
-  max_deposit_size                bigint(8), 
-  max_file_count                  int(4), 
-  max_file_size                   bigint(8), 
-  upload_proposition_request_uuid varchar(255), 
-  can_delete                      bit NOT NULL, 
-  can_close                       bit NOT NULL, 
-  can_edit_expiry_date            bit NOT NULL, 
-  locale                          varchar(255) NOT NULL, 
-  secured                         bit NOT NULL, 
-  creation_date                   timestamp NOT NULL, 
-  modification_date               timestamp NOT NULL, 
-  mail_message_id                 varchar(255), 
+  id                              bigint(8) NOT NULL AUTO_INCREMENT,
+  upload_request_id               bigint(8) NOT NULL,
+  status                          varchar(255) NOT NULL,
+  status_updated                  bit NOT NULL,
+  event_type                      varchar(255) NOT NULL,
+  uuid                            varchar(255) NOT NULL UNIQUE,
+  activation_date                 timestamp NOT NULL,
+  expiry_date                     timestamp NOT NULL,
+  notification_date               timestamp NOT NULL,
+  max_deposit_size                bigint(8),
+  max_file_count                  int(4),
+  max_file_size                   bigint(8),
+  upload_proposition_request_uuid varchar(255),
+  can_delete                      bit NOT NULL,
+  can_close                       bit NOT NULL,
+  can_edit_expiry_date            bit NOT NULL,
+  locale                          varchar(255) NOT NULL,
+  secured                         bit NOT NULL,
+  creation_date                   timestamp NOT NULL,
+  modification_date               timestamp NOT NULL,
+  mail_message_id                 varchar(255),
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE upload_request_entry (
-  entry_id                bigint(8) NOT NULL, 
-  document_entry_entry_id bigint(8), 
-  upload_request_id       bigint(8) NOT NULL, 
-  `size`                  bigint(8) NOT NULL, 
+  entry_id                bigint(8) NOT NULL,
+  document_entry_entry_id bigint(8),
+  upload_request_id       bigint(8) NOT NULL,
+  `size`                  bigint(8) NOT NULL,
   PRIMARY KEY (entry_id)) CHARACTER SET UTF8;
 CREATE TABLE upload_proposition_filter (
-  id                 bigint(8) NOT NULL AUTO_INCREMENT, 
-  domain_abstract_id bigint(8) NOT NULL, 
-  uuid               varchar(255) NOT NULL, 
-  name               varchar(255) NOT NULL, 
-  `match`            varchar(255) NOT NULL, 
-  enable             bit NOT NULL, 
-  creation_date      timestamp NOT NULL, 
-  modification_date  timestamp NOT NULL, 
-  sort_order         int(4) NOT NULL, 
+  id                 bigint(8) NOT NULL AUTO_INCREMENT,
+  domain_abstract_id bigint(8) NOT NULL,
+  uuid               varchar(255) NOT NULL,
+  name               varchar(255) NOT NULL,
+  `match`            varchar(255) NOT NULL,
+  enable             bit NOT NULL,
+  creation_date      timestamp NOT NULL,
+  modification_date  timestamp NOT NULL,
+  sort_order         int(4) NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE upload_proposition_rule (
-  id                           bigint(8) NOT NULL AUTO_INCREMENT, 
-  uuid                         varchar(255) NOT NULL, 
-  upload_proposition_filter_id bigint(8) NOT NULL, 
-  operator                     varchar(255) NOT NULL, 
-  field                        varchar(255) NOT NULL, 
-  value                        varchar(255), 
-  creation_date                timestamp NOT NULL, 
-  modification_date            timestamp NOT NULL, 
+  id                           bigint(8) NOT NULL AUTO_INCREMENT,
+  uuid                         varchar(255) NOT NULL,
+  upload_proposition_filter_id bigint(8) NOT NULL,
+  operator                     varchar(255) NOT NULL,
+  field                        varchar(255) NOT NULL,
+  value                        varchar(255),
+  creation_date                timestamp NOT NULL,
+  modification_date            timestamp NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE upload_proposition_action (
-  id                           bigint(8) NOT NULL AUTO_INCREMENT, 
-  uuid                         varchar(255) NOT NULL, 
-  upload_proposition_filter_id bigint(8) NOT NULL, 
-  action_type                  varchar(255) NOT NULL, 
-  data                         text, 
-  creation_date                timestamp NOT NULL, 
-  modification_date            timestamp NOT NULL, 
+  id                           bigint(8) NOT NULL AUTO_INCREMENT,
+  uuid                         varchar(255) NOT NULL,
+  upload_proposition_filter_id bigint(8) NOT NULL,
+  action_type                  varchar(255) NOT NULL,
+  data                         text,
+  creation_date                timestamp NOT NULL,
+  modification_date            timestamp NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE functionality_boolean (
-  functionality_id bigint(8) NOT NULL, 
-  boolean_value    bit NOT NULL, 
+  functionality_id bigint(8) NOT NULL,
+  boolean_value    bit NOT NULL,
   CONSTRAINT linshare_functionality_boolean_pkey
     PRIMARY KEY (functionality_id)) CHARACTER SET UTF8;
 CREATE TABLE statistic_event (
-  id                bigint(8) NOT NULL AUTO_INCREMENT, 
-  event_type        int(4) NOT NULL, 
-  event_action      int(4) NOT NULL, 
-  event_source      int(4) NOT NULL, 
-  event_actor_type  int(4) NOT NULL, 
-  action_count      bigint(8), 
-  description       text, 
-  transfer_size     bigint(8), 
-  transfer_duration bigint(8), 
-  transfer_rate     bigint(8), 
-  recipient_count   bigint(8), 
-  document_count    bigint(8), 
-  secured           bit, 
-  daily             int(10), 
-  creation_date     timestamp NOT NULL, 
+  id                bigint(8) NOT NULL AUTO_INCREMENT,
+  event_type        int(4) NOT NULL,
+  event_action      int(4) NOT NULL,
+  event_source      int(4) NOT NULL,
+  event_actor_type  int(4) NOT NULL,
+  action_count      bigint(8),
+  description       text,
+  transfer_size     bigint(8),
+  transfer_duration bigint(8),
+  transfer_rate     bigint(8),
+  recipient_count   bigint(8),
+  document_count    bigint(8),
+  secured           bit,
+  daily             int(10),
+  creation_date     timestamp NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mailing_list (
   id                  bigint(8) NOT NULL AUTO_INCREMENT,
@@ -555,79 +555,79 @@ CREATE TABLE mailing_list (
   modification_date  timestamp NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mailing_list_contact (
-  id                         bigint(8) NOT NULL AUTO_INCREMENT, 
-  mailing_list_id            bigint(8) NOT NULL, 
-  mail                       varchar(255) NOT NULL, 
-  first_name                 varchar(255), 
-  last_name                  varchar(255), 
-  uuid                       varchar(255) NOT NULL, 
-  creation_date              timestamp NOT NULL, 
-  modification_date          timestamp NOT NULL, 
-  mailing_list_contact_index int(4) NOT NULL, 
-  PRIMARY KEY (id), 
+  id                         bigint(8) NOT NULL AUTO_INCREMENT,
+  mailing_list_id            bigint(8) NOT NULL,
+  mail                       varchar(255) NOT NULL,
+  first_name                 varchar(255),
+  last_name                  varchar(255),
+  uuid                       varchar(255) NOT NULL,
+  creation_date              timestamp NOT NULL,
+  modification_date          timestamp NOT NULL,
+  mailing_list_contact_index int(4) NOT NULL,
+  PRIMARY KEY (id),
   INDEX (uuid)) CHARACTER SET UTF8;
 CREATE TABLE upload_request_template (
-  id                         bigint(8) NOT NULL AUTO_INCREMENT, 
-  uuid                       varchar(255) NOT NULL, 
-  account_id                 bigint(8) NOT NULL, 
-  name                       varchar(255) NOT NULL, 
-  description                varchar(255), 
-  duration_before_activation bigint(8), 
-  unit_before_activation     bigint(8), 
-  duration_before_expiry     bigint(8), 
-  unit_before_expiry         bigint(8), 
-  group_mode                 bit, 
-  deposit_mode               bit, 
-  max_file                   bigint(8), 
-  max_file_size              bigint(8), 
-  max_deposit_size           bigint(8), 
-  locale                     varchar(255), 
-  secured                    bit, 
-  day_before_notification    bigint(8), 
-  prolongation_mode          bit, 
-  creation_date              timestamp NOT NULL, 
-  modification_date          timestamp NOT NULL, 
+  id                         bigint(8) NOT NULL AUTO_INCREMENT,
+  uuid                       varchar(255) NOT NULL,
+  account_id                 bigint(8) NOT NULL,
+  name                       varchar(255) NOT NULL,
+  description                varchar(255),
+  duration_before_activation bigint(8),
+  unit_before_activation     bigint(8),
+  duration_before_expiry     bigint(8),
+  unit_before_expiry         bigint(8),
+  group_mode                 bit,
+  deposit_mode               bit,
+  max_file                   bigint(8),
+  max_file_size              bigint(8),
+  max_deposit_size           bigint(8),
+  locale                     varchar(255),
+  secured                    bit,
+  day_before_notification    bigint(8),
+  prolongation_mode          bit,
+  creation_date              timestamp NOT NULL,
+  modification_date          timestamp NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE upload_proposition (
-  id                 bigint(8) NOT NULL AUTO_INCREMENT, 
-  uuid               varchar(255) NOT NULL, 
-  domain_abstract_id bigint(8) NOT NULL, 
-  status             varchar(255) NOT NULL, 
-  subject            varchar(255) NOT NULL, 
-  body               text, 
-  mail               varchar(255) NOT NULL, 
-  first_name         varchar(255) NOT NULL, 
-  last_name          varchar(255) NOT NULL, 
-  domain_source      varchar(255), 
-  recipient_mail     varchar(255) NOT NULL, 
-  creation_date      timestamp NOT NULL, 
-  modification_date  timestamp NOT NULL, 
+  id                 bigint(8) NOT NULL AUTO_INCREMENT,
+  uuid               varchar(255) NOT NULL,
+  domain_abstract_id bigint(8) NOT NULL,
+  status             varchar(255) NOT NULL,
+  subject            varchar(255) NOT NULL,
+  body               text,
+  mail               varchar(255) NOT NULL,
+  first_name         varchar(255) NOT NULL,
+  last_name          varchar(255) NOT NULL,
+  domain_source      varchar(255),
+  recipient_mail     varchar(255) NOT NULL,
+  creation_date      timestamp NOT NULL,
+  modification_date  timestamp NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mime_policy (
-  id                bigint(8) NOT NULL AUTO_INCREMENT, 
-  domain_id         bigint(8) NOT NULL, 
-  uuid              varchar(255) NOT NULL, 
-  name              varchar(255) NOT NULL, 
-  mode              int(10) NOT NULL, 
-  displayable       int(10) NOT NULL, 
-  creation_date     timestamp NOT NULL, 
-  modification_date timestamp NOT NULL, 
+  id                bigint(8) NOT NULL AUTO_INCREMENT,
+  domain_id         bigint(8) NOT NULL,
+  uuid              varchar(255) NOT NULL,
+  name              varchar(255) NOT NULL,
+  mode              int(10) NOT NULL,
+  displayable       int(10) NOT NULL,
+  creation_date     timestamp NOT NULL,
+  modification_date timestamp NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mime_type (
-  id                bigint(8) NOT NULL AUTO_INCREMENT, 
-  mime_policy_id    bigint(8) NOT NULL, 
-  uuid              varchar(255) NOT NULL, 
-  mime_type         text NOT NULL, 
-  extensions        text NOT NULL, 
-  enable            bit NOT NULL, 
-  displayable       bit NOT NULL, 
-  creation_date     timestamp NOT NULL, 
-  modification_date timestamp NOT NULL, 
+  id                bigint(8) NOT NULL AUTO_INCREMENT,
+  mime_policy_id    bigint(8) NOT NULL,
+  uuid              varchar(255) NOT NULL,
+  mime_type         text NOT NULL,
+  extensions        text NOT NULL,
+  enable            bit NOT NULL,
+  displayable       bit NOT NULL,
+  creation_date     timestamp NOT NULL,
+  modification_date timestamp NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE account_permission (
-  id                              bigint(8) NOT NULL AUTO_INCREMENT, 
-  technical_account_permission_id bigint(8) NOT NULL, 
-  permission                      varchar(255) NOT NULL, 
+  id                              bigint(8) NOT NULL AUTO_INCREMENT,
+  technical_account_permission_id bigint(8) NOT NULL,
+  permission                      varchar(255) NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 ALTER TABLE domain_abstract ADD INDEX fk449bc2ec4e302e7 (user_provider_id), ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD INDEX fk449bc2ec59e1e332 (domain_policy_id), ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
@@ -715,13 +715,13 @@ ALTER TABLE account_permission ADD INDEX FKaccount_pe759382 (technical_account_p
 ALTER TABLE upload_request ADD INDEX FKupload_req220337 (account_id), ADD CONSTRAINT FKupload_req220337 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE upload_request ADD INDEX FKupload_req840249 (domain_abstract_id), ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE upload_proposition_filter ADD INDEX FKupload_pro316142 (domain_abstract_id), ADD CONSTRAINT FKupload_pro316142 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-CREATE UNIQUE INDEX account_lsuid_index 
+CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
-CREATE UNIQUE INDEX account_ls_uuid 
+CREATE UNIQUE INDEX account_ls_uuid
   ON account (ls_uuid);
-CREATE INDEX account_account_type 
+CREATE INDEX account_account_type
   ON account (account_type);
-CREATE INDEX cookie2 
+CREATE INDEX cookie2
   ON cookie (identifier);
 CREATE INDEX cookie_i
   ON cookie (cookie_id);
@@ -741,9 +741,9 @@ CREATE INDEX domain_access_rule_index
   ON domain_access_rule (id);
 CREATE INDEX domain_pattern_index
   ON domain_pattern (identifier);
-CREATE INDEX domain_pattern_i 
+CREATE INDEX domain_pattern_i
   ON domain_pattern (domain_pattern_id);
-CREATE INDEX domain_policy_index 
+CREATE INDEX domain_policy_index
   ON domain_policy (id);
 CREATE UNIQUE INDEX domain_policy_i
   ON domain_policy (domain_access_policy_id);
@@ -755,23 +755,23 @@ CREATE UNIQUE INDEX functionality_i2
   ON functionality (identifier, domain_id);
 CREATE UNIQUE INDEX functionality_i3
   ON functionality (policy_configuration_id);
-CREATE INDEX functionality_integer_index 
+CREATE INDEX functionality_integer_index
   ON functionality_integer (functionality_id);
-CREATE INDEX functionality_string_index 
+CREATE INDEX functionality_string_index
   ON functionality_string (functionality_id);
-CREATE UNIQUE INDEX functionality_unit_index 
+CREATE UNIQUE INDEX functionality_unit_index
   ON functionality_unit (unit_id);
-CREATE INDEX functionality_unit_i 
+CREATE INDEX functionality_unit_i
   ON functionality_unit (functionality_id);
-CREATE UNIQUE INDEX functionality_unit_boolean_index 
+CREATE UNIQUE INDEX functionality_unit_boolean_index
   ON functionality_unit_boolean (unit_id);
-CREATE INDEX functionality_unit_boolean_i 
+CREATE INDEX functionality_unit_boolean_i
   ON functionality_unit_boolean (functionality_id);
-CREATE INDEX ldap_connection_index 
+CREATE INDEX ldap_connection_index
   ON ldap_connection (identifier);
-CREATE INDEX ldap_connection_i 
+CREATE INDEX ldap_connection_i
   ON ldap_connection (ldap_connection_id);
-CREATE INDEX log_entry_i 
+CREATE INDEX log_entry_i
   ON log_entry (actor_domain);
 CREATE INDEX log_entry_i2
   ON log_entry (file_name);
@@ -797,7 +797,7 @@ CREATE UNIQUE INDEX anonymous_url_i
   ON anonymous_url (url_path, uuid);
 CREATE INDEX anonymous_url_i2
   ON anonymous_url (id);
-CREATE INDEX share_expiry_rules_index 
+CREATE INDEX share_expiry_rules_index
   ON share_expiry_rules (domain_id);
 CREATE INDEX signature_index
   ON signature (id);
@@ -807,9 +807,9 @@ CREATE INDEX unit_index
   ON unit (id);
 CREATE INDEX user_provider_ldap_index
   ON user_provider_ldap (id);
-CREATE INDEX welcome_texts_i 
+CREATE INDEX welcome_texts_i
   ON welcome_texts (messages_configuration_id);
-CREATE INDEX mailing_list_index 
+CREATE INDEX mailing_list_index
   ON mailing_list (uuid);
-CREATE INDEX mailing_list_contact_index 
+CREATE INDEX mailing_list_contact_index
   ON mailing_list_contact (uuid);

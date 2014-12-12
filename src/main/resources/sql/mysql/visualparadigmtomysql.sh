@@ -29,7 +29,8 @@ sed -i -e 's/tinyint[(1)]*/bit/g' output.sql
 # escaping keywords
 sed -i -e 's/regexp/`regexp`/g' output.sql
 sed -i -e 's/write/`write`/g' output.sql
+sed -i -e 's/ ENGINE=InnoDB//g' output.sql
 
 # cleanup
-sed -i -e 's/ $//g' output.sql
 sed -i -e 's///g' output.sql
+sed -i -e 's/ $//g' output.sql
