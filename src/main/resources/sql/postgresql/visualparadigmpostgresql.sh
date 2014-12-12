@@ -29,7 +29,6 @@ sed -i -e 's/CREATE INDEX mailing_list_contact_uuid/CREATE INDEX mailing_list_co
 # cleanup
 #sed -i -e 's/ $//g' output.sql
 sed -i -e 's///g' output.sql
-
-# sed -i -e 's/ $//g' output.sql
+sed -i -e 's/ $//g' output.sql
 
 echo "Done : output.sql"
