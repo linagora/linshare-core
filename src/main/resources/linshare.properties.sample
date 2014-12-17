@@ -57,6 +57,14 @@ linshare.files.directory=/var/lib/linshare/repository
 # internal user see all other internal user by default in the Users tab ?
 linshare.users.internal.defaultView.showAll=false
 
+# Externalized translations
+# 1. create an empty file in the following directory for every WEB-INF/app*.properties files.
+# 2. create another empty file named app_en.properties
+# NB:
+# - You just need to add the keys you want to override to these files.
+# - All key presents in app.properties will be global for every language.
+# linshare.translations.file=/etc/linshare
+
 # webservice
 webservice.attachment-memory-threshold=4000000
 webservice.attachment-directory=/tmp/

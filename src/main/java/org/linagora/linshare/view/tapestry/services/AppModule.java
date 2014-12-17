@@ -414,9 +414,17 @@ public class AppModule
 	public void contributeComponentMessagesSource(OrderedConfiguration<Resource> configuration,
 			@InjectService("PropertiesSymbolProvider") PropertiesSymbolProvider provider) {
 		String translationsFileName = provider.valueForSymbol("linshare.translations.file");
-		if (translationsFileName != null && new File(translationsFileName).exists()) {
-			Resource resource = new LocalFileResource(translationsFileName);
-			configuration.add(translationsFileName, resource, "after:appCatalog");
+		if (translationsFileName != null) {
+			StringBuffer files = new StringBuffer();
+			files.append(translationsFileName);
+			if (!translationsFileName.endsWith("/")) {
+				files.append('/');
+			}
+			files.append("app.properties");
+			if (new File(files.toString()).exists()) {
+				Resource resource = new LocalFileResource(files.toString());
+				configuration.add(translationsFileName, resource, "after:appCatalog");
+			}
 		}
 	}
 
