@@ -270,13 +270,13 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 
 	private String formatExpirationDate(Account account,
 			UploadRequest uploadRequest) {
-		Locale locale = account.getJavaExternalMailLocale();
-		DateFormat formatter = DateFormat.getDateInstance(DateFormat.FULL,
-				locale);
-		if (uploadRequest.getExpiryDate() == null) {
-			return "";
+		if (uploadRequest.getExpiryDate() != null) {
+			Locale locale = account.getJavaExternalMailLocale();
+			DateFormat formatter = DateFormat.getDateInstance(DateFormat.FULL,
+					locale);
+			return formatter.format(uploadRequest.getExpiryDate().getTime());
 		}
-		return formatter.format(uploadRequest.getExpiryDate().getTime());
+		return "";
 	}
 
 	@Override
