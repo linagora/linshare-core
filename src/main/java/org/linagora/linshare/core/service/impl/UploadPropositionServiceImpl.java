@@ -195,6 +195,9 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		logger.debug("Rejecting proposition: " + e.getUuid());
 		e.setStatus(UploadPropositionStatus.USER_REJECTED);
 		uploadPropositionBusinessService.update(e);
+		MailContainerWithRecipient mail = mailBuildingService
+				.buildRejectUploadProposition(actor, e);
+		notifierService.sendNotification(mail);
 	}
 
 	public void acceptHook(User owner, UploadProposition created)
