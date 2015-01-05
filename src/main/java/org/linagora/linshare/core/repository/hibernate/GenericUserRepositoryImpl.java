@@ -67,7 +67,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 			throw new IllegalStateException("Mail must be unique");
 		}
 	}
-	
+
 	@Override
 	public U findByMailAndDomain(String domainId, String mail) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
@@ -75,16 +75,17 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 		criteria.add(Restrictions.eq("domain.identifier",domainId));
 		criteria.add(Restrictions.eq("mail", mail).ignoreCase());
 		criteria.add(Restrictions.eq("destroyed",false));
-		
+
 		List<U> users = findByCriteria(criteria);
-		 
-        if (users == null || users.isEmpty()) {
-            return null;
-        } else if (users.size() == 1) {
-            return users.get(0);
-        } else {
-            throw new IllegalStateException("Mail and domain must be unique");
-        }
+		if (users == null || users.isEmpty()) {
+			return null;
+		} else if (users.size() == 1) {
+			return users.get(0);
+		} else {
+			logger.error("Mail and domain must be unique : " + domainId + " : "
+					+ mail);
+			throw new IllegalStateException("Mail and domain must be unique");
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
