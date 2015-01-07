@@ -150,10 +150,6 @@ public class ListDocument {
 	@Property
 	private String action;
 
-
-	private Map<String, String> tooltipValues;
-	private Map<String, String> tooltipGroupValues;
-
 	private String tooltipValue;
 	@Property
 	private String tooltipTitle;
@@ -242,10 +238,6 @@ public class ListDocument {
 	@Inject
 	@Path("context:templates/tooltipGroup.tml")
 	private Asset tooltipTemplateGroup;
-
-	@Inject
-	@Path("context:templates/tooltipGroup_row.tml")
-	private Asset tooltipTemplateGroupRow;
 
 	@SuppressWarnings("unchecked")
 	@Property
@@ -343,66 +335,8 @@ public class ListDocument {
 	 * the active sharings of files
 	 */
 	private void buildTooltipValues() {
-		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.date"));
-
 		tooltipTitle = messages.get("components.listDocument.tooltip.title");
 		tooltipGroupTitle = messages.get("components.listDocument.tooltipGroup.title");
-		tooltipValues = new HashedMap();
-		tooltipGroupValues = new HashedMap();
-
-		try {
-			String templateContainer = templating.readFullyTemplateContent(tooltipTemplate.getResource().openStream());
-			String templateRow = templating.readFullyTemplateContent(tooltipTemplateRow.getResource().openStream());
-			String templateGroupContainer = templating.readFullyTemplateContent(tooltipTemplateGroup.getResource().openStream());
-			String templateGroupRow = templating.readFullyTemplateContent(tooltipTemplateGroupRow.getResource().openStream());
-
-			Map<String,String> templateRowParams=new HashMap<String, String>();
-			String value = "";
-			String valueGroup = "";
-
-			int i=0;
-			for (DocumentVo docVo : documents) {
-
-				if (docVo.getShared()) {
-					StringBuffer tempBuf = new StringBuffer();
-					StringBuffer tempBufGroup = new StringBuffer();
-					Map<String,String> templateParams=new HashMap<String, String>();
-
-					filleHeaderParams(templateParams);
-
-					List<ShareDocumentVo> shares = shareFacade.getSharingsByUserAndFile(user, docVo);
-					Map<String, Calendar> securedUrls = shareFacade.getAnonymousSharingsByUserAndFile(user, docVo);
-
-					for (ShareDocumentVo share : shares) {
-						UserVo receiver = share.getReceiver();
-						fillRowParams(templateRowParams, receiver.getFirstName(), receiver.getLastName(), receiver.getMail(), formatter.format(share.getShareExpirationDate().getTime()));
-						tempBuf.append(templating.getMessage(templateRow, templateRowParams));
-					}
-					Set<Entry<String, Calendar>> set = securedUrls.entrySet();
-					for (Entry<String, Calendar> entry : set) {
-						fillRowParams(templateRowParams, " ", " ", entry.getKey(), formatter.format(entry.getValue().getTime()));
-						tempBuf.append(templating.getMessage(templateRow, templateRowParams));
-					}
-
-					templateParams.put("${rows}", tempBuf.toString());
-					templateParams.put("${group_rows}", tempBufGroup.toString());
-
-					value = templating.getMessage(templateContainer, templateParams);
-					valueGroup = templating.getMessage(templateGroupContainer, templateParams);
-				}
-				else {
-					value = messages.get("components.listDocument.tooltip.noEntry");
-					valueGroup = messages.get("components.listDocument.tooltip.noEntry");
-				}
-				tooltipValues.put(docVo.getIdentifier(), value.replaceAll("[\r\n]+", ""));
-				tooltipGroupValues.put(docVo.getIdentifier(), valueGroup.toString().replaceAll("[\r\n]+", ""));
-				i++;
-			}
-
-		} catch (IOException e) {
-			logger.error("Bad mail template", e);
-			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
-		}
 	}
 
 	private void filleHeaderParams(Map<String,String> templateParams) {
@@ -428,22 +362,6 @@ public class ListDocument {
 		templateRowParams.put("${expiration}", expiration);
 	}
 
-	private void filleGroupRowParams(Map<String, String> templateRowParams, String name, String expiration) {
-		templateRowParams.put("${name}", name);
-		templateRowParams.put("${expiration}", expiration);
-	}
-
-	/**
-	 * Returns the good tooltip content for the document pointed by
-     * the user in the list of documents.
-	 */
-	public String getTooltipValue() {
-		return tooltipValues.get(document.getIdentifier());
-	}
-	public String getTooltipGroupValue() {
-		return tooltipGroupValues.get(document.getIdentifier());
-	}
-
 	public String getTypeCSSClass() {
 		String ret = document.getType();
 		ret = ret.replace("/", "_");
@@ -451,6 +369,42 @@ public class ListDocument {
 		ret = ret.replace(".", "_-_");
 		return ret;
 	}
+
+	public String getTooltipValue() {
+		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.date"));
+		try {
+			String templateContainer = templating.readFullyTemplateContent(tooltipTemplate.getResource().openStream());
+			String templateRow = templating.readFullyTemplateContent(tooltipTemplateRow.getResource().openStream());
+			Map<String,String> templateRowParams=new HashMap<String, String>();
+			DocumentVo docVo = document;
+				if (docVo.getShared()) {
+					StringBuffer tempBuf = new StringBuffer();
+					Map<String,String> templateParams=new HashMap<String, String>();
+					filleHeaderParams(templateParams);
+					List<ShareDocumentVo> shares = shareFacade.getSharingsByUserAndFile(user, docVo);
+					Map<String, Calendar> securedUrls = shareFacade.getAnonymousSharingsByUserAndFile(user, docVo);
+					for (ShareDocumentVo share : shares) {
+						UserVo receiver = share.getReceiver();
+						fillRowParams(templateRowParams, receiver.getFirstName(), receiver.getLastName(), receiver.getMail(), formatter.format(share.getShareExpirationDate().getTime()));
+						tempBuf.append(templating.getMessage(templateRow, templateRowParams));
+					}
+					Set<Entry<String, Calendar>> set = securedUrls.entrySet();
+					for (Entry<String, Calendar> entry : set) {
+						fillRowParams(templateRowParams, " ", " ", entry.getKey(), formatter.format(entry.getValue().getTime()));
+						tempBuf.append(templating.getMessage(templateRow, templateRowParams));
+					}
+					templateParams.put("${rows}", tempBuf.toString());
+					return templating.getMessage(templateContainer, templateParams).replaceAll("[\r\n]+", "");
+				}
+				else {
+					return messages.get("components.listDocument.tooltip.noEntry").replaceAll("[\r\n]+", "");
+				}
+		} catch (IOException e) {
+			logger.error("Bad mail template", e);
+			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
+		}
+	}
+
 
 	/**
 	 * Initialize the JS value
