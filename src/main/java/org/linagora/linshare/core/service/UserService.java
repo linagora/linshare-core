@@ -106,6 +106,14 @@ public interface UserService {
 	public void updateUserLocale(String domainId, String mail, String locale) throws BusinessException;
 
 	/**
+	 * Update a user externalMailLocale
+	 * @param mail : the user email
+	 * @param locale : the new externalMailLocal
+	 * @throws BusinessException
+	 */
+	public void updateUserExternalMailLocale(String domainId, String mail, String externalMailLocale) throws BusinessException;
+
+	/**
 	 * change a guest or superadmin password
 	 * @param mail
 	 * @param oldPassword

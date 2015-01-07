@@ -119,10 +119,17 @@ public interface UserFacade {
 	 * Update a user locale
 	 * @param user
 	 * @param locale
-	 * @throws BusinessException 
+	 * @throws BusinessException
 	 */
 	public void updateUserLocale(UserVo user, String locale) throws BusinessException;
 
+	/**
+	 * Update a user externalMailLocale
+	 * @param user
+	 * @param externalMailLocale
+	 * @throws BusinessException
+	 */
+	public void updateUserExternalMailLocale(UserVo user, String externalMailLocale) throws BusinessException;
 
     /** Load a User.
      * If the user doesn't exist in database, search informations in LDAP and create a user entry before returning it.

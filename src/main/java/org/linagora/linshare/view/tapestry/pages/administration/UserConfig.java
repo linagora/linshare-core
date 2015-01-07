@@ -124,6 +124,9 @@ public class UserConfig {
 	private String currentLocale;
 
 	@Property
+	private String currentExternalMailLocale;
+
+	@Property
 	private String oldUserPassword;
 
 	@Property
@@ -153,7 +156,10 @@ public class UserConfig {
 
 		if (userVo.getLocale() !=null) {
 			currentLocale = userVo.getLocale();
+		}
 
+		if (userVo.getExternalMailLocale() !=null) {
+			currentExternalMailLocale = userVo.getExternalMailLocale();
 		}
 
 		model = new SimpleSelectModel<String>(locales, messages, "pages.administration.userconfig.select");
@@ -170,6 +176,7 @@ public class UserConfig {
 
 	void onSuccessFromConfigUserform() throws BusinessException {
 		userFacade.updateUserLocale(userVo,currentLocale);
+		userFacade.updateUserExternalMailLocale(userVo, currentExternalMailLocale);
 		userVo = userFacade.findUserByLsUuid(userVo, userVo.getLsUuid());
 		userVo = userFacade.findUserInDb(userVo.getMail(), userVo.getDomainIdentifier());
 		persistentLocale.set(LocaleUtils.toLocale(currentLocale));

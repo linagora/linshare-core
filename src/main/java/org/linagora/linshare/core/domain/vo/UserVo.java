@@ -64,6 +64,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 	private Date expirationDate = null;
 	private String comment;
 	private String locale;
+	private String externalMailLocale;
 	private boolean restricted;
 	private String domainIdentifier;
 
@@ -86,6 +87,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		this.userType = account.getAccountType();
 		this.role = account.getRole();
 		this.locale = account.getLocale();
+		this.externalMailLocale = account.getExternalMailLocale();
 		this.restricted = false;
 
 		if (userType.equals(AccountType.GUEST)
@@ -128,6 +130,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		this.restricted = false;
 
 		this.locale = user.getLocale();
+		this.externalMailLocale = user.getExternalMailLocale();
 		if (user instanceof Guest) {
 			Guest guest = (Guest) user;
 			ownerLogin = ((User) guest.getOwner()).getMail();
@@ -153,6 +156,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		this.expirationDate = (Date) user.getExpirationDate().clone();
 		this.comment = user.getComment();
 		this.locale = user.getLocale();
+		this.externalMailLocale = user.getExternalMailLocale();
 		this.restricted = user.isRestricted();
 		if (user.getDomain() != null) {
 			this.domainIdentifier = user.getDomain().getIdentifier();
@@ -294,6 +298,14 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 
 	public void setLocale(String locale) {
 		this.locale = locale;
+	}
+
+	public String getExternalMailLocale() {
+		return externalMailLocale;
+	}
+
+	public void setExternalMailLocale(String externalMailLocale) {
+		this.externalMailLocale = externalMailLocale;
 	}
 
 	public void setRestricted(boolean restricted) {
