@@ -161,6 +161,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                 deleteFile: {
                     enabled: true,
                     forceConfirm: true,
+                    confirmMessage: "${message:pages.files.upload.deleteFile.confirmMessage} ",
                     endpoint: "${contextPath}/webservice/fineuploader/upload/receiver"
                 },
                 messages: {
