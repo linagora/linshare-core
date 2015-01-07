@@ -862,6 +862,7 @@ public class UserServiceImpl implements UserService {
 		user.setCanCreateGuest(updatedUser.getCanCreateGuest());
 		user.setCanUpload(updatedUser.getCanUpload());
 		user.setLocale(updatedUser.getLocale());
+		user.setExternalMailLocale(updatedUser.getExternalMailLocale());
 		if (user.getAccountType() == AccountType.GUEST) {
 			Guest updatedGuest = (Guest) updatedUser;
 			Assert.notNull(updatedUser.getOwner());

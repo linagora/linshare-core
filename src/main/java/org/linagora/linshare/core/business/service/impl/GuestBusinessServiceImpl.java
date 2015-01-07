@@ -160,7 +160,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 			// fields that can be null.
 			entity.setComment(guest.getComment());
 			entity.setBusinessLocale(guest.getLocale());
-			entity.setBusinessExternalMailLocale(guest.getLocale());
+			entity.setBusinessExternalMailLocale(guest.getExternalMailLocale());
 			entity.setBusinessLastName(guest.getLastName());
 			entity.setBusinessFirstName(guest.getFirstName());
 			entity.setBusinessMail(guest.getMail());

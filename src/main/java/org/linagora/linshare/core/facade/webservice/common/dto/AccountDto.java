@@ -58,6 +58,9 @@ public class AccountDto {
 	@ApiModelProperty(value = "Locale")
 	protected String locale;
 
+	@ApiModelProperty(value = "ExternalMailLocale")
+	protected String externalMailLocale;
+
 	@ApiModelProperty(value = "Domain")
 	protected String domain;
 
@@ -72,6 +75,7 @@ public class AccountDto {
 			this.creationDate = a.getCreationDate();
 			this.modificationDate = a.getModificationDate();
 			this.locale = a.getLocale();
+			this.externalMailLocale = a.getExternalMailLocale();
 		}
 	}
 
@@ -105,6 +109,14 @@ public class AccountDto {
 
 	public void setLocale(String locale) {
 		this.locale = locale;
+	}
+
+	public String getExternalMailLocale() {
+		return externalMailLocale;
+	}
+
+	public void setExternalMailLocale(String extertalMailLocale) {
+		this.externalMailLocale = extertalMailLocale;
 	}
 
 	public String getDomain() {

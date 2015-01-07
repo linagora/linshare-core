@@ -238,10 +238,7 @@ public abstract class Account {
 	public abstract String getFullName();
 
 	public String getExternalMailLocale() {
-		// TODO : add ihm for external mail locale value. For now, using user
-		// locale.
-		// return externalMailLocale;
-		return locale;
+		return externalMailLocale;
 	}
 
 	public Locale getJavaExternalMailLocale() {
