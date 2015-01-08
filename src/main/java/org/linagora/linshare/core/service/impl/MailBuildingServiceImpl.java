@@ -262,6 +262,12 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		return formatter.format(entry.getCreationDate().getTime());
 	}
 
+	private String formatCreationDate(Account account, UploadRequest uploadRequest) {
+		Locale locale = account.getJavaExternalMailLocale();
+		DateFormat formatter = DateFormat.getDateInstance(DateFormat.FULL, locale);
+		return formatter.format(uploadRequest.getCreationDate().getTime());
+	}
+
 	private String formatActivationDate(Account account, UploadRequest uploadRequest) {
 		Locale locale = account.getJavaExternalMailLocale();
 		DateFormat formatter = DateFormat.getDateInstance(DateFormat.FULL, locale);
@@ -761,13 +767,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				recipient.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
-		String baseUrl = getLinShareUrlForAUserRecipient(recipient);
-		StringBuffer uploadPropositionUrl = new StringBuffer();
-		uploadPropositionUrl.append(baseUrl);
-		if (!baseUrl.endsWith("/")) {
-			uploadPropositionUrl.append('/');
-		}
-		uploadPropositionUrl.append("uploadrequest/proposition");
 		builder.getSubjectChain()
 				.add("actorRepresentation", proposition.getMail())
 				.add("subject", proposition.getSubject());
@@ -780,7 +779,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("firstName", proposition.getFirstName())
 				.add("lastName", proposition.getLastName())
 				.add("mail", proposition.getMail())
-				.add("uploadPropositionUrl", uploadPropositionUrl.toString());
+				.add("uploadPropositionUrl", getUploadPropositionUrl(recipient));
 		container.setRecipient(recipient.getMail());
 		container.setFrom(getFromMailAddress(recipient));
 		container.setFrom(abstractDomainService.getDomainMail(recipient.getDomain()));
@@ -1008,11 +1007,18 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		builder.getBodyChain()
 				.add("subject", request.getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequestGroup().getBody())
+				.add("expirationDate", formatExpirationDate(owner, request))
+				.add("creationDate", formatCreationDate(owner, request))
 				.add("files", getFileRepresentation(request));
+		for (UploadRequestUrl uru : request.getUploadRequestURLs()) {
+			builder.getBodyChain().add(
+					"recipientMail",
+					uru.getContact().getMail()
+			);
+		}
 		container.setRecipient(owner.getMail());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
-
 		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_OWNER_BEFORE_EXPIRY, builder);
 	}
 
@@ -1048,11 +1054,16 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
 				.add("files", getFileRepresentation(request.getUploadRequest()))
+				.add("ownerFirstName",owner.getFirstName())
+				.add("ownerLastName",owner.getLastName())
+				.add("ownerMail",owner.getMail())
+				.add("ownerRepresentation", new ContactRepresentation(owner).getContactRepresentation())
+				.add("expirationDate", formatExpirationDate(owner, request.getUploadRequest()))
+				.add("creationDate", formatCreationDate(owner, request.getUploadRequest()))
 				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(owner)));
 		container.setRecipient(request.getContact().getMail());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
-
 		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY, builder);
 	}
 
@@ -1304,6 +1315,16 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.getValue();
 	}
 
+	private String getUploadPropositionUrl(Account recipient) {
+		String baseUrl = getLinShareUrlForAUserRecipient(recipient);
+		StringBuffer uploadPropositionUrl = new StringBuffer();
+		uploadPropositionUrl.append(baseUrl);
+		if (!baseUrl.endsWith("/")) {
+			uploadPropositionUrl.append('/');
+		}
+		uploadPropositionUrl.append("uploadrequest/proposition");
+		return uploadPropositionUrl.toString();
+	}
 
 	private String getLinShareUrlForAUserRecipient(Account recipient) {
 		return functionalityReadOnlyService
