@@ -608,6 +608,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		}
 
 		builder.getSubjectChain()
+				.add("actorSubject", input.getSubject())
 				.add("actorRepresentation", actorRepresentation);
 		builder.getGreetingsChain()
 				.add("firstName", recipient.getFirstName())
@@ -619,6 +620,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("documentNames", names.toString())
 				.add("url", url)
 				.add("urlparam", "");
+		container.setSubject(input.getSubject());
 		container.setRecipient(recipient);
 		container.setFrom(getFromMailAddress(sender));
 		container.setReplyTo(sender.getMail());
