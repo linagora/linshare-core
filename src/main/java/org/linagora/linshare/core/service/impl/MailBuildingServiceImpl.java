@@ -651,6 +651,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		}
 
 		builder.getSubjectChain()
+				.add("actorSubject", input.getSubject())
 				.add("actorRepresentation", actorRepresentation);
 		builder.getGreetingsChain()
 				.add("firstName", "")
@@ -663,6 +664,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("password", anonUrl.getTemporaryPlainTextPassword())
 				.add("url", url)
 				.add("urlparam", "");
+		container.setSubject(input.getSubject());
 		container.setRecipient(email);
 		container.setFrom(getFromMailAddress(sender));
 		container.setReplyTo(sender.getMail());
@@ -697,6 +699,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		}
 
 		builder.getSubjectChain()
+				.add("actorSubject", input.getSubject())
 				.add("actorRepresentation", actorRepresentation);
 		builder.getGreetingsChain()
 				.add("firstName", recipient.getFirstName())
@@ -709,6 +712,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("jwsEncryptUrl", getJwsEncryptUrlString(url))
 				.add("url", url)
 				.add("urlparam", "");
+		container.setSubject(input.getSubject());
 		container.setRecipient(recipient);
 		container.setFrom(getFromMailAddress(sender));
 		container.setReplyTo(sender.getMail());
@@ -739,6 +743,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		}
 
 		builder.getSubjectChain()
+				.add("actorSubject", input.getSubject())
 				.add("actorRepresentation", actorRepresentation);
 		builder.getGreetingsChain()
 				.add("firstName", "")
@@ -752,6 +757,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("jwsEncryptUrl", getJwsEncryptUrlString(url))
 				.add("url", url)
 				.add("urlparam", "");
+		container.setSubject(input.getSubject());
 		container.setRecipient(email);
 		container.setFrom(getFromMailAddress(sender));
 		container.setReplyTo(sender.getMail());
