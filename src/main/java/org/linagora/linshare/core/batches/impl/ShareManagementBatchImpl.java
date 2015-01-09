@@ -141,7 +141,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 				try {
 					DocumentEntry documentEntry = shareEntry.getDocumentEntry();
 					boolean doDeleteDoc = documentSuppressionIsNeeded(documentEntry);
-					anonymousShareEntryService.delete(systemAccount, null, shareEntry.getUuid());
+					anonymousShareEntryService.delete(systemAccount, shareEntry.getEntryOwner(), shareEntry.getUuid());
 					if(doDeleteDoc) {
 						documentEntryService.deleteExpiredDocumentEntry(systemAccount, documentEntry);
 					}
