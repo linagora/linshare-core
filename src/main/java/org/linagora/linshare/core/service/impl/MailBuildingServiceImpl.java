@@ -1070,7 +1070,15 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		builder.getBodyChain()
 				.add("subject", request.getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequestGroup().getBody())
+				.add("expirationDate", formatExpirationDate(owner, request))
+				.add("creationDate", formatCreationDate(owner, request))
 				.add("files", getFileNames(request));
+		for (UploadRequestUrl uru : request.getUploadRequestURLs()) {
+			builder.getBodyChain().add(
+					"recipientMail",
+					uru.getContact().getMail()
+			);
+		}
 		container.setRecipient(owner.getMail());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
@@ -1094,7 +1102,14 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		builder.getBodyChain()
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("files", getFileNames(request.getUploadRequest()));
+				.add("files", getFileNames(request.getUploadRequest()))
+				.add("ownerFirstName",owner.getFirstName())
+				.add("ownerLastName",owner.getLastName())
+				.add("ownerMail",owner.getMail())
+				.add("ownerRepresentation", new ContactRepresentation(owner).getContactRepresentation())
+				.add("expirationDate", formatExpirationDate(owner, request.getUploadRequest()))
+				.add("creationDate", formatCreationDate(owner, request.getUploadRequest()))
+				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(owner)));
 		container.setRecipient(request.getContact().getMail());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
