@@ -36,7 +36,9 @@ package org.linagora.linshare.core.facade;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -121,7 +123,7 @@ public interface UserFacade {
 	 * @param locale
 	 * @throws BusinessException
 	 */
-	public void updateUserLocale(UserVo user, String locale) throws BusinessException;
+	public void updateUserLocale(UserVo user, SupportedLanguage locale) throws BusinessException;
 
 	/**
 	 * Update a user externalMailLocale
@@ -129,7 +131,7 @@ public interface UserFacade {
 	 * @param externalMailLocale
 	 * @throws BusinessException
 	 */
-	public void updateUserExternalMailLocale(UserVo user, String externalMailLocale) throws BusinessException;
+	public void updateUserExternalMailLocale(UserVo user, Language externalMailLocale) throws BusinessException;
 
     /** Load a User.
      * If the user doesn't exist in database, search informations in LDAP and create a user entry before returning it.

@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.domain.objects;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -54,7 +55,7 @@ public class Recipient {
 
 	protected String domainIdentifier;
 
-	protected String locale;
+	protected Language locale;
 
 	public Recipient(String mail) {
 		super();
@@ -62,7 +63,7 @@ public class Recipient {
 	}
 
 	public Recipient(String uuid, String mail, String firstName,
-			String lastName, AbstractDomain domain, String locale) {
+			String lastName, AbstractDomain domain, Language locale) {
 		super();
 		this.uuid = uuid;
 		this.mail = mail;
@@ -149,11 +150,11 @@ public class Recipient {
 		this.domain = domain;
 	}
 
-	public String getLocale() {
+	public Language getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(Language locale) {
 		this.locale = locale;
 	}
 

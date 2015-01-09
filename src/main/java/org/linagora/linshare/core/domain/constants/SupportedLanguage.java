@@ -31,52 +31,75 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.domain.constants;
 
-import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.constants.SupportedLanguage;
-import org.linagora.linshare.core.domain.vo.TopDomainVo;
-import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
+import java.util.Locale;
 
-public class TopDomain extends AbstractDomain {
+/**
+ * Defines supported languages.
+ */
+public enum SupportedLanguage {
+	ENGLISH(0, "en"), FRENCH(1, "fr"), DUTCH(2, "nl"), VIETNAMESE(3, "vi"), CREOLE(4, "mq");
 
-	public TopDomain() {
+	private int value;
+	private String tapestryLocale;
+
+	private SupportedLanguage(int value, String tapestryLocale) {
+		this.value = value;
+		this.tapestryLocale = tapestryLocale;
 	}
 
-	/*
-	 * For tests only
-	 */
-	public TopDomain(String identifier, String label, RootDomain rootDomain) {
-		super(identifier, label);
-		this.defaultRole = Role.ADMIN;
-		this.defaultTapestryLocale = SupportedLanguage.ENGLISH;
-		this.parentDomain = rootDomain;
+	public int toInt() {
+		return value;
 	}
 
-	public TopDomain(String identifier, String label, LDAPConnection ldapConn, DomainPattern domainPattern, String baseDn) {
-		this(identifier,label,null);
-		this.userProvider = new LdapUserProvider(baseDn,ldapConn,domainPattern);
-	}
-
-	public TopDomain(TopDomainVo topDomain) {
-		super(topDomain);
-	}
-
-	public TopDomain(DomainDto domainDto, AbstractDomain parent) {
-		super(domainDto, parent);
-	}
-
-	@Override
-	public DomainType getDomainType() {
-		return DomainType.TOPDOMAIN;
-	}
-
-	@Override
-	public void updateDomainWith(AbstractDomain d) {
-		super.updateDomainWith(d);
-		if (!(this.defaultRole.equals(Role.SIMPLE) || this.defaultRole.equals(Role.ADMIN))) {
-			this.defaultRole = Role.SIMPLE;
+	public static SupportedLanguage fromInt(int value) {
+		for (SupportedLanguage lang : values()) {
+			if (lang.value == value) {
+				return lang;
+			}
 		}
+		throw new IllegalArgumentException("Doesn't match an existing Language");
+	}
+
+	public static SupportedLanguage fromLocale(Locale locale) {
+		if (locale.getLanguage().equals("nl_NL")
+				|| locale.getLanguage().equals("nl")) {
+			return DUTCH;
+		}
+		if (Locale.FRENCH.equals(locale) || Locale.FRANCE.equals(locale)) {
+			return FRENCH;
+		}
+		return ENGLISH;
+	}
+
+	public static SupportedLanguage fromTapestryLocale(String locale) {
+		if (locale == null)
+			return null;
+		return SupportedLanguage.fromLocale(new Locale(locale));
+	}
+
+	public String getTapestryLocale() {
+		return tapestryLocale;
+	}
+	
+	public static SupportedLanguage fromLanguage(Language language){
+		if (language == Language.FRENCH){
+			return SupportedLanguage.FRENCH;
+		}
+		if (language == Language.DUTCH){
+			return SupportedLanguage.DUTCH;
+		}
+		return SupportedLanguage.ENGLISH;
+	}
+	
+	public static Language toLanguage(SupportedLanguage language){
+		if (language == SupportedLanguage.FRENCH){
+			return Language.FRENCH;
+		}
+		if (language == SupportedLanguage.DUTCH){
+			return Language.DUTCH;
+		}
+		return Language.ENGLISH;
 	}
 }

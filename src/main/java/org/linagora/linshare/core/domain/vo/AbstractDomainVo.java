@@ -38,6 +38,7 @@ import java.io.Serializable;
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
 public class AbstractDomainVo implements Serializable {
@@ -48,7 +49,7 @@ public class AbstractDomainVo implements Serializable {
 
 	protected String label;
 	
-	protected String defaultLocale;
+	protected SupportedLanguage defaultLocale;
 
 	protected Role defaultRole;
 	
@@ -141,15 +142,15 @@ public class AbstractDomainVo implements Serializable {
 	}
 
 	@Validate("required")
-	public String getDefaultLocale() {
+	public SupportedLanguage getDefaultLocale() {
 		return defaultLocale;
 	}
 
-	public void setDefaultLocale(String defaultLocale) {
+	public void setDefaultLocale(SupportedLanguage defaultLocale) {
 		if(defaultLocale != null)
-			this.defaultLocale = defaultLocale.trim();
+			this.defaultLocale = defaultLocale;
 		else
-			this.defaultLocale = defaultLocale;			
+			this.defaultLocale = SupportedLanguage.ENGLISH;
 	}
 
 //	@Validate("required")

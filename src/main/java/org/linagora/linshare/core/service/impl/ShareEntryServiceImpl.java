@@ -281,7 +281,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		Set<ShareEntry> entries = Sets.newHashSet();
 		for (User recipient : sc.getShareRecipients()) {
 			MailContainer mailContainer = new MailContainer(
-					recipient.getLocale(), sc.getMessage(), sc.getSubject());
+					recipient.getExternalMailLocale(), sc.getMessage(), sc.getSubject());
 			Set<ShareEntry> shares = Sets.newHashSet();
 			for (DocumentEntry documentEntry : sc.getDocuments()) {
 				ShareEntry createShare = shareEntryBusinessService.create(

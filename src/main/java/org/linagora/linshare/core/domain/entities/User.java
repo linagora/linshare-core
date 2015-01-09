@@ -38,6 +38,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
@@ -77,7 +78,7 @@ public abstract class User extends Account {
 		this.destroyed = false;
 		this.canUpload = true;
 		this.canCreateGuest = true;
-		this.externalMailLocale = "en";
+		this.externalMailLocale = Language.ENGLISH;
 	}
 
 	public User(String firstName, String lastName, String mail) {
@@ -92,7 +93,7 @@ public abstract class User extends Account {
 		this.destroyed = false;
 		this.canUpload = true;
 		this.canCreateGuest = true;
-		this.externalMailLocale = "en";
+		this.externalMailLocale = Language.ENGLISH;
 	}
 
 	public User(UserDto userDto) {
@@ -103,7 +104,7 @@ public abstract class User extends Account {
 		this.role = Role.valueOf(userDto.getRole());
 		this.canUpload = userDto.getCanUpload();
 		this.canCreateGuest = userDto.getCanCreateGuest();
-		this.externalMailLocale = userDto.getLocale();
+		this.externalMailLocale = userDto.getExternalMailLocale();
 		this.locale = userDto.getLocale();
 	}
 

@@ -87,10 +87,10 @@ public class MailContainer {
 		this.contentHTML = null;
 	}
 
-	public MailContainer(String locale, String message, String subject) {
+	public MailContainer(Language locale, String message, String subject) {
 		super();
 		this.personalMessage = message;
-		this.language = Language.fromLocale(new Locale(locale));
+		this.language = locale;
 		this.subject = subject;
 		this.contentTXT = null;
 		this.contentHTML = null;

@@ -37,7 +37,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
@@ -63,8 +65,8 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 	private String ownerLogin = null;
 	private Date expirationDate = null;
 	private String comment;
-	private String locale;
-	private String externalMailLocale;
+	private SupportedLanguage locale;
+	private Language externalMailLocale;
 	private boolean restricted;
 	private String domainIdentifier;
 
@@ -195,7 +197,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 	}
 
 	public UserVo(String login, String firstName, String lastName, String mail,
-			Role role, AccountType userType, String locale) {
+			Role role, AccountType userType, SupportedLanguage locale) {
 		this.login = login;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -292,19 +294,19 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		this.comment = comment;
 	}
 
-	public String getLocale() {
+	public SupportedLanguage getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(SupportedLanguage locale) {
 		this.locale = locale;
 	}
 
-	public String getExternalMailLocale() {
+	public Language getExternalMailLocale() {
 		return externalMailLocale;
 	}
 
-	public void setExternalMailLocale(String externalMailLocale) {
+	public void setExternalMailLocale(Language externalMailLocale) {
 		this.externalMailLocale = externalMailLocale;
 	}
 

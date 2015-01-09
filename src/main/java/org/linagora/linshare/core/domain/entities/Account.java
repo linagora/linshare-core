@@ -39,7 +39,9 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 
 public abstract class Account {
 
@@ -53,9 +55,9 @@ public abstract class Account {
 
 	protected Role role = Role.SIMPLE;
 
-	protected String locale;
+	protected SupportedLanguage locale;
 
-	protected String externalMailLocale;
+	protected Language externalMailLocale;
 
 	protected boolean enable;
 
@@ -157,15 +159,15 @@ public abstract class Account {
 		this.role = role;
 	}
 
-	public String getLocale() {
+	public SupportedLanguage getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(SupportedLanguage locale) {
 		this.locale = locale;
 	}
 
-	public void setBusinessLocale(String locale) {
+	public void setBusinessLocale(SupportedLanguage locale) {
 		if (locale != null) {
 			this.locale = locale;
 		}
@@ -237,14 +239,14 @@ public abstract class Account {
 
 	public abstract String getFullName();
 
-	public String getExternalMailLocale() {
+	public Language getExternalMailLocale() {
 		return externalMailLocale;
 	}
 
 	public Locale getJavaExternalMailLocale() {
 		Locale locale = Locale.ENGLISH;
 		switch (getExternalMailLocale()) {
-		case "fr":
+		case FRENCH:
 			locale = Locale.FRANCE;
 			break;
 		default:
@@ -253,11 +255,11 @@ public abstract class Account {
 		return locale;
 	}
 
-	public void setExternalMailLocale(String externalMailLocale) {
+	public void setExternalMailLocale(Language externalMailLocale) {
 		this.externalMailLocale = externalMailLocale;
 	}
 
-	public void setBusinessExternalMailLocale(String externalMailLocale) {
+	public void setBusinessExternalMailLocale(Language externalMailLocale) {
 		if (externalMailLocale != null) {
 			this.externalMailLocale = externalMailLocale;
 		}

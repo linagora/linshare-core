@@ -38,6 +38,7 @@ import java.util.Date;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.Account;
 
 public class AccountVo implements Serializable {
@@ -60,7 +61,7 @@ public class AccountVo implements Serializable {
 	
 	protected Role role = Role.SIMPLE;
 	
-	protected String locale;
+	protected SupportedLanguage locale;
 	
 	protected boolean enable;
 
@@ -111,11 +112,11 @@ public class AccountVo implements Serializable {
 		this.role = role;
 	}
 
-	public String getLocale() {
+	public SupportedLanguage getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(SupportedLanguage locale) {
 		this.locale = locale;
 	}
 

@@ -96,7 +96,7 @@ public class UserLocaleDispatcher implements Dispatcher {
     		UserVo userVo = this.stateManager.get(UserVo.class);
     		// the user predefined locale overrides the browser locale 
     		if (userVo.getLocale()!=null && !userVo.getLocale().equals("")) {
-    			persistentLocale.set(new Locale(userVo.getLocale()));
+    			persistentLocale.set(new Locale(userVo.getLocale().getTapestryLocale()));
     		} else {
 				Locale requestLocale = request.getLocale();
 				if (supportedLocales.contains(requestLocale)) {

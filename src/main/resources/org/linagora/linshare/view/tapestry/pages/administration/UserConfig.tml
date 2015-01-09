@@ -35,8 +35,8 @@
                     <td class="field_langage" style="padding-top:8px;">
                         <t:label for="currentExternalMailLocale">${message:pages.administration.userconfig.currentExternalMailLocale}</t:label>
                     </td>
-                    <td class="field_form" style="padding-top:8px;">
-                        <t:select t:model="model" t:id="currentExternalMailLocale" t:value="currentExternalMailLocale" blankoption="never"/>
+                    <td class="field_form" style="padding-top:8px; width:3px;">
+                        <t:select t:model="externalMailModel" t:id="currentExternalMailLocale" t:value="currentExternalMailLocale" blankoption="never"/>
                     </td>
                     <td class="field_button">
                     </td>

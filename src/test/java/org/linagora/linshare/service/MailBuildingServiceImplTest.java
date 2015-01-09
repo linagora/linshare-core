@@ -218,7 +218,7 @@ public class MailBuildingServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		User actor = john;
-		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
+		MailContainer mailContainer = new MailContainer(Language.ENGLISH,"contentTxt","contentHTML");
 		mailContainer.setLanguage(Language.FRENCH);
 		List<Document> docs = new ArrayList<Document>();
 		docs.add(aDocument);

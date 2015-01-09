@@ -149,7 +149,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	public UserDto update(UserDto userDto) throws BusinessException {
 		Validate.notNull(userDto, "user must be set.");
 		Validate.notEmpty(userDto.getUuid(), "uuid must be set.");
-		Validate.notEmpty(userDto.getLocale(), "uuid must be set.");
+		Validate.notNull(userDto.getLocale(), "locale must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
 		User entity = userService.findByLsUuid(userDto.getUuid());
 		if (entity == null) {

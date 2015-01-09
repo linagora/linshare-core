@@ -46,6 +46,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -106,7 +107,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
 
     	String subject = "subject";
     	String txtContent = "content";
-    	String locale = "en";
+    	Language locale = Language.ENGLISH;
     	String fromUser = "foobar@foodomain.com";
     	String fromDomain = LINSHARE_MAIL;
     	String recipient = "johndoe@unknow.com";
@@ -158,7 +159,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
 
     	String subject = "subject";
     	String contentTxt = "content";
-    	String locale = "en";
+    	Language locale = Language.ENGLISH;
     	String fromUser = "foobar@foodomain.com";
     	String fromDomain = LINSHARE_MAIL;
     	String recipient = "johndoe@unknow.com";

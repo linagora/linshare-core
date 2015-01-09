@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.GuestBusinessService;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -135,7 +136,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		guest.setOwner(owner);
 		guest.setDomain(domain);
 		guest.setLocale(domain.getDefaultTapestryLocale());
-		guest.setExternalMailLocale(domain.getDefaultTapestryLocale());
+		guest.setExternalMailLocale(SupportedLanguage.toLanguage(domain.getDefaultTapestryLocale()));
 		guest.setPassword(hashedPassword);
 		guest.setExpirationDate(expiryDate);
 		Guest create = guestRepository.create(guest);

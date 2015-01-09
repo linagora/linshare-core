@@ -36,7 +36,9 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -103,7 +105,7 @@ public interface UserService {
 	 * @param locale : the new local
 	 * @throws BusinessException 
 	 */
-	public void updateUserLocale(String domainId, String mail, String locale) throws BusinessException;
+	public void updateUserLocale(String domainId, String mail, SupportedLanguage locale) throws BusinessException;
 
 	/**
 	 * Update a user externalMailLocale
@@ -111,7 +113,7 @@ public interface UserService {
 	 * @param locale : the new externalMailLocal
 	 * @throws BusinessException
 	 */
-	public void updateUserExternalMailLocale(String domainId, String mail, String externalMailLocale) throws BusinessException;
+	public void updateUserExternalMailLocale(String domainId, String mail, Language externalMailLocale) throws BusinessException;
 
 	/**
 	 * change a guest or superadmin password

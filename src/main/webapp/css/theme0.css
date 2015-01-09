@@ -2071,6 +2071,7 @@ fieldset.title_criteria_zone textarea {
 
 #userConfig #pageContent input, #userConfig #pageContent select {
 	margin-left: 1em;
+	width: 100px;
 }
 
 /* Tables */ 

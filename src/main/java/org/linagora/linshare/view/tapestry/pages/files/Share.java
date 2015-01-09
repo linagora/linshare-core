@@ -280,7 +280,7 @@ public class Share {
 			// PROCESS SHARE
 			try {
 				MailContainer mailContainer = new MailContainer(
-						userVo.getLocale(), textAreaValue, textAreaSubjectValue);
+						userVo.getExternalMailLocale(), textAreaValue, textAreaSubjectValue);
 				shareFacade.share(userVo, documents, recipientsEmail, secureSharing, mailContainer);
 			} catch (BusinessException ex) {
 

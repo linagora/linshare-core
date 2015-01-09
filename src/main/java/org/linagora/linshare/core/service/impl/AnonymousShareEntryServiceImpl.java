@@ -40,6 +40,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -155,8 +156,12 @@ public class AnonymousShareEntryServiceImpl extends
 					.computeMinShareExpiryDateOfList(sc.getDocuments(), owner);
 		}
 		for (Recipient recipient : sc.getAnonymousShareRecipients()) {
+			Language mailLocale = recipient.getLocale();
+			if (mailLocale == null){
+				mailLocale = owner.getExternalMailLocale();
+			}
 			MailContainer mailContainer = new MailContainer(
-					recipient.getLocale(), sc.getMessage(), sc.getSubject());
+					mailLocale, sc.getMessage(), sc.getSubject());
 			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService
 					.create(owner, recipient, sc.getDocuments(), expiryDate,
 							passwordProtected);

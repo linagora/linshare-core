@@ -37,6 +37,8 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.Account;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -56,10 +58,10 @@ public class AccountDto {
 	protected Date modificationDate;
 
 	@ApiModelProperty(value = "Locale")
-	protected String locale;
+	protected SupportedLanguage locale;
 
 	@ApiModelProperty(value = "ExternalMailLocale")
-	protected String externalMailLocale;
+	protected Language externalMailLocale;
 
 	@ApiModelProperty(value = "Domain")
 	protected String domain;
@@ -103,19 +105,19 @@ public class AccountDto {
 		this.modificationDate = modificationDate;
 	}
 
-	public String getLocale() {
+	public SupportedLanguage getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(SupportedLanguage locale) {
 		this.locale = locale;
 	}
 
-	public String getExternalMailLocale() {
+	public Language getExternalMailLocale() {
 		return externalMailLocale;
 	}
 
-	public void setExternalMailLocale(String extertalMailLocale) {
+	public void setExternalMailLocale(Language extertalMailLocale) {
 		this.externalMailLocale = extertalMailLocale;
 	}
 

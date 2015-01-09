@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -51,6 +52,9 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.apache.tapestry5.util.EnumSelectModel;
+import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
@@ -62,6 +66,9 @@ import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 
 /**
@@ -124,7 +131,7 @@ public class UserConfig {
 	private String currentLocale;
 
 	@Property
-	private String currentExternalMailLocale;
+	private Language currentExternalMailLocale;
 
 	@Property
 	private String oldUserPassword;
@@ -139,6 +146,10 @@ public class UserConfig {
 	@Property
 	private SimpleSelectModel<String> model;
 
+	@Persist
+	@Property
+	private EnumSelectModel externalMailModel;
+
 	/* ***********************************************************
 	 *                       Phase processing
 	 ************************************************************ */
@@ -149,13 +160,12 @@ public class UserConfig {
 			if(null!=symbolSource.valueForSymbol(SymbolConstants.SUPPORTED_LOCALES)){
 				String stringLocales=symbolSource.valueForSymbol(SymbolConstants.SUPPORTED_LOCALES);
 				String[]listLocales=stringLocales.split(",");
-
-				locales=this.getSupportedLocales(listLocales);		
+				locales=this.getSupportedLocales(listLocales);
 			}
 		}
 
 		if (userVo.getLocale() !=null) {
-			currentLocale = userVo.getLocale();
+			currentLocale = userVo.getLocale().getTapestryLocale();
 		}
 
 		if (userVo.getExternalMailLocale() !=null) {
@@ -163,7 +173,14 @@ public class UserConfig {
 		}
 
 		model = new SimpleSelectModel<String>(locales, messages, "pages.administration.userconfig.select");
-
+		externalMailModel = new EnumSelectModel(Language.class, messages);
+		Iterables.removeIf(externalMailModel.getOptions(),
+				new Predicate<OptionModel>() {
+					@Override
+					public boolean apply(OptionModel input) {
+						return input.getValue().equals(Language.DUTCH);
+					}
+				});
 	}
 
 	public boolean getDisplayChangePassword() {
@@ -175,7 +192,7 @@ public class UserConfig {
 	 ************************************************************ */
 
 	void onSuccessFromConfigUserform() throws BusinessException {
-		userFacade.updateUserLocale(userVo,currentLocale);
+		userFacade.updateUserLocale(userVo, SupportedLanguage.fromTapestryLocale(currentLocale));
 		userFacade.updateUserExternalMailLocale(userVo, currentExternalMailLocale);
 		userVo = userFacade.findUserByLsUuid(userVo, userVo.getLsUuid());
 		userVo = userFacade.findUserInDb(userVo.getMail(), userVo.getDomainIdentifier());
@@ -220,7 +237,6 @@ public class UserConfig {
 		for(String currentLocale:locales){
 			newLocales.add(currentLocale);
 		}
-
 		return newLocales;
 	}
 	/* ***********************************************************

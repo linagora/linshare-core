@@ -42,8 +42,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -523,7 +525,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUserLocale(String domainId, String mail, String locale)
+	public void updateUserLocale(String domainId, String mail, SupportedLanguage locale)
 			throws BusinessException {
 		User user = findOrCreateUser(mail, domainId);
 		if (user == null) {
@@ -544,7 +546,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUserExternalMailLocale(String domainId, String mail, String externalMailLocale)
+	public void updateUserExternalMailLocale(String domainId, String mail, Language externalMailLocale)
 			throws BusinessException {
 		User user = findOrCreateUser(mail, domainId);
 		if (user == null) {

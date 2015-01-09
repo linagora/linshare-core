@@ -400,7 +400,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		User sender = (User) shareEntry.getEntryOwner();
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
-		String url, firstName, lastName, mimeType, fileName, recipient, locale; // ugly
+		String url, firstName, lastName, mimeType, fileName, recipient; // ugly
+		Language locale;
 		if (shareEntry instanceof AnonymousShareEntry) {
 			AnonymousShareEntry e = (AnonymousShareEntry) shareEntry;
 			url = e.getAnonymousUrl()
@@ -460,7 +461,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		User sender = (User) shareEntry.getEntryOwner();
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
-		String firstName, lastName, fileName, recipient, locale; // ugly
+		String firstName, lastName, fileName, recipient; // ugly
+		Language locale;
 		if (shareEntry instanceof AnonymousShareEntry) {
 			AnonymousShareEntry e = (AnonymousShareEntry) shareEntry;
 			recipient = e.getAnonymousUrl().getContact().getMail();
@@ -507,7 +509,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		User sender = (User) shareEntry.getEntryOwner();
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
-		String url, firstName, lastName, fileName, recipient, locale; // ugly
+		String url, firstName, lastName, fileName, recipient; // ugly
+		Language locale;
 		if (shareEntry instanceof AnonymousShareEntry) {
 			AnonymousShareEntry e = (AnonymousShareEntry) shareEntry;
 			url = e.getAnonymousUrl()

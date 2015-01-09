@@ -189,7 +189,7 @@ public class Index {
 			Locale userLocale = null;
 			if (((userVo.getLocale()) != null)
 					&& (!userVo.getLocale().equals(""))) {
-				userLocale = new Locale(userVo.getLocale());
+				userLocale = new Locale(userVo.getLocale().getTapestryLocale());
 			}
 			Language language = WelcomeMessageUtils.getLanguage(
 					persistentLocale.get(), request.getLocale(), userLocale);

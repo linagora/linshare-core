@@ -8,6 +8,12 @@
 		<param name="identifierMethod">toInt</param>
 		<param name="valueOfMethod">fromInt</param>
 	</typedef>
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="supportedLanguageType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.SupportedLanguage</param>
+		<param name="identifierMethod">getTapestryLocale</param>
+		<param name="valueOfMethod">fromTapestryLocale</param>
+	</typedef>
 
 
 	<class name="AbstractDomain" table="domain_abstract" discriminator-value= "-1" >
@@ -24,7 +30,7 @@
 		<property access="field" column="template" name="template" not-null="true" />
 		<property access="field" column="description" name="description" />
 		<property access="field" column="default_role" name="defaultRole" type="roleEnumType" />
-		<property access="field" column="default_locale" name="defaultTapestryLocale" />
+		<property access="field" column="default_locale" name="defaultTapestryLocale" type="supportedLanguageType"/>
 		<property access="field" column="used_space" name="usedSpace" not-null="true"/>
 		<property access="field" column="auth_show_order" name="authShowOrder" />
 

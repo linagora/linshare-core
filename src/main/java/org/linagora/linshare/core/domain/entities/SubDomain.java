@@ -35,6 +35,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.vo.SubDomainVo;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
 
@@ -45,9 +46,9 @@ public class SubDomain extends AbstractDomain {
 
 	public SubDomain(String identifier, String label,TopDomain topDomain) {
 		super(identifier, label);
-		this.defaultRole=Role.SIMPLE;
-		this.defaultTapestryLocale="en";
-		this.parentDomain=topDomain;
+		this.defaultRole = Role.SIMPLE;
+		this.defaultTapestryLocale = SupportedLanguage.ENGLISH;
+		this.parentDomain = topDomain;
 	}
 
 	public SubDomain(SubDomainVo subDomain) {

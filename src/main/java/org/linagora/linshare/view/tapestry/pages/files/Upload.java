@@ -311,7 +311,7 @@ public class Upload {
 			// PROCESS SHARE
 			try {
 				MailContainer mailContainer = new MailContainer(
-						userVo.getLocale(), textAreaValue, textAreaSubjectValue);
+						userVo.getExternalMailLocale(), textAreaValue, textAreaSubjectValue);
 				shareFacade.share(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer);
 
 			} catch (BusinessException ex) {

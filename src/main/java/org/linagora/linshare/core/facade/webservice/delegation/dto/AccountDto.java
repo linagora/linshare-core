@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.delegation.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.User;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -58,14 +59,14 @@ public class AccountDto {
 	protected String domain;
 
 	@ApiModelProperty(value = "Locale")
-	protected String locale;
+	protected SupportedLanguage locale;
 
 	public AccountDto() {
 		super();
 	}
 
 	public AccountDto(String uuid, String mail, String name, String domain,
-			String locale) {
+			SupportedLanguage locale) {
 		super();
 		this.uuid = uuid;
 		this.mail = mail;
@@ -115,11 +116,11 @@ public class AccountDto {
 		this.domain = domain;
 	}
 
-	public String getLocale() {
+	public SupportedLanguage getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(SupportedLanguage locale) {
 		this.locale = locale;
 	}
 

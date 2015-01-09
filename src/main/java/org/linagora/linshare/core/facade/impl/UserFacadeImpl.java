@@ -38,7 +38,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -249,13 +251,13 @@ public class UserFacadeImpl implements UserFacade {
 		return userRepository.findMails(beginWith);
 	}
 
-	public void updateUserLocale(UserVo user, String locale)
+	public void updateUserLocale(UserVo user, SupportedLanguage locale)
 			throws BusinessException {
 		userService.updateUserLocale(user.getDomainIdentifier(),
 				user.getMail(), locale);
 	}
 
-	public void updateUserExternalMailLocale(UserVo user, String externalMailLocale)
+	public void updateUserExternalMailLocale(UserVo user, Language externalMailLocale)
 			throws BusinessException {
 		userService.updateUserExternalMailLocale(user.getDomainIdentifier(),
 				user.getMail(), externalMailLocale);

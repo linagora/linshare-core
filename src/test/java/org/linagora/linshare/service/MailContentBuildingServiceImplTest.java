@@ -254,7 +254,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	
 		User actor = john;
 		Contact recipient = new Contact(jane.getMail());
-		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
+		MailContainer mailContainer = new MailContainer(Language.ENGLISH,"contentTxt","contentHTML");
 		mailContainer.setLanguage(Language.FRENCH);
 		List<DocumentEntry> docs = new ArrayList<DocumentEntry>();
 		docs.add(aDocumentEntry);
@@ -278,7 +278,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		User actor = john;
-		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
+		MailContainer mailContainer = new MailContainer(Language.ENGLISH,"contentTxt","contentHTML");
 		mailContainer.setLanguage(Language.FRENCH);
 		List<Document> docs = new ArrayList<Document>();
 		docs.add(aDocument);
@@ -327,7 +327,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		User actor = john;
-		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
+		MailContainer mailContainer = new MailContainer(Language.ENGLISH,"contentTxt","contentHTML");
 		mailContainer.setLanguage(Language.FRENCH);
 		
 		Set<ShareEntry> shares = Sets.newHashSet();

@@ -40,6 +40,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
 
@@ -53,7 +54,7 @@ public abstract class AbstractDomain {
 
 	protected String label;
 
-	protected String defaultTapestryLocale;
+	protected SupportedLanguage defaultTapestryLocale;
 
 	protected Role defaultRole;
 
@@ -110,7 +111,7 @@ public abstract class AbstractDomain {
 		this.parentDomain = null;
 		this.subdomain = new HashSet<AbstractDomain>();
 		this.defaultRole = Role.SIMPLE;
-		this.defaultTapestryLocale = "en";
+		this.defaultTapestryLocale = SupportedLanguage.ENGLISH;
 		this.enable = true;
 		this.template = false;
 		this.usedSpace = new Long(0);
@@ -157,7 +158,7 @@ public abstract class AbstractDomain {
 		this.usedSpace = new Long(0);
 		this.subdomain = new HashSet<AbstractDomain>();
 		this.defaultRole = Role.valueOf(domainDto.getUserRole());
-		this.defaultTapestryLocale = domainDto.getLanguage().getTapestryLocale();
+		this.defaultTapestryLocale = domainDto.getLanguage();
 		this.authShowOrder = domainDto.getAuthShowOrder();
 //		TODO this.mimePolicy = new MimePolicy();
 	}
@@ -171,7 +172,7 @@ public abstract class AbstractDomain {
 		this.authShowOrder = d.getAuthShowOrder();
 	}
 
-	public String getDefaultTapestryLocale() {
+	public SupportedLanguage getDefaultTapestryLocale() {
 		return defaultTapestryLocale;
 	}
 
@@ -203,7 +204,7 @@ public abstract class AbstractDomain {
 		return template;
 	}
 
-	public void setDefaultTapestryLocale(String defaultTapestryLocale) {
+	public void setDefaultTapestryLocale(SupportedLanguage defaultTapestryLocale) {
 		this.defaultTapestryLocale = defaultTapestryLocale;
 	}
 
