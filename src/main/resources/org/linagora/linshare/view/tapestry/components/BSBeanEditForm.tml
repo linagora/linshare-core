@@ -5,7 +5,7 @@
       <t:beaneditor t:id="editor" object="object" model="model" overrides="this"/>
       <div class="form-actions">
         <input type="submit" class="btn btn-primary" value="${submitLabel}"/>
-        <t:submit t:id="cancel" class="btn" mode="cancel" value="message:cancel-label"/>
+        <t:submit t:id="cancel" class="btn" mode="cancel" value="message:global.button.cancel"/>
       </div>
     </div>
   </form>
