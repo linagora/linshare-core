@@ -207,6 +207,9 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <!-- Main content -->
     <div id="content">
 
+		<t:messagePanel />
+		<t:businessMessagesDisplayer />
+
         <h1>${message:pages.files.upload.title}</h1>
 
         <h2>${message:pages.files.upload.upload.title}</h2>
