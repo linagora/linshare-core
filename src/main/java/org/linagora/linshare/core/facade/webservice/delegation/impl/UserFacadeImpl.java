@@ -63,6 +63,8 @@ public class UserFacadeImpl extends DelegationGenericFacadeImpl implements
 		if(domainId == null) {
 			domainId = actor.getDomainId();
 		}
+		// We can not accept this wildcard. 
+		mail = mail.replace("*", "");
 		User user = userService.findOrCreateUserWithDomainPolicies(mail, domainId);
 		return new GenericUserDto(user);
 	}
