@@ -165,4 +165,8 @@ public class AnonymousUrl {
 		}
 		return isOneDocEncrypted;
 	}
+
+	public boolean isPasswordProtected() {
+		return getPassword() != null;
+	}
 }

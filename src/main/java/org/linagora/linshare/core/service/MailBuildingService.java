@@ -83,13 +83,21 @@ public interface MailBuildingService {
 			MailContainer inputMailContainer, User recipient,
 			List<ShareDocumentVo> shares) throws BusinessException;
 
-	MailContainerWithRecipient buildNewSharingProtected(User sender,
-			MailContainer inputMailContainer, AnonymousUrl anonymousUrl)
-			throws BusinessException;
-
 	MailContainerWithRecipient buildNewSharingCyphered(User sender,
 			MailContainer inputMailContainer, User recipient,
 			List<ShareDocumentVo> shares) throws BusinessException;
+
+	MailContainerWithRecipient buildNewSharing(User sender,
+			MailContainer inputMailContainer, AnonymousUrl anonymousUrl)
+			throws BusinessException;
+
+	MailContainerWithRecipient buildNewSharingProtected(User sender,
+			MailContainer inputMailContainer, AnonymousUrl anonymousUrl)
+					throws BusinessException;
+
+	MailContainerWithRecipient buildNewSharingCyphered(
+			User sender, MailContainer input, AnonymousUrl anonUrl)
+					throws BusinessException;
 
 	MailContainerWithRecipient buildNewSharingCypheredProtected(User sender,
 			MailContainer inputMailContainer, AnonymousUrl anonymousUrl)

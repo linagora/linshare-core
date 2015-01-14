@@ -630,10 +630,8 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				builder);
 	}
 
-	@Override
-	public MailContainerWithRecipient buildNewSharingProtected(User sender,
-			MailContainer input, AnonymousUrl anonUrl)
-			throws BusinessException {
+	private MailContainerWithRecipient buildNewAnonymousSharing(User sender, MailContainer input,
+			AnonymousUrl anonUrl, MailContentType mailContentType) throws BusinessException {
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
 		String url = anonUrl
@@ -644,12 +642,10 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				sender.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
-
 		StringBuffer names = new StringBuffer();
 		for (String n : anonUrl.getDocumentNames()) {
 			names.append("<li>" + n + "</li>");
 		}
-
 		builder.getSubjectChain()
 				.add("actorSubject", input.getSubject())
 				.add("actorRepresentation", actorRepresentation);
@@ -662,6 +658,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("number", "" + anonUrl.getDocumentNames().size())
 				.add("documentNames", names.toString())
 				.add("password", anonUrl.getTemporaryPlainTextPassword())
+				.add("jwsEncryptUrl", getJwsEncryptUrlString(getLinShareUrlForAContactRecipient(sender)))
 				.add("url", url)
 				.add("urlparam", "");
 		container.setSubject(input.getSubject());
@@ -669,9 +666,38 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		container.setFrom(getFromMailAddress(sender));
 		container.setReplyTo(sender.getMail());
 
-		return buildMailContainer(cfg, container,
-				input.getPersonalMessage(),
-				MailContentType.NEW_SHARING_PROTECTED, builder);
+		return buildMailContainer(cfg, container, input.getPersonalMessage(),
+				mailContentType, builder);
+	}
+
+	@Override
+	public MailContainerWithRecipient buildNewSharing(User sender,
+			MailContainer input, AnonymousUrl anonUrl) throws BusinessException {
+		return buildNewAnonymousSharing(sender, input, anonUrl,
+				MailContentType.NEW_SHARING);
+	}
+
+	@Override
+	public MailContainerWithRecipient buildNewSharingProtected(User sender,
+			MailContainer input, AnonymousUrl anonUrl) throws BusinessException {
+		return buildNewAnonymousSharing(sender, input, anonUrl,
+				MailContentType.NEW_SHARING_PROTECTED);
+	}
+
+	@Override
+	public MailContainerWithRecipient buildNewSharingCyphered(
+			User sender, MailContainer input, AnonymousUrl anonUrl)
+			throws BusinessException {
+		return buildNewAnonymousSharing(sender, input, anonUrl,
+				MailContentType.NEW_SHARING_CYPHERED);
+	}
+
+	@Override
+	public MailContainerWithRecipient buildNewSharingCypheredProtected(
+			User sender, MailContainer input, AnonymousUrl anonUrl)
+			throws BusinessException {
+		return buildNewAnonymousSharing(sender, input, anonUrl,
+				MailContentType.NEW_SHARING_CYPHERED_PROTECTED);
 	}
 
 	@Override
@@ -720,51 +746,6 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 		return buildMailContainer(cfg, container,
 				input.getPersonalMessage(),
 				MailContentType.NEW_SHARING_CYPHERED, builder);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildNewSharingCypheredProtected(
-			User sender, MailContainer input, AnonymousUrl anonUrl)
-			throws BusinessException {
-		String actorRepresentation = new ContactRepresentation(sender)
-				.getContactRepresentation();
-		String url = anonUrl
-				.getFullUrl(getLinShareUrlForAContactRecipient(sender));
-		String email = anonUrl.getContact().getMail();
-
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		StringBuffer names = new StringBuffer();
-		for (String n : anonUrl.getDocumentNames()) {
-			names.append("<li>" + n + "</li>");
-		}
-
-		builder.getSubjectChain()
-				.add("actorSubject", input.getSubject())
-				.add("actorRepresentation", actorRepresentation);
-		builder.getGreetingsChain()
-				.add("firstName", "")
-				.add("lastName", email);
-		builder.getBodyChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
-				.add("number", "" + anonUrl.getDocumentNames().size())
-				.add("documentNames", names.toString())
-				.add("password", anonUrl.getTemporaryPlainTextPassword())
-				.add("jwsEncryptUrl", getJwsEncryptUrlString(url))
-				.add("url", url)
-				.add("urlparam", "");
-		container.setSubject(input.getSubject());
-		container.setRecipient(email);
-		container.setFrom(getFromMailAddress(sender));
-		container.setReplyTo(sender.getMail());
-
-		return buildMailContainer(cfg, container,
-				input.getPersonalMessage(),
-				MailContentType.NEW_SHARING_PROTECTED, builder);
 	}
 
 	@Override
@@ -1305,9 +1286,14 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 	public MailContainerWithRecipient buildMailNewSharingWithRecipient(
 			MailContainer input, AnonymousUrl anonUrl, User sender)
 			throws BusinessException {
+		if (anonUrl.isPasswordProtected()) {
+			if (anonUrl.oneDocumentIsEncrypted())
+				return buildNewSharingCypheredProtected(sender, input, anonUrl);
+			return buildNewSharingProtected(sender, input, anonUrl);
+		}
 		if (anonUrl.oneDocumentIsEncrypted())
-			return buildNewSharingCypheredProtected(sender, input, anonUrl);
-		return buildNewSharingProtected(sender, input, anonUrl);
+			return buildNewSharingCyphered(sender, input, anonUrl);
+		return buildNewSharing(sender, input, anonUrl);
 	}
 
 	@Override
