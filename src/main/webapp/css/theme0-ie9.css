@@ -42,4 +42,5 @@
 	left:451px !important;
 }
 
+#expiryDate + .datePicker {top:inherit !important;}
 /***************************************************************************/
