@@ -34,10 +34,12 @@
 
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
@@ -45,11 +47,17 @@ import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
+import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
+import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -204,7 +212,120 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			throws BusinessException {
 		UploadRequest req = new UploadRequest();
 		req.setUploadPropositionRequestUuid(created.getUuid());
+		getDefaultValue(owner, req);// get value default from domain
 		Contact contact = new Contact(created.getMail());
-		uploadRequestService.createRequest(owner, owner, req, contact, created.getSubject(), created.getBody());
+		uploadRequestService.createRequest(owner, owner, req, contact,
+				created.getSubject(), created.getBody());
+	}
+
+	public void getDefaultValue(User owner, UploadRequest req)
+			throws BusinessException {
+		AbstractDomain domain = owner.getDomain();
+
+		TimeUnitValueFunctionality expiryDateFunc = functionalityReadOnlyService
+				.getUploadRequestExpiryTimeFunctionality(domain);
+
+		if (expiryDateFunc.getActivationPolicy().getStatus()) {
+			logger.debug("expiryDateFunc is activated");
+			if (expiryDateFunc.getDelegationPolicy() != null
+					&& expiryDateFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("expiryDateFunc has a delegation policy");
+			}
+			@SuppressWarnings("deprecation")
+			Date expiryDate = DateUtils.add(new Date(),
+					expiryDateFunc.toCalendarUnitValue(),
+					expiryDateFunc.getValue());
+			req.setExpiryDate(expiryDate);
+		}
+
+		SizeUnitValueFunctionality maxDepositSizeFunc = functionalityReadOnlyService
+				.getUploadRequestMaxDepositSizeFunctionality(domain);
+
+		if (maxDepositSizeFunc.getActivationPolicy().getStatus()) {
+			logger.debug("maxDepositSizeFunc is activated");
+			if (maxDepositSizeFunc.getDelegationPolicy() != null
+					&& maxDepositSizeFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("maxDepositSizeFunc has a delegation policy");
+			}
+			long maxDepositSize = ((FileSizeUnitClass) maxDepositSizeFunc
+					.getUnit()).getPlainSize(maxDepositSizeFunc.getValue());
+			req.setMaxDepositSize(maxDepositSize);
+		}
+
+		IntegerValueFunctionality maxFileCountFunc = functionalityReadOnlyService
+				.getUploadRequestMaxFileCountFunctionality(domain);
+
+		if (maxFileCountFunc.getActivationPolicy().getStatus()) {
+			logger.debug("maxFileCountFunc is activated");
+			if (maxFileCountFunc.getDelegationPolicy() != null
+					&& maxFileCountFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("maxFileCountFunc has a delegation policy");
+			}
+			int maxFileCount = maxFileCountFunc.getValue();
+			req.setMaxFileCount(maxFileCount);
+		}
+
+		SizeUnitValueFunctionality maxFileSizeFunc = functionalityReadOnlyService
+				.getUploadRequestMaxFileSizeFunctionality(domain);
+
+		if (maxFileSizeFunc.getActivationPolicy().getStatus()) {
+			logger.debug("maxFileSizeFunc is activated");
+			if (maxFileSizeFunc.getDelegationPolicy() != null
+					&& maxFileSizeFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("maxFileSizeFunc has a delegation policy");
+			}
+			long maxFileSize = ((FileSizeUnitClass) maxFileSizeFunc.getUnit())
+					.getPlainSize(maxFileSizeFunc.getValue());
+			req.setMaxFileSize(maxFileSize);
+		}
+
+		StringValueFunctionality notificationLangFunc = functionalityReadOnlyService
+				.getUploadRequestNotificationLanguageFunctionality(domain);
+
+		if (notificationLangFunc.getActivationPolicy().getStatus()) {
+			logger.debug("notificationLangFunc is activated");
+			if (notificationLangFunc.getDelegationPolicy() != null
+					&& notificationLangFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("notificationLangFunc has a delegation policy");
+			}
+			String locale = notificationLangFunc.getValue();
+			req.setLocale(locale);
+		}
+
+		BooleanValueFunctionality secureUrlFunc = functionalityReadOnlyService
+				.getUploadRequestSecureUrlFunctionality(domain);
+
+		if (secureUrlFunc.getActivationPolicy().getStatus()) {
+			logger.debug("secureUrlFunc is activated");
+			if (secureUrlFunc.getDelegationPolicy() != null
+					&& secureUrlFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("secureUrlFunc has a delegation policy");
+			}
+			req.setSecured(secureUrlFunc.getValue());
+		}
+
+		BooleanValueFunctionality canDeleteFunc = functionalityReadOnlyService
+				.getUploadRequestCandDeleteFileFunctionality(domain);
+
+		if (canDeleteFunc.getActivationPolicy().getStatus()) {
+			logger.debug("depositFunc is activated");
+			if (canDeleteFunc.getDelegationPolicy() != null
+					&& canDeleteFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("depositFunc has a delegation policy");
+			}
+			req.setCanDelete(canDeleteFunc.getValue());
+		}
+
+		BooleanValueFunctionality canCloseFunc = functionalityReadOnlyService
+				.getUploadRequestCanCloseFunctionality(domain);
+
+		if (canCloseFunc.getActivationPolicy().getStatus()) {
+			logger.debug("canCloseFunc  is activated");
+			if (canCloseFunc.getDelegationPolicy() != null
+					&& canCloseFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("canCloseFunc  has a delegation policy");
+			}
+			req.setCanClose(canCloseFunc.getValue());
+		}
 	}
 }
