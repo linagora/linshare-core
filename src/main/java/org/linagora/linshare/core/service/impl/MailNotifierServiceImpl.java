@@ -202,7 +202,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 				if (displayLicenceLogo) {
 					resource = getClass().getResource("/org/linagora/linshare/core/service/mail_logo_licence.png");
 				} else {
-					if (externalLogo != null) {
+					if (externalLogo != null && !"".equals(externalLogo)){
 						File file = new File(externalLogo);
 						if (file.canRead()) {
 							resource = file.toURI().toURL();
