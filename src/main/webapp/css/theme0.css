@@ -4094,5 +4094,17 @@ input.ck-kaptcha {
     width: 70%;
 }
 
+/** Hack css to target IE 8, 9 and 10 **/
+@media screen\0 {
+    #upload #uploaderForm .t-autocomplete-menu {
+		top:inherit !important;
+		left:inherit !important;
+	}
+	
+	#expiryDate + .datePicker {
+		top:inherit !important;
+	}
+}
+
 /***************************************************************************/
 /* EOF */
