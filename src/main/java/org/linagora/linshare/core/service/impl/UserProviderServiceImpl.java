@@ -143,7 +143,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 	public void deleteConnection(String connectionToDelete)
 			throws BusinessException {
 		if (!connectionIsDeletable(connectionToDelete)) {
-			throw new BusinessException(
+			throw new BusinessException(BusinessErrorCode.LDAP_CONNECTION_STILL_IN_USE,
 					"Cannot delete connection because still used by domains");
 		}
 
@@ -174,7 +174,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 	public void deletePattern(String patternToDelete) throws BusinessException {
 
 		if (!patternIsDeletable(patternToDelete)) {
-			throw new BusinessException(
+			throw new BusinessException(BusinessErrorCode.DOMAIN_PATTERN_STILL_IN_USE,
 					"Cannot delete pattern because still used by domains");
 		}
 
