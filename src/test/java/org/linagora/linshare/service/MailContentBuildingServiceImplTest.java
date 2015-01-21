@@ -155,15 +155,15 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
-		john = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+		john = userService.findOrCreateUser("user1@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
 		try  {
-			jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);			
+			jane = userService.findOrCreateUser("user2@linshare.org", LoadingServiceTestDatas.sqlSubDomain);			
 		} catch (BusinessException e) {
-			jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+			jane = userService.findOrCreateUser("user2@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
 		}
 		
 		
-		jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+		jane = userService.findOrCreateUser("user2@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
 		
 		
 		
@@ -299,7 +299,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		
 		GuestDomain guestDomain = abstractDomainService.getGuestDomain(john.getDomainId());
 		
-		Guest guest = new Guest("firstName", "lastName", "guest@linpki.org", "xxxxxxxx" , true,"");
+		Guest guest = new Guest("firstName", "lastName", "guest@linshare.org", "xxxxxxxx" , true,"");
 		guest.setDomain(john.getDomain());
 		guest.setOwner(john);
 		// Guest must not be able to create other guests.

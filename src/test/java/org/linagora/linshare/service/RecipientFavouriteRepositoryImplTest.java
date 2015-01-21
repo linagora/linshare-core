@@ -102,9 +102,9 @@ public class RecipientFavouriteRepositoryImplTest extends AbstractTransactionalJ
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 
-		user1 = new Internal("John","Doe","user1@linpki.org", null);
-		user2 = new Internal("Jane","Smith","user2@linpki.org", null);
-		user3 = new Internal("Foo","Bar","user3@linpki.org", null); 
+		user1 = new Internal("John","Doe","user1@linshare.org", null);
+		user2 = new Internal("Jane","Smith","user2@linshare.org", null);
+		user3 = new Internal("Foo","Bar","user3@linshare.org", null); 
 
 		AbstractDomain userGuestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.guestDomainName1);
 		user1.setLocale(userGuestDomain.getDefaultTapestryLocale());

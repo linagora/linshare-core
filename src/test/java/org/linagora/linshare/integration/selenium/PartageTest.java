@@ -45,7 +45,7 @@ public class PartageTest extends AbstractLinshareSeleneseTestCase {
 	public void testPartage() throws Exception {
 		open();
 		
-		selenium.type("login", "user1@linpki.org");
+		selenium.type("login", "user1@linshare.org");
 		selenium.type("password", "password1");
 		selenium.click("//input[@value='Connexion']");
 		for (int second = 0;; second++) {
@@ -106,7 +106,7 @@ public class PartageTest extends AbstractLinshareSeleneseTestCase {
 			Thread.sleep(1000);
 		}
 
-		selenium.type("recipientsPatternSharePopup", "user2@linpki.org");
+		selenium.type("recipientsPatternSharePopup", "user2@linshare.org");
 		selenium.click("secureSharing");
 		selenium.click("//a[@id='linksubmit_0']/span");
 		for (int second = 0;; second++) {
@@ -117,7 +117,7 @@ public class PartageTest extends AbstractLinshareSeleneseTestCase {
 
 		selenium.click("link=Déconnexion");
 		selenium.waitForPageToLoad("300000");
-		selenium.type("login", "user2@linpki.org");
+		selenium.type("login", "user2@linshare.org");
 		selenium.type("password", "password2");
 		selenium.click("//input[@value='Connection']");
 		selenium.waitForPageToLoad("300000");

@@ -57,7 +57,7 @@ public class LanguageTest extends AbstractLinshareSeleneseTestCase {
 			Thread.sleep(1000);
 		}
 
-		selenium.type("login", "user1@linpki.org");
+		selenium.type("login", "user1@linshare.org");
 		selenium.type("password", "password1");
 		selenium.click("//input[@value='Connexion']");
 		for (int second = 0;; second++) {
@@ -95,7 +95,7 @@ public class LanguageTest extends AbstractLinshareSeleneseTestCase {
 			Thread.sleep(1000);
 		}
 
-		selenium.type("login", "user1@linpki.org");
+		selenium.type("login", "user1@linshare.org");
 		selenium.type("password", "password1");
 		selenium.click("//input[@value='Connection']");
 		for (int second = 0;; second++) {

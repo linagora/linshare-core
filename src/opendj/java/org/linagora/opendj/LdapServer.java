@@ -49,7 +49,7 @@ public class LdapServer {
 	/** The local logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(LdapServer.class);
 	
-	private static String DIRECTORY_REAL_ROOT = "dc=linpki,dc=org";
+	private static String DIRECTORY_REAL_ROOT = "dc=linshare,dc=org";
 	
 	public void start() throws Exception {
 		LOGGER.info("Starting embedded OpenDJ directory");

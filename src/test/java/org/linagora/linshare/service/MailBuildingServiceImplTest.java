@@ -145,15 +145,15 @@ public class MailBuildingServiceImplTest extends AbstractTransactionalJUnit4Spri
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
-		john = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+		john = userService.findOrCreateUser("user1@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
 		try  {
-			jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);			
+			jane = userService.findOrCreateUser("user2@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
 		} catch (BusinessException e) {
-			jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+			jane = userService.findOrCreateUser("user2@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
 		}
 		
 		
-		jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+		jane = userService.findOrCreateUser("user2@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
 		
 		
 		

@@ -43,7 +43,7 @@ public class AddUsersTest extends AbstractLinshareSeleneseTestCase {
 		open();
 		
 
-		selenium.type("login", "user1@linpki.org");
+		selenium.type("login", "user1@linshare.org");
 		selenium.type("password", "password1");
 		selenium.click("//input[@value='Connexion']");
 		selenium.waitForPageToLoad("300000");

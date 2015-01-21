@@ -84,7 +84,7 @@ public class GuestRepositoryImplTest extends
 
 	private static final String O_FIRST_NAME = "John";
 	private static final String O_LAST_NAME = "Doe";
-	private static final String O_MAIL = "user1@linpki.org";
+	private static final String O_MAIL = "user1@linshare.org";
 
 	private boolean flag = false;
 

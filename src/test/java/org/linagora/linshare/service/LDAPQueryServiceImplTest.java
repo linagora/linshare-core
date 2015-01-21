@@ -98,7 +98,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
 		ldapConn = new LDAPConnection("testldap", "ldap://localhost:33389", "anonymous");
-		baseDn = "ou=People,dc=linpki,dc=org";
+		baseDn = "ou=People,dc=linshare,dc=org";
 		
 		// auto complete command using first name, last name or mail attributes
 		String auto_complete_command_on_all_attributes = "ldap.search(domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*)(|(mail=\" + pattern + \")(sn=\" + pattern + \")(givenName=\" + pattern + \")))\");";
@@ -112,7 +112,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		
 		initDefault(auto_complete_command_on_all_attributes, auto_complete_command_on_first_and_last_name, search_command, auth_command, 0, 0);
 
-		this.userMail1 = "user1@linpki.org";
+		this.userMail1 = "user1@linshare.org";
 		this.userPassword1 = "password1";
 		this.strPattern = "linpki";
 		

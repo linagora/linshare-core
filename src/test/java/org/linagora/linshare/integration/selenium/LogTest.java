@@ -41,7 +41,7 @@ public class LogTest extends AbstractLinshareSeleneseTestCase {
 	public void testLog() throws Exception {
 		open();
 
-		selenium.type("login", "user1@linpki.org");
+		selenium.type("login", "user1@linshare.org");
 		selenium.type("password", "password1");
 		selenium.click("//input[@value='Connexion']");
 		selenium.waitForPageToLoad("300000");
