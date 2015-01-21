@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="enumLanguage">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.Language</param>
+		<param name="identifierMethod">getTapestryLocale</param>
+		<param name="valueOfMethod">fromTapestryLocale</param>
+	</typedef>
   <class name="Functionality" table="functionality" >
     <id name="persistenceId" type="long">
       <column name="id" not-null="true" index="index_functionality_id"/>
@@ -54,6 +60,13 @@
         <property name="value" column="integer_value" type="integer"/>
         <property name="bool" column="boolean_value" type="boolean"/>
         <many-to-one name="unit" class="org.linagora.linshare.core.domain.entities.Unit" column="unit_id" unique="true" cascade="all" lazy="false" />
+    </joined-subclass>
+
+    <joined-subclass name="EnumValueFunctionality" table="functionality_enum">
+		<key>
+			<column name="functionality_id" not-null="true" index="index_functionality_enum_id"/>
+		</key>
+        <property name="value" column="enum_value" type="enumLanguage"/>
     </joined-subclass>
   </class>
  </hibernate-mapping>

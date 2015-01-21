@@ -38,6 +38,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.Language;
+
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -80,6 +82,14 @@ public class ParameterDto {
 		this.integer = integer;
 		this.type = type;
 		this.select = new ArrayList<String>(listUnit);
+	}
+
+	public ParameterDto(Language value) {
+		this.string = value.getTapestryLocale();
+		this.type = "ENUM_LANG";
+		this.select = new ArrayList<String>();
+		this.select.add(Language.ENGLISH.getTapestryLocale());
+		this.select.add(Language.FRENCH.getTapestryLocale());
 	}
 
 	public ParameterDto(boolean bool) {
