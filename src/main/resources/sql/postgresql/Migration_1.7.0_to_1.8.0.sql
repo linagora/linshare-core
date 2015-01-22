@@ -41,8 +41,12 @@ INSERT INTO users(account_id, first_name, last_name, mail, can_upload, comment, 
 	WHERE NOT EXISTS (SELECT account_id FROM users WHERE account_id=4) LIMIT 1;
 
 ALTER TABLE upload_request ALTER COLUMN expiry_date DROP NOT NULL;
+ALTER TABLE upload_request ALTER COLUMN locale SET DEFAULT 'en';
 ALTER TABLE upload_request ALTER COLUMN locale SET NOT NULL;
-UPDATE policy SET system = true where id=83;
+
+-- Upload request - notification language - Mandatory
+UPDATE policy SET status = true, default_status = true, policy = 1, system = true where id=83;
+
 
 -- LinShare version
 INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence')),'1.8.0');

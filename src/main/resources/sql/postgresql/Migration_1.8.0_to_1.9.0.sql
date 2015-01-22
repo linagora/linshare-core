@@ -38,11 +38,23 @@ UPDATE mail_content SET body = replace(body, 'cliquez sur le lien ou copiez le',
 UPDATE mail_content SET subject='L’invitation de dépôt: ${subject}, va expirer' WHERE id=71 OR id=72;
 
 ALTER TABLE upload_request ALTER COLUMN expiry_date DROP NOT NULL;
+ALTER TABLE upload_request ALTER COLUMN locale SET DEFAULT 'en';
 ALTER TABLE upload_request ALTER COLUMN locale SET NOT NULL;
-UPDATE policy SET system = true where id=83;
+-- Upload request - notification language - Mandatory
+UPDATE policy SET status = true, default_status = true, policy = 1, system = true where id=83;
 
 -- LinShare version
 INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence')),'1.9.0');
+
+
+
+-- schema upgrade - begin
+ALTER TABLE mime_type ALTER COLUMN extensions TYPE character varying(255);
+ALTER TABLE mime_type ALTER COLUMN mime_type TYPE character varying(255);
+-- if not exists ?
+ALTER TABLE mime_type ADD  CONSTRAINT unicity_type_and_policy  UNIQUE (mime_policy_id, mime_type);
+-- schema upgrade - end
+
 
 
 COMMIT;
