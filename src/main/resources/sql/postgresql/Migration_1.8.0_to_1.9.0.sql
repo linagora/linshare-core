@@ -46,6 +46,11 @@ UPDATE policy SET status = true, default_status = true, policy = 1, system = tru
 -- LinShare version
 INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence')),'1.9.0');
 
+-- New functionality table for enum parameter
+CREATE TABLE functionality_enum (functionality_id int8 NOT NULL, enum_value varchar(255),
+    PRIMARY KEY (functionality_id));
+DELETE FROM functionality_string WHERE functionality_id=38;
+INSERT INTO functionality_enum (functionality_id, enum_value) VALUES (38, 'en');
 
 
 -- schema upgrade - begin

@@ -143,6 +143,9 @@ CREATE TABLE functionality_string (
   string_value     varchar(255),
   CONSTRAINT linshare_functionality_string_pkey
     PRIMARY KEY (functionality_id));
+CREATE TABLE functionality_enum (functionality_id int8 NOT NULL, enum_value varchar(255),
+  CONSTRAINT linshare_functionality_enum_pkey
+    PRIMARY KEY (functionality_id));
 CREATE TABLE functionality_unit (
   functionality_id int8 NOT NULL,
   integer_value    int4,
