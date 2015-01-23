@@ -42,7 +42,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
 
 public interface ThreadRestService {
 
-	public Set<ThreadDto> findAll() throws BusinessException;
+	public Set<ThreadDto> findAll(String pattern, String threadName, String memberName) throws BusinessException;
 
 	public ThreadDto find(String uuid) throws BusinessException;
 

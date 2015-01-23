@@ -51,4 +51,6 @@ public interface ThreadFacade extends AdminGenericFacade {
 	ThreadDto update(ThreadDto threadDto) throws BusinessException;
 
 	void delete(String uuid) throws BusinessException;
+
+	Set<ThreadDto> searchThreads(String pattern, String threadName, String memberName) throws BusinessException;
 }

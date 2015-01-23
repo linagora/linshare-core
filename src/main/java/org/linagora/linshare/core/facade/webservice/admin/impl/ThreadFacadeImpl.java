@@ -78,6 +78,31 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
+	public Set<ThreadDto> searchThreads(String pattern, String threadName, String memberName)
+			throws BusinessException {
+		User currentUser = super.checkAuthentication(Role.ADMIN);
+
+		Set<ThreadDto> threadsDto = new HashSet<ThreadDto>();
+		Set<Thread> threads = new HashSet<Thread>();
+		if (memberName != null)
+			threads.addAll(threadService.searchByMembers(currentUser, memberName));
+
+		if (threadName != null)
+			threads.addAll(threadService.searchByName(currentUser, threadName));
+
+		if (pattern != null) {
+			threads.addAll(threadService.searchByName(currentUser, pattern));
+			threads.addAll(threadService.searchByMembers(currentUser, pattern));
+		}
+
+		for (Thread thread : threads) {
+			ThreadDto threadDto = new ThreadDto(thread);
+			threadsDto.add(threadDto);
+		}
+		return threadsDto;
+	}
+
+	@Override
 	public Set<ThreadMemberDto> members(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");

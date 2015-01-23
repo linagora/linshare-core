@@ -43,6 +43,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -74,8 +75,10 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 	@ApiOperation(value = "Find all threads.", response = ThreadDto.class, responseContainer = "Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public Set<ThreadDto> findAll() throws BusinessException {
-		return threadFacade.findAll();
+	public Set<ThreadDto> findAll(@QueryParam("pattern") String pattern, @QueryParam("threadName") String threadName, @QueryParam("memberName") String memberName) throws BusinessException {
+		if (pattern == null && threadName == null && memberName == null)
+			return threadFacade.findAll();
+		return threadFacade.searchThreads(pattern, threadName, memberName);
 	}
 
 	@Path("/{uuid}")
