@@ -68,6 +68,14 @@ public class AdminGenericFacadeImpl extends GenericFacadeImpl implements
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		}
+		if (role.equals(Role.SUPERADMIN)) {
+			if (!(actor.hasSuperAdminRole())) {
+				logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountReprentation());
+				throw new BusinessException(
+						BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+						"You are not authorized to use this service");
+			}
+		}
 		return actor;
 	}
 }
