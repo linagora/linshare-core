@@ -881,12 +881,11 @@ public class UserServiceImpl implements UserService {
 		if (!(updatedUser.getRole().equals(Role.SIMPLE) || updatedUser.getRole().equals(Role.ADMIN))) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Role not authorized.");
 		}
-		user.setRole(updatedUser.getRole());
 		user.setCanCreateGuest(updatedUser.getCanCreateGuest());
 		user.setCanUpload(updatedUser.getCanUpload());
 		user.setLocale(updatedUser.getLocale());
 		user.setExternalMailLocale(updatedUser.getExternalMailLocale());
-		if (user.getAccountType() == AccountType.GUEST) {
+		if (user.isGuest()) {
 			Guest updatedGuest = (Guest) updatedUser;
 			Assert.notNull(updatedUser.getOwner());
 			Assert.notNull(updatedGuest.getExpirationDate());
@@ -898,6 +897,9 @@ public class UserServiceImpl implements UserService {
 			User owner = find((User) updatedGuest.getOwner(), updatedGuest
 					.getOwner().getDomainId());
 			guest.setOwner(owner);
+		} else {
+			// For internal users.
+			user.setRole(updatedUser.getRole());
 		}
 		User update = userRepository.update(user);
 		UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_UPDATE,

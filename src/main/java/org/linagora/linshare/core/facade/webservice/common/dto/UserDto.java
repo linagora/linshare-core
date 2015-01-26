@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
@@ -132,6 +133,7 @@ public class UserDto extends AccountDto {
 			internal.setExternalMailLocale(getExternalMailLocale());
 			internal.setFirstName(getFirstName());
 			internal.setLastName(getLastName());
+			internal.setRole(Role.valueOf(getRole()));
 //			internal.setMail(getMail());
 			return internal;
 		}
