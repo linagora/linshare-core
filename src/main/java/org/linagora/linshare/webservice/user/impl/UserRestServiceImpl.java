@@ -46,6 +46,9 @@ import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.user.UserRestService;
 
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
 public class UserRestServiceImpl extends WebserviceBase implements UserRestService {
 
 	private final UserFacade webServiceUserFacade;
@@ -57,9 +60,14 @@ public class UserRestServiceImpl extends WebserviceBase implements UserRestServi
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to list."),
+		@ApiResponse(code = 404, message = "Not found."),
+		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+		@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public List<UserDto> getUsers() throws BusinessException {
 		webServiceUserFacade.checkAuthentication();
-		return webServiceUserFacade.getUsers();
+		return webServiceUserFacade.findAll();
 	}
 }

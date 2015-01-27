@@ -65,7 +65,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/documents")
-@Api(value = "/rest/user/documents", basePath = "/rest/delegation/", description = "Documents service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Api(value = "/rest/user/documents", basePath = "/rest/user/", description = "Documents service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 public class DocumentRestServiceImpl extends WebserviceBase implements
 		DocumentRestService {
 
@@ -219,9 +219,9 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public Response thumbnail(String uuid) throws BusinessException {
-		DocumentDto documentDto = documentFacade.find(uuid);
-		InputStream documentStream = documentFacade.getThumbnailStream(uuid);
+	public Response thumbnail(@PathParam("uuid") String documentUuid) throws BusinessException {
+		DocumentDto documentDto = documentFacade.find(documentUuid);
+		InputStream documentStream = documentFacade.getThumbnailStream(documentUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(documentStream,
 						documentDto.getName() + "_thumb.png", "image/png");

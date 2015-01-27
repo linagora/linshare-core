@@ -58,7 +58,7 @@ public class AnonymousShareEntryResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected Account getOwner(AnonymousShareEntry entry) {
+	protected Account getOwner(AnonymousShareEntry entry, Object... opt) {
 		Account owner = entry.getEntryOwner();
 		return owner;
 	}

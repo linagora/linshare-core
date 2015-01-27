@@ -147,8 +147,8 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 	@Override
 	public void delete(
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
-			@ApiParam(value = "The user uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "The user uuid.", required = true) @PathParam("uuid") String userUuid)
 					throws BusinessException {
-		threadMemberFacade.delete(threadUuid, uuid);
+		threadMemberFacade.delete(threadUuid, userUuid);
 	}
 }

@@ -58,7 +58,7 @@ public class ThreadEntryResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected Account getOwner(ThreadEntry entry) {
+	protected Account getOwner(ThreadEntry entry, Object... opt) {
 		Account owner = entry.getEntryOwner();
 		return owner;
 	}

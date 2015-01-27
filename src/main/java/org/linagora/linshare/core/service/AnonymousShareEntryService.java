@@ -44,13 +44,13 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AnonymousShareEntryService {
 
-	AnonymousShareEntry find(Account actor, Account owner, String shareUuid)
+	AnonymousShareEntry find(Account actor, Account targetedAccount, String shareUuid)
 			throws BusinessException;
 
-	Set<AnonymousShareEntry> create(Account actor, User owner, ShareContainer shareContainer)
+	Set<AnonymousShareEntry> create(Account actor, User targetedAccount, ShareContainer shareContainer)
 			throws BusinessException;
 
-	void delete(Account actor, Account owner, String shareUuid)
+	void delete(Account actor, Account targetedAccount, String shareUuid)
 			throws BusinessException;
 
 	InputStream getAnonymousShareEntryStream(Account actor, String shareUuid)

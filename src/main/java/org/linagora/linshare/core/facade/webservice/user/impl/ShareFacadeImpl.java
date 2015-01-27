@@ -36,13 +36,19 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.EntryBusinessService;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ShareEntryService;
@@ -50,6 +56,7 @@ import org.linagora.linshare.core.service.ShareService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class ShareFacadeImpl extends UserGenericFacadeImp
 		implements ShareFacade {
@@ -58,13 +65,17 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 
 	private final ShareService shareService;
 
+	private final EntryBusinessService entryBusinessService;
+
 	public ShareFacadeImpl(
 			final AccountService accountService, 
 			final ShareEntryService shareEntryService,
-			final ShareService shareService) {
+			final ShareService shareService,
+			final EntryBusinessService entryBusinessService) {
 		super(accountService);
 		this.shareEntryService = shareEntryService;
 		this.shareService = shareService;
+		this.entryBusinessService = entryBusinessService;
 	}
 
 	@Override
@@ -73,7 +84,15 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		List<ShareEntry> shares = shareEntryService.findAllMyRecievedShareEntries(
 				actor, actor);
 		return ImmutableList.copyOf(Lists.transform(shares,
-				ShareDto.toVo()));
+				ShareDto.toDto()));
+	}
+
+	@Override
+	public List<ShareDto> getShares() throws BusinessException {
+		User actor = checkAuthentication();
+		List<Entry> shares = entryBusinessService
+				.findAllMyShareEntries(actor);
+ 		return ImmutableList.copyOf(Lists.transform(shares, ShareDto.EntrytoDto()));
 	}
 
 	@Override
@@ -156,5 +175,51 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	public InputStream getThumbnailStream(String shareEntryUuid) throws BusinessException {
 		User actor = checkAuthentication();
 		return shareEntryService.getThumbnailStream(actor, actor, shareEntryUuid);
+	}
+
+	@Override
+	public Set<ShareDto> create(ShareCreationDto createDto) {
+		User actor = checkAuthentication();
+		if ((actor.isGuest() && !actor.getCanUpload()))
+			throw new BusinessException(
+					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+					"You are not authorized to use this service");
+		ShareContainer sc = new ShareContainer();
+		sc.addDocumentUuid(createDto.getDocuments());
+		sc.setSubject(createDto.getSubject());
+		sc.setMessage(createDto.getMessage());
+		sc.setSecured(createDto.getSecured());
+		sc.setExpiryDate(createDto.getExpirationDate());
+		sc.addGenericUserDto(createDto.getRecipients());
+		Set<Entry> shares = shareService.create(actor, actor, sc);
+		Set<ShareDto> sharesDto = Sets.newHashSet();
+		for (Entry entry : shares) {
+			sharesDto.add(ShareDto.getSentShare(entry));
+		}
+		return sharesDto;
+	}
+
+	@Override
+	public void delete(String shareUuid) throws BusinessException {
+		Validate.notEmpty(shareUuid, "Missing required share uuid");
+		Account actor = checkAuthentication();
+		shareService.delete(actor, actor, shareUuid);
+	}
+
+	@Override
+	public ShareDto getShare(String shareUuid) throws BusinessException {
+		Validate.notEmpty(shareUuid, "Missing required share uuid");
+		User actor = checkAuthentication();
+		return ShareDto.getSentShare(shareEntryService.find(actor, actor, shareUuid));
+	}
+
+	@Override
+	public ShareDto copy(String ownerUuid, String shareEntryUuid, String threadEntryUuid)
+			throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(shareEntryUuid, "Missing required share uuid");
+		Validate.notEmpty(threadEntryUuid, "Missing required thread uuid");
+//		TODO Not implemented yet
+		return null;
 	}
 }

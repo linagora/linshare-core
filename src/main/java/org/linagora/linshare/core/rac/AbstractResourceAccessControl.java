@@ -38,20 +38,25 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface AbstractResourceAccessControl<O, R, E> {
+public interface AbstractResourceAccessControl<A, R, E> {
 
-	void checkReadPermission(Account actor, O owner, E entry, BusinessErrorCode errCode, Object... opt)
+	void checkReadPermission(Account actor, A targetedAccount, Class<?> clazz,
+			BusinessErrorCode errCode, E entry, Object... opt)
 			throws BusinessException;
 
-	void checkListPermission(Account actor, O owner, Class<?> clazz,
-			BusinessErrorCode errCode, Object... opt) throws BusinessException;
-
-	void checkCreatePermission(Account actor, O owner, Class<?> clazz,
-			BusinessErrorCode errCode, Object... opt) throws BusinessException;
-
-	void checkUpdatePermission(Account actor, E entry, BusinessErrorCode errCode, Object... opt)
+	void checkListPermission(Account actor, A targetedAccount, Class<?> clazz,
+			BusinessErrorCode errCode, E entry, Object... opt)
 			throws BusinessException;
 
-	void checkDeletePermission(Account actor, O owner, E entry, BusinessErrorCode errCode, Object... opt)
+	void checkCreatePermission(Account actor, A targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
+			throws BusinessException;
+
+	void checkUpdatePermission(Account actor, A targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
+			throws BusinessException;
+
+	void checkDeletePermission(Account actor, A targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
 			throws BusinessException;
 }

@@ -40,7 +40,10 @@ import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.EntryRepository;
 import org.springframework.dao.support.DataAccessUtils;
@@ -61,7 +64,7 @@ public class EntryRepositoryImpl extends AbstractRepositoryImpl<Entry>
 	}
 
 	/**
-	 * Find a document using its uuid.
+	 * Find a entry using its uuid.
 	 * 
 	 * @param id
 	 * @return found document (null if no document found).
@@ -91,4 +94,13 @@ public class EntryRepositoryImpl extends AbstractRepositoryImpl<Entry>
 		return findByCriteria(Restrictions.lt("expirationDate",
 				Calendar.getInstance()));
 	}
+
+	@Override
+	public List<Entry> findAllMyShareEntries(User owner) {
+		return findByCriteria(Restrictions.disjunction()
+				.add(Restrictions.eq("entryOwner", owner))
+				.add(Restrictions.eq("class", ShareEntry.class))
+				.add(Restrictions.eq("class", AnonymousShareEntry.class)));
+	}
+
 }

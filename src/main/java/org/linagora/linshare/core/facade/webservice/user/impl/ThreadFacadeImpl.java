@@ -100,7 +100,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 
 		User actor = checkAuthentication();
 
-		Thread thread = threadService.findByLsUuid(actor, actor, uuid);
+		Thread thread = threadService.find(actor, actor, uuid);
 		return new ThreadDto(thread, thread.getMyMembers());
 	}
 
@@ -113,7 +113,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 
 		User actor = checkAuthentication();
 
-		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		Thread thread = threadService.find(actor, actor, threadUuid);
 		User user = userService.findOrCreateUserWithDomainPolicies(mail,
 				domainId, actor.getDomainId());
 		threadService.addMember(actor, actor, thread, user, false, !readonly);
@@ -136,7 +136,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 				"Missing required thread dto uuid");
 
 		User actor = checkAuthentication();
-		Thread thread = threadService.findByLsUuid(actor, actor,
+		Thread thread = threadService.find(actor, actor,
 				threadDto.getUuid());
 
 		threadService.deleteThread(actor, actor, thread);
@@ -148,7 +148,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 
 		User actor = checkAuthentication();
 
-		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		Thread thread = threadService.find(actor, actor, threadUuid);
 		threadService.deleteThread(actor, actor, thread);
 	}
 
@@ -158,10 +158,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadDto, "Missing required ThreadDto");
 		Validate.notEmpty(threadDto.getName(), "Missing required thread name");
-
 		User actor = checkAuthentication();
-		Thread oldThread = threadService.findByLsUuid(actor, actor, threadUuid);
-		return new ThreadDto(threadService.update(actor, actor, oldThread,
+		return new ThreadDto(threadService.update(actor, actor, threadUuid,
 				threadDto.getName()));
 	}
 }

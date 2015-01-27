@@ -68,7 +68,7 @@ public class ThreadFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notEmpty(uuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		return new ThreadDto(threadService.findByLsUuid(actor, owner, uuid));
+		return new ThreadDto(threadService.find(actor, owner, uuid));
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class ThreadFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notEmpty(threadDto.getUuid(), "Missing required thread dto uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread thread = threadService.findByLsUuid(actor, owner, threadDto.getUuid());
+		Thread thread = threadService.find(actor, owner, threadDto.getUuid());
 		threadService.deleteThread(actor, owner, thread);
 	}
 
@@ -116,8 +116,7 @@ public class ThreadFacadeImpl extends DelegationGenericFacadeImpl implements
 
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread oldThread = threadService.findByLsUuid(actor, actor, threadUuid);
-		return new ThreadDto(threadService.update(actor, owner, oldThread,
+		return new ThreadDto(threadService.update(actor, owner, threadUuid,
 				threadDto.getName()));
 	}
 }

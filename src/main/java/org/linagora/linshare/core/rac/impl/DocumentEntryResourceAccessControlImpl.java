@@ -57,7 +57,7 @@ public class DocumentEntryResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected Account getOwner(DocumentEntry entry) {
+	protected Account getOwner(DocumentEntry entry, Object... opt) {
 		Account owner = entry.getEntryOwner();
 		return owner;
 	}

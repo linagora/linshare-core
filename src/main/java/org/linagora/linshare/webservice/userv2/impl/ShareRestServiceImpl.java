@@ -31,38 +31,43 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.user.impl;
+
+package org.linagora.linshare.webservice.userv2.impl;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.user.ShareRestService;
+import org.linagora.linshare.webservice.userv2.ShareRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
+@Api(value = "/rest/user/shares", description = "Shares service")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class ShareRestServiceImpl extends WebserviceBase implements
 		ShareRestService {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(ShareRestServiceImpl.class);
 
 	private final ShareFacade webServiceShareFacade;
 
@@ -77,28 +82,17 @@ public class ShareRestServiceImpl extends WebserviceBase implements
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<ShareDto> getReceivedShares() throws BusinessException {
-		return webServiceShareFacade.getReceivedShares();
+	public List<ShareDto> getShares() throws BusinessException {
+		return webServiceShareFacade.getShares();
 	}
 
+	@Path("/{uuid}")
 	@GET
-	@Path("/sharedocument/{targetMail}/{uuid}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void sharedocument(@PathParam("targetMail") String targetMail,
-			@PathParam("uuid") String uuid,
-			@DefaultValue("0") @QueryParam("securedShare") int securedShare)
-			throws BusinessException {
-		webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
-	}
-
-	@POST
-	@Path("/multiplesharedocuments")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Override
-	public void multiplesharedocuments(ArrayList<ShareDto> shares,
-			@QueryParam("secured") boolean secured,
-			@QueryParam("message") String message) throws BusinessException {
-		webServiceShareFacade.multiplesharedocuments(shares, secured, message);
+	public ShareDto getShare(
+			@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String shareUuid) {
+		return webServiceShareFacade.getShare(shareUuid);
 	}
 
 	@Path("/{uuid}/download")
@@ -125,5 +119,35 @@ public class ShareRestServiceImpl extends WebserviceBase implements
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getThumbnailResponseBuilder(documentStream);
 		return response.build();
+	}
+
+	@Path("/")
+	@POST
+	@ApiOperation(value = "Create a share.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "Owner not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public Set<ShareDto> create(
+			ShareCreationDto createDto)
+					throws BusinessException {
+		return webServiceShareFacade.create(createDto);
+	}
+
+	@Path("/{uuid}")
+	@DELETE
+	@ApiOperation(value = "Delete a share document.")
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Share not found."),
+			@ApiResponse(code = 400, message = "Bad request: missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public void delete(
+			@ApiParam(value = "Share's to delete uuid.", required = true) @PathParam("uuid") String shareUuid)
+			throws BusinessException {
+		webServiceShareFacade.delete(shareUuid);
 	}
 }

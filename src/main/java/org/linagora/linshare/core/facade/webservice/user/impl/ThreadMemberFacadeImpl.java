@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
@@ -75,7 +74,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 
 		User actor = checkAuthentication();
 
-		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		Thread thread = threadService.find(actor, actor, threadUuid);
 		List<ThreadMemberDto> res = Lists.newArrayList();
 
 		for (ThreadMember m : threadService.getMembers(actor, actor, thread)) {
@@ -93,7 +92,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 
 		User actor = checkAuthentication();
 
-		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		Thread thread = threadService.find(actor, actor, threadUuid);
 
 		return new ThreadMemberDto(threadService.getMemberFromUser(thread,
 				userService.findByLsUuid(userUuid)));
@@ -110,7 +109,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User actor = checkAuthentication();
 
 		User user = userService.findOrCreateUser(userMail, domainId);
-		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		Thread thread = threadService.find(actor, actor, threadUuid);
 		return new ThreadMemberDto(threadService.addMember(actor, actor,
 				thread, user, admin, !readOnly));
 	}
@@ -123,7 +122,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 
 		User actor = checkAuthentication();
 
-		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		Thread thread = threadService.find(actor, actor, threadUuid);
 		User user = userService.findByLsUuid(threadMember.getUserUuid());
 		ThreadMember member = threadService.getMemberFromUser(thread, user);
 		return new ThreadMemberDto(threadService.updateMember(actor, actor,
@@ -137,11 +136,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(userUuid, "Missing required user uuid");
 
 		User actor = checkAuthentication();
-
-		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
-		ThreadMember member = threadService.getMemberFromUser(thread,
-				userService.findByLsUuid(userUuid));
-		threadService.deleteMember(actor, actor, thread, member);
+		threadService.deleteMember(actor, actor, threadUuid, userUuid);
 
 	}
 }

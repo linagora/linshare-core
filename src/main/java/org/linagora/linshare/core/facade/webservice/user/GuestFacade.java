@@ -34,10 +34,14 @@
 
 package org.linagora.linshare.core.facade.webservice.user;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 
 public interface GuestFacade {
+	
+	List<GuestDto> findAll() throws BusinessException;
 
 	GuestDto find(String uuid) throws BusinessException;
 
@@ -48,4 +52,5 @@ public interface GuestFacade {
 	void delete(GuestDto guest) throws BusinessException;
 
 	void delete(String uuid) throws BusinessException;
+
 }

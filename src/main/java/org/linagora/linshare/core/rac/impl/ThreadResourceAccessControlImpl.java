@@ -56,6 +56,18 @@ public class ThreadResourceAccessControlImpl extends
 	}
 
 	@Override
+	protected Account getOwner(Thread entry, Object... opt) {
+		Account owner = null;
+		if (opt != null && opt.length > 0) {
+			if (opt[0] instanceof Account) {
+				owner = (Account) opt[0];
+			}
+		}
+		Validate.notNull(owner, "Missing owner argument");
+		return owner;
+	}
+
+	@Override
 	protected boolean hasReadPermission(Account actor, Account owner,
 			Thread entry, Object... opt) {
 		Validate.notNull(actor);
@@ -76,7 +88,7 @@ public class ThreadResourceAccessControlImpl extends
 	protected boolean hasListPermission(Account actor, Account owner,
 			Thread entry, Object... opt) {
 		Validate.notNull(actor);
-		Validate.notNull(owner);
+		// Owner is always null, because threads have not owner.
 
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
@@ -92,8 +104,8 @@ public class ThreadResourceAccessControlImpl extends
 	protected boolean hasDeletePermission(Account actor, Account owner,
 			Thread entry, Object... opt) {
 		Validate.notNull(actor);
-		Validate.notNull(owner);
 		Validate.notNull(entry);
+		// Owner is always null, because threads have not owner.
 
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
@@ -109,14 +121,14 @@ public class ThreadResourceAccessControlImpl extends
 	protected boolean hasCreatePermission(Account actor, Account owner,
 			Thread entry, Object... opt) {
 		Validate.notNull(actor);
-		Validate.notNull(owner);
+		// Owner is always null, because threads have not owner.
 
+		if (actor.hasAllRights()) {
+			return true;
+		}
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREADS_CREATE);
-		}
-		if (actor.hasAllRights()) {
-			return true;
 		}
 		return !owner.getAccountType().equals(AccountType.GUEST);
 	}
@@ -125,17 +137,17 @@ public class ThreadResourceAccessControlImpl extends
 	protected boolean hasUpdatePermission(Account actor, Account owner,
 			Thread entry, Object... opt) {
 		Validate.notNull(actor);
-		Validate.notNull(owner);
 		Validate.notNull(entry);
+		// Owner is always null, because threads have not owner.
 
+		if (actor.hasAllRights()) {
+			return true;
+		}
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREADS_UPDATE);
 		}
-		if (actor.hasAllRights()) {
-			return true;
-		}
-		return isUserAdmin(owner, entry);
+		return isUserAdmin(actor, entry);
 	}
 
 	@Override
@@ -154,5 +166,10 @@ public class ThreadResourceAccessControlImpl extends
 		boolean ret = threadMemberRepository.isUserAdmin((User) user, thread);
 		logger.debug(user + " admin of " + thread + " : " + ret);
 		return ret;
+	}
+
+	@Override
+	protected String getTargetedAccountRepresentation(Account targetedAccount) {
+		return targetedAccount.getAccountReprentation();
 	}
 }

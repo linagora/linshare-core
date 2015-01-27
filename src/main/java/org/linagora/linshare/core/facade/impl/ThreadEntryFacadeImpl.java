@@ -126,7 +126,7 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	public ThreadVo getThread(UserVo actorVo, String uuid)
 			throws BusinessException {
 		User actor = getActor(actorVo);
-		return new ThreadVo(threadService.findByLsUuid(actor, actor, uuid));
+		return new ThreadVo(threadService.find(actor, actor, uuid));
 	}
 
 	@Override
@@ -257,12 +257,10 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	@Override
 	public void deleteMember(UserVo actorVo, ThreadVo threadVo,
 			ThreadMemberVo memberVo) throws BusinessException {
-		Thread thread = findThread(threadVo);
 		Account actor = findUser(actorVo);
 		User user = findUser(memberVo.getUser());
-		ThreadMember member = findMember(thread, user);
-
-		threadService.deleteMember(actor, actor, thread, member);
+		threadService.deleteMember(actor, actor, threadVo.getLsUuid(),
+				memberVo.getLsUuid());
 	}
 
 	@Override
@@ -321,7 +319,7 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	public void renameThread(UserVo actorVo, ThreadVo threadVo, String threadName)
 			throws BusinessException {
 		User actor = findUser(actorVo);
-		threadService.update(actor, actor, findThread(threadVo), threadName);
+		threadService.update(actor, actor, threadVo.getLsUuid(), threadName);
 	}
 
 	@Override
@@ -337,11 +335,8 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	@Override
 	public void removeMember(UserVo actorVo, ThreadVo threadVo,
 			UserVo userVo) throws BusinessException {
-		Thread thread = findThread(threadVo);
 		User actor = findUser(actorVo);
-		ThreadMember member = findMember(thread, findUser(userVo));
-
-		threadService.deleteMember(actor, actor, thread, member);
+		threadService.deleteMember(actor, actor, threadVo.getLsUuid(), userVo.getLsUuid());
 	}
 
 	@Override

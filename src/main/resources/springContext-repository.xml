@@ -199,4 +199,7 @@
 	<bean name="uploadPropositionRuleRepository" class="org.linagora.linshare.core.repository.hibernate.UploadPropositionRuleRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+	<bean name="entryRepository" class="org.linagora.linshare.core.repository.hibernate.EntryRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>

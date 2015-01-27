@@ -55,13 +55,17 @@ public class GenericEntryServiceImpl<R, E extends Entry> extends
 		this.rac = rac;
 	}
 
-	protected void checkDownloadPermission(Account actor, E entry,
-			BusinessErrorCode errCode) throws BusinessException {
-		rac.checkDownloadPermission(actor, entry, errCode);
+	protected void checkDownloadPermission(Account actor,
+			Account targetedAccount, Class<?> clazz, BusinessErrorCode errCode,
+			E entry, Object... opt) throws BusinessException {
+		rac.checkDownloadPermission(actor, targetedAccount, clazz, errCode,
+				entry, opt);
 	}
 
-	protected void checkThumbNailDownloadPermission(Account actor, E entry,
-			BusinessErrorCode errCode) throws BusinessException {
-		rac.checkThumbNailDownloadPermission(actor, entry, errCode);
+	protected void checkThumbNailDownloadPermission(Account actor,
+			Account targetedAccount, Class<?> clazz, BusinessErrorCode errCode,
+			E entry, Object... opt) throws BusinessException {
+		rac.checkThumbNailDownloadPermission(actor, targetedAccount, clazz,
+				errCode, entry, opt);
 	}
 }

@@ -35,9 +35,11 @@ package org.linagora.linshare.core.facade.webservice.user;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
 
 
 public interface ShareFacade extends GenericFacade {
@@ -45,17 +47,26 @@ public interface ShareFacade extends GenericFacade {
 	public void sharedocument (String targetMail, String uuid, int securedShare) throws BusinessException;
 
 	void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String messageOpt, String inReplyToOpt, String referencesOpt) throws BusinessException;
-	
+
 	void multiplesharedocuments(List<String> mails, List<String> uuid, int securedShare, String messageOpt, String inReplyToOpt, String referencesOpt) throws BusinessException;
-	
+
 	void multiplesharedocuments(List<ShareDto> shares, boolean secured, String message) throws BusinessException;
 
 	public List<ShareDto> getReceivedShares() throws BusinessException;
-	
+
 	public ShareDto getReceivedShare(String shareEntryUuid) throws BusinessException;
-	
+
+	public List<ShareDto> getShares() throws BusinessException;
+
+	public ShareDto getShare(String shareUuid) throws BusinessException;
+
 	public InputStream getDocumentStream(String shareEntryUuid) throws BusinessException;
-	
+
 	public InputStream getThumbnailStream(String shareEntryUuid) throws BusinessException;
-	
+
+	Set<ShareDto> create(ShareCreationDto createDto);
+
+	void delete(String shareUuid) throws BusinessException;
+
+	ShareDto copy(String ownerUuid, String shareEntryUuid, String threadEntryUuid) throws BusinessException;
 }

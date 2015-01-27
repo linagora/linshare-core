@@ -37,6 +37,9 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.EntryType;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
@@ -77,7 +80,7 @@ public class ShareDto {
 	protected DocumentDto documentDto;
 
     @ApiModelProperty(value = "Recipient")
-	protected UserDto recipient;
+	protected GenericUserDto recipient;
 
 	/**
 	 * Received Share.
@@ -106,25 +109,34 @@ public class ShareDto {
 	/**
 	 * Constructor
 	 * 
-	 * @param shareEntry
+	 * @param entry
 	 */
-	protected ShareDto(ShareEntry shareEntry, boolean receivedShare) {
-		this.uuid = shareEntry.getUuid();
-		this.name = shareEntry.getName();
-		this.creationDate = shareEntry.getCreationDate().getTime();
-		this.modificationDate = shareEntry.getModificationDate().getTime();
-		this.expirationDate = shareEntry.getExpirationDate().getTime();
-		if (receivedShare) {
-			this.downloaded = shareEntry.getDownloaded();
-			this.description = shareEntry.getComment();
-			this.sender = UserDto.getSimple((User) shareEntry.getEntryOwner());
-			this.size = shareEntry.getDocumentEntry().getSize();
-			this.type = shareEntry.getDocumentEntry().getType();
-			this.ciphered = shareEntry.getDocumentEntry().getCiphered();
-		} else {
-			// sent share.
-			this.documentDto = new DocumentDto(shareEntry.getDocumentEntry());
-			this.recipient = UserDto.getSimple((User) shareEntry.getRecipient());
+	protected ShareDto(Entry entry, boolean receivedShare) {
+		this.uuid = entry.getUuid();
+		this.name = entry.getName();
+		this.creationDate = entry.getCreationDate().getTime();
+		this.modificationDate = entry.getModificationDate().getTime();
+		if(entry.getExpirationDate() != null)
+			this.expirationDate = entry.getExpirationDate().getTime();
+		if (entry.getEntryType().equals(EntryType.SHARE)) {
+			ShareEntry sa = (ShareEntry) entry;
+			if (receivedShare) {
+				this.downloaded = sa.getDownloaded();
+				this.description = entry.getComment();
+				this.sender = UserDto.getSimple((User) entry.getEntryOwner());
+				this.size = sa.getDocumentEntry().getSize();
+				this.type = sa.getDocumentEntry().getType();
+				this.ciphered = sa.getDocumentEntry().getCiphered();
+			} else {
+				// sent share.
+				this.documentDto = new DocumentDto(((ShareEntry) entry).getDocumentEntry());
+				this.recipient = new GenericUserDto(sa.getRecipient());
+			}
+		} else if (entry.getEntryType().equals(EntryType.ANONYMOUS_SHARE)) {
+			AnonymousShareEntry a = (AnonymousShareEntry) entry;
+			this.downloaded = a.getDownloaded();
+			this.documentDto = new DocumentDto(a.getDocumentEntry());
+			this.recipient = new GenericUserDto(a.getAnonymousUrl().getContact());
 		}
 	}
 
@@ -132,12 +144,12 @@ public class ShareDto {
 		super();
 	}
 
-	public static ShareDto getReceivedShare(ShareEntry shareEntry) {
-		return new ShareDto(shareEntry, true);
+	public static ShareDto getReceivedShare(Entry entry) {
+		return new ShareDto(entry, true);
 	}
 
-	public static ShareDto getSentShare(ShareEntry shareEntry) {
-		return new ShareDto(shareEntry, false);
+	public static ShareDto getSentShare(Entry entry) {
+		return new ShareDto(entry, false);
 	}
 
 	public String getUuid() {
@@ -196,17 +208,17 @@ public class ShareDto {
 		this.documentDto = documentDto;
 	}
 
-	public UserDto getRecipient() {
+	public GenericUserDto getRecipient() {
 		return recipient;
 	}
 
-	public void setRecipient(UserDto recipient) {
+	public void setRecipient(GenericUserDto recipient) {
 		this.recipient = recipient;
 	}
 
 	public String getDescription() {
 		return description;
-	}
+		}
 
 	public void setDescription(String description) {
 		this.description = description;
@@ -255,11 +267,20 @@ public class ShareDto {
 	/*
 	 * Transformers
 	 */
-	public static Function<ShareEntry, ShareDto> toVo() {
+	public static Function<ShareEntry, ShareDto> toDto() {
 		return new Function<ShareEntry, ShareDto>() {
 			@Override
 			public ShareDto apply(ShareEntry arg0) {
 				return ShareDto.getReceivedShare(arg0);
+			}
+		};
+	}
+
+	public static Function<Entry, ShareDto> EntrytoDto() {
+		return new Function<Entry, ShareDto>() {
+			@Override
+			public ShareDto apply(Entry arg0) {
+				return ShareDto.getSentShare(arg0);
 			}
 		};
 	}

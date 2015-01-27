@@ -168,4 +168,7 @@
 		<constructor-arg ref="uploadPropositionActionRepository" />
 		<constructor-arg ref="uploadPropositionRuleRepository" />
 	</bean>
+	<bean id="entryBusinessService" class="org.linagora.linshare.core.business.service.impl.EntryBusinessServiceImpl">
+		<constructor-arg ref="entryRepository" />
+	</bean>
 </beans>

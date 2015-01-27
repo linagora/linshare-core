@@ -74,11 +74,8 @@ public class ThreadMemberResourceAccessControlImpl extends
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_LIST);
 		}
-		if (actor.hasAllRights()) {
-			return true;
-		}
-		if (opt.length > 1 && opt[1] instanceof Thread) {
-			return threadMemberRepository.findUserThreadMember((Thread) opt[1],
+		if (opt.length > 0 && opt[0] instanceof Thread) {
+			return threadMemberRepository.findUserThreadMember((Thread) opt[0],
 					(User) owner) != null;
 		}
 		return false;
@@ -90,9 +87,6 @@ public class ThreadMemberResourceAccessControlImpl extends
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_DELETE);
-		}
-		if (actor.hasAllRights()) {
-			return true;
 		}
 		return isUserAdmin(owner, entry);
 	}
@@ -137,5 +131,10 @@ public class ThreadMemberResourceAccessControlImpl extends
 	private boolean isUserAdmin(Account user, ThreadMember member) {
 		return threadMemberRepository.isUserAdmin((User) user,
 				member.getThread());
+	}
+
+	@Override
+	protected String getTargetedAccountRepresentation(Account targetedAccount) {
+		return targetedAccount.getAccountReprentation();
 	}
 }

@@ -31,15 +31,42 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.user;
+
+package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.user.UserFacade;
+import org.linagora.linshare.webservice.userv2.UserRestService;
 
-public interface UserFacade extends GenericFacade {
+import com.wordnik.swagger.annotations.Api;
 
-	public List<UserDto> findAll() throws BusinessException;
+@Path("/users")
+@Api(value = "/rest/user/users")
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+public class UserRestServiceImpl implements UserRestService {
+
+	private final UserFacade webServiceUserFacade;
 	
+	public UserRestServiceImpl(final UserFacade webServiceUserFacade) {
+		this.webServiceUserFacade = webServiceUserFacade;
+	}
+	
+	@Path("/")
+	@GET
+	@Override
+	public List<UserDto> findAll() throws BusinessException {
+		webServiceUserFacade.checkAuthentication();
+		return webServiceUserFacade.findAll();
+	}
+
 }

@@ -114,9 +114,9 @@ public class AnonymousShareEntryServiceImpl extends
 	}
 
 	@Override
-	public AnonymousShareEntry find(Account actor, Account owner,
+	public AnonymousShareEntry find(Account actor, Account targetedAccount,
 			String shareUuid) throws BusinessException {
-		preChecks(actor, owner);
+		preChecks(actor, targetedAccount);
 		Validate.notEmpty(shareUuid, "Share uuid is required.");
 		AnonymousShareEntry share = anonymousShareEntryBusinessService
 				.findByUuid(shareUuid);
@@ -126,57 +126,56 @@ public class AnonymousShareEntryServiceImpl extends
 					BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_NOT_FOUND,
 					"Share entry not found : " + shareUuid);
 		}
-		checkReadPermission(actor, share,
-				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN);
+		checkReadPermission(actor, targetedAccount, AnonymousShareEntry.class,
+				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, share);
 		return share;
 	}
 
 	// TODO FMA - Refactoring shares
 	@Override
-	public Set<AnonymousShareEntry> create(Account actor, User owner, ShareContainer sc)
+	public Set<AnonymousShareEntry> create(Account actor, User targetedAccount, ShareContainer sc)
 			throws BusinessException {
-		preChecks(actor, owner);
+		preChecks(actor, targetedAccount);
 		Validate.notNull(sc, "Share container is required.");
-		checkCreatePermission(actor, owner, AnonymousShareEntry.class,
-				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN);
-
+		checkCreatePermission(actor, targetedAccount, AnonymousShareEntry.class,
+				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, null);
 		Set<AnonymousShareEntry> entries = Sets.newHashSet();
 		Date expiryDate = sc.getExpiryDate();
 		Boolean passwordProtected = sc.getSecured();
 		if (passwordProtected == null) passwordProtected = false;
-		if (functionalityService.isSauMadatory(owner.getDomain()
+		if (functionalityService.isSauMadatory(targetedAccount.getDomain()
 				.getIdentifier())) {
 			passwordProtected = true;
-		} else if (functionalityService.isSauForbidden(owner.getDomain()
+		} else if (functionalityService.isSauForbidden(targetedAccount.getDomain()
 				.getIdentifier())) {
 			passwordProtected = false;
 		}
 		if (expiryDate == null) {
 			expiryDate = shareExpiryDateService
-					.computeMinShareExpiryDateOfList(sc.getDocuments(), owner);
+					.computeMinShareExpiryDateOfList(sc.getDocuments(), targetedAccount);
 		}
 		for (Recipient recipient : sc.getAnonymousShareRecipients()) {
 			Language mailLocale = recipient.getLocale();
 			if (mailLocale == null){
-				mailLocale = owner.getExternalMailLocale();
+				mailLocale = targetedAccount.getExternalMailLocale();
 			}
 			MailContainer mailContainer = new MailContainer(
 					mailLocale, sc.getMessage(), sc.getSubject());
 			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService
-					.create(owner, recipient, sc.getDocuments(), expiryDate,
+					.create(targetedAccount, recipient, sc.getDocuments(), expiryDate,
 							passwordProtected);
 
 			MailContainerWithRecipient mail = mailBuildingService
-					.buildNewSharingProtected(owner, mailContainer,
+					.buildNewSharingProtected(targetedAccount, mailContainer,
 							anonymousUrl);
 			sc.addMailContainer(mail);
-			recipientFavouriteRepository.incAndCreate(owner,
+			recipientFavouriteRepository.incAndCreate(targetedAccount,
 					recipient.getMail());
 			entries.addAll(anonymousUrl.getAnonymousShareEntries());
 		}
 		// FIXME : recipients ?
 		for (DocumentEntry documentEntry : sc.getDocuments()) {
-			ShareLogEntry logEntry = new ShareLogEntry(owner, documentEntry,
+			ShareLogEntry logEntry = new ShareLogEntry(targetedAccount, documentEntry,
 					LogAction.FILE_SHARE, "Anonymous sharing of a file",
 					expiryDate);
 			logEntryService.create(logEntry);
@@ -185,15 +184,15 @@ public class AnonymousShareEntryServiceImpl extends
 	}
 
 	@Override
-	public void delete(Account actor, Account owner, String shareUuid)
+	public void delete(Account actor, Account targetedAccount, String shareUuid)
 			throws BusinessException {
-		preChecks(actor, owner);
+		preChecks(actor, targetedAccount);
 		Validate.notEmpty(shareUuid, "Share uuid is required.");
-		AnonymousShareEntry share = find(actor, owner, shareUuid);
-		checkDeletePermission(actor, share,
-				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN);
+		AnonymousShareEntry share = find(actor, targetedAccount, shareUuid);
+		checkDeletePermission(actor, targetedAccount, AnonymousShareEntry.class,
+				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, share);
 		anonymousShareEntryBusinessService.delete(share);
-		ShareLogEntry logEntry = new ShareLogEntry(owner, share,
+		ShareLogEntry logEntry = new ShareLogEntry(targetedAccount, share,
 				LogAction.SHARE_DELETE, "Deleting anonymous share");
 		logEntryService.create(logEntry);
 
@@ -214,8 +213,8 @@ public class AnonymousShareEntryServiceImpl extends
 					BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_NOT_FOUND,
 					"Share entry not found : " + shareUuid);
 		}
-		checkDownloadPermission(actor, shareEntry,
-				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN);
+		checkDownloadPermission(actor, null, AnonymousShareEntry.class,
+				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, shareEntry);
 		ShareLogEntry logEntry = new ShareLogEntry(shareEntry.getEntryOwner(),
 				shareEntry, LogAction.ANONYMOUS_SHARE_DOWNLOAD,
 				"Anonymous user "

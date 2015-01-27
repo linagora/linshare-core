@@ -32,7 +32,7 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.user.impl;
+package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
 
@@ -49,45 +49,62 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
-import org.linagora.linshare.webservice.user.GuestRestService;
+import org.linagora.linshare.webservice.userv2.GuestRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/guests")
-@Api(value = "/rest/guests", description = "Guests service.")
+@Api(value = "/rest/user/guests", description = "Guests service")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class GuestRestServiceImpl implements GuestRestService {
 
 	private final GuestFacade guestFacade;
 
-	public GuestRestServiceImpl(final GuestFacade guestFacade) {
+	public GuestRestServiceImpl(GuestFacade guestFacade) {
+		super();
 		this.guestFacade = guestFacade;
 	}
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all guest of a user.", response = GuestDto.class)
+	@ApiOperation(value = "Find all guests of a user.", response = GuestDto.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "No permission to list all guests."),
+			@ApiResponse(code = 404, message = "Guests not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public List<GuestDto> findAll(String ownerLsUuid) throws BusinessException {
-		return null;
+	public List<GuestDto> findAll() throws BusinessException {
+		return guestFacade.findAll();
 	}
 
-	@Path("/{lsUuid}")
+	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a guest.")
+	@ApiOperation(value = "Find a guest.", response = GuestDto.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Guest not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public GuestDto find(
-			@ApiParam(value = "Guest's lsUuid.", required = true) @PathParam("lsUuid") String lsUuid)
+			@ApiParam(value = "Guest's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return guestFacade.find(lsUuid);
+		return guestFacade.find(uuid);
 	}
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a guest.")
+	@ApiOperation(value = "Create a guest.", response = GuestDto.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "No permission to create."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public GuestDto create(
 			@ApiParam(value = "Guest to create.", required = true) GuestDto guest)
@@ -97,7 +114,12 @@ public class GuestRestServiceImpl implements GuestRestService {
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a guest.")
+	@ApiOperation(value = "Update a guest.", response = GuestDto.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "No permission to update."),
+			@ApiResponse(code = 404, message = "Guest not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public GuestDto update(
 			@ApiParam(value = "Guest to update.", required = true) GuestDto guest)
@@ -108,6 +130,11 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Path("/")
 	@DELETE
 	@ApiOperation(value = "Delete a guest.")
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "No permission to delete."),
+			@ApiResponse(code = 404, message = "Guest not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public void delete(
 			@ApiParam(value = "Guest to delete.", required = true) GuestDto guest)
@@ -115,13 +142,19 @@ public class GuestRestServiceImpl implements GuestRestService {
 		guestFacade.delete(guest);
 	}
 
-	@Path("/{lsUuid}")
+	@Path("/{uuid}")
 	@DELETE
 	@ApiOperation(value = "Delete a guest.")
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "No permission to delete."),
+			@ApiResponse(code = 404, message = "Guest not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public void delete(
-			@ApiParam(value = "Guest's lsUuid to delete.", required = true) @PathParam("lsUuid") String lsUuid)
+			@ApiParam(value = "Guest's uuid to delete.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		guestFacade.delete(lsUuid);
+		guestFacade.delete(uuid);
 	}
+
 }

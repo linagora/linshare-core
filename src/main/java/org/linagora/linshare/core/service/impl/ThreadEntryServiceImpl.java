@@ -71,7 +71,7 @@ import org.linagora.linshare.core.utils.DocumentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ThreadEntryServiceImpl implements ThreadEntryService {
+public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, ThreadEntry> implements ThreadEntryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ThreadEntryServiceImpl.class);
 
@@ -85,7 +85,6 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	private final ThreadMemberRepository threadMemberRepository;
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 	private final AntiSamyService antiSamyService;
-	private final ThreadEntryResourceAccessControl threadEntryAC;
 
 	public ThreadEntryServiceImpl(
 			DocumentEntryBusinessService documentEntryBusinessService,
@@ -97,8 +96,8 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			ThreadMemberRepository threadMemberRepository,
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
 			AntiSamyService antiSamyService,
-			ThreadEntryResourceAccessControl threadEntryAC) {
-		super();
+			ThreadEntryResourceAccessControl rac) {
+		super(rac);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 		this.abstractDomainService = abstractDomainService;
@@ -109,15 +108,13 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		this.threadMemberRepository = threadMemberRepository;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
 		this.antiSamyService = antiSamyService;
-		this.threadEntryAC = threadEntryAC;
 	}
 
 	@Override
 	public ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, InputStream stream, String filename) throws BusinessException {
-		threadEntryAC.checkCreatePermission(actor, owner, ThreadEntry.class, BusinessErrorCode.THREAD_ENTRY_FORBIDDEN);
-
+		checkCreatePermission(actor, owner, ThreadEntry.class,
+				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, null, thread);
 		filename = sanitizeFileName(filename); // throws
-
 		DocumentUtils util = new DocumentUtils();
 		File tempFile = util.getTempFile(stream, filename);
 		Long size = tempFile.length();
@@ -166,9 +163,8 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	public ThreadEntry findById(Account actor, Account owner, String threadEntryUuid) throws BusinessException {
 		ThreadEntry threadEntry = documentEntryBusinessService
 				.findThreadEntryById(threadEntryUuid);
-
-		threadEntryAC.checkReadPermission(actor, owner, threadEntry,
-				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN);
+		checkReadPermission(actor, owner, ThreadEntry.class,
+				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, threadEntry);
 		return threadEntry;
 	}
 
@@ -176,9 +172,9 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	public void deleteThreadEntry(Account actor, Account owner, ThreadEntry threadEntry) throws BusinessException {
 		Thread thread = (Thread) threadEntry.getEntryOwner();
 		try {
-			threadEntryAC.checkDeletePermission(actor, owner, threadEntry,
-					BusinessErrorCode.THREAD_ENTRY_FORBIDDEN);
-
+			checkDeletePermission(actor, owner, ThreadEntry.class,
+					BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, threadEntry,
+					thread);
 			ThreadLogEntry log = new ThreadLogEntry(owner, threadEntry,
 					LogAction.THREAD_REMOVE_ENTRY, "Deleting a thread entry.");
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
@@ -210,9 +206,8 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 
 	@Override
 	public List<ThreadEntry> findAllThreadEntries(Account actor, Account owner, Thread thread) throws BusinessException {
-		threadEntryAC.checkListPermission(actor, owner, ThreadEntry.class,
-				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN);
-
+		checkListPermission(actor, owner, ThreadEntry.class,
+				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, null, thread);
 		if (!this.isThreadMember(thread, (User) owner)) {
 			if(!owner.hasSuperAdminRole()) {
 				return new ArrayList<ThreadEntry>();
@@ -231,9 +226,9 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 
 	@Override
 	public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException {
-		threadEntryAC.checkDownloadPermission(actor, owner, ThreadEntry.class, BusinessErrorCode.THREAD_ENTRY_FORBIDDEN);
-
 		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(uuid);
+		checkDownloadPermission(actor, owner, ThreadEntry.class,
+				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, threadEntry);
 		if (threadEntry == null) {
 			logger.error("Can't find document entry, are you sure it is not a share ? : " + uuid);
 			return null;

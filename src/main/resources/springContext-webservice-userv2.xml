@@ -30,31 +30,34 @@
 <!-- 		<constructor-arg ref="wsThreadFacade" /> -->
 		<constructor-arg ref="wsThreadMemberFacade" />
 	</bean>
-	
+
 	<bean id="userThreadRestService" class="org.linagora.linshare.webservice.userv2.impl.ThreadRestServiceImpl">
 		<constructor-arg ref="wsThreadFacade" />
 	</bean>
-	
+
 	<bean id="userThreadEntryRestService" class="org.linagora.linshare.webservice.userv2.impl.ThreadEntryRestServiceImpl">
 		<constructor-arg ref="wsThreadEntryFacade" />
 	</bean>
-<!-- 
-	<bean id="shareRestService" class="org.linagora.linshare.webservice.userv2.impl.ShareRestServiceImpl">
+
+	<bean id="userGuestRestService" class="org.linagora.linshare.webservice.userv2.impl.GuestRestServiceImpl">
+		<constructor-arg ref="wsGuestFacade" />
+	</bean>
+
+	<bean id="userShareRestService" class="org.linagora.linshare.webservice.userv2.impl.ShareRestServiceImpl">
 		<constructor-arg ref="wsShareFacade" />
 	</bean>
 
 	<bean id="userRestService" class="org.linagora.linshare.webservice.userv2.impl.UserRestServiceImpl">
 		<constructor-arg ref="wsUserFacade" />
-	</bean>
+	</bean>	
 
+	<bean id="userReceivedShareRestService" class="org.linagora.linshare.webservice.userv2.impl.ReceivedShareRestServiceImpl">
+		<constructor-arg ref="wsShareFacade" />
+	</bean>
+<!-- 
 	<bean id="logRestService" class="org.linagora.linshare.webservice.userv2.impl.LogRestServiceImpl">
 		<constructor-arg ref="wsLogEntryFacade" />
 	</bean>
-
-	<bean id="guestRestService" class="org.linagora.linshare.webservice.userv2.impl.GuestRestServiceImpl">
-		<constructor-arg ref="wsGuestFacade" />
-	</bean>
-
 -->
 	<jaxrs:server id="userRestContainer" address="/rest/user">
 		<jaxrs:serviceBeans>
@@ -64,12 +67,13 @@
 			<ref bean="userThreadRestService" />
 			<ref bean="userThreadMemberRestService" />
 			<ref bean="userThreadEntryRestService" />
-<!--
-			<ref bean="shareRestService" />
-			<ref bean="pluginCompatibilityRestService" />
+			<ref bean="userGuestRestService" />
+			<ref bean="userShareRestService" />
 			<ref bean="userRestService" />
+			<ref bean="userReceivedShareRestService" />
+<!--
+			<ref bean="pluginCompatibilityRestService" />
 			<ref bean="logRestService" />
-			<ref bean="guestRestService" />
 -->
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>

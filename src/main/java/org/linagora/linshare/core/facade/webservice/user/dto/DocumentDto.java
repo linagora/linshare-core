@@ -213,7 +213,7 @@ public class DocumentDto {
 	/*
 	 * Transformers
 	 */
-	public static Function<DocumentEntry, DocumentDto> toVo() {
+	public static Function<DocumentEntry, DocumentDto> toDto() {
 		return new Function<DocumentEntry, DocumentDto>() {
 			@Override
 			public DocumentDto apply(DocumentEntry arg0) {

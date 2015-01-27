@@ -58,7 +58,7 @@ public class ShareEntryResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected Account getOwner(ShareEntry entry) {
+	protected Account getOwner(ShareEntry entry, Object... opt) {
 		Account owner = entry.getEntryOwner();
 		return owner;
 	}

@@ -37,13 +37,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
-import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -52,7 +50,6 @@ import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.LogEntry;
@@ -154,7 +151,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			throw new BusinessException(
 					BusinessErrorCode.DOCUMENT_ENTRY_NOT_FOUND, message);
 		}
-		checkReadPermission(actor, entry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+		checkReadPermission(actor, owner, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
 		return entry;
 	}
 
@@ -162,7 +160,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	public List<DocumentEntry> findAll(Account actor, Account owner)
 			throws BusinessException {
 		preChecks(actor, owner);
-		checkListPermission(actor, owner, DocumentEntry.class, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+		checkListPermission(actor, owner, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
 		return documentEntryBusinessService.findAllMyDocumentEntries(owner);
 	}
 
@@ -175,9 +174,9 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, boolean forceAntivirusOff) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(fileName, "fileName is required.");
-		checkCreatePermission(actor, owner, DocumentEntry.class, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+		checkCreatePermission(actor, owner, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
 		fileName = sanitizeFileName(fileName); // throws
-
 		DocumentUtils util = new DocumentUtils();
 		File tempFile = util.getTempFile(stream, fileName);
 		Long size = tempFile.length(); 
@@ -244,10 +243,9 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		if (fileName == null || fileName.isEmpty()) {
 			fileName = originalFileName;
 		}
-
-		checkUpdatePermission(actor, originalEntry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+		checkUpdatePermission(actor, owner, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, originalEntry);
 		fileName = sanitizeFileName(fileName); // throws
-
 		DocumentUtils util = new DocumentUtils();
 		File tempFile = util.getTempFile(stream, fileName);
 		Long size = tempFile.length();
@@ -331,7 +329,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 	@Override
 	public void deleteInconsistentDocumentEntry(SystemAccount actor, DocumentEntry documentEntry) throws BusinessException {
-		checkDeletePermission(actor, documentEntry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+		checkDeletePermission(actor, null, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, documentEntry);
 		Account owner = documentEntry.getEntryOwner();
 		try {
 
@@ -354,7 +353,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 	@Override
 	public void deleteExpiredDocumentEntry(SystemAccount actor, DocumentEntry documentEntry) throws BusinessException {
-		checkDeletePermission(actor, documentEntry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+		checkDeletePermission(actor, null, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, documentEntry);
 		Account owner = documentEntry.getEntryOwner();
 		try {
 
@@ -382,7 +382,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		Validate.notEmpty(documentUuid, "documentUuid is required.");
 		logger.debug("Actor: " + actor.getAccountReprentation() + " is trying to delete document entry: " + documentUuid);
 		DocumentEntry documentEntry = find(actor, owner, documentUuid);
-		checkDeletePermission(actor, documentEntry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+		checkDeletePermission(actor, owner, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, documentEntry);
 		if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document. There's still existing shares.");
 		}
@@ -447,7 +448,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		DocumentEntry entry = find(actor, owner, uuid);
-		checkThumbNailDownloadPermission(actor, entry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+		checkThumbNailDownloadPermission(actor, owner, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
 		return documentEntryBusinessService.getDocumentThumbnailStream(entry);
 	}
 
@@ -457,14 +459,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		DocumentEntry entry = find(actor, owner, uuid);
-		return getDocumentStream(actor, entry);
-	}
-
-	@Override
-	public InputStream getDocumentStream(Account actor, DocumentEntry entry)
-			throws BusinessException {
-		checkDownloadPermission(actor, entry,
-				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+		checkDownloadPermission(actor, owner, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
 		return documentEntryBusinessService.getDocumentStream(entry);
 	}
 
@@ -501,9 +497,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		Validate.notEmpty(newName, "new name is required.");
 		DocumentEntry entry = find(actor, owner, uuid);
-
-		checkUpdatePermission(actor, entry,
-				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+		checkUpdatePermission(actor, owner, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
 		documentEntryBusinessService.renameDocumentEntry(entry, newName);
 	}
 
@@ -518,7 +513,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		if (meta == null) {
 			meta = entry.getMetaData();
 		}
-		checkUpdatePermission(actor, entry, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN);
+		checkUpdatePermission(actor, owner, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
 		return documentEntryBusinessService.updateFileProperties(entry, newName, fileComment, meta);
 	}
 

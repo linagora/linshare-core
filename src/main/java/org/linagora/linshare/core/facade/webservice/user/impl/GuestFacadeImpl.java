@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -46,6 +48,8 @@ import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
 
+import com.google.common.collect.Lists;
+
 public class GuestFacadeImpl extends UserGenericFacadeImp implements
 		GuestFacade {
 
@@ -55,6 +59,13 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 			final GuestService guestService) {
 		super(accountService);
 		this.guestService = guestService;
+	}
+
+	@Override
+	public List<GuestDto> findAll() throws BusinessException {
+		User actor = checkAuthentication();
+		List<Guest> guests = guestService.findAllMyGuests(actor, actor);
+		return Lists.transform(guests, GuestDto.toDto());
 	}
 
 	@Override

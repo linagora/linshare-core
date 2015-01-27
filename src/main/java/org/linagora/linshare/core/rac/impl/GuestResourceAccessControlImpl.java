@@ -59,7 +59,7 @@ public class GuestResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected Account getOwner(Guest entry) {
+	protected Account getOwner(Guest entry, Object... opt) {
 		return entry.getOwner();
 	}
 
@@ -87,7 +87,10 @@ public class GuestResourceAccessControlImpl extends
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.GUESTS_LIST);
 		} else if (actor.isInternal()) {
-			if (entry.getOwner().equals(owner)) {
+			/* Is it usefull to check if the current actor is an interal ?
+			 * Only internals have the right to create guests.
+			*/
+			if (actor.equals(owner)) {
 				return true;
 			}
 		}
@@ -153,6 +156,11 @@ public class GuestResourceAccessControlImpl extends
 
 	private boolean hasGuestDomain(String topDomainId) {
 		return abstractDomainService.getGuestDomain(topDomainId) != null;
+	}
+
+	@Override
+	protected String getTargetedAccountRepresentation(Account targetedAccount) {
+		return targetedAccount.getAccountReprentation();
 	}
 
 }

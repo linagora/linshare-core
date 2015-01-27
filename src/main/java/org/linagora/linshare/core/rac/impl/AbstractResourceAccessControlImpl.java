@@ -48,32 +48,30 @@ import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
-		AbstractResourceAccessControl<O, R, E> {
+public abstract class AbstractResourceAccessControlImpl<A, R, E> implements
+		AbstractResourceAccessControl<A, R, E> {
 
 	protected static Logger logger = LoggerFactory
 			.getLogger(AbstractResourceAccessControlImpl.class);
 
-	protected abstract boolean hasReadPermission(Account actor, O owner,
+	protected abstract boolean hasReadPermission(Account actor, A account,
 			E entry, Object... opt);
 
-	protected abstract boolean hasListPermission(Account actor, O owner,
+	protected abstract boolean hasListPermission(Account actor, A account,
 			E entry, Object... opt);
 
-	protected abstract boolean hasDeletePermission(Account actor, O owner,
+	protected abstract boolean hasDeletePermission(Account actor, A account,
 			E entry, Object... opt);
 
-	protected abstract boolean hasCreatePermission(Account actor, O owner,
+	protected abstract boolean hasCreatePermission(Account actor, A account,
 			E entry, Object... opt);
 
-	protected abstract boolean hasUpdatePermission(Account actor, O owner,
+	protected abstract boolean hasUpdatePermission(Account actor, A account,
 			E entry, Object... opt);
 
-	protected O getOwner(E entry) {
-		return null;
-	}
+	protected abstract String getTargetedAccountRepresentation(A targetedAccount);
 
-	protected String getOwnerRepresentation(O owner) {
+	protected A getOwner(E entry, Object... opt) {
 		return null;
 	}
 
@@ -87,21 +85,8 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 
 	protected abstract String getEntryRepresentation(E entry);
 
-	protected boolean isAuthorized(Account actor, O owner,
-			PermissionType permission, Object... opt) {
-		E entry = null;
-		if (opt != null && opt.length > 0) {
-			entry = (E) opt[0];
-		}
-		return this.isAuthorized(actor, owner, permission, entry, opt);
-	}
-
-	protected boolean isAuthorized(Account actor, O owner,
-			PermissionType permission, E entry, Object... opt) {
-		return this.isAuthorized(actor, owner, permission, entry, null, opt);
-	}
-
-	protected void appendOwner(O owner, StringBuilder sb) {
+	protected void appendOwner(StringBuilder sb, E entry, Object... opt) {
+		A owner = getOwner(entry, opt);
 		if (owner != null) {
 			String or = getOwnerRepresentation(owner);
 			if (or != null) {
@@ -111,14 +96,8 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 		}
 	}
 
-	protected void appendForAccount(O owner, StringBuilder sb) {
-		if (owner != null) {
-			String or = getOwnerRepresentation(owner);
-			if (or != null) {
-				sb.append(" for account : ");
-				sb.append(or);
-			}
-		}
+	protected String getOwnerRepresentation(A owner) {
+		return null;
 	}
 
 	protected StringBuilder getActorStringBuilder(Account actor) {
@@ -127,34 +106,34 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 		return sb;
 	}
 
-	protected boolean isAuthorized(Account actor, O owner,
-			PermissionType permission, E entry, String resourceName,
-			Object... opt) {
+	protected boolean isAuthorized(Account actor, A targetedAccount,
+			PermissionType permission, E entry, Class<?> clazz, Object... opt) {
+		Validate.notNull(actor);
+		Validate.notNull(targetedAccount);
 		Validate.notNull(permission);
-
-		if (actor.hasSuperAdminRole() || actor.hasSystemAccountRole())
+		if (actor.hasAllRights())
 			return true;
 		if (permission.equals(PermissionType.GET)) {
-			if (hasReadPermission(actor, owner, entry, opt))
+			if (hasReadPermission(actor, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.LIST)) {
-			if (hasListPermission(actor, owner, entry, opt))
+			if (hasListPermission(actor, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.CREATE)) {
-			if (hasCreatePermission(actor, owner, entry, opt))
+			if (hasCreatePermission(actor, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.UPDATE)) {
-			if (hasUpdatePermission(actor, owner, entry, opt))
+			if (hasUpdatePermission(actor, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.DELETE)) {
-			if (hasDeletePermission(actor, owner, entry, opt))
+			if (hasDeletePermission(actor, targetedAccount, entry, opt))
 				return true;
 		}
-		if (resourceName != null) {
+		if (clazz != null) {
 			StringBuilder sb = getActorStringBuilder(actor);
-			sb.append(" is trying to access to unauthorized ");
-			sb.append(resourceName);
-			appendOwner(getOwner(entry), sb);
+			sb.append(" is trying to access to unauthorized resource named ");
+			sb.append(clazz.toString());
+			appendOwner(sb, entry, opt);
 			logger.error(sb.toString());
 		}
 		return false;
@@ -191,78 +170,74 @@ public abstract class AbstractResourceAccessControlImpl<O, R, E> implements
 		return false;
 	}
 
-	@Override
-	public void checkReadPermission(Account actor, O owner, E entry,
-			BusinessErrorCode errCode, Object... opt) throws BusinessException {
-		if (owner == null)
-			owner = getOwner(entry);
-		if (!isAuthorized(actor, owner, PermissionType.GET, entry, opt)) {
+	protected void checkPermission(Account actor, A targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry,
+			PermissionType permissionType, String logMessage,
+			String exceptionMessage, Object... opt) throws BusinessException {
+		if (!isAuthorized(actor, targetedAccount, permissionType, entry, clazz,
+				opt)) {
 			StringBuilder sb = getActorStringBuilder(actor);
-			sb.append(" is not authorized to get the entry ");
-			sb.append(getEntryRepresentation(entry));
-			appendOwner(owner, sb);
+			sb.append(logMessage);
+			if (entry != null) {
+				String entryRepresentation = getEntryRepresentation(entry);
+				sb.append(entryRepresentation);
+			}
+			if (targetedAccount != null) {
+				sb.append(" for targeted account : ");
+				sb.append(getTargetedAccountRepresentation(targetedAccount));
+			}
 			logger.error(sb.toString());
-			throw new BusinessException(errCode,
-					"You are not authorized to get this entry.");
+			throw new BusinessException(errCode, exceptionMessage);
 		}
 	}
 
 	@Override
-	public void checkListPermission(Account actor, O owner, Class<?> clazz,
-			BusinessErrorCode errCode, Object... opt) throws BusinessException {
-		if (!isAuthorized(actor, owner, PermissionType.LIST, opt)) {
-			StringBuilder sb = getActorStringBuilder(actor);
-			sb.append(" is not authorized to list all entries ");
-			sb.append(clazz.getSimpleName());
-			appendOwner(owner, sb);
-			logger.error(sb.toString());
-			throw new BusinessException(errCode,
-					"You are not authorized to list all entries.");
-		}
+	public void checkReadPermission(Account actor, A targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
+			throws BusinessException {
+		String logMessage = " is not authorized to get the entry ";
+		String exceptionMessage = "You are not authorized to get this entry.";
+		checkPermission(actor, targetedAccount, clazz, errCode, entry,
+				PermissionType.GET, logMessage, exceptionMessage, opt);
 	}
 
 	@Override
-	public void checkCreatePermission(Account actor, O owner, Class<?> clazz,
-			BusinessErrorCode errCode, Object... opt) throws BusinessException {
-		if (!isAuthorized(actor, owner, PermissionType.CREATE, opt)) {
-			StringBuilder sb = getActorStringBuilder(actor);
-			sb.append(" is not authorized to create entry ");
-			sb.append(clazz.getSimpleName());
-			appendForAccount(owner, sb);
-			logger.error(sb.toString());
-			throw new BusinessException(errCode,
-					"You are not authorized to create entry.");
-		}
+	public void checkListPermission(Account actor, A targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
+			throws BusinessException {
+		String logMessage = " is not authorized to list all entries ";
+		String exceptionMessage = "You are not authorized to list all entries.";
+		checkPermission(actor, targetedAccount, clazz, errCode, entry,
+				PermissionType.LIST, logMessage, exceptionMessage, opt);
 	}
 
 	@Override
-	public void checkUpdatePermission(Account actor, E entry,
-			BusinessErrorCode errCode, Object... opt) throws BusinessException {
-		O owner = getOwner(entry);
-		if (!isAuthorized(actor, owner, PermissionType.UPDATE, entry, opt)) {
-			StringBuilder sb = getActorStringBuilder(actor);
-			sb.append(" is not authorized to create entry ");
-			sb.append(getEntryRepresentation(entry));
-			appendForAccount(owner, sb);
-			logger.error(sb.toString());
-			throw new BusinessException(errCode,
-					"You are not authorized to update this entry.");
-		}
+	public void checkCreatePermission(Account actor, A targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
+			throws BusinessException {
+		String logMessage = " is not authorized to create an entry ";
+		String exceptionMessage = "You are not authorized to create an entry.";
+		checkPermission(actor, targetedAccount, clazz, errCode, entry,
+				PermissionType.CREATE, logMessage, exceptionMessage, opt);
 	}
 
 	@Override
-	public void checkDeletePermission(Account actor, O owner, E entry,
-			BusinessErrorCode errCode, Object... opt) throws BusinessException {
-		if (owner == null)
-			owner = getOwner(entry);
-		if (!isAuthorized(actor, owner, PermissionType.DELETE, entry, opt)) {
-			StringBuilder sb = getActorStringBuilder(actor);
-			sb.append(" is not authorized to delete the entry ");
-			sb.append(getEntryRepresentation(entry));
-			appendOwner(owner, sb);
-			logger.error(sb.toString());
-			throw new BusinessException(errCode,
-					"You are not authorized to delete this entry.");
-		}
+	public void checkUpdatePermission(Account actor, A targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
+			throws BusinessException {
+		String logMessage = " is not authorized to update the entry ";
+		String exceptionMessage = "You are not authorized to update this entry.";
+		checkPermission(actor, targetedAccount, clazz, errCode, entry,
+				PermissionType.UPDATE, logMessage, exceptionMessage, opt);
+	}
+
+	@Override
+	public void checkDeletePermission(Account actor, A targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
+			throws BusinessException {
+		String logMessage = " is not authorized to delete the entry ";
+		String exceptionMessage = "You are not authorized to delete this entry.";
+		checkPermission(actor, targetedAccount, clazz, errCode, entry,
+				PermissionType.DELETE, logMessage, exceptionMessage, opt);
 	}
 }

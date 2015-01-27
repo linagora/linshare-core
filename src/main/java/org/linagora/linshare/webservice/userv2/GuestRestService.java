@@ -31,15 +31,26 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.user;
+
+package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 
-public interface UserFacade extends GenericFacade {
+public interface GuestRestService {
 
-	public List<UserDto> findAll() throws BusinessException;
-	
+	GuestDto find(String uuid) throws BusinessException;
+
+	List<GuestDto> findAll() throws BusinessException;
+
+	GuestDto create(GuestDto guest) throws BusinessException;
+
+	GuestDto update(GuestDto guest) throws BusinessException;
+
+	void delete(GuestDto guest) throws BusinessException;
+
+	void delete(String uuid) throws BusinessException;
+
 }

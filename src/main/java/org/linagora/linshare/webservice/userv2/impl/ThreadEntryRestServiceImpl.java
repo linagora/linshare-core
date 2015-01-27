@@ -49,6 +49,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
@@ -91,8 +92,8 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 	public ThreadEntryDto create(
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "File stream.", required = true) InputStream theFile,
-			@ApiParam(value = "An optional description of a thread entry.") String description,
-			@ApiParam(value = "The given file name of the uploaded file.", required = true) String givenFileName,
+			@ApiParam(value = "An optional description of a thread entry.") @Multipart(value = "description", required = false) String description,
+			@ApiParam(value = "The given file name of the uploaded file.", required = true) @Multipart(value = "filename", required = false) String givenFileName,
 			MultipartBody body)
 					throws BusinessException {
 		String fileName;

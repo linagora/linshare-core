@@ -71,7 +71,6 @@ public interface ShareRestService {
 
 	void sharedocument(String targetMail, String uuid, int securedShare) throws BusinessException;
 
-	// public List<ShareDto> getMyOwnShares();
 	List<ShareDto> getReceivedShares() throws BusinessException;
 
 	Response getDocumentStream(String shareUuid) throws BusinessException;

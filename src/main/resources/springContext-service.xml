@@ -34,6 +34,7 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="threadResourceAccessControl" />
 		<constructor-arg ref="threadMemberResourceAccessControl" />
+		<constructor-arg ref="userRepository" />
 	</bean>
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">
@@ -314,6 +315,7 @@
 		<constructor-arg ref="anonymousShareEntryService" />
 		<constructor-arg ref="shareEntryService" />
 		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="entryBusinessService" />
 		<constructor-arg ref="shareEntryResourceAccessControl" />
 	</bean>
 </beans>

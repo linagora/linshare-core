@@ -42,12 +42,11 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface EntryResourceAccessControl<R, E extends Entry> extends
 		AbstractResourceAccessControl<Account, R, E> {
 
-	void checkDownloadPermission(Account actor, E entry,
-			BusinessErrorCode errCode, Object... opt) throws BusinessException;
+	void checkDownloadPermission(Account actor, Account targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
+			throws BusinessException;
 
-	void checkDownloadPermission(Account actor, Account owner, E entry,
-			BusinessErrorCode errCode, Object... opt) throws BusinessException;
-
-	void checkThumbNailDownloadPermission(Account actor, E entry,
-			BusinessErrorCode errCode, Object... opt) throws BusinessException;
+	void checkThumbNailDownloadPermission(Account actor,
+			Account targetedAccount, Class<?> clazz, BusinessErrorCode errCode,
+			E entry, Object... opt) throws BusinessException;
 }

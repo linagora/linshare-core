@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -80,7 +81,7 @@ public class UserFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public List<UserDto> getUsers() throws BusinessException {
+	public List<UserDto> findAll() throws BusinessException {
 		User actor = checkAuthentication();
 		List<UserDto> res = new ArrayList<UserDto>();
 		// we return all users without any filters
@@ -92,4 +93,5 @@ public class UserFacadeImpl extends UserGenericFacadeImp
 		logger.debug("user found : " + res.size());
 		return res;
 	}
+
 }

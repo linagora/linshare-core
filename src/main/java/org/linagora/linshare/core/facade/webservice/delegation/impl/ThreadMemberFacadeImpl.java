@@ -72,7 +72,7 @@ public class ThreadMemberFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
+		Thread thread = threadService.find(actor, owner, threadUuid);
 		List<ThreadMemberDto> res = Lists.newArrayList();
 
 		for (ThreadMember m : threadService.getMembers(actor, owner, thread)) {
@@ -92,7 +92,7 @@ public class ThreadMemberFacadeImpl extends DelegationGenericFacadeImpl
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		User user = userService.findOrCreateUser(mail, domainId);
-		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
+		Thread thread = threadService.find(actor, owner, threadUuid);
 		return new ThreadMemberDto(threadService.addMember(actor, owner,
 				thread, user, admin, !readonly));
 	}
@@ -105,7 +105,7 @@ public class ThreadMemberFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notNull(threadMember, "Missing required thread member");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
+		Thread thread = threadService.find(actor, owner, threadUuid);
 		User user = userService.findByLsUuid(threadMember.getUserUuid());
 		ThreadMember member = threadService.getMemberFromUser(thread, user);
 		return new ThreadMemberDto(threadService.updateMember(actor, owner,
@@ -116,14 +116,10 @@ public class ThreadMemberFacadeImpl extends DelegationGenericFacadeImpl
 	public void delete(String ownerUuid, String threadUuid, String userUuid)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
-		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(userUuid, "Missing required user uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
-		ThreadMember member = threadService.getMemberFromUser(thread,
-				userService.findByLsUuid(userUuid));
-		threadService.deleteMember(actor, owner, thread, member);
+		threadService.deleteMember(actor, owner, threadUuid, userUuid);
 	}
 
 }

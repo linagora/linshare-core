@@ -74,7 +74,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	public ThreadDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
-		return new ThreadDto(threadService.findByLsUuid(actor, actor, uuid));
+		return new ThreadDto(threadService.find(actor, actor, uuid));
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(uuid, "uuid must be set.");
 		Set<ThreadMemberDto> ret = new HashSet<ThreadMemberDto>();
 
-		for (ThreadMember m : threadService.findByLsUuid(actor, actor, uuid).getMyMembers())
+		for (ThreadMember m : threadService.find(actor, actor, uuid).getMyMembers())
 			ret.add(new ThreadMemberDto(m));
 		return ret;
 	}
@@ -92,17 +92,14 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	public ThreadDto update(ThreadDto threadDto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(threadDto, "thread must be set.");
-		Thread thread = threadService.findByLsUuid(actor, actor, threadDto.getUuid());
-
-		return new ThreadDto(threadService.update(actor, actor, thread, threadDto.getName()));
+		return new ThreadDto(threadService.update(actor, actor, threadDto.getUuid(), threadDto.getName()));
 	}
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
-		Thread thread = threadService.findByLsUuid(actor, actor, uuid);
-
+		Thread thread = threadService.find(actor, actor, uuid);
 		threadService.deleteThread(actor, actor, thread);
 	}
 }

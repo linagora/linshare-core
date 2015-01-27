@@ -149,6 +149,6 @@ public class SoapServiceImpl extends WebserviceBase implements SoapService {
 	// Users
 	@Override
 	public List<UserDto> getUsers() throws BusinessException {
-		return webServiceUserFacade.getUsers();
+		return webServiceUserFacade.findAll();
 	}
 }

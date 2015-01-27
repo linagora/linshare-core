@@ -44,7 +44,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ThreadService {
 	
-	Thread findByLsUuid(Account actor, Account owner, String uuid);
+	Thread find(Account actor, Account owner, String uuid);
 
 	List<Thread> findAll(Account actor, Account owner);
 
@@ -76,7 +76,7 @@ public interface ThreadService {
 
 	ThreadMember updateMember(Account actor, Account owner, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException;
 
-	void deleteMember(Account actor, Account owner, Thread thread, ThreadMember member) throws BusinessException;
+	void deleteMember(Account actor, Account owner, String threadUuid, String memberUuid) throws BusinessException;
 	
 	void deleteAllMembers(Account actor, Thread thread) throws BusinessException;
 
@@ -84,7 +84,7 @@ public interface ThreadService {
 
 	void deleteThread(User actor, Account owner, Thread thread) throws BusinessException;
 
-	Thread update(User actor, Account owner, Thread thread, String threadName) throws BusinessException;
+	Thread update(User actor, Account owner, String threadUuid, String threadName) throws BusinessException;
 
 	List<Thread> searchByName(User actor, String pattern);
 

@@ -86,7 +86,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
+		Thread thread = threadService.find(actor, owner, threadUuid);
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
 				owner, thread, theFile, fileName);
 		return new ThreadEntryDto(threadEntry);
@@ -101,7 +101,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
+		Thread thread = threadService.find(actor, owner, threadUuid);
 		DocumentEntry doc = documentEntryService.find(actor, owner, entryUuid);
 		InputStream stream = documentEntryService.getDocumentStream(actor,
 				owner, entryUuid);
@@ -131,7 +131,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread thread = threadService.findByLsUuid(actor, owner, threadUuid);
+		Thread thread = threadService.find(actor, owner, threadUuid);
 		List<ThreadEntryDto> ret = Lists.newArrayList();
 
 		for (ThreadEntry t : threadEntryService.findAllThreadEntries(actor, owner, thread)) {

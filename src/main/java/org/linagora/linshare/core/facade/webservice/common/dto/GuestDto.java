@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -236,5 +237,17 @@ public class GuestDto extends AccountDto {
 
 	public void setOwner(GenericUserDto owner) {
 		this.owner = owner;
+	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<Guest, GuestDto> toDto() {
+		return new Function<Guest, GuestDto>() {
+			@Override
+			public GuestDto apply(Guest arg0) {
+				return new GuestDto(arg0, false);
+			}
+		};
 	}
 }

@@ -75,7 +75,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(dto.getUserDomainId(), "thread member domain id must be set.");
 		Validate.notEmpty(dto.getUserMail(), "thread member mail must be set.");
 
-		Thread thread = threadService.findByLsUuid(actor, actor, dto.getThreadUuid());
+		Thread thread = threadService.find(actor, actor, dto.getThreadUuid());
 		User user = (User) accountService.findByLsUuid(dto.getUserUuid());
 		if (user == null) {
 			user = userService.findOrCreateUser(dto.getUserMail(),
@@ -109,8 +109,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notNull(dto.getId(), "thread member id must be set.");
-		ThreadMember member = threadService.getThreadMemberById(dto.getId());
 
-		this.threadService.deleteMember(actor, actor, member.getThread(), member);
+		this.threadService.deleteMember(actor, actor, dto.getThreadUuid(), dto.getUserUuid());
 	}
 }

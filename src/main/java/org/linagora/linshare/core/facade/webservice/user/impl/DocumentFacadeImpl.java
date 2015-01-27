@@ -80,7 +80,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 	public List<DocumentDto> findAll() throws BusinessException {
 		User actor = checkAuthentication();
 		List<DocumentEntry> docs = documentEntryService.findAll(actor, actor);
-		return Lists.transform(docs, DocumentDto.toVo());
+		return Lists.transform(docs, DocumentDto.toDto());
 	}
 
 	@Override
@@ -92,8 +92,8 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public DocumentDto create(InputStream fi, String fileName,
-			String description) throws BusinessException {
+	public DocumentDto create(InputStream fi, String description,
+			String fileName) throws BusinessException {
 		Validate.notNull(fi,
 				"Missing required file (check parameter named file)");
 		User actor = checkAuthentication();

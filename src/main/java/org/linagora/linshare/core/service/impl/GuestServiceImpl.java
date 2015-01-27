@@ -51,7 +51,6 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.rac.GuestResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -108,7 +107,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND,
 					message);
 		}
-		checkReadPermission(owner, guest, BusinessErrorCode.GUEST_FORBIDDEN);
+		checkReadPermission(actor, owner, Guest.class,
+				BusinessErrorCode.GUEST_FORBIDDEN, null);
 		return guest;
 	}
 
@@ -130,7 +130,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			throws BusinessException {
 		preChecks(actor, owner);
 		checkListPermission(actor, owner, Guest.class,
-				BusinessErrorCode.GUEST_FORBIDDEN);
+				BusinessErrorCode.GUEST_FORBIDDEN, null);
 		return guestBusinessService.findAllMyGuests(owner);
 	}
 
@@ -145,7 +145,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		preChecks(actor, owner);
 		Validate.notNull(guest);
 		checkCreatePermission(actor, owner, Guest.class,
-				BusinessErrorCode.USER_CANNOT_CREATE_GUEST);
+				BusinessErrorCode.USER_CANNOT_CREATE_GUEST, null);
 		if (!hasGuestDomain(owner.getDomainId())) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Guest domain was not found");
@@ -179,8 +179,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		preChecks(actor, owner);
 		updateValidation(guest);
 		Guest original = find(actor, owner, guest.getLsUuid());
-		checkUpdatePermission(actor, original,
-				BusinessErrorCode.CANNOT_UPDATE_USER);
+		checkUpdatePermission(actor, owner, Guest.class,
+				BusinessErrorCode.CANNOT_UPDATE_USER, original);
 		GuestDomain guestDomain = abstractDomainService.getGuestDomain(owner
 				.getDomainId());
 		if (guestDomain == null) {
@@ -197,8 +197,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		preChecks(actor, owner);
 		Validate.notEmpty(lsUuid);
 		Guest original = find(actor, owner, lsUuid);
-		checkDeletePermission(actor, original,
-				BusinessErrorCode.CANNOT_DELETE_USER);
+		checkDeletePermission(actor, owner, Guest.class,
+				BusinessErrorCode.CANNOT_DELETE_USER, original);
 		guestBusinessService.delete(original);
 	}
 

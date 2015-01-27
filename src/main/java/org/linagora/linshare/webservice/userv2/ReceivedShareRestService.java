@@ -31,15 +31,28 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.user;
+
+package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
 
-public interface UserFacade extends GenericFacade {
+public interface ReceivedShareRestService {
 
-	public List<UserDto> findAll() throws BusinessException;
-	
+	 List<ShareDto> getReceivedShares() throws BusinessException;
+
+	 ShareDto getReceivedShare(String receivedShareUuid) throws BusinessException;
+
+	 Response thumbnail(String receivedShareUuid) throws BusinessException;
+
+	 void delete(String receivedShareUuid) throws BusinessException;
+
+	 ShareDto copy(String ownerUuid, String shareEntryUuid, String threadEntryUuid) throws BusinessException;
+
+	 Response download(String uuid) throws BusinessException;
 }

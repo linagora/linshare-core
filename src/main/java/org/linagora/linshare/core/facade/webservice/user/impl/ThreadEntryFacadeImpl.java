@@ -105,7 +105,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 
 		User actor = checkAuthentication();
 
-		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		Thread thread = threadService.find(actor, actor, threadUuid);
 		if (thread == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
 					"Current thread was not found : " + threadUuid);
@@ -122,7 +122,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(entryUuid, "Missing required entry uuid");
 
 		User actor = checkAuthentication();
-		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		Thread thread = threadService.find(actor, actor, threadUuid);
 		DocumentEntry doc = documentEntryService.find(actor, actor, entryUuid);
 		InputStream stream = documentEntryService.getDocumentStream(actor,
 				actor, entryUuid);
@@ -138,7 +138,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(uuid, "Missing required entry uuid");
 
 		User actor = checkAuthentication();
-		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		Thread thread = threadService.find(actor, actor, threadUuid);
 		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
 				uuid);
 		return new ThreadEntryDto(threadEntry);
@@ -152,7 +152,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		User actor = checkAuthentication();
 		List<ThreadEntryDto> res = Lists.newArrayList();
 
-		Thread thread = threadService.findByLsUuid(actor, actor, threadUuid);
+		Thread thread = threadService.find(actor, actor, threadUuid);
 		for (ThreadEntry threadEntry : threadEntryService.findAllThreadEntries(
 				actor, actor, thread)) {
 			res.add(new ThreadEntryDto(threadEntry));

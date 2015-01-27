@@ -58,7 +58,8 @@ public class GenericServiceImpl<R, E> {
 		preChecks(actor, owner, false);
 	}
 
-	protected void preChecks(Account actor, Account owner, boolean dontCheckOwner) {
+	protected void preChecks(Account actor, Account owner,
+			boolean dontCheckOwner) {
 		Validate.notNull(actor, "Missing actor account");
 		Validate.notEmpty(actor.getLsUuid(), "Missing actor uuid");
 		if (!dontCheckOwner) {
@@ -73,28 +74,38 @@ public class GenericServiceImpl<R, E> {
 		}
 	}
 
-	protected void checkReadPermission(Account actor, E entry,
-			BusinessErrorCode errCode) {
-		rac.checkReadPermission(actor, null, entry, errCode);
+	void checkReadPermission(Account actor, Account targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
+			throws BusinessException {
+		rac.checkReadPermission(actor, targetedAccount, clazz, errCode, entry,
+				opt);
 	}
 
-	protected void checkListPermission(Account actor, Account owner,
-			Class<?> clazz, BusinessErrorCode errCode) throws BusinessException {
-		rac.checkListPermission(actor, owner, clazz, errCode);
+	void checkListPermission(Account actor, Account targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
+			throws BusinessException {
+		rac.checkListPermission(actor, targetedAccount, clazz, errCode, entry,
+				opt);
 	}
 
-	protected void checkCreatePermission(Account actor, Account owner,
-			Class<?> clazz, BusinessErrorCode errCode) throws BusinessException {
-		rac.checkCreatePermission(actor, owner, clazz, errCode);
+	void checkCreatePermission(Account actor, Account targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
+			throws BusinessException {
+		rac.checkCreatePermission(actor, targetedAccount, clazz, errCode,
+				entry, opt);
 	}
 
-	protected void checkUpdatePermission(Account actor, E entry,
-			BusinessErrorCode errCode) throws BusinessException {
-		rac.checkUpdatePermission(actor, entry, errCode);
+	void checkUpdatePermission(Account actor, Account targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
+			throws BusinessException {
+		rac.checkUpdatePermission(actor, targetedAccount, clazz, errCode,
+				entry, opt);
 	}
 
-	protected void checkDeletePermission(Account actor, E entry,
-			BusinessErrorCode errCode) throws BusinessException {
-		rac.checkDeletePermission(actor, null, entry, errCode);
+	void checkDeletePermission(Account actor, Account targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
+			throws BusinessException {
+		rac.checkDeletePermission(actor, targetedAccount, clazz, errCode,
+				entry, opt);
 	}
 }

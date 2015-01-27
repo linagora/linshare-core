@@ -137,8 +137,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			throw new BusinessException(
 					BusinessErrorCode.SHARE_ENTRY_NOT_FOUND, message);
 		}
-		checkReadPermission(actor, entry,
-				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
+		checkReadPermission(actor, owner, ShareEntry.class,
+				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, null);
 		return entry;
 	}
 
@@ -148,9 +148,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
-		checkDeletePermission(actor, share,
-				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
-
+		checkDeletePermission(actor, owner, ShareEntry.class,
+				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
 		ShareLogEntry logEntry = new ShareLogEntry(owner, share,
 				LogAction.SHARE_DELETE, "Delete a sharing");
 		logEntryService.create(logEntry);
@@ -170,12 +169,10 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(shareUuid, "Missing share entry uuid");
-
 		// step1 : find the resource
 		ShareEntry share = find(actor, owner, shareUuid);
-		checkDownloadPermission(actor, share,
-				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
-
+		checkDownloadPermission(actor, owner, ShareEntry.class,
+				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
 		// step2 : log the copy
 		ShareLogEntry logEntryShare = ShareLogEntry.hasCopiedAShare(owner,
 				share);
@@ -217,8 +214,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		 * Actually the owner have the right to update his own shareEntry. Is it
 		 * really useful ?
 		 */
-		checkUpdatePermission(actor, share,
-				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
+		checkUpdatePermission(actor, owner, ShareEntry.class,
+				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
 		return shareEntryBusinessService.update(share);
 	}
 
@@ -228,8 +225,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
-		checkThumbNailDownloadPermission(actor, share,
-				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
+		checkThumbNailDownloadPermission(actor, owner, ShareEntry.class,
+				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
 		return documentEntryBusinessService.getDocumentThumbnailStream(share
 				.getDocumentEntry());
 	}
@@ -240,8 +237,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
-		checkDownloadPermission(actor, share,
-				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
+		checkDownloadPermission(actor, owner, ShareEntry.class,
+				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
 		ShareLogEntry logEntryActor = ShareLogEntry.hasDownloadedAShare(owner,
 				share);
 		ShareLogEntry logEntryTarget = ShareLogEntry.aShareWasDownloaded(owner,
@@ -262,7 +259,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	public List<ShareEntry> findAllMyRecievedShareEntries(Account actor, Account owner) {
 		preChecks(actor, owner);
 		checkListPermission(actor, owner, ShareEntry.class,
-				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
+				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, null);
 		return shareEntryBusinessService.findAllMyRecievedShareEntries((User) owner);
 	}
 
@@ -271,7 +268,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		preChecks(actor, owner);
 		Validate.notNull(sc);
 		checkCreatePermission(actor, owner, ShareEntry.class,
-				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN);
+				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, null);
 
 		Date expiryDate = sc.getExpiryDate();
 		if (expiryDate == null) {

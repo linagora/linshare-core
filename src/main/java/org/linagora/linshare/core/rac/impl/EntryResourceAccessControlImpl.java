@@ -47,10 +47,10 @@ public abstract class EntryResourceAccessControlImpl<R, E extends Entry>
 		EntryResourceAccessControl<R, E> {
 
 	protected abstract boolean hasDownloadPermission(Account actor,
-			Account owner, E entry, Object... opt);
+			Account account, E entry, Object... opt);
 
 	protected abstract boolean hasDownloadTumbnailPermission(Account actor,
-			Account owner, E entry, Object... opt);
+			Account account, E entry, Object... opt);
 
 	@Override
 	protected String getEntryRepresentation(E entry) {
@@ -62,7 +62,7 @@ public abstract class EntryResourceAccessControlImpl<R, E extends Entry>
 	}
 
 	@Override
-	protected Account getOwner(Entry entry) {
+	protected Account getOwner(Entry entry, Object... opt) {
 		Account owner = entry.getEntryOwner();
 		return owner;
 	}
@@ -73,78 +73,67 @@ public abstract class EntryResourceAccessControlImpl<R, E extends Entry>
 	}
 
 	@Override
-	protected boolean isAuthorized(Account actor, Account owner,
-			PermissionType permission, E entry, String resourceName,
-			Object... opt) {
-		Validate.notNull(permission);
+	protected String getTargetedAccountRepresentation(Account targetedAccount) {
+		return targetedAccount.getAccountReprentation();
+	}
 
-		if (actor.hasSuperAdminRole() || actor.hasSystemAccountRole())
+	@Override
+	protected boolean isAuthorized(Account actor, Account targetedAccount,
+			PermissionType permission, E entry, Class<?> clazz, Object... opt) {
+		Validate.notNull(permission);
+		if (actor.hasAllRights())
 			return true;
 		if (permission.equals(PermissionType.GET)) {
-			if (hasReadPermission(actor, owner, entry, opt))
+			if (hasReadPermission(actor, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.LIST)) {
-			if (hasListPermission(actor, owner, entry, opt))
+			if (hasListPermission(actor, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.CREATE)) {
-			if (hasCreatePermission(actor, owner, entry, opt))
+			if (hasCreatePermission(actor, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.UPDATE)) {
-			if (hasUpdatePermission(actor, owner, entry, opt))
+			if (hasUpdatePermission(actor, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.DELETE)) {
-			if (hasDeletePermission(actor, owner, entry, opt))
+			if (hasDeletePermission(actor, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.DOWNLOAD)) {
-			if (hasDownloadPermission(actor, owner, entry, opt))
+			if (hasDownloadPermission(actor, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.DOWNLOAD_THUMBNAIL)) {
-			if (hasDownloadTumbnailPermission(actor, owner, entry, opt))
+			if (hasDownloadTumbnailPermission(actor, targetedAccount, entry,
+					opt))
 				return true;
 		}
-		if (resourceName != null) {
+		if (clazz != null) {
 			StringBuilder sb = getActorStringBuilder(actor);
-			sb.append(" is trying to access to unauthorized ");
-			sb.append(resourceName);
-			appendOwner(getOwner(entry), sb);
+			sb.append(" is trying to access to unauthorized resource named ");
+			sb.append(clazz.toString());
+			appendOwner(sb, entry, opt);
 			logger.error(sb.toString());
 		}
 		return false;
 	}
 
 	@Override
-	public void checkDownloadPermission(Account actor, E entry,
-			BusinessErrorCode errCode, Object... opt) throws BusinessException {
-		checkDownloadPermission(actor, getOwner(entry), entry, errCode, opt);
+	public void checkDownloadPermission(Account actor, Account targetedAccount,
+			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
+			throws BusinessException {
+		String logMessage = " is not authorized to download the entry ";
+		String exceptionMessage = "You are not authorized to download this entry.";
+		checkPermission(actor, targetedAccount, clazz, errCode, entry,
+				PermissionType.DOWNLOAD, logMessage, exceptionMessage, opt);
 	}
 
 	@Override
-	public void checkDownloadPermission(Account actor, Account owner, E entry,
-			BusinessErrorCode errCode, Object... opt) throws BusinessException {
-		if (!isAuthorized(actor, owner, PermissionType.DOWNLOAD, entry, opt)) {
-			StringBuilder sb = getActorStringBuilder(actor);
-			sb.append(" is not authorized to download the entry ");
-			sb.append(getEntryRepresentation(entry));
-			appendOwner(owner, sb);
-			logger.error(sb.toString());
-			throw new BusinessException(errCode,
-					"You are not authorized to download this entry.");
-		}
-	}
-
-	@Override
-	public void checkThumbNailDownloadPermission(Account actor, E entry,
-			BusinessErrorCode errCode, Object... opt) throws BusinessException {
-		Account owner = getOwner(entry);
-		if (!isAuthorized(actor, owner, PermissionType.DOWNLOAD_THUMBNAIL,
-				entry, opt)) {
-			StringBuilder sb = getActorStringBuilder(actor);
-			sb.append(" is not authorized to get the thumbnail of the entry ");
-			sb.append(getEntryRepresentation(entry));
-			appendOwner(owner, sb);
-			logger.error(sb.toString());
-			throw new BusinessException(errCode,
-					"You are not authorized to get the thumbnail of this entry.");
-		}
+	public void checkThumbNailDownloadPermission(Account actor,
+			Account targetedAccount, Class<?> clazz, BusinessErrorCode errCode,
+			E entry, Object... opt) throws BusinessException {
+		String logMessage = " is not authorized to get the thumbnail of the entry ";
+		String exceptionMessage = "You are not authorized to get the thumbnail of this entry.";
+		checkPermission(actor, targetedAccount, clazz, errCode, entry,
+				PermissionType.DOWNLOAD_THUMBNAIL, logMessage,
+				exceptionMessage, opt);
 	}
 }

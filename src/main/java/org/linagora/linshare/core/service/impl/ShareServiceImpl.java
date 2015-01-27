@@ -37,6 +37,8 @@ package org.linagora.linshare.core.service.impl;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.EntryBusinessService;
+import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -82,6 +84,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 	private final NotifierService notifierService;
 
+	private final EntryBusinessService entryBusinessService;
+
 	public ShareServiceImpl(
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final DocumentEntryService documentEntryService,
@@ -89,6 +93,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			final AnonymousShareEntryService anonymousShareEntryService,
 			final ShareEntryService shareEntryService,
 			final NotifierService notifierService,
+			final EntryBusinessService entryBusinessService,
 			final ShareEntryResourceAccessControl rac) {
 		super(rac);
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
@@ -97,6 +102,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		this.anonymousShareEntryService = anonymousShareEntryService;
 		this.shareEntryService = shareEntryService;
 		this.notifierService = notifierService;
+		this.entryBusinessService = entryBusinessService;
 	}
 
 	// TODO FMA - Refactoring shares
@@ -106,7 +112,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		preChecks(actor, owner);
 		Validate.notNull(shareContainer);
 		checkCreatePermission(actor, owner, ShareEntry.class,
-				BusinessErrorCode.FORBIDDEN);
+				BusinessErrorCode.FORBIDDEN, null);
 
 		// Check functionalities
 
@@ -265,5 +271,27 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			shareEntryService.delete(actor, owner, share.getUuid());
 		}
 		return entry;
+	}
+
+	@Override
+	public void delete(Account actor, Account owner, String entryUuid) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notNull(entryUuid);
+		// TODO : To be improved.
+		Entry entry = entryBusinessService.find(entryUuid);
+		if (entry == null) {
+			String msg = "Can not find the current entry : " + entryUuid;
+			logger.error(msg);
+			throw new BusinessException(BusinessErrorCode.SHARE_NOT_FOUND, msg);
+		}
+		if (entry.getEntryType().equals(EntryType.SHARE)) {
+			shareEntryService.delete(actor, owner, entryUuid);
+		} else if (entry.getEntryType().equals(EntryType.ANONYMOUS_SHARE)) {
+			anonymousShareEntryService.delete(actor, owner, entryUuid);
+		} else {
+			String msg = "Can not find the current entry : " + entryUuid;
+			logger.error(msg);
+			throw new BusinessException(BusinessErrorCode.SHARE_NOT_FOUND, msg);
+		}
 	}
 }

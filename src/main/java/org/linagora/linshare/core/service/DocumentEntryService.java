@@ -90,7 +90,6 @@ public interface DocumentEntryService {
     public InputStream getDocumentThumbnailStream(Account actor, Account owner, String uuid) throws BusinessException;
 
     public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException;
-	public InputStream getDocumentStream(Account actor, DocumentEntry entry) throws BusinessException;
 
 	/**
 	 * return true if the signature functionality is enabled

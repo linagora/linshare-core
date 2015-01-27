@@ -36,6 +36,7 @@ package org.linagora.linshare.core.repository;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.User;
 
 public interface EntryRepository extends AbstractRepository<Entry> {
 
@@ -48,4 +49,6 @@ public interface EntryRepository extends AbstractRepository<Entry> {
 	public Entry findById(String uuid);
 
 	public List<Entry> getOutdatedEntry();
+
+	public List<Entry> findAllMyShareEntries(User owner);
 }
