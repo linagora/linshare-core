@@ -42,8 +42,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
 
 public interface ThreadFacade extends AdminGenericFacade {
 
-	Set<ThreadDto> findAll() throws BusinessException;
-
 	ThreadDto find(String uuid) throws BusinessException;
 
 	Set<ThreadMemberDto> members(String uuid) throws BusinessException;
@@ -52,5 +50,8 @@ public interface ThreadFacade extends AdminGenericFacade {
 
 	void delete(String uuid) throws BusinessException;
 
-	Set<ThreadDto> searchThreads(String pattern, String threadName, String memberName) throws BusinessException;
+	Set<ThreadDto> findAll(String pattern, String threadName, String memberName)
+			throws BusinessException;
+
+	Set<ThreadDto> findAll() throws BusinessException;
 }

@@ -42,6 +42,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 
+import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -87,5 +88,17 @@ public class ThreadDto extends AccountDto {
 
 	public void setMembers(List<ThreadMemberDto> members) {
 		this.members = members;
+	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<Thread, ThreadDto> toDto() {
+		return new Function<Thread, ThreadDto>() {
+			@Override
+			public ThreadDto apply(Thread arg0) {
+				return new ThreadDto(arg0);
+			}
+		};
 	}
 }

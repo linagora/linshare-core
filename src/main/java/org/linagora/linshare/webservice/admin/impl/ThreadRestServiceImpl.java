@@ -75,10 +75,12 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 	@ApiOperation(value = "Find all threads.", response = ThreadDto.class, responseContainer = "Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public Set<ThreadDto> findAll(@QueryParam("pattern") String pattern, @QueryParam("threadName") String threadName, @QueryParam("memberName") String memberName) throws BusinessException {
-		if (pattern == null && threadName == null && memberName == null)
-			return threadFacade.findAll();
-		return threadFacade.searchThreads(pattern, threadName, memberName);
+	public Set<ThreadDto> findAll(
+			@QueryParam("pattern") String pattern,
+			@QueryParam("threadName") String threadName,
+			@QueryParam("memberName") String memberName)
+					throws BusinessException {
+		return threadFacade.findAll(pattern, threadName, memberName);
 	}
 
 	@Path("/{uuid}")

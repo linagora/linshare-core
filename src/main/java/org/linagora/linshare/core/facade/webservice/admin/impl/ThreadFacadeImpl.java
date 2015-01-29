@@ -49,6 +49,8 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ThreadService;
 
+import com.google.common.collect.Sets;
+
 public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		ThreadFacade {
 
@@ -61,16 +63,6 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<ThreadDto> findAll() throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
-		Set<ThreadDto> ret = new HashSet<ThreadDto>();
-
-		for (Thread t : threadService.findAll(actor, actor))
-			ret.add(new ThreadDto(t));
-		return ret;
-	}
-
-	@Override
 	public ThreadDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
@@ -78,28 +70,34 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<ThreadDto> searchThreads(String pattern, String threadName, String memberName)
-			throws BusinessException {
-		User currentUser = super.checkAuthentication(Role.ADMIN);
+	public Set<ThreadDto> findAll() throws BusinessException {
+		return findAll(null, null, null);
+	}
 
-		Set<ThreadDto> threadsDto = new HashSet<ThreadDto>();
-		Set<Thread> threads = new HashSet<Thread>();
-		if (memberName != null)
-			threads.addAll(threadService.searchByMembers(currentUser, memberName));
-
-		if (threadName != null)
-			threads.addAll(threadService.searchByName(currentUser, threadName));
-
-		if (pattern != null) {
-			threads.addAll(threadService.searchByName(currentUser, pattern));
-			threads.addAll(threadService.searchByMembers(currentUser, pattern));
+	@Override
+	public Set<ThreadDto> findAll(String pattern, String threadName,
+			String memberName) throws BusinessException {
+		User actor = super.checkAuthentication(Role.ADMIN);
+		Set<Thread> threads = Sets.newHashSet();
+		if (pattern == null && threadName == null && memberName == null) {
+			threads.addAll(threadService.findAll(actor, actor));
+		} else {
+			if (memberName != null) {
+				threads.addAll(threadService.searchByMembers(actor, memberName));
+			}
+			if (threadName != null) {
+				threads.addAll(threadService.searchByName(actor, threadName));
+			}
+			if (pattern != null) {
+				threads.addAll(threadService.searchByName(actor, pattern));
+				threads.addAll(threadService.searchByMembers(actor, pattern));
+			}
 		}
-
+		Set<ThreadDto> ret = Sets.newHashSet();
 		for (Thread thread : threads) {
-			ThreadDto threadDto = new ThreadDto(thread);
-			threadsDto.add(threadDto);
+			ret.add(new ThreadDto(thread));
 		}
-		return threadsDto;
+		return ret;
 	}
 
 	@Override
@@ -108,7 +106,8 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(uuid, "uuid must be set.");
 		Set<ThreadMemberDto> ret = new HashSet<ThreadMemberDto>();
 
-		for (ThreadMember m : threadService.find(actor, actor, uuid).getMyMembers())
+		for (ThreadMember m : threadService.find(actor, actor, uuid)
+				.getMyMembers())
 			ret.add(new ThreadMemberDto(m));
 		return ret;
 	}
@@ -117,7 +116,8 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	public ThreadDto update(ThreadDto threadDto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(threadDto, "thread must be set.");
-		return new ThreadDto(threadService.update(actor, actor, threadDto.getUuid(), threadDto.getName()));
+		return new ThreadDto(threadService.update(actor, actor,
+				threadDto.getUuid(), threadDto.getName()));
 	}
 
 	@Override
