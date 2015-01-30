@@ -1288,7 +1288,7 @@
 		<profile>
 			<id>dev</id>
 			<build>
-				<finalName>linshare-${project.version}-${maven.build.timestamp}-${sources.version}</finalName>
+				<finalName>linshare-core-${project.version}-${maven.build.timestamp}-${sources.version}</finalName>
 			</build>
 			<properties>
 				<project.version>${project.version}-${maven.build.timestamp}-${sources.version}</project.version>

@@ -57,7 +57,7 @@ function distribute_jar ()
 	local l_version=${g_version} 
 	local l_extension="jar"
 	local l_root_name="linshare-${l_version}"
-	local l_ouput_name="linshare-${l_version}"
+	local l_ouput_name="linshare-core-${l_version}"
 
 	mv ${g_output_dir}/${l_root_name}.${l_extension} ${g_distribution_dir}/${l_ouput_name}.${l_extension}
 	echo_linshare "Done."
@@ -70,7 +70,7 @@ function distribute_war ()
 	local l_version=${g_version} 
 	local l_extension="war"
 	local l_root_name="linshare"
-	local l_ouput_name="linshare-${l_version}"
+	local l_ouput_name="linshare-core-${l_version}"
 	if [ ${g_set_current_revision} -eq 1 ] ; then
 		if [ ! -z "${g_revision}" ] ; then
 			l_ouput_name="${l_ouput_name}-r${g_revision}"
@@ -154,8 +154,8 @@ function build_sso ()
 
 function build_source ()
 {
-	local linshare_soure=linshare-src
-	local linshare_archive=linshare-${g_version}-src.tar
+	local linshare_soure=linshare-core-src
+	local linshare_archive=linshare-core-${g_version}-src.tar
 
 	echo_linshare "Archive creation in progress : ${linshare_archive}"
 	git archive --format=tar ${g_branch_or_tag} -o ${g_distribution_dir}/${linshare_archive}
