@@ -44,6 +44,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -92,6 +93,8 @@ public class JScriptLdapQuery {
 
 	private BeanInfo beanInfo;
 
+	private Pattern cleaner;
+
 	/**
 	 * @param jScriptEvaluator
 	 * @param ldapJndiService
@@ -105,6 +108,7 @@ public class JScriptLdapQuery {
 		this.evaluator = JScriptEvaluator.getInstance(ctx.getLdapCtx(), dnList);
 		this.baseDn = baseDn;
 		this.domainPattern = domainPattern;
+		this.cleaner = Pattern.compile("[;,!|*()&]");
 
 		try {
 			this.beanInfo = Introspector.getBeanInfo(Internal.class);
@@ -112,7 +116,10 @@ public class JScriptLdapQuery {
 			logger.error("Introspection of Internal user class impossible.");
 			logger.debug("message : " + e.getMessage());
 		}
+	}
 
+	public String cleanLdapInputPattern(String pattern) {
+		return cleaner.matcher(pattern).replaceAll("");
 	}
 
 	/** Methods **/
@@ -487,7 +494,7 @@ public class JScriptLdapQuery {
 
 		// Setting lql query parameters
 		Map<String, Object> vars = lqlctx.getVariables();
-		vars.put("mail", mail);
+		vars.put("mail", cleanLdapInputPattern(mail));
 		vars.put("first_name", first_name);
 		vars.put("last_name", last_name);
 		if (logger.isDebugEnabled())
@@ -524,7 +531,7 @@ public class JScriptLdapQuery {
 
 		// Setting lql query parameters
 		Map<String, Object> vars = lqlctx.getVariables();
-		vars.put("mail", mail);
+		vars.put("mail", cleanLdapInputPattern(mail));
 		vars.put("first_name", first_name);
 		vars.put("last_name", last_name);
 		if (logger.isDebugEnabled())
@@ -553,7 +560,7 @@ public class JScriptLdapQuery {
 
 		String command = domainPattern.getAuthCommand();
 		Map<String, Object> vars = lqlctx.getVariables();
-		vars.put("login", login);
+		vars.put("login", cleanLdapInputPattern(login));
 		if (logger.isDebugEnabled())
 			logLqlQuery(command, login);
 
@@ -602,7 +609,7 @@ public class JScriptLdapQuery {
 
 		String command = domainPattern.getAuthCommand();
 		Map<String, Object> vars = lqlctx.getVariables();
-		vars.put("login", login);
+		vars.put("login", cleanLdapInputPattern(login));
 		if (logger.isDebugEnabled())
 			logLqlQuery(command, login);
 
@@ -633,6 +640,7 @@ public class JScriptLdapQuery {
 		if (string == null || string.length() < 1) {
 			string = "*";
 		} else {
+			string = cleanLdapInputPattern(string);
 			string = "*" + string.trim() + "*";
 		}
 		return string;
