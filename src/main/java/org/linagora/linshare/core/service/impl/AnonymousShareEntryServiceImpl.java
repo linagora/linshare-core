@@ -164,7 +164,14 @@ public class AnonymousShareEntryServiceImpl extends
 			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService
 					.create(targetedAccount, recipient, sc.getDocuments(), expiryDate,
 							passwordProtected);
-
+			// logs.
+			for (DocumentEntry documentEntry : sc.getDocuments()) {
+				ShareLogEntry logEntry = new ShareLogEntry(targetedAccount, documentEntry,
+						LogAction.FILE_SHARE, "Anonymous sharing of a file",
+						expiryDate, recipient);
+				logEntryService.create(logEntry);
+			}
+			// Notifications
 			MailContainerWithRecipient mail = mailBuildingService
 					.buildNewSharingProtected(targetedAccount, mailContainer,
 							anonymousUrl);
@@ -172,13 +179,6 @@ public class AnonymousShareEntryServiceImpl extends
 			recipientFavouriteRepository.incAndCreate(targetedAccount,
 					recipient.getMail());
 			entries.addAll(anonymousUrl.getAnonymousShareEntries());
-		}
-		// FIXME : recipients ?
-		for (DocumentEntry documentEntry : sc.getDocuments()) {
-			ShareLogEntry logEntry = new ShareLogEntry(targetedAccount, documentEntry,
-					LogAction.FILE_SHARE, "Anonymous sharing of a file",
-					expiryDate);
-			logEntryService.create(logEntry);
 		}
 		return entries;
 	}

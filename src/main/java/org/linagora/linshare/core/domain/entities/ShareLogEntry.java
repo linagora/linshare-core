@@ -37,6 +37,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.objects.Recipient;
 
 public class ShareLogEntry extends FileLogEntry {
 
@@ -93,30 +94,17 @@ public class ShareLogEntry extends FileLogEntry {
 		this.expirationDate = share.getExpirationDate();
 	}
 
-	public ShareLogEntry(Account actor, DocumentEntry document, LogAction logAction, String description, Date expirationDate) {
-
+	public ShareLogEntry(Account actor, DocumentEntry document, LogAction logAction, String description, Date expirationDate, Recipient recipient) {
 		super(actor, logAction, description, document.getName(), document.getSize(), document.getType());
-
-		Account target = document.getEntryOwner();
-		this.targetDomain = target.getDomainId();
-		if(isUser(target)) {
-			User user = (User)target;
-			this.targetMail = user.getMail();
-			this.targetFirstname = user.getFirstName();
-			this.targetLastname = user.getLastName();
-		} else {
-			this.targetMail = target.getLsUuid();
-			this.targetFirstname = "";
-			this.targetLastname = "";
-		}
+		this.targetDomain = actor.getDomainId();
+		this.targetMail = recipient.getMail();
+		this.targetFirstname = "";
+		this.targetLastname = "";
 		// FIXME : Calendar hack : temporary hack on expiry date
 		Calendar expiryCal = Calendar.getInstance();
 		expiryCal.setTime(expirationDate);
 		this.expirationDate = expiryCal;
-
 	}
-
-
 
 	public ShareLogEntry(Account actor, LogAction logAction, String description, String fileName, Long fileSize, String fileType, Account target, Calendar expirationDate) {
 		super(actor, logAction, description, fileName, fileSize, fileType);
