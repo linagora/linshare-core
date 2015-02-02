@@ -128,8 +128,8 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 
 		// logs
 		for (DocumentEntry documentEntry : documentEntries) {
-			ShareLogEntry logEntry = new ShareLogEntry(sender, documentEntry, LogAction.FILE_SHARE, "Anonymous sharing of a file", expirationDate);
-		    logEntryService.create(logEntry);
+			ShareLogEntry logEntry = new ShareLogEntry(sender, documentEntry, LogAction.FILE_SHARE, "Anonymous sharing of a file", expirationDate, recipient);
+			logEntryService.create(logEntry);
 		}
 
 		notifierService.sendNotification(mailContentBuildingService.buildMailNewSharingWithRecipient(mailContainer, anonymousUrl, sender));

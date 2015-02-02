@@ -92,28 +92,16 @@ public class ShareLogEntry extends FileLogEntry {
 		this.expirationDate = share.getExpirationDate();
 	}
 	
-	public ShareLogEntry(Account actor, DocumentEntry document, LogAction logAction, String description, Calendar expirationDate) {
+	public ShareLogEntry(Account actor, DocumentEntry document, LogAction logAction, String description, Calendar expirationDate, Contact recipient) {
 		
 		super(actor, logAction, description, document.getName(), document.getSize(), document.getType());
-		
-		Account target = document.getEntryOwner();
-		this.targetDomain = target.getDomainId();
-		if(isUser(target)) {
-			User user = (User)target;
-			this.targetMail = user.getMail();
-			this.targetFirstname = user.getFirstName();
-			this.targetLastname = user.getLastName();
-		} else {
-			this.targetMail = target.getLsUuid();
-			this.targetFirstname = "";
-			this.targetLastname = "";
-		}
+		this.targetDomain = actor.getDomainId();
+		this.targetMail = recipient.getMail();
+		this.targetFirstname = "";
+		this.targetLastname = "";
 		this.expirationDate = expirationDate;
-		
 	}
 
-	
-	
 	public ShareLogEntry(Account actor, LogAction logAction, String description, String fileName, Long fileSize, String fileType, Account target, Calendar expirationDate) {
 		super(actor, logAction, description, fileName, fileSize, fileType);
 
