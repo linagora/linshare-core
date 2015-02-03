@@ -114,10 +114,11 @@ public class ShareRestServiceImpl extends WebserviceBase implements
 	@Override
 	public Response getThumbnailStream(@PathParam("uuid") String shareUuid)
 			throws BusinessException {
+		ShareDto shareDto = webServiceShareFacade.getShare(shareUuid);
 		InputStream documentStream = webServiceShareFacade
 				.getThumbnailStream(shareUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getThumbnailResponseBuilder(documentStream);
+				.getDocumentResponseBuilder(documentStream, shareDto.getName()+ "_thumb.png", "image/png", shareDto.getSize());
 		return response.build();
 	}
 

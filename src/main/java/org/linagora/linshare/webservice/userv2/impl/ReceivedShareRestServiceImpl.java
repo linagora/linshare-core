@@ -103,7 +103,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 				.getThumbnailStream(receivedShareUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(receivedShareStream,
-						receivedShareDto.getName(), receivedShareDto.getType(),
+						receivedShareDto.getName() + "_thumb.png", "image/png",
 						receivedShareDto.getSize());
 		return response.build();
 	}
