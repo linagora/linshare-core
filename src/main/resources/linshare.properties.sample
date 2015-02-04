@@ -63,6 +63,7 @@ linshare.users.internal.defaultView.showAll=false
 # NB:
 # - You just need to add the keys you want to override to these files.
 # - All key presents in app.properties will be global for every language.
+# Uncomment this key to specify the directory where are stored the app files.
 # linshare.translations.file=/etc/linshare
 
 # webservice
