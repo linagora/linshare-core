@@ -63,6 +63,10 @@ public class MailContent {
 
 	private boolean plaintext;
 
+	private String alternativeSubject;
+
+	private boolean enableAS;
+
 	public MailContent() {
 	}
 
@@ -168,5 +172,21 @@ public class MailContent {
 
 	public void setPlaintext(boolean plaintext) {
 		this.plaintext = plaintext;
+	}
+
+	public String getAlternativeSubject() {
+		return alternativeSubject;
+	}
+
+	public void setAlternativeSubject (String alternativeSubject) {
+		this.alternativeSubject = alternativeSubject;
+	}
+
+	public boolean isEnableAS() {
+		return enableAS;
+	}
+
+	public void setEnableAS(boolean asUsed) {
+		this.enableAS = asUsed;
 	}
 }

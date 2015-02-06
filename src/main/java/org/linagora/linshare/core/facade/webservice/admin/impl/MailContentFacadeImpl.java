@@ -131,6 +131,8 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		content.setBody(dto.getBody());
 		content.setMailContentType(MailContentType.valueOf(
 				dto.getMailContentType()).toInt());
+		if (content.isEnableAS() == true)
+			content.setAlternativeSubject(dto.getAlternativeSubject());
 	}
 
 	private MailContent findContent(User actor, String uuid)

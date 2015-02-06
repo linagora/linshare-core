@@ -1284,11 +1284,10 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	/*
 	 * MAIL CONTAINER BUILDER SECTION
 	 */
-	private String formatSubject(String subject, Language lang) {
-		if (StringUtils.isBlank(subject))
-			return null;
-		return lang.equals(Language.FRENCH) ? "${actorSubject} de la part de ${actorRepresentation}"
-				: "${actorSubject} from ${actorRepresentation}";
+	private String formatSubjectTemplate(String subject, MailContent mailContent) {
+		if (StringUtils.isBlank(subject) || mailContent.isEnableAS() == false)
+			return mailContent.getSubject();
+		return mailContent.getAlternativeSubject();
 	}
 
 	private String formatPersonalMessage(String pm, Language lang) {
@@ -1316,9 +1315,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				input);
 		MailContent mailContent = cfg.findContent(lang, type);
-		String subject = StringUtils.defaultIfEmpty(
-				formatSubject(input.getSubject(), lang),
-				mailContent.getSubject());
+		String subjectTemplate = formatSubjectTemplate(input.getSubject(), mailContent);
 		String greetings = mailContent.getGreetings();
 		String body = mailContent.getBody();
 		MailFooter f = cfg.findFooter(lang);
@@ -1327,7 +1324,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		logger.info("Building mail content: " + type);
 		pm = formatPersonalMessage(pm, lang);
-		subject = builder.getSubjectChain().build(subject);
+		String subject = builder.getSubjectChain().build(subjectTemplate);
 		greetings = builder.getGreetingsChain().build(greetings);
 		body = builder.getBodyChain().build(body);
 		footer = builder.getFooterChain().build(footer);

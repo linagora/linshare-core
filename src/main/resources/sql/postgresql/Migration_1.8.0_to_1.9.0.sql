@@ -74,6 +74,13 @@ INSERT INTO functionality_enum_lang(functionality_id, lang_value) VALUES (38, 'e
 
 ALTER TABLE mime_type ALTER COLUMN extensions TYPE character varying(255);
 ALTER TABLE mime_type ALTER COLUMN mime_type TYPE character varying(255);
+
+-- Mail Content : Alternative Subject
+ALTER TABLE mail_content ADD COLUMN alternative_subject TYPE character varying(255);
+ALTER TABLE mail_content ADD COLUMN enable_as TYPE bool DEFAULT false NOT NULL;
+UPDATE mail_content SET alternative_subject = '${actorSubject} from ${actorRepresentation}', enable_as = true, modification_date = now() WHERE language = 0 AND mail_content_type IN (8, 9, 10, 11);
+UPDATE mail_content SET alternative_subject = '${actorSubject} de la part de ${actorRepresentation}', enable_as = true, modification_date = now() WHERE language = 1 AND mail_content_type IN (8, 9, 10, 11);
+
 -- schema upgrade - end
 
 

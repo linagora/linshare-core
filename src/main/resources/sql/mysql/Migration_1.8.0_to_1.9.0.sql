@@ -268,6 +268,12 @@ ALTER TABLE mime_type CHANGE mime_type mime_type varchar(255) NOT NULL;
 ALTER TABLE mime_type CHANGE extensions extensions varchar(255) NOT NULL;
 -- schema upgrade - end
 
+-- Mail Content : Alternative Subject
+ALTER TABLE mail_content ADD COLUMN alternative_subject varchar(255);
+ALTER TABLE mail_content ADD COLUMN enable_as bool DEFAULT false NOT NULL;
+UPDATE mail_content SET alternative_subject = '${actorSubject} from ${actorRepresentation}', enable_as = true, modification_date = now() WHERE language = 0 AND mail_content_type IN (8, 9, 10, 11);
+UPDATE mail_content SET alternative_subject = '${actorSubject} de la part de ${actorRepresentation}', enable_as = true, modification_date = now() WHERE language = 1 AND mail_content_type IN (8, 9, 10, 11);
+
 -- LinShare version
 INSERT INTO version (version) VALUES ('1.9.0');
 

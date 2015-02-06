@@ -407,6 +407,8 @@ CREATE TABLE mail_content (
   plaintext          bit NOT NULL,
   creation_date      datetime NOT NULL,
   modification_date  datetime NOT NULL,
+  alternative_subject varchar(255),
+  enable_as         bit DEFAULT false NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mail_content_lang (
   id                bigint(8) NOT NULL AUTO_INCREMENT,

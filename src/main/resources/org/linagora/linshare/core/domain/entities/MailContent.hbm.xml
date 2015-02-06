@@ -19,5 +19,7 @@
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="plaintext" column="plaintext" type="boolean" not-null="true" lazy="false"/>
+		<property name="alternativeSubject" column="alternative_subject" type="text" not-null="false" lazy="false"/>
+		<property name="enableAS" column="enable_as" type="boolean" not-null="true" lazy="false"/>
 	</class>
 </hibernate-mapping>

@@ -84,6 +84,12 @@ public class MailContentDto {
 	@ApiModelProperty(value = "Plaintext")
 	private boolean plaintext;
 
+	@ApiModelProperty(value = "AlternativeSubject")
+	private String alternativeSubject;
+
+	@ApiModelProperty(value = "EnableAS")
+	private boolean enableAS;
+
 	public MailContentDto() {
 	}
 
@@ -101,6 +107,7 @@ public class MailContentDto {
 				cont.getMailContentType()).toString();
 		this.creationDate = new Date(cont.getCreationDate().getTime());
 		this.modificationDate = new Date(cont.getModificationDate().getTime());
+		this.alternativeSubject = cont.getAlternativeSubject();
 	}
 
 	public String getName() {
@@ -197,5 +204,21 @@ public class MailContentDto {
 
 	public void setPlaintext(boolean plaintext) {
 		this.plaintext = plaintext;
+	}
+
+	public String getAlternativeSubject() {
+		return alternativeSubject;
+	}
+
+	public void setAlternativeSubject(String alternativeSubject) {
+		this.alternativeSubject = alternativeSubject;
+	}
+
+	public boolean isEnableAS() {
+		return enableAS;
+	}
+
+	public void setEnableAS(boolean asUsed) {
+		this.enableAS = asUsed;
 	}
 }
