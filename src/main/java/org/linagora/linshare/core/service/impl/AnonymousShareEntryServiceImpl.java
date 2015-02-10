@@ -172,9 +172,20 @@ public class AnonymousShareEntryServiceImpl extends
 				logEntryService.create(logEntry);
 			}
 			// Notifications
-			MailContainerWithRecipient mail = mailBuildingService
-					.buildNewSharingProtected(targetedAccount, mailContainer,
-							anonymousUrl);
+			MailContainerWithRecipient mail = null;
+			if (sc.getSecured() && !sc.isEncrypted()) {
+				mail = mailBuildingService.buildNewSharingProtected(targetedAccount,
+						mailContainer, anonymousUrl);
+			} else if (sc.getSecured() && sc.isEncrypted()) {
+				mail = mailBuildingService.buildNewSharingCypheredProtected(
+						targetedAccount, mailContainer, anonymousUrl);
+			} else if (sc.isEncrypted() && !sc.getSecured()) {
+				mail = mailBuildingService.buildNewSharingCyphered(targetedAccount,
+						mailContainer, anonymousUrl);
+			} else {
+				mail = mailBuildingService.buildNewSharing(targetedAccount,
+						mailContainer, anonymousUrl);
+			}
 			sc.addMailContainer(mail);
 			recipientFavouriteRepository.incAndCreate(targetedAccount,
 					recipient.getMail());
