@@ -47,7 +47,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.LogEntryFacade;
-import org.linagora.linshare.core.facade.webservice.common.dto.LogCriteriaDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LogCriteriaDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.LogDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.LogEntryService;

@@ -72,8 +72,8 @@ public class LogEntryFacadeImpl extends UserGenericFacadeImp implements
 		before.setTime(criteria.getBeforeDate());
 		after.setTime(criteria.getAfterDate());
 		LogCriteriaBean crit = new LogCriteriaBean(Lists.newArrayList(actor
-				.getMail()), criteria.getActorFirstName(),
-				criteria.getActorLastName(), criteria.getActorDomain(),
+				.getMail()), actor.getFirstName(),
+				actor.getLastName(), actor.getDomain().getLabel(),
 				criteria.getTargetMails(), criteria.getTargetFirstName(),
 				criteria.getTargetLastName(), criteria.getTargetDomain(),
 				before, after, criteria.getLogActions(),
@@ -91,4 +91,5 @@ public class LogEntryFacadeImpl extends UserGenericFacadeImp implements
 					}
 				});
 	}
+
 }

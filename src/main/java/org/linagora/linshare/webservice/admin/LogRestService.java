@@ -37,7 +37,7 @@ package org.linagora.linshare.webservice.admin;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.LogCriteriaDto;
+import org.linagora.linshare.core.facade.webservice.admin .dto.LogCriteriaDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.LogDto;
 
 public interface LogRestService {

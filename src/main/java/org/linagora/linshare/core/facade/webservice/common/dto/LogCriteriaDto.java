@@ -48,18 +48,6 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "LogCriteria", description = "Criteria used to search the history")
 public class LogCriteriaDto {
 
-	@ApiModelProperty(value = "List of actor's mail")
-	private List<String> actorMails; // The selected user
-
-	@ApiModelProperty(value = "First name of the actor")
-	private String actorFirstName;
-
-	@ApiModelProperty(value = "Last name of the actor")
-	private String actorLastName;
-
-	@ApiModelProperty(value = "Domain of the actor")
-	private String actorDomain;
-
 	@ApiModelProperty(value = "List of target's mail")
 	private List<String> targetMails; // The list of the selected users
 
@@ -91,14 +79,9 @@ public class LogCriteriaDto {
 		targetMails = new ArrayList<String>();
 	}
 
-	public LogCriteriaDto(List<String> actorMails, String actorFirstName,
-			String actorLastName, String actorDomain, List<String> targetMails,
+	public LogCriteriaDto(List<String> targetMails,
 			String targetFirstname, String targetLastname, String targetDomain,
 			Date beforeDate, Date afterDate, List<LogAction> logActions) {
-		this.actorMails = actorMails;
-		this.actorFirstName = actorFirstName;
-		this.actorLastName = actorLastName;
-		this.actorDomain = actorDomain;
 		this.targetMails = targetMails;
 		this.targetFirstName = targetFirstname;
 		this.targetLastName = targetLastname;
@@ -106,14 +89,6 @@ public class LogCriteriaDto {
 		this.beforeDate = beforeDate;
 		this.afterDate = afterDate;
 		this.logActions = logActions;
-	}
-
-	public List<String> getActorMails() {
-		return actorMails;
-	}
-
-	public void setActorMails(List<String> mails) {
-		this.actorMails = mails;
 	}
 
 	public Date getBeforeDate() {
@@ -138,22 +113,6 @@ public class LogCriteriaDto {
 
 	public void setLogActions(List<LogAction> logActions) {
 		this.logActions = logActions;
-	}
-
-	public String getActorFirstName() {
-		return actorFirstName;
-	}
-
-	public void setActorFirstName(String firstname) {
-		this.actorFirstName = firstname;
-	}
-
-	public String getActorLastName() {
-		return actorLastName;
-	}
-
-	public void setActorLastName(String lastname) {
-		this.actorLastName = lastname;
 	}
 
 	public List<String> getTargetMails() {
@@ -196,16 +155,8 @@ public class LogCriteriaDto {
 		this.fileExtension = fileExtension;
 	}
 
-	public void setActorDomain(String actorDomain) {
-		this.actorDomain = actorDomain;
-	}
-
 	public void setTargetDomain(String targetDomain) {
 		this.targetDomain = targetDomain;
-	}
-
-	public String getActorDomain() {
-		return actorDomain;
 	}
 
 	public String getTargetDomain() {
