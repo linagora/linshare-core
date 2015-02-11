@@ -1182,6 +1182,34 @@
 					</execution>
 				</executions>
 			</plugin>
+	<plugin>
+		<!-- This plugin is used to get all jwsdecrypt applet from the internal maven
+			repository and copy them into the webapp video folder -->
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-dependency-plugin</artifactId>
+		<version>2.3</version>
+		<executions>
+			<execution>
+				<id>copy</id>
+				<phase>initialize</phase>
+				<goals>
+					<goal>copy</goal>
+				</goals>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>org.linagora.linshare.aescrypt</groupId>
+							<artifactId>jwsdecrypt</artifactId>
+							<version>0.2</version>
+							<type>jar</type>
+						</artifactItem>
+					</artifactItems>
+					<outputDirectory>src/main/webapp/applet/</outputDirectory>
+					<stripVersion>true</stripVersion>
+				</configuration>
+			</execution>
+		</executions>
+	</plugin>
 		</plugins>
 		<resources>
 			<resource>

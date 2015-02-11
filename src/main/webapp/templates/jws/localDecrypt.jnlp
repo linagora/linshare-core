@@ -10,17 +10,12 @@
 		</shortcut>
 		<offline-allowed />
 	</information>
-	
 	<security>
 		<all-permissions />
 	</security>
-
 	<resources>
 		<j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se" />
-		<jar href="jwsDecrypt.jar" download="eager" main="true"/>
+		<jar href="jwsdecrypt.jar" download="eager" main="true"/>
 	</resources>
-
-	<application-desc main-class="org.linagora.linShare.aescrypt.JwsDecrypt">
-	</application-desc>
+	<application-desc main-class="org.linagora.linshare.aescrypt.JwsDecrypt" />
 </jnlp>
-			
