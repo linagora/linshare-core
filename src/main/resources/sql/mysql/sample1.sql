@@ -1,12 +1,7 @@
 -- Jeu de données de tests
 
-
--- Jeu de données de tests
-
 INSERT INTO ldap_connection(ldap_connection_id, identifier, provider_url, security_auth, security_principal, security_credentials) VALUES (1, 'linshare-obm', 'ldap://linshare-obm2.linagora.dc1:389', 'simple', '', '');
 
-
--- system domain pattern
 INSERT INTO domain_pattern(
  domain_pattern_id,
  identifier,
@@ -23,7 +18,7 @@ INSERT INTO domain_pattern(
 VALUES (
  50,
  'linshare-obm',
- 'This is pattern the default pattern for the ldap obm structure.',
+ 'linshare-obm.',
  'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");',
  'ldap.search(domain, "(&(objectClass=obmUser)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
  false,
@@ -42,7 +37,7 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pa
 
 
 
-INSERT INTO user_provider_ldap(id, differential_key, domain_pattern_id, ldap_connection_id) VALUES (1, 'ou=users,dc=int1.linshare.dev,dc=local', 2, 1);
+INSERT INTO user_provider_ldap(id, differential_key, domain_pattern_id, ldap_connection_id) VALUES (1, 'ou=users,dc=int1.linshare.dev,dc=local', 50, 1);
 
 
 -- Top domain (example domain)
