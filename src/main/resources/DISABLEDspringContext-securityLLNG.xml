@@ -39,6 +39,9 @@
 			<sec:filter-chain pattern="/download.downloadthemall/**" filters="none" />
 			<sec:filter-chain pattern="/localDecrypt/**" filters="none" />
 
+			<sec:filter-chain pattern="/urentryurldownload/**" filters="none" />
+			<sec:filter-chain pattern="/urentryurldownload.passwordpopup.formpassword" filters="none" />
+
 			<!-- allow soap wsdl to be public with these rule -->
 			<sec:filter-chain pattern="/webservice/soap?wsdl" filters="none" />
 			<sec:filter-chain pattern="/webservice/soap?wsdl=SoapService.wsdl" filters="none" />

@@ -39,6 +39,8 @@ import java.util.Calendar;
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntryUrl;
 
 public class DocumentVo implements Serializable, Comparable {
 
@@ -156,6 +158,24 @@ public class DocumentVo implements Serializable, Comparable {
 		this.hasThumbnail = anonymousShareEntry.getDocumentEntry().hasThumbnail();
 	}
 
+	public DocumentVo(UploadRequestEntry uploadRequestEntry) {
+		super();
+		this.identifier = uploadRequestEntry.getUuid();
+		this.fileName = uploadRequestEntry.getName();
+		this.creationDate = (Calendar)uploadRequestEntry.getCreationDate().clone();
+		if(uploadRequestEntry.getExpirationDate() !=null) {
+			this.expirationDate = (Calendar)uploadRequestEntry.getExpirationDate().clone();
+		} else {
+			this.expirationDate = null;
+		}
+		this.ownerLogin = uploadRequestEntry.getEntryOwner().getLsUuid();
+		this.encrypted = uploadRequestEntry.getDocumentEntry().getCiphered();
+		this.shared = uploadRequestEntry.getDocumentEntry().isShared();
+		this.type=uploadRequestEntry.getDocumentEntry().getType();
+		this.size=uploadRequestEntry.getDocumentEntry().getSize();
+		this.fileComment = uploadRequestEntry.getDocumentEntry().getComment();
+		this.hasThumbnail = uploadRequestEntry.getDocumentEntry().hasThumbnail();
+	}
 
 
 	public Long getSize() {

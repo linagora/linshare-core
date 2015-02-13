@@ -46,6 +46,8 @@ public class UploadRequestEntry extends Entry implements Serializable {
 	private UploadRequest uploadRequest;
 
 	private long size;
+	
+	private UploadRequestEntryUrl uploadRequestEntryUrl;
 
 	public UploadRequestEntry() {
 		super();
@@ -91,6 +93,15 @@ public class UploadRequestEntry extends Entry implements Serializable {
 
 	public void setSize(long size) {
 		this.size = size;
+	}
+
+	public UploadRequestEntryUrl getUploadRequestEntryUrl() {
+		return uploadRequestEntryUrl;
+	}
+
+	public void setUploadRequestEntryUrl(
+			UploadRequestEntryUrl uploadRequestEntryUrl) {
+		this.uploadRequestEntryUrl = uploadRequestEntryUrl;
 	}
 
 }

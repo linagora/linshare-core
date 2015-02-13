@@ -56,6 +56,7 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntryUrl;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
@@ -692,6 +693,44 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		return buildNewAnonymousSharing(sender, input, anonUrl,
 				MailContentType.NEW_SHARING_CYPHERED_PROTECTED);
+	}
+
+	@Override
+	public MailContainerWithRecipient buildNewUploadRequestEntryUrl(
+			User owner, UploadRequestUrl request, UploadRequestEntryUrl uREUrl)
+			throws BusinessException {
+
+		String url = uREUrl
+				.getFullUrl(getLinShareUrlForAContactRecipient(owner));
+		String actorRepresentation = request.getContact().getMail();
+		DateFormat df = DateFormat.getDateInstance(DateFormat.FULL, Locale.forLanguageTag(owner.getExternalMailLocale().getTapestryLocale()));
+		String expiryDate = df.format(uREUrl.getExpiryDate());
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
+		MailContainerWithRecipient container = new MailContainerWithRecipient(
+				owner.getExternalMailLocale());
+		MailContainerBuilder builder = new MailContainerBuilder();
+		builder.getSubjectChain()
+				.add("actorSubject", container.getSubject())
+				.add("actorRepresentation", actorRepresentation);
+		builder.getGreetingsChain()
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName());
+		builder.getBodyChain()
+				.add("firstName", "")
+				.add("lastName", actorRepresentation)
+				.add("number", "" + 1)
+				.add("documentNames", "<li>" + uREUrl.getUploadRequestEntry().getName() + "</li>")
+				.add("expiryDate", expiryDate)
+				.add("password", uREUrl.getTemporaryPlainTextPassword())
+				.add("jwsEncryptUrl",
+						getJwsEncryptUrlString(getLinShareUrlForAContactRecipient(owner)))
+				.add("url", url).add("urlparam", "");
+		container.setRecipient(owner.getMail());
+		container.setFrom(getFromMailAddress(owner));
+		container.setReplyTo(actorRepresentation);
+
+		return buildMailContainer(cfg, container, null,
+				MailContentType.UPLOAD_REQUEST_ENTRY_URL, builder);
 	}
 
 	@Override

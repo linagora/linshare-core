@@ -340,6 +340,27 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public Functionality getUploadRequestEntryUrlFunctionality(
+			AbstractDomain domain) {
+		return _getFunctionality(domain,
+				FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL);
+	}
+
+	@Override
+	public Functionality getUploadRequestEntryUrlPasswordFunctionality(
+			AbstractDomain domain) {
+		return _getFunctionality(
+				domain,
+				FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL__PASSWORD);
+	}
+
+	@Override
+	public TimeUnitValueFunctionality getUploadRequestEntryUrlExpiryTimeFunctionality(
+			AbstractDomain domain) {
+		return new TimeUnitValueFunctionality((UnitValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL__EXPIRATION));
+	}
+
+	@Override
 	public Functionality getUploadPropositionFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.UPLOAD_PROPOSITION);
 	}
@@ -354,6 +375,32 @@ public class FunctionalityReadOnlyServiceImpl implements
 			return funcSAU.getActivationPolicy().getPolicy().equals(Policies.ALLOWED);
 		}
 		return false;
+	}
+
+	@Override
+	public boolean isEnableUploadRequestEntryUrl(String domainIdentifier)
+			throws BusinessException {
+		AbstractDomain domain = findDomain(domainIdentifier);
+		if (domain == null) {
+			logger.error("Can't find upload request entry url functionality for domain : "
+					+ domainIdentifier);
+			return false;
+		}
+		Functionality funcUREU = getUploadRequestEntryUrlFunctionality(domain);
+		return funcUREU.getActivationPolicy().getStatus();
+	}
+
+	@Override
+	public boolean isEnableUploadRequestEntryUrlPassword(String domainIdentifier)
+			throws BusinessException {
+		AbstractDomain domain = findDomain(domainIdentifier);
+		if (domain == null) {
+			logger.error("Can't find upload request entry url functionality for domain : "
+					+ domainIdentifier);
+			return false;
+		}
+		Functionality funcUREU = getUploadRequestEntryUrlPasswordFunctionality(domain);
+		return funcUREU.getActivationPolicy().getStatus();
 	}
 
 	@Override

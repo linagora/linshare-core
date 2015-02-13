@@ -82,7 +82,16 @@ UPDATE mail_content SET alternative_subject = '${actorSubject} from ${actorRepre
 UPDATE mail_content SET alternative_subject = '${actorSubject} de la part de ${actorRepresentation}', enable_as = true, modification_date = now() WHERE language = 1 AND mail_content_type IN (8, 9, 10, 11);
 
 -- schema upgrade - end
-
+CREATE TABLE upload_request_entry_url (
+  id                 int8 NOT NULL,
+  upload_request_entry_id int8 NOT NULL,
+  uuid              varchar(255) NOT NULL UNIQUE,
+  path              varchar(255) NOT NULL,
+  password          varchar(255),
+  creation_date     timestamp(6) NOT NULL,
+  modification_date timestamp(6) NOT NULL,
+  expiration_date   timestamp(6) NOT NULL,
+  PRIMARY KEY (id));
 
 -- LinShare version
 INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence')),'1.9.0');

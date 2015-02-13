@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntryUrl;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
@@ -147,5 +148,9 @@ public interface MailBuildingService {
 			throws BusinessException;
 
 	MailContainerWithRecipient buildErrorUploadRequestNoSpaceLeft(User owner, UploadRequestUrl request)
+			throws BusinessException;
+
+	MailContainerWithRecipient buildNewUploadRequestEntryUrl(User sender,
+			UploadRequestUrl request, UploadRequestEntryUrl uREUrl)
 			throws BusinessException;
 }

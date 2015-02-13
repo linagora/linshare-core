@@ -104,6 +104,15 @@ public interface FunctionalityReadOnlyService {
 	// UPLOAD PROPOSITION
 	Functionality getUploadPropositionFunctionality(AbstractDomain domain);
 
+	// UPLOAD REQUEST ENTRY ULR
+	Functionality getUploadRequestEntryUrlFunctionality(AbstractDomain domain);
+
+	Functionality getUploadRequestEntryUrlPasswordFunctionality(
+			AbstractDomain domain);
+
+	TimeUnitValueFunctionality getUploadRequestEntryUrlExpiryTimeFunctionality(
+			AbstractDomain domain);
+
 	/**
 	 * Check if SecuredAnonymousUrl (SAU) is mandatory
 	 * @param domain : the current domain identifier
@@ -185,4 +194,17 @@ public interface FunctionalityReadOnlyService {
 	 */
 	String getCustomNotificationURLInRootDomain() throws BusinessException;
 
+	/**
+	 * Return the status of the upload request entry URL functionality in root domain
+	 * @return the status
+	 */
+	boolean isEnableUploadRequestEntryUrl(String domainIdentifier)
+			throws BusinessException;
+
+	/**
+	 * Return the status of the upload request entry URL password functionality in root domain
+	 * @return the status
+	 */
+	boolean isEnableUploadRequestEntryUrlPassword(String domainIdentifier)
+			throws BusinessException;
 }

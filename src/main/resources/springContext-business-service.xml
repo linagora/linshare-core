@@ -150,6 +150,13 @@
 		<constructor-arg value="#" />
 	</bean>
 
+	<bean id="uploadRequestEntryUrlBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestEntryUrlBusinessServiceImpl">
+		<constructor-arg ref="uploadRequestEntryUrlRepository" />
+		<constructor-arg ref="passwordService" />
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg value="urentryurldownload" />
+	</bean>
+
 	<bean id="technicalAccountBusinessService" class="org.linagora.linshare.core.business.service.impl.TechnicalAccountBusinessServiceImpl">
 		<constructor-arg ref="abstractDomainRepository" />
 		<constructor-arg ref="technicalAccountRepository" />

@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntryUrl;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -55,8 +56,10 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.UploadRequestEntryUrlService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.slf4j.Logger;
@@ -79,20 +82,28 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 
 	private final NotifierService notifierService;
 
+	private final UploadRequestEntryUrlService uploadRequestEntryUrlService;
+
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+
 	public UploadRequestUrlServiceImpl(
 			final UploadRequestUrlBusinessService uploadRequestUrlBusinessService,
 			final UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
+			final UploadRequestEntryUrlService uploadRequestEntryUrlService,
 			final AccountRepository<Account> accountRepository,
 			final DocumentEntryService documentEntryService,
 			final MailBuildingService mailBuildingService,
-			final NotifierService notifierService) {
+			final NotifierService notifierService,
+			final FunctionalityReadOnlyService functionalityReadOnlyService) {
 		super();
 		this.uploadRequestUrlBusinessService = uploadRequestUrlBusinessService;
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
+		this.uploadRequestEntryUrlService = uploadRequestEntryUrlService;
 		this.accountRepository = accountRepository;
 		this.documentEntryService = documentEntryService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
 	@Override
@@ -144,6 +155,9 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 				// Store the file into the owner account.
 				documentEntryService.delete(actor, owner, documentEntryUuid);
 			}
+			if(found.getUploadRequestEntryUrl() != null){
+				uploadRequestEntryUrlService.deleteUploadRequestEntryUrl(found.getUploadRequestEntryUrl());
+			}
 			uploadRequestEntryBusinessService.delete(found);
 		} else {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
@@ -170,9 +184,21 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 				document, requestUrl.getUploadRequest());
 		UploadRequestEntry requestEntry = uploadRequestEntryBusinessService
 				.create(uploadRequestEntry);
-		MailContainerWithRecipient mail = mailBuildingService
-				.buildAckUploadRequest((User) requestUrl.getUploadRequest()
-						.getOwner(), requestUrl, requestEntry);
+		MailContainerWithRecipient mail = null;
+		if (functionalityReadOnlyService.isEnableUploadRequestEntryUrl(actor
+				.getDomainId())) {
+			boolean isUREUlrSecured = functionalityReadOnlyService
+					.isEnableUploadRequestEntryUrlPassword(actor.getDomainId());
+			UploadRequestEntryUrl uploadRequestEntryUrl = uploadRequestEntryUrlService
+					.create(requestEntry, isUREUlrSecured);
+			mail = mailBuildingService.buildNewUploadRequestEntryUrl(
+					(User) requestUrl.getUploadRequest().getOwner(),
+					requestUrl, uploadRequestEntryUrl);
+		} else {
+			mail = mailBuildingService.buildAckUploadRequest(
+					(User) requestUrl.getUploadRequest().getOwner(),
+					requestUrl, requestEntry);
+		}
 		notifierService.sendNotification(mail);
 		return requestEntry;
 	}

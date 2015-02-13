@@ -78,6 +78,7 @@
 			<many-to-one name="uploadRequest" cascade="lock" column="upload_request_id" class="org.linagora.linshare.core.domain.entities.UploadRequest"
 				not-null="true" lazy="proxy">
 			</many-to-one>
+			 <one-to-one name="uploadRequestEntryUrl" class="org.linagora.linshare.core.domain.entities.UploadRequestEntryUrl"/>
 		</joined-subclass>
 	</class>
 </hibernate-mapping>

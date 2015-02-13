@@ -179,6 +179,10 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
+	<bean name="uploadRequestEntryUrlRepository" class="org.linagora.linshare.core.repository.hibernate.UploadRequestEntryUrlRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
 	<bean name="technicalAccountRepository" class="org.linagora.linshare.core.repository.hibernate.TechnicalAccountRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>

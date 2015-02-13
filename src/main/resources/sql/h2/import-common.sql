@@ -360,6 +360,25 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (101, fals
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (102, true, true, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(44, false, 'UPLOAD_PROPOSITION', 101, 102, 1);
 
+-- Functionality : UPLOAD_REQUEST_ENTRY_URL
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (104, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (105, true, true, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, param) VALUES(45, false, 'UPLOAD_REQUEST_ENTRY_URL', 104, 105, 1, false);
+
+-- Functionality : UPLOAD_REQUEST_ENTRY_URL__EXPIRATION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (106, true, true, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (107, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES(46, false, 'UPLOAD_REQUEST_ENTRY_URL__EXPIRATION', 106, 107, 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
+-- time unit : day
+INSERT INTO unit(id, unit_type, unit_value) VALUES (12, 0, 0);
+-- time : 7 days
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (46, 7, 12);
+
+-- Functionality : UPLOAD_REQUEST_ENTRY_URL__PASSWORD
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (109, true, true, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (110, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES(47, false, 'UPLOAD_REQUEST_ENTRY_URL__PASSWORD', 109, 110, 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (47, false);
 
 
 -- %{image}    <img src="cid:image.part.1@linshare.org" /><br/><br/>
@@ -433,6 +452,8 @@ INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_t
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (27, '690f1bbc-4f99-4e70-a6cd-44388e3e2c86', 1, 0, 26, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request deleted', 'A user ${actorRepresentation} has just deleted an upload request', '<strong>${firstName} ${lastName}</strong> has just deleted the upload request: ${subject}<br/>${body}<br/>You will not be able to upload file anymore<br/><br/>', false);
 -- UPLOAD_REQUEST_NO_SPACE_LEFT
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (28, '48fee30b-b2d3-4f85-b9ee-22044f9dbb4d', 1, 0, 27, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload request error: no space left', 'A user ${actorRepresentation} has just tried to upload a file but server had no space left', '<strong>${firstName} ${lastName}</strong> has just tried to upload in the upload request: ${subject}<br/>${body}<br>Please free space and notify the recipient to retry is upload<br/><br/>', false);
+-- UPLOAD_REQUEST_ENTRY_URL
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (29, 'aa74f9b1-471d-4588-9551-4fb985def2c7', 1, 0, 28, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload Request Entry Url', E'A user ${actorRepresentation} has uploaded a file you', E'<strong>${firstName} ${lastName}</strong> has uploaded a file &nbsp;:<ul>${documentNames}</ul>To download the file, follow this link &nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a><br/>The password to use is&nbsp;: <code>${password}</code><br/><br/>That link will not be available after ${expiryDate}<br/>', false);
 
 
 -- LANGUAGE FRENCH 1
@@ -493,6 +514,8 @@ INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_t
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (77, '1ebf231f-ab5e-469a-9487-c460db735e96', 1, 1, 26, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Invitation de dépôt supprimée', 'Un utilisateur ${actorRepresentation} a supprimé l’invitation de dépôt: ${subject}', '<strong>${firstName} ${lastName}</strong> a supprimé une invitation de dépôt: ${subject}<br/>${body}<br/>Vous ne serez plus en mesure d’y déposer des fichiers<br/><br/>', false);
 -- UPLOAD_REQUEST_NO_SPACE_LEFT
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (78, 'a89afcb4-2bef-431c-9967-e2cf4de38933', 1, 1, 27, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Erreur sur une d’invitation de dépôt: espace disque insuffisant', 'Un utilisateur ${actorRepresentation} a essayé de déposer un fichier mais le serveur n’a pas suffisamment d’espace', '<strong>${firstName} ${lastName}</strong> a tenté de déposer un fichier dans l’invitation de dépôt: ${subject}<br/>${body}<br/>Veuiller libérer de l’espace puis notifier le destinataire d’exécuter son dépôt à nouveau<br/><br/>', false);
+-- UPLOAD_REQUEST_ENTRY_URL
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (80, '6f8096ec-36e7-4ec7-a82f-c37b2eac094e', 1, 0, 28, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Upload Request Entry Url', E'${actorRepresentation} vient de déposer un fichier', E'<strong>${firstName} ${lastName}</strong> a déposé un fichier à votre attention&nbsp;:<ul>${documentNames}</ul>Pour télécharger le fichier, cliquez sur le lien ou copiez-le dans votre navigateur&nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a><br/>Le mot de passe à utiliser est&nbsp;: <code>${password}</code><br/><br/>Ce lien ne sera plus valide après le  ${expiryDate}<br/>',false);
 
 
 INSERT INTO mail_config (id, name, domain_abstract_id, visible, mail_layout_html_id, mail_layout_text_id, modification_date, creation_date, uuid) VALUES (1, 'Default mail config', 1, true, 1, 2, now(), now(), '946b190d-4c95-485f-bfe6-d288a2de1edd');
@@ -528,6 +551,7 @@ INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mai
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (26, 1, 0, 26, 25, 'd8316b6b-f6c8-408b-ac7d-1ebea767912e');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (27, 1, 0, 27, 26, '7642b888-3bd8-4f8c-b65c-81b61e512137');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (28, 1, 0, 28, 27, '9bf9d474-fd10-48da-843c-dfadebd2b455');
+INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (29, 1, 0, 29, 28, 'b9c6779b-e8ef-4678-b81c-e37ed79e9ed7');
 
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (51, 1, 1, 51, 0, 'd0af96a7-6a9c-4c3f-8b8c-7c8e2d0449e1');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (52, 1, 1, 52, 1, '28e5855a-c0e7-40fc-8401-9cf25eb53f03');
@@ -557,5 +581,6 @@ INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mai
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (76, 1, 1, 76, 25, 'a7994bd1-bd67-4cc6-93f3-be935c1cdb67');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (77, 1, 1, 77, 26, '5e1fb460-1efc-497c-96d8-6adf162cbc4e');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (78, 1, 1, 78, 27, '2daaea2a-1b13-48b4-89a6-032f7e034a2d');
+INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (80, 1, 1, 80, 28, 'cd65cae1-4946-4675-a356-addd722a5c6c');
 
 UPDATE domain_abstract SET mailconfig_id = 1;
