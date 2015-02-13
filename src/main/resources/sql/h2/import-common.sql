@@ -299,7 +299,7 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (83, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (84, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (85, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES(38, false, 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE', 83, 84, 85, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (38, 'en');
+INSERT INTO functionality_enum_lang(functionality_id, lang_value) VALUES (38, 'en');
 
 -- Functionality : UPLOAD_REQUEST__SECURED_URL
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (86, false, false, 1, false);

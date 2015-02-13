@@ -41,13 +41,13 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.facade.webservice.common.dto.FunctionalityDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 
-public class EnumValueFunctionality extends OneValueFunctionality<Language> {
+public class LanguageEnumValueFunctionality extends OneValueFunctionality<Language> {
 
-	public EnumValueFunctionality() {
+	public LanguageEnumValueFunctionality() {
 		super();
 	}
 
-	public EnumValueFunctionality(String identifier, boolean system, Policy activationPolicy, Policy configurationPolicy, AbstractDomain domain, Language value){
+	public LanguageEnumValueFunctionality(String identifier, boolean system, Policy activationPolicy, Policy configurationPolicy, AbstractDomain domain, Language value){
 		super(identifier, system, activationPolicy, configurationPolicy, domain, value);
 	}
 
@@ -59,7 +59,7 @@ public class EnumValueFunctionality extends OneValueFunctionality<Language> {
 	@Override
 	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if (super.businessEquals(obj, checkPolicies)) {
-			EnumValueFunctionality o = (EnumValueFunctionality) obj;
+			LanguageEnumValueFunctionality o = (LanguageEnumValueFunctionality) obj;
 			if (value.equals(o.getValue())) {
 				logger.debug("EnumValueFunctionality : " + this.toString() + " is equal to EnumValueFunctionality "
 						+ obj.toString());
@@ -79,7 +79,7 @@ public class EnumValueFunctionality extends OneValueFunctionality<Language> {
 
 	@Override
 	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
-		EnumValueFunctionality f = (EnumValueFunctionality) functionality;
+		LanguageEnumValueFunctionality f = (LanguageEnumValueFunctionality) functionality;
 		this.value = f.getValue();
 	}
 

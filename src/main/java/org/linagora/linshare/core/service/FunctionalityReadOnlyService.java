@@ -37,6 +37,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
+import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
@@ -93,7 +94,7 @@ public interface FunctionalityReadOnlyService {
 	IntegerValueFunctionality getUploadRequestMaxFileCountFunctionality(AbstractDomain domain);
 	SizeUnitValueFunctionality getUploadRequestMaxFileSizeFunctionality(AbstractDomain domain);
 	SizeUnitValueFunctionality getUploadRequestMaxDepositSizeFunctionality(AbstractDomain domain);
-	StringValueFunctionality getUploadRequestNotificationLanguageFunctionality(AbstractDomain domain);
+	LanguageEnumValueFunctionality getUploadRequestNotificationLanguageFunctionality(AbstractDomain domain);
 	BooleanValueFunctionality getUploadRequestSecureUrlFunctionality(AbstractDomain domain);
 	BooleanValueFunctionality getUploadRequestProlongationFunctionality(AbstractDomain domain);
 	BooleanValueFunctionality getUploadRequestCandDeleteFileFunctionality(AbstractDomain domain);

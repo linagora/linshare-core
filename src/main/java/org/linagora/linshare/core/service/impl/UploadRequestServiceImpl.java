@@ -54,7 +54,7 @@ import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
-import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
@@ -244,10 +244,10 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 
 	private void checkNotificationLanguage(AbstractDomain domain,
 			UploadRequest req) {
-		StringValueFunctionality func = functionalityService
+		LanguageEnumValueFunctionality func = functionalityService
 				.getUploadRequestNotificationLanguageFunctionality(domain);
-		String checkString = checkString(func, req.getLocale());
-		req.setLocale(checkString);
+		//String checkString = checkString(func, req.getLocale());
+		req.setLocale(func.getValue().getTapestryLocale());
 	}
 
 	private void checkMaxFileSize(AbstractDomain domain, UploadRequest req) {
@@ -306,43 +306,6 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 			logger.debug(func.getIdentifier() + " is not activated");
 			if (currentSize != null) {
 				logger.warn("the current value " + currentSize.toString()
-						+ " should be null for the functionality "
-						+ func.toString());
-			}
-			return null;
-		}
-	}
-
-	private String checkString(StringValueFunctionality func,
-			String current) {
-		if (func.getActivationPolicy().getStatus()) {
-			logger.debug(func.getIdentifier() + " is activated");
-			String defaultValue = func.getValue();
-			if (func.getDelegationPolicy() != null
-					&& func.getDelegationPolicy().getStatus()) {
-				logger.debug(func.getIdentifier() + " has a delegation policy");
-				if (current != null) {
-					return current;
-				}
-				return defaultValue;
-			} else {
-				// there is no delegation, the current value should be the
-				// system value or null
-				logger.debug(func.getIdentifier()
-						+ " does not have a delegation policy");
-				if (current != null) {
-					if (!current.equals(defaultValue)) {
-						logger.warn("the current value "
-								+ current.toString()
-								+ " is different than system value " + defaultValue);
-					}
-				}
-				return defaultValue;
-			}
-		} else {
-			logger.debug(func.getIdentifier() + " is not activated");
-			if (current != null) {
-				logger.warn("the current value " + current.toString()
 						+ " should be null for the functionality "
 						+ func.toString());
 			}

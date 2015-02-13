@@ -143,9 +143,6 @@ CREATE TABLE functionality_string (
   string_value     varchar(255),
   CONSTRAINT linshare_functionality_string_pkey
     PRIMARY KEY (functionality_id));
-CREATE TABLE functionality_enum (functionality_id int8 NOT NULL, enum_value varchar(255),
-  CONSTRAINT linshare_functionality_enum_pkey
-    PRIMARY KEY (functionality_id));
 CREATE TABLE functionality_unit (
   functionality_id int8 NOT NULL,
   integer_value    int4,
@@ -522,10 +519,6 @@ CREATE TABLE upload_proposition_action (
   creation_date                timestamp(6) NOT NULL,
   modification_date            timestamp(6) NOT NULL,
   PRIMARY KEY (id));
-CREATE TABLE functionality_boolean (
-  functionality_id int8 NOT NULL,
-  boolean_value    bool NOT NULL,
-  PRIMARY KEY (functionality_id));
 CREATE TABLE mailing_list (
   id                  int8 NOT NULL,
   domain_abstract_id int8 NOT NULL,
@@ -599,8 +592,8 @@ CREATE TABLE mime_type (
   id                 int8 NOT NULL,
   mime_policy_id    int8 NOT NULL,
   uuid              varchar(255) NOT NULL,
-  mime_type         text NOT NULL,
-  extensions        text NOT NULL,
+  mime_type         varchar(255) NOT NULL,
+  extensions        varchar(255) NOT NULL,
   enable            bool NOT NULL,
   displayable       bool NOT NULL,
   creation_date     timestamp(6) NOT NULL,
@@ -613,6 +606,14 @@ CREATE TABLE account_permission (
   technical_account_permission_id int8 NOT NULL,
   permission                      varchar(255) NOT NULL,
   PRIMARY KEY (id));
+CREATE TABLE functionality_enum_lang (
+  functionality_id int8 NOT NULL,
+  lang_value            varchar(255),
+  PRIMARY KEY (functionality_id));
+CREATE TABLE functionality_boolean (
+  functionality_id int8 NOT NULL,
+  boolean_value            bool NOT NULL,
+  PRIMARY KEY (functionality_id));
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid
@@ -790,6 +791,7 @@ ALTER TABLE account_permission ADD CONSTRAINT FKaccount_pe759382 FOREIGN KEY (te
 ALTER TABLE upload_request ADD CONSTRAINT FKupload_req220337 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE upload_request ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE upload_proposition_filter ADD CONSTRAINT FKupload_pro316142 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE functionality_enum_lang ADD CONSTRAINT FKfunctional140416 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 
 CREATE INDEX welcome_texts_i

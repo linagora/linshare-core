@@ -516,10 +516,6 @@ CREATE TABLE upload_proposition_action (
   creation_date                datetime NOT NULL,
   modification_date            datetime NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
-CREATE TABLE functionality_boolean (
-  functionality_id bigint(8) NOT NULL,
-  boolean_value    bit NOT NULL,
-  PRIMARY KEY (functionality_id)) CHARACTER SET UTF8;
 CREATE TABLE statistic_event (
   id                bigint(8) NOT NULL AUTO_INCREMENT,
   event_type        int(4) NOT NULL,
@@ -612,8 +608,8 @@ CREATE TABLE mime_type (
   id                bigint(8) NOT NULL AUTO_INCREMENT,
   mime_policy_id    bigint(8) NOT NULL,
   uuid              varchar(255) NOT NULL,
-  mime_type         text NOT NULL,
-  extensions        text NOT NULL,
+  mime_type         varchar(255) NOT NULL,
+  extensions        varchar(255) NOT NULL,
   enable            bit NOT NULL,
   displayable       bit NOT NULL,
   creation_date     datetime NOT NULL,
@@ -626,6 +622,14 @@ CREATE TABLE account_permission (
   technical_account_permission_id bigint(8) NOT NULL,
   permission                      varchar(255) NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
+CREATE TABLE functionality_enum_lang (
+  functionality_id bigint(8) NOT NULL,
+  lang_value            varchar(255),
+  PRIMARY KEY (functionality_id)) CHARACTER SET UTF8;
+CREATE TABLE functionality_boolean (
+  functionality_id bigint(8) NOT NULL,
+  boolean_value            bit NOT NULL,
+  PRIMARY KEY (functionality_id)) CHARACTER SET UTF8;
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE INDEX cookie2
@@ -795,6 +799,7 @@ ALTER TABLE account_permission ADD INDEX FKaccount_pe759382 (technical_account_p
 ALTER TABLE upload_request ADD INDEX FKupload_req220337 (account_id), ADD CONSTRAINT FKupload_req220337 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE upload_request ADD INDEX FKupload_req840249 (domain_abstract_id), ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE upload_proposition_filter ADD INDEX FKupload_pro316142 (domain_abstract_id), ADD CONSTRAINT FKupload_pro316142 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE functionality_enum_lang ADD INDEX FKfunctional140416 (functionality_id), ADD CONSTRAINT FKfunctional140416 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE functionality_boolean ADD INDEX FKfunctional171577 (functionality_id), ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 
 ALTER TABLE domain_abstract ADD INDEX fk449bc2ec126ff4f2 (messages_configuration_id), ADD CONSTRAINT fk449bc2ec126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;

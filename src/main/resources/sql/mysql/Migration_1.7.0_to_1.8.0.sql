@@ -10,6 +10,7 @@ START TRANSACTION;
 DROP PROCEDURE IF EXISTS ls_drop_column_if_exists;
 DROP PROCEDURE IF EXISTS ls_drop_constraint_if_exists;
 DROP PROCEDURE IF EXISTS ls_drop_index_if_exists;
+DROP PROCEDURE IF EXISTS ls_drop_primarykey_if_exists;
 
 delimiter '$$'
 CREATE PROCEDURE ls_drop_column_if_exists(IN ls_table_name VARCHAR(255), IN ls_column_name VARCHAR(255))
@@ -59,6 +60,21 @@ BEGIN
         DEALLOCATE PREPARE _stmt;
     END IF;
 END$$
+
+CREATE PROCEDURE ls_drop_primarykey_if_exists(IN ls_table_name VARCHAR(255))
+BEGIN
+    DECLARE ls_database_name varchar(255);
+    DECLARE local_ls_table_name varchar(255) DEFAULT ls_table_name;
+    DECLARE _stmt VARCHAR(1024);
+    SELECT DATABASE() INTO ls_database_name;
+    IF EXISTS (SELECT NULL FROM information_schema.table_constraints WHERE constraint_type = 'PRIMARY KEY' AND table_name = ls_table_name AND table_schema = ls_database_name) THEN
+        SET @SQL := CONCAT('ALTER TABLE ', local_ls_table_name, ' DROP PRIMARY KEY ', ";");
+        select @SQL;
+        PREPARE _stmt FROM @SQL;
+        EXECUTE _stmt;
+        DEALLOCATE PREPARE _stmt;
+    END IF;
+END$$
 delimiter ';'
 
 -- mysql schema fixes - begin
@@ -66,6 +82,7 @@ delimiter ';'
 -- "ALTER TABLE functionality_boolean DROP COLUMN IF EXISTS id" not supported by mysql.
 call ls_drop_column_if_exists("functionality_boolean", "id");
 call ls_drop_constraint_if_exists("functionality_boolean", "functionality_boolean_pkey");
+call ls_drop_primarykey_if_exists("functionality_boolean");
 ALTER TABLE functionality_boolean ADD PRIMARY KEY(functionality_id);
 
 

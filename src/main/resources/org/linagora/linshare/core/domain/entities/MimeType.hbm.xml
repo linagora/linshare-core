@@ -7,8 +7,8 @@
 			</generator>
 		</id>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
-		<property name="mimeType" column="mime_type" type="text" not-null="true" lazy="false"/>
-		<property name="extensions" column="extensions" type="text" not-null="true" lazy="false"/>
+		<property name="mimeType" column="mime_type" type="string" not-null="true" lazy="false"/>
+		<property name="extensions" column="extensions" type="string" not-null="true" lazy="false"/>
 		<property name="enable" column="enable" type="boolean" not-null="true" lazy="false"/>
 		<property name="displayable" column="displayable" type="boolean" not-null="true" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>

@@ -40,6 +40,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
+import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UnitBooleanValueFunctionality;
@@ -303,9 +304,9 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public StringValueFunctionality getUploadRequestNotificationLanguageFunctionality(
+	public LanguageEnumValueFunctionality getUploadRequestNotificationLanguageFunctionality(
 			AbstractDomain domain) {
-		return (StringValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__NOTIFICATION_LANGUAGE);
+		return (LanguageEnumValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__NOTIFICATION_LANGUAGE);
 	}
 
 	@Override

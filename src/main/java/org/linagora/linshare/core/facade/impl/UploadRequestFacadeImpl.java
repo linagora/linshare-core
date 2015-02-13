@@ -47,7 +47,7 @@ import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
-import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
@@ -312,7 +312,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 			ret.setMaxFileSize(maxFileSize);
 		}
 
-		StringValueFunctionality notificationLangFunc = functionalityReadOnlyService
+		LanguageEnumValueFunctionality notificationLangFunc = functionalityReadOnlyService
 				.getUploadRequestNotificationLanguageFunctionality(domain);
 
 		if (notificationLangFunc.getActivationPolicy().getStatus()) {
@@ -322,8 +322,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				logger.debug("notificationLangFunc has a delegation policy");
 				includes.add("locale");
 			}
-			Language locale = Language.fromTapestryLocale(notificationLangFunc
-					.getValue());
+			Language locale = notificationLangFunc.getValue();
 			ret.setLocale(locale);
 		}
 
@@ -430,7 +429,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 			}
 		}
 
-		StringValueFunctionality notificationLangFunc = functionalityReadOnlyService
+		LanguageEnumValueFunctionality notificationLangFunc = functionalityReadOnlyService
 				.getUploadRequestNotificationLanguageFunctionality(domain);
 
 		if (notificationLangFunc.getActivationPolicy().getStatus()) {

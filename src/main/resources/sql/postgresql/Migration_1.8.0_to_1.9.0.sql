@@ -13,7 +13,6 @@ ALTER TABLE functionality_boolean DROP CONSTRAINT IF EXISTS functionality_boolea
 ALTER TABLE functionality_boolean ADD PRIMARY KEY(functionality_id);
 ALTER TABLE functionality_boolean DROP CONSTRAINT IF EXISTS FKfunctional171577;
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
-
 ALTER TABLE mime_type DROP CONSTRAINT IF EXISTS unicity_type_and_policy;
 -- If this command failed, you should delete all mime_type to apply this constraint.
 ALTER TABLE mime_type ADD  CONSTRAINT unicity_type_and_policy  UNIQUE (mime_policy_id, mime_type);
@@ -43,23 +42,43 @@ ALTER TABLE upload_request ALTER COLUMN locale SET NOT NULL;
 -- Upload request - notification language - Mandatory
 UPDATE policy SET status = true, default_status = true, policy = 1, system = true where id=83;
 
--- LinShare version
-INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence')),'1.9.0');
-
--- New functionality table for enum parameter
-CREATE TABLE functionality_enum (functionality_id int8 NOT NULL, enum_value varchar(255),
-    PRIMARY KEY (functionality_id));
-DELETE FROM functionality_string WHERE functionality_id=38;
-INSERT INTO functionality_enum (functionality_id, enum_value) VALUES (38, 'en');
-
-
 -- schema upgrade - begin
+-- step 1 : delete subclass functionality
+DELETE FROM functionality_string WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE');
+
+-- step 2 : save policy id in temp table
+CREATE TEMP TABLE temptable_1_9 (id int8);
+INSERT INTO temptable_1_9 SELECT policy_activation_id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE';
+INSERT INTO temptable_1_9 SELECT policy_configuration_id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE';
+INSERT INTO temptable_1_9 SELECT policy_delegation_id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE';
+
+-- step 3 : delete subclass functionality
+DELETE FROM functionality WHERE identifier = 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE';
+
+-- step 4 : delete policies
+DELETE FROM policy WHERE id in (SELECT id FROM temptable_1_9);
+
+-- step 5 : create table
+CREATE TABLE functionality_enum_lang (
+  functionality_id int8 NOT NULL,
+  lang_value            varchar(255),
+  PRIMARY KEY (functionality_id));
+-- step 6 : insert new functionality
+-- Functionality : UPLOAD_REQUEST__NOTIFICATION_LANGUAGE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (83, true, true, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (84, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (85, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(38, false, 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE', 83, 84, 85, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_enum_lang(functionality_id, lang_value) VALUES (38, 'en');
+
 ALTER TABLE mime_type ALTER COLUMN extensions TYPE character varying(255);
 ALTER TABLE mime_type ALTER COLUMN mime_type TYPE character varying(255);
--- if not exists ?
-ALTER TABLE mime_type ADD  CONSTRAINT unicity_type_and_policy  UNIQUE (mime_policy_id, mime_type);
 -- schema upgrade - end
 
+
+-- LinShare version
+INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence')),'1.9.0');
 
 
 COMMIT;

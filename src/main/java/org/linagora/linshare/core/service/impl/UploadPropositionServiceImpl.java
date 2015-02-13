@@ -51,7 +51,7 @@ import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
-import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
@@ -279,7 +279,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			req.setMaxFileSize(maxFileSize);
 		}
 
-		StringValueFunctionality notificationLangFunc = functionalityReadOnlyService
+		LanguageEnumValueFunctionality notificationLangFunc = functionalityReadOnlyService
 				.getUploadRequestNotificationLanguageFunctionality(domain);
 
 		if (notificationLangFunc.getActivationPolicy().getStatus()) {
@@ -288,7 +288,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 					&& notificationLangFunc.getDelegationPolicy().getStatus()) {
 				logger.debug("notificationLangFunc has a delegation policy");
 			}
-			String locale = notificationLangFunc.getValue();
+			String locale = notificationLangFunc.getValue().getTapestryLocale();
 			req.setLocale(locale);
 		}
 

@@ -11,6 +11,7 @@ START TRANSACTION;
 DROP PROCEDURE IF EXISTS ls_drop_column_if_exists;
 DROP PROCEDURE IF EXISTS ls_drop_constraint_if_exists;
 DROP PROCEDURE IF EXISTS ls_drop_index_if_exists;
+DROP PROCEDURE IF EXISTS ls_drop_primarykey_if_exists;
 
 delimiter '$$'
 CREATE PROCEDURE ls_drop_column_if_exists(IN ls_table_name VARCHAR(255), IN ls_column_name VARCHAR(255))
@@ -36,8 +37,15 @@ BEGIN
     DECLARE local_ls_constraint_name varchar(255) DEFAULT ls_constraint_name;
     DECLARE _stmt VARCHAR(1024);
     SELECT DATABASE() INTO ls_database_name;
-    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND constraint_name = ls_constraint_name) THEN
+    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND constraint_name = ls_constraint_name AND constraint_type <> 'UNIQUE' ) THEN
         SET @SQL := CONCAT('ALTER TABLE ', local_ls_table_name, ' DROP FOREIGN KEY ', local_ls_constraint_name , ";");
+        select @SQL;
+        PREPARE _stmt FROM @SQL;
+        EXECUTE _stmt;
+        DEALLOCATE PREPARE _stmt;
+    END IF;
+    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND constraint_name = ls_constraint_name AND constraint_type = 'UNIQUE' ) THEN
+        SET @SQL := CONCAT('ALTER TABLE ', local_ls_table_name, ' DROP INDEX ', local_ls_constraint_name , ";");
         select @SQL;
         PREPARE _stmt FROM @SQL;
         EXECUTE _stmt;
@@ -60,21 +68,34 @@ BEGIN
         DEALLOCATE PREPARE _stmt;
     END IF;
 END$$
+
+CREATE PROCEDURE ls_drop_primarykey_if_exists(IN ls_table_name VARCHAR(255))
+BEGIN
+    DECLARE ls_database_name varchar(255);
+    DECLARE local_ls_table_name varchar(255) DEFAULT ls_table_name;
+    DECLARE _stmt VARCHAR(1024);
+    SELECT DATABASE() INTO ls_database_name;
+    IF EXISTS (SELECT NULL FROM information_schema.table_constraints WHERE constraint_type = 'PRIMARY KEY' AND table_name = ls_table_name AND table_schema = ls_database_name) THEN
+        SET @SQL := CONCAT('ALTER TABLE ', local_ls_table_name, ' DROP PRIMARY KEY ', ";");
+        select @SQL;
+        PREPARE _stmt FROM @SQL;
+        EXECUTE _stmt;
+        DEALLOCATE PREPARE _stmt;
+    END IF;
+END$$
 delimiter ';'
 
 
 -- "ALTER TABLE functionality_boolean DROP COLUMN IF EXISTS id" not supported by mysql.
 call ls_drop_column_if_exists("functionality_boolean", "id");
 call ls_drop_constraint_if_exists("functionality_boolean", "functionality_boolean_pkey");
-ALTER TABLE functionality_boolean ADD PRIMARY KEY(functionality_id);
-
+call ls_drop_primarykey_if_exists("functionality_boolean");
+ALTER TABLE functionality_boolean ADD PRIMARY KEY (functionality_id);
 
 -- "ALTER TABLE functionality_boolean DROP CONSTRAINT IF EXISTS FKfunctional171577" not supported by mysql
 call ls_drop_constraint_if_exists("functionality_boolean", "FKfunctional171577");
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 
--- If this query failed, you should delete all mime_type to apply this constraint.
-ALTER TABLE mime_type ADD  CONSTRAINT unicity_type_and_policy  UNIQUE (mime_policy_id, mime_type);
 
 DROP TABLE IF EXISTS technical_account_permission_account;
 DROP TABLE IF EXISTS statistic_event;
@@ -104,8 +125,10 @@ call ls_drop_index_if_exists("upload_proposition", "FKupload_pro226633");
 ALTER TABLE upload_proposition ADD INDEX FKupload_pro226633 (domain_abstract_id), ADD CONSTRAINT FKupload_pro226633 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 
 call ls_drop_constraint_if_exists("mime_type", "unicity_type_and_policy");
+ALTER TABLE mime_type MODIFY mime_type varchar(255) NOT NULL;
+ALTER TABLE mime_type MODIFY extensions varchar(255) NOT NULL;
+ALTER TABLE mime_type ADD CONSTRAINT unicity_type_and_policy UNIQUE (mime_policy_id, mime_type);
 -- If this command failed, you should delete all mime_type to apply this constraint.
-ALTER TABLE mime_type ADD  CONSTRAINT unicity_type_and_policy  UNIQUE (mime_policy_id, mime_type);
 
 -- system account for upload-request:
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id)
@@ -210,14 +233,40 @@ ALTER TABLE mailing_list_contact MODIFY creation_date datetime NOT NULL;
 ALTER TABLE mailing_list_contact MODIFY modification_date datetime NOT NULL;
 
 
-
 -- schema upgrade - begin
+-- step 1 : delete subclass functionality
+DELETE FROM functionality_string WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE');
+
+-- step 2 : save policy id in temp table
+CREATE TEMPORARY TABLE temptable_1_9 (id bigint(8));
+INSERT INTO temptable_1_9 SELECT policy_activation_id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE';
+INSERT INTO temptable_1_9 SELECT policy_configuration_id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE';
+INSERT INTO temptable_1_9 SELECT policy_delegation_id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE';
+
+-- step 3 : delete subclass functionality
+DELETE FROM functionality WHERE identifier = 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE';
+
+-- step 4 : delete policies
+DELETE FROM policy WHERE id in (SELECT id FROM temptable_1_9);
+
+-- step 5 : create table
+CREATE TABLE functionality_enum_lang (
+  functionality_id bigint(8) NOT NULL,
+  lang_value            varchar(255),
+  PRIMARY KEY (functionality_id));
+
+-- step 6 : insert new functionality
+-- Functionality : UPLOAD_REQUEST__NOTIFICATION_LANGUAGE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (83, true, true, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (84, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (85, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(38, false, 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE', 83, 84, 85, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_enum_lang(functionality_id, lang_value) VALUES (38, 'en');
+
 ALTER TABLE mime_type CHANGE mime_type mime_type varchar(255) NOT NULL;
 ALTER TABLE mime_type CHANGE extensions extensions varchar(255) NOT NULL;
-ALTER TABLE mime_type ADD  CONSTRAINT unicity_type_and_policy  UNIQUE (mime_policy_id, mime_type)
 -- schema upgrade - end
-
-
 
 -- LinShare version
 INSERT INTO version (version) VALUES ('1.9.0');

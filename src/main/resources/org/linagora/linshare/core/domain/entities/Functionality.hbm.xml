@@ -62,11 +62,11 @@
         <many-to-one name="unit" class="org.linagora.linshare.core.domain.entities.Unit" column="unit_id" unique="true" cascade="all" lazy="false" />
     </joined-subclass>
 
-    <joined-subclass name="EnumValueFunctionality" table="functionality_enum">
+    <joined-subclass name="LanguageEnumValueFunctionality" table="functionality_enum_lang">
 		<key>
 			<column name="functionality_id" not-null="true" index="index_functionality_enum_id"/>
 		</key>
-        <property name="value" column="enum_value" type="enumLanguage"/>
+        <property name="value" column="lang_value" type="enumLanguage"/>
     </joined-subclass>
   </class>
  </hibernate-mapping>

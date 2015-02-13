@@ -44,3 +44,5 @@ sed -i -e 's/is_public          bit NOT NULL/is_public          bool NOT NULL/' 
 # cleanup
 sed -i -e 's///g' output.sql
 sed -i -e 's/ $//g' output.sql
+
+echo "Done : output.sql"
