@@ -83,7 +83,9 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	@Path("/{policyId}")
 	@GET
 	@ApiOperation(value = "Find a domain policy.", response = DomainPolicyDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "User isn't superadmin."),
+			@ApiResponse(code = 404, message = "Domain policy not found.") })
 	@Override
 	public DomainPolicyDto find(
 			@ApiParam(value = "Identifier of the domain policy to search for.", required = true) @PathParam("policyId") String policyId)

@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainPolicyBusinessService;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -45,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.AllowDomain;
 import org.linagora.linshare.core.domain.entities.DenyDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.slf4j.Logger;
@@ -89,7 +91,15 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 
 	@Override
 	public DomainPolicy find(String identifier) {
-		return domainPolicyBusinessService.find(identifier);
+		Validate.notEmpty(identifier);
+		DomainPolicy domainPolicy = domainPolicyBusinessService
+				.find(identifier);
+		if (domainPolicy == null)
+			throw new BusinessException(
+					BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,
+					"Domain poilicy with identifer: " + identifier
+							+ " not found");
+		return domainPolicy;
 	}
 
 	@Override
