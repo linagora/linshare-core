@@ -97,7 +97,7 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 		if (domainPolicy == null)
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,
-					"Domain poilicy with identifer: " + identifier
+					"Domain policy with identifer: " + identifier
 							+ " not found");
 		return domainPolicy;
 	}
