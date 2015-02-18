@@ -56,8 +56,8 @@ public class LDAPUserProviderDto {
 	public LDAPUserProviderDto(final LdapUserProvider ldapUserProvider) {
 
 		this.ldapConnectionId = ldapUserProvider.getLdapconnexion()
-				.getIdentifier();
-		this.domainPatternId = ldapUserProvider.getPattern().getIdentifier();
+				.getUuid();
+		this.domainPatternId = ldapUserProvider.getPattern().getUuid();
 		this.baseDn = ldapUserProvider.getBaseDn();
 	}
 

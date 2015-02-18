@@ -87,8 +87,8 @@ public class AbstractDomainVo implements Serializable {
 		
 		if(entity.getUserProvider() != null) {
 			this.setDifferentialKey(entity.getUserProvider().getBaseDn());
-			this.setLdapIdentifier(entity.getUserProvider().getLdapconnexion().getIdentifier());
-			this.setPatternIdentifier(entity.getUserProvider().getPattern().getIdentifier());
+			this.setLdapIdentifier(entity.getUserProvider().getLdapconnexion().getUuid());
+			this.setPatternIdentifier(entity.getUserProvider().getPattern().getUuid());
 		}
 		
 		this.setEnable(entity.isEnable());

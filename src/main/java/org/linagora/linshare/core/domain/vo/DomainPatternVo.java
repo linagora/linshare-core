@@ -37,8 +37,9 @@ import java.util.Map;
 
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.beaneditor.Validate;
-import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
+import org.linagora.linshare.core.domain.entities.LdapPattern;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 
 public class DomainPatternVo {
 
@@ -65,18 +66,18 @@ public class DomainPatternVo {
 	public DomainPatternVo() {
 	}
 
-	public DomainPatternVo(DomainPattern domainPattern) {
-		this.identifier = domainPattern.getIdentifier();
+	public DomainPatternVo(UserLdapPattern domainPattern) {
+		this.identifier = domainPattern.getUuid();
 		this.patternDescription = domainPattern.getDescription();
 		this.authCommand = domainPattern.getAuthCommand();
 		this.searchUserCommand = domainPattern.getSearchUserCommand();
         this.system = domainPattern.getSystem();
 
         Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
-        this.userMail = attributes.get(DomainPattern.USER_MAIL).getAttribute();
-        this.userFirstName = attributes.get(DomainPattern.USER_FIRST_NAME).getAttribute();
-        this.userLastName = attributes.get(DomainPattern.USER_LAST_NAME).getAttribute();
-        this.ldapUid = attributes.get(DomainPattern.USER_UID).getAttribute();
+        this.userMail = attributes.get(LdapPattern.USER_MAIL).getAttribute();
+        this.userFirstName = attributes.get(LdapPattern.USER_FIRST_NAME).getAttribute();
+        this.userLastName = attributes.get(LdapPattern.USER_LAST_NAME).getAttribute();
+        this.ldapUid = attributes.get(LdapPattern.USER_UID).getAttribute();
         
         this.autoCompleteCommandOnAllAttributes = domainPattern.getAutoCompleteCommandOnAllAttributes();
 		this.autoCompleteCommandOnFirstAndLastName = domainPattern.getAutoCompleteCommandOnFirstAndLastName();

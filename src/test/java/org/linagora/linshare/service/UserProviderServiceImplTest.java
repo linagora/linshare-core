@@ -41,9 +41,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.entities.DomainPattern;
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +91,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
 		
-		LDAPConnection ldapconnexion  = new LDAPConnection(identifier, providerUrl, securityAuth);
+		LdapConnection ldapconnexion  = new LdapConnection(identifier, providerUrl, securityAuth);
 		try {
 			userProviderService.createLDAPConnection(ldapconnexion);
 		} catch (BusinessException e) {
@@ -108,11 +108,10 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 	@Test
 	public void testCreateDomainPattern() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
 			attributeList.put("first", attribute);
-		DomainPattern domainPattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
+		UserLdapPattern domainPattern = new UserLdapPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
 		try {
 			userProviderService.createDomainPattern(domainPattern);
 		} catch (BusinessException e) {
@@ -127,7 +126,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 	public void testCreateDeleteLDAPConnection() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		LDAPConnection ldapconnexion  = new LDAPConnection(identifier +"2", providerUrl, securityAuth);
+		LdapConnection ldapconnexion  = new LdapConnection(identifier +"2", providerUrl, securityAuth);
 		try {
 			userProviderService.createLDAPConnection(ldapconnexion);
 		} catch (BusinessException e) {
@@ -138,7 +137,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		
 		
 		try {
-			userProviderService.deleteConnection(ldapconnexion.getIdentifier());
+			userProviderService.deleteConnection(ldapconnexion.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't delete connection.");
@@ -154,7 +153,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
 			attributeList.put("first", attribute);
-		DomainPattern domainPattern = new DomainPattern(identifierP +"2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
+		UserLdapPattern domainPattern = new UserLdapPattern(identifierP +"2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
 		try {
 			userProviderService.createDomainPattern(domainPattern);
 		} catch (BusinessException e) {
@@ -164,7 +163,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug("Current pattern object: " + domainPattern.toString());
 
 		try {
-			userProviderService.deletePattern(domainPattern.getIdentifier());
+			userProviderService.deletePattern(domainPattern.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't delete pattern.");
@@ -177,7 +176,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 	public void testUpdateDomainPattern() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
-		DomainPattern domainPattern = null;
+		UserLdapPattern domainPattern = null;
 		
 		try {
 			domainPattern = userProviderService.findAllUserDomainPattern().get(0);
@@ -186,7 +185,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 			Assert.fail("Can't retrieve pattern.");
 		}
 		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
-		attributes.get(DomainPattern.USER_FIRST_NAME).setAttribute("foo");
+		attributes.get(UserLdapPattern.USER_FIRST_NAME).setAttribute("foo");
 		try {
 			userProviderService.updateDomainPattern(domainPattern);
 		} catch (BusinessException e) {

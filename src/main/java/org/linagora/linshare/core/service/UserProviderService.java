@@ -35,8 +35,8 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.DomainPattern;
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -46,21 +46,21 @@ public interface UserProviderService {
 	public List<String> findAllDomainPatternIdentifiers();
 	public List<String> findAllUserDomainPatternIdentifiers();
 	public List<String> findAllSystemDomainPatternIdentifiers();
-	public List<DomainPattern> findAllDomainPattern() throws BusinessException;
-	public DomainPattern findDomainPattern(String id) throws BusinessException;
-	public List<DomainPattern> findAllUserDomainPattern() throws BusinessException;
-	public List<DomainPattern> findAllSystemDomainPattern() throws BusinessException;
-	public DomainPattern createDomainPattern(DomainPattern domainPattern) throws BusinessException;
-	public DomainPattern retrieveDomainPattern(String identifier) throws BusinessException;
-	public DomainPattern updateDomainPattern(DomainPattern domainPattern) throws BusinessException;
+	public List<UserLdapPattern> findAllDomainPattern() throws BusinessException;
+	public UserLdapPattern findDomainPattern(String id) throws BusinessException;
+	public List<UserLdapPattern> findAllUserDomainPattern() throws BusinessException;
+	public List<UserLdapPattern> findAllSystemDomainPattern() throws BusinessException;
+	public UserLdapPattern createDomainPattern(UserLdapPattern domainPattern) throws BusinessException;
+	public UserLdapPattern retrieveDomainPattern(String identifier) throws BusinessException;
+	public UserLdapPattern updateDomainPattern(UserLdapPattern domainPattern) throws BusinessException;
 	public void deletePattern(String patternToDelete) throws BusinessException;
 
 	public List<String> findAllLDAPConnectionIdentifiers();
-	public List<LDAPConnection> findAllLDAPConnections() throws BusinessException;
-	public LDAPConnection findLDAPConnection(String id) throws BusinessException;
-	public LDAPConnection createLDAPConnection(LDAPConnection ldapConnection) throws BusinessException;
-	public LDAPConnection retrieveLDAPConnection(String identifier) throws BusinessException;
-	public LDAPConnection updateLDAPConnection(LDAPConnection ldapConnection) throws BusinessException;
+	public List<LdapConnection> findAllLDAPConnections() throws BusinessException;
+	public LdapConnection findLDAPConnection(String id) throws BusinessException;
+	public LdapConnection createLDAPConnection(LdapConnection ldapConnection) throws BusinessException;
+	public LdapConnection retrieveLDAPConnection(String identifier) throws BusinessException;
+	public LdapConnection updateLDAPConnection(LdapConnection ldapConnection) throws BusinessException;
 	public void deleteConnection(String connectionToDelete) throws BusinessException;
 
 	public void create(LdapUserProvider userProvider) throws BusinessException;

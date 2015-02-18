@@ -37,7 +37,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -89,19 +89,19 @@ public class DomainPatternDto {
     @ApiModelProperty(value = "CompletionSizeLimit")
     private Integer completionSizeLimit;
 
-	public DomainPatternDto(DomainPattern domainPattern) {
-		this.identifier = domainPattern.getIdentifier();
+	public DomainPatternDto(UserLdapPattern domainPattern) {
+		this.identifier = domainPattern.getUuid();
 		this.description = domainPattern.getDescription();
 		this.authCommand = domainPattern.getAuthCommand();
 		this.searchUserCommand = domainPattern.getSearchUserCommand();
 
 		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
-		this.userMail = attributes.get(DomainPattern.USER_MAIL).getAttribute();
-		this.userFirstName = attributes.get(DomainPattern.USER_FIRST_NAME)
+		this.userMail = attributes.get(UserLdapPattern.USER_MAIL).getAttribute();
+		this.userFirstName = attributes.get(UserLdapPattern.USER_FIRST_NAME)
 				.getAttribute();
-		this.userLastName = attributes.get(DomainPattern.USER_LAST_NAME)
+		this.userLastName = attributes.get(UserLdapPattern.USER_LAST_NAME)
 				.getAttribute();
-		this.ldapUid = attributes.get(DomainPattern.USER_UID).getAttribute();
+		this.ldapUid = attributes.get(UserLdapPattern.USER_UID).getAttribute();
 		
         this.autoCompleteCommandOnAllAttributes = domainPattern.getAutoCompleteCommandOnAllAttributes();
 		this.autoCompleteCommandOnFirstAndLastName = domainPattern.getAutoCompleteCommandOnFirstAndLastName();

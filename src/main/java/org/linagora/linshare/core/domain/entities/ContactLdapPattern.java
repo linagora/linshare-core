@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2014 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2014. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,32 +31,49 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.domain.entities;
 
-import java.io.IOException;
-import java.util.List;
+public class ContactLdapPattern extends LdapPattern {
 
-import javax.naming.NamingException;
+	private String autoCompleteCommandOnAllAttributes;
 
-import org.linagora.linshare.core.domain.entities.UserLdapPattern;
-import org.linagora.linshare.core.domain.entities.LdapConnection;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
+	private String autoCompleteCommandOnFirstAndLastName;
 
-public interface LDAPQueryService {
+	private Integer pageSize;
 
-	public User auth(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String userLogin, String userPasswd) throws NamingException, IOException;
+	private Integer sizeLimit;
 
-	public User searchForAuth(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String userLogin) throws NamingException, IOException;
+	public String getAutoCompleteCommandOnAllAttributes() {
+		return autoCompleteCommandOnAllAttributes;
+	}
 
-	public List<User> searchUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String mail, String firstName, String lastName) throws BusinessException, NamingException,
-			IOException;
+	public void setAutoCompleteCommandOnAllAttributes(
+			String autoCompleteCommandOnAllAttributes) {
+		this.autoCompleteCommandOnAllAttributes = autoCompleteCommandOnAllAttributes;
+	}
 
-	public Boolean isUserExist(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String mail) throws BusinessException, NamingException, IOException;
-	
-	public User getUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String mail) throws BusinessException, NamingException,	IOException;
+	public String getAutoCompleteCommandOnFirstAndLastName() {
+		return autoCompleteCommandOnFirstAndLastName;
+	}
 
-	public List<User> completeUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String pattern) throws BusinessException, NamingException, IOException;
+	public void setAutoCompleteCommandOnFirstAndLastName(
+			String autoCompleteCommandOnFirstAndLastName) {
+		this.autoCompleteCommandOnFirstAndLastName = autoCompleteCommandOnFirstAndLastName;
+	}
 
-	public List<User> completeUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String firstName, String lastName) throws BusinessException, NamingException, IOException;
+	public Integer getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public Integer getSizeLimit() {
+		return sizeLimit;
+	}
+
+	public void setSizeLimit(Integer sizeLimit) {
+		this.sizeLimit = sizeLimit;
+	}
 }

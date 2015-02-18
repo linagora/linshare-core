@@ -39,7 +39,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.LDAPConnectionFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPConnectionDto;
@@ -59,8 +59,8 @@ public class LDAPConnectionFacadeImpl extends AdminGenericFacadeImpl implements 
 	public Set<LDAPConnectionDto> findAll() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		Set<LDAPConnectionDto> ldapConnectionsDto = new HashSet<LDAPConnectionDto>();
-		List<LDAPConnection> ldapConnections = userProviderService.findAllLDAPConnections();
-		for (LDAPConnection ldapConnection : ldapConnections) {
+		List<LdapConnection> ldapConnections = userProviderService.findAllLDAPConnections();
+		for (LdapConnection ldapConnection : ldapConnections) {
 			ldapConnectionsDto.add(new LDAPConnectionDto(ldapConnection));
 		}
 		return ldapConnectionsDto;
@@ -76,13 +76,13 @@ public class LDAPConnectionFacadeImpl extends AdminGenericFacadeImpl implements 
 	@Override
 	public LDAPConnectionDto update(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		return new LDAPConnectionDto(userProviderService.updateLDAPConnection(new LDAPConnection(ldapConnectionDto)));
+		return new LDAPConnectionDto(userProviderService.updateLDAPConnection(new LdapConnection(ldapConnectionDto)));
 	}
 
 	@Override
 	public LDAPConnectionDto create(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		return new LDAPConnectionDto(userProviderService.createLDAPConnection(new LDAPConnection(ldapConnectionDto)));
+		return new LDAPConnectionDto(userProviderService.createLDAPConnection(new LdapConnection(ldapConnectionDto)));
 	}
 
 	@Override

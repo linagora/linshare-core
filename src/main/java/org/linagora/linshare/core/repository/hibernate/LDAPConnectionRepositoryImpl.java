@@ -37,12 +37,12 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.repository.LDAPConnectionRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class LDAPConnectionRepositoryImpl extends
-		AbstractRepositoryImpl<LDAPConnection> implements
+		AbstractRepositoryImpl<LdapConnection> implements
 		LDAPConnectionRepository {
 
 	public LDAPConnectionRepositoryImpl(HibernateTemplate hibernateTemplate) {
@@ -50,14 +50,14 @@ public class LDAPConnectionRepositoryImpl extends
 	}
 
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(LDAPConnection entity) {
-		DetachedCriteria det = DetachedCriteria.forClass( LDAPConnection.class )
-		.add(Restrictions.eq( "identifier", entity.getIdentifier() ) );
+	protected DetachedCriteria getNaturalKeyCriteria(LdapConnection entity) {
+		DetachedCriteria det = DetachedCriteria.forClass( LdapConnection.class )
+		.add(Restrictions.eq( "identifier", entity.getUuid() ) );
 		return det;
 	}
 
-	public LDAPConnection findById(String identifier) {
-		List<LDAPConnection> conns = findByCriteria(Restrictions.eq("identifier", identifier));
+	public LdapConnection findById(String identifier) {
+		List<LdapConnection> conns = findByCriteria(Restrictions.eq("identifier", identifier));
 		
 		if (conns == null || conns.isEmpty()) {
 			return null;

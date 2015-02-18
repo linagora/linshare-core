@@ -37,13 +37,13 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class DomainPatternRepositoryImpl extends
-		AbstractRepositoryImpl<DomainPattern> implements
+		AbstractRepositoryImpl<UserLdapPattern> implements
 		DomainPatternRepository {
 
 	public DomainPatternRepositoryImpl(HibernateTemplate hibernateTemplate) {
@@ -51,25 +51,25 @@ public class DomainPatternRepositoryImpl extends
 	}
 
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(DomainPattern entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(DomainPattern.class)
-				.add(Restrictions.eq("identifier", entity.getIdentifier()));
+	protected DetachedCriteria getNaturalKeyCriteria(UserLdapPattern entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(UserLdapPattern.class)
+				.add(Restrictions.eq("identifier", entity.getUuid()));
 		return det;
 	}
 
 	@Override
-	public DomainPattern findById(String identifier) {
+	public UserLdapPattern findById(String identifier) {
 		return DataAccessUtils.singleResult(findByCriteria(
 				Restrictions.eq("identifier", identifier)));
 	}
 
 	@Override
-	public List<DomainPattern> findAllSystemDomainPattern() {
+	public List<UserLdapPattern> findAllSystemDomainPattern() {
 		return findByCriteria(Restrictions.eq("system", true));
 	}
 
 	@Override
-	public List<DomainPattern> findAllUserDomainPattern() {
+	public List<UserLdapPattern> findAllUserDomainPattern() {
 		return findByCriteria(Restrictions.eq("system", false));
 	}
 }

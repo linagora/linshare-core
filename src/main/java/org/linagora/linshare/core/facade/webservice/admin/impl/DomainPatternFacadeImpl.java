@@ -39,7 +39,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPatternFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPatternDto;
@@ -62,9 +63,9 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 	@Override
 	public Set<DomainPatternDto> findAll() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		List<DomainPattern> domainPatterns = userProviderService.findAllUserDomainPattern();
+		List<UserLdapPattern> domainPatterns = userProviderService.findAllUserDomainPattern();
 		Set<DomainPatternDto> res = new HashSet<DomainPatternDto>();
-		for (DomainPattern domainPattern : domainPatterns) {
+		for (UserLdapPattern domainPattern : domainPatterns) {
 			res.add(new DomainPatternDto(domainPattern));
 		}
 		return res;
@@ -80,9 +81,9 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 	@Override
 	public Set<DomainPatternDto> findAllModels() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		List<DomainPattern> domainPatterns = userProviderService.findAllDomainPattern();
+		List<UserLdapPattern> domainPatterns = userProviderService.findAllDomainPattern();
 		Set<DomainPatternDto> res = new HashSet<DomainPatternDto>();
-		for (DomainPattern domainPattern : domainPatterns) {
+		for (UserLdapPattern domainPattern : domainPatterns) {
 			res.add(new DomainPatternDto(domainPattern));
 		}
 		return res;
@@ -92,14 +93,14 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 	public DomainPatternDto update(DomainPatternDto domainPatternDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainPatternDto.getIdentifier(), "domain pattern id must be set.");
-		return new DomainPatternDto(userProviderService.updateDomainPattern(new DomainPattern(domainPatternDto)));
+		return new DomainPatternDto(userProviderService.updateDomainPattern(new UserLdapPattern(domainPatternDto)));
 	}
 
 	@Override
 	public DomainPatternDto create(DomainPatternDto domainPatternDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainPatternDto.getIdentifier(), "domain pattern id must be set.");
-		return new DomainPatternDto(userProviderService.createDomainPattern(new DomainPattern(domainPatternDto)));
+		return new DomainPatternDto(userProviderService.createDomainPattern(new UserLdapPattern(domainPatternDto)));
 	}
 
 	@Override

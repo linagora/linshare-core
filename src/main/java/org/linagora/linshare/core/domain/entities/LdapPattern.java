@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2014 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2014. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -33,52 +33,97 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
-public class LdapUserProvider extends UserProvider {
+public abstract class LdapPattern {
 
-	private String baseDn;
+	protected long id;
 
-	private LdapConnection ldapConnection;
+	protected String label;
 
-	private UserLdapPattern pattern;
+	protected String uuid;
 
-	public LdapUserProvider(String baseDn, LdapConnection ldapConnection,
-			UserLdapPattern pattern) {
-		super();
+	protected String description;
+
+	protected boolean system;
+
+	protected Map<String, LdapAttribute> attributes;
+
+	public static final String USER_MAIL = "user_mail";
+	public static final String USER_FIRST_NAME = "user_firstname";
+	public static final String USER_LAST_NAME = "user_lastname";
+	public static final String USER_UID = "user_uid";
+
+	public static final Map<String, String> USER_METHOD_MAPPING = new HashMap<String, String>();
+
+	static {
+		USER_METHOD_MAPPING.put(LdapPattern.USER_LAST_NAME, "setLastName");
+		USER_METHOD_MAPPING.put(LdapPattern.USER_FIRST_NAME, "setFirstName");
+		USER_METHOD_MAPPING.put(LdapPattern.USER_MAIL, "setMail");
+		USER_METHOD_MAPPING.put(LdapPattern.USER_UID, "setLdapUid");
+	};
+
+	protected LdapPattern() {
 		this.uuid = UUID.randomUUID().toString();
-		this.baseDn = baseDn;
-		this.ldapConnection = ldapConnection;
-		this.pattern = pattern;
 	}
 
-	public UserLdapPattern getPattern() {
-		return pattern;
+	public long getId() {
+		return id;
 	}
 
-	public void setPattern(UserLdapPattern pattern) {
-		this.pattern = pattern;
+	public void setId(long id) {
+		this.id = id;
 	}
 
-	public String getBaseDn() {
-		return baseDn;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setBaseDn(String baseDn) {
-		this.baseDn = baseDn;
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
-	public void setLdapconnexion(LdapConnection ldapconnexion) {
-		this.ldapConnection = ldapconnexion;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public LdapConnection getLdapconnexion() {
-		return ldapConnection;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Map<String, LdapAttribute> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Map<String, LdapAttribute> attributes) {
+		this.attributes = attributes;
+	}
+
+	public Boolean getSystem() {
+		return system;
+	}
+
+	public void setSystem(Boolean system) {
+		this.system = system;
+	}
+
+	public String getAttribute(String field) {
+		return attributes.get(field).getAttribute().trim().toLowerCase();
 	}
 
 	@Override
 	public String toString() {
-		return "LdapUserProvider [baseDn=" + baseDn + ", uuid=" + uuid + "]";
+		return "LdapPattern [label=" + label + ", uuid=" + uuid + "]";
 	}
 
 }

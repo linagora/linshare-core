@@ -33,10 +33,10 @@
  */
 package org.linagora.linshare.core.repository;
 
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 
-public interface LDAPConnectionRepository extends AbstractRepository<LDAPConnection> {
+public interface LDAPConnectionRepository extends AbstractRepository<LdapConnection> {
 	
-	public LDAPConnection findById(String identifier);
+	public LdapConnection findById(String identifier);
 
 }

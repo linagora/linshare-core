@@ -43,10 +43,10 @@ import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.TopDomain;
@@ -99,15 +99,15 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
 	
-	private LDAPConnection ldapconnexion;
+	private LdapConnection ldapconnexion;
 	
-	private DomainPattern domainPattern;
+	private UserLdapPattern domainPattern;
 
 	
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		ldapconnexion  = new LDAPConnection(identifier, providerUrl, securityAuth);
+		ldapconnexion  = new LdapConnection(identifier, providerUrl, securityAuth);
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
 			attributeList.put("first", attribute);
@@ -118,7 +118,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		}
 		logger.debug("Current ldapconnexion object: " + ldapconnexion.toString());
 		
-		domainPattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
+		domainPattern = new UserLdapPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
 		try {
 			userProviderService.createDomainPattern(domainPattern);
 		} catch (BusinessException e) {
@@ -132,8 +132,8 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		userProviderService.deleteConnection(ldapconnexion.getIdentifier());
-		userProviderService.deletePattern(domainPattern.getIdentifier());
+		userProviderService.deleteConnection(ldapconnexion.getUuid());
+		userProviderService.deletePattern(domainPattern.getUuid());
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
@@ -172,8 +172,8 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	public void testCreateTopDomain2() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
-		LDAPConnection myldapconnexion = null;
-		DomainPattern mydomainPattern = null;
+		LdapConnection myldapconnexion = null;
+		UserLdapPattern mydomainPattern = null;
 		
 		try {
 			myldapconnexion = userProviderService.retrieveLDAPConnection("baseLDAP");

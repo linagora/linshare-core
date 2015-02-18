@@ -34,7 +34,7 @@
 package org.linagora.linshare.core.domain.vo;
 
 import org.apache.tapestry5.beaneditor.Validate;
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 
 public class LDAPConnectionVo {
 
@@ -47,8 +47,8 @@ public class LDAPConnectionVo {
 	public LDAPConnectionVo() {
 	}
 	
-	public LDAPConnectionVo(LDAPConnection ldapConn) {
-		this.identifier = ldapConn.getIdentifier();
+	public LDAPConnectionVo(LdapConnection ldapConn) {
+		this.identifier = ldapConn.getUuid();
 		this.providerUrl = ldapConn.getProviderUrl();
 		this.securityAuth = ldapConn.getSecurityAuth();
 		this.securityPrincipal = ldapConn.getSecurityPrincipal();

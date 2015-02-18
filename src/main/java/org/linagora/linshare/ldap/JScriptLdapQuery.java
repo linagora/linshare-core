@@ -54,9 +54,9 @@ import javax.naming.directory.SearchResult;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.HasControls;
 
-import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linid.dm.authorization.lql.JScriptEvaluator;
@@ -85,7 +85,7 @@ public class JScriptLdapQuery {
 	
 	private String baseDn;
 
-	private DomainPattern domainPattern;
+	private UserLdapPattern domainPattern;
 
 	private LqlRequestCtx lqlctx;
 
@@ -102,7 +102,7 @@ public class JScriptLdapQuery {
 	 * @param baseDn
 	 * @param domainPattern
 	 */
-	public JScriptLdapQuery(LqlRequestCtx ctx, String baseDn, DomainPattern domainPattern, IDnList dnList) throws NamingException, IOException {
+	public JScriptLdapQuery(LqlRequestCtx ctx, String baseDn, UserLdapPattern domainPattern, IDnList dnList) throws NamingException, IOException {
 		super();
 		this.lqlctx = ctx;
 		this.evaluator = JScriptEvaluator.getInstance(ctx.getLdapCtx(), dnList);
@@ -427,7 +427,7 @@ public class JScriptLdapQuery {
 	private boolean setUserAttribute(User user, String attr_key, String curValue) {
 		for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
 			Method userSetter = pd.getWriteMethod();
-			String method = DomainPattern.USER_METHOD_MAPPING.get(attr_key);
+			String method = UserLdapPattern.USER_METHOD_MAPPING.get(attr_key);
 			if (userSetter != null && method.equals(userSetter.getName())) {
 				try {
 					userSetter.invoke(user, curValue);
@@ -556,7 +556,7 @@ public class JScriptLdapQuery {
 	 * @return
 	 * @throws NamingException
 	 */
-	public User auth(LDAPConnection ldapConnection, String login, String userPasswd) throws NamingException {
+	public User auth(LdapConnection ldapConnection, String login, String userPasswd) throws NamingException {
 
 		String command = domainPattern.getAuthCommand();
 		Map<String, Object> vars = lqlctx.getVariables();
@@ -605,7 +605,7 @@ public class JScriptLdapQuery {
 	 * @return
 	 * @throws NamingException
 	 */
-	public User searchForAuth(LDAPConnection ldapConnection, String login) throws NamingException {
+	public User searchForAuth(LdapConnection ldapConnection, String login) throws NamingException {
 
 		String command = domainPattern.getAuthCommand();
 		Map<String, Object> vars = lqlctx.getVariables();

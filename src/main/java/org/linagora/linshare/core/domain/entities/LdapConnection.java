@@ -33,65 +33,72 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import java.util.Properties;
-
-import javax.naming.Context;
-
 import org.linagora.linshare.core.domain.vo.LDAPConnectionVo;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPConnectionDto;
 
-public class LDAPConnection {
+public class LdapConnection {
 	/**
 	 * Database persistence identifier
 	 */
-	private long persistenceId;
-
-	private final String identifier;
+	private long id;
+	private String uuid;
+	private String label;
 	private String providerUrl;
 	private String securityAuth;
 	private String securityPrincipal;
 	private String securityCredentials;
-	
-	public LDAPConnection(LDAPConnectionVo ldapConn) {
-		this.identifier = ldapConn.getIdentifier();
+
+	public LdapConnection(LDAPConnectionVo ldapConn) {
+		this.uuid =  ldapConn.getIdentifier();
 		this.providerUrl = ldapConn.getProviderUrl();
 		this.securityAuth = ldapConn.getSecurityAuth();
 		this.securityPrincipal = ldapConn.getSecurityPrincipal();
 		this.securityCredentials = ldapConn.getSecurityCredentials();
 	}
-	
-	public LDAPConnection(LDAPConnectionDto ldapConnectionDto) {
-		this.identifier = ldapConnectionDto.getIdentifier();
+
+	public LdapConnection(LDAPConnectionDto ldapConnectionDto) {
+		this.uuid = ldapConnectionDto.getIdentifier();
 		this.providerUrl = ldapConnectionDto.getProviderUrl();
 		this.securityAuth = ldapConnectionDto.getSecurityAuth();
 		this.securityPrincipal = ldapConnectionDto.getSecurityPrincipal();
 		this.securityCredentials = ldapConnectionDto.getSecurityCredentials();
 	}
-	
-	public long getPersistenceId() {
-		return persistenceId;
+
+	protected LdapConnection() {
 	}
-	
-	public void setPersistenceId(long persistenceId) {
-		this.persistenceId = persistenceId;
-	}
-	
-	protected LDAPConnection() {
-		this.identifier = null;
-	}
-	
-	public LDAPConnection(String identifier, String providerUrl, String securityAuth) {
-		this.identifier = identifier;
+
+	public LdapConnection(String label, String providerUrl, String securityAuth) {
+		this.label = label;
 		this.providerUrl = providerUrl;
 		this.securityAuth = securityAuth;
 		this.securityCredentials = null;
 		this.securityPrincipal = null;
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public long getId() {
+		return id;
 	}
-	
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
 	public String getProviderUrl() {
 		return providerUrl;
 	}
@@ -124,27 +131,9 @@ public class LDAPConnection {
 		this.securityCredentials = securityCredentials;
 	}
 
-	public Properties toLdapProperties() {
-		Properties ldapProperties = new Properties();
-		ldapProperties.put(Context.PROVIDER_URL, this.providerUrl);
-		ldapProperties.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		ldapProperties.put(Context.SECURITY_AUTHENTICATION, this.securityAuth);
-		if (this.securityPrincipal != null) {
-			ldapProperties.put(Context.SECURITY_PRINCIPAL, this.securityPrincipal);
-		}
-		if (this.securityCredentials != null) {
-			ldapProperties.put(Context.SECURITY_CREDENTIALS, this.securityCredentials);
-		}
-		if (this.providerUrl.contains("ldaps://")) {
-			ldapProperties.put(Context.SECURITY_PROTOCOL, "ssl");
-			ldapProperties.put("java.naming.ldap.factory.socket", "org.linagora.linshare.core.utils.MySSLSocketFactory");
-		}
-		return ldapProperties;
-	}
-
 	@Override
 	public String toString() {
-		return "LDAPConnection : " + identifier + " : " + providerUrl;
+		return "LdapConnection [uuid=" + uuid + ", label=" + label + "]";
 	}
 
 }

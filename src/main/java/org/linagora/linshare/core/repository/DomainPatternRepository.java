@@ -35,13 +35,13 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 
-public interface DomainPatternRepository extends AbstractRepository<DomainPattern> {
+public interface DomainPatternRepository extends AbstractRepository<UserLdapPattern> {
 
-	public DomainPattern findById(String identifier);
+	public UserLdapPattern findById(String identifier);
 
-	List<DomainPattern> findAllUserDomainPattern();
+	List<UserLdapPattern> findAllUserDomainPattern();
 
-	List<DomainPattern> findAllSystemDomainPattern();
+	List<UserLdapPattern> findAllSystemDomainPattern();
 }

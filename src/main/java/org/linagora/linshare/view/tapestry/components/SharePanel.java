@@ -175,7 +175,7 @@ public class SharePanel {
 	 * Send an event to the container of this component.
 	 * It's triggered when the reset link is pushed.
 	 * The id of this event is "clearListObject"
-	 * @param identifier
+	 * @param label
 	 */
 //	public void onActionFromReset(){
 //		componentResources.getContainer().getComponentResources().triggerEvent("clearListObject",null, null);
@@ -205,7 +205,7 @@ public class SharePanel {
 	 * Send an event to the container of this component.
 	 * The id of this event is "sharePanel"
 	 * The event is triggered when the shared link is pressed.
-	 * @param identifier
+	 * @param label
 	 */
 	public void onSuccess() {
 		if (reset) {

@@ -41,10 +41,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.linagora.linshare.core.domain.entities.DomainPattern;
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.LdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
 import org.linagora.linshare.core.repository.LDAPConnectionRepository;
@@ -76,20 +77,20 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 	private DomainPatternRepository domainPatternRepository;
 	
 	//Objects
-	private LDAPConnection ldapconnexion;
-	private DomainPattern pattern;
+	private LdapConnection ldapconnexion;
+	private UserLdapPattern pattern;
 	
 	
 	@Before
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		
-		ldapconnexion  = new LDAPConnection(identifier, providerUrl, securityAuth);
+		ldapconnexion  = new LdapConnection(identifier, providerUrl, securityAuth);
 		ldapConnectionRepository.create(ldapconnexion);
 		logger.debug("Current ldapconnexion object: " + ldapconnexion.toString());
 		
 		
-		pattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", null);
+		pattern = new UserLdapPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", null);
 		domainPatternRepository.create(pattern);
 		logger.debug("Current pattern object: " + pattern.toString());
 		
@@ -110,11 +111,11 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		Map<String, LdapAttribute> a = new HashMap<String, LdapAttribute>();
 		a.put("ldapUid", new LdapAttribute("ldapUid" , "uid", false));
 		a.put("toto", new LdapAttribute("ldapUid" , "uid", false));
-		DomainPattern p = new DomainPattern("identifierP2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", a);
+		UserLdapPattern p = new UserLdapPattern("identifierP2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", a);
 		
 		domainPatternRepository.create(p);
 		
-		DomainPattern aa = domainPatternRepository.findById("identifierP2");
+		UserLdapPattern aa = domainPatternRepository.findById("identifierP2");
 		logger.debug("aa size : " + aa.getAttributes().size());
 		Assert.assertEquals(2, aa.getAttributes().size());
 
@@ -144,21 +145,21 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		
 		LdapUserProvider provider = new LdapUserProvider(baseDn,ldapconnexion,pattern);
 		ldapUserProviderRepository.create(provider);
-		Assert.assertNotNull(provider.getPersistenceId());
+		Assert.assertNotNull(provider.getId());
 		
 		logger.debug("Current provider object: " + provider.toString());
 		
 		Assert.assertTrue(ldapUserProviderRepository.findAll() != null);
 		Assert.assertTrue(ldapUserProviderRepository.findAll().size() == actualCount + 1);
 		
-		LdapUserProvider newProvider = ldapUserProviderRepository.findById(provider.getPersistenceId());
+		LdapUserProvider newProvider = ldapUserProviderRepository.findById(provider.getId());
 		Assert.assertTrue(newProvider != null);
 		
 		LdapUserProvider ldapProvider = newProvider; 
 		
 		Assert.assertTrue(ldapProvider.getBaseDn().equals(baseDn));
-		Assert.assertTrue(ldapProvider.getPattern().getIdentifier().equals(identifierP));
-		Assert.assertTrue(ldapProvider.getLdapconnexion().getIdentifier().equals(identifier));
+		Assert.assertTrue(ldapProvider.getPattern().getUuid().equals(identifierP));
+		Assert.assertTrue(ldapProvider.getLdapconnexion().getUuid().equals(identifier));
 		
 		ldapUserProviderRepository.delete(newProvider);
 		logger.debug("End testCreateLdapUserProvider");

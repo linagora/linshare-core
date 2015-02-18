@@ -63,7 +63,7 @@ public class UserProviderRepositoryImpl extends AbstractRepositoryImpl<LdapUserP
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(LdapUserProvider entity) {
 		DetachedCriteria det = DetachedCriteria.forClass(LdapUserProvider.class).add(
-				Restrictions.eq("id", entity.getPersistenceId()));
+				Restrictions.eq("id", entity.getId()));
 		return det;
 	}
 

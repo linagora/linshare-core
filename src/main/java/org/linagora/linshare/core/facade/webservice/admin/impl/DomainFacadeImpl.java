@@ -40,16 +40,16 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
@@ -207,9 +207,9 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			Validate.notEmpty(ldapConnectionId,
 					"ldap connection identifier must be set.");
 
-			LDAPConnection ldapConnection = userProviderService
+			LdapConnection ldapConnection = userProviderService
 					.retrieveLDAPConnection(ldapConnectionId);
-			DomainPattern domainPattern = userProviderService
+			UserLdapPattern domainPattern = userProviderService
 					.retrieveDomainPattern(domainPatternId);
 			domain.setUserProvider(new LdapUserProvider(baseDn, ldapConnection,
 					domainPattern));

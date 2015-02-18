@@ -35,7 +35,7 @@ package org.linagora.linshare.core.facade.webservice.admin.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -59,8 +59,8 @@ public class LDAPConnectionDto {
     @ApiModelProperty(value = "SecurityCredentials")
 	private String securityCredentials;
 
-	public LDAPConnectionDto(LDAPConnection ldapConnection) {
-		this.identifier = ldapConnection.getIdentifier();
+	public LDAPConnectionDto(LdapConnection ldapConnection) {
+		this.identifier = ldapConnection.getUuid();
 		this.providerUrl = ldapConnection.getProviderUrl();
 		this.securityAuth = ldapConnection.getSecurityAuth();
 		this.securityPrincipal = ldapConnection.getSecurityPrincipal();

@@ -41,8 +41,8 @@ import java.util.Map;
 import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
 
-import org.linagora.linshare.core.domain.entities.DomainPattern;
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.LDAPQueryService;
@@ -63,7 +63,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		super();
 	}
 
-	private ContextSource getLdapContext(LDAPConnection ldapConnection, String baseDn) {
+	private ContextSource getLdapContext(LdapConnection ldapConnection, String baseDn) {
 		LdapContextSource ldapContextSource = new LdapContextSource();
 		ldapContextSource.setUrl(ldapConnection.getProviderUrl());
 		ldapContextSource.setBase(baseDn);
@@ -84,8 +84,8 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	@Override
-	public User searchForAuth(LDAPConnection ldapConnection, String baseDn,
-			DomainPattern domainPattern, String userLogin)
+	public User searchForAuth(LdapConnection ldapConnection, String baseDn,
+			UserLdapPattern domainPattern, String userLogin)
 			throws NamingException, IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
 
@@ -107,7 +107,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	@Override
-	public User auth(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String userLogin, String userPasswd) throws NamingException, IOException {
+	public User auth(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String userLogin, String userPasswd) throws NamingException, IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
 
 		Map<String, Object> vars = new HashMap<String, Object>();
@@ -129,7 +129,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	@Override
-	public User getUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail) throws BusinessException, NamingException, IOException {
+	public User getUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String mail) throws BusinessException, NamingException, IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
 
 		Map<String, Object> vars = new HashMap<String, Object>();
@@ -150,7 +150,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	@Override
-	public List<User> searchUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail, String first_name, String last_name) throws BusinessException,
+	public List<User> searchUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String mail, String first_name, String last_name) throws BusinessException,
 			NamingException, IOException {
 
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
@@ -173,7 +173,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	@Override
-	public List<User> completeUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String pattern) throws BusinessException, NamingException, IOException {
+	public List<User> completeUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String pattern) throws BusinessException, NamingException, IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
 
 		Map<String, Object> vars = new HashMap<String, Object>();
@@ -194,7 +194,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	@Override
-	public List<User> completeUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String first_name, String last_name) throws BusinessException, NamingException,
+	public List<User> completeUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String first_name, String last_name) throws BusinessException, NamingException,
 			IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
 
@@ -216,7 +216,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	@Override
-	public Boolean isUserExist(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail) throws BusinessException, NamingException, IOException {
+	public Boolean isUserExist(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String mail) throws BusinessException, NamingException, IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
 
 		Map<String, Object> vars = new HashMap<String, Object>();
