@@ -34,9 +34,6 @@
 		<property access="field" column="used_space" name="usedSpace" not-null="true"/>
 		<property access="field" column="auth_show_order" name="authShowOrder" />
 
-		<many-to-one name="userProvider" class="org.linagora.linshare.core.domain.entities.LdapUserProvider" 
-			column="user_provider_id" unique="true" lazy="proxy" cascade="delete" />
-
 		<many-to-one name="policy" class="org.linagora.linshare.core.domain.entities.DomainPolicy" 
 			column="domain_policy_id" not-null="true" lazy="proxy" />
 
@@ -96,6 +93,18 @@
 			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadProposition"/>
 		</set>
 
+		<many-to-one name="userProvider" column="user_provider_id" class="org.linagora.linshare.core.domain.entities.UserProvider"
+			unique="true" not-null="false" lazy="proxy">
+		</many-to-one>
+		<!-- 
+		<many-to-one name="userProvider" class="org.linagora.linshare.core.domain.entities.LdapUserProvider" 
+			column="user_provider_id" unique="true" lazy="proxy" cascade="delete" />
+			 -->
+
+		<set name="contractProvider" lazy="true" inverse="false">
+			<key column="domain_abstract_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.ContractProvider"/>
+		</set>
 
 		<many-to-one cascade="save-update" lazy="proxy" access="field" class="org.linagora.linshare.core.domain.entities.MessagesConfiguration" 
 			name="messagesConfiguration" column="messages_configuration_id" not-null="false" />

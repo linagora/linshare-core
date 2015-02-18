@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-  <class name="org.linagora.linshare.core.domain.entities.LDAPConnection" table="ldap_connection">
-    <id name="persistenceId" type="long">
-      <column name="ldap_connection_id" not-null="true" index="index_ldap_connection_id"/>
-      <generator class="native"/>
-    </id>
-    <property access="field" column="identifier" index="index_ldap_connection_identifier" name="identifier" not-null="true" unique="true"/>
-    <property access="field" column="provider_url" name="providerUrl"/>
-    <property access="field" column="security_auth" name="securityAuth"/>
-    <property access="field" column="security_principal" name="securityPrincipal"/>
-    <property access="field" column="security_credentials" name="securityCredentials"/>
-  </class>
+	<class name="org.linagora.linshare.core.domain.entities.LdapConnection"
+		table="ldap_connection">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<property name="uuid" column="uuid" unique="true" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="label" column="label" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="provider_url" column="provider_url" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="security_auth" column="security_auth" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="security_principal" column="security_principal" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="security_credentials" column="security_credentials" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
+		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
+	</class>
 </hibernate-mapping>
