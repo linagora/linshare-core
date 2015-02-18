@@ -57,8 +57,6 @@ CREATE TABLE document_entry (
     UNIQUE (entry_id, document_id));
 CREATE TABLE domain_abstract (
   id                         int8 NOT NULL,
-  mime_policy_id            int8,
-  mailconfig_id             int8,
   type                      int4 NOT NULL,
   identifier                varchar(255) NOT NULL,
   label                     varchar(255) NOT NULL,
@@ -66,13 +64,15 @@ CREATE TABLE domain_abstract (
   template                  bool NOT NULL,
   description               text NOT NULL,
   default_role              int4 NOT NULL,
-  default_locale            varchar(255),
+  default_locale            varchar(255) NOT NULL,
   used_space                int8 NOT NULL,
-  user_provider_id          int8,
-  domain_policy_id          int8 NOT NULL,
-  parent_id                 int8,
   messages_configuration_id int8 NOT NULL,
   auth_show_order           int8 NOT NULL,
+  domain_policy_id          int8 NOT NULL,
+  parent_id                 int8,
+  mime_policy_id            int8 NOT NULL,
+  mailconfig_id             int8 NOT NULL,
+  user_provider_id          int8,
   CONSTRAINT linshare_domain_abstract_pkey
     PRIMARY KEY (id));
 CREATE TABLE domain_access_policy (
@@ -88,21 +88,6 @@ CREATE TABLE domain_access_rule (
   rule_index              int4,
   CONSTRAINT linshare_domain_access_rule_pkey
     PRIMARY KEY (id));
-CREATE TABLE domain_pattern (
-  domain_pattern_id                             int8 NOT NULL,
-  identifier                                   varchar(255) NOT NULL,
-  description                                  text NOT NULL,
-  auth_command                                 text NOT NULL,
-  search_user_command                          text NOT NULL,
-  system                                       bool NOT NULL,
-  auto_complete_command_on_first_and_last_name text NOT NULL,
-  auto_complete_command_on_all_attributes      text NOT NULL,
-  search_page_size                             int4 NOT NULL,
-  search_size_limit                            int4 NOT NULL,
-  completion_page_size                         int4 NOT NULL,
-  completion_size_limit                        int4 NOT NULL,
-  CONSTRAINT linshare_domain_pattern_pkey
-    PRIMARY KEY (domain_pattern_id));
 CREATE TABLE domain_policy (
   id                       int8 NOT NULL,
   description             text,
@@ -157,14 +142,15 @@ CREATE TABLE functionality_unit_boolean (
   CONSTRAINT linshare_functionality_unit_boolean_pkey
     PRIMARY KEY (functionality_id));
 CREATE TABLE ldap_connection (
-  ldap_connection_id    int8 NOT NULL,
+  id                    int8 NOT NULL,
+  uuid                 varchar(255) NOT NULL UNIQUE,
   identifier           varchar(255) NOT NULL,
   provider_url         varchar(255) NOT NULL,
   security_auth        varchar(255),
   security_principal   varchar(255),
   security_credentials varchar(255),
   CONSTRAINT linshare_ldap_connection_pkey
-    PRIMARY KEY (ldap_connection_id));
+    PRIMARY KEY (id));
 CREATE TABLE log_entry (
   id                int8 NOT NULL,
   entry_type       varchar(255) NOT NULL,
@@ -257,14 +243,14 @@ CREATE TABLE signature (
   CONSTRAINT linshare_signature_pkey
     PRIMARY KEY (id));
 CREATE TABLE ldap_attribute (
-  id                 int8 NOT NULL,
-  domain_pattern_id int8,
-  field             varchar(255) NOT NULL,
-  attribute         varchar(255) NOT NULL,
-  sync              bool NOT NULL,
-  system            bool NOT NULL,
-  enable            bool NOT NULL,
-  completion        bool NOT NULL,
+  id               int8 NOT NULL,
+  attribute       varchar(255) NOT NULL,
+  field           varchar(255) NOT NULL,
+  sync            bool NOT NULL,
+  system          bool NOT NULL,
+  enable          bool NOT NULL,
+  completion      bool NOT NULL,
+  ldap_pattern_id int8 NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE thread (
   account_id int8 NOT NULL,
@@ -308,13 +294,6 @@ CREATE TABLE users (
   can_create_guest      bool NOT NULL,
   CONSTRAINT user_pkey
     PRIMARY KEY (account_id));
-CREATE TABLE user_provider_ldap (
-  id                  int8 NOT NULL,
-  differential_key   varchar(255) NOT NULL,
-  domain_pattern_id  int8 NOT NULL,
-  ldap_connection_id int8 NOT NULL,
-  CONSTRAINT linshare_user_provider_ldap_pkey
-    PRIMARY KEY (id));
 CREATE TABLE version (
   id       int8 NOT NULL,
   version text NOT NULL UNIQUE,
@@ -397,7 +376,7 @@ CREATE TABLE mail_footer_lang (
   uuid           varchar(255) NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mail_content (
-  id                  int8 NOT NULL,
+  id                   int8 NOT NULL,
   domain_abstract_id  int8 NOT NULL,
   name                varchar(255) NOT NULL,
   visible             bool NOT NULL,
@@ -411,7 +390,7 @@ CREATE TABLE mail_content (
   creation_date       timestamp(6) NOT NULL,
   modification_date   timestamp(6) NOT NULL,
   alternative_subject varchar(255),
-  enable_as          bool DEFAULT false NOT NULL,
+  enable_as           bool NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mail_content_lang (
   id                 int8 NOT NULL,
@@ -610,12 +589,55 @@ CREATE TABLE account_permission (
   PRIMARY KEY (id));
 CREATE TABLE functionality_enum_lang (
   functionality_id int8 NOT NULL,
-  lang_value            varchar(255),
+  value            varchar(255),
   PRIMARY KEY (functionality_id));
 CREATE TABLE functionality_boolean (
   functionality_id int8 NOT NULL,
-  boolean_value            bool NOT NULL,
+  value            bool NOT NULL,
   PRIMARY KEY (functionality_id));
+CREATE TABLE upload_request_entry_url (
+  id                       int8 NOT NULL,
+  upload_request_entry_id int8 NOT NULL,
+  uuid                    varchar(255) NOT NULL,
+  path                    varchar(255) NOT NULL,
+  password                varchar(255),
+  creation_date           date NOT NULL,
+  modification_date       date NOT NULL,
+  expiry_date             date NOT NULL,
+  PRIMARY KEY (id));
+CREATE TABLE contract_provider (
+  id                  int8 NOT NULL,
+  uuid               varchar(255) NOT NULL UNIQUE,
+  provider_type      varchar(255) NOT NULL,
+  base_dn            varchar(255),
+  domain_abstract_id int8 NOT NULL,
+  ldap_pattern_id    int8 NOT NULL,
+  ldap_connection_id int8 NOT NULL,
+  PRIMARY KEY (id));
+CREATE TABLE user_provider (
+  id                  int8 NOT NULL,
+  uuid               varchar(255) NOT NULL UNIQUE,
+  provider_type      varchar(255) NOT NULL,
+  base_dn            varchar(255),
+  ldap_connection_id int8 NOT NULL,
+  ldap_pattern_id    int8 NOT NULL,
+  PRIMARY KEY (id));
+CREATE TABLE ldap_pattern (
+  id                                            int8 NOT NULL,
+  uuid                                         varchar(255) NOT NULL UNIQUE,
+  pattern_type                                 varchar(255) NOT NULL,
+  label                                        varchar(255) NOT NULL,
+  system                                       bool NOT NULL,
+  description                                  text NOT NULL,
+  auth_command                                 text,
+  search_user_command                          text,
+  search_page_size                             int4,
+  search_size_limit                            int4,
+  auto_complete_command_on_first_and_last_name text,
+  auto_complete_command_on_all_attributes      text,
+  completion_page_size                         int4,
+  completion_size_limit                        int4,
+  PRIMARY KEY (id));
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid
@@ -632,18 +654,12 @@ CREATE INDEX document_i
   ON document (uuid);
 CREATE INDEX domain_abstract_id_index
   ON domain_abstract (identifier);
-CREATE UNIQUE INDEX domain_abstract_i
-  ON domain_abstract (user_provider_id);
 CREATE INDEX domain_abstract_i2
   ON domain_abstract (id);
 CREATE INDEX domain_access_policy_index
   ON domain_access_policy (id);
 CREATE INDEX domain_access_rule_index
   ON domain_access_rule (id);
-CREATE INDEX domain_pattern_index
-  ON domain_pattern (identifier);
-CREATE INDEX domain_pattern_i
-  ON domain_pattern (domain_pattern_id);
 CREATE INDEX domain_policy_index
   ON domain_policy (id);
 CREATE UNIQUE INDEX domain_policy_i
@@ -671,7 +687,7 @@ CREATE INDEX functionality_unit_boolean_i
 CREATE INDEX ldap_connection_index
   ON ldap_connection (identifier);
 CREATE INDEX ldap_connection_i
-  ON ldap_connection (ldap_connection_id);
+  ON ldap_connection (id);
 CREATE INDEX log_entry_i
   ON log_entry (actor_domain);
 CREATE INDEX log_entry_i2
@@ -706,13 +722,10 @@ CREATE UNIQUE INDEX signature_i
   ON signature (uuid);
 CREATE INDEX unit_index
   ON unit (id);
-CREATE INDEX user_provider_ldap_index
-  ON user_provider_ldap (id);
 CREATE INDEX mailing_list_index
   ON mailing_list (uuid);
 CREATE INDEX mailing_list_contact_index
   ON mailing_list_contact (uuid);
-ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_access_rule ADD CONSTRAINT fkf75719ed3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
@@ -729,8 +742,6 @@ ALTER TABLE functionality_unit_boolean ADD CONSTRAINT fk3ced016910439d2c FOREIGN
 ALTER TABLE functionality_unit_boolean ADD CONSTRAINT fk3ced0169f329e0d9 FOREIGN KEY (unit_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE share_expiry_rules ADD CONSTRAINT fkfda1673c3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE signature ADD CONSTRAINT fk81c9a1a7c0bbd6f FOREIGN KEY (document_id) REFERENCES document (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE user_provider_ldap ADD CONSTRAINT fk409cafb2372a0802 FOREIGN KEY (domain_pattern_id) REFERENCES domain_pattern (domain_pattern_id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE user_provider_ldap ADD CONSTRAINT fk409cafb23834018 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (ldap_connection_id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE thread ADD CONSTRAINT inheritance_account_thread FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE document_entry ADD CONSTRAINT FKdocument_e594117 FOREIGN KEY (document_id) REFERENCES document (id);
 ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr708932 FOREIGN KEY (document_entry_id) REFERENCES document_entry (entry_id);
@@ -739,7 +750,6 @@ ALTER TABLE recipient_favourite ADD CONSTRAINT FKrecipient_90791 FOREIGN KEY (us
 ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_732508 FOREIGN KEY (anonymous_url_id) REFERENCES anonymous_url (id);
 ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr87036 FOREIGN KEY (recipient_id) REFERENCES account (id);
 ALTER TABLE account ADD CONSTRAINT FKaccount400616 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
-ALTER TABLE ldap_attribute ADD CONSTRAINT FKldap_attri687153 FOREIGN KEY (domain_pattern_id) REFERENCES domain_pattern (domain_pattern_id);
 ALTER TABLE allowed_contact ADD CONSTRAINT FKallowed_co409962 FOREIGN KEY (account_id) REFERENCES users (account_id);
 ALTER TABLE allowed_contact ADD CONSTRAINT FKallowed_co620678 FOREIGN KEY (contact_id) REFERENCES users (account_id);
 ALTER TABLE account ADD CONSTRAINT FKaccount487511 FOREIGN KEY (owner_id) REFERENCES account (id);
@@ -795,6 +805,14 @@ ALTER TABLE upload_request ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain
 ALTER TABLE upload_proposition_filter ADD CONSTRAINT FKupload_pro316142 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE functionality_enum_lang ADD CONSTRAINT FKfunctional140416 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
+ALTER TABLE upload_request_entry_url ADD CONSTRAINT FKupload_req784409 FOREIGN KEY (upload_request_entry_id) REFERENCES upload_request_entry (entry_id);
+ALTER TABLE contract_provider ADD CONSTRAINT FKcontract_p266833 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
+ALTER TABLE contract_provider ADD CONSTRAINT FKcontract_p706697 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs163989 FOREIGN KEY (user_provider_id) REFERENCES user_provider (id);
+ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
+ALTER TABLE contract_provider ADD CONSTRAINT FKcontract_p455269 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
+ALTER TABLE ldap_attribute ADD CONSTRAINT FKldap_attri49928 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
+ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi813203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 
 CREATE INDEX welcome_texts_i
   ON welcome_texts (messages_configuration_id);
