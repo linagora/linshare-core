@@ -10,8 +10,8 @@ CREATE TABLE account (
   technical_account_permission_id int8,
   owner_id                        int8,
   ls_uuid                         varchar(255) NOT NULL,
-  creation_date                   timestamp(6) NOT NULL,
-  modification_date               timestamp(6) NOT NULL,
+  creation_date                   timestamp NOT NULL,
+  modification_date               timestamp NOT NULL,
   role_id                         int4 NOT NULL,
   locale                          varchar(255) NOT NULL,
   external_mail_locale            varchar(255) NOT NULL,
@@ -32,13 +32,13 @@ CREATE TABLE cookie (
   identifier varchar(255) NOT NULL,
   user_name  varchar(255) NOT NULL,
   value      varchar(255) NOT NULL,
-  last_use   timestamp(6) NOT NULL,
+  last_use   timestamp NOT NULL,
   CONSTRAINT linshare_cookie_pkey
     PRIMARY KEY (cookie_id));
 CREATE TABLE document (
   id               int8 NOT NULL,
   uuid            varchar(255) NOT NULL UNIQUE,
-  creation_date   timestamp(6) NOT NULL,
+  creation_date   timestamp NOT NULL,
   type            varchar(255) NOT NULL,
   "size"          int8 NOT NULL,
   thmb_uuid       varchar(255),
@@ -98,11 +98,11 @@ CREATE TABLE domain_policy (
 CREATE TABLE entry (
   id                 int8 NOT NULL,
   owner_id          int8 NOT NULL,
-  creation_date     timestamp(6) NOT NULL,
-  modification_date timestamp(6) NOT NULL,
+  creation_date     timestamp NOT NULL,
+  modification_date timestamp NOT NULL,
   name              varchar(255) NOT NULL,
   comment           text NOT NULL,
-  expiration_date   timestamp(6),
+  expiration_date   timestamp,
   uuid              varchar(255) NOT NULL UNIQUE,
   meta_data         text,
   PRIMARY KEY (id));
@@ -149,12 +149,14 @@ CREATE TABLE ldap_connection (
   security_auth        varchar(255),
   security_principal   varchar(255),
   security_credentials varchar(255),
+  creation_date        timestamp NOT NULL,
+  modification_date    timestamp NOT NULL,
   CONSTRAINT linshare_ldap_connection_pkey
     PRIMARY KEY (id));
 CREATE TABLE log_entry (
   id                int8 NOT NULL,
   entry_type       varchar(255) NOT NULL,
-  action_date      timestamp(6) NOT NULL,
+  action_date      timestamp NOT NULL,
   actor_mail       varchar(255) NOT NULL,
   actor_firstname  varchar(255) NOT NULL,
   actor_lastname   varchar(255) NOT NULL,
@@ -168,7 +170,7 @@ CREATE TABLE log_entry (
   target_firstname varchar(255),
   target_lastname  varchar(255),
   target_domain    varchar(255),
-  expiration_date  timestamp(6),
+  expiration_date  timestamp,
   CONSTRAINT linshare_log_entry_pkey
     PRIMARY KEY (id));
 CREATE TABLE mail_subjects (
@@ -243,14 +245,16 @@ CREATE TABLE signature (
   CONSTRAINT linshare_signature_pkey
     PRIMARY KEY (id));
 CREATE TABLE ldap_attribute (
-  id               int8 NOT NULL,
-  attribute       varchar(255) NOT NULL,
-  field           varchar(255) NOT NULL,
-  sync            bool NOT NULL,
-  system          bool NOT NULL,
-  enable          bool NOT NULL,
-  completion      bool NOT NULL,
-  ldap_pattern_id int8 NOT NULL,
+  id                 int8 NOT NULL,
+  attribute         varchar(255) NOT NULL,
+  field             varchar(255) NOT NULL,
+  sync              bool NOT NULL,
+  system            bool NOT NULL,
+  enable            bool NOT NULL,
+  completion        bool NOT NULL,
+  creation_date     timestamp NOT NULL,
+  modification_date timestamp NOT NULL,
+  ldap_pattern_id   int8 NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE thread (
   account_id int8 NOT NULL,
@@ -268,8 +272,8 @@ CREATE TABLE thread_member (
   thread_id         int8 NOT NULL,
   admin             bool NOT NULL,
   can_upload        bool NOT NULL,
-  creation_date     timestamp(6) NOT NULL,
-  modification_date timestamp(6) NOT NULL,
+  creation_date     timestamp NOT NULL,
+  modification_date timestamp NOT NULL,
   user_id           int8 NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE unit (
@@ -316,8 +320,8 @@ CREATE TABLE technical_account_permission_domain_abstract (
 CREATE TABLE technical_account_permission (
   id                 int8 NOT NULL,
   uuid              varchar(255) NOT NULL UNIQUE,
-  creation_date     date NOT NULL,
-  modification_date date NOT NULL,
+  creation_date     timestamp NOT NULL,
+  modification_date timestamp NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE contact (
   id    int8 NOT NULL,
@@ -390,7 +394,7 @@ CREATE TABLE mail_content (
   creation_date       timestamp(6) NOT NULL,
   modification_date   timestamp(6) NOT NULL,
   alternative_subject varchar(255),
-  enable_as           bool NOT NULL,
+  enable_as           int2 DEFAULT False NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mail_content_lang (
   id                 int8 NOT NULL,
@@ -589,11 +593,11 @@ CREATE TABLE account_permission (
   PRIMARY KEY (id));
 CREATE TABLE functionality_enum_lang (
   functionality_id int8 NOT NULL,
-  value            varchar(255),
+  lang_value       varchar(255),
   PRIMARY KEY (functionality_id));
 CREATE TABLE functionality_boolean (
   functionality_id int8 NOT NULL,
-  value            bool NOT NULL,
+  boolean_value    int2 NOT NULL,
   PRIMARY KEY (functionality_id));
 CREATE TABLE upload_request_entry_url (
   id                       int8 NOT NULL,
@@ -601,15 +605,17 @@ CREATE TABLE upload_request_entry_url (
   uuid                    varchar(255) NOT NULL,
   path                    varchar(255) NOT NULL,
   password                varchar(255),
-  creation_date           date NOT NULL,
-  modification_date       date NOT NULL,
-  expiry_date             date NOT NULL,
+  creation_date           timestamp NOT NULL,
+  modification_date       timestamp NOT NULL,
+  expiry_date             timestamp NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE contract_provider (
   id                  int8 NOT NULL,
   uuid               varchar(255) NOT NULL UNIQUE,
   provider_type      varchar(255) NOT NULL,
   base_dn            varchar(255),
+  creation_date      timestamp NOT NULL,
+  modification_date  timestamp NOT NULL,
   domain_abstract_id int8 NOT NULL,
   ldap_pattern_id    int8 NOT NULL,
   ldap_connection_id int8 NOT NULL,
@@ -619,6 +625,8 @@ CREATE TABLE user_provider (
   uuid               varchar(255) NOT NULL UNIQUE,
   provider_type      varchar(255) NOT NULL,
   base_dn            varchar(255),
+  creation_date      timestamp NOT NULL,
+  modification_date  timestamp NOT NULL,
   ldap_connection_id int8 NOT NULL,
   ldap_pattern_id    int8 NOT NULL,
   PRIMARY KEY (id));
@@ -637,6 +645,8 @@ CREATE TABLE ldap_pattern (
   auto_complete_command_on_all_attributes      text,
   completion_page_size                         int4,
   completion_size_limit                        int4,
+  creation_date                                timestamp NOT NULL,
+  modification_date                            timestamp NOT NULL,
   PRIMARY KEY (id));
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
