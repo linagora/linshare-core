@@ -172,12 +172,11 @@ public class UserProviderServiceImpl implements UserProviderService {
 
 	@Override
 	public void deletePattern(String patternToDelete) throws BusinessException {
-
 		if (!patternIsDeletable(patternToDelete)) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_PATTERN_STILL_IN_USE,
+			throw new BusinessException(
+					BusinessErrorCode.DOMAIN_PATTERN_STILL_IN_USE,
 					"Cannot delete pattern because still used by domains");
 		}
-
 		DomainPattern pattern = retrieveDomainPattern(patternToDelete);
 		domainPatternRepository.delete(pattern);
 	}
@@ -203,7 +202,13 @@ public class UserProviderServiceImpl implements UserProviderService {
 
 	@Override
 	public DomainPattern findDomainPattern(String id) throws BusinessException {
-		return domainPatternRepository.findById(id);
+		Validate.notEmpty(id, "Domain pattern identifier must be set.");
+		DomainPattern pattern = domainPatternRepository.findById(id);
+		if (pattern == null)
+			throw new BusinessException(
+					BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND,
+					"Can not found domain pattern with identifier: " + id + ".");
+		return pattern;
 	}
 
 	@Override
@@ -226,8 +231,15 @@ public class UserProviderServiceImpl implements UserProviderService {
 
 	@Override
 	public LDAPConnection findLDAPConnection(String id) throws BusinessException {
-		return ldapConnectionRepository.findById(id);
+		Validate.notEmpty(id, "Ldap connection identifier must be set.");
+		LDAPConnection connection = ldapConnectionRepository.findById(id);
+		if (connection == null)
+			throw new BusinessException(
+					BusinessErrorCode.LDAP_CONNECTION_NOT_FOUND,
+					"Can not found ldap connection with identifier: " + id + ".");
+		return connection;
 	}
+
 	@Override
 	public LDAPConnection updateLDAPConnection(LDAPConnection ldapConnection)
 			throws BusinessException {
