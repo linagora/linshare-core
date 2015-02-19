@@ -8,8 +8,8 @@
 		</id>
 
 		<property name="uuid" column="uuid" unique="true" type="string" length="255" not-null="true" lazy="false"/>
-		<property name="creationDate" column="creation_date" type="date" not-null="true" lazy="false"/>
-		<property name="modificationDate" column="modification_date" type="date" not-null="true" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
+		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
 
 		<set name="accountPermissions" lazy="true" cascade="all-delete-orphan" inverse="false">
 			<key column="technical_account_permission_id" not-null="true"/>

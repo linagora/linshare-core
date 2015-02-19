@@ -12,3 +12,4 @@
 /misc/jetty
 /.project
 /src/main/webapp/applet/jwsdecrypt.jar
+*.swp

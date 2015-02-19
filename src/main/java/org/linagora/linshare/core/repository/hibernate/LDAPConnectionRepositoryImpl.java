@@ -33,11 +33,14 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.LDAPConnectionRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
@@ -50,14 +53,30 @@ public class LDAPConnectionRepositoryImpl extends
 	}
 
 	@Override
+	public LdapConnection create(LdapConnection entity)
+			throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setUuid(UUID.randomUUID().toString());
+		return super.create(entity);
+	}
+
+	@Override
+	public LdapConnection update(LdapConnection entity)
+			throws BusinessException {
+		entity.setModificationDate(new Date());
+		return super.update(entity);
+	}
+
+	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(LdapConnection entity) {
 		DetachedCriteria det = DetachedCriteria.forClass( LdapConnection.class )
-		.add(Restrictions.eq( "identifier", entity.getUuid() ) );
+		.add(Restrictions.eq( "uuid", entity.getUuid() ) );
 		return det;
 	}
 
 	public LdapConnection findById(String identifier) {
-		List<LdapConnection> conns = findByCriteria(Restrictions.eq("identifier", identifier));
+		List<LdapConnection> conns = findByCriteria(Restrictions.eq("uuid", identifier));
 		
 		if (conns == null || conns.isEmpty()) {
 			return null;

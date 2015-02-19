@@ -33,11 +33,14 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -51,16 +54,32 @@ public class DomainPatternRepositoryImpl extends
 	}
 
 	@Override
+	public UserLdapPattern create(UserLdapPattern entity)
+			throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setUuid(UUID.randomUUID().toString());
+		return super.create(entity);
+	}
+
+	@Override
+	public UserLdapPattern update(UserLdapPattern entity)
+			throws BusinessException {
+		entity.setModificationDate(new Date());
+		return super.update(entity);
+	}
+
+	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(UserLdapPattern entity) {
 		DetachedCriteria det = DetachedCriteria.forClass(UserLdapPattern.class)
-				.add(Restrictions.eq("identifier", entity.getUuid()));
+				.add(Restrictions.eq("uuid", entity.getUuid()));
 		return det;
 	}
 
 	@Override
 	public UserLdapPattern findById(String identifier) {
-		return DataAccessUtils.singleResult(findByCriteria(
-				Restrictions.eq("identifier", identifier)));
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"uuid", identifier)));
 	}
 
 	@Override

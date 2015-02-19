@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
-
 	<typedef
 		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="roleEnumType">
 		<param name="enumClass">org.linagora.linshare.core.domain.constants.Role</param>
@@ -14,8 +13,6 @@
 		<param name="identifierMethod">getTapestryLocale</param>
 		<param name="valueOfMethod">fromTapestryLocale</param>
 	</typedef>
-
-
 	<class name="AbstractDomain" table="domain_abstract" discriminator-value= "-1" >
 		<id name="persistenceId" type="long">
 			<column name="id" not-null="true" index="index_abstract_domain_id"/>
@@ -101,9 +98,9 @@
 			column="user_provider_id" unique="true" lazy="proxy" cascade="delete" />
 			 -->
 
-		<set name="contractProvider" lazy="true" inverse="false">
+		<set name="contactProvider" lazy="true" inverse="false">
 			<key column="domain_abstract_id" not-null="true"/>
-			<one-to-many class="org.linagora.linshare.core.domain.entities.ContractProvider"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.ContactProvider"/>
 		</set>
 
 		<many-to-one cascade="save-update" lazy="proxy" access="field" class="org.linagora.linshare.core.domain.entities.MessagesConfiguration" 

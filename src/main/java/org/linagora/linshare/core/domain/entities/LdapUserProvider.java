@@ -43,6 +43,9 @@ public class LdapUserProvider extends UserProvider {
 
 	private UserLdapPattern pattern;
 
+	protected LdapUserProvider() {
+	}
+
 	public LdapUserProvider(String baseDn, LdapConnection ldapConnection,
 			UserLdapPattern pattern) {
 		super();
@@ -68,11 +71,11 @@ public class LdapUserProvider extends UserProvider {
 		this.baseDn = baseDn;
 	}
 
-	public void setLdapconnexion(LdapConnection ldapconnexion) {
-		this.ldapConnection = ldapconnexion;
+	public void setLdapConnection(LdapConnection ldapConnection) {
+		this.ldapConnection = ldapConnection;
 	}
 
-	public LdapConnection getLdapconnexion() {
+	public LdapConnection getLdapConnection() {
 		return ldapConnection;
 	}
 

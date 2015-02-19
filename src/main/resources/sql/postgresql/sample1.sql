@@ -7,46 +7,60 @@ SET default_with_oids = false;
 
 -- Jeu de données de tests
 
-INSERT INTO ldap_connection(ldap_connection_id, identifier, provider_url, security_auth, security_principal, security_credentials) VALUES (1, 'linshare-obm', 'ldap://linshare-obm.linagora.dc1:389', 'simple', '', '');
+INSERT INTO ldap_connection(id, uuid, label, provider_url, security_auth, security_principal, security_credentials, creation_date, modification_date)
+VALUES (1, 'a9b2058f-811f-44b7-8fe5-7a51961eb098', 'linshare-obm', 'ldap://linshare-obm.linagora.dc1:389', 'simple', '', '', now(), now());
 
 
 -- system domain pattern
-INSERT INTO domain_pattern(
- domain_pattern_id,
- identifier,
- description,
- auth_command,
- search_user_command,
- system,
- auto_complete_command_on_first_and_last_name,
- auto_complete_command_on_all_attributes,
- search_page_size,
- search_size_limit,
- completion_page_size,
- completion_size_limit)
+INSERT INTO ldap_pattern(
+    id,
+    uuid,
+    pattern_type,
+    label,
+    description,
+    auth_command,
+    search_user_command,
+    system,
+    auto_complete_command_on_first_and_last_name,
+    auto_complete_command_on_all_attributes,
+    search_page_size,
+    search_size_limit,
+    completion_page_size,
+    completion_size_limit,
+    creation_date,
+    modification_date)
 VALUES (
- 50,
- 'linshare-obm',
- 'This is pattern the default pattern for the ldap obm structure.',
- 'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");',
- 'ldap.search(domain, "(&(objectClass=obmUser)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
- false,
- 'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");',
- 'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");',
- 100,
- 100,
- 10,
- 10
- );
+    50,
+    'd793ebef-b8bb-4930-bf16-27add911ec13',
+    'USER_LDAP_PATTERN',
+    'linshare-obm',
+    'This is pattern the default pattern for the ldap obm structure.',
+    'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");',
+    'ldap.search(domain, "(&(objectClass=obmUser)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
+    false,
+    'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");',
+    'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");',
+    100,
+    100,
+    10,
+    10,
+    now(),
+    now()
+    );
 
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (51, 'user_mail', 'mail', false, true, true, 50, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (52, 'user_firstname', 'givenName', false, true, true, 50, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (53, 'user_lastname', 'sn', false, true, true, 50, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (54, 'user_uid', 'uid', false, true, true, 50, false);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (51, 'user_mail', 'mail', false, true, true, 50, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (52, 'user_firstname', 'givenName', false, true, true, 50, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (53, 'user_lastname', 'sn', false, true, true, 50, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (54, 'user_uid', 'uid', false, true, true, 50, false);
 
 
 
-INSERT INTO user_provider_ldap(id, differential_key, domain_pattern_id, ldap_connection_id) VALUES (1, 'ou=users,dc=int1.linshare.dev,dc=local', 50, 1);
+INSERT INTO user_provider(id, uuid, provider_type, base_dn, creation_date, modification_date, ldap_connection_id, ldap_pattern_id)
+VALUES (1, '93fd0e8b-fa4c-495d-978f-132e157c2292', 'LDAP_PROVIDER', 'ou=users,dc=int1.linshare.dev,dc=local', now(), now(), 1, 50);
 
 
 -- Top domain (example domain)

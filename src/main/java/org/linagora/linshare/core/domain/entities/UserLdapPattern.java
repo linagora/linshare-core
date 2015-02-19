@@ -57,6 +57,8 @@ public class UserLdapPattern extends LdapPattern {
 
 	private Integer completionSizeLimit;
 
+	protected UserLdapPattern() {
+	}
 	/**
 	 * For tests only.
 	 * 
@@ -72,6 +74,7 @@ public class UserLdapPattern extends LdapPattern {
 			String getUserCommand, String getAllDomainUsersCommand,
 			String authCommand, String searchUserCommand,
 			Map<String, LdapAttribute> attributes) {
+		this.uuid = label;
 		this.label = label;
 		this.description = description;
 		this.authCommand = authCommand;
@@ -87,6 +90,7 @@ public class UserLdapPattern extends LdapPattern {
 
 	public UserLdapPattern(DomainPatternVo domainPatternVo) {
 		this.uuid = domainPatternVo.getIdentifier();
+		this.label= domainPatternVo.getIdentifier();
 		this.description = domainPatternVo.getPatternDescription();
 		this.authCommand = domainPatternVo.getAuthCommand();
 		this.searchUserCommand = domainPatternVo.getSearchUserCommand();
@@ -114,6 +118,7 @@ public class UserLdapPattern extends LdapPattern {
 
 	public UserLdapPattern(DomainPatternDto domainPatternDto) {
 		this.uuid = domainPatternDto.getIdentifier();
+		this.label= domainPatternDto.getIdentifier();
 		this.description = domainPatternDto.getDescription();
 		this.authCommand = domainPatternDto.getAuthCommand();
 		this.searchUserCommand = domainPatternDto.getSearchUserCommand();
@@ -164,6 +169,7 @@ public class UserLdapPattern extends LdapPattern {
 			Integer completionPageSize, Integer completionSizeLimit,
 			boolean system) {
 		super();
+		this.uuid = label;
 		this.label = label;
 		this.description = description;
 		this.authCommand = authCommand;

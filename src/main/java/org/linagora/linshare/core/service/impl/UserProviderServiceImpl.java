@@ -42,10 +42,10 @@ import javax.naming.NamingException;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
-import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
@@ -53,7 +53,6 @@ import org.linagora.linshare.core.repository.LDAPConnectionRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.linagora.linshare.core.service.LDAPQueryService;
 import org.linagora.linshare.core.service.UserProviderService;
-import org.linagora.linshare.core.utils.LsIdValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,15 +82,15 @@ public class UserProviderServiceImpl implements UserProviderService {
 			throws BusinessException {
 		Validate.notEmpty(domainPattern.getUuid(),
 				"domain pattern identifier must be set.");
+		Validate.notEmpty(domainPattern.getLabel());
+		Validate.notEmpty(domainPattern.getAuthCommand());
+		Validate.notEmpty(domainPattern.getSearchUserCommand());
+		Validate.notEmpty(domainPattern.getAutoCompleteCommandOnAllAttributes());
+		Validate.notEmpty(domainPattern.getAutoCompleteCommandOnFirstAndLastName());
 		Collection<LdapAttribute> collection = domainPattern.getAttributes().values();
 		for (LdapAttribute e : collection) {
 			if (e.getAttribute() == null)
 				throw new BusinessException(BusinessErrorCode.LDAP_ATTRIBUTE_CONTAINS_NULL, "Attribute must be not null");
-		}
-		if (!LsIdValidator.isValid(domainPattern.getUuid())) {
-			throw new BusinessException(BusinessErrorCode.LDAP_CONNECTION_ID_BAD_FORMAT,
-					"This new domain pattern identifier should only contains the following characters : "
-							+ LsIdValidator.getAllowedCharacters() + ".");
 		}
 		if (domainPatternRepository.findById(domainPattern.getUuid()) != null) {
 			throw new BusinessException(
@@ -106,19 +105,8 @@ public class UserProviderServiceImpl implements UserProviderService {
 	@Override
 	public LdapConnection createLDAPConnection(LdapConnection ldapConnection)
 			throws BusinessException {
-		Validate.notEmpty(ldapConnection.getUuid(),
-				"ldap connection identifier must be set.");
-		if (!LsIdValidator.isValid(ldapConnection.getUuid())) {
-			throw new BusinessException(
-					BusinessErrorCode.LDAP_CONNECTION_ID_BAD_FORMAT,
-					"This new ldap connection identifier should only contains the following characters : "
-							+ LsIdValidator.getAllowedCharacters() + ".");
-		}
-		if (ldapConnectionRepository.findById(ldapConnection.getUuid()) != null) {
-			throw new BusinessException(
-					BusinessErrorCode.LDAP_CONNECTION_ID_ALREADY_EXISTS,
-					"This new ldap connection identifier already exists.");
-		}
+		Validate.notEmpty(ldapConnection.getLabel(),
+				"ldap connection label must be set.");
 		LdapConnection createdLDAPConnection = ldapConnectionRepository
 				.create(ldapConnection);
 		return createdLDAPConnection;
@@ -167,7 +155,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 		List<LdapUserProvider> list = userProviderRepository.findAll();
 		boolean used = false;
 		for (LdapUserProvider ldapUserProvider : list) {
-			if (ldapUserProvider.getLdapconnexion().getUuid()
+			if (ldapUserProvider.getLdapConnection().getUuid()
 					.equals(connectionToDelete)) {
 				used = true;
 				break;
@@ -329,14 +317,14 @@ public class UserProviderServiceImpl implements UserProviderService {
 		}
 		User user = null;
 		try {
-			user = ldapQueryService.getUser(userProvider.getLdapconnexion(),
+			user = ldapQueryService.getUser(userProvider.getLdapConnection(),
 					userProvider.getBaseDn(), userProvider.getPattern(), mail);
 		} catch (NamingException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		} catch (IOException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		} catch (org.springframework.ldap.CommunicationException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		}
 		return user;
 	}
@@ -346,15 +334,15 @@ public class UserProviderServiceImpl implements UserProviderService {
 			String firstName, String lastName) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 		try {
-			users = ldapQueryService.searchUser(userProvider.getLdapconnexion(),
+			users = ldapQueryService.searchUser(userProvider.getLdapConnection(),
 					userProvider.getBaseDn(), userProvider.getPattern(), mail,
 					firstName, lastName);
 		} catch (NamingException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		} catch (IOException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		} catch (org.springframework.ldap.CommunicationException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		}
 		return users;
 	}
@@ -364,14 +352,14 @@ public class UserProviderServiceImpl implements UserProviderService {
 			String pattern) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 		try {
-			users = ldapQueryService.completeUser(userProvider.getLdapconnexion(),
+			users = ldapQueryService.completeUser(userProvider.getLdapConnection(),
 					userProvider.getBaseDn(), userProvider.getPattern(), pattern);
 		} catch (NamingException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		} catch (IOException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		} catch (org.springframework.ldap.CommunicationException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		}
 		return users;
 	}
@@ -381,15 +369,15 @@ public class UserProviderServiceImpl implements UserProviderService {
 			String firstName, String lastName) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 		try {
-			users = ldapQueryService.completeUser(userProvider.getLdapconnexion(),
+			users = ldapQueryService.completeUser(userProvider.getLdapConnection(),
 				userProvider.getBaseDn(), userProvider.getPattern(), firstName,
 				lastName);
 		} catch (NamingException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		} catch (IOException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		} catch (org.springframework.ldap.CommunicationException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		}
 		return users;
 	}
@@ -399,14 +387,14 @@ public class UserProviderServiceImpl implements UserProviderService {
 			throws BusinessException {
 		Boolean result = false;
 		try {
-			result = ldapQueryService.isUserExist(userProvider.getLdapconnexion(),
+			result = ldapQueryService.isUserExist(userProvider.getLdapConnection(),
 					userProvider.getBaseDn(), userProvider.getPattern(), mail);
 		} catch (NamingException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		} catch (IOException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		} catch (org.springframework.ldap.CommunicationException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		}
 		return result;
 	}
@@ -420,14 +408,14 @@ public class UserProviderServiceImpl implements UserProviderService {
 		}
 		User user = null;
 		try {
-			user = ldapQueryService.auth(p.getLdapconnexion(), p.getBaseDn(),
+			user = ldapQueryService.auth(p.getLdapConnection(), p.getBaseDn(),
 					p.getPattern(), login, userPasswd);
 		} catch (NamingException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		} catch (IOException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		} catch (org.springframework.ldap.CommunicationException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		}
 		return user;
 	}
@@ -441,14 +429,14 @@ public class UserProviderServiceImpl implements UserProviderService {
 		}
 		User user = null;
 		try {
-			user = ldapQueryService.searchForAuth(p.getLdapconnexion(),
+			user = ldapQueryService.searchForAuth(p.getLdapConnection(),
 					p.getBaseDn(), p.getPattern(), login);
 		} catch (NamingException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		} catch (IOException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		} catch (org.springframework.ldap.CommunicationException e) {
-			throwError(userProvider.getLdapconnexion(), e);
+			throwError(userProvider.getLdapConnection(), e);
 		}
 		return user;
 	}

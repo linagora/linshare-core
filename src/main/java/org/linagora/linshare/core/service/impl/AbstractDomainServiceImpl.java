@@ -160,7 +160,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 
 		if (domain.getUserProvider() != null) {
-			if (domain.getUserProvider().getLdapconnexion() == null) {
+			if (domain.getUserProvider().getLdapConnection() == null) {
 				throw new BusinessException(
 						BusinessErrorCode.LDAP_CONNECTION_NOT_FOUND,
 						"This new domain has no ldap connection.");
@@ -394,7 +394,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 
 		if (domain.getUserProvider() != null) {
-			if (domain.getUserProvider().getLdapconnexion() == null) {
+			if (domain.getUserProvider().getLdapConnection() == null) {
 				throw new BusinessException(
 						BusinessErrorCode.LDAP_CONNECTION_NOT_FOUND,
 						"This domain has no ldap connection.");
@@ -425,7 +425,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			String baseDn = null;
 			if (domain.getUserProvider() != null) {
 				domainPattern = domain.getUserProvider().getPattern();
-				ldapConn = domain.getUserProvider().getLdapconnexion();
+				ldapConn = domain.getUserProvider().getLdapConnection();
 				baseDn = domain.getUserProvider().getBaseDn();
 			}
 			if (baseDn != null && domainPattern != null && ldapConn != null) {
@@ -439,7 +439,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				} else {
 					logger.debug("Update domain with provider update ");
 					provider.setBaseDn(baseDn);
-					provider.setLdapconnexion(ldapConn);
+					provider.setLdapConnection(ldapConn);
 					provider.setPattern(domainPattern);
 					userProviderService.update(provider);
 				}

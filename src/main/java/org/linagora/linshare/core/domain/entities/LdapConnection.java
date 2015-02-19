@@ -33,23 +33,34 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+
 import org.linagora.linshare.core.domain.vo.LDAPConnectionVo;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPConnectionDto;
 
 public class LdapConnection {
-	/**
-	 * Database persistence identifier
-	 */
-	private long id;
-	private String uuid;
-	private String label;
-	private String providerUrl;
-	private String securityAuth;
-	private String securityPrincipal;
-	private String securityCredentials;
+
+	protected long id;
+
+	protected String uuid;
+
+	protected String label;
+
+	protected String providerUrl;
+
+	protected String securityAuth;
+
+	protected String securityPrincipal;
+
+	protected String securityCredentials;
+
+	protected Date creationDate;
+
+	protected Date modificationDate;
 
 	public LdapConnection(LDAPConnectionVo ldapConn) {
 		this.uuid =  ldapConn.getIdentifier();
+		this.label = ldapConn.getIdentifier();
 		this.providerUrl = ldapConn.getProviderUrl();
 		this.securityAuth = ldapConn.getSecurityAuth();
 		this.securityPrincipal = ldapConn.getSecurityPrincipal();
@@ -57,6 +68,7 @@ public class LdapConnection {
 	}
 
 	public LdapConnection(LDAPConnectionDto ldapConnectionDto) {
+		this.label = ldapConnectionDto.getIdentifier();
 		this.uuid = ldapConnectionDto.getIdentifier();
 		this.providerUrl = ldapConnectionDto.getProviderUrl();
 		this.securityAuth = ldapConnectionDto.getSecurityAuth();
@@ -129,6 +141,22 @@ public class LdapConnection {
 
 	public void setSecurityCredentials(String securityCredentials) {
 		this.securityCredentials = securityCredentials;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 
 	@Override

@@ -33,9 +33,9 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public abstract class LdapPattern {
 
@@ -48,6 +48,10 @@ public abstract class LdapPattern {
 	protected String description;
 
 	protected boolean system;
+
+	protected Date creationDate;
+
+	protected Date modificationDate;
 
 	protected Map<String, LdapAttribute> attributes;
 
@@ -66,7 +70,6 @@ public abstract class LdapPattern {
 	};
 
 	protected LdapPattern() {
-		this.uuid = UUID.randomUUID().toString();
 	}
 
 	public long getId() {
@@ -119,6 +122,22 @@ public abstract class LdapPattern {
 
 	public String getAttribute(String field) {
 		return attributes.get(field).getAttribute().trim().toLowerCase();
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 
 	@Override

@@ -70,8 +70,8 @@ CREATE TABLE domain_abstract (
   auth_show_order           int8 NOT NULL,
   domain_policy_id          int8 NOT NULL,
   parent_id                 int8,
-  mime_policy_id            int8 NOT NULL,
-  mailconfig_id             int8 NOT NULL,
+  mime_policy_id            int8,
+  mailconfig_id             int8,
   user_provider_id          int8,
   CONSTRAINT linshare_domain_abstract_pkey
     PRIMARY KEY (id));
@@ -130,8 +130,8 @@ CREATE TABLE functionality_string (
     PRIMARY KEY (functionality_id));
 CREATE TABLE functionality_unit (
   functionality_id int8 NOT NULL,
-  integer_value    int4,
-  unit_id          int8,
+  integer_value    int4 NOT NULL,
+  unit_id          int8 NOT NULL,
   CONSTRAINT linshare_functionality_unit_pkey
     PRIMARY KEY (functionality_id));
 CREATE TABLE functionality_unit_boolean (
@@ -144,7 +144,7 @@ CREATE TABLE functionality_unit_boolean (
 CREATE TABLE ldap_connection (
   id                    int8 NOT NULL,
   uuid                 varchar(255) NOT NULL UNIQUE,
-  identifier           varchar(255) NOT NULL,
+  label                varchar(255) NOT NULL,
   provider_url         varchar(255) NOT NULL,
   security_auth        varchar(255),
   security_principal   varchar(255),
@@ -233,28 +233,26 @@ CREATE TABLE signature (
   document_id       int8 NOT NULL,
   uuid              varchar(255) NOT NULL UNIQUE,
   name              varchar(255) NOT NULL,
-  creation_date     timestamp(6) NOT NULL,
-  modification_date timestamp(6) NOT NULL,
+  creation_date     timestamp NOT NULL,
+  modification_date timestamp NOT NULL,
   type              varchar(255),
   "size"            int8,
   cert_subject_dn   varchar(255),
   cert_issuer_dn    varchar(255),
-  cert_not_after    timestamp(6),
+  cert_not_after    timestamp,
   cert              text,
   sort_order        int4,
   CONSTRAINT linshare_signature_pkey
     PRIMARY KEY (id));
 CREATE TABLE ldap_attribute (
-  id                 int8 NOT NULL,
-  attribute         varchar(255) NOT NULL,
-  field             varchar(255) NOT NULL,
-  sync              bool NOT NULL,
-  system            bool NOT NULL,
-  enable            bool NOT NULL,
-  completion        bool NOT NULL,
-  creation_date     timestamp NOT NULL,
-  modification_date timestamp NOT NULL,
-  ldap_pattern_id   int8 NOT NULL,
+  id               int8 NOT NULL,
+  attribute       varchar(255) NOT NULL,
+  field           varchar(255) NOT NULL,
+  sync            bool NOT NULL,
+  system          bool NOT NULL,
+  enable          bool NOT NULL,
+  completion      bool NOT NULL,
+  ldap_pattern_id int8 NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE thread (
   account_id int8 NOT NULL,
@@ -393,8 +391,8 @@ CREATE TABLE mail_content (
   plaintext           bool NOT NULL,
   creation_date       timestamp(6) NOT NULL,
   modification_date   timestamp(6) NOT NULL,
-  alternative_subject varchar(255),
-  enable_as           int2 DEFAULT False NOT NULL,
+  alternative_subject text,
+  enable_as           bool DEFAULT 'False' NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mail_content_lang (
   id                 int8 NOT NULL,
@@ -593,11 +591,11 @@ CREATE TABLE account_permission (
   PRIMARY KEY (id));
 CREATE TABLE functionality_enum_lang (
   functionality_id int8 NOT NULL,
-  lang_value       varchar(255),
+  lang_value       varchar(255) NOT NULL,
   PRIMARY KEY (functionality_id));
 CREATE TABLE functionality_boolean (
   functionality_id int8 NOT NULL,
-  boolean_value    int2 NOT NULL,
+  boolean_value    bool NOT NULL,
   PRIMARY KEY (functionality_id));
 CREATE TABLE upload_request_entry_url (
   id                       int8 NOT NULL,
@@ -609,7 +607,7 @@ CREATE TABLE upload_request_entry_url (
   modification_date       timestamp NOT NULL,
   expiry_date             timestamp NOT NULL,
   PRIMARY KEY (id));
-CREATE TABLE contract_provider (
+CREATE TABLE contact_provider (
   id                  int8 NOT NULL,
   uuid               varchar(255) NOT NULL UNIQUE,
   provider_type      varchar(255) NOT NULL,
@@ -694,10 +692,6 @@ CREATE UNIQUE INDEX functionality_unit_boolean_index
   ON functionality_unit_boolean (unit_id);
 CREATE INDEX functionality_unit_boolean_i
   ON functionality_unit_boolean (functionality_id);
-CREATE INDEX ldap_connection_index
-  ON ldap_connection (identifier);
-CREATE INDEX ldap_connection_i
-  ON ldap_connection (id);
 CREATE INDEX log_entry_i
   ON log_entry (actor_domain);
 CREATE INDEX log_entry_i2
@@ -816,11 +810,11 @@ ALTER TABLE upload_proposition_filter ADD CONSTRAINT FKupload_pro316142 FOREIGN 
 ALTER TABLE functionality_enum_lang ADD CONSTRAINT FKfunctional140416 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE upload_request_entry_url ADD CONSTRAINT FKupload_req784409 FOREIGN KEY (upload_request_entry_id) REFERENCES upload_request_entry (entry_id);
-ALTER TABLE contract_provider ADD CONSTRAINT FKcontract_p266833 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
-ALTER TABLE contract_provider ADD CONSTRAINT FKcontract_p706697 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr166740 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
+ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr806790 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs163989 FOREIGN KEY (user_provider_id) REFERENCES user_provider (id);
 ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
-ALTER TABLE contract_provider ADD CONSTRAINT FKcontract_p455269 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
+ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr355176 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE ldap_attribute ADD CONSTRAINT FKldap_attri49928 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi813203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 

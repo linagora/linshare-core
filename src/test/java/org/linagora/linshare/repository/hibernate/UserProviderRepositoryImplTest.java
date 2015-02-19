@@ -159,7 +159,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		
 		Assert.assertTrue(ldapProvider.getBaseDn().equals(baseDn));
 		Assert.assertTrue(ldapProvider.getPattern().getUuid().equals(identifierP));
-		Assert.assertTrue(ldapProvider.getLdapconnexion().getUuid().equals(identifier));
+		Assert.assertTrue(ldapProvider.getLdapConnection().getUuid().equals(identifier));
 		
 		ldapUserProviderRepository.delete(newProvider);
 		logger.debug("End testCreateLdapUserProvider");

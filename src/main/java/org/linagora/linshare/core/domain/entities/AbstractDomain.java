@@ -66,8 +66,6 @@ public abstract class AbstractDomain {
 
 	protected MessagesConfiguration messagesConfiguration;
 
-	protected LdapUserProvider userProvider;
-
 	protected DomainPolicy policy;
 
 	protected Set<DomainAccessRule> domainAccessRules;
@@ -97,6 +95,10 @@ public abstract class AbstractDomain {
 	private Set<UploadPropositionFilter> uploadPropositionFilters;
 
 	private Set<UploadProposition> uploadPropositions;
+
+	protected LdapUserProvider userProvider;
+
+	protected Set<ContactProvider> contactProvider;
 
 	protected AbstractDomain() {
 		this.identifier = null;
@@ -436,5 +438,13 @@ public abstract class AbstractDomain {
 
 	public void setUploadPropositions(Set<UploadProposition> uploadPropositions) {
 		this.uploadPropositions = uploadPropositions;
+	}
+
+	public Set<ContactProvider> getContactProvider() {
+		return contactProvider;
+	}
+
+	public void setContactProvider(Set<ContactProvider> contactProvider) {
+		this.contactProvider = contactProvider;
 	}
 }
