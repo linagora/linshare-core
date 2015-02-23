@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="languageType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.Language</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">valueOf</param>
+	</typedef>
+	<class name="org.linagora.linshare.core.domain.entities.CustomisationEntry" table="customisation_entry" lazy="false">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<property name="lang" column="lang" type="languageType" length="255" not-null="true" lazy="false"/>
+		<property name="value" column="value" type="string" length="255" not-null="true" lazy="false"/>
+	</class>
+</hibernate-mapping>

@@ -646,6 +646,26 @@ CREATE TABLE ldap_pattern (
   creation_date                                timestamp NOT NULL,
   modification_date                            timestamp NOT NULL,
   PRIMARY KEY (id));
+CREATE TABLE customisation (
+  id                 int8 NOT NULL,
+  uuid              varchar(255) NOT NULL,
+  name              varchar(255) NOT NULL,
+  description       text NOT NULL,
+  creation_date     timestamp NOT NULL,
+  modification_date timestamp NOT NULL,
+  custom_type       varchar(255) NOT NULL,
+  PRIMARY KEY (id));
+CREATE TABLE customisation_entry (
+  id                int8 NOT NULL,
+  lang             varchar(255) NOT NULL,
+  value            varchar(255) NOT NULL,
+  customisation_id int8 NOT NULL,
+  PRIMARY KEY (id));
+CREATE TABLE domain_abstract_customisation (
+  domain_abstract_id int8 NOT NULL,
+  customisation_id   int8 NOT NULL,
+  PRIMARY KEY (domain_abstract_id,
+  customisation_id));
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid
@@ -730,6 +750,8 @@ CREATE INDEX mailing_list_index
   ON mailing_list (uuid);
 CREATE INDEX mailing_list_contact_index
   ON mailing_list_contact (uuid);
+CREATE UNIQUE INDEX customisation_uuid
+  ON customisation (uuid);
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_access_rule ADD CONSTRAINT fkf75719ed3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
@@ -817,6 +839,9 @@ ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1640 FOREIGN KEY (ldap_conn
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr355176 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE ldap_attribute ADD CONSTRAINT FKldap_attri49928 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi813203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
+ALTER TABLE customisation_entry ADD CONSTRAINT FKcustomisat539594 FOREIGN KEY (customisation_id) REFERENCES customisation (id);
+ALTER TABLE domain_abstract_customisation ADD CONSTRAINT FKdomain_abs157863 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE domain_abstract_customisation ADD CONSTRAINT FKdomain_abs55191 FOREIGN KEY (customisation_id) REFERENCES customisation (id);
 
 CREATE INDEX welcome_texts_i
   ON welcome_texts (messages_configuration_id);
