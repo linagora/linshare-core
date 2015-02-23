@@ -112,6 +112,8 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
 			attributeList.put("first", attribute);
 		UserLdapPattern domainPattern = new UserLdapPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
+		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
+		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
 		try {
 			userProviderService.createDomainPattern(domainPattern);
 		} catch (BusinessException e) {
@@ -149,11 +151,12 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 	@Test
 	public void testCreateDeleteDomainPattern() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
 			attributeList.put("first", attribute);
 		UserLdapPattern domainPattern = new UserLdapPattern(identifierP +"2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
+		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
+		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
 		try {
 			userProviderService.createDomainPattern(domainPattern);
 		} catch (BusinessException e) {

@@ -107,7 +107,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 	
 	// TODO : toto?
 	@Test
-	public void toto() throws BusinessException {
+	public void test1() throws BusinessException {
 		Map<String, LdapAttribute> a = new HashMap<String, LdapAttribute>();
 		a.put("ldapUid", new LdapAttribute("ldapUid" , "uid", false));
 		a.put("toto", new LdapAttribute("ldapUid" , "uid", false));
@@ -115,7 +115,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		
 		domainPatternRepository.create(p);
 		
-		UserLdapPattern aa = domainPatternRepository.findById("identifierP2");
+		UserLdapPattern aa = domainPatternRepository.findById(p.getUuid());
 		logger.debug("aa size : " + aa.getAttributes().size());
 		Assert.assertEquals(2, aa.getAttributes().size());
 
@@ -123,7 +123,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		aa.getAttributes().put("nom", new LdapAttribute("nom" , "sn", true));
 		domainPatternRepository.update(aa);
 		
-		aa = domainPatternRepository.findById("identifierP2");
+		aa = domainPatternRepository.findById(p.getUuid());
 		logger.debug("aa size : " + aa.getAttributes().size());
 		Assert.assertEquals(3, aa.getAttributes().size());
 
@@ -158,8 +158,8 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		LdapUserProvider ldapProvider = newProvider; 
 		
 		Assert.assertTrue(ldapProvider.getBaseDn().equals(baseDn));
-		Assert.assertTrue(ldapProvider.getPattern().getUuid().equals(identifierP));
-		Assert.assertTrue(ldapProvider.getLdapConnection().getUuid().equals(identifier));
+		Assert.assertTrue(ldapProvider.getPattern().getLabel().equals(identifierP));
+		Assert.assertTrue(ldapProvider.getLdapConnection().getLabel().equals(identifier));
 		
 		ldapUserProviderRepository.delete(newProvider);
 		logger.debug("End testCreateLdapUserProvider");

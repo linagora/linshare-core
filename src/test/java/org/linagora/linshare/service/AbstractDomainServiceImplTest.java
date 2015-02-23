@@ -112,15 +112,17 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
 			attributeList.put("first", attribute);
 		try {
-			userProviderService.createLDAPConnection(ldapconnexion);
+			ldapconnexion = userProviderService.createLDAPConnection(ldapconnexion);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 		}
 		logger.debug("Current ldapconnexion object: " + ldapconnexion.toString());
 		
 		domainPattern = new UserLdapPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
+		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
+		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
 		try {
-			userProviderService.createDomainPattern(domainPattern);
+			domainPattern = userProviderService.createDomainPattern(domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 		}
@@ -132,8 +134,6 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		userProviderService.deleteConnection(ldapconnexion.getUuid());
-		userProviderService.deletePattern(domainPattern.getUuid());
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
@@ -171,20 +171,10 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	@Test
 	public void testCreateTopDomain2() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		LdapConnection myldapconnexion = null;
-		UserLdapPattern mydomainPattern = null;
-		
-		try {
-			myldapconnexion = userProviderService.retrieveLDAPConnection("baseLDAP");
-			mydomainPattern = userProviderService.retrieveDomainPattern("basePattern");
-		} catch (BusinessException e1) {
-			e1.printStackTrace();
-			Assert.fail("Can't get initial data (domain pattern and ldap connection");
-		}
-		
-		TopDomain topDomain = new TopDomain(topDomaineName+"1","label",myldapconnexion,mydomainPattern,baseDn);
-		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
+		TopDomain topDomain = new TopDomain(topDomaineName + "1", "label",
+				ldapconnexion, domainPattern, baseDn);
+		DomainPolicy policy = domainPolicyRepository
+				.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);
 		
 		MailConfig mailConfig = new MailConfig();
