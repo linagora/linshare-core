@@ -69,7 +69,7 @@ public class UploadPropositionFilterServiceImpl implements UploadPropositionFilt
 		UploadPropositionFilter filter = businessService.find(uuid);
 		if (filter ==null) {
 			logger.error(actor.getAccountReprentation() + " is looking for missing filter uuid : " + uuid);
-			throw new BusinessException("filter uuid not found.");
+			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_FILTER_NOT_FOUND, "filter with uuid : " + uuid + " not found.");
 		}
 		return filter;
 	}

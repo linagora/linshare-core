@@ -68,7 +68,7 @@ public class UploadPropositionFilterRepositoryImpl extends
 	public UploadPropositionFilter find(String uuid) {
 		List<UploadPropositionFilter> entries = findByCriteria(Restrictions.eq(
 				"uuid", uuid));
-		return DataAccessUtils.requiredSingleResult(entries);
+		return DataAccessUtils.singleResult(entries);
 	}
 
 	@Override
