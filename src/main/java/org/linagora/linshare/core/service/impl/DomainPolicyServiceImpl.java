@@ -81,6 +81,12 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 				|| domainPolicy.getDomainAccessPolicy() == null)
 			throw new BusinessException(
 					"Creating a domain policy without an associated access policy is impossible");
+		DomainPolicy policy = domainPolicyBusinessService.find(domainPolicy.getIdentifier());
+		if (policy != null)
+			throw new BusinessException(
+					BusinessErrorCode.DOMAIN_POLICY_ALREADY_EXISTS,
+					"Domain policy with identifier : "
+							+ domainPolicy.getIdentifier() + " already exists.");
 		return domainPolicyBusinessService.create(domainPolicy);
 	}
 
