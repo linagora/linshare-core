@@ -35,13 +35,17 @@ package org.linagora.linshare.core.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.NamingException;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -81,6 +85,11 @@ public class UserProviderServiceImpl implements UserProviderService {
 			throws BusinessException {
 		Validate.notEmpty(domainPattern.getIdentifier(),
 				"domain pattern identifier must be set.");
+		Collection<LdapAttribute> collection = domainPattern.getAttributes().values();
+		for (LdapAttribute e : collection) {
+			if (e.getAttribute() == null)
+				throw new BusinessException(BusinessErrorCode.LDAP_ATTRIBUTE_CONTAINS_NULL, "Attribute must be not null");
+		}
 		if (!LsIdValidator.isValid(domainPattern.getIdentifier())) {
 			throw new BusinessException(BusinessErrorCode.LDAP_CONNECTION_ID_BAD_FORMAT,
 					"This new domain pattern identifier should only contains the following characters : "
@@ -146,7 +155,6 @@ public class UserProviderServiceImpl implements UserProviderService {
 			throw new BusinessException(BusinessErrorCode.LDAP_CONNECTION_STILL_IN_USE,
 					"Cannot delete connection because still used by domains");
 		}
-
 		LDAPConnection conn = retrieveLDAPConnection(connectionToDelete);
 		if (conn == null) {
 			logger.error("Ldap connexion not found: " + connectionToDelete);
