@@ -112,9 +112,8 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		return threadEntryFacade.create(threadUuid, theFile, fileName);
 	}
 
-	@Path("/copy")
+	@Path("/copy/{entryUuid}")
 	@POST
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@ApiOperation(value = "Create a thread entry which will contain the uploaded file.", response = ThreadEntryDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 					@ApiResponse(code = 404, message = "Owner not found."),
