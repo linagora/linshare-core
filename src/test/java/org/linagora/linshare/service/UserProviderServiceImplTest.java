@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.After;
@@ -108,7 +109,10 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 	public void testCreateDomainPattern() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		DomainPattern domainPattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", null);
+		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
+		Map<String, LdapAttribute> attributeList = new HashMap<>();
+			attributeList.put("first", attribute);
+		DomainPattern domainPattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
 		try {
 			userProviderService.createDomainPattern(domainPattern);
 		} catch (BusinessException e) {
@@ -117,7 +121,6 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		}
 		logger.debug("Current pattern object: " + domainPattern.toString());
 		logger.debug(LinShareTestConstants.END_TEST);
-
 	}
 	
 	@Test
@@ -148,8 +151,10 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 	public void testCreateDeleteDomainPattern() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		
-		DomainPattern domainPattern = new DomainPattern(identifierP +"2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", null);
+		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
+		Map<String, LdapAttribute> attributeList = new HashMap<>();
+			attributeList.put("first", attribute);
+		DomainPattern domainPattern = new DomainPattern(identifierP +"2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
 		try {
 			userProviderService.createDomainPattern(domainPattern);
 		} catch (BusinessException e) {

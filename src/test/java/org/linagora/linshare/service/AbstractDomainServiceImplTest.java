@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -43,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.TopDomain;
@@ -104,6 +108,9 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		ldapconnexion  = new LDAPConnection(identifier, providerUrl, securityAuth);
+		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
+		Map<String, LdapAttribute> attributeList = new HashMap<>();
+			attributeList.put("first", attribute);
 		try {
 			userProviderService.createLDAPConnection(ldapconnexion);
 		} catch (BusinessException e) {
@@ -111,7 +118,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		}
 		logger.debug("Current ldapconnexion object: " + ldapconnexion.toString());
 		
-		domainPattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", null);
+		domainPattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
 		try {
 			userProviderService.createDomainPattern(domainPattern);
 		} catch (BusinessException e) {
