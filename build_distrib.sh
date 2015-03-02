@@ -152,9 +152,24 @@ function build_sso ()
 	mv ${g_ressources}/{,DISABLED}springContext-securityLLNG.xml
 }
 
+function build_doc ()
+{
+    local linshare_output=generated-userv2
+    local linshare_source=documentation-webservice-api-user-${g_version}
+    local linshare_archive=documentation-webservice-api-user-${g_version}.tar.bz2
+    # Creation de la version avec SSO
+    maven_clean
+    rm -fr ${linshare_output}
+    echo_linshare "Building documentation ..."
+    maven compile -Pswagger-userv2
+    echo_linshare "Archive creation in progress : ${linshare_archive}"
+    mv -v ${linshare_output} ${linshare_source}
+    tar cjvf ${linshare_archive} ${linshare_source}
+    echo_linshare "Done."
+}
+
 function build_source ()
 {
-	local linshare_soure=linshare-core-src
 	local linshare_archive=linshare-core-${g_version}-src.tar
 
 	echo_linshare "Archive creation in progress : ${linshare_archive}"
@@ -175,7 +190,7 @@ function test_linshare ()
 usage()
 {
 	echo
-	echo "Usage : $g_main_function is not a valid function : possible choices are : classic , installer , cas , sso , source, all"
+	echo "Usage : $g_main_function is not a valid function : possible choices are : classic , installer , cas , sso , source, doc, all"
 	echo " command target"
 	exit 0
 }
@@ -207,6 +222,9 @@ if [ "${g_main_function}" == "all" ] ; then
 
 	# Creation de la version avec SSO
 	build_sso
+
+    # Creation de la documentation
+    build_doc
 
 	# Creation de l'archive des sources
 	build_source
