@@ -58,6 +58,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
+import org.linagora.linshare.core.service.LdapConnectionService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
@@ -71,6 +72,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final UserProviderService userProviderService;
 
+	private final LdapConnectionService ldapConnectionService;
+
 	private final DomainPolicyService domainPolicyService;
 
 	private final UserAndDomainMultiService userAndDomainMultiService;
@@ -81,14 +84,16 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			final AbstractDomainService abstractDomainService,
 			final UserProviderService userProviderService,
 			final DomainPolicyService domainPolicyService,
-			final UserAndDomainMultiService userAndDomainMultiService,
-			final WelcomeMessagesService welcomeMessagesService) {
+			final WelcomeMessagesService welcomeMessagesService,
+			final LdapConnectionService ldapConnectionService,
+			final UserAndDomainMultiService userAndDomainMultiService) {
 		super(accountService);
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
 		this.domainPolicyService = domainPolicyService;
 		this.userAndDomainMultiService = userAndDomainMultiService;
 		this.welcomeMessagesService = welcomeMessagesService;
+		this.ldapConnectionService = ldapConnectionService;
 	}
 
 	@Override
@@ -219,8 +224,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			Validate.notEmpty(ldapConnectionId,
 					"ldap connection identifier must be set.");
 
-			LdapConnection ldapConnection = userProviderService
-					.retrieveLDAPConnection(ldapConnectionId);
+			LdapConnection ldapConnection = ldapConnectionService
+					.find(ldapConnectionId);
 			UserLdapPattern domainPattern = userProviderService
 					.retrieveDomainPattern(domainPatternId);
 			domain.setUserProvider(new LdapUserProvider(baseDn, ldapConnection,

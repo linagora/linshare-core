@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.LdapConnectionService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -69,8 +70,10 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 	private static String identifierP= "ID_PARAM_DE_TEST2";
 	private static String providerUrl= "ldap://10.75.113.53:389";
 	private static String securityAuth= "simple";
-	
-	
+
+	@Autowired
+	private LdapConnectionService ldapConnectionService;
+
 	@Autowired
 	private UserProviderService userProviderService;
 	
@@ -93,7 +96,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		
 		LdapConnection ldapconnexion  = new LdapConnection(identifier, providerUrl, securityAuth);
 		try {
-			userProviderService.createLDAPConnection(ldapconnexion);
+			ldapConnectionService.create(ldapconnexion);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't create connection.");
@@ -130,7 +133,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 
 		LdapConnection ldapconnexion  = new LdapConnection(identifier +"2", providerUrl, securityAuth);
 		try {
-			userProviderService.createLDAPConnection(ldapconnexion);
+			ldapConnectionService.create(ldapconnexion);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't create connection.");
@@ -139,7 +142,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		
 		
 		try {
-			userProviderService.deleteConnection(ldapconnexion.getUuid());
+			ldapConnectionService.delete(ldapconnexion.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't delete connection.");

@@ -42,10 +42,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
-import org.linagora.linshare.core.domain.entities.LdapPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
-import org.linagora.linshare.core.domain.entities.LdapConnection;
-import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
@@ -54,10 +51,9 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
-import org.linagora.linshare.core.repository.LDAPConnectionRepository;
+import org.linagora.linshare.core.repository.LdapConnectionRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
@@ -91,7 +87,7 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 	private DomainAccessPolicyRepository domainAccessRepository;
 
 	@Autowired
-	private LDAPConnectionRepository ldapConnectionRepository;
+	private LdapConnectionRepository ldapConnectionRepository;
 
 	@Autowired
 	private DomainPatternRepository domainPatternRepository;

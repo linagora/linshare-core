@@ -41,25 +41,27 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.LDAPConnectionFacade;
+import org.linagora.linshare.core.facade.webservice.admin.LdapConnectionFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPConnectionDto;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.core.service.LdapConnectionService;
 
-public class LDAPConnectionFacadeImpl extends AdminGenericFacadeImpl implements LDAPConnectionFacade {
+public class LdapConnectionFacadeImpl extends AdminGenericFacadeImpl implements LdapConnectionFacade {
 
-	private final UserProviderService userProviderService;
+	private final LdapConnectionService ldapConnectionService;
 
-	public LDAPConnectionFacadeImpl(final AccountService accountService, final UserProviderService userProviderService) {
+	public LdapConnectionFacadeImpl(
+			final AccountService accountService,
+			final LdapConnectionService ldapConnectionService) {
 		super(accountService);
-		this.userProviderService = userProviderService;
+		this.ldapConnectionService = ldapConnectionService;
 	}
 
 	@Override
 	public Set<LDAPConnectionDto> findAll() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		Set<LDAPConnectionDto> ldapConnectionsDto = new HashSet<LDAPConnectionDto>();
-		List<LdapConnection> ldapConnections = userProviderService.findAllLDAPConnections();
+		List<LdapConnection> ldapConnections = ldapConnectionService.findAll();
 		for (LdapConnection ldapConnection : ldapConnections) {
 			ldapConnectionsDto.add(new LDAPConnectionDto(ldapConnection));
 		}
@@ -70,24 +72,24 @@ public class LDAPConnectionFacadeImpl extends AdminGenericFacadeImpl implements 
 	public LDAPConnectionDto find(String id) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(id, "ldap connection id must be set.");
-		return new LDAPConnectionDto(userProviderService.findLDAPConnection(id));
+		return new LDAPConnectionDto(ldapConnectionService.find(id));
 	}
 
 	@Override
 	public LDAPConnectionDto update(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		return new LDAPConnectionDto(userProviderService.updateLDAPConnection(new LdapConnection(ldapConnectionDto)));
+		return new LDAPConnectionDto(ldapConnectionService.update(new LdapConnection(ldapConnectionDto)));
 	}
 
 	@Override
 	public LDAPConnectionDto create(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		return new LDAPConnectionDto(userProviderService.createLDAPConnection(new LdapConnection(ldapConnectionDto)));
+		return new LDAPConnectionDto(ldapConnectionService.create(new LdapConnection(ldapConnectionDto)));
 	}
 
 	@Override
 	public void delete(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		userProviderService.deleteConnection(ldapConnectionDto.getIdentifier());
+		ldapConnectionService.delete(ldapConnectionDto.getIdentifier());
 	}
 }

@@ -49,7 +49,6 @@ import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
-import org.linagora.linshare.core.repository.LDAPConnectionRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.linagora.linshare.core.service.LDAPQueryService;
 import org.linagora.linshare.core.service.UserProviderService;
@@ -61,17 +60,16 @@ public class UserProviderServiceImpl implements UserProviderService {
 	private static final Logger logger = LoggerFactory
 			.getLogger(UserProviderServiceImpl.class);
 
-	private final LDAPConnectionRepository ldapConnectionRepository;
 	private final DomainPatternRepository domainPatternRepository;
+
 	private final LDAPQueryService ldapQueryService;
+
 	private final UserProviderRepository userProviderRepository;
 
 	public UserProviderServiceImpl(
-			LDAPConnectionRepository ldapConnectionRepository,
 			DomainPatternRepository domainPatternRepository,
 			LDAPQueryService ldapQueryService,
 			UserProviderRepository userProviderRepository) {
-		this.ldapConnectionRepository = ldapConnectionRepository;
 		this.domainPatternRepository = domainPatternRepository;
 		this.ldapQueryService = ldapQueryService;
 		this.userProviderRepository = userProviderRepository;
@@ -86,11 +84,15 @@ public class UserProviderServiceImpl implements UserProviderService {
 		Validate.notEmpty(domainPattern.getAuthCommand());
 		Validate.notEmpty(domainPattern.getSearchUserCommand());
 		Validate.notEmpty(domainPattern.getAutoCompleteCommandOnAllAttributes());
-		Validate.notEmpty(domainPattern.getAutoCompleteCommandOnFirstAndLastName());
-		Collection<LdapAttribute> collection = domainPattern.getAttributes().values();
+		Validate.notEmpty(domainPattern
+				.getAutoCompleteCommandOnFirstAndLastName());
+		Collection<LdapAttribute> collection = domainPattern.getAttributes()
+				.values();
 		for (LdapAttribute e : collection) {
 			if (e.getAttribute() == null)
-				throw new BusinessException(BusinessErrorCode.LDAP_ATTRIBUTE_CONTAINS_NULL, "Attribute must be not null");
+				throw new BusinessException(
+						BusinessErrorCode.LDAP_ATTRIBUTE_CONTAINS_NULL,
+						"Attribute must be not null");
 		}
 		if (domainPatternRepository.findById(domainPattern.getUuid()) != null) {
 			throw new BusinessException(
@@ -103,65 +105,15 @@ public class UserProviderServiceImpl implements UserProviderService {
 	}
 
 	@Override
-	public LdapConnection createLDAPConnection(LdapConnection ldapConnection)
-			throws BusinessException {
-		Validate.notEmpty(ldapConnection.getLabel(),
-				"ldap connection label must be set.");
-		LdapConnection createdLDAPConnection = ldapConnectionRepository
-				.create(ldapConnection);
-		return createdLDAPConnection;
-	}
-
-	@Override
-	public LdapConnection retrieveLDAPConnection(String identifier)
-			throws BusinessException {
-		LdapConnection connection = ldapConnectionRepository.findById(identifier);
-		if (connection == null) {
-			throw new BusinessException(BusinessErrorCode.LDAP_CONNECTION_NOT_FOUND,
-					"ldap connexion identifier no found.");
-		}
-		return connection;
-	}
-
-	@Override
 	public UserLdapPattern retrieveDomainPattern(String identifier)
 			throws BusinessException {
 		UserLdapPattern pattern = domainPatternRepository.findById(identifier);
 		if (pattern == null) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND,
+			throw new BusinessException(
+					BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND,
 					"Domain pattern identifier no found.");
 		}
 		return pattern;
-	}
-
-	@Override
-	public void deleteConnection(String connectionToDelete)
-			throws BusinessException {
-		if (!connectionIsDeletable(connectionToDelete)) {
-			throw new BusinessException(BusinessErrorCode.LDAP_CONNECTION_STILL_IN_USE,
-					"Cannot delete connection because still used by domains");
-		}
-		LdapConnection conn = retrieveLDAPConnection(connectionToDelete);
-		if (conn == null) {
-			logger.error("Ldap connexion not found: " + connectionToDelete);
-		} else {
-			logger.debug("delete ldap connexion : " + connectionToDelete);
-			ldapConnectionRepository.delete(conn);
-		}
-	}
-
-	@Override
-	public boolean connectionIsDeletable(String connectionToDelete) {
-		List<LdapUserProvider> list = userProviderRepository.findAll();
-		boolean used = false;
-		for (LdapUserProvider ldapUserProvider : list) {
-			if (ldapUserProvider.getLdapConnection().getUuid()
-					.equals(connectionToDelete)) {
-				used = true;
-				break;
-			}
-		}
-		return (!used);
 	}
 
 	@Override
@@ -180,8 +132,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 		List<LdapUserProvider> list = userProviderRepository.findAll();
 		boolean used = false;
 		for (LdapUserProvider ldapUserProvider : list) {
-			if (ldapUserProvider.getPattern().getUuid()
-					.equals(patternToDelete)) {
+			if (ldapUserProvider.getPattern().getUuid().equals(patternToDelete)) {
 				used = true;
 				break;
 			}
@@ -195,7 +146,8 @@ public class UserProviderServiceImpl implements UserProviderService {
 	}
 
 	@Override
-	public UserLdapPattern findDomainPattern(String id) throws BusinessException {
+	public UserLdapPattern findDomainPattern(String id)
+			throws BusinessException {
 		Validate.notEmpty(id, "Domain pattern identifier must be set.");
 		UserLdapPattern pattern = domainPatternRepository.findById(id);
 		if (pattern == null)
@@ -218,44 +170,14 @@ public class UserProviderServiceImpl implements UserProviderService {
 	}
 
 	@Override
-	public List<LdapConnection> findAllLDAPConnections()
-			throws BusinessException {
-		return ldapConnectionRepository.findAll();
-	}
-
-	@Override
-	public LdapConnection findLDAPConnection(String id) throws BusinessException {
-		Validate.notEmpty(id, "Ldap connection identifier must be set.");
-		LdapConnection connection = ldapConnectionRepository.findById(id);
-		if (connection == null)
-			throw new BusinessException(
-					BusinessErrorCode.LDAP_CONNECTION_NOT_FOUND,
-					"Can not found ldap connection with identifier: " + id + ".");
-		return connection;
-	}
-
-	@Override
-	public LdapConnection updateLDAPConnection(LdapConnection ldapConnection)
-			throws BusinessException {
-		LdapConnection ldapConn = ldapConnectionRepository
-				.findById(ldapConnection.getUuid());
-		if (ldapConn == null) {
-			throw new BusinessException(BusinessErrorCode.LDAP_CONNECTION_NOT_FOUND, "no such ldap connection");
-		}
-		ldapConn.setProviderUrl(ldapConnection.getProviderUrl());
-		ldapConn.setSecurityAuth(ldapConnection.getSecurityAuth());
-		ldapConn.setSecurityCredentials(ldapConnection.getSecurityCredentials());
-		ldapConn.setSecurityPrincipal(ldapConnection.getSecurityPrincipal());
-		return ldapConnectionRepository.update(ldapConn);
-	}
-
-	@Override
 	public UserLdapPattern updateDomainPattern(UserLdapPattern domainPattern)
 			throws BusinessException {
-		UserLdapPattern pattern = domainPatternRepository.findById(domainPattern
-				.getUuid());
+		UserLdapPattern pattern = domainPatternRepository
+				.findById(domainPattern.getUuid());
 		if (pattern == null) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND, "no such domain pattern");
+			throw new BusinessException(
+					BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND,
+					"no such domain pattern");
 		}
 		pattern.setDescription(domainPattern.getDescription());
 		pattern.setAuthCommand(domainPattern.getAuthCommand());
@@ -334,9 +256,9 @@ public class UserProviderServiceImpl implements UserProviderService {
 			String firstName, String lastName) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 		try {
-			users = ldapQueryService.searchUser(userProvider.getLdapConnection(),
-					userProvider.getBaseDn(), userProvider.getPattern(), mail,
-					firstName, lastName);
+			users = ldapQueryService.searchUser(
+					userProvider.getLdapConnection(), userProvider.getBaseDn(),
+					userProvider.getPattern(), mail, firstName, lastName);
 		} catch (NamingException e) {
 			throwError(userProvider.getLdapConnection(), e);
 		} catch (IOException e) {
@@ -352,8 +274,9 @@ public class UserProviderServiceImpl implements UserProviderService {
 			String pattern) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 		try {
-			users = ldapQueryService.completeUser(userProvider.getLdapConnection(),
-					userProvider.getBaseDn(), userProvider.getPattern(), pattern);
+			users = ldapQueryService.completeUser(
+					userProvider.getLdapConnection(), userProvider.getBaseDn(),
+					userProvider.getPattern(), pattern);
 		} catch (NamingException e) {
 			throwError(userProvider.getLdapConnection(), e);
 		} catch (IOException e) {
@@ -369,9 +292,9 @@ public class UserProviderServiceImpl implements UserProviderService {
 			String firstName, String lastName) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 		try {
-			users = ldapQueryService.completeUser(userProvider.getLdapConnection(),
-				userProvider.getBaseDn(), userProvider.getPattern(), firstName,
-				lastName);
+			users = ldapQueryService.completeUser(
+					userProvider.getLdapConnection(), userProvider.getBaseDn(),
+					userProvider.getPattern(), firstName, lastName);
 		} catch (NamingException e) {
 			throwError(userProvider.getLdapConnection(), e);
 		} catch (IOException e) {
@@ -387,8 +310,9 @@ public class UserProviderServiceImpl implements UserProviderService {
 			throws BusinessException {
 		Boolean result = false;
 		try {
-			result = ldapQueryService.isUserExist(userProvider.getLdapConnection(),
-					userProvider.getBaseDn(), userProvider.getPattern(), mail);
+			result = ldapQueryService.isUserExist(
+					userProvider.getLdapConnection(), userProvider.getBaseDn(),
+					userProvider.getPattern(), mail);
 		} catch (NamingException e) {
 			throwError(userProvider.getLdapConnection(), e);
 		} catch (IOException e) {
@@ -441,52 +365,14 @@ public class UserProviderServiceImpl implements UserProviderService {
 		return user;
 	}
 
-	private void throwError(LdapConnection ldap, Exception e) throws BusinessException {
+	private void throwError(LdapConnection ldap, Exception e)
+			throws BusinessException {
 		logger.error(
 				"Error while searching for a user with ldap connection {}",
 				ldap.getUuid());
 		logger.error(e.getMessage());
 		logger.debug(e.toString());
-		throw new BusinessException(
-				BusinessErrorCode.DIRECTORY_UNAVAILABLE,
+		throw new BusinessException(BusinessErrorCode.DIRECTORY_UNAVAILABLE,
 				"Couldn't connect to the directory.");
-	}
-
-	@Override
-	public List<String> findAllDomainPatternIdentifiers() {
-		List<String> list = new ArrayList<String>();
-		for (UserLdapPattern d : domainPatternRepository.findAll()) {
-			list.add(d.getUuid());
-		}
-		return list;
-	}
-
-	@Override
-	public List<String> findAllUserDomainPatternIdentifiers() {
-		List<String> list = new ArrayList<String>();
-		for (UserLdapPattern d : domainPatternRepository
-				.findAllUserDomainPattern()) {
-			list.add(d.getUuid());
-		}
-		return list;
-	}
-
-	@Override
-	public List<String> findAllSystemDomainPatternIdentifiers() {
-		List<String> list = new ArrayList<String>();
-		for (UserLdapPattern d : domainPatternRepository
-				.findAllSystemDomainPattern()) {
-			list.add(d.getUuid());
-		}
-		return list;
-	}
-
-	@Override
-	public List<String> findAllLDAPConnectionIdentifiers() {
-		List<String> list = new ArrayList<String>();
-		for (LdapConnection c : ldapConnectionRepository.findAll()) {
-			list.add(c.getUuid());
-		}
-		return list;
 	}
 }

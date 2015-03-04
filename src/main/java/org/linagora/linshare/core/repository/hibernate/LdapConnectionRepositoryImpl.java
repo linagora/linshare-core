@@ -38,17 +38,20 @@ import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.LDAPConnectionRepository;
+import org.linagora.linshare.core.repository.LdapConnectionRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class LDAPConnectionRepositoryImpl extends
+public class LdapConnectionRepositoryImpl extends
 		AbstractRepositoryImpl<LdapConnection> implements
-		LDAPConnectionRepository {
+		LdapConnectionRepository {
 
-	public LDAPConnectionRepositoryImpl(HibernateTemplate hibernateTemplate) {
+	public LdapConnectionRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
 
@@ -70,20 +73,30 @@ public class LDAPConnectionRepositoryImpl extends
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(LdapConnection entity) {
-		DetachedCriteria det = DetachedCriteria.forClass( LdapConnection.class )
-		.add(Restrictions.eq( "uuid", entity.getUuid() ) );
+		DetachedCriteria det = DetachedCriteria.forClass(LdapConnection.class)
+				.add(Restrictions.eq("uuid", entity.getUuid()));
 		return det;
 	}
 
-	public LdapConnection findById(String identifier) {
-		List<LdapConnection> conns = findByCriteria(Restrictions.eq("uuid", identifier));
-		
+	@Override
+	public boolean isUsed(LdapConnection ldapConnection) {
+		DetachedCriteria det = DetachedCriteria
+				.forClass(LdapUserProvider.class);
+		det.add(Restrictions.eq("ldapConnection", ldapConnection));
+		det.setProjection(Projections.rowCount());
+		return DataAccessUtils.longResult(findByCriteria(det)) > 0;
+	}
+
+	@Override
+	public LdapConnection findByUuid(String uuid) {
+		List<LdapConnection> conns = findByCriteria(Restrictions.eq("uuid",
+				uuid));
 		if (conns == null || conns.isEmpty()) {
 			return null;
 		} else if (conns.size() == 1) {
 			return conns.get(0);
 		} else {
-			throw new IllegalStateException("Id must be unique");
+			throw new IllegalStateException("Uuid must be unique");
 		}
 	}
 

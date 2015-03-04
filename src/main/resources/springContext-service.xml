@@ -189,10 +189,13 @@
 	</bean>
 
 	<bean name="userProviderService" class="org.linagora.linshare.core.service.impl.UserProviderServiceImpl">
-		<constructor-arg ref="userProviderRepository" />
 		<constructor-arg ref="domainPatternRepository" />
-		<constructor-arg ref="ldapConnectionRepository" />
 		<constructor-arg ref="ldapQueryService" />
+		<constructor-arg ref="userProviderRepository" />
+	</bean>
+
+	<bean name="ldapConnectionService" class="org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl">
+		<constructor-arg ref="ldapConnectionRepository" />
 	</bean>
 
 	<bean name="functionalityService" class="org.linagora.linshare.core.service.impl.FunctionalityServiceImpl">

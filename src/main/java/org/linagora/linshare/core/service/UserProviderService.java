@@ -35,17 +35,13 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.UserLdapPattern;
-import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UserProviderService {
 
-	public List<String> findAllDomainPatternIdentifiers();
-	public List<String> findAllUserDomainPatternIdentifiers();
-	public List<String> findAllSystemDomainPatternIdentifiers();
 	public List<UserLdapPattern> findAllDomainPattern() throws BusinessException;
 	public UserLdapPattern findDomainPattern(String id) throws BusinessException;
 	public List<UserLdapPattern> findAllUserDomainPattern() throws BusinessException;
@@ -54,14 +50,6 @@ public interface UserProviderService {
 	public UserLdapPattern retrieveDomainPattern(String identifier) throws BusinessException;
 	public UserLdapPattern updateDomainPattern(UserLdapPattern domainPattern) throws BusinessException;
 	public void deletePattern(String patternToDelete) throws BusinessException;
-
-	public List<String> findAllLDAPConnectionIdentifiers();
-	public List<LdapConnection> findAllLDAPConnections() throws BusinessException;
-	public LdapConnection findLDAPConnection(String id) throws BusinessException;
-	public LdapConnection createLDAPConnection(LdapConnection ldapConnection) throws BusinessException;
-	public LdapConnection retrieveLDAPConnection(String identifier) throws BusinessException;
-	public LdapConnection updateLDAPConnection(LdapConnection ldapConnection) throws BusinessException;
-	public void deleteConnection(String connectionToDelete) throws BusinessException;
 
 	public void create(LdapUserProvider userProvider) throws BusinessException;
 	public void delete(LdapUserProvider userProvider) throws BusinessException;
@@ -79,5 +67,4 @@ public interface UserProviderService {
 	public User searchForAuth(LdapUserProvider userProvider, String login) throws BusinessException;
 
 	public boolean patternIsDeletable(String patternToDelete);
-	public boolean connectionIsDeletable(String connectionToDelete);
 }

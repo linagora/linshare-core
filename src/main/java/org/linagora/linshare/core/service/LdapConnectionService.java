@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2014 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2014. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,22 +31,29 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.admin;
+package org.linagora.linshare.core.service;
 
-import java.util.Set;
+import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPConnectionDto;
 
-public interface LDAPConnectionFacade extends AdminGenericFacade {
+public interface LdapConnectionService {
 
-	Set<LDAPConnectionDto> findAll() throws BusinessException;
+	public LdapConnection create(LdapConnection ldapConnection)
+			throws BusinessException;
 
-	LDAPConnectionDto find(String id) throws BusinessException;
+	public List<LdapConnection> findAll()
+			throws BusinessException;
 
-	LDAPConnectionDto update(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
+	public LdapConnection find(String uuid)
+			throws BusinessException;
 
-	LDAPConnectionDto create(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
+	public LdapConnection update(LdapConnection ldapConnection)
+			throws BusinessException;
 
-	void delete(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
+	public void delete(String uuid)
+			throws BusinessException;
+
+	public boolean isUsed(String uuid);
 }

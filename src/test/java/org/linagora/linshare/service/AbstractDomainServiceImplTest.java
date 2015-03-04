@@ -52,10 +52,12 @@ import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.LdapConnectionService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
 import org.slf4j.Logger;
@@ -77,25 +79,26 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-test.xml"
 		})
 public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
-	
+
 	private static Logger logger = LoggerFactory.getLogger(AbstractDomainServiceImplTest.class);
 
-	
 	public static String topDomaineName = "TEST_ADST_Domain_0_1";
-	
+
 	private static String baseDn = "dc=nodomain,dc=com";
 	private static String identifier= "ID_ADST_LDAP_DE_TEST";
-	private static String identifierP= "ID_ADST_PARAM_DE_TEST";
-	private static String providerUrl= "ldap://10.75.113.53:389";
-	private static String securityAuth= "simple";
-	
-	
+	private static String identifierP = "ID_ADST_PARAM_DE_TEST";
+	private static String providerUrl = "ldap://10.75.113.53:389";
+	private static String securityAuth = "simple";
+
 	@Autowired
 	private AbstractDomainService abstractDomainService;
-	
+
 	@Autowired
 	private UserProviderService userProviderService;
-	
+
+	@Autowired
+	private LdapConnectionService ldapConnectionService;
+
 	@Autowired
 	private AccountService accountService;
 
@@ -106,7 +109,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	private DomainPolicyRepository domainPolicyRepository;
 
 	private LdapConnection ldapconnexion;
-	
+
 	private UserLdapPattern domainPattern;
 
 	private WelcomeMessages current;
@@ -119,7 +122,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
 			attributeList.put("first", attribute);
 		try {
-			ldapconnexion = userProviderService.createLDAPConnection(ldapconnexion);
+			ldapconnexion = ldapConnectionService.create(ldapconnexion);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 		}

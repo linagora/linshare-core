@@ -31,12 +31,22 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.core.facade.webservice.admin;
 
-import org.linagora.linshare.core.domain.entities.LdapConnection;
+import java.util.Set;
 
-public interface LDAPConnectionRepository extends AbstractRepository<LdapConnection> {
-	
-	public LdapConnection findById(String identifier);
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPConnectionDto;
 
+public interface LdapConnectionFacade extends AdminGenericFacade {
+
+	Set<LDAPConnectionDto> findAll() throws BusinessException;
+
+	LDAPConnectionDto find(String id) throws BusinessException;
+
+	LDAPConnectionDto update(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
+
+	LDAPConnectionDto create(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
+
+	void delete(LDAPConnectionDto LDAPConnectionDto) throws BusinessException;
 }

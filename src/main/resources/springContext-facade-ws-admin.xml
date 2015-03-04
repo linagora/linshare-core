@@ -28,6 +28,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="userProviderService" />
+		<constructor-arg ref="ldapConnectionService" />
 		<constructor-arg ref="domainPolicyService" />
 		<constructor-arg ref="userAndDomainMultiService" />
 		<constructor-arg ref="welcomeMessagesService" />
@@ -48,9 +49,9 @@
 		<constructor-arg ref="accountService" />
 	</bean>
 	<bean id="wsAdminLDAPConnectionFacade"
-		class="org.linagora.linshare.core.facade.webservice.admin.impl.LDAPConnectionFacadeImpl">
+		class="org.linagora.linshare.core.facade.webservice.admin.impl.LdapConnectionFacadeImpl">
 		<constructor-arg ref="accountService" />
-		<constructor-arg ref="userProviderService" />
+		<constructor-arg ref="ldapConnectionService" />
 	</bean>
 	<bean id="wsAdminThreadFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.ThreadFacadeImpl">

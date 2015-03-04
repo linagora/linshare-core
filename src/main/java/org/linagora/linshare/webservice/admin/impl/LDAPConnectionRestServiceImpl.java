@@ -46,7 +46,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.LDAPConnectionFacade;
+import org.linagora.linshare.core.facade.webservice.admin.LdapConnectionFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPConnectionDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.LDAPConnectionRestService;
@@ -63,10 +63,10 @@ import com.wordnik.swagger.annotations.ApiResponses;
 public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 		LDAPConnectionRestService {
 
-	private final LDAPConnectionFacade ldapConnectionFacade;
+	private final LdapConnectionFacade ldapConnectionFacade;
 
 	public LDAPConnectionRestServiceImpl(
-			final LDAPConnectionFacade ldapConnectionFacade) {
+			final LdapConnectionFacade ldapConnectionFacade) {
 		this.ldapConnectionFacade = ldapConnectionFacade;
 	}
 
