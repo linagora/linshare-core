@@ -1,5 +1,5 @@
 /*
- * LinShare is an open source filesharing software, part of the LinPKI software
+ * LinShbjectare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
  * Copyright (C) 2014 LINAGORA
@@ -130,5 +130,24 @@ public class TechnicalAccountDto extends AccountDto {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	/**
+	 * Helper
+	 */
+	public static TechnicalAccount toObject(TechnicalAccountDto dto) {
+		TechnicalAccount object = new TechnicalAccount();
+		object.setLastName(dto.getName());
+		object.setLsUuid(dto.getUuid());
+		object.setMail(dto.getMail());
+		object.setEnable(dto.isEnable());
+		List<String> permissions = dto.getPermissions();
+		if (permissions != null) {
+			object.setPermission(new TechnicalAccountPermission());
+			for (String perm : permissions) {
+				object.getPermission().addPermission(perm);
+			}
+		}
+		return object;
 	}
 }

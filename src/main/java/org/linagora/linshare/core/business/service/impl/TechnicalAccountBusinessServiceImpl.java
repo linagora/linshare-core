@@ -39,10 +39,11 @@ import java.util.Set;
 import org.linagora.linshare.core.business.service.TechnicalAccountBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
-import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.TechnicalAccountRepository;
+import org.linagora.linshare.core.service.PasswordService;
+import org.linagora.linshare.core.utils.HashUtils;
 
 import com.google.common.collect.Sets;
 
@@ -53,12 +54,16 @@ public class TechnicalAccountBusinessServiceImpl implements
 
 	private final TechnicalAccountRepository technicalAccountRepository;
 
+	private final PasswordService passwordService;
+
 	public TechnicalAccountBusinessServiceImpl(
 			AbstractDomainRepository abstractDomainRepository,
-			TechnicalAccountRepository technicalAccountRepository) {
+			TechnicalAccountRepository technicalAccountRepository,
+			PasswordService passwordService) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.technicalAccountRepository = technicalAccountRepository;
+		this.passwordService = passwordService;
 	}
 
 	@Override
@@ -79,6 +84,8 @@ public class TechnicalAccountBusinessServiceImpl implements
 	public TechnicalAccount create(String domainId, TechnicalAccount account)
 			throws BusinessException {
 		AbstractDomain domain = abstractDomainRepository.findById(domainId);
+		account.setPassword(HashUtils.hashSha1withBase64(account.getPassword()
+				.getBytes()));
 		return this.create(domain, account);
 	}
 
@@ -86,7 +93,6 @@ public class TechnicalAccountBusinessServiceImpl implements
 	public TechnicalAccount create(AbstractDomain domain,
 			TechnicalAccount account) throws BusinessException {
 		account.setDomain(domain);
-		account.setPermission(new TechnicalAccountPermission());
 		return technicalAccountRepository.create(account);
 	}
 

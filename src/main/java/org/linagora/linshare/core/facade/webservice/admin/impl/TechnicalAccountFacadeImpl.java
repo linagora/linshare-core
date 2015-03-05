@@ -67,8 +67,8 @@ public class TechnicalAccountFacadeImpl extends AdminGenericFacadeImpl
 		Validate.notEmpty(dto.getName(), "name must be set.");
 		Validate.notEmpty(dto.getMail(), "mail must be set.");
 		TechnicalAccount technicalAccount = new TechnicalAccount(dto);
-		return new TechnicalAccountDto(technicalAccountService.create(actor,
-				technicalAccount));
+		TechnicalAccount create = technicalAccountService.create(actor, technicalAccount);
+		return new TechnicalAccountDto(create);
 	}
 
 	@Override
@@ -82,6 +82,7 @@ public class TechnicalAccountFacadeImpl extends AdminGenericFacadeImpl
 	@Override
 	public void delete(TechnicalAccountDto dto) throws BusinessException {
 		User actor = checkAuth();
+		Validate.notNull(dto, "dto must be set.");
 		Validate.notEmpty(dto.getUuid(), "uuid must be set.");
 		TechnicalAccount account = technicalAccountService.find(actor, dto.getUuid());
 		technicalAccountService.delete(actor, account);
@@ -110,11 +111,12 @@ public class TechnicalAccountFacadeImpl extends AdminGenericFacadeImpl
 	public TechnicalAccountDto update(TechnicalAccountDto dto)
 			throws BusinessException {
 		User actor = checkAuth();
+		Validate.notNull(dto, "dto must be set.");
 		Validate.notEmpty(dto.getUuid(), "uuid must be set.");
 		Validate.notEmpty(dto.getName(), "name must be set.");
 		Validate.notEmpty(dto.getMail(), "mail must be set.");
 		TechnicalAccount account = technicalAccountService.update(actor,
-				new TechnicalAccount(dto));
+				TechnicalAccountDto.toObject(dto));
 		return new TechnicalAccountDto(account);
 	}
 

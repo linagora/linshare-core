@@ -132,4 +132,9 @@ public class TechnicalAccountPermission {
 	public void addPermission(String permission) {
 		this.accountPermissions.add(new AccountPermission(permission));
 	}
+
+	@Override
+	public String toString() {
+		return "TechnicalAccountPermission [id=" + id + ", uuid=" + uuid + "]";
+	}
 }

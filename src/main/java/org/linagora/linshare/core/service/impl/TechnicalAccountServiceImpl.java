@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.TechnicalAccountBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -44,7 +45,6 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.TechnicalAccountPermissionService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
 import org.linagora.linshare.core.utils.HashUtils;
@@ -55,21 +55,24 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 
 	private final TechnicalAccountPermissionService technicalAccountPermissionService;
 
-	private final AccountService accountService;
-
 	public TechnicalAccountServiceImpl(
 			final TechnicalAccountBusinessService technicalAccountBusinessService,
-			final AccountService accountService,
 			final TechnicalAccountPermissionService technicalAccountPermissionService) {
 		super();
 		this.technicalAccountBusinessService = technicalAccountBusinessService;
-		this.accountService = accountService;
 		this.technicalAccountPermissionService = technicalAccountPermissionService;
 	}
 
 	@Override
 	public TechnicalAccount create(Account actor, TechnicalAccount account) throws BusinessException {
+		Validate.notNull(actor, "name must be set.");
+		Validate.notNull(account, "name must be set.");
+		Validate.notEmpty(account.getLastName(), "last name must be set.");
+		Validate.notEmpty(account.getMail(), "mail must be set.");
+		Validate.notEmpty(account.getMail(), "mail must be set.");
 		// TODO : check rights, log actions.
+		// Check role : only uploadprop or delegation
+		// mail unicity ?
 		TechnicalAccountPermission accountPermission = technicalAccountPermissionService.create(actor, new TechnicalAccountPermission());
 		account.setPermission(accountPermission);
 		return technicalAccountBusinessService.create(LinShareConstants.rootDomainIdentifier, account);
@@ -79,8 +82,13 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 	public void delete(Account actor, TechnicalAccount account)
 			throws BusinessException {
 		// TODO : check rights, log actions.
+		TechnicalAccountPermission permission = account.getPermission();
+		account.setPermission(null);
+		technicalAccountBusinessService.update(account);
+		if (permission != null) {
+			technicalAccountPermissionService.delete(actor, permission);
+		}
 		technicalAccountBusinessService.delete(account);
-		technicalAccountPermissionService.delete(actor, account.getPermission());
 	}
 
 	@Override
@@ -103,18 +111,19 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 	}
 
 	@Override
-	public TechnicalAccount update(Account actor, TechnicalAccount accountDto)
+	public TechnicalAccount update(Account actor, TechnicalAccount dto)
 			throws BusinessException {
 		// TODO : check rights, log actions.
-		TechnicalAccount technicalAccount = technicalAccountBusinessService.find(accountDto.getLsUuid());
-		technicalAccount.setLastName(accountDto.getLastName());
-		technicalAccount.setMail(accountDto.getMail());
-		// TODO
-//		technicalAccount.setEnable(accountDto.isEnable());
-		TechnicalAccountPermission accountPermission = technicalAccount.getPermission();
-		accountPermission.setAccountPermissions(accountDto.getPermission().getAccountPermissions());
-		technicalAccountPermissionService.update(actor, accountPermission);
-		return technicalAccountBusinessService.update(technicalAccount);
+		TechnicalAccount entity = find(actor, dto.getLsUuid());
+		TechnicalAccountPermission permissionDto = dto.getPermission();
+		permissionDto.setUuid(entity.getPermission().getUuid());
+		if (permissionDto != null) {
+			technicalAccountPermissionService.update(actor, permissionDto);
+		}
+		entity.setLastName(dto.getLastName());
+		entity.setMail(dto.getMail());
+		entity.setEnable(dto.isEnable());
+		return technicalAccountBusinessService.update(entity);
 	}
 
 	@Override
@@ -131,7 +140,6 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_ERROR,
 					"The supplied password is invalid");
 		}
-
 		account.setPassword(HashUtils.hashSha1withBase64(newPassword.getBytes()));
 		technicalAccountBusinessService.update(account);
 	}
