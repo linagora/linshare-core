@@ -157,15 +157,20 @@ function build_sso ()
     mv ${g_ressources}/{DISABLED,}springContext-security.xml
     mv ${g_ressources}/{,DISABLED}springContext-securityLLNG.xml
 }
-
 function build_doc ()
+{
+    maven_clean
+    build_doc_delegation
+    build_doc_userv2
+    echo_linshare "Done."
+}
+
+function build_doc_userv2 ()
 {
     local linshare_output=generated-userv2
     local linshare_source=documentation-webservice-api-user-${g_version}
     local linshare_archive=documentation-webservice-api-user-${g_version}.tar.bz2
     local linshare_sha=documentation-webservice-api-user-${g_version}.sha256sum
-    # Creation de la version avec SSO
-    maven_clean
     rm -fr ${linshare_output}
     echo_linshare "Building documentation ..."
     maven compile -Pswagger-userv2
@@ -175,7 +180,23 @@ function build_doc ()
     rm -fr ${linshare_source}
     sha256sum ${linshare_archive} > ${linshare_sha}
     mv ${linshare_archive} ${linshare_sha} ${g_distribution_dir}/
-    echo_linshare "Done."
+}
+
+function build_doc_delegation ()
+{
+    local linshare_output=generated-delegation
+    local linshare_source=documentation-webservice-api-delegation-${g_version}
+    local linshare_archive=documentation-webservice-api-delegation-${g_version}.tar.bz2
+    local linshare_sha=documentation-webservice-api-delegation-${g_version}.sha256sum
+    rm -fr ${linshare_output}
+    echo_linshare "Building documentation ..."
+    maven compile -Pswagger-delegation
+    echo_linshare "Archive creation in progress : ${linshare_archive}"
+    mv -v ${linshare_output} ${linshare_source}
+    tar cjvf ${linshare_archive} ${linshare_source}
+    rm -fr ${linshare_source}
+    sha256sum ${linshare_archive} > ${linshare_sha}
+    mv ${linshare_archive} ${linshare_sha} ${g_distribution_dir}/
 }
 
 function build_source ()
