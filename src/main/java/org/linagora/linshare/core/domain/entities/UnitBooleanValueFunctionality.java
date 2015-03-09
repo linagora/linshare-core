@@ -95,7 +95,7 @@ public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 				if (parameterType.equals("BOOLEAN")) {
 					this.setBool(parameterDto.getBool());
 				} else {
-					this.updateFunctionality(functionalityDto.getType(), parameterDto);
+					this.updateFunctionality(parameterType, parameterDto);
 				}
 			}
 		}
