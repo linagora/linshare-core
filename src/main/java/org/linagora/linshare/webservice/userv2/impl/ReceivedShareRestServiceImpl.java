@@ -51,15 +51,20 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.webservice.userv2.ReceivedShareRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/receivedShares")
+@Path("/received_shares")
+@Api(value = "/rest/user/received_shares", description = "received shares rest service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 
 	private final ShareFacade shareFacade;
@@ -70,6 +75,11 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 
 	@Path("/")
 	@GET
+	@ApiOperation(value = "Find all connected user received shares.", response = ShareDto.class, responseContainer = "List")
+	@ApiResponses({
+		@ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+		@ApiResponse(code = 404, message = "Received shares not found."),
+		@ApiResponse(code = 500, message = "Internal server error."), })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<ShareDto> getReceivedShares() throws BusinessException {
@@ -78,6 +88,12 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 
 	@Path("/{uuid}")
 	@GET
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+			@ApiResponse(code = 404, message = "Received share not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@ApiOperation(value = "Find a received share entry.", response = ShareDto.class)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public ShareDto getReceivedShare(
@@ -88,10 +104,10 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 
 	@Path("/{uuid}/thumbnail")
 	@GET
-	@ApiOperation(value = "Download the thumbnail of a file.")
+	@ApiOperation(value = "Download the thumbnail of a file.", response = Response.class)
 	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+			@ApiResponse(code = 404, message = "Received share not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
@@ -112,29 +128,38 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 	@DELETE
 	@ApiOperation(value = "Delete a received share.")
 	@ApiResponses({
-		@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-		@ApiResponse(code = 404, message = "Owner not found."),
-		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-		@ApiResponse(code = 500, message = "Internal server error."), })
+			@ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+			@ApiResponse(code = 404, message = "Received share not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public void delete(@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid) throws BusinessException {
+	public void delete(
+			@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid)
+			throws BusinessException {
 		shareFacade.delete(receivedShareUuid);
 	}
 
-	@Path("/copy")
+	@Path("/copy/{uuid}")
 	@POST
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+			@ApiResponse(code = 404, message = "Received share not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@ApiOperation(value = "Copy a received share in your personal files.", response = DocumentDto.class)
 	@Override
-	public ShareDto copy(String ownerUuid, String shareEntryUuid, String threadEntryUuid) throws BusinessException {
-		return shareFacade.copy(ownerUuid, shareEntryUuid, threadEntryUuid);
+	public DocumentDto copy(
+			@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String shareEntryUuid)
+			throws BusinessException {
+		return shareFacade.copy(shareEntryUuid);
 	}
 
 	@Path("/{uuid}/download")
 	@GET
-	@ApiOperation(value = "Download a  received share.")
+	@ApiOperation(value = "Download a received share.", response = Response.class)
 	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+			@ApiResponse(code = 404, message = "Received share not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override

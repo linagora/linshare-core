@@ -40,6 +40,7 @@ import java.util.Set;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 
 public interface ShareFacade extends GenericFacade {
@@ -68,5 +69,5 @@ public interface ShareFacade extends GenericFacade {
 
 	void delete(String shareUuid) throws BusinessException;
 
-	ShareDto copy(String ownerUuid, String shareEntryUuid, String threadEntryUuid) throws BusinessException;
+	DocumentDto copy(String shareEntryUuid) throws BusinessException;
 }

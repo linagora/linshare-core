@@ -59,7 +59,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/threads")
-@Api(value = "/rest/user/threads", basePath = "/rest/threads", description = "threads service.",
+@Api(value = "/rest/user/threads", description = "threads service.",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
