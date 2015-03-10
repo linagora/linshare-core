@@ -51,17 +51,19 @@
 			<sec:filter-chain pattern="/webservice/api-docs/**" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest?_wadl" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/?_wadl" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/user?_wadl" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/admin?_wadl" filters="none" />
 			<sec:filter-chain pattern="/webservice/fineuploader?_wadl" filters="none" />
 
 			<sec:filter-chain pattern="/webservice/rest/authentication/" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/admin/authentication/" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/user/authentication/" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/uploadrequest/**" filters="none" />
 
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/**"
-				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor,logoutFilterAdmin" />
+				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor,logoutFilterAdmin, logoutFilterAdmin" />
 
 			<sec:filter-chain pattern="/webservice/fineuploader/**"
 				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
@@ -155,6 +157,19 @@
 			<value>/webservice/rest/admin/authentication/logout</value>
 		</property>
 		<constructor-arg value="/webservice/rest/admin/authentication/" />
+		<constructor-arg>
+			<list>
+				<ref bean="rememberMeService" />
+				<bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="logoutFilterUser" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<property name="filterProcessesUrl">
+			<value>/webservice/rest/user/authentication/logout</value>
+		</property>
+		<constructor-arg value="/webservice/rest/user/authentication/" />
 		<constructor-arg>
 			<list>
 				<ref bean="rememberMeService" />
