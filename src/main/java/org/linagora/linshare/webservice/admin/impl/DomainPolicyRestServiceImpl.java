@@ -38,6 +38,7 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -91,6 +92,19 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Identifier of the domain policy to search for.", required = true) @PathParam("policyId") String policyId)
 			throws BusinessException {
 		return domainPolicyFacade.find(policyId);
+	}
+
+	@Path("/{policyId}")
+	@HEAD
+	@ApiOperation(value = "Check if a domain policy exists.", response = DomainPolicyDto.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "User isn't superadmin."),
+			@ApiResponse(code = 404, message = "Domain policy not found.") })
+	@Override
+	public void head(
+			@ApiParam(value = "Identifier of the domain policy to search for.", required = true) @PathParam("policyId") String policyId)
+			throws BusinessException {
+		domainPolicyFacade.find(policyId);
 	}
 
 	@Path("/")
