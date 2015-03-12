@@ -76,6 +76,10 @@ public enum SupportedLanguage {
 	public static SupportedLanguage fromTapestryLocale(String locale) {
 		if (locale == null)
 			return null;
+		if (locale.equals("vi"))
+			return VIETNAMESE;
+		if (locale.equals("mq"))
+			return CREOLE;
 		return SupportedLanguage.fromLocale(new Locale(locale));
 	}
 
