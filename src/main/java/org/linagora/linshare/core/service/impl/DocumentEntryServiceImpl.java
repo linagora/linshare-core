@@ -302,10 +302,10 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 				//send email, file has been replaced ....
 				List<MailContainerWithRecipient> mails = Lists.newArrayList();
 				for (AnonymousShareEntry anonymousShareEntry : documentEntry.getAnonymousShareEntries()) {
-					mails.add(mailBuildingService.buildSharedDocUpdated(anonymousShareEntry, originalFileName));
+					mails.add(mailBuildingService.buildSharedDocUpdated(anonymousShareEntry, originalFileName, documentEntry.getDocument().getSize()));
 				}
 				for (ShareEntry shareEntry : documentEntry.getShareEntries()) {
-					mails.add(mailBuildingService.buildSharedDocUpdated(shareEntry, originalFileName));
+					mails.add(mailBuildingService.buildSharedDocUpdated(shareEntry, originalFileName, documentEntry.getDocument().getSize()));
 				}
 				notifierService.sendNotification(mails);
 			}

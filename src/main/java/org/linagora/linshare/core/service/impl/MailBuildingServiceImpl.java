@@ -393,7 +393,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 	@Override
 	public MailContainerWithRecipient buildSharedDocUpdated(
-			Entry shareEntry, String oldDocName) throws BusinessException {
+			Entry shareEntry, String oldDocName, long size) throws BusinessException {
 		/*
 		 * XXX ugly
 		 */
@@ -438,8 +438,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("firstName", sender.getFirstName())
 				.add("lastName", sender.getLastName())
 				.add("fileName", fileName)
-				// TODO : To be fixe
-//				.add("fileSize", fileSizeTxt)
+				.add("fileSize", DocumentUtils.humanReadableByteCount(size, true))
 				.add("fileOldName", oldDocName)
 				.add("mimeType", mimeType)
 				.add("url", url)
