@@ -36,14 +36,22 @@ package org.linagora.linshare.core.facade.auth;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AuthentificationFacade {
 
 	User loadUserDetails(String uuid) throws BusinessException;
 
+	UserVo loadUserVoDetails(String uuid) throws BusinessException;
+
 	User findOrCreateUser(String domainIdentifier, String mail) throws BusinessException;
+
+	Internal  findByLogin(String login);
+
+	Internal findByLoginAndDomain(String domain, String login);
 
 	public void logAuthError(String login, String domainIdentifier, String message) throws BusinessException;
 

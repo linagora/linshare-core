@@ -266,7 +266,6 @@
 	<!-- Domain Authentification -->
 	<bean id="ldapUserDetailsProvider" class="org.linagora.linshare.auth.dao.LdapUserDetailsProvider">
 		<constructor-arg ref="authentificationFacade" />
-		<constructor-arg ref="internalRepository" />
 	</bean>
 
 	<bean id="ldapAuthenticationProvider" class="org.linagora.linshare.auth.dao.LdapAuthenticationProvider">

@@ -37,10 +37,13 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
+import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
+import org.linagora.linshare.core.repository.InternalRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.UserProviderService;
@@ -56,18 +59,27 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 
 	private final UserProviderService userProviderService;
 
+	private final InternalRepository internalRepository;
+
 	public AuthentificationFacadeImpl(UserService userService, LogEntryService logEntryService,
-			AbstractDomainService abstractDomainService, UserProviderService userProviderService) {
+			AbstractDomainService abstractDomainService, UserProviderService userProviderService,
+			InternalRepository internalRepository) {
 		super();
 		this.userService = userService;
 		this.logEntryService = logEntryService;
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
+		this.internalRepository = internalRepository;
 	}
 
 	@Override
 	public User loadUserDetails(String uuid) throws BusinessException {
 		return userService.findByLsUuid(uuid);
+	}
+
+	@Override
+	public UserVo loadUserVoDetails(String uuid) throws BusinessException {
+		return new UserVo(userService.findByLsUuid(uuid));
 	}
 
 	@Override
@@ -86,12 +98,16 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	@Override
 	public void logAuthError(User user, String domainIdentifier, String message)
 			throws BusinessException {
+		// Reloading entity inside a new transaction/session.
+		user = userService.findByLsUuid(user.getLsUuid());
 		logEntryService.create(new UserLogEntry(user,
 				LogAction.USER_AUTH_FAILED, message, user));
 	}
 
 	@Override
 	public void logAuthSuccess(User user) throws BusinessException {
+		// Reloading entity inside a new transaction/session.
+		user = userService.findByLsUuid(user.getLsUuid());
 		logEntryService.create(new UserLogEntry(user,
 				LogAction.USER_AUTH, "Successfull authentification"));
 	}
@@ -118,5 +134,21 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 			throws BusinessException {
 		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
 		return userProviderService.searchForAuth(domain.getUserProvider(), login);
+	}
+
+	@Override
+	public Internal findByLogin(String login) {
+		Internal internal = internalRepository.findByLogin(login);
+		// Ugly but needed until we find a more elegant solution :(
+		internal.getDomain().getIdentifier();
+		return internal;
+	}
+
+	@Override
+	public Internal findByLoginAndDomain(String domain, String login) {
+		Internal internal = internalRepository.findByLoginAndDomain(domain, login);
+		// Ugly but needed until we find a more elegant solution :(
+		internal.getDomain().getIdentifier();
+		return internal;
 	}
 }

@@ -73,7 +73,7 @@ public class UserAccessAuthentity  {
 				logger.debug("processAuth with " + username);
 				UserVo userVo = null;
 				try {
-					userVo = new UserVo(authentificationFacade.loadUserDetails(username.toLowerCase()));
+					userVo = authentificationFacade.loadUserVoDetails(username.toLowerCase());
 					applicationStateManager.set(UserVo.class, userVo);
 				} catch (BusinessException e) {
 					logger.error("Error while trying to find user details", e);

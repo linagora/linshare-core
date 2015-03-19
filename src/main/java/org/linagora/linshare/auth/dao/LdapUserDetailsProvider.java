@@ -43,7 +43,6 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
-import org.linagora.linshare.core.repository.InternalRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -54,12 +53,8 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 
 	private static final Logger logger = LoggerFactory.getLogger(LdapUserDetailsProvider.class);
 
-	private InternalRepository internalRepository;
-
-	public LdapUserDetailsProvider(AuthentificationFacade authentificationFacade,
-			InternalRepository internalRepository) {
+	public LdapUserDetailsProvider(AuthentificationFacade authentificationFacade) {
 		super(authentificationFacade);
-		this.internalRepository = internalRepository;
 	}
 
 	/**
@@ -119,7 +114,7 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 		AbstractDomain domain = retrieveDomain(login, domainIdentifier);
 
 		// looking in database for a user.
-		foundUser = internalRepository.findByLoginAndDomain(domainIdentifier, login);
+		foundUser = authentificationFacade.findByLoginAndDomain(domainIdentifier, login);
 		if (foundUser != null) {
 			foundUser = checkStillInLdap(login, foundUser);
 		}
@@ -163,7 +158,7 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 	private User findUserInAllDomain(String login) throws BusinessException {
 		User foundUser = null;
 		try {
-			foundUser = internalRepository.findByLogin(login);
+			foundUser = authentificationFacade.findByLogin(login);
 		} catch (IllegalStateException e) {
 			throw new AuthenticationServiceException(
 					"Could not authenticate user: " + login);

@@ -48,6 +48,7 @@ import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class GuestFacadeImpl extends UserGenericFacadeImp implements
@@ -65,7 +66,7 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 	public List<GuestDto> findAll() throws BusinessException {
 		User actor = checkAuthentication();
 		List<Guest> guests = guestService.findAllMyGuests(actor, actor);
-		return Lists.transform(guests, GuestDto.toDto());
+		return toGuestDto(guests);
 	}
 
 	@Override
@@ -120,4 +121,9 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 		}
 		return guest;
 	}
+
+	private List<GuestDto> toGuestDto(List<Guest> col) {
+		return ImmutableList.copyOf(Lists.transform(col, GuestDto.toDto()));
+	}
+
 }
