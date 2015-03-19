@@ -36,6 +36,8 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -47,6 +49,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+@XmlRootElement(name = "User")
 public class UserDto extends AccountDto {
 
 	@ApiModelProperty(value = "FirstName")
