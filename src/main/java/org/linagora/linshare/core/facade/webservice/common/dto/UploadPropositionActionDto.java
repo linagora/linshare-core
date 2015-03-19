@@ -109,7 +109,7 @@ public class UploadPropositionActionDto {
 				entity.setUuid(dto.getUuid());
 				entity.setData(dto.getData());
 				entity.setActionType(UploadPropositionActionType.fromString(dto
-						.getAction()));
+						.getAction(), true));
 				return entity;
 			}
 		};

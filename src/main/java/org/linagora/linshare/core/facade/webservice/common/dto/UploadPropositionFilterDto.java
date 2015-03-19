@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.UploadPropositionMatchType;
 import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
 import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
@@ -157,6 +158,8 @@ public class UploadPropositionFilterDto {
 		return new Function<UploadPropositionFilterDto, UploadPropositionFilter>() {
 			@Override
 			public UploadPropositionFilter apply(UploadPropositionFilterDto dto) {
+				Validate.notNull(dto.getUploadPropositionActions());
+				Validate.notNull(dto.getUploadPropositionRules());
 				UploadPropositionFilter filter = new UploadPropositionFilter();
 				filter.setUuid(dto.getUuid());
 				filter.setMatch(UploadPropositionMatchType.fromString(dto
