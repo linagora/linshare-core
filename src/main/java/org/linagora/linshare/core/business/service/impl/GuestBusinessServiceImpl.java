@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.core.business.service.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.GuestBusinessService;
@@ -124,8 +123,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 
 	@Override
 	public GuestWithMetadata create(Account owner, Guest guest,
-			AbstractDomain domain, Date expiryDate, List<User> allowedContacts)
-			throws BusinessException {
+			AbstractDomain domain, List<User> allowedContacts) throws BusinessException {
 		String password = passwordService.generatePassword();
 		String hashedPassword = HashUtils.hashSha1withBase64(password
 				.getBytes());
@@ -135,7 +133,6 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		guest.setExternalMailLocale(SupportedLanguage.toLanguage(domain
 				.getDefaultTapestryLocale()));
 		guest.setPassword(hashedPassword);
-		guest.setExpirationDate(expiryDate);
 		Guest create = guestRepository.create(guest);
 		if (create.isRestricted()) {
 			if (allowedContacts != null) {
@@ -149,24 +146,25 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public Guest update(Account owner, Guest entity, Guest guestDto,
+	public Guest update(Account owner, Guest entity, Guest guest,
 			AbstractDomain domain, List<User> allowedContacts)
 			throws BusinessException {
 		boolean wasRestricted = entity.isRestricted();
 		entity.setOwner(owner);
 		entity.setDomain(domain);
 		// fields that can not be null
-		entity.setCanUpload(guestDto.getCanUpload());
-		entity.setRestricted(guestDto.isRestricted());
+		entity.setCanUpload(guest.getCanUpload());
+		entity.setRestricted(guest.isRestricted());
 		// fields that can be null.
-		entity.setComment(guestDto.getComment());
-		entity.setBusinessLocale(guestDto.getLocale());
-		entity.setBusinessExternalMailLocale(guestDto.getExternalMailLocale());
-		entity.setBusinessLastName(guestDto.getLastName());
-		entity.setBusinessFirstName(guestDto.getFirstName());
-		entity.setBusinessMail(guestDto.getMail());
+		entity.setComment(guest.getComment());
+		entity.setBusinessLocale(guest.getLocale());
+		entity.setBusinessExternalMailLocale(guest.getExternalMailLocale());
+		entity.setBusinessLastName(guest.getLastName());
+		entity.setBusinessFirstName(guest.getFirstName());
+		entity.setBusinessMail(guest.getMail());
+		entity.setExpirationDate(guest.getExpirationDate());
 		Guest update = guestRepository.update(entity);
-		if (wasRestricted == guestDto.isRestricted()) {
+		if (wasRestricted == guest.isRestricted()) {
 			if (allowedContacts != null) {
 				// update
 				allowedContactRepository.purge(update);

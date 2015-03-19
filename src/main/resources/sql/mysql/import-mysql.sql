@@ -526,11 +526,20 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
  VALUES(47, false, 'UPLOAD_REQUEST_ENTRY_URL__PASSWORD', 109, 110, 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (47, false);
 
+-- Functionality : GUEST__EXPIRATION_ALLOW_PROLONGATION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (123, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (124, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (125, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, polidy_delegation_id, domain_id, parent_identifier, param) VALUES(51, false, 'GUESTS__EXPIRATION_ALLOW_PROLONGATION', 123, 124, 125, 1, 'GUESTS', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (51, true);
+
 -- Functionality : UPLOAD_REQUEST_ENABLE_TEMPLATE
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (129, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (130, true, true, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, param)
  VALUES(53, false, 'UPLOAD_REQUEST_ENABLE_TEMPLATE', 129, 130, 1, false);
+
+-- Functionality : END
 
 -- %{image}    <img src="cid:image.part.1@linshare.org" /><br/><br/>
 

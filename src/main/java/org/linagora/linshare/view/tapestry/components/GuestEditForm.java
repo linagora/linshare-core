@@ -33,7 +33,9 @@
  */
 package org.linagora.linshare.view.tapestry.components;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.tapestry5.BindingConstants;
@@ -42,6 +44,7 @@ import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -51,6 +54,7 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linshare.core.domain.vo.GuestDomainVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -90,7 +94,7 @@ public class GuestEditForm {
      ************************************************************ */
     @Inject
     private UserFacade userFacade;
-    
+
     @Inject
     private AbstractDomainFacade domainFacade;
 
@@ -122,7 +126,7 @@ public class GuestEditForm {
 
     @SessionState
     private ShareSessionObjects shareSessionObjects;
-    
+
 	@Environmental
 	private JavaScriptSupport renderSupport;
 
@@ -137,10 +141,16 @@ public class GuestEditForm {
 
     @Property
     private boolean uploadGranted;
-	
+
+    @Property
+    private Date expiryDate;
+
+	@Inject
+	private PersistentLocale persistentLocale;
+
 	@Property
 	private boolean guestsAllowedToCreateGuest;
-    
+
     @Property
     @Persist("flash")
     private boolean restrictedGuest;
@@ -150,11 +160,10 @@ public class GuestEditForm {
 
     @Property
     private String comment;
-	
-	
+
 	@Persist("flash")
 	private List<String> recipientsEmail;
-	
+
 	@Persist("flash")
 	@Property
 	private String recipientsSearch;
@@ -163,13 +172,13 @@ public class GuestEditForm {
 
     @Inject
     private ComponentResources componentResources;
-    
+
     @Property
 	private int autocompleteMin;
-	
+
 	@Inject
 	private FunctionalityFacade functionalityFacade;
-	
+
 	@Inject
 	private UserAutoCompleteFacade userAutoCompleteFacade;
 
@@ -177,31 +186,39 @@ public class GuestEditForm {
 	private boolean showRestricted;
 
 	@Property
+	private boolean showExpirationDatePicker;
+
+	@Property
 	private boolean showUpload;
-	
+
 	private XSSFilter filter;
 
 	@Inject
 	private Policy antiSamyPolicy;
-	
+
+	private boolean dateValidated = true;
 
 	@SetupRender
 	void init() throws BusinessException {
 		recipientsSearch = MailCompletionService.formatLabel(userLoggedIn);
-		
+
 		GuestDomainVo guestDomainVo = domainFacade.findGuestDomain(userLoggedIn.getDomainIdentifier());
 		restrictedGuest = functionalityFacade.guestIsRestricted(userLoggedIn.getDomainIdentifier());
 		showRestricted = functionalityFacade.userCanCreateRestrictedGuest(userLoggedIn.getDomainIdentifier());
 		showUpload= functionalityFacade.userCanGiveUploadRight(userLoggedIn.getDomainIdentifier());
 		uploadGranted = functionalityFacade.guestCanUpload(userLoggedIn.getDomainIdentifier());
+		showExpirationDatePicker = functionalityFacade.userCanChooseExpirationDateForGuest(userLoggedIn.getDomainIdentifier());
+		if (showExpirationDatePicker) {
+			expiryDate = userFacade.getGuestCreationExpirationDate(userLoggedIn);
+		}
 
 		if (guestDomainVo != null){
     	}
-    	
+
 		guestsAllowedToCreateGuest = false;
 		autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
 	}
-	
+
 	@AfterRender
 	void afterRender() {
 		renderSupport.addScript("initAllowedContacts("+Boolean.toString(restrictedGuest)+");");
@@ -220,7 +237,7 @@ public class GuestEditForm {
 
 		return elements;
 	}
-	
+
 	/** Perform a user search using the user search pattern.
 	 * @param input user search pattern.
 	 * @return list of users.
@@ -234,18 +251,36 @@ public class GuestEditForm {
 		}
 		return new ArrayList<UserVo>();
 	}
-	
+
+	/* ***********************************************************
+     *                   Validators
+     ************************************************************ */
+
+	@Log
+	public void onValidateFromExpiryDate(Date toValidate) {
+		Date expirationDate = userFacade.getGuestCreationExpirationDate(userLoggedIn);
+		if (toValidate.after(expirationDate)) {
+			dateValidated = false;
+			String localizedExpirationDate = DateFormat.getDateInstance(DateFormat.SHORT, persistentLocale.get()).format(expirationDate);
+			guestCreateForm.recordError(messages.format("pages.user.validation.expirationDateTooLate", localizedExpirationDate));
+		}
+		Date now = new Date();
+		if (toValidate.before(now)) {
+			dateValidated = false;
+			guestCreateForm.recordError(messages.get("pages.user.validation.expirationDateBeforeNow"));
+		}
+	}
 
     /* ***********************************************************
      *                   Event handlers&processing
      ************************************************************ */
-	
+
     public void  onValidateFormFromGuestCreateForm() throws BusinessException {
-    	
+
     	if (guestCreateForm.getHasErrors()) {
     		return ;
     	}
-    	
+
     	if (mail == null | firstName == null | lastName == null) {
     		// the message will be handled by Tapestry
     		return;
@@ -259,10 +294,10 @@ public class GuestEditForm {
             userAlreadyExists = true;
             return ;
         }
-		
+
     	if (restrictedGuest || userLoggedIn.isRestricted()) {
         	boolean sendErrors = false;
-        	
+
 	    	List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
 	    	String badFormatEmail =  "";
 			
@@ -272,7 +307,7 @@ public class GuestEditForm {
 	            	sendErrors = true;
 	            }
 	    	}
-			
+
 	    	if(sendErrors) {
 	        	guestCreateForm.recordError(String.format(messages.get("components.confirmSharePopup.validate.email"), badFormatEmail));
 	        }
@@ -300,24 +335,25 @@ public class GuestEditForm {
 			businessMessagesManagementService.notify(e);
 			return Index.class;
 		}
-		
+
 		try {
-			userFacade.createGuest(mail, firstName, lastName, uploadGranted, guestsAllowedToCreateGuest, comment, userLoggedIn, restrictedGuest, recipientsEmail);
+			userFacade.createGuest(mail, firstName, lastName, uploadGranted, guestsAllowedToCreateGuest, comment, userLoggedIn, restrictedGuest, recipientsEmail, expiryDate);
 		} catch (BusinessException e) { 
 			logger.error("Can't create Guest : " + mail);
 			logger.debug(e.toString());
 			businessMessagesManagementService.notify(e);
 			return Index.class;
 		}
-        componentResources.triggerEvent("resetListUsers", null, null);
-        
-        return Index.class;
+		componentResources.triggerEvent("resetListUsers", null, null);
+		return Index.class;
     }
 
     Object onFailure() {
     	if (!userAlreadyExists)
     		shareSessionObjects.addError(messages.get("pages.user.edit.error.generic"));
+    	if (!dateValidated) {
+    		shareSessionObjects.addError(messages.get("pages.user.validation.error.indication"));
+    	}
     	return this;
     }
-  
 }

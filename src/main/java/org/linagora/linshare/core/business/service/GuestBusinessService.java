@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.core.business.service;
 
-import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.impl.GuestBusinessServiceImpl.GuestWithMetadata;
@@ -60,7 +59,7 @@ public interface GuestBusinessService {
 	List<Guest> findOutdatedGuests();
 
 	GuestWithMetadata create(Account owner, Guest guest, AbstractDomain domain,
-			Date expiryDate, List<User> allowedContacts)
+			List<User> allowedContacts)
 			throws BusinessException;
 
 	Guest update(Account owner, Guest entity, Guest guestDto,

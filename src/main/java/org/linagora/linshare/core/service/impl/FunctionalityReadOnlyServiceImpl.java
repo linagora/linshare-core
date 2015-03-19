@@ -147,6 +147,11 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public BooleanValueFunctionality getGuestsExpirationDateProlongation(AbstractDomain domain) {
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.GUESTS__EXPIRATION_ALLOW_PROLONGATION);
+	}
+
+	@Override
 	public StringValueFunctionality getTimeStampingFunctionality(AbstractDomain domain) {
 		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.TIME_STAMPING);
 	}

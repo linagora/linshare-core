@@ -153,11 +153,11 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public Guest create(Account actor, Account owner, Guest guestDto,
+	public Guest create(Account actor, Account owner, Guest guest,
 			List<String> restrictedMails) throws BusinessException {
 		preChecks(actor, owner);
-		Validate.notNull(guestDto);
-		if (guestDto.isRestricted()) {
+		Validate.notNull(guest);
+		if (guest.isRestricted()) {
 			Validate.notNull(restrictedMails,
 					"A restricted guest must have a restricted list of contacts (mails)");
 			Validate.notEmpty(restrictedMails,
@@ -169,16 +169,23 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Guest domain was not found");
 		}
-		Date expiryDate = calculateUserExpiryDate(owner);
-		AbstractDomain guestDomain = abstractDomainService.getGuestDomain(owner.getDomainId());
+		Date expiryDate = guest.getExpirationDate();
+		if (expiryDate != null) {
+			checkDateValidity((User) owner, null, expiryDate, null, guest);
+		} else {
+			expiryDate = calculateUserExpiryDate(owner, null);
+			guest.setExpirationDate(expiryDate);
+		}
+		AbstractDomain guestDomain = abstractDomainService.getGuestDomain(owner
+				.getDomainId());
 		if (!guestBusinessService.exist(guestDomain.getIdentifier(),
-				guestDto.getMail())) {
+				guest.getMail())) {
 			throw new BusinessException(BusinessErrorCode.GUEST_ALREADY_EXISTS,
 					"Pair mail/domain already exist");
 		}
-		guestDto.setRole(Role.SIMPLE);
+		guest.setRole(Role.SIMPLE);
 		List<User> restrictedContacts = null;
-		if (guestDto.isRestricted()) {
+		if (guest.isRestricted()) {
 			restrictedContacts = transformToUsers(actor, restrictedMails);
 			if (restrictedContacts == null || restrictedContacts.isEmpty()) {
 				throw new BusinessException(
@@ -186,8 +193,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 						"Can not create a restricted guest without restricted contacts (internal or guest users only).");
 			}
 		}
-		GuestWithMetadata create = guestBusinessService.create(owner, guestDto,
-				guestDomain, expiryDate, restrictedContacts);
+		GuestWithMetadata create = guestBusinessService.create(owner, guest,
+				guestDomain, restrictedContacts);
 		MailContainerWithRecipient mail = mailBuildingService.buildNewGuest(
 				owner, create.getGuest(), create.getPassword());
 		notifierService.sendNotification(mail);
@@ -195,25 +202,57 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public Guest update(Account actor, User owner, Guest guestDto,
+	public Guest update(Account actor, User owner, Guest guest,
 			List<String> restrictedMails) throws BusinessException {
 		preChecks(actor, owner);
-		Validate.notNull(guestDto, "Guest object is required");
-		Validate.notEmpty(guestDto.getLsUuid(), "Guest uuid is required");
+		Validate.notNull(guest, "Guest object is required");
+		Validate.notEmpty(guest.getLsUuid(), "Guest uuid is required");
 		// In case if guestDto was an existing modified entity.
-		guestBusinessService.evict(guestDto);
-		Guest entity = find(actor, owner, guestDto.getLsUuid());
+		guestBusinessService.evict(guest);
+		Guest entity = find(actor, owner, guest.getLsUuid());
 		checkUpdatePermission(actor, owner, Guest.class,
 				BusinessErrorCode.CANNOT_UPDATE_USER, entity);
-		AbstractDomain guestDomain = abstractDomainService.getGuestDomain(owner.getDomainId());
+		AbstractDomain guestDomain = abstractDomainService.getGuestDomain(owner
+				.getDomainId());
 		if (guestDomain == null) {
 			throw new BusinessException(
 					BusinessErrorCode.USER_CANNOT_CREATE_GUEST,
 					"New owner doesn't have guest domain");
 		}
 		List<User> restrictedContacts = transformToUsers(actor, restrictedMails);
-		return guestBusinessService.update(owner, entity, guestDto,
-				guestDomain, restrictedContacts);
+		Date newExpirationDate = guest.getExpirationDate();
+		if (newExpirationDate != null) {
+			checkDateValidity(owner,entity.getExpirationDate(),newExpirationDate,functionalityReadOnlyService.getGuestsExpirationDateProlongation(owner.getDomain()).getDelegationPolicy().getStatus(), entity);
+		} else {
+			guest.setExpirationDate(entity.getExpirationDate());
+		}
+		return guestBusinessService.update(owner, entity, guest, guestDomain,
+				restrictedContacts);
+	}
+
+	private void checkDateValidity(User owner, Date oldExpiryDate,
+			Date dateToCheck, Boolean prolongation, Guest guest) {
+
+		if (oldExpiryDate == null) {
+			if (dateToCheck.before(new Date())
+					|| dateToCheck.after(calculateUserExpiryDate(owner, null))) {
+				throw new BusinessException(
+						BusinessErrorCode.GUEST_EXPIRY_DATE_INVALID,
+						"Guest expiry date invalid.");
+			}
+		} else {
+			Date date;
+			if (prolongation) {
+				date = calculateUserExpiryDate(owner, guest.getCreationDate());
+			} else
+				date = calculateUserExpiryDate(owner, null);
+
+			if (dateToCheck.before(new Date()) || dateToCheck.after(date)) {
+				throw new BusinessException(
+						BusinessErrorCode.GUEST_EXPIRY_DATE_INVALID,
+						"Guest expiry date invalid.");
+			}
+		}
 	}
 
 	private List<User> transformToUsers(Account actor,
@@ -246,7 +285,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public void deleteUser(SystemAccount systemAccount, String uuid){
+	public void deleteUser(SystemAccount systemAccount, String uuid) {
 		userService.deleteUser(systemAccount, uuid);
 	}
 
@@ -267,10 +306,12 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public List<Guest> findOudatedGuests(Account actor) throws BusinessException{
-		if(actor.hasSuperAdminRole())
+	public List<Guest> findOudatedGuests(Account actor)
+			throws BusinessException {
+		if (actor.hasSuperAdminRole())
 			return guestBusinessService.findOutdatedGuests();
-		throw new BusinessException(BusinessErrorCode.FORBIDDEN, "the actor's role must be SUPERADMIN");
+		throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+				"the actor's role must be SUPERADMIN");
 	}
 
 	@Override
@@ -301,11 +342,22 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		return abstractDomainService.getGuestDomain(topDomainId) != null;
 	}
 
-	private Date calculateUserExpiryDate(Account owner) {
+	private Date calculateUserExpiryDate(Account owner, Date guestCreationDate) {
 		Calendar expiryDate = Calendar.getInstance();
-		TimeUnitValueFunctionality func = functionalityReadOnlyService
-				.getGuestsExpiration(owner.getDomain());
-		expiryDate.add(func.toCalendarValue(), func.getValue());
+		if (guestCreationDate == null) {
+			TimeUnitValueFunctionality func = functionalityReadOnlyService
+					.getGuestsExpiration(owner.getDomain());
+			expiryDate.add(func.toCalendarValue(), func.getValue());
+		} else {
+			expiryDate.setTime(guestCreationDate);
+			expiryDate.add(Calendar.MONTH, 3);
+		}
 		return expiryDate.getTime();
+	}
+
+	@Override
+	public Date getGuestExpirationDate(Account actor,
+			Date currentGuestExpirationDate) throws BusinessException {
+		return calculateUserExpiryDate(actor, currentGuestExpirationDate);
 	}
 }

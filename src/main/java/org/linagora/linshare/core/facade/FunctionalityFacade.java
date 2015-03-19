@@ -79,5 +79,10 @@ public interface FunctionalityFacade {
 	 * @return
 	 */
 	boolean guestIsRestricted(String domainIdentifier);
+
 	boolean isUploadRequestTemplateEnabled(String domainIdentifier);
+
+	boolean userCanChooseExpirationDateForGuest(String domainIdentifier);
+
+	boolean isGuestExpirationDateProlonged(String domainIdentifier);
 }

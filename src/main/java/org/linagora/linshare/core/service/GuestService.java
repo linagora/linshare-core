@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
@@ -90,12 +91,12 @@ public interface GuestService {
 	 * Update a guest
 	 * @param actor
 	 * @param owner
-	 * @param guestDto
+	 * @param guest
 	 * @param restrictedMails : if null, it won't be updated.
 	 * @return
 	 * @throws BusinessException
 	 */
-	Guest update(Account actor, User owner, Guest guestDto, List<String> restrictedMails)
+	Guest update(Account actor, User owner, Guest guest, List<String> restrictedMails)
 			throws BusinessException;
 
 	/**
@@ -181,4 +182,6 @@ public interface GuestService {
 //	 */
 //	Guest removeContactRestriction(User actor, String lsUuid)
 //			throws BusinessException;
+
+	public Date getGuestExpirationDate(Account actor, Date currentGuestExpirationDate) throws BusinessException;
 }

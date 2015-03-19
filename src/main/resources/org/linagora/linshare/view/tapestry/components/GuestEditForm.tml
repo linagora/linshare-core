@@ -16,6 +16,7 @@
 
             <t:label for="firstName" class="edit-form-label">${message:pages.user.edit.firstName}</t:label>
             <t:textfield t:id="firstName" validate="required" size="20" class="edit-form-field"/>
+
             <br/>
 
             <t:label for="lastName" class="edit-form-label">${message:pages.user.edit.lastName}</t:label>
@@ -73,6 +74,18 @@
                 </div>
                 <div class="clear"></div>
 			</div>
+
+			<t:if test="showExpirationDatePicker">
+				<hr />
+				<div class="number3"></div>
+				<br />
+				<div id="expirationDateDiv">
+					<t:label for="expiryDate" class="edit-form-label"/>
+					<t:datefield t:id="expiryDate" t:value="expiryDate" t:validate="required" class="edit-form-checkbox" />
+				</div>
+			</t:if>
+			<br />
+			<br />
 
 			<hr />
 

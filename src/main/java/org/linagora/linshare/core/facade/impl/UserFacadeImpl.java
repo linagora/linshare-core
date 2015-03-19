@@ -34,9 +34,11 @@
 package org.linagora.linshare.core.facade.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -131,27 +133,30 @@ public class UserFacadeImpl implements UserFacade {
 	 * @throws BusinessException
 	 *             if user already exist.
 	 */
+
 	@Override
 	public UserVo createGuest(String mail, String firstName, String lastName,
 			Boolean canUpload, Boolean canCreateGuest, String comment,
-			UserVo owner, boolean restricted, List<String> restrictedMails) throws BusinessException {
+			UserVo owner, boolean restricted, List<String> restrictedMails, Date expirationDate) throws BusinessException {
 		User actor = userService.findByLsUuid(owner.getLsUuid());
 		Guest guest = new Guest(firstName,lastName, mail);
 		guest.setCanUpload(canUpload);
 		guest.setComment(comment);
 		guest.setRestricted(restricted);
+		guest.setExpirationDate(expirationDate);
 		return new UserVo(guestService.create(actor, actor, guest, restrictedMails));
 	}
 
 	@Override
 	public void updateGuest(String guestUuid, String domain, String mail,
 			String firstName, String lastName, Boolean canUpload,
-			UserVo owner, boolean restricted, List<String> restrictedMails) throws BusinessException {
+			UserVo owner, boolean restricted, List<String> restrictedMails, Date expirationDate) throws BusinessException {
 		User actor = userService.findByLsUuid(owner.getLsUuid());
 		Guest guest = new Guest(firstName, lastName, mail);
 		guest.setCanUpload(canUpload);
 		guest.setLsUuid(guestUuid);
 		guest.setRestricted(restricted);
+		guest.setExpirationDate(expirationDate);
 		guestService.update(actor, actor, guest, restrictedMails);
 	}
 
@@ -455,5 +460,20 @@ public class UserFacadeImpl implements UserFacade {
 		User actor = userRepository.findByLsUuid(actorVo.getLsUuid());
 		User user = userService.findOrCreateUser(userVo.getMail(), userVo.getDomainIdentifier());
 		return userService.isAdminForThisUser(actor, user);
+	}
+
+	@Override
+	public Date getGuestUpdateExpirationDate(UserVo actorVo, String currentUserUuid) throws BusinessException {
+		Validate.notEmpty(currentUserUuid, "Guest uuid must be set.");
+		Account actor = userService.findByLsUuid(actorVo.getLsUuid());
+		Account guest = userService.findByLsUuid(currentUserUuid);
+		return guestService.getGuestExpirationDate(actor, guest.getCreationDate());
+	}
+
+	@Override
+	public Date getGuestCreationExpirationDate(UserVo actorVo)
+			throws BusinessException {
+		Account actor = userService.findByLsUuid(actorVo.getLsUuid());
+		return guestService.getGuestExpirationDate(actor, null);
 	}
 }

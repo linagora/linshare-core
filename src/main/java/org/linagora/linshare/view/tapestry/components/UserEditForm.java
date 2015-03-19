@@ -33,7 +33,9 @@
  */
 package org.linagora.linshare.view.tapestry.components;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.tapestry5.BindingConstants;
@@ -43,6 +45,7 @@ import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -52,6 +55,7 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -99,6 +103,9 @@ public class UserEditForm {
     @Inject
     private Logger logger;
 
+	@Inject
+	private PersistentLocale persistentLocale;
+
     @Inject
     private ComponentResources componentResources;
 
@@ -139,6 +146,9 @@ public class UserEditForm {
     private boolean uploadGranted;
 
     @Property
+    private Date expiryDate;
+
+    @Property
     private boolean createGuestGranted;
 
     @Property
@@ -161,11 +171,17 @@ public class UserEditForm {
 	private boolean showRestricted;
 
 	@Property
+	private boolean showExpirationDatePicker;
+
+	@Property
 	private boolean showUpload;
 
-    @Property
+	@Property
+	private boolean isGuestsExpirationDateProlonged;
+
+	@Property
 	@Persist
-    private boolean userRestrictedGuest;
+	private boolean userRestrictedGuest;
 
 	@Persist("flash")
 	private List<String> recipientsEmail;
@@ -189,7 +205,6 @@ public class UserEditForm {
 	@Inject
 	private UserAutoCompleteFacade userAutoCompleteFacade;
 
-
 	private XSSFilter filter;
 
 	@Inject
@@ -210,7 +225,9 @@ public class UserEditForm {
 		userGuest = true;
 
 		showRestricted = functionalityFacade.userCanCreateRestrictedGuest(userLoggedIn.getDomainIdentifier());
-		showUpload= functionalityFacade.userCanGiveUploadRight(userLoggedIn.getDomainIdentifier());
+		showUpload = functionalityFacade.userCanGiveUploadRight(userLoggedIn.getDomainIdentifier());
+		showExpirationDatePicker = functionalityFacade.userCanChooseExpirationDateForGuest(userLoggedIn.getDomainIdentifier());
+		isGuestsExpirationDateProlonged = functionalityFacade.isGuestExpirationDateProlonged(userLoggedIn.getDomainIdentifier());
 
 		if(editUserWithMail!=null){
 
@@ -221,20 +238,27 @@ public class UserEditForm {
 				}
 			}
 
-			if(currentUser!=null){    		
-	    		mail = currentUser.getMail();
-	    		firstName = currentUser.getFirstName();
-	    		lastName = currentUser.getLastName();
-	    		uploadGranted = currentUser.isUpload();
-	    		createGuestGranted = currentUser.isCreateGuest();
-	    		role = SelectableRole.fromRole(currentUser.getRole());
-	    		usertype = currentUser.getUserType();
-	    		userGuest = usertype.equals(AccountType.GUEST); //to set friendly title on account
-	    		userDomain = currentUser.getDomainIdentifier();
-	    		restrictedEditGuest = currentUser.isRestricted();
-	    		userRestrictedGuest = currentUser.isGuest() && currentUser.isRestricted();
-	    		if (userRestrictedGuest) {
-	    			List<UserVo> contacts = null;
+			if(currentUser!=null) {
+				mail = currentUser.getMail();
+				firstName = currentUser.getFirstName();
+				lastName = currentUser.getLastName();
+				uploadGranted = currentUser.isUpload();
+				createGuestGranted = currentUser.isCreateGuest();
+				role = SelectableRole.fromRole(currentUser.getRole());
+				usertype = currentUser.getUserType();
+				userGuest = usertype.equals(AccountType.GUEST); //to set friendly title on account
+				userDomain = currentUser.getDomainIdentifier();
+				restrictedEditGuest = currentUser.isRestricted();
+				userRestrictedGuest = currentUser.isGuest() && currentUser.isRestricted();
+				if (showExpirationDatePicker) {
+					if (isGuestsExpirationDateProlonged) {
+						expiryDate = userFacade.getGuestCreationExpirationDate(userLoggedIn);
+					} else {
+						expiryDate = userFacade.getGuestUpdateExpirationDate(userLoggedIn, currentUser.getLsUuid());
+					}
+				}
+				if (userRestrictedGuest) {
+					List<UserVo> contacts = null;
 					try {
 						contacts = userFacade.fetchGuestContacts(userLoggedIn, currentUser.getLsUuid());
 					} catch (BusinessException e) {
@@ -258,7 +282,6 @@ public class UserEditForm {
     		renderSupport.addScript(String.format("$('allowedContactsBlock').style.display = 'none';"));
     	}
     }
-
 
 	public List<String> onProvideCompletionsFromRecipientsPatternEditForm(String input) throws BusinessException {
 		List<UserVo> searchResults = performSearch(input);
@@ -350,7 +373,7 @@ public class UserEditForm {
 
         try {
         	if(userGuest) {    	
-                userFacade.updateGuest(currentUser.getLsUuid(), userDomain, mail, firstName, lastName, uploadGranted, userLoggedIn, restrictedEditGuest, recipientsEmail);
+                userFacade.updateGuest(currentUser.getLsUuid(), userDomain, mail, firstName, lastName, uploadGranted, userLoggedIn, restrictedEditGuest, recipientsEmail, expiryDate);
         	} else {
                 userFacade.updateUserRole(currentUser.getLsUuid(), userDomain, mail, SelectableRole.fromSelectableRole(role), userLoggedIn);
         	}
@@ -363,7 +386,6 @@ public class UserEditForm {
 
     public void onFailure() {
     	 shareSessionObjects.addError(messages.get("components.userEditForm.action.update.error"));
-
     }
 
     @CleanupRender
@@ -371,5 +393,28 @@ public class UserEditForm {
     	userForm.clearErrors();
     }
 
+	/* ***********************************************************
+     *                   Validators
+     ************************************************************ */
+
+	@Log
+	public void onValidateFromExpiryDate(Date toValidate) {
+		Date expirationDate;
+		if (isGuestsExpirationDateProlonged) {
+			expirationDate = userFacade.getGuestCreationExpirationDate(userLoggedIn);
+		} else {
+			expirationDate = userFacade.getGuestUpdateExpirationDate(userLoggedIn, currentUser.getLsUuid());
+		}
+		if (toValidate.after(expirationDate)) {
+			String localizedExpirationDate = DateFormat.getDateInstance(DateFormat.SHORT, persistentLocale.get()).format(expirationDate);
+			shareSessionObjects.addError(messages.format("pages.user.validation.expirationDateTooLate", localizedExpirationDate));
+			userForm.recordError(messages.format("pages.user.validation.expirationDateTooLate", localizedExpirationDate));
+		}
+		Date now = new Date();
+		if (toValidate.before(now)) {
+			shareSessionObjects.addError(messages.get("pages.user.validation.expirationDateBeforeNow"));
+			userForm.recordError(messages.get("pages.user.validation.expirationDateBeforeNow"));
+		}
+	}
 
 }

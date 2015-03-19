@@ -62,6 +62,7 @@ public interface FunctionalityReadOnlyService {
 	TimeUnitValueFunctionality getGuestsExpiration (AbstractDomain domain);
 	BooleanValueFunctionality getGuestsRestricted(AbstractDomain domain);
 	BooleanValueFunctionality getGuestsCanUpload(AbstractDomain domain);
+	BooleanValueFunctionality getGuestsExpirationDateProlongation(AbstractDomain domain);
 
 	StringValueFunctionality getTimeStampingFunctionality(AbstractDomain domain);
 	StringValueFunctionality getDomainMailFunctionality(AbstractDomain domain);

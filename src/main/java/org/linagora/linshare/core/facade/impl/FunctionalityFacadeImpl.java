@@ -38,6 +38,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -265,6 +266,17 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	}
 
 	@Override
+	public boolean isGuestExpirationDateProlonged(String domainIdentifier) {
+		AbstractDomain domain = abstractDomainService.findById(domainIdentifier);
+		Functionality guests = functionalityReadOnlyService.getGuests(domain);
+		if (guests.getActivationPolicy().getStatus()) {
+			BooleanValueFunctionality expirationDateProlongation = functionalityReadOnlyService.getGuestsExpirationDateProlongation(domain);
+			return expirationDateProlongation.getDelegationPolicy().getStatus();
+		}
+		return false;
+	}
+
+	@Override
 	public boolean userCanCreateRestrictedGuest(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainService.findById(domainIdentifier);
 		Functionality guests = functionalityReadOnlyService.getGuests(domain);
@@ -295,5 +307,16 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		Functionality uploadRequestEnableTemplate = functionalityReadOnlyService
 				.getUploadRequestEnableTemplateFunctionality(domain);
 		return uploadRequestEnableTemplate.getActivationPolicy().getStatus();
+	}
+
+	@Override
+	public boolean userCanChooseExpirationDateForGuest(String domainIdentifier) {
+		AbstractDomain domain = abstractDomainService.findById(domainIdentifier);
+		Functionality guests = functionalityReadOnlyService.getGuests(domain);
+		if (guests.getActivationPolicy().getStatus()) {
+			TimeUnitValueFunctionality expirationDateChoosable = functionalityReadOnlyService.getGuestsExpiration(domain);
+			return expirationDateChoosable.getDelegationPolicy().getStatus();
+		}
+		return false;
 	}
 }

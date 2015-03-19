@@ -64,6 +64,17 @@
 			<div class="clear"></div>
 			</t:if>
 
+			<br />
+
+			<t:if test="showExpirationDatePicker">
+				<div id="expirationDateDiv">
+					<t:label for="expiryDate" class="edit-form-label"/>
+					<t:datefield t:id="expiryDate" t:value="expiryDate" t:validate="required" class="edit-form-field"/>
+				</div>
+			</t:if>
+			<br />
+			<br />
+
 
 			<hr />
 

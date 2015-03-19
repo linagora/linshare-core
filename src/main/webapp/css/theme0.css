@@ -3529,6 +3529,17 @@ form#uploadForm .upload-list {
 	padding: .25em .5em !important;
 }
 
+#guestEditFormComponent #expirationDateDiv img {
+	float: left;
+	margin-top: -1.38em;
+	margin-left: 23.2em;
+}
+
+#userEditFormComponent #expirationDateDiv img {
+	float: left;
+	margin-top: -1.38em;
+	margin-left: 23.2em;
+}
 
 /*--------------------------------------------------------------------------
 * Popups > User details displayer

@@ -238,6 +238,14 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 -- Notice : boolean_value= false, because we reset share_expiration functionality
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (50, false);
 
+-- Functionality : GUEST__EXPIRITION_ALLOW_PROLONGATION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (123, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (124, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (125, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
+ VALUES(51, false, 'GUESTS__EXPIRITION_ALLOW_PROLONGATION', 123, 124, 125, 'GUESTS', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (51, true);
+
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL__EXPIRATION
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (106, true, true, 1, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (107, true, true, 1, false);

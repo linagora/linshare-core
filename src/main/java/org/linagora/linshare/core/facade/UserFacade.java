@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade;
 
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
@@ -60,8 +61,10 @@ public interface UserFacade {
      * @param restrictedMails TODO
      * @throws BusinessException if user already exist.
      */
-	UserVo createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment,
-    		UserVo owner, boolean restricted, List<String> restrictedMails) throws BusinessException;
+	UserVo createGuest(String mail, String firstName, String lastName,
+			Boolean canUpload, Boolean canCreateGuest, String comment,
+			UserVo owner, boolean restricted, List<String> restrictedMails,
+			Date expirationDate) throws BusinessException;
 
     /**
      * update a guest (edit)
@@ -73,7 +76,10 @@ public interface UserFacade {
      * @param owner
      * @throws BusinessException
      */
-    public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, UserVo owner, boolean restricted, List<String> restrictedMails) throws BusinessException;
+	public void updateGuest(String guestUuid, String domain, String mail,
+			String firstName, String lastName, Boolean canUpload, UserVo owner,
+			boolean restricted, List<String> restrictedMails,
+			Date expirationDate) throws BusinessException;
 
     /**
      * update an user (only the role)
@@ -233,6 +239,9 @@ public interface UserFacade {
 	 * @param userToManageVo
 	 * @return
 	 */
-	public boolean isAdminForThisUser(UserVo actorVo, UserVo userToManageVo) throws BusinessException ;
+	public boolean isAdminForThisUser(UserVo actorVo, UserVo userToManageVo) throws BusinessException;
+
+	Date getGuestCreationExpirationDate(UserVo actorVo) throws BusinessException;
+	Date getGuestUpdateExpirationDate(UserVo actorVo, String currentUserUuid) throws BusinessException;
 
 }
