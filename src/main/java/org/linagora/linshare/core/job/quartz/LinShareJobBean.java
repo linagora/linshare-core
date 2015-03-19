@@ -18,10 +18,6 @@ public abstract class LinShareJobBean<T> extends QuartzJobBean {
 
 	protected GenericBatch<T> batch;
 
-	public GenericBatch<T> getBatch() {
-		return batch;
-	}
-
 	public void setBatch(GenericBatch<T> batch) {
 		this.batch = batch;
 	}
@@ -32,6 +28,7 @@ public abstract class LinShareJobBean<T> extends QuartzJobBean {
 		Set<T> all = batch.getAll();
 		for (T ressource : all) {
 			try {
+				logger.info("LinshareJobBean Bath :");
 				BatchResultContext<T> batchResult = batch.execute(ressource);
 				batch.notify(batchResult);
 			} catch (BatchBusinessException ex) {

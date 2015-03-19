@@ -34,7 +34,9 @@
 
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -88,5 +90,15 @@ public class UploadRequestEntryUrlRepositoryImpl extends
 			UploadRequestEntry entry) {
 		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
 				"uploadRequestEntry", entry)));
+	}
+
+	@Override
+	public List<UploadRequestEntryUrl> findAllExpiredUREUrl() {
+		List<UploadRequestEntryUrl> uREUrl = findByCriteria(Restrictions.lt("expiryDate", new Date()));
+		if (uREUrl == null) {
+			logger.error("None of the upload request entries url has expired");
+			return new ArrayList<UploadRequestEntryUrl>();
+		}
+		return uREUrl;
 	}
 }

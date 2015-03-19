@@ -35,7 +35,9 @@
 package org.linagora.linshare.core.service;
 
 import java.io.InputStream;
+import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntryUrl;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -48,7 +50,7 @@ public interface UploadRequestEntryUrlService {
 	UploadRequestEntryUrl create(UploadRequestEntry requestEntry,
 			boolean secured) throws BusinessException;
 
-	void deleteUploadRequestEntryUrl(UploadRequestEntryUrl url)
+	void deleteUploadRequestEntryUrl(Account actor, UploadRequestEntryUrl url)
 			throws BusinessException;
 
 	boolean exists(String uuid, String urlPath);
@@ -65,4 +67,6 @@ public interface UploadRequestEntryUrlService {
 
 	UploadRequestEntry getUploadRequestEntry(String uploadRequestUrlUuid,
 			String password) throws BusinessException;
+
+	List<UploadRequestEntryUrl> findAllExpiredUploadRequestEntryUrl(Account actor);
 }

@@ -11,7 +11,6 @@
             </map>
         </property>
     </bean>
-
     <bean id="cleanOutdatedGuestsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="cleanOutdatedGuestsJob"/>
         <property name="cronExpression" value="${job.guests.cron.expression}"/>
@@ -107,10 +106,22 @@
             </map>
         </property>
     </bean>
-
     <bean id="updateUploadRequestJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="updateUploadRequestJob"/>
         <property name="cronExpression" value="${job.uploadrequest.cron.expression}"/>
+    </bean>
+
+    <bean id="cleanOutdatedUploadRequestEntryUrlJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="org.linagora.linshare.core.job.quartz.CleanOutdatedUploadRequestEntryUrlJobBean"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="batch" value-ref="uploadRequestEntryUrlBatch"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="cleanOutdatedUploadRequestEntryUrlJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="cleanOutdatedUploadRequestEntryUrlJob"/>
+        <property name="cronExpression" value="${job.uploadrequestentryurl.cleaner.cron.expression}"/>
     </bean>
 
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -124,6 +135,7 @@
                 <ref bean="cleanJcrUnusedFilesJobTrigger"/>
                 <ref bean="cleanOutdatedDocumentsJobTrigger"/>
                 <ref bean="updateUploadRequestJobTrigger"/>
+                <ref bean="cleanOutdatedUploadRequestEntryUrlJobTrigger"/>
             </list>
         </property>
     </bean>

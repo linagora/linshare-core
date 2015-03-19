@@ -35,13 +35,13 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.linagora.linshare.core.business.service.UploadRequestEntryUrlBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntryUrl;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntryUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UploadRequestEntryUrlRepository;
@@ -59,7 +59,10 @@ public class UploadRequestEntryUrlBusinessServiceImpl implements
 
 	private final String path;
 
-	public UploadRequestEntryUrlBusinessServiceImpl(final UploadRequestEntryUrlRepository uploadRequestEntryUrlRepository, final PasswordService passwordService, final String baseUrl, final AccountRepository<Account> accountRepository) {
+	public UploadRequestEntryUrlBusinessServiceImpl(
+			final UploadRequestEntryUrlRepository uploadRequestEntryUrlRepository,
+			final PasswordService passwordService, final String baseUrl,
+			final AccountRepository<Account> accountRepository) {
 		super();
 		this.uploadRequestEntryUrlRepository = uploadRequestEntryUrlRepository;
 		this.passwordService = passwordService;
@@ -75,10 +78,12 @@ public class UploadRequestEntryUrlBusinessServiceImpl implements
 
 	@Override
 	public UploadRequestEntryUrl create(UploadRequestEntry requestEntry,
-			Boolean passwordProtected, Date expiryDate) throws BusinessException {
-		UploadRequestEntryUrl UREUrl =  new UploadRequestEntryUrl(requestEntry, path);
+			Boolean passwordProtected, Date expiryDate)
+			throws BusinessException {
+		UploadRequestEntryUrl UREUrl = new UploadRequestEntryUrl(requestEntry,
+				path);
 		UREUrl.setExpiryDate(expiryDate);
-		if(passwordProtected) {
+		if (passwordProtected) {
 			String password = passwordService.generatePassword();
 			// We store it temporary in this object for mail notification.
 			UREUrl.setTemporaryPlainTextPassword(password);
@@ -99,12 +104,16 @@ public class UploadRequestEntryUrlBusinessServiceImpl implements
 	}
 
 	@Override
-	public boolean isValidPassword(UploadRequestEntryUrl uploadRequestEntryUrl, String password) {
-		if (uploadRequestEntryUrl == null) throw new IllegalArgumentException("uploadRequestEntry url cannot be null");
+	public boolean isValidPassword(UploadRequestEntryUrl uploadRequestEntryUrl,
+			String password) {
+		if (uploadRequestEntryUrl == null)
+			throw new IllegalArgumentException(
+					"uploadRequestEntry url cannot be null");
 
 		// Check password validity
 		if (password != null) {
-			String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
+			String hashedPassword = HashUtils.hashSha1withBase64(password
+					.getBytes());
 			return hashedPassword.equals(uploadRequestEntryUrl.getPassword());
 		}
 		return true;
@@ -113,7 +122,8 @@ public class UploadRequestEntryUrlBusinessServiceImpl implements
 	@Override
 	public boolean isExpired(UploadRequestEntryUrl uploadRequestEntryUrl) {
 		if (uploadRequestEntryUrl == null)
-			throw new IllegalArgumentException("UploadRequestEntryUrl url cannot be null");
+			throw new IllegalArgumentException(
+					"UploadRequestEntryUrl url cannot be null");
 		Date now = new Date();
 		Date expiryDate = uploadRequestEntryUrl.getExpiryDate();
 		return now.after(expiryDate);
@@ -128,5 +138,10 @@ public class UploadRequestEntryUrlBusinessServiceImpl implements
 	public UploadRequestEntryUrl find(UploadRequestEntry entry)
 			throws BusinessException {
 		return uploadRequestEntryUrlRepository.findByUploadRequestEntry(entry);
+	}
+
+	@Override
+	public List<UploadRequestEntryUrl> findAllExpiredUploadRequestEntryUrl() {
+		return uploadRequestEntryUrlRepository.findAllExpiredUREUrl();
 	}
 }

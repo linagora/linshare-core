@@ -38,12 +38,16 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryUrlBusinessService;
+import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntryUrl;
@@ -212,10 +216,15 @@ public class UploadRequestEntryUrlServiceImpl implements
 
 	@Override
 	public void deleteUploadRequestEntryUrl(
-			UploadRequestEntryUrl uploadRequestEntryUrl)
+			Account actor, UploadRequestEntryUrl uploadRequestEntryUrl)
 			throws BusinessException {
+		Validate.notNull(actor);
+		Validate.notNull(uploadRequestEntryUrl);
+		if( !actor.hasSuperAdminRole() )
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					"the actor has not the right to delete this upload request entry url"
+							+ uploadRequestEntryUrl.getUuid());
 		uploadRequestEntryUrlBusinessService.delete(uploadRequestEntryUrl);
-
 	}
 
 	@Override
@@ -228,5 +237,16 @@ public class UploadRequestEntryUrlServiceImpl implements
 			res = uploadRequestEntryUrl.getUploadRequestEntry();
 		}
 		return res;
+	}
+
+	@Override
+	public List<UploadRequestEntryUrl> findAllExpiredUploadRequestEntryUrl(
+			Account actor) throws BusinessException {
+		Validate.notNull(actor);
+		if (actor.getRole() == Role.SUPERADMIN)
+			return uploadRequestEntryUrlBusinessService
+					.findAllExpiredUploadRequestEntryUrl();
+		throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+				"Actor role must be SUPERADMIN");
 	}
 }

@@ -51,6 +51,11 @@
         <constructor-arg ref="accountRepository" />
     </bean>
 
+    <bean name="uploadRequestEntryUrlBatch" class="org.linagora.linshare.core.batches.impl.UploadRequestEntryUrlBatchImpl">
+	    <constructor-arg ref="uploadRequestEntryUrlService" />
+	    <constructor-arg ref="accountRepository" />
+    </bean>
+
 	<!-- Don't use that with Jackrabbit 1.4 !! -->
 	<!-- https://issues.apache.org/jira/browse/JCR-2492 -->
     <bean name="jcrGarbageCollectionBatch" class="org.linagora.linshare.core.batches.impl.JcrGarbageCollectionBatchImpl">
