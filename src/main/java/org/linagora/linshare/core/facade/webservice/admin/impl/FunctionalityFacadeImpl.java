@@ -48,7 +48,7 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
-import org.linagora.linshare.core.facade.webservice.common.dto.FunctionalityDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityService;
 
@@ -66,7 +66,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public FunctionalityDto find(String domainId, String funcId)
+	public FunctionalityAdminDto find(String domainId, String funcId)
 			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
@@ -77,18 +77,18 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<FunctionalityDto> findAll(String domainId)
+	public List<FunctionalityAdminDto> findAll(String domainId)
 			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
 		Set<Functionality> entities = functionalityService
 				.getAllFunctionalities(actor, domainId);
 
-		Map<String, FunctionalityDto> ret = new HashMap<String, FunctionalityDto>();
-		List<FunctionalityDto> subs = new ArrayList<FunctionalityDto>();
+		Map<String, FunctionalityAdminDto> ret = new HashMap<String, FunctionalityAdminDto>();
+		List<FunctionalityAdminDto> subs = new ArrayList<FunctionalityAdminDto>();
 
 		for (Functionality f : entities) {
-			FunctionalityDto func = transform(actor, f);
+			FunctionalityAdminDto func = transform(actor, f);
 			// We check if this a sub functionality (a parameter)
 			if (f.isParam()) {
 				if (ret.containsKey(func.getParentIdentifier())) {
@@ -101,7 +101,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 				ret.put(f.getIdentifier(), func);
 			}
 		}
-		for (FunctionalityDto func : subs) {
+		for (FunctionalityAdminDto func : subs) {
 			if (ret.containsKey(func.getParentIdentifier())) {
 				ret.get(func.getParentIdentifier()).addFunctionalities(func);
 			}
@@ -110,7 +110,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public FunctionalityDto update(FunctionalityDto func)
+	public FunctionalityAdminDto update(FunctionalityAdminDto func)
 			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 
@@ -149,7 +149,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		return transform(actor, update);
 	}
 
-	private FunctionalityDto transform(Account actor, Functionality update) throws BusinessException {
+	private FunctionalityAdminDto transform(Account actor, Functionality update) throws BusinessException {
 		boolean parentAllowAPUpdate = functionalityService
 				.activationPolicyIsMutable(actor, update, update.getDomain()
 						.getIdentifier());
@@ -159,11 +159,11 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		boolean parentAllowDPUpdate = functionalityService
 				.delegationPolicyIsMutable(update, update.getDomain().getIdentifier());
 		boolean parentAllowParametersUpdate = functionalityService.parametersAreMutable(actor, update, update.getDomain().getIdentifier());
-		return new FunctionalityDto(update, parentAllowAPUpdate, parentAllowCPUpdate, parentAllowDPUpdate, parentAllowParametersUpdate);
+		return new FunctionalityAdminDto(update, parentAllowAPUpdate, parentAllowCPUpdate, parentAllowDPUpdate, parentAllowParametersUpdate);
 	}
 
 	@Override
-	public void delete(FunctionalityDto func) throws BusinessException {
+	public void delete(FunctionalityAdminDto func) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(func.getDomain(), "domain identifier must be set.");
 		Validate.notEmpty(func.getIdentifier(),

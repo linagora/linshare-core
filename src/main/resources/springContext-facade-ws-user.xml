@@ -49,4 +49,8 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="guestService" />
 	</bean>
+	<bean id="wsFunctionalityFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.FunctionalityFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="functionalityService" />
+	</bean>
 </beans>

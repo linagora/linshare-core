@@ -31,23 +31,17 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
-package org.linagora.linshare.core.facade.webservice.admin;
+package org.linagora.linshare.core.facade.webservice.user;
 
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 
-public interface FunctionalityFacade extends AdminGenericFacade {
+public interface FunctionalityFacade extends GenericFacade {
 
-	FunctionalityAdminDto find(String domainId, String funcId)
-			throws BusinessException;
+	FunctionalityDto find(String identifier) throws BusinessException;
 
-	List<FunctionalityAdminDto> findAll(String domainId) throws BusinessException;
-
-	FunctionalityAdminDto update(FunctionalityAdminDto func) throws BusinessException;
-
-	void delete(FunctionalityAdminDto func) throws BusinessException;
+	List<FunctionalityDto> findAll() throws BusinessException;
 
 }

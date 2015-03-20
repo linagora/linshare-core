@@ -36,8 +36,10 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
-import org.linagora.linshare.core.facade.webservice.common.dto.FunctionalityDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityTimeDto;
 
 public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 
@@ -87,7 +89,7 @@ public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 	}
 
 	@Override
-	public void updateFunctionalityValuesOnlyFromDto(FunctionalityDto functionalityDto) {
+	public void updateFunctionalityValuesOnlyFromDto(FunctionalityAdminDto functionalityDto) {
 		List<ParameterDto> parameters = functionalityDto.getParameters();
 		if (parameters != null && !parameters.isEmpty()) {
 			for (ParameterDto parameterDto : parameters) {
@@ -113,5 +115,14 @@ public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 		parameters.add(new ParameterDto(this.getBool()));
 		
 		return parameters;
+	}
+
+	@Override
+	protected FunctionalityDto getUserDto() {
+		FunctionalityTimeDto f = new FunctionalityTimeDto();
+		TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
+		f.setUnit(timeUnit.getUnitValue().toString());
+		f.setValue(value);
+		return f;
 	}
 }

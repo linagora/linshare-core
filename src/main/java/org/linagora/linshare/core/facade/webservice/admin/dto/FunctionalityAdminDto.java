@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.common.dto;
+package org.linagora.linshare.core.facade.webservice.admin.dto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +41,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.PolicyDto;
 
 import com.google.common.collect.Ordering;
 import com.wordnik.swagger.annotations.ApiModel;
@@ -50,7 +52,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @JsonIgnoreProperties({"name"})
 @XmlRootElement(name = "Functionality")
 @ApiModel(value = "Functionality", description = "Functionalities are used to configure the application")
-public class FunctionalityDto implements Comparable<FunctionalityDto> {
+public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> {
 
 	@ApiModelProperty(value = "Identifier")
 	protected String identifier;
@@ -85,16 +87,16 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 	protected String parentIdentifier;
 
 	@ApiModelProperty(value = "functionalities")
-	protected List<FunctionalityDto> functionalities;
+	protected List<FunctionalityAdminDto> functionalities;
 
 	@ApiModelProperty(value = "displayable")
 	protected boolean displayable;
 
-	public FunctionalityDto() {
+	public FunctionalityAdminDto() {
 		super();
 	}
 
-	public FunctionalityDto(Functionality f,
+	public FunctionalityAdminDto(Functionality f,
 			boolean parentAllowAPUpdate,
 			boolean parentAllowCPUpdate,
 			boolean parentAllowDPUpdate,
@@ -118,7 +120,7 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 		this.parameters = f.getParameters();
 		this.type = f.getType().toString();
 		this.parentIdentifier = f.getParentIdentifier();
-		functionalities = new ArrayList<FunctionalityDto>();
+		functionalities = new ArrayList<FunctionalityAdminDto>();
 		this.displayable = true;
 
 		if (!parentAllowAPUpdate && f.getActivationPolicy().isForbidden()) {
@@ -221,15 +223,15 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 		this.parentIdentifier = parentIdentifier;
 	}
 
-	public List<FunctionalityDto> getFunctionalities() {
+	public List<FunctionalityAdminDto> getFunctionalities() {
 		return Ordering.natural().immutableSortedCopy(functionalities);
 	}
 
-	public void setFunctionalities(List<FunctionalityDto> functionalities) {
+	public void setFunctionalities(List<FunctionalityAdminDto> functionalities) {
 		this.functionalities = functionalities;
 	}
 
-	public void addFunctionalities(FunctionalityDto functionality) {
+	public void addFunctionalities(FunctionalityAdminDto functionality) {
 		if (functionality != null) {
 			this.functionalities.add(functionality);
 			if(functionality.isDisplayable()) {
@@ -243,7 +245,7 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 	}
 
 	@Override
-	public int compareTo(FunctionalityDto o) {
+	public int compareTo(FunctionalityAdminDto o) {
 		return this.identifier.compareTo(o.getIdentifier());
 	}
 

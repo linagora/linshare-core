@@ -31,86 +31,53 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
-package org.linagora.linshare.webservice.admin.impl;
+package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
-import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
+import org.linagora.linshare.core.facade.webservice.user.FunctionalityFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.admin.FunctionalityRestService;
+import org.linagora.linshare.webservice.userv2.FunctionalityRestService;
 
-import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
 @Path("/functionalities")
-@Api(value = "/rest/admin/functionalities", description = "Functionalities service.")
+@Api(value = "/rest/user/functionalities", description = "functionality service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class FunctionalityRestServiceImpl extends WebserviceBase implements
-		FunctionalityRestService {
+public class FunctionalityRestServiceImpl extends WebserviceBase implements FunctionalityRestService {
 
-	private final FunctionalityFacade functionalityFacade;
+	private FunctionalityFacade functionalityFacade;
 
-	public FunctionalityRestServiceImpl(
-			final FunctionalityFacade functionalityFacade) {
+	public FunctionalityRestServiceImpl(FunctionalityFacade functionalityFacade) {
+		super();
 		this.functionalityFacade = functionalityFacade;
 	}
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all domain's functionalities.", response = FunctionalityAdminDto.class, responseContainer = "Set")
+	@ApiOperation(value = "Find all domain's functionalities.", response = FunctionalityDto.class, responseContainer = "Set")
 	@Override
-	public List<FunctionalityAdminDto> findAll(
-			@QueryParam(value = "domainId") String domainId)
-			throws BusinessException {
-		return functionalityFacade.findAll(domainId);
+	public List<FunctionalityDto> findAll() throws BusinessException {
+		return functionalityFacade.findAll();
 	}
 
 	@Path("/{funcId}")
 	@GET
-	@ApiOperation(value = "Find a domain's functionality.", response = FunctionalityAdminDto.class)
+	@ApiOperation(value = "Find a functionality.", response = FunctionalityDto.class)
 	@Override
-	public FunctionalityAdminDto find(
-			@QueryParam(value = "domainId") String domainId,
+	public FunctionalityDto find(
 			@PathParam(value = "funcId") String funcId)
 			throws BusinessException {
-		return functionalityFacade.find(domainId, funcId);
+		return functionalityFacade.find(funcId);
 	}
 
-	@Path("/")
-	@PUT
-	@ApiOperation(value = "Update a domain's functionality.")
-	@Override
-	public FunctionalityAdminDto update(FunctionalityAdminDto func)
-			throws BusinessException {
-		List<FunctionalityAdminDto> subs = Lists.newArrayList();
-		for (FunctionalityAdminDto functionalityDto : func.getFunctionalities()) {
-			subs.add(functionalityFacade.update(functionalityDto));
-		}
-		FunctionalityAdminDto ret = functionalityFacade.update(func);
-		ret.setFunctionalities(subs);
-		return ret;
-	}
-
-	@Path("/")
-	@DELETE
-	@ApiOperation(value = "Delete a domain's functionality.")
-	@Override
-	public void delete(FunctionalityAdminDto func) throws BusinessException {
-		functionalityFacade.delete(func);
-	}
 }

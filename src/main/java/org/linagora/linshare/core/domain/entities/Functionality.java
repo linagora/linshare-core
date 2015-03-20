@@ -38,7 +38,8 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
-import org.linagora.linshare.core.facade.webservice.common.dto.FunctionalityDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 
 
@@ -106,7 +107,30 @@ public class Functionality extends AbstractFunctionality {
 		this.param = param;
 	}
 
-	public void updateFunctionalityValuesOnlyFromDto(FunctionalityDto functionality) {
+	public void updateFunctionalityValuesOnlyFromDto(FunctionalityAdminDto functionality) {
 		// no data in this class.
+	}
+
+	/**
+	 * Need to be override by every subclasses.
+	 * @return
+	 */
+	protected FunctionalityDto getUserDto() {
+		return new FunctionalityDto();
+	}
+
+	/**
+	 * Call it to transform your entity to a DTO.
+	 * @return
+	 */
+	public FunctionalityDto toUserDto() {
+		FunctionalityDto f = getUserDto();
+		f.setIdentifier(identifier);
+		f.setCanOverride(null);
+		f.setEnable(activationPolicy.getStatus());
+		if (delegationPolicy != null) {
+			f.setCanOverride(delegationPolicy.getStatus());
+		}
+		return f;
 	}
 }

@@ -58,9 +58,11 @@
 	<bean id="userLogRestService" class="org.linagora.linshare.webservice.userv2.impl.LogRestServiceImpl">
 		<constructor-arg ref="wsLogEntryFacade" />
 	</bean>
-<!--
 
--->
+	<bean id="userFunctionalityRestService" class="org.linagora.linshare.webservice.userv2.impl.FunctionalityRestServiceImpl">
+		<constructor-arg ref="wsFunctionalityFacade" />
+	</bean>
+
 	<jaxrs:server id="userRestContainer" address="/rest/user">
 		<jaxrs:serviceBeans>
 			<ref bean="userEnumRestService" />
@@ -74,6 +76,7 @@
 			<ref bean="userRestService" />
 			<ref bean="userReceivedShareRestService" />
 			<ref bean="userLogRestService" />
+			<ref bean="userFunctionalityRestService" />
 <!--
 			<ref bean="pluginCompatibilityRestService" />
 -->

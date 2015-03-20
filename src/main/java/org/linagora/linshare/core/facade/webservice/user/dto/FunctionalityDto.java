@@ -31,21 +31,77 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin;
+package org.linagora.linshare.core.facade.webservice.user.dto;
 
-import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
+import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonSubTypes.Type;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 
-public interface FunctionalityRestService {
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({ @Type(value = FunctionalityStringDto.class, name = "string"),
+		@Type(value = FunctionalityIntegerDto.class, name = "integer"),
+		@Type(value = FunctionalityBooleanDto.class, name = "boolean"),
+		@Type(value = FunctionalityTimeDto.class, name = "time"),
+		@Type(value = FunctionalitySizeDto.class, name = "size"),
+		@Type(value = FunctionalityDto.class, name = "simple"),
+		})
+@XmlRootElement(name = "Functionality")
+@XmlSeeAlso({ FunctionalityStringDto.class,
+	FunctionalityIntegerDto.class,
+	FunctionalityBooleanDto.class,
+	FunctionalityTimeDto.class,
+	FunctionalitySizeDto.class})
+public class FunctionalityDto {
 
-	List<FunctionalityAdminDto> findAll(String domainId) throws BusinessException;
+	/**
+	 * the functionality identifier.
+	 */
+	protected String identifier;
+	/**
+	 * if the functionality is enable/available.
+	 */
+	protected boolean enable;
+	/**
+	 * if the user can override the default parameters.
+	 */
+	protected Boolean canOverride;
 
-	FunctionalityAdminDto find(String domainId, String funcId)
-			throws BusinessException;
+	public FunctionalityDto() {
+		super();
+	}
 
-	FunctionalityAdminDto update(FunctionalityAdminDto func) throws BusinessException;
+	public FunctionalityDto(String identifier, boolean enable,
+			Boolean  canOverride) {
+		super();
+		this.identifier = identifier;
+		this.enable = enable;
+		this.canOverride = canOverride;
+	}
 
-	void delete(FunctionalityAdminDto func) throws BusinessException;
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+
+	public boolean isEnable() {
+		return enable;
+	}
+
+	public void setEnable(boolean enable) {
+		this.enable = enable;
+	}
+
+	public Boolean isCanOverride() {
+		return canOverride;
+	}
+
+	public void setCanOverride(Boolean canOverride) {
+		this.canOverride = canOverride;
+	}
 }

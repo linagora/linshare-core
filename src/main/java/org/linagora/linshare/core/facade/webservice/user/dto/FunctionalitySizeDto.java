@@ -31,23 +31,66 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.facade.webservice.user.dto;
 
-package org.linagora.linshare.core.facade.webservice.admin;
-
+import java.util.ArrayList;
 import java.util.List;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public interface FunctionalityFacade extends AdminGenericFacade {
+import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 
-	FunctionalityAdminDto find(String domainId, String funcId)
-			throws BusinessException;
+@XmlRootElement(name = "FunctionalitySize")
+public class FunctionalitySizeDto extends FunctionalityDto {
 
-	List<FunctionalityAdminDto> findAll(String domainId) throws BusinessException;
+	protected Integer value;
 
-	FunctionalityAdminDto update(FunctionalityAdminDto func) throws BusinessException;
+	protected String unit;
 
-	void delete(FunctionalityAdminDto func) throws BusinessException;
+	protected List<String> units = new ArrayList<String>();
 
+	public FunctionalitySizeDto(FileSizeUnit... units) {
+		super();
+		for (FileSizeUnit sizeUnit : units) {
+			this.units.add(sizeUnit.toString());
+		}
+	}
+
+	public FunctionalitySizeDto() {
+		super();
+		this.units.add(FileSizeUnit.KILO.toString());
+		this.units.add(FileSizeUnit.MEGA.toString());
+		this.units.add(FileSizeUnit.GIGA.toString());
+	}
+
+	public FunctionalitySizeDto(Integer value, String unit, List<String> units) {
+		super();
+		this.value = value;
+		this.unit = unit;
+		this.units = units;
+	}
+
+	public Integer getValue() {
+		return value;
+	}
+
+	public void setValue(Integer value) {
+		this.value = value;
+	}
+
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+
+	public List<String> getUnits() {
+		return units;
+	}
+
+	public void setUnits(List<String> units) {
+		this.units = units;
+	}
 }

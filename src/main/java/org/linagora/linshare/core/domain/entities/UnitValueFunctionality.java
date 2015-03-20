@@ -39,8 +39,11 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.constants.TimeUnit;
-import org.linagora.linshare.core.facade.webservice.common.dto.FunctionalityDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalitySizeDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityTimeDto;
 
 public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
@@ -107,7 +110,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	public void updateFunctionalityValuesOnlyFromDto(FunctionalityDto functionalityDto) {
+	public void updateFunctionalityValuesOnlyFromDto(FunctionalityAdminDto functionalityDto) {
 		List<ParameterDto> parameters = functionalityDto.getParameters();
 		if (parameters != null && !parameters.isEmpty()) {
 			ParameterDto parameterDto = parameters.get(0);
@@ -152,5 +155,23 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		}
 		res.add(new ParameterDto(unitType, units, currentUnit, this.getValue()));
 		return res;
+	}
+
+	@Override
+	protected FunctionalityDto getUserDto() {
+		if (getUnit() instanceof FileSizeUnitClass) {
+			FunctionalitySizeDto f = new FunctionalitySizeDto();
+			FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
+			f.setUnit(sizeUnit.getUnitValue().toString());
+			f.setValue(value);
+			return f;
+		} else if (getUnit() instanceof TimeUnitClass) {
+			FunctionalityTimeDto f = new FunctionalityTimeDto();
+			TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
+			f.setUnit(timeUnit.getUnitValue().toString());
+			f.setValue(value);
+			return f;
+		}
+		return null;
 	}
 }

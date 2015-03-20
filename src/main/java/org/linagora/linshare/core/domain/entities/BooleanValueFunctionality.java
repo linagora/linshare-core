@@ -37,8 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
-import org.linagora.linshare.core.facade.webservice.common.dto.FunctionalityDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityBooleanDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 
 public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 
@@ -84,7 +86,7 @@ public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 	}
 
 	@Override
-	public void updateFunctionalityValuesOnlyFromDto(FunctionalityDto functionality) {
+	public void updateFunctionalityValuesOnlyFromDto(FunctionalityAdminDto functionality) {
 		List<ParameterDto> parameters = functionality.getParameters();
 		if (parameters != null && !parameters.isEmpty()) {
 			ParameterDto parameterDto = parameters.get(0);
@@ -97,5 +99,12 @@ public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 		List<ParameterDto> res = new ArrayList<ParameterDto>();
 		res.add(new ParameterDto(this.getValue()));
 		return res;
+	}
+
+	@Override
+	protected FunctionalityDto getUserDto() {
+		FunctionalityBooleanDto f = new FunctionalityBooleanDto();
+		f.setValue(value);
+		return f;
 	}
 }

@@ -31,23 +31,30 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.facade.webservice.user.dto;
 
-package org.linagora.linshare.core.facade.webservice.admin;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import java.util.List;
+@XmlRootElement(name = "FunctionalityBoolean")
+public class FunctionalityBooleanDto extends FunctionalityDto {
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
+	protected Boolean value;
 
-public interface FunctionalityFacade extends AdminGenericFacade {
+	public FunctionalityBooleanDto() {
+		super();
+	}
 
-	FunctionalityAdminDto find(String domainId, String funcId)
-			throws BusinessException;
+	public FunctionalityBooleanDto(String identifier, boolean enable,
+			boolean canOverride, Boolean value) {
+		super(identifier, enable, canOverride);
+		this.value = value;
+	}
 
-	List<FunctionalityAdminDto> findAll(String domainId) throws BusinessException;
+	public Boolean getValue() {
+		return value;
+	}
 
-	FunctionalityAdminDto update(FunctionalityAdminDto func) throws BusinessException;
-
-	void delete(FunctionalityAdminDto func) throws BusinessException;
-
+	public void setValue(Boolean value) {
+		this.value = value;
+	}
 }

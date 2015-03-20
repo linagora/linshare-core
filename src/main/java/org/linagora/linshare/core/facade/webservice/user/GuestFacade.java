@@ -39,7 +39,7 @@ import java.util.List;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 
-public interface GuestFacade {
+public interface GuestFacade extends GenericFacade {
 	
 	List<GuestDto> findAll() throws BusinessException;
 
