@@ -94,19 +94,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		private String name;
 
-		private Long size;
-
-		@SuppressWarnings("unused")
-		public FileRepresentation(String name, Long size) {
-			super();
-			this.name = name;
-			this.size = size;
-		}
-
 		public FileRepresentation(UploadRequestEntry entry) {
 			super();
 			this.name = entry.getName();
-			this.size = entry.getDocumentEntry().getSize();
 		}
 
 		@Override
