@@ -34,9 +34,10 @@
 
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -47,6 +48,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestEntryUrlRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+
+import com.google.common.collect.Sets;
 
 public class UploadRequestEntryUrlRepositoryImpl extends
 		AbstractRepositoryImpl<UploadRequestEntryUrl> implements
@@ -93,12 +96,12 @@ public class UploadRequestEntryUrlRepositoryImpl extends
 	}
 
 	@Override
-	public List<UploadRequestEntryUrl> findAllExpiredUREUrl() {
+	public Set<UploadRequestEntryUrl> findAllExpired() {
+		HashSet<UploadRequestEntryUrl> set = Sets.newHashSet();
 		List<UploadRequestEntryUrl> uREUrl = findByCriteria(Restrictions.lt("expiryDate", new Date()));
-		if (uREUrl == null) {
-			logger.error("None of the upload request entries url has expired");
-			return new ArrayList<UploadRequestEntryUrl>();
+		if (uREUrl != null) {
+			set.addAll(uREUrl);
 		}
-		return uREUrl;
+		return set;
 	}
 }

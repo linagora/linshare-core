@@ -38,14 +38,13 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryUrlBusinessService;
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -240,13 +239,13 @@ public class UploadRequestEntryUrlServiceImpl implements
 	}
 
 	@Override
-	public List<UploadRequestEntryUrl> findAllExpiredUploadRequestEntryUrl(
-			Account actor) throws BusinessException {
+	public Set<UploadRequestEntryUrl> findAllExpired(Account actor)
+			throws BusinessException {
 		Validate.notNull(actor);
-		if (actor.getRole() == Role.SUPERADMIN)
-			return uploadRequestEntryUrlBusinessService
-					.findAllExpiredUploadRequestEntryUrl();
+		if (actor.hasSuperAdminRole() || actor.hasSystemAccountRole()) {
+			return uploadRequestEntryUrlBusinessService.findAllExpired();
+		}
 		throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-				"Actor role must be SUPERADMIN");
+			"Actor role must be super admin or system account");
 	}
 }

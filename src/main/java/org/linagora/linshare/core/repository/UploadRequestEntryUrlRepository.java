@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.core.repository;
 
-import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntryUrl;
@@ -53,6 +53,5 @@ public interface UploadRequestEntryUrlRepository extends
 
 	UploadRequestEntryUrl findByUploadRequestEntry(UploadRequestEntry entry);
 
-	List<UploadRequestEntryUrl> findAllExpiredUREUrl();
-
+	Set<UploadRequestEntryUrl> findAllExpired();
 }

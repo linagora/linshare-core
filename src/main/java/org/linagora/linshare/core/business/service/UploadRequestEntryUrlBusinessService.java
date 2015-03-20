@@ -35,7 +35,7 @@
 package org.linagora.linshare.core.business.service;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
@@ -63,5 +63,5 @@ public interface UploadRequestEntryUrlBusinessService {
 
 	SystemAccount getUploadRequestEntryURLAccount();
 
-	List<UploadRequestEntryUrl> findAllExpiredUploadRequestEntryUrl();
+	Set<UploadRequestEntryUrl> findAllExpired();
 }

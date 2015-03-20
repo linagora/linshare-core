@@ -37,13 +37,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.linagora.linshare.core.batches.UserManagementBatch;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
-import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.GuestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,41 +52,35 @@ import org.slf4j.LoggerFactory;
 public class UserManagementBatchImpl implements UserManagementBatch {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(UserManagementBatch.class);
+			.getLogger(UserManagementBatchImpl.class);
 
-	private final AccountRepository<Account> accountRepository;
-	private final GuestService guestService;
+	private final GuestService service;
 
-	public UserManagementBatchImpl(
-			final AccountRepository<Account> accountRepository,
-			final GuestService guestService) {
-		this.guestService = guestService;
-		this.accountRepository = accountRepository;
+	public UserManagementBatchImpl(final GuestService guestService) {
+		this.service = guestService;
 	}
 
 	@Override
-	public Set<Guest> getAll() {
-		SystemAccount actor = accountRepository.getBatchSystemAccount();
-		return new HashSet<>(guestService.findOudatedGuests(actor));
+	public Set<Guest> getAll(SystemAccount systemAccount) {
+		logger.info("UserManagementBatchImpl job starting ...");
+		HashSet<Guest> allGuests = new HashSet<>(
+				service.findOudatedGuests(systemAccount));
+		logger.info(allGuests.size()
+				+ " guest(s) have been found to be removed");
+		return allGuests;
 	}
 
 	@Override
-	public BatchResultContext<Guest> execute(Guest resource)
-			throws BatchBusinessException, BusinessException {
-		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
+	public BatchResultContext<Guest> execute(SystemAccount systemAccount,
+			Guest resource) throws BatchBusinessException, BusinessException {
 		BatchResultContext<Guest> context = new BatchResultContext<Guest>(
 				resource);
 		try {
-			Set<Guest> allGuests = getAll();
-			logger.info(allGuests.size() + " guest(s) have been found to be removed");
-			for(Guest guest : allGuests) {
-				guestService.deleteUser(systemAccount, guest.getLsUuid());
-				logger.info("Removed expired user : "
-						+ guest.getAccountReprentation());
-			}
+			service.deleteUser(systemAccount, resource.getLsUuid());
+			logger.info("Removed expired user : " + resource.getAccountReprentation());
 		} catch (BusinessException businessException) {
 			BatchBusinessException exception = new BatchBusinessException(
-					context, "sample");
+					context, "Error while trying to delete expired guest");
 			exception.setBusinessException(businessException);
 			throw exception;
 		}
@@ -96,13 +88,22 @@ public class UserManagementBatchImpl implements UserManagementBatch {
 	}
 
 	@Override
-	public void notify(BatchResultContext<Guest> context) {
+	public void notify(SystemAccount systemAccount,
+			BatchResultContext<Guest> context) {
 		logger.info("notification after cleaning outdated guest success ",
-				context.getResource());
+				context.getResource().getAccountReprentation());
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception) {
+	public void notifyError(SystemAccount systemAccount,
+			BatchBusinessException exception) {
 		logger.error("Error notification BatchBusinessException ", exception);
+	}
+
+	@Override
+	public void terminate(SystemAccount systemAccount, Set<Guest> all) {
+		logger.info(all.size() + " guests have been removed.");
+		logger.info("UserManagementBatchImpl job terminated.");
+
 	}
 }
