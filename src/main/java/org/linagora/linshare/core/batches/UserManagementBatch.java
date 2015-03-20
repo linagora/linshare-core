@@ -33,10 +33,11 @@
  */
 package org.linagora.linshare.core.batches;
 
+import org.linagora.linshare.core.batches.generics.GenericBatch;
+import org.linagora.linshare.core.domain.entities.Guest;
+
 /** Batch for user management.
  */
-public interface UserManagementBatch {
+public interface UserManagementBatch extends GenericBatch<Guest>{
 
-    /** Find all outdated guest accounts and remove them. */
-    void cleanExpiredGuestAccounts();
 }

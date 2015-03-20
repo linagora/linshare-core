@@ -34,24 +34,12 @@
 package org.linagora.linshare.core.job.quartz;
 
 import org.linagora.linshare.core.batches.UserManagementBatch;
-import org.quartz.JobExecutionContext;
-import org.springframework.scheduling.quartz.QuartzJobBean;
 
 /** This job clean periodically outdated guests.
  */
-public class CleanOutdatedGuests extends QuartzJobBean {
+public class CleanOutdatedGuests extends LinShareJobBean<UserManagementBatch> {
 
-    private UserManagementBatch batch;
-
-    public CleanOutdatedGuests() {}
-
-    protected void executeInternal(JobExecutionContext context) {
-        batch.cleanExpiredGuestAccounts();
-    }
-
-    /** @param userManagementBatch used batch. */
-    public void setBatch(UserManagementBatch batch) {
-        this.batch = batch;
-
-    }
+	public CleanOutdatedGuests() {
+		super();
+	}
 }

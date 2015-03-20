@@ -33,16 +33,28 @@
  */
 package org.linagora.linshare.core.batches.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.linagora.linshare.core.batches.UserManagementBatch;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.exception.BatchBusinessException;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.GuestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Batch for user management.
  */
 public class UserManagementBatchImpl implements UserManagementBatch {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(UserManagementBatch.class);
 
 	private final AccountRepository<Account> accountRepository;
 	private final GuestService guestService;
@@ -54,10 +66,43 @@ public class UserManagementBatchImpl implements UserManagementBatch {
 		this.accountRepository = accountRepository;
 	}
 
-	/** Find all outdated guest accounts and remove them. */
-	public void cleanExpiredGuestAccounts() {
-		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
-		guestService.cleanExpiredGuests(systemAccount);
+	@Override
+	public Set<Guest> getAll() {
+		SystemAccount actor = accountRepository.getBatchSystemAccount();
+		return new HashSet<>(guestService.findOudatedGuests(actor));
 	}
 
+	@Override
+	public BatchResultContext<Guest> execute(Guest resource)
+			throws BatchBusinessException, BusinessException {
+		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
+		BatchResultContext<Guest> context = new BatchResultContext<Guest>(
+				resource);
+		try {
+			Set<Guest> allGuests = getAll();
+			logger.info(allGuests.size() + " guest(s) have been found to be removed");
+			for(Guest guest : allGuests) {
+				guestService.deleteUser(systemAccount, guest.getLsUuid());
+				logger.info("Removed expired user : "
+						+ guest.getAccountReprentation());
+			}
+		} catch (BusinessException businessException) {
+			BatchBusinessException exception = new BatchBusinessException(
+					context, "sample");
+			exception.setBusinessException(businessException);
+			throw exception;
+		}
+		return context;
+	}
+
+	@Override
+	public void notify(BatchResultContext<Guest> context) {
+		logger.info("notification after cleaning outdated guest success ",
+				context.getResource());
+	}
+
+	@Override
+	public void notifyError(BatchBusinessException exception) {
+		logger.error("Error notification BatchBusinessException ", exception);
+	}
 }

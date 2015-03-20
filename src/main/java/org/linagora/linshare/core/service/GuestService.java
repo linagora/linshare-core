@@ -162,6 +162,10 @@ public interface GuestService {
 	 */
 	void resetPassword(String lsUuid) throws BusinessException;
 
+	List<Guest> findOudatedGuests(Account actor) throws BusinessException;
+
+	void deleteUser(SystemAccount systemAccount, String uuid) throws BusinessException;
+
 //	/**
 //	 * Remove restriction on contacts for a guest and delete all his contacts
 //	 * 
