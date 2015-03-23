@@ -682,6 +682,9 @@ public class UserServiceImpl implements UserService {
 				user.setCreationDate(new Date());
 
 				user.setLocale(user.getDomain().getDefaultTapestryLocale());
+				// TODO : FIXME : Waiting to get default external mail local from domain.
+				Language locale = Language.fromTapestryLocale(user.getLocale().getTapestryLocale());
+				user.setExternalMailLocale(locale);
 				try {
 					return userRepository.create(user);
 				} catch (IllegalArgumentException e) {
