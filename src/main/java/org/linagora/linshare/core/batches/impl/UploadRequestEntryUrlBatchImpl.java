@@ -69,7 +69,9 @@ public class UploadRequestEntryUrlBatchImpl implements
 	@Override
 	public void notifyError(SystemAccount systemAccount,
 			BatchBusinessException exception) {
-		logger.error("Error notification BatchBusinessException ", exception);
+		logger.error(
+				"An error occured while cleaning outdated upload request entry url. A BatchBusinessException has been thrown ",
+				exception);
 	}
 
 	@Override

@@ -76,9 +76,12 @@ public class UserManagementBatchImpl implements UserManagementBatch {
 		BatchResultContext<Guest> context = new BatchResultContext<Guest>(
 				resource);
 		try {
+			logger.info("processing guest : " + resource.getAccountReprentation());
 			service.deleteUser(systemAccount, resource.getLsUuid());
 			logger.info("Removed expired user : " + resource.getAccountReprentation());
 		} catch (BusinessException businessException) {
+			logger.info("Error occured while cleaning outdated guests ",
+					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
 					context, "Error while trying to delete expired guest");
 			exception.setBusinessException(businessException);
@@ -90,14 +93,14 @@ public class UserManagementBatchImpl implements UserManagementBatch {
 	@Override
 	public void notify(SystemAccount systemAccount,
 			BatchResultContext<Guest> context) {
-		logger.info("notification after cleaning outdated guest success ",
+		logger.info("Outdated guest was successfully removed ",
 				context.getResource().getAccountReprentation());
 	}
 
 	@Override
 	public void notifyError(SystemAccount systemAccount,
 			BatchBusinessException exception) {
-		logger.error("Error notification BatchBusinessException ", exception);
+		logger.error("Error occured while cleaning outdated guests. BatchBusinessException ", exception);
 	}
 
 	@Override
