@@ -33,8 +33,10 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -238,7 +240,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 				.getUploadRequestNotificationTimeFunctionality(domain);
 		Date expiryDate = checkDate(funcExpiry, req.getExpiryDate());
 		req.setExpiryDate(expiryDate);
-		Date notifDate =  checkDate(funcNotify, req.getExpiryDate()); // Must have a setted value in order to return a value not null
+		Date notifDate =  checkNotificationDate(funcNotify, req.getNotificationDate(), req.getExpiryDate()); // Must have a setted value in order to return a value not null
 		req.setNotificationDate(notifDate);
 	}
 
@@ -392,24 +394,38 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 		}
 	}
 
+	/**
+	 * Check if the current input date is after now and not before now more the
+	 * functionality duration if delegation policy allowed it.
+	 * now() < currentDate <  now() + func.value
+	 * Otherwise functionality value is used as default value.
+	 * @param func
+	 * @param currentDate
+	 * @return the proper date is returned according to activation policy,
+	 * configuration policy and others checks.
+	 */
 	private Date checkDate(TimeUnitValueFunctionality func, Date currentDate) {
 		if (func.getActivationPolicy().getStatus()) {
 			logger.debug(func.getIdentifier() + " is activated");
-			@SuppressWarnings("deprecation")
-			Date maxDate = DateUtils.add(new Date(),
-					func.toCalendarUnitValue(), func.getValue());
+			Calendar c = new GregorianCalendar();
+			c.add(func.toCalendarUnitValue(), func.getValue());
+			Date maxDate = c.getTime();
 			if (func.getDelegationPolicy() != null
 					&& func.getDelegationPolicy().getStatus()) {
 				logger.debug(func.getIdentifier() + " has a delegation policy");
-				if(currentDate!=null) {
-					if (!(currentDate.before(maxDate))) {
-						//	if (!(currentDate.after(new Date()) && currentDate.before(maxDate))) {
-						logger.warn("the current value " + currentDate.toString()
-								+ " is out of range : " + func.toString());
+				if (currentDate != null) {
+					if (currentDate.after(maxDate)
+							|| currentDate.before(new Date())) {
+						logger.warn("the current value "
+								+ currentDate.toString()
+								+ " is out of range : " + func.toString()
+								+ " : " + maxDate.toString());
 						return maxDate;
+					} else {
+						return currentDate;
 					}
 				}
-				return currentDate;
+				return maxDate;
 			} else {
 				// there is no delegation, the current value should be the
 				// system value or null
@@ -423,6 +439,63 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 					}
 				}
 				return maxDate;
+			}
+		} else {
+			logger.debug(func.getIdentifier() + " is not activated");
+			if (currentDate != null) {
+				logger.warn("the current value " + currentDate.toString()
+						+ " should be null for the functionality "
+						+ func.toString());
+			}
+			return null;
+		}
+	}
+
+	/**
+	 * Check if the current input date is after now and not before now more the
+	 * functionality duration if delegation policy allowed it.
+	 * now() < currentDate <  now() + func.value
+	 * Otherwise functionality value is used as default value.
+	 * @param func
+	 * @param currentDate
+	 * @param expirationDate TODO
+	 * @return the proper date is returned according to activation policy,
+	 * configuration policy and others checks.
+	 */
+	private Date checkNotificationDate(TimeUnitValueFunctionality func, Date currentDate, Date expirationDate) {
+		if (func.getActivationPolicy().getStatus()) {
+			logger.debug(func.getIdentifier() + " is activated");
+			Calendar c = new GregorianCalendar();
+			c.setTime(expirationDate);
+			c.add(func.toCalendarUnitValue(), - func.getValue());
+			Date minDate = c.getTime();
+			if (func.getDelegationPolicy() != null
+					&& func.getDelegationPolicy().getStatus()) {
+				logger.debug(func.getIdentifier() + " has a delegation policy");
+				if (currentDate != null) {
+					if (!(currentDate.before(expirationDate) && currentDate.after(minDate))) {
+						//	if (!(currentDate.after(new Date()) && currentDate.before(maxDate))) {
+						logger.warn("the current value " + currentDate.toString()
+								+ " is out of range : " + func.toString());
+						return minDate;
+					}
+					return currentDate;
+				} else {
+					return minDate;
+				}
+			} else {
+				// there is no delegation, the current value should be the
+				// system value or null
+				logger.debug(func.getIdentifier()
+						+ " does not have a delegation policy");
+				if (currentDate != null) {
+					if (!currentDate.equals(minDate)) {
+						logger.warn("the current value "
+								+ currentDate.toString()
+								+ " is different than system value " + minDate);
+					}
+				}
+				return minDate;
 			}
 		} else {
 			logger.debug(func.getIdentifier() + " is not activated");
