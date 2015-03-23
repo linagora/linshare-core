@@ -23,6 +23,13 @@
                         <span><img src="${asset:context:images/icons/icon-add-files.png}" alt="" /> ${message:pages.files.upload.addbutton}</span>
                     </t:pageLink>
                 </li>
+                <li>
+                 <!-- <t:if test="showCreateButton"> -->
+                    <t:pageLink page="files/SignAndUpload" class="button" title="${message:pages.files.signandupload.addbutton}">
+                        <span><img src="${asset:context:images/icons/icon-add-files.png}" alt="" /> ${message:pages.files.signandupload.addbutton}</span>
+                    </t:pageLink>
+                <!-- </t:if> -->
+                </li>
 				<t:parameter name="else"><t:linkit.Comment> * KEEP IT, XHTML validation * </t:linkit.Comment>
 				<li>&nbsp;</li>
 				</t:parameter>

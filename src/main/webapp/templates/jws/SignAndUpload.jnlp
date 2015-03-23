@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+" codebase="${javawebstart.decrypt.url.codebase}">
+	<information>
+		<title>Applet LinSign v2 for LinShare</title>
+		<vendor>Linagora</vendor>
+		<description>Logiciel pour signer des fichiers localement par l'application LinShare</description>
+		<icon href="../images/icon_lock_48x48.png" />
+		<shortcut online="true">
+		</shortcut>
+		<offline-allowed /> 
+	</information>
+	
+	<security>
+		<all-permissions />
+	</security>
+	
+	<resources>
+		<j2se version="1.7" href="http://java.sun.com/products/autodl/j2se" />
+		<jar href="signature-client.jar" download="eager" main="true"/>
+	</resources>
+	
+	<!-- launch the signature module as an application -->
+	<!--
+	<application-desc main-class="org.gsafeproject.signature.client.LinShareSignatureXAdES" />
+	-->
+
+	<!-- launch the signature module as an applet -->
+	<applet-desc
+		name="LinShare Signature"
+		main-class="org.gsafeproject.signature.client.LinShareSignatureApplet"
+		width="650"
+		height="350">
+	</applet-desc>
+</jnlp>
