@@ -34,10 +34,11 @@
 package org.linagora.linshare.webservice.user;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 public interface AuthenticationRestService {
 
 	void noop();
 
-	Boolean isAuthorized() throws BusinessException;
+	UserDto isAuthorized() throws BusinessException;
 }
