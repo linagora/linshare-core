@@ -31,8 +31,8 @@ public class UploadRequestEntryUrlBatchImpl implements
 		logger.info("UploadRequestEntryUrlBatchImpl job starting ...");
 		Set<UploadRequestEntryUrl> allExpired = service
 				.findAllExpired(systemAccount);
-		logger.info(allExpired.size()
-				+ " upload request entrie(s) url have been found to be removed");
+		logger.info("The system has found " + allExpired.size()
+				+ " expired upload request entrie(s) url");
 		return allExpired;
 	}
 
@@ -46,12 +46,10 @@ public class UploadRequestEntryUrlBatchImpl implements
 			logger.info("processing uREUrl : " + resource.getUuid());
 			service.deleteUploadRequestEntryUrl(systemAccount, resource);
 		} catch (BusinessException businessException) {
-			logger.error(
-					"Error while trying to delete outdated upload request entry url ",
-					businessException);
+			String msg = "Error while trying to delete outdated upload request entry url ";
+			logger.error(msg, businessException);
 			BatchBusinessException exception = new BatchBusinessException(
-					context,
-					"Error while trying to delete outdated upload request entry url");
+					context, msg);
 			exception.setBusinessException(businessException);
 			throw exception;
 		}
@@ -68,9 +66,11 @@ public class UploadRequestEntryUrlBatchImpl implements
 
 	@Override
 	public void notifyError(SystemAccount systemAccount,
-			BatchBusinessException exception) {
+			BatchBusinessException exception, UploadRequestEntryUrl resource) {
 		logger.error(
-				"An error occured while cleaning outdated upload request entry url. A BatchBusinessException has been thrown ",
+				"An error occured while cleaning outdated upload request entry url "
+						+ resource.getUuid()
+						+ ". A BatchBusinessException has been thrown ",
 				exception);
 	}
 
@@ -78,7 +78,7 @@ public class UploadRequestEntryUrlBatchImpl implements
 	public void terminate(SystemAccount systemAccount,
 			Set<UploadRequestEntryUrl> all) {
 		logger.info(all.size()
-				+ " upload request entrie(s) url have been cleaned.");
+				+ " upload request entrie(s) url have been removed.");
 		logger.info("UploadRequestEntryUrlBatchImpl job terminated.");
 
 	}

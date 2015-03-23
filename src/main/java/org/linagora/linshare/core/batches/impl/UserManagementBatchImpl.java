@@ -99,8 +99,11 @@ public class UserManagementBatchImpl implements UserManagementBatch {
 
 	@Override
 	public void notifyError(SystemAccount systemAccount,
-			BatchBusinessException exception) {
-		logger.error("Error occured while cleaning outdated guests. BatchBusinessException ", exception);
+			BatchBusinessException exception, Guest resource) {
+		logger.error(
+				"Error occured while cleaning outdated guest "
+						+ resource.getAccountReprentation()
+						+ ". BatchBusinessException ", exception);
 	}
 
 	@Override

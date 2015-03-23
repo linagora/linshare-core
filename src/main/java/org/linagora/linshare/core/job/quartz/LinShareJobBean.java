@@ -37,14 +37,14 @@ public abstract class LinShareJobBean<T> extends QuartzJobBean {
 		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
 		Set<T> all = batch.getAll(systemAccount);
 		int cpt = 1;
-		for (T ressource : all) {
+		for (T resource : all) {
 			try {
 				logger.info("LinshareJobBean : processing ressource  position: " + cpt +"/" + all.size());
-				BatchResultContext<T> batchResult = batch.execute(systemAccount, ressource);
+				BatchResultContext<T> batchResult = batch.execute(systemAccount, resource);
 				batch.notify(systemAccount, batchResult);
 				cpt ++;
 			} catch (BatchBusinessException ex) {
-				batch.notifyError(systemAccount, ex);
+				batch.notifyError(systemAccount, ex, resource);
 			} catch (BusinessException ex) {
 				logger.error("Unhandled business exception in batches !");
 				logger.error(ex.getMessage());

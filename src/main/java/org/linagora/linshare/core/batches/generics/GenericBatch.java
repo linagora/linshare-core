@@ -15,7 +15,7 @@ public interface GenericBatch<T> {
 
 	void notify(SystemAccount systemAccount, BatchResultContext<T> context);
 
-	void notifyError(SystemAccount systemAccount, BatchBusinessException exception);
+	void notifyError(SystemAccount systemAccount, BatchBusinessException exception, T resource);
 
 	void terminate(SystemAccount systemAccount, Set<T> all);
 
