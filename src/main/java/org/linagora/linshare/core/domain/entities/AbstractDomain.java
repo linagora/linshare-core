@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
@@ -55,6 +56,8 @@ public abstract class AbstractDomain {
 	protected String label;
 
 	protected SupportedLanguage defaultTapestryLocale;
+
+	protected Language externalMailLocale;
 
 	protected Role defaultRole;
 
@@ -114,6 +117,7 @@ public abstract class AbstractDomain {
 		this.subdomain = new HashSet<AbstractDomain>();
 		this.defaultRole = Role.SIMPLE;
 		this.defaultTapestryLocale = SupportedLanguage.ENGLISH;
+		this.externalMailLocale = Language.ENGLISH;
 		this.enable = true;
 		this.template = false;
 		this.usedSpace = new Long(0);
@@ -161,6 +165,7 @@ public abstract class AbstractDomain {
 		this.subdomain = new HashSet<AbstractDomain>();
 		this.defaultRole = Role.valueOf(domainDto.getUserRole());
 		this.defaultTapestryLocale = domainDto.getLanguage();
+		this.externalMailLocale = domainDto.getExternalMailLocale();
 		this.authShowOrder = domainDto.getAuthShowOrder();
 //		TODO this.mimePolicy = new MimePolicy();
 	}
@@ -170,12 +175,21 @@ public abstract class AbstractDomain {
 		this.description = d.getDescription();
 		this.defaultRole = d.getDefaultRole();
 		this.defaultTapestryLocale = d.getDefaultTapestryLocale();
+		this.externalMailLocale = d.getExternalMailLocale();
 		this.enable = d.isEnable();
 		this.authShowOrder = d.getAuthShowOrder();
 	}
 
 	public SupportedLanguage getDefaultTapestryLocale() {
 		return defaultTapestryLocale;
+	}
+
+	public Language getExternalMailLocale() {
+		return externalMailLocale;
+	}
+
+	public void setExternalMailLocale(Language externalMailLocale) {
+		this.externalMailLocale = externalMailLocale;
 	}
 
 	public Role getDefaultRole() {

@@ -274,6 +274,11 @@ ALTER TABLE mail_content ADD COLUMN enable_as bool DEFAULT false NOT NULL;
 UPDATE mail_content SET alternative_subject = '${actorSubject} from ${actorRepresentation}', enable_as = true, modification_date = now() WHERE language = 0 AND mail_content_type IN (8, 9, 10, 11);
 UPDATE mail_content SET alternative_subject = '${actorSubject} de la part de ${actorRepresentation}', enable_as = true, modification_date = now() WHERE language = 1 AND mail_content_type IN (8, 9, 10, 11);
 
+-- Domain Abstract
+ALTER TABLE domain_abstract ADD COLUMN external_mail_locale varchar(255);
+UPDATE domain_abstract SET external_mail_locale = 'en';
+ALTER TABLE domain_abstract ALTER COLUMN external_mail_locale SET NOT NULL;
+
 -- LinShare version
 INSERT INTO version (version) VALUES ('1.9.0');
 

@@ -39,6 +39,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPolicyDto;
@@ -71,6 +72,9 @@ public class DomainDto {
 	@ApiModelProperty(value = "Language")
 	private SupportedLanguage language;
 
+	@ApiModelProperty(value = "Language")
+	private Language externalMailLocale;
+
 	@ApiModelProperty(value = "Policy")
 	private DomainPolicyDto policy;
 
@@ -102,6 +106,7 @@ public class DomainDto {
 		if (!light) {
 			this.description = domain.getDescription();
 			this.language = domain.getDefaultTapestryLocale();
+			this.externalMailLocale = domain.getExternalMailLocale();
 			this.userRole = domain.getDefaultRole().toString();
 			this.policy = new DomainPolicyDto(domain.getPolicy());
 			this.authShowOrder = domain.getAuthShowOrder();
@@ -188,6 +193,14 @@ public class DomainDto {
 
 	public void setLanguage(SupportedLanguage language) {
 		this.language = language;
+	}
+
+	public Language getExternalMailLocale() {
+		return externalMailLocale;
+	}
+
+	public void setExternalMailLocale(Language externalMailLocale) {
+		this.externalMailLocale = externalMailLocale;
 	}
 
 	public DomainPolicyDto getPolicy() {

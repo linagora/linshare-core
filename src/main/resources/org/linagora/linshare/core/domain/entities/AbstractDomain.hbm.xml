@@ -13,6 +13,12 @@
 		<param name="identifierMethod">getTapestryLocale</param>
 		<param name="valueOfMethod">fromTapestryLocale</param>
 	</typedef>
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="languageType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.Language</param>
+		<param name="identifierMethod">getTapestryLocale</param>
+		<param name="valueOfMethod">fromTapestryLocale</param>
+	</typedef>
 	<class name="AbstractDomain" table="domain_abstract" discriminator-value= "-1" >
 		<id name="persistenceId" type="long">
 			<column name="id" not-null="true" index="index_abstract_domain_id"/>
@@ -28,6 +34,7 @@
 		<property access="field" column="description" name="description" />
 		<property access="field" column="default_role" name="defaultRole" type="roleEnumType" />
 		<property access="field" column="default_locale" name="defaultTapestryLocale" type="supportedLanguageType"/>
+		<property access="field" column="external_mail_locale" name="externalMailLocale" type="languageType"/>
 		<property access="field" column="used_space" name="usedSpace" not-null="true"/>
 		<property access="field" column="auth_show_order" name="authShowOrder" />
 

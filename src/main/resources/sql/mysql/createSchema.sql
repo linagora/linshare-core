@@ -62,6 +62,7 @@ CREATE TABLE domain_abstract (
   description               varchar(255) NOT NULL,
   default_role              int(4) NOT NULL,
   default_locale            varchar(255) NOT NULL,
+  external_mail_locale      varchar(255) NOT NULL,
   used_space                bigint(8) NOT NULL,
   messages_configuration_id bigint(8) NOT NULL,
   auth_show_order           bigint(8) NOT NULL,
