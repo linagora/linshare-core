@@ -38,7 +38,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.facade.webservice.common.dto.FunctionalityDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 
 public class LanguageEnumValueFunctionality extends OneValueFunctionality<Language> {
@@ -84,7 +84,7 @@ public class LanguageEnumValueFunctionality extends OneValueFunctionality<Langua
 	}
 
 	@Override
-	public void updateFunctionalityValuesOnlyFromDto(FunctionalityDto functionality) {
+	public void updateFunctionalityValuesOnlyFromDto(FunctionalityAdminDto functionality) {
 		List<ParameterDto> parameters = functionality.getParameters();
 		if (parameters != null && !parameters.isEmpty()) {
 			ParameterDto parameterDto = parameters.get(0);

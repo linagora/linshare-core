@@ -40,7 +40,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdmin
 
 public interface FunctionalityRestService {
 
-	List<FunctionalityAdminDto> findAll(String domainId) throws BusinessException;
+	List<FunctionalityAdminDto> findAll(String domainId, String parentId) throws BusinessException;
 
 	FunctionalityAdminDto find(String domainId, String funcId)
 			throws BusinessException;

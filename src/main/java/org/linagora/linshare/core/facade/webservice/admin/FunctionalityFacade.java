@@ -44,7 +44,7 @@ public interface FunctionalityFacade extends AdminGenericFacade {
 	FunctionalityAdminDto find(String domainId, String funcId)
 			throws BusinessException;
 
-	List<FunctionalityAdminDto> findAll(String domainId) throws BusinessException;
+	List<FunctionalityAdminDto> findAll(String domainId, String parentId) throws BusinessException;
 
 	FunctionalityAdminDto update(FunctionalityAdminDto func) throws BusinessException;
 

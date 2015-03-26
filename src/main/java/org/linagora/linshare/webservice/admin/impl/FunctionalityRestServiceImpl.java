@@ -52,7 +52,6 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdmin
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.FunctionalityRestService;
 
-import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
@@ -75,9 +74,10 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Find all domain's functionalities.", response = FunctionalityAdminDto.class, responseContainer = "Set")
 	@Override
 	public List<FunctionalityAdminDto> findAll(
-			@QueryParam(value = "domainId") String domainId)
+			@QueryParam(value = "domainId") String domainId,
+			@QueryParam(value = "parentId") String parentId)
 			throws BusinessException {
-		return functionalityFacade.findAll(domainId);
+		return functionalityFacade.findAll(domainId, parentId);
 	}
 
 	@Path("/{funcId}")
@@ -97,13 +97,7 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 	@Override
 	public FunctionalityAdminDto update(FunctionalityAdminDto func)
 			throws BusinessException {
-		List<FunctionalityAdminDto> subs = Lists.newArrayList();
-		for (FunctionalityAdminDto functionalityDto : func.getFunctionalities()) {
-			subs.add(functionalityFacade.update(functionalityDto));
-		}
-		FunctionalityAdminDto ret = functionalityFacade.update(func);
-		ret.setFunctionalities(subs);
-		return ret;
+		return functionalityFacade.update(func);
 	}
 
 	@Path("/")

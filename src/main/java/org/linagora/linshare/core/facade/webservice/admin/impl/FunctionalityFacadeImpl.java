@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -51,11 +52,16 @@ import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
 public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		FunctionalityFacade {
+
+	private static final Logger logger = LoggerFactory.getLogger(FunctionalityFacadeImpl.class);
 
 	private FunctionalityService functionalityService;
 
@@ -77,36 +83,51 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<FunctionalityAdminDto> findAll(String domainId)
+	public List<FunctionalityAdminDto> findAll(String domainId, String parentId)
 			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
 		Set<Functionality> entities = functionalityService
 				.getAllFunctionalities(actor, domainId);
-
-		Map<String, FunctionalityAdminDto> ret = new HashMap<String, FunctionalityAdminDto>();
+		Map<String, FunctionalityAdminDto> parents = new HashMap<String, FunctionalityAdminDto>();
+		Map<String, List<FunctionalityAdminDto>> children = new HashMap<String, List<FunctionalityAdminDto>>();
 		List<FunctionalityAdminDto> subs = new ArrayList<FunctionalityAdminDto>();
-
 		for (Functionality f : entities) {
 			FunctionalityAdminDto func = transform(actor, f);
 			// We check if this a sub functionality (a parameter)
 			if (f.isParam()) {
-				if (ret.containsKey(func.getParentIdentifier())) {
-					ret.get(func.getParentIdentifier())
-							.addFunctionalities(func);
-				} else {
-					subs.add(func);
-				}
+				subs.add(func);
 			} else {
-				ret.put(f.getIdentifier(), func);
+				parents.put(f.getIdentifier(), func);
 			}
 		}
 		for (FunctionalityAdminDto func : subs) {
-			if (ret.containsKey(func.getParentIdentifier())) {
-				ret.get(func.getParentIdentifier()).addFunctionalities(func);
+			if (parents.containsKey(func.getParentIdentifier())) {
+				// if parent contains at least one sub functionality, it cans be display.
+				parents.get(func.getParentIdentifier())
+						.setDisplayable(true);
+				// storing children in maps
+				List<FunctionalityAdminDto> list = children.get(func.getParentIdentifier());
+				if (list == null) {
+					list = Lists.newArrayList();
+					children.put(func.getParentIdentifier(), list);
+				}
+				list.add(func);
+			} else {
+				logger.error("Sub functionality {} without a parent : {}", func.getIdentifier(), func.getParentIdentifier());
 			}
 		}
-		return Ordering.natural().immutableSortedCopy(ret.values());
+		if (parentId == null) {
+			return Ordering.natural().immutableSortedCopy(parents.values());
+		} else {
+			FunctionalityNames parentIdentifier = FunctionalityNames.valueOf(parentId);
+			List<FunctionalityAdminDto> list = children.get(parentIdentifier.name());
+			if (list == null) {
+				logger.debug("Functionality {} has no children.", parentIdentifier.name());
+				return Lists.newArrayList();
+			}
+			return Ordering.natural().immutableSortedCopy(list);
+		}
 	}
 
 	@Override

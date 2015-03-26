@@ -244,6 +244,10 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 		return displayable;
 	}
 
+	public void setDisplayable(boolean displayable) {
+		this.displayable = displayable;
+	}
+
 	@Override
 	public int compareTo(FunctionalityAdminDto o) {
 		return this.identifier.compareTo(o.getIdentifier());
