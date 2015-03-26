@@ -64,6 +64,7 @@ public class RootDomain extends AbstractDomain {
 		this.label = d.getLabel();
 		this.description = d.getDescription();
 		this.defaultTapestryLocale = d.getDefaultTapestryLocale();
+		this.externalMailLocale = d.getExternalMailLocale();
 		this.authShowOrder = d.getAuthShowOrder();
 		this.defaultRole = Role.SUPERADMIN;
 	}
