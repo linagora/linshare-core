@@ -27,7 +27,8 @@ public abstract class LinShareJobBean<T> extends QuartzJobBean {
 		this.batch = batch;
 	}
 
-	public void setAccountRepository(AccountRepository<Account> accountRepository) {
+	public void setAccountRepository(
+			AccountRepository<Account> accountRepository) {
 		this.accountRepository = accountRepository;
 	}
 
@@ -36,22 +37,38 @@ public abstract class LinShareJobBean<T> extends QuartzJobBean {
 			throws JobExecutionException {
 		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
 		Set<T> all = batch.getAll(systemAccount);
-		int cpt = 1;
+		long position = 1;
+		long errors = 0;
+		long unhandled_errors = 0;
+		long total = all.size();
 		for (T resource : all) {
 			try {
-				logger.info("LinshareJobBean : processing ressource  position: " + cpt +"/" + all.size());
-				BatchResultContext<T> batchResult = batch.execute(systemAccount, resource);
-				batch.notify(systemAccount, batchResult);
-				cpt ++;
+				logDebug(total, position, "processing resource ...");
+				BatchResultContext<T> batchResult = batch.execute(
+						systemAccount, resource, total, position);
+				batch.notify(systemAccount, batchResult, total, position);
+				position++;
 			} catch (BatchBusinessException ex) {
-				batch.notifyError(systemAccount, ex, resource);
+				errors++;
+				batch.notifyError(systemAccount, ex, resource, total, position);
 			} catch (BusinessException ex) {
+				unhandled_errors++;
 				logger.error("Unhandled business exception in batches !");
 				logger.error(ex.getMessage());
 				logger.debug(ex.getStackTrace().toString());
+				logger.error("Cannot process resource '{}' ");
 			}
+			logDebug(total, position, "resource processed.");
 		}
-		batch.terminate(systemAccount, all);
+		batch.terminate(systemAccount, all, errors, unhandled_errors, total);
+	}
+
+	protected void logDebug(long total, long position, String message) {
+		logger.debug(getStringPosition(total, position) + message);
+	}
+
+	protected String getStringPosition(long total, long position) {
+		return total + "/" + position + ":";
 	}
 
 }

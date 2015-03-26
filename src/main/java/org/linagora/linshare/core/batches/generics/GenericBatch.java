@@ -11,12 +11,12 @@ public interface GenericBatch<T> {
 
 	Set<T> getAll(SystemAccount systemAccount);
 
-	BatchResultContext<T> execute(SystemAccount systemAccount, T resource) throws BatchBusinessException, BusinessException;
+	BatchResultContext<T> execute(SystemAccount systemAccount, T resource, long total, long position) throws BatchBusinessException, BusinessException;
 
-	void notify(SystemAccount systemAccount, BatchResultContext<T> context);
+	void notify(SystemAccount systemAccount, BatchResultContext<T> context, long total, long position);
 
-	void notifyError(SystemAccount systemAccount, BatchBusinessException exception, T resource);
+	void notifyError(SystemAccount systemAccount, BatchBusinessException exception, T resource, long total, long position);
 
-	void terminate(SystemAccount systemAccount, Set<T> all);
+	void terminate(SystemAccount systemAccount, Set<T> all, long errors, long unhandled_errors, long total);
 
 }

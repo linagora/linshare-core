@@ -72,7 +72,7 @@ public class UserManagementBatchImpl implements UserManagementBatch {
 
 	@Override
 	public BatchResultContext<Guest> execute(SystemAccount systemAccount,
-			Guest resource) throws BatchBusinessException, BusinessException {
+			Guest resource, long total, long position) throws BatchBusinessException, BusinessException {
 		BatchResultContext<Guest> context = new BatchResultContext<Guest>(
 				resource);
 		try {
@@ -92,14 +92,14 @@ public class UserManagementBatchImpl implements UserManagementBatch {
 
 	@Override
 	public void notify(SystemAccount systemAccount,
-			BatchResultContext<Guest> context) {
+			BatchResultContext<Guest> context, long total, long position) {
 		logger.info("Outdated guest was successfully removed ",
 				context.getResource().getAccountReprentation());
 	}
 
 	@Override
 	public void notifyError(SystemAccount systemAccount,
-			BatchBusinessException exception, Guest resource) {
+			BatchBusinessException exception, Guest resource, long total, long position) {
 		logger.error(
 				"Error occured while cleaning outdated guest "
 						+ resource.getAccountReprentation()
@@ -108,6 +108,11 @@ public class UserManagementBatchImpl implements UserManagementBatch {
 
 	@Override
 	public void terminate(SystemAccount systemAccount, Set<Guest> all) {
+		terminate(systemAccount, all, errors, unhandled_errors, total);
+	}
+
+	@Override
+	public void terminate(SystemAccount systemAccount, Set<Guest> all, long errors, long unhandled_errors, long total) {
 		logger.info(all.size() + " guests have been removed.");
 		logger.info("UserManagementBatchImpl job terminated.");
 

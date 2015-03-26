@@ -45,7 +45,6 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryUrlBusinessService;
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
