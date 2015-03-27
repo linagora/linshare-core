@@ -38,6 +38,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
 import org.slf4j.Logger;
@@ -77,5 +78,10 @@ public class AdminGenericFacadeImpl extends GenericFacadeImpl implements
 			}
 		}
 		return actor;
+	}
+
+	@Override
+	public UserDto checkAuthenticationDto(Role role) throws BusinessException {
+		return UserDto.getFull(checkAuthentication(Role.ADMIN));
 	}
 }

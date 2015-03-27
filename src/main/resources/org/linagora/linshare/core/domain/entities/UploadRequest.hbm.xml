@@ -7,7 +7,7 @@
 		<param name="valueOfMethod">fromString</param>
 	</typedef>
 	<class name="org.linagora.linshare.core.domain.entities.UploadRequest"
-		table="upload_request" lazy="false">
+		table="upload_request" lazy="true">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>

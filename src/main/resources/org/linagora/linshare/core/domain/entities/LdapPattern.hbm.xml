@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="org.linagora.linshare.core.domain.entities.LdapPattern" table="ldap_pattern" lazy="false">
+	<class name="org.linagora.linshare.core.domain.entities.LdapPattern" table="ldap_pattern" lazy="true">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>
@@ -13,13 +13,13 @@
 		<property name="description" column="description" type="text" not-null="true" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
-		<map name="attributes" lazy="false" cascade="all" inverse="false">
+		<map name="attributes" lazy="true" cascade="all" inverse="false">
 			<key column="ldap_pattern_id" not-null="true" />
 			<map-key column="field" type="string" />
 			<one-to-many
 				class="org.linagora.linshare.core.domain.entities.LdapAttribute" />
 		</map>
-		<subclass name="org.linagora.linshare.core.domain.entities.UserLdapPattern" discriminator-value="USER_LDAP_PATTERN" lazy="false">
+		<subclass name="org.linagora.linshare.core.domain.entities.UserLdapPattern" discriminator-value="USER_LDAP_PATTERN" lazy="true">
 			<property name="authCommand" column="auth_command" type="text" not-null="true" lazy="false"/>
 			<property name="searchUserCommand" column="search_user_command" type="text" not-null="true" lazy="false"/>
 			<property name="searchPageSize" column="search_page_size" type="integer" not-null="true" lazy="false"/>
@@ -29,7 +29,7 @@
 			<property name="completionPageSize" column="completion_page_size" type="integer" not-null="true" lazy="false"/>
 			<property name="completionSizeLimit" column="completion_size_limit" type="integer" not-null="true" lazy="false"/>
 		</subclass>
-		<subclass name="org.linagora.linshare.core.domain.entities.ContactLdapPattern" discriminator-value="CONTACT_LDAP_PATTERN" lazy="false">
+		<subclass name="org.linagora.linshare.core.domain.entities.ContactLdapPattern" discriminator-value="CONTACT_LDAP_PATTERN" lazy="true">
 			<property name="autoCompleteCommandOnFirstAndLastName" column="auto_complete_command_on_first_and_last_name" type="text" not-null="true" lazy="false"/>
 			<property name="autoCompleteCommandOnAllAttributes" column="auto_complete_command_on_all_attributes" type="text" not-null="true" lazy="false"/>
 			<property name="pageSize" column="completion_page_size" type="integer" not-null="true" lazy="false"/>

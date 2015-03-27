@@ -8,7 +8,7 @@
 	</typedef>
 	<class
 		name="org.linagora.linshare.core.domain.entities.UploadRequestHistory"
-		table="upload_request_history" lazy="false">
+		table="upload_request_history" lazy="true">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>

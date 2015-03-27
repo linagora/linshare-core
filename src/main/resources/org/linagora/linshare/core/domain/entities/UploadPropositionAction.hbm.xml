@@ -7,7 +7,7 @@
 		<param name="identifierMethod">name</param>
 		<param name="valueOfMethod">fromString</param>
 	</typedef>
-	<class name="org.linagora.linshare.core.domain.entities.UploadPropositionAction" table="upload_proposition_action" lazy="false">
+	<class name="org.linagora.linshare.core.domain.entities.UploadPropositionAction" table="upload_proposition_action" lazy="true">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>

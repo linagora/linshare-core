@@ -3,7 +3,7 @@
 <hibernate-mapping>
 	<class
 		name="org.linagora.linshare.core.domain.entities.UploadRequestEntryUrl"
-		table="upload_request_entry_url" lazy="false">
+		table="upload_request_entry_url" lazy="true">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native"></generator>
 		</id>

@@ -4,7 +4,7 @@
 	<!-- old mapping <property access="field" column="creation_date" name="creationDate" not-null="true" type="calendar"/> <property access="field" 
 		column="expiration_date" index="index_document_expiration_date" name="expirationDate" not-null="true" type="calendar"/> <property access="field" 
 		column="deletion_date" name="deletionDate" type="calendar"/> -->
-	<class name="org.linagora.linshare.core.domain.entities.Document" table="document" lazy="false">
+	<class name="org.linagora.linshare.core.domain.entities.Document" table="document" lazy="true">
 		<id name="id" type="long" unsaved-value="0">
 			<column name="id" not-null="true" index="index_document_id" />
 			<generator class="native" />

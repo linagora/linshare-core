@@ -8,7 +8,7 @@
 		<param name="valueOfMethod">fromString</param>
 	</typedef>
 	<class name="org.linagora.linshare.core.domain.entities.AccountPermission"
-		table="account_permission" lazy="false">
+		table="account_permission" lazy="true">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>

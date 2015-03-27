@@ -57,6 +57,7 @@ import org.linagora.linshare.core.service.ShareService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class DocumentFacadeImpl extends UserGenericFacadeImp implements
@@ -85,7 +86,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 	public List<DocumentDto> findAll() throws BusinessException {
 		User actor = checkAuthentication();
 		List<DocumentEntry> docs = documentEntryService.findAll(actor, actor);
-		return Lists.transform(docs, DocumentDto.toDto());
+		return ImmutableList.copyOf(Lists.transform(docs, DocumentDto.toDto()));
 	}
 
 	@Override
