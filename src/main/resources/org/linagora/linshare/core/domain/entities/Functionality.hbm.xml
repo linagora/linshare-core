@@ -18,9 +18,9 @@
 		<column name="param" default="false"/>
 	</property>
     <property column="parent_identifier" name="parentIdentifier"/>
-    <many-to-one name="activationPolicy" class="Policy" column="policy_activation_id" unique="true" cascade="all" lazy="false" />
-    <many-to-one name="configurationPolicy" class="Policy" column="policy_configuration_id" unique="true" cascade="all" lazy="false" />
-    <many-to-one name="delegationPolicy" class="Policy" column="policy_delegation_id" unique="true" cascade="all" lazy="false" />
+    <many-to-one name="activationPolicy" class="Policy" column="policy_activation_id" unique="true" cascade="all" lazy="false" fetch="join" />
+    <many-to-one name="configurationPolicy" class="Policy" column="policy_configuration_id" unique="true" cascade="all" lazy="false" fetch="join" />
+    <many-to-one name="delegationPolicy" class="Policy" column="policy_delegation_id" unique="true" cascade="all" lazy="false" fetch="join" />
 
 	<many-to-one name="domain" column="domain_id" not-null="true" lazy="no-proxy"  unique-key="functionality_unicity_key" />
 
