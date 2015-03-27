@@ -51,8 +51,6 @@ public class DocumentEntry extends Entry implements Serializable {
 
 	protected Set<AnonymousShareEntry> anonymousShareEntries = new HashSet<AnonymousShareEntry>();
 
-	protected UploadRequestEntry uploadRequestEntry;
-
 	protected DocumentEntry() {
 	}
 
@@ -111,14 +109,6 @@ public class DocumentEntry extends Entry implements Serializable {
 			return true;
 		}
 		return false;
-	}
-
-	public UploadRequestEntry getUploadRequestEntry() {
-		return uploadRequestEntry;
-	}
-
-	public void setUploadRequestEntry(UploadRequestEntry uploadRequestEntry) {
-		this.uploadRequestEntry = uploadRequestEntry;
 	}
 
 	/* usefull getters */

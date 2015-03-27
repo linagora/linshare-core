@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
@@ -69,5 +70,10 @@ public class UploadRequestEntryBusinessServiceImpl implements
 	@Override
 	public void delete(UploadRequestEntry entry) throws BusinessException {
 		uploadRequestEntryRepository.delete(entry);
+	}
+
+	@Override
+	public UploadRequestEntry findRelative(DocumentEntry entry) {
+		return uploadRequestEntryRepository.findRelative(entry);
 	}
 }

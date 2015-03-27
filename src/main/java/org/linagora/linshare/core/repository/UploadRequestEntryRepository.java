@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.repository;
 
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 
 public interface UploadRequestEntryRepository extends
@@ -44,5 +45,7 @@ public interface UploadRequestEntryRepository extends
 	 * @param uuid
 	 * @return found uploadRequestEntry (null if no uploadRequestEntry found).
 	 */
-	public UploadRequestEntry findByUuid(String uuid);
+	UploadRequestEntry findByUuid(String uuid);
+
+	UploadRequestEntry findRelative(DocumentEntry entry);
 }

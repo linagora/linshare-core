@@ -314,7 +314,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			logger.error("Could not delete docEntry " + documentEntry.getName()+ " (" + documentEntry.getUuid() + " own by " + documentEntry.getEntryOwner().getLsUuid() + ", reason : it is still shared. ");
 			throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_SHARED_DOCUMENT, "Can't delete a shared document. Delete all shares first.");
 		}
-		UploadRequestEntry uploadRequestEntry = documentEntry.getUploadRequestEntry();
+		UploadRequestEntry uploadRequestEntry = uploadRequestEntryBusinessService.findRelative(documentEntry);
 		if (uploadRequestEntry != null) {
 			uploadRequestEntry.setDocumentEntry(null);
 			uploadRequestEntryBusinessService.update(uploadRequestEntry);

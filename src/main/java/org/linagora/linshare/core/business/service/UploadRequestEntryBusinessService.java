@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.business.service;
 
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -47,4 +48,6 @@ public interface UploadRequestEntryBusinessService {
 			throws BusinessException;
 
 	void delete(UploadRequestEntry entry) throws BusinessException;
+
+	UploadRequestEntry findRelative(DocumentEntry entry);
 }

@@ -45,8 +45,6 @@
 			 -->
 			<many-to-one name="document" column="document_id" class="org.linagora.linshare.core.domain.entities.Document"  unique="true"
 				not-null="true" lazy="proxy"/>
-			<one-to-one name="uploadRequestEntry" class="org.linagora.linshare.core.domain.entities.UploadRequestEntry" property-ref="documentEntry"
-				lazy="proxy"/>
 		</joined-subclass>
 		<joined-subclass name="org.linagora.linshare.core.domain.entities.ShareEntry" table="share_entry" lazy="true">
 			<key>
