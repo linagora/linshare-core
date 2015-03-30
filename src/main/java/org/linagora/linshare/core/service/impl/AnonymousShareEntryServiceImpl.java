@@ -150,6 +150,7 @@ public class AnonymousShareEntryServiceImpl extends
 				.getIdentifier())) {
 			passwordProtected = false;
 		}
+		sc.setSecured(passwordProtected);
 		if (expiryDate == null) {
 			expiryDate = shareExpiryDateService
 					.computeMinShareExpiryDateOfList(sc.getDocuments(), targetedAccount);
