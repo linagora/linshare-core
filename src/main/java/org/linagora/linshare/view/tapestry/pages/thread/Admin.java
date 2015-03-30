@@ -98,8 +98,9 @@ public class Admin {
 		this.thread = thread;
 	}
 
-	public void onActionFromDelete() throws BusinessException {
+	public Object onActionFromDelete() throws BusinessException {
 		threadEntryFacade.deleteThread(userVo, thread);
+		return Index.class;
 	}
 
 	/*
