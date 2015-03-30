@@ -1,5 +1,6 @@
 package org.linagora.linshare.core.repository;
 
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntryUrl;
 
 public interface UploadRequestEntryUrlRepository extends
@@ -12,4 +13,6 @@ public interface UploadRequestEntryUrlRepository extends
 	 * @return found UploadRequestEntryUrl (null if no uploadRequestEntry found).
 	 */
 	public UploadRequestEntryUrl findByUuid(String uuid);
+
+	public UploadRequestEntryUrl findByUploadRequestEntry(UploadRequestEntry entry);
 }

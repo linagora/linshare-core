@@ -41,6 +41,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
+import org.linagora.linshare.core.business.service.UploadRequestEntryUrlBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -82,6 +83,8 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 
 	private final NotifierService notifierService;
 
+	private final UploadRequestEntryUrlBusinessService uploadRequestEntryUrlBusinessService;
+
 	private final UploadRequestEntryUrlService uploadRequestEntryUrlService;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
@@ -89,6 +92,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	public UploadRequestUrlServiceImpl(
 			final UploadRequestUrlBusinessService uploadRequestUrlBusinessService,
 			final UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
+			final UploadRequestEntryUrlBusinessService uploadRequestEntryUrlBusinessService,
 			final UploadRequestEntryUrlService uploadRequestEntryUrlService,
 			final AccountRepository<Account> accountRepository,
 			final DocumentEntryService documentEntryService,
@@ -99,6 +103,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		this.uploadRequestUrlBusinessService = uploadRequestUrlBusinessService;
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.uploadRequestEntryUrlService = uploadRequestEntryUrlService;
+		this.uploadRequestEntryUrlBusinessService = uploadRequestEntryUrlBusinessService;
 		this.accountRepository = accountRepository;
 		this.documentEntryService = documentEntryService;
 		this.mailBuildingService = mailBuildingService;
@@ -155,8 +160,9 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 				// Store the file into the owner account.
 				documentEntryService.delete(actor, owner, documentEntryUuid);
 			}
-			if(found.getUploadRequestEntryUrl() != null){
-				uploadRequestEntryUrlService.deleteUploadRequestEntryUrl(found.getUploadRequestEntryUrl());
+			UploadRequestEntryUrl uploadRequestEntryUrl = uploadRequestEntryUrlBusinessService.find(found);
+			if(uploadRequestEntryUrl != null){
+				uploadRequestEntryUrlBusinessService.delete(uploadRequestEntryUrl);
 			}
 			uploadRequestEntryBusinessService.delete(found);
 		} else {

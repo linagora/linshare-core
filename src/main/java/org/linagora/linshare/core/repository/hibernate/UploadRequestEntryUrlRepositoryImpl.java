@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntryUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestEntryUrlRepository;
@@ -46,5 +47,12 @@ public class UploadRequestEntryUrlRepositoryImpl extends
 			throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
+	}
+
+	@Override
+	public UploadRequestEntryUrl findByUploadRequestEntry(
+			UploadRequestEntry entry) {
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"uploadRequestEntry", entry)));
 	}
 }

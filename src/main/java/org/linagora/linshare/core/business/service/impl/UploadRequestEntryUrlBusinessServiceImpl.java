@@ -89,4 +89,10 @@ public class UploadRequestEntryUrlBusinessServiceImpl implements
 	public SystemAccount getUploadRequestEntryURLAccount() {
 		return accountRepository.getUploadRequestSystemAccount();
 	}
+
+	@Override
+	public UploadRequestEntryUrl find(UploadRequestEntry entry)
+			throws BusinessException {
+		return uploadRequestEntryUrlRepository.findByUploadRequestEntry(entry);
+	}
 }

@@ -11,6 +11,8 @@ public interface UploadRequestEntryUrlBusinessService {
 
 	UploadRequestEntryUrl findByUuid(String uuid) throws BusinessException;
 
+	UploadRequestEntryUrl find(UploadRequestEntry entry) throws BusinessException;
+
 	UploadRequestEntryUrl create(UploadRequestEntry url,
 			Boolean passwordProtected, Date expirtyDate) throws BusinessException;
 
