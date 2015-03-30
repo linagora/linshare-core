@@ -203,7 +203,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public UserDto findUser(String uuid) throws BusinessException {
-		checkAuthentication(Role.SUPERADMIN);
+		checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(uuid, "User uuid must be set.");
 		return UserDto.getFull(userService.findByLsUuid(uuid));
 	}
 }

@@ -134,7 +134,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User findByLsUuid(String lsUuid) {
-		return userRepository.findByLsUuid(lsUuid);
+		Validate.notEmpty(lsUuid, "User uuid must be set.");
+		User user = userRepository.findByLsUuid(lsUuid);
+		if (user == null)
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "User with uuid : " + lsUuid  + " not found.");
+		return user;
 	}
 
 	@Override
