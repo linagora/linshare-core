@@ -31,64 +31,55 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.view.tapestry.components;
 
-import java.util.Set;
+package org.linagora.linshare.core.domain.entities;
 
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Persist;
-import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linshare.core.domain.entities.MailSubject;
-import org.slf4j.Logger;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 
-public class MailSubjectConfigurer {
-    @Parameter(required = true, defaultPrefix = BindingConstants.PROP)
-    @Property
-    private Set<MailSubject> mailSubjects;
-    
-    @Property
-    private MailSubject mailSubject;
-    
-    @Property
-    @Persist
-    private MailSubject mailSubjectToEdit;
-    
-    @Inject
-    private Logger logger;
-    
-    @Property
-    @Persist
-    private String value;
+public class WelcomeMessagesEntry {
 
-    @SetupRender
-    void setupRender() {
-    }
-    
-    public boolean getInSubjectModificationState() {
-    	if (mailSubjectToEdit == null) {
-    		return false;
-    	}
-    	return mailSubjectToEdit.toString().equals(mailSubject.toString());
-    }
-    
-    void onActionFromSwitchToSubjectModificationState(String rowValue) {
-    	for (MailSubject mailSubjectObj : mailSubjects) {
-			if (mailSubjectObj.toString().equals(rowValue)) {
-				mailSubjectToEdit = mailSubjectObj;
-	        	break;
-			}
-		}
-    	
-    }
-    
-    void onActionFromSwitchFromSubjectModificationState() {
-    	mailSubjectToEdit = null;
-    }
-    
-    void onSuccess() {
-    	mailSubjectToEdit = null;
-    }
+	private long id;
+
+	private SupportedLanguage lang;
+
+	private String value;
+
+	public WelcomeMessagesEntry() {
+		super();
+	}
+
+	public WelcomeMessagesEntry(WelcomeMessagesEntry entry) {
+		super();
+		this.lang = entry.getLang();
+		this.value = entry.getValue();
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public SupportedLanguage getLang() {
+		return lang;
+	}
+
+	public void setLang(SupportedLanguage lang) {
+		this.lang = lang;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return "WelcomeMessagesEntry [id=" + id + ", lang=" + lang + "]";
+	}
 }

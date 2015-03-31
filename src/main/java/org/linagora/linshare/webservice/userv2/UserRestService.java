@@ -42,5 +42,4 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 public interface UserRestService {
 	
 	List<UserDto> findAll() throws BusinessException;
-
 }

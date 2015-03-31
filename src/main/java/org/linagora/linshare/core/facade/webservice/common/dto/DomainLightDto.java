@@ -31,57 +31,37 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
 
-import java.io.Serializable;
+package org.linagora.linshare.core.facade.webservice.common.dto;
 
-import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
-/** Internationalisable welcome text depending on the user type.
- *
- */
-public class WelcomeText implements Serializable {
+public class DomainLightDto {
 
-    private String welcomeText;
+	private String label;
 
-    private Language language;
+	private String identifier;
 
-    public Language getLanguage() {
-        return language;
-    }
+	public DomainLightDto(){}
 
-    public void setLanguage(Language language) {
-        this.language = language;
-    }
+	public DomainLightDto(AbstractDomain domain) {
+		this.identifier = domain.getIdentifier();
+		this.label = domain.getLabel();
+	}
 
-    public String getWelcomeText() {
-        return welcomeText;
-    }
+	public String getIdentifier() {
+		return identifier;
+	}
 
-    public void setWelcomeText(String welcomeText) {
-        this.welcomeText = welcomeText;
-    }
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final WelcomeText other = (WelcomeText) obj;
-        if (this.language != other.language) {
-            return false;
-        }
-        return true;
-    }
+	public String getLabel() {
+		return label;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 71 * hash + (this.language != null ? this.language.hashCode() : 0);
-        return hash;
-    }
-
+	public void setLabel(String label) {
+		this.label = label;
+	}
 }

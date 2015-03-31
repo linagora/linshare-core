@@ -34,11 +34,10 @@
 package org.linagora.linshare.core.facade;
 
 import java.util.List;
-import java.util.Set;
 
-import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
+import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.ShareExpiryRule;
-import org.linagora.linshare.core.domain.entities.WelcomeText;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.GuestDomainVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -78,12 +77,6 @@ public interface AbstractDomainFacade {
 
 	public String getCustomLogoLinkInRootDomain() throws BusinessException;
 
-	public MessagesConfiguration getMessages(String domainIdentifier)
-			throws BusinessException;
-
-	public void updateMessages(UserVo actorVo, String domainIdentifier,
-			MessagesConfiguration messages) throws BusinessException;
-
 	public List<ShareExpiryRule> getShareExpiryRules(String domainIdentifier)
 			throws BusinessException;
 
@@ -105,5 +98,5 @@ public interface AbstractDomainFacade {
 	 */
 	public boolean checkPlatformEncryptSupportedAlgo();
 
-	Set<WelcomeText> getWelcomeMessages();
+	String getDomainWelcomeMessagesValue( UserVo userVo, SupportedLanguage lang);
 }

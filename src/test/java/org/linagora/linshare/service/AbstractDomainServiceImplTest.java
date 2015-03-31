@@ -43,6 +43,7 @@ import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
@@ -50,11 +51,13 @@ import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.core.service.WelcomeMessagesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,15 +98,19 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	
 	@Autowired
 	private AccountService accountService;
+
+	@Autowired
+	private WelcomeMessagesService welcomeService;
 	
 	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
-	
+
 	private LdapConnection ldapconnexion;
 	
 	private UserLdapPattern domainPattern;
 
-	
+	private WelcomeMessages current;
+
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
@@ -127,8 +134,6 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 			e.printStackTrace();
 		}
 		logger.debug("Current pattern object: " + domainPattern.toString());
-		
-		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@After
@@ -156,10 +161,10 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		
 		try {
 			Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+			current = welcomeService.find((User) actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
+			topDomain.setCurrentWelcomeMessages(current);
 			abstractDomainService.createTopDomain(actor, topDomain);
 			abstractDomainService.deleteDomain(actor, topDomain.getIdentifier());
-					
-			
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't create top domain.");
@@ -188,6 +193,8 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		
 		
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		current = welcomeService.find((User) actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
+		topDomain.setCurrentWelcomeMessages(current);
 		try {
 			abstractDomainService.createTopDomain(actor, topDomain);
 		} catch (BusinessException e) {

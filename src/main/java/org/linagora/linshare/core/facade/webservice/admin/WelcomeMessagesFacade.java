@@ -31,11 +31,25 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
 
-import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
+package org.linagora.linshare.core.facade.webservice.admin;
 
-public interface MessagesRepository extends AbstractRepository<MessagesConfiguration> {
-	
-	MessagesConfiguration loadDefault();
-} 
+import java.util.Set;
+
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.dto.WelcomeMessagesDto;
+
+public interface WelcomeMessagesFacade {
+
+	Set<WelcomeMessagesDto> findAll() throws BusinessException;
+
+	WelcomeMessagesDto find(String uuid) throws BusinessException;
+
+	WelcomeMessagesDto create(WelcomeMessagesDto wlcmDto) throws BusinessException;
+
+	WelcomeMessagesDto update(WelcomeMessagesDto wlcmDto) throws BusinessException;
+
+	WelcomeMessagesDto delete(String uuid) throws BusinessException;
+
+	WelcomeMessagesDto delete(WelcomeMessagesDto wlcmDto) throws BusinessException;
+}

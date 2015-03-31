@@ -31,55 +31,25 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
 
+package org.linagora.linshare.webservice.admin;
 
-/**
- * Enumerate the available mail templates
- * 
- * @author sduprey
- *
- */
-@Deprecated
-public enum MailTemplateEnum {
-	GREETINGS(0),
-	FOOTER(1),
-	CONFIRM_DOWNLOAD_ANONYMOUS(2),
-	CONFIRM_DOWNLOAD_REGISTERED(3),
-	LINSHARE_URL(4),
-	FILE_DOWNLOAD_URL(5),
-	DECRYPT_URL(6),
-	PERSONAL_MESSAGE(7),
-	GUEST_INVITATION(8),
-	ACCOUNT_DESCRIPTION(9),
-	SHARE_NOTIFICATION(10),
-	PASSWORD_GIVING(11),
-	FILE_UPDATED(12),
-	GROUP_SHARE_NOTIFICATION(13),
-	GROUP_NEW_MEMBER(14),
-	GROUP_MEMBERSHIP_STATUS(15),
-	GROUP_SHARE_DELETED(16),
-	SHARED_FILE_DELETED(17),
-	SECURED_URL_UPCOMING_OUTDATED(18),
-	SHARED_DOC_UPCOMING_OUTDATED(19), 
-	DOC_UPCOMING_OUTDATED(20);
+import java.util.Set;
 
-	private int value;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.dto.WelcomeMessagesDto;
 
-	private MailTemplateEnum(final int value) {
-		this.value = value;
-	}
+public interface WelcomeMessagesRestService {
 
-	public int toInt() {
-		return value;
-	}
+	Set<WelcomeMessagesDto> findAll() throws BusinessException;
 
-	public static MailTemplateEnum fromInt(final int value) {
-		for (MailTemplateEnum template : values()) {
-			if (template.value == value) {
-				return template;
-			}
-		}
-		throw new IllegalArgumentException("Doesn't match an existing MailTemplates");
-	}
+	WelcomeMessagesDto find(String uuid) throws BusinessException;
+
+	WelcomeMessagesDto create(WelcomeMessagesDto customDto) throws BusinessException;
+
+	WelcomeMessagesDto update(WelcomeMessagesDto customDto) throws BusinessException;
+
+	WelcomeMessagesDto delete(String uuid) throws BusinessException;
+
+	WelcomeMessagesDto delete(WelcomeMessagesDto customDto) throws BusinessException;
 }

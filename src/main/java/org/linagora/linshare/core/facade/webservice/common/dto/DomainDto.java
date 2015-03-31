@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPolicyDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.WelcomeMessagesDto;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -96,6 +97,9 @@ public class DomainDto {
 	@ApiModelProperty(value = "MailConfigUuid")
 	private String mailConfigUuid;
 
+	@ApiModelProperty(value = "currentWelcomeMessage")
+	private WelcomeMessagesDto currentWelcomeWessage;
+
 	protected DomainDto(final AbstractDomain domain, boolean light,
 			boolean recursive) {
 		this.identifier = domain.getIdentifier();
@@ -103,6 +107,7 @@ public class DomainDto {
 		this.type = domain.getDomainType().toString();
 		mimePolicyUuid = domain.getMimePolicy().getUuid();
 		mailConfigUuid = domain.getCurrentMailConfiguration().getUuid();
+		this.currentWelcomeWessage = new WelcomeMessagesDto(domain.getCurrentWelcomeMessage());
 		if (!light) {
 			this.description = domain.getDescription();
 			this.language = domain.getDefaultTapestryLocale();
@@ -257,5 +262,13 @@ public class DomainDto {
 
 	public void setMailConfigUuid(String mailConfigUuid) {
 		this.mailConfigUuid = mailConfigUuid;
+	}
+
+	public void setCurrentWelcomeMessages (WelcomeMessagesDto welcomeMessageDto) {
+		this.currentWelcomeWessage = welcomeMessageDto;
+	}
+
+	public WelcomeMessagesDto getCurrentWelcomeMessages() {
+		return currentWelcomeWessage;
 	}
 }

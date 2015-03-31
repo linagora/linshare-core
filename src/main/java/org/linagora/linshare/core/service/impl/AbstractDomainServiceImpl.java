@@ -53,22 +53,22 @@ import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.MessagesRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.core.service.WelcomeMessagesService;
 import org.linagora.linshare.core.utils.LsIdValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,32 +84,32 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final DomainPolicyService domainPolicyService;
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 	private final UserProviderService userProviderService;
-	private final MessagesRepository messagesRepository;
 	private final UserRepository<User> userRepository;
 	private final DomainBusinessService domainBusinessService;
 	private final MimePolicyBusinessService mimePolicyBusinessService;
 	private final MailConfigBusinessService mailConfigBusinessService;
+	private final WelcomeMessagesService welcomeMessagesService;
 
 	public AbstractDomainServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
 			final DomainPolicyService domainPolicyService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final UserProviderService userProviderService,
-			final MessagesRepository messagesRepository,
 			final UserRepository<User> userRepository,
 			final DomainBusinessService domainBusinessService,
 			final MimePolicyBusinessService mimePolicyBusinessService,
-			final MailConfigBusinessService mailConfigBusinessService) {
+			final MailConfigBusinessService mailConfigBusinessService,
+			final WelcomeMessagesService welcomeMessagesService) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
 		this.userProviderService = userProviderService;
-		this.messagesRepository = messagesRepository;
 		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.domainBusinessService = domainBusinessService;
 		this.mimePolicyBusinessService = mimePolicyBusinessService;
 		this.mailConfigBusinessService = mailConfigBusinessService;
+		this.welcomeMessagesService = welcomeMessagesService;
 	}
 
 	@Override
@@ -159,6 +159,16 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			domain.setMimePolicy(mimePolicy);
 		}
 
+		if (domain.getCurrentWelcomeMessage() == null) {
+			throw new BusinessException(
+					BusinessErrorCode.WELCOME_MESSAGES_NOT_FOUND,
+					"This domain has no current welcome message");
+		} else {
+			WelcomeMessages current = welcomeMessagesService.find((User) actor,
+					domain.getCurrentWelcomeMessage().getUuid());
+			domain.setCurrentWelcomeMessages(current);
+		}
+
 		if (domain.getUserProvider() != null) {
 			if (domain.getUserProvider().getLdapConnection() == null) {
 				throw new BusinessException(
@@ -190,9 +200,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 		domain.setPolicy(policy);
 		domain.setParentDomain(parentDomain);
-		MessagesConfiguration msg = new MessagesConfiguration(
-				messagesRepository.loadDefault());
-		domain.setMessagesConfiguration(msg);
 
 		if (domain.getUserProvider() != null) {
 			userProviderService.create(domain.getUserProvider());

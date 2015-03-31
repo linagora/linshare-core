@@ -28,7 +28,6 @@
 		<mapping resource="org/linagora/linshare/core/domain/entities/DomainAccessRule.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/DomainAccessPolicy.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/DomainPolicy.hbm.xml"/>
-		<mapping resource="org/linagora/linshare/core/domain/entities/MessagesConfiguration.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/Account.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/ThreadMember.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/LdapAttribute.hbm.xml"/>
@@ -66,6 +65,7 @@
 		<mapping resource="org/linagora/linshare/core/domain/entities/UploadPropositionAction.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/UploadPropositionFilter.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/UploadPropositionRule.hbm.xml"/>
-
+		<mapping resource="org/linagora/linshare/core/domain/entities/WelcomeMessages.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/WelcomeMessagesEntry.hbm.xml"/>
 	</session-factory>
 </hibernate-configuration>

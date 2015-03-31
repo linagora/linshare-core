@@ -31,46 +31,52 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
 
-/**
- * Enumerate the available mail subjects.
- * 
- * @author sduprey
- *
- */
-public enum MailSubjectEnum {
-	ANONYMOUS_DOWNLOAD(0),
-	REGISTERED_DOWNLOAD(1), 
-	NEW_GUEST(2),
-	RESET_PASSWORD(3), 
-	NEW_SHARING(4),
-	SHARED_DOC_UPDATED(5),
-//	NEW_GROUP_SHARING(6), // DO NOT USE ! 
-//	MEMBERSHIP_REQUEST_STATUS(7), // DO NOT USE ! 
-//	NEW_GROUP_MEMBER(8), // DO NOT USE ! 
-//	GROUP_SHARING_DELETED(9), // DO NOT USE ! 
-	SHARED_DOC_DELETED(10), // user
-	SHARED_DOC_UPCOMING_OUTDATED(11),
-	DOC_UPCOMING_OUTDATED(12),
-	NEW_SHARING_WITH_ACTOR(13);
-	
-	private int value;
+package org.linagora.linshare.core.repository.hibernate;
 
-	private MailSubjectEnum(final int value) {
-		this.value = value;
+import java.util.Date;
+import java.util.UUID;
+
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.WelcomeMessagesRepository;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate3.HibernateTemplate;
+
+public class WelcomeMessagesRepositoryImpl extends
+		AbstractRepositoryImpl<WelcomeMessages> implements
+		WelcomeMessagesRepository {
+
+	public WelcomeMessagesRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
 	}
 
-	public int toInt() {
-		return value;
+	@Override
+	public WelcomeMessages findByUuid(String uuid) throws BusinessException {
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq("uuid",
+				uuid)));
 	}
 
-	public static MailSubjectEnum fromInt(final int value) {
-		for (MailSubjectEnum subject : values()) {
-			if (subject.value == value) {
-				return subject;
-			}
-		}
-		throw new IllegalArgumentException("Doesn't match an existing MailSubjects");
+	@Override
+	public WelcomeMessages create(WelcomeMessages entity) throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setUuid(UUID.randomUUID().toString());
+		return super.create(entity);
+	}
+
+	@Override
+	public WelcomeMessages update(WelcomeMessages entity) throws BusinessException {
+		entity.setModificationDate(new Date());
+		return super.update(entity);
+	}
+
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(WelcomeMessages entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass())
+				.add(Restrictions.eq("id", entity.getId()));
+		return det;
 	}
 }

@@ -55,7 +55,6 @@ import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.LDAPConnectionRepository;
-import org.linagora.linshare.core.repository.MessagesRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -92,9 +91,6 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 	private DomainAccessPolicyRepository domainAccessRepository;
 
 	@Autowired
-	private MessagesRepository messagesRepository;
-
-	@Autowired
 	private LDAPConnectionRepository ldapConnectionRepository;
 
 	@Autowired
@@ -128,9 +124,6 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 	private AbstractDomain createATestRootDomain() throws BusinessException {
 		AbstractDomain currentDomain= new RootDomain(rootDomainName,"My root domain");
 
-		// Set default messages (welcome messages, mails, ...)
-		currentDomain.setMessagesConfiguration(messagesRepository.loadDefault());
-
 		currentDomain.setPolicy(defaultPolicy);
 
 		abstractDomainRepository.create(currentDomain);
@@ -163,7 +156,6 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 		Assert.assertFalse(entityDomain instanceof SubDomain);
 		Assert.assertTrue(entityDomain.isEnable());
 		Assert.assertFalse(entityDomain.isTemplate());
-		Assert.assertTrue(entityDomain.getMessagesConfiguration().getId() >= 1);
 
 		abstractDomainRepository.delete(currentDomain);
 		logger.debug("End testRootDomainCreation");

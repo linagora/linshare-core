@@ -31,50 +31,48 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.view.tapestry.utils;
 
-import java.util.Locale;
-import java.util.Set;
+package org.linagora.linshare.core.business.service.impl;
 
-import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.entities.WelcomeText;
+import java.util.List;
 
-/**
- * Helpers for Welcome message processing.
- * 
- */
-public class WelcomeMessageUtils {
+import org.linagora.linshare.core.business.service.WelcomeMessagesBusinessService;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.WelcomeMessagesRepository;
 
-	public static WelcomeText getWelcomeText(Set<WelcomeText> welcomeTexts,
-			Language selectedLanguage, AccountType userType) {
-		for (WelcomeText welcomeText_ : welcomeTexts) {
-			if (selectedLanguage.equals(welcomeText_.getLanguage())) {
-				return welcomeText_;
-			}
-		}
-		return null;
+public class WelcomeMessagesBusinessServiceImpl implements WelcomeMessagesBusinessService {
+
+	private final WelcomeMessagesRepository customRepository;
+
+	public WelcomeMessagesBusinessServiceImpl(final WelcomeMessagesRepository customRepository) {
+		this.customRepository = customRepository;
 	}
 
-	/**
-	 * Return the language based on locale, with the following priority :
-	 * persistentLocale (cookie), userLocale (user parameter), browser language
-	 * 
-	 * @param persistentLocale
-	 * @param requestLocal
-	 * @param userLocale
-	 * @return
-	 */
-	public static Language getLanguage(Locale persistentLocale,
-			Locale requestLocal, Locale userLocale) {
-		if (persistentLocale == null) {
-			if (userLocale != null) {
-				return Language.fromLocale(userLocale);
-			} else {
-				return Language.fromLocale(requestLocal);
-			}
-		} else {
-			return Language.fromLocale(persistentLocale);
-		}
+	@Override
+	public List<WelcomeMessages> findAll() throws BusinessException {
+		return customRepository.findAll();
+	}
+
+	@Override
+	public WelcomeMessages find(String uuid) throws BusinessException {
+		return customRepository.findByUuid(uuid);
+	}
+
+	@Override
+	public WelcomeMessages create(WelcomeMessages customisation)
+			throws BusinessException {
+		return customRepository.create(customisation);
+	}
+
+	@Override
+	public WelcomeMessages update(WelcomeMessages customisation)
+			throws BusinessException {
+		return customRepository.update(customisation);
+	}
+
+	@Override
+	public void delete(WelcomeMessages customisation) throws BusinessException {
+		customRepository.delete(customisation);
 	}
 }

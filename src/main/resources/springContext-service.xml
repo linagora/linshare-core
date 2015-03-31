@@ -222,11 +222,11 @@
 		<constructor-arg ref="abstractDomainRepository" />
 		<constructor-arg ref="domainPolicyService" />
 		<constructor-arg ref="userProviderService" />
-		<constructor-arg ref="messagesRepository" />
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="domainBusinessService" />
 		<constructor-arg ref="mailConfigBusinessService" />
 		<constructor-arg ref="mimePolicyBusinessService" />
+		<constructor-arg ref="welcomeMessagesService" />
 	</bean>
 
 	<bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">
@@ -323,5 +323,9 @@
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="entryBusinessService" />
 		<constructor-arg ref="shareEntryResourceAccessControl" />
+	</bean>
+	<bean id="welcomeMessagesService" class="org.linagora.linshare.core.service.impl.WelcomeMessagesServiceImpl">
+		<constructor-arg ref="welcomeMessagesBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 </beans>

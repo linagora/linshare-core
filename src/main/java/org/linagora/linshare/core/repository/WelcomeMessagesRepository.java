@@ -31,35 +31,13 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.List;
+package org.linagora.linshare.core.repository;
 
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
-import org.linagora.linshare.core.repository.MessagesRepository;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.exception.BusinessException;
 
-public class MessagesRepositoryImpl extends AbstractRepositoryImpl<MessagesConfiguration> implements MessagesRepository {
+public interface WelcomeMessagesRepository extends AbstractRepository<WelcomeMessages> {
 
-	public MessagesRepositoryImpl(HibernateTemplate hibernateTemplate) {
-		super(hibernateTemplate);
-	}
-
-    protected DetachedCriteria getNaturalKeyCriteria(MessagesConfiguration messages) {
-        DetachedCriteria det = DetachedCriteria.forClass(MessagesConfiguration.class).add(Restrictions.eq("id", messages.getId()));
-        return det;
-    }
-    
-    public MessagesConfiguration loadDefault() {
-		List<MessagesConfiguration> messages = findByCriteria(Restrictions.eq("id", 1L));
-		
-		if (messages != null && messages.size() == 1) {
-			return messages.get(0);
-		} else {
-			throw new IllegalStateException("No default messages found in DB");
-		}
-	}
-
+	WelcomeMessages findByUuid(String uuid) throws BusinessException;
 }

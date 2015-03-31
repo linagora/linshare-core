@@ -30,6 +30,7 @@
 		<constructor-arg ref="userProviderService" />
 		<constructor-arg ref="domainPolicyService" />
 		<constructor-arg ref="userAndDomainMultiService" />
+		<constructor-arg ref="welcomeMessagesService" />
 	</bean>
 	<bean id="wsAdminDomainPolicyFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.DomainPolicyFacadeImpl">
@@ -138,5 +139,10 @@
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.UploadPropositionFilterFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="uploadPropositionFilterService" />
+	</bean>
+	<bean id="wsAdminWelcomeMessagesFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.WelcomeMessagesFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="welcomeMessagesService" />
+		<constructor-arg ref="abstractDomainService" />
 	</bean>
 </beans>

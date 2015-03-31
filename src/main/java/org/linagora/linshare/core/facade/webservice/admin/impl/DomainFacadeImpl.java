@@ -50,6 +50,7 @@ import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
@@ -59,6 +60,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.core.service.WelcomeMessagesService;
 
 import com.google.common.collect.Sets;
 
@@ -73,16 +75,20 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final UserAndDomainMultiService userAndDomainMultiService;
 
+	private final WelcomeMessagesService welcomeMessagesService;
+
 	public DomainFacadeImpl(final AccountService accountService,
 			final AbstractDomainService abstractDomainService,
 			final UserProviderService userProviderService,
 			final DomainPolicyService domainPolicyService,
-			final UserAndDomainMultiService userAndDomainMultiService) {
+			final UserAndDomainMultiService userAndDomainMultiService,
+			final WelcomeMessagesService welcomeMessagesService) {
 		super(accountService);
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
 		this.domainPolicyService = domainPolicyService;
 		this.userAndDomainMultiService = userAndDomainMultiService;
+		this.welcomeMessagesService = welcomeMessagesService;
 	}
 
 	@Override
@@ -172,6 +178,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(domainDto.getPolicy(), "domain policy must be set.");
 		Validate.notEmpty(domainDto.getPolicy().getIdentifier(),
 				"domain policy identifier must be set.");
+		Validate.notNull(domainDto.getCurrentWelcomeMessages(), "Current messages must be set.");
+		Validate.notEmpty(domainDto.getCurrentWelcomeMessages().getUuid(), "Current message uuid must be set.");
 
 		DomainType domainType = DomainType.valueOf(domainDto.getType());
 		AbstractDomain parent = abstractDomainService.retrieveDomain(domainDto
@@ -181,6 +189,10 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 				.find(domainDto.getPolicy().getIdentifier());
 		domain.setPolicy(policy);
 
+		WelcomeMessages welcomeMessage = welcomeMessagesService.find(
+				getAuthentication(), domainDto.getCurrentWelcomeMessages()
+				.getUuid());
+		domain.setCurrentWelcomeMessages(welcomeMessage);
 
 		if (domainDto.getMailConfigUuid() != null) {
 			MailConfig mailConfig = new MailConfig();

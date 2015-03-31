@@ -58,7 +58,7 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
@@ -67,9 +67,9 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
+import org.linagora.linshare.core.facade.webservice.admin.WelcomeMessagesFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.pages.files.Share;
-import org.linagora.linshare.view.tapestry.utils.WelcomeMessageUtils;
 import org.slf4j.Logger;
 
 /**
@@ -90,6 +90,9 @@ public class Index {
 
 	@Inject
 	private AbstractDomainFacade domainFacade;
+
+	@Inject
+	private WelcomeMessagesFacade customFacade;
 
 	@Inject
 	private PageRenderLinkSource linkFactory;
@@ -137,6 +140,9 @@ public class Index {
 	@Property
 	private String welcomeText;
 
+//	@Property
+//	private String welcomeTextT;
+
 	@Property
 	@Persist
 	private boolean advanced;
@@ -163,9 +169,7 @@ public class Index {
 			if (userVo.isSuperAdmin()) {
 				return org.linagora.linshare.view.tapestry.pages.administration.Index.class;
 			}
-			if (userVo.hasDelegationRole()
-					|| userVo.hasUploadPropositionRole()
-					) {
+			if (userVo.hasDelegationRole() || userVo.hasUploadPropositionRole()) {
 				return org.linagora.linshare.view.tapestry.pages.administration.UserConfig.class;
 			}
 		}
@@ -181,8 +185,6 @@ public class Index {
 	@SetupRender
 	private void initList() throws BusinessException {
 		if (!userVoExists) {
-			Language language = WelcomeMessageUtils.getLanguage(
-					persistentLocale.get(), request.getLocale(), null);
 			shares = new ArrayList<ShareDocumentVo>();
 			welcomeText = "";
 		} else {
@@ -191,19 +193,23 @@ public class Index {
 					&& (!userVo.getLocale().equals(""))) {
 				userLocale = new Locale(userVo.getLocale().getTapestryLocale());
 			}
-			Language language = WelcomeMessageUtils.getLanguage(
-					persistentLocale.get(), request.getLocale(), userLocale);
+
+			SupportedLanguage language = null;
+			if (persistentLocale.get() == null) {
+				if (userLocale != null) {
+					language = SupportedLanguage.fromLocale(userLocale);
+				} else {
+					language = SupportedLanguage.fromLocale(request.getLocale());
+				}
+			} else {
+				language = SupportedLanguage.fromLocale(persistentLocale.get());
+			}
+			welcomeText = domainFacade.getDomainWelcomeMessagesValue(userVo, language);
 
 			if (!flag) {
 				shares = shareFacade.getAllSharingReceivedByUser(userVo);
 			}
-			welcomeText = WelcomeMessageUtils.getWelcomeText(
-					domainFacade.getWelcomeMessages(),
-					language,
-					userVo.getUserType())
-					.getWelcomeText();
 		}
-
 	}
 
 	/**

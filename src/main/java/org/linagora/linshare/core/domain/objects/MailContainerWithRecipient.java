@@ -35,8 +35,6 @@ package org.linagora.linshare.core.domain.objects;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.Contact;
-import org.linagora.linshare.core.domain.entities.MailSubject;
-import org.linagora.linshare.core.domain.entities.MailTemplate;
 import org.linagora.linshare.core.domain.entities.User;
 
 /**
@@ -130,12 +128,6 @@ public class MailContainerWithRecipient extends MailContainer {
 	 * Stuffs 
 	 */
 
-
-	public void appendTemplate(MailTemplate template) {
-		bufferTXT.append(template.getContentTXT() + "\n");
-		bufferHTML.append(template.getContentHTML() + "<br/>");
-	}
-
 	@Override
 	public String getContentTXT() {
 		contentTXT = bufferTXT.toString();
@@ -146,10 +138,6 @@ public class MailContainerWithRecipient extends MailContainer {
 	public String getContentHTML() {
 		contentHTML= bufferHTML.toString();
 		return super.getContentHTML();
-	}
-
-	public void setMailSubject(MailSubject mailSubject) {
-		this.subject = mailSubject.getContent();
 	}
 
 	@Override

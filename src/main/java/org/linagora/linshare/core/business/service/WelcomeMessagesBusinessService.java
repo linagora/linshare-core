@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2014. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -32,41 +32,22 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.business.service;
 
-public class CustomisationEntry {
+import java.util.List;
 
-	private long id;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.exception.BusinessException;
 
-	private String lang;
+public interface WelcomeMessagesBusinessService {
 
-	private String value;
+	List<WelcomeMessages> findAll() throws BusinessException;
 
-	public CustomisationEntry() {
-		super();
-	}
+	WelcomeMessages find(String uuid) throws BusinessException;
 
-	public long getId() {
-		return id;
-	}
+	WelcomeMessages create(WelcomeMessages customisation) throws BusinessException;
 
-	public void setId(long id) {
-		this.id = id;
-	}
+	WelcomeMessages update(WelcomeMessages customisation) throws BusinessException;
 
-	public String getLang() {
-		return lang;
-	}
-
-	public void setLang(String lang) {
-		this.lang = lang;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
+	void delete(WelcomeMessages customisation) throws BusinessException;
 }

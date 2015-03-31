@@ -49,7 +49,6 @@ public class DomainPolicyRepositoryImpl extends AbstractRepositoryImpl<DomainPol
 		super(hibernateTemplate);
 	}
 
-
 	@Override
 	public DomainPolicy findById(String identifier) {
 		return DataAccessUtils.singleResult(findByCriteria(

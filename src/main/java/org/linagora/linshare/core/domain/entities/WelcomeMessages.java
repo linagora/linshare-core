@@ -34,13 +34,15 @@
 
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.CustomisationType;
-import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 
-public class Customisation {
+import com.google.common.collect.Maps;
+
+public class WelcomeMessages implements Cloneable {
 
 	private long id;
 
@@ -50,17 +52,51 @@ public class Customisation {
 
 	private String description;
 
-	private java.util.Date creationDate;
+	private Date creationDate;
 
-	private java.util.Date modificationDate;
+	private Date modificationDate;
 
-	private CustomisationType customType;
+	private Map<SupportedLanguage, WelcomeMessagesEntry> welcomeMessagesEntries;
 
-	private Set<AbstractDomain> abstractDomain;
+	/**
+	 * owner domain
+	 */
+	private AbstractDomain domain;
 
-	private Map<Language, CustomisationEntry> customisationEntries;
+	public WelcomeMessages() {
+	}
 
-	public Customisation() {
+	public WelcomeMessages(String name, String description,
+			AbstractDomain domain,
+			Map<SupportedLanguage, WelcomeMessagesEntry> customEntries) {
+		this.name = name;
+		this.description = description;
+		this.domain = domain;
+		this.welcomeMessagesEntries = customEntries;
+	}
+
+	public WelcomeMessages(WelcomeMessages c) {
+		this.name = c.getName();
+		this.description = c.getDescription();
+		Collection<WelcomeMessagesEntry> values = c.getWelcomeMessagesEntries()
+				.values();
+		this.welcomeMessagesEntries = Maps.newHashMap();
+		for (WelcomeMessagesEntry entry : values) {
+			this.welcomeMessagesEntries.put(entry.getLang(),
+					new WelcomeMessagesEntry(entry));
+		}
+		this.domain = c.getDomain();
+	}
+
+	public Object clone() {
+		WelcomeMessages welcome = null;
+		try {
+			welcome = (WelcomeMessages) super.clone();
+		} catch(CloneNotSupportedException cnse) {
+			cnse.printStackTrace(System.err);
+		}
+		welcome.id=0;
+		return welcome;
 	}
 
 	public long getId() {
@@ -95,44 +131,36 @@ public class Customisation {
 		this.description = description;
 	}
 
-	public java.util.Date getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(java.util.Date creationDate) {
+	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
 
-	public java.util.Date getModificationDate() {
+	public Date getModificationDate() {
 		return modificationDate;
 	}
 
-	public void setModificationDate(java.util.Date modificationDate) {
+	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
 
-	public CustomisationType getCustomType() {
-		return customType;
+	public Map<SupportedLanguage, WelcomeMessagesEntry> getWelcomeMessagesEntries() {
+		return welcomeMessagesEntries;
 	}
 
-	public void setCustomType(CustomisationType customType) {
-		this.customType = customType;
+	public void setWelcomeMessagesEntries(
+			Map<SupportedLanguage, WelcomeMessagesEntry> customisationEntries) {
+		this.welcomeMessagesEntries = customisationEntries;
 	}
 
-	public Set<AbstractDomain> getAbstractDomain() {
-		return abstractDomain;
+	public AbstractDomain getDomain() {
+		return domain;
 	}
 
-	public void setAbstractDomain(Set<AbstractDomain> abstractDomain) {
-		this.abstractDomain = abstractDomain;
-	}
-
-	public Map<Language, CustomisationEntry> getCustomisationEntries() {
-		return customisationEntries;
-	}
-
-	public void setCustomisationEntries(
-			Map<Language, CustomisationEntry> customisationEntries) {
-		this.customisationEntries = customisationEntries;
+	public void setDomain(AbstractDomain domain) {
+		this.domain = domain;
 	}
 }

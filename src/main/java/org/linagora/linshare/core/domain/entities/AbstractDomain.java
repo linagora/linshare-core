@@ -67,8 +67,6 @@ public abstract class AbstractDomain {
 
 	protected boolean enable;
 
-	protected MessagesConfiguration messagesConfiguration;
-
 	protected DomainPolicy policy;
 
 	protected Set<DomainAccessRule> domainAccessRules;
@@ -103,6 +101,10 @@ public abstract class AbstractDomain {
 
 	protected Set<ContactProvider> contactProvider;
 
+	protected WelcomeMessages currentWelcomeMessage;
+
+	protected Set<WelcomeMessages> welcomeMessages;
+
 	protected AbstractDomain() {
 		this.identifier = null;
 	}
@@ -122,7 +124,6 @@ public abstract class AbstractDomain {
 		this.template = false;
 		this.usedSpace = new Long(0);
 		this.shareExpiryRules = new ArrayList<ShareExpiryRule>();
-		this.messagesConfiguration = new MessagesConfiguration();
 		this.policy = null;
 		this.authShowOrder = new Long(1);
 		this.mailLayouts = new HashSet<MailLayout>();
@@ -130,6 +131,7 @@ public abstract class AbstractDomain {
 		this.mailContents = new HashSet<MailContent>();
 		this.mailConfigs = new HashSet<MailConfig>();
 		this.mimePolicies = new HashSet<MimePolicy>();
+		this.currentWelcomeMessage = null;
 	}
 
 	public AbstractDomain(AbstractDomainVo d) {
@@ -137,7 +139,6 @@ public abstract class AbstractDomain {
 		this.label = d.getLabel();
 		this.description = d.getDomainDescription();
 		this.functionalities = new HashSet<Functionality>();
-		this.messagesConfiguration = new MessagesConfiguration();
 		this.domainAccessRules = new HashSet<DomainAccessRule>();
 		this.parentDomain = null;
 		this.subdomain = new HashSet<AbstractDomain>();
@@ -156,7 +157,6 @@ public abstract class AbstractDomain {
 		this.label = domainDto.getLabel();
 		this.description = domainDto.getDescription();
 		this.functionalities = new HashSet<Functionality>();
-		this.messagesConfiguration = new MessagesConfiguration();
 		this.domainAccessRules = new HashSet<DomainAccessRule>();
 		this.parentDomain = parent;
 		this.enable = true;
@@ -178,6 +178,7 @@ public abstract class AbstractDomain {
 		this.externalMailLocale = d.getExternalMailLocale();
 		this.enable = d.isEnable();
 		this.authShowOrder = d.getAuthShowOrder();
+		this.currentWelcomeMessage = d.getCurrentWelcomeMessage();
 	}
 
 	public SupportedLanguage getDefaultTapestryLocale() {
@@ -303,15 +304,6 @@ public abstract class AbstractDomain {
 
 	public void setDomainAccessRules(Set<DomainAccessRule> domainAccessRules) {
 		this.domainAccessRules = domainAccessRules;
-	}
-
-	public MessagesConfiguration getMessagesConfiguration() {
-		return messagesConfiguration;
-	}
-
-	public void setMessagesConfiguration(
-			MessagesConfiguration messagesConfiguration) {
-		this.messagesConfiguration = messagesConfiguration;
 	}
 
 	public List<ShareExpiryRule> getShareExpiryRules() {
@@ -460,5 +452,21 @@ public abstract class AbstractDomain {
 
 	public void setContactProvider(Set<ContactProvider> contactProvider) {
 		this.contactProvider = contactProvider;
+	}
+
+	public WelcomeMessages getCurrentWelcomeMessage() {
+		return currentWelcomeMessage;
+	}
+
+	public void setCurrentWelcomeMessages(WelcomeMessages currentCustomisation) {
+		this.currentWelcomeMessage = currentCustomisation;
+	}
+
+	public Set<WelcomeMessages> getWelcomeMessages() {
+		return welcomeMessages;
+	}
+
+	public void setWelcomeMessages(Set<WelcomeMessages> customisations) {
+		this.welcomeMessages = customisations;
 	}
 }

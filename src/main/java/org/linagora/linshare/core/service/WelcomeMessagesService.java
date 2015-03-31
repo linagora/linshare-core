@@ -31,68 +31,25 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.view.tapestry.components;
 
-import java.util.Set;
+package org.linagora.linshare.core.service;
 
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Persist;
-import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linshare.core.domain.entities.MailTemplate;
-import org.slf4j.Logger;
+import java.util.List;
 
-public class MailTemplateConfigurer {
-    @Parameter(required = true, defaultPrefix = BindingConstants.PROP)
-    @Property
-    private Set<MailTemplate> mailTemplates;
-    
-    @Property
-    private MailTemplate mailTemplate;
-    
-    @Property
-    @Persist
-    private MailTemplate mailTemplateToEdit;
-    
-    @Inject
-    private Logger logger;
-    
-    @Property
-    @Persist
-    private String valueTXT;
-    
-    @Property
-    @Persist
-    private String valueHTML;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 
-    @SetupRender
-    void setupRender() {
-    }
-    
-    public boolean getInModificationState() {
-    	if (mailTemplateToEdit == null) {
-    		return false;
-    	}
-    	return mailTemplateToEdit.toString().equals(mailTemplate.toString());
-    }
-    
-    void onActionFromSwitchToModificationState(String rowValue) {
-    	for (MailTemplate mailTemplate : mailTemplates) {
-			if (mailTemplate.toString().equals(rowValue)) {
-				mailTemplateToEdit = mailTemplate;
-	        	break;
-			}
-		}
-    	
-    }
-    
-    void onActionFromSwitchFromModificationState() {
-    	mailTemplateToEdit = null;
-    }
-    
-    void onSuccess() {
-    	mailTemplateToEdit = null;
-    }
+public interface WelcomeMessagesService {
+
+	List<WelcomeMessages> findAll(User actor) throws BusinessException;
+
+	WelcomeMessages find(User actor,String uuid) throws BusinessException;
+
+	WelcomeMessages create(User actor, AbstractDomain domain, String uuid) throws BusinessException;
+
+	WelcomeMessages update(User actor, AbstractDomain domain, WelcomeMessages custom) throws BusinessException;
+
+	WelcomeMessages delete(User actor,String uuid) throws BusinessException;
 }

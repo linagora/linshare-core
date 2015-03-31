@@ -70,17 +70,29 @@ public enum SupportedLanguage {
 		if (Locale.FRENCH.equals(locale) || Locale.FRANCE.equals(locale)) {
 			return FRENCH;
 		}
+		if (locale.toString().equals("vi"))
+			return VIETNAMESE;
+		if (locale.toString().equals("mq"))
+			return CREOLE;
+
 		return ENGLISH;
 	}
 
 	public static SupportedLanguage fromTapestryLocale(String locale) {
 		if (locale == null)
 			return null;
+		if (locale.equals("nl_NL")
+				|| locale.equals("nl")) {
+			return DUTCH;
+		}
+		if (locale.equals("fr")) {
+			return FRENCH;
+		}
 		if (locale.equals("vi"))
 			return VIETNAMESE;
 		if (locale.equals("mq"))
 			return CREOLE;
-		return SupportedLanguage.fromLocale(new Locale(locale));
+		return ENGLISH;
 	}
 
 	public String getTapestryLocale() {
@@ -96,7 +108,7 @@ public enum SupportedLanguage {
 		}
 		return SupportedLanguage.ENGLISH;
 	}
-	
+
 	public static Language toLanguage(SupportedLanguage language){
 		if (language == SupportedLanguage.FRENCH){
 			return Language.FRENCH;

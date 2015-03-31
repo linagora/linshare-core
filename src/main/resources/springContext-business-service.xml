@@ -181,4 +181,7 @@
 		<constructor-arg ref="shareEntryRepository" />
 		<constructor-arg ref="anonymousShareEntryRepository" />
 	</bean>
+	<bean id="welcomeMessagesBusinessService" class="org.linagora.linshare.core.business.service.impl.WelcomeMessagesBusinessServiceImpl">
+		<constructor-arg ref="welcomeMessagesRepository" />
+	</bean>
 </beans>

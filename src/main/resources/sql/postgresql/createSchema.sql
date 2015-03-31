@@ -67,13 +67,13 @@ CREATE TABLE domain_abstract (
   default_locale            varchar(255) NOT NULL,
   external_mail_locale     varchar(255) NOT NULL,
   used_space                int8 NOT NULL,
-  messages_configuration_id int8 NOT NULL,
   auth_show_order           int8 NOT NULL,
   domain_policy_id          int8 NOT NULL,
   parent_id                 int8,
   mime_policy_id            int8,
   mailconfig_id             int8,
   user_provider_id          int8,
+  welcome_id                int8,
   CONSTRAINT linshare_domain_abstract_pkey
     PRIMARY KEY (id));
 CREATE TABLE domain_access_policy (
@@ -174,21 +174,6 @@ CREATE TABLE log_entry (
   expiration_date  timestamp,
   CONSTRAINT linshare_log_entry_pkey
     PRIMARY KEY (id));
-CREATE TABLE mail_subjects (
-  messages_configuration_id int8 NOT NULL,
-  subject_id                int4 NOT NULL,
-  language_id               int4 NOT NULL,
-  content                   text);
-CREATE TABLE mail_templates (
-  messages_configuration_id int8 NOT NULL,
-  template_id               int4 NOT NULL,
-  language_id               int4 NOT NULL,
-  content_html              text,
-  content_txt               text);
-CREATE TABLE messages_configuration (
-  messages_configuration_id  int8 NOT NULL,
-  CONSTRAINT linshare_messages_configuration_pkey
-    PRIMARY KEY (messages_configuration_id));
 CREATE TABLE policy (
   id              int8 NOT NULL,
   status         bool NOT NULL,
@@ -302,10 +287,6 @@ CREATE TABLE version (
   version text NOT NULL UNIQUE,
   CONSTRAINT linshare_version_pkey
     PRIMARY KEY (id));
-CREATE TABLE welcome_texts (
-  messages_configuration_id int8 NOT NULL,
-  welcome_text              text,
-  language_id               int4);
 CREATE TABLE allowed_contact (
   id          int8 NOT NULL,
   account_id int8 NOT NULL,
@@ -647,26 +628,21 @@ CREATE TABLE ldap_pattern (
   creation_date                                timestamp NOT NULL,
   modification_date                            timestamp NOT NULL,
   PRIMARY KEY (id));
-CREATE TABLE customisation (
-  id                 int8 NOT NULL,
-  uuid              varchar(255) NOT NULL,
-  name              varchar(255) NOT NULL,
-  description       text NOT NULL,
-  creation_date     timestamp NOT NULL,
-  modification_date timestamp NOT NULL,
-  custom_type       varchar(255) NOT NULL,
+CREATE TABLE welcome_messages (
+  id                 BIGSERIAL NOT NULL, 
+  uuid              varchar(255) NOT NULL, 
+  name              varchar(255) NOT NULL, 
+  description       text NOT NULL, 
+  creation_date     timestamp NOT NULL, 
+  modification_date timestamp NOT NULL, 
+  domain_id         int8 NOT NULL, 
   PRIMARY KEY (id));
-CREATE TABLE customisation_entry (
-  id                int8 NOT NULL,
-  lang             varchar(255) NOT NULL,
-  value            varchar(255) NOT NULL,
-  customisation_id int8 NOT NULL,
+CREATE TABLE welcome_messages_entry (
+  id          BIGSERIAL NOT NULL, 
+  lang       varchar(255) NOT NULL, 
+  value      varchar(255) NOT NULL, 
+  welcome_id int8 NOT NULL, 
   PRIMARY KEY (id));
-CREATE TABLE domain_abstract_customisation (
-  domain_abstract_id int8 NOT NULL,
-  customisation_id   int8 NOT NULL,
-  PRIMARY KEY (domain_abstract_id,
-  customisation_id));
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid
@@ -751,8 +727,8 @@ CREATE INDEX mailing_list_index
   ON mailing_list (uuid);
 CREATE INDEX mailing_list_contact_index
   ON mailing_list_contact (uuid);
-CREATE UNIQUE INDEX customisation_uuid
-  ON customisation (uuid);
+CREATE UNIQUE INDEX welcome_messages_uuid 
+  ON welcome_messages (uuid);
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_access_rule ADD CONSTRAINT fkf75719ed3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
@@ -840,13 +816,7 @@ ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1640 FOREIGN KEY (ldap_conn
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr355176 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE ldap_attribute ADD CONSTRAINT FKldap_attri49928 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi813203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
-ALTER TABLE customisation_entry ADD CONSTRAINT FKcustomisat539594 FOREIGN KEY (customisation_id) REFERENCES customisation (id);
-ALTER TABLE domain_abstract_customisation ADD CONSTRAINT FKdomain_abs157863 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE domain_abstract_customisation ADD CONSTRAINT FKdomain_abs55191 FOREIGN KEY (customisation_id) REFERENCES customisation (id);
 
-CREATE INDEX welcome_texts_i
-  ON welcome_texts (messages_configuration_id);
-ALTER TABLE mail_subjects ADD CONSTRAINT fk1c97f3be126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE mail_templates ADD CONSTRAINT fkdd1b7f22126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE welcome_texts ADD CONSTRAINT fk36a0c738126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE welcome_messages_entry ADD CONSTRAINT FKwelcome_me856948 FOREIGN KEY (welcome_id) REFERENCES welcome_messages (id);
+ALTER TABLE domain_abstract ADD CONSTRAINT use_customisation FOREIGN KEY (welcome_id) REFERENCES welcome_messages (id);
+ALTER TABLE welcome_messages ADD CONSTRAINT own_welcome_messages FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);

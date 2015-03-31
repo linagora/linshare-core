@@ -110,8 +110,14 @@
 			<one-to-many class="org.linagora.linshare.core.domain.entities.ContactProvider"/>
 		</set>
 
-		<many-to-one cascade="save-update" lazy="proxy" access="field" class="org.linagora.linshare.core.domain.entities.MessagesConfiguration" 
-			name="messagesConfiguration" column="messages_configuration_id" not-null="false" />
+		<many-to-one name="currentWelcomeMessage" cascade="lock" column="welcome_id"
+			class="org.linagora.linshare.core.domain.entities.WelcomeMessages" not-null="false" lazy="proxy">
+		</many-to-one>
+
+		<set name="welcomeMessages" lazy="true" inverse="true">
+			<key column="domain_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.WelcomeMessages"/>
+		</set>
 
 		<list name="shareExpiryRules" table="share_expiry_rules" lazy="true">
       		<key>

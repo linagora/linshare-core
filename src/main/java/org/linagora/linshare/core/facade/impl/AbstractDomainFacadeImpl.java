@@ -40,18 +40,19 @@ import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
-import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
 import org.linagora.linshare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.WelcomeText;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.GuestDomainVo;
 import org.linagora.linshare.core.domain.vo.SubDomainVo;
@@ -59,7 +60,6 @@ import org.linagora.linshare.core.domain.vo.TopDomainVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
@@ -73,17 +73,15 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 	private final UserAndDomainMultiService userAndDomainMultiService;
 	// Dirty hack. Will be removed with tapestry ! :)
-	private final AbstractDomainRepository abstractDomainRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractDomainFacadeImpl.class);
 
     public AbstractDomainFacadeImpl(AbstractDomainService abstractDomainService, FunctionalityReadOnlyService functionalityReadOnlyService,
-            UserAndDomainMultiService userAndDomainMultiService, AbstractDomainRepository abstractDomainRepository) {
+            UserAndDomainMultiService userAndDomainMultiService) {
         super();
         this.abstractDomainService = abstractDomainService;
         this.functionalityReadOnlyService = functionalityReadOnlyService;
         this.userAndDomainMultiService = userAndDomainMultiService;
-        this.abstractDomainRepository = abstractDomainRepository;
     }
 
 
@@ -248,28 +246,6 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     }
 
     @Override
-    public MessagesConfiguration getMessages(String domainIdentifier) throws BusinessException {
-        AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-        // Stuff to be compatible with old shit.
-        return new MessagesConfiguration(domain.getMessagesConfiguration());
-    }
-
-    @Override
-    public void updateMessages(UserVo actorVo, String domainIdentifier, MessagesConfiguration messages) throws BusinessException {
-        if(isAuthorized(actorVo)) {
-            AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-
-            // Stuff to be compatible with old shit.
-            MessagesConfiguration m = new MessagesConfiguration(messages);
-            domain.setMessagesConfiguration(m);
-            abstractDomainRepository.update(domain);
-        } else {
-            throw new BusinessException("You are not authorized to update messages.");
-        }
-    }
-
-
-    @Override
     public List<ShareExpiryRule> getShareExpiryRules(String domainIdentifier) throws BusinessException {
         AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
 
@@ -301,9 +277,18 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         return abstractDomainService.getAllMyDomainIdentifiers(actorVo.getDomainIdentifier());
     }
 
-
 	@Override
-	public Set<WelcomeText> getWelcomeMessages() {
-		return abstractDomainService.getUniqueRootDomain().getMessagesConfiguration().getWelcomeTexts();
+	public String getDomainWelcomeMessagesValue(UserVo userVo, SupportedLanguage lang) {
+		AbstractDomain domain = abstractDomainService.findById(userVo
+				.getDomainIdentifier());
+		WelcomeMessages currentWelcomeMessage = domain.getCurrentWelcomeMessage();
+		Map<SupportedLanguage, WelcomeMessagesEntry> welcomeMessagesEntries = currentWelcomeMessage
+				.getWelcomeMessagesEntries();
+		WelcomeMessagesEntry entry = welcomeMessagesEntries.get(lang);
+		if (entry == null) {
+			logger.error("Missing welcome message :" + lang);
+			entry = welcomeMessagesEntries.get(SupportedLanguage.ENGLISH);
+		}
+		return entry.getValue();
 	}
 }

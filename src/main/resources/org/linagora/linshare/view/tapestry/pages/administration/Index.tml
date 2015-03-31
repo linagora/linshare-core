@@ -20,11 +20,6 @@
 				<div id="version">
 					<strong>${message:global.version.label} : </strong> <code>${version}</code>
 					<br/>
-					 <p>
-						<t:pagelink t:id="personalization" t:page="administration/Personalization"  context="selectedDomain">
-							<span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/>${message:pages.administration.index.link.personalization}</span>
-						</t:pagelink>
-					</p>
 				</div>
 			</t:if>
 		</div>

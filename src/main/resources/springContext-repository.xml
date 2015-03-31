@@ -84,9 +84,6 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
-	<bean name="messagesRepository" class="org.linagora.linshare.core.repository.hibernate.MessagesRepositoryImpl">
-		<constructor-arg ref="hibernateTemplate" />
-	</bean>
 	<bean name="policyRepository" class="org.linagora.linshare.core.repository.hibernate.PolicyRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
@@ -194,16 +191,24 @@
 	<bean name="uploadPropositionRepository" class="org.linagora.linshare.core.repository.hibernate.UploadPropositionRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
 	<bean name="uploadPropositionFilterRepository" class="org.linagora.linshare.core.repository.hibernate.UploadPropositionFilterRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
 	<bean name="uploadPropositionActionRepository" class="org.linagora.linshare.core.repository.hibernate.UploadPropositionActionRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
 	<bean name="uploadPropositionRuleRepository" class="org.linagora.linshare.core.repository.hibernate.UploadPropositionRuleRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
 	<bean name="entryRepository" class="org.linagora.linshare.core.repository.hibernate.EntryRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="welcomeMessagesRepository" class="org.linagora.linshare.core.repository.hibernate.WelcomeMessagesRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 </beans>
