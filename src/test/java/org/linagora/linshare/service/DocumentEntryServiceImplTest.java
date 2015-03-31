@@ -291,5 +291,3 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }
-
-

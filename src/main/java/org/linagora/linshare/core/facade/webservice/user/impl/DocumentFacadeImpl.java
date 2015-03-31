@@ -53,6 +53,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.MimePolicyService;
+import org.linagora.linshare.core.service.ShareService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,12 +69,16 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 
 	private final MimePolicyService mimePolicyService;
 
+	private final ShareService shareService;
+
 	public DocumentFacadeImpl(final DocumentEntryService documentEntryService,
 			final AccountService accountService,
-			final MimePolicyService mimePolicyService) {
+			final MimePolicyService mimePolicyService,
+			final ShareService shareService) {
 		super(accountService);
 		this.documentEntryService = documentEntryService;
 		this.mimePolicyService = mimePolicyService;
+		this.shareService = shareService;
 	}
 
 	@Override
@@ -168,9 +173,9 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(uuid, "Missing required document uuid");
 		logger.debug("deleting for document : " + uuid);
 		User actor = checkAuthentication();
-		DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
+		DocumentEntry documentEntry = shareService.deleteAllShareEntries(actor, actor, uuid);
 		documentEntryService.delete(actor, actor, uuid);
-		return new DocumentDto(doc);
+		return new DocumentDto(documentEntry);
 	}
 
 	@Override
