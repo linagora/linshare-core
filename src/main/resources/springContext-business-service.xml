@@ -171,5 +171,7 @@
 	</bean>
 	<bean id="entryBusinessService" class="org.linagora.linshare.core.business.service.impl.EntryBusinessServiceImpl">
 		<constructor-arg ref="entryRepository" />
+		<constructor-arg ref="shareEntryRepository" />
+		<constructor-arg ref="anonymousShareEntryRepository" />
 	</bean>
 </beans>

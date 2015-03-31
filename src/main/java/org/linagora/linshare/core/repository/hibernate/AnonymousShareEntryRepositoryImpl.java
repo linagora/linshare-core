@@ -42,6 +42,9 @@ import java.util.UUID;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -106,5 +109,14 @@ public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<An
     	calMax.add(Calendar.DAY_OF_MONTH, date+1);
         
     	return findByCriteria(Restrictions.lt("expirationDate", calMax), Restrictions.gt("expirationDate", calMin));
+	}
+
+	@Override
+	public List<AnonymousShareEntry> findAllMyAnonymousShareEntries(User owner,
+			DocumentEntry entry) {
+		 return findByCriteria(
+				 Restrictions.conjunction()
+				 .add(Restrictions.eq("entryOwner", owner))
+				 .add(Restrictions.eq("documentEntry", entry)));
 	}
 }

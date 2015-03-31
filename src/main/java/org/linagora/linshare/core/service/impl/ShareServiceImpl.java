@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -264,13 +266,15 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			String docEntryUuid) throws BusinessException {
 		DocumentEntry entry = documentEntryService.find(actor, owner,
 				docEntryUuid);
-		for (AnonymousShareEntry share : entry.getAnonymousShareEntries()) {
+		List<AnonymousShareEntry> list1 = entryBusinessService.findAllMyAnonymousShareEntries((User)owner, entry);
+		List<ShareEntry> list2 = entryBusinessService.findAllMyShareEntries((User)owner, entry);
+		for (AnonymousShareEntry share : list1) {
 			anonymousShareEntryService.delete(actor, owner, share.getUuid());
 		}
-		for (ShareEntry share : entry.getShareEntries()) {
+		for (ShareEntry share : list2) {
 			shareEntryService.delete(actor, owner, share.getUuid());
 		}
-		return entry;
+		return documentEntryService.find(actor, owner, entry.getUuid());
 	}
 
 	@Override

@@ -31,12 +31,15 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
- 
+
 package org.linagora.linshare.core.business.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -45,5 +48,10 @@ public interface EntryBusinessService {
 	Entry find(String entryUuid) throws BusinessException;
 
 	List<Entry> findAllMyShareEntries(User owner);
+
+	List<ShareEntry> findAllMyShareEntries(User owner, DocumentEntry entry);
+
+	List<AnonymousShareEntry> findAllMyAnonymousShareEntries(User owner,
+			DocumentEntry entry);
 
 }

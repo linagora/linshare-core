@@ -45,6 +45,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
@@ -255,5 +256,13 @@ public class ShareEntryRepositoryImpl extends
 			return "%" + value + "%";
 		}
 		return value;
+	}
+
+	@Override
+	public List<ShareEntry> findAllMyShareEntries(User owner,
+			DocumentEntry entry) {
+		return findByCriteria(Restrictions.conjunction()
+				.add(Restrictions.eq("entryOwner", owner))
+				.add(Restrictions.eq("documentEntry", entry)));
 	}
 }

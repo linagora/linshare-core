@@ -23,7 +23,6 @@
 			<property name="downloaded" column="downloaded" type="long" not-null="true" lazy="false"/>
 			<many-to-one name="documentEntry" column="document_entry_id" class="org.linagora.linshare.core.domain.entities.DocumentEntry" not-null="true" lazy="proxy"/>
 			<many-to-one name="anonymousUrl" column="anonymous_url_id" class="org.linagora.linshare.core.domain.entities.AnonymousUrl" not-null="true" lazy="proxy"/>
-
 		</joined-subclass>
 		<joined-subclass name="org.linagora.linshare.core.domain.entities.DocumentEntry" table="document_entry" lazy="true">
 			<key>

@@ -54,18 +54,19 @@ public interface ShareEntryRepository extends AbstractRepository<ShareEntry> {
 	 * @param uuid
 	 * @return found document (null if no ShareEntry found).
 	 */
-	public ShareEntry findByUuid(String uuid);
+	ShareEntry findByUuid(String uuid);
 
-	public ShareEntry getShareEntry(DocumentEntry documentEntry, User sender,
+	ShareEntry getShareEntry(DocumentEntry documentEntry, User sender,
 			User recipient);
 
-	public List<ShareEntry> findAllMyRecievedShareEntries(User owner);
+	List<ShareEntry> findAllMyRecievedShareEntries(User owner);
 
-	public List<ShareEntry> findAllExpiredEntries();
+	List<ShareEntry> findAllExpiredEntries();
 
-	public List<ShareEntry> findUpcomingExpiredEntries(Integer date);
+	List<ShareEntry> findUpcomingExpiredEntries(Integer date);
 
-	public List<ShareEntry> retrieveUserShareEntriesWithMatchCriterion(
+	List<ShareEntry> retrieveUserShareEntriesWithMatchCriterion(
 			SearchDocumentCriterion searchDocumentCriterion);
 
+	List<ShareEntry> findAllMyShareEntries(User owner, DocumentEntry entry);
 }
