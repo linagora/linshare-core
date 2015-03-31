@@ -9,6 +9,7 @@
 		</id>
 		<many-to-one name="contact" cascade="lock" column="contact_id"
 			class="org.linagora.linshare.core.domain.entities.Contact" not-null="true"
+			fetch="join"
 			lazy="no-proxy">
 		</many-to-one>
 		<many-to-one name="uploadRequest" cascade="lock"
