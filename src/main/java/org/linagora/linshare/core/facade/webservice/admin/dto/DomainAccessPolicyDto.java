@@ -57,7 +57,15 @@ public class DomainAccessPolicyDto {
 	public DomainAccessPolicyDto(DomainAccessPolicy dap) {
 		this.rules = Lists.newArrayList();
 		for (DomainAccessRule rule : dap.getRules()) {
-			this.rules.add(new DomainAccessRuleDto(rule));
+			// FIXME : the list can contain a null rule object
+			/**
+			 * If you delete a domain referenced by a domain access policy,
+			 * it seems the proxy keep a null object in the dap list.
+			 * May be because the rule is deleted by cascade instead of being deleted by the repository.
+			 */
+			if (rule != null) {
+				this.rules.add(new DomainAccessRuleDto(rule));
+			}
 		}
 	}
 
