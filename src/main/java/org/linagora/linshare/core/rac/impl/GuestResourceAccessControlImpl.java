@@ -121,8 +121,12 @@ public class GuestResourceAccessControlImpl extends
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.GUESTS_CREATE);
 		} else if (actor.isInternal()) {
+			// Only internal users can create guests.
 			if (guestFunctionalityStatus(owner.getDomain())) {
+				// We can not create guests if guest functionality is not enable.
 				if (hasGuestDomain(owner.getDomainId())) {
+					// We can not create guest if there is no guest domain.
+					// TODO : Add a check if user still can guest.
 					return true;
 				} else {
 					logger.error("Missing guest domain to create a guest.");
