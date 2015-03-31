@@ -97,10 +97,12 @@ public class EntryRepositoryImpl extends AbstractRepositoryImpl<Entry>
 
 	@Override
 	public List<Entry> findAllMyShareEntries(User owner) {
-		return findByCriteria(Restrictions.disjunction()
-				.add(Restrictions.eq("entryOwner", owner))
-				.add(Restrictions.eq("class", ShareEntry.class))
-				.add(Restrictions.eq("class", AnonymousShareEntry.class)));
+		DetachedCriteria criteria = DetachedCriteria.forClass(ShareEntry.class);
+		criteria.add(Restrictions.eq("entryOwner", owner));
+		List<Entry> list = findByCriteria(criteria);
+		criteria = DetachedCriteria.forClass(AnonymousShareEntry.class);
+		criteria.add(Restrictions.eq("entryOwner", owner));
+		list.addAll(findByCriteria(criteria));
+		return list;
 	}
-
 }
