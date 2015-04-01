@@ -233,7 +233,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			}
 			@SuppressWarnings("deprecation")
 			Date expiryDate = DateUtils.add(new Date(),
-					expiryDateFunc.toCalendarUnitValue(),
+					expiryDateFunc.toCalendarValue(),
 					expiryDateFunc.getValue());
 			req.setExpiryDate(expiryDate);
 		}

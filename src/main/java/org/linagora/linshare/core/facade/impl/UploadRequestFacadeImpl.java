@@ -263,7 +263,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 			}
 			@SuppressWarnings("deprecation")
 			Date expiryDate = DateUtils.add(new Date(),
-					expiryDateFunc.toCalendarUnitValue(),
+					expiryDateFunc.toCalendarValue(),
 					expiryDateFunc.getValue());
 			ret.setExpiryDate(expiryDate);
 		}

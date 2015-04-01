@@ -323,7 +323,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	private Calendar getDocumentExpirationDate(AbstractDomain domain) {
 		Calendar expirationDate = Calendar.getInstance();
 		TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityReadOnlyService.getDefaultFileExpiryTimeFunctionality(domain);
-		expirationDate.add(fileExpirationTimeFunctionality.toCalendarUnitValue(), fileExpirationTimeFunctionality.getValue());
+		expirationDate.add(fileExpirationTimeFunctionality.toCalendarValue(), fileExpirationTimeFunctionality.getValue());
 		return expirationDate;
 	}
 

@@ -360,7 +360,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 			logger.debug(func.getIdentifier() + " is activated");
 			@SuppressWarnings("deprecation")
 			Date maxDate = DateUtils.add(new Date(),
-					func.toCalendarUnitValue(), func.getValue());
+					func.toCalendarValue(), func.getValue());
 			if (func.getDelegationPolicy() != null
 					&& func.getDelegationPolicy().getStatus()) {
 				logger.debug(func.getIdentifier() + " has a delegation policy");

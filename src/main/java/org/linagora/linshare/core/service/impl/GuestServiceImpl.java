@@ -250,7 +250,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		Calendar expiryDate = Calendar.getInstance();
 		TimeUnitValueFunctionality func = functionalityReadOnlyService
 				.getGuestAccountExpiryTimeFunctionality(owner.getDomain());
-		expiryDate.add(func.toCalendarUnitValue(), func.getValue());
+		expiryDate.add(func.toCalendarValue(), func.getValue());
 		return expiryDate.getTime();
 	}
 }

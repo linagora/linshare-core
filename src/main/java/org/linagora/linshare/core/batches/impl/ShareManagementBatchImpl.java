@@ -42,12 +42,12 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -135,7 +135,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		for (AnonymousShareEntry shareEntry : expiredEntries) {
 			AbstractDomain domain = shareEntry.getEntryOwner().getDomain();
 
-			TimeUnitBooleanValueFunctionality shareExpiryTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(domain);
+			TimeUnitValueFunctionality shareExpiryTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(domain);
 			// test if this functionality is enable for the current domain.
 			if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
 				try {
@@ -158,13 +158,14 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		boolean doDeleteDoc = false;
 		AbstractDomain domain = documentEntry.getEntryOwner().getDomain();
 		long sum = documentEntryRepository.getRelatedEntriesCount(documentEntry);
-		TimeUnitBooleanValueFunctionality shareExpiryTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(domain);
+		TimeUnitValueFunctionality shareExpiryTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(domain);
+		BooleanValueFunctionality deleteShareFunc= functionalityReadOnlyService.getDefaultShareExpiryTimeDeletionFunctionality(domain);
 
 		if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
 			// we check if the current share is the last related entry to the document
 			if(sum -1 <= 0) {
 				// if this field is set, we must delete the document entry when the share entry is expired.
-				if(shareExpiryTimeFunctionality.getBool()) {
+				if(deleteShareFunc.getValue()) {
 					doDeleteDoc = true;
 					logger.debug("current document " + documentEntry.getUuid() + " need to be deleted.");
 				} else {
@@ -172,7 +173,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 					TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityReadOnlyService.getDefaultFileExpiryTimeFunctionality(domain);
 
 					Calendar deletionDate = Calendar.getInstance();
-					deletionDate.add(fileExpirationTimeFunctionality.toCalendarUnitValue(), fileExpirationTimeFunctionality.getValue());
+					deletionDate.add(fileExpirationTimeFunctionality.toCalendarValue(), fileExpirationTimeFunctionality.getValue());
 					documentEntry.setExpirationDate(deletionDate);
 
 					try {
@@ -201,7 +202,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		for (ShareEntry shareEntry : expiredEntries) {
 			AbstractDomain domain = shareEntry.getEntryOwner().getDomain();
 
-			TimeUnitBooleanValueFunctionality shareExpiryTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(domain);
+			TimeUnitValueFunctionality shareExpiryTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(domain);
 			// test if this functionality is enable for the current domain.
 			if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
 				try {

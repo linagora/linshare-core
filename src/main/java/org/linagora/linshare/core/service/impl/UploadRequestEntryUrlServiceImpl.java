@@ -129,7 +129,7 @@ public class UploadRequestEntryUrlServiceImpl implements
 		TimeUnitValueFunctionality expiryDateFunc = functionalityReadOnlyService
 				.getUploadRequestEntryUrlExpiryTimeFunctionality(actor.getDomain());
 		@SuppressWarnings("deprecation")
-		Date expiryDate = DateUtils.add(new Date(), expiryDateFunc.toCalendarUnitValue(), expiryDateFunc.getValue());
+		Date expiryDate = DateUtils.add(new Date(), expiryDateFunc.toCalendarValue(), expiryDateFunc.getValue());
 		return expiryDate;
 	}
 

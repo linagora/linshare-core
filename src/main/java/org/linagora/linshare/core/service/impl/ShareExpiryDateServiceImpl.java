@@ -42,7 +42,7 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareExpiryRule;
-import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.slf4j.Logger;
@@ -65,7 +65,7 @@ public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
      */
 	@Override
 	public Calendar computeShareExpiryDate(DocumentEntry document, Account owner) {
-		TimeUnitBooleanValueFunctionality shareExpirationTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(owner.getDomain());
+		TimeUnitValueFunctionality shareExpirationTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(owner.getDomain());
 		Calendar defaultExpiration = null;
 
 		if(shareExpirationTimeFunctionality.getActivationPolicy().getStatus()) {

@@ -677,14 +677,11 @@ public class UserServiceImpl implements UserService {
 						.getGuestFunctionality(user.getDomain());
 				user.setCanCreateGuest(guestfunc.getActivationPolicy()
 						.getStatus());
-
 				Functionality userCanUploadFunc = functionalityReadOnlyService
 						.getUserCanUploadFunctionality(user.getDomain());
 				user.setCanUpload(userCanUploadFunc.getActivationPolicy()
 						.getStatus());
-
 				user.setCreationDate(new Date());
-
 				user.setLocale(user.getDomain().getDefaultTapestryLocale());
 				// TODO : FIXME : Waiting to get default external mail local from domain.
 				Language locale = Language.fromTapestryLocale(user.getLocale().getTapestryLocale());

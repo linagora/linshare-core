@@ -43,10 +43,8 @@ import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
-import org.linagora.linshare.core.domain.entities.UnitBooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
-import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -119,8 +117,13 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public TimeUnitBooleanValueFunctionality getDefaultShareExpiryTimeFunctionality(AbstractDomain domain) {
-		return new TimeUnitBooleanValueFunctionality((UnitBooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.SHARE_EXPIRATION));
+	public TimeUnitValueFunctionality getDefaultShareExpiryTimeFunctionality(AbstractDomain domain) {
+		return new TimeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.SHARE_EXPIRATION));
+	}
+
+	@Override
+	public BooleanValueFunctionality getDefaultShareExpiryTimeDeletionFunctionality(AbstractDomain domain) {
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.SHARE_EXPIRATION__DELETE_FILE_ON_EXPIRATION);
 	}
 
 	@Override
@@ -145,7 +148,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public TimeUnitValueFunctionality getGuestAccountExpiryTimeFunctionality(AbstractDomain domain) {
-		return new TimeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.ACCOUNT_EXPIRATION));
+		return new TimeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.GUESTS__EXPIRATION));
 	}
 
 	@Override
@@ -155,7 +158,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public StringValueFunctionality getDomainMailFunctionality(AbstractDomain domain) {
-		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.DOMAIN_MAIL);
+		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.DOMAIN__MAIL);
 	}
 
 	@Override
@@ -180,12 +183,12 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public Functionality getSecuredAnonymousUrlFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.SECURED_ANONYMOUS_URL);
+		return _getFunctionality(domain, FunctionalityNames.ANONYMOUS_URL__SECURED);
 	}
 
 	@Override
 	public Functionality getRestrictedGuestFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.RESTRICTED_GUEST);
+		return _getFunctionality(domain, FunctionalityNames.GUEST__RESTRICTED);
 	}
 
 	@Override
@@ -205,12 +208,12 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public StringValueFunctionality getCustomLinkLogoFunctionality(AbstractDomain domain) {
-		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.LINK_LOGO);
+		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.CUSTOM_LOGO_LINK);
 	}
 
 	@Override
 	public Functionality getUserCanUploadFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.USER_CAN_UPLOAD);
+		return _getFunctionality(domain, FunctionalityNames.INTERNAL_CAN_UPLOAD);
 	}
 
 	@Override
@@ -260,7 +263,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain) {
-		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.NOTIFICATION_URL);
+		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.DOMAIN__NOTIFICATION_URL);
 	}
 
 	@Override

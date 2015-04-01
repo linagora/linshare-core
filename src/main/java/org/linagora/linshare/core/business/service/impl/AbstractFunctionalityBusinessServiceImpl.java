@@ -170,7 +170,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			List<String> exclude = new ArrayList<String>();
 			if(domain.getDomainType().equals(DomainType.GUESTDOMAIN)) {
 				// A guest user can not create a guest, so account expiration for guests is useless.
-				exclude.add(FunctionalityNames.ACCOUNT_EXPIRATION.toString());
+				exclude.add(FunctionalityNames.GUESTS__EXPIRATION.toString());
 			}
 			return convertToFunctionality(this.getAllInnerFunctionalities(abstractDomain), exclude, true, abstractDomain);
 		}

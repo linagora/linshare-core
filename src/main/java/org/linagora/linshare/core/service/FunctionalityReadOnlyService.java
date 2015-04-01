@@ -40,7 +40,6 @@ import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
-import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -55,7 +54,8 @@ public interface FunctionalityReadOnlyService {
 	SizeUnitValueFunctionality getGlobalQuotaFunctionality (AbstractDomain domain);
 	SizeUnitValueFunctionality getUserQuotaFunctionality (AbstractDomain domain);
 	SizeUnitValueFunctionality getUserMaxFileSizeFunctionality (AbstractDomain domain);
-	TimeUnitBooleanValueFunctionality getDefaultShareExpiryTimeFunctionality (AbstractDomain domain);
+	TimeUnitValueFunctionality getDefaultShareExpiryTimeFunctionality (AbstractDomain domain);
+	BooleanValueFunctionality getDefaultShareExpiryTimeDeletionFunctionality (AbstractDomain domain);
 	TimeUnitValueFunctionality getDefaultFileExpiryTimeFunctionality (AbstractDomain domain);
 
 	Functionality getGuestFunctionality (AbstractDomain domain);
