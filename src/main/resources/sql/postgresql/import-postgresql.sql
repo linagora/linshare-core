@@ -1,5 +1,6 @@
 SET client_encoding = 'UTF8';
 SET client_min_messages = warning;
+\set ON_ERROR_STOP
 
 -- default domain policy
 INSERT INTO domain_access_policy(id) VALUES (1);
@@ -8,8 +9,8 @@ INSERT INTO domain_policy(id, identifier, domain_access_policy_id) VALUES (1, 'D
 
 
 -- Root domain (application domain)
-INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id,
-    auth_show_order) VALUES (1, 0, 'LinShareRootDomain', 'LinShareRootDomain', true, false, 'The root application domain', 3, 'en', 0, null, 1, null, 0);
+INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, external_mail_locale, used_space, user_provider_id, domain_policy_id, parent_id,
+    auth_show_order) VALUES (1, 0, 'LinShareRootDomain', 'LinShareRootDomain', true, false, 'The root application domain', 3, 'en', 'en', 0, null, 1, null, 0);
 
 -- Default mime policy
 INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, creation_date, modification_date) VALUES(1, 1, '3d6d8800-e0f7-11e3-8ec0-080027c0eef0', 'Default Mime Policy', 0, 0, now(), now());
@@ -26,7 +27,7 @@ INSERT INTO welcome_messages_entry(id, lang, value, welcome_id) VALUES (3, 'mq',
 INSERT INTO welcome_messages_entry(id, lang, value, welcome_id) VALUES (4, 'vi', 'Chào mừng bạn đến với Linshare, phần mềm nguồn mở chia sẻ file bảo mật.', 1);
 INSERT INTO welcome_messages_entry(id, lang, value, welcome_id) VALUES (5, 'nl', 'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 1);
 
---Setting welcome_id for all domains
+-- Default setting welcome messages for all domains
 UPDATE domain_abstract SET welcome_id = 1;
 
 

@@ -52,6 +52,9 @@ CREATE TABLE document_entry (
   entry_id    int8 NOT NULL,
   document_id int8 NOT NULL,
   ciphered    bool NOT NULL,
+  type        varchar(255),
+  "size"      int8,
+  sha256sum   varchar(255),
   PRIMARY KEY (entry_id),
   CONSTRAINT "unique document entry"
     UNIQUE (entry_id, document_id));
@@ -248,6 +251,9 @@ CREATE TABLE thread_entry (
   entry_id    int8 NOT NULL,
   document_id int8 NOT NULL,
   ciphered    bool NOT NULL,
+  type        varchar(255),
+  "size"      int8,
+  sha256sum   varchar(255),
   PRIMARY KEY (entry_id),
   CONSTRAINT "unique thread entry"
     UNIQUE (entry_id, document_id));
@@ -629,19 +635,19 @@ CREATE TABLE ldap_pattern (
   modification_date                            timestamp NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE welcome_messages (
-  id                 BIGSERIAL NOT NULL, 
-  uuid              varchar(255) NOT NULL, 
-  name              varchar(255) NOT NULL, 
-  description       text NOT NULL, 
-  creation_date     timestamp NOT NULL, 
-  modification_date timestamp NOT NULL, 
-  domain_id         int8 NOT NULL, 
+  id                 int8 NOT NULL,
+  uuid              varchar(255) NOT NULL,
+  name              varchar(255) NOT NULL,
+  description       text NOT NULL,
+  creation_date     timestamp NOT NULL,
+  modification_date timestamp NOT NULL,
+  domain_id         int8 NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE welcome_messages_entry (
-  id          BIGSERIAL NOT NULL, 
-  lang       varchar(255) NOT NULL, 
-  value      varchar(255) NOT NULL, 
-  welcome_id int8 NOT NULL, 
+  id          int8 NOT NULL,
+  lang       varchar(255) NOT NULL,
+  value      varchar(255) NOT NULL,
+  welcome_id int8 NOT NULL,
   PRIMARY KEY (id));
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
@@ -727,7 +733,7 @@ CREATE INDEX mailing_list_index
   ON mailing_list (uuid);
 CREATE INDEX mailing_list_contact_index
   ON mailing_list_contact (uuid);
-CREATE UNIQUE INDEX welcome_messages_uuid 
+CREATE UNIQUE INDEX welcome_messages_uuid
   ON welcome_messages (uuid);
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
@@ -816,7 +822,6 @@ ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1640 FOREIGN KEY (ldap_conn
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr355176 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE ldap_attribute ADD CONSTRAINT FKldap_attri49928 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi813203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
-
 ALTER TABLE welcome_messages_entry ADD CONSTRAINT FKwelcome_me856948 FOREIGN KEY (welcome_id) REFERENCES welcome_messages (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT use_customisation FOREIGN KEY (welcome_id) REFERENCES welcome_messages (id);
 ALTER TABLE welcome_messages ADD CONSTRAINT own_welcome_messages FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
