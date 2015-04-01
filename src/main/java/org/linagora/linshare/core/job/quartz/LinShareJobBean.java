@@ -47,7 +47,6 @@ public abstract class LinShareJobBean<T> extends QuartzJobBean {
 				BatchResultContext<T> batchResult = batch.execute(
 						systemAccount, resource, total, position);
 				batch.notify(systemAccount, batchResult, total, position);
-				position++;
 			} catch (BatchBusinessException ex) {
 				errors++;
 				batch.notifyError(systemAccount, ex, resource, total, position);
@@ -59,6 +58,7 @@ public abstract class LinShareJobBean<T> extends QuartzJobBean {
 				logger.error("Cannot process resource '{}' ");
 			}
 			logDebug(total, position, "resource processed.");
+			position++;
 		}
 		batch.terminate(systemAccount, all, errors, unhandled_errors, total);
 	}
@@ -68,7 +68,7 @@ public abstract class LinShareJobBean<T> extends QuartzJobBean {
 	}
 
 	protected String getStringPosition(long total, long position) {
-		return total + "/" + position + ":";
+		return position + "/" + total + ":";
 	}
 
 }

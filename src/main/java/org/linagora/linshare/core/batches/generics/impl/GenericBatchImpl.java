@@ -10,7 +10,7 @@ public abstract class GenericBatchImpl<T> implements GenericBatch<T> {
 			.getLogger(GenericBatchImpl.class);
 
 	protected String getStringPosition(long total, long position) {
-		return total + "/" + position + ":";
+		return position + "/" + total + ":";
 	}
 
 	protected void logDebug(long total, long position, String message) {
@@ -20,7 +20,7 @@ public abstract class GenericBatchImpl<T> implements GenericBatch<T> {
 	protected void logInfo(long total, long position, String message) {
 		logger.info(getStringPosition(total, position) + message);
 	}
-	
+
 	protected void logError(long total, long position, String message) {
 		logger.error(getStringPosition(total, position) + message);
 	}

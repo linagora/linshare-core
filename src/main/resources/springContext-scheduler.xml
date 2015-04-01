@@ -8,6 +8,7 @@
         <property name="jobDataAsMap">
             <map>
                 <entry key="batch" value-ref="userManagementBatch"/>
+                <entry key="accountRepository" value-ref="accountRepository"/>
             </map>
         </property>
     </bean>

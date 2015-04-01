@@ -51,6 +51,7 @@ public class UploadRequestEntryUrlBatchImpl extends
 			service.deleteUploadRequestEntryUrl(systemAccount, resource);
 		} catch (BusinessException businessException) {
 			String msg = "Error while trying to delete outdated upload request entry url ";
+			logError(total, position, msg);
 			logger.error(msg, businessException);
 			BatchBusinessException exception = new BatchBusinessException(
 					context, msg);

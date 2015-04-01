@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.linagora.linshare.core.batches.UserManagementBatch;
+import org.linagora.linshare.core.batches.generics.impl.GenericBatchImpl;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BatchBusinessException;
@@ -49,7 +50,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Batch for user management.
  */
-public class UserManagementBatchImpl implements UserManagementBatch {
+public class UserManagementBatchImpl extends GenericBatchImpl<Guest> implements
+		UserManagementBatch {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(UserManagementBatchImpl.class);
@@ -72,14 +74,19 @@ public class UserManagementBatchImpl implements UserManagementBatch {
 
 	@Override
 	public BatchResultContext<Guest> execute(SystemAccount systemAccount,
-			Guest resource, long total, long position) throws BatchBusinessException, BusinessException {
+			Guest resource, long total, long position)
+			throws BatchBusinessException, BusinessException {
 		BatchResultContext<Guest> context = new BatchResultContext<Guest>(
 				resource);
 		try {
-			logger.info("processing guest : " + resource.getAccountReprentation());
+			logInfo(total, position,
+					"processing guest : " + resource.getAccountReprentation());
 			service.deleteUser(systemAccount, resource.getLsUuid());
-			logger.info("Removed expired user : " + resource.getAccountReprentation());
+			logger.info("Removed expired user : "
+					+ resource.getAccountReprentation());
 		} catch (BusinessException businessException) {
+			logError(total, position,
+					"Error while trying to delete expired guest ");
 			logger.info("Error occured while cleaning outdated guests ",
 					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
@@ -93,13 +100,20 @@ public class UserManagementBatchImpl implements UserManagementBatch {
 	@Override
 	public void notify(SystemAccount systemAccount,
 			BatchResultContext<Guest> context, long total, long position) {
-		logger.info("Outdated guest was successfully removed ",
-				context.getResource().getAccountReprentation());
+		logInfo(total, position, "The Guest "
+				+ context.getResource().getAccountReprentation()
+				+ " has been successfully removed ");
 	}
 
 	@Override
 	public void notifyError(SystemAccount systemAccount,
-			BatchBusinessException exception, Guest resource, long total, long position) {
+			BatchBusinessException exception, Guest resource, long total,
+			long position) {
+		logError(
+				total,
+				position,
+				"cleaning Guest has failed : "
+						+ resource.getAccountReprentation());
 		logger.error(
 				"Error occured while cleaning outdated guest "
 						+ resource.getAccountReprentation()
@@ -107,14 +121,19 @@ public class UserManagementBatchImpl implements UserManagementBatch {
 	}
 
 	@Override
-	public void terminate(SystemAccount systemAccount, Set<Guest> all) {
-		terminate(systemAccount, all, errors, unhandled_errors, total);
-	}
-
-	@Override
-	public void terminate(SystemAccount systemAccount, Set<Guest> all, long errors, long unhandled_errors, long total) {
-		logger.info(all.size() + " guests have been removed.");
+	public void terminate(SystemAccount systemAccount, Set<Guest> all,
+			long errors, long unhandled_errors, long total) {
+		long success = total - errors - unhandled_errors;
+		logger.info(success
+				+ " guest(s) have been removed.");
+		if (errors > 0) {
+			logger.error(errors
+					+ " guest(s) failed to be removed.");
+		}
+		if (unhandled_errors > 0) {
+			logger.error(unhandled_errors
+					+ " guest(s) failed to be removed (unhandled error).");
+		}
 		logger.info("UserManagementBatchImpl job terminated.");
-
 	}
 }
