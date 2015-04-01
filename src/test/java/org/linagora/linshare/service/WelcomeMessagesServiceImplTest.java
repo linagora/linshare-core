@@ -139,13 +139,13 @@ public class WelcomeMessagesServiceImplTest extends
 			e.printStackTrace();
 			logger.debug(e.getMessage());
 			logger.debug(e.getMessage());
+			Assert.assertTrue(false);
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	@DirtiesContext
-	public void createAndDeleteCustomisation() {
+	public void createAndDeleteWelcomeMessage() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 
 		try {
@@ -154,7 +154,7 @@ public class WelcomeMessagesServiceImplTest extends
 					.create(actor, rootDomain, welcm.getUuid());
 			logger.debug("Object created.");
 			Assert.assertNotNull(welcm_create);
-			Assert.assertEquals(2, welcm_create.getWelcomeMessagesEntries()
+			Assert.assertEquals(5, welcm_create.getWelcomeMessagesEntries()
 					.size());
 	
 			logger.debug("Deleting the welcome message we just created.");
@@ -174,7 +174,7 @@ public class WelcomeMessagesServiceImplTest extends
 	}
 
 	@Test
-	@DirtiesContext	public void updateCustomisation() {
+	public void updateWelcomeMessages() {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 
 		try {
@@ -206,6 +206,7 @@ public class WelcomeMessagesServiceImplTest extends
 			logger.debug("FAIL!");
 			e.printStackTrace();
 			logger.debug(e.getMessage());
+			Assert.assertTrue(false);
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
