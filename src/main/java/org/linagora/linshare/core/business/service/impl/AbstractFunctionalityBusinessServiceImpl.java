@@ -165,14 +165,13 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	@Override
 	public Set<T> getAllFunctionalities(AbstractDomain domain) {
 		// Check if the current argument is a real domain.
-		AbstractDomain abstractDomain = abstractDomainRepository.findById(domain.getIdentifier());
-		if (abstractDomain != null) {
+		if (domain != null) {
 			List<String> exclude = new ArrayList<String>();
 			if(domain.getDomainType().equals(DomainType.GUESTDOMAIN)) {
 				// A guest user can not create a guest, so account expiration for guests is useless.
 				exclude.add(FunctionalityNames.GUESTS__EXPIRATION.toString());
 			}
-			return convertToFunctionality(this.getAllInnerFunctionalities(abstractDomain), exclude, true, abstractDomain);
+			return convertToFunctionality(this.getAllInnerFunctionalities(domain), exclude, true, domain);
 		}
 		return null;
 	}
