@@ -208,7 +208,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public StringValueFunctionality getCustomLinkLogoFunctionality(AbstractDomain domain) {
-		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.CUSTOM_LOGO_LINK);
+		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.CUSTOM_LOGO__LINK);
 	}
 
 	@Override
