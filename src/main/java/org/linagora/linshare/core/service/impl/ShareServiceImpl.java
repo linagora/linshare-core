@@ -152,7 +152,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		AbstractDomain domain = sender.getDomain();
 		if (domain != null) {
 			Functionality func = functionalityReadOnlyService
-					.getAnonymousUrlFunctionality(domain);
+					.getAnonymousUrl(domain);
 			return func.getActivationPolicy().getStatus();
 		}
 		return false;

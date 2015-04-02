@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -46,9 +46,7 @@ import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.slf4j.Logger;
@@ -59,37 +57,26 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	protected final Logger logger = LoggerFactory.getLogger(FunctionalityReadOnlyServiceImpl.class);
 
-	private final AbstractDomainRepository abstractDomainRepository;
+	private final DomainBusinessService domainBusinessService;
 
 	private final FunctionalityRepository functionalityRepository;
 
 	public FunctionalityReadOnlyServiceImpl(
-			AbstractDomainRepository abstractDomainRepository,
+			DomainBusinessService domainBusinessService,
 			FunctionalityRepository functionalityRepository) {
 		super();
-		this.abstractDomainRepository = abstractDomainRepository;
+		this.domainBusinessService = domainBusinessService;
 		this.functionalityRepository = functionalityRepository;
 	}
 
-	private AbstractDomain findDomain(String domainIdentifier)
-			throws BusinessException {
-		Validate.notEmpty(domainIdentifier, "Domain identifier is missing");
-		AbstractDomain domain = abstractDomainRepository
-				.findById(domainIdentifier);
-		if (domain == null) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
-					"No domain found in the database : " + domainIdentifier);
-		}
-		return domain;
-	}
 
 	private RootDomain getRootDomain() throws BusinessException {
-		return abstractDomainRepository.getUniqueRootDomain();
+		return domainBusinessService.getUniqueRootDomain();
 	}
 
 	@Override
 	public Functionality get(String domainIdentifier, String functionalityIdentifier) throws BusinessException {
-		AbstractDomain domain = findDomain(domainIdentifier);
+		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		Functionality functionality = _getFunctionality(domain, functionalityIdentifier);
 		// Always return a read only functionality.
 		return (Functionality)functionality.clone();
@@ -177,13 +164,14 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Functionality getAnonymousUrlFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.ANONYMOUS_URL);
+	public BooleanValueFunctionality getAnonymousUrl(AbstractDomain domain) {
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.ANONYMOUS_URL);
 	}
 
 	@Override
-	public Functionality getSecuredAnonymousUrlFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.ANONYMOUS_URL__SECURED);
+	public BooleanValueFunctionality getAnonymousUrl(String domainIdentifier) {
+		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
+		return getAnonymousUrl(domain);
 	}
 
 	@Override
@@ -228,7 +216,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public Functionality getThreadCreationPermissionFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.CREATE_THREAD_PERMISSION);
+		return _getFunctionality(domain, FunctionalityNames.TAB_THREAD__CREATE_PERMISSION);
 	}
 
 	@Override
@@ -369,26 +357,9 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public boolean isSauAllowed(String domainIdentifier) throws BusinessException {
-		AbstractDomain domain = findDomain(domainIdentifier);
-		Functionality funcAU = getAnonymousUrlFunctionality(domain);
-		// We check if Anonymous Url are activated.
-		if(funcAU.getActivationPolicy().getStatus()) {
-			Functionality funcSAU = getSecuredAnonymousUrlFunctionality(domain);
-			return funcSAU.getActivationPolicy().getPolicy().equals(Policies.ALLOWED);
-		}
-		return false;
-	}
-
-	@Override
 	public boolean isEnableUploadRequestEntryUrl(String domainIdentifier)
 			throws BusinessException {
-		AbstractDomain domain = findDomain(domainIdentifier);
-		if (domain == null) {
-			logger.error("Can't find upload request entry url functionality for domain : "
-					+ domainIdentifier);
-			return false;
-		}
+		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		Functionality funcUREU = getUploadRequestEntryUrlFunctionality(domain);
 		return funcUREU.getActivationPolicy().getStatus();
 	}
@@ -396,55 +367,28 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public boolean isEnableUploadRequestEntryUrlPassword(String domainIdentifier)
 			throws BusinessException {
-		AbstractDomain domain = findDomain(domainIdentifier);
-		if (domain == null) {
-			logger.error("Can't find upload request entry url functionality for domain : "
-					+ domainIdentifier);
-			return false;
-		}
+		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		Functionality funcUREU = getUploadRequestEntryUrlPasswordFunctionality(domain);
 		return funcUREU.getActivationPolicy().getStatus();
 	}
 
 	@Override
-	public boolean isSauForbidden(String domainIdentifier) throws BusinessException {
-		AbstractDomain domain = findDomain(domainIdentifier);
-		Functionality func = getSecuredAnonymousUrlFunctionality(domain);
-		return func.getActivationPolicy().getPolicy().equals(Policies.FORBIDDEN);
-	}
-
-	@Override
-	public boolean isSauMadatory(String domainIdentifier) throws BusinessException {
-		AbstractDomain domain = findDomain(domainIdentifier);
-		Functionality func = getSecuredAnonymousUrlFunctionality(domain);
-		return func.getActivationPolicy().getPolicy().equals(Policies.MANDATORY);
-	}
-
-	@Override
-	public boolean getDefaultSauValue(String domainIdentifier) throws BusinessException {
-		AbstractDomain domain = findDomain(domainIdentifier);
-		Functionality func = getSecuredAnonymousUrlFunctionality(domain);
-		return func.getActivationPolicy().getStatus();
-	}
-
-
-	@Override
 	public boolean getDefaultRestrictedGuestValue(String domainIdentifier) throws BusinessException {
-		AbstractDomain domain = findDomain(domainIdentifier);
+		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		Functionality func = getRestrictedGuestFunctionality(domain);
 		return func.getActivationPolicy().getStatus();
 	}
 
 	@Override
 	public boolean isRestrictedGuestAllowed(String domainIdentifier) throws BusinessException {
-		AbstractDomain domain = findDomain(domainIdentifier);
+		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		Functionality funcRG = getRestrictedGuestFunctionality(domain);
 		return funcRG.getActivationPolicy().getPolicy().equals(Policies.ALLOWED);
 	}
 
 	@Override
 	public boolean isRestrictedGuestMadatory(String domainIdentifier) throws BusinessException {
-		AbstractDomain domain = findDomain(domainIdentifier);
+		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		Functionality func = getRestrictedGuestFunctionality(domain);
 		return func.getActivationPolicy().getPolicy().equals(Policies.MANDATORY);
 	}

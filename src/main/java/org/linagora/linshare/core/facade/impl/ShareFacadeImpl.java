@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
@@ -178,25 +179,30 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	@Override
 	public boolean isVisibleSecuredAnonymousUrlCheckBox(String domainIdentifier) {
 		try {
-			return functionalityReadOnlyService.isSauAllowed(domainIdentifier);
+			BooleanValueFunctionality anonymousUrl = functionalityReadOnlyService.getAnonymousUrl(domainIdentifier);
+			if (anonymousUrl.getActivationPolicy().getStatus()) {
+				return anonymousUrl.getDelegationPolicy().getStatus();
+			}
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 			logger.debug(e.toString());
-			return false;
 		}
+		return false;
 	}
 
 	@Override
 	public boolean getDefaultSecuredAnonymousUrlCheckBoxValue(
 			String domainIdentifier) {
 		try {
-			return functionalityReadOnlyService
-					.getDefaultSauValue(domainIdentifier);
+			BooleanValueFunctionality anonymousUrl = functionalityReadOnlyService.getAnonymousUrl(domainIdentifier);
+			if (anonymousUrl.getActivationPolicy().getStatus()) {
+				return anonymousUrl.getValue();
+			}
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 			logger.debug(e.toString());
-			return false;
 		}
+		return false;
 	}
 
 	@Override

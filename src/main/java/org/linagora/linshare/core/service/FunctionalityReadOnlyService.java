@@ -67,8 +67,8 @@ public interface FunctionalityReadOnlyService {
 	Functionality getMimeTypeFunctionality(AbstractDomain domain);
 	Functionality getEnciphermentFunctionality(AbstractDomain domain);
 	Functionality getAntivirusFunctionality(AbstractDomain domain);
-	Functionality getAnonymousUrlFunctionality(AbstractDomain domain);
-	Functionality getSecuredAnonymousUrlFunctionality(AbstractDomain domain);
+	BooleanValueFunctionality getAnonymousUrl(AbstractDomain domain);
+	BooleanValueFunctionality getAnonymousUrl(String domainIdentifier);
 	Functionality getRestrictedGuestFunctionality(AbstractDomain domain);
 	Functionality getSignatureFunctionality(AbstractDomain domain);
 	Functionality getThreadCreationPermissionFunctionality(AbstractDomain domain);
@@ -112,35 +112,6 @@ public interface FunctionalityReadOnlyService {
 
 	TimeUnitValueFunctionality getUploadRequestEntryUrlExpiryTimeFunctionality(
 			AbstractDomain domain);
-
-	/**
-	 * Check if SecuredAnonymousUrl (SAU) is mandatory
-	 * @param domain : the current domain identifier
-	 * @return
-	 */
-	boolean isSauMadatory(String domainIdentifier) throws BusinessException;
-
-	/**
-	 * Check if SecuredAnonymousUrl (SAU) is forbidden
-	 * @param domain : the current domain identifier
-	 * @return
-	 */
-	boolean isSauForbidden(String domainIdentifier) throws BusinessException;
-
-	/**
-	 * Check if SecuredAnonymousUrl (SAU) is allowed
-	 * @param domain : the current domain identifier
-	 * @return
-	 * @throws BusinessException
-	 */
-	boolean isSauAllowed(String domainIdentifier) throws BusinessException;
-
-	/**
-	 * return the default value for SecuredAnonymousUrl (SAU)
-	 * @param domain : the current domain identifier
-	 * @return
-	 */
-	boolean getDefaultSauValue(String domainIdentifier) throws BusinessException;
 
 	/**
 	 * return the default value for RestrictedGuest

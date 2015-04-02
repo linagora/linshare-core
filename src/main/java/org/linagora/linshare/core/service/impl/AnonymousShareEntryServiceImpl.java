@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
@@ -141,14 +142,14 @@ public class AnonymousShareEntryServiceImpl extends
 				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, null);
 		Set<AnonymousShareEntry> entries = Sets.newHashSet();
 		Date expiryDate = sc.getExpiryDate();
+		BooleanValueFunctionality anonymousUrlFunc = functionalityService.getAnonymousUrl(targetedAccount.getDomain());
 		Boolean passwordProtected = sc.getSecured();
-		if (passwordProtected == null) passwordProtected = false;
-		if (functionalityService.isSauMadatory(targetedAccount.getDomain()
-				.getIdentifier())) {
-			passwordProtected = true;
-		} else if (functionalityService.isSauForbidden(targetedAccount.getDomain()
-				.getIdentifier())) {
-			passwordProtected = false;
+		if (passwordProtected == null) {
+			passwordProtected = anonymousUrlFunc.getValue();
+		}
+		if (!anonymousUrlFunc.getDelegationPolicy().getStatus()) {
+			// User have not the right to override admin parameter.
+			passwordProtected = anonymousUrlFunc.getValue();
 		}
 		sc.setSecured(passwordProtected);
 		if (expiryDate == null) {

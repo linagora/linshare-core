@@ -38,14 +38,20 @@ import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionTyp
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.rac.AnonymousShareEntryResourceAccessControl;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class AnonymousShareEntryResourceAccessControlImpl extends
 		EntryResourceAccessControlImpl<Contact, AnonymousShareEntry> implements
 		AnonymousShareEntryResourceAccessControl {
 
-	public AnonymousShareEntryResourceAccessControlImpl() {
+	private final FunctionalityReadOnlyService functionalityService;
+
+	public AnonymousShareEntryResourceAccessControlImpl(
+			final FunctionalityReadOnlyService functionalityService) {
 		super();
+		this.functionalityService = functionalityService;
 	}
 
 	@Override
@@ -92,8 +98,14 @@ public class AnonymousShareEntryResourceAccessControlImpl extends
 	@Override
 	protected boolean hasCreatePermission(Account actor, Account owner,
 			AnonymousShareEntry entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
-				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_CREATE);
+		if (defaultPermissionCheck(actor, owner, entry,
+				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_CREATE)) {
+			Functionality anonymousUrl = functionalityService.getAnonymousUrl(owner.getDomain());
+			if (anonymousUrl.getActivationPolicy().getStatus()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
