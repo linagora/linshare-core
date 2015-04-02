@@ -93,7 +93,7 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.ADMIN);
 
 		AbstractDomain domain = abstractDomainService.findById(wlcmDto
-				.getDomainLightDto().getIdentifier());
+				.getMyDomain().getIdentifier());
 
 		WelcomeMessages wlcm = wlcmDto.toObject();
 		WelcomeMessages wlcmMessage = welcomeMessagesService.create(actor,
@@ -107,7 +107,7 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.ADMIN);
 
 		AbstractDomain domain = abstractDomainService.findById(wlcmDto
-				.getDomainLightDto().getIdentifier());
+				.getMyDomain().getIdentifier());
 
 		WelcomeMessages wlcm = wlcmDto.toObject();
 		WelcomeMessages wlcmMessage = welcomeMessagesService.update(actor,

@@ -34,8 +34,14 @@
 
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
+import com.wordnik.swagger.annotations.ApiModel;
+
+@XmlRootElement(name = "Domain")
+@ApiModel(value = "Domain", description = "")
 public class DomainLightDto {
 
 	private String label;

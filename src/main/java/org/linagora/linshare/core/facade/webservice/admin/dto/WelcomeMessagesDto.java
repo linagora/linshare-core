@@ -37,12 +37,21 @@ package org.linagora.linshare.core.facade.webservice.admin.dto;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
 
+import com.google.common.collect.Sets;
+import com.wordnik.swagger.annotations.ApiModel;
+
+@XmlRootElement(name = "WelcomeMessages")
+@ApiModel(value = "WelcomeMessages", description = "")
 public class WelcomeMessagesDto {
 
 	private String uuid;
@@ -55,7 +64,9 @@ public class WelcomeMessagesDto {
 
 	private Date modificationDate;
 
-	private DomainLightDto domains;
+	private DomainLightDto myDomain;
+
+	private Set<DomainLightDto> domains;
 
 	private Map<SupportedLanguage, String> welcomeMessagesEntries;
 
@@ -72,7 +83,11 @@ public class WelcomeMessagesDto {
 			wlcmsEntries.put(entry.getLang(), entry.getValue()) ;
 		}
 		setWelcomeMessagesEntries(wlcmsEntries);
-		domains = new DomainLightDto(welcomeMessage.getDomain());
+		this.myDomain = new DomainLightDto(welcomeMessage.getDomain());
+		this.domains = Sets.newHashSet();
+		for (AbstractDomain d : welcomeMessage.getDomains()) {
+			this.domains.add(new DomainLightDto(d));
+		}
 	}
 
 	public String getUuid() {
@@ -115,12 +130,12 @@ public class WelcomeMessagesDto {
 		this.modificationDate = modificationDate;
 	}
 
-	public DomainLightDto getDomainLightDto() {
-		return domains;
+	public DomainLightDto getMyDomain() {
+		return myDomain;
 	}
 
-	public void setDomainLightDto(DomainLightDto domainDto) {
-		this.domains = domainDto;
+	public void setMyDomain(DomainLightDto myDomain) {
+		this.myDomain = myDomain;
 	}
 
 	public Map<SupportedLanguage, String> getWelcomeMessagesEntries() {
@@ -130,6 +145,14 @@ public class WelcomeMessagesDto {
 	public void setWelcomeMessagesEntries(
 			Map<SupportedLanguage, String> wlcmEntries) {
 		this.welcomeMessagesEntries = wlcmEntries;
+	}
+
+	public Set<DomainLightDto> getDomains() {
+		return domains;
+	}
+
+	public void setDomains(Set<DomainLightDto> domains) {
+		this.domains = domains;
 	}
 
 	/**
