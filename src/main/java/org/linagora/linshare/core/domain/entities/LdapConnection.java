@@ -35,8 +35,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 
-import org.linagora.linshare.core.domain.vo.LDAPConnectionVo;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPConnectionDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LdapConnectionDto;
 
 public class LdapConnection {
 
@@ -58,18 +57,9 @@ public class LdapConnection {
 
 	protected Date modificationDate;
 
-	public LdapConnection(LDAPConnectionVo ldapConn) {
-		this.uuid =  ldapConn.getIdentifier();
-		this.label = ldapConn.getIdentifier();
-		this.providerUrl = ldapConn.getProviderUrl();
-		this.securityAuth = ldapConn.getSecurityAuth();
-		this.securityPrincipal = ldapConn.getSecurityPrincipal();
-		this.securityCredentials = ldapConn.getSecurityCredentials();
-	}
-
-	public LdapConnection(LDAPConnectionDto ldapConnectionDto) {
-		this.label = ldapConnectionDto.getIdentifier();
-		this.uuid = ldapConnectionDto.getIdentifier();
+	public LdapConnection(LdapConnectionDto ldapConnectionDto) {
+		this.label = ldapConnectionDto.getLabel();
+		this.uuid = ldapConnectionDto.getUuid();
 		this.providerUrl = ldapConnectionDto.getProviderUrl();
 		this.securityAuth = ldapConnectionDto.getSecurityAuth();
 		this.securityPrincipal = ldapConnectionDto.getSecurityPrincipal();

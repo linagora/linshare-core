@@ -47,7 +47,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.LdapConnectionFacade;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPConnectionDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LdapConnectionDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.LDAPConnectionRestService;
 
@@ -72,29 +72,29 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all LDAP connections.", response = LDAPConnectionDto.class, responseContainer = "Set")
+	@ApiOperation(value = "Find all LDAP connections.", response = LdapConnectionDto.class, responseContainer = "Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public Set<LDAPConnectionDto> findAll() throws BusinessException {
+	public Set<LdapConnectionDto> findAll() throws BusinessException {
 		return ldapConnectionFacade.findAll();
 	}
 
 	@Path("/{id}")
 	@GET
-	@ApiOperation(value = "Find a LDAP connection.", response = LDAPConnectionDto.class)
+	@ApiOperation(value = "Find a LDAP connection.", response = LdapConnectionDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public LDAPConnectionDto find(@PathParam(value = "id") String id) throws BusinessException {
+	public LdapConnectionDto find(@PathParam(value = "id") String id) throws BusinessException {
 		return ldapConnectionFacade.find(id);
 	}
 
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Find a LDAP connection.", response = LDAPConnectionDto.class)
+	@ApiOperation(value = "Find a LDAP connection.", response = LdapConnectionDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public LDAPConnectionDto create(LDAPConnectionDto LDAPConnection)
+	public LdapConnectionDto create(LdapConnectionDto LDAPConnection)
 			throws BusinessException {
 		return ldapConnectionFacade.create(LDAPConnection);
 	}
@@ -104,7 +104,7 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Update a LDAP connection.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public LDAPConnectionDto update(LDAPConnectionDto LDAPConnection)
+	public LdapConnectionDto update(LdapConnectionDto LDAPConnection)
 			throws BusinessException {
 		return ldapConnectionFacade.update(LDAPConnection);
 	}
@@ -114,7 +114,7 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Delete a LDAP connection.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void delete(LDAPConnectionDto LDAPConnection)
+	public void delete(LdapConnectionDto LDAPConnection)
 			throws BusinessException {
 		ldapConnectionFacade.delete(LDAPConnection);
 	}

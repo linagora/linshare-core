@@ -55,6 +55,7 @@ public class LdapConnectionServiceImpl implements LdapConnectionService {
 		Validate.notEmpty(ldapConnection.getUuid(),
 				"Ldap connection uuid must be set.");
 		LdapConnection ldapConn = find(ldapConnection.getUuid());
+		ldapConn.setLabel(ldapConnection.getLabel());
 		ldapConn.setProviderUrl(ldapConnection.getProviderUrl());
 		ldapConn.setSecurityAuth(ldapConnection.getSecurityAuth());
 		ldapConn.setSecurityCredentials(ldapConnection.getSecurityCredentials());

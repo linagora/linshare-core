@@ -40,43 +40,55 @@ import org.linagora.linshare.core.domain.entities.LdapConnection;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name = "LDAPConnection")
-@ApiModel(value = "LDAPConnection", description = "An LDAP directory connection descriptor")
-public class LDAPConnectionDto {
+@XmlRootElement(name = "LdapConnection")
+@ApiModel(value = "LdapConnection", description = "An LDAP directory connection descriptor")
+public class LdapConnectionDto {
 
-    @ApiModelProperty(value = "Identifier")
-	private String identifier;
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
 
-    @ApiModelProperty(value = "ProviderUrl")
+	@ApiModelProperty(value = "Label")
+	private String label;
+
+	@ApiModelProperty(value = "ProviderUrl")
 	private String providerUrl;
 
-    @ApiModelProperty(value = "SecurityAuth")
+	@ApiModelProperty(value = "SecurityAuth")
 	private String securityAuth;
 
-    @ApiModelProperty(value = "SecurityPrincipal")
+	@ApiModelProperty(value = "SecurityPrincipal")
 	private String securityPrincipal;
 
-    @ApiModelProperty(value = "SecurityCredentials")
+	@ApiModelProperty(value = "SecurityCredentials")
 	private String securityCredentials;
 
-	public LDAPConnectionDto(LdapConnection ldapConnection) {
-		this.identifier = ldapConnection.getUuid();
+	public LdapConnectionDto(LdapConnection ldapConnection) {
+		this.uuid = ldapConnection.getUuid();
+		this.label= ldapConnection.getLabel();
 		this.providerUrl = ldapConnection.getProviderUrl();
 		this.securityAuth = ldapConnection.getSecurityAuth();
 		this.securityPrincipal = ldapConnection.getSecurityPrincipal();
 		this.securityCredentials = ldapConnection.getSecurityCredentials();
 	}
 
-	public LDAPConnectionDto() {
+	public LdapConnectionDto() {
 		super();
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public String getProviderUrl() {
