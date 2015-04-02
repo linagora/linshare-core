@@ -7,7 +7,7 @@
 		<param name="identifierMethod">getTapestryLocale</param>
 		<param name="valueOfMethod">fromTapestryLocale</param>
 	</typedef>
-	<class name="org.linagora.linshare.core.domain.entities.WelcomeMessages" table="welcome_messages" lazy="false">
+	<class name="org.linagora.linshare.core.domain.entities.WelcomeMessages" table="welcome_messages" lazy="true">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>
@@ -19,7 +19,7 @@
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
 		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true" lazy="proxy">
 		</many-to-one>
-		<map name="welcomeMessagesEntries" lazy="false" cascade="all" inverse="false">
+		<map name="welcomeMessagesEntries" lazy="true" cascade="all" inverse="false">
 			<key column="welcome_id" not-null="true" />
 			<map-key column="lang" type="languageType" />
 			<one-to-many
