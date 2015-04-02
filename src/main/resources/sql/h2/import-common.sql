@@ -66,6 +66,8 @@ UPDATE domain_abstract set welcome_id = 1;
 -- Policies : MANDATORY(0), ALLOWED(1), FORBIDDEN(2)
 
 
+
+-- Functionality : BEGIN
 -- Functionality : FILESIZE_MAX
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (1, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (2, true, true, 1, false);
@@ -128,13 +130,39 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (18, true,
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (9, false, 'CUSTOM_LOGO', 17, 18, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (9, 'http://localhost/images/logo.png');
 
+-- Functionality : CUSTOM_LOGO__LINK
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (59, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (60, false, false, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES (29, false, 'LINK_LOGO', 59, 60, 1, 'CUSTOM_LOGO', true);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://localhost:8080/linshare/en');
 
--- Functionality : ACCOUNT_EXPIRATION (for Guests)
+
+-- Functionality : GUESTS
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (27, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (28, false, false, 2, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (14, true, 'GUESTS', 27, 28, 1);
+
+-- Functionality : GUESTS__EXPIRATION
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (19, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (20, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (10, false, 'ACCOUNT_EXPIRATION', 19, 20, 1);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (111, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES (10, false, 'GUESTS__EXPIRATION', 19, 20, 111, 1, 'GUESTS', true);
 INSERT INTO unit(id, unit_type, unit_value) VALUES (4, 0, 2);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (10, 3, 4);
+
+-- Functionality : GUEST__RESTRICTED
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (47, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (48, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (112, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES (24, false, 'GUEST__RESTRICTED', 47, 48, 112, 1, 'GUESTS', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (24, true);
+
+-- Functionality : GUEST__CAN_UPLOAD
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (113, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (114, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (115, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES (48, false, 'GUEST__CAN_UPLOAD', 113, 114, 115, 1, 'GUESTS', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (48, true);
 
 
 -- Functionality : FILE_EXPIRATION
@@ -148,27 +176,30 @@ INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES 
 -- Functionality : SHARE_EXPIRATION
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (23, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (24, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (12, false, 'SHARE_EXPIRATION', 23, 24, 1);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (122, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id) VALUES (12, false, 'SHARE_EXPIRATION', 23, 24, 122, 1);
 INSERT INTO unit(id, unit_type, unit_value) VALUES (6, 0, 2);
-INSERT INTO functionality_unit_boolean(functionality_id, integer_value, unit_id, boolean_value) VALUES (12, 3, 6, false);
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (12, 3, 6);
 
+-- Functionality : SHARE_EXPIRATION__DELETE_FILE_ON_EXPIRATION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (120, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (121, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES (50, false, 'SHARE_EXPIRATION__DELETE_FILE_ON_EXPIRATION', 120, 121, 1, 'SHARE_EXPIRATION', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (50, false);
 
 -- Functionality : ANONYMOUS_URL
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (25, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (26, false, false, 2, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (13, true, 'ANONYMOUS_URL', 25, 26, 1);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (26, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (116, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id) VALUES (13, false, 'ANONYMOUS_URL', 25, 26, 116, 1);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (13, true);
 
 
--- Functionality : GUESTS
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (27, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (28, false, false, 2, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (14, true, 'GUESTS', 27, 28, 1);
-
-
--- Functionality : USER_CAN_UPLOAD
+-- Functionality : INTERNAL_CAN_UPLOAD formerly known as USER_CAN_UPLOAD
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (29, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (30, false, false, 2, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (15, true, 'USER_CAN_UPLOAD', 29, 30, 1);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (15, true, 'INTERNAL_CAN_UPLOAD', 29, 30, 1);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (15, true);
 
 
 -- Functionality : COMPLETION
@@ -195,11 +226,6 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (37, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (38, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (19, true, 'TAB_USER', 37, 38, 1);
 
--- Functionality : SECURED_ANONYMOUS_URL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (41, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (42, false, false, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (21, true, 'SECURED_ANONYMOUS_URL', 41, 42, 1);
-
 -- Functionality : SHARE_NOTIFICATION_BEFORE_EXPIRATION
 -- Policies : MANDATORY(0), ALLOWED(1), FORBIDDEN(2)
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (43, true, true, 0, true);
@@ -213,16 +239,12 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (46, false
 -- if a functionality is system, you will not be able see/modify its parameters
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (23, true, 'TAB_THREAD', 45, 46, 1);
 
--- Functionality : RESTRICTED_GUEST
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (47, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (48, false, false, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (24, true, 'RESTRICTED_GUEST', 47, 48, 1);
-
--- Functionality : DOMAIN_MAIL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (49, true, true, 0, true);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (50, false, false, 2, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (25, false, 'DOMAIN_MAIL', 49, 50, 1);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (25, 'linshare-noreply@linagora.com');
+-- Functionality : TAB_THREAD__CREATE_PERMISSION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (57, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (58, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (117, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES (28, true, 'TAB_THREAD__CREATE_PERMISSION', 57, 58, 117, 1, 'TAB_THREAD', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (28, true);
 
 -- Functionality : TAB_LIST
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (53, true, true, 1, false);
@@ -234,22 +256,23 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (55, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (56, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (27, true, 'UPDATE_FILE', 55, 56, 1);
 
--- Functionality : CREATE_THREAD_PERMISSION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (57, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (58, false, false, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (28, true, 'CREATE_THREAD_PERMISSION', 57, 58, 1);
+-- Functionality : DOMAIN
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (118, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (119, false, false, 2, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(49, false, 'DOMAIN', 118, 119, 1);
 
--- Functionality : LINK_LOGO
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (59, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (60, false, false, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (29, false, 'LINK_LOGO', 59, 60, 1);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://localhost:8080/linshare/en');
-
--- Functionality : NOTIFICATION_URL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (61, true, true, 1, false);
+-- Functionality : DOMAIN__NOTIFICATION_URL
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (61, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (62, false, false, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(30, false, 'NOTIFICATION_URL', 61, 62, 1); 
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES(30, false, 'DOMAIN__NOTIFICATION_URL', 61, 62, 1, 'DOMAIN', true);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'http://localhost:8080/linshare/');
+
+-- Functionality : DOMAIN__MAIL
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (49, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (50, false, false, 2, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES (25, false, 'DOMAIN__MAIL', 49, 50, 1, 'DOMAIN', true);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (25, 'linshare-noreply@linagora.com');
+
 
 -- Functionality : UPLOAD_REQUEST
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (63, false, false, 1, false);
@@ -378,6 +401,9 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (109, true
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (110, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES(47, false, 'UPLOAD_REQUEST_ENTRY_URL__PASSWORD', 109, 110, 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (47, false);
+
+-- Functionality : END
+
 
 
 -- %{image}    <img src="cid:image.part.1@linshare.org" /><br/><br/>
