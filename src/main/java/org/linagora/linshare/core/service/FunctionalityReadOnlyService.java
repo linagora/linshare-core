@@ -58,9 +58,10 @@ public interface FunctionalityReadOnlyService {
 	BooleanValueFunctionality getDefaultShareExpiryTimeDeletionFunctionality (AbstractDomain domain);
 	TimeUnitValueFunctionality getDefaultFileExpiryTimeFunctionality (AbstractDomain domain);
 
-	Functionality getGuestFunctionality (AbstractDomain domain);
-	TimeUnitValueFunctionality getGuestAccountExpiryTimeFunctionality (AbstractDomain domain);
-
+	Functionality getGuests (AbstractDomain domain);
+	TimeUnitValueFunctionality getGuestsExpiration (AbstractDomain domain);
+	BooleanValueFunctionality getGuestsRestricted(AbstractDomain domain);
+	BooleanValueFunctionality getGuestsCanUpload(AbstractDomain domain);
 
 	StringValueFunctionality getTimeStampingFunctionality(AbstractDomain domain);
 	StringValueFunctionality getDomainMailFunctionality(AbstractDomain domain);
@@ -112,28 +113,6 @@ public interface FunctionalityReadOnlyService {
 
 	TimeUnitValueFunctionality getUploadRequestEntryUrlExpiryTimeFunctionality(
 			AbstractDomain domain);
-
-	/**
-	 * return the default value for RestrictedGuest
-	 * @param domain : the current domain identifier
-	 * @return
-	 */
-	boolean getDefaultRestrictedGuestValue(String domainIdentifier) throws BusinessException;
-
-	/**
-	 * Check if RestrictedGuest is mandatory
-	 * @param domain : the current domain identifier
-	 * @return
-	 * @throws BusinessException
-	 */
-	boolean isRestrictedGuestMadatory(String domainIdentifier) throws BusinessException;
-
-	/**
-	 * Check if RestrictedGuest is allowed
-	 * @param domain : the current domain identifier
-	 * @return
-	 */
-	boolean isRestrictedGuestAllowed(String domainIdentifier) throws BusinessException;
 
 	/**
 	 * Return the status of the custom logo  in root domain

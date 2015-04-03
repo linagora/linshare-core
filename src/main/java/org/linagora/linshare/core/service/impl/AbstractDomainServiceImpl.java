@@ -749,7 +749,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		AbstractDomain domain = user.getDomain();
 		if (domain != null) {
 			Functionality func = functionalityReadOnlyService
-					.getGuestFunctionality(domain);
+					.getGuests(domain);
 			if (func.getActivationPolicy().getStatus()) {
 				GuestDomain g = findGuestDomain(domain);
 				// if we found an existing GuestDomain, it means we can create

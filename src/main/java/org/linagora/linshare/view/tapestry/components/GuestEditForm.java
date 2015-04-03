@@ -172,10 +172,12 @@ public class GuestEditForm {
 	
 	@Inject
 	private UserAutoCompleteFacade userAutoCompleteFacade;
-	
+
 	@Property
 	private boolean showRestricted;
-	
+
+	@Property
+	private boolean showUpload;
 	
 	private XSSFilter filter;
 
@@ -187,14 +189,16 @@ public class GuestEditForm {
 	void init() throws BusinessException {
 		recipientsSearch = MailCompletionService.formatLabel(userLoggedIn);
 		
-    	GuestDomainVo guestDomainVo = domainFacade.findGuestDomain(userLoggedIn.getDomainIdentifier());
-    	if (guestDomainVo != null){
-    		showRestricted = functionalityFacade.isRestrictedGuestEnabled(userLoggedIn.getDomainIdentifier());
-			restrictedGuest = functionalityFacade.getDefaultRestrictedGuestValue(userLoggedIn.getDomainIdentifier()) || userLoggedIn.isRestricted();
+		GuestDomainVo guestDomainVo = domainFacade.findGuestDomain(userLoggedIn.getDomainIdentifier());
+		restrictedGuest = functionalityFacade.guestIsRestricted(userLoggedIn.getDomainIdentifier());
+		showRestricted = functionalityFacade.userCanCreateRestrictedGuest(userLoggedIn.getDomainIdentifier());
+		showUpload= functionalityFacade.userCanGiveUploadRight(userLoggedIn.getDomainIdentifier());
+		uploadGranted = functionalityFacade.guestCanUpload(userLoggedIn.getDomainIdentifier());
+
+		if (guestDomainVo != null){
     	}
     	
 		guestsAllowedToCreateGuest = false;
-		uploadGranted = false;
 		autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
 	}
 	

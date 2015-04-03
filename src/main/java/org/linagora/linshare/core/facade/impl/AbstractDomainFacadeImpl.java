@@ -149,7 +149,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         if(domainIdentifier != null) {
             AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
             logger.debug("domain found : " + domain.getIdentifier());
-            Functionality func = functionalityReadOnlyService.getGuestFunctionality(domain);
+            Functionality func = functionalityReadOnlyService.getGuests(domain);
             if(func.getActivationPolicy().getStatus()) {
                 return true;
             }

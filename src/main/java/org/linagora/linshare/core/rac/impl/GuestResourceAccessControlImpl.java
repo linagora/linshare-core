@@ -154,7 +154,7 @@ public class GuestResourceAccessControlImpl extends
 	}
 
 	private boolean guestFunctionalityStatus(AbstractDomain domain) {
-		return functionalityService.getGuestFunctionality(domain)
+		return functionalityService.getGuests(domain)
 				.getActivationPolicy().getStatus();
 	}
 

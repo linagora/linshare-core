@@ -35,7 +35,6 @@ package org.linagora.linshare.core.service.impl;
 
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
-import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -129,12 +128,22 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Functionality getGuestFunctionality(AbstractDomain domain) {
+	public Functionality getGuests(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.GUESTS);
 	}
 
 	@Override
-	public TimeUnitValueFunctionality getGuestAccountExpiryTimeFunctionality(AbstractDomain domain) {
+	public BooleanValueFunctionality getGuestsRestricted(AbstractDomain domain) {
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.GUESTS__RESTRICTED);
+	}
+
+	@Override
+	public BooleanValueFunctionality getGuestsCanUpload(AbstractDomain domain) {
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.GUESTS__CAN_UPLOAD);
+	}
+
+	@Override
+	public TimeUnitValueFunctionality getGuestsExpiration(AbstractDomain domain) {
 		return new TimeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.GUESTS__EXPIRATION));
 	}
 
@@ -176,7 +185,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public Functionality getRestrictedGuestFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.GUEST__RESTRICTED);
+		return _getFunctionality(domain, FunctionalityNames.GUESTS__RESTRICTED);
 	}
 
 	@Override
@@ -370,27 +379,6 @@ public class FunctionalityReadOnlyServiceImpl implements
 		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		Functionality funcUREU = getUploadRequestEntryUrlPasswordFunctionality(domain);
 		return funcUREU.getActivationPolicy().getStatus();
-	}
-
-	@Override
-	public boolean getDefaultRestrictedGuestValue(String domainIdentifier) throws BusinessException {
-		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
-		Functionality func = getRestrictedGuestFunctionality(domain);
-		return func.getActivationPolicy().getStatus();
-	}
-
-	@Override
-	public boolean isRestrictedGuestAllowed(String domainIdentifier) throws BusinessException {
-		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
-		Functionality funcRG = getRestrictedGuestFunctionality(domain);
-		return funcRG.getActivationPolicy().getPolicy().equals(Policies.ALLOWED);
-	}
-
-	@Override
-	public boolean isRestrictedGuestMadatory(String domainIdentifier) throws BusinessException {
-		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
-		Functionality func = getRestrictedGuestFunctionality(domain);
-		return func.getActivationPolicy().getPolicy().equals(Policies.MANDATORY);
 	}
 
 	@Override

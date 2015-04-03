@@ -157,8 +157,11 @@ public class UserEditForm {
 	@Persist
     private boolean restrictedEditGuest;
 
-    @Property
-    private boolean showRestricted;
+	@Property
+	private boolean showRestricted;
+
+	@Property
+	private boolean showUpload;
 
     @Property
 	@Persist
@@ -197,14 +200,17 @@ public class UserEditForm {
      *                   Event handlers&processing
      ************************************************************ */
 
-    @SetupRender
-    public void init(){
+	@SetupRender
+	public void init(){
 
-    	autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
+		autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
 		recipientsSearch = MailCompletionService.formatLabel(userLoggedIn);
 
 		currentUser=null;
 		userGuest = true;
+
+		showRestricted = functionalityFacade.userCanCreateRestrictedGuest(userLoggedIn.getDomainIdentifier());
+		showUpload= functionalityFacade.userCanGiveUploadRight(userLoggedIn.getDomainIdentifier());
 
 		if(editUserWithMail!=null){
 
@@ -225,7 +231,6 @@ public class UserEditForm {
 	    		usertype = currentUser.getUserType();
 	    		userGuest = usertype.equals(AccountType.GUEST); //to set friendly title on account
 	    		userDomain = currentUser.getDomainIdentifier();
-	    		showRestricted = functionalityFacade.isRestrictedGuestEnabled(userLoggedIn.getDomainIdentifier());
 	    		restrictedEditGuest = currentUser.isRestricted();
 	    		userRestrictedGuest = currentUser.isGuest() && currentUser.isRestricted();
 	    		if (userRestrictedGuest) {

@@ -29,12 +29,10 @@
 	            <t:textfield t:id="lastName" validate="required" size="20" class="edit-form-field"/>
 	            <br/>
 
-	            <t:label for="uploadGranted" class="edit-form-label">${message:pages.user.edit.uploadGranted}</t:label>
-	            <t:checkbox t:id="uploadGranted" class="edit-form-checkbox"/>
-				<!-- br/>
-				
-				<t:label for="createGuestGranted" class="edit-form-label">${message:pages.user.edit.createGuestGranted}</t:label>
-	            <t:checkbox t:id="createGuestGranted" class="edit-form-checkbox"/-->
+				<t:if test="showUpload">
+					<t:label for="uploadGranted" class="edit-form-label">${message:pages.user.edit.uploadGranted}</t:label>
+					<t:checkbox t:id="uploadGranted" class="edit-form-checkbox"/>
+				</t:if>
 
                 <t:if test="showRestricted">
                     <t:if test="userLoggedIn.restricted" negate="true">

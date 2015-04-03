@@ -674,7 +674,7 @@ public class UserServiceImpl implements UserService {
 				logger.debug("userRepository.create(user)");
 				// create
 				Functionality guestfunc = functionalityReadOnlyService
-						.getGuestFunctionality(user.getDomain());
+						.getGuests(user.getDomain());
 				user.setCanCreateGuest(guestfunc.getActivationPolicy()
 						.getStatus());
 				Functionality userCanUploadFunc = functionalityReadOnlyService

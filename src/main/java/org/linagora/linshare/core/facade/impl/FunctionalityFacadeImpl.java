@@ -35,9 +35,9 @@ package org.linagora.linshare.core.facade.impl;
 
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -233,7 +233,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 				.retrieveDomain(domainIdentifier);
 		if (domain != null) {
 			Functionality helpTabFunctionality = functionalityReadOnlyService
-					.getGuestFunctionality(domain);
+					.getGuests(domain);
 			return helpTabFunctionality.getActivationPolicy().getStatus();
 		} else {
 			logger.error("Can't find help tab functionality for domain : "
@@ -243,26 +243,48 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	}
 
 	@Override
-	public boolean getDefaultRestrictedGuestValue(String domainIdentifier) {
-		try {
-			return functionalityReadOnlyService
-					.getDefaultRestrictedGuestValue(domainIdentifier);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			logger.debug(e.toString());
-			return false;
+	public boolean userCanGiveUploadRight(String domainIdentifier) {
+		AbstractDomain domain = abstractDomainService.findById(domainIdentifier);
+		Functionality guests = functionalityReadOnlyService.getGuests(domain);
+		if (guests.getActivationPolicy().getStatus()) {
+			BooleanValueFunctionality guestsCanUpload = functionalityReadOnlyService.getGuestsCanUpload(domain);
+			return guestsCanUpload.getDelegationPolicy().getStatus();
 		}
+		return false;
 	}
 
 	@Override
-	public boolean isRestrictedGuestEnabled(String domainIdentifier) {
-		try {
-			return functionalityReadOnlyService
-					.isRestrictedGuestAllowed(domainIdentifier);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			logger.debug(e.toString());
-			return false;
+	public boolean guestCanUpload(String domainIdentifier) {
+		AbstractDomain domain = abstractDomainService.findById(domainIdentifier);
+		Functionality guests = functionalityReadOnlyService.getGuests(domain);
+		if (guests.getActivationPolicy().getStatus()) {
+			BooleanValueFunctionality guestsCanUpload = functionalityReadOnlyService.getGuestsCanUpload(domain);
+			return guestsCanUpload.getValue();
 		}
+		return false;
+	}
+
+	@Override
+	public boolean userCanCreateRestrictedGuest(String domainIdentifier) {
+		AbstractDomain domain = abstractDomainService.findById(domainIdentifier);
+		Functionality guests = functionalityReadOnlyService.getGuests(domain);
+		if (guests.getActivationPolicy().getStatus()) {
+			BooleanValueFunctionality guestsRestricted = functionalityReadOnlyService.getGuestsRestricted(domain);
+			return guestsRestricted.getDelegationPolicy().getStatus();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean guestIsRestricted(String domainIdentifier) {
+		AbstractDomain domain = abstractDomainService.findById(domainIdentifier);
+		Functionality guests = functionalityReadOnlyService.getGuests(domain);
+		if (guests.getActivationPolicy().getStatus()) {
+			BooleanValueFunctionality guestsRestricted= functionalityReadOnlyService.getGuestsRestricted(domain);
+			if (guestsRestricted.getActivationPolicy().getStatus()) {
+				return guestsRestricted.getValue();
+			}
+		}
+		return false;
 	}
 }

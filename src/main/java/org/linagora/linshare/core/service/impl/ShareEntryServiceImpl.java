@@ -314,7 +314,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			// get new guest expiry date
 			Calendar guestExpiryDate = Calendar.getInstance();
 			TimeUnitValueFunctionality guestFunctionality = functionalityService
-					.getGuestAccountExpiryTimeFunctionality(sender.getDomain());
+					.getGuestsExpiration(sender.getDomain());
 			guestExpiryDate.add(guestFunctionality.toCalendarValue(),
 					guestFunctionality.getValue());
 

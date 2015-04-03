@@ -261,7 +261,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	private Date calculateUserExpiryDate(Account owner) {
 		Calendar expiryDate = Calendar.getInstance();
 		TimeUnitValueFunctionality func = functionalityReadOnlyService
-				.getGuestAccountExpiryTimeFunctionality(owner.getDomain());
+				.getGuestsExpiration(owner.getDomain());
 		expiryDate.add(func.toCalendarValue(), func.getValue());
 		return expiryDate.getTime();
 	}

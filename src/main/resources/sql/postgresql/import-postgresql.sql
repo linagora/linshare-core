@@ -275,18 +275,18 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO unit(id, unit_type, unit_value) VALUES (4, 0, 2);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (10, 3, 4);
 
--- Functionality : GUEST__RESTRICTED
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (47, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (48, false, false, 1, false);
+-- Functionality : GUESTS__RESTRICTED
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (47, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (48, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (112, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES (24, false, 'GUEST__RESTRICTED', 47, 48, 112, 1, 'GUESTS', true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES (24, false, 'GUESTS__RESTRICTED', 47, 48, 112, 1, 'GUESTS', true);
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (24, true);
 
--- Functionality : GUEST__CAN_UPLOAD
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (113, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (114, false, false, 1, false);
+-- Functionality : GUESTS__CAN_UPLOAD
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (113, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (114, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (115, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES (48, false, 'GUEST__CAN_UPLOAD', 113, 114, 115, 1, 'GUESTS', true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES (48, false, 'GUESTS__CAN_UPLOAD', 113, 114, 115, 1, 'GUESTS', true);
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (48, true);
 
 

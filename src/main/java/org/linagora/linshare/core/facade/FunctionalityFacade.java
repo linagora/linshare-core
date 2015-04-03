@@ -47,15 +47,36 @@ public interface FunctionalityFacade {
 	boolean isEnableCustomLogoLink(String domainIdentifier);
 	boolean isEnableUploadRequest(String domainIdentifier);
 	boolean isEnableUploadProposition(String domainIdentifier);
-	
-	boolean getDefaultRestrictedGuestValue(String domainIdentifier);
-	boolean isRestrictedGuestEnabled(String domainIdentifier);
-	
+
 	/**
-	 * Check if the policy "Allowed guest" is enabled
-	 * 
-	 * @param domainIdentifier the domain to check
-	 * @return return true if the policy is enabled, otherwise return false
+	 * return true if the guests functionality is enabled.
+	 * @param domainIdentifier
+	 * @return
 	 */
 	boolean isEnableGuest(String domainIdentifier);
+
+	/**
+	 * return true if the current user have the right to enable/disable upload right (creation/edition)
+	 * @param domainIdentifier : domain of current user
+	 * @return
+	 */
+	boolean userCanGiveUploadRight(String domainIdentifier);
+	/**
+	 * return the default value for upload right at creation time
+	 * @param domainIdentifier : domain of current user
+	 * @return
+	 */
+	boolean guestCanUpload(String domainIdentifier);
+	/**
+	 * return true if the current user have the right to enable/disable restriction mode (creation/edition)
+	 * @param domainIdentifier : domain of current user
+	 * @return
+	 */
+	boolean userCanCreateRestrictedGuest(String domainIdentifier);
+	/**
+	 * return the default value for restricted mode at creation time
+	 * @param domainIdentifier : domain of current user
+	 * @return
+	 */
+	boolean guestIsRestricted(String domainIdentifier);
 }
