@@ -367,9 +367,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 -- Functionality : TAB_THREAD__CREATE_PERMISSION
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (57, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (58, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (117, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES (28, false, 'TAB_THREAD__CREATE_PERMISSION', 57, 58, 117, 1, 'TAB_THREAD', true);
-INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (28, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES (28, true, 'TAB_THREAD__CREATE_PERMISSION', 57, 58, 1, 'TAB_THREAD', true);
 
 -- Functionality : TAB_LIST
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (53, true, true, 1, false);
