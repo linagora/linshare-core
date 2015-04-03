@@ -47,64 +47,71 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "DomainPattern", description = "A domain pattern is used by domains to search users in an LDAP directory")
 public class DomainPatternDto {
 
-    @ApiModelProperty(value = "Identifier")
-	private String identifier;
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
 
-    @ApiModelProperty(value = "Description")
+	@ApiModelProperty(value = "Label")
+	private String label;
+
+	@ApiModelProperty(value = "Description")
 	private String description;
 
-    @ApiModelProperty(value = "AuthCommand")
+	@ApiModelProperty(value = "AuthCommand")
 	private String authCommand;
 
-    @ApiModelProperty(value = "SearchUserCommand")
+	@ApiModelProperty(value = "SearchUserCommand")
 	private String searchUserCommand;
 
-    @ApiModelProperty(value = "UserMail")
+	@ApiModelProperty(value = "UserMail")
 	private String userMail;
 
-    @ApiModelProperty(value = "UserFirstName")
+	@ApiModelProperty(value = "UserFirstName")
 	private String userFirstName;
 
-    @ApiModelProperty(value = "UserLastName")
+	@ApiModelProperty(value = "UserLastName")
 	private String userLastName;
 
-    @ApiModelProperty(value = "LdapUid")
+	@ApiModelProperty(value = "LdapUid")
 	private String ldapUid;
 
-    @ApiModelProperty(value = "AutoCompleteCommandOnAllAttributes")
+	@ApiModelProperty(value = "AutoCompleteCommandOnAllAttributes")
 	private String autoCompleteCommandOnAllAttributes;
 
-    @ApiModelProperty(value = "AutoCompleteCommandOnFirstAndLastName")
-    private String autoCompleteCommandOnFirstAndLastName;
+	@ApiModelProperty(value = "AutoCompleteCommandOnFirstAndLastName")
+	private String autoCompleteCommandOnFirstAndLastName;
 
-    @ApiModelProperty(value = "SearchPageSize")
-    private Integer searchPageSize;
+	@ApiModelProperty(value = "SearchPageSize")
+	private Integer searchPageSize;
 
-    @ApiModelProperty(value = "SearchSizeLimit")
-    private Integer searchSizeLimit;
+	@ApiModelProperty(value = "SearchSizeLimit")
+	private Integer searchSizeLimit;
 
-    @ApiModelProperty(value = "CompletionPageSize")
-    private Integer completionPageSize;
+	@ApiModelProperty(value = "CompletionPageSize")
+	private Integer completionPageSize;
 
-    @ApiModelProperty(value = "CompletionSizeLimit")
-    private Integer completionSizeLimit;
+	@ApiModelProperty(value = "CompletionSizeLimit")
+	private Integer completionSizeLimit;
 
 	public DomainPatternDto(UserLdapPattern domainPattern) {
-		this.identifier = domainPattern.getUuid();
+		this.uuid = domainPattern.getUuid();
+		this.label = domainPattern.getLabel();
 		this.description = domainPattern.getDescription();
 		this.authCommand = domainPattern.getAuthCommand();
 		this.searchUserCommand = domainPattern.getSearchUserCommand();
 
 		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
-		this.userMail = attributes.get(UserLdapPattern.USER_MAIL).getAttribute();
+		this.userMail = attributes.get(UserLdapPattern.USER_MAIL)
+				.getAttribute();
 		this.userFirstName = attributes.get(UserLdapPattern.USER_FIRST_NAME)
 				.getAttribute();
 		this.userLastName = attributes.get(UserLdapPattern.USER_LAST_NAME)
 				.getAttribute();
 		this.ldapUid = attributes.get(UserLdapPattern.USER_UID).getAttribute();
-		
-        this.autoCompleteCommandOnAllAttributes = domainPattern.getAutoCompleteCommandOnAllAttributes();
-		this.autoCompleteCommandOnFirstAndLastName = domainPattern.getAutoCompleteCommandOnFirstAndLastName();
+
+		this.autoCompleteCommandOnAllAttributes = domainPattern
+				.getAutoCompleteCommandOnAllAttributes();
+		this.autoCompleteCommandOnFirstAndLastName = domainPattern
+				.getAutoCompleteCommandOnFirstAndLastName();
 		this.searchPageSize = domainPattern.getSearchPageSize();
 		this.searchSizeLimit = domainPattern.getSearchSizeLimit();
 		this.completionPageSize = domainPattern.getCompletionPageSize();
@@ -115,12 +122,20 @@ public class DomainPatternDto {
 		super();
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public String getDescription() {

@@ -40,7 +40,6 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
-import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPatternFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPatternDto;
@@ -92,21 +91,22 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 	@Override
 	public DomainPatternDto update(DomainPatternDto domainPatternDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(domainPatternDto.getIdentifier(), "domain pattern id must be set.");
+		Validate.notEmpty(domainPatternDto.getUuid(), "domain pattern uuid must be set.");
 		return new DomainPatternDto(userProviderService.updateDomainPattern(new UserLdapPattern(domainPatternDto)));
 	}
 
 	@Override
 	public DomainPatternDto create(DomainPatternDto domainPatternDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(domainPatternDto.getIdentifier(), "domain pattern id must be set.");
+		Validate.notEmpty(domainPatternDto.getLabel(), "domain pattern label must be set.");
 		return new DomainPatternDto(userProviderService.createDomainPattern(new UserLdapPattern(domainPatternDto)));
 	}
 
 	@Override
 	public void delete(DomainPatternDto domainPatternDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		userProviderService.deletePattern(domainPatternDto.getIdentifier());
+		Validate.notEmpty(domainPatternDto.getUuid(), "domain pattern uuid must be set.");
+		userProviderService.deletePattern(domainPatternDto.getUuid());
 	}
 
 }

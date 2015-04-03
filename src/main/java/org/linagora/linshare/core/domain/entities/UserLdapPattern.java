@@ -36,7 +36,6 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.linagora.linshare.core.domain.vo.DomainPatternVo;
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPatternDto;
 
 public class UserLdapPattern extends LdapPattern {
@@ -88,37 +87,9 @@ public class UserLdapPattern extends LdapPattern {
 		this.completionSizeLimit = 0;
 	}
 
-	public UserLdapPattern(DomainPatternVo domainPatternVo) {
-		this.uuid = domainPatternVo.getIdentifier();
-		this.label= domainPatternVo.getIdentifier();
-		this.description = domainPatternVo.getPatternDescription();
-		this.authCommand = domainPatternVo.getAuthCommand();
-		this.searchUserCommand = domainPatternVo.getSearchUserCommand();
-		this.system = domainPatternVo.getSystem();
-
-		this.autoCompleteCommandOnAllAttributes = domainPatternVo
-				.getAutoCompleteCommandOnAllAttributes();
-		this.autoCompleteCommandOnFirstAndLastName = domainPatternVo
-				.getAutoCompleteCommandOnFirstAndLastName();
-		this.searchPageSize = domainPatternVo.getSearchPageSize();
-		this.searchSizeLimit = domainPatternVo.getSearchSizeLimit();
-		this.completionPageSize = domainPatternVo.getCompletionPageSize();
-		this.completionSizeLimit = domainPatternVo.getCompletionSizeLimit();
-
-		this.attributes = new HashMap<String, LdapAttribute>();
-		this.attributes.put(USER_MAIL, new LdapAttribute(USER_MAIL,
-				domainPatternVo.getUserMail(), true));
-		this.attributes.put(USER_FIRST_NAME, new LdapAttribute(USER_FIRST_NAME,
-				domainPatternVo.getUserFirstName(), true));
-		this.attributes.put(USER_LAST_NAME, new LdapAttribute(USER_LAST_NAME,
-				domainPatternVo.getUserLastName(), true));
-		this.attributes.put(USER_UID, new LdapAttribute(USER_UID,
-				domainPatternVo.getLdapUid(), false));
-	}
-
 	public UserLdapPattern(DomainPatternDto domainPatternDto) {
-		this.uuid = domainPatternDto.getIdentifier();
-		this.label= domainPatternDto.getIdentifier();
+		this.uuid = domainPatternDto.getUuid();
+		this.label= domainPatternDto.getLabel();
 		this.description = domainPatternDto.getDescription();
 		this.authCommand = domainPatternDto.getAuthCommand();
 		this.searchUserCommand = domainPatternDto.getSearchUserCommand();
