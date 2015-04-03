@@ -38,7 +38,6 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
-import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
@@ -73,7 +72,7 @@ public interface AbstractDomainService {
 
 
 
-	public RootDomain getUniqueRootDomain()throws BusinessException;
+	public AbstractDomain getUniqueRootDomain()throws BusinessException;
 
 	/**
 	 * This method returns a list containing all the authorized domains for the input domain.

@@ -242,7 +242,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 
 	private void checkDeleteRights(String domainId) throws BusinessException {
 		AbstractDomain domain = domainBusinessService.findById(domainId);
-		RootDomain rootDomain = domainBusinessService.getUniqueRootDomain();
+		AbstractDomain rootDomain = domainBusinessService.getUniqueRootDomain();
 		if (domain.equals(rootDomain)) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_INVALID_OPERATION,

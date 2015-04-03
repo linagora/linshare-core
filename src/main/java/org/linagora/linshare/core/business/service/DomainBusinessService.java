@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.business.service;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DomainBusinessService {
@@ -42,5 +41,5 @@ public interface DomainBusinessService {
 
 	AbstractDomain update(AbstractDomain domain) throws BusinessException;
 
-	RootDomain getUniqueRootDomain() throws BusinessException;
+	AbstractDomain getUniqueRootDomain() throws BusinessException;
 }

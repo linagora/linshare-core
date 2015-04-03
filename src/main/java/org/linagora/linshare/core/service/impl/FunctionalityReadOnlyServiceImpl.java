@@ -40,7 +40,6 @@ import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
-import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
@@ -69,7 +68,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 
-	private RootDomain getRootDomain() throws BusinessException {
+	private AbstractDomain getRootDomain() throws BusinessException {
 		return domainBusinessService.getUniqueRootDomain();
 	}
 

@@ -111,8 +111,8 @@ public class AbstractDomainRepositoryImpl extends
 	}
 
 	@Override
-	public RootDomain getUniqueRootDomain() throws BusinessException {
-		RootDomain domain = (RootDomain) this.findById(LinShareConstants.rootDomainIdentifier);
+	public AbstractDomain getUniqueRootDomain() throws BusinessException {
+		AbstractDomain domain = this.findById(LinShareConstants.rootDomainIdentifier);
 		if (domain == null) {
 			throw new BusinessException(
 					BusinessErrorCode.DATABASE_INCOHERENCE_NO_ROOT_DOMAIN,
