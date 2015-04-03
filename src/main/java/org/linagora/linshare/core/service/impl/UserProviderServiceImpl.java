@@ -94,11 +94,6 @@ public class UserProviderServiceImpl implements UserProviderService {
 						BusinessErrorCode.LDAP_ATTRIBUTE_CONTAINS_NULL,
 						"Attribute must be not null");
 		}
-		if (domainPatternRepository.findById(domainPattern.getUuid()) != null) {
-			throw new BusinessException(
-					BusinessErrorCode.DOMAIN_PATTERN_ID_ALREADY_EXISTS,
-					"This new domain pattern identifier already exists.");
-		}
 		UserLdapPattern createdDomain = domainPatternRepository
 				.create(domainPattern);
 		return createdDomain;
