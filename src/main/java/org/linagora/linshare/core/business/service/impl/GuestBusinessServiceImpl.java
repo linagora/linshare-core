@@ -128,11 +128,10 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 
 	@Override
 	public GuestWithMetadata create(Guest guest, Account owner,
-			GuestDomain domain, Date expiryDate) throws BusinessException {
+			AbstractDomain domain, Date expiryDate) throws BusinessException {
 		String password = passwordService.generatePassword();
 		String hashedPassword = HashUtils.hashSha1withBase64(password
 				.getBytes());
-
 		guest.setOwner(owner);
 		guest.setDomain(domain);
 		guest.setLocale(domain.getDefaultTapestryLocale());

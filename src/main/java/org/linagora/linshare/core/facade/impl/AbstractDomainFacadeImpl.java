@@ -166,16 +166,17 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         return res;
     }
 
-    @Override
-    public GuestDomainVo findGuestDomain(String topDomainIdentifier) {
-        GuestDomain g = abstractDomainService.getGuestDomain(topDomainIdentifier);
-        if(g==null) {
-            // No Guest domain found.
-            return null;
-        } else {
-            return new GuestDomainVo (abstractDomainService.getGuestDomain(topDomainIdentifier));
-        }
-    }
+	@Override
+	public GuestDomainVo findGuestDomain(String topDomainIdentifier) {
+		AbstractDomain g = abstractDomainService
+				.getGuestDomain(topDomainIdentifier);
+		if (g == null) {
+			// No Guest domain found.
+			return null;
+		} else {
+			return new GuestDomainVo(g);
+		}
+	}
 
     @Override
     public boolean isCustomLogoActive(UserVo actorVo) throws BusinessException {

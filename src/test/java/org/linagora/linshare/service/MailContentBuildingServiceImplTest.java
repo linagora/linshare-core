@@ -50,13 +50,13 @@ import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessSe
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
@@ -296,9 +296,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	@Test
 	public void testBuildMailResetPassword() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		GuestDomain guestDomain = abstractDomainService.getGuestDomain(john.getDomainId());
-		
+		AbstractDomain guestDomain = abstractDomainService.getGuestDomain(john.getDomainId());
 		Guest guest = new Guest("firstName", "lastName", "guest@linshare.org", "xxxxxxxx" , true,"");
 		guest.setDomain(john.getDomain());
 		guest.setOwner(john);

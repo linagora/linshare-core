@@ -751,10 +751,10 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			Functionality func = functionalityReadOnlyService
 					.getGuests(domain);
 			if (func.getActivationPolicy().getStatus()) {
-				GuestDomain g = findGuestDomain(domain);
+				AbstractDomain guestDomain = findGuestDomain(domain);
 				// if we found an existing GuestDomain, it means we can create
 				// guests.
-				if (g != null) {
+				if (guestDomain != null) {
 					return true;
 				} else {
 					logger.debug("Guest functionality is enable, but no guest domain found for domain : "
@@ -788,13 +788,13 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		return false;
 	}
 
-	private GuestDomain findGuestDomain(AbstractDomain domain) {
+	private AbstractDomain findGuestDomain(AbstractDomain domain) {
 
 		// search GuestDomain among subdomains
 		if (domain.getSubdomain() != null) {
 			for (AbstractDomain d : domain.getSubdomain()) {
 				if (d.getDomainType().equals(DomainType.GUESTDOMAIN)) {
-					return (GuestDomain) d;
+					return d;
 				}
 			}
 		}
@@ -808,7 +808,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	@Override
-	public GuestDomain getGuestDomain(String topDomainIdentifier) {
+	public AbstractDomain getGuestDomain(String topDomainIdentifier) {
 		AbstractDomain top;
 		top = retrieveDomain(topDomainIdentifier);
 		if (top == null) {

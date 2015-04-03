@@ -69,7 +69,7 @@ public interface AbstractDomainService {
 	public List<AbstractDomain> getAllTopAndSubDomain();
 	public List<AbstractDomain> getAllTopDomain();
 	public List<AbstractDomain> getAllSubDomain();
-	public GuestDomain getGuestDomain(String topDomainIdentifier);
+	public AbstractDomain getGuestDomain(String topDomainIdentifier);
 
 
 

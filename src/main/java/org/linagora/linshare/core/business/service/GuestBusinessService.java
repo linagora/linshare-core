@@ -56,7 +56,7 @@ public interface GuestBusinessService {
 
 	List<Guest> findOutdatedGuests();
 
-	GuestWithMetadata create(Guest guest, Account owner, GuestDomain domain, Date expiryDate)
+	GuestWithMetadata create(Guest guest, Account owner, AbstractDomain domain, Date expiryDate)
 			throws BusinessException;
 
 	Guest update(Account owner, Guest guest, AbstractDomain domain)

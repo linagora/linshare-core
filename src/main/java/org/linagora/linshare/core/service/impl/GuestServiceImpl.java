@@ -151,8 +151,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 					"Guest domain was not found");
 		}
 		Date expiryDate = calculateUserExpiryDate(owner);
-		GuestDomain guestDomain = abstractDomainService.getGuestDomain(owner
-				.getDomainId());
+		AbstractDomain guestDomain = abstractDomainService.getGuestDomain(owner.getDomainId());
 		if (!guestBusinessService.exist(guestDomain.getIdentifier(),
 				guest.getMail())) {
 			throw new BusinessException(BusinessErrorCode.GUEST_ALREADY_EXISTS,
@@ -181,8 +180,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		Guest original = find(actor, owner, guest.getLsUuid());
 		checkUpdatePermission(actor, owner, Guest.class,
 				BusinessErrorCode.CANNOT_UPDATE_USER, original);
-		GuestDomain guestDomain = abstractDomainService.getGuestDomain(owner
-				.getDomainId());
+		AbstractDomain guestDomain = abstractDomainService.getGuestDomain(owner.getDomainId());
 		if (guestDomain == null) {
 			throw new BusinessException(
 					BusinessErrorCode.USER_CANNOT_CREATE_GUEST,
