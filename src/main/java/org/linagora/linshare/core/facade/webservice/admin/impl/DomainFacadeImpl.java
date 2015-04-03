@@ -183,6 +183,9 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(domainDto.getPolicy(), "domain policy must be set.");
 		Validate.notEmpty(domainDto.getPolicy().getIdentifier(),
 				"domain policy identifier must be set.");
+		Validate.notEmpty(domainDto.getLabel(), "label must be set.");
+		Validate.notNull(domainDto.getLanguage(), "language must be set.");
+		Validate.notNull(domainDto.getExternalMailLocale(), "external mail locale must be set.");
 		Validate.notNull(domainDto.getCurrentWelcomeMessages(), "Current messages must be set.");
 		Validate.notEmpty(domainDto.getCurrentWelcomeMessages().getUuid(), "Current message uuid must be set.");
 
