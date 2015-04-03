@@ -72,7 +72,7 @@ public interface FunctionalityReadOnlyService {
 	BooleanValueFunctionality getAnonymousUrl(String domainIdentifier);
 	Functionality getRestrictedGuestFunctionality(AbstractDomain domain);
 	Functionality getSignatureFunctionality(AbstractDomain domain);
-	Functionality getThreadCreationPermissionFunctionality(AbstractDomain domain);
+	Functionality getThreadCreationPermission(AbstractDomain domain);
 	Functionality getUpdateFilesFunctionality(AbstractDomain domain);
 	Functionality getUserCanUploadFunctionality(AbstractDomain domain);
 	StringValueFunctionality getCustomLogoFunctionality(AbstractDomain domain);

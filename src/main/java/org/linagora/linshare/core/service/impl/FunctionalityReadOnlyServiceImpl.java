@@ -224,7 +224,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Functionality getThreadCreationPermissionFunctionality(AbstractDomain domain) {
+	public Functionality getThreadCreationPermission(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.TAB_THREAD__CREATE_PERMISSION);
 	}
 

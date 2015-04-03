@@ -41,6 +41,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Policies;
@@ -126,7 +127,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		
 		ArrayList<Functionality> functionalities = new ArrayList<Functionality>();
 		functionalities.add(
-			new UnitValueFunctionality("QUOTA_GLOBAL",
+			new UnitValueFunctionality(FunctionalityNames.QUOTA_GLOBAL.toString(),
 				true,
 				new Policy(Policies.ALLOWED, false),
 				new Policy(Policies.ALLOWED, false),
@@ -137,7 +138,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		);
 		
 		functionalities.add(
-			new UnitValueFunctionality("QUOTA_USER",
+			new UnitValueFunctionality(FunctionalityNames.QUOTA_USER.toString(),
 				true,
 				new Policy(Policies.ALLOWED, false),
 				new Policy(Policies.ALLOWED, false),
@@ -148,7 +149,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		);
 		
 		functionalities.add(
-				new Functionality("MIME_TYPE",
+				new Functionality(FunctionalityNames.MIME_TYPE.toString(),
 					true,
 					new Policy(Policies.ALLOWED, false),
 					new Policy(Policies.ALLOWED, false),
@@ -157,7 +158,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		);
 		
 		functionalities.add(
-				new Functionality("ANTIVIRUS",
+				new Functionality(FunctionalityNames.ANTIVIRUS.toString(),
 					true,
 					new Policy(Policies.ALLOWED, false),
 					new Policy(Policies.ALLOWED, false),
@@ -166,7 +167,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		);
 		
 		functionalities.add(
-				new Functionality("ENCIPHERMENT",
+				new Functionality(FunctionalityNames.ENCIPHERMENT.toString(),
 					true,
 					new Policy(Policies.ALLOWED, true),
 					new Policy(Policies.ALLOWED, true),
@@ -175,7 +176,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		);
 		
 		functionalities.add(
-				new StringValueFunctionality("TIME_STAMPING",
+				new StringValueFunctionality(FunctionalityNames.TIME_STAMPING.toString(),
 					true,
 					new Policy(Policies.ALLOWED, false),
 					new Policy(Policies.ALLOWED, false),
@@ -185,7 +186,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		);
 		
 		functionalities.add(
-				new UnitValueFunctionality("FILE_EXPIRATION",
+				new UnitValueFunctionality(FunctionalityNames.FILE_EXPIRATION.toString(),
 					true,
 					new Policy(Policies.ALLOWED, false),
 					new Policy(Policies.ALLOWED, false),
@@ -196,7 +197,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		);
 		
 		functionalities.add(
-				new UnitValueFunctionality("FILESIZE_MAX",
+				new UnitValueFunctionality(FunctionalityNames.FILESIZE_MAX.toString(),
 					true,
 					new Policy(Policies.ALLOWED, true),
 					new Policy(Policies.ALLOWED, true),
@@ -207,7 +208,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		);
 		
 		functionalities.add(
-				new Functionality("CREATE_THREAD_PERMISSION",
+				new Functionality(FunctionalityNames.TAB_THREAD__CREATE_PERMISSION.toString(),
 					false,
 					new Policy(Policies.ALLOWED, true),
 					new Policy(Policies.ALLOWED, true),

@@ -160,7 +160,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 				.retrieveDomain(domainIdentifier);
 		if (domain != null) {
 			Functionality createThreadFunctionality = functionalityReadOnlyService
-					.getThreadCreationPermissionFunctionality(domain);
+					.getThreadCreationPermission(domain);
 			return createThreadFunctionality.getActivationPolicy().getStatus();
 		} else {
 			logger.error("Can't find thread creation functionality for domain : "

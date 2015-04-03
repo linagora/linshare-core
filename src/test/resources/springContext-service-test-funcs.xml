@@ -38,6 +38,6 @@
 
 	<bean name="functionalityReadOnlyService" class="org.linagora.linshare.core.service.impl.FunctionalityReadOnlyServiceImpl">
 		<constructor-arg ref="functionalityRepository" />
-		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="domainBusinessService" />
 	</bean>
 </beans>

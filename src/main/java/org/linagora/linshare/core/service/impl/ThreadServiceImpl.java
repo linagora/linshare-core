@@ -137,7 +137,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	public Thread create(Account actor, Account owner, String name) throws BusinessException {
 		checkCreatePermission(actor, owner, Thread.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, null);
-		Functionality creation = functionalityReadOnlyService.getThreadCreationPermissionFunctionality(owner.getDomain());
+		Functionality creation = functionalityReadOnlyService.getThreadCreationPermission(owner.getDomain());
 		if (!creation.getActivationPolicy().getStatus()){
 			String message = "You can not create thread, you are not authorized.";
 			logger.error(message);
