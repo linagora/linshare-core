@@ -46,15 +46,12 @@ public class GuestResourceAccessControlImpl extends
 		AbstractResourceAccessControlImpl<Account, Account, Guest> implements
 		GuestResourceAccessControl {
 
-	private final FunctionalityReadOnlyService functionalityService;
-
 	private final AbstractDomainService abstractDomainService;
 
 	public GuestResourceAccessControlImpl(
-			FunctionalityReadOnlyService functionalityService,
-			AbstractDomainService abstractDomainService) {
-		super();
-		this.functionalityService = functionalityService;
+			final FunctionalityReadOnlyService functionalityService,
+			final AbstractDomainService abstractDomainService) {
+		super(functionalityService);
 		this.abstractDomainService = abstractDomainService;
 	}
 

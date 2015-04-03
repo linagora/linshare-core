@@ -46,12 +46,9 @@ public class AnonymousShareEntryResourceAccessControlImpl extends
 		EntryResourceAccessControlImpl<Contact, AnonymousShareEntry> implements
 		AnonymousShareEntryResourceAccessControl {
 
-	private final FunctionalityReadOnlyService functionalityService;
-
 	public AnonymousShareEntryResourceAccessControlImpl(
 			final FunctionalityReadOnlyService functionalityService) {
-		super();
-		this.functionalityService = functionalityService;
+		super(functionalityService);
 	}
 
 	@Override

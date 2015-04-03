@@ -45,11 +45,20 @@ import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractResourceAccessControlImpl<A, R, E> implements
 		AbstractResourceAccessControl<A, R, E> {
+
+	protected final FunctionalityReadOnlyService functionalityService;
+
+	public AbstractResourceAccessControlImpl(
+			FunctionalityReadOnlyService functionalityService) {
+		super();
+		this.functionalityService = functionalityService;
+	}
 
 	protected static Logger logger = LoggerFactory
 			.getLogger(AbstractResourceAccessControlImpl.class);

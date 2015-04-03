@@ -38,13 +38,15 @@ import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionTyp
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.rac.DocumentEntryResourceAccessControl;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class DocumentEntryResourceAccessControlImpl extends
 		EntryResourceAccessControlImpl<Account, DocumentEntry> implements
 		DocumentEntryResourceAccessControl {
 
-	public DocumentEntryResourceAccessControlImpl() {
-		super();
+	public DocumentEntryResourceAccessControlImpl(
+			final FunctionalityReadOnlyService functionalityService) {
+		super(functionalityService);
 	}
 
 	@Override

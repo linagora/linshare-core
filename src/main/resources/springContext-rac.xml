@@ -7,19 +7,32 @@
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
 	default-autowire="no">
 
-	<bean name="shareEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ShareEntryResourceAccessControlImpl"/>
-	<bean name="documentEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.DocumentEntryResourceAccessControlImpl"/>
+	<bean name="shareEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ShareEntryResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
+
+	<bean name="documentEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.DocumentEntryResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
+
 	<bean name="anonymousShareEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.AnonymousShareEntryResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
-	<bean name="threadEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ThreadEntryResourceAccessControlImpl"/>
+
+	<bean name="threadEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ThreadEntryResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
 
 	<bean name="threadResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ThreadResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="threadMemberRepository" />
 	</bean>
+
 	<bean name="threadMemberResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ThreadMemberResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="threadMemberRepository" />
 	</bean>
+
 	<bean name="guestResourceAccessControl" class="org.linagora.linshare.core.rac.impl.GuestResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="abstractDomainService" />

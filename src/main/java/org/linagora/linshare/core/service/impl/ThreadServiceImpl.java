@@ -41,7 +41,6 @@ import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadLogEntry;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
@@ -137,14 +136,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	public Thread create(Account actor, Account owner, String name) throws BusinessException {
 		checkCreatePermission(actor, owner, Thread.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, null);
-		Functionality creation = functionalityReadOnlyService.getThreadCreationPermission(owner.getDomain());
-		if (!creation.getActivationPolicy().getStatus()){
-			String message = "You can not create thread, you are not authorized.";
-			logger.error(message);
-			logger.error("The current domain does not allow you to create a thread.");
-			throw new BusinessException(
-					BusinessErrorCode.THREAD_FORBIDDEN, message);
-		}
 		Thread thread = null;
 		ThreadMember member = null;
 

@@ -35,13 +35,14 @@
 package org.linagora.linshare.core.rac.impl;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.rac.ThreadResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class ThreadResourceAccessControlImpl extends
 		AbstractResourceAccessControlImpl<Account, Account, Thread> implements
@@ -50,8 +51,9 @@ public class ThreadResourceAccessControlImpl extends
 	private final ThreadMemberRepository threadMemberRepository;
 
 	public ThreadResourceAccessControlImpl(
+			final FunctionalityReadOnlyService functionalityService,
 			final ThreadMemberRepository threadMemberRepository) {
-		super();
+		super(functionalityService);
 		this.threadMemberRepository = threadMemberRepository;
 	}
 
@@ -121,7 +123,7 @@ public class ThreadResourceAccessControlImpl extends
 	protected boolean hasCreatePermission(Account actor, Account owner,
 			Thread entry, Object... opt) {
 		Validate.notNull(actor);
-		// Owner is always null, because threads have not owner.
+		// Owner is always null, because threads do not have owner.
 
 		if (actor.hasAllRights()) {
 			return true;
@@ -130,7 +132,14 @@ public class ThreadResourceAccessControlImpl extends
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREADS_CREATE);
 		}
-		return !owner.getAccountType().equals(AccountType.GUEST);
+		Functionality creation = functionalityService.getThreadCreationPermission(owner.getDomain());
+		if (!creation.getActivationPolicy().getStatus()){
+			String message = "You can not create thread, you are not authorized.";
+			logger.error(message);
+			logger.error("The current domain does not allow you to create a thread.");
+			return false;
+		}
+		return true;
 	}
 
 	@Override

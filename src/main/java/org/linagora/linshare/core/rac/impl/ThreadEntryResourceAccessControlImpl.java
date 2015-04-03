@@ -39,13 +39,15 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.rac.ThreadEntryResourceAccessControl;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class ThreadEntryResourceAccessControlImpl extends
 		EntryResourceAccessControlImpl<Account, ThreadEntry> implements
 		ThreadEntryResourceAccessControl {
 
-	public ThreadEntryResourceAccessControlImpl() {
-		super();
+	public ThreadEntryResourceAccessControlImpl(
+			final FunctionalityReadOnlyService functionalityService) {
+		super(functionalityService);
 	}
 
 	@Override

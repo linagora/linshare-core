@@ -39,13 +39,15 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class ShareEntryResourceAccessControlImpl extends
 		EntryResourceAccessControlImpl<Account, ShareEntry> implements
 		ShareEntryResourceAccessControl {
 
-	public ShareEntryResourceAccessControlImpl() {
-		super();
+	public ShareEntryResourceAccessControlImpl(
+			final FunctionalityReadOnlyService functionalityService) {
+		super(functionalityService);
 	}
 
 	@Override

@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.rac.ThreadMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class ThreadMemberResourceAccessControlImpl extends
 		AbstractResourceAccessControlImpl<Account, Account, ThreadMember>
@@ -49,8 +50,9 @@ public class ThreadMemberResourceAccessControlImpl extends
 	private final ThreadMemberRepository threadMemberRepository;
 
 	public ThreadMemberResourceAccessControlImpl(
+			final FunctionalityReadOnlyService functionalityService,
 			final ThreadMemberRepository threadMemberRepository) {
-		super();
+		super(functionalityService);
 		this.threadMemberRepository = threadMemberRepository;
 	}
 

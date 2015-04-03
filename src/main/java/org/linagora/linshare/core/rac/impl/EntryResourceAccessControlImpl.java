@@ -41,10 +41,16 @@ import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.EntryResourceAccessControl;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public abstract class EntryResourceAccessControlImpl<R, E extends Entry>
 		extends AbstractResourceAccessControlImpl<Account, R, E> implements
 		EntryResourceAccessControl<R, E> {
+
+	public EntryResourceAccessControlImpl(
+			FunctionalityReadOnlyService functionalityService) {
+		super(functionalityService);
+	}
 
 	protected abstract boolean hasDownloadPermission(Account actor,
 			Account account, E entry, Object... opt);
