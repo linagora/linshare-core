@@ -65,7 +65,6 @@ public class UserRestServiceImpl implements UserRestService {
 	@GET
 	@Override
 	public List<UserDto> findAll() throws BusinessException {
-		webServiceUserFacade.checkAuthentication();
 		return webServiceUserFacade.findAll();
 	}
 
