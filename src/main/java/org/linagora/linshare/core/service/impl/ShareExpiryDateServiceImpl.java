@@ -84,7 +84,7 @@ public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
 			// luckily, the shareExpiryRules are ordered according to the size,
 			// increasing
 			for (ShareExpiryRule shareExpiryRule : shareRules) {
-				if (document.getDocument().getSize() < shareExpiryRule.getShareSizeUnit().getPlainSize(shareExpiryRule.getShareSize())) {
+				if (document.getSize() < shareExpiryRule.getShareSizeUnit().getPlainSize(shareExpiryRule.getShareSize())) {
 					Calendar expiration = GregorianCalendar.getInstance();
 					expiration.add(shareExpiryRule.getShareExpiryUnit().toCalendarValue(), shareExpiryRule.getShareExpiryTime());
 					return expiration;

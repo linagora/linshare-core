@@ -80,6 +80,12 @@ public class DocumentDto {
 	@ApiModelProperty(value = "Sha256sum")
 	protected String sha256sum;
 
+	@ApiModelProperty(value = "hasThumbnail")
+	protected boolean hasThumbnail;
+
+	@ApiModelProperty(value = "Shared")
+	protected Long shared;
+
 	public DocumentDto(DocumentEntry de) {
 		if (de == null)
 			return;
@@ -92,10 +98,12 @@ public class DocumentDto {
 		}
 		this.description = de.getComment();
 		this.ciphered = de.getCiphered();
-		this.type = de.getDocument().getType();
-		this.size = de.getDocument().getSize();
+		this.type = de.getType();
+		this.size = de.getSize();
 		this.metaData = de.getMetaData();
-		this.sha256sum = de.getDocument().getSha256sum();
+		this.sha256sum = de.getSha256sum();
+		this.hasThumbnail = de.isHasThumbnail();
+		this.shared = de.getShared();
 	}
 
 	public DocumentDto() {
@@ -202,6 +210,22 @@ public class DocumentDto {
 	 */
 	public void setSha256sum(String sha256sum) {
 		this.sha256sum = sha256sum;
+	}
+
+	public boolean isHasThumbnail() {
+		return hasThumbnail;
+	}
+
+	public void setHasThumbnail(boolean hasThumbnail) {
+		this.hasThumbnail = hasThumbnail;
+	}
+
+	public Long getShared() {
+		return shared;
+	}
+
+	public void setShared(Long shared) {
+		this.shared = shared;
 	}
 
 	@Override

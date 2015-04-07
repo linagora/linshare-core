@@ -292,6 +292,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			docEntry.setName(fileName);
 			docEntry.setDocument(document);
 			docEntry.setExpirationDate(expirationDate);
+			docEntry.setSize(size);
+			docEntry.setType(mimeType);
+			docEntry.setSha256sum(document.getSha256sum());
 
 			//aes encrypt ? check headers
 			if(checkIfIsCiphered) {
@@ -310,7 +313,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 	@Override
 	public void deleteDocumentEntry(DocumentEntry documentEntry) throws BusinessException {
-		if(documentEntry.isShared()) {
+		if(documentEntry.getShared() > 0) {
 			logger.error("Could not delete docEntry " + documentEntry.getName()+ " (" + documentEntry.getUuid() + " own by " + documentEntry.getEntryOwner().getLsUuid() + ", reason : it is still shared. ");
 			throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_SHARED_DOCUMENT, "Can't delete a shared document. Delete all shares first.");
 		}

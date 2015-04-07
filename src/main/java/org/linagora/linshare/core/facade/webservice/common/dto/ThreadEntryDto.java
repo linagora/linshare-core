@@ -88,10 +88,10 @@ public class ThreadEntryDto {
 		this.modificationDate = te.getModificationDate().getTime();
 		this.description = te.getComment();
 		this.ciphered = te.getCiphered();
-		this.type = te.getDocument().getType();
-		this.size = te.getDocument().getSize();
+		this.type = te.getType();
+		this.size = te.getSize();
 		this.metaData = te.getMetaData();
-		this.sha256sum = te.getDocument().getSha256sum();
+		this.sha256sum = te.getSha256sum();
 	}
 
 	public String getSha256sum() {

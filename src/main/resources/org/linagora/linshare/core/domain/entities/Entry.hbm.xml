@@ -21,14 +21,19 @@
 				<column name="entry_id"/>
 			</key>
 			<property name="downloaded" column="downloaded" type="long" not-null="true" lazy="false"/>
-			<many-to-one name="documentEntry" column="document_entry_id" class="org.linagora.linshare.core.domain.entities.DocumentEntry" not-null="true" lazy="proxy"/>
-			<many-to-one name="anonymousUrl" column="anonymous_url_id" class="org.linagora.linshare.core.domain.entities.AnonymousUrl" not-null="true" lazy="proxy"/>
+			<many-to-one name="documentEntry" column="document_entry_id" class="org.linagora.linshare.core.domain.entities.DocumentEntry" not-null="true" lazy="proxy" fetch="join" />
+			<many-to-one name="anonymousUrl" column="anonymous_url_id" class="org.linagora.linshare.core.domain.entities.AnonymousUrl" not-null="true" lazy="proxy" fetch="join" />
 		</joined-subclass>
 		<joined-subclass name="org.linagora.linshare.core.domain.entities.DocumentEntry" table="document_entry" lazy="true">
 			<key>
 				<column name="entry_id"/>
 			</key>
 			<property name="ciphered" column="ciphered" type="boolean" not-null="true" lazy="false"/>
+			<property name="type" column="type" type="string" length="255" not-null="true" lazy="false" />
+			<property name="size" column="size" type="long" not-null="true" lazy="false" />
+			<property name="sha256sum" column="sha256sum" type="string" length="255" lazy="false"/>
+			<property name="hasThumbnail" column="has_thumbnail" type="boolean" not-null="true" lazy="false"/>
+			<property name="shared" column="shared" type="long" not-null="true" lazy="false" />
 			<set name="shareEntries" lazy="true"  inverse="true">
 				<key column="document_entry_id" not-null="true"/>
 				<one-to-many class="org.linagora.linshare.core.domain.entities.ShareEntry" />
@@ -51,10 +56,10 @@
 				<column name="entry_id"/>
 			</key>
 			<property name="downloaded" column="downloaded" type="long" not-null="true" lazy="false"/>
-			<many-to-one name="recipient" column="recipient_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="proxy">
+			<many-to-one name="recipient" column="recipient_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="proxy" fetch="join" >
 			</many-to-one>
 			<many-to-one name="documentEntry" column="document_entry_id" class="org.linagora.linshare.core.domain.entities.DocumentEntry"
-			not-null="true" lazy="proxy">
+			not-null="true" lazy="proxy" fetch="join" >
 			</many-to-one>
 		</joined-subclass>
 		<joined-subclass name="org.linagora.linshare.core.domain.entities.ThreadEntry" table="thread_entry" lazy="true">
@@ -62,6 +67,10 @@
 				<column name="entry_id"/>
 			</key>
 			<property name="ciphered" column="ciphered" type="boolean" not-null="true" lazy="false"/>
+			<property name="type" column="type" type="string" length="255" not-null="true" lazy="false" />
+			<property name="size" column="size" type="long" not-null="true" lazy="false" />
+			<property name="sha256sum" column="sha256sum" type="string" length="255" lazy="false"/>
+			<property name="hasThumbnail" column="has_thumbnail" type="boolean" not-null="true" lazy="false"/>
 			<many-to-one name="document" column="document_id" class="org.linagora.linshare.core.domain.entities.Document" unique="true"
 			not-null="true" lazy="proxy"/>
 		</joined-subclass>

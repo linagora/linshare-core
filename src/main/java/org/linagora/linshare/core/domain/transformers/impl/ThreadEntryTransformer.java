@@ -56,8 +56,8 @@ public class ThreadEntryTransformer implements Transformer<ThreadEntry, Document
 
 		if(null!=entityObject){
 				return new DocumentVo(entityObject.getUuid(),entityObject.getName(), entityObject.getComment() ,entityObject.getCreationDate(),entityObject.getExpirationDate(),
-					entityObject.getDocument().getType(), entityObject.getEntryOwner().getLsUuid(), entityObject.getCiphered(),
-					false,entityObject.getDocument().getSize());
+					entityObject.getType(), entityObject.getEntryOwner().getLsUuid(), entityObject.getCiphered(),
+					false, entityObject.getSize());
 		}
 		return null;
 	}

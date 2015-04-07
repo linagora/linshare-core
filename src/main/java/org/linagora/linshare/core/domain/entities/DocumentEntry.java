@@ -51,6 +51,16 @@ public class DocumentEntry extends Entry implements Serializable {
 
 	protected Set<AnonymousShareEntry> anonymousShareEntries = new HashSet<AnonymousShareEntry>();
 
+	protected String type;
+
+	protected Long size;
+
+	protected String sha256sum;
+
+	protected boolean hasThumbnail;
+
+	protected long shared;
+
 	protected DocumentEntry() {
 	}
 
@@ -63,12 +73,22 @@ public class DocumentEntry extends Entry implements Serializable {
 		super(entryOwner, name, comment);
 		this.document = document;
 		this.ciphered = false;
+		this.sha256sum = document.getSha256sum();
+		this.size = document.getSize();
+		this.type = document.getType();
+		this.hasThumbnail = document.getThmbUuid() != null;
+		this.shared = 0;
 	}
 
 	public DocumentEntry(Account entryOwner, String name, Document document) {
 		super(entryOwner, name, "");
 		this.document = document;
 		this.ciphered = false;
+		this.sha256sum = document.getSha256sum();
+		this.size = document.getSize();
+		this.type = document.getType();
+		this.hasThumbnail = document.getThmbUuid() != null;
+		this.shared = 0;
 	}
 
 	public Document getDocument() {
@@ -104,27 +124,52 @@ public class DocumentEntry extends Entry implements Serializable {
 		this.ciphered = ciphered;
 	}
 
-	public Boolean isShared() {
-		if(getAnonymousShareEntries().size() > 0 || getShareEntries().size() > 0) {
-			return true;
-		}
-		return false;
-	}
-
-	/* usefull getters */
-	public long getSize() {
-		return document.getSize();
-	}
-
 	public String getType() {
-		return document.getType();
+		return type;
 	}
 
-	/*
-	 * helpers
-	 */
-	public boolean hasThumbnail() {
-		String thmbUUID = document.getThmbUuid();
-		return (thmbUUID != null && thmbUUID.length() > 0);
+	public void setType(String type) {
+		this.type = type;
 	}
+
+	public Long getSize() {
+		return size;
+	}
+
+	public void setSize(Long size) {
+		this.size = size;
+	}
+
+	public String getSha256sum() {
+		return sha256sum;
+	}
+
+	public void setSha256sum(String sha256sum) {
+		this.sha256sum = sha256sum;
+	}
+
+	public boolean isHasThumbnail() {
+		return hasThumbnail;
+	}
+
+	public void setHasThumbnail(boolean hasThumbnail) {
+		this.hasThumbnail = hasThumbnail;
+	}
+
+	public long getShared() {
+		return shared;
+	}
+
+	public void setShared(long shared) {
+		this.shared = shared;
+	}
+
+	public void incrementShared() {
+		shared ++;
+	}
+
+	public void decrementShared() {
+		shared --;
+	}
+
 }

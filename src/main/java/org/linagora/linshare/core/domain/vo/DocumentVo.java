@@ -40,7 +40,6 @@ import org.apache.tapestry5.beaneditor.NonVisual;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntryUrl;
 
 public class DocumentVo implements Serializable, Comparable {
 
@@ -110,11 +109,11 @@ public class DocumentVo implements Serializable, Comparable {
 		}
 		this.ownerLogin = documentEntry.getEntryOwner().getLsUuid();
 		this.encrypted = documentEntry.getCiphered();
-		this.shared = documentEntry.isShared();
+		this.shared = documentEntry.getShared() > 1;
 		this.type = documentEntry.getType();
 		this.size = documentEntry.getSize();
 		this.fileComment = documentEntry.getComment();
-		this.hasThumbnail = documentEntry.hasThumbnail();
+		this.hasThumbnail = documentEntry.isHasThumbnail();
 	}
 
 	public DocumentVo(String identifier,String name, String fileComment, Calendar creationDate,
@@ -151,11 +150,11 @@ public class DocumentVo implements Serializable, Comparable {
 		}
 		this.ownerLogin = anonymousShareEntry.getEntryOwner().getLsUuid();
 		this.encrypted = anonymousShareEntry.getDocumentEntry().getCiphered();
-		this.shared = anonymousShareEntry.getDocumentEntry().isShared();
+		this.shared = anonymousShareEntry.getDocumentEntry().getShared() > 1;
 		this.type=anonymousShareEntry.getDocumentEntry().getType();
 		this.size=anonymousShareEntry.getDocumentEntry().getSize();
 		this.fileComment = anonymousShareEntry.getDocumentEntry().getComment();
-		this.hasThumbnail = anonymousShareEntry.getDocumentEntry().hasThumbnail();
+		this.hasThumbnail = anonymousShareEntry.getDocumentEntry().isHasThumbnail();
 	}
 
 	public DocumentVo(UploadRequestEntry uploadRequestEntry) {
@@ -170,11 +169,11 @@ public class DocumentVo implements Serializable, Comparable {
 		}
 		this.ownerLogin = uploadRequestEntry.getEntryOwner().getLsUuid();
 		this.encrypted = uploadRequestEntry.getDocumentEntry().getCiphered();
-		this.shared = uploadRequestEntry.getDocumentEntry().isShared();
+		this.shared = uploadRequestEntry.getDocumentEntry().getShared() > 1;
 		this.type=uploadRequestEntry.getDocumentEntry().getType();
 		this.size=uploadRequestEntry.getDocumentEntry().getSize();
 		this.fileComment = uploadRequestEntry.getDocumentEntry().getComment();
-		this.hasThumbnail = uploadRequestEntry.getDocumentEntry().hasThumbnail();
+		this.hasThumbnail = uploadRequestEntry.getDocumentEntry().isHasThumbnail();
 	}
 
 
@@ -197,7 +196,6 @@ public class DocumentVo implements Serializable, Comparable {
 	public Calendar getExpirationDate() {
 		return expirationDate;
 	}
-
 
 	public boolean getEncrypted() {
 		return encrypted;
@@ -241,4 +239,5 @@ public class DocumentVo implements Serializable, Comparable {
 	public int compareTo(Object arg0) { //DESC order
 		return -this.creationDate.compareTo(((DocumentVo)arg0).creationDate);
 	}
+
 }

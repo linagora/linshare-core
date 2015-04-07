@@ -62,7 +62,7 @@ public class FunctionalityFacadeImpl extends UserGenericFacadeImp implements
 		this.functionalityService = functionalityService;
 		excludes.add(FunctionalityNames.SHARE_NOTIFICATION_BEFORE_EXPIRATION.toString());
 		excludes.add(FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION.toString());
-		excludes.add(FunctionalityNames.DOMAIN_MAIL.toString());
+		excludes.add(FunctionalityNames.DOMAIN__MAIL.toString());
 		excludes.add(FunctionalityNames.ANONYMOUS_URL.toString());
 		excludes.add(FunctionalityNames.ANTIVIRUS.toString());
 		excludes.add(FunctionalityNames.QUOTA_GLOBAL.toString());

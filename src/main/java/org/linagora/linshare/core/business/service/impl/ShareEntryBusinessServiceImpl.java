@@ -95,6 +95,7 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 
 		// If the current document was previously shared, we need to rest its expiration date
 		documentEntry.setExpirationDate(null);
+		documentEntry.incrementShared();
 
 		documentEntry.getShareEntries().add(shareEntity);
 		recipient.getShareEntries().add(shareEntity);
@@ -114,6 +115,7 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		shareEntryRepository.delete(share);
 
 		DocumentEntry documentEntry = share.getDocumentEntry();
+		documentEntry.decrementShared();
 		documentEntry.getShareEntries().remove(share);
 
 		Account recipient = share.getRecipient();

@@ -45,7 +45,14 @@ public class ThreadEntry extends Entry implements Serializable {
 	
 	protected Boolean ciphered;
 
-	
+	protected String type;
+
+	protected Long size;
+
+	protected String sha256sum;
+
+	protected boolean hasThumbnail;
+
 	public ThreadEntry() {
 		super();
 	}
@@ -54,6 +61,10 @@ public class ThreadEntry extends Entry implements Serializable {
 		super(entryOwner, name, "");
 		this.document = document;
 		this.ciphered = false;
+		this.sha256sum = document.getSha256sum();
+		this.size = document.getSize();
+		this.type = document.getType();
+		this.hasThumbnail = document.getThmbUuid() != null;
 	}
 
 	public Document getDocument() {
@@ -76,13 +87,36 @@ public class ThreadEntry extends Entry implements Serializable {
 	public void setCiphered(Boolean ciphered) {
 		this.ciphered = ciphered;
 	}
-	
-	/* usefull getters */
-	public long getSize() {
-		return document.getSize();
-	}
-	
+
 	public String getType() {
-		return document.getType();
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public Long getSize() {
+		return size;
+	}
+
+	public void setSize(Long size) {
+		this.size = size;
+	}
+
+	public String getSha256sum() {
+		return sha256sum;
+	}
+
+	public void setSha256sum(String sha256sum) {
+		this.sha256sum = sha256sum;
+	}
+
+	public boolean isHasThumbnail() {
+		return hasThumbnail;
+	}
+
+	public void setHasThumbnail(boolean hasThumbnail) {
+		this.hasThumbnail = hasThumbnail;
 	}
 }

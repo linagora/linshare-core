@@ -104,6 +104,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 
 		// If the current document was previously shared, we need to rest its expiration date
 		documentEntry.setExpirationDate(null);
+		documentEntry.incrementShared();
 
 		documentEntry.getAnonymousShareEntries().add(anonymousShare);
 		sender.getEntries().add(anonymousShare);
@@ -163,6 +164,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		anonymousShareEntryRepository.delete(anonymousShare);
 
 		DocumentEntry documentEntry = anonymousShare.getDocumentEntry();
+		documentEntry.decrementShared();
 		documentEntry.getAnonymousShareEntries().remove(anonymousShare);
 
 		Account sender = anonymousShare.getEntryOwner();

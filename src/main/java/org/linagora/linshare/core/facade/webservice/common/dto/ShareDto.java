@@ -55,55 +55,58 @@ public class ShareDto {
 	/**
 	 * Share
 	 */
-    @ApiModelProperty(value = "Uuid")
+	@ApiModelProperty(value = "Uuid")
 	protected String uuid;
 
-    @ApiModelProperty(value = "Name")
+	@ApiModelProperty(value = "Name")
 	protected String name;
 
-    @ApiModelProperty(value = "CreationDate")
+	@ApiModelProperty(value = "CreationDate")
 	protected Date creationDate;
 
-    @ApiModelProperty(value = "ModificationDate")
+	@ApiModelProperty(value = "ModificationDate")
 	protected Date modificationDate;
 
-    @ApiModelProperty(value = "ExpirationDate")
+	@ApiModelProperty(value = "ExpirationDate")
 	protected Date expirationDate;
 
-    @ApiModelProperty(value = "Downloaded")
+	@ApiModelProperty(value = "Downloaded")
 	protected Long downloaded;
 
 	/**
 	 * SentShare
 	 */
-    @ApiModelProperty(value = "DocumentDto")
+	@ApiModelProperty(value = "DocumentDto")
 	protected DocumentDto documentDto;
 
-    @ApiModelProperty(value = "Recipient")
+	@ApiModelProperty(value = "Recipient")
 	protected GenericUserDto recipient;
 
 	/**
 	 * Received Share.
 	 */
-    @ApiModelProperty(value = "Description")
+	@ApiModelProperty(value = "Description")
 	protected String description;
 
-    @ApiModelProperty(value = "Sender")
+	@ApiModelProperty(value = "Sender")
 	protected UserDto sender;
 
-    @ApiModelProperty(value = "Size")
+	@ApiModelProperty(value = "Size")
 	protected Long size;
 
-    @ApiModelProperty(value = "Type")
+	@ApiModelProperty(value = "Type")
 	protected String type;
 
-    @ApiModelProperty(value = "Ciphered")
+	@ApiModelProperty(value = "Ciphered")
 	protected Boolean ciphered;
+
+	@ApiModelProperty(value = "hasThumbnail")
+	protected Boolean hasThumbnail;
 
 	/**
 	 * ???
 	 */
-    @ApiModelProperty(value = "Message")
+	@ApiModelProperty(value = "Message")
 	protected String message;
 
 	/**
@@ -127,6 +130,7 @@ public class ShareDto {
 				this.size = sa.getDocumentEntry().getSize();
 				this.type = sa.getDocumentEntry().getType();
 				this.ciphered = sa.getDocumentEntry().getCiphered();
+				this.hasThumbnail = sa.getDocumentEntry().isHasThumbnail();
 			} else {
 				// sent share.
 				this.documentDto = new DocumentDto(((ShareEntry) entry).getDocumentEntry());
@@ -262,6 +266,14 @@ public class ShareDto {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public Boolean getHasThumbnail() {
+		return hasThumbnail;
+	}
+
+	public void setHasThumbnail(Boolean hasThumbnail) {
+		this.hasThumbnail = hasThumbnail;
 	}
 
 	/*

@@ -212,7 +212,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			// activation.
 			docEntry = documentEntryBusinessService.createDocumentEntry(owner, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, getDocumentExpirationDate(domain));
 
-			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_UPLOAD, "Creation of a file", docEntry.getName(), docEntry.getDocument().getSize(), docEntry.getDocument().getType());
+			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_UPLOAD, "Creation of a file", docEntry.getName(), docEntry.getSize(), docEntry.getType());
 			logEntryService.create(logEntry);
 
 			addDocSizeToGlobalUsedQuota(docEntry.getDocument(), domain);
@@ -256,7 +256,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
 
-			long oldDocSize = originalEntry.getDocument().getSize();
+			long oldDocSize = originalEntry.getSize();
 			checkSpace(size, fileName, owner);
 
 			// check if the file MimeType is allowed
@@ -292,13 +292,13 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 				logText = documentEntry.getName() + " [" + logText + "]";
 			}
 
-			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_UPDATE, "Update of a file", logText, documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
+			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_UPDATE, "Update of a file", logText, documentEntry.getSize(), documentEntry.getType());
 			logEntryService.create(logEntry);
 
 			removeDocSizeFromGlobalUsedQuota(oldDocSize, domain);
 			addDocSizeToGlobalUsedQuota(documentEntry.getDocument(), domain);
 
-			if(documentEntry.isShared()){
+			if(documentEntry.getShared() > 0) {
 				//send email, file has been replaced ....
 				List<MailContainerWithRecipient> mails = Lists.newArrayList();
 				for (AnonymousShareEntry anonymousShareEntry : documentEntry.getAnonymousShareEntries()) {
@@ -339,10 +339,10 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			}
 
 			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
-			removeDocSizeFromGlobalUsedQuota(documentEntry.getDocument().getSize(), domain);
+			removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
 
 			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_INCONSISTENCY, "File removed because of inconsistence. Please contact your administrator.", documentEntry.getName(),
-					documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
+					documentEntry.getSize(), documentEntry.getType());
 			logEntryService.create(LogEntryService.WARN, logEntry);
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
 		} catch (IllegalArgumentException e) {
@@ -363,10 +363,9 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			}
 
 			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
-			removeDocSizeFromGlobalUsedQuota(documentEntry.getDocument().getSize(), domain);
+			removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
 
-			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_EXPIRE, "Expiration of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument()
-					.getType());
+			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_EXPIRE, "Expiration of a file", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
 			logEntryService.create(LogEntryService.INFO, logEntry);
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
 
@@ -388,10 +387,9 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document. There's still existing shares.");
 		}
 		AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
-		removeDocSizeFromGlobalUsedQuota(documentEntry.getDocument().getSize(), domain);
+		removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
 
-		FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_DELETE, "Deletion of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument()
-				.getType());
+		FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_DELETE, "Deletion of a file", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
 		logEntryService.create(LogEntryService.INFO, logEntry);
 		documentEntryBusinessService.deleteDocumentEntry(documentEntry);
 	}
