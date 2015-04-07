@@ -85,7 +85,7 @@ public class WelcomeMessagesRestServiceImpl implements WelcomeMessagesRestServic
 	@ApiOperation(value = "Find a welcome message entry.", response = WelcomeMessagesDto.class)
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "User isn't admin."),
-			@ApiResponse(code = 404, message = "Welcome message not found"),
+			@ApiResponse(code = 404, message = "Welcome message not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields.") })
 	@Override
 	public WelcomeMessagesDto find(
@@ -112,6 +112,7 @@ public class WelcomeMessagesRestServiceImpl implements WelcomeMessagesRestServic
 	@ApiOperation(value = "Update a welcome message entry.", response = WelcomeMessagesDto.class)
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "User isn't admin."),
+			@ApiResponse(code = 404, message = "Welcome message not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields.") })
 	@Override
 	public WelcomeMessagesDto update(
@@ -125,6 +126,7 @@ public class WelcomeMessagesRestServiceImpl implements WelcomeMessagesRestServic
 	@ApiOperation(value = "Delete a welcome message entry.", response = WelcomeMessagesDto.class)
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "User isn't admin."),
+			@ApiResponse(code = 404, message = "Welcome message not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields.") })
 	@Override
 	public WelcomeMessagesDto delete(
@@ -138,6 +140,7 @@ public class WelcomeMessagesRestServiceImpl implements WelcomeMessagesRestServic
 	@ApiOperation(value = "Delete a welcome message entry.", response = WelcomeMessagesDto.class)
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "User isn't admin."),
+			@ApiResponse(code = 404, message = "Welcome message not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields.") })
 	@Override
 	public WelcomeMessagesDto delete(

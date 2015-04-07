@@ -49,25 +49,34 @@ import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
 
 import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement(name = "WelcomeMessages")
 @ApiModel(value = "WelcomeMessages", description = "")
 public class WelcomeMessagesDto {
 
+	@ApiModelProperty(value = "Uuid")
 	private String uuid;
 
+	@ApiModelProperty(value = "Name")
 	private String name;
 
+	@ApiModelProperty(value = "Description")
 	private String description;
 
+	@ApiModelProperty(value = "CreationDate")
 	private Date creationDate;
 
+	@ApiModelProperty(value = "ModificationDate")
 	private Date modificationDate;
 
+	@ApiModelProperty(value = "MyDomain")
 	private DomainLightDto myDomain;
 
+	@ApiModelProperty(value = "Domains")
 	private Set<DomainLightDto> domains;
 
+	@ApiModelProperty(value = "WelcomeMessagesEntries")
 	private Map<SupportedLanguage, String> welcomeMessagesEntries;
 
 	public WelcomeMessagesDto() {}
