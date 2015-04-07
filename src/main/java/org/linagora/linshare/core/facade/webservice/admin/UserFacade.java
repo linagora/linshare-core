@@ -60,4 +60,8 @@ public interface UserFacade extends AdminGenericFacade {
 	void changePassword(PasswordDto password) throws BusinessException;
 
 	UserDto findUser(String uuid) throws BusinessException;
+
+	boolean exist(String uuid) throws BusinessException;
+
+	UserDto create(UserDto userDto) throws BusinessException;
 }

@@ -207,4 +207,29 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(uuid, "User uuid must be set.");
 		return UserDto.getFull(userService.findByLsUuid(uuid));
 	}
+
+	@Override
+	public boolean exist(String uuid) throws BusinessException {
+		checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(uuid, "User uuid must be set.");
+		return userService.exist(uuid);
+	}
+
+	@Override
+	public UserDto create(UserDto userDto) throws BusinessException {
+		User actor = checkAuthentication(Role.ADMIN);
+		Validate.notNull(userDto, "User dto must be set.");
+		String uuid = userDto.getUuid();
+		if (uuid != null) {
+			if (userService.exist(uuid)) {
+				return UserDto.getFull(userService.findByLsUuid(uuid));
+			}
+		}
+		String mail = userDto.getMail();
+		String domain = userDto.getDomain();
+		Validate.notEmpty(mail, "User mail must be set.");
+		Validate.notEmpty(domain, "User domain identifier must be set.");
+		User user = userService.findOrCreateUserWithDomainPolicies(domain, mail, actor.getDomainId());
+		return UserDto.getFull(user);
+	}
 }

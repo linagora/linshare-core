@@ -38,6 +38,7 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -46,6 +47,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
@@ -66,6 +68,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "/rest/admin/users", description = "User administration service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Path("/users")
 public class UserRestServiceImpl extends WebserviceBase implements
 		UserRestService {
 
@@ -140,6 +143,24 @@ public class UserRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "User uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return userFacade.findUser(uuid);
+	}
+
+	@Path("/{uuid}")
+	@HEAD
+	@ApiOperation(value = "Test if an user exists.")
+	@Override
+	public void exist(@ApiParam(value = "User uuid.", required = true) @PathParam("uuid") String uuid) throws BusinessException {
+		if (!userFacade.exist(uuid)) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The current uuid does not refer to an existing user profile.");
+		}
+	}
+
+	@Path("/")
+	@POST
+	@ApiOperation(value = "Create an user if he exists in some ldap directories.")
+	@Override
+	public UserDto create(@ApiParam(value = "User to update", required = true) UserDto user) throws BusinessException {
+		return userFacade.create(user);
 	}
 
 	@Path("/")
