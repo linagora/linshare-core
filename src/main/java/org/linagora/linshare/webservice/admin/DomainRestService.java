@@ -42,7 +42,7 @@ public interface DomainRestService {
 
 	Set<DomainDto> findAll() throws BusinessException;
 
-	DomainDto find(String domainId, boolean tree) throws BusinessException;
+	DomainDto find(String domainId, boolean tree, boolean parent) throws BusinessException;
 
 	DomainDto update(DomainDto domain) throws BusinessException;
 

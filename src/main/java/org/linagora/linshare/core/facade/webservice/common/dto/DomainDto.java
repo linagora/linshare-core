@@ -46,6 +46,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPolicyDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.WelcomeMessagesDto;
 
+import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -230,6 +231,13 @@ public class DomainDto {
 
 	public void setChildren(List<DomainDto> children) {
 		this.children = children;
+	}
+
+	public void addChild(DomainDto child) {
+		if (this.children == null) {
+			this.children = Lists.newArrayList();
+		}
+		this.children.add(child);
 	}
 
 	public String getParent() {

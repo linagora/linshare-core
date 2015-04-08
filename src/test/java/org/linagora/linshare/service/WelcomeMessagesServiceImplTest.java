@@ -109,7 +109,7 @@ public class WelcomeMessagesServiceImplTest extends
 		logger.debug("List All the welcome messages with and with the query param.");
 
 		try {
-			List<WelcomeMessages> wlcms = welcomeService.findAll(actor);
+			List<WelcomeMessages> wlcms = welcomeService.findAll(actor, null);
 			Assert.assertEquals(1, wlcms.size());
 
 		} catch (Exception e) {

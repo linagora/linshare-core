@@ -329,6 +329,6 @@
 	</bean>
 	<bean id="welcomeMessagesService" class="org.linagora.linshare.core.service.impl.WelcomeMessagesServiceImpl">
 		<constructor-arg ref="welcomeMessagesBusinessService" />
-		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="domainBusinessService" />
 	</bean>
 </beans>

@@ -37,42 +37,44 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.WelcomeMessagesBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.WelcomeMessagesRepository;
 
 public class WelcomeMessagesBusinessServiceImpl implements WelcomeMessagesBusinessService {
 
-	private final WelcomeMessagesRepository customRepository;
+	private final WelcomeMessagesRepository wlcmmRepository;
 
 	public WelcomeMessagesBusinessServiceImpl(final WelcomeMessagesRepository customRepository) {
-		this.customRepository = customRepository;
+		this.wlcmmRepository = customRepository;
 	}
 
 	@Override
-	public List<WelcomeMessages> findAll() throws BusinessException {
-		return customRepository.findAll();
+	public List<WelcomeMessages> findAll(AbstractDomain domain)
+			throws BusinessException {
+		return wlcmmRepository.findAllByDomain(domain);
 	}
 
 	@Override
 	public WelcomeMessages find(String uuid) throws BusinessException {
-		return customRepository.findByUuid(uuid);
+		return wlcmmRepository.findByUuid(uuid);
 	}
 
 	@Override
 	public WelcomeMessages create(WelcomeMessages customisation)
 			throws BusinessException {
-		return customRepository.create(customisation);
+		return wlcmmRepository.create(customisation);
 	}
 
 	@Override
 	public WelcomeMessages update(WelcomeMessages customisation)
 			throws BusinessException {
-		return customRepository.update(customisation);
+		return wlcmmRepository.update(customisation);
 	}
 
 	@Override
 	public void delete(WelcomeMessages customisation) throws BusinessException {
-		customRepository.delete(customisation);
+		wlcmmRepository.delete(customisation);
 	}
 }

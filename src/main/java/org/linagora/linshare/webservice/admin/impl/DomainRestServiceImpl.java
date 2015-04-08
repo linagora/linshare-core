@@ -86,9 +86,10 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
 	public DomainDto find(@PathParam(value = "domainId") String domainId,
-			@QueryParam("tree") @DefaultValue("false") boolean tree)
+			@QueryParam("tree") @DefaultValue("false") boolean tree,
+			@QueryParam("parent") @DefaultValue("false") boolean parent)
 			throws BusinessException {
-		return domainFacade.find(domainId, tree);
+		return domainFacade.find(domainId, tree, parent);
 	}
 
 	@Path("/")

@@ -42,7 +42,7 @@ public interface DomainFacade extends AdminGenericFacade {
 
 	Set<DomainDto> findAll() throws BusinessException;
 
-	DomainDto find(String domain, boolean tree) throws BusinessException;
+	DomainDto find(String domain, boolean tree, boolean parent) throws BusinessException;
 
 	DomainDto create(DomainDto domain) throws BusinessException;
 

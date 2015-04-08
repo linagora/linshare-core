@@ -37,7 +37,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.WelcomeMessagesBusinessService;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -51,25 +51,25 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 
 	private final WelcomeMessagesBusinessService welcomeMessagesBusinessService;
 
-	private final DomainPermissionBusinessService permissionService;
+	private final DomainBusinessService domainBusinessService;
 
 	public WelcomeMessagesServiceImpl(
 			final WelcomeMessagesBusinessService wlcmBusinessService,
-			final DomainPermissionBusinessService permissionService) {
+			final DomainBusinessService domainBusinessService) {
 		this.welcomeMessagesBusinessService = wlcmBusinessService;
-		this.permissionService = permissionService;
+		this.domainBusinessService = domainBusinessService;
 	}
 
 	@Override
-	public List<WelcomeMessages> findAll(User actor) throws BusinessException {
+	public List<WelcomeMessages> findAll(User actor, String domainId) throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 
-		if (!permissionService.isAdminforThisDomain(actor, actor.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
-					+ actor + " cannot list welcome messages in this domain "
-					+ actor.getDomainId());
-
-		return welcomeMessagesBusinessService.findAll();
+		if (domainId == null)
+			return welcomeMessagesBusinessService.findAll(actor.getDomain());
+		else {
+			AbstractDomain domain = domainBusinessService.findById(domainId);
+			return welcomeMessagesBusinessService.findAll(domain);
+		}
 	}
 
 	@Override
@@ -92,11 +92,6 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 		Validate.notNull(uuid, "Welcome message must be set.");
 		Validate.notNull(domain, "Welcome message domain must be set.");
 
-		if (!permissionService.isAdminforThisDomain(actor, domain))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
-					+ actor + " cannot create a welcome message in this domain "
-					+ domain.getIdentifier());
-
 		WelcomeMessages wlcm = find(actor, uuid);
 		WelcomeMessages welcomeMessage = new WelcomeMessages(wlcm);
 		wlcm.setDomain(domain);
@@ -112,11 +107,6 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 		Validate.notEmpty(wlcm.getWelcomeMessagesEntries(),
 				"Wecolme message entries must be set.");
 		Validate.notNull(wlcm.getDomain(), "owner domain must be set.");
-
-		if (!permissionService.isAdminforThisDomain(actor, domain))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
-					+ actor + " cannot update a welcome message in this domain "
-					+ domain.getIdentifier());
 
 		WelcomeMessages welcomeMessage = find(actor, wlcm.getUuid());
 
@@ -148,11 +138,6 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 			throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notEmpty(uuid, "Welcome message uudi must be set.");
-
-		if (!permissionService.isAdminforThisDomain(actor, actor.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
-					+ actor + " cannot delete a welcome message in this domain "
-					+ actor.getDomainId());
 
 		WelcomeMessages wlcm = find(actor, uuid);
 		welcomeMessagesBusinessService.delete(wlcm);

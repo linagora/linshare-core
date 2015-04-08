@@ -34,10 +34,15 @@
 
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface WelcomeMessagesRepository extends AbstractRepository<WelcomeMessages> {
+
+	List<WelcomeMessages> findAllByDomain(AbstractDomain domain) throws BusinessException;
 
 	WelcomeMessages findByUuid(String uuid) throws BusinessException;
 }

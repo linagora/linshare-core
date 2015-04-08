@@ -108,29 +108,51 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public DomainDto find(String domain, boolean tree)
+	public DomainDto find(String domain, boolean tree, boolean parent)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		Validate.notEmpty(domain, "domain identifier must be set.");
-		AbstractDomain entity = abstractDomainService.retrieveDomain(domain);
-		if (entity == null) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
-					"the curent domain was not found : " + domain);
-		}
-		if (tree) {
-			if (actor.hasSuperAdminRole()) {
-				return DomainDto.getFullTree(entity);
-			}
-			if (entity.isManagedBy(actor)) {
-				return DomainDto.getSimpleTree(entity);
-			}
-		} else {
-			if (entity.isManagedBy(actor)) {
-				return DomainDto.getSimple(entity);
-			}
-		}
-		throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
-				"the curent domain was not found : " + domain);
+		 User actor = checkAuthentication(Role.ADMIN);
+		 Validate.notEmpty(domain, "domain identifier must be set.");
+		 AbstractDomain entity =
+				 abstractDomainService.retrieveDomain(domain);
+		 DomainDto res = null;
+		 if (entity == null) {
+			 throw new
+			 BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
+					 "the curent domain was not found : " + domain);
+		 }
+		 boolean simple = true;
+		 if (actor.hasSuperAdminRole()) {
+			 simple = false;
+		 } else if (entity.isManagedBy(actor)) {
+			 simple = true;
+		 } else {
+			 throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					 "the curent domain was not found : " + domain);
+		 }
+		 if (tree) {
+			 if (simple) {
+				 res = DomainDto.getSimpleTree(entity);
+			 } else {
+				 res = DomainDto.getFullTree(entity);
+			 }
+		 } else {
+			 res = DomainDto.getSimple(entity);
+		 }
+		 DomainDto rootdomain = res;
+		 if (parent) {
+			 if (entity.getParentDomain() != null) {
+				 AbstractDomain firstParent = entity.getParentDomain();
+				 DomainDto topdomain = DomainDto.getSimple(firstParent);
+				 topdomain.addChild(res);
+				 if (firstParent.getParentDomain() != null) {
+					 rootdomain = DomainDto.getSimple(firstParent.getParentDomain());
+					 rootdomain.addChild(topdomain);
+				 } else {
+					 rootdomain = topdomain;
+				 }
+			 }
+		 }
+		 return rootdomain;
 	}
 
 	@Override

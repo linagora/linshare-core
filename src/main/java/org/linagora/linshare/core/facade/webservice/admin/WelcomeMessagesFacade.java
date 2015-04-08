@@ -41,7 +41,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.WelcomeMessagesDto
 
 public interface WelcomeMessagesFacade {
 
-	Set<WelcomeMessagesDto> findAll() throws BusinessException;
+	Set<WelcomeMessagesDto> findAll(String domainId) throws BusinessException;
 
 	WelcomeMessagesDto find(String uuid) throws BusinessException;
 

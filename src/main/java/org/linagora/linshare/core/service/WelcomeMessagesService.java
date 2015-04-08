@@ -43,7 +43,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface WelcomeMessagesService {
 
-	List<WelcomeMessages> findAll(User actor) throws BusinessException;
+	List<WelcomeMessages> findAll(User actor, String domainId) throws BusinessException;
 
 	WelcomeMessages find(User actor,String uuid) throws BusinessException;
 

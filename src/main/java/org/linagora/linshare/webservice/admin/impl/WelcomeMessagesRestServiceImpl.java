@@ -44,6 +44,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -61,7 +62,8 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "/rest/admin/welcome_messages", description = "Welcome messages administration")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class WelcomeMessagesRestServiceImpl implements WelcomeMessagesRestService {
+public class WelcomeMessagesRestServiceImpl implements
+		WelcomeMessagesRestService {
 
 	private final WelcomeMessagesFacade welcomeMessagesFacade;
 
@@ -75,9 +77,10 @@ public class WelcomeMessagesRestServiceImpl implements WelcomeMessagesRestServic
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin."),
 			@ApiResponse(code = 400, message = "Bad request.") })
 	@Override
-	public Set<WelcomeMessagesDto> findAll()
+	public Set<WelcomeMessagesDto> findAll(
+			@QueryParam("domainId") String domainId)
 			throws BusinessException {
-		return welcomeMessagesFacade.findAll();
+		return welcomeMessagesFacade.findAll(domainId);
 	}
 
 	@Path("/{uuid}")

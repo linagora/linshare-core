@@ -35,10 +35,12 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.WelcomeMessagesRepository;
@@ -55,12 +57,19 @@ public class WelcomeMessagesRepositoryImpl extends
 
 	@Override
 	public WelcomeMessages findByUuid(String uuid) throws BusinessException {
-		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq("uuid",
-				uuid)));
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"uuid", uuid)));
 	}
 
 	@Override
-	public WelcomeMessages create(WelcomeMessages entity) throws BusinessException {
+	public List<WelcomeMessages> findAllByDomain(AbstractDomain domain)
+			throws BusinessException {
+		return findByCriteria(Restrictions.eq("domain", domain));
+	}
+
+	@Override
+	public WelcomeMessages create(WelcomeMessages entity)
+			throws BusinessException {
 		entity.setCreationDate(new Date());
 		entity.setModificationDate(new Date());
 		entity.setUuid(UUID.randomUUID().toString());
@@ -68,7 +77,8 @@ public class WelcomeMessagesRepositoryImpl extends
 	}
 
 	@Override
-	public WelcomeMessages update(WelcomeMessages entity) throws BusinessException {
+	public WelcomeMessages update(WelcomeMessages entity)
+			throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
