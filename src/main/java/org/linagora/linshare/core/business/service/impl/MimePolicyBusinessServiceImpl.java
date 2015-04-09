@@ -92,8 +92,8 @@ public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService 
 	public MimePolicy find(String uuid) throws BusinessException {
 		MimePolicy mimePolicy = mimePolicyRepository.findByUuid(uuid);
 		if (mimePolicy == null) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
-					"Can not find mimePolicy " + uuid);
+			throw new BusinessException(BusinessErrorCode.MIME_NOT_FOUND,
+					"Can not find mimePolicy with uuid : " + uuid + ".");
 		}
 		return mimePolicy;
 	}

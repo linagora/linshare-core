@@ -172,6 +172,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(domainDto.getPolicy(), "domain policy must be set.");
 		Validate.notEmpty(domainDto.getPolicy().getIdentifier(),
 				"domain policy identifier must be set.");
+		Validate.notEmpty(domainDto.getUserRole(), "User role must be set.");
 
 		DomainType domainType = DomainType.valueOf(domainDto.getType());
 		AbstractDomain parent = abstractDomainService.retrieveDomain(domainDto
@@ -180,7 +181,6 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		DomainPolicy policy = domainPolicyService
 				.find(domainDto.getPolicy().getIdentifier());
 		domain.setPolicy(policy);
-
 
 		if (domainDto.getMailConfigUuid() != null) {
 			MailConfig mailConfig = new MailConfig();
@@ -193,26 +193,28 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			domain.setMimePolicy(mimePolicy);
 		}
 
-		if (!domainDto.getProviders().isEmpty()) {
-			String baseDn = domainDto.getProviders().get(0).getBaseDn();
-			Validate.notEmpty(baseDn, "ldap base dn must be set.");
+		if (domainDto.getProviders() != null) {
+			if (!domainDto.getProviders().isEmpty()) {
+				String baseDn = domainDto.getProviders().get(0).getBaseDn();
+				Validate.notEmpty(baseDn, "ldap base dn must be set.");
 
-			String domainPatternId = domainDto.getProviders().get(0)
-					.getDomainPatternId();
-			Validate.notEmpty(domainPatternId,
-					"domain pattern identifier must be set.");
+				String domainPatternId = domainDto.getProviders().get(0)
+						.getDomainPatternId();
+				Validate.notEmpty(domainPatternId,
+						"domain pattern identifier must be set.");
 
-			String ldapConnectionId = domainDto.getProviders().get(0)
-					.getLdapConnectionId();
-			Validate.notEmpty(ldapConnectionId,
-					"ldap connection identifier must be set.");
+				String ldapConnectionId = domainDto.getProviders().get(0)
+						.getLdapConnectionId();
+				Validate.notEmpty(ldapConnectionId,
+						"ldap connection identifier must be set.");
 
-			LDAPConnection ldapConnection = userProviderService
-					.retrieveLDAPConnection(ldapConnectionId);
-			DomainPattern domainPattern = userProviderService
-					.retrieveDomainPattern(domainPatternId);
-			domain.setUserProvider(new LdapUserProvider(baseDn, ldapConnection,
-					domainPattern));
+				LDAPConnection ldapConnection = userProviderService
+						.retrieveLDAPConnection(ldapConnectionId);
+				DomainPattern domainPattern = userProviderService
+						.retrieveDomainPattern(domainPatternId);
+				domain.setUserProvider(new LdapUserProvider(baseDn, ldapConnection,
+						domainPattern));
+			}
 		}
 		return domain;
 	}
