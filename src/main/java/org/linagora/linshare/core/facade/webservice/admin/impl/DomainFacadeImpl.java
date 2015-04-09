@@ -50,7 +50,6 @@ import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
-import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
@@ -210,6 +209,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(domainDto.getExternalMailLocale(), "external mail locale must be set.");
 		Validate.notNull(domainDto.getCurrentWelcomeMessages(), "Current messages must be set.");
 		Validate.notEmpty(domainDto.getCurrentWelcomeMessages().getUuid(), "Current message uuid must be set.");
+		Validate.notEmpty(domainDto.getUserRole(), "User role must be set.");
 
 		DomainType domainType = DomainType.valueOf(domainDto.getType());
 		AbstractDomain parent = abstractDomainService.retrieveDomain(domainDto
@@ -218,11 +218,6 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		DomainPolicy policy = domainPolicyService
 				.find(domainDto.getPolicy().getIdentifier());
 		domain.setPolicy(policy);
-
-		WelcomeMessages welcomeMessage = welcomeMessagesService.find(
-				getAuthentication(), domainDto.getCurrentWelcomeMessages()
-				.getUuid());
-		domain.setCurrentWelcomeMessages(welcomeMessage);
 
 		if (domainDto.getMailConfigUuid() != null) {
 			MailConfig mailConfig = new MailConfig();
@@ -235,26 +230,28 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			domain.setMimePolicy(mimePolicy);
 		}
 
-		if (!domainDto.getProviders().isEmpty()) {
-			String baseDn = domainDto.getProviders().get(0).getBaseDn();
-			Validate.notEmpty(baseDn, "ldap base dn must be set.");
+		if (domainDto.getProviders() != null) {
+			if (!domainDto.getProviders().isEmpty()) {
+				String baseDn = domainDto.getProviders().get(0).getBaseDn();
+				Validate.notEmpty(baseDn, "ldap base dn must be set.");
 
-			String domainPatternId = domainDto.getProviders().get(0)
-					.getDomainPatternId();
-			Validate.notEmpty(domainPatternId,
-					"domain pattern identifier must be set.");
+				String domainPatternId = domainDto.getProviders().get(0)
+						.getDomainPatternId();
+				Validate.notEmpty(domainPatternId,
+						"domain pattern identifier must be set.");
 
-			String ldapConnectionId = domainDto.getProviders().get(0)
-					.getLdapConnectionId();
-			Validate.notEmpty(ldapConnectionId,
-					"ldap connection identifier must be set.");
+				String ldapConnectionId = domainDto.getProviders().get(0)
+						.getLdapConnectionId();
+				Validate.notEmpty(ldapConnectionId,
+						"ldap connection identifier must be set.");
 
-			LdapConnection ldapConnection = ldapConnectionService
-					.find(ldapConnectionId);
-			UserLdapPattern domainPattern = userProviderService
-					.retrieveDomainPattern(domainPatternId);
-			domain.setUserProvider(new LdapUserProvider(baseDn, ldapConnection,
-					domainPattern));
+				LdapConnection ldapConnection = ldapConnectionService
+						.find(ldapConnectionId);
+				UserLdapPattern domainPattern = userProviderService
+						.retrieveDomainPattern(domainPatternId);
+				domain.setUserProvider(new LdapUserProvider(baseDn, ldapConnection,
+						domainPattern));
+			}
 		}
 		return domain;
 	}

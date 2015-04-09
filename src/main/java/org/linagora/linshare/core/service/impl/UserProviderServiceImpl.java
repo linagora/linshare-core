@@ -174,6 +174,15 @@ public class UserProviderServiceImpl implements UserProviderService {
 					BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND,
 					"no such domain pattern");
 		}
+		Validate.notEmpty(domainPattern.getDescription(), "Pattern's description must be set.");
+		Validate.notNull(domainPattern.getCompletionPageSize(), "Pattern's completion page size must be set.");
+		Validate.notNull(domainPattern.getCompletionSizeLimit(), "Pattern's completion size limit must be set.");
+		Validate.notNull(domainPattern.getSearchPageSize(), "Pattern's search page size must be set.");
+		Validate.notNull(domainPattern.getSearchSizeLimit(), "Pattern's search page size must be set.");
+		Validate.notEmpty(domainPattern.getAuthCommand(), "Pattern's auth command must be set.");
+		Validate.notEmpty(domainPattern.getAutoCompleteCommandOnAllAttributes(), "Patterns's auto complete command on all attributes must be set.");
+		Validate.notEmpty(domainPattern.getAutoCompleteCommandOnFirstAndLastName(), "Patterns's auto complete command on first name and last name must be set.");
+		Validate.notEmpty(domainPattern.getSearchUserCommand(), "Patterns's search command user must be set.");
 		pattern.setDescription(domainPattern.getDescription());
 		pattern.setAuthCommand(domainPattern.getAuthCommand());
 		pattern.setSearchUserCommand(domainPattern.getSearchUserCommand());

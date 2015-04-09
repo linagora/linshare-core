@@ -167,7 +167,9 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					domain.getCurrentWelcomeMessage().getUuid());
 			domain.setCurrentWelcomeMessages(current);
 		}
-
+		if (domain.getDescription() == null) {
+			domain.setDescription("");
+		}
 		if (domain.getUserProvider() != null) {
 			if (domain.getUserProvider().getLdapConnection() == null) {
 				throw new BusinessException(
@@ -366,6 +368,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	@Override
 	public AbstractDomain updateDomain(Account actor, AbstractDomain domain) throws BusinessException {
+		Validate.notEmpty(domain.getDescription(), "Description must be set.");
+		Validate.notEmpty(domain.getLabel(), "Domain lqbel must be set.");
 		if (!actor.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Only root is authorized to create domains.");
 		}
