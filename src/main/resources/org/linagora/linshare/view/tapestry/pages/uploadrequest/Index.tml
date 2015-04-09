@@ -18,11 +18,13 @@
             <span><img src="${asset:context:images/icons/icon-list-mini.png}" alt=""/> ${message:pages.uploadrequest.history.button}</span>
           </t:pageLink>
         </li>
+        <t:if test="uploadPropositionEnable">
         <li>
           <t:pageLink page="uploadrequest/proposition" class="button" title="${message:pages.uploadrequest.uploadproposition.button}">
             <span><img src="${asset:context:images/icons/validate-mini.png}" alt=""/> ${message:pages.uploadrequest.uploadproposition.button}</span>
           </t:pageLink>
         </li>
+        </t:if>
         <t:if test="templatesEnable">
         <li>
           <t:pageLink page="uploadrequest/template" class="button" title="${message:pages.uploadrequest.template.button}">
