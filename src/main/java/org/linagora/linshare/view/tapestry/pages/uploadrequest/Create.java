@@ -38,7 +38,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
@@ -69,9 +68,6 @@ import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.components.BSBeanEditForm;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 
 public class Create {
@@ -183,13 +179,6 @@ public class Create {
 			_c = current.getMaxFileCount();
 			_expiration = current.getExpiryDate();
 			languageModel = new EnumSelectModel(Language.class, messages);
-			Iterables.removeIf(languageModel.getOptions(),
-					new Predicate<OptionModel>() {
-						@Override
-						public boolean apply(OptionModel input) {
-							return input.getValue().equals(Language.DUTCH);
-						}
-					});
 		} catch (BusinessException e) {
 			logger.error("Cannot get default upload request value for user "
 					+ userVo.getLsUuid());

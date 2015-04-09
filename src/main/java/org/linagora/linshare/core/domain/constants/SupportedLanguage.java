@@ -103,18 +103,12 @@ public enum SupportedLanguage {
 		if (language == Language.FRENCH){
 			return SupportedLanguage.FRENCH;
 		}
-		if (language == Language.DUTCH){
-			return SupportedLanguage.DUTCH;
-		}
 		return SupportedLanguage.ENGLISH;
 	}
 
 	public static Language toLanguage(SupportedLanguage language){
 		if (language == SupportedLanguage.FRENCH){
 			return Language.FRENCH;
-		}
-		if (language == SupportedLanguage.DUTCH){
-			return Language.DUTCH;
 		}
 		return Language.ENGLISH;
 	}

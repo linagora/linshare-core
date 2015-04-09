@@ -39,7 +39,7 @@ import java.util.Locale;
  * Defines supported languages.
  */
 public enum Language {
-	ENGLISH(0, "en"), FRENCH(1, "fr"), DUTCH(2, "nl");
+	ENGLISH(0, "en"), FRENCH(1, "fr");
 
 	private int value;
 	private String tapestryLocale;
@@ -63,10 +63,6 @@ public enum Language {
 	}
 
 	public static Language fromLocale(Locale locale) {
-		if (locale.getLanguage().equals("nl_NL")
-				|| locale.getLanguage().equals("nl")) {
-			return DUTCH;
-		}
 		if (Locale.FRENCH.equals(locale) || Locale.FRANCE.equals(locale)) {
 			return FRENCH;
 		}

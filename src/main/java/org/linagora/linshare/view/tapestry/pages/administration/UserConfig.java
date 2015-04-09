@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -66,9 +65,6 @@ import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 
 /**
@@ -174,13 +170,6 @@ public class UserConfig {
 
 		model = new SimpleSelectModel<String>(locales, messages, "pages.administration.userconfig.select");
 		externalMailModel = new EnumSelectModel(Language.class, messages);
-		Iterables.removeIf(externalMailModel.getOptions(),
-				new Predicate<OptionModel>() {
-					@Override
-					public boolean apply(OptionModel input) {
-						return input.getValue().equals(Language.DUTCH);
-					}
-				});
 	}
 
 	public boolean getDisplayChangePassword() {
