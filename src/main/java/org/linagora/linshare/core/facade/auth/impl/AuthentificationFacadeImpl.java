@@ -140,7 +140,7 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	public Internal findByLogin(String login) {
 		Internal internal = internalRepository.findByLogin(login);
 		// Ugly but needed until we find a more elegant solution :(
-		internal.getDomain().getIdentifier();
+		if (internal != null) internal.getDomain().getIdentifier();
 		return internal;
 	}
 
@@ -148,7 +148,7 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	public Internal findByLoginAndDomain(String domain, String login) {
 		Internal internal = internalRepository.findByLoginAndDomain(domain, login);
 		// Ugly but needed until we find a more elegant solution :(
-		internal.getDomain().getIdentifier();
+		if (internal != null) internal.getDomain().getIdentifier();
 		return internal;
 	}
 }
