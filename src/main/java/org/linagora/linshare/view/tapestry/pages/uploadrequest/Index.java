@@ -123,6 +123,10 @@ public class Index {
 		return Create.class;
     }
 
+    public boolean getUploadPropositionEnable() {
+		return functionalityFacade.isEnableUploadProposition(userVo.getDomainIdentifier());
+    }
+
 	/*
 	 * Exception Handling
 	 */
