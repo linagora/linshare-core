@@ -52,6 +52,9 @@ public class LogCriteriaDto extends org.linagora.linshare.core.facade.webservice
 	@ApiModelProperty(value = "Domain of the actor")
 	private String actorDomain;
 
+	public LogCriteriaDto() {
+	}
+
 	public LogCriteriaDto(List<String> actorMails, String actorFirstName,
 			String actorLastName, String actorDomain) {
 		this.actorMails = actorMails;
