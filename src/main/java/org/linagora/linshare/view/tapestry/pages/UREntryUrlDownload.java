@@ -178,10 +178,9 @@ public class UREntryUrlDownload {
 	}
 
 	private void checkUrl(String uuid) {
-		try {
 			if (!requestEntryUrlFacade.exists(uuid, componentResources
 					.getPageName().toLowerCase())) {
-				String msg = "secure url does not exists";
+				String msg = "The upload resquest entry url does not exists";
 				logger.error(msg);
 				throw new BusinessException(BusinessErrorCode.WRONG_URL, msg);
 			}
@@ -189,14 +188,10 @@ public class UREntryUrlDownload {
 					.isPasswordProtected(uuid) && password == null);
 			logger.debug("uuid : " + passwordProtected);
 			if (!requestEntryUrlFacade.isValid(uuid, password)) {
-				String msg = "the secured url is not valid";
+				String msg = "the UploadRequestEntryUrl is not valid";
 				logger.error(msg);
 				throw new BusinessException(msg);
 			}
-
-		} catch (BusinessException e) {
-			messagesManagementService.notify(e);
-		}
 	}
 
 	public Zone onValidateFormFromPasswordPopup() {

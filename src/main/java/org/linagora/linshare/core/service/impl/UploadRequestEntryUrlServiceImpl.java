@@ -87,6 +87,11 @@ public class UploadRequestEntryUrlServiceImpl implements
 		UploadRequestEntryUrl uploadRequestEntryUrl = uploadRequestEntryUrlBusinessService
 				.findByUuid(uploadRequestEntryUrlUuid);
 
+		if (uploadRequestEntryUrl == null) {
+			logger.error("the requested upload request entry url doesn't exit : " + uploadRequestEntryUrlUuid);
+			return false;
+		}
+
 		if (uploadRequestEntryUrl.getPath().endsWith(urlPath)) {
 			return true;
 		}
