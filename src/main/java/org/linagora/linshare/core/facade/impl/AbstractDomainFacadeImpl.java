@@ -105,20 +105,6 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     }
 
     @Override
-    public AbstractDomainVo retrieveDomain(String identifier) throws BusinessException {
-        AbstractDomain domain = abstractDomainService.retrieveDomain(identifier);
-
-        if(domain instanceof TopDomain) {
-            return new TopDomainVo(domain);
-        } else if(domain instanceof SubDomain) {
-            return new SubDomainVo(domain);
-        } else if(domain instanceof GuestDomain) {
-            return new GuestDomainVo(domain);
-        }
-        return new AbstractDomainVo(domain);
-    }
-
-    @Override
     public List<String> getAllDomainIdentifiers() throws BusinessException {
         return abstractDomainService.getAllDomainIdentifiers();
     }

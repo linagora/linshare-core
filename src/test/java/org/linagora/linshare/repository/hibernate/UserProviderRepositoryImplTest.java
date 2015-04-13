@@ -43,9 +43,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
-import org.linagora.linshare.core.domain.entities.LdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.domain.entities.UserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
 import org.linagora.linshare.core.repository.LdapConnectionRepository;
@@ -115,7 +115,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		
 		domainPatternRepository.create(p);
 		
-		UserLdapPattern aa = domainPatternRepository.findById(p.getUuid());
+		UserLdapPattern aa = domainPatternRepository.findByUuid(p.getUuid());
 		logger.debug("aa size : " + aa.getAttributes().size());
 		Assert.assertEquals(2, aa.getAttributes().size());
 
@@ -123,7 +123,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		aa.getAttributes().put("nom", new LdapAttribute("nom" , "sn", true));
 		domainPatternRepository.update(aa);
 		
-		aa = domainPatternRepository.findById(p.getUuid());
+		aa = domainPatternRepository.findByUuid(p.getUuid());
 		logger.debug("aa size : " + aa.getAttributes().size());
 		Assert.assertEquals(3, aa.getAttributes().size());
 
@@ -152,10 +152,10 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		Assert.assertTrue(ldapUserProviderRepository.findAll() != null);
 		Assert.assertTrue(ldapUserProviderRepository.findAll().size() == actualCount + 1);
 		
-		LdapUserProvider newProvider = ldapUserProviderRepository.findById(provider.getId());
+		UserProvider newProvider = ldapUserProviderRepository.findByUuid(provider.getUuid());
 		Assert.assertTrue(newProvider != null);
 		
-		LdapUserProvider ldapProvider = newProvider; 
+		LdapUserProvider ldapProvider = (LdapUserProvider) newProvider;
 		
 		Assert.assertTrue(ldapProvider.getBaseDn().equals(baseDn));
 		Assert.assertTrue(ldapProvider.getPattern().getLabel().equals(identifierP));

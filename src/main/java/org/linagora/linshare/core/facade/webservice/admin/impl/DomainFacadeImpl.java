@@ -54,6 +54,7 @@ import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
@@ -161,8 +162,12 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		AbstractDomain domain = getDomain(domainDto);
 		switch (domain.getDomainType()) {
 		case TOPDOMAIN:
+			LdapUserProvider ldapUserProvider = createLdapUserProviderIfNeeded(domainDto);
+			domain.setUserProvider(ldapUserProvider);
 			return DomainDto.getFull(abstractDomainService.createTopDomain(actor, (TopDomain) domain));
 		case SUBDOMAIN:
+			LdapUserProvider ldapUserProvider2 = createLdapUserProviderIfNeeded(domainDto);
+			domain.setUserProvider(ldapUserProvider2);
 			return DomainDto.getFull(abstractDomainService.createSubDomain(actor, (SubDomain) domain));
 		case GUESTDOMAIN:
 			return DomainDto.getFull(abstractDomainService.createGuestDomain(actor, (GuestDomain) domain));
@@ -172,12 +177,60 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		}
 	}
 
+	private LdapUserProvider createLdapUserProviderIfNeeded(DomainDto domainDto) {
+		LdapUserProvider ldapUserProvider = null;
+		List<LDAPUserProviderDto> providers = domainDto.getProviders();
+		if (providers != null && !providers.isEmpty()) {
+			// For now there is (must be) only one.
+			LDAPUserProviderDto userProviderDto = providers.get(0);
+			String domainPatternUuid = userProviderDto.getUserLdapPatternUuid();
+			String ldapUuid = userProviderDto.getLdapConnectionUuid();
+			String baseDn = userProviderDto.getBaseDn();
+			Validate.notEmpty(domainPatternUuid, "domainPatternUuid is mandatory for user provider creation");
+			Validate.notEmpty(ldapUuid, "ldapUuid is mandatory for user provider creation");
+			Validate.notEmpty(baseDn, "baseDn is mandatory for user provider creation");
+			LdapConnection ldapConnection = ldapConnectionService.find(ldapUuid);
+			UserLdapPattern pattern = userProviderService.findDomainPattern(domainPatternUuid);
+			ldapUserProvider = userProviderService.create(new LdapUserProvider(baseDn, ldapConnection, pattern));
+		}
+		return ldapUserProvider;
+	}
+
+	private LdapUserProvider updateLdapUserProvider(DomainDto domainDto) {
+		LdapUserProvider ldapUserProvider = null;
+		List<LDAPUserProviderDto> providers = domainDto.getProviders();
+		if (providers != null && !providers.isEmpty()) {
+			// For now there is (must be) only one.
+			LDAPUserProviderDto userProviderDto = providers.get(0);
+			String domainPatternUuid = userProviderDto.getUserLdapPatternUuid();
+			String ldapUuid = userProviderDto.getLdapConnectionUuid();
+			String baseDn = userProviderDto.getBaseDn();
+			Validate.notEmpty(domainPatternUuid, "userLdapPatternUuid is mandatory for user provider creation");
+			Validate.notEmpty(ldapUuid, "ldapUuid is mandatory for user provider creation");
+			Validate.notEmpty(baseDn, "baseDn is mandatory for user provider creation");
+			LdapConnection ldapConnection = ldapConnectionService.find(ldapUuid);
+			UserLdapPattern pattern = userProviderService.findDomainPattern(domainPatternUuid);
+			if (userProviderService.exists(userProviderDto.getUuid())) {
+				LdapUserProvider userProvider = userProviderService.find(userProviderDto.getUuid());
+				userProvider.setBaseDn(userProviderDto.getBaseDn());
+				userProvider.setLdapConnection(ldapConnection);
+				userProvider.setPattern(pattern);
+				ldapUserProvider = userProviderService.update(userProvider);
+			} else {
+				ldapUserProvider = userProviderService.create(new LdapUserProvider(baseDn, ldapConnection, pattern));
+			}
+		}
+		return ldapUserProvider;
+	}
+
 	@Override
 	public DomainDto update(DomainDto domainDto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainDto.getIdentifier(),
 				"domain identifier must be set.");
 		AbstractDomain domain = getDomain(domainDto);
+		LdapUserProvider ldapUserProvider = updateLdapUserProvider(domainDto);
+		domain.setUserProvider(ldapUserProvider);
 		return DomainDto.getFull(abstractDomainService.updateDomain(actor, domain));
 	}
 
@@ -232,30 +285,6 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			MimePolicy mimePolicy = new MimePolicy();
 			mimePolicy.setUuid(domainDto.getMimePolicyUuid());
 			domain.setMimePolicy(mimePolicy);
-		}
-
-		if (domainDto.getProviders() != null) {
-			if (!domainDto.getProviders().isEmpty()) {
-				String baseDn = domainDto.getProviders().get(0).getBaseDn();
-				Validate.notEmpty(baseDn, "ldap base dn must be set.");
-
-				String domainPatternId = domainDto.getProviders().get(0)
-						.getDomainPatternId();
-				Validate.notEmpty(domainPatternId,
-						"domain pattern identifier must be set.");
-
-				String ldapConnectionId = domainDto.getProviders().get(0)
-						.getLdapConnectionId();
-				Validate.notEmpty(ldapConnectionId,
-						"ldap connection identifier must be set.");
-
-				LdapConnection ldapConnection = ldapConnectionService
-						.find(ldapConnectionId);
-				UserLdapPattern domainPattern = userProviderService
-						.retrieveDomainPattern(domainPatternId);
-				domain.setUserProvider(new LdapUserProvider(baseDn, ldapConnection,
-						domainPattern));
-			}
 		}
 		return domain;
 	}

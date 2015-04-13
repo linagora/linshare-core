@@ -35,7 +35,6 @@ package org.linagora.linshare.core.facade;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
@@ -44,9 +43,6 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AbstractDomainFacade {
-
-	public AbstractDomainVo retrieveDomain(String identifier)
-			throws BusinessException;
 
 	public List<String> getAllDomainIdentifiers() throws BusinessException;
 
@@ -98,5 +94,5 @@ public interface AbstractDomainFacade {
 	 */
 	public boolean checkPlatformEncryptSupportedAlgo();
 
-	String getDomainWelcomeMessagesValue( UserVo userVo, SupportedLanguage lang);
+	String getDomainWelcomeMessagesValue(UserVo userVo, SupportedLanguage lang);
 }

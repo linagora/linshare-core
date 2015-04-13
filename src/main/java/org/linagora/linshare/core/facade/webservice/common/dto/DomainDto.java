@@ -120,8 +120,7 @@ public class DomainDto {
 			this.policy = new DomainPolicyDto(domain.getPolicy());
 			this.authShowOrder = domain.getAuthShowOrder();
 			if (domain.getUserProvider() != null) {
-				this.providers.add(new LDAPUserProviderDto(domain
-						.getUserProvider()));
+				this.providers.add(domain.getUserProvider().toLDAPUserProviderDto());
 			}
 			if (domain.getParentDomain() != null) {
 				this.parent = domain.getParentDomain().getIdentifier();

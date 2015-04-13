@@ -77,9 +77,9 @@ public class DomainPatternRepositoryImpl extends
 	}
 
 	@Override
-	public UserLdapPattern findById(String identifier) {
+	public UserLdapPattern findByUuid(String uuid) {
 		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
-				"uuid", identifier)));
+				"uuid", uuid)));
 	}
 
 	@Override

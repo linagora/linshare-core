@@ -161,7 +161,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
 		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
 		try {
-			userProviderService.createDomainPattern(domainPattern);
+			domainPattern = userProviderService.createDomainPattern(domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't create pattern.");
@@ -171,6 +171,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		try {
 			userProviderService.deletePattern(domainPattern.getUuid());
 		} catch (BusinessException e) {
+			logger.error(e.toString());
 			e.printStackTrace();
 			Assert.fail("Can't delete pattern.");
 		}

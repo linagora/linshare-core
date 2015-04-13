@@ -39,7 +39,7 @@ import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 
 public interface DomainPatternRepository extends AbstractRepository<UserLdapPattern> {
 
-	public UserLdapPattern findById(String identifier);
+	UserLdapPattern findByUuid(String uuid);
 
 	List<UserLdapPattern> findAllUserDomainPattern();
 

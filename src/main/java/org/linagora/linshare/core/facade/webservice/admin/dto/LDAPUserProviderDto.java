@@ -35,8 +35,6 @@ package org.linagora.linshare.core.facade.webservice.admin.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.LdapUserProvider;
-
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -44,41 +42,44 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "LDAPUserProvider", description = "Used to provide users from an LDAP directory")
 public class LDAPUserProviderDto {
 
-    @ApiModelProperty(value = "LdapConnectionId")
-	private String ldapConnectionId = "";
+	@ApiModelProperty(value = "uuid")
+	private String uuid;
 
-    @ApiModelProperty(value = "DomainPatternId")
-	private String domainPatternId = "";
+	@ApiModelProperty(value = "LdapConnectionUuid")
+	private String ldapConnectionUuid = "";
 
-    @ApiModelProperty(value = "BaseDn")
+	@ApiModelProperty(value = "UserLdapPatternUuid")
+	private String userLdapPatternUuid = "";
+
+	@ApiModelProperty(value = "BaseDn")
 	private String baseDn = "";
-
-	public LDAPUserProviderDto(final LdapUserProvider ldapUserProvider) {
-
-		this.ldapConnectionId = ldapUserProvider.getLdapConnection()
-				.getUuid();
-		this.domainPatternId = ldapUserProvider.getPattern().getUuid();
-		this.baseDn = ldapUserProvider.getBaseDn();
-	}
 
 	public LDAPUserProviderDto() {
 		super();
 	}
 
-	public String getLdapConnectionId() {
-		return ldapConnectionId;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setLdapConnectionId(String ldapConnectionId) {
-		this.ldapConnectionId = ldapConnectionId;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
-	public String getDomainPatternId() {
-		return domainPatternId;
+	public String getLdapConnectionUuid() {
+		return ldapConnectionUuid;
 	}
 
-	public void setDomainPatternId(String domainPatternId) {
-		this.domainPatternId = domainPatternId;
+	public void setLdapConnectionUuid(String ldapConnectionUuid) {
+		this.ldapConnectionUuid = ldapConnectionUuid;
+	}
+
+	public String getUserLdapPatternUuid() {
+		return userLdapPatternUuid;
+	}
+
+	public void setUserLdapPatternUuid(String userLdapPatternUuid) {
+		this.userLdapPatternUuid = userLdapPatternUuid;
 	}
 
 	public String getBaseDn() {

@@ -37,8 +37,9 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
 public class SubDomainVo extends AbstractDomainVo {
-	
-	private  String parentDomainIdentifier;
+
+	private static final long serialVersionUID = 3908702625641488848L;
+	private String parentDomainIdentifier;
 
 	public String getParentDomainIdentifier() {
 		return parentDomainIdentifier;
@@ -53,8 +54,9 @@ public class SubDomainVo extends AbstractDomainVo {
 	 */
 	public SubDomainVo(AbstractDomain entity) {
 		super(entity);
-		if(entity.getParentDomain() != null) {
-			this.setParentDomainIdentifier(entity.getParentDomain().getIdentifier());
+		if (entity.getParentDomain() != null) {
+			this.setParentDomainIdentifier(entity.getParentDomain()
+					.getIdentifier());
 		}
 	}
 
@@ -63,5 +65,4 @@ public class SubDomainVo extends AbstractDomainVo {
 		this.defaultRole = Role.SIMPLE;
 	}
 
-	
 }

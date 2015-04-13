@@ -35,6 +35,8 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.UUID;
 
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
+
 public class LdapUserProvider extends UserProvider {
 
 	private String baseDn;
@@ -84,4 +86,13 @@ public class LdapUserProvider extends UserProvider {
 		return "LdapUserProvider [baseDn=" + baseDn + ", uuid=" + uuid + "]";
 	}
 
+	@Override
+	public LDAPUserProviderDto toLDAPUserProviderDto() {
+		LDAPUserProviderDto l = new LDAPUserProviderDto();
+		l.setUuid(uuid);
+		l.setBaseDn(baseDn);
+		l.setUserLdapPatternUuid(this.pattern.getUuid());
+		l.setLdapConnectionUuid(this.ldapConnection.getUuid());
+		return l;
+	}
 }

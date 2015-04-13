@@ -31,25 +31,16 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.repository;
 
-package org.linagora.linshare.core.domain.constants;
+import org.linagora.linshare.core.domain.entities.LdapUserProvider;
+import org.linagora.linshare.core.domain.entities.UserProvider;
 
-import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+public interface LdapUserProviderRepository extends
+		AbstractRepository<LdapUserProvider> {
 
-public enum UserProviderType {
+	LdapUserProvider load(UserProvider provider);
 
-	LDAP_PROVIDER;
-
-	public static UserProviderType fromString(String s) {
-		try {
-			return UserProviderType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(
-					TechnicalErrorCode.NO_SUCH_UPLOAD_REQUEST_STATUS,
-					StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
-	}
+	LdapUserProvider findByUuid(String uuid);
 
 }

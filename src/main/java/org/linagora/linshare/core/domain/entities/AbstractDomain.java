@@ -97,7 +97,7 @@ public abstract class AbstractDomain {
 
 	private Set<UploadProposition> uploadPropositions;
 
-	protected LdapUserProvider userProvider;
+	protected UserProvider userProvider;
 
 	protected Set<ContactProvider> contactProvider;
 
@@ -282,11 +282,11 @@ public abstract class AbstractDomain {
 		this.label = label;
 	}
 
-	public LdapUserProvider getUserProvider() {
+	public UserProvider getUserProvider() {
 		return userProvider;
 	}
 
-	public void setUserProvider(LdapUserProvider userProvider) {
+	public void setUserProvider(UserProvider userProvider) {
 		this.userProvider = userProvider;
 	}
 

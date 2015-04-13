@@ -31,25 +31,60 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.repository.hibernate;
 
-package org.linagora.linshare.core.domain.constants;
+import java.util.Date;
+import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.LdapUserProvider;
+import org.linagora.linshare.core.domain.entities.UserProvider;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.LdapUserProviderRepository;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public enum UserProviderType {
+public class LdapUserProviderRepositoryImpl extends AbstractRepositoryImpl<LdapUserProvider> implements LdapUserProviderRepository {
 
-	LDAP_PROVIDER;
+	public LdapUserProviderRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
+	}
 
-	public static UserProviderType fromString(String s) {
-		try {
-			return UserProviderType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(
-					TechnicalErrorCode.NO_SUCH_UPLOAD_REQUEST_STATUS,
-					StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
+	@Override
+	public LdapUserProvider create(LdapUserProvider entity)
+			throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setUuid(UUID.randomUUID().toString());
+		return super.create(entity);
+	}
+
+	@Override
+	public LdapUserProvider update(LdapUserProvider entity)
+			throws BusinessException {
+		entity.setModificationDate(new Date());
+		return super.update(entity);
+	}
+
+	@Override
+	public LdapUserProvider  findByUuid(String uuid) {
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"uuid", uuid)));
+	}
+
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(LdapUserProvider entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(LdapUserProvider.class).add(
+				Restrictions.eq("id", entity.getId()));
+		return det;
+	}
+
+	@Override
+	public LdapUserProvider load(UserProvider provider) {
+		DetachedCriteria det = DetachedCriteria.forClass(LdapUserProvider.class).add(
+				Restrictions.eq("id", provider.getId()));
+		return (LdapUserProvider) DataAccessUtils.singleResult(findByCriteria(det));
 	}
 
 }

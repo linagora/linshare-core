@@ -36,6 +36,9 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 
+import org.linagora.linshare.core.domain.constants.UserProviderType;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
+
 public abstract class UserProvider {
 
 	protected long id;
@@ -45,6 +48,8 @@ public abstract class UserProvider {
 	protected Date creationDate;
 
 	protected Date modificationDate;
+
+	protected UserProviderType userProviderType;
 
 	@Override
 	public String toString() {
@@ -82,5 +87,24 @@ public abstract class UserProvider {
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
+
+	public UserProviderType getUserProviderType() {
+		return userProviderType;
+	}
+
+	/**
+	 * alias
+	 * @return
+	 */
+	public UserProviderType getType() {
+		return userProviderType;
+	}
+
+	protected void setUserProviderType(UserProviderType userProviderType) {
+		this.userProviderType = userProviderType;
+	}
+
+	// TODO Just create and return an UserProviderDto
+	public abstract LDAPUserProviderDto toLDAPUserProviderDto();
 
 }

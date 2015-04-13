@@ -48,49 +48,32 @@ public class AbstractDomainVo implements Serializable {
 	protected String identifier;
 
 	protected String label;
-	
+
 	protected SupportedLanguage defaultLocale;
 
 	protected Role defaultRole;
-	
+
 	protected String domainDescription;
 
-	@NonVisual 
+	@NonVisual
 	protected boolean template = false;
-	
+
 	@NonVisual
 	protected boolean enable = true;
-	
-	@NonVisual 
+
+	@NonVisual
 	protected Long usedSpace = new Long(0);
-	
-	@NonVisual 
+
+	@NonVisual
 	protected Long authShowOrder = new Long(1);
-	
-	protected String differentialKey;
-	
-	protected String patternIdentifier;
-	
-	protected String ldapIdentifier;
-	
-	protected String policyIdentifier;
 
 	public AbstractDomainVo() {
 	}
-	
+
 	public AbstractDomainVo(AbstractDomain entity) {
 		this.setDefaultLocale(entity.getDefaultTapestryLocale());
 		this.setDefaultRole(entity.getDefaultRole());
 		this.setDomainDescription(entity.getDescription());
-		
-		this.setPolicyIdentifier(entity.getPolicy().getIdentifier());
-		
-		if(entity.getUserProvider() != null) {
-			this.setDifferentialKey(entity.getUserProvider().getBaseDn());
-			this.setLdapIdentifier(entity.getUserProvider().getLdapConnection().getUuid());
-			this.setPatternIdentifier(entity.getUserProvider().getPattern().getUuid());
-		}
-		
 		this.setEnable(entity.isEnable());
 		this.setIdentifier(entity.getIdentifier());
 		this.setLabel(entity.getLabel());
@@ -99,14 +82,6 @@ public class AbstractDomainVo implements Serializable {
 		this.setAuthShowOrder(entity.getAuthShowOrder());
 	}
 
-	public AbstractDomainVo(String identifier, String differentialKey,
-			String patternIdentifier, String ldapIdentifier) {
-		this.identifier = identifier;
-		this.differentialKey = differentialKey;
-		this.patternIdentifier = patternIdentifier;
-		this.ldapIdentifier = ldapIdentifier;
-	}
-	
 	public void setIdentifier(String identifier) {
 		this.identifier = identifier;
 	}
@@ -115,25 +90,14 @@ public class AbstractDomainVo implements Serializable {
 	public String getIdentifier() {
 		return identifier;
 	}
-	
+
 	@Validate("required")
 	public String getLabel() {
 		return label;
 	}
-	
+
 	public void setLabel(String label) {
 		this.label = label;
-	}
-
-	public String getDifferentialKey() {
-		return differentialKey;
-	}
-
-	public void setDifferentialKey(String differentialKey) {
-		if(differentialKey != null)
-			this.differentialKey = differentialKey.trim();
-		else
-			this.differentialKey = differentialKey;			
 	}
 
 	@Override
@@ -147,13 +111,13 @@ public class AbstractDomainVo implements Serializable {
 	}
 
 	public void setDefaultLocale(SupportedLanguage defaultLocale) {
-		if(defaultLocale != null)
+		if (defaultLocale != null)
 			this.defaultLocale = defaultLocale;
 		else
 			this.defaultLocale = SupportedLanguage.ENGLISH;
 	}
 
-//	@Validate("required")
+	// @Validate("required")
 	public Role getDefaultRole() {
 		return defaultRole;
 	}
@@ -163,15 +127,16 @@ public class AbstractDomainVo implements Serializable {
 	}
 
 	public String getDomainDescription() {
-		if(domainDescription == null) return "";
+		if (domainDescription == null)
+			return "";
 		return domainDescription;
 	}
 
 	public void setDomainDescription(String domainDescription) {
-		if(domainDescription != null)
+		if (domainDescription != null)
 			this.domainDescription = domainDescription.trim();
 		else
-			this.domainDescription = domainDescription;			
+			this.domainDescription = domainDescription;
 	}
 
 	public boolean isTemplate() {
@@ -190,45 +155,12 @@ public class AbstractDomainVo implements Serializable {
 		this.enable = enable;
 	}
 
-	public String getPolicyIdentifier() {
-		return policyIdentifier;
-	}
-
-	public void setPolicyIdentifier(String policyIdentifier) {
-		if(policyIdentifier != null)
-			this.policyIdentifier = policyIdentifier.trim();
-		else
-			this.policyIdentifier = policyIdentifier;				
-	}
-
 	public Long getUsedSpace() {
 		return usedSpace;
 	}
 
 	public void setUsedSpace(Long usedSpace) {
 		this.usedSpace = usedSpace;
-	}
-
-	public String getPatternIdentifier() {
-		return patternIdentifier;
-	}
-
-	public void setPatternIdentifier(String patternIdentifier) {
-		if(patternIdentifier != null)
-			this.patternIdentifier = patternIdentifier.trim();
-		else
-			this.patternIdentifier = patternIdentifier;		
-	}
-
-	public String getLdapIdentifier() {
-		return ldapIdentifier;
-	}
-
-	public void setLdapIdentifier(String ldapIdentifier) {
-		if(ldapIdentifier != null)
-			this.ldapIdentifier = ldapIdentifier.trim();
-		else
-			this.ldapIdentifier = ldapIdentifier;
 	}
 
 	public Long getAuthShowOrder() {
@@ -238,5 +170,5 @@ public class AbstractDomainVo implements Serializable {
 	public void setAuthShowOrder(Long authShowOrder) {
 		this.authShowOrder = authShowOrder;
 	}
-	
+
 }

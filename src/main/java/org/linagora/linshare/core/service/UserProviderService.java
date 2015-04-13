@@ -38,33 +38,35 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.domain.entities.UserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UserProviderService {
 
-	public List<UserLdapPattern> findAllDomainPattern() throws BusinessException;
-	public UserLdapPattern findDomainPattern(String id) throws BusinessException;
-	public List<UserLdapPattern> findAllUserDomainPattern() throws BusinessException;
-	public List<UserLdapPattern> findAllSystemDomainPattern() throws BusinessException;
-	public UserLdapPattern createDomainPattern(UserLdapPattern domainPattern) throws BusinessException;
-	public UserLdapPattern retrieveDomainPattern(String identifier) throws BusinessException;
-	public UserLdapPattern updateDomainPattern(UserLdapPattern domainPattern) throws BusinessException;
-	public void deletePattern(String patternToDelete) throws BusinessException;
+	List<UserLdapPattern> findAllDomainPattern() throws BusinessException;
+	UserLdapPattern findDomainPattern(String uuid) throws BusinessException;
+	List<UserLdapPattern> findAllUserDomainPattern() throws BusinessException;
+	List<UserLdapPattern> findAllSystemDomainPattern() throws BusinessException;
+	UserLdapPattern createDomainPattern(UserLdapPattern domainPattern) throws BusinessException;
+	UserLdapPattern updateDomainPattern(UserLdapPattern domainPattern) throws BusinessException;
+	void deletePattern(String patternToDelete) throws BusinessException;
 
-	public void create(LdapUserProvider userProvider) throws BusinessException;
-	public void delete(LdapUserProvider userProvider) throws BusinessException;
-	public void update(LdapUserProvider userProvider) throws BusinessException;
+	LdapUserProvider find(String uuid) throws BusinessException;
+	boolean exists(String uuid);
+	LdapUserProvider create(LdapUserProvider userProvider) throws BusinessException;
+	LdapUserProvider update(LdapUserProvider userProvider) throws BusinessException;
+	void delete(UserProvider userProvider) throws BusinessException;
 
-	public User findUser(LdapUserProvider userProvider, String mail) throws BusinessException;
-	public Boolean isUserExist(LdapUserProvider userProvider, String mail) throws BusinessException;
+	User findUser(UserProvider userProvider, String mail) throws BusinessException;
+	Boolean isUserExist(UserProvider userProvider, String mail) throws BusinessException;
 
-	public List<User> searchUser(LdapUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException;
+	List<User> searchUser(UserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException;
 
-	public List<User> autoCompleteUser(LdapUserProvider userProvider, String pattern) throws BusinessException;
-	public List<User> autoCompleteUser(LdapUserProvider userProvider, String firstName, String lastName) throws BusinessException;
+	List<User> autoCompleteUser(UserProvider userProvider, String pattern) throws BusinessException;
+	List<User> autoCompleteUser(UserProvider userProvider, String firstName, String lastName) throws BusinessException;
 
-	public User auth(LdapUserProvider userProvider,	String login, String userPasswd) throws BusinessException;
-	public User searchForAuth(LdapUserProvider userProvider, String login) throws BusinessException;
+	User auth(UserProvider userProvider, String login, String userPasswd) throws BusinessException;
+	User searchForAuth(UserProvider userProvider, String login) throws BusinessException;
 
-	public boolean patternIsDeletable(String patternToDelete);
+	public boolean canDeletePattern(String uuid);
 }

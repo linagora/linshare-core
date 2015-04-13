@@ -43,16 +43,15 @@ import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.TopDomain;
-import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -150,7 +149,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	@Test
 	public void testCreateTopDomain() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		TopDomain topDomain = new TopDomain(topDomaineName,"label",ldapconnexion,domainPattern,baseDn);
+		TopDomain topDomain = new TopDomain(topDomaineName,"label");
 		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);
 
@@ -179,8 +178,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	@Test
 	public void testCreateTopDomain2() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		TopDomain topDomain = new TopDomain(topDomaineName + "1", "label",
-				ldapconnexion, domainPattern, baseDn);
+		TopDomain topDomain = new TopDomain(topDomaineName + "1", "label");
 		DomainPolicy policy = domainPolicyRepository
 				.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);

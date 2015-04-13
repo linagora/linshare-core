@@ -33,11 +33,14 @@
  */
 package org.linagora.linshare.core.repository;
 
-import org.linagora.linshare.core.domain.entities.LdapUserProvider;
+import org.linagora.linshare.core.domain.entities.LdapPattern;
+import org.linagora.linshare.core.domain.entities.UserProvider;
 
 public interface UserProviderRepository extends
-		AbstractRepository<LdapUserProvider> {
-	
-	public LdapUserProvider findById(long id);
+		AbstractRepository<UserProvider> {
+
+	UserProvider findByUuid(String uuid);
+
+	boolean isUsed(LdapPattern pattern);
 
 }

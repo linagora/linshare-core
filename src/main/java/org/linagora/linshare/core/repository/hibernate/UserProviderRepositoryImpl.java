@@ -34,24 +34,27 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.LdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
+import org.linagora.linshare.core.domain.entities.UserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserProviderRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class UserProviderRepositoryImpl extends AbstractRepositoryImpl<LdapUserProvider> implements UserProviderRepository {
+public class UserProviderRepositoryImpl extends AbstractRepositoryImpl<UserProvider> implements UserProviderRepository {
 
 	public UserProviderRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
 
 	@Override
-	public LdapUserProvider create(LdapUserProvider entity)
+	public UserProvider create(UserProvider entity)
 			throws BusinessException {
 		entity.setCreationDate(new Date());
 		entity.setModificationDate(new Date());
@@ -60,30 +63,32 @@ public class UserProviderRepositoryImpl extends AbstractRepositoryImpl<LdapUserP
 	}
 
 	@Override
-	public LdapUserProvider update(LdapUserProvider entity)
+	public UserProvider update(UserProvider entity)
 			throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
 
 	@Override
-	public LdapUserProvider findById(long id) {
-		List<LdapUserProvider> provider = findByCriteria(Restrictions.eq("id", id));
-		
-		if (provider == null || provider.isEmpty()) {
-			return null;
-		} else if (provider.size() == 1) {
-			return provider.get(0);
-		} else {
-			throw new IllegalStateException("Id must be unique");
-		}
+	public UserProvider findByUuid(String uuid) {
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"uuid", uuid)));
 	}
 
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(LdapUserProvider entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(LdapUserProvider.class).add(
+	protected DetachedCriteria getNaturalKeyCriteria(UserProvider entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(UserProvider.class).add(
 				Restrictions.eq("id", entity.getId()));
 		return det;
 	}
 
+	@Override
+	public boolean isUsed(LdapPattern pattern) {
+		DetachedCriteria det = DetachedCriteria
+				.forClass(UserProvider.class);
+		det.add(Restrictions.eq("pattern", pattern));
+		det.setProjection(Projections.rowCount());
+		long longResult = DataAccessUtils.longResult(findByCriteria(det));
+		return longResult > 0;
+	}
 }

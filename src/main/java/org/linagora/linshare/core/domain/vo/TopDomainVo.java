@@ -40,7 +40,9 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
 public class TopDomainVo extends AbstractDomainVo {
-	
+
+	private static final long serialVersionUID = -4279585456617768024L;
+
 	private List<String> subdomainIdentifiers;
 
 	public List<String> getSubdomainIdentifiers() {
@@ -53,28 +55,15 @@ public class TopDomainVo extends AbstractDomainVo {
 
 	public TopDomainVo(AbstractDomain entity) {
 		super(entity);
-		
+
 		this.setSubdomainIdentifiers(new ArrayList<String>());
 		for (AbstractDomain domain : entity.getSubdomain()) {
 			this.getSubdomainIdentifiers().add(domain.getIdentifier());
 		}
 	}
 
-	
 	public TopDomainVo() {
 		super();
-		this.defaultRole = Role.ADMIN;
-	}
-
-	/**
-	 * @param identifier
-	 * @param differentialKey
-	 * @param patternIdentifier
-	 * @param ldapIdentifier
-	 */
-	public TopDomainVo(String identifier, String differentialKey,
-			String patternIdentifier, String ldapIdentifier) {
-		super(identifier, differentialKey, patternIdentifier, ldapIdentifier);
 		this.defaultRole = Role.ADMIN;
 	}
 }

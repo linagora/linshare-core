@@ -41,14 +41,17 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.UserProviderType;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.domain.entities.UserProvider;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
+import org.linagora.linshare.core.repository.LdapUserProviderRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.linagora.linshare.core.service.LDAPQueryService;
 import org.linagora.linshare.core.service.UserProviderService;
@@ -66,13 +69,17 @@ public class UserProviderServiceImpl implements UserProviderService {
 
 	private final UserProviderRepository userProviderRepository;
 
+	private final LdapUserProviderRepository ldapUserProviderRepository;
+
 	public UserProviderServiceImpl(
 			DomainPatternRepository domainPatternRepository,
 			LDAPQueryService ldapQueryService,
+			LdapUserProviderRepository ldapUserProviderRepository,
 			UserProviderRepository userProviderRepository) {
 		this.domainPatternRepository = domainPatternRepository;
 		this.ldapQueryService = ldapQueryService;
 		this.userProviderRepository = userProviderRepository;
+		this.ldapUserProviderRepository = ldapUserProviderRepository;
 	}
 
 	@Override
@@ -100,39 +107,42 @@ public class UserProviderServiceImpl implements UserProviderService {
 	}
 
 	@Override
-	public UserLdapPattern retrieveDomainPattern(String identifier)
+	public LdapUserProvider find(String uuid)
 			throws BusinessException {
-		UserLdapPattern pattern = domainPatternRepository.findById(identifier);
-		if (pattern == null) {
+		LdapUserProvider provider = ldapUserProviderRepository.findByUuid(uuid);
+		if (provider == null) {
 			throw new BusinessException(
-					BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND,
+					BusinessErrorCode.USER_PROVIDER_NOT_FOUND,
 					"Domain pattern identifier no found.");
 		}
-		return pattern;
+		return provider;
+	}
+
+	@Override
+	public boolean exists(String uuid) {
+		LdapUserProvider provider = ldapUserProviderRepository.findByUuid(uuid);
+		return provider != null;
 	}
 
 	@Override
 	public void deletePattern(String patternToDelete) throws BusinessException {
-		if (!patternIsDeletable(patternToDelete)) {
+		UserLdapPattern pattern = findDomainPattern(patternToDelete);
+		if (isUsed(pattern)) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_PATTERN_STILL_IN_USE,
 					"Cannot delete pattern because still used by domains");
 		}
-		UserLdapPattern pattern = retrieveDomainPattern(patternToDelete);
 		domainPatternRepository.delete(pattern);
 	}
 
+	public boolean isUsed(UserLdapPattern pattern) {
+		return userProviderRepository.isUsed(pattern);
+	}
+
 	@Override
-	public boolean patternIsDeletable(String patternToDelete) {
-		List<LdapUserProvider> list = userProviderRepository.findAll();
-		boolean used = false;
-		for (LdapUserProvider ldapUserProvider : list) {
-			if (ldapUserProvider.getPattern().getUuid().equals(patternToDelete)) {
-				used = true;
-				break;
-			}
-		}
-		return (!used);
+	public boolean canDeletePattern(String patternToDelete) {
+		UserLdapPattern pattern = findDomainPattern(patternToDelete);
+		return !isUsed(pattern);
 	}
 
 	@Override
@@ -141,14 +151,14 @@ public class UserProviderServiceImpl implements UserProviderService {
 	}
 
 	@Override
-	public UserLdapPattern findDomainPattern(String id)
+	public UserLdapPattern findDomainPattern(String uuid)
 			throws BusinessException {
-		Validate.notEmpty(id, "Domain pattern identifier must be set.");
-		UserLdapPattern pattern = domainPatternRepository.findById(id);
+		Validate.notEmpty(uuid, "Domain pattern uuid must be set.");
+		UserLdapPattern pattern = domainPatternRepository.findByUuid(uuid);
 		if (pattern == null)
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND,
-					"Can not found domain pattern with identifier: " + id + ".");
+					"Can not found domain pattern with identifier: " + uuid + ".");
 		return pattern;
 	}
 
@@ -168,7 +178,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 	public UserLdapPattern updateDomainPattern(UserLdapPattern domainPattern)
 			throws BusinessException {
 		UserLdapPattern pattern = domainPatternRepository
-				.findById(domainPattern.getUuid());
+				.findByUuid(domainPattern.getUuid());
 		if (pattern == null) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND,
@@ -220,153 +230,186 @@ public class UserProviderServiceImpl implements UserProviderService {
 	}
 
 	@Override
-	public void create(LdapUserProvider userProvider) throws BusinessException {
-		userProviderRepository.create(userProvider);
+	public LdapUserProvider create(LdapUserProvider userProvider) throws BusinessException {
+		return ldapUserProviderRepository.create(userProvider);
 	}
 
 	@Override
-	public void delete(LdapUserProvider userProvider) throws BusinessException {
+	public void delete(UserProvider userProvider) throws BusinessException {
 		userProviderRepository.delete(userProvider);
 	}
 
 	@Override
-	public void update(LdapUserProvider userProvider) throws BusinessException {
-		userProviderRepository.update(userProvider);
+	public LdapUserProvider update(LdapUserProvider userProvider) throws BusinessException {
+		return ldapUserProviderRepository.update(userProvider);
 	}
 
 	@Override
-	public User findUser(LdapUserProvider userProvider, String mail)
+	public User findUser(UserProvider up, String mail)
 			throws BusinessException {
-		LdapUserProvider p = userProvider;
-		if (p == null) {
-			return null;
+		if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
+			LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
+			User user = null;
+			try {
+				user = ldapQueryService.getUser(userProvider.getLdapConnection(),
+						userProvider.getBaseDn(), userProvider.getPattern(), mail);
+			} catch (NamingException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			} catch (IOException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			} catch (org.springframework.ldap.CommunicationException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			}
+			return user;
+		} else {
+			logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 		}
-		User user = null;
-		try {
-			user = ldapQueryService.getUser(userProvider.getLdapConnection(),
-					userProvider.getBaseDn(), userProvider.getPattern(), mail);
-		} catch (NamingException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		} catch (IOException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		} catch (org.springframework.ldap.CommunicationException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		}
-		return user;
+		return null;
 	}
 
 	@Override
-	public List<User> searchUser(LdapUserProvider userProvider, String mail,
+	public List<User> searchUser(UserProvider up, String mail,
 			String firstName, String lastName) throws BusinessException {
-		List<User> users = new ArrayList<User>();
-		try {
-			users = ldapQueryService.searchUser(
-					userProvider.getLdapConnection(), userProvider.getBaseDn(),
-					userProvider.getPattern(), mail, firstName, lastName);
-		} catch (NamingException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		} catch (IOException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		} catch (org.springframework.ldap.CommunicationException e) {
-			throwError(userProvider.getLdapConnection(), e);
+		if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
+			LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
+			List<User> users = new ArrayList<User>();
+			try {
+				users = ldapQueryService.searchUser(
+						userProvider.getLdapConnection(), userProvider.getBaseDn(),
+						userProvider.getPattern(), mail, firstName, lastName);
+			} catch (NamingException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			} catch (IOException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			} catch (org.springframework.ldap.CommunicationException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			}
+			return users;
+		} else {
+			logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 		}
-		return users;
+		return null;
 	}
 
 	@Override
-	public List<User> autoCompleteUser(LdapUserProvider userProvider,
+	public List<User> autoCompleteUser(UserProvider up,
 			String pattern) throws BusinessException {
-		List<User> users = new ArrayList<User>();
-		try {
-			users = ldapQueryService.completeUser(
-					userProvider.getLdapConnection(), userProvider.getBaseDn(),
-					userProvider.getPattern(), pattern);
-		} catch (NamingException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		} catch (IOException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		} catch (org.springframework.ldap.CommunicationException e) {
-			throwError(userProvider.getLdapConnection(), e);
+		if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
+			LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
+			List<User> users = new ArrayList<User>();
+			try {
+				users = ldapQueryService.completeUser(
+						userProvider.getLdapConnection(), userProvider.getBaseDn(),
+						userProvider.getPattern(), pattern);
+			} catch (NamingException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			} catch (IOException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			} catch (org.springframework.ldap.CommunicationException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			}
+			return users;
+		} else {
+			logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 		}
-		return users;
+		return null;
 	}
 
 	@Override
-	public List<User> autoCompleteUser(LdapUserProvider userProvider,
+	public List<User> autoCompleteUser(UserProvider up,
 			String firstName, String lastName) throws BusinessException {
-		List<User> users = new ArrayList<User>();
-		try {
-			users = ldapQueryService.completeUser(
-					userProvider.getLdapConnection(), userProvider.getBaseDn(),
-					userProvider.getPattern(), firstName, lastName);
-		} catch (NamingException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		} catch (IOException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		} catch (org.springframework.ldap.CommunicationException e) {
-			throwError(userProvider.getLdapConnection(), e);
+		if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
+			LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
+			List<User> users = new ArrayList<User>();
+			try {
+				users = ldapQueryService.completeUser(
+						userProvider.getLdapConnection(), userProvider.getBaseDn(),
+						userProvider.getPattern(), firstName, lastName);
+			} catch (NamingException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			} catch (IOException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			} catch (org.springframework.ldap.CommunicationException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			}
+			return users;
+		} else {
+			logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 		}
-		return users;
+		return null;
 	}
 
 	@Override
-	public Boolean isUserExist(LdapUserProvider userProvider, String mail)
+	public Boolean isUserExist(UserProvider up, String mail)
 			throws BusinessException {
-		Boolean result = false;
-		try {
-			result = ldapQueryService.isUserExist(
-					userProvider.getLdapConnection(), userProvider.getBaseDn(),
-					userProvider.getPattern(), mail);
-		} catch (NamingException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		} catch (IOException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		} catch (org.springframework.ldap.CommunicationException e) {
-			throwError(userProvider.getLdapConnection(), e);
+		if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
+			LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
+			Boolean result = false;
+			try {
+				result = ldapQueryService.isUserExist(
+						userProvider.getLdapConnection(), userProvider.getBaseDn(),
+						userProvider.getPattern(), mail);
+			} catch (NamingException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			} catch (IOException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			} catch (org.springframework.ldap.CommunicationException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			}
+			return result;
+		} else {
+			logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 		}
-		return result;
+		return null;
 	}
 
 	@Override
-	public User auth(LdapUserProvider userProvider, String login,
+	public User auth(UserProvider up, String login,
 			String userPasswd) throws BusinessException {
-		LdapUserProvider p = userProvider;
-		if (p == null) {
-			return null;
+		if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
+			LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
+			User user = null;
+			try {
+				user = ldapQueryService.auth(userProvider.getLdapConnection(),
+						userProvider.getBaseDn(),
+						userProvider.getPattern(),
+						login, userPasswd);
+			} catch (NamingException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			} catch (IOException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			} catch (org.springframework.ldap.CommunicationException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			}
+			return user;
+		} else {
+			logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 		}
-		User user = null;
-		try {
-			user = ldapQueryService.auth(p.getLdapConnection(), p.getBaseDn(),
-					p.getPattern(), login, userPasswd);
-		} catch (NamingException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		} catch (IOException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		} catch (org.springframework.ldap.CommunicationException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		}
-		return user;
+		return null;
 	}
 
 	@Override
-	public User searchForAuth(LdapUserProvider userProvider, String login)
+	public User searchForAuth(UserProvider up, String login)
 			throws BusinessException {
-		LdapUserProvider p = userProvider;
-		if (p == null) {
-			return null;
+		if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
+			LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
+			User user = null;
+			try {
+				user = ldapQueryService.searchForAuth(userProvider.getLdapConnection(),
+						userProvider.getBaseDn(),
+						userProvider.getPattern(), login);
+			} catch (NamingException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			} catch (IOException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			} catch (org.springframework.ldap.CommunicationException e) {
+				throwError(userProvider.getLdapConnection(), e);
+			}
+			return user;
+		} else {
+			logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 		}
-		User user = null;
-		try {
-			user = ldapQueryService.searchForAuth(p.getLdapConnection(),
-					p.getBaseDn(), p.getPattern(), login);
-		} catch (NamingException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		} catch (IOException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		} catch (org.springframework.ldap.CommunicationException e) {
-			throwError(userProvider.getLdapConnection(), e);
-		}
-		return user;
+		return null;
 	}
 
 	private void throwError(LdapConnection ldap, Exception e)

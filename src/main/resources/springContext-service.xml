@@ -192,6 +192,7 @@
 		<constructor-arg ref="domainPatternRepository" />
 		<constructor-arg ref="ldapQueryService" />
 		<constructor-arg ref="userProviderRepository" />
+		<constructor-arg ref="ldapUserProviderRepository" />
 	</bean>
 
 	<bean name="ldapConnectionService" class="org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl">
@@ -229,7 +230,6 @@
 		<constructor-arg ref="domainBusinessService" />
 		<constructor-arg ref="mailConfigBusinessService" />
 		<constructor-arg ref="mimePolicyBusinessService" />
-		<constructor-arg ref="welcomeMessagesService" />
 	</bean>
 
 	<bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">
