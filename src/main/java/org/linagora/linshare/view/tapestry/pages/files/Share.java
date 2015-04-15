@@ -105,6 +105,10 @@ public class Share {
 	@Property
 	private boolean secureSharing;
 
+	@Persist(PersistenceConstants.FLASH)
+	@Property
+	private boolean creationAcknowledgement;
+
 	@Property
 	private String textAreaValue;
 
@@ -114,6 +118,10 @@ public class Share {
 	@Persist
 	@Property
 	private boolean showSecureSharingCheckBox;
+
+	@Persist
+	@Property
+	private boolean showAcknowledgementCheckBox;
 
 	@Persist
 	@Property
@@ -173,9 +181,15 @@ public class Share {
 		autocompleteMin = functionalityFacade.completionThreshold(domainId);
 		showSecureSharingCheckBox = shareFacade
 				.isVisibleSecuredAnonymousUrlCheckBox(domainId);
+		showAcknowledgementCheckBox = shareFacade
+				.isVisibleAcknowledgementCheckBox(domainId);
 		if (showSecureSharingCheckBox) {
 			secureSharing = shareFacade
 					.getDefaultSecuredAnonymousUrlCheckBoxValue(domainId);
+		}
+		if (showAcknowledgementCheckBox) {
+			creationAcknowledgement = shareFacade
+					.getDefaultAcknowledgementCheckBox(domainId);
 		}
 	}
 
@@ -281,7 +295,7 @@ public class Share {
 			try {
 				MailContainer mailContainer = new MailContainer(
 						userVo.getExternalMailLocale(), textAreaValue, textAreaSubjectValue);
-				shareFacade.share(userVo, documents, recipientsEmail, secureSharing, mailContainer);
+				shareFacade.share(userVo, documents, recipientsEmail, secureSharing, mailContainer, creationAcknowledgement);
 			} catch (BusinessException ex) {
 
 				// IF RELAY IS DISABLE ON SMTP SERVER

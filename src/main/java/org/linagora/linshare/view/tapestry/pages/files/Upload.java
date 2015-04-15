@@ -130,6 +130,10 @@ public class Upload {
 	@Property
 	private boolean secureSharing;
 
+	@Persist(PersistenceConstants.FLASH)
+	@Property
+	private boolean creationAcknowledgement;
+
 	@Property
 	private String textAreaValue;
 
@@ -139,6 +143,10 @@ public class Upload {
 	@Persist
 	@Property
 	private boolean showSecureSharingCheckBox;
+
+	@Persist
+	@Property
+	private boolean showAcknowledgementCheckBox;
 
 	@Property
 	private int autocompleteMin;
@@ -202,9 +210,15 @@ public class Upload {
 		autocompleteMin = functionalityFacade.completionThreshold(domainId);
 		showSecureSharingCheckBox = shareFacade
 				.isVisibleSecuredAnonymousUrlCheckBox(domainId);
+		showAcknowledgementCheckBox = shareFacade
+				.isVisibleAcknowledgementCheckBox(domainId);
 		if (showSecureSharingCheckBox) {
 			secureSharing = shareFacade
 					.getDefaultSecuredAnonymousUrlCheckBoxValue(domainId);
+		}
+		if (showAcknowledgementCheckBox) {
+			creationAcknowledgement = shareFacade
+					.getDefaultAcknowledgementCheckBox(domainId);
 		}
 	}
 
@@ -312,7 +326,7 @@ public class Upload {
 			try {
 				MailContainer mailContainer = new MailContainer(
 						userVo.getExternalMailLocale(), textAreaValue, textAreaSubjectValue);
-				shareFacade.share(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer);
+				shareFacade.share(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer, creationAcknowledgement);
 
 			} catch (BusinessException ex) {
 

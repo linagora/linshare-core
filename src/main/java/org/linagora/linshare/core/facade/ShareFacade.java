@@ -115,6 +115,17 @@ public interface ShareFacade {
 	 * @throws IllegalArgumentException
 	 * @throws BusinessException
 	 */
+
+	/**
+	 * This method returns true if we can enable or disable manually on the IHM the checkbox 'Acknowledgement'.
+	 * @param domainIdentifier
+	 * @return
+	 * @throws BusinessException
+	 */
+	public boolean isVisibleAcknowledgementCheckBox(String domainIdentifier) throws BusinessException;
+
+	public boolean getDefaultAcknowledgementCheckBox(String domainIdentifier) throws BusinessException;
+
 	public void updateShareComment(UserVo actorVo, String uuid, String comment) throws IllegalArgumentException, BusinessException ;
 
 	public InputStream getShareThumbnailStream(UserVo actorVo, String shareEntryUuid) throws BusinessException;
@@ -131,7 +142,7 @@ public interface ShareFacade {
 
 	public void share(UserVo actorVo, List<DocumentVo> documentVos,
 			List<String> recipientsEmail,
-			boolean secured, MailContainer mailContainer)
+			boolean secured, MailContainer mailContainer, boolean acknowledgement)
 			throws BusinessException;
 }
 

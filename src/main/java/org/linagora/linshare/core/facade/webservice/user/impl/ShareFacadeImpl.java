@@ -190,6 +190,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		sc.setSubject(createDto.getSubject());
 		sc.setMessage(createDto.getMessage());
 		sc.setSecured(createDto.getSecured());
+		sc.setAcknowledgement(createDto.isCreationAcknowledgement());
 		sc.setExpiryDate(createDto.getExpirationDate());
 		sc.addGenericUserDto(createDto.getRecipients());
 		Set<Entry> shares = shareService.create(actor, actor, sc);

@@ -65,6 +65,8 @@ public class ShareContainer {
 
 	protected Boolean secured;
 
+	protected Boolean creationAcknowledgement;
+
 	protected String inReplyTo;
 
 	protected String references;
@@ -104,13 +106,14 @@ public class ShareContainer {
 	protected List<MailContainerWithRecipient> mailContainers = Lists
 			.newArrayList();
 
-	public ShareContainer(String subject, String message, Boolean secured) {
+	public ShareContainer(String subject, String message, Boolean secured, Boolean creationAcknowledgement) {
 		super();
 		this.subject = subject;
 		this.message = message;
 		this.locale = "en";
 		this.secured = secured;
 		this.encrypted = false;
+		this.creationAcknowledgement = creationAcknowledgement;
 	}
 
 	public ShareContainer() {
@@ -377,6 +380,14 @@ public class ShareContainer {
 		for (AllowedContact allowedContact : allowedContacts) {
 			this.addAllowedRecipient(allowedContact.getContact());
 		}
+	}
+
+	public Boolean isAcknowledgement() {
+		return creationAcknowledgement;
+	}
+
+	public void setAcknowledgement(Boolean creationAcknowledgement) {
+		this.creationAcknowledgement = creationAcknowledgement;
 	}
 
 	/*

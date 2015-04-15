@@ -415,6 +415,13 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (129, fals
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (130, true, true, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, param) VALUES(53, false, 'UPLOAD_REQUEST_ENABLE_TEMPLATE', 129, 130, 1, false);
 
+-- Functionality : SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (126, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (127, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (128, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id) VALUES(52, false, 'SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER', 126, 127, 128, 1);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (52, true);
+
 -- Functionality : END
 
 
@@ -493,6 +500,9 @@ INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_t
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (29, 'aa74f9b1-471d-4588-9551-4fb985def2c7', 1, 0, 28, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload Request Entry Url', E'A user ${actorRepresentation} has uploaded a file you', E'<strong>${firstName} ${lastName}</strong> has uploaded a file &nbsp;:<ul>${documentNames}</ul>To download the file, follow this link &nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a><br/>The password to use is&nbsp;: <code>${password}</code><br/><br/>That link will not be available after ${expiryDate}<br/>', false);
 -- UPLOAD_REQUEST_FILE_DELETED_BY_SENDER
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (30, '88b90304-e9c9-11e4-b6b4-5404a6202d2c', 1, 0, 29, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request file deleted', E'A user ${actorRepresentation} has deleted a file for upload request: ${subject}', E'<strong>${firstName} ${lastName}</strong> has deleted a file.<br/>File name: ${fileName}<br/>Deletion date: ${deleteDate}<br/>File size: ${fileSize}<br/><br/>', false);
+-- SHARE_CREATION_ACKWOLEDGEMENT_FOR_OWNER
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (31, '01e0ac2e-f7ba-11e4-901b-08002722e7b1', 1, 0, 30, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Share creation acknowledgement', E'[SHARE ACKNOWLEDGEMENT] Shared on ${date}.', E'You just shared ${fileNumber} file(s), on the ${creationDate}, expiring the ${expirationDate}, with :<br/><ul>${recipientNames}</ul><br/>The list of your files is : <ul>${documentNames}</ul><br/>', false);
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (32, '2209b038-e1e7-11e4-8d2d-3b2a506425c0', 1, 0, 31, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Share creation acknowledgement', E'[SHARE ACKNOWLEDGEMENT] ${subject}. Shared on ${date}.', E'You just shared ${fileNumber} file(s), on the ${creationDate}, expiring the ${expirationDate}, with :<br/><ul>${recipientNames}</ul><br/>Your original message was:<br/><i>${message}</i><br/>The list of your files is : <ul>${documentNames}</ul><br/>', false);
 
 -- LANGUAGE FRENCH 1
 
@@ -556,6 +566,9 @@ INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_t
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (80, '6f8096ec-36e7-4ec7-a82f-c37b2eac094e', 1, 0, 28, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Upload Request Entry Url', E'${actorRepresentation} vient de déposer un fichier', E'<strong>${firstName} ${lastName}</strong> a déposé un fichier à votre attention&nbsp;:<ul>${documentNames}</ul>Pour télécharger le fichier, cliquez sur le lien ou copiez-le dans votre navigateur&nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a><br/>Le mot de passe à utiliser est&nbsp;: <code>${password}</code><br/><br/>Ce lien ne sera plus valide après le  ${expiryDate}<br/>',false);
 -- UPLOAD_REQUEST_FILE_DELETED_BY_SENDER
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (81, '41ef3560-e9ca-11e4-b6b4-5404a6202d2c', 1, 1, 29, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Suppression de fichier après dépôt', E'${actorRepresentation} a supprimé un fichier suite à une invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> a supprimé un fichier.<br/>Nom du fichier: ${fileName}<br/>Date de suppression: ${deleteDate}<br/>Taille du fichier: ${fileSize}<br/><br/>', false);
+-- SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (82, '5f705812-e351-11e4-b752-08002722e7b1', 1, 1, 30, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Accusé de réception de création de partage', E'[Accusé de Réception] Partagé le ${date}.', E'Vous avez de partagé ${fileNumber} document(s), le ${creationDate}, expirant le ${expirationdate}, avec : <ul>${recipientNames}</ul><br/>Voici la liste des documents partagés : <ul>${documentNames}</ul>', false);
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (83, 'edd4eba0-f7b9-11e4-95cc-08002722e7b1', 1, 1, 31, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Accusé de réception de création de partage', E'[Accusé de Réception] ${subject}. Partagé le ${date}.', E'Vous avez de partagé ${fileNumber} document(s), le ${creationDate}, expirant le ${expirationdate}, avec : <ul>${recipientNames}</ul>Votre message original est le suivant :<br/><i>${message}</i><br/><br/>Voici la liste des documents partagés :<br/><ul>${documentNames}</ul>', false);
 
 INSERT INTO mail_config (id, name, domain_abstract_id, visible, mail_layout_html_id, mail_layout_text_id, modification_date, creation_date, uuid) VALUES (1, 'Default mail config', 1, true, 1, 2, now(), now(), '946b190d-4c95-485f-bfe6-d288a2de1edd');
 
@@ -592,6 +605,8 @@ INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mai
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (28, 1, 0, 28, 27, '9bf9d474-fd10-48da-843c-dfadebd2b455');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (29, 1, 0, 29, 28, 'b9c6779b-e8ef-4678-b81c-e37ed79e9ed7');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (30, 1, 0, 30, 29, 'ec270da7-e9cb-11e4-b6b4-5404a6202d2c');
+INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (31, 1, 0, 31, 30, '447217e4-e1ee-11e4-8a45-fb8c68777bdf');
+INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (32, 1, 0, 32, 31, '1837a6f0-e8c7-11e4-b36a-08002722e7b1');
 
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (51, 1, 1, 51, 0, 'd0af96a7-6a9c-4c3f-8b8c-7c8e2d0449e1');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (52, 1, 1, 52, 1, '28e5855a-c0e7-40fc-8401-9cf25eb53f03');
@@ -623,5 +638,7 @@ INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mai
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (78, 1, 1, 78, 27, '2daaea2a-1b13-48b4-89a6-032f7e034a2d');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (80, 1, 1, 80, 28, 'cd65cae1-4946-4675-a356-addd722a5c6c');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (81, 1, 1, 81, 29, 'd6e18c3b-e9cb-11e4-b6b4-5404a6202d2c');
+INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (82, 1, 1, 82, 30, '8f579a8a-e352-11e4-99b3-08002722e7b1');
+INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (83, 1, 1, 83, 31, '2d3a0e80-e8c7-11e4-8349-08002722e7b1');
 
 UPDATE domain_abstract SET mailconfig_id = 1;

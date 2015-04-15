@@ -52,6 +52,9 @@ public class ShareCreationDto {
 	@ApiModelProperty(value = "Secured")
 	protected Boolean secured;
 
+	@ApiModelProperty(value = "Share acknowledgement, this boolean allows to choose whether or not the creator of the share wants to receive an acknowledgement.")
+	protected Boolean creationAcknowledgement;
+
 	@ApiModelProperty(value = "ExpirationDate")
 	protected Date expirationDate;
 
@@ -107,5 +110,13 @@ public class ShareCreationDto {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public void setCreationAcknowledgement(Boolean creationAcknowkedgement) {
+		this.creationAcknowledgement = creationAcknowkedgement;
+	}
+
+	public Boolean isCreationAcknowledgement() {
+		return creationAcknowledgement;
 	}
 }

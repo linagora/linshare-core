@@ -58,6 +58,7 @@ import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
+import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
@@ -89,6 +90,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 	private final EntryBusinessService entryBusinessService;
 
+	private final MailBuildingService mailBuildingService;
+
 	public ShareServiceImpl(
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final DocumentEntryService documentEntryService,
@@ -98,7 +101,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			final ShareEntryService shareEntryService,
 			final NotifierService notifierService,
 			final EntryBusinessService entryBusinessService,
-			final ShareEntryResourceAccessControl rac) {
+			final ShareEntryResourceAccessControl rac,
+			final MailBuildingService mailBuildingService) {
 		super(rac);
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.documentEntryService = documentEntryService;
@@ -108,6 +112,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		this.shareEntryService = shareEntryService;
 		this.notifierService = notifierService;
 		this.entryBusinessService = entryBusinessService;
+		this.mailBuildingService = mailBuildingService;
 	}
 
 	// TODO FMA - Refactoring shares
@@ -146,6 +151,9 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		entries.addAll(anonymousShareEntryService.create(actor, owner, shareContainer));
 		entries.addAll(shareEntryService.create(actor, owner, shareContainer));
 
+		if (shareContainer.isAcknowledgement()) {
+			notifierService.sendNotification(mailBuildingService.buildNewSharingPersonnalNotification(owner, shareContainer, entries));
+		}
 		// Notification
 		notifierService.sendNotification(shareContainer.getMailContainers());
 		return entries;

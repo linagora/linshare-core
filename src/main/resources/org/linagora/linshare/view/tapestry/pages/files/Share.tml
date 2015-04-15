@@ -66,6 +66,20 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                     </t:if>
                 </div>
 
+				<div class="control-group">
+                    <t:if test="showAcknowledgementCheckBox">
+                        <t:label for="creationAcknowledgement" class="control-label">
+                        ${message:pages.files.upload.creationAcknowledgement}</t:label>
+                        <div class="controls">
+                            <label class="checkbox">
+                                <t:checkbox t:id="creationAcknowledgement" />
+                                <span class="help-inline">
+                                ${message:pages.files.upload.creationAcknowledgement.description}</span>
+                            </label>
+                        </div>
+                    </t:if>
+                </div>
+
                 <div class="accordion" id="accordionMessage">
                     <div class="accordion-group">
                         <div class="accordion-heading">

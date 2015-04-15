@@ -182,6 +182,11 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public BooleanValueFunctionality getAcknowledgement(AbstractDomain domain) {
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER);
+	}
+
+	@Override
 	public BooleanValueFunctionality getAnonymousUrl(String domainIdentifier) {
 		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		return getAnonymousUrl(domain);
@@ -414,5 +419,11 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public String getCustomNotificationURLInRootDomain() throws BusinessException {
 		return this.getCustomNotificationUrlFunctionality(getRootDomain()).getValue();
+	}
+
+	@Override
+	public BooleanValueFunctionality getAcknowledgement(String domainIdentifier) {
+		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
+		return getAcknowledgement(domain);
 	}
 }

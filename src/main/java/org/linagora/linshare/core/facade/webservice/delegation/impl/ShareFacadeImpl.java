@@ -84,6 +84,7 @@ public class ShareFacadeImpl extends DelegationGenericFacadeImpl implements
 		sc.setSecured(createDto.getSecured());
 		sc.setExpiryDate(createDto.getExpirationDate());
 		sc.addGenericUserDto(createDto.getRecipients());
+		sc.setAcknowledgement(createDto.isCreationAcknowledgement());
 		Set<Entry> shares = shareService.create(actor, owner, sc);
 		Set<ShareDto> sharesDto = Sets.newHashSet();
 		for (Entry entry : shares) {

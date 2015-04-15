@@ -328,6 +328,7 @@
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="entryBusinessService" />
 		<constructor-arg ref="shareEntryResourceAccessControl" />
+		<constructor-arg ref="mailBuildingService" />
 	</bean>
 	<bean id="welcomeMessagesService" class="org.linagora.linshare.core.service.impl.WelcomeMessagesServiceImpl">
 		<constructor-arg ref="welcomeMessagesBusinessService" />

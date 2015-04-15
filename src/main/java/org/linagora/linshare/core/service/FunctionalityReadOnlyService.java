@@ -80,6 +80,8 @@ public interface FunctionalityReadOnlyService {
 	StringValueFunctionality getCustomLinkLogoFunctionality(AbstractDomain domain);
 	StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain);
 	StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain);
+	BooleanValueFunctionality getAcknowledgement(String domainIdentifier);
+	BooleanValueFunctionality getAcknowledgement(AbstractDomain domain);
 
 	IntegerValueFunctionality getCompletionFunctionality(AbstractDomain domain);
 	Functionality getUserTabFunctionality(AbstractDomain domain);

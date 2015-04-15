@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -62,6 +63,8 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.objects.Recipient;
+import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailConfigRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -1415,9 +1418,71 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setSubject(subject);
 		container.setContentHTML(layout);
 		container.setContentTXT(container.getContentHTML());
-		// Message IDs from Web service API (ex Plugin Thunerbird)
+		// Message IDs from Web service API (ex Plugin Thunderbird)
 		container.setInReplyTo(input.getInReplyTo());
 		container.setReferences(input.getReferences());
 		return container;
+	}
+
+	@Override
+	public MailContainerWithRecipient buildNewSharingPersonnalNotification(
+			User sender, ShareContainer container, Set<Entry> entries) throws BusinessException {
+		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(
+				sender.getExternalMailLocale());
+		MailContainerBuilder builder = new MailContainerBuilder();
+
+		SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		StringBuffer creationDate = new StringBuffer();
+		StringBuffer expirationDate = new StringBuffer();
+		creationDate.append(formater.format(entries.iterator().next().getCreationDate().getTime()));
+		expirationDate.append(formater.format(entries.iterator().next().getExpirationDate().getTime()));
+
+		long count = 0;
+		StringBuffer docNames = new StringBuffer();
+		for (DocumentEntry entry : container.getDocuments()) {
+			StringBuffer fileUrl = new StringBuffer();
+			fileUrl.append(getLinShareUrlForAUserRecipient(sender)
+					+ "files/index.listdocument.download/" + entry.getUuid());
+			docNames.append("<li><a href='" + fileUrl + "'>" + entry.getName()
+					+ "</a></li>");
+			count++;
+		}
+
+		StringBuffer recipientNames = new StringBuffer();
+		for (User rec : container.getShareRecipients()) {
+			recipientNames.append("<li>" + rec.getFullName()
+					+ "</li>");
+		}
+
+		for (Recipient recipient : container.getAnonymousShareRecipients()) {
+			recipientNames.append("<li>" + recipient.getMail() + "</li>");
+		}
+
+		builder.getSubjectChain().add("subject", container.getSubject());
+		builder.getSubjectChain().add("date", creationDate.toString());
+		builder.getGreetingsChain().add("firstName", sender.getFirstName())
+				.add("lastName", sender.getLastName());
+		builder.getBodyChain()
+				.add("message", container.getMessage())
+				.add("documentNames", docNames.toString())
+				.add("creationDate", creationDate.toString())
+				.add("expirationDate", expirationDate.toString())
+				.add("fileNumber", "" + count)
+				.add("recipientNames", recipientNames.toString());
+		mailContainer.setSubject(container.getSubject());
+		mailContainer.setRecipient(sender);
+		mailContainer.setFrom(getFromMailAddress(sender));
+		mailContainer.setReplyTo(sender.getMail());
+
+		if (container.getMessage() == null) {
+			return buildMailContainer(cfg, mailContainer,
+					null, MailContentType.SHARE_CREATION_ACKNOWLEDGMENT_FOR_OWNER,
+					builder);
+		} else {
+			return buildMailContainer(cfg, mailContainer,
+					null, MailContentType.SHARE_CREATION_ACKNOWLEDGMENT_WITH_SPECIAL_MESSAGE_FOR_OWNER,
+					builder);
+		}
 	}
 }

@@ -51,6 +51,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailBuildingService {
@@ -156,4 +157,7 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildNewUploadRequestEntryUrl(User sender,
 			UploadRequestUrl request, UploadRequestEntryUrl uREUrl)
 			throws BusinessException;
+
+	MailContainerWithRecipient buildNewSharingPersonnalNotification(
+			User sender, ShareContainer container, Set<Entry> entries) throws BusinessException;
 }

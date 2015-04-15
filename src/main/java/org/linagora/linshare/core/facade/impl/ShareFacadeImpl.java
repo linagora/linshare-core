@@ -327,13 +327,43 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	@Override
 	public void share(UserVo actorVo,
 			List<DocumentVo> documentVos, List<String> recipientsEmail,
-			boolean secured, MailContainer mailContainer)
+			boolean secured, MailContainer mailContainer, boolean creationAcknowledgement)
 			throws BusinessException {
 		User actor = getActor(actorVo);
 		ShareContainer sc = new ShareContainer(mailContainer.getSubject(),
-				mailContainer.getPersonalMessage(), secured);
+				mailContainer.getPersonalMessage(), secured, creationAcknowledgement);
 		sc.addDocumentVos(documentVos);
 		sc.addMail(recipientsEmail);
 		shareService.create(actor, actor, sc);
+	}
+
+	@Override
+	public boolean isVisibleAcknowledgementCheckBox(String domainIdentifier)
+			throws BusinessException {
+		try {
+			BooleanValueFunctionality acknowledgement = functionalityReadOnlyService.getAcknowledgement(domainIdentifier);
+			if (acknowledgement.getActivationPolicy().getStatus()) {
+				return acknowledgement.getDelegationPolicy().getStatus();
+			}
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+		}
+		return false;
+	}
+
+	@Override
+	public boolean getDefaultAcknowledgementCheckBox(String domainIdentifier)
+			throws BusinessException {
+		try {
+			BooleanValueFunctionality acknowledgement = functionalityReadOnlyService.getAcknowledgement(domainIdentifier);
+			if (acknowledgement.getActivationPolicy().getStatus()) {
+				return acknowledgement.getValue();
+			}
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+		}
+		return false;
 	}
 }
