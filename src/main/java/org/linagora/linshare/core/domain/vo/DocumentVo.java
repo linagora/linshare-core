@@ -109,7 +109,7 @@ public class DocumentVo implements Serializable, Comparable {
 		}
 		this.ownerLogin = documentEntry.getEntryOwner().getLsUuid();
 		this.encrypted = documentEntry.getCiphered();
-		this.shared = documentEntry.getShared() > 1;
+		this.shared = documentEntry.getShared() > 0;
 		this.type = documentEntry.getType();
 		this.size = documentEntry.getSize();
 		this.fileComment = documentEntry.getComment();
@@ -150,7 +150,7 @@ public class DocumentVo implements Serializable, Comparable {
 		}
 		this.ownerLogin = anonymousShareEntry.getEntryOwner().getLsUuid();
 		this.encrypted = anonymousShareEntry.getDocumentEntry().getCiphered();
-		this.shared = anonymousShareEntry.getDocumentEntry().getShared() > 1;
+		this.shared = anonymousShareEntry.getDocumentEntry().getShared() > 0;
 		this.type=anonymousShareEntry.getDocumentEntry().getType();
 		this.size=anonymousShareEntry.getDocumentEntry().getSize();
 		this.fileComment = anonymousShareEntry.getDocumentEntry().getComment();
@@ -169,7 +169,7 @@ public class DocumentVo implements Serializable, Comparable {
 		}
 		this.ownerLogin = uploadRequestEntry.getEntryOwner().getLsUuid();
 		this.encrypted = uploadRequestEntry.getDocumentEntry().getCiphered();
-		this.shared = uploadRequestEntry.getDocumentEntry().getShared() > 1;
+		this.shared = uploadRequestEntry.getDocumentEntry().getShared() > 0;
 		this.type=uploadRequestEntry.getDocumentEntry().getType();
 		this.size=uploadRequestEntry.getDocumentEntry().getSize();
 		this.fileComment = uploadRequestEntry.getDocumentEntry().getComment();
