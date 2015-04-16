@@ -78,7 +78,7 @@ CREATE TABLE domain_abstract (
   mime_policy_id      int8,
   mailconfig_id       int8,
   user_provider_id    int8,
-  welcome_id          int8,
+  welcome_messages_id          int8,
   CONSTRAINT linshare_domain_abstract_pkey
     PRIMARY KEY (id));
 CREATE TABLE domain_access_policy (
@@ -139,13 +139,6 @@ CREATE TABLE functionality_unit (
   integer_value    int4 NOT NULL,
   unit_id          int8 NOT NULL,
   CONSTRAINT linshare_functionality_unit_pkey
-    PRIMARY KEY (functionality_id));
-CREATE TABLE functionality_unit_boolean (
-  functionality_id int8 NOT NULL,
-  integer_value    int4 NOT NULL,
-  boolean_value    bool NOT NULL,
-  unit_id          int8 NOT NULL,
-  CONSTRAINT linshare_functionality_unit_boolean_pkey
     PRIMARY KEY (functionality_id));
 CREATE TABLE ldap_connection (
   id                    int8 NOT NULL,
@@ -651,7 +644,7 @@ CREATE TABLE welcome_messages_entry (
   id          int8 NOT NULL,
   lang       varchar(255) NOT NULL,
   value      varchar(255) NOT NULL,
-  welcome_id int8 NOT NULL,
+  welcome_messages_id int8 NOT NULL,
   PRIMARY KEY (id));
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
@@ -747,12 +740,11 @@ ALTER TABLE domain_policy ADD CONSTRAINT fk49c9a27c85924e31 FOREIGN KEY (domain_
 ALTER TABLE functionality ADD CONSTRAINT fk7430c53a58fe5398 FOREIGN KEY (policy_activation_id) REFERENCES policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE functionality ADD CONSTRAINT fk7430c53a71796372 FOREIGN KEY (policy_configuration_id) REFERENCES policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE functionality ADD CONSTRAINT fk7430c53a3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
 ALTER TABLE functionality_integer ADD CONSTRAINT fk8662133910439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE functionality_string ADD CONSTRAINT fkb2a122b610439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE functionality_unit ADD CONSTRAINT fk3ced016910439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE functionality_unit ADD CONSTRAINT fk3ced0169f329e0c9 FOREIGN KEY (unit_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality_unit_boolean ADD CONSTRAINT fk3ced016910439d2c FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality_unit_boolean ADD CONSTRAINT fk3ced0169f329e0d9 FOREIGN KEY (unit_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE share_expiry_rules ADD CONSTRAINT fkfda1673c3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE signature ADD CONSTRAINT fk81c9a1a7c0bbd6f FOREIGN KEY (document_id) REFERENCES document (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE thread ADD CONSTRAINT inheritance_account_thread FOREIGN KEY (account_id) REFERENCES account (id);
@@ -802,7 +794,6 @@ ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req254795 FOREIGN KEY (
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req11781 FOREIGN KEY (document_entry_entry_id) REFERENCES document_entry (entry_id);
 ALTER TABLE upload_proposition_rule ADD CONSTRAINT FKupload_pro672390 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
 ALTER TABLE upload_proposition_action ADD CONSTRAINT FKupload_pro841666 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
-ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingLis595962 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
@@ -826,6 +817,6 @@ ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1640 FOREIGN KEY (ldap_conn
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr355176 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE ldap_attribute ADD CONSTRAINT FKldap_attri49928 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi813203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
-ALTER TABLE welcome_messages_entry ADD CONSTRAINT FKwelcome_me856948 FOREIGN KEY (welcome_id) REFERENCES welcome_messages (id);
-ALTER TABLE domain_abstract ADD CONSTRAINT use_customisation FOREIGN KEY (welcome_id) REFERENCES welcome_messages (id);
+ALTER TABLE welcome_messages_entry ADD CONSTRAINT FKwelcome_me856948 FOREIGN KEY (welcome_messages_id) REFERENCES welcome_messages (id);
+ALTER TABLE domain_abstract ADD CONSTRAINT use_customisation FOREIGN KEY (welcome_messages_id) REFERENCES welcome_messages (id);
 ALTER TABLE welcome_messages ADD CONSTRAINT own_welcome_messages FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);

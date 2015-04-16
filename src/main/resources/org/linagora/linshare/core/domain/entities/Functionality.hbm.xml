@@ -52,15 +52,6 @@
         <property name="value" column="integer_value" type="integer"/>
         <many-to-one name="unit" class="org.linagora.linshare.core.domain.entities.Unit" column="unit_id" unique="true" cascade="all" lazy="false" />
     </joined-subclass>
-    
-    <joined-subclass name="UnitBooleanValueFunctionality" table="functionality_unit_boolean">
-    	<key>
-     		<column name="functionality_id" not-null="true" index="index_functionality_unit_boolean_id"/>
-    	</key>
-        <property name="value" column="integer_value" type="integer"/>
-        <property name="bool" column="boolean_value" type="boolean"/>
-        <many-to-one name="unit" class="org.linagora.linshare.core.domain.entities.Unit" column="unit_id" unique="true" cascade="all" lazy="false" />
-    </joined-subclass>
 
     <joined-subclass name="LanguageEnumValueFunctionality" table="functionality_enum_lang">
 		<key>

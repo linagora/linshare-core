@@ -110,7 +110,7 @@
 			<one-to-many class="org.linagora.linshare.core.domain.entities.ContactProvider"/>
 		</set>
 
-		<many-to-one name="currentWelcomeMessage" cascade="lock" column="welcome_id"
+		<many-to-one name="currentWelcomeMessage" cascade="lock" column="welcome_messages_id"
 			class="org.linagora.linshare.core.domain.entities.WelcomeMessages" not-null="false" lazy="proxy">
 		</many-to-one>
 

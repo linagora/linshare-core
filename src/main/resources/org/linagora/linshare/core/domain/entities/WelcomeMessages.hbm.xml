@@ -20,13 +20,13 @@
 		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true" lazy="proxy">
 		</many-to-one>
 		<map name="welcomeMessagesEntries" lazy="true" cascade="all" inverse="false">
-			<key column="welcome_id" not-null="true" />
+			<key column="welcome_messages_id" not-null="true" />
 			<map-key column="lang" type="languageType" />
 			<one-to-many
 				class="org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry" />
 		</map>
 		<set name="domains" lazy="true" cascade="save-update,lock" inverse="true">
-			<key column="welcome_id" not-null="false"/>
+			<key column="welcome_messages_id" not-null="false"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.AbstractDomain"/>
 		</set>
 	</class>

@@ -20,4 +20,4 @@ INSERT INTO domain_abstract(id, type , identifier, label, enable, template, desc
 
 UPDATE domain_abstract SET mime_policy_id=1 WHERE id < 100000;
 UPDATE domain_abstract SET mailconfig_id = 1;
-UPDATE domain_abstract SET welcome_id = 1;
+UPDATE domain_abstract SET welcome_messages_id = 1;

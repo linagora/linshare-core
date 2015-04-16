@@ -10,7 +10,7 @@ INSERT INTO domain_policy(id, identifier, domain_access_policy_id) VALUES (1, 'D
 
 
 -- Root domain (application domain)
-INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, default_mail_locale,  used_space, user_provider_id, domain_policy_id, parent_id,
+INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, default_mail_locale, used_space, user_provider_id, domain_policy_id, parent_id,
     auth_show_order) VALUES (1, 0, 'LinShareRootDomain', 'LinShareRootDomain', true, false, 'The root application domain', 3, 'en', 'en', 0, null, 1, null, 0);
 
 -- Default mime policy
@@ -22,14 +22,14 @@ UPDATE domain_abstract SET mime_policy_id=1;
 INSERT INTO welcome_messages(id, uuid, name, description, creation_date, modification_date, domain_id) VALUES (1, '4bc57114-c8c9-11e4-a859-37b5db95d856', 'WelcomeName', 'a Welcome description', now(), now(), 1);
 
 --Melcome messages Entry
-INSERT INTO welcome_messages_entry(id, lang, value, welcome_id) VALUES (1, 'en', 'Welcome to LinShare, THE Secure, Open-Source File Sharing Tool.', 1);
-INSERT INTO welcome_messages_entry(id, lang, value, welcome_id) VALUES (2, 'fr', 'Bienvenue dans LinShare, le logiciel libre de partage de fichiers sécurisé.', 1);
-INSERT INTO welcome_messages_entry(id, lang, value, welcome_id) VALUES (3, 'mq', 'Bienvini an lè Linshare, an solusyon lib de partaj de fichié sékirisé.', 1);
-INSERT INTO welcome_messages_entry(id, lang, value, welcome_id) VALUES (4, 'vi', 'Chào mừng bạn đến với Linshare, phần mềm nguồn mở chia sẻ file bảo mật.', 1);
-INSERT INTO welcome_messages_entry(id, lang, value, welcome_id) VALUES (5, 'nl', 'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 1);
+INSERT INTO welcome_messages_entry(id, lang, value, welcome_messages_id) VALUES (1, 'en', 'Welcome to LinShare, THE Secure, Open-Source File Sharing Tool.', 1);
+INSERT INTO welcome_messages_entry(id, lang, value, welcome_messages_id) VALUES (2, 'fr', 'Bienvenue dans LinShare, le logiciel libre de partage de fichiers sécurisé.', 1);
+INSERT INTO welcome_messages_entry(id, lang, value, welcome_messages_id) VALUES (3, 'mq', 'Bienvini an lè Linshare, an solusyon lib de partaj de fichié sékirisé.', 1);
+INSERT INTO welcome_messages_entry(id, lang, value, welcome_messages_id) VALUES (4, 'vi', 'Chào mừng bạn đến với Linshare, phần mềm nguồn mở chia sẻ file bảo mật.', 1);
+INSERT INTO welcome_messages_entry(id, lang, value, welcome_messages_id) VALUES (5, 'nl', 'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 1);
 
 -- Default setting welcome messages for all domains
-UPDATE domain_abstract SET welcome_id = 1;
+UPDATE domain_abstract SET welcome_messages_id = 1;
 
 
 -- system
@@ -519,7 +519,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
  VALUES(44, false, 'UPLOAD_PROPOSITION', 101, 102, 1);
 
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (104, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (104, false, false, 1, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (105, true, true, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, param)
  VALUES(45, false, 'UPLOAD_REQUEST_ENTRY_URL', 104, 105, 1, false);
@@ -535,7 +535,7 @@ INSERT INTO unit(id, unit_type, unit_value) VALUES (12, 0, 0);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (46, 7, 12);
 
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL__PASSWORD
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (109, true, true, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (109, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (110, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
  VALUES(47, false, 'UPLOAD_REQUEST_ENTRY_URL__PASSWORD', 109, 110, 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
