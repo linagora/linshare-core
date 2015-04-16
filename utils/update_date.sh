@@ -15,8 +15,8 @@ if [ ! -d "$path" ]; then
     usage
 fi
 
-yearfrom='2013'
-yearto='2014'
+yearfrom='2014'
+yearto='2015'
 
 grep -l "LinShare" --include "*.java" --include "*.properties" --include "*.tml" -R ${path} 2>/dev/null | xargs -i \
     sed -i 's/2009-'${yearfrom}' LINAGORA/'${yearto}' LINAGORA/g' {}
