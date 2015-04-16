@@ -434,6 +434,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("url", url)
 				.add("urlparam", "");
 		container.setRecipient(recipient);
+		container.setReplyTo(sender);
 		container.setFrom(getFromMailAddress(sender));
 
 		return buildMailContainer(cfg, container, null,
@@ -481,8 +482,8 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("lastName", sender.getLastName())
 				.add("documentName", fileName);
 		container.setRecipient(recipient);
+		container.setReplyTo(sender);
 		container.setFrom(getFromMailAddress(sender));
-
 		return buildMailContainer(cfg, container, null,
 				MailContentType.SHARED_DOC_DELETED, builder);
 	}
@@ -535,6 +536,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("url", url)
 				.add("urlparam", "");
 		container.setRecipient(recipient);
+		container.setReplyTo(sender);
 		container.setFrom(getFromMailAddress(sender));
 
 		return buildMailContainer(cfg, container, null,
@@ -761,7 +763,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("uploadPropositionUrl", getUploadPropositionUrl(recipient));
 		container.setRecipient(recipient.getMail());
 		container.setFrom(getFromMailAddress(recipient));
-		container.setFrom(abstractDomainService.getDomainMail(recipient.getDomain()));
+		container.setReplyTo(proposition.getMail());
 
 		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_PROPOSITION_CREATED, builder);
 	}
@@ -788,6 +790,7 @@ public class MailBuildingServiceImpl implements MailBuildingService, MailContent
 				.add("mail", proposition.getMail());
 
 		container.setRecipient(proposition.getMail());
+		container.setReplyTo(sender);
 		container.setFrom(getFromMailAddress(sender));
 
 		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_PROPOSITION_REJECTED, builder);
