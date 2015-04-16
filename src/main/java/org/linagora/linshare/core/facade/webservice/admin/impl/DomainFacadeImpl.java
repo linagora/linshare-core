@@ -50,6 +50,7 @@ import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
@@ -198,7 +199,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private AbstractDomain getDomain(DomainDto domainDto)
 			throws BusinessException {
-		checkAuthentication(Role.SUPERADMIN);
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainDto.getIdentifier(),
 				"domain identifier must be set.");
 		Validate.notNull(domainDto.getPolicy(), "domain policy must be set.");
@@ -218,6 +219,9 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		DomainPolicy policy = domainPolicyService
 				.find(domainDto.getPolicy().getIdentifier());
 		domain.setPolicy(policy);
+
+		WelcomeMessages wlcm = welcomeMessagesService.find(actor, domainDto.getCurrentWelcomeMessages().getUuid());
+		domain.setCurrentWelcomeMessages(wlcm);
 
 		if (domainDto.getMailConfigUuid() != null) {
 			MailConfig mailConfig = new MailConfig();

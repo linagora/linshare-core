@@ -162,14 +162,12 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throw new BusinessException(
 					BusinessErrorCode.WELCOME_MESSAGES_NOT_FOUND,
 					"This domain has no current welcome message");
-		} else {
-			WelcomeMessages current = welcomeMessagesService.find((User) actor,
-					domain.getCurrentWelcomeMessage().getUuid());
-			domain.setCurrentWelcomeMessages(current);
 		}
+
 		if (domain.getDescription() == null) {
 			domain.setDescription("");
 		}
+
 		if (domain.getUserProvider() != null) {
 			if (domain.getUserProvider().getLdapConnection() == null) {
 				throw new BusinessException(
