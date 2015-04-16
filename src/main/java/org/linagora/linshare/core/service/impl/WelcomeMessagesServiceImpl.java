@@ -86,14 +86,17 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 	}
 
 	@Override
-	public WelcomeMessages create(User actor, AbstractDomain domain, String uuid)
+	public WelcomeMessages create(User actor, AbstractDomain domain, WelcomeMessages wlcmInput)
 			throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
-		Validate.notNull(uuid, "Welcome message must be set.");
+		Validate.notNull(wlcmInput, "Welcome message must be set.");
+		Validate.notNull(wlcmInput.getUuid(), "Welcome message uuid must be set in order to duplicate it.");
 		Validate.notNull(domain, "Welcome message domain must be set.");
 
-		WelcomeMessages wlcm = find(actor, uuid);
+		WelcomeMessages wlcm = find(actor, wlcmInput.getUuid());
 		WelcomeMessages welcomeMessage = new WelcomeMessages(wlcm);
+		welcomeMessage.setBussinessName(wlcmInput.getName());
+		welcomeMessage.setBussinessDescription(wlcmInput.getDescription());
 		wlcm.setDomain(domain);
 		return welcomeMessagesBusinessService.create(welcomeMessage);
 	}

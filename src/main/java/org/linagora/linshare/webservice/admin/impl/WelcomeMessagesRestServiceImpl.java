@@ -78,7 +78,7 @@ public class WelcomeMessagesRestServiceImpl implements
 			@ApiResponse(code = 400, message = "Bad request.") })
 	@Override
 	public Set<WelcomeMessagesDto> findAll(
-			@QueryParam("domainId") String domainId)
+			@ApiParam(value = "If not set, actor domain will be use.", required = true)  @QueryParam("domainId") String domainId)
 			throws BusinessException {
 		return welcomeMessagesFacade.findAll(domainId);
 	}
@@ -105,7 +105,7 @@ public class WelcomeMessagesRestServiceImpl implements
 			@ApiResponse(code = 400, message = "Bad request : missing required fields.") })
 	@Override
 	public WelcomeMessagesDto create(
-			@ApiParam(value = "Welcome message to create", required = true) WelcomeMessagesDto customDto)
+			@ApiParam(value = "Welcome message to create (uuid is required because we will duplicate an existing WelcomeMessage", required = true) WelcomeMessagesDto customDto)
 			throws BusinessException {
 		return welcomeMessagesFacade.create(customDto);
 	}

@@ -98,10 +98,10 @@ public class WelcomeMessages implements Cloneable {
 		WelcomeMessages welcome = null;
 		try {
 			welcome = (WelcomeMessages) super.clone();
-		} catch(CloneNotSupportedException cnse) {
+		} catch (CloneNotSupportedException cnse) {
 			cnse.printStackTrace(System.err);
 		}
-		welcome.id=0;
+		welcome.id = 0;
 		return welcome;
 	}
 
@@ -129,12 +129,24 @@ public class WelcomeMessages implements Cloneable {
 		this.name = name;
 	}
 
+	public void setBussinessName(String name) {
+		if (name != null) {
+			this.name = name;
+		}
+	}
+
 	public String getDescription() {
 		return description;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public void setBussinessDescription(String description) {
+		if (description != null) {
+			this.description = description;
+		}
 	}
 
 	public Date getCreationDate() {

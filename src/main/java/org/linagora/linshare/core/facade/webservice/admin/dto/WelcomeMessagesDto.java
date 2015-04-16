@@ -79,7 +79,8 @@ public class WelcomeMessagesDto {
 	@ApiModelProperty(value = "WelcomeMessagesEntries")
 	private Map<SupportedLanguage, String> welcomeMessagesEntries;
 
-	public WelcomeMessagesDto() {}
+	public WelcomeMessagesDto() {
+	}
 
 	public WelcomeMessagesDto(WelcomeMessages welcomeMessage) {
 		this.uuid = welcomeMessage.getUuid();
@@ -88,14 +89,17 @@ public class WelcomeMessagesDto {
 		this.creationDate = welcomeMessage.getCreationDate();
 		this.modificationDate = welcomeMessage.getModificationDate();
 		Map<SupportedLanguage, String> wlcmsEntries = new HashMap<SupportedLanguage, String>();
-		for (WelcomeMessagesEntry entry : welcomeMessage.getWelcomeMessagesEntries().values()) {
-			wlcmsEntries.put(entry.getLang(), entry.getValue()) ;
+		for (WelcomeMessagesEntry entry : welcomeMessage
+				.getWelcomeMessagesEntries().values()) {
+			wlcmsEntries.put(entry.getLang(), entry.getValue());
 		}
 		setWelcomeMessagesEntries(wlcmsEntries);
 		this.myDomain = new DomainLightDto(welcomeMessage.getDomain());
 		this.domains = Sets.newHashSet();
-		for (AbstractDomain d : welcomeMessage.getDomains()) {
-			this.domains.add(new DomainLightDto(d));
+		if (welcomeMessage.getDomains() != null) {
+			for (AbstractDomain d : welcomeMessage.getDomains()) {
+				this.domains.add(new DomainLightDto(d));
+			}
 		}
 	}
 

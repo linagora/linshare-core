@@ -96,7 +96,7 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 
 		WelcomeMessages wlcm = wlcmDto.toObject();
 		WelcomeMessages wlcmMessage = welcomeMessagesService.create(actor,
-				domain, wlcm.getUuid());
+				domain, wlcm);
 		return new WelcomeMessagesDto(wlcmMessage);
 	}
 

@@ -47,7 +47,7 @@ public interface WelcomeMessagesService {
 
 	WelcomeMessages find(User actor,String uuid) throws BusinessException;
 
-	WelcomeMessages create(User actor, AbstractDomain domain, String uuid) throws BusinessException;
+	WelcomeMessages create(User actor, AbstractDomain domain, WelcomeMessages wlcm) throws BusinessException;
 
 	WelcomeMessages update(User actor, AbstractDomain domain, WelcomeMessages custom) throws BusinessException;
 

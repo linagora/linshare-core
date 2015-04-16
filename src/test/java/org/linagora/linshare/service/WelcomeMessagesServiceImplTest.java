@@ -151,7 +151,7 @@ public class WelcomeMessagesServiceImplTest extends
 		try {
 			WelcomeMessages welcm = welcomeService.find(actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
 			WelcomeMessages welcm_create = welcomeService
-					.create(actor, rootDomain, welcm.getUuid());
+					.create(actor, rootDomain, welcm);
 			logger.debug("Object created.");
 			Assert.assertNotNull(welcm_create);
 			Assert.assertEquals(5, welcm_create.getWelcomeMessagesEntries()
