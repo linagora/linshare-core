@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.MimeType;
 
@@ -43,4 +45,5 @@ public interface MimeTypeRepository extends AbstractRepository<MimeType> {
 
 	MimeType findByMimeType(MimePolicy mimePolicy, String mimeType);
 
+	List<MimeType> findAll(MimePolicy mimePolicy);
 }

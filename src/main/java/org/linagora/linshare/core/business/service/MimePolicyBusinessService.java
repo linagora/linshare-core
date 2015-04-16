@@ -48,7 +48,7 @@ public interface MimePolicyBusinessService {
 
 	Set<MimePolicy> findAll() throws BusinessException;
 
-	void load(MimePolicy mimePolicy) throws BusinessException;
+	MimePolicy load(MimePolicy mimePolicy) throws BusinessException;
 
 	MimePolicy update(MimePolicy mimePolicy) throws BusinessException;
 

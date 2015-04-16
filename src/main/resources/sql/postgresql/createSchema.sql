@@ -561,6 +561,7 @@ CREATE TABLE mime_policy (
   displayable       int4 NOT NULL,
   creation_date     timestamp(6) NOT NULL,
   modification_date timestamp(6) NOT NULL,
+  version           int4 NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mime_type (
   id                 int8 NOT NULL,

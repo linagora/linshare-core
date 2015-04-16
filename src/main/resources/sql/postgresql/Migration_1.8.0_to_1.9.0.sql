@@ -98,6 +98,15 @@ CREATE TABLE upload_request_entry_url (
   expiration_date   timestamp(6) NOT NULL,
   PRIMARY KEY (id));
 
+ALTER TABLE mime_policy ADD COLUMN version INTEGER;
+UPDATE mime_policy SET version = 0;
+ALTER TABLE mime_policy ALTER COLUMN version SET NOT NULL;
+
+
+
+
+
+
 -- LinShare version
 INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence')),'1.9.0');
 

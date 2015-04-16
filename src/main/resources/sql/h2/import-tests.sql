@@ -56,7 +56,7 @@ INSERT INTO domain_abstract(id, type , identifier, label, enable, template, desc
 INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, auth_show_order, welcome_id) VALUES (100006, 3, 'guestDomainName1', 'guestDomainName1 (GuestDomain)', true, false, 'a simple description', 0, 'en', 0, null, 100001, 100002, 6, 1);
 
 -- Default mime policy
-INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, creation_date, modification_date) VALUES(100001, 100001, 'ec51317c-086c-442a-a4bf-1afdf8774079', 'Default Mime Policy de test', 0, 0, now(), now());
+INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, version, creation_date, modification_date) VALUES(100001, 100001, 'ec51317c-086c-442a-a4bf-1afdf8774079', 'Default Mime Policy de test', 0, 0, 1, now(), now());
 UPDATE domain_abstract SET mime_policy_id=1 WHERE id >= 100001;
 
 

@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
@@ -45,10 +46,14 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.MimePolicyRepository;
 import org.linagora.linshare.core.repository.MimeTypeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService {
+
+	private static final Logger logger = LoggerFactory.getLogger(MimePolicyBusinessServiceImpl.class);
 
 	private final MimePolicyRepository mimePolicyRepository;
 
@@ -71,6 +76,7 @@ public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService 
 
 	@Override
 	public MimePolicy create(MimePolicy mimePolicy) throws BusinessException {
+		mimePolicy.setVersion(1);
 		mimePolicyRepository.create(mimePolicy);
 		for (MimeType mimeType : mimeTypeMagicNumberDao.getAllMimeType()) {
 			mimeType.setMimePolicy(mimePolicy);
@@ -106,14 +112,39 @@ public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService 
 	}
 
 	@Override
-	public void load(MimePolicy mimePolicy) throws BusinessException {
+	public MimePolicy load(MimePolicy mimePolicy) throws BusinessException {
 		if (mimePolicy.getMimeTypes() != null
 				&& mimePolicy.getMimeTypes().size() == 0) {
 			for (MimeType mimeType : mimeTypeMagicNumberDao.getAllMimeType()) {
 				mimeType.setMimePolicy(mimePolicy);
 				mimeTypeRepository.create(mimeType);
 			}
+		} else if (mimePolicy.getVersion() != 1) {
+			// The main purpose of this code is to upgrade database with all new mime types
+			// available in Apache Tika. Each version of Tika adds and/or removes some mime types.
+			Set<MimeType> mimeTypes = mimeTypeMagicNumberDao.getAllMimeType();
+			Set<String> ref = Sets.newHashSet();
+			for (MimeType mimeType : mimeTypes) {
+				ref.add(mimeType.getMimeType());
+				MimeType type = mimeTypeRepository.findByMimeType(mimePolicy, mimeType.getMimeType());
+				if (type == null) {
+					mimeType.setMimePolicy(mimePolicy);
+					mimeTypeRepository.create(mimeType);
+					mimePolicy.getMimeTypes().add(mimeType);
+				}
+			}
+			List<MimeType> findAll = mimeTypeRepository.findAll(mimePolicy);
+			for (MimeType mimeType : findAll) {
+				if (!ref.contains(mimeType.getMimeType())) {
+					mimeTypeRepository.delete(mimeType);
+					mimePolicy.getMimeTypes().remove(mimeType);
+				}
+			}
+			mimePolicy.setVersion(1);
+			mimePolicy = mimePolicyRepository.update(mimePolicy);
+			logger.debug("mime_policies size : " + mimePolicy.getMimeTypes().size());
 		}
+		return mimePolicy;
 	}
 
 	@Override

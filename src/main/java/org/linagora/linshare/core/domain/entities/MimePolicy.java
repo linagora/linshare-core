@@ -51,6 +51,8 @@ public class MimePolicy {
 
 	private int displayable;
 
+	private int version;
+
 	private Date creationDate;
 
 	private Date modificationDate;
@@ -94,6 +96,14 @@ public class MimePolicy {
 
 	public void setMode(int mode) {
 		this.mode = mode;
+	}
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
 	}
 
 	public int getDisplayable() {
