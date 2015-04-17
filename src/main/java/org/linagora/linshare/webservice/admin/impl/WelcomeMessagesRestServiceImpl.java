@@ -110,7 +110,7 @@ public class WelcomeMessagesRestServiceImpl implements
 		return welcomeMessagesFacade.create(customDto);
 	}
 
-	@Path("/{uuid}")
+	@Path("/")
 	@PUT
 	@ApiOperation(value = "Update a welcome message entry.", response = WelcomeMessagesDto.class)
 	@ApiResponses({

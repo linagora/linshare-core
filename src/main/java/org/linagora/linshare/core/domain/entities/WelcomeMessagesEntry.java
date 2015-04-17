@@ -53,6 +53,11 @@ public class WelcomeMessagesEntry {
 		this.lang = entry.getLang();
 		this.value = entry.getValue();
 	}
+	public WelcomeMessagesEntry(SupportedLanguage lang, String value) {
+		super();
+		this.lang = lang;
+		this.value = value;
+	}
 
 	public long getId() {
 		return id;

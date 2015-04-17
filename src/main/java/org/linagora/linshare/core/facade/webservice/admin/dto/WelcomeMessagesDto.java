@@ -176,6 +176,13 @@ public class WelcomeMessagesDto {
 		wlcm.setUuid(uuid);
 		wlcm.setDescription(description);
 		wlcm.setName(name);
+		if (welcomeMessagesEntries != null) {
+			for (SupportedLanguage supportedLanguage : welcomeMessagesEntries
+					.keySet()) {
+				wlcm.addWelcomeMessagesEntry(supportedLanguage,
+						welcomeMessagesEntries.get(supportedLanguage));
+			}
+		}
 		return wlcm;
 	}
 }

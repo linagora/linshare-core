@@ -109,7 +109,6 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 		Validate.notEmpty(wlcm.getUuid(), "Welcome message uuid must be set.");
 		Validate.notEmpty(wlcm.getWelcomeMessagesEntries(),
 				"Wecolme message entries must be set.");
-		Validate.notNull(wlcm.getDomain(), "owner domain must be set.");
 
 		WelcomeMessages welcomeMessage = find(actor, wlcm.getUuid());
 
@@ -130,7 +129,6 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 
 		welcomeMessage.setDescription(wlcm.getDescription());
 		welcomeMessage.setName(wlcm.getName());
-		welcomeMessage.setDomain(wlcm.getDomain());
 		welcomeMessage.setWelcomeMessagesEntries(wlcm.getWelcomeMessagesEntries());
 
 		return welcomeMessagesBusinessService.update(welcomeMessage);

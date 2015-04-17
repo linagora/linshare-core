@@ -35,10 +35,12 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.domain.entities.User;
@@ -107,7 +109,6 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 
 		AbstractDomain domain = abstractDomainService.findById(wlcmDto
 				.getMyDomain().getIdentifier());
-
 		WelcomeMessages wlcm = wlcmDto.toObject();
 		WelcomeMessages wlcmMessage = welcomeMessagesService.update(actor,
 				domain, wlcm);

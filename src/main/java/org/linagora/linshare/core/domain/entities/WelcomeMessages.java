@@ -169,6 +169,14 @@ public class WelcomeMessages implements Cloneable {
 		return welcomeMessagesEntries;
 	}
 
+	public void addWelcomeMessagesEntry(SupportedLanguage key, String entry) {
+		if (welcomeMessagesEntries == null) {
+			welcomeMessagesEntries = Maps.newHashMap();
+		}
+		this.welcomeMessagesEntries.put(key, new WelcomeMessagesEntry(key,
+				entry));
+	}
+
 	public void setWelcomeMessagesEntries(
 			Map<SupportedLanguage, WelcomeMessagesEntry> customisationEntries) {
 		this.welcomeMessagesEntries = customisationEntries;
