@@ -135,43 +135,53 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequest createRequest(Account actor, User owner,
-			UploadRequest req, Contact contact, String subject, String body)
+	public List<UploadRequest> createRequest(Account actor, User owner,
+			UploadRequest req, Contact contact, String subject, String body, Boolean groupedMode)
 			throws BusinessException {
 		return createRequest(actor, owner, req, Lists.newArrayList(contact),
-				subject, body);
+				subject, body, groupedMode);
 	}
 
 	@Override
-	public UploadRequest createRequest(Account actor, User owner,
-			UploadRequest req, List<Contact> contacts, String subject,
-			String body) throws BusinessException {
+	public List<UploadRequest> createRequest(Account actor, User owner,
+			UploadRequest inputRequest, List<Contact> contacts, String subject,
+			String body, Boolean groupedMode) throws BusinessException {
+		AbstractDomain domain = owner.getDomain();
+		BooleanValueFunctionality groupedFunc = functionalityService.getUploadRequestGroupedFunctionality(domain);
+		boolean groupedModeLocal = groupedFunc.getValue();
+		if (groupedFunc.getActivationPolicy().getStatus()) {
+			if (groupedFunc.getDelegationPolicy().getStatus()) {
+				if (groupedMode != null) {
+					groupedModeLocal = groupedMode;
+				}
+			}
+		} else {
+			groupedModeLocal = false;
+		}
 		UploadRequestGroup group = uploadRequestGroupBusinessService
 				.create(new UploadRequestGroup(subject, body));
-		AbstractDomain domain = owner.getDomain();
-		req.setOwner(owner);
-		req.setStatus(UploadRequestStatus.STATUS_CREATED);
-		req.setAbstractDomain(domain);
-		req.setUploadRequestGroup(group);
+		UploadRequest req = initUploadRequest(owner, group, inputRequest);
+		List<UploadRequest> requests = Lists.newArrayList();
+		if (groupedModeLocal) {
+			requests.addAll(createRequestGrouped(actor, owner, req,
+					contacts, subject, body, group));
+		} else {
+			for (Contact contact : contacts) {
+				UploadRequest clone = req.clone();
+				requests.addAll(createRequestGrouped(actor, owner, clone,
+						 Lists.newArrayList(contact), subject, body, group));
+			}
+		}
+		return requests;
+	}
 
-		checkActivationDate(domain, req);
-		checkExpiryAndNoticationDate(domain, req);
-		checkMaxDepositSize(domain, req);
-		checkMaxFileCount(domain, req);
-		checkMaxFileSize(domain, req);
-		checkNotificationLanguage(domain, req);
-		checkCanDelete(domain, req);
-		checkCanClose(domain, req);
-		checkSecuredUrl(domain, req);
-
-		Functionality func = functionalityService.getUploadRequestProlongationFunctionality(domain);
-		req.setCanEditExpiryDate(func.getActivationPolicy().getStatus());
-
+	private List<UploadRequest> createRequestGrouped(Account actor, User owner,
+			UploadRequest req, List<Contact> contacts, String subject,
+			String body, UploadRequestGroup group) throws BusinessException {
 		UploadRequestHistory hist = new UploadRequestHistory(req,
 				UploadRequestHistoryEventType.EVENT_CREATED);
 		req.getUploadRequestHistory().add(hist);
 		req = uploadRequestBusinessService.create(req);
-
 		List<MailContainerWithRecipient> mails = Lists.newArrayList();
 		for (Contact c : contacts) {
 			UploadRequestUrl requestUrl = uploadRequestUrlService
@@ -196,6 +206,27 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 				logger.error("Fail to update upload request status of the request : " + req.getUuid());
 			}
 		}
+		return Lists.newArrayList(req);
+	}
+
+	private UploadRequest initUploadRequest(User owner,
+			UploadRequestGroup group, UploadRequest req) {
+		AbstractDomain domain = owner.getDomain();
+		req.setOwner(owner);
+		req.setStatus(UploadRequestStatus.STATUS_CREATED);
+		req.setAbstractDomain(domain);
+		req.setUploadRequestGroup(group);
+		checkActivationDate(domain, req);
+		checkExpiryAndNoticationDate(domain, req);
+		checkMaxDepositSize(domain, req);
+		checkMaxFileCount(domain, req);
+		checkMaxFileSize(domain, req);
+		checkNotificationLanguage(domain, req);
+		checkCanDelete(domain, req);
+		checkCanClose(domain, req);
+		checkSecuredUrl(domain, req);
+		Functionality func = functionalityService.getUploadRequestProlongationFunctionality(domain);
+		req.setCanEditExpiryDate(func.getActivationPolicy().getStatus());
 		return req;
 	}
 

@@ -54,9 +54,9 @@ public interface UploadRequestService {
 
 	UploadRequest findRequestByUuid(Account actor, String uuid) throws BusinessException;
 
-	UploadRequest createRequest(Account actor, User owner, UploadRequest req, Contact contact, String subject, String body) throws BusinessException;
+	List<UploadRequest> createRequest(Account actor, User owner, UploadRequest req, Contact contact, String subject, String body, Boolean groupedMode) throws BusinessException;
 
-	UploadRequest createRequest(Account actor, User owner, UploadRequest req, List<Contact> contacts, String subject, String body)
+	List<UploadRequest> createRequest(Account actor, User owner, UploadRequest req, List<Contact> contacts, String subject, String body, Boolean groupedMode)
 			throws BusinessException;
 
 	UploadRequest updateRequest(Account actor, UploadRequest req)

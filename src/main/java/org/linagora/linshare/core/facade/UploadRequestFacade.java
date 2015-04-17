@@ -54,7 +54,7 @@ public interface UploadRequestFacade {
 	UploadRequestVo findRequestByUuid(UserVo actorVo, String uuid)
 			throws BusinessException;
 
-	UploadRequestVo createRequest(UserVo actorVo, UploadRequestVo req)
+	List<UploadRequestVo> createRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException;
 
 	UploadRequestVo updateRequest(UserVo actorVo, UploadRequestVo req)
