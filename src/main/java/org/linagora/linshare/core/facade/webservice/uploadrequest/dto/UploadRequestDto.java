@@ -37,6 +37,8 @@ package org.linagora.linshare.core.facade.webservice.uploadrequest.dto;
 import java.util.Date;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
@@ -45,6 +47,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+@XmlRootElement(name = "UploadRequest")
 public class UploadRequestDto {
 
 	private String uuid;

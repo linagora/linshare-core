@@ -36,11 +36,14 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+@XmlRootElement(name = "UploadRequest")
 public class UploadRequestDto {
 
 	@ApiModelProperty(value = "Uuid")
