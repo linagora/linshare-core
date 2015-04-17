@@ -48,11 +48,6 @@ public class WelcomeMessagesEntry {
 		super();
 	}
 
-	public WelcomeMessagesEntry(WelcomeMessagesEntry entry) {
-		super();
-		this.lang = entry.getLang();
-		this.value = entry.getValue();
-	}
 	public WelcomeMessagesEntry(SupportedLanguage lang, String value) {
 		super();
 		this.lang = lang;

@@ -97,7 +97,7 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 		WelcomeMessages welcomeMessage = new WelcomeMessages(wlcm);
 		welcomeMessage.setBussinessName(wlcmInput.getName());
 		welcomeMessage.setBussinessDescription(wlcmInput.getDescription());
-		wlcm.setDomain(domain);
+		welcomeMessage.setDomain(domain);
 		return welcomeMessagesBusinessService.create(welcomeMessage);
 	}
 
