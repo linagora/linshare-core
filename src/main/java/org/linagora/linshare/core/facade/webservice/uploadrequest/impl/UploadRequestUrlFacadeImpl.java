@@ -39,12 +39,14 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
@@ -57,14 +59,17 @@ public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 
 	private final MimePolicyService mimePolicyService;
 
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	public UploadRequestUrlFacadeImpl(
 			final UploadRequestService uploadRequestService,
 			final UploadRequestUrlService uploadRequestUrlService,
+			FunctionalityReadOnlyService functionalityReadOnlyService,
 			final MimePolicyService mimePolicyService) {
 		this.uploadRequestService = uploadRequestService;
 		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.mimePolicyService = mimePolicyService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
 	@Override
@@ -119,10 +124,17 @@ public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 			return null;
 		UploadRequestDto dto = new UploadRequestDto(requestUrl);
 		Account owner = requestUrl.getUploadRequest().getOwner();
+		Functionality functionality = functionalityReadOnlyService.getMimeTypeFunctionality(owner.getDomain());
 		Set<MimeType> mimeTypes = mimePolicyService.findAllMyMimeTypes(owner);
 		for (MimeType mimeType : mimeTypes) {
-			if (mimeType.getEnable()) {
-				String extension = mimeType.getExtensions();
+			String extension = mimeType.getExtensions();
+			if (functionality.getActivationPolicy().getStatus()) {
+				if (mimeType.getEnable()) {
+					if (!extension.isEmpty()) {
+						dto.addExtensions(extension.substring(1));
+					}
+				}
+			} else {
 				if (!extension.isEmpty()) {
 					dto.addExtensions(extension.substring(1));
 				}

@@ -215,7 +215,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		getDefaultValue(owner, req);// get value default from domain
 		Contact contact = new Contact(created.getMail());
 		uploadRequestService.createRequest(owner, owner, req, contact,
-				created.getSubject(), created.getBody());
+				created.getSubject(), created.getBody(), null);
 	}
 
 	public void getDefaultValue(User owner, UploadRequest req)

@@ -41,7 +41,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 import com.google.common.collect.Sets;
 
-public class UploadRequest {
+public class UploadRequest implements Cloneable {
 
 	private long id;
 
@@ -293,4 +293,17 @@ public class UploadRequest {
 	public void setSecured(boolean secured) {
 		this.secured = secured;
 	}
+
+	@Override
+	public UploadRequest clone() {
+		UploadRequest req = null;
+		try {
+			req = (UploadRequest) super.clone();
+		} catch (CloneNotSupportedException cnse) {
+			cnse.printStackTrace(System.err);
+		}
+		req.id = 0;
+		return req;
+	}
+
 }

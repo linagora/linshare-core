@@ -84,6 +84,8 @@ public class UploadRequestVo implements Cloneable {
 
 	private Boolean canClose;
 
+	private Boolean groupedMode;
+
 	private Boolean canEditExpiryDate;
 
 	@Validate(value = "required")
@@ -121,6 +123,7 @@ public class UploadRequestVo implements Cloneable {
 		expiryDate = req.getExpiryDate();
 		canDelete = req.isCanDelete();
 		canClose = req.isCanClose();
+		groupedMode = false;
 		canEditExpiryDate = req.isCanEditExpiryDate();
 		locale = Language.fromTapestryLocale(req.getLocale());
 		secured = req.isSecured();
@@ -254,6 +257,14 @@ public class UploadRequestVo implements Cloneable {
 
 	public Boolean getCanClose() {
 		return canClose;
+	}
+
+	public Boolean getGroupedMode() {
+		return groupedMode;
+	}
+
+	public void setGroupedMode(Boolean groupedMode) {
+		this.groupedMode = groupedMode;
 	}
 
 	public void setCanClose(Boolean canClose) {

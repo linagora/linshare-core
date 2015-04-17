@@ -141,7 +141,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	}
 
 	@Override
-	public UploadRequestVo createRequest(UserVo actorVo, UploadRequestVo reqVo)
+	public List<UploadRequestVo> createRequest(UserVo actorVo, UploadRequestVo reqVo)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		List<Contact> contacts = Lists.newArrayList();
@@ -149,9 +149,13 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 			contacts.add(new Contact(contact));
 		}
 		UploadRequest req = reqVo.toEntity();
-		UploadRequest request = uploadRequestService.createRequest(actor,
-				actor, req, contacts, reqVo.getSubject(), reqVo.getBody());
-		return new UploadRequestVo(request);
+		List<UploadRequest> requests = uploadRequestService.createRequest(actor,
+				actor, req, contacts, reqVo.getSubject(), reqVo.getBody(), reqVo.getGroupedMode());
+		List<UploadRequestVo> requestDtos = Lists.newArrayList();
+		for (UploadRequest request : requests) {
+			requestDtos.add(new UploadRequestVo(request));
+		}
+		return requestDtos ;
 	}
 
 	@Override
@@ -364,6 +368,20 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 			}
 			ret.setCanClose(canCloseFunc.getValue());
 		}
+
+		BooleanValueFunctionality groupedModeFunc = functionalityReadOnlyService
+				.getUploadRequestGroupedFunctionality(domain);
+
+		if (groupedModeFunc.getActivationPolicy().getStatus()) {
+			logger.debug("groupedModeFunc is activated");
+			if (groupedModeFunc.getDelegationPolicy() != null
+					&& groupedModeFunc.getDelegationPolicy().getStatus()) {
+				logger.debug("groupedModeFunc has a delegation policy");
+				includes.add("groupedMode");
+			}
+			ret.setGroupedMode(groupedModeFunc.getValue());
+		}
+
 		String[] include = includes.toArray(new String[includes.size()]);
 
 		logger.debug("Create BeanModel includes :\n\t\t"
