@@ -75,7 +75,7 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 		Set<WelcomeMessagesDto> wlcmDtoList = Sets.newHashSet();
 		List<WelcomeMessages> entities = welcomeMessagesService.findAll(actor, domainId);
 		for (WelcomeMessages entity : entities) {
-			wlcmDtoList.add(new WelcomeMessagesDto(entity));
+			wlcmDtoList.add(new WelcomeMessagesDto(entity, true));
 		}
 		return wlcmDtoList;
 	}
@@ -84,7 +84,7 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 	public WelcomeMessagesDto find(String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Welcome message uuid must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
-		return new WelcomeMessagesDto(welcomeMessagesService.find(actor, uuid));
+		return new WelcomeMessagesDto(welcomeMessagesService.find(actor, uuid), true);
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 		WelcomeMessages wlcm = wlcmDto.toObject();
 		WelcomeMessages wlcmMessage = welcomeMessagesService.create(actor,
 				domain, wlcm);
-		return new WelcomeMessagesDto(wlcmMessage);
+		return new WelcomeMessagesDto(wlcmMessage, true);
 	}
 
 	@Override
@@ -112,14 +112,14 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 		WelcomeMessages wlcm = wlcmDto.toObject();
 		WelcomeMessages wlcmMessage = welcomeMessagesService.update(actor,
 				domain, wlcm);
-		return new WelcomeMessagesDto(wlcmMessage);
+		return new WelcomeMessagesDto(wlcmMessage, true);
 	}
 
 	@Override
 	public WelcomeMessagesDto delete(String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Welcome message uuid must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
-		return new WelcomeMessagesDto(welcomeMessagesService.delete(actor, uuid));
+		return new WelcomeMessagesDto(welcomeMessagesService.delete(actor, uuid), true);
 	}
 
 	@Override
@@ -129,6 +129,6 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(wlcmDto.getUuid(), "Welcome message uuid must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
 		return new WelcomeMessagesDto(welcomeMessagesService.delete(actor,
-				wlcmDto.getUuid()));
+				wlcmDto.getUuid()), true);
 	}
 }

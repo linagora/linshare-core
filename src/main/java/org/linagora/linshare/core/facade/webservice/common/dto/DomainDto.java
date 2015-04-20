@@ -39,6 +39,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -51,6 +52,8 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 // we need to ignore route property. It was added my Restangular (Javascript IHM)
+
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 @JsonIgnoreProperties({"route"})
 @XmlRootElement(name = "Domain")
 @ApiModel(value = "Domain", description = "A domain contains ")
@@ -108,7 +111,7 @@ public class DomainDto {
 		this.type = domain.getDomainType().toString();
 		mimePolicyUuid = domain.getMimePolicy().getUuid();
 		mailConfigUuid = domain.getCurrentMailConfiguration().getUuid();
-		this.currentWelcomeWessage = new WelcomeMessagesDto(domain.getCurrentWelcomeMessage());
+		this.currentWelcomeWessage = new WelcomeMessagesDto(domain.getCurrentWelcomeMessage(), false);
 		if (!light) {
 			this.description = domain.getDescription();
 			this.language = domain.getDefaultTapestryLocale();

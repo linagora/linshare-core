@@ -41,6 +41,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
@@ -51,6 +52,7 @@ import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "WelcomeMessages")
 @ApiModel(value = "WelcomeMessages", description = "")
 public class WelcomeMessagesDto {
@@ -82,23 +84,24 @@ public class WelcomeMessagesDto {
 	public WelcomeMessagesDto() {
 	}
 
-	public WelcomeMessagesDto(WelcomeMessages welcomeMessage) {
+	public WelcomeMessagesDto(WelcomeMessages welcomeMessage, boolean extended) {
 		this.uuid = welcomeMessage.getUuid();
 		this.name = welcomeMessage.getName();
 		this.description = welcomeMessage.getDescription();
 		this.creationDate = welcomeMessage.getCreationDate();
 		this.modificationDate = welcomeMessage.getModificationDate();
-		Map<SupportedLanguage, String> wlcmsEntries = new HashMap<SupportedLanguage, String>();
-		for (WelcomeMessagesEntry entry : welcomeMessage
-				.getWelcomeMessagesEntries().values()) {
-			wlcmsEntries.put(entry.getLang(), entry.getValue());
-		}
-		setWelcomeMessagesEntries(wlcmsEntries);
-		this.myDomain = new DomainLightDto(welcomeMessage.getDomain());
-		this.domains = Sets.newHashSet();
-		if (welcomeMessage.getDomains() != null) {
-			for (AbstractDomain d : welcomeMessage.getDomains()) {
-				this.domains.add(new DomainLightDto(d));
+		if (extended) {
+			this.welcomeMessagesEntries = new HashMap<SupportedLanguage, String>();
+			for (WelcomeMessagesEntry entry : welcomeMessage
+					.getWelcomeMessagesEntries().values()) {
+				welcomeMessagesEntries.put(entry.getLang(), entry.getValue());
+			}
+			this.myDomain = new DomainLightDto(welcomeMessage.getDomain());
+			this.domains = Sets.newHashSet();
+			if (welcomeMessage.getDomains() != null) {
+				for (AbstractDomain d : welcomeMessage.getDomains()) {
+					this.domains.add(new DomainLightDto(d));
+				}
 			}
 		}
 	}
