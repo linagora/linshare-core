@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
 
-	<class name="MimePolicy" table="mime_policy" lazy="false">
+	<class name="MimePolicy" table="mime_policy" lazy="true">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>
