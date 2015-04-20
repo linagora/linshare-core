@@ -81,6 +81,6 @@ public enum MailContentType {
 			}
 		}
 		throw new IllegalArgumentException(
-				"Doesn't match an existing MailContentType");
+				"Value : " + value + " doesn't match an existing MailContentType");
 	}
 }
