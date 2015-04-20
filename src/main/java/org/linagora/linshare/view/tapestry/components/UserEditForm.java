@@ -345,7 +345,7 @@ public class UserEditForm {
 
         try {
         	if(userGuest) {    	
-                userFacade.updateGuest(currentUser.getLsUuid(), userDomain, mail, firstName, lastName,uploadGranted,userLoggedIn);
+                userFacade.updateGuest(currentUser.getLsUuid(), userDomain, mail, firstName, lastName, uploadGranted, userLoggedIn, restrictedEditGuest, recipientsEmail);
         	} else {
                 userFacade.updateUserRole(currentUser.getLsUuid(), userDomain, mail, SelectableRole.fromSelectableRole(role), userLoggedIn);
         	}
@@ -353,32 +353,6 @@ public class UserEditForm {
             // should never occur.
             logger.error(e.toString());
         }
-
-		if (userGuest) {
-			try {
-
-				UserVo guest = userFacade.findGuestByLsUuid(userLoggedIn, currentUser.getLsUuid());
-				logger.debug("current guest : " + guest);
-
-
-				if (restrictedEditGuest && !guest.isRestricted()) { //toogle restricted to true
-					userFacade.setGuestContactRestriction(userLoggedIn, guest.getLsUuid(), recipientsEmail);
-
-				} else if (!restrictedEditGuest && guest.isRestricted()) { //toogle restricted to false
-					userFacade.removeGuestContactRestriction(userLoggedIn, guest.getLsUuid());
-
-				} else if (restrictedEditGuest && guest.isRestricted()) { //maybe user add new contact
-					if (intialContacts != null && !intialContacts.equalsIgnoreCase(recipientsSearch)) {
-						userFacade.setGuestContactRestriction(userLoggedIn, guest.getLsUuid(), recipientsEmail);
-					}
-				}				
-		        shareSessionObjects.addMessage(messages.get("components.userEditForm.action.update.confirm"));
-			} catch (BusinessException e) {
-				shareSessionObjects.addError(messages.get("components.guestEditForm.action.update.guestRestriction.badUser"));
-				logger.debug(e.toString());
-			}
-		}
-
 		componentResources.triggerEvent("resetListUsers", null, null);
     }
 

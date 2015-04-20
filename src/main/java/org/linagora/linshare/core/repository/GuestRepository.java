@@ -66,5 +66,5 @@ public interface GuestRepository extends UserRepository<Guest> {
      */
     List<Guest> searchGuestAnyWhere(String mail, String firstName, String lastName);
 
-
+    void evict(Guest entity);
 }

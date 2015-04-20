@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.core.service.impl;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -48,7 +47,6 @@ import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.Recipient;
@@ -59,6 +57,7 @@ import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
@@ -80,6 +79,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 	private final UserService userService;
 
+	private final GuestService guestService;
+
 	private final AnonymousShareEntryService anonymousShareEntryService;
 
 	private final ShareEntryService shareEntryService;
@@ -92,6 +93,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final DocumentEntryService documentEntryService,
 			final UserService userService,
+			final GuestService guestService,
 			final AnonymousShareEntryService anonymousShareEntryService,
 			final ShareEntryService shareEntryService,
 			final NotifierService notifierService,
@@ -101,6 +103,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.documentEntryService = documentEntryService;
 		this.userService = userService;
+		this.guestService = guestService;
 		this.anonymousShareEntryService = anonymousShareEntryService;
 		this.shareEntryService = shareEntryService;
 		this.notifierService = notifierService;
@@ -163,8 +166,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 		// Initialize the shareContainer for guest if needed.
 		if (owner.isGuest() && owner.isRestricted()) {
-			Set<AllowedContact> allowedContacts = ((Guest) owner)
-					.getRestrictedContacts();
+			List<AllowedContact> allowedContacts = guestService.load(actor, owner);
 			shareContainer.addAllowedRecipients(allowedContacts);
 		}
 

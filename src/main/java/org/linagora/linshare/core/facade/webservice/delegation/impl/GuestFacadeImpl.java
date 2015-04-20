@@ -40,6 +40,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.delegation.GuestFacade;
 import org.linagora.linshare.core.service.AccountService;
@@ -102,7 +103,13 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		Guest guest = guestDto.toUserObject();
-		return GuestDto.getFull(guestService.create(actor, owner, guest));
+		List<String> ac = Lists.newArrayList();
+		if (guest.isRestricted()) {
+			for (GenericUserDto contactDto : guestDto.getRestrictedContacts()) {
+				ac.add(contactDto.getMail());
+			}
+		}
+		return GuestDto.getFull(guestService.create(actor, owner, guest, ac));
 	}
 
 	@Override
@@ -114,7 +121,16 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		Guest guest = guestDto.toUserObject();
-		return GuestDto.getFull(guestService.update(actor, owner, guest));
+		List<String> ac = null;
+		if (guest.isRestricted()) {
+			if (guestDto.getRestrictedContacts() != null) {
+				ac = Lists.newArrayList();
+				for (GenericUserDto contactDto : guestDto.getRestrictedContacts()) {
+					ac.add(contactDto.getMail());
+				}
+			}
+		}
+		return GuestDto.getFull(guestService.update(actor, owner, guest, ac));
 	}
 
 	@Override

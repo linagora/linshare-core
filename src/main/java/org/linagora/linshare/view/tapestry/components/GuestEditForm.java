@@ -255,7 +255,6 @@ public class GuestEditForm {
             userAlreadyExists = true;
             return ;
         }
-        
 		
     	if (restrictedGuest || userLoggedIn.isRestricted()) {
         	boolean sendErrors = false;
@@ -298,37 +297,14 @@ public class GuestEditForm {
 			return Index.class;
 		}
 		
-		UserVo guestVo = null ;
 		try {
-        	guestVo = userFacade.createGuest(mail, firstName, lastName, uploadGranted, guestsAllowedToCreateGuest, comment, userLoggedIn);
+			userFacade.createGuest(mail, firstName, lastName, uploadGranted, guestsAllowedToCreateGuest, comment, userLoggedIn, restrictedGuest, recipientsEmail);
 		} catch (BusinessException e) { 
 			logger.error("Can't create Guest : " + mail);
 			logger.debug(e.toString());
 			businessMessagesManagementService.notify(e);
 			return Index.class;
 		}
-        	
-        try {
-        	// TODO : need some heavy refactoring
-        	if (userLoggedIn.isRestricted()) { //user restricted needs to see the guest he has created
-        		userFacade.addGuestContactRestriction(userLoggedIn, userLoggedIn.getLsUuid(), guestVo.getLsUuid());
-        	}
-        	
-        	if (restrictedGuest || userLoggedIn.isRestricted()) { // a restricted guest can only create restricted guests
-        		userFacade.setGuestContactRestriction(userLoggedIn, guestVo.getLsUuid(), recipientsEmail);
-        	}
-            shareSessionObjects.addMessage(messages.get("components.guestEditForm.action.add.confirm"));
-        } catch (BusinessException e) { //bad contact for contacts list
-        	logger.debug(e.toString());
-        	shareSessionObjects.addError(messages.get("components.guestEditForm.action.add.guestRestriction.badUser"));
-        	List<String> contactMailList = new ArrayList<String>();
-        	contactMailList.add(userLoggedIn.getMail());
-        	try {
-				userFacade.setGuestContactRestriction(userLoggedIn, guestVo.getLsUuid(), contactMailList); //default: set guest contact restriction with the owner
-			} catch (BusinessException e1) {
-				e1.printStackTrace();
-			}
-        }
         componentResources.triggerEvent("resetListUsers", null, null);
         
         return Index.class;

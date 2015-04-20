@@ -372,7 +372,7 @@ public class ShareContainer {
 		allowedRecipients.put(recipient.getUuid(), recipient);
 	}
 
-	public void addAllowedRecipients(Set<AllowedContact> allowedContacts) {
+	public void addAllowedRecipients(List<AllowedContact> allowedContacts) {
 		Validate.notNull(allowedContacts, "allowedContacts must not be null.");
 		for (AllowedContact allowedContact : allowedContacts) {
 			this.addAllowedRecipient(allowedContact.getContact());

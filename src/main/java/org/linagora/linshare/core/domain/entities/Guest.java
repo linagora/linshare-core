@@ -122,14 +122,6 @@ public class Guest extends User {
 		return contacts;
 	}
 
-	public void setContacts(Set<AllowedContact> contacts) {
-		this.contacts = contacts;
-	}
-
-	public void addContact(AllowedContact c) {
-		this.contacts.add(c);
-	}
-
 	public void addContacts(Collection<? extends AllowedContact> c) {
 		this.contacts.addAll(c);
 	}
