@@ -1,6 +1,7 @@
 SET NAMES UTF8 COLLATE utf8_general_ci;
 SET CHARACTER SET UTF8;
 
+START TRANSACTION;
 -- default domain policy
 INSERT INTO domain_access_policy(id) VALUES (1);
 INSERT INTO domain_access_rule(id, domain_access_rule_type, `regexp`, domain_id, domain_access_policy_id, rule_index) VALUES (1, 0, '', null, 1,0);
@@ -8,31 +9,33 @@ INSERT INTO domain_policy(id, identifier, domain_access_policy_id) VALUES (1, 'D
 
 
 -- Root domain (application domain)
-INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, auth_show_order) VALUES (1, 0, 'LinShareRootDomain', 'LinShareRootDomain', true, false, 'The root application domain', 3, 'en', 0, null, 1, null, 0);
+INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, default_mail_locale, used_space, user_provider_id, domain_policy_id, parent_id, auth_show_order) VALUES (1, 0, 'LinShareRootDomain', 'LinShareRootDomain', true, false, 'The root application domain', 3, 'en', 'en', 0, null, 1, null, 0);
 
 -- Default mime policy
-INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, creation_date, modification_date) VALUES(1, 1, '3d6d8800-e0f7-11e3-8ec0-080027c0eef0', 'Default Mime Policy', 0, 0, now(), now());
+INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, version, creation_date, modification_date) VALUES(1, 1, '3d6d8800-e0f7-11e3-8ec0-080027c0eef0', 'Default Mime Policy', 0, 0, 1, now(), now());
 UPDATE domain_abstract SET mime_policy_id=1;
 
 
---Welcome messages
+-- Welcome messages
 INSERT INTO welcome_messages(id, uuid, name, description, creation_date, modification_date, domain_id) VALUES (1, '4bc57114-c8c9-11e4-a859-37b5db95d856', 'WelcomeName', 'a Welcome description', now(), now(), 1);
 
---Melcome messages Entry
-INSERT INTO welcome_messages_entry(id, lang, value, welcome_id) VALUES (1, 'en', 'Welcome to LinShare, THE Secure, Open-Source File Sharing Tool.', 1);
-INSERT INTO welcome_messages_entry(id, lang, value, welcome_id) VALUES (2, 'fr', 'Bienvenue dans LinShare, le logiciel libre de partage de fichiers sécurisé.', 1);
-INSERT INTO welcome_messages_entry(id, lang, value, welcome_id) VALUES (3, 'mq', 'Bienvini an lè Linshare, an solusyon lib de partaj de fichié sékirisé.', 1);
-INSERT INTO welcome_messages_entry(id, lang, value, welcome_id) VALUES (4, 'vi', 'Chào mừng bạn đến với Linshare, phần mềm nguồn mở chia sẻ file bảo mật.', 1);
-INSERT INTO welcome_messages_entry(id, lang, value, welcome_id) VALUES (5, 'nl', 'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 1);
+-- Melcome messages Entry
+INSERT INTO welcome_messages_entry(id, lang, value, welcome_messages_id) VALUES (1, 'en', 'Welcome to LinShare, THE Secure, Open-Source File Sharing Tool.', 1);
+INSERT INTO welcome_messages_entry(id, lang, value, welcome_messages_id) VALUES (2, 'fr', 'Bienvenue dans LinShare, le logiciel libre de partage de fichiers sécurisé.', 1);
+INSERT INTO welcome_messages_entry(id, lang, value, welcome_messages_id) VALUES (3, 'mq', 'Bienvini an lè Linshare, an solusyon lib de partaj de fichié sékirisé.', 1);
+INSERT INTO welcome_messages_entry(id, lang, value, welcome_messages_id) VALUES (4, 'vi', 'Chào mừng bạn đến với Linshare, phần mềm nguồn mở chia sẻ file bảo mật.', 1);
+INSERT INTO welcome_messages_entry(id, lang, value, welcome_messages_id) VALUES (5, 'nl', 'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 1);
 
---Update domains
-UPDATE domain_abstract SET welcome_id = 1;
+-- Update domains
+UPDATE domain_abstract SET welcome_messages_id = 1;
 
 -- system domain pattern
--- OBM domain pattern.
-INSERT INTO domain_pattern(
- domain_pattern_id,
- identifier,
+-- OBM user ldap pattern.
+INSERT INTO ldap_pattern(
+ id,
+ uuid,
+ pattern_type,
+ label,
  description,
  auth_command,
  search_user_command, 
@@ -42,105 +45,127 @@ INSERT INTO domain_pattern(
  search_page_size,  
  search_size_limit, 
  completion_page_size, 
- completion_size_limit)
+ completion_size_limit,
+ creation_date,
+ modification_date)
 VALUES (
- 1,
- 'default-pattern-obm',
- 'This is pattern the default pattern for the ldap obm structure.', 
- 'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");',
- 'ldap.search(domain, "(&(objectClass=obmUser)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
- true,
- 'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");',
- 'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");',
- 100,
- 100,
- 10,
- 10
- );
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (1, 'user_mail', 'mail', false, true, true, 1, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (2, 'user_firstname', 'givenName', false, true, true, 1, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (3, 'user_lastname', 'sn', false, true, true, 1, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (4, 'user_uid', 'uid', false, true, true, 1, false);
+    1,
+    'cd26e59d-6d4c-41b4-a0eb-610fd42e1beb',
+    'USER_LDAP_PATTERN',
+    'default-pattern-obm',
+    'This is pattern the default pattern for the ldap obm structure.',
+    'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");',
+    'ldap.search(domain, "(&(objectClass=obmUser)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
+    true,
+    'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");',
+    'ldap.search(domain, "(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");',
+    100,
+    100,
+    10,
+    10,
+    now(),
+    now()
+);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion) VALUES (1, 'user_mail', 'mail', false, true, true, 1, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion) VALUES (2, 'user_firstname', 'givenName', false, true, true, 1, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion) VALUES (3, 'user_lastname', 'sn', false, true, true, 1, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion) VALUES (4, 'user_uid', 'uid', false, true, true, 1, false);
 
 -- Active Directory domain pattern.
-INSERT INTO domain_pattern(
- domain_pattern_id,
- identifier,
- description,
- auth_command,
- search_user_command,
- system,
- auto_complete_command_on_first_and_last_name,
- auto_complete_command_on_all_attributes,
- search_page_size,
- search_size_limit,
- completion_page_size,
- completion_size_limit)
+INSERT INTO ldap_pattern(
+    id,
+    uuid,
+    pattern_type,
+    label,
+    description,
+    auth_command,
+    search_user_command,
+    system,
+    auto_complete_command_on_first_and_last_name,
+    auto_complete_command_on_all_attributes,
+    search_page_size,
+    search_size_limit,
+    completion_page_size,
+    completion_size_limit,
+    creation_date,
+    modification_date)
 VALUES (
- 2,
- 'default-pattern-AD',
- 'This is pattern the default pattern for the Active Directory structure.',
- 'ldap.search(domain, "(&(objectClass=user)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(sAMAccountName="+login+")))");',
- 'ldap.search(domain, "(&(objectClass=user)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
- true,
- 'ldap.search(domain, "(&(objectClass=user)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");',
- 'ldap.search(domain, "(&(objectClass=user)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");',
- 100,
- 100,
- 10,
- 10
- );
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (5, 'user_mail', 'mail', false, true, true, 2, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (6, 'user_firstname', 'givenName', false, true, true, 2, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (7, 'user_lastname', 'sn', false, true, true, 2, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (8, 'user_uid', 'sAMAccountName', false, true, true, 2, false);
+    2,
+    'af7ceb1e-9268-4b20-af80-21fa4bd5222c',
+    'USER_LDAP_PATTERN',
+    'default-pattern-AD',
+    'This is pattern the default pattern for the Active Directory structure.',
+    'ldap.search(domain, "(&(objectClass=user)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(sAMAccountName="+login+")))");',
+    'ldap.search(domain, "(&(objectClass=user)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
+    true,
+    'ldap.search(domain, "(&(objectClass=user)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");',
+    'ldap.search(domain, "(&(objectClass=user)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");',
+    100,
+    100,
+    10,
+    10,
+    now(),
+    now()
+);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion) VALUES (5, 'user_mail', 'mail', false, true, true, 2, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion) VALUES (6, 'user_firstname', 'givenName', false, true, true, 2, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion) VALUES (7, 'user_lastname', 'sn', false, true, true, 2, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion) VALUES (8, 'user_uid', 'sAMAccountName', false, true, true, 2, false);
 
 -- OpenLdap domain pattern.
-INSERT INTO domain_pattern(
- domain_pattern_id,
- identifier,
- description,
- auth_command,
- search_user_command,
- system,
- auto_complete_command_on_first_and_last_name,
- auto_complete_command_on_all_attributes,
- search_page_size,
- search_size_limit,
- completion_page_size,
- completion_size_limit)
+INSERT INTO ldap_pattern(
+    id,
+    uuid,
+    pattern_type,
+    label,
+    description,
+    auth_command,
+    search_user_command,
+    system,
+    auto_complete_command_on_first_and_last_name,
+    auto_complete_command_on_all_attributes,
+    search_page_size,
+    search_size_limit,
+    completion_page_size,
+    completion_size_limit,
+    creation_date,
+    modification_date)
 VALUES (
- 3,
- 'default-pattern-openldap',
- 'This is pattern the default pattern for the OpenLdap structure.',
- 'ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");',
- 'ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
- true,
- 'ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");',
- 'ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");',
- 100,
- 100,
- 10,
- 10
- );
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (9, 'user_mail', 'mail', false, true, true, 3, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (10, 'user_firstname', 'givenName', false, true, true, 3, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (11, 'user_lastname', 'sn', false, true, true, 3, true);
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pattern_id, completion) VALUES (12, 'user_uid', 'uid', false, true, true, 3, false);
+    3,
+    '868400c0-c12e-456a-8c3c-19e985290586',
+    'USER_LDAP_PATTERN',
+    'default-pattern-openldap',
+    'This is pattern the default pattern for the OpenLdap structure.',
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");',
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
+    true,
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");',
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");',
+    100,
+    100,
+    10,
+    10,
+    now(),
+    now()
+);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion) VALUES (9, 'user_mail', 'mail', false, true, true, 3, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion) VALUES (10, 'user_firstname', 'givenName', false, true, true, 3, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion) VALUES (11, 'user_lastname', 'sn', false, true, true, 3, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion) VALUES (12, 'user_uid', 'uid', false, true, true, 3, false);
 
 
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id) VALUES (1, 6, 'root@localhost.localdomain', current_date,current_date, 3, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
-INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (1, 'Administrator', 'LinShare', 'root@localhost.localdomain', false, '', false, false);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id) VALUES (1, 6, 'root@localhost.localdomain', now(), now(), 3, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, can_create_guest) VALUES (1, 'Administrator', 'LinShare', 'root@localhost.localdomain', false, '', false, false);
 
 -- system account :
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (2, 7, 'system', current_date,current_date, 3, 'en', 'en', true, false, 1);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (2, 7, 'system', now(),now(), 3, 'en', 'en', true, false, 1);
 -- system account for upload-request:
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (3, 7, 'system-account-uploadrequest', current_date, current_date, 3, 'en', 'en', true, false, 1);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (3, 7, 'system-account-uploadrequest', now(), now(), 3, 'en', 'en', true, false, 1);
 
 -- system account for upload-proposition
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id)
-	VALUES (4, 4, '89877610-574a-4e79-aeef-5606b96bde35', now(),now(), 5, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+	VALUES (4, 4, '89877610-574a-4e79-aeef-5606b96bde35', now(), now(), 5, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
 INSERT INTO users(account_id, first_name, last_name, mail, can_upload, comment, restricted, can_create_guest)
 	VALUES (4, null, 'Technical Account for upload proposition', 'linshare-noreply@linagora.com', false, '', false, false);
 
@@ -156,7 +181,7 @@ INSERT INTO users(account_id, first_name, last_name, mail, can_upload, comment, 
 -- Functionality : FILESIZE_MAX
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (1, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (2, true, true, 1, false);
--- if a functionality is system, you will not be hable see/modify its parameters
+-- if a functionality is system, you will not be able see/modify its parameters
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (1, false, 'FILESIZE_MAX', 1, 2, 1);
 INSERT INTO unit(id, unit_type, unit_value) VALUES (1, 1, 1);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (1, 10, 1);
@@ -215,14 +240,38 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (18, true,
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (9, false, 'CUSTOM_LOGO', 17, 18, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (9, 'http://localhost/images/logo.png');
 
+-- Functionality : CUSTOM_LOGO__LINK
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (59, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (60, false, false, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES (29, false, 'CUSTOM_LOGO__LINK', 59, 60, 1, 'CUSTOM_LOGO', true);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://localhost:8080/linshare/en');
 
--- Functionality : ACCOUNT_EXPIRATION (for Guests)
+-- Functionality : GUESTS
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (27, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (28, false, false, 2, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (14, true, 'GUESTS', 27, 28, 1);
+
+-- Functionality : GUESTS__EXPIRATION (for Guests)
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (19, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (20, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (10, false, 'ACCOUNT_EXPIRATION', 19, 20, 1);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (111, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES (10, false, 'GUESTS__EXPIRATION', 19, 20, 111, 1, 'GUESTS', true);
 INSERT INTO unit(id, unit_type, unit_value) VALUES (4, 0, 2);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (10, 3, 4);
 
+-- Functionality : GUESTS__RESTRICTED
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (47, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (48, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (112, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES (24, false, 'GUESTS__RESTRICTED', 47, 48, 112, 1, 'GUESTS', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (24, true);
+
+-- Functionality : GUESTS__CAN_UPLOAD
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (113, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (114, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (115, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES (48, false, 'GUESTS__CAN_UPLOAD', 113, 114, 115, 1, 'GUESTS', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (48, true);
 
 -- Functionality : FILE_EXPIRATION
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (21, true, true, 1, false);
@@ -235,27 +284,31 @@ INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES 
 -- Functionality : SHARE_EXPIRATION
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (23, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (24, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (12, false, 'SHARE_EXPIRATION', 23, 24, 1);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (122, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id) VALUES (12, false, 'SHARE_EXPIRATION', 23, 24, 122, 1);
 INSERT INTO unit(id, unit_type, unit_value) VALUES (6, 0, 2);
-INSERT INTO functionality_unit_boolean(functionality_id, integer_value, unit_id, boolean_value) VALUES (12, 3, 6, false);
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (12, 3, 6);
+
+-- Functionality : SHARE_EXPIRATION__DELETE_FILE_ON_EXPIRATION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (120, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (121, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES (50, false, 'SHARE_EXPIRATION__DELETE_FILE_ON_EXPIRATION', 120, 121, 1, 'SHARE_EXPIRATION', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (50, false);
 
 
 -- Functionality : ANONYMOUS_URL
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (25, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (26, false, false, 2, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (13, true, 'ANONYMOUS_URL', 25, 26, 1);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (26, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (116, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id) VALUES (13, false, 'ANONYMOUS_URL', 25, 26, 116, 1);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (13, true);
 
 
--- Functionality : GUESTS
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (27, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (28, false, false, 2, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (14, true, 'GUESTS', 27, 28, 1);
-
-
--- Functionality : USER_CAN_UPLOAD
+-- Functionality : INTERNAL_CAN_UPLOAD formerly known as USER_CAN_UPLOAD
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (29, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (30, false, false, 2, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (15, true, 'USER_CAN_UPLOAD', 29, 30, 1);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (15, true, 'INTERNAL_CAN_UPLOAD', 29, 30, 1);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (15, true);
 
 
 -- Functionality : COMPLETION
@@ -282,11 +335,6 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (37, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (38, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (19, true, 'TAB_USER', 37, 38, 1);
 
--- Functionality : SECURED_ANONYMOUS_URL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (41, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (42, false, false, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (21, true, 'SECURED_ANONYMOUS_URL', 41, 42, 1);
-
 
 -- Functionality : SHARE_NOTIFICATION_BEFORE_EXPIRATION
 -- Policies : MANDATORY(0), ALLOWED(1), FORBIDDEN(2)
@@ -301,16 +349,10 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (46, false
 -- if a functionality is system, you will not be able see/modify its parameters
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (23, true, 'TAB_THREAD', 45, 46, 1);
 
--- Functionality : RESTRICTED_GUEST
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (47, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (48, false, false, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (24, true, 'RESTRICTED_GUEST', 47, 48, 1);
-
--- Functionality : DOMAIN_MAIL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (49, true, true, 0, true);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (50, false, false, 2, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (25, false, 'DOMAIN_MAIL', 49, 50, 1);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (25, 'linshare-noreply@linagora.com');
+-- Functionality : TAB_THREAD__CREATE_PERMISSION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (57, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (58, false, false, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES (28, true, 'TAB_THREAD__CREATE_PERMISSION', 57, 58, 1, 'TAB_THREAD', true);
 
 -- Functionality : TAB_LIST
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (53, true, true, 1, false);
@@ -322,22 +364,23 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (55, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (56, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (27, true, 'UPDATE_FILE', 55, 56, 1);
 
--- Functionality : CREATE_THREAD_PERMISSION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (57, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (58, false, false, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (28, true, 'CREATE_THREAD_PERMISSION', 57, 58, 1);
+-- Functionality : DOMAIN
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (118, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (119, false, false, 2, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(49, false, 'DOMAIN', 118, 119, 1);
 
--- Functionality : LINK_LOGO
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (59, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (60, false, false, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (29, false, 'LINK_LOGO', 59, 60, 1);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://localhost:8080/linshare/en');
-
--- Functionality : NOTIFICATION_URL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (61, true, true, 1, false);
+-- Functionality : DOMAIN__NOTIFICATION_URL
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (61, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (62, false, false, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(30, false, 'NOTIFICATION_URL', 61, 62, 1); 
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES(30, false, 'DOMAIN__NOTIFICATION_URL', 61, 62, 1, 'DOMAIN', true);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'http://localhost:8080/linshare/');
+
+-- Functionality : DOMAIN_MAIL
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (49, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (50, false, false, 2, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (25, false, 'DOMAIN_MAIL', 49, 50, 1);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (25, 'linshare-noreply@linagora.com');
+
 
 -- Functionality : UPLOAD_REQUEST
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (63, false, false, 1, false);
@@ -461,7 +504,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
  VALUES(44, false, 'UPLOAD_PROPOSITION', 101, 102, 1);
 
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (104, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (104, false, false, 1, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (105, true, true, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, param)
  VALUES(45, false, 'UPLOAD_REQUEST_ENTRY_URL', 104, 105, 1, false);
@@ -477,7 +520,7 @@ INSERT INTO unit(id, unit_type, unit_value) VALUES (12, 0, 0);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (46, 7, 12);
 
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL__PASSWORD
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (109, true, true, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (109, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (110, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
  VALUES(47, false, 'UPLOAD_REQUEST_ENTRY_URL__PASSWORD', 109, 110, 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
@@ -559,6 +602,7 @@ INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_t
 -- UPLOAD_REQUEST_FILE_DELETED_BY_SENDER
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (30, '88b90304-e9c9-11e4-b6b4-5404a6202d2c', 1, 0, 29, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request file deleted', E'A user ${actorRepresentation} has deleted a file for upload request: ${subject}', E'<strong>${firstName} ${lastName}</strong> has deleted a file.<br/>File name: ${fileName}<br/>Deletion date: ${deleteDate}<br/>File size: ${fileSize}<br/><br/>');
 
+
 -- LANGUAGE FRENCH 1
 
 -- ANONYMOUS_DOWNLOAD
@@ -621,6 +665,7 @@ INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_t
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (80, '6f8096ec-36e7-4ec7-a82f-c37b2eac094e', 1, 0, 28, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Upload Request Entry Url', E'${actorRepresentation} vient de déposer un fichier', E'<strong>${firstName} ${lastName}</strong> a déposé un fichier à votre attention&nbsp;:<ul>${documentNames}</ul>Pour télécharger le fichier, cliquez sur le lien ou copiez-le dans votre navigateur&nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a><br/>Le mot de passe à utiliser est&nbsp;: <code>${password}</code><br/><br/>Ce lien ne sera plus valide après le  ${expiryDate}<br/>');
 -- UPLOAD_REQUEST_FILE_DELETED_BY_SENDER
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (81, '41ef3560-e9ca-11e4-b6b4-5404a6202d2c', 1, 1, 29, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Suppression de fichier après dépôt', E'${actorRepresentation} a supprimé un fichier suite à une invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> a supprimé un fichier.<br/>Nom du fichier: ${fileName}<br/>Date de suppression: ${deleteDate}<br/>Taille du fichier: ${fileSize}<br/><br/>');
+
 
 INSERT INTO mail_config (id, name, domain_abstract_id, visible, mail_layout_html_id, mail_layout_text_id, modification_date, creation_date, uuid) VALUES (1, 'Default mail config', 1, true, 1, 2, now(), now(), '946b190d-4c95-485f-bfe6-d288a2de1edd');
 
@@ -694,3 +739,32 @@ UPDATE domain_abstract SET mailconfig_id = 1;
 -- LinShare version
 INSERT INTO version (id,version) VALUES (1,'1.9.0');
 
+-- Alias
+CREATE VIEW alias_func_list_all  AS SELECT
+ functionality.id, functionality.system as sys, identifier, policy_delegation_id AS pd_id, domain_id, param, parent_identifier AS parent,
+ ap.status AS ap_status, ap.default_status AS ap_default, ap.policy AS ap_policy, ap.system AS ap_sys,
+ cp.status AS cp_status, cp.default_status AS cp_default, cp.policy AS cp_policy, cp.system AS cp_sys
+ FROM functionality
+ JOIN policy AS ap ON policy_activation_id = ap.id
+ JOIN policy AS cp ON policy_configuration_id = cp.id order by identifier;
+
+-- Alias for Users
+-- All users
+CREATE VIEW alias_users_list_all AS
+ SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id;
+-- All active users
+CREATE VIEW alias_users_list_active AS
+ SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id where a.destroyed = False;
+-- All destroyed users
+CREATE VIEW alias_users_list_destroyed AS
+ SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id where a.destroyed = True;
+
+-- Alias for threads
+-- All threads
+CREATE VIEW alias_threads_list_all AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id;
+-- All active threads
+CREATE VIEW alias_threads_list_active AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed = False;
+-- All destroyed threads
+CREATE VIEW alias_threads_list_destroyed AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed = True;
+
+COMMIT;
