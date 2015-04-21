@@ -108,6 +108,7 @@ public class MailContentDto {
 		this.creationDate = new Date(cont.getCreationDate().getTime());
 		this.modificationDate = new Date(cont.getModificationDate().getTime());
 		this.alternativeSubject = cont.getAlternativeSubject();
+		this.enableAS = cont.isEnableAS();
 	}
 
 	public String getName() {
