@@ -37,9 +37,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
@@ -80,8 +78,17 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 	public GuestDto create(GuestDto guestDto) throws BusinessException {
 		Validate.notNull(guestDto, "guest dto is required");
 		User actor = checkAuthentication();
-		Guest guest = retreiveGuest(guestDto);
-		return GuestDto.getFull(guestService.create(actor, actor, guest));
+		Guest guest = guestDto.toUserObject();
+		List<String> ac = null;
+		if (guest.isRestricted()) {
+			if (guestDto.getRestrictedContacts() != null) {
+				ac = Lists.newArrayList();
+				for (GenericUserDto contactDto : guestDto.getRestrictedContacts()) {
+					ac.add(contactDto.getMail());
+				}
+			}
+		}
+		return GuestDto.getFull(guestService.create(actor, actor, guest, ac));
 	}
 
 	@Override
@@ -90,7 +97,13 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(guestDto.getUuid(), "guest uuid is required");
 		User actor = checkAuthentication();
 		Guest guest = guestDto.toUserObject();
-		return GuestDto.getFull(guestService.update(actor, actor, guest));
+		List<String> ac = Lists.newArrayList();
+		if (guest.isRestricted()) {
+			for (GenericUserDto contactDto : guestDto.getRestrictedContacts()) {
+				ac.add(contactDto.getMail());
+			}
+		}
+		return GuestDto.getFull(guestService.update(actor, actor, guest, ac));
 	}
 
 	@Override
@@ -108,22 +121,7 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 		guestService.delete(actor, actor, uuid);
 	}
 
-	/**
-	 * HELPERS
-	 */
-	private Guest retreiveGuest(GuestDto guestDto) {
-		Guest guest = guestDto.toUserObject();
-		if (guest.isRestricted()) {
-			for (GenericUserDto contactDto : guestDto.getRestrictedContacts()) {
-				guest.addContact(new AllowedContact(guest, new Internal(
-						contactDto)));
-			}
-		}
-		return guest;
-	}
-
 	private List<GuestDto> toGuestDto(List<Guest> col) {
 		return ImmutableList.copyOf(Lists.transform(col, GuestDto.toDto()));
 	}
-
 }

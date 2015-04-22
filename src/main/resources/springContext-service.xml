@@ -321,6 +321,7 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="userService" />
+		<constructor-arg ref="guestService" />
 		<constructor-arg ref="anonymousShareEntryService" />
 		<constructor-arg ref="shareEntryService" />
 		<constructor-arg ref="notifierService" />

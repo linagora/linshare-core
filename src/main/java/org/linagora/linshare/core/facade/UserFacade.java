@@ -56,10 +56,12 @@ public interface UserFacade {
      * @param canUpload if the user can upoad.
      * @param comment : the comment about the user
      * @param owner user who create the guest.
+     * @param restricted TODO
+     * @param restrictedMails TODO
      * @throws BusinessException if user already exist.
      */
 	UserVo createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment,
-    		UserVo owner) throws BusinessException;
+    		UserVo owner, boolean restricted, List<String> restrictedMails) throws BusinessException;
 
     /**
      * update a guest (edit)
@@ -71,7 +73,7 @@ public interface UserFacade {
      * @param owner
      * @throws BusinessException
      */
-    public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, UserVo owner) throws BusinessException;
+    public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, UserVo owner, boolean restricted, List<String> restrictedMails) throws BusinessException;
 
     /**
      * update an user (only the role)
@@ -161,32 +163,6 @@ public interface UserFacade {
      * @param actor
      */
     void resetPassword(UserVo guest) throws BusinessException;
-
-    /**
-	 * Update a guest as restricted and set his list of contacts
-     * @param actorVo 
-	 * 
-	 * @param login of the guest
-	 * @param mailContacts
-	 */
-	void setGuestContactRestriction(UserVo actorVo, String login, List<String> mailContacts) throws BusinessException;
-
-    /**
-	 * Set a guest as not restricted and remove his list of contacts
-     * @param actorVo 
-	 * 
-	 * @param login
-	 */
-	public void removeGuestContactRestriction(UserVo actorVo, String login) throws BusinessException;
-
-	/**
-	 * Add one contact to a restricted guest
-	 * @param actorVo
-	 * 
-	 * @param ownerUuid
-	 * @param contactUuid
-	 */
-	public void addGuestContactRestriction(UserVo actorVo, String ownerUuid, String contactUuid) throws BusinessException;
 
 	/**
 	 * Retrieve the list of contacts of the guest

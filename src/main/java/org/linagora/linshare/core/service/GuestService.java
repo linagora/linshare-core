@@ -37,6 +37,7 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -57,6 +58,8 @@ public interface GuestService {
 	 */
 	Guest find(Account actor, Account owner, String lsUuid) throws BusinessException;
 
+	List<AllowedContact> load(Account actor, User owner) throws BusinessException;
+
 	Guest find(Account actor, Account owner, String domainId, String mail) throws BusinessException;
 
 	List<Guest> findAllMyGuests(Account actor, Account owner) throws BusinessException;
@@ -76,23 +79,23 @@ public interface GuestService {
 	 *            who triggered the action
 	 * @param guest
 	 *            guest to create
+	 * @param restrictedMails TODO
 	 * @return created guest
 	 * @throws BusinessException
 	 */
-	Guest create(Account actor, Account owner, Guest guest)
+	Guest create(Account actor, Account owner, Guest guest, List<String> restrictedMails)
 			throws BusinessException;
 
 	/**
 	 * Update a guest
-	 * @param actor TODO
+	 * @param actor
 	 * @param owner
-	 *            who triggered the action
-	 * @param guest
-	 *            guest to update
-	 * @return updated guest
+	 * @param guestDto
+	 * @param restrictedMails : if null, it won't be updated.
+	 * @return
 	 * @throws BusinessException
 	 */
-	Guest update(Account actor, User owner, Guest guest)
+	Guest update(Account actor, User owner, Guest guestDto, List<String> restrictedMails)
 			throws BusinessException;
 
 	/**

@@ -43,12 +43,8 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
@@ -127,62 +123,75 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public GuestWithMetadata create(Guest guest, Account owner,
-			AbstractDomain domain, Date expiryDate) throws BusinessException {
+	public GuestWithMetadata create(Account owner, Guest guest,
+			AbstractDomain domain, Date expiryDate, List<User> allowedContacts)
+			throws BusinessException {
 		String password = passwordService.generatePassword();
 		String hashedPassword = HashUtils.hashSha1withBase64(password
 				.getBytes());
 		guest.setOwner(owner);
 		guest.setDomain(domain);
 		guest.setLocale(domain.getDefaultTapestryLocale());
-		guest.setExternalMailLocale(SupportedLanguage.toLanguage(domain.getDefaultTapestryLocale()));
+		guest.setExternalMailLocale(SupportedLanguage.toLanguage(domain
+				.getDefaultTapestryLocale()));
 		guest.setPassword(hashedPassword);
 		guest.setExpirationDate(expiryDate);
 		Guest create = guestRepository.create(guest);
 		if (create.isRestricted()) {
-			for (AllowedContact c : guest.getRestrictedContacts()) {
-				allowedContactRepository.create(c);
+			if (allowedContacts != null) {
+				for (User contact : allowedContacts) {
+					allowedContactRepository.create(new AllowedContact(create,
+							contact));
+				}
 			}
 		}
 		return new GuestWithMetadata(password, create);
 	}
 
 	@Override
-	public Guest update(Account owner, Guest guest, AbstractDomain domain)
+	public Guest update(Account owner, Guest entity, Guest guestDto,
+			AbstractDomain domain, List<User> allowedContacts)
 			throws BusinessException {
-		try {
-			Guest entity = guestRepository.findByLsUuid(guest.getLsUuid());
-			entity.setOwner(owner);
-			entity.setDomain(domain);
-			// fields that can not be null
-			entity.setCanUpload(guest.getCanUpload());
-			entity.setRestricted(guest.isRestricted());
-			// fields that can be null.
-			entity.setComment(guest.getComment());
-			entity.setBusinessLocale(guest.getLocale());
-			entity.setBusinessExternalMailLocale(guest.getExternalMailLocale());
-			entity.setBusinessLastName(guest.getLastName());
-			entity.setBusinessFirstName(guest.getFirstName());
-			entity.setBusinessMail(guest.getMail());
-			Guest update = guestRepository.update(entity);
-			if (update.isRestricted()) {
-				try {
-					allowedContactRepository.purge(update);
-				} catch (IllegalArgumentException e) {
-					throw new TechnicalException(
-							TechnicalErrorCode.USER_INCOHERENCE, "Guest "
-									+ entity.getLsUuid()
-									+ " contacts cannot be purge");
-				}
-				for (AllowedContact c : entity.getRestrictedContacts()) {
-					allowedContactRepository.create(c);
+		boolean wasRestricted = entity.isRestricted();
+		entity.setOwner(owner);
+		entity.setDomain(domain);
+		// fields that can not be null
+		entity.setCanUpload(guestDto.getCanUpload());
+		entity.setRestricted(guestDto.isRestricted());
+		// fields that can be null.
+		entity.setComment(guestDto.getComment());
+		entity.setBusinessLocale(guestDto.getLocale());
+		entity.setBusinessExternalMailLocale(guestDto.getExternalMailLocale());
+		entity.setBusinessLastName(guestDto.getLastName());
+		entity.setBusinessFirstName(guestDto.getFirstName());
+		entity.setBusinessMail(guestDto.getMail());
+		Guest update = guestRepository.update(entity);
+		if (wasRestricted == guestDto.isRestricted()) {
+			if (allowedContacts != null) {
+				// update
+				allowedContactRepository.purge(update);
+				for (User contact : allowedContacts) {
+					allowedContactRepository.create(new AllowedContact(update,
+							contact));
 				}
 			}
-			return update;
-		} catch (IllegalArgumentException iae) {
-			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND,
-					"Cannot update guest " + guest);
+		} else if (wasRestricted) {
+			// not restricted anymore. purge
+			allowedContactRepository.purge(update);
+		} else {
+			// Add
+			for (User contact : allowedContacts) {
+				allowedContactRepository.create(new AllowedContact(update,
+						contact));
+			}
 		}
+		return update;
+	}
+
+	@Override
+	public List<AllowedContact> loadAllowedContacts(User guest)
+			throws BusinessException {
+		return allowedContactRepository.findByOwner(guest);
 	}
 
 	@Override
@@ -207,6 +216,11 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		guest.setPassword(hashedPassword);
 		Guest update = guestRepository.update(guest);
 		return new GuestWithMetadata(password, update);
+	}
+
+	@Override
+	public void evict(Guest entity) {
+		guestRepository.evict(entity);
 	}
 
 	/**

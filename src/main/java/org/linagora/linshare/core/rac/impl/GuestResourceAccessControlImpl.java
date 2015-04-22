@@ -37,6 +37,7 @@ package org.linagora.linshare.core.rac.impl;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.rac.GuestResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -57,7 +58,10 @@ public class GuestResourceAccessControlImpl extends
 
 	@Override
 	protected Account getOwner(Guest entry, Object... opt) {
-		return entry.getOwner();
+		if (entry != null) {
+			return entry.getOwner();
+		}
+		return null;
 	}
 
 	@Override
@@ -73,8 +77,19 @@ public class GuestResourceAccessControlImpl extends
 	@Override
 	protected boolean hasReadPermission(Account actor, Account owner,
 			Guest entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
-				TechnicalAccountPermissionType.GUESTS_GET);
+		if (actor.hasDelegationRole())
+			return hasPermission(actor, TechnicalAccountPermissionType.GUESTS_GET);
+		if (actor.isInternal() || actor.isGuest()) {
+			if (actor.equals(owner)) {
+				if (entry.getOwner().equals(owner)) {
+					return true;
+				}
+			}
+			if (entry.getDomain().isManagedBy(actor)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -84,7 +99,7 @@ public class GuestResourceAccessControlImpl extends
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.GUESTS_LIST);
 		} else if (actor.isInternal()) {
-			/* Is it usefull to check if the current actor is an interal ?
+			/* Is it usefull to check if the current actor is an internal ?
 			 * Only internals have the right to create guests.
 			*/
 			if (actor.equals(owner)) {
@@ -151,12 +166,21 @@ public class GuestResourceAccessControlImpl extends
 	}
 
 	private boolean guestFunctionalityStatus(AbstractDomain domain) {
-		return functionalityService.getGuests(domain)
+		Functionality guestFunctionality = functionalityService.getGuests(domain);
+		boolean status = guestFunctionality
 				.getActivationPolicy().getStatus();
+		if (!status) {
+			logger.warn("guest functionality is disable.");
+		}
+		return status;
 	}
 
 	private boolean hasGuestDomain(String topDomainId) {
-		return abstractDomainService.getGuestDomain(topDomainId) != null;
+		boolean status = abstractDomainService.getGuestDomain(topDomainId) != null;
+		if (!status) {
+			logger.warn("guest domain do not exist.");
+		}
+		return status;
 	}
 
 	@Override

@@ -56,6 +56,11 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		return det;
 	}
 
+	@Override
+	public void evict(Guest entity) {
+		getHibernateTemplate().evict(entity);
+	}
+
 	/**
 	 * Search some guests. If given agument is null, it's not considered.
 	 * @param mail

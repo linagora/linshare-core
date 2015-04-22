@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -55,6 +56,7 @@ import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class UserFacadeImpl extends AdminGenericFacadeImpl implements
@@ -159,8 +161,15 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		User userToUpdate = userDto.toUserObject(entity.isGuest());
 		User update;
 		if (entity.isGuest()) {
+			List<String> ac = null;
+			if (entity.isRestricted()) {
+				ac = Lists.newArrayList();
+				for (UserDto contactDto : userDto.getRestrictedContacts()) {
+					ac.add(contactDto.getMail());
+				}
+			}
 			update = guestService.update(actor, (User) entity.getOwner(),
-					(Guest) userToUpdate);
+					(Guest) userToUpdate, ac);
 		} else {
 			update = userService.updateUser(actor, userToUpdate,
 					userDto.getDomain());

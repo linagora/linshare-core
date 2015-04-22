@@ -41,10 +41,11 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.business.service.impl.GuestBusinessServiceImpl.GuestWithMetadata;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -60,6 +61,8 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		implements GuestService {
@@ -108,8 +111,18 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 					message);
 		}
 		checkReadPermission(actor, owner, Guest.class,
-				BusinessErrorCode.GUEST_FORBIDDEN, null);
+				BusinessErrorCode.GUEST_FORBIDDEN, guest);
 		return guest;
+	}
+
+	@Override
+	public List<AllowedContact> load(Account actor, User guest)
+			throws BusinessException {
+		preChecks(actor, actor);
+		Guest guest2 = guestBusinessService.findByLsUuid(guest.getLsUuid());
+		checkReadPermission(actor, actor, Guest.class,
+				BusinessErrorCode.GUEST_FORBIDDEN, guest2);
+		return guestBusinessService.loadAllowedContacts(guest);
 	}
 
 	@Override
@@ -140,10 +153,16 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public Guest create(Account actor, Account owner, Guest guest)
-			throws BusinessException {
+	public Guest create(Account actor, Account owner, Guest guestDto,
+			List<String> restrictedMails) throws BusinessException {
 		preChecks(actor, owner);
-		Validate.notNull(guest);
+		Validate.notNull(guestDto);
+		if (guestDto.isRestricted()) {
+			Validate.notNull(restrictedMails,
+					"A restricted guest must have a restricted list of contacts (mails)");
+			Validate.notEmpty(restrictedMails,
+					"A restricted guest must have a restricted list of contacts (mails)");
+		}
 		checkCreatePermission(actor, owner, Guest.class,
 				BusinessErrorCode.USER_CANNOT_CREATE_GUEST, null);
 		if (!hasGuestDomain(owner.getDomainId())) {
@@ -153,40 +172,66 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		Date expiryDate = calculateUserExpiryDate(owner);
 		AbstractDomain guestDomain = abstractDomainService.getGuestDomain(owner.getDomainId());
 		if (!guestBusinessService.exist(guestDomain.getIdentifier(),
-				guest.getMail())) {
+				guestDto.getMail())) {
 			throw new BusinessException(BusinessErrorCode.GUEST_ALREADY_EXISTS,
 					"Pair mail/domain already exist");
 		}
-		GuestWithMetadata create = guestBusinessService.create(guest, owner,
-				guestDomain, expiryDate);
+		guestDto.setRole(Role.SIMPLE);
+		List<User> restrictedContacts = null;
+		if (guestDto.isRestricted()) {
+			restrictedContacts = transformToUsers(actor, restrictedMails);
+			if (restrictedContacts == null || restrictedContacts.isEmpty()) {
+				throw new BusinessException(
+						BusinessErrorCode.GUEST_INVALID_INPUT,
+						"Can not create a restricted guest without restricted contacts (internal or guest users only).");
+			}
+		}
+		GuestWithMetadata create = guestBusinessService.create(owner, guestDto,
+				guestDomain, expiryDate, restrictedContacts);
 		MailContainerWithRecipient mail = mailBuildingService.buildNewGuest(
 				owner, create.getGuest(), create.getPassword());
 		notifierService.sendNotification(mail);
 		return create.getGuest();
 	}
 
-	void updateValidation(Guest guest) {
-		Validate.notNull(guest, "Guest object is required");
-		Validate.notEmpty(guest.getLsUuid(), "Guest uuid is required");
-		guest.setOwner(null);
-		guest.setDomain(null);
-	}
-
 	@Override
-	public Guest update(Account actor, User owner, Guest guest)
-			throws BusinessException {
+	public Guest update(Account actor, User owner, Guest guestDto,
+			List<String> restrictedMails) throws BusinessException {
 		preChecks(actor, owner);
-		updateValidation(guest);
-		Guest original = find(actor, owner, guest.getLsUuid());
+		Validate.notNull(guestDto, "Guest object is required");
+		Validate.notEmpty(guestDto.getLsUuid(), "Guest uuid is required");
+		// In case if guestDto was an existing modified entity.
+		guestBusinessService.evict(guestDto);
+		Guest entity = find(actor, owner, guestDto.getLsUuid());
 		checkUpdatePermission(actor, owner, Guest.class,
-				BusinessErrorCode.CANNOT_UPDATE_USER, original);
+				BusinessErrorCode.CANNOT_UPDATE_USER, entity);
 		AbstractDomain guestDomain = abstractDomainService.getGuestDomain(owner.getDomainId());
 		if (guestDomain == null) {
 			throw new BusinessException(
 					BusinessErrorCode.USER_CANNOT_CREATE_GUEST,
 					"New owner doesn't have guest domain");
 		}
-		return guestBusinessService.update(owner, guest, guestDomain);
+		List<User> restrictedContacts = transformToUsers(actor, restrictedMails);
+		return guestBusinessService.update(owner, entity, guestDto,
+				guestDomain, restrictedContacts);
+	}
+
+	private List<User> transformToUsers(Account actor,
+			List<String> restrictedMails) {
+		if (restrictedMails != null) {
+			List<User> restrictedContacts = Lists.newArrayList();
+			for (String mail : restrictedMails) {
+				try {
+					User user = userService.findOrCreateUser(mail,
+							actor.getDomainId());
+					restrictedContacts.add(user);
+				} catch (BusinessException ex) {
+					logger.error("You can not restricted a guest to a simple email address. It must be an User.");
+				}
+			}
+			return restrictedContacts;
+		}
+		return null;
 	}
 
 	@Override
