@@ -25,9 +25,5 @@
 			<one-to-many
 				class="org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry" />
 		</map>
-		<set name="domains" lazy="true" cascade="save-update,lock" inverse="true">
-			<key column="welcome_messages_id" not-null="false"/>
-			<one-to-many class="org.linagora.linshare.core.domain.entities.AbstractDomain"/>
-		</set>
 	</class>
 </hibernate-mapping>

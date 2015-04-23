@@ -43,7 +43,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
@@ -98,11 +97,6 @@ public class WelcomeMessagesDto {
 			}
 			this.myDomain = new DomainLightDto(welcomeMessage.getDomain());
 			this.domains = Sets.newHashSet();
-			if (welcomeMessage.getDomains() != null) {
-				for (AbstractDomain d : welcomeMessage.getDomains()) {
-					this.domains.add(new DomainLightDto(d));
-				}
-			}
 		}
 	}
 
@@ -169,6 +163,11 @@ public class WelcomeMessagesDto {
 
 	public void setDomains(Set<DomainLightDto> domains) {
 		this.domains = domains;
+	}
+
+	@Override
+	public String toString() {
+		return "WelcomeMessagesDto [uuid=" + uuid + ", name=" + name + "]";
 	}
 
 	/**

@@ -39,6 +39,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.WelcomeMessagesBusinessService;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
@@ -103,7 +104,7 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 
 	@Override
 	public WelcomeMessages update(User actor, AbstractDomain domain,
-			WelcomeMessages wlcm) throws BusinessException {
+			WelcomeMessages wlcm, List<AbstractDomain> newDomainsList, List<AbstractDomain> oldDomainsList) throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(wlcm, "Welcome message object must be set.");
 		Validate.notEmpty(wlcm.getUuid(), "Welcome message uuid must be set.");
@@ -111,7 +112,6 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 				"Wecolme message entries must be set.");
 
 		WelcomeMessages welcomeMessage = find(actor, wlcm.getUuid());
-
 		if (welcomeMessage.getWelcomeMessagesEntries().keySet().size() != wlcm
 				.getWelcomeMessagesEntries().keySet().size()) {
 			throw new BusinessException(
@@ -131,7 +131,18 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 		welcomeMessage.setName(wlcm.getName());
 		welcomeMessage.setWelcomeMessagesEntries(wlcm.getWelcomeMessagesEntries());
 
-		return welcomeMessagesBusinessService.update(welcomeMessage);
+		WelcomeMessages ret = welcomeMessagesBusinessService.update(welcomeMessage);
+		for (AbstractDomain d : newDomainsList) {
+			d.setCurrentWelcomeMessages(ret);
+			domainBusinessService.update(d);
+		}
+		for (AbstractDomain ad : oldDomainsList) {
+			if (!newDomainsList.contains(ad)) {
+				ad.setCurrentWelcomeMessages(welcomeMessagesBusinessService.find(LinShareConstants.defaultWelcomeMessagesUuid));
+				domainBusinessService.update(ad);
+			}
+		}
+		return ret;
 	}
 
 	@Override

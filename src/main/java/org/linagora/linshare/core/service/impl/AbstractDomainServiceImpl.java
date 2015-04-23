@@ -56,6 +56,7 @@ import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserProvider;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -64,6 +65,7 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.core.service.WelcomeMessagesService;
 import org.linagora.linshare.core.utils.LsIdValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +85,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final DomainBusinessService domainBusinessService;
 	private final MimePolicyBusinessService mimePolicyBusinessService;
 	private final MailConfigBusinessService mailConfigBusinessService;
+	private final WelcomeMessagesService welcomeMessagesService;
 
 	public AbstractDomainServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
@@ -92,7 +95,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			final UserRepository<User> userRepository,
 			final DomainBusinessService domainBusinessService,
 			final MimePolicyBusinessService mimePolicyBusinessService,
-			final MailConfigBusinessService mailConfigBusinessService) {
+			final MailConfigBusinessService mailConfigBusinessService,
+			final WelcomeMessagesService welcomeMessagesService) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
@@ -102,6 +106,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.domainBusinessService = domainBusinessService;
 		this.mimePolicyBusinessService = mimePolicyBusinessService;
 		this.mailConfigBusinessService = mailConfigBusinessService;
+		this.welcomeMessagesService = welcomeMessagesService;
 	}
 
 	@Override
@@ -778,4 +783,15 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 	}
 
+	@Override
+	public List<AbstractDomain> loadDomainsForAWelcomeMessage(User actor,
+			String welcomeMessageUuid) throws BusinessException {
+		if (actor.hasAdminRole() || actor.hasSuperAdminRole()) {
+			WelcomeMessages welcomeMessage = welcomeMessagesService.find(actor, welcomeMessageUuid);
+			List<AbstractDomain> domains = new ArrayList<>();
+			domains = abstractDomainRepository.loadDomainsForAWelcomeMessage(welcomeMessage);
+			return domains;
+		} else
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "actor has no rights");
+	}
 }

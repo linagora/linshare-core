@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AbstractDomainRepository extends AbstractRepository<AbstractDomain> {
@@ -85,5 +86,6 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 	 * @return
 	 */
 	List<AbstractDomain> findByCurrentMailConfig(MailConfig cfg);
-	
+
+	List<AbstractDomain> loadDomainsForAWelcomeMessage(WelcomeMessages welcomeMessage) throws BusinessException;
 }

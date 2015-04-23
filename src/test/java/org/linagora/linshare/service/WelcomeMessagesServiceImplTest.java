@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -187,13 +188,16 @@ public class WelcomeMessagesServiceImplTest extends
 			tmp.setDescription("a new welcome descreption");
 			String text1 = "This is epic!!!";
 			String text2 = "Ceci est un exploit!!!";
+			//TODO: to improve when delete is ready.
+			List<AbstractDomain> oldDomainList = new ArrayList();
+			List<AbstractDomain> newDomainList = new ArrayList();
 			for (WelcomeMessagesEntry wEntry : tmp.getWelcomeMessagesEntries().values()) {
 				if (wEntry.getLang().toString().equals("ENGLISH"))
 					wEntry.setValue(text1);
 				if (wEntry.getLang().toString().equals("FRENCH"))
 					wEntry.setValue(text2);
 			}
-			WelcomeMessages wlcm_updated = welcomeService.update(actor, rootDomain, tmp);
+			WelcomeMessages wlcm_updated = welcomeService.update(actor, rootDomain, tmp, oldDomainList, newDomainList);
 			Assert.assertEquals(wlcm_updated.getDescription(), "a new welcome descreption");
 			Assert.assertEquals(wlcm_updated.getName(), "A new name for tests");
 			for (WelcomeMessagesEntry wEntry : wlcm_updated.getWelcomeMessagesEntries().values()) {

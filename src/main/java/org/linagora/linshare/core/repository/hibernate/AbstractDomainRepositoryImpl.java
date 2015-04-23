@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -119,5 +120,12 @@ public class AbstractDomainRepositoryImpl extends
 					"No root domain found in the database.");
 		}
 		return domain;
+	}
+
+	@Override
+	public List<AbstractDomain> loadDomainsForAWelcomeMessage(
+			WelcomeMessages welcomeMessage) throws BusinessException {
+		return findByCriteria(Restrictions.eq("currentWelcomeMessage",
+				welcomeMessage));
 	}
 }

@@ -70,4 +70,10 @@ public class DomainLightDto {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+
+	@Override
+	public String toString() {
+		return "DomainLightDto [label=" + label + ", identifier=" + identifier
+				+ "]";
+	}
 }

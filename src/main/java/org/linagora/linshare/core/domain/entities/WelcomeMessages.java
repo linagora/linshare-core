@@ -37,7 +37,6 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 
@@ -63,11 +62,6 @@ public class WelcomeMessages implements Cloneable {
 	 * owner domain
 	 */
 	private AbstractDomain domain;
-
-	/**
-	 * domain associated with the current welcome messages.
-	 */
-	private Set<AbstractDomain> domains;
 
 	public WelcomeMessages() {
 	}
@@ -187,13 +181,5 @@ public class WelcomeMessages implements Cloneable {
 
 	public void setDomain(AbstractDomain domain) {
 		this.domain = domain;
-	}
-
-	public Set<AbstractDomain> getDomains() {
-		return domains;
-	}
-
-	public void setDomains(Set<AbstractDomain> domains) {
-		this.domains = domains;
 	}
 }

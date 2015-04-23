@@ -68,14 +68,17 @@ public class LinShareConstants {
 	/**
 	 * Default max size for an upload
 	 */
-	public static final Long defaultMaxFileSize = Long.MAX_VALUE;	
+	public static final Long defaultMaxFileSize = Long.MAX_VALUE;
 
 	/**
 	 * Default max available size
 	 */
 	public static final Long defaultFreeSpace = Long.MAX_VALUE;
 
-	public static final String defaultThreadView = "Default";	
+	public static final String defaultThreadView = "Default";
 
-
+	/**
+	 * Default linShare welcome message uuid.
+	 */
+	public static final String defaultWelcomeMessagesUuid = "4bc57114-c8c9-11e4-a859-37b5db95d856";
 }

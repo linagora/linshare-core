@@ -49,7 +49,7 @@ public interface WelcomeMessagesService {
 
 	WelcomeMessages create(User actor, AbstractDomain domain, WelcomeMessages wlcm) throws BusinessException;
 
-	WelcomeMessages update(User actor, AbstractDomain domain, WelcomeMessages custom) throws BusinessException;
+	WelcomeMessages update(User actor, AbstractDomain domain, WelcomeMessages custom, List<AbstractDomain> newDomainsList, List<AbstractDomain> oldDomainsList) throws BusinessException;
 
 	WelcomeMessages delete(User actor,String uuid) throws BusinessException;
 }
