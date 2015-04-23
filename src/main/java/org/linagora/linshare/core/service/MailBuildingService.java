@@ -123,6 +123,9 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildAckUploadRequest(User owner, UploadRequestUrl request, UploadRequestEntry entry)
 			throws BusinessException;
 
+	MailContainerWithRecipient buildAckDeleteFileUploadRequest(User owner, UploadRequestUrl request, UploadRequestEntry entry)
+			throws BusinessException;
+
 	MailContainerWithRecipient buildRemindUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException;
 

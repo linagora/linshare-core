@@ -81,6 +81,12 @@ ALTER TABLE mail_content ADD COLUMN enable_as TYPE bool DEFAULT false NOT NULL;
 UPDATE mail_content SET alternative_subject = '${actorSubject} from ${actorRepresentation}', enable_as = true, modification_date = now() WHERE language = 0 AND mail_content_type IN (8, 9, 10, 11);
 UPDATE mail_content SET alternative_subject = '${actorSubject} de la part de ${actorRepresentation}', enable_as = true, modification_date = now() WHERE language = 1 AND mail_content_type IN (8, 9, 10, 11);
 
+-- Mail Content : new template for UPLOAD_REQUEST_FILE_DELETED_BY_SENDER
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (30, '88b90304-e9c9-11e4-b6b4-5404a6202d2c', 1, 0, 29, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request file deleted', E'A user ${actorRepresentation} has deleted a file for upload request: ${subject}', E'<strong>${firstName} ${lastName}</strong> has deleted a file.<br/>File name: ${fileName}<br/>Deletion date: ${deleteDate}<br/>File size: ${fileSize}<br/><br/>');
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (81, '41ef3560-e9ca-11e4-b6b4-5404a6202d2c', 1, 1, 29, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Suppression de fichier après dépôt', E'${actorRepresentation} a supprimé un fichier suite à une invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> a supprimé un fichier.<br/>Nom du fichier: ${fileName}<br/>Date de suppression: ${deleteDate}<br/>Taille du fichier: ${fileSize}<br/><br/>');
+INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (30, 1, 0, 30, 29, 'ec270da7-e9cb-11e4-b6b4-5404a6202d2c');
+INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (81, 1, 1, 81, 29, 'd6e18c3b-e9cb-11e4-b6b4-5404a6202d2c');
+
 -- Domain Abstract
 ALTER TABLE domain_abstract ADD COLUMN external_mail_locale varchar(255);
 UPDATE domain_abstract SET external_mail_locale = 'en';

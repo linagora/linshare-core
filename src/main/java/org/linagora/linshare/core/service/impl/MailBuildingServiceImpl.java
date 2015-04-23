@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.text.DateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -247,8 +248,14 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 	private String formatCreationDate(Account account, Entry entry) {
 		Locale locale = account.getJavaExternalMailLocale();
-		DateFormat formatter = DateFormat.getDateInstance(DateFormat.FULL, locale);
+		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT, locale);
 		return formatter.format(entry.getCreationDate().getTime());
+	}
+
+	private String formatDeletionDate(Account account) {
+		Locale locale = account.getJavaExternalMailLocale();
+		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT, locale);
+		return formatter.format(new Date());
 	}
 
 	private String formatCreationDate(Account account, UploadRequest uploadRequest) {
@@ -984,6 +991,35 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(contact);
 		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_ACKNOWLEDGMENT, builder);
+	}
+
+	@Override
+	public MailContainerWithRecipient buildAckDeleteFileUploadRequest(User owner, UploadRequestUrl request, UploadRequestEntry entry)
+			throws BusinessException {
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
+		MailContainerWithRecipient container = new MailContainerWithRecipient(
+				request.getLocale());
+		MailContainerBuilder builder = new MailContainerBuilder();
+
+		String contact = request.getContact().getMail();
+		builder.getSubjectChain()
+				.add("actorRepresentation", contact)
+				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
+		builder.getGreetingsChain()
+				.add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName());
+		builder.getBodyChain()
+				.add("firstName", contact)
+				.add("lastName", "")
+				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
+				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
+				.add("fileSize", DocumentUtils.humanReadableByteCount(entry.getSize(), true))
+				.add("fileName", entry.getName())
+				.add("deleteDate", formatDeletionDate(owner));
+		container.setRecipient(owner.getMail());
+		container.setFrom(getFromMailAddress(owner));
+		container.setReplyTo(contact);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_FILE_DELETED_BY_SENDER, builder);
 	}
 
 	@Override

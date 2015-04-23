@@ -165,6 +165,12 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 				uploadRequestEntryUrlBusinessService.delete(uploadRequestEntryUrl);
 			}
 			uploadRequestEntryBusinessService.delete(found);
+
+			MailContainerWithRecipient mail = mailBuildingService.buildAckDeleteFileUploadRequest(
+					(User) requestUrl.getUploadRequest().getOwner(),
+					requestUrl, found);
+			notifierService.sendNotification(mail);
+
 		} else {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"You do not have the right to delete a file into upload request : "
