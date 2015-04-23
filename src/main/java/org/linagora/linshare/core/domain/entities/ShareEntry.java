@@ -108,7 +108,6 @@ public class ShareEntry extends Entry {
 	 * helpers
 	 */
 	public boolean hasThumbnail() {
-		String thmbUUID = documentEntry.getDocument().getThmbUuid();
-		return (thmbUUID != null && thmbUUID.length() > 0);
+		return documentEntry.isHasThumbnail();
 	}
 }
