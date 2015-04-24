@@ -196,9 +196,8 @@ public class Download {
 			if (!securedUrlFacade.isValid(uuid, password)) {
 				String msg = "the secured url is not valid";
 				logger.error(msg);
-				throw new BusinessException(msg);
+				throw new BusinessException(BusinessErrorCode.INVALID_UUID, msg);
 			}
-	
 		} catch (BusinessException e) {
 			messagesManagementService.notify(e);
 		}
