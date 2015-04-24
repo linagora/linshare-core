@@ -150,7 +150,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 					"You are not authorized to use this service");
 		ShareContainer sc = new ShareContainer();
 		for (ShareDto share : shares) {
-			sc.addDocumentUuid(share.getDocumentDto().getUuid());
+			sc.addDocumentUuid(share.getDocument().getUuid());
 			sc.addUserDto(share.getRecipient());
 		}
 		sc.setSecured(secured);

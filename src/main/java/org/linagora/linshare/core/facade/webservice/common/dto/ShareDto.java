@@ -76,8 +76,8 @@ public class ShareDto {
 	/**
 	 * SentShare
 	 */
-	@ApiModelProperty(value = "DocumentDto")
-	protected DocumentDto documentDto;
+	@ApiModelProperty(value = "Document")
+	protected DocumentDto document;
 
 	@ApiModelProperty(value = "Recipient")
 	protected GenericUserDto recipient;
@@ -133,13 +133,13 @@ public class ShareDto {
 				this.hasThumbnail = sa.getDocumentEntry().isHasThumbnail();
 			} else {
 				// sent share.
-				this.documentDto = new DocumentDto(((ShareEntry) entry).getDocumentEntry());
+				this.document = new DocumentDto(((ShareEntry) entry).getDocumentEntry());
 				this.recipient = new GenericUserDto(sa.getRecipient());
 			}
 		} else if (entry.getEntryType().equals(EntryType.ANONYMOUS_SHARE)) {
 			AnonymousShareEntry a = (AnonymousShareEntry) entry;
 			this.downloaded = a.getDownloaded();
-			this.documentDto = new DocumentDto(a.getDocumentEntry());
+			this.document = new DocumentDto(a.getDocumentEntry());
 			this.recipient = new GenericUserDto(a.getAnonymousUrl().getContact());
 		}
 	}
@@ -204,12 +204,12 @@ public class ShareDto {
 		this.downloaded = downloaded;
 	}
 
-	public DocumentDto getDocumentDto() {
-		return documentDto;
+	public DocumentDto getDocument() {
+		return document;
 	}
 
-	public void setDocumentDto(DocumentDto documentDto) {
-		this.documentDto = documentDto;
+	public void setDocument(DocumentDto document) {
+		this.document = document;
 	}
 
 	public GenericUserDto getRecipient() {
