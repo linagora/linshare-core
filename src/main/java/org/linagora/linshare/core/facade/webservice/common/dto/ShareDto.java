@@ -55,55 +55,55 @@ public class ShareDto {
 	/**
 	 * Share
 	 */
-    @ApiModelProperty(value = "Uuid")
+	@ApiModelProperty(value = "Uuid")
 	protected String uuid;
 
-    @ApiModelProperty(value = "Name")
+	@ApiModelProperty(value = "Name")
 	protected String name;
 
-    @ApiModelProperty(value = "CreationDate")
+	@ApiModelProperty(value = "CreationDate")
 	protected Date creationDate;
 
-    @ApiModelProperty(value = "ModificationDate")
+	@ApiModelProperty(value = "ModificationDate")
 	protected Date modificationDate;
 
-    @ApiModelProperty(value = "ExpirationDate")
+	@ApiModelProperty(value = "ExpirationDate")
 	protected Date expirationDate;
 
-    @ApiModelProperty(value = "Downloaded")
+	@ApiModelProperty(value = "Downloaded")
 	protected Long downloaded;
 
 	/**
 	 * SentShare
 	 */
-    @ApiModelProperty(value = "DocumentDto")
-	protected DocumentDto documentDto;
+	@ApiModelProperty(value = "Document")
+	protected DocumentDto document;
 
-    @ApiModelProperty(value = "Recipient")
+	@ApiModelProperty(value = "Recipient")
 	protected GenericUserDto recipient;
 
 	/**
 	 * Received Share.
 	 */
-    @ApiModelProperty(value = "Description")
+	@ApiModelProperty(value = "Description")
 	protected String description;
 
-    @ApiModelProperty(value = "Sender")
+	@ApiModelProperty(value = "Sender")
 	protected UserDto sender;
 
-    @ApiModelProperty(value = "Size")
+	@ApiModelProperty(value = "Size")
 	protected Long size;
 
-    @ApiModelProperty(value = "Type")
+	@ApiModelProperty(value = "Type")
 	protected String type;
 
-    @ApiModelProperty(value = "Ciphered")
+	@ApiModelProperty(value = "Ciphered")
 	protected Boolean ciphered;
 
 	/**
 	 * ???
 	 */
-    @ApiModelProperty(value = "Message")
+	@ApiModelProperty(value = "Message")
 	protected String message;
 
 	/**
@@ -116,7 +116,7 @@ public class ShareDto {
 		this.name = entry.getName();
 		this.creationDate = entry.getCreationDate().getTime();
 		this.modificationDate = entry.getModificationDate().getTime();
-		if(entry.getExpirationDate() != null)
+		if (entry.getExpirationDate() != null)
 			this.expirationDate = entry.getExpirationDate().getTime();
 		if (entry.getEntryType().equals(EntryType.SHARE)) {
 			ShareEntry sa = (ShareEntry) entry;
@@ -129,14 +129,16 @@ public class ShareDto {
 				this.ciphered = sa.getDocumentEntry().getCiphered();
 			} else {
 				// sent share.
-				this.documentDto = new DocumentDto(((ShareEntry) entry).getDocumentEntry());
+				this.document = new DocumentDto(
+						((ShareEntry) entry).getDocumentEntry());
 				this.recipient = new GenericUserDto(sa.getRecipient());
 			}
 		} else if (entry.getEntryType().equals(EntryType.ANONYMOUS_SHARE)) {
 			AnonymousShareEntry a = (AnonymousShareEntry) entry;
 			this.downloaded = a.getDownloaded();
-			this.documentDto = new DocumentDto(a.getDocumentEntry());
-			this.recipient = new GenericUserDto(a.getAnonymousUrl().getContact());
+			this.document = new DocumentDto(a.getDocumentEntry());
+			this.recipient = new GenericUserDto(a.getAnonymousUrl()
+					.getContact());
 		}
 	}
 
@@ -200,12 +202,12 @@ public class ShareDto {
 		this.downloaded = downloaded;
 	}
 
-	public DocumentDto getDocumentDto() {
-		return documentDto;
+	public DocumentDto getDocument() {
+		return document;
 	}
 
-	public void setDocumentDto(DocumentDto documentDto) {
-		this.documentDto = documentDto;
+	public void setDocument(DocumentDto document) {
+		this.document = document;
 	}
 
 	public GenericUserDto getRecipient() {
@@ -218,7 +220,7 @@ public class ShareDto {
 
 	public String getDescription() {
 		return description;
-		}
+	}
 
 	public void setDescription(String description) {
 		this.description = description;
