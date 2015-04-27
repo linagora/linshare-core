@@ -385,6 +385,14 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public boolean getDefaultUploadValueForGuestCreation(String domainIdentifier)
+			throws BusinessException {
+		AbstractDomain domain = findDomain(domainIdentifier);
+		Functionality func = getUserCanUploadFunctionality(domain);
+		return func.getActivationPolicy().getStatus();
+	}
+
+	@Override
 	public boolean isRestrictedGuestAllowed(String domainIdentifier) throws BusinessException {
 		AbstractDomain domain = findDomain(domainIdentifier);
 		Functionality funcRG = getRestrictedGuestFunctionality(domain);

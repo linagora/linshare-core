@@ -194,7 +194,7 @@ public class GuestEditForm {
     	}
     	
 		guestsAllowedToCreateGuest = false;
-		uploadGranted = false;
+		uploadGranted = functionalityFacade.getDefaultUploadValueForGuestCreation(userLoggedIn.getDomainIdentifier());
 		autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
 	}
 	

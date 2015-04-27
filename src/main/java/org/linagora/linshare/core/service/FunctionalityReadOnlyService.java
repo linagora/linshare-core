@@ -139,6 +139,8 @@ public interface FunctionalityReadOnlyService {
 	 */
 	boolean getDefaultRestrictedGuestValue(String domainIdentifier) throws BusinessException;
 
+	boolean getDefaultUploadValueForGuestCreation(String domainIdentifier) throws BusinessException;
+
 	/**
 	 * Check if RestrictedGuest is mandatory
 	 * @param domain : the current domain identifier

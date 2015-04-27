@@ -58,4 +58,5 @@ public interface FunctionalityFacade {
 	 * @return return true if the policy is enabled, otherwise return false
 	 */
 	boolean isEnableGuest(String domainIdentifier);
+	boolean getDefaultUploadValueForGuestCreation(String domainIdentifier);
 }

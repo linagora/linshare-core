@@ -255,6 +255,17 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	}
 
 	@Override
+	public boolean getDefaultUploadValueForGuestCreation(String domainIdentifier) {
+		try {
+			return functionalityReadOnlyService.getDefaultUploadValueForGuestCreation(domainIdentifier);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+			return false;
+		}
+	}
+
+	@Override
 	public boolean isRestrictedGuestEnabled(String domainIdentifier) {
 		try {
 			return functionalityReadOnlyService
