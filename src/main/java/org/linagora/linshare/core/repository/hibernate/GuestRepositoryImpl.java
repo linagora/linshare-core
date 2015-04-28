@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -112,14 +113,17 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 
 		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
 		criteria.add(Restrictions.eq("destroyed", false));
+		Disjunction or = Restrictions.disjunction();
+		criteria.add(or);
+
 		if (mail != null) {
-			criteria.add(Restrictions.like("mail", mail, MatchMode.ANYWHERE).ignoreCase());
+			or.add(Restrictions.ilike("mail", mail, MatchMode.ANYWHERE));
 		}
 		if (firstName != null) {
-			criteria.add(Restrictions.like("firstName", firstName, MatchMode.ANYWHERE).ignoreCase());
+			or.add(Restrictions.ilike("firstName", firstName, MatchMode.ANYWHERE));
 		}
 		if (lastName != null) {
-			criteria.add(Restrictions.like("lastName", lastName, MatchMode.ANYWHERE).ignoreCase());
+			or.add(Restrictions.ilike("lastName", lastName, MatchMode.ANYWHERE));
 		}
 		return findByCriteria(criteria);
 	}
