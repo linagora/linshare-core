@@ -65,6 +65,8 @@ public interface GuestRepository extends UserRepository<Guest> {
      * @return a list of matching users.
      */
     List<Guest> searchGuestAnyWhere(String mail, String firstName, String lastName);
+    List<Guest> searchGuestAnyWhere(String firstName, String lastName);
+    List<Guest> searchGuestAnyWhere(String pattern);
 
     void evict(Guest entity);
 }
