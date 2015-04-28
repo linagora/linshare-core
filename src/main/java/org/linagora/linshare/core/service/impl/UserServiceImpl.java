@@ -327,27 +327,58 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
-	 * @deprecated function used by completion and research method. Now it is
-	 *             only used by research method. Should be refactor.
+	 * TODO : FIXME : OPTIMISATION NEEDED : This method should be refactor to
+	 * search guests domain by domain
+	 *
+	 * @param actor
+	 *            : the current user performing this research.
 	 * @param mail
+	 *            : mail pattern. Not used if null.
 	 * @param firstName
+	 *            : first name pattern. Not used if null.
 	 * @param lastName
-	 * @param currentUser
+	 *            : last name pattern. Not used if null.
 	 * @return
 	 * @throws BusinessException 
 	 */
-	private List<User> completionSearchForGuest(String mail, String firstName,
-			String lastName, User currentUser) throws BusinessException {
+	private List<User> completionSearchOnGuest(Account actor, String pattern) throws BusinessException {
 		List<User> result = new ArrayList<User>();
 		logger.debug("adding guests to the return list");
 
-		List<Guest> list = guestRepository.searchGuestAnyWhere(mail, firstName,
-				lastName);
+		// TODO : FIXME : OPTIMISATION NEEDED : This method should be refactored
+		// to search guests domain by domain
+		List<Guest> list = guestRepository.searchGuestAnyWhere(pattern);
 		logger.debug("Guest found : size : " + list.size());
 
 		List<AbstractDomain> allAuthorizedDomain = abstractDomainService
-				.getAllAuthorizedDomains(currentUser.getDomain()
-						.getIdentifier());
+				.getAllAuthorizedDomains(actor.getDomain().getIdentifier());
+		List<String> allAuthorizedDomainIdentifier = new ArrayList<String>();
+
+		for (AbstractDomain d : allAuthorizedDomain) {
+			allAuthorizedDomainIdentifier.add(d.getIdentifier());
+		}
+
+		for (Guest guest : list) {
+			if (allAuthorizedDomainIdentifier.contains(guest.getDomainId())) {
+				result.add(guest);
+			}
+		}
+
+		logger.debug("result guest list : size : " + result.size());
+		return result;
+	}
+
+	private List<User> completionSearchOnGuest(Account actor, String firstName, String lastName) throws BusinessException {
+		List<User> result = new ArrayList<User>();
+		logger.debug("adding guests to the return list");
+
+		// TODO : FIXME : OPTIMISATION NEEDED : This method should be refactored
+		// to search guests domain by domain
+		List<Guest> list = guestRepository.searchGuestAnyWhere(firstName, lastName);
+		logger.debug("Guest found : size : " + list.size());
+
+		List<AbstractDomain> allAuthorizedDomain = abstractDomainService
+				.getAllAuthorizedDomains(actor.getDomain().getIdentifier());
 		List<String> allAuthorizedDomainIdentifier = new ArrayList<String>();
 
 		for (AbstractDomain d : allAuthorizedDomain) {
@@ -441,8 +472,11 @@ public class UserServiceImpl implements UserService {
 		}
 
 		// completion on database for guests
-		users.addAll(completionSearchOnGuest(actor, mail, firstName,
-				lastName));
+		if (lastName == null) {
+			users.addAll(completionSearchOnGuest(actor, mail));
+		} else {
+			users.addAll(completionSearchOnGuest(actor, firstName, lastName));
+		}
 
 		// completion on LDAP directory for internals
 		if (lastName == null) {
@@ -484,8 +518,7 @@ public class UserServiceImpl implements UserService {
 		}
 
 		if (null == userType || userType.equals(AccountType.GUEST)) {
-			users.addAll(completionSearchForGuest(mail, firstName, lastName,
-					currentUser));
+			users.addAll(completionSearchOnGuest(currentUser, mail, firstName, lastName));
 		}
 		if (null == userType || userType.equals(AccountType.INTERNAL)) {
 			List<User> internals = abstractDomainService

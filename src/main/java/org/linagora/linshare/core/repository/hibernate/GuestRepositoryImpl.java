@@ -36,6 +36,7 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
@@ -110,21 +111,42 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 	 * @see GuestRepository#searchGuestAnyWhere(String, String, String, String)
 	 */
 	public List<Guest> searchGuestAnyWhere(String mail, String firstName, String lastName) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
+		criteria.add(Restrictions.eq("destroyed", false));
+		Conjunction and= Restrictions.conjunction();
+		criteria.add(and);
+		if (mail != null) {
+			and.add(Restrictions.ilike("mail", mail, MatchMode.ANYWHERE));
+		}
+		if (firstName != null) {
+			and.add(Restrictions.ilike("firstName", firstName, MatchMode.ANYWHERE));
+		}
+		if (lastName != null) {
+			and.add(Restrictions.ilike("lastName", lastName, MatchMode.ANYWHERE));
+		}
+		return findByCriteria(criteria);
+	}
 
+	@Override
+	public List<Guest> searchGuestAnyWhere(String firstName, String lastName) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
+		criteria.add(Restrictions.eq("destroyed", false));
+		Conjunction and = Restrictions.conjunction();
+		criteria.add(and);
+		and.add(Restrictions.ilike("firstName", firstName, MatchMode.ANYWHERE));
+		and.add(Restrictions.ilike("lastName", lastName, MatchMode.ANYWHERE));
+		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<Guest> searchGuestAnyWhere(String pattern) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
 		criteria.add(Restrictions.eq("destroyed", false));
 		Disjunction or = Restrictions.disjunction();
 		criteria.add(or);
-
-		if (mail != null) {
-			or.add(Restrictions.ilike("mail", mail, MatchMode.ANYWHERE));
-		}
-		if (firstName != null) {
-			or.add(Restrictions.ilike("firstName", firstName, MatchMode.ANYWHERE));
-		}
-		if (lastName != null) {
-			or.add(Restrictions.ilike("lastName", lastName, MatchMode.ANYWHERE));
-		}
+		or.add(Restrictions.ilike("mail", pattern, MatchMode.ANYWHERE));
+		or.add(Restrictions.ilike("firstName", pattern, MatchMode.ANYWHERE));
+		or.add(Restrictions.ilike("lastName", pattern, MatchMode.ANYWHERE));
 		return findByCriteria(criteria);
 	}
 
