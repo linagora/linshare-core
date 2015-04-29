@@ -38,11 +38,14 @@ import java.util.Set;
 
 import org.linagora.linshare.core.batches.UserManagementBatch;
 import org.linagora.linshare.core.batches.generics.impl.GenericBatchImpl;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
+import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.ResourceContext;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.GuestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,30 +61,33 @@ public class UserManagementBatchImpl extends GenericBatchImpl<Guest> implements
 
 	private final GuestService service;
 
-	public UserManagementBatchImpl(final GuestService guestService) {
+	public UserManagementBatchImpl(final GuestService guestService,
+			AccountRepository<Account> accountRepository) {
+		super(accountRepository);
 		this.service = guestService;
 	}
 
 	@Override
-	public Set<Guest> getAll(SystemAccount systemAccount) {
+	public Set<Guest> getAll() {
 		logger.info("UserManagementBatchImpl job starting ...");
 		HashSet<Guest> allGuests = new HashSet<>(
-				service.findOudatedGuests(systemAccount));
+				service.findOudatedGuests(getSystemAccount()));
 		logger.info(allGuests.size()
 				+ " guest(s) have been found to be removed");
 		return allGuests;
 	}
 
 	@Override
-	public BatchResultContext<Guest> execute(SystemAccount systemAccount,
-			Guest resource, long total, long position)
+	public BatchResultContext<Guest> execute(Context c,
+			long total, long position)
 			throws BatchBusinessException, BusinessException {
+		Guest resource = getResource(c);
 		BatchResultContext<Guest> context = new BatchResultContext<Guest>(
 				resource);
 		try {
 			logInfo(total, position,
 					"processing guest : " + resource.getAccountReprentation());
-			service.deleteUser(systemAccount, resource.getLsUuid());
+			service.deleteUser(getSystemAccount(), resource.getLsUuid());
 			logger.info("Removed expired user : "
 					+ resource.getAccountReprentation());
 		} catch (BusinessException businessException) {
@@ -98,17 +104,16 @@ public class UserManagementBatchImpl extends GenericBatchImpl<Guest> implements
 	}
 
 	@Override
-	public void notify(SystemAccount systemAccount,
-			BatchResultContext<Guest> context, long total, long position) {
+	public void notify(BatchResultContext<Guest> context,
+			long total, long position) {
 		logInfo(total, position, "The Guest "
 				+ context.getResource().getAccountReprentation()
 				+ " has been successfully removed ");
 	}
 
 	@Override
-	public void notifyError(SystemAccount systemAccount,
-			BatchBusinessException exception, Guest resource, long total,
-			long position) {
+	public void notifyError(BatchBusinessException exception,
+			Guest resource, long total, long position) {
 		logError(
 				total,
 				position,
@@ -121,8 +126,8 @@ public class UserManagementBatchImpl extends GenericBatchImpl<Guest> implements
 	}
 
 	@Override
-	public void terminate(SystemAccount systemAccount, Set<Guest> all,
-			long errors, long unhandled_errors, long total) {
+	public void terminate(Set<Guest> all, long errors,
+			long unhandled_errors, long total) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success
 				+ " guest(s) have been removed.");
@@ -135,5 +140,20 @@ public class UserManagementBatchImpl extends GenericBatchImpl<Guest> implements
 					+ " guest(s) failed to be removed (unhandled error).");
 		}
 		logger.info("UserManagementBatchImpl job terminated.");
+	}
+
+	/*
+	 * Helpers
+	 */
+
+	/**
+	 * Workaround to get the resource without using generic
+		because Spring AOP does not support to create transaction with generic parameters.
+	 */
+	@Override
+	public Guest getResource(Context c) {
+		@SuppressWarnings("unchecked")
+		ResourceContext<Guest> rc = (ResourceContext<Guest>)c;
+		return rc.getRessource();
 	}
 }

@@ -2,16 +2,21 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-    
-    <bean id="cleanOutdatedGuestsJob" class="org.springframework.scheduling.quartz.JobDetailBean">
-        <property name="jobClass" value="org.linagora.linshare.core.job.quartz.CleanOutdatedGuests"/>
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="batch" value-ref="userManagementBatch"/>
-                <entry key="accountRepository" value-ref="accountRepository"/>
-            </map>
-        </property>
-    </bean>
+
+	<bean id="cleanOutdatedGuestsJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="org.linagora.linshare.core.job.quartz.CleanOutdatedGuests" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="batch">
+					<list value-type="org.linagora.linshare.core.job.quartz.LinShareJobBean">
+						<ref bean="userManagementBatch" />
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
     <bean id="cleanOutdatedGuestsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="cleanOutdatedGuestsJob"/>
         <property name="cronExpression" value="${job.guests.cron.expression}"/>
@@ -112,15 +117,20 @@
         <property name="cronExpression" value="${job.uploadrequest.cron.expression}"/>
     </bean>
 
-    <bean id="cleanOutdatedUploadRequestEntryUrlJob" class="org.springframework.scheduling.quartz.JobDetailBean">
-        <property name="jobClass" value="org.linagora.linshare.core.job.quartz.CleanOutdatedUploadRequestEntryUrlJobBean"/>
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="batch" value-ref="uploadRequestEntryUrlBatch"/>
-                <entry key="accountRepository" value-ref="accountRepository"/>
-            </map>
-        </property>
-    </bean>
+	<bean id="cleanOutdatedUploadRequestEntryUrlJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="org.linagora.linshare.core.job.quartz.CleanOutdatedUploadRequestEntryUrlJobBean" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="batch">
+					<list value-type="org.linagora.linshare.core.job.quartz.LinShareJobBean">
+						<ref bean="uploadRequestEntryUrlBatch" />
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
     <bean id="cleanOutdatedUploadRequestEntryUrlJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="cleanOutdatedUploadRequestEntryUrlJob"/>
         <property name="cronExpression" value="${job.uploadrequestentryurl.cleaner.cron.expression}"/>

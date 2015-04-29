@@ -10,6 +10,7 @@
 
     <bean name="userManagementBatch" class="org.linagora.linshare.core.batches.impl.UserManagementBatchImpl">
         <constructor-arg ref="guestService"/>
+        <constructor-arg ref="accountRepository"/>
     </bean>
 
     <bean name="shareManagementBatch" class="org.linagora.linshare.core.batches.impl.ShareManagementBatchImpl">
@@ -50,9 +51,11 @@
         <constructor-arg ref="accountRepository" />
     </bean>
 
-    <bean name="uploadRequestEntryUrlBatch" class="org.linagora.linshare.core.batches.impl.UploadRequestEntryUrlBatchImpl">
-	    <constructor-arg ref="uploadRequestEntryUrlService" />
-    </bean>
+	<bean name="uploadRequestEntryUrlBatch"
+		class="org.linagora.linshare.core.batches.impl.UploadRequestEntryUrlBatchImpl">
+		<constructor-arg ref="uploadRequestEntryUrlService" />
+		<constructor-arg ref="accountRepository" />
+	</bean>
 
 	<!-- Don't use that with Jackrabbit 1.4 !! -->
 	<!-- https://issues.apache.org/jira/browse/JCR-2492 -->
