@@ -39,7 +39,8 @@ ALTER TABLE mime_type ADD  CONSTRAINT unicity_type_and_policy  UNIQUE (mime_poli
 DROP VIEW IF EXISTS alias_users_list_all, alias_users_list_active, alias_users_list_destroyed, alias_threads_list_all, alias_threads_list_active, alias_threads_list_destroyed;
 ALTER TABLE account
 	ALTER COLUMN creation_date TYPE timestamp,
-	ALTER COLUMN modification_date TYPE timestamp;
+	ALTER COLUMN modification_date TYPE timestamp,
+	ADD COLUMN purge_step varchar(255) DEFAULT 'IN_USE' NOT NULL;
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id)
 	SELECT 3, 7, 'system-account-uploadrequest', now(),now(), 3, 'en', 'en', true, false, 1 FROM account
 	WHERE NOT EXISTS (SELECT id FROM account WHERE id=3) LIMIT 1;

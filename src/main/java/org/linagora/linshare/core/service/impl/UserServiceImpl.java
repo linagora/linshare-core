@@ -224,19 +224,43 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+
 	/**
 	 * Legacy code, saved for future batch delete
 	 */
-	private void doDeleteUser(Account actor, User userToDelete)
-			throws BusinessException {
-		try {
 
+	@Override
+	public void markToPurge(Account actor, String lsUuid) throws BusinessException {
+		User user = userRepository.findDeleted(lsUuid);
+		boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, user);
+
+		logger.debug("Has right ? : " + hasRightToDeleteThisUser);
+
+		if (!hasRightToDeleteThisUser) {
+			throw new BusinessException(
+					BusinessErrorCode.CANNOT_DELETE_USER, "The user "
+							+ lsUuid
+							+ " cannot be deleted, he is not a guest, or "
+							+ actor.getAccountReprentation()
+							+ " is not an admin");
+		} else {
+			userRepository.markToPurge(user);
+		}
+	}
+
+	@Override
+	public void purge(Account actor, String lsUuid)
+			throws BusinessException {
+
+		User userToDelete = userRepository.findDeleted(lsUuid);
+
+		try {
 			entryService.deleteAllReceivedShareEntries(actor, userToDelete);
 			entryService.deleteAllShareEntriesWithDocumentEntries(actor,
 					userToDelete);
 
 			// clearing the favorites
-//			recipientFavouriteService.deleteFavoritesOfUser(userToDelete);
+			// recipientFavouriteService.deleteFavoritesOfUser(userToDelete);
 
 			// clearing allowed contacts
 			allowedContactRepository.deleteAllByUserBothSides(userToDelete);
@@ -249,7 +273,7 @@ public class UserServiceImpl implements UserService {
 			// ownSignatures.clear();
 			// userRepository.update(userToDelete);
 
-			userRepository.delete(userToDelete);
+			userRepository.purge(userToDelete);
 
 			UserLogEntry logEntry = new UserLogEntry(actor,
 					LogAction.USER_DELETE, "Deleting an user", userToDelete);
@@ -962,5 +986,17 @@ public class UserServiceImpl implements UserService {
 				"Update of a user:" + user.getMail(), user);
 		logEntryService.create(logEntry);
 		return update;
+	}
+
+	@Override
+	public List<User> findAllAccountsReadyToPurge()
+			throws BusinessException {
+		return userRepository.findAllAccountsReadyToPurge();
+	}
+
+	@Override
+	public List<User> findAllDeletedAccountsToPurge(Date limit)
+			throws BusinessException {
+		return userRepository.findAllDeletedAccountsToPurge(limit);
 	}
 }

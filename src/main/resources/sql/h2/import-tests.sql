@@ -61,7 +61,7 @@ UPDATE domain_abstract SET mime_policy_id=1 WHERE id >= 100001;
 
 
 
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id) VALUES (100001, 6, 'root@localhost.localdomain@test', current_date(), current_date(), 3, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 100001);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id, purge_step) VALUES (100001, 6, 'root@localhost.localdomain@test', current_date(), current_date(), 3, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 100001, 'IN_USE');
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (100001, 'Administrator', 'LinShare', 'root@localhost.localdomain@test', false, '', false, false);
 
 

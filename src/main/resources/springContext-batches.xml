@@ -8,8 +8,19 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd"
        default-autowire="no">
 
-    <bean name="userManagementBatch" class="org.linagora.linshare.core.batches.impl.UserManagementBatchImpl">
+    <bean name="deleteGuestBatch" class="org.linagora.linshare.core.batches.impl.DeleteGuestBatchImpl">
         <constructor-arg ref="guestService"/>
+        <constructor-arg ref="accountRepository"/>
+    </bean>
+
+    <bean name="markUserToPurgeBatch" class="org.linagora.linshare.core.batches.impl.MarkUserToPurgeBatchImpl">
+        <constructor-arg ref="userService"/>
+        <constructor-arg ref="accountRepository"/>
+        <constructor-arg value="${job.users.delay.before.purge}" />
+    </bean>
+
+    <bean name="purgeUserBatch" class="org.linagora.linshare.core.batches.impl.PurgeUserBatchImpl">
+        <constructor-arg ref="userService"/>
         <constructor-arg ref="accountRepository"/>
     </bean>
 

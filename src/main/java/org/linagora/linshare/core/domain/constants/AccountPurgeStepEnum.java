@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
- * 
+ *
  * Copyright (C) 2015 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
@@ -19,25 +19,30 @@
  * refrain from infringing Linagora intellectual property rights over its
  * trademarks and commercial brands. Other Additional Terms apply, see
  * <http://www.linagora.com/licenses/> for more details.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.batches;
+package org.linagora.linshare.core.domain.constants;
 
-import org.linagora.linshare.core.batches.generics.GenericBatch;
-import org.linagora.linshare.core.domain.entities.Guest;
+public enum AccountPurgeStepEnum {
 
-/** Batch for user management.
- */
-public interface UserManagementBatch extends GenericBatch<Guest>{
+	IN_USE, WAIT_FOR_PURGE, PURGED;
 
+	public static AccountPurgeStepEnum fromString(String value) {
+		for (AccountPurgeStepEnum purgeStep : values()) {
+			if (purgeStep.name().equalsIgnoreCase(value)) {
+				return purgeStep;
+			}
+		}
+		throw new IllegalArgumentException("Doesn't match any AccountPurgeStepEnum");
+	}
 }

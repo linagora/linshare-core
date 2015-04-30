@@ -19,6 +19,7 @@ CREATE TABLE account (
   account_type                    int4 NOT NULL,
   password                        varchar(255),
   destroyed                       bool NOT NULL,
+  purge_step                      varchar(255) DEFAULT 'IN_USE' NOT NULL,
   CONSTRAINT account_pkey
     PRIMARY KEY (id));
 CREATE TABLE anonymous_share_entry (

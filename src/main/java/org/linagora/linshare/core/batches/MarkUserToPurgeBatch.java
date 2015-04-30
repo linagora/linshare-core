@@ -31,9 +31,11 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.batches;
 
-package org.linagora.linshare.core.job.quartz;
+import org.linagora.linshare.core.batches.generics.GenericBatch;
+import org.linagora.linshare.core.domain.entities.User;
 
-public abstract class Context {
+public interface MarkUserToPurgeBatch extends GenericBatch<User> {
 
 }

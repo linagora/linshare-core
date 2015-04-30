@@ -3,7 +3,7 @@
  * suite, developed by Linagora.
  *
  * Copyright (C) 2015 LINAGORA
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -31,9 +31,11 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.batches;
 
-package org.linagora.linshare.core.job.quartz;
+import org.linagora.linshare.core.batches.generics.GenericBatch;
+import org.linagora.linshare.core.domain.entities.User;
 
-public abstract class Context {
+public interface PurgeUserBatch extends GenericBatch<User>{
 
 }

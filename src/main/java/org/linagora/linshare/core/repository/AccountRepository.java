@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
@@ -51,6 +52,13 @@ public interface AccountRepository<U extends Account> extends
 
 	SystemAccount getUploadRequestSystemAccount();
 
-	List<U> findAllDestroyedAccounts();
+	U findDeleted(String lsUuid);
 
+	void markToPurge(U entity);
+
+	void purge(U entity);
+
+	List<U> findAllAccountsReadyToPurge();
+
+	List<U> findAllDeletedAccountsToPurge(Date limit);
 }

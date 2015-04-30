@@ -191,6 +191,7 @@ ALTER TABLE mime_type MODIFY modification_date datetime NOT NULL;
 
 ALTER TABLE account MODIFY creation_date datetime NOT NULL;
 ALTER TABLE account MODIFY modification_date datetime NOT NULL;
+ALTER TABLE account ADD COLUMN purge_step varchar(255) DEFAULT 'IN_USE' NOT NULL;
 
 ALTER TABLE document MODIFY creation_date datetime NOT NULL;
 

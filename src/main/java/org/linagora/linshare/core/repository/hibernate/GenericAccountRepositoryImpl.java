@@ -39,6 +39,7 @@ import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.constants.AccountPurgeStepEnum;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -156,12 +157,50 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 
 	@Override
 	public void delete(U entity) throws BusinessException, IllegalArgumentException {
-		entity.setDestroyed(true);
+			entity.setDestroyed(true);
 		this.update(entity);
 	}
 
 	@Override
-	public List<U> findAllDestroyedAccounts() {
-		return findByCriteria(Restrictions.eq("destroyed", true));
+	public void markToPurge(U entity) throws BusinessException,
+			IllegalArgumentException {
+			entity.setPurgeStep(AccountPurgeStepEnum.WAIT_FOR_PURGE);
+		this.update(entity);
+	}
+
+	@Override
+	public void purge(U entity) throws BusinessException,
+			IllegalArgumentException {
+			entity.setPurgeStep(AccountPurgeStepEnum.PURGED);
+		this.update(entity);
+	}
+
+	@Override
+	public U findDeleted(String lsUuid) {
+		Assert.notNull(lsUuid);
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
+		criteria.add(Restrictions.eq("destroyed", true));
+		return DataAccessUtils.singleResult(findByCriteria(criteria));
+	}
+
+	@Override
+	public List<U> findAllAccountsReadyToPurge() {
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("purgeStep", AccountPurgeStepEnum.WAIT_FOR_PURGE));
+		criteria.add(Restrictions.eq("destroyed", true));
+		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<U> findAllDeletedAccountsToPurge(Date limit){
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(getPersistentClass());
+		criteria.add(Restrictions.lt("modificationDate", limit));
+		criteria.add(Restrictions.eq("purgeStep", AccountPurgeStepEnum.IN_USE));
+		criteria.add(Restrictions.eq("destroyed", true));
+		return findByCriteria(criteria);
 	}
 }

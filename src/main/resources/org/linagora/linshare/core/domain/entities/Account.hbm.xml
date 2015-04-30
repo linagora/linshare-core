@@ -18,6 +18,12 @@
 		<param name="identifierMethod">getTapestryLocale</param>
 		<param name="valueOfMethod">fromTapestryLocale</param>
 	</typedef>
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="purgeStep">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.AccountPurgeStepEnum</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
 
 	<class name="org.linagora.linshare.core.domain.entities.Account" table="account" lazy="false" discriminator-value="0">
 		<id name="id" column="id" type="long" unsaved-value="0">
@@ -34,6 +40,7 @@
 		<property name="enable" column="enable" type="boolean" not-null="true" lazy="false"/>
 		<property name="password" column="password" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="destroyed" column="destroyed" type="boolean" not-null="true" lazy="false"/>
+		<property access="field" name="purgeStep" column="purge_step" type="purgeStep" not-null="true" lazy="false"/>
 
 		<many-to-one name="owner" column="owner_id" class="org.linagora.linshare.core.domain.entities.Account" lazy="proxy"/>
 		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true"

@@ -36,8 +36,6 @@ public abstract class GenericBatchImpl<T> implements GenericBatch<T> {
 	}
 
 	protected SystemAccount getSystemAccount() {
-		SystemAccount systemAccount;
-		systemAccount = accountRepository.getBatchSystemAccount();
-		return systemAccount;
+		return accountRepository.getBatchSystemAccount();
 	}
 }

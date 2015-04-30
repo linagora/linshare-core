@@ -14,6 +14,7 @@ CREATE TABLE account (
   account_type                    int(4) NOT NULL,
   password                        varchar(255),
   destroyed                       bit NOT NULL,
+  purge_step                      varchar(255) DEFAULT 'IN_USE' NOT NULL,
   CONSTRAINT account_pkey
     PRIMARY KEY (id),
   UNIQUE INDEX (ls_uuid),

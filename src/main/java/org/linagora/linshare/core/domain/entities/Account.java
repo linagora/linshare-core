@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.AccountPurgeStepEnum;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -64,6 +65,8 @@ public abstract class Account {
 	protected String password;
 
 	protected boolean destroyed;
+
+	protected AccountPurgeStepEnum purgeStep = AccountPurgeStepEnum.IN_USE;
 
 	protected AbstractDomain domain;
 
@@ -195,6 +198,14 @@ public abstract class Account {
 
 	public void setDestroyed(boolean destroyed) {
 		this.destroyed = destroyed;
+	}
+
+	public AccountPurgeStepEnum getPurgeStep() {
+		return purgeStep;
+	}
+
+	public void setPurgeStep(AccountPurgeStepEnum purgeStep) {
+		this.purgeStep = purgeStep;
 	}
 
 	public AbstractDomain getDomain() {

@@ -55,7 +55,7 @@ import org.apache.tapestry5.services.SelectModelFactory;
 import org.linagora.linshare.core.batches.DocumentManagementBatch;
 import org.linagora.linshare.core.batches.ShareManagementBatch;
 import org.linagora.linshare.core.batches.UploadRequestBatch;
-import org.linagora.linshare.core.batches.UserManagementBatch;
+import org.linagora.linshare.core.batches.DeleteGuestBatch;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -169,7 +169,7 @@ public class TestPopup {
 	private DocumentEntryRepository documentEntryRepository;
 	
 	@Inject
-	private UserManagementBatch userManagementBatch;
+	private DeleteGuestBatch deleteGuestBatch;
 	
 	@Inject
 	private DocumentManagementBatch documentManagementBatch;

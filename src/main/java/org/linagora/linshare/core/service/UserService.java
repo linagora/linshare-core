@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
@@ -227,4 +228,19 @@ public interface UserService {
 	 * @throws BusinessException
 	 */
 	User updateUser(User actor, User updatedUser, String domainId) throws BusinessException;
+
+	/**
+	 * Find destroyed accounts
+	 * @param purge_step
+	 * @return
+	 *
+	 * @throws BusinessException
+	 */
+	List<User> findAllAccountsReadyToPurge() throws BusinessException;
+
+	List<User> findAllDeletedAccountsToPurge(Date limit) throws BusinessException;
+
+	void purge(Account actor, String lsUuid) throws BusinessException;
+
+	void markToPurge(Account actor, String lsUuid) throws BusinessException;
 }

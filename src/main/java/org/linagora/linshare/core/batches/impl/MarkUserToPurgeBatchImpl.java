@@ -1,9 +1,9 @@
 /*
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
- * 
+ *
  * Copyright (C) 2015 LINAGORA
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,12 +19,12 @@
  * refrain from infringing Linagora intellectual property rights over its
  * trademarks and commercial brands. Other Additional Terms apply, see
  * <http://www.linagora.com/licenses/> for more details.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
@@ -33,70 +33,74 @@
  */
 package org.linagora.linshare.core.batches.impl;
 
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.linagora.linshare.core.batches.UserManagementBatch;
+import org.linagora.linshare.core.batches.MarkUserToPurgeBatch;
 import org.linagora.linshare.core.batches.generics.impl.GenericBatchImpl;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.job.quartz.ResourceContext;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.service.GuestService;
+import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.google.common.collect.Sets;
 
-/**
- * Batch for user management.
- */
-public class UserManagementBatchImpl extends GenericBatchImpl<Guest> implements
-		UserManagementBatch {
+public class MarkUserToPurgeBatchImpl extends GenericBatchImpl<User>
+		implements MarkUserToPurgeBatch {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(UserManagementBatchImpl.class);
+			.getLogger(MarkUserToPurgeBatchImpl.class);
 
-	private final GuestService service;
+	private final UserService service;
 
-	public UserManagementBatchImpl(final GuestService guestService,
-			AccountRepository<Account> accountRepository) {
+	private final Integer cron;// 7 for 7 days
+
+	public MarkUserToPurgeBatchImpl(final UserService userService,
+			AccountRepository<Account> accountRepository,
+			Integer cron) {
 		super(accountRepository);
-		this.service = guestService;
+		this.service = userService;
+		this.cron = cron;
 	}
 
 	@Override
-	public Set<Guest> getAll() {
-		logger.info("UserManagementBatchImpl job starting ...");
-		HashSet<Guest> allGuests = new HashSet<>(
-				service.findOudatedGuests(getSystemAccount()));
-		logger.info(allGuests.size()
-				+ " guest(s) have been found to be removed");
-		return allGuests;
+	public Set<User> getAll() {
+		logger.info("MarkUserToDeleteBatchImpl job starting ...");
+		Calendar expiryLimit = Calendar.getInstance();
+		expiryLimit.add(Calendar.DAY_OF_YEAR, -cron);
+		HashSet<User> allUsers = Sets.newHashSet();
+		allUsers.addAll(service.findAllDeletedAccountsToPurge(expiryLimit
+				.getTime()));
+		logger.info(allUsers.size()
+				+ " destroyed user(s) have been found. If any, they will be moved into users to purge");
+		return allUsers;
 	}
 
 	@Override
-	public BatchResultContext<Guest> execute(Context c,
-			long total, long position)
-			throws BatchBusinessException, BusinessException {
-		Guest resource = getResource(c);
-		BatchResultContext<Guest> context = new BatchResultContext<Guest>(
+	public BatchResultContext<User> execute(Context c, long total,
+			long position) throws BatchBusinessException, BusinessException {
+		User resource = getResource(c);
+		BatchResultContext<User> context = new BatchResultContext<User>(
 				resource);
 		try {
-			logInfo(total, position,
-					"processing guest : " + resource.getAccountReprentation());
-			service.deleteUser(getSystemAccount(), resource.getLsUuid());
-			logger.info("Removed expired user : "
+			logInfo(total, position, "processing user : " + resource.getAccountReprentation());
+			service.markToPurge(getSystemAccount(), resource.getLsUuid());
+			logger.info("expired user set to purge (purge_step to 1) : "
 					+ resource.getAccountReprentation());
 		} catch (BusinessException businessException) {
 			logError(total, position,
-					"Error while trying to delete expired guest ");
-			logger.info("Error occured while cleaning outdated guests ",
+					"Error while trying to mark expired users to purge");
+			logger.info("Error occured while cleaning outdated users ",
 					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
-					context, "Error while trying to delete expired guest");
+					context, "Error while trying to move the expired user into those to purge");
 			exception.setBusinessException(businessException);
 			throw exception;
 		}
@@ -104,42 +108,42 @@ public class UserManagementBatchImpl extends GenericBatchImpl<Guest> implements
 	}
 
 	@Override
-	public void notify(BatchResultContext<Guest> context,
-			long total, long position) {
-		logInfo(total, position, "The Guest "
+	public void notify(BatchResultContext<User> context, long total,
+			long position) {
+		logInfo(total, position, "The User "
 				+ context.getResource().getAccountReprentation()
-				+ " has been successfully removed ");
+				+ " has been successfully placed into users to purge ");
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception,
-			Guest resource, long total, long position) {
+	public void notifyError(BatchBusinessException exception, User resource,
+			long total, long position) {
 		logError(
 				total,
 				position,
-				"cleaning Guest has failed : "
+				"cleaning User has failed : "
 						+ resource.getAccountReprentation());
 		logger.error(
-				"Error occured while cleaning outdated guest "
+				"Error occured while cleaning outdated user "
 						+ resource.getAccountReprentation()
 						+ ". BatchBusinessException ", exception);
 	}
 
 	@Override
-	public void terminate(Set<Guest> all, long errors,
-			long unhandled_errors, long total) {
+	public void terminate(Set<User> all, long errors, long unhandled_errors,
+			long total) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success
-				+ " guest(s) have been removed.");
+				+ " user(s) have been marked to purge.");
 		if (errors > 0) {
 			logger.error(errors
-					+ " guest(s) failed to be removed.");
+					+ " user(s) failed to be marked to purge.");
 		}
 		if (unhandled_errors > 0) {
 			logger.error(unhandled_errors
-					+ " guest(s) failed to be removed (unhandled error).");
+					+ " user(s) failed to be removed (unhandled error).");
 		}
-		logger.info("UserManagementBatchImpl job terminated.");
+		logger.info("MarkUserToPurgeBatchImpl job terminated.");
 	}
 
 	/*
@@ -151,9 +155,10 @@ public class UserManagementBatchImpl extends GenericBatchImpl<Guest> implements
 		because Spring AOP does not support to create transaction with generic parameters.
 	 */
 	@Override
-	public Guest getResource(Context c) {
+	public User getResource(Context c) {
 		@SuppressWarnings("unchecked")
-		ResourceContext<Guest> rc = (ResourceContext<Guest>)c;
+		ResourceContext<User> rc = (ResourceContext<User>)c;
 		return rc.getRessource();
 	}
+
 }

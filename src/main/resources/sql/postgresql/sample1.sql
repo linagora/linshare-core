@@ -77,8 +77,8 @@ UPDATE domain_abstract SET welcome_messages_id = 1;
 
 
 -- Technical account with Delegation Role for delegation API.
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id)
-	VALUES (5, 4, '59236bed-7e4d-4f98-99d9-5c1dd6b503d4', now(),now(), 4, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id, purge_step)
+	VALUES (5, 4, '59236bed-7e4d-4f98-99d9-5c1dd6b503d4', now(),now(), 4, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1, 0);
 INSERT INTO users(account_id, first_name, last_name, mail, can_upload, comment, restricted, can_create_guest)
 	VALUES (5, null, 'Delegation Account', 'delegation@int1.linshare.dev', false, '', false, false);
 
@@ -138,10 +138,10 @@ INSERT INTO account_permission (id, technical_account_permission_id, permission)
 
 -- Users
 -- bart simpson
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (50, 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_timestamp(3), current_timestamp(3), 0, 'fr', 'en', true, false, 3);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, purge_step) VALUES (50, 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_timestamp(3), current_timestamp(3), 0, 'fr', 'en', true, false, 3, 0);
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (50, 'Bart', 'Simpson', 'bart.simpson@int1.linshare.dev', true, '', false, true);
 -- pierre mongin : 15kn60njvhdjh
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, owner_id , password ) VALUES (53, 3, 'fa2cab19-2cd7-44f5-96f6-418455899d3e', current_timestamp(3), current_timestamp(3), 0, 'fr', 'fr', true, false, 4, 50 , 'OsFTxoUjd62imwHnaV/4zQfrJ5s=');
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, owner_id , password, purge_step) VALUES (53, 3, 'fa2cab19-2cd7-44f5-96f6-418455899d3e', current_timestamp(3), current_timestamp(3), 0, 'fr', 'fr', true, false, 4, 50 , 'OsFTxoUjd62imwHnaV/4zQfrJ5s=', 0);
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, expiration_date) VALUES (53, 'Pierre', 'Mongin', 'pmongin@ratp.fr', true, '', false, false, current_timestamp(3));
 
 -- Upload Requests.
@@ -158,13 +158,13 @@ INSERT INTO upload_request_url (id, contact_id, upload_request_id, uuid, path, p
 
 
 -- Thread : projet : RATP
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (51, 5, '9806de10-ed0b-11e1-877a-5404a6202d2c', current_timestamp(3), current_timestamp(3), 0, 'fr', 'fr', true, false, 1);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, purge_step) VALUES (51, 5, '9806de10-ed0b-11e1-877a-5404a6202d2c', current_timestamp(3), current_timestamp(3), 0, 'fr', 'fr', true, false, 1, 0);
 INSERT INTO thread (account_id, name) VALUES (51, 'RATP');
 -- Thread : projet : 3MI
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (52, 5, '34544580-f0ec-11e1-a62a-080027c0eef0', current_timestamp(3), current_timestamp(3), 0, 'fr', 'fr', true, false, 1);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, purge_step) VALUES (52, 5, '34544580-f0ec-11e1-a62a-080027c0eef0', current_timestamp(3), current_timestamp(3), 0, 'fr', 'fr', true, false, 1, 0);
 INSERT INTO thread (account_id, name) VALUES (52, 'Ministère de l''intérieur');
 -- Thread : projet : Test Thread
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (54, 5, 'c4570914-d004-4506-8abf-04527f342e88', current_timestamp(3), current_timestamp(3), 0, 'en', 'en', true, false, 1);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, purge_step) VALUES (54, 5, 'c4570914-d004-4506-8abf-04527f342e88', current_timestamp(3), current_timestamp(3), 0, 'en', 'en', true, false, 1, 0);
 INSERT INTO thread (account_id, name) VALUES (54, 'Test Thread');
 
 
