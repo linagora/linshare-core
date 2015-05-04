@@ -161,10 +161,7 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.ADMIN);
 		WelcomeMessages welcomeMessage = welcomeMessagesService.delete(actor,
 				wlcmDto.getUuid());
-		Set<DomainLightDto> domains = getDomainDto(actor, welcomeMessage);
-		WelcomeMessagesDto ret = new WelcomeMessagesDto(welcomeMessage, true);
-		ret.setDomains(domains);
-		return ret;
+		return new WelcomeMessagesDto(welcomeMessage, true);
 	}
 
 	private Set<DomainLightDto> getDomainDto(User actor,
