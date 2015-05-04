@@ -43,6 +43,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
@@ -51,7 +52,7 @@ import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "WelcomeMessages")
 @ApiModel(value = "WelcomeMessages", description = "")
 public class WelcomeMessagesDto {
@@ -159,6 +160,13 @@ public class WelcomeMessagesDto {
 
 	public Set<DomainLightDto> getDomains() {
 		return domains;
+	}
+
+	public void addDomain(AbstractDomain domain) {
+		if (domains == null) {
+			domains = Sets.newHashSet();
+		}
+		domains.add(new DomainLightDto(domain));
 	}
 
 	public void setDomains(Set<DomainLightDto> domains) {

@@ -7,7 +7,7 @@
 		<param name="identifierMethod">getTapestryLocale</param>
 		<param name="valueOfMethod">fromTapestryLocale</param>
 	</typedef>
-	<class name="org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry" table="welcome_messages_entry" lazy="false">
+	<class name="org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry" table="welcome_messages_entry" lazy="true">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>

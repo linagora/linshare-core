@@ -41,7 +41,6 @@ import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AbstractDomainService {
@@ -171,11 +170,11 @@ public interface AbstractDomainService {
 	 */
 	public List<AbstractDomain> findAll(Account actor);
 	/**
-	 * This method returns all the domains using as currentwelcomeMessage the parameter welcomeMessage
+	 * This method returns all the domains using the welcome message parameter as currentwelcomeMessage
 	 * @param actor
-	 * @param welcomeMessage
+	 * @param uuid
 	 * @return
 	 * @throws BusinessException
 	 */
-	public List<AbstractDomain> loadDomainsForAWelcomeMessage(User actor, String welcomeMessageUuid) throws BusinessException;
+	List<AbstractDomain> loadRelativeDomains(User actor, String uuid) throws BusinessException;
 }

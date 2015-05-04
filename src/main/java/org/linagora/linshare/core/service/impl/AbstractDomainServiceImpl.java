@@ -784,13 +784,11 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	@Override
-	public List<AbstractDomain> loadDomainsForAWelcomeMessage(User actor,
-			String welcomeMessageUuid) throws BusinessException {
+	public List<AbstractDomain> loadRelativeDomains(User actor,
+			String uuid) throws BusinessException {
 		if (actor.hasAdminRole() || actor.hasSuperAdminRole()) {
-			WelcomeMessages welcomeMessage = welcomeMessagesService.find(actor, welcomeMessageUuid);
-			List<AbstractDomain> domains = new ArrayList<>();
-			domains = abstractDomainRepository.loadDomainsForAWelcomeMessage(welcomeMessage);
-			return domains;
+			WelcomeMessages welcomeMessage = welcomeMessagesService.find(actor, uuid);
+			return domainBusinessService.loadRelativeDomains(welcomeMessage);
 		} else
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "actor has no rights");
 	}

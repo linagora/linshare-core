@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
@@ -44,40 +45,43 @@ import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
 
 public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 
-	private final WelcomeMessagesBusinessService welcomeMessagesBusinessService;
+	private final WelcomeMessagesBusinessService businessService;
 
 	private final DomainBusinessService domainBusinessService;
 
 	public WelcomeMessagesServiceImpl(
 			final WelcomeMessagesBusinessService wlcmBusinessService,
 			final DomainBusinessService domainBusinessService) {
-		this.welcomeMessagesBusinessService = wlcmBusinessService;
+		this.businessService = wlcmBusinessService;
 		this.domainBusinessService = domainBusinessService;
 	}
 
 	@Override
-	public List<WelcomeMessages> findAll(User actor, String domainId) throws BusinessException {
+	public List<WelcomeMessages> findAll(User actor, String domainId)
+			throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 
 		if (domainId == null)
-			return welcomeMessagesBusinessService.findAll(actor.getDomain());
+			return businessService.findAll(actor.getDomain());
 		else {
 			AbstractDomain domain = domainBusinessService.findById(domainId);
-			return welcomeMessagesBusinessService.findAll(domain);
+			return businessService.findAll(domain);
 		}
 	}
 
 	@Override
-	public WelcomeMessages find(User actor, String uuid) throws BusinessException {
+	public WelcomeMessages find(User actor, String uuid)
+			throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notEmpty(uuid, "Welcome message uuid must be set.");
-		WelcomeMessages wlcm = welcomeMessagesBusinessService.find(uuid);
+		WelcomeMessages wlcm = businessService.find(uuid);
 
 		if (wlcm == null)
 			throw new BusinessException(
@@ -87,33 +91,36 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 	}
 
 	@Override
-	public WelcomeMessages create(User actor, AbstractDomain domain, WelcomeMessages wlcmInput)
-			throws BusinessException {
+	public WelcomeMessages create(User actor, WelcomeMessages wlcmInput,
+			String domainId) throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(wlcmInput, "Welcome message must be set.");
-		Validate.notNull(wlcmInput.getUuid(), "Welcome message uuid must be set in order to duplicate it.");
-		Validate.notNull(domain, "Welcome message domain must be set.");
+		Validate.notNull(wlcmInput.getUuid(),
+				"Welcome message uuid must be set in order to duplicate it.");
+		Validate.notNull(domainId, "Welcome message domain must be set.");
 
+		AbstractDomain domain = domainBusinessService.findById(domainId);
 		WelcomeMessages wlcm = find(actor, wlcmInput.getUuid());
 		WelcomeMessages welcomeMessage = new WelcomeMessages(wlcm);
 		welcomeMessage.setBussinessName(wlcmInput.getName());
 		welcomeMessage.setBussinessDescription(wlcmInput.getDescription());
 		welcomeMessage.setDomain(domain);
-		return welcomeMessagesBusinessService.create(welcomeMessage);
+		return businessService.create(welcomeMessage);
 	}
 
 	@Override
-	public WelcomeMessages update(User actor, AbstractDomain domain,
-			WelcomeMessages wlcm, List<AbstractDomain> newDomainsList, List<AbstractDomain> oldDomainsList) throws BusinessException {
+	public WelcomeMessages update(User actor, WelcomeMessages wlcm,
+			List<String> domainUuids) throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(wlcm, "Welcome message object must be set.");
 		Validate.notEmpty(wlcm.getUuid(), "Welcome message uuid must be set.");
-		Validate.notEmpty(wlcm.getWelcomeMessagesEntries(),
-				"Wecolme message entries must be set.");
+		Map<SupportedLanguage, WelcomeMessagesEntry> tmpMsg = wlcm
+				.getWelcomeMessagesEntries();
+		Validate.notEmpty(tmpMsg, "Wecolme message entries must be set.");
 
 		WelcomeMessages welcomeMessage = find(actor, wlcm.getUuid());
-		if (welcomeMessage.getWelcomeMessagesEntries().keySet().size() != wlcm
-				.getWelcomeMessagesEntries().keySet().size()) {
+		if (welcomeMessage.getWelcomeMessagesEntries().keySet().size() != tmpMsg
+				.keySet().size()) {
 			throw new BusinessException(
 					BusinessErrorCode.WELCOME_MESSAGES_ILLEGAL_KEY,
 					"Invalid number of keys.");
@@ -126,23 +133,59 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 						BusinessErrorCode.WELCOME_MESSAGES_ILLEGAL_KEY,
 						"Invalid number of keys.");
 		}
-
+		for (SupportedLanguage lang : tmpMsg.keySet()) {
+			if (!welcomeMessage.getWelcomeMessagesEntries().keySet()
+					.contains(lang))
+				throw new BusinessException(
+						BusinessErrorCode.WELCOME_MESSAGES_ILLEGAL_KEY,
+						"Invalid number of keys.");
+		}
+		// Updating current WM.
 		welcomeMessage.setDescription(wlcm.getDescription());
 		welcomeMessage.setName(wlcm.getName());
-		welcomeMessage.setWelcomeMessagesEntries(wlcm.getWelcomeMessagesEntries());
-
-		WelcomeMessages ret = welcomeMessagesBusinessService.update(welcomeMessage);
-		for (AbstractDomain d : newDomainsList) {
-			d.setCurrentWelcomeMessages(ret);
-			domainBusinessService.update(d);
+		Map<SupportedLanguage, WelcomeMessagesEntry> welcomeMessagesEntries = welcomeMessage
+				.getWelcomeMessagesEntries();
+		for (SupportedLanguage key : tmpMsg.keySet()) {
+			WelcomeMessagesEntry welcomeMessagesEntry = welcomeMessagesEntries
+					.get(key);
+			welcomeMessagesEntry.setValue(tmpMsg.get(key).getValue());
 		}
-		for (AbstractDomain ad : oldDomainsList) {
-			if (!newDomainsList.contains(ad)) {
-				ad.setCurrentWelcomeMessages(welcomeMessagesBusinessService.find(LinShareConstants.defaultWelcomeMessagesUuid));
-				domainBusinessService.update(ad);
+		welcomeMessage = businessService.update(welcomeMessage);
+
+		if (domainUuids != null) {
+			WelcomeMessages defaultWM = businessService
+					.find(LinShareConstants.defaultWelcomeMessagesUuid);
+			List<AbstractDomain> relativeDomains = domainBusinessService
+					.loadRelativeDomains(welcomeMessage);
+			for (AbstractDomain domain : relativeDomains) {
+				String domainId = domain.getIdentifier();
+				if (domainUuids.contains(domainId)) {
+					// Already affected.
+					domainUuids.remove(domainId);
+				} else {
+					// current domain is not using this WM.
+					domain.setCurrentWelcomeMessages(defaultWM);
+					domainBusinessService.update(domain);
+				}
+			}
+			for (String id : domainUuids) {
+				AbstractDomain domain = domainBusinessService.findById(id);
+				domain.setCurrentWelcomeMessages(welcomeMessage);
+				domainBusinessService.update(domain);
 			}
 		}
-		return ret;
+		return welcomeMessage;
+	}
+
+	private void reinitToDefault(WelcomeMessages welcomeMessage) {
+		List<AbstractDomain> domains = domainBusinessService
+				.loadRelativeDomains(welcomeMessage);
+		WelcomeMessages defaultWM = businessService
+				.find(LinShareConstants.defaultWelcomeMessagesUuid);
+		for (AbstractDomain d : domains) {
+			d.setCurrentWelcomeMessages(defaultWM);
+			domainBusinessService.update(d);
+		}
 	}
 
 	@Override
@@ -152,7 +195,8 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 		Validate.notEmpty(uuid, "Welcome message uudi must be set.");
 
 		WelcomeMessages wlcm = find(actor, uuid);
-		welcomeMessagesBusinessService.delete(wlcm);
+		reinitToDefault(wlcm);
+		businessService.delete(wlcm);
 		return wlcm;
 	}
 }

@@ -82,8 +82,10 @@ public class WelcomeMessages implements Cloneable {
 				.values();
 		this.welcomeMessagesEntries = Maps.newHashMap();
 		for (WelcomeMessagesEntry entry : values) {
-			this.welcomeMessagesEntries.put(entry.getLang(),
-					new WelcomeMessagesEntry(entry.getLang(), entry.getValue()));
+			this.welcomeMessagesEntries
+					.put(entry.getLang(),
+							new WelcomeMessagesEntry(entry.getLang(), entry
+									.getValue()));
 		}
 	}
 

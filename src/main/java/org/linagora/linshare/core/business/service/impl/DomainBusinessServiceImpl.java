@@ -33,8 +33,11 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.List;
+
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -66,5 +69,11 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 	public AbstractDomain update(AbstractDomain domain)
 			throws BusinessException {
 		return repository.update(domain);
+	}
+
+	@Override
+	public List<AbstractDomain> loadRelativeDomains(WelcomeMessages welcomeMessage)
+			throws BusinessException {
+		return repository.loadDomainsForAWelcomeMessage(welcomeMessage);
 	}
 }

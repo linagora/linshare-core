@@ -36,20 +36,31 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface WelcomeMessagesService {
 
-	List<WelcomeMessages> findAll(User actor, String domainId) throws BusinessException;
+	List<WelcomeMessages> findAll(User actor, String domainId)
+			throws BusinessException;
 
-	WelcomeMessages find(User actor,String uuid) throws BusinessException;
+	WelcomeMessages find(User actor, String uuid) throws BusinessException;
 
-	WelcomeMessages create(User actor, AbstractDomain domain, WelcomeMessages wlcm) throws BusinessException;
+	WelcomeMessages create(User actor, WelcomeMessages wlcm, String domainId)
+			throws BusinessException;
 
-	WelcomeMessages update(User actor, AbstractDomain domain, WelcomeMessages custom, List<AbstractDomain> newDomainsList, List<AbstractDomain> oldDomainsList) throws BusinessException;
+	/**
+	 * 
+	 * @param actor
+	 * @param wlcm
+	 * @param domainUuids
+	 *            no modification will be done for domain links if null
+	 * @return
+	 * @throws BusinessException
+	 */
+	WelcomeMessages update(User actor, WelcomeMessages wlcm,
+			List<String> domainUuids) throws BusinessException;
 
-	WelcomeMessages delete(User actor,String uuid) throws BusinessException;
+	WelcomeMessages delete(User actor, String uuid) throws BusinessException;
 }

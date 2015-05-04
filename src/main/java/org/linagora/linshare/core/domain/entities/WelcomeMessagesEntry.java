@@ -36,6 +36,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 
+
 public class WelcomeMessagesEntry {
 
 	private long id;

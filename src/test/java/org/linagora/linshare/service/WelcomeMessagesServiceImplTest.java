@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -55,6 +54,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+
+import com.google.common.collect.Lists;
 
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -89,8 +90,10 @@ public class WelcomeMessagesServiceImplTest extends
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		try {
-			rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.rootDomainName);
-			actor = rootUserRepository.findByLsUuid("root@localhost.localdomain");
+			rootDomain = abstractDomainRepository
+					.findById(LoadingServiceTestDatas.rootDomainName);
+			actor = rootUserRepository
+					.findByLsUuid("root@localhost.localdomain");
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.debug(e.getMessage());
@@ -127,14 +130,20 @@ public class WelcomeMessagesServiceImplTest extends
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 
 		try {
-			WelcomeMessages wlcm = welcomeService.find(actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
+			WelcomeMessages wlcm = welcomeService.find(actor,
+					"4bc57114-c8c9-11e4-a859-37b5db95d856");
 			logger.debug("NAME : -------------->" + wlcm.getName());
-			logger.debug("DESCRIPTION : -------------->" + wlcm.getDescription());
+			logger.debug("DESCRIPTION : -------------->"
+					+ wlcm.getDescription());
 			logger.debug("UUID : -------------->" + wlcm.getUuid());
-			logger.debug("MAP SIZE : -------------->" + wlcm.getWelcomeMessagesEntries().size());
-			for (WelcomeMessagesEntry entry : wlcm.getWelcomeMessagesEntries().values()) {
-				logger.debug("CUSTOMISATION ENTRY LANG: -------------->" + entry.getLang().toString());
-				logger.debug("CUSTOMISATION ENTRY VALUE : -------------->" + entry.getValue());
+			logger.debug("MAP SIZE : -------------->"
+					+ wlcm.getWelcomeMessagesEntries().size());
+			for (WelcomeMessagesEntry entry : wlcm.getWelcomeMessagesEntries()
+					.values()) {
+				logger.debug("CUSTOMISATION ENTRY LANG: -------------->"
+						+ entry.getLang().toString());
+				logger.debug("CUSTOMISATION ENTRY VALUE : -------------->"
+						+ entry.getValue());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -150,19 +159,21 @@ public class WelcomeMessagesServiceImplTest extends
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 
 		try {
-			WelcomeMessages welcm = welcomeService.find(actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
-			WelcomeMessages welcm_create = welcomeService
-					.create(actor, rootDomain, welcm);
+			WelcomeMessages welcm = welcomeService.find(actor,
+					"4bc57114-c8c9-11e4-a859-37b5db95d856");
+			WelcomeMessages welcm_create = welcomeService.create(actor, welcm,
+					LoadingServiceTestDatas.rootDomainName);
 			logger.debug("Object created.");
 			Assert.assertNotNull(welcm_create);
 			Assert.assertEquals(5, welcm_create.getWelcomeMessagesEntries()
 					.size());
-	
+
 			logger.debug("Deleting the welcome message we just created.");
 
-			WelcomeMessages wlcm_tmp = welcomeService.find(actor, welcm_create.getUuid());
-			WelcomeMessages wlcm_delete = welcomeService
-					.delete(actor, wlcm_tmp.getUuid());
+			WelcomeMessages wlcm_tmp = welcomeService.find(actor,
+					welcm_create.getUuid());
+			WelcomeMessages wlcm_delete = welcomeService.delete(actor,
+					wlcm_tmp.getUuid());
 			logger.debug("Object deleted.");
 
 			Assert.assertEquals(wlcm_delete, welcm_create);
@@ -179,7 +190,8 @@ public class WelcomeMessagesServiceImplTest extends
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 
 		try {
-			WelcomeMessages wlcm = welcomeService.find(actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
+			WelcomeMessages wlcm = welcomeService.find(actor,
+					"4bc57114-c8c9-11e4-a859-37b5db95d856");
 
 			logger.debug("Updating the object.");
 
@@ -188,23 +200,26 @@ public class WelcomeMessagesServiceImplTest extends
 			tmp.setDescription("a new welcome descreption");
 			String text1 = "This is epic!!!";
 			String text2 = "Ceci est un exploit!!!";
-			//TODO: to improve when delete is ready.
-			List<AbstractDomain> oldDomainList = new ArrayList();
-			List<AbstractDomain> newDomainList = new ArrayList();
-			for (WelcomeMessagesEntry wEntry : tmp.getWelcomeMessagesEntries().values()) {
+			// TODO: to improve when delete is ready.
+			for (WelcomeMessagesEntry wEntry : tmp.getWelcomeMessagesEntries()
+					.values()) {
 				if (wEntry.getLang().toString().equals("ENGLISH"))
 					wEntry.setValue(text1);
 				if (wEntry.getLang().toString().equals("FRENCH"))
 					wEntry.setValue(text2);
 			}
-			WelcomeMessages wlcm_updated = welcomeService.update(actor, rootDomain, tmp, oldDomainList, newDomainList);
-			Assert.assertEquals(wlcm_updated.getDescription(), "a new welcome descreption");
+			WelcomeMessages wlcm_updated = welcomeService.update(actor, tmp,
+					null);
+			Assert.assertEquals(wlcm_updated.getDescription(),
+					"a new welcome descreption");
 			Assert.assertEquals(wlcm_updated.getName(), "A new name for tests");
-			for (WelcomeMessagesEntry wEntry : wlcm_updated.getWelcomeMessagesEntries().values()) {
+			for (WelcomeMessagesEntry wEntry : wlcm_updated
+					.getWelcomeMessagesEntries().values()) {
 				if (wEntry.getLang().toString().equals("ENGLISH"))
 					Assert.assertEquals(wEntry.getValue(), "This is epic!!!");
 				if (wEntry.getLang().toString().equals("FRENCH"))
-					Assert.assertEquals(wEntry.getValue(), "Ceci est un exploit!!!");
+					Assert.assertEquals(wEntry.getValue(),
+							"Ceci est un exploit!!!");
 			}
 		} catch (Exception e) {
 			logger.debug("FAIL!");
