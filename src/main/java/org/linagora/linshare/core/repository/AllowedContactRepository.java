@@ -61,8 +61,13 @@ public interface AllowedContactRepository extends AbstractRepository<AllowedCont
 	 * @param guest
 	 * @return
 	 */
-	List<AllowedContact> searchContact(final String mail, final String firstName,
-			final String lastName, final Guest guest);
+	List<AllowedContact> searchContact(final Guest guest, final String mail, final String firstName,
+			final String lastName);
+
+	List<AllowedContact> completeContact(final Guest guest, final String pattern);
+
+	List<AllowedContact> completeContact(final Guest guest, final String firstName, final String lastName);
+
 	/**
 	 * Delete all the AllowedContact pairs where user can be both a contact or
 	 * an owner

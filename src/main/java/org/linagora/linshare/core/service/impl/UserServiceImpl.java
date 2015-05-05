@@ -72,6 +72,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import com.google.common.collect.Lists;
+
 /**
  * Services for User management.
  */
@@ -265,20 +267,35 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	private List<User> completionSearchForRestrictedGuest(Guest actor,
-			String mail, String firstname, String lastname) {
-		List<User> users = new ArrayList<User>();
-		logger.debug("special search for restricted guest ");
-
+	private List<User> searchForRestrictedGuest(Guest owner, String mail, String firstname, String lastname) {
 		// TODO : FIXME : OPTIMISATION NEEDED : This method should return a User
 		// list instead of AllowedContact.
-		List<AllowedContact> contacts = allowedContactRepository.searchContact(
-				mail, firstname, lastname, actor);
+		List<AllowedContact> contacts = allowedContactRepository.searchContact(owner,
+				mail, firstname, lastname);
+		return toUsers(contacts);
+	}
+
+	private List<User> completionSearchForRestrictedGuest(Guest actor, String firstname, String lastname) {
+		// TODO : FIXME : OPTIMISATION NEEDED : This method should return a User
+		// list instead of AllowedContact.
+		List<AllowedContact> contacts = allowedContactRepository.completeContact(actor,
+				firstname, lastname);
+		return toUsers(contacts);
+	}
+
+	private List<User> completionSearchForRestrictedGuest(Guest actor,
+			String pattern) {
+		// TODO : FIXME : OPTIMISATION NEEDED : This method should return a User
+		// list instead of AllowedContact.
+		List<AllowedContact> contacts = allowedContactRepository.completeContact(actor, pattern);
+		return toUsers(contacts);
+	}
+
+	private List<User> toUsers(List<AllowedContact> contacts) {
+		List<User> users = Lists.newArrayList();
 		for (AllowedContact allowedContact : contacts) {
 			users.add(allowedContact.getContact());
 		}
-		logger.debug("End searchUser(restricted guests)");
-
 		return users;
 	}
 
@@ -297,7 +314,7 @@ public class UserServiceImpl implements UserService {
 	 * @return
 	 * @throws BusinessException 
 	 */
-	private List<User> completionSearchOnGuest(Account actor, String mail,
+	private List<User> searchOnGuest(Account actor, String mail,
 			String firstName, String lastName) throws BusinessException {
 		List<User> result = new ArrayList<User>();
 		logger.debug("adding guests to the return list");
@@ -466,8 +483,11 @@ public class UserServiceImpl implements UserService {
 		if (actor.isGuest()) {
 			// RESTRICTED GUEST MUST NOT SEE ALL USERS
 			if (((Guest)actor).isRestricted()) {
-				return completionSearchForRestrictedGuest((Guest) actor,
-						pattern, firstName, lastName);
+				if (lastName == null) {
+					return completionSearchForRestrictedGuest((Guest)actor, mail);
+				} else {
+					return completionSearchForRestrictedGuest((Guest)actor, firstName, lastName);
+				}
 			}
 		}
 
@@ -509,16 +529,15 @@ public class UserServiceImpl implements UserService {
 																		// SEE
 																		// ALL
 																		// USERS
-			Guest currentGuest = guestRepository.findByMail(currentUser
-					.getMail());
+			Guest currentGuest = guestRepository.findByLsUuid(currentUser.getLsUuid());
 			if (currentGuest.isRestricted()) {
-				return completionSearchForRestrictedGuest(currentGuest, mail,
+				return searchForRestrictedGuest(currentGuest, mail,
 						firstName, lastName);
 			}
 		}
 
 		if (null == userType || userType.equals(AccountType.GUEST)) {
-			users.addAll(completionSearchOnGuest(currentUser, mail, firstName, lastName));
+			users.addAll(searchOnGuest(currentUser, mail, firstName, lastName));
 		}
 		if (null == userType || userType.equals(AccountType.INTERNAL)) {
 			List<User> internals = abstractDomainService

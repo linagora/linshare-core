@@ -77,17 +77,16 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 	 * @return a list of matching users.
 	 */
 	public List<Guest> searchGuest(Account owner, String mail, String firstName, String lastName) {
-
-		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("destroyed", false));
 		if (mail != null) {
-			criteria.add(Restrictions.like("mail", mail, MatchMode.START).ignoreCase());
+			criteria.add(Restrictions.ilike("mail", mail, MatchMode.ANYWHERE));
 		}
 		if (firstName != null) {
-			criteria.add(Restrictions.like("firstName", firstName, MatchMode.START).ignoreCase());
+			criteria.add(Restrictions.ilike("firstName", firstName, MatchMode.ANYWHERE));
 		}
 		if (lastName != null) {
-			criteria.add(Restrictions.like("lastName", lastName, MatchMode.START).ignoreCase());
+			criteria.add(Restrictions.ilike("lastName", lastName, MatchMode.ANYWHERE));
 		}
 		if (owner != null) {
 			criteria.add(Restrictions.eq("owner", owner));
@@ -101,7 +100,7 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 	 * @return a list of outdated guests (null if no one found).
 	 */
 	public List<Guest> findOutdatedGuests() {
-		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.lt("expirationDate", new Date()));
 		criteria.add(Restrictions.eq("destroyed", false));
 		return findByCriteria(criteria);
@@ -111,9 +110,9 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 	 * @see GuestRepository#searchGuestAnyWhere(String, String, String, String)
 	 */
 	public List<Guest> searchGuestAnyWhere(String mail, String firstName, String lastName) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("destroyed", false));
-		Conjunction and= Restrictions.conjunction();
+		Conjunction and = Restrictions.conjunction();
 		criteria.add(and);
 		if (mail != null) {
 			and.add(Restrictions.ilike("mail", mail, MatchMode.ANYWHERE));
@@ -129,18 +128,27 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 
 	@Override
 	public List<Guest> searchGuestAnyWhere(String firstName, String lastName) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("destroyed", false));
-		Conjunction and = Restrictions.conjunction();
-		criteria.add(and);
-		and.add(Restrictions.ilike("firstName", firstName, MatchMode.ANYWHERE));
-		and.add(Restrictions.ilike("lastName", lastName, MatchMode.ANYWHERE));
+
+		Conjunction and1 = Restrictions.conjunction();
+		and1.add(Restrictions.ilike("firstName", lastName, MatchMode.ANYWHERE));
+		and1.add(Restrictions.ilike("lastName", firstName, MatchMode.ANYWHERE));
+
+		Conjunction and2 = Restrictions.conjunction();
+		and2.add(Restrictions.ilike("firstName", firstName, MatchMode.ANYWHERE));
+		and2.add(Restrictions.ilike("lastName", lastName, MatchMode.ANYWHERE));
+
+		Disjunction or = Restrictions.disjunction();
+		or.add(and1);
+		or.add(and2);
+		criteria.add(or);
 		return findByCriteria(criteria);
 	}
 
 	@Override
 	public List<Guest> searchGuestAnyWhere(String pattern) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("destroyed", false));
 		Disjunction or = Restrictions.disjunction();
 		criteria.add(or);

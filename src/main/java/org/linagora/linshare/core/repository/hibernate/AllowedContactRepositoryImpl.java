@@ -33,21 +33,19 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
-import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class AllowedContactRepositoryImpl extends AbstractRepositoryImpl<AllowedContact>
@@ -69,33 +67,60 @@ public class AllowedContactRepositoryImpl extends AbstractRepositoryImpl<Allowed
 		List<AllowedContact> contacts = findByCriteria(Restrictions.eq("owner", owner));
 		return contacts;
 	}
-	
-	// TODO
-	// FIXME
-	// XXX
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<AllowedContact> searchContact(final String mail, final String firstName, final String lastName, final Guest guest) {
-		return getHibernateTemplate().executeFind(new HibernateCallback() {
-			public Object doInHibernate(final Session session)
-			throws HibernateException, SQLException {
-				String mailQ = mail==null?"":mail;
-				String firstNameQ = firstName==null?"":firstName;
-				String lastNameQ = lastName==null?"":lastName;
-				
-				String queryString = "select ac from AllowedContact ac join ac.contact as contact where ac.owner= :guest and LOWER(contact.mail) like :mail and LOWER(contact.firstName) like :firstName and LOWER(contact.lastName) like :lastName";
 
-				Query query = session.createQuery(queryString);
-			    query.setParameter("guest", guest);
-			    query.setParameter("mail", '%'+mailQ.toLowerCase()+'%');
-			    query.setParameter("firstName", '%'+firstNameQ.toLowerCase()+'%');
-			    query.setParameter("lastName", '%'+lastNameQ.toLowerCase()+'%');
-			    
-				
-				List<Query> queries = query.setCacheable(false).list();
-				return queries;
-			}
-		});
+	@Override
+	public List<AllowedContact> searchContact(final Guest owner, final String mail,
+			final String firstName, final String lastName) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("owner", owner));
+		criteria.createAlias("contact", "c");
+		Conjunction and = Restrictions.conjunction();
+		criteria.add(and);
+		if (mail != null) {
+			and.add(Restrictions.ilike("c.mail", mail, MatchMode.ANYWHERE));
+		}
+		if (firstName != null) {
+			and.add(Restrictions.ilike("c.firstName", firstName, MatchMode.ANYWHERE));
+		}
+		if (lastName != null) {
+			and.add(Restrictions.ilike("c.lastName", lastName, MatchMode.ANYWHERE));
+		}
+		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<AllowedContact> completeContact(Guest owner, String firstName,
+			String lastName) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("owner", owner));
+		criteria.createAlias("contact", "c");
+
+		Conjunction and1 = Restrictions.conjunction();
+		and1.add(Restrictions.ilike("c.firstName", firstName, MatchMode.ANYWHERE));
+		and1.add(Restrictions.ilike("c.lastName", lastName, MatchMode.ANYWHERE));
+
+		Conjunction and2 = Restrictions.conjunction();
+		and2.add(Restrictions.ilike("c.firstName", lastName, MatchMode.ANYWHERE));
+		and2.add(Restrictions.ilike("c.lastName", firstName, MatchMode.ANYWHERE));
+
+		Disjunction or = Restrictions.disjunction();
+		or.add(and1);
+		or.add(and2);
+		criteria.add(or);
+		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<AllowedContact> completeContact(Guest owner, String pattern) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("owner", owner));
+		criteria.createAlias("contact", "c");
+		Disjunction or = Restrictions.disjunction();
+		criteria.add(or);
+		or.add(Restrictions.ilike("c.mail", pattern, MatchMode.ANYWHERE));
+		or.add(Restrictions.ilike("c.firstName", pattern, MatchMode.ANYWHERE));
+		or.add(Restrictions.ilike("c.lastName", pattern, MatchMode.ANYWHERE));
+		return findByCriteria(criteria);
 	}
 
 	@Override
