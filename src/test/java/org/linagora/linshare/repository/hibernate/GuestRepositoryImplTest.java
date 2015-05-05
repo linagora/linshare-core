@@ -253,7 +253,7 @@ public class GuestRepositoryImplTest extends
 		results = guestRepository.searchGuest(null, MAIL, null, null);
 		assertNotNull(results);
 		assertFalse(results.isEmpty());
-		assertEquals(results.size(), 1);
+		assertEquals(results.size(), 2);
 		results = null;
 
 		results = guestRepository.searchGuest(null, "foo@", null, null);
