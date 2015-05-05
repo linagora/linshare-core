@@ -37,6 +37,7 @@ package org.linagora.linshare.core.rac.impl;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.rac.DocumentEntryResourceAccessControl;
 
 public class DocumentEntryResourceAccessControlImpl extends
@@ -85,14 +86,23 @@ public class DocumentEntryResourceAccessControlImpl extends
 	protected boolean hasDeletePermission(Account actor, Account owner,
 			DocumentEntry entry, Object... opt) {
 		return defaultPermissionCheck(actor, owner, entry,
-				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_CREATE);
+				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_DELETE);
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account actor, Account owner,
 			DocumentEntry entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
-				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_CREATE);
+		if (actor.hasDelegationRole()) {
+			return hasPermission(actor,
+					TechnicalAccountPermissionType.DOCUMENT_ENTRIES_CREATE);
+		} else if (actor.isInternal() || actor.isGuest()) {
+			if (actor.equals(owner)) {
+				if (((User) owner).getCanUpload()) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override

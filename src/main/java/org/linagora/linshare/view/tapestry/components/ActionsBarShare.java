@@ -92,7 +92,8 @@ public class ActionsBarShare {
 	@Property
 	private boolean activeEncipherment;
 
-	
+	@Property
+	private boolean activeUploadRights;
 	/*********************************
 	 * Phase render
 	 *********************************/
@@ -105,6 +106,7 @@ public class ActionsBarShare {
 	public void initUserlogin() throws BusinessException {
 		activeSignature = documentFacade.isSignatureActive(user);
 		activeEncipherment = documentFacade.isEnciphermentActive(user);
+		activeUploadRights = user.isUpload();
 	}
 	
 }
