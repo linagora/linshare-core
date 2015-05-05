@@ -179,8 +179,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		if (!((User) owner).getCanUpload()) {
 			throw new BusinessException(BusinessErrorCode.NO_UPLOAD_RIGHTS_FOR_ACTOR, "Actor do not have upload rights.");
 		}
-		checkCreatePermission(actor, owner, ShareEntry.class,
-				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, null);
 
 		// step2 : log the copy
 		ShareLogEntry logEntryShare = ShareLogEntry.hasCopiedAShare(owner,
