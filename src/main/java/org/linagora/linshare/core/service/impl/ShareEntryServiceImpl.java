@@ -173,6 +173,12 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		ShareEntry share = find(actor, owner, shareUuid);
 		checkDownloadPermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
+		/*
+		 * Already exists in DocumentEntry rac, but here to avoid to go deeper in the method.
+		 */
+		if (!((User) owner).getCanUpload()) {
+			throw new BusinessException(BusinessErrorCode.NO_UPLOAD_RIGHTS_FOR_ACTOR, "Actor do not have upload rights.");
+		}
 		// step2 : log the copy
 		ShareLogEntry logEntryShare = ShareLogEntry.hasCopiedAShare(owner,
 				share);
@@ -267,6 +273,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	public Set<ShareEntry> create(Account actor, User owner, ShareContainer sc) {
 		preChecks(actor, owner);
 		Validate.notNull(sc);
+
 		checkCreatePermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, null);
 

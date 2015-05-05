@@ -6,22 +6,26 @@
 	<ul>
 
 		<!-- Action > Copy -->
-		<li>
-			<a href="#"
-				class="listDocument" onclick="submitFormWithAction('${formName}','COPY_ACTION');">
-				<img src="${asset:context:images/icons/copy-small.png}" alt=""/>
-				${message:components.listDocument.action.copy}
+		<t:if t:test="activeUploadRights">
+			<li>
+				<a href="#"
+					class="listDocument" onclick="submitFormWithAction('${formName}','COPY_ACTION');">
+					<img src="${asset:context:images/icons/copy-small.png}" alt=""/>
+					${message:components.listDocument.action.copy}
 				</a>
-		</li>
+			</li>
+		</t:if>
 
 		<!-- Action > Forward -->
-		<li>
-			<a href="#"
-				class="listDocument" onclick="submitFormWithAction('${formName}','FORWARD_ACTION');">
-				<img src="${asset:context:images/icons/share-on-small.png}" alt=""/>
-				${message:components.listDocument.action.forward}
+		<t:if t:test="activeUploadRights">
+			<li>
+				<a href="#"
+					class="listDocument" onclick="submitFormWithAction('${formName}','FORWARD_ACTION');">
+					<img src="${asset:context:images/icons/share-on-small.png}" alt=""/>
+					${message:components.listDocument.action.forward}
 				</a>
-		</li>
+			</li>
+		</t:if>
 
 		<!-- Action > Sign -->
 		<t:if t:test="activeSignature">			

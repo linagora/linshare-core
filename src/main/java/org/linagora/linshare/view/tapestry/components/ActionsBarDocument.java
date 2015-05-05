@@ -90,13 +90,16 @@ public class ActionsBarDocument {
 	 ***********************************/
 	@Property
 	private boolean activeSignature;
-	
+
 	@Property
 	private boolean activeEncipherment;
-	
+
 	@Property
 	private boolean activeThreadTab;
-	
+
+	@Property
+	private boolean activeUploadRights;
+
 	/*********************************
 	 * Phase render
 	 *********************************/
@@ -110,9 +113,9 @@ public class ActionsBarDocument {
 		activeSignature = documentFacade.isSignatureActive(user);
 		activeEncipherment = documentFacade.isEnciphermentActive(user);
 		activeThreadTab = functionalityFacade.isEnableThreadTab(user.getDomainIdentifier());
+		activeUploadRights = user.isUpload();
 	}
-	
-	
+
 	/***************************
 	 * Events 
 	 ***************************/
