@@ -20,13 +20,17 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <!-- Main content -->
     <div id="content">
         <h1>${message:pages.files.upload.title}</h1>
+            <t:businessMessagesDisplayer />
+            <t:messagePanel />
+
         <t:grid source="documents" include="fileName">
         </t:grid>
 
         <h2>${message:pages.files.upload.share.title}</h2>
+
         <t:form t:id="shareForm" class="form-horizontal">
             <fieldset>
-                <t:errors />
+              <!--  <t:errors /> -->
 
                 <div class="control-group">
                     <t:label for="recipientsPattern" class="control-label required">
@@ -38,7 +42,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                         <p class="help-block">${message:pages.files.upload.recipients.description}</p>
                     </div>
                 </div>
-                
+
                 <t:if test="enableListTab">
                     <div class="control-group">
                         <t:label for="mailingLists" class="control-label required">
@@ -52,6 +56,18 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                 </t:if>
 
                 <div class="control-group">
+                    <t:if test="showShareExpirationDate">
+                        <t:label for="shareExpiryDate" class="control-label">
+                        ${message:pages.files.upload.shareExpiryDate}</t:label>
+                        <div class="controls">
+                            <t:datefield t:id="shareExpiryDate" t:value="shareExpiryDate" t:validate="required" />
+                            <span class="help-inline">
+                                ${message:pages.files.upload.message.shareExpiration.help}  ${maxLocalizedExpirationDate}</span>
+                        </div>
+                    </t:if>
+                </div>
+
+                <div class="control-group">
                     <t:if test="showSecureSharingCheckBox">
                         <t:label for="secureSharing" class="control-label">
                         ${message:pages.files.upload.secureSharing}</t:label>
@@ -59,8 +75,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                             <label class="checkbox">
                                 <t:checkbox t:id="secureSharing" />
                                 <span class="help-inline">
-                                ${message:pages.files.upload.secureSharing.description}</span>
-                                <p class="help-block">${message:pages.files.upload.message.secureSharing.help}</p>
+                                ${message:pages.files.upload.message.secureSharing.help}</span>
                             </label>
                         </div>
                     </t:if>

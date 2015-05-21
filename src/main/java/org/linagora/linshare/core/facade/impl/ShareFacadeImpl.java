@@ -36,11 +36,14 @@ package org.linagora.linshare.core.facade.impl;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -49,6 +52,7 @@ import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
 import org.linagora.linshare.core.domain.transformers.impl.ShareEntryTransformer;
 import org.linagora.linshare.core.domain.transformers.impl.SignatureTransformer;
@@ -58,6 +62,7 @@ import org.linagora.linshare.core.domain.vo.SignatureVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ShareFacade;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -91,13 +96,16 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 
 	private final ShareService shareService;
 
+	private final AbstractDomainService abstractDomainService;
+
 	public ShareFacadeImpl(AccountService accountService,
 			final ShareEntryTransformer shareEntryTransformer,
 			final ShareEntryService shareEntryService,
 			final DocumentEntryTransformer documentEntryTransformer,
 			final DocumentEntryService documentEntryService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
-			final SignatureTransformer signatureTransformer, ShareService shareService) {
+			final SignatureTransformer signatureTransformer, ShareService shareService,
+			final AbstractDomainService abstractDomainService) {
 		super(accountService);
 		this.shareEntryTransformer = shareEntryTransformer;
 		this.shareEntryService = shareEntryService;
@@ -106,6 +114,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.signatureTransformer = signatureTransformer;
 		this.shareService = shareService;
+		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
@@ -188,6 +197,32 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 			logger.debug(e.toString());
 		}
 		return false;
+	}
+
+	@Override
+	public boolean isVisibleShareExpiration(String domainId) {
+		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
+		try {
+			TimeUnitValueFunctionality shareExpiration = functionalityReadOnlyService
+					.getDefaultShareExpiryTimeFunctionality(domain);
+			if (shareExpiration.getActivationPolicy().getStatus()) {
+				return shareExpiration.getDelegationPolicy().getStatus();
+			}
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+		}
+		return false;
+	}
+
+	@Override
+	public Date getDefaultShareExpirationValue(String domainId) {
+		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
+		TimeUnitValueFunctionality shareExpiration = functionalityReadOnlyService
+				.getDefaultShareExpiryTimeFunctionality(domain);
+		Calendar defaultExpiration = GregorianCalendar.getInstance();
+		defaultExpiration.add(shareExpiration.toCalendarValue(), shareExpiration.getValue());
+		return defaultExpiration.getTime();
 	}
 
 	@Override
@@ -325,13 +360,16 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	}
 
 	@Override
-	public void share(UserVo actorVo,
-			List<DocumentVo> documentVos, List<String> recipientsEmail,
-			boolean secured, MailContainer mailContainer, boolean creationAcknowledgement)
-			throws BusinessException {
+	public void share(UserVo actorVo, List<DocumentVo> documentVos,
+			List<String> recipientsEmail, boolean secured,
+			MailContainer mailContainer, boolean creationAcknowledgement,
+			Date shareExpiryDate) throws BusinessException {
 		User actor = getActor(actorVo);
 		ShareContainer sc = new ShareContainer(mailContainer.getSubject(),
-				mailContainer.getPersonalMessage(), secured, creationAcknowledgement);
+				mailContainer.getPersonalMessage(), secured,
+				creationAcknowledgement);
+
+		sc.setExpiryDate(shareExpiryDate);
 		sc.addDocumentVos(documentVos);
 		sc.addMail(recipientsEmail);
 		shareService.create(actor, actor, sc);

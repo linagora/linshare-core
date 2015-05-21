@@ -33,7 +33,9 @@
  */
 package org.linagora.linshare.view.tapestry.pages.files;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.tapestry5.PersistenceConstants;
@@ -41,6 +43,7 @@ import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -49,6 +52,7 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.SelectModelFactory;
 import org.linagora.linshare.core.domain.objects.MailContainer;
@@ -148,11 +152,21 @@ public class Upload {
 	@Property
 	private boolean showAcknowledgementCheckBox;
 
+	@Persist
+	@Property
+	private boolean showShareExpirationDate;
+
 	@Property
 	private int autocompleteMin;
 
 	@Property
 	private String contextPath;
+
+	@Property
+	private Date shareExpiryDate;
+
+	@Property
+	private String maxLocalizedExpirationDate;
 
 	/* ***********************************************************
 	 * Injected services
@@ -191,6 +205,9 @@ public class Upload {
 	@Inject
 	private UserAutoCompleteFacade userAutoCompleteFacade;
 
+	@Inject
+	private PersistentLocale persistentLocale;
+
 	private XSSFilter filter;
 
 	void onActivate() {
@@ -212,6 +229,8 @@ public class Upload {
 				.isVisibleSecuredAnonymousUrlCheckBox(domainId);
 		showAcknowledgementCheckBox = shareFacade
 				.isVisibleAcknowledgementCheckBox(domainId);
+		showShareExpirationDate = shareFacade
+				.isVisibleShareExpiration(domainId);
 		if (showSecureSharingCheckBox) {
 			secureSharing = shareFacade
 					.getDefaultSecuredAnonymousUrlCheckBoxValue(domainId);
@@ -219,6 +238,13 @@ public class Upload {
 		if (showAcknowledgementCheckBox) {
 			creationAcknowledgement = shareFacade
 					.getDefaultAcknowledgementCheckBox(domainId);
+		}
+		if (showShareExpirationDate) {
+			shareExpiryDate = shareFacade
+					.getDefaultShareExpirationValue(domainId);
+			maxLocalizedExpirationDate = DateFormat.getDateInstance(
+					DateFormat.SHORT, persistentLocale.get()).format(
+					shareExpiryDate);
 		}
 	}
 
@@ -326,8 +352,7 @@ public class Upload {
 			try {
 				MailContainer mailContainer = new MailContainer(
 						userVo.getExternalMailLocale(), textAreaValue, textAreaSubjectValue);
-				shareFacade.share(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer, creationAcknowledgement);
-
+				shareFacade.share(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer, creationAcknowledgement, shareExpiryDate);
 			} catch (BusinessException ex) {
 
 				// IF RELAY IS DISABLE ON SMTP SERVER
@@ -348,6 +373,20 @@ public class Upload {
 					businessMessagesManagementService.notify(new BusinessUserMessage(
 							BusinessUserMessageType.QUICKSHARE_NOMAIL,
 							MessageSeverity.ERROR));
+				} else if (ex.equalErrCode(BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_AFTER)) {
+					String domainId = userVo.getDomainIdentifier();
+					Date max = shareFacade.getDefaultShareExpirationValue(domainId);
+					String localizedExpirationDate = DateFormat
+							.getDateInstance(DateFormat.SHORT,
+									persistentLocale.get()).format(
+									max);
+					businessMessagesManagementService.notify(new BusinessUserMessage(
+							BusinessUserMessageType.SHARE_AFTER_EXPIRY_DATE,
+							MessageSeverity.ERROR, localizedExpirationDate));
+				} else if (ex.equalErrCode(BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_BEFORE)) {
+					businessMessagesManagementService.notify(new BusinessUserMessage(
+							BusinessUserMessageType.SHARE_BEFORE_EXPIRY_DATE,
+							MessageSeverity.ERROR));
 				} else {
 					// TODO : Translate businessErrorCode into BusinessUserMessage.
 					logger.error("Could not create sharing, caught a BusinessException.");
@@ -366,6 +405,20 @@ public class Upload {
 					MessageSeverity.ERROR));
 		}
 		return Index.class;
+	}
+
+	@Log
+	public void onValidateFromShareExpiryDate(Date toValidate) throws BusinessException {
+		String domainId = userVo.getDomainIdentifier();
+		Date max = shareFacade.getDefaultShareExpirationValue(domainId);
+		if (toValidate.after(max)) {
+			String localizedExpirationDate = DateFormat.getDateInstance(DateFormat.SHORT, persistentLocale.get()).format(max);
+			uploaderForm.recordError(messages.format("pages.files.validation.expiryDateTooLate", localizedExpirationDate));
+		}
+		Date now = new Date();
+		if (toValidate.before(now)) {
+			uploaderForm.recordError(messages.get("pages.uploadrequest.validation.expiryDateBeforeNow"));
+		}
 	}
 
 	public List<String> onProvideCompletionsFromRecipientsPattern(String input) {

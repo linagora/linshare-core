@@ -68,6 +68,7 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="signatureTransformer" />
 		<constructor-arg ref="shareService" />
+		<constructor-arg ref="abstractDomainService" />
 	</bean>
 
 	<bean name="securedUrlFacade" class="org.linagora.linshare.core.facade.impl.SecuredUrlFacadeImpl">

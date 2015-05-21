@@ -250,6 +250,18 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                     </div>
                 </t:if>
 
+                <t:if test="showShareExpirationDate">
+                    <div class="control-group">
+                        <t:label for="shareExpiryDate" class="control-label">
+                        ${message:pages.files.upload.shareExpiryDate}</t:label>
+                        <div class="controls">
+                            <t:datefield t:id="shareExpiryDate" t:value="shareExpiryDate" t:validate="required" />
+                            <span class="help-inline">
+                                ${message:pages.files.upload.message.shareExpiration.help}  ${maxLocalizedExpirationDate}</span>
+                        </div>
+                    </div>
+                </t:if>
+
                 <div class="control-group">
                     <t:if test="showSecureSharingCheckBox">
                         <t:label for="secureSharing" class="control-label">
@@ -257,10 +269,9 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                         <div class="controls">
                             <label class="checkbox">
                                 <t:checkbox t:id="secureSharing" />
-                                <span class="help-inline">
-                                ${message:pages.files.upload.secureSharing.description}</span>
+                                <span class="help-inline" style="font-size: small;">
+                                ${message:pages.files.upload.message.secureSharing.help}</span>
                             </label>
-                            <p class="help-block">${message:pages.files.upload.message.secureSharing.help}</p>
                         </div>
                     </t:if>
                 </div>

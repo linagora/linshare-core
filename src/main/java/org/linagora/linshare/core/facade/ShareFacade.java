@@ -35,6 +35,7 @@ package org.linagora.linshare.core.facade;
 
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -142,7 +143,11 @@ public interface ShareFacade {
 
 	public void share(UserVo actorVo, List<DocumentVo> documentVos,
 			List<String> recipientsEmail,
-			boolean secured, MailContainer mailContainer, boolean acknowledgement)
+			boolean secured, MailContainer mailContainer, boolean acknowledgement, Date shareExpiryDate)
 			throws BusinessException;
+
+	boolean isVisibleShareExpiration(String domainId);
+
+	Date getDefaultShareExpirationValue(String domainId);
 }
 

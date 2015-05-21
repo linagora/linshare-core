@@ -34,6 +34,9 @@
 
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
@@ -51,6 +54,7 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
@@ -140,6 +144,19 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			throw new BusinessException(
 					BusinessErrorCode.SHARE_MISSING_RECIPIENTS,
 					"Can not share documents, missing recipients.");
+		}
+
+		if (shareContainer.getExpiryDate().before(new Date())) {
+			throw new BusinessException(
+					BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_BEFORE,
+					"Can not share documents, expiry date is before today.");
+		}
+
+		if (shareContainer.getExpiryDate().after(
+				getDefaultShareExpiryDate(owner.getDomain()))) {
+			throw new BusinessException(
+					BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_AFTER,
+					"Can not share documents, expiry date is after the max date.");
 		}
 
 		// Check documents
@@ -261,6 +278,15 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			}
 		}
 		return false;
+	}
+
+	private Date getDefaultShareExpiryDate(AbstractDomain domain) {
+		TimeUnitValueFunctionality shareExpiration = functionalityReadOnlyService
+				.getDefaultShareExpiryTimeFunctionality(domain);
+		Calendar defaultExpiration = GregorianCalendar.getInstance();
+		defaultExpiration.add(shareExpiration.toCalendarValue(),
+				shareExpiration.getValue());
+		return defaultExpiration.getTime();
 	}
 
 	protected void transformDocuments(Account actor, User owner,
