@@ -287,4 +287,13 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean isUploadRequestTemplateEnabled(String domainIdentifier) {
+		AbstractDomain domain = abstractDomainService
+				.findById(domainIdentifier);
+		Functionality uploadRequestEnableTemplate = functionalityReadOnlyService
+				.getUploadRequestEnableTemplateFunctionality(domain);
+		return uploadRequestEnableTemplate.getActivationPolicy().getStatus();
+	}
 }

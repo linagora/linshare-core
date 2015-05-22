@@ -51,7 +51,6 @@ import org.apache.tapestry5.corelib.components.TextField;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.PersistentLocale;
@@ -153,8 +152,6 @@ public class Create {
 
 	private Long maxFileSizeValue;
 
-	@Inject
-	@Symbol("linshare.uploadrequest.templates.enable")
 	@Property
 	private boolean templatesEnable;
 
@@ -163,6 +160,8 @@ public class Create {
 				.getDomainIdentifier())) {
 			return org.linagora.linshare.view.tapestry.pages.Index.class;
 		}
+		templatesEnable = functionalityFacade
+				.isUploadRequestTemplateEnabled(userVo.getDomainIdentifier());
 		if (maxDepositSizeUnit == null) {
 			maxDepositSizeUnit = FileSizeUnit.MEGA;
 		}

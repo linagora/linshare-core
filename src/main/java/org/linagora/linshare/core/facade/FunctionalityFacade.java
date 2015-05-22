@@ -79,4 +79,5 @@ public interface FunctionalityFacade {
 	 * @return
 	 */
 	boolean guestIsRestricted(String domainIdentifier);
+	boolean isUploadRequestTemplateEnabled(String domainIdentifier);
 }

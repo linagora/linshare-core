@@ -339,6 +339,12 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public Functionality getUploadRequestEnableTemplateFunctionality(
+			AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST_ENABLE_TEMPLATE);
+	}
+
+	@Override
 	public Functionality getUploadRequestEntryUrlFunctionality(
 			AbstractDomain domain) {
 		return _getFunctionality(domain,

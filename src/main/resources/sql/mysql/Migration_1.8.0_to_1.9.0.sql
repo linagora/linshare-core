@@ -274,6 +274,12 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
  VALUES(38, false, 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE', 83, 84, 85, 1, 'UPLOAD_REQUEST', true);
 INSERT INTO functionality_enum_lang(functionality_id, lang_value) VALUES (38, 'en');
 
+-- Functionality : UPLOAD_REQUEST_ENABLE_TEMPLATE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (129, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (130, true, true, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, param)
+ VALUES(53, false, 'UPLOAD_REQUEST_ENABLE_TEMPLATE', 129, 130, 1, false);
+
 ALTER TABLE mime_type CHANGE mime_type mime_type varchar(255) NOT NULL;
 ALTER TABLE mime_type CHANGE extensions extensions varchar(255) NOT NULL;
 -- schema upgrade - end

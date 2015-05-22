@@ -255,6 +255,12 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
  VALUES(47, false, 'UPLOAD_REQUEST_ENTRY_URL__PASSWORD', 109, 110, 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (47, false);
 
+-- Functionality : UPLOAD_REQUEST_ENABLE_TEMPLATE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (129, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (130, true, true, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, param)
+ VALUES(53, false, 'UPLOAD_REQUEST_ENABLE_TEMPLATE', 129, 130, 1, false);
+
 ALTER TABLE cookie ALTER COLUMN last_use TYPE timestamp;
 
 ALTER TABLE document ALTER COLUMN creation_date TYPE timestamp;

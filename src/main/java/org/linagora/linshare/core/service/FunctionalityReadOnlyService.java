@@ -101,6 +101,7 @@ public interface FunctionalityReadOnlyService {
 	BooleanValueFunctionality getUploadRequestCandDeleteFileFunctionality(AbstractDomain domain);
 	BooleanValueFunctionality getUploadRequestCanCloseFunctionality(AbstractDomain domain);
 	TimeUnitValueFunctionality getUploadRequestNotificationTimeFunctionality(AbstractDomain domain);
+	Functionality getUploadRequestEnableTemplateFunctionality(AbstractDomain domain);
 
 	// UPLOAD PROPOSITION
 	Functionality getUploadPropositionFunctionality(AbstractDomain domain);
