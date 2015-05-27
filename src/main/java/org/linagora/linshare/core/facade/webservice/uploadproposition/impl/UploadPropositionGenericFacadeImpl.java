@@ -37,6 +37,7 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.UploadPropositionGenericFacade;
 import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
@@ -74,5 +75,10 @@ public class UploadPropositionGenericFacadeImpl extends GenericFacadeImpl implem
 					"This service UploadProposition is not enable.");
 		}
 		return actor;
+	}
+
+	@Override
+	public UserDto isAuthorized() throws BusinessException {
+		return UserDto.getFull(checkAuthentication());
 	}
 }

@@ -33,8 +33,11 @@
  */
 package org.linagora.linshare.core.facade.webservice.uploadproposition;
 
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.GenericFacade;
 
 public interface UploadPropositionGenericFacade extends GenericFacade {
 
+	UserDto isAuthorized() throws BusinessException;
 }

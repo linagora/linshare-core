@@ -33,8 +33,11 @@
  */
 package org.linagora.linshare.core.facade.webservice.delegation;
 
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.AccountDto;
 import org.linagora.linshare.core.facade.webservice.user.GenericFacade;
 
 public interface DelegationGenericFacade extends GenericFacade {
 
+	AccountDto isAuthorized() throws BusinessException;
 }

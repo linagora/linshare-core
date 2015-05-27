@@ -37,6 +37,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.delegation.DelegationGenericFacade;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.AccountDto;
 import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserService;
@@ -68,6 +69,11 @@ public class DelegationGenericFacadeImpl extends GenericFacadeImpl implements
 					"You are not authorized to use this service");
 		}
 		return actor;
+	}
+
+	@Override
+	public AccountDto isAuthorized() throws BusinessException {
+		return new AccountDto(checkAuthentication());
 	}
 
 	protected User getOwner(String ownerUuid) {

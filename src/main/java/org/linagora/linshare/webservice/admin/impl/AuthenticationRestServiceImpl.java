@@ -40,7 +40,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
@@ -82,7 +81,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	@ApiOperation(value = "Check if user is authorized.", response = UserDto.class)
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
-		return adminFacade.checkAuthenticationDto(Role.ADMIN);
+		return adminFacade.isAuthorized();
 	}
 
 	@Path("/change_password")

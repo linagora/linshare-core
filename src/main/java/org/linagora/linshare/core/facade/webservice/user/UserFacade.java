@@ -40,6 +40,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 public interface UserFacade extends GenericFacade {
 
-	public List<UserDto> findAll() throws BusinessException;
-	
+	List<UserDto> findAll() throws BusinessException;
+
+	UserDto isAuthorized() throws BusinessException;
 }

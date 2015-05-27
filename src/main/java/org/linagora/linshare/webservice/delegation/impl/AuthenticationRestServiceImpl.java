@@ -83,7 +83,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	@ApiOperation(value = "Check if user is authorized.", response = AccountDto.class)
 	@Override
 	public AccountDto isAuthorized() throws BusinessException {
-		return new AccountDto(delegationGenericFacade.checkAuthentication());
+		return delegationGenericFacade.isAuthorized();
 	}
 
 	@Path("/change_password")

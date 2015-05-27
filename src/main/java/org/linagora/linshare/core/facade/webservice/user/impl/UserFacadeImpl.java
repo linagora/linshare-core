@@ -36,7 +36,6 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -94,4 +93,8 @@ public class UserFacadeImpl extends UserGenericFacadeImp
 		return res;
 	}
 
+	@Override
+	public UserDto isAuthorized() throws BusinessException {
+		return UserDto.getFull(checkAuthentication());
+	}
 }

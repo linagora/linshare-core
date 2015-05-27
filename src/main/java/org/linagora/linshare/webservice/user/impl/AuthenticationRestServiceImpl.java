@@ -38,7 +38,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
@@ -46,7 +45,8 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.user.AuthenticationRestService;
 
 @Path("/authentication")
-public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
+public class AuthenticationRestServiceImpl extends WebserviceBase implements
+		AuthenticationRestService {
 
 	private final UserFacade webServiceUserFacade;
 
@@ -66,8 +66,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
-		User user = webServiceUserFacade.checkAuthentication();
-		return UserDto.getFull(user);
+		return webServiceUserFacade.isAuthorized();
 	}
 
 	@Path("/version")

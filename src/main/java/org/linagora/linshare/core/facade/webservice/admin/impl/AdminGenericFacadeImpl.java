@@ -81,7 +81,7 @@ public class AdminGenericFacadeImpl extends GenericFacadeImpl implements
 	}
 
 	@Override
-	public UserDto checkAuthenticationDto(Role role) throws BusinessException {
+	public UserDto isAuthorized() throws BusinessException {
 		return UserDto.getFull(checkAuthentication(Role.ADMIN));
 	}
 }

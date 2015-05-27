@@ -39,10 +39,9 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.GenericFacade;
 
-
 public interface AdminGenericFacade extends GenericFacade {
 
-	public User checkAuthentication(Role role) throws BusinessException;
+	User checkAuthentication(Role role) throws BusinessException;
 
-	public UserDto checkAuthenticationDto(Role role) throws BusinessException;
+	UserDto isAuthorized() throws BusinessException;
 }
