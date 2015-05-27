@@ -43,7 +43,6 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linshare.core.domain.vo.UploadRequestVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -94,15 +93,17 @@ public class Index {
 	@Inject
 	private UploadRequestFacade uploadRequestFacade;
 
-	@Inject
-	@Symbol("linshare.uploadrequest.templates.enable")
 	@Property
 	private boolean templatesEnable;
 
 	public Object onActivate() {
 		if (!functionalityFacade.isEnableUploadRequest(userVo
-				.getDomainIdentifier()))
+				.getDomainIdentifier())) {
+			templatesEnable = functionalityFacade
+					.isUploadRequestTemplateEnabled(userVo
+							.getDomainIdentifier());
 			return org.linagora.linshare.view.tapestry.pages.Index.class;
+		}
 		return null;
 	}
 
