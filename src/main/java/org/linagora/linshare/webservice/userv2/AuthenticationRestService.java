@@ -44,4 +44,6 @@ public interface AuthenticationRestService {
 	UserDto isAuthorized() throws BusinessException;
 
 	void logout();
+
+	String getVersion();
 }

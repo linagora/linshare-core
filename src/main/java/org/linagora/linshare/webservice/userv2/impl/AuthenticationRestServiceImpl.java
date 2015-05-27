@@ -87,4 +87,11 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements
 		// security before.
 		// This function was created just to show the logout URL into WADL.
 	}
+
+	@Path("/version")
+	@GET
+	@Override
+	public String getVersion() {
+		return getCoreVersion();
+	}
 }

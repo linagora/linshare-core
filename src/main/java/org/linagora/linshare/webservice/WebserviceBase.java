@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.webservice;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -51,7 +54,7 @@ public class WebserviceBase {
 	// SOAP
 
 	public static final String NAME_SPACE_NS = "http://org/linagora/linshare/webservice/";
-	
+
 	// REST
 
 	protected WebApplicationException giveRestException(int httpErrorCode,
@@ -67,6 +70,26 @@ public class WebserviceBase {
 		} else {
 			return new WebApplicationException(cause, Response
 					.status(httpErrorCode).entity(message).build());
+		}
+	}
+
+	protected String getCoreVersion() {
+		Properties prop = new Properties();
+		try {
+			if (this.getClass().getResourceAsStream("/version.properties") != null) {
+				prop.load(this.getClass().getResourceAsStream(
+						"/version.properties"));
+			} else {
+				logger.debug("Impossible to load version.properties, Is this a dev environnement?");
+			}
+		} catch (IOException e) {
+			logger.debug("Impossible to load version.properties, Is this a dev environnement?");
+			logger.debug(e.toString());
+		}
+		if (prop.getProperty("Implementation-Version") != null) {
+			return prop.getProperty("Implementation-Version");
+		} else {
+			return "trunk";
 		}
 	}
 }

@@ -69,4 +69,11 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 		User user = webServiceUserFacade.checkAuthentication();
 		return UserDto.getFull(user);
 	}
+
+	@Path("/version")
+	@GET
+	@Override
+	public String getVersion() {
+		return getCoreVersion();
+	}
 }

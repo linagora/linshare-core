@@ -41,4 +41,6 @@ public interface AuthenticationRestService {
 	void noop();
 
 	UserDto isAuthorized() throws BusinessException;
+
+	String getVersion();
 }

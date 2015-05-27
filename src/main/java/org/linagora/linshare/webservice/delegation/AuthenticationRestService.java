@@ -46,4 +46,6 @@ public interface AuthenticationRestService {
 	void changePassword(PasswordDto password) throws BusinessException;
 
 	void logout();
+
+	String getVersion();
 }
