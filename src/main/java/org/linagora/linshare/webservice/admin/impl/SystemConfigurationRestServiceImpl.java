@@ -31,57 +31,65 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.admin.impl;
+package org.linagora.linshare.webservice.admin.impl;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.log4j.Level;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
-import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.facade.webservice.common.dto.LoggerStatus;
+import org.linagora.linshare.webservice.admin.SystemConfigurationRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AdminGenericFacadeImpl extends GenericFacadeImpl implements
-		AdminGenericFacade {
+@Path("/loggers")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class SystemConfigurationRestServiceImpl implements
+		SystemConfigurationRestService {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(AdminGenericFacadeImpl.class);
+			.getLogger(SystemConfigurationRestServiceImpl.class);
 
-	public AdminGenericFacadeImpl(final AccountService accountService) {
-		super(accountService);
+	private final AdminGenericFacade adminFacade;
+
+	public SystemConfigurationRestServiceImpl(AdminGenericFacade adminFacade) {
+		super();
+		this.adminFacade = adminFacade;
 	}
 
+	@Path("/{loggerName}/{level}")
+	@GET
 	@Override
-	public User checkAuthentication(Role role) throws BusinessException {
-		User actor = super.checkAuthentication();
-
-		if (role != Role.SUPERADMIN && role != Role.ADMIN) {
-			logger.error("Programmatic error: role must be set either to SUPERADMIN or ADMIN but is " + role.name());
-			throw new IllegalArgumentException(
-					"role must be either SUPERADMIN or ADMIN");
-		}
-		if (!(actor.hasAdminRole() || actor.hasSuperAdminRole())) {
-			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountReprentation());
-			throw new BusinessException(
-					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
-					"You are not authorized to use this service");
-		}
-		if (role.equals(Role.SUPERADMIN)) {
-			if (!(actor.hasSuperAdminRole())) {
-				logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountReprentation());
-				throw new BusinessException(
-						BusinessErrorCode.WEBSERVICE_FORBIDDEN,
-						"You are not authorized to use this service");
-			}
-		}
-		return actor;
+	public LoggerStatus changeLogLevel(
+			@PathParam(value = "loggerName") String loggerName,
+			@PathParam(value = "level") String levelStr) {
+		adminFacade.isAuthorized(Role.SUPERADMIN);
+		logger.warn("Trying to update log level at runtime using logger name : "
+				+ loggerName);
+		org.apache.log4j.Logger currLogger = org.apache.log4j.LogManager
+				.getLogger(loggerName);
+		Level level = Level.toLevel(levelStr.toUpperCase());
+		logger.warn("Log level value : " + level);
+		currLogger.setLevel(level);
+		logger.warn("Log level updated at runtime.");
+		return new LoggerStatus(currLogger, level);
 	}
 
+	@Path("/{loggerName}")
+	@GET
 	@Override
-	public UserDto isAuthorized(Role role) throws BusinessException {
-		return UserDto.getFull(checkAuthentication(role));
+	public LoggerStatus getLogLevel(
+			@PathParam(value = "loggerName") String loggerName) {
+		adminFacade.isAuthorized(Role.SUPERADMIN);
+		org.apache.log4j.Logger currLogger = org.apache.log4j.LogManager
+				.getLogger(loggerName);
+		return new LoggerStatus(currLogger, currLogger.getLevel());
 	}
 }

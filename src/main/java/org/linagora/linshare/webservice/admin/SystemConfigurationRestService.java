@@ -31,17 +31,13 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.admin;
+package org.linagora.linshare.webservice.admin;
 
-import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.GenericFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.LoggerStatus;
 
-public interface AdminGenericFacade extends GenericFacade {
+public interface SystemConfigurationRestService {
 
-	User checkAuthentication(Role role) throws BusinessException;
+	LoggerStatus getLogLevel(String loggerName);
 
-	UserDto isAuthorized(Role role) throws BusinessException;
+	LoggerStatus changeLogLevel(String loggerName, String levelStr);
 }

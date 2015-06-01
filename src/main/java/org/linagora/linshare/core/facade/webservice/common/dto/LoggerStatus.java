@@ -31,17 +31,51 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.admin;
+package org.linagora.linshare.core.facade.webservice.common.dto;
 
-import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.GenericFacade;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public interface AdminGenericFacade extends GenericFacade {
+import org.apache.log4j.Level;
 
-	User checkAuthentication(Role role) throws BusinessException;
+@XmlRootElement(name = "LoggerStatus")
+public class LoggerStatus {
 
-	UserDto isAuthorized(Role role) throws BusinessException;
+	private String name;
+
+	private String level;
+
+	public LoggerStatus() {
+		super();
+	}
+
+	public LoggerStatus(String name, String level) {
+		super();
+		this.name = name;
+		this.level = level;
+	}
+
+	public LoggerStatus(org.apache.log4j.Logger logger, Level level) {
+		super();
+		this.name = logger.getName();
+		if (level != null) {
+			this.level = level.toString();
+		}
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
+	}
+
 }
