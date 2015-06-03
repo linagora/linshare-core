@@ -112,6 +112,10 @@
 		<constructor-arg ref="wsAdminUploadPropositionFilterFacade" />
 	</bean>
 
+	<bean id="adminSystemConfigurationRestService" class="org.linagora.linshare.webservice.admin.impl.SystemConfigurationRestServiceImpl">
+		<constructor-arg ref="wsAdminGenericFacade" />
+	</bean>
+
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">
 		<jaxrs:serviceBeans>
 			<ref bean="adminAuthenticationRestService" />
@@ -138,6 +142,7 @@
 			<ref bean="adminTechnicalAccountPermissionRestService" />
 			<ref bean="adminUploadRequestRestService" />
 			<ref bean="adminUploadPropositionFilterRestService" />
+			<ref bean="adminSystemConfigurationRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

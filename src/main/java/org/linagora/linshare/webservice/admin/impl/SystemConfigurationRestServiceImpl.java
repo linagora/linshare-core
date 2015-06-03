@@ -35,71 +35,61 @@ package org.linagora.linshare.webservice.admin.impl;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Level;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
-import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
-import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.admin.AuthenticationRestService;
+import org.linagora.linshare.core.facade.webservice.common.dto.LoggerStatus;
+import org.linagora.linshare.webservice.admin.SystemConfigurationRestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
-
-@Path("/authentication")
-@Api(value = "/rest/admin/authentication", description = "Authentication administration")
+@Path("/loggers")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
+public class SystemConfigurationRestServiceImpl implements
+		SystemConfigurationRestService {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(SystemConfigurationRestServiceImpl.class);
 
 	private final AdminGenericFacade adminFacade;
 
-	private final UserFacade userFacade;
-
-	public AuthenticationRestServiceImpl(final AdminGenericFacade adminFacade, final UserFacade userFacade) {
+	public SystemConfigurationRestServiceImpl(AdminGenericFacade adminFacade) {
+		super();
 		this.adminFacade = adminFacade;
-		this.userFacade = userFacade;
 	}
 
-	@Path("/")
+	@Path("/{loggerName}/{level}")
 	@GET
-	@ApiOperation(value = "No operation.")
 	@Override
-	public void noop() {
-		return; // do nothing
+	public LoggerStatus changeLogLevel(
+			@PathParam(value = "loggerName") String loggerName,
+			@PathParam(value = "level") String levelStr) {
+		adminFacade.checkAuthentication(Role.SUPERADMIN);
+		logger.warn("Trying to update log level at runtime using logger name : "
+				+ loggerName);
+		org.apache.log4j.Logger currLogger = org.apache.log4j.LogManager
+				.getLogger(loggerName);
+		Level level = Level.toLevel(levelStr.toUpperCase());
+		logger.warn("Log level value : " + level);
+		currLogger.setLevel(level);
+		logger.warn("Log level updated at runtime.");
+		return new LoggerStatus(currLogger, level);
 	}
 
-	@Path("/authorized")
+	@Path("/{loggerName}")
 	@GET
-	@ApiOperation(value = "Check if user is authorized.", response = UserDto.class)
 	@Override
-	public UserDto isAuthorized() throws BusinessException {
-		return UserDto.getFull(adminFacade.checkAuthentication(Role.ADMIN));
-	}
-
-	@Path("/change_password")
-	@POST
-	@ApiOperation(value = "Change the password of the current user.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
-	@Override
-	public void changePassword(PasswordDto password) throws BusinessException {
-		userFacade.changePassword(password);
-	}
-
-	@Path("/logout")
-	@GET
-	@ApiOperation(value = "Logout the current user.")
-	@Override
-	public void logout() {
-		// This code is never reach because the URL will be catch by spring security before.
-		// This function was created just to show the logout URL into WADL.
+	public LoggerStatus getLogLevel(
+			@PathParam(value = "loggerName") String loggerName) {
+		adminFacade.checkAuthentication(Role.SUPERADMIN);
+		org.apache.log4j.Logger currLogger = org.apache.log4j.LogManager
+				.getLogger(loggerName);
+		return new LoggerStatus(currLogger, currLogger.getLevel());
 	}
 }
