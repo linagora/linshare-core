@@ -511,6 +511,9 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		if (meta == null) {
 			meta = entry.getMetaData();
 		}
+		if (fileComment == null) {
+			fileComment = entry.getComment();
+		}
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
 		return documentEntryBusinessService.updateFileProperties(entry, newName, fileComment, meta);
