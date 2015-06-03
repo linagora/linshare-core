@@ -79,6 +79,7 @@
 			<ref bean="businessExceptionMapper" />
 			<ref bean="genericExceptionMapper" />
 			<ref bean="webApplicationExceptionMapper" />
+			<ref bean="illegalArgumentExceptionMapper" />
 			<!-- Json provider for serialisation -->
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
