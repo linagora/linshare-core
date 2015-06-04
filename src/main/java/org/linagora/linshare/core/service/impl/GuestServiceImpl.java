@@ -163,6 +163,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			Validate.notEmpty(restrictedMails,
 					"A restricted guest must have a restricted list of contacts (mails)");
 		}
+		Validate.notEmpty(guest.getMail(), "Guest mail must be set.");
 		checkCreatePermission(actor, owner, Guest.class,
 				BusinessErrorCode.USER_CANNOT_CREATE_GUEST, null);
 		if (!hasGuestDomain(owner.getDomainId())) {
