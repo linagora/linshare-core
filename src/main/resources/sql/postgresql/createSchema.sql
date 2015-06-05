@@ -689,10 +689,6 @@ CREATE UNIQUE INDEX functionality_unit_index
   ON functionality_unit (unit_id);
 CREATE INDEX functionality_unit_i
   ON functionality_unit (functionality_id);
-CREATE UNIQUE INDEX functionality_unit_boolean_index
-  ON functionality_unit_boolean (unit_id);
-CREATE INDEX functionality_unit_boolean_i
-  ON functionality_unit_boolean (functionality_id);
 CREATE INDEX log_entry_i
   ON log_entry (actor_domain);
 CREATE INDEX log_entry_i2
