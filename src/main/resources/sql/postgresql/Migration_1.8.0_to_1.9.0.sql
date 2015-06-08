@@ -243,8 +243,7 @@ INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (50, f
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (123, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (124, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (125, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
- VALUES(51, false, 'GUESTS__EXPIRATION_ALLOW_PROLONGATION', 123, 124, 125, 'GUESTS', true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES(51, false, 'GUESTS__EXPIRATION_ALLOW_PROLONGATION', 123, 124, 125, 1, 'GUESTS', true);
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (51, true);
 
 -- Functionality : SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER
