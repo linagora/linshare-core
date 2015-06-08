@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.facade;
 
+import org.linagora.linshare.core.exception.BusinessException;
+
 
 public interface FunctionalityFacade {
 
@@ -85,4 +87,8 @@ public interface FunctionalityFacade {
 	boolean userCanChooseExpirationDateForGuest(String domainIdentifier);
 
 	boolean isGuestExpirationDateProlonged(String domainIdentifier);
+
+	String getCustomNotificationURLInRootDomain() throws BusinessException;
+
+	String getSessionId() throws BusinessException;
 }

@@ -49,7 +49,7 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.view.tapestry.objects.CustomStreamResponse;
 import org.linagora.linshare.view.tapestry.services.Templating;
 import org.slf4j.Logger;
@@ -73,35 +73,44 @@ public class SignAndUpload {
 	private Asset jwsTemplate;
 
 	@Inject
-	private FunctionalityReadOnlyService functionalityService;
+	private FunctionalityFacade functionalityFacade;
 	
 	@Inject
 	private Templating templating;
 	
+	@Property
+	private String sessionId;
 	
 	public CustomStreamResponse onActivate() throws BusinessException {
-		
+
+		sessionId = "10oucmzi2ubeupdpsmkjx02re";
+
+		//sessionId = functionalityFacade.getSessionId();
+		logger.info("session id = " + sessionId);
 		try {
 			String tplcontent = templating.readFullyTemplateContent(jwsTemplate.getResource().openStream());
 			
-			String linshareInfoUrl = functionalityService.getCustomNotificationURLInRootDomain();
+			String linshareInfoUrl = functionalityFacade.getCustomNotificationURLInRootDomain();
 			
 			Map<String,String> templateParams=new HashMap<String, String>();
 			//result codebase for JNLP is an url like http://localhost:8080/linshare/applet to download signature-client.jar
 			StringBuffer jwsUrlToPut = new StringBuffer(linshareInfoUrl);
 			if(!linshareInfoUrl.endsWith("/")) jwsUrlToPut.append('/');
 			jwsUrlToPut.append(suffixcodebase); //application jws directory: applet in this case
+
 			if(suffixcodebase.endsWith("/")) jwsUrlToPut.deleteCharAt(jwsUrlToPut.length()-1);
-			
+
 			templateParams.put("${javawebstart.decrypt.url.codebase}", jwsUrlToPut.toString());
+			templateParams.put("${sessionId}", sessionId);
+
 			String jnlp = templating.getMessage(tplcontent, templateParams);
-			
+
 			byte[] send = jnlp.getBytes();
 			long size = send.length;
 			ByteArrayInputStream bi = new ByteArrayInputStream(send);
-			
+
 			return new CustomStreamResponse(new FileInfo("","SignAndUpload.jnlp","",size,"application/x-java-jnlp-file"),bi);
-			
+
 		} catch (IOException e) {
 			logger.error("Bad jws template", e);
 			throw new TechnicalException(TechnicalErrorCode.GENERIC,"Bad jws template",e);

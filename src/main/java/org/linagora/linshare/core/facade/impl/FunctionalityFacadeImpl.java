@@ -39,11 +39,15 @@ import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 public class FunctionalityFacadeImpl implements FunctionalityFacade {
 
@@ -318,5 +322,17 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 			return expirationDateChoosable.getDelegationPolicy().getStatus();
 		}
 		return false;
+	}
+
+	@Override
+	public String getCustomNotificationURLInRootDomain() throws BusinessException {
+		return functionalityReadOnlyService.getCustomNotificationURLInRootDomain();
+	}
+
+	@Override
+	public String getSessionId() throws BusinessException {
+		SecurityContext context = SecurityContextHolder.getContext();
+		WebAuthenticationDetails details = (WebAuthenticationDetails)context.getAuthentication().getDetails();
+		return details.getSessionId();
 	}
 }
