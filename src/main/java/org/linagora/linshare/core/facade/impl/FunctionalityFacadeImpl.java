@@ -45,9 +45,8 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 public class FunctionalityFacadeImpl implements FunctionalityFacade {
 
@@ -331,8 +330,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 
 	@Override
 	public String getSessionId() throws BusinessException {
-		SecurityContext context = SecurityContextHolder.getContext();
-		WebAuthenticationDetails details = (WebAuthenticationDetails)context.getAuthentication().getDetails();
-		return details.getSessionId();
+		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+		return requestAttributes.getSessionId();
 	}
 }

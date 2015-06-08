@@ -18,18 +18,18 @@
 			<h4>Actions</h4>
 			<ul>
 				<t:if test="displayUploadButton">
-                <li>
-                    <t:pageLink page="files/upload" class="button" title="${message:pages.files.upload.addbutton}">
-                        <span><img src="${asset:context:images/icons/icon-add-files.png}" alt="" /> ${message:pages.files.upload.addbutton}</span>
-                    </t:pageLink>
-                </li>
-                <li>
-                 <!-- <t:if test="showCreateButton"> -->
-                    <t:pageLink page="files/SignAndUpload" class="button" title="${message:pages.files.signandupload.addbutton}">
-                        <span><img src="${asset:context:images/icons/icon-add-files.png}" alt="" /> ${message:pages.files.signandupload.addbutton}</span>
-                    </t:pageLink>
-                <!-- </t:if> -->
-                </li>
+					<li>
+						<t:pageLink page="files/upload" class="button" title="${message:pages.files.upload.addbutton}">
+							<span><img src="${asset:context:images/icons/icon-add-files.png}" alt="" /> ${message:pages.files.upload.addbutton}</span>
+						</t:pageLink>
+					</li>
+					<li>
+						<t:if test="displaySignButton">
+							<t:pageLink page="files/SignAndUpload" class="button" title="${message:pages.files.signandupload.addbutton}">
+								<span><img src="${asset:context:images/icons/icon-add-files.png}" alt="" /> ${message:pages.files.signandupload.addbutton}</span>
+							</t:pageLink>
+						</t:if>
+					</li>
 				<t:parameter name="else"><t:linkit.Comment> * KEEP IT, XHTML validation * </t:linkit.Comment>
 				<li>&nbsp;</li>
 				</t:parameter>

@@ -83,10 +83,8 @@ public class SignAndUpload {
 	
 	public CustomStreamResponse onActivate() throws BusinessException {
 
-		sessionId = "10oucmzi2ubeupdpsmkjx02re";
-
-		//sessionId = functionalityFacade.getSessionId();
-		logger.info("session id = " + sessionId);
+		sessionId = functionalityFacade.getSessionId();
+		logger.debug("session id = " + sessionId);
 		try {
 			String tplcontent = templating.readFullyTemplateContent(jwsTemplate.getResource().openStream());
 			

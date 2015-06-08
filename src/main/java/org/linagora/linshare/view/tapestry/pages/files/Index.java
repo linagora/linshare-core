@@ -659,6 +659,10 @@ public class Index {
 		return (userVo.isUpload());
 	}
 
+	public boolean isDisplaySignButton() {
+		return documentFacade.isSignatureActive(userVo);
+	}
+
 	public String getPageTitle() {
 		return messages.get("components.myborderlayout.file.title");
 	}
