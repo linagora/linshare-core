@@ -329,7 +329,9 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 	@Override
 	public boolean isSignatureActive(UserVo userVo) {
 		User actor = getActor(userVo);
-		return documentEntryService.isSignatureActive(actor);
+		// HACK : Signature temporary disabled
+		// return documentEntryService.isSignatureActive(actor);
+		return false;
 	}
 
 	@Override
