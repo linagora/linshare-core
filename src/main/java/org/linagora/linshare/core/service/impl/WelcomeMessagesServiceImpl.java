@@ -141,8 +141,10 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 						"Invalid number of keys.");
 		}
 		// Updating current WM.
-		welcomeMessage.setDescription(wlcm.getDescription());
-		welcomeMessage.setName(wlcm.getName());
+		if (wlcm.getDescription() != null)
+			welcomeMessage.setDescription(wlcm.getDescription());
+		if (wlcm.getName() != null)
+			welcomeMessage.setName(wlcm.getName());
 		Map<SupportedLanguage, WelcomeMessagesEntry> welcomeMessagesEntries = welcomeMessage
 				.getWelcomeMessagesEntries();
 		for (SupportedLanguage key : tmpMsg.keySet()) {

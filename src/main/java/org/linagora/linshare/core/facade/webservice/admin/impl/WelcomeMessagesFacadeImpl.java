@@ -113,6 +113,12 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public WelcomeMessagesDto update(WelcomeMessagesDto wlcmDto)
 			throws BusinessException {
+		Validate.notNull(wlcmDto, "Welcome message object must be set.");
+		Validate.notEmpty(wlcmDto.getUuid(), "Welcome message uuid must be set.");
+		if (wlcmDto.getDomains() == null) {
+			Set<DomainLightDto> domains = Sets.newHashSet();
+			wlcmDto.setDomains(domains);
+		}
 		User actor = checkAuthentication(Role.ADMIN);
 		WelcomeMessages wlcm = wlcmDto.toObject();
 		List<String> domainUuids = Lists.newArrayList();
