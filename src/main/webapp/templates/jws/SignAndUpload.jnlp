@@ -21,8 +21,11 @@
 	
 	<!-- launch the signature module as an application -->
 	<!--
-	<application-desc main-class="org.gsafeproject.signature.client.LinShareSignatureXAdES" />
+	<application-desc main-class="org.gsafeproject.signature.client.LinShareSignatureXAdES">
+		<param name="sessionId" value="${sessionId}" />
+	</application-desc>
 	-->
+
 
 	<!-- launch the signature module as an applet -->
 	<applet-desc
@@ -30,5 +33,6 @@
 		main-class="org.gsafeproject.signature.client.LinShareSignatureApplet"
 		width="650"
 		height="350">
+		<param name="sessionID" value="${sessionId}" />
 	</applet-desc>
 </jnlp>

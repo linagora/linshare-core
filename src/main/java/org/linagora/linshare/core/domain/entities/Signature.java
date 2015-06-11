@@ -88,7 +88,7 @@ public class Signature implements Serializable {
 		this.certNotAfter = null;
 	}
 	
-	public Signature(String uuid, String name, Calendar creationDate, Calendar modificationDate, Account signer, Document doc, Long size,X509Certificate signerCertificate) {
+	public Signature(String uuid, String name, Calendar creationDate, Calendar modificationDate, Account signer, Document doc, Long size, X509Certificate signerCertificate) {
 		super();
 		this.uuid = uuid;
 		this.name = name;
@@ -98,8 +98,8 @@ public class Signature implements Serializable {
 		this.signer = signer;
 		this.document = doc;
 		this.size = size;
-		this.certSubjectDn = signerCertificate.getSubjectX500Principal().toString();
-		this.certIssuerDn = signerCertificate.getIssuerX500Principal().toString();
+		this.certSubjectDn = signerCertificate.getSubjectDN().toString();
+		this.certIssuerDn = signerCertificate.getIssuerDN().toString();
 		this.certNotAfter = signerCertificate.getNotAfter();
 		try {
 			this.cert = Base64Utils.encodeBytes(signerCertificate.getEncoded());
@@ -107,7 +107,7 @@ public class Signature implements Serializable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public boolean equals(Object o1) {
 		if (o1 instanceof Signature) {
@@ -116,7 +116,7 @@ public class Signature implements Serializable {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return this.uuid.hashCode();

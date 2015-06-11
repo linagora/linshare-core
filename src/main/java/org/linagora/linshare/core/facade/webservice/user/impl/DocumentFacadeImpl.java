@@ -35,6 +35,9 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Set;
 
@@ -54,6 +57,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.core.service.ShareService;
+import org.linagora.linshare.core.service.SignatureService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,14 +76,18 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 
 	private final ShareService shareService;
 
+	private final SignatureService signatureService;
+
 	public DocumentFacadeImpl(final DocumentEntryService documentEntryService,
 			final AccountService accountService,
 			final MimePolicyService mimePolicyService,
-			final ShareService shareService) {
+			final ShareService shareService,
+			final SignatureService signatureService) {
 		super(accountService);
 		this.documentEntryService = documentEntryService;
 		this.mimePolicyService = mimePolicyService;
 		this.shareService = shareService;
+		this.signatureService = signatureService;
 	}
 
 	@Override
@@ -99,7 +107,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 
 	@Override
 	public DocumentDto create(InputStream fi, String description,
-			String fileName) throws BusinessException {
+			String fileName, InputStream signatureFile, String signatureFileName, InputStream x509) throws BusinessException {
 		Validate.notNull(fi,
 				"Missing required file (check parameter named file)");
 		User actor = checkAuthentication();
@@ -108,6 +116,16 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 					"You are not authorized to use this service");
 		DocumentEntry res = documentEntryService.create(actor, actor, fi,
 				fileName);
+		if(signatureFile != null) {
+			X509Certificate x509certificate = null;
+			try {
+				CertificateFactory cf = CertificateFactory.getInstance("X.509");
+				x509certificate = (X509Certificate) cf.generateCertificate(x509);
+			} catch (CertificateException e) {
+				e.printStackTrace();
+			}
+			signatureService.createSignature(actor, res.getDocument(), signatureFile, res.getSize(), signatureFileName, x509certificate);
+		}
 
 		documentEntryService.updateFileProperties(actor, actor, res.getUuid(),
 				res.getName(), description, null);

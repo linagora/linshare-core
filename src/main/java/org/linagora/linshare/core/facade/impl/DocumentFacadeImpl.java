@@ -136,7 +136,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		Account actor = getActor(ownerVo);
 		DocumentEntry documentEntry = documentEntryService.find(actor, actor, documentVo.getIdentifier());
 		signatureService.createSignature(actor, documentEntry.getDocument(), file, size, fileName, signerCertificate);
-	}
+		}
 
 	@Override
 	public List<SignatureVo> getAllSignatures(UserVo userVo, DocumentVo documentVo){

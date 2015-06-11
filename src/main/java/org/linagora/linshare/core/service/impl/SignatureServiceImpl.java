@@ -75,6 +75,7 @@ public class SignatureServiceImpl implements SignatureService {
 		DocumentUtils util = new DocumentUtils();
 		File tempFile =  util.getTempFile(stream, fileName);
 		Signature signature = null;
+
 		try {
 			String mimeType = "text/xml";
 			signature = signatureBusinessService.createSignature(actor, document, tempFile, size, fileName, mimeType, signerCertificate);

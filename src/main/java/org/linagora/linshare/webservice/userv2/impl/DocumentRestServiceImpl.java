@@ -34,7 +34,10 @@
 
 package org.linagora.linshare.webservice.userv2.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
+import java.security.cert.X509Certificate;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -51,6 +54,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.bouncycastle.openssl.PEMReader;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
@@ -91,6 +95,9 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream theFile,
 			@ApiParam(value = "An optional description of a document.") @Multipart(value = "description", required = false) String description,
 			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
+			@ApiParam(value = "Signature file stream.", required = false) @Multipart(value = "signaturefile", required = false) InputStream theSignatureFile,
+			@ApiParam(value = "The given file name of the signature uploaded file.", required = false) @Multipart(value = "signatureFileName", required = false) String signatureFileName,
+			@ApiParam(value = "X509 Certificate entity.", required = false) @Multipart(value = "x509cert", required = false) InputStream x509certificate,
 			MultipartBody body) throws BusinessException {
 		String fileName;
 		String comment = (description == null) ? "" : description;
@@ -103,7 +110,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		} else {
 			fileName = givenFileName;
 		}
-		return documentFacade.create(theFile, comment, fileName);
+		return documentFacade.create(theFile, comment, fileName, theSignatureFile, signatureFileName, x509certificate);
 	}
 
 	@Path("/{uuid}")
