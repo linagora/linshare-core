@@ -118,7 +118,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	@Override
 	public List<AllowedContact> load(Account actor, User guest)
 			throws BusinessException {
-		preChecks(actor, actor);
+		preChecks(actor, guest);
 		Guest guest2 = guestBusinessService.findByLsUuid(guest.getLsUuid());
 		checkReadPermission(actor, actor, Guest.class,
 				BusinessErrorCode.GUEST_FORBIDDEN, guest2);
