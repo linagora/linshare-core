@@ -74,8 +74,14 @@
 	
 			<div class="button">
 				<t:actionLink t:id="downloadSignedArchive" class="button button_wide"
-					title="${message:components.signaturedetailsdisplayer.action.archive.download.title}"><span>${message:components.signaturedetailsdisplayer.action.archive.download}</span></t:actionLink>
-				<t:pagelink page="signature/verifySignature" class="button button_wide"><span>${message:components.signaturedetailsdisplayer.action.verifySignature}</span></t:pagelink>
+					title="${message:components.signaturedetailsdisplayer.action.archive.download.title}">
+					<span>${message:components.signaturedetailsdisplayer.action.archive.download}</span>
+				</t:actionLink>
+				<!--
+				<t:pagelink page="signature/verifySignature" class="button button_wide">
+					<span>${message:components.signaturedetailsdisplayer.action.verifySignature}</span>
+				</t:pagelink>
+				-->
 				<a href="#" onclick="signatureDetailsWindow.close();" class="button"><span>${message:components.signaturedetailsdisplayer.close}</span></a>
 			</div>
 
