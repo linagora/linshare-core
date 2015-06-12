@@ -67,29 +67,28 @@ public class SignAndUpload {
 
 	@Inject @Symbol("javawebstart.decrypt.url.suffixcodebase")
 	private String suffixcodebase;
-	
+
 	@Inject
 	@Path("context:templates/jws/SignAndUpload.jnlp")
 	private Asset jwsTemplate;
 
 	@Inject
 	private FunctionalityFacade functionalityFacade;
-	
+
 	@Inject
 	private Templating templating;
-	
+
 	@Property
 	private String sessionId;
-	
+
 	public CustomStreamResponse onActivate() throws BusinessException {
 
 		sessionId = functionalityFacade.getSessionId();
-		logger.debug("session id = " + sessionId);
 		try {
 			String tplcontent = templating.readFullyTemplateContent(jwsTemplate.getResource().openStream());
-			
+
 			String linshareInfoUrl = functionalityFacade.getCustomNotificationURLInRootDomain();
-			
+
 			Map<String,String> templateParams=new HashMap<String, String>();
 			//result codebase for JNLP is an url like http://localhost:8080/linshare/applet to download signature-client.jar
 			StringBuffer jwsUrlToPut = new StringBuffer(linshareInfoUrl);
@@ -97,8 +96,8 @@ public class SignAndUpload {
 			jwsUrlToPut.append(suffixcodebase); //application jws directory: applet in this case
 
 			if(suffixcodebase.endsWith("/")) jwsUrlToPut.deleteCharAt(jwsUrlToPut.length()-1);
-
 			templateParams.put("${javawebstart.decrypt.url.codebase}", jwsUrlToPut.toString());
+			templateParams.put("${serverURL}", linshareInfoUrl.concat("webservice/rest/user/"));
 			templateParams.put("${sessionId}", sessionId);
 
 			String jnlp = templating.getMessage(tplcontent, templateParams);

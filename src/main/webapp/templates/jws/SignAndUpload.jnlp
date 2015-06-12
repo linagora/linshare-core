@@ -7,25 +7,25 @@
 		<icon href="../images/icon_lock_48x48.png" />
 		<shortcut online="true">
 		</shortcut>
-		<offline-allowed /> 
+		<offline-allowed />
 	</information>
-	
+
 	<security>
 		<all-permissions />
 	</security>
-	
+
 	<resources>
 		<j2se version="1.7" href="http://java.sun.com/products/autodl/j2se" />
 		<jar href="signature-client.jar" download="eager" main="true"/>
 	</resources>
-	
+
 	<!-- launch the signature module as an application -->
 	<!--
 	<application-desc main-class="org.gsafeproject.signature.client.LinShareSignatureXAdES">
-		<param name="sessionId" value="${sessionId}" />
+		<argument>${serverURL}</argument>
+		<argument>${sessionId}</argument>
 	</application-desc>
 	-->
-
 
 	<!-- launch the signature module as an applet -->
 	<applet-desc
@@ -34,5 +34,6 @@
 		width="650"
 		height="350">
 		<param name="sessionID" value="${sessionId}" />
+		<param name="serverURL" value="${serverURL}" />
 	</applet-desc>
 </jnlp>
