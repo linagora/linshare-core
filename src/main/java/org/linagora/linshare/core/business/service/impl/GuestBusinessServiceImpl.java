@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
@@ -140,7 +141,9 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		guest.setExpirationDate(expiryDate);
 		Guest create = guestRepository.create(guest);
 		if (create.isRestricted()) {
-			if (allowedContacts != null) {
+			if (allowedContacts == null || allowedContacts.isEmpty()) {
+				throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT, "You can not create a restricted guest without a list of contacts.");
+			} else {
 				for (User contact : allowedContacts) {
 					allowedContactRepository.create(new AllowedContact(create,
 							contact));
@@ -170,6 +173,9 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		Guest update = guestRepository.update(entity);
 		if (wasRestricted == guestDto.isRestricted()) {
 			if (allowedContacts != null) {
+				if (allowedContacts.isEmpty()) {
+					throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT, "You can not update a restricted guest without a list of contacts.");
+				}
 				// update
 				allowedContactRepository.purge(update);
 				for (User contact : allowedContacts) {
@@ -178,13 +184,20 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 				}
 			}
 		} else if (wasRestricted) {
-			// not restricted anymore. purge
+			// it is not restricted anymore. purge
 			allowedContactRepository.purge(update);
 		} else {
-			// Add
-			for (User contact : allowedContacts) {
-				allowedContactRepository.create(new AllowedContact(update,
-						contact));
+			// it was not restricted,
+			if (guestDto.isRestricted()) {
+				// but it is now
+				if (allowedContacts == null || allowedContacts.isEmpty()) {
+					throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT, "You can not update a restricted guest without a list of contacts.");
+				} else {
+					for (User contact : allowedContacts) {
+						allowedContactRepository.create(new AllowedContact(update,
+								contact));
+					}
+				}
 			}
 		}
 		return update;
