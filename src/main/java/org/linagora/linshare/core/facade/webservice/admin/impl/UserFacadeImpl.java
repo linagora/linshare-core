@@ -212,9 +212,18 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public UserDto findUser(String uuid) throws BusinessException {
-		checkAuthentication(Role.ADMIN);
+		User currentUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(uuid, "User uuid must be set.");
-		return UserDto.getFull(userService.findByLsUuid(uuid));
+		UserDto userDto = null;
+		User user = userService.findByLsUuid(uuid);
+		if (user.isGuest() && user.isRestricted()) {
+			Guest guest = guestService.find(currentUser, currentUser,
+					uuid);
+			userDto =  UserDto.getFull(guest);
+		} else {
+			userDto = UserDto.getFull(user);
+		}
+		return userDto;
 	}
 
 	@Override
