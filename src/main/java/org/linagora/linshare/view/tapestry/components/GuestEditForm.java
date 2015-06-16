@@ -142,7 +142,7 @@ public class GuestEditForm {
 	private boolean guestsAllowedToCreateGuest;
     
     @Property
-    @Persist("flash")
+    @Persist
     private boolean restrictedGuest;
 
     @Property
@@ -213,7 +213,6 @@ public class GuestEditForm {
                 elements.add(completeName);
             }
 		}
-
 		return elements;
 	}
 	
@@ -241,7 +240,7 @@ public class GuestEditForm {
     	if (guestCreateForm.getHasErrors()) {
     		return ;
     	}
-    	
+
     	if (mail == null | firstName == null | lastName == null) {
     		// the message will be handled by Tapestry
     		return;
@@ -315,5 +314,4 @@ public class GuestEditForm {
     		shareSessionObjects.addError(messages.get("pages.user.edit.error.generic"));
     	return this;
     }
-  
 }
