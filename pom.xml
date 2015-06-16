@@ -76,6 +76,38 @@
 				<role>Developer</role>
 			</roles>
 		</developer>
+
+		<developer>
+			<id>akone</id>
+			<name>Alioune Badara Kone</name>
+			<email>akone@linagora.com</email>
+			<organization>LINAGORA</organization>
+			<organizationUrl>http://www.linagora.com/</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>asall</id>
+			<name>Alpha Sall</name>
+			<email>asall@linagora.com</email>
+			<organization>LINAGORA</organization>
+			<organizationUrl>http://www.linagora.com/</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>asiba</id>
+			<name>Anais Siba</name>
+			<email>asiba@linagora.com</email>
+			<organization>LINAGORA</organization>
+			<organizationUrl>http://www.linagora.com/</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+
 	</developers>
 	<mailingLists>
 		<mailingList>
