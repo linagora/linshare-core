@@ -37,29 +37,19 @@
 	</organization>
 	<developers>
 		<developer>
-			<id>slevesque</id>
-			<name>Sebastien Levesque</name>
-			<email>slevesque@linagora.com</email>
-			<organization>LINAGORA</organization>
-			<organizationUrl>http://www.linagora.com/</organizationUrl>
-			<roles>
-				<role>Developer</role>
-			</roles>
-		</developer>
-		<developer>
 			<id>fmartin</id>
 			<name>Frederic Martin</name>
 			<email>fmartin@linagora.com</email>
 			<organization>LINAGORA</organization>
 			<organizationUrl>http://www.linagora.com/</organizationUrl>
 			<roles>
-				<role>Manager</role>
+				<role>Product Owner</role>
 			</roles>
 		</developer>
 		<developer>
-			<id>ctjhoa</id>
-			<name>Camille Tjhoa</name>
-			<email>ctjhoa@linagora.com</email>
+			<id>akone</id>
+			<name>Alioune Badara Kone</name>
+			<email>akone@linagora.com</email>
 			<organization>LINAGORA</organization>
 			<organizationUrl>http://www.linagora.com/</organizationUrl>
 			<roles>
@@ -67,9 +57,19 @@
 			</roles>
 		</developer>
 		<developer>
-			<id>nbertrand</id>
-			<name>Nicolas Bertrand</name>
-			<email>nbertrand@linagora.com</email>
+			<id>asall</id>
+			<name>Alpha Sall</name>
+			<email>asall@linagora.com</email>
+			<organization>LINAGORA</organization>
+			<organizationUrl>http://www.linagora.com/</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>asiba</id>
+			<name>Anais Siba</name>
+			<email>asiba@linagora.com</email>
 			<organization>LINAGORA</organization>
 			<organizationUrl>http://www.linagora.com/</organizationUrl>
 			<roles>
