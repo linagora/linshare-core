@@ -152,7 +152,7 @@ public class GuestEditForm {
 	private boolean guestsAllowedToCreateGuest;
 
     @Property
-    @Persist("flash")
+    @Persist
     private boolean restrictedGuest;
 
     @Property
