@@ -106,8 +106,8 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public DocumentDto create(InputStream fi, String description,
-			String fileName, InputStream signatureFile, String signatureFileName, InputStream x509) throws BusinessException {
+	public DocumentDto create(InputStream fi, String fileName,
+			String description) throws BusinessException {
 		Validate.notNull(fi,
 				"Missing required file (check parameter named file)");
 		User actor = checkAuthentication();
@@ -116,16 +116,6 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 					"You are not authorized to use this service");
 		DocumentEntry res = documentEntryService.create(actor, actor, fi,
 				fileName);
-		if(signatureFile != null) {
-			X509Certificate x509certificate = null;
-			try {
-				CertificateFactory cf = CertificateFactory.getInstance("X.509");
-				x509certificate = (X509Certificate) cf.generateCertificate(x509);
-			} catch (CertificateException e) {
-				e.printStackTrace();
-			}
-			signatureService.createSignature(actor, res.getDocument(), signatureFile, res.getSize(), signatureFileName, x509certificate);
-		}
 
 		documentEntryService.updateFileProperties(actor, actor, res.getUuid(),
 				res.getName(), description, null);
@@ -240,5 +230,36 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 
 		return new DocumentDto(documentEntryService.update(actor, actor,
 				documentUuid, theFile, givenFileName));
+	}
+
+	@Override
+	public DocumentDto createWithSignature(InputStream fi, String fileName,
+			String description, InputStream signatureFile,
+			String signatureFileName, InputStream x509)
+					throws BusinessException {
+		Validate.notNull(fi,
+				"Missing required file (check parameter named file)");
+		User actor = checkAuthentication();
+		if ((actor.isGuest() && !actor.getCanUpload()))
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+					"You are not authorized to use this service");
+		DocumentEntry res = documentEntryService.create(actor, actor, fi,
+				fileName);
+		if(signatureFile != null) {
+			X509Certificate x509certificate = null;
+			try {
+				CertificateFactory cf = CertificateFactory.getInstance("X.509");
+				x509certificate = (X509Certificate) cf.generateCertificate(x509);
+			} catch (CertificateException e) {
+				throw new BusinessException(
+						BusinessErrorCode.INVALID_INPUT_FOR_X509_CERTIFICATE,
+						"unable to generate a X509 certificate", e);
+			}
+			signatureService.createSignature(actor, res.getDocument(), signatureFile, res.getSize(), signatureFileName, x509certificate);
+		}
+
+		documentEntryService.updateFileProperties(actor, actor, res.getUuid(),
+				res.getName(), description, null);
+		return new DocumentDto(res);
 	}
 }

@@ -110,7 +110,12 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		} else {
 			fileName = givenFileName;
 		}
-		return documentFacade.create(theFile, comment, fileName, theSignatureFile, signatureFileName, x509certificate);
+		if(theSignatureFile != null) {
+			return documentFacade.createWithSignature(theFile, fileName,
+					comment, theSignatureFile, signatureFileName,
+					x509certificate);
+		}
+		return documentFacade.create(theFile, fileName, comment);
 	}
 
 	@Path("/{uuid}")

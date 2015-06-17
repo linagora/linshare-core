@@ -55,6 +55,9 @@ public interface DocumentFacade extends GenericFacade {
 	Long getAvailableSize() throws BusinessException;
 
 	DocumentDto create(InputStream fi, String fileName,
+			String description) throws BusinessException;
+
+	DocumentDto createWithSignature(InputStream fi, String fileName,
 			String description, InputStream signatureFile, String signatureFileName, InputStream x509certificate) throws BusinessException;
 
 	InputStream getDocumentStream(String docEntryUuid)

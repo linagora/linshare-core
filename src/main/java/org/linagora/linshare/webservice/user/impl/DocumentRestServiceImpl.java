@@ -129,7 +129,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			fileName = givenFileName;
 		}
 
-		return webServiceDocumentFacade.create(theFile, comment, fileName, null, null, null);
+		return webServiceDocumentFacade.create(theFile, fileName, comment);
 	}
 
 	/**
