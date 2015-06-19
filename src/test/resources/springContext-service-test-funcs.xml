@@ -30,12 +30,6 @@
 		<constructor-arg ref="domainBusinessService" />
 	</bean>
 
-	<bean name="functionalityOldService" class="org.linagora.linshare.core.service.impl.FunctionalityOldServiceImpl">
-		<constructor-arg ref="functionalityRepository" />
-		<constructor-arg ref="functionalityBusinessService" />
-		<constructor-arg ref="abstractDomainRepository" />
-	</bean>
-
 	<bean name="functionalityReadOnlyService" class="org.linagora.linshare.core.service.impl.FunctionalityReadOnlyServiceImpl">
 		<constructor-arg ref="functionalityRepository" />
 		<constructor-arg ref="domainBusinessService" />

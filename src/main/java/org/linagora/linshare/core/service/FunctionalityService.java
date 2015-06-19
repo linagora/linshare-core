@@ -39,21 +39,19 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.objects.FunctionalityPermissions;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface FunctionalityService {
 
-	Set<Functionality> getAllFunctionalities(Account actor, AbstractDomain domain) throws BusinessException;
+	Set<Functionality> findAll(Account actor, AbstractDomain domain)
+			throws BusinessException;
 
-	Set<Functionality> getAllFunctionalities(Account actor, String domain) throws BusinessException;
+	Set<Functionality> findAll(Account actor, String domain)
+			throws BusinessException;
 
-	boolean activationPolicyIsMutable(Account actor, Functionality f, String domain) throws BusinessException;
-
-	boolean configurationPolicyIsMutable(Account actor, Functionality f, String domain) throws BusinessException;
-
-	boolean parametersAreMutable(Account actor, Functionality f, String domain) throws BusinessException;
-
-	boolean delegationPolicyIsMutable(Functionality f, String domain);
+	FunctionalityPermissions isMutable(Account actor, Functionality f,
+			AbstractDomain domain) throws BusinessException;
 
 	/**
 	 * Return a clone of the original functionality store into the database.
@@ -63,12 +61,13 @@ public interface FunctionalityService {
 	 * @return
 	 * @throws BusinessException
 	 */
-	Functionality getFunctionality(Account actor, String domainId, String functionalityId) throws BusinessException;
+	Functionality find(Account actor, String domainId, String functionalityId)
+			throws BusinessException;
 
-	void deleteFunctionality(Account actor, String domainId, String functionalityId) throws BusinessException;
+	void delete(Account actor, String domainId, String functionalityId)
+			throws BusinessException;
 
-	Functionality update(Account actor, String domain, Functionality functionality) throws BusinessException;
+	Functionality update(Account actor, String domain,
+			Functionality functionality) throws BusinessException;
 
-	@Deprecated
-	void update(Account actor, AbstractDomain domain, Functionality functionality) throws BusinessException;
 }

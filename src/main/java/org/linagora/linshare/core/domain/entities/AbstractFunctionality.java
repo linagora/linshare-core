@@ -244,4 +244,8 @@ public abstract class AbstractFunctionality implements Cloneable {
 	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		// no data in this class.
 	}
+
+	public boolean hasSomeParam() {
+		return false;
+	}
 }

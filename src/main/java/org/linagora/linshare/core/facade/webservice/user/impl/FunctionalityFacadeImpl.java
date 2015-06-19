@@ -74,7 +74,7 @@ public class FunctionalityFacadeImpl extends UserGenericFacadeImp implements
 	@Override
 	public FunctionalityDto find(String identifier) throws BusinessException {
 		User actor = checkAuthentication();
-		Functionality functionality = functionalityService.getFunctionality(
+		Functionality functionality = functionalityService.find(
 				actor, actor.getDomainId(), identifier);
 		if (excludes.contains(functionality.getIdentifier())) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Functionality not found");
@@ -87,7 +87,7 @@ public class FunctionalityFacadeImpl extends UserGenericFacadeImp implements
 		User actor = checkAuthentication();
 		List<FunctionalityDto> res = Lists.newArrayList();
 		Set<Functionality> functionalities = functionalityService
-				.getAllFunctionalities(actor, actor.getDomain());
+				.findAll(actor, actor.getDomain());
 		for (Functionality functionality : functionalities) {
 			if (!excludes.contains(functionality.getIdentifier())) {
 				res.add(functionality.toUserDto());

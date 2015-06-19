@@ -43,7 +43,7 @@ import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.RootDomain;
+import org.linagora.linshare.core.domain.objects.FunctionalityPermissions;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.FunctionalityService;
@@ -72,7 +72,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
-	public Set<Functionality> getAllFunctionalities(Account actor, AbstractDomain domain) throws BusinessException {
+	public Set<Functionality> findAll(Account actor, AbstractDomain domain) throws BusinessException {
 		Validate.notNull(domain);
 		Validate.notEmpty(domain.getIdentifier());
 		checkDomainRights(actor, domain.getIdentifier());
@@ -80,45 +80,22 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
-	public Set<Functionality> getAllFunctionalities(Account actor, String domain) throws BusinessException {
+	public Set<Functionality> findAll(Account actor, String domain) throws BusinessException {
 		Validate.notEmpty(domain);
 		checkDomainRights(actor, domain);
 		return functionalityBusinessService.getAllFunctionalities(domain);
 	}
 
 	@Override
-	public boolean activationPolicyIsMutable(Account actor, Functionality f, String domain) throws BusinessException {
+	public FunctionalityPermissions isMutable(Account actor, Functionality f,
+			AbstractDomain domain) throws BusinessException {
 		Validate.notNull(f);
 		Validate.notNull(domain);
-		checkDomainRights(actor, domain);
-		return functionalityBusinessService.activationPolicyIsMutable(f, domain);
+		return functionalityBusinessService.isMutable(f, domain);
 	}
 
 	@Override
-	public boolean configurationPolicyIsMutable(Account actor, Functionality f, String domain) throws BusinessException {
-		Validate.notNull(f);
-		Validate.notNull(domain);
-		checkDomainRights(actor, domain);
-		return functionalityBusinessService.configurationPolicyIsMutable(f, domain);
-	}
-
-	@Override
-	public boolean delegationPolicyIsMutable(Functionality f, String domain) {
-		Validate.notNull(f);
-		Validate.notNull(domain);
-		return functionalityBusinessService.delegationPolicyIsMutable(f, domain);
-	}
-
-	@Override
-	public boolean parametersAreMutable(Account actor, Functionality f, String domain) throws BusinessException {
-		Validate.notNull(f);
-		Validate.notNull(domain);
-		checkDomainRights(actor, domain);
-		return functionalityBusinessService.parametersAreMutable(f, domain);
-	}
-
-	@Override
-	public Functionality getFunctionality(Account actor, String domainId, String functionalityId) throws BusinessException {
+	public Functionality find(Account actor, String domainId, String functionalityId) throws BusinessException {
 		Validate.notNull(domainId);
 		Validate.notNull(functionalityId);
 		logger.debug("looking for functionality : " + functionalityId + " in domain "+ domainId);
@@ -127,7 +104,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
-	public void deleteFunctionality(Account actor, String domainId, String functionalityId) throws IllegalArgumentException, BusinessException {
+	public void delete(Account actor, String domainId, String functionalityId) throws IllegalArgumentException, BusinessException {
 		checkDomainRights(actor, domainId);
 		checkDeleteRights(domainId);
 		functionalityBusinessService.delete(domainId, functionalityId);
@@ -145,11 +122,6 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		return functionalityBusinessService.getFunctionality(domain, functionality.getIdentifier());
 	}
 
-	@Override
-	public void update(Account actor, AbstractDomain domain, Functionality functionality) throws BusinessException {
-		this.update(actor, domain.getIdentifier(), functionality);
-	}
-
 	/**
 	 * Return true if you need to update the input functionality.
 	 * @param actor
@@ -159,9 +131,9 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	 * @return
 	 * @throws BusinessException
 	 */
-	private boolean checkUpdateRights(Account actor, String domain, Functionality functionality)
+	private boolean checkUpdateRights(Account actor, String domainId, Functionality functionality)
 			throws BusinessException {
-		Functionality entity = this.getFunctionality(actor, domain, functionality.getIdentifier());
+		Functionality entity = this.find(actor, domainId, functionality.getIdentifier());
 
 		// consistency checks
 		if (!entity.getType().equals(functionality.getType())) {
@@ -177,8 +149,10 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 			functionality.getDelegationPolicy().applyConsistency();
 		}
 
+		AbstractDomain domain = domainBusinessService.findById(domainId);
+		FunctionalityPermissions mutable = isMutable(actor, entity, domain);
 		// we check if the parent functionality allow modifications of the activation policy (AP).
-		boolean parentAllowAPUpdate = activationPolicyIsMutable(actor, entity, domain);
+		boolean parentAllowAPUpdate = mutable.isParentAllowAPUpdate();
 		if(!parentAllowAPUpdate) {
 			// Modifications are not allowed.
 			if (!entity.getActivationPolicy().businessEquals(functionality.getActivationPolicy())) {
@@ -195,7 +169,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		}
 
 		// we check if the parent functionality allow modifications of the configuration policy (CP).
-		boolean parentAllowCPUpdate = configurationPolicyIsMutable(actor, entity, domain);
+		boolean parentAllowCPUpdate = mutable.isParentAllowCPUpdate();
 		if(!parentAllowCPUpdate) {
 			// Modifications are not allowed.
 			if (!entity.getConfigurationPolicy().businessEquals(functionality.getConfigurationPolicy())) {
@@ -207,7 +181,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 
 		// we check if the parent functionality allow modifications of the delegation policy (DP).
 		if (entity.getDelegationPolicy() != null) {
-			boolean parentAllowDPUpdate = delegationPolicyIsMutable(entity, domain);
+			boolean parentAllowDPUpdate = mutable.isParentAllowDPUpdate();
 			if(!parentAllowDPUpdate) {
 				// Modifications are not allowed.
 				if (!entity.getDelegationPolicy().businessEquals(functionality.getDelegationPolicy())) {
@@ -218,7 +192,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 			}
 		}
 
-		boolean parentAllowParamUpdate = parametersAreMutable(actor, entity, domain);
+		boolean parentAllowParamUpdate = mutable.isParentAllowParametersUpdate();
 		if(!parentAllowParamUpdate) {
 			if (!functionality.businessEquals(entity, false)) {
 				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (PARAM) '" + functionality +"' in domain '" + domain +"'");

@@ -115,7 +115,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Assert.assertNotNull(domain);
 
 		Assert.assertEquals(TOTAL_COUNT_FUNC,domain.getFunctionalities().size());
-		Set<Functionality> list = functionalityService.getAllFunctionalities(actor, domain);
+		Set<Functionality> list = functionalityService.findAll(actor, domain);
 
 		Assert.assertNotNull(list);
 		Assert.assertEquals(TOTAL_COUNT_FUNC, list.size());
@@ -131,7 +131,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Assert.assertNotNull(domain);
 
 		Assert.assertEquals(2,domain.getFunctionalities().size());
-		Set<Functionality> list = functionalityService.getAllFunctionalities(actor, domain);
+		Set<Functionality> list = functionalityService.findAll(actor, domain);
 
 		Assert.assertNotNull(list);
 		Assert.assertEquals(TOTAL_COUNT_FUNC, list.size());
@@ -146,7 +146,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(domain);
 		Assert.assertEquals(1,domain.getFunctionalities().size());
-		Set<Functionality> list = functionalityService.getAllFunctionalities(actor, domain);
+		Set<Functionality> list = functionalityService.findAll(actor, domain);
 		Assert.assertNotNull(list);
 		Assert.assertEquals(TOTAL_COUNT_FUNC, list.size());
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -161,22 +161,22 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		String subdomain1 = LoadingServiceTestDatas.subDomainName1;
 
 		// The first functionality should be override by the current subdomain
-		Functionality func1 = functionalityService.getFunctionality(actor, subdomain1, LoadingServiceTestDatas.FILESIZE_MAX);
+		Functionality func1 = functionalityService.find(actor, subdomain1, LoadingServiceTestDatas.FILESIZE_MAX);
 		Assert.assertNotNull(func1);
 		Assert.assertEquals(subdomain1, func1.getDomain().getIdentifier());
 
 		// The second functionality should be override by the top domain
 		Assert.assertEquals(3, countFunctionality(LoadingServiceTestDatas.rootDomainName, LoadingServiceTestDatas.QUOTA_USER));
-		Functionality func2_parent = functionalityService.getFunctionality(actor, LoadingServiceTestDatas.rootDomainName, LoadingServiceTestDatas.QUOTA_USER);
-		Functionality func2_child = functionalityService.getFunctionality(actor, subdomain1, LoadingServiceTestDatas.QUOTA_USER);
+		Functionality func2_parent = functionalityService.find(actor, LoadingServiceTestDatas.rootDomainName, LoadingServiceTestDatas.QUOTA_USER);
+		Functionality func2_child = functionalityService.find(actor, subdomain1, LoadingServiceTestDatas.QUOTA_USER);
 		Assert.assertNotNull(func2_child);
 		Assert.assertNotSame(func2_parent, func2_child);
 		Assert.assertFalse(func2_parent.businessEquals(func2_child, true));
 
 		// It should the same functionality for each domain.
-		Functionality func3_root = functionalityService.getFunctionality(actor, LoadingServiceTestDatas.rootDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
-		Functionality func3_top = functionalityService.getFunctionality(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
-		Functionality func3_sub = functionalityService.getFunctionality(actor, subdomain1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		Functionality func3_root = functionalityService.find(actor, LoadingServiceTestDatas.rootDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		Functionality func3_top = functionalityService.find(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		Functionality func3_sub = functionalityService.find(actor, subdomain1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		Assert.assertNotNull(func3_root);
 		Assert.assertNotNull(func3_top);
 		Assert.assertNotNull(func3_top);
@@ -196,11 +196,11 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(domain);
 
-		UnitValueFunctionality func = (UnitValueFunctionality)functionalityService.getFunctionality(actor, domain.getIdentifier(), LoadingServiceTestDatas.FILESIZE_MAX);
+		UnitValueFunctionality func = (UnitValueFunctionality)functionalityService.find(actor, domain.getIdentifier(), LoadingServiceTestDatas.FILESIZE_MAX);
 
 		Assert.assertEquals(50,func.getValue().intValue());
 		func.setValue(25);
-		functionalityService.update(actor, domain, func);
+		functionalityService.update(actor, domain.getIdentifier(), func);
 
 		domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertEquals(1, domain.getFunctionalities().size());
@@ -218,10 +218,10 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(domain);
 
-		UnitValueFunctionality func = (UnitValueFunctionality)functionalityService.getFunctionality(actor, domain.getIdentifier(), LoadingServiceTestDatas.FILESIZE_MAX);
+		UnitValueFunctionality func = (UnitValueFunctionality)functionalityService.find(actor, domain.getIdentifier(), LoadingServiceTestDatas.FILESIZE_MAX);
 
 		Assert.assertEquals(50,func.getValue().intValue());
-		functionalityService.update(actor, domain, func);
+		functionalityService.update(actor, domain.getIdentifier(), func);
 
 		domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertEquals(1, domain.getFunctionalities().size());
@@ -239,10 +239,10 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(domain);
 
-		StringValueFunctionality func = (StringValueFunctionality)functionalityService.getFunctionality(actor, domain.getIdentifier(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, domain.getIdentifier(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
 
 		Assert.assertTrue(func.getValue().equals(LoadingServiceTestDatas.timeStampingUrl));
-		functionalityService.update(actor, domain, func);
+		functionalityService.update(actor, domain.getIdentifier(), func);
 
 		domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertEquals(1, domain.getFunctionalities().size());
@@ -256,23 +256,23 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 		String subDomain = LoadingServiceTestDatas.subDomainName2;
 
-		StringValueFunctionality func_child = (StringValueFunctionality)functionalityService.getFunctionality(actor, subDomain, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func_child = (StringValueFunctionality)functionalityService.find(actor, subDomain, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality
 		func_child.setValue("plop");
 		functionalityService.update(actor, subDomain, func_child);
 
 		String topDomain = LoadingServiceTestDatas.rootDomainName;
-		StringValueFunctionality func_parent = (StringValueFunctionality)functionalityService.getFunctionality(actor, topDomain, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func_parent = (StringValueFunctionality)functionalityService.find(actor, topDomain, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		// sub functionality will be reset.
 		func_parent.getActivationPolicy().setPolicy(Policies.FORBIDDEN);
 		functionalityService.update(actor, topDomain, func_parent);
-		func_child = (StringValueFunctionality)functionalityService.getFunctionality(actor, subDomain, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		func_child = (StringValueFunctionality)functionalityService.find(actor, subDomain, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		Assert.assertEquals(LoadingServiceTestDatas.timeStampingUrl, func_child.getValue());
 		Assert.assertNotEquals("plop", func_child.getValue());
 
 		// we should not be able to update a functionality in subdomain where parent do not allowed it.
-		func_child = (StringValueFunctionality)functionalityService.getFunctionality(actor, subDomain, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		func_child = (StringValueFunctionality)functionalityService.find(actor, subDomain, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func_child.setValue("plop2");
 		try {
 			functionalityService.update(actor, subDomain, func_child);
@@ -296,17 +296,17 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName2);
 		Assert.assertNotNull(domain);
 
-		StringValueFunctionality func = (StringValueFunctionality)functionalityService.getFunctionality(actor, domain.getIdentifier(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, domain.getIdentifier(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
 
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality
 		func.setValue("plop");
-		functionalityService.update(actor, domain, func);
+		functionalityService.update(actor, domain.getIdentifier(), func);
 
-		StringValueFunctionality parent = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality parent = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		parent.getActivationPolicy().setPolicy(Policies.FORBIDDEN);
 
 		try {
-			functionalityService.update(actor, domain, parent);
+			functionalityService.update(actor, domain.getIdentifier(), parent);
 			Assert.assertTrue(false);
 		} catch (BusinessException e) {
 			Assert.assertTrue(true);
@@ -322,11 +322,11 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.rootDomainName);
 		Assert.assertNotNull(domain);
 
-		StringValueFunctionality func = (StringValueFunctionality)functionalityService.getFunctionality(actor, domain.getIdentifier(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, domain.getIdentifier(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
 
 		func.setValue("plop");
 		func.getActivationPolicy().setPolicy(Policies.FORBIDDEN);
-		functionalityService.update(actor, domain, func);
+		functionalityService.update(actor, domain.getIdentifier(), func);
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -370,7 +370,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Assert.assertEquals(1, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 
 		// Step 1
-		StringValueFunctionality func = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 
 		func.getActivationPolicy().setStatus(false);
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality for top domain
@@ -378,14 +378,14 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Assert.assertEquals(2, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 
 		// Step 2
-		StringValueFunctionality func2 = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func2 = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func2.getActivationPolicy().setPolicy(Policies.FORBIDDEN);
 		// modification of a functionality which belong to the top domain. This will lead to the creation of a new functionality for sub domain
 		functionalityService.update(actor, LoadingServiceTestDatas.subDomainName1, func2);
 		Assert.assertEquals(3, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 
 		// Step 3
-		StringValueFunctionality func3 = (StringValueFunctionality)functionalityService.getFunctionality(actor, rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func3 = (StringValueFunctionality)functionalityService.find(actor, rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func3.getActivationPolicy().setPolicy(Policies.FORBIDDEN);
 		// root domain functionality is set with a forbidden policy, this should lead to the suppression of all functionalities above rootDomain
 		functionalityService.update(actor, rootDomainId, func3);
@@ -406,7 +406,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Assert.assertEquals(1, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 
 		// Step 1
-		StringValueFunctionality func = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 
 		func.getConfigurationPolicy().setStatus(false);
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality for top domain
@@ -415,7 +415,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 
 		// Step 2
-		StringValueFunctionality func2 = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func2 = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func2.getConfigurationPolicy().setPolicy(Policies.FORBIDDEN);
 		// modification of a functionality which belong to the top domain. This will lead to the creation of a new functionality for sub domain
 		functionalityService.update(actor, LoadingServiceTestDatas.subDomainName1, func2);
@@ -423,7 +423,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 
 		// Step 3
-		StringValueFunctionality func3 = (StringValueFunctionality)functionalityService.getFunctionality(actor, rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func3 = (StringValueFunctionality)functionalityService.find(actor, rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func3.getConfigurationPolicy().setPolicy(Policies.MANDATORY);
 		// root domain functionality is set with a mandatory policy, this should lead to the modification of all functionalities above rootDomain
 		// func 2 : configuration policy will be updated form FORBIDDEN to MANDATORY
@@ -432,7 +432,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		// first check
 		Assert.assertEquals(3, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 		// second check : func 4 (equal to func 2) : configuration policy will be updated form FORBIDDEN to MANDATORY
-		StringValueFunctionality func4 = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func4 = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		logger.debug("func4.getConfigurationPolicy().getPolicy() : " + func4.getConfigurationPolicy().getPolicy());
 		Assert.assertTrue(func4.getConfigurationPolicy().getPolicy().equals(Policies.MANDATORY));
 
@@ -455,7 +455,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 
 		// Step 1
-		StringValueFunctionality func = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 
 		func.getConfigurationPolicy().setStatus(false);
 		func.setValue(valueFromTop);
@@ -465,7 +465,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 
 		// Step 2
-		StringValueFunctionality func2 = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func2 = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func2.getConfigurationPolicy().setPolicy(Policies.MANDATORY);
 		func2.setValue(valueFromSub);
 		// modification of a functionality which belong to the top domain. This will lead to the creation of a new functionality for sub domain
@@ -474,7 +474,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 
 		// Step 3
-		StringValueFunctionality func3 = (StringValueFunctionality)functionalityService.getFunctionality(actor, rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func3 = (StringValueFunctionality)functionalityService.find(actor, rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		Assert.assertEquals(LoadingServiceTestDatas.timeStampingUrl, func3.getValue());
 		func3.getConfigurationPolicy().setPolicy(Policies.FORBIDDEN);
 
@@ -484,7 +484,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 
 		// Step 4
-		StringValueFunctionality func4 = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func4 = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		logger.debug("func4.getConfigurationPolicy().getPolicy() : " + func4.getConfigurationPolicy().getPolicy());
 		Assert.assertTrue(func4.getConfigurationPolicy().getPolicy().equals(Policies.FORBIDDEN));
 		logger.debug("func4.getValue()" + func4.getValue());
@@ -506,7 +506,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 
 		// Step 1
-		StringValueFunctionality func = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 
 		func.getConfigurationPolicy().setStatus(false);
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality for top domain
@@ -515,7 +515,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 
 		// Step 2
-		StringValueFunctionality func2 = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func2 = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func2.getConfigurationPolicy().setPolicy(Policies.FORBIDDEN);
 		// modification of a functionality which belong to the top domain. This will lead to the creation of a new functionality for sub domain
 		functionalityService.update(actor, LoadingServiceTestDatas.subDomainName1, func2);
@@ -523,13 +523,13 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 
 		// Step 3
-		StringValueFunctionality func3 = (StringValueFunctionality)functionalityService.getFunctionality(actor, rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func3 = (StringValueFunctionality)functionalityService.find(actor, rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		func3.getConfigurationPolicy().setPolicy(Policies.MANDATORY);
 		// root domain functionality is set with a forbidden policy, this should lead to the suppression of all functionalities above rootDomain
 		functionalityService.update(actor, rootDomainId, func3);
 		Assert.assertEquals(3, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 
-		StringValueFunctionality func4 = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func4 = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		Assert.assertTrue(func4.getConfigurationPolicy().getPolicy().equals(Policies.MANDATORY));
 
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -546,7 +546,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		// Try to modify functionalities with a specific configuration. Fail in Linshare 1.0.0-rc1
 		try {
 			// Set the functionality entity
-			StringValueFunctionality funcAncestor = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.rootDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+			StringValueFunctionality funcAncestor = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.rootDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 
 			activationPolicy = funcAncestor.getActivationPolicy();
 			activationPolicy.setStatus(true);
@@ -560,14 +560,14 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 			functionalityService.update(actor,LoadingServiceTestDatas.rootDomainName, funcAncestor);
 
-			StringValueFunctionality funcEntity = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+			StringValueFunctionality funcEntity = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 			activationPolicy = funcEntity.getActivationPolicy();
 			activationPolicy.setStatus(false);
 			activationPolicy.setSystem(false);
 			activationPolicy.setPolicy(Policies.FORBIDDEN);
 			functionalityService.update(actor,LoadingServiceTestDatas.topDomainName, funcEntity);
 
-			funcEntity = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+			funcEntity = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 			configurationPolicy = funcEntity.getConfigurationPolicy();
 			configurationPolicy.setStatus(false);
 			configurationPolicy.setSystem(true);
@@ -580,7 +580,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 				Assert.assertFalse(false);
 			}
 
-			StringValueFunctionality funcDto = (StringValueFunctionality)functionalityService.getFunctionality(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+			StringValueFunctionality funcDto = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 			activationPolicy = funcDto.getActivationPolicy();
 			activationPolicy.setStatus(true);
 			activationPolicy.setSystem(false);

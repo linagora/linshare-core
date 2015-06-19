@@ -87,7 +87,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	 * @return
 	 */
 	private  Functionality _getFunctionality(AbstractDomain domain, String functionalityIdentifier) {
-		Functionality fonc = functionalityRepository.findById(domain, functionalityIdentifier);
+		Functionality fonc = functionalityRepository.findByDomain(domain, functionalityIdentifier);
 		if (fonc == null && domain.getParentDomain() != null) {
 			fonc = _getFunctionality(domain.getParentDomain(), functionalityIdentifier);
 		}

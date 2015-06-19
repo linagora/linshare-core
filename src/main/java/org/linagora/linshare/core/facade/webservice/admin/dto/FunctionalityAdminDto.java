@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.PolicyDto;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -92,6 +93,8 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 	@ApiModelProperty(value = "displayable")
 	protected boolean displayable;
 
+	protected Boolean system;
+
 	public FunctionalityAdminDto() {
 		super();
 	}
@@ -102,6 +105,8 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 			boolean parentAllowDPUpdate,
 			boolean parentAllowParametersUpdate) {
 		super();
+		// System returned only for development purpose.
+		this.system = f.isSystem();
 		this.domain = f.getDomain().getIdentifier();
 		this.identifier = f.getIdentifier();
 		// Activation policy
@@ -121,28 +126,18 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 		this.type = f.getType().toString();
 		this.parentIdentifier = f.getParentIdentifier();
 		functionalities = new ArrayList<FunctionalityAdminDto>();
-		this.displayable = true;
-
-		if (!parentAllowAPUpdate && f.getActivationPolicy().isForbidden()) {
-			// No modification allowed, functionality is forbidden.
-			// You will never be able to perform any modification on the functionality
-			this.displayable = false;
+		this.displayable = false;
+		if (parentAllowAPUpdate) {
+			this.displayable = true;
 		}
-		if (!parentAllowAPUpdate && f.getActivationPolicy().isMandatory()) {
-			// No modification allowed for AP, functionality is mandatory.
-			if(!parentAllowCPUpdate && f.getConfigurationPolicy().isForbidden()) {
-				// No modification allowed for CP, functionality configuration is forbidden.
-				// You will never be able to perform any modification on the functionality
-				this.displayable = false;
-			}
+		if(parentAllowCPUpdate) {
+			this.displayable = true;
 		}
-		if(parameters.size() == 0)
-			this.parentAllowParametersUpdate = false;
-		if (!parentAllowAPUpdate && !parentAllowCPUpdate && !this.parentAllowParametersUpdate) {
-			this.displayable = false;
+		if(parentAllowDPUpdate) {
+			this.displayable = true;
 		}
 	}
-	
+
 	public String getIdentifier() {
 		return identifier;
 	}
@@ -232,12 +227,10 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 	}
 
 	public void addFunctionalities(FunctionalityAdminDto functionality) {
-		if (functionality != null) {
-			this.functionalities.add(functionality);
-			if(functionality.isDisplayable()) {
-				this.displayable = true;
-			}
+		if (this.functionalities == null) {
+			this.functionalities = Lists.newArrayList();
 		}
+		this.functionalities.add(functionality);
 	}
 
 	public boolean isDisplayable() {
@@ -251,6 +244,14 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 	@Override
 	public int compareTo(FunctionalityAdminDto o) {
 		return this.identifier.compareTo(o.getIdentifier());
+	}
+
+	public Boolean getSystem() {
+		return system;
+	}
+
+	public void setSystem(Boolean system) {
+		this.system = system;
 	}
 
 	@Override

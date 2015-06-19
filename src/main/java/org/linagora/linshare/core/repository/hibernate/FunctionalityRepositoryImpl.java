@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -61,18 +62,20 @@ public class FunctionalityRepositoryImpl extends AbstractRepositoryImpl<Function
 			throw new IllegalStateException("Id must be unique");
 		}
 	}
-	
+
 	@Override
-	public Functionality findById(AbstractDomain domain, String identifier) {
-		
-		List<Functionality> fonc = findByCriteria(Restrictions.and(Restrictions.eq("domain", domain), Restrictions.eq("identifier", identifier)));
-		
+	public Functionality findByDomain(AbstractDomain domain, String identifier) {
+		LogicalExpression and = Restrictions.and(
+				Restrictions.eq("domain", domain),
+				Restrictions.eq("identifier", identifier));
+		List<Functionality> fonc = findByCriteria(and);
 		if (fonc == null || fonc.isEmpty()) {
 			return null;
 		} else if (fonc.size() == 1) {
 			return fonc.get(0);
 		} else {
-			throw new IllegalStateException("the Identifier and domain couple must be unique");
+			throw new IllegalStateException(
+					"the Identifier and domain couple must be unique");
 		}
 	}
 

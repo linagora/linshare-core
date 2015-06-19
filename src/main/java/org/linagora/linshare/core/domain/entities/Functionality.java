@@ -46,9 +46,9 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 public class Functionality extends AbstractFunctionality {
 
 	/**
-	 * True if the current entity is a parameter
+	 * True if the current entity is a parameter also known as sub functionality
 	 */
-	private boolean param;
+	protected boolean param;
 
 	/**
 	 * If the current entity is a parameter, it must have a parent.

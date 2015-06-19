@@ -135,7 +135,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 
 		logger.debug("Current object: " + fonc.toString());
 
-		StringValueFunctionality entityFonc = (StringValueFunctionality)functionalityRepository.findById(currentDomain,ID_FONC_1);
+		StringValueFunctionality entityFonc = (StringValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_1);
 		Assert.assertTrue(entityFonc.getActivationPolicy().getStatus());
 		Assert.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
 		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getIdentifier());
@@ -164,7 +164,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		List<Functionality> a =functionalityRepository.findAll();
 		logger.debug("a.size() : " + a.size());
 
-		UnitValueFunctionality entityFonc = (UnitValueFunctionality)functionalityRepository.findById(currentDomain,ID_FONC_2);
+		UnitValueFunctionality entityFonc = (UnitValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_2);
 		Assert.assertFalse(entityFonc.getActivationPolicy().getStatus());
 		Assert.assertFalse(entityFonc.getConfigurationPolicy().getStatus());
 		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getIdentifier());
@@ -190,7 +190,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 
 		logger.debug("Current object: " + fonc.toString());
 
-		UnitValueFunctionality entityFonc = (UnitValueFunctionality)functionalityRepository.findById(currentDomain,ID_FONC_2);
+		UnitValueFunctionality entityFonc = (UnitValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_2);
 		Assert.assertFalse(entityFonc.getActivationPolicy().getStatus());
 		Assert.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
 		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getIdentifier());
@@ -218,7 +218,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 
 		logger.debug("Current object: " + fonc.toString());
 
-		UnitValueFunctionality entityFonc = (UnitValueFunctionality)functionalityRepository.findById(currentDomain,ID_FONC_2);
+		UnitValueFunctionality entityFonc = (UnitValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_2);
 		Assert.assertFalse(entityFonc.getActivationPolicy().getStatus());
 		Assert.assertFalse(entityFonc.getConfigurationPolicy().getStatus());
 		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getIdentifier());
@@ -242,7 +242,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 
 		logger.debug("Current object: " + fonc2.toString());
 
-		UnitValueFunctionality entityFonc2 = (UnitValueFunctionality)functionalityRepository.findById(currentDomain,ID_FONC_3);
+		UnitValueFunctionality entityFonc2 = (UnitValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_3);
 		Assert.assertFalse(entityFonc2.getActivationPolicy().getStatus());
 		Assert.assertFalse(entityFonc2.getConfigurationPolicy().getStatus());
 		Assert.assertEquals(rootDomaineName,entityFonc2.getDomain().getIdentifier());
@@ -270,7 +270,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 
 		logger.debug("Current object: " + fonc.toString());
 
-		StringValueFunctionality entityFonc = (StringValueFunctionality)functionalityRepository.findById(currentDomain, ID_FONC_1);
+		StringValueFunctionality entityFonc = (StringValueFunctionality)functionalityRepository.findByDomain(currentDomain, ID_FONC_1);
 		Assert.assertTrue(entityFonc.getActivationPolicy().getStatus());
 		Assert.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
 		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getIdentifier());
@@ -304,7 +304,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 
 		logger.debug("Current object: " + fonc2.toString());
 
-		StringValueFunctionality entityFonc2 = (StringValueFunctionality)functionalityRepository.findById(currentDomain2, ID_FONC_1);
+		StringValueFunctionality entityFonc2 = (StringValueFunctionality)functionalityRepository.findByDomain(currentDomain2, ID_FONC_1);
 		Assert.assertTrue(entityFonc2.getActivationPolicy().getStatus());
 		Assert.assertTrue(entityFonc2.getConfigurationPolicy().getStatus());
 		Assert.assertEquals(rootDomaineName2,entityFonc2.getDomain().getIdentifier());
@@ -333,7 +333,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 
 		logger.debug("Current object: " + fonc.toString());
 
-		StringValueFunctionality entityFonc = (StringValueFunctionality)functionalityRepository.findById(currentDomain, ID_FONC_1);
+		StringValueFunctionality entityFonc = (StringValueFunctionality)functionalityRepository.findByDomain(currentDomain, ID_FONC_1);
 		Assert.assertTrue(entityFonc.getActivationPolicy().getStatus());
 		Assert.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
 		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getIdentifier());

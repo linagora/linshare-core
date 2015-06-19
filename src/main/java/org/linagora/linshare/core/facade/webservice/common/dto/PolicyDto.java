@@ -64,19 +64,10 @@ public class PolicyDto {
 	protected boolean parentAllowUpdate;
 
 	// HOOK : To be removed. For debug.
-	protected boolean system;
+	protected Boolean system;
 
 	public PolicyDto() {
 		super();
-	}
-
-	public PolicyDto(String policy, boolean status, boolean defaultStatus) {
-		super();
-		this.policy = policy;
-		this.status = status;
-		this.defaultStatus = defaultStatus;
-		this.parentAllowUpdate = false;
-		system = false;
 	}
 
 	public PolicyDto(Policy policy) {
@@ -86,6 +77,13 @@ public class PolicyDto {
 		this.defaultStatus = policy.getDefaultStatus();
 		this.parentAllowUpdate = false;
 		system = policy.isSystem();
+	}
+
+	@Override
+	public String toString() {
+		return "PolicyDto [policy=" + policy + ", status=" + status
+				+ ", parentAllowUpdate=" + parentAllowUpdate + ", system="
+				+ system + "]";
 	}
 
 	public boolean getStatus() {
@@ -120,7 +118,11 @@ public class PolicyDto {
 		this.parentAllowUpdate = parentAllowUpdate;
 	}
 
-	public boolean isSystem() {
+	public Boolean isSystem() {
 		return system;
+	}
+
+	public void setSystem(Boolean system) {
+		this.system = system;
 	}
 }

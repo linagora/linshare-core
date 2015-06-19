@@ -49,6 +49,10 @@ public abstract class OneValueFunctionality<U> extends Functionality {
 		this.value = value;
 	}
 
+	public boolean hasSomeParam() {
+		return true;
+	}
+
 	public U getValue() {
 		return value;
 	}

@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AbstractFunctionality;
+import org.linagora.linshare.core.domain.objects.FunctionalityPermissions;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -147,13 +148,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		T res = null;
 		AbstractDomain parentDomain = domain.getParentDomain();
 		if (parentDomain != null) {
-			for (T f : functionalityRepository.findAll(parentDomain)) {
-				// only functionality identifier is compared.
-				if (f.getIdentifier().equals(functionalityIdentifier)) {
-					res = f;
-					break;
-				}
-			}
+			res = functionalityRepository.findByDomain(parentDomain, functionalityIdentifier);
 			// no functionality was found in the current parentDomain. Trying parentDomain of parentDomain, using recursive call.
 			if (res == null) {
 				res = getParentFunctionality(parentDomain, functionalityIdentifier);
@@ -183,15 +178,25 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	@Override
-	public boolean activationPolicyIsMutable(T functionality, String domain) throws BusinessException {
+	public FunctionalityPermissions isMutable(T functionality, AbstractDomain domain) {
+		// ancestor functionality could be null
+		// It is loaded in advance for performance purpose
+		T ancestorFunc = getParentFunctionality(domain, functionality.getIdentifier());
+		boolean parentAllowAPUpdate = activationPolicyIsMutable(functionality, domain, ancestorFunc);
+		boolean parentAllowCPUpdate = configurationPolicyIsMutable(functionality, domain, ancestorFunc);
+		boolean parentAllowDPUpdate = delegationPolicyIsMutable(functionality, domain, ancestorFunc);
+		boolean parentAllowParametersUpdate = parametersAreMutable(functionality, domain, ancestorFunc);
+		FunctionalityPermissions mutable = new FunctionalityPermissions(parentAllowAPUpdate, parentAllowCPUpdate, parentAllowDPUpdate, parentAllowParametersUpdate);
+		return mutable;
+	}
+
+	protected boolean activationPolicyIsMutable(T functionality, AbstractDomain domain, T ancestorFunc) throws BusinessException {
 		Assert.notNull(functionality);
 		Assert.notNull(domain);
 
 		// Check if the current functionality belong to the current domain.
-		if (functionality.getDomain().getIdentifier().equals(domain)) {
+		if (functionality.getDomain().getIdentifier().equals(domain.getIdentifier())) {
 			// The current functionality belong to the current domain.
-			AbstractDomain abstractDomain = findDomain(domain);
-			T ancestorFunc = getParentFunctionality(abstractDomain, functionality.getIdentifier());
 			// We check if the parent domain allow the current domain to
 			// modify/override activation policy configuration.
 			if (ancestorFunc == null) {
@@ -204,24 +209,20 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			}
 		} else {
 			// the current functionality belongs to the parent functionality, so it could be considered as an ancestor.
-			T ancestorFunc = functionality;
-			if (ancestorFunc.getActivationPolicy().isMutable()) {
+			if (functionality.getActivationPolicy().isMutable()) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	@Override
-	public boolean configurationPolicyIsMutable(T functionality, String domain) throws BusinessException {
+	protected boolean configurationPolicyIsMutable(T functionality, AbstractDomain domain, T ancestorFunc) throws BusinessException {
 		Assert.notNull(functionality);
 		Assert.notNull(domain);
 
 		// Check if the current functionality belong to the current domain.
-		if (functionality.getDomain().getIdentifier().equals(domain)) {
+		if (functionality.getDomain().getIdentifier().equals(domain.getIdentifier())) {
 			// we have to check if we have the permission to modify the configuration status of this functionality
-			AbstractDomain abstractDomain = findDomain(domain);
-			T ancestorFunc = getParentFunctionality(abstractDomain, functionality.getIdentifier());
 			// We check if the parent domain allow the current domain to
 			// modify/override activation policy configuration.
 			if (ancestorFunc == null) {
@@ -234,24 +235,24 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			}
 		} else {
 			// The current functionality belong to a parent domain.
-			T ancestorFunc = functionality;
-			if (ancestorFunc.getConfigurationPolicy().isMutable()) {
+			if (functionality.getConfigurationPolicy().isMutable()) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	@Override
-	public boolean parametersAreMutable(T functionality, String domain) throws BusinessException {
+	protected boolean parametersAreMutable(T functionality, AbstractDomain domain, T ancestorFunc) throws BusinessException {
 		Assert.notNull(functionality);
 		Assert.notNull(domain);
 
+		// No need to check every conditions if there is no parameters to manage
+		if (!functionality.hasSomeParam()) {
+			return false;
+		}
 		// Check if the current functionality belong to the current domain.
-		if (functionality.getDomain().getIdentifier().equals(domain)) {
+		if (functionality.getDomain().getIdentifier().equals(domain.getIdentifier())) {
 			// we have to check if we have the permission to modify the configuration status of this functionality
-			AbstractDomain abstractDomain = findDomain(domain);
-			T ancestorFunc = getParentFunctionality(abstractDomain, functionality.getIdentifier());
 			// We check if the parent domain allow the current domain to
 			// modify/override activation policy configuration.
 			if (ancestorFunc == null) {
@@ -274,34 +275,32 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			}
 		} else {
 			// The current functionality belong to a parent domain.
-			T ancestorFunc = functionality;
-			if (ancestorFunc.isSystem()) {
+			if (functionality.isSystem()) {
 				return false;
 			}
-			if (ancestorFunc.getActivationPolicy().isForbidden()) {
+			if (functionality.getActivationPolicy().isForbidden()) {
 				return false;
 			}
-			return ancestorFunc.getConfigurationPolicy().getStatus();
+			return functionality.getConfigurationPolicy().getStatus();
 		}
 	}
 
-	@Override
-	public boolean delegationPolicyIsMutable(T functionality, String domain) {
+	protected boolean delegationPolicyIsMutable(T functionality, AbstractDomain domain, T ancestorFunc) {
 		Assert.notNull(functionality);
 		Assert.notNull(domain);
 
 		// Check if the current functionality belong to the current domain.
-		if (functionality.getDomain().getIdentifier().equals(domain)) {
+		if (functionality.getDomain().getIdentifier().equals(domain.getIdentifier())) {
 			// we have to check if we have the permission to modify the configuration status of this functionality
-			AbstractDomain abstractDomain = abstractDomainRepository.findById(domain);
-			T ancestorFunc = getParentFunctionality(abstractDomain, functionality.getIdentifier());
 			// We check if the parent domain allow the current domain to
 			// modify/override activation policy configuration.
 			if (ancestorFunc == null) {
-				if (functionality.getDelegationPolicy() != null && functionality.getDelegationPolicy().isSystem()) {
-					return false;
+				if (functionality.getDelegationPolicy() != null) {
+					if (!functionality.getDelegationPolicy().isSystem()) {
+						return true;
+					}
 				}
-				return true;
+				return false;
 			} else if (ancestorFunc.getDelegationPolicy() != null && ancestorFunc.getDelegationPolicy().isMutable()) {
 				return true;
 			}
@@ -317,7 +316,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	private  T getFunctionalityEntityByIdentifiers(AbstractDomain domain, String functionalityId) {
 		Assert.notNull(domain);
 		Assert.notNull(functionalityId);
-		T fonc = functionalityRepository.findById(domain, functionalityId);
+		T fonc = functionalityRepository.findByDomain(domain, functionalityId);
 		if (fonc == null && domain.getParentDomain() != null) {
 			fonc = getFunctionalityEntityByIdentifiers(domain.getParentDomain(), functionalityId);
 		}
@@ -366,7 +365,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			if (!functionality.businessEquals(entity, true)) {
 				// This functionality is different, it needs to be persist.
 				functionality.setDomain(currentDomain);
-				if (functionalityRepository.findById(currentDomain, functionality.getIdentifier()) == null) {
+				if (functionalityRepository.findByDomain(currentDomain, functionality.getIdentifier()) == null) {
 					functionalityRepository.create(functionality);
 					logger.info("Update by creation of a new functionality for : " + functionality.getIdentifier() + " link to domain : " + currentDomain.getIdentifier());
 				} else {
@@ -392,7 +391,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		// The functionality belong to the current domain. We can delete it.
 		if (functionality.getDomain().getIdentifier().equals(domainId)){
 			logger.debug("suppression of the functionality : " + domainId + " : " + functionalityId);
-			T rawFunc = functionalityRepository.findById(domain, functionalityId);
+			T rawFunc = functionalityRepository.findByDomain(domain, functionalityId);
 			functionalityRepository.delete(rawFunc);
 			domain.getFunctionalities().remove(rawFunc);
 			abstractDomainRepository.update(domain);

@@ -105,7 +105,7 @@ public class GuestServiceImplTest extends
 		owner2.setRole(Role.SIMPLE);
 		owner2 = userService.saveOrUpdateUser(owner2);
 
-		Functionality functionality = functionalityService.getFunctionality(
+		Functionality functionality = functionalityService.find(
 				root, LoadingServiceTestDatas.sqlSubDomain,
 				FunctionalityNames.GUESTS.toString());
 		functionality.getActivationPolicy().setStatus(true);
