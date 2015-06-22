@@ -1248,8 +1248,8 @@
 					<artifactItems>
 						<artifactItem>
 							<groupId>org.linagora.linshare</groupId>
-                            <artifactId>signature-client</artifactId>
-                            <version>1.0.1</version>
+							<artifactId>signature-client</artifactId>
+							<version>1.0.2</version>
 							<type>jar</type>
 						</artifactItem>
 					</artifactItems>
