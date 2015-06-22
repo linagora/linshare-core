@@ -13,3 +13,4 @@
 /.project
 /src/main/webapp/applet/jwsdecrypt.jar
 *.swp
+/src/main/webapp/applet/signature-client.jar
