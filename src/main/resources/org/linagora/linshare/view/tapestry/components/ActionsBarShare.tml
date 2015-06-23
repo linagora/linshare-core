@@ -27,16 +27,6 @@
 			</li>
 		</t:if>
 
-		<!-- Action > Sign -->
-		<t:if t:test="activeSignature">			
-		<li>
-			<a href="#" onclick="submitFormWithAction('${formName}','SIGNATURE_ACTION');">
-				<img src="${asset:context:images/icons/sign-small.png}" alt="" />
-				${message:components.listDocument.action.signature}
-			</a>
-		</li>
-		</t:if>	
-
 		<!-- Action > Encrypt/Decrypt 
 		<t:if t:test="activeEncipherment">
 		<li>
