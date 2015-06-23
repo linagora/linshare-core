@@ -99,9 +99,6 @@ public class SignatureDetailsDisplayer {
 	private SignatureVo signature;
 
 	@Property
-	private boolean isSignedByCurrentUser;
-
-	@Property
 	private SignatureVo userOwnsignature;
 
 	@Property
@@ -126,13 +123,13 @@ public class SignatureDetailsDisplayer {
 		if(share) {
 			shareDocumentVo = shareFacade.getShareDocumentVoByUuid(userVo, uuidIdentifier);
 			currentfileName = shareDocumentVo.getFileName();
-			currentdoc = documentFacade.getDocument(userVo, shareDocumentVo.getIdentifier());
-			isSignedByCurrentUser = shareFacade.isSignedShare(userVo, uuidIdentifier);
+			// FIXME : HACK
+//			currentdoc = documentFacade.getDocument(userVo, shareDocumentVo.getIdentifier());
+			currentdoc = shareDocumentVo;
 			userOwnsignature = shareFacade.getSignature(userVo, shareDocumentVo);
 			signatures = shareFacade.getAllSignatures(userVo, shareDocumentVo);
 		} else {
 			currentdoc = documentFacade.getDocument(userVo, uuidIdentifier);
-			isSignedByCurrentUser = documentFacade.isSignedDocumentByCurrentUser(userVo, currentdoc);
 			currentfileName = currentdoc.getFileName();
 			userOwnsignature = documentFacade.getSignature(userVo, currentdoc);
 			signatures = documentFacade.getAllSignatures(userVo, currentdoc);
@@ -169,10 +166,6 @@ public class SignatureDetailsDisplayer {
 			return DateFormatUtils.format(signature.getCertNotAfter().getTime(), pattern, persistentLocale.get());
 		}
 		else return null;
-	}
-
-	public boolean isSignedByCurrentUser(){
-		return isSignedByCurrentUser;
 	}
 
 	public String getJSONId(){

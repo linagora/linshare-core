@@ -34,10 +34,7 @@
 
 package org.linagora.linshare.webservice.userv2.impl;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
-import java.security.cert.X509Certificate;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -54,7 +51,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.bouncycastle.openssl.PEMReader;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;

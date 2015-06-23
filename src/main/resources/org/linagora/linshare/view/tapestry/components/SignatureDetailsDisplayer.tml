@@ -11,13 +11,6 @@
 		<div id="currentfileName">
 			${currentfileName}
 		</div>
-		<t:if t:test="signedByCurrentUser">
-			<div class="signatureMessage">${message:components.signaturedetailsdisplayer.message} ${userOwnsignatureDate}.</div>
-			<t:parameter name="else">
-			<div class="signatureMessage">${message:components.signaturedetailsdisplayer.message.else}.</div>	
-			</t:parameter>
-		</t:if>
-
 
 		<hr />
 
