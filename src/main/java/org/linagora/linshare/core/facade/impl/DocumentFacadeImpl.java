@@ -135,7 +135,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 	public void insertSignatureFile(InputStream file, long size, String fileName, UserVo ownerVo, DocumentVo documentVo, X509Certificate signerCertificate) throws BusinessException {
 		Account actor = getActor(ownerVo);
 		DocumentEntry documentEntry = documentEntryService.find(actor, actor, documentVo.getIdentifier());
-		signatureService.createSignature(actor, documentEntry.getDocument(), file, size, fileName, signerCertificate);
+		signatureService.createSignature(actor, documentEntry.getDocument(), file, fileName, signerCertificate);
 		}
 
 	@Override

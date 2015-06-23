@@ -71,11 +71,11 @@ public class SignatureServiceImpl implements SignatureService {
 
 
 	@Override
-	public Signature createSignature(Account actor, Document document, InputStream stream, Long size, String fileName, X509Certificate signerCertificate) throws BusinessException {
+	public Signature createSignature(Account actor, Document document, InputStream stream, String fileName, X509Certificate signerCertificate) throws BusinessException {
 		DocumentUtils util = new DocumentUtils();
 		File tempFile =  util.getTempFile(stream, fileName);
+		Long size = tempFile.length();
 		Signature signature = null;
-
 		try {
 			String mimeType = "text/xml";
 			signature = signatureBusinessService.createSignature(actor, document, tempFile, size, fileName, mimeType, signerCertificate);

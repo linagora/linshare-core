@@ -255,7 +255,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 						BusinessErrorCode.INVALID_INPUT_FOR_X509_CERTIFICATE,
 						"unable to generate a X509 certificate", e);
 			}
-			signatureService.createSignature(actor, res.getDocument(), signatureFile, res.getSize(), signatureFileName, x509certificate);
+			signatureService.createSignature(actor, res.getDocument(), signatureFile, signatureFileName, x509certificate);
 		}
 
 		documentEntryService.updateFileProperties(actor, actor, res.getUuid(),
