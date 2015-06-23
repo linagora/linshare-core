@@ -92,14 +92,18 @@ public class SignAndUpload {
 			Map<String,String> templateParams=new HashMap<String, String>();
 			//result codebase for JNLP is an url like http://localhost:8080/linshare/applet to download signature-client.jar
 			StringBuffer jwsUrlToPut = new StringBuffer(linshareInfoUrl);
-			if(!linshareInfoUrl.endsWith("/")) jwsUrlToPut.append('/');
+			StringBuffer serveurUrl = new StringBuffer(linshareInfoUrl);
+			
+			if(!linshareInfoUrl.endsWith("/")) {
+				jwsUrlToPut.append('/');
+				serveurUrl.append('/');
+			}
+			serveurUrl.append("webservice/rest/user/");
+			templateParams.put("${serverURL}", serveurUrl.toString());
 			jwsUrlToPut.append(suffixcodebase); //application jws directory: applet in this case
-
 			if(suffixcodebase.endsWith("/")) jwsUrlToPut.deleteCharAt(jwsUrlToPut.length()-1);
 			templateParams.put("${javawebstart.decrypt.url.codebase}", jwsUrlToPut.toString());
-			templateParams.put("${serverURL}", linshareInfoUrl.concat("webservice/rest/user/"));
 			templateParams.put("${sessionId}", sessionId);
-
 			String jnlp = templating.getMessage(tplcontent, templateParams);
 
 			byte[] send = jnlp.getBytes();
