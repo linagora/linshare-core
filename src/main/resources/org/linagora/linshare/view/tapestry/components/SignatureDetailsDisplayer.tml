@@ -14,8 +14,6 @@
 
 		<hr />
 
-		<h2>${message:components.signaturedetailsdisplayer.list.message}</h2>
-
 		<div id="signDocumentlist">
 			<t:grid source="signatures" row="signature"
 				add="signerInfo, creationDateCustom, action"
