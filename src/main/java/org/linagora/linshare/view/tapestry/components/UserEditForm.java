@@ -171,7 +171,7 @@ public class UserEditForm {
 	private boolean showRestricted;
 
 	@Property
-	private boolean showExpirationDatePicker;
+	private boolean showExpirationDatePickerForGuest;
 
 	@Property
 	private boolean showUpload;
@@ -226,7 +226,7 @@ public class UserEditForm {
 
 		showRestricted = functionalityFacade.userCanCreateRestrictedGuest(userLoggedIn.getDomainIdentifier());
 		showUpload = functionalityFacade.userCanGiveUploadRight(userLoggedIn.getDomainIdentifier());
-		showExpirationDatePicker = functionalityFacade.userCanChooseExpirationDateForGuest(userLoggedIn.getDomainIdentifier());
+		showExpirationDatePickerForGuest = functionalityFacade.userCanChooseExpirationDateForGuest(userLoggedIn.getDomainIdentifier());
 		isGuestsExpirationDateProlonged = functionalityFacade.isGuestExpirationDateProlonged(userLoggedIn.getDomainIdentifier());
 
 		if(editUserWithMail!=null){
@@ -250,7 +250,7 @@ public class UserEditForm {
 				userDomain = currentUser.getDomainIdentifier();
 				restrictedEditGuest = currentUser.isRestricted();
 				userRestrictedGuest = currentUser.isGuest() && currentUser.isRestricted();
-				if (showExpirationDatePicker) {
+				if (showExpirationDatePickerForGuest) {
 					if (isGuestsExpirationDateProlonged) {
 						expiryDate = userFacade.getGuestCreationExpirationDate(userLoggedIn);
 					} else {
@@ -272,6 +272,15 @@ public class UserEditForm {
 			}
 		}
     }
+
+	public boolean getShowExpirationDatePicker() {
+		if (currentUser != null) {
+			if (currentUser.isGuest()) {
+				return showExpirationDatePickerForGuest;
+			}
+		}
+		return false;
+	}
 
     @AfterRender
     void afterRender() {
