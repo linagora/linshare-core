@@ -162,7 +162,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		User update;
 		if (entity.isGuest()) {
 			List<String> ac = null;
-			if (entity.isRestricted()) {
+			if (userDto.isRestricted()) {
 				ac = Lists.newArrayList();
 				for (UserDto contactDto : userDto.getRestrictedContacts()) {
 					ac.add(contactDto.getMail());
