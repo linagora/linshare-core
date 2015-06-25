@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.FunctionalityPermissions;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
@@ -89,10 +90,15 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		Functionality func = service.find(actor,
 				domainId, funcId);
 		FunctionalityAdminDto res = transform(actor, func);
+		if (!res.isDisplayable()) {
+			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_ENTITY_OUT_OF_DATE, "Functionality not found.");
+		}
 		if (tree) {
 			List<FunctionalityAdminDto> all = findAll(domainId, funcId, false, false);
 			for (FunctionalityAdminDto f: all) {
-				res.addFunctionalities(f);
+				if (res.isDisplayable()) {
+					res.addFunctionalities(f);
+				}
 			}
 		}
 		return res;
