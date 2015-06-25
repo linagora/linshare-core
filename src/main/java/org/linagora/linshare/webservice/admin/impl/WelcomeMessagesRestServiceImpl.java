@@ -38,6 +38,7 @@ import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -78,9 +79,10 @@ public class WelcomeMessagesRestServiceImpl implements
 			@ApiResponse(code = 400, message = "Bad request.") })
 	@Override
 	public Set<WelcomeMessagesDto> findAll(
-			@ApiParam(value = "If not set, actor domain will be use.", required = true)  @QueryParam("domainId") String domainId)
+			@ApiParam(value = "If not set, actor domain will be use.", required = true) @QueryParam("domainId") String domainId,
+			@QueryParam("parent") @DefaultValue("false") Boolean parent)
 			throws BusinessException {
-		return welcomeMessagesFacade.findAll(domainId);
+		return welcomeMessagesFacade.findAll(domainId, parent);
 	}
 
 	@Path("/{uuid}")

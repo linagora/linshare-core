@@ -50,6 +50,8 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
 
+import com.google.common.collect.Lists;
+
 public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 
 	private final WelcomeMessagesBusinessService businessService;
@@ -64,16 +66,26 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 	}
 
 	@Override
-	public List<WelcomeMessages> findAll(User actor, String domainId)
+	public List<WelcomeMessages> findAll(User actor, String domainId, boolean parent)
 			throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
-
-		if (domainId == null)
-			return businessService.findAll(actor.getDomain());
-		else {
-			AbstractDomain domain = domainBusinessService.findById(domainId);
-			return businessService.findAll(domain);
+		AbstractDomain currDomain = actor.getDomain();
+		if (domainId != null) {
+			currDomain = domainBusinessService.findById(domainId);
 		}
+		if (parent) {
+			return findAll(actor, currDomain);
+		}
+		return businessService.findAll(currDomain);
+	}
+
+	private  List<WelcomeMessages> findAll(User actor, AbstractDomain domain) {
+		List<WelcomeMessages> res = Lists.newArrayList();
+		res.addAll(businessService.findAll(domain));
+		if (domain.getParentDomain() != null) {
+			res.addAll(findAll(actor, domain.getParentDomain()));
+		}
+		return res;
 	}
 
 	@Override

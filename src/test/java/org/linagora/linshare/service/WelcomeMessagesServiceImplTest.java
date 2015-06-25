@@ -55,8 +55,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-import com.google.common.collect.Lists;
-
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -113,9 +111,10 @@ public class WelcomeMessagesServiceImplTest extends
 		logger.debug("List All the welcome messages with and with the query param.");
 
 		try {
-			List<WelcomeMessages> wlcms = welcomeService.findAll(actor, null);
+			List<WelcomeMessages> wlcms = welcomeService.findAll(actor, null, false);
 			Assert.assertEquals(1, wlcms.size());
-
+			wlcms = welcomeService.findAll(actor, null, true);
+			Assert.assertEquals(1, wlcms.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.debug(e.getMessage());

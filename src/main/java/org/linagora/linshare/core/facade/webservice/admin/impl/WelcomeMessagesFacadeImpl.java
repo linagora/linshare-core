@@ -69,11 +69,11 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<WelcomeMessagesDto> findAll(String domainId)
+	public Set<WelcomeMessagesDto> findAll(String domainId, boolean parent)
 			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Set<WelcomeMessagesDto> wlcmDtoList = Sets.newHashSet();
-		List<WelcomeMessages> entities = service.findAll(actor, domainId);
+		List<WelcomeMessages> entities = service.findAll(actor, domainId, parent);
 		for (WelcomeMessages entity : entities) {
 			wlcmDtoList.add(new WelcomeMessagesDto(entity, true));
 		}
