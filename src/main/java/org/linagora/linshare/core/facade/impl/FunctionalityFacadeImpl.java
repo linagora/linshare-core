@@ -252,7 +252,9 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		Functionality guests = functionalityReadOnlyService.getGuests(domain);
 		if (guests.getActivationPolicy().getStatus()) {
 			BooleanValueFunctionality guestsCanUpload = functionalityReadOnlyService.getGuestsCanUpload(domain);
-			return guestsCanUpload.getDelegationPolicy().getStatus();
+			if (guestsCanUpload.getActivationPolicy().getStatus()) {
+				return guestsCanUpload.getDelegationPolicy().getStatus();
+			}
 		}
 		return false;
 	}
@@ -263,7 +265,9 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		Functionality guests = functionalityReadOnlyService.getGuests(domain);
 		if (guests.getActivationPolicy().getStatus()) {
 			BooleanValueFunctionality guestsCanUpload = functionalityReadOnlyService.getGuestsCanUpload(domain);
-			return guestsCanUpload.getValue();
+			if (guestsCanUpload.getActivationPolicy().getStatus()) {
+				return guestsCanUpload.getValue();
+			}
 		}
 		return false;
 	}
@@ -274,7 +278,9 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		Functionality guests = functionalityReadOnlyService.getGuests(domain);
 		if (guests.getActivationPolicy().getStatus()) {
 			BooleanValueFunctionality expirationDateProlongation = functionalityReadOnlyService.getGuestsExpirationDateProlongation(domain);
-			return expirationDateProlongation.getDelegationPolicy().getStatus();
+			if (expirationDateProlongation.getActivationPolicy().getStatus()) {
+				return expirationDateProlongation.getDelegationPolicy().getStatus();
+			}
 		}
 		return false;
 	}
@@ -285,7 +291,9 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		Functionality guests = functionalityReadOnlyService.getGuests(domain);
 		if (guests.getActivationPolicy().getStatus()) {
 			BooleanValueFunctionality guestsRestricted = functionalityReadOnlyService.getGuestsRestricted(domain);
-			return guestsRestricted.getDelegationPolicy().getStatus();
+			if (guestsRestricted.getActivationPolicy().getStatus()) {
+				return guestsRestricted.getDelegationPolicy().getStatus();
+			}
 		}
 		return false;
 	}
