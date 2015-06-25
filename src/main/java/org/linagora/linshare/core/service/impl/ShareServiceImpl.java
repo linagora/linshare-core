@@ -47,6 +47,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -146,17 +147,19 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 					"Can not share documents, missing recipients.");
 		}
 
-		if (shareContainer.getExpiryDate().before(new Date())) {
-			throw new BusinessException(
-					BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_BEFORE,
-					"Can not share documents, expiry date is before today.");
-		}
-
-		if (shareContainer.getExpiryDate().after(
-				getDefaultShareExpiryDate(owner.getDomain()))) {
-			throw new BusinessException(
-					BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_AFTER,
-					"Can not share documents, expiry date is after the max date.");
+		Date expiryDate = shareContainer.getExpiryDate();
+		if (expiryDate != null) {
+			if (expiryDate.before(new Date())) {
+				throw new BusinessException(
+						BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_BEFORE,
+						"Can not share documents, expiry date is before today.");
+			}
+			if (shareContainer.getExpiryDate().after(
+					getDefaultShareExpiryDate(owner.getDomain()))) {
+				throw new BusinessException(
+						BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_AFTER,
+						"Can not share documents, expiry date is after the max date.");
+			}
 		}
 
 		// Check documents
@@ -168,7 +171,19 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		entries.addAll(anonymousShareEntryService.create(actor, owner, shareContainer));
 		entries.addAll(shareEntryService.create(actor, owner, shareContainer));
 
-		if (shareContainer.isAcknowledgement()) {
+		BooleanValueFunctionality groupedFunc = functionalityReadOnlyService.getAcknowledgement(actor.getDomain());
+		boolean groupedModeLocal = groupedFunc.getValue();
+		if (groupedFunc.getActivationPolicy().getStatus()) {
+			if (groupedFunc.getDelegationPolicy().getStatus()) {
+				if (shareContainer.isAcknowledgement() != null) {
+					groupedModeLocal = shareContainer.isAcknowledgement();
+				}
+			}
+		} else {
+			groupedModeLocal = false;
+		}
+
+		if (groupedModeLocal) {
 			notifierService.sendNotification(mailBuildingService.buildNewSharingPersonnalNotification(owner, shareContainer, entries));
 		}
 		// Notification
