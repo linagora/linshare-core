@@ -133,7 +133,7 @@ CREATE TABLE upload_request_entry_url (
 ALTER TABLE upload_request_entry_url ADD CONSTRAINT FKupload_req784409 FOREIGN KEY (upload_request_entry_id) REFERENCES upload_request_entry (entry_id);
 
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (104, false, false, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (104, false, false, 2, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (105, true, true, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, param)
  VALUES(45, false, 'UPLOAD_REQUEST_ENTRY_URL', 104, 105, 1, false);
@@ -162,6 +162,14 @@ UPDATE functionality
 		param = true
 	WHERE id in (SELECT id FROM functionality WHERE identifier = 'RESTRICTED_GUEST');
 SELECT set_func_policy_deleg('GUESTS__RESTRICTED');
+
+UPDATE policy
+	SET system = false,
+		policy = 1
+	WHERE id IN (SELECT policy_activation_id
+		FROM functionality
+		WHERE identifier = 'GUESTS__RESTRICTED');
+
 
 -- Functionality : ANONYMOUS_URL (anonymous_url func has been changed from policy (id, status, default_status, policy, system) values (26, false, false, 2, true) to policy (id, status, default_status, policy, system) values (26, true, true, 1, false)
 UPDATE policy
@@ -254,7 +262,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (52, true);
 
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL__EXPIRATION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (106, true, true, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (106, false, false, 2, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (107, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
  VALUES(46, false, 'UPLOAD_REQUEST_ENTRY_URL__EXPIRATION', 106, 107, 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
@@ -264,7 +272,7 @@ INSERT INTO unit(id, unit_type, unit_value) VALUES (12, 0, 0);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (46, 7, 12);
 
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL__PASSWORD
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (109, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (109, false, false, 2, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (110, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
  VALUES(47, false, 'UPLOAD_REQUEST_ENTRY_URL__PASSWORD', 109, 110, 1, 'UPLOAD_REQUEST_ENTRY_URL', true);

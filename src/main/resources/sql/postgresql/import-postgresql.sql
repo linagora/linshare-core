@@ -276,7 +276,7 @@ INSERT INTO unit(id, unit_type, unit_value) VALUES (4, 0, 2);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (10, 3, 4);
 
 -- Functionality : GUESTS__RESTRICTED
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (47, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (47, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (48, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (112, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES (24, false, 'GUESTS__RESTRICTED', 47, 48, 112, 1, 'GUESTS', true);
@@ -519,13 +519,13 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
  VALUES(44, false, 'UPLOAD_PROPOSITION', 101, 102, 1);
 
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (104, false, false, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (104, false, false, 2, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (105, true, true, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, param)
  VALUES(45, false, 'UPLOAD_REQUEST_ENTRY_URL', 104, 105, 1, false);
 
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL__EXPIRATION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (106, true, true, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (106, false, false, 2, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (107, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
  VALUES(46, false, 'UPLOAD_REQUEST_ENTRY_URL__EXPIRATION', 106, 107, 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
@@ -535,7 +535,7 @@ INSERT INTO unit(id, unit_type, unit_value) VALUES (12, 0, 0);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (46, 7, 12);
 
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL__PASSWORD
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (109, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (109, false, false, 2, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (110, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
  VALUES(47, false, 'UPLOAD_REQUEST_ENTRY_URL__PASSWORD', 109, 110, 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
