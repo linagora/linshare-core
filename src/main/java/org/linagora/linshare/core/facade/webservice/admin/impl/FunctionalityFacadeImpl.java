@@ -90,16 +90,17 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		Functionality func = service.find(actor,
 				domainId, funcId);
 		FunctionalityAdminDto res = transform(actor, func);
-		if (!res.isDisplayable()) {
-			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_ENTITY_OUT_OF_DATE, "Functionality not found.");
-		}
-		if (tree) {
-			List<FunctionalityAdminDto> all = findAll(domainId, funcId, false, false);
-			for (FunctionalityAdminDto f: all) {
-				if (res.isDisplayable()) {
+		List<FunctionalityAdminDto> all = findAll(domainId, funcId, false, false);
+		for (FunctionalityAdminDto f: all) {
+			if (f.isDisplayable()) {
+				res.setDisplayable(true);
+				if (tree) {
 					res.addFunctionalities(f);
 				}
 			}
+		}
+		if (!res.isDisplayable()) {
+			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_ENTITY_OUT_OF_DATE, "Functionality not found : " + funcId);
 		}
 		return res;
 	}
@@ -216,11 +217,12 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 			throws BusinessException {
 		FunctionalityPermissions mutable = service.isMutable(
 				actor, update, update.getDomain());
-		return new FunctionalityAdminDto(update,
+		FunctionalityAdminDto dto = new FunctionalityAdminDto(update,
 				mutable.isParentAllowAPUpdate(),
 				mutable.isParentAllowCPUpdate(),
 				mutable.isParentAllowDPUpdate(),
 				mutable.isParentAllowParametersUpdate());
+		return dto;
 	}
 
 	@Override

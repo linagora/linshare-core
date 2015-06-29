@@ -182,11 +182,17 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		// ancestor functionality could be null
 		// It is loaded in advance for performance purpose
 		T ancestorFunc = getParentFunctionality(domain, functionality.getIdentifier());
+		FunctionalityPermissions mutable = null;
 		boolean parentAllowAPUpdate = activationPolicyIsMutable(functionality, domain, ancestorFunc);
-		boolean parentAllowCPUpdate = configurationPolicyIsMutable(functionality, domain, ancestorFunc);
-		boolean parentAllowDPUpdate = delegationPolicyIsMutable(functionality, domain, ancestorFunc);
-		boolean parentAllowParametersUpdate = parametersAreMutable(functionality, domain, ancestorFunc);
-		FunctionalityPermissions mutable = new FunctionalityPermissions(parentAllowAPUpdate, parentAllowCPUpdate, parentAllowDPUpdate, parentAllowParametersUpdate);
+		if (!parentAllowAPUpdate && functionality.getActivationPolicy().isForbidden()) {
+			parentAllowAPUpdate = false;
+			mutable = new FunctionalityPermissions(parentAllowAPUpdate, false, false, false);
+		} else {
+			boolean parentAllowCPUpdate = configurationPolicyIsMutable(functionality, domain, ancestorFunc);
+			boolean parentAllowDPUpdate = delegationPolicyIsMutable(functionality, domain, ancestorFunc);
+			boolean parentAllowParametersUpdate = parametersAreMutable(functionality, domain, ancestorFunc);
+			mutable = new FunctionalityPermissions(parentAllowAPUpdate, parentAllowCPUpdate, parentAllowDPUpdate, parentAllowParametersUpdate);
+		}
 		return mutable;
 	}
 
