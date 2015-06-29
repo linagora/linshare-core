@@ -695,6 +695,19 @@ INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_t
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (29, 1, 0, 29, 28, 'b9c6779b-e8ef-4678-b81c-e37ed79e9ed7');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (80, 1, 1, 80, 28, 'cd65cae1-4946-4675-a356-addd722a5c6c');
 
+-- new template for UPLOAD REQUEST ENTRY URL
+INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 0, 29, 28, UUID() FROM mail_config AS config WHERE id <> 1);
+INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 1, 80, 28, UUID() FROM mail_config AS config WHERE id <> 1);
+-- new template UPLOAD REQUEST FILE DELETED
+INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 0, 30, 29, UUID() FROM mail_config AS config WHERE id <> 1);
+INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 1, 81, 29, UUID() FROM mail_config AS config WHERE id <> 1);
+-- new template for SHARE_CREATION_ACKNOWLEDGEMENT
+INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 0, 31, 30, UUID() FROM mail_config AS config WHERE id <> 1);
+INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 1, 82, 30, UUID() FROM mail_config AS config WHERE id <> 1);
+-- new template for SHARE_CREATION_ACKNOWLEDGEMENT WITH SPECIAL MESSAGE FOR OWNER
+INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 0, 32, 31, UUID() FROM mail_config AS config WHERE id <> 1);
+INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 1, 83, 31, UUID() FROM mail_config AS config WHERE id <> 1);
+
 -- LinShare version
 INSERT INTO version (version) VALUES ('1.9.0');
 
