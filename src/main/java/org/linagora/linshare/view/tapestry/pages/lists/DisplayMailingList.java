@@ -59,7 +59,7 @@ public class DisplayMailingList {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(DisplayMailingList.class);
-	
+
 	@Inject
 	private MailingListFacade mailingListFacade;
 
@@ -206,7 +206,7 @@ public class DisplayMailingList {
 	}
 
 	public void onSuccessFromSearchUserForm() throws BusinessException {
-		results = userAutoCompleteFacade.autoCompleteUserSortedByFavorites(loginUser, recipientsSearch);
+		results = userFacade.searchUser(recipientsSearch, null, null, loginUser);
 		displayGrid = true;
 	}
 
@@ -266,7 +266,7 @@ public class DisplayMailingList {
 	public boolean isInModify() {
 		return inModify;
 	}
-	
+
 	public String getTruncatedMailingListIdentifier() {
 		String result = StringUtils.abbreviate(mailingListVo.getIdentifier(), truncatedValue);
 		return result;
