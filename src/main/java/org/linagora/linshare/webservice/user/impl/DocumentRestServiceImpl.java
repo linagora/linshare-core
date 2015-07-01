@@ -48,6 +48,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -59,9 +60,13 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.user.DocumentRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Path("/documents")
 public class DocumentRestServiceImpl extends WebserviceBase implements DocumentRestService {
+
+	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
 
 	private final DocumentFacade webServiceDocumentFacade;
 
@@ -128,7 +133,11 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		} else {
 			fileName = givenFileName;
 		}
-
+		if (fileName == null) {
+			logger.error("There is no multi-part attachment named 'filename'.");
+			logger.error("There is no 'filename' header in multi-Part attachment named 'file'.");
+			Validate.notNull(fileName, "File name for file attachment is required.");
+		}
 		return webServiceDocumentFacade.create(theFile, fileName, comment);
 	}
 

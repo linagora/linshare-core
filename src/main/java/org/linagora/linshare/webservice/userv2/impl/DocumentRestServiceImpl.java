@@ -49,6 +49,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -57,6 +58,8 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.DocumentRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -68,6 +71,8 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "/rest/user/documents", basePath = "/rest/user/", description = "Documents service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 public class DocumentRestServiceImpl extends WebserviceBase implements
 		DocumentRestService {
+
+	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
 
 	private final DocumentFacade documentFacade;
 
@@ -95,16 +100,21 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The given file name of the signature uploaded file.", required = false) @Multipart(value = "signatureFileName", required = false) String signatureFileName,
 			@ApiParam(value = "X509 Certificate entity.", required = false) @Multipart(value = "x509cert", required = false) InputStream x509certificate,
 			MultipartBody body) throws BusinessException {
-		String fileName;
+		String fileName = null;
 		String comment = (description == null) ? "" : description;
 		if (givenFileName == null || givenFileName.isEmpty()) {
 			// parameter givenFileName is optional
 			// so need to search this information in the header of the
-			// attachement (with id file)
+			// attachment (with id file)
 			fileName = body.getAttachment("file").getContentDisposition()
 					.getParameter("filename");
 		} else {
 			fileName = givenFileName;
+		}
+		if (fileName == null) {
+			logger.error("There is no multi-part attachment named 'filename'.");
+			logger.error("There is no 'filename' header in multi-Part attachment named 'file'.");
+			Validate.notNull(fileName, "File name for file attachment is required.");
 		}
 		if(theSignatureFile != null) {
 			return documentFacade.createWithSignature(theFile, fileName,

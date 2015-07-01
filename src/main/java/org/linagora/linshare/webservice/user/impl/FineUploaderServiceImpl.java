@@ -45,6 +45,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -106,7 +107,11 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 			fileName = body.getAttachment(FILE).getContentDisposition()
 					.getParameter(FILE_NAME);
 		}
-
+		if (fileName == null) {
+			logger.error("There is no multi-part attachment named '"+ FILE_NAME + "'.");
+			logger.error("There is no '"+ FILE_NAME + "' header in multi-Part attachment named '" + FILE + "'.");
+			Validate.notNull(fileName, "File name for file attachment is required.");
+		}
 		try {
 			byte[] bytes = fileName.getBytes("ISO-8859-1");
 			fileName = new String(bytes, "UTF-8");

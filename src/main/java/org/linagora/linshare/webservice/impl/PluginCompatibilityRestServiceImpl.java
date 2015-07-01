@@ -60,6 +60,7 @@ import org.linagora.linshare.webservice.PluginCompatibilityRestService;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.lang.Validate;
 
 public class PluginCompatibilityRestServiceImpl extends WebserviceBase implements PluginCompatibilityRestService {
 
@@ -113,8 +114,13 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 		if (givenFileName == null || givenFileName.isEmpty()) {
 			// parameter givenFileName is optional
 			// so need to search this information in the header of the
-			// attachement (with id file)
+			// attachment (with id file)
 			fileName = body.getAttachment("file").getContentDisposition().getParameter("filename");
+			if (fileName == null) {
+				logger.error("There is no multi-part attachment named 'filename'.");
+				logger.error("There is no 'filename' header in multi-Part attachment named 'file'.");
+				Validate.notNull(fileName, "File name for file attachment is required.");
+			}
 			try {
 				byte[] bytes = fileName.getBytes("ISO-8859-1");
 				fileName = new String(bytes, "UTF-8");
@@ -124,9 +130,6 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 		} else {
 			fileName = givenFileName;
 		}
-
-		
-
 		// comment can not be null ?
 		return webServiceDocumentFacade.create(theFile, fileName, comment);
 	}
