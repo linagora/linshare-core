@@ -55,7 +55,9 @@ public interface AuthentificationFacade {
 
 	public void logAuthError(String login, String domainIdentifier, String message) throws BusinessException;
 
-	public void logAuthError(User user, String domainIdentifier, String message) throws BusinessException;
+	void logAuthError(User user, String domainIdentifier, String message) throws BusinessException;
+
+	void logAuthError(User user, String message) throws BusinessException;
 
 	public void logAuthSuccess(User user) throws BusinessException;
 

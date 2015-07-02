@@ -79,6 +79,18 @@ public abstract class UserDetailsProvider {
 		}
 	}
 
+	public void logAuthError(User user, String message) {
+		try {
+			authentificationFacade.logAuthError(user, message);
+		} catch (IllegalArgumentException e) {
+			logger.error("Couldn't log an authentication failure : " + message);
+			logger.debug(e.getMessage());
+		} catch (BusinessException e1) {
+			logger.error("Couldn't log an authentication failure : " + message);
+			logger.debug(e1.getMessage());
+		}
+	}
+
 	public void logAuthSuccess(User user) {
 		try {
 			authentificationFacade.logAuthSuccess(user);

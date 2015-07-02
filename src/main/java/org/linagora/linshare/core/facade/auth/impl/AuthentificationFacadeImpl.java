@@ -96,6 +96,14 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	}
 
 	@Override
+	public void logAuthError(User user, String message)
+			throws BusinessException {
+		user = userService.findByLsUuid(user.getLsUuid());
+		logEntryService.create(new UserLogEntry(user,
+				LogAction.USER_AUTH_FAILED, message, user));
+	}
+
+	@Override
 	public void logAuthError(User user, String domainIdentifier, String message)
 			throws BusinessException {
 		// Reloading entity inside a new transaction/session.

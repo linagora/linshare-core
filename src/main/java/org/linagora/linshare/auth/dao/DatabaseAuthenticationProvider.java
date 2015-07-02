@@ -135,7 +135,7 @@ public class DatabaseAuthenticationProvider extends
 			if (!passwordEncoder.isPasswordValid(password,
 					presentedPassword, null)) {
 				logger.debug("Authentication failed: password does not match stored value");
-				userDetailsProvider.logAuthError(account, account.getDomainId(), "Bad credentials.");
+				userDetailsProvider.logAuthError(account, "Bad credentials.");
 				throw new BadCredentialsException(messages.getMessage(
 						"AbstractUserDetailsAuthenticationProvider.badCredentials",
 						"Bad credentials"), account);
