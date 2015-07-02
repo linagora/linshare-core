@@ -86,6 +86,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final MimePolicyBusinessService mimePolicyBusinessService;
 	private final MailConfigBusinessService mailConfigBusinessService;
 	private final WelcomeMessagesService welcomeMessagesService;
+	private final boolean overrideGlobalQuota;
 
 	public AbstractDomainServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
@@ -96,7 +97,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			final DomainBusinessService domainBusinessService,
 			final MimePolicyBusinessService mimePolicyBusinessService,
 			final MailConfigBusinessService mailConfigBusinessService,
-			final WelcomeMessagesService welcomeMessagesService) {
+			final WelcomeMessagesService welcomeMessagesService,
+			final boolean overrideGlobalQuota) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
@@ -107,6 +109,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.mimePolicyBusinessService = mimePolicyBusinessService;
 		this.mailConfigBusinessService = mailConfigBusinessService;
 		this.welcomeMessagesService = welcomeMessagesService;
+		this.overrideGlobalQuota = overrideGlobalQuota;
 	}
 
 	@Override
@@ -791,5 +794,16 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			return domainBusinessService.loadRelativeDomains(welcomeMessage);
 		} else
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "actor has no rights");
+	}
+
+	@Override
+	public long getUsedSpace(Account actor) throws BusinessException {
+		long totalUsedSpace;
+		if (overrideGlobalQuota) {
+			totalUsedSpace = domainBusinessService.getTotalUsedSpace();
+		} else {
+			 totalUsedSpace = actor.getDomain().getUsedSpace();
+		}
+		return totalUsedSpace;
 	}
 }

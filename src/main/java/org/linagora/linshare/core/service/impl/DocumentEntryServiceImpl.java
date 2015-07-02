@@ -108,6 +108,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 	private final Long virusscannerLimitFilesize;
 
+	private final boolean overrideGlobalQuota;
+
 	public DocumentEntryServiceImpl(
 			DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
@@ -121,7 +123,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			DocumentEntryResourceAccessControl rac,
 			MailBuildingService mailBuildingService,
 			NotifierService notifierService,
-			Long virusscannerLimitFilesize) {
+			Long virusscannerLimitFilesize,
+			boolean overrideGlobalQuota) {
 		super(rac);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -135,6 +138,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.virusscannerLimitFilesize = virusscannerLimitFilesize;
+		this.overrideGlobalQuota = overrideGlobalQuota;
 	}
 
 	@Override
@@ -412,11 +416,12 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	@Override
 	public long getAvailableSize(Account account) throws BusinessException {
 		// if user is not in one domain = BOUM
-		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getIdentifier());
+		AbstractDomain domain = account.getDomain();
 		SizeUnitValueFunctionality globalQuotaFunctionality = functionalityReadOnlyService.getGlobalQuotaFunctionality(domain);
 		SizeUnitValueFunctionality userQuotaFunctionality = functionalityReadOnlyService.getUserQuotaFunctionality(domain);
 		if (globalQuotaFunctionality.getActivationPolicy().getStatus()) {
-			long availableSize = globalQuotaFunctionality.getPlainSize() - domain.getUsedSpace().longValue();
+			long usedSpace = abstractDomainService.getUsedSpace(account);
+			long availableSize = globalQuotaFunctionality.getPlainSize() - usedSpace;
 			if (availableSize < 0) {
 				availableSize = 0;
 			}
@@ -579,14 +584,18 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	}
 
 	private void addDocSizeToGlobalUsedQuota(Document docEntity, AbstractDomain domain) throws BusinessException {
-		long newUsedQuota = domain.getUsedSpace().longValue() + docEntity.getSize();
-		domain.setUsedSpace(newUsedQuota);
-		domainBusinessService.update(domain);
+		if (!overrideGlobalQuota) {
+			long newUsedQuota = domain.getUsedSpace().longValue() + docEntity.getSize();
+			domain.setUsedSpace(newUsedQuota);
+			domainBusinessService.update(domain);
+		}
 	}
 
 	private void removeDocSizeFromGlobalUsedQuota(long docSize, AbstractDomain domain) throws BusinessException {
-		long newUsedQuota = domain.getUsedSpace().longValue() - docSize;
-		domain.setUsedSpace(newUsedQuota);
-		domainBusinessService.update(domain);
+		if (!overrideGlobalQuota) {
+			long newUsedQuota = domain.getUsedSpace().longValue() - docSize;
+			domain.setUsedSpace(newUsedQuota);
+			domainBusinessService.update(domain);
+		}
 	}
 }

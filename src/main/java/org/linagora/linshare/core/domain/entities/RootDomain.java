@@ -60,6 +60,11 @@ public class RootDomain extends AbstractDomain {
 	}
 
 	@Override
+	public boolean isRootDomain() {
+		return true;
+	}
+
+	@Override
 	public void updateDomainWith(AbstractDomain d) {
 		this.label = d.getLabel();
 		this.description = d.getDescription();

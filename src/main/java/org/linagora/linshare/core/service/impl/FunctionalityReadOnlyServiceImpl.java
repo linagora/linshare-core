@@ -59,12 +59,16 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	private final FunctionalityRepository functionalityRepository;
 
+	private final boolean overrideGlobalQuota;
+
 	public FunctionalityReadOnlyServiceImpl(
 			DomainBusinessService domainBusinessService,
-			FunctionalityRepository functionalityRepository) {
+			FunctionalityRepository functionalityRepository,
+			boolean overrideGlobalQuota) {
 		super();
 		this.domainBusinessService = domainBusinessService;
 		this.functionalityRepository = functionalityRepository;
+		this.overrideGlobalQuota = overrideGlobalQuota;
 	}
 
 
@@ -118,6 +122,9 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public SizeUnitValueFunctionality getGlobalQuotaFunctionality(AbstractDomain domain) {
+		if (overrideGlobalQuota) {
+			domain = domainBusinessService.getUniqueRootDomain();
+		}
 		return new SizeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.QUOTA_GLOBAL));
 	}
 

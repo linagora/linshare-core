@@ -177,4 +177,6 @@ public interface AbstractDomainService {
 	 * @throws BusinessException
 	 */
 	List<AbstractDomain> loadRelativeDomains(User actor, String uuid) throws BusinessException;
+
+	long getUsedSpace(Account actor) throws BusinessException;
 }

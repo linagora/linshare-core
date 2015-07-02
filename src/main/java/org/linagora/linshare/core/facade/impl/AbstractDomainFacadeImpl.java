@@ -192,11 +192,12 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         return functionalityReadOnlyService.getCustomLinkLogoInRootDomain();
     }
 
-    @Override
-    public Long getUsedSpace(String domainIdentifier) throws BusinessException {
-        AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-        return domain.getUsedSpace();
-    }
+	@Override
+	public Long getUsedSpace(UserVo actorVo) throws BusinessException {
+		User actor = userAndDomainMultiService.findOrCreateUser(
+				actorVo.getMail(), actorVo.getDomainIdentifier());
+		return abstractDomainService.getUsedSpace(actor);
+	}
 
     @Override
     public boolean checkPlatformEncryptSupportedAlgo() {

@@ -82,11 +82,11 @@ public interface AbstractDomainFacade {
 	/**
 	 * return the current used space of this domain
 	 * 
-	 * @param domainIdentifier
+	 * @param actorVo
 	 * @return
 	 * @throws BusinessException
 	 */
-	public Long getUsedSpace(String domainIdentifier) throws BusinessException;
+	public Long getUsedSpace(UserVo actorVo) throws BusinessException;
 
 	/**
 	 * check that encrypt, signature is possible on the server side just do a

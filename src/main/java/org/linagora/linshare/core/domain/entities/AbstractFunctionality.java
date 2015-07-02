@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.domain.entities;
 
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -231,6 +232,13 @@ public abstract class AbstractFunctionality implements Cloneable {
 		if (!this.identifier.equals(other.identifier))
 			return false;
 		return true;
+	}
+
+	public boolean equalsIdentifier(FunctionalityNames name) {
+		if (identifier.equals(name.toString())) {
+			return true;
+		}
+		return false;
 	}
 
 	public void updateFunctionalityFrom(AbstractFunctionality functionality) {

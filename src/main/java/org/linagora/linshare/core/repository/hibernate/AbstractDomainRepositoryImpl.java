@@ -37,12 +37,13 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
@@ -127,5 +128,19 @@ public class AbstractDomainRepositoryImpl extends
 			WelcomeMessages welcomeMessage) throws BusinessException {
 		return findByCriteria(Restrictions.eq("currentWelcomeMessage",
 				welcomeMessage));
+	}
+
+	@Override
+	public long getTotalUsedSpace() throws BusinessException {
+		DetachedCriteria det = DetachedCriteria.forClass(DocumentEntry.class);
+		det.createAlias("document", "doc");
+		ProjectionList columns = Projections.projectionList()
+				.add(Projections.sum("doc.size"));
+		det.setProjection(columns);
+		List<AbstractDomain> result = findByCriteria(det);
+		if (result == null || result.isEmpty() || result.get(0) == null) {
+			return 0;
+		}
+		return DataAccessUtils.longResult(result);
 	}
 }

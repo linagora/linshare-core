@@ -88,4 +88,6 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 	List<AbstractDomain> findByCurrentMailConfig(MailConfig cfg);
 
 	List<AbstractDomain> loadDomainsForAWelcomeMessage(WelcomeMessages welcomeMessage) throws BusinessException;
+
+	long getTotalUsedSpace() throws BusinessException;
 }

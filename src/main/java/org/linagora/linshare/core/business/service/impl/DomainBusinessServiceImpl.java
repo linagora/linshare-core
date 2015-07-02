@@ -76,4 +76,9 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 			throws BusinessException {
 		return repository.loadDomainsForAWelcomeMessage(welcomeMessage);
 	}
+
+	@Override
+	public long getTotalUsedSpace() throws BusinessException {
+		return repository.getTotalUsedSpace();
+	}
 }

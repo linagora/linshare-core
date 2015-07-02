@@ -142,9 +142,7 @@ public class InfoComponent {
 					usedQuota = FileUtils.getFriendlySize(userUsedQuota, messages, preferedUnity);
 					totalQuota = FileUtils.getFriendlySize(userTotalQuota, messages, preferedUnity);
 				} else {
-					Long usedQuotaB = domainFacade.getUsedSpace(userVo.getDomainIdentifier());
-							
-							
+					Long usedQuotaB = domainFacade.getUsedSpace(userVo);
 					Long globalQuotaB = documentFacade.getGlobalQuota(userVo);
 					FileUtils.Unit preferedUnity= FileUtils.getAppropriateUnitSize(globalQuotaB);
 					usedQuota = FileUtils.getFriendlySize(usedQuotaB, messages, preferedUnity);

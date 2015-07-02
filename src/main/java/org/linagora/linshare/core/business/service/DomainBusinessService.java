@@ -54,4 +54,6 @@ public interface DomainBusinessService {
 	 */
 	List<AbstractDomain> loadRelativeDomains(WelcomeMessages welcomeMessage)
 			throws BusinessException;
+
+	long getTotalUsedSpace() throws BusinessException;
 }

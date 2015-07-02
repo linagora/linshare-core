@@ -42,6 +42,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -69,16 +70,23 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private FunctionalityService service;
 
+	private boolean overrideGlobalQuota;
+
 	// FIXME : HACK : Very dirty.
 	private List<String> excludes = new ArrayList<String>();
 
 	public FunctionalityFacadeImpl(final AccountService accountService,
-			final FunctionalityService functionalityService) {
+			final FunctionalityService functionalityService,
+			boolean overrideGlobalQuota) {
 		super(accountService);
 		this.service = functionalityService;
+		this.overrideGlobalQuota = overrideGlobalQuota;
 		excludes.add(FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL.toString());
 		excludes.add(FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL__EXPIRATION.toString());
 		excludes.add(FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL__PASSWORD.toString());
+		if (overrideGlobalQuota) {
+			excludes.add(FunctionalityNames.QUOTA_GLOBAL.toString());
+		}
 	}
 
 	@Override
@@ -102,6 +110,13 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		if (!res.isDisplayable()) {
 			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_ENTITY_OUT_OF_DATE, "Functionality not found : " + funcId);
 		}
+		if (overrideGlobalQuota) {
+			if (res.getIdentifier().equals(FunctionalityNames.QUOTA_GLOBAL.toString())) {
+				if (!domainId.equals(LinShareConstants.rootDomainIdentifier)) {
+					throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_NOT_FOUND, "Functionality not found : " + funcId);
+				}
+			}
+		}
 		return res;
 	}
 
@@ -116,7 +131,17 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		for (Functionality f : entities) {
 			// FIXME : HACK : Very dirty.
 			if (excludes.contains(f.getIdentifier())) {
-				continue;
+				if (overrideGlobalQuota) {
+					if (f.equalsIdentifier(FunctionalityNames.QUOTA_GLOBAL)) {
+						if (!f.getDomain().isRootDomain()) {
+							continue;
+						}
+					} else {
+						continue;
+					}
+				} else {
+					continue;
+				}
 			}
 			FunctionalityAdminDto func = transform(actor, f);
 			// We check if this a sub functionality (a parameter)
