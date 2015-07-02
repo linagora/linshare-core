@@ -137,16 +137,13 @@ public class InfoComponent {
 						usedQuotaPercent = (int) (100*userUsedQuota / userTotalQuota);
 						if(usedQuotaPercent>100) usedQuotaPercent = 100;
 					}
-					
-					FileUtils.Unit preferedUnity= FileUtils.getAppropriateUnitSize(userTotalQuota);
-					usedQuota = FileUtils.getFriendlySize(userUsedQuota, messages, preferedUnity);
-					totalQuota = FileUtils.getFriendlySize(userTotalQuota, messages, preferedUnity);
+					usedQuota = FileUtils.getFriendlySize(userUsedQuota, messages, FileUtils.getAppropriateUnitSize(userUsedQuota));
+					totalQuota = FileUtils.getFriendlySize(userTotalQuota, messages, FileUtils.getAppropriateUnitSize(userTotalQuota));
 				} else {
 					Long usedQuotaB = domainFacade.getUsedSpace(userVo);
 					Long globalQuotaB = documentFacade.getGlobalQuota(userVo);
-					FileUtils.Unit preferedUnity= FileUtils.getAppropriateUnitSize(globalQuotaB);
-					usedQuota = FileUtils.getFriendlySize(usedQuotaB, messages, preferedUnity);
-					totalQuota = FileUtils.getFriendlySize(globalQuotaB, messages, preferedUnity);
+					usedQuota = FileUtils.getFriendlySize(usedQuotaB, messages, FileUtils.getAppropriateUnitSize(usedQuotaB));
+					totalQuota = FileUtils.getFriendlySize(globalQuotaB, messages, FileUtils.getAppropriateUnitSize(globalQuotaB));
 					if (usedQuotaB<1) {
 						usedQuotaPercent = 0;
 					} else {
