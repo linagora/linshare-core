@@ -63,6 +63,7 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.grid.ColumnSort;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.Response;
 import org.linagora.LinThumbnail.utils.Constants;
@@ -174,6 +175,10 @@ public class ListThreadDocument {
 	@InjectComponent
 	private ThreadEntryEditForm threadEntryEdit;
 
+	@Inject
+	@Symbol("linshare.tapestry.paging.groups")
+	@Property
+	private int paging;
 
     /***********************************
      * Flags

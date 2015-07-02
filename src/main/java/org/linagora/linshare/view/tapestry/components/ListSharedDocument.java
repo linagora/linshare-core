@@ -63,6 +63,7 @@ import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
@@ -236,6 +237,11 @@ public class ListSharedDocument {
 	@Property
 	@InjectComponent
 	private ShareEditForm shareEditForm;
+
+	@Inject
+	@Symbol("linshare.tapestry.paging.shares")
+	@Property
+	private int paging;
 
 	private final Integer truncatedValue=40;
 

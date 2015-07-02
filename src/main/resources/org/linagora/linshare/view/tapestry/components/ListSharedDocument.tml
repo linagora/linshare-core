@@ -28,8 +28,7 @@
 
 		<t:grid source="shareDocuments" row="shareDocument" model="model"
 			exclude="fileName, fileComment, identifier, size, encrypted, ownerLogin, shared, type, shareActive, downloaded, comment, actions, creationDate, shareExpirationDate, sharingDate"
-			rowsPerPage="10">
-
+			rowsPerPage="paging">
 
 			<!-- Header definition -->
 
