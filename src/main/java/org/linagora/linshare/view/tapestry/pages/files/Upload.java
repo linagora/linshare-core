@@ -51,6 +51,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.RequestGlobals;
@@ -167,6 +168,10 @@ public class Upload {
 
 	@Property
 	private String maxLocalizedExpirationDate;
+
+	@Inject @Symbol("linshare.tapestry.fineuploader.maxconnections")
+	@Property
+	private String fineUploaderMaxConnections;
 
 	/* ***********************************************************
 	 * Injected services
