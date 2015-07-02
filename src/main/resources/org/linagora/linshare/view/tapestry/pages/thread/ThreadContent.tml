@@ -47,7 +47,7 @@
             var uploader = new qq.FineUploader({
                 element: jQuery('#uploader')[0],
                 debug: true,
-                maxConnections: 1,
+                maxConnections: ${fineUploaderMaxConnections},
                 request: {
                     endpoint: "${contextPath}/webservice/fineuploader/upload/threadentry/${threadUuid}"
                 },

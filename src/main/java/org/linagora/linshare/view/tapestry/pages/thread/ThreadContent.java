@@ -46,6 +46,7 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
@@ -103,6 +104,10 @@ public class ThreadContent {
 
 	@Property
 	private String contextPath;
+
+	@Inject @Symbol("linshare.tapestry.fineuploader.maxconnections")
+	@Property
+	private String fineUploaderMaxConnections;
 
 	/* ***********************************************************
 	 * Injected services
