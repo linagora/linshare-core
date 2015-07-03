@@ -33,5 +33,6 @@
 	<bean name="functionalityReadOnlyService" class="org.linagora.linshare.core.service.impl.FunctionalityReadOnlyServiceImpl">
 		<constructor-arg ref="functionalityRepository" />
 		<constructor-arg ref="domainBusinessService" />
+		<constructor-arg value="${linshare.override.global.quota}" />
 	</bean>
 </beans>
