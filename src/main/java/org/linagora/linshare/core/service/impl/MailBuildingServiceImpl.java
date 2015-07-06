@@ -1468,6 +1468,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("documentNames", docNames.toString())
 				.add("creationDate", creationDate.toString())
 				.add("expirationDate", expirationDate.toString())
+//				FIX: 1.9.0
+				.add("expirationdate", expirationDate.toString())
 				.add("fileNumber", "" + count)
 				.add("recipientNames", recipientNames.toString());
 		mailContainer.setSubject(container.getSubject());
