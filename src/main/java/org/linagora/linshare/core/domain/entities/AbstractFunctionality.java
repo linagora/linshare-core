@@ -43,7 +43,7 @@ public abstract class AbstractFunctionality implements Cloneable {
 	/**
 	 * Database persistence identifier
 	 */
-	protected long persistenceId;
+	protected long id;
 
 	/**
 	 * An unique string code designed to identify a Functionality. This code should represent the Functionality.
@@ -97,11 +97,11 @@ public abstract class AbstractFunctionality implements Cloneable {
 	}
 
 	public long getId() {
-		return persistenceId;
+		return id;
 	}
 
-	public void setId(long persistenceId) {
-		this.persistenceId = persistenceId;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getIdentifier() {
@@ -191,7 +191,7 @@ public abstract class AbstractFunctionality implements Cloneable {
 		if (delegationPolicy != null) {
 			func.delegationPolicy = (Policy) delegationPolicy.clone();
 		}
-		func.persistenceId = 0;
+		func.id = 0;
 		return func;
 	}
 

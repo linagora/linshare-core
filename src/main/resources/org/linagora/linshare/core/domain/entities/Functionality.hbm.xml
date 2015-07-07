@@ -8,7 +8,7 @@
 		<param name="valueOfMethod">fromTapestryLocale</param>
 	</typedef>
   <class name="Functionality" table="functionality" >
-    <id name="persistenceId" type="long">
+    <id name="id" type="long">
       <column name="id" not-null="true" index="index_functionality_id"/>
       <generator class="native"/>
     </id>

@@ -67,5 +67,8 @@
 		<mapping resource="org/linagora/linshare/core/domain/entities/UploadPropositionRule.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/WelcomeMessages.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/WelcomeMessagesEntry.hbm.xml"/>
+
+		<mapping resource="org/linagora/linshare/core/domain/entities/ShareEntryGroup.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/MailActivation.hbm.xml"/>
 	</session-factory>
 </hibernate-configuration>

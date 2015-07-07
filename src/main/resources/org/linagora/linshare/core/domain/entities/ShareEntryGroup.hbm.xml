@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.linagora.linshare.core.domain.entities">
+	<class name="ShareEntryGroup" table="share_entry_group" lazy="true">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<property name="uuid" column="uuid" unique="true" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="subject" column="subject" type="text" not-null="true" lazy="false"/>
+		<property name="expirationDate" column="expiration_date" type="timestamp" not-null="false" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
+		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
+		<many-to-one name="owner" cascade="lock" column="account_id"
+			class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="proxy"/>
+		<set name="anonymousShareEntries" lazy="true" cascade="save-update,lock" inverse="false">
+			<key column="share_entry_group_id" not-null="false"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.AnonymousShareEntry"/>
+		</set>
+		<set name="shareEntries" lazy="true" cascade="save-update,lock" inverse="false">
+			<key column="share_entry_group_id" not-null="false"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.ShareEntry"/>
+		</set>
+	</class>
+</hibernate-mapping>
