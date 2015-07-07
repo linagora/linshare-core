@@ -23,10 +23,11 @@ CREATE TABLE account (
   CONSTRAINT account_pkey
     PRIMARY KEY (id));
 CREATE TABLE anonymous_share_entry (
-  entry_id          int8 NOT NULL,
-  downloaded        int8 NOT NULL,
-  document_entry_id int8 NOT NULL,
-  anonymous_url_id  int8 NOT NULL,
+  entry_id             int8 NOT NULL,
+  downloaded           int8 NOT NULL,
+  document_entry_id    int8 NOT NULL,
+  anonymous_url_id     int8 NOT NULL,
+  share_entry_group_id int8,
   PRIMARY KEY (entry_id));
 CREATE TABLE cookie (
   cookie_id   int8 NOT NULL,
@@ -79,7 +80,7 @@ CREATE TABLE domain_abstract (
   mime_policy_id      int8,
   mailconfig_id       int8,
   user_provider_id    int8,
-  welcome_messages_id          int8,
+  welcome_messages_id int8,
   CONSTRAINT linshare_domain_abstract_pkey
     PRIMARY KEY (id));
 CREATE TABLE domain_access_policy (
@@ -197,10 +198,11 @@ CREATE TABLE anonymous_url (
   CONSTRAINT linshare_secured_url_pkey
     PRIMARY KEY (id));
 CREATE TABLE share_entry (
-  entry_id          int8 NOT NULL,
-  document_entry_id int8 NOT NULL,
-  downloaded        int8 NOT NULL,
-  recipient_id      int8 NOT NULL,
+  entry_id             int8 NOT NULL,
+  document_entry_id    int8 NOT NULL,
+  downloaded           int8 NOT NULL,
+  recipient_id         int8 NOT NULL,
+  share_entry_group_id int8,
   PRIMARY KEY (entry_id));
 CREATE TABLE share_expiry_rules (
   domain_id       int8 NOT NULL,
@@ -642,10 +644,29 @@ CREATE TABLE welcome_messages (
   domain_id         int8 NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE welcome_messages_entry (
-  id          int8 NOT NULL,
-  lang       varchar(255) NOT NULL,
-  value      varchar(255) NOT NULL,
+  id                   int8 NOT NULL,
+  lang                varchar(255) NOT NULL,
+  value               varchar(255) NOT NULL,
   welcome_messages_id int8 NOT NULL,
+  PRIMARY KEY (id));
+CREATE TABLE share_entry_group (
+  id                 int8 NOT NULL,
+  account_id        int8 NOT NULL,
+  uuid              varchar(255) NOT NULL UNIQUE,
+  subject           text NOT NULL,
+  expiration_date   timestamp,
+  creation_date     timestamp NOT NULL,
+  modification_date timestamp NOT NULL,
+  PRIMARY KEY (id));
+CREATE TABLE mail_activation (
+  id                       int8 NOT NULL,
+  identifier              varchar(255) NOT NULL,
+  system                  bool NOT NULL,
+  activation_policy_id    int8 NOT NULL,
+  configuration_policy_id int8 NOT NULL,
+  delegation_policy_id    int8 NOT NULL,
+  domain_abstract_id      int8 NOT NULL,
+  value                   bool NOT NULL,
   PRIMARY KEY (id));
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
@@ -737,7 +758,6 @@ ALTER TABLE domain_policy ADD CONSTRAINT fk49c9a27c85924e31 FOREIGN KEY (domain_
 ALTER TABLE functionality ADD CONSTRAINT fk7430c53a58fe5398 FOREIGN KEY (policy_activation_id) REFERENCES policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE functionality ADD CONSTRAINT fk7430c53a71796372 FOREIGN KEY (policy_configuration_id) REFERENCES policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE functionality ADD CONSTRAINT fk7430c53a3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
-ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
 ALTER TABLE functionality_integer ADD CONSTRAINT fk8662133910439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE functionality_string ADD CONSTRAINT fkb2a122b610439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE functionality_unit ADD CONSTRAINT fk3ced016910439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
@@ -791,6 +811,7 @@ ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req254795 FOREIGN KEY (
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req11781 FOREIGN KEY (document_entry_entry_id) REFERENCES document_entry (entry_id);
 ALTER TABLE upload_proposition_rule ADD CONSTRAINT FKupload_pro672390 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
 ALTER TABLE upload_proposition_action ADD CONSTRAINT FKupload_pro841666 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
+ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingLis595962 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
@@ -817,3 +838,9 @@ ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi813203 FOREIGN KEY (ldap_pa
 ALTER TABLE welcome_messages_entry ADD CONSTRAINT FKwelcome_me856948 FOREIGN KEY (welcome_messages_id) REFERENCES welcome_messages (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT use_customisation FOREIGN KEY (welcome_messages_id) REFERENCES welcome_messages (id);
 ALTER TABLE welcome_messages ADD CONSTRAINT own_welcome_messages FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
+ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_708340 FOREIGN KEY (share_entry_group_id) REFERENCES share_entry_group (id);
+ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr137514 FOREIGN KEY (share_entry_group_id) REFERENCES share_entry_group (id);
+ALTER TABLE mail_activation ADD CONSTRAINT FKmail_activ832873 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_activation ADD CONSTRAINT activation FOREIGN KEY (activation_policy_id) REFERENCES policy (id);
+ALTER TABLE mail_activation ADD CONSTRAINT configuration FOREIGN KEY (configuration_policy_id) REFERENCES policy (id);
+ALTER TABLE mail_activation ADD CONSTRAINT delegation FOREIGN KEY (delegation_policy_id) REFERENCES policy (id);
