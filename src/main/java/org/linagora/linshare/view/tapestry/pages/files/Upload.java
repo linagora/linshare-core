@@ -312,14 +312,7 @@ public class Upload {
 			String badFormatEmail = "";
 
 			for (String uuid : StringJoiner.split(uuids, ",")) {
-				DocumentVo d = documentFacade.getDocument(userVo,
-						uuid);
-
-				if (d == null) {
-					// shouldn't be there
-					logger.error("Error document with uuid: " + uuid
-							+ " not found.");
-				}
+				DocumentVo d = documentFacade.getDocument(userVo, uuid);
 				addedDocuments.add(d);
 			}
 

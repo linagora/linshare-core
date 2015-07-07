@@ -131,6 +131,9 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                         console.log(name + "delete sucesssful");
                         uuids.splice(uuids.indexOf(uploader.getUuid(id)), 1);
 
+                        // set new value of uuids
+                        jQuery("#uuids").attr("value", uuids.join());
+
                         // update validation size
                         updateSizeAvailable(updateCallback);
                     },
