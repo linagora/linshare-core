@@ -33,12 +33,11 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.List;
-
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class DomainAccessPolicyRepositoryImpl extends AbstractRepositoryImpl<DomainAccessPolicy> implements DomainAccessPolicyRepository {
@@ -49,15 +48,9 @@ public class DomainAccessPolicyRepositoryImpl extends AbstractRepositoryImpl<Dom
 
 	@Override
 	public DomainAccessPolicy findById(long id) {
-		List<DomainAccessPolicy> domainAccessPolicy = findByCriteria(Restrictions.eq("id", id));
-		if (domainAccessPolicy == null || domainAccessPolicy.isEmpty()) {
-			return null;
-		} else if (domainAccessPolicy.size() == 1) {
-			return domainAccessPolicy.get(0);
-		} else {
-			throw new IllegalStateException("Id must be unique");
+		return DataAccessUtils.singleResult(findByCriteria(
+				Restrictions.eq("id", id)));
 		}
-	}
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(DomainAccessPolicy entity) {

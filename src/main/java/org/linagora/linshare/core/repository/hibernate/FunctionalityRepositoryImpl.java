@@ -38,11 +38,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class FunctionalityRepositoryImpl extends AbstractRepositoryImpl<Functionality> implements FunctionalityRepository {
@@ -53,30 +53,16 @@ public class FunctionalityRepositoryImpl extends AbstractRepositoryImpl<Function
 
 	@Override
 	public Functionality findById(long id) {
-		List<Functionality> fonc = findByCriteria(Restrictions.eq("id", id));
-		if (fonc == null || fonc.isEmpty()) {
-			return null;
-		} else if (fonc.size() == 1) {
-			return fonc.get(0);
-		} else {
-			throw new IllegalStateException("Id must be unique");
-		}
+		return DataAccessUtils.singleResult(findByCriteria(
+				Restrictions.eq("id", id)));
 	}
 
 	@Override
 	public Functionality findByDomain(AbstractDomain domain, String identifier) {
-		LogicalExpression and = Restrictions.and(
-				Restrictions.eq("domain", domain),
-				Restrictions.eq("identifier", identifier));
-		List<Functionality> fonc = findByCriteria(and);
-		if (fonc == null || fonc.isEmpty()) {
-			return null;
-		} else if (fonc.size() == 1) {
-			return fonc.get(0);
-		} else {
-			throw new IllegalStateException(
-					"the Identifier and domain couple must be unique");
-		}
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("domain", domain));
+		det.add(Restrictions.eq("identifier", identifier));
+		return DataAccessUtils.singleResult(findByCriteria(det));
 	}
 
 	@Override
