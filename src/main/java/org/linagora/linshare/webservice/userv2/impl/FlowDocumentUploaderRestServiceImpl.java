@@ -126,7 +126,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 				InputStream inputStream = Files.newInputStream(tempFile,
 						StandardOpenOption.READ);
 
-				documentFacade.create(inputStream, "", filename);
+				documentFacade.create(inputStream, filename, "");
 
 				ChunkedFile remove = chunkedFiles.remove(identifier);
 				Files.deleteIfExists(remove.getPath());
