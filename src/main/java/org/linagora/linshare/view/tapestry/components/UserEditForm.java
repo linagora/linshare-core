@@ -34,6 +34,7 @@
 package org.linagora.linshare.view.tapestry.components;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -176,6 +177,7 @@ public class UserEditForm {
 	@Property
 	private boolean showUpload;
 
+	@Persist
 	@Property
 	private boolean isGuestsExpirationDateProlonged;
 
@@ -251,11 +253,7 @@ public class UserEditForm {
 				restrictedEditGuest = currentUser.isRestricted();
 				userRestrictedGuest = currentUser.isGuest() && currentUser.isRestricted();
 				if (showExpirationDatePickerForGuest) {
-					if (isGuestsExpirationDateProlonged) {
-						expiryDate = userFacade.getGuestCreationExpirationDate(userLoggedIn);
-					} else {
-						expiryDate = userFacade.getGuestUpdateExpirationDate(userLoggedIn, currentUser.getLsUuid());
-					}
+					expiryDate = currentUser.getExpirationDate();
 				}
 				if (userRestrictedGuest) {
 					List<UserVo> contacts = null;
@@ -426,4 +424,14 @@ public class UserEditForm {
 		}
 	}
 
+    public String getFormattedUserMaxExpiryDate() {
+    	Date maxExpiryDate;
+    	if (isGuestsExpirationDateProlonged) {
+			maxExpiryDate = userFacade.getGuestCreationExpirationDate(userLoggedIn);
+		} else {
+			maxExpiryDate = userFacade.getGuestUpdateExpirationDate(userLoggedIn, currentUser.getLsUuid());
+		}
+    	SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.date"));
+    	return formatter.format(maxExpiryDate);
+    }
 }

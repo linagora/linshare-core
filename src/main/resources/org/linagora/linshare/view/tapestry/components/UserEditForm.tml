@@ -70,6 +70,10 @@
 				<div id="expirationDateDiv">
 					<t:label for="expiryDate" class="edit-form-label"/>
 					<t:datefield t:id="expiryDate" t:value="expiryDate" t:validate="required" class="edit-form-field"/>
+					<p>
+						${message:component.user.edit.maxExipryDate}${formattedUserMaxExpiryDate}
+					</p>
+
 				</div>
 			</t:if>
 			<br />

@@ -223,7 +223,14 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		List<User> restrictedContacts = transformToUsers(actor, restrictedMails);
 		Date newExpirationDate = guest.getExpirationDate();
 		if (newExpirationDate != null) {
-			checkDateValidity(owner,entity.getExpirationDate(),newExpirationDate,functionalityReadOnlyService.getGuestsExpirationDateProlongation(owner.getDomain()).getDelegationPolicy().getStatus(), entity);
+			checkDateValidity(
+					owner,
+					entity.getExpirationDate(),
+					newExpirationDate,
+					functionalityReadOnlyService
+							.getGuestsExpirationDateProlongation(
+									owner.getDomain()).getDelegationPolicy()
+							.getStatus(), entity);
 		} else {
 			guest.setExpirationDate(entity.getExpirationDate());
 		}
@@ -244,10 +251,9 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		} else {
 			Date date;
 			if (prolongation) {
-				date = calculateUserExpiryDate(owner, guest.getCreationDate());
-			} else
 				date = calculateUserExpiryDate(owner, null);
-
+			} else
+				date = calculateUserExpiryDate(owner, guest.getCreationDate());
 			if (dateToCheck.before(new Date()) || dateToCheck.after(date)) {
 				throw new BusinessException(
 						BusinessErrorCode.GUEST_EXPIRY_DATE_INVALID,
