@@ -31,28 +31,35 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.uploadrequest;
+package org.linagora.linshare.core.domain.objects;
 
-import java.io.InputStream;
+import java.util.ArrayList;
 
-import javax.ws.rs.core.Response;
+import com.google.common.collect.Lists;
 
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.linagora.linshare.core.exception.BusinessException;
+public class ChunkedFile {
 
-public interface FlowUploaderRestService {
+	private final ArrayList<Long> chunks = Lists.newArrayList();
 
-	Response uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
-			long totalSize, String identifier, String filename,
-			String relativePath, InputStream file, MultipartBody body,
-			String uploadRequestUrlUuid, String password)
-			throws BusinessException;
+	private final java.nio.file.Path path;
 
-	Response testChunk(long chunkNumber, long totalChunks, long chunkSize,
-			long totalSize, String identifier, String filename,
-			String relativePath);
+	public ChunkedFile(java.nio.file.Path path) {
+		this.path = path;
+	}
 
-	Response uploadForIe9(InputStream file, MultipartBody body,
-			String uploadRequestUrlUuid, String password)
-			throws BusinessException;
+	public boolean hasChunk(long chunkNumber) {
+		return chunks.contains(chunkNumber);
+	}
+
+	public void addChunk(long chunkNumber) {
+		chunks.add(chunkNumber);
+	}
+
+	public ArrayList<Long> getChunks() {
+		return chunks;
+	}
+
+	public java.nio.file.Path getPath() {
+		return path;
+	}
 }

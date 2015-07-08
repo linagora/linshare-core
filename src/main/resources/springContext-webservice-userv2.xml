@@ -26,6 +26,10 @@
 		<constructor-arg ref="wsDocumentFacade" />
 	</bean>
 
+	<bean id="userFlowDocumentUploaderRestService" class="org.linagora.linshare.webservice.userv2.impl.FlowDocumentUploaderRestServiceImpl">
+		<constructor-arg ref="wsDocumentFacade" />
+	</bean>
+
 	<bean id="userThreadMemberRestService" class="org.linagora.linshare.webservice.userv2.impl.ThreadMemberRestServiceImpl">
 <!-- 		<constructor-arg ref="wsThreadFacade" /> -->
 		<constructor-arg ref="wsThreadMemberFacade" />
@@ -77,6 +81,7 @@
 			<ref bean="userReceivedShareRestService" />
 			<ref bean="userLogRestService" />
 			<ref bean="userFunctionalityRestService" />
+			<ref bean="userFlowDocumentUploaderRestService" />
 <!--
 			<ref bean="pluginCompatibilityRestService" />
 -->

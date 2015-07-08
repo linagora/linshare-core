@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.uploadrequest;
+package org.linagora.linshare.webservice.userv2;
 
 import java.io.InputStream;
 
@@ -40,19 +40,14 @@ import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface FlowUploaderRestService {
+public interface FlowDocumentUploaderRestService {
 
 	Response uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
 			long totalSize, String identifier, String filename,
-			String relativePath, InputStream file, MultipartBody body,
-			String uploadRequestUrlUuid, String password)
+			String relativePath, InputStream file, MultipartBody body)
 			throws BusinessException;
 
 	Response testChunk(long chunkNumber, long totalChunks, long chunkSize,
 			long totalSize, String identifier, String filename,
 			String relativePath);
-
-	Response uploadForIe9(InputStream file, MultipartBody body,
-			String uploadRequestUrlUuid, String password)
-			throws BusinessException;
 }
