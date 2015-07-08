@@ -215,4 +215,8 @@
 	<bean name="ldapUserProviderRepository" class="org.linagora.linshare.core.repository.hibernate.LdapUserProviderRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
+	<bean name="mailActivationRepository" class="org.linagora.linshare.core.repository.hibernate.MailActivationRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>
