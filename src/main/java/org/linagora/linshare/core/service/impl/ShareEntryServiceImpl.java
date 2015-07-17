@@ -223,6 +223,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		 */
 		checkUpdatePermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
+		share.setComment(dto.getComment());
 		return shareEntryBusinessService.update(share);
 	}
 
