@@ -40,7 +40,7 @@
 
             <t:form t:id="simpleSearchForm">
                 <t:label for="name">${message:components.searchfile.fileName} </t:label>
-                <t:textfield t:id="name" t:mixins="autocomplete" t:minChars="${autocompleteMin}" class="fileSearchPattern"
+                <t:textfield t:id="name" class="fileSearchPattern"
                              title="${message:components.searchfile.fileName}"/><br/>
                 <t:submit class="tsubmit" value="${message:global.button.search}"/>
                 ${message:global.space}
@@ -56,7 +56,7 @@
                 <div><t:errors  t:banner="${message:advancedSearchForm-banner}"   /></div> <!-- t:class="literal:advancedSearchForm-error" -->
                 
                 <p><t:label for="fileNamePattern">${message:components.searchfile.fileName} </t:label>
-                <t:textfield t:id="fileNamePattern" t:mixins="autocomplete" t:minChars="${autocompleteMin}" size="15" class="fileSearchPattern" title="${message:components.searchfile.fileName}"/>
+                <t:textfield t:id="fileNamePattern" size="15" class="fileSearchPattern" title="${message:components.searchfile.fileName}"/>
                 </p>
                 
                 <p>
