@@ -38,6 +38,8 @@ import java.util.Calendar;
 import org.linagora.linshare.core.domain.constants.LogAction;
 
 public class UserLogEntryVo extends LogEntryVo {
+	private static final long serialVersionUID = 474036470853702560L;
+
 	private final String targetMail;
 
 	private final String targetFirstname;

@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
+
 import org.linagora.linshare.core.domain.constants.ThreadRoles;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 
@@ -40,7 +42,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-public class ThreadMemberVo implements Comparable<ThreadMemberVo> {
+public class ThreadMemberVo implements Serializable, Comparable<ThreadMemberVo> {
+
+	private static final long serialVersionUID = 3662179320073503690L;
 
 	private UserVo user;
 

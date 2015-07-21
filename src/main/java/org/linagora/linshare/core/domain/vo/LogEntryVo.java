@@ -33,11 +33,14 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
 
-public abstract class LogEntryVo {
+public abstract class LogEntryVo implements Serializable {
+	private static final long serialVersionUID = -3359828852169706355L;
+
 	private final Calendar actionDate;
 	
 	private final String actorMail;

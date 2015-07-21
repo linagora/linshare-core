@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.tapestry5.beaneditor.NonVisual;
@@ -42,9 +43,11 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.TimeUnit;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 
-public class UploadRequestTemplateVo {
+public class UploadRequestTemplateVo implements Serializable {
 
-    @Validate("required")
+	private static final long serialVersionUID = 6506743228628907140L;
+
+	@Validate("required")
 	private String name;
 
 	@NonVisual

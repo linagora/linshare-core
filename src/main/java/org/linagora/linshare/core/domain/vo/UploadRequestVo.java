@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -51,7 +52,9 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 
-public class UploadRequestVo implements Cloneable {
+public class UploadRequestVo implements Serializable, Cloneable {
+
+	private static final long serialVersionUID = 1068995245715097010L;
 
 	private String uuid;
 

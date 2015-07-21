@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -44,7 +45,9 @@ import org.linagora.linshare.core.domain.constants.LogAction;
  * @author ncharles
  *
  */
-public class DisplayableLogEntryVo {
+public class DisplayableLogEntryVo implements Serializable {
+
+	private static final long serialVersionUID = 1346349038722968364L;
 
 	private final Date actionDate;
 	

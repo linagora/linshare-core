@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.tapestry5.beaneditor.NonVisual;
@@ -41,7 +42,9 @@ import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 
-public class UploadRequestHistoryVo {
+public class UploadRequestHistoryVo implements Serializable {
+
+	private static final long serialVersionUID = -1332006251848565910L;
 
 	private boolean statusUpdated;
 

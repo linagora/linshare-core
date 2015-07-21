@@ -36,6 +36,8 @@ package org.linagora.linshare.core.domain.vo;
 
 public class DenyAllDomainVo extends DomainAccessRuleVo {
 
+	private static final long serialVersionUID = -270161143021356406L;
+
 	public DenyAllDomainVo() {
 		super();
 	}

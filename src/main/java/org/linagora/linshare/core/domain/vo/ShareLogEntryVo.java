@@ -38,7 +38,9 @@ import java.util.Calendar;
 import org.linagora.linshare.core.domain.constants.LogAction;
 
 public class ShareLogEntryVo extends FileLogEntryVo {
-	
+
+	private static final long serialVersionUID = -8650263060181701338L;
+
 	private final String targetMail;
 
 	private final String targetFirstname;

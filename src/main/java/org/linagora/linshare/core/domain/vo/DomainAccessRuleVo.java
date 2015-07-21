@@ -34,10 +34,13 @@
 
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
+
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 
-public class DomainAccessRuleVo {
+public class DomainAccessRuleVo implements Serializable {
 
+	private static final long serialVersionUID = 4875169975588883057L;
 	private String regexp;
 	private long persistenceId;
 

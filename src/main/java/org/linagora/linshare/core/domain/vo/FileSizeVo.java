@@ -39,6 +39,7 @@ import java.math.BigInteger;
 import org.apache.tapestry5.beaneditor.NonVisual;
 
 public enum FileSizeVo {
+
 	@NonVisual
 	NONE(Integer.MAX_VALUE),
 	BYTE(0),
