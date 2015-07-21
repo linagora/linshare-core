@@ -33,10 +33,14 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
+
 import org.linagora.linshare.core.domain.constants.AccountType;
 
 
-public class DisplayableAccountOccupationEntryVo implements Comparable<DisplayableAccountOccupationEntryVo>  {
+public class DisplayableAccountOccupationEntryVo implements Comparable<DisplayableAccountOccupationEntryVo>, Serializable {
+
+	private static final long serialVersionUID = -8892677890684059706L;
 
 	private final String actorFirstname;
 	

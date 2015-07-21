@@ -43,7 +43,8 @@ import org.linagora.linshare.core.domain.entities.ShareExpiryRule;
  */
 public class ShareExpiryRuleVo implements Serializable {
 
-    private final Integer shareExpiryTime;
+	private static final long serialVersionUID = -896190348275893760L;
+	private final Integer shareExpiryTime;
     private final TimeUnit shareExpiryUnit;
     private final Integer shareSize;
     private final FileSizeUnit shareSizeUnit;

@@ -39,6 +39,8 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 
 public class FileLogEntryVo extends LogEntryVo {
 
+	private static final long serialVersionUID = -6165628306094771775L;
+
 	private final String fileName;
 	
 	private final Long fileSize;

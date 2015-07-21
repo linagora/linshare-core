@@ -33,11 +33,14 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import org.linagora.linshare.view.tapestry.enums.HelpType;
 
-public class HelpVO {
+public class HelpVO implements Serializable {
+
+	private static final long serialVersionUID = -5301593038862178925L;
 
 	private final String idSection;
 	

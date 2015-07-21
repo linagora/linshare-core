@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 import org.linagora.linshare.core.domain.constants.DocumentType;
@@ -42,9 +43,9 @@ import org.linagora.linshare.core.domain.constants.DocumentType;
  * @author ngapaillard
  *
  */
-public class SearchDocumentCriterion {
+public class SearchDocumentCriterion implements Serializable {
 
-	
+	private static final long serialVersionUID = 2640576961921262270L;
 	private final UserVo user;
 	private final String name;
 	private final Long sizeMin;

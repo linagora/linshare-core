@@ -34,9 +34,13 @@
 
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
+
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 
-public class MailingListContactVo {
+public class MailingListContactVo implements Serializable {
+
+	private static final long serialVersionUID = 5767981265116071770L;
 
 	private String mail;
 	

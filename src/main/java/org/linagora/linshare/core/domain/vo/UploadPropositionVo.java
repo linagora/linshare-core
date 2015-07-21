@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.tapestry5.beaneditor.NonVisual;
@@ -42,7 +43,9 @@ import org.linagora.linshare.core.domain.entities.UploadProposition;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-public class UploadPropositionVo {
+public class UploadPropositionVo implements Serializable {
+
+	private static final long serialVersionUID = -1644957309374227845L;
 
 	private long id;
 

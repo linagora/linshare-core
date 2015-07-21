@@ -33,13 +33,16 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
+
 /**
  * Value object representation of a favourite.
  * @author ngapaillard
  *
  */
-public class RecipientFavouriteVO {
+public class RecipientFavouriteVO implements Serializable {
 
+	private static final long serialVersionUID = -6286210301055052370L;
 	/** the weight of the element. **/
 	private final Long weight;
 	/**
