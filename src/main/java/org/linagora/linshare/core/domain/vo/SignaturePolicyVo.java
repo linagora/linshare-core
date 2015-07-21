@@ -33,8 +33,11 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
-public class SignaturePolicyVo {
+import java.io.Serializable;
 
+public class SignaturePolicyVo implements Serializable {
+
+	private static final long serialVersionUID = -7338158060312085673L;
 	private String label;
 	private String oid;
 	

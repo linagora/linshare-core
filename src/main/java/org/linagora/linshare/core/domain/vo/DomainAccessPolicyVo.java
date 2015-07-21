@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,8 +44,9 @@ import org.linagora.linshare.core.domain.entities.DenyDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 
-public class DomainAccessPolicyVo {
+public class DomainAccessPolicyVo implements Serializable {
 
+	private static final long serialVersionUID = 4798538039182776921L;
 	private List<DomainAccessRuleVo> rules;
 	private long id;
 

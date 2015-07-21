@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.tapestry5.beaneditor.NonVisual;
@@ -41,7 +42,9 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-public class UploadRequestEntryVo {
+public class UploadRequestEntryVo implements Serializable {
+
+	private static final long serialVersionUID = 4781015539583214255L;
 
 	@NonVisual
 	private String uuid;

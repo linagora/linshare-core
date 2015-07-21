@@ -33,13 +33,20 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import java.io.Serializable;
+
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.Policy;
 
 /**
  * this class is designed to handle the 'enable/disable' status of a particular functionality.
  */
-public class PolicyVo implements Comparable{
+public class PolicyVo implements Comparable, Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5074653393390517771L;
 
 	private String domainIdentifier;
 
