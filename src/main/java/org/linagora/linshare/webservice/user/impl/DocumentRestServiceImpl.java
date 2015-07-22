@@ -138,7 +138,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			logger.error("There is no 'filename' header in multi-Part attachment named 'file'.");
 			Validate.notNull(fileName, "File name for file attachment is required.");
 		}
-		return webServiceDocumentFacade.create(theFile, fileName, comment);
+		return webServiceDocumentFacade.create(theFile, fileName, comment, null);
 	}
 
 	/**

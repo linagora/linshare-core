@@ -40,34 +40,34 @@ import org.linagora.linshare.core.domain.constants.EntryType;
 public abstract class Entry {
 
 	protected long id;
-	
+
 	protected Account entryOwner;
-	
+
 	protected Calendar creationDate;
-	
+
 	protected Calendar modificationDate;
-	
+
 	protected Calendar expirationDate;
-	
+
 	protected String name;
-	
+
 	protected String comment;
-	
+
 	protected String uuid;
-	
+
 	protected String metaData;
 
 	public Entry() {
 	}
-	
+
 	public Entry(Account entryOwner, String name, String comment) {
 		this.entryOwner = entryOwner;
 		this.name = name;
 		this.comment = comment;
 	}
-	
+
 	public abstract EntryType getEntryType();
-	
+
 	public String getUuid() {
 		return uuid;
 	}
@@ -163,5 +163,27 @@ public abstract class Entry {
 		} else if (!uuid.equals(other.uuid))
 			return false;
 		return true;
+	}
+
+/**
+ * Business setters.
+ */
+
+	public void setBusinessName(String name) {
+		if (name != null) {
+			this.name = name;
+		}
+	}
+
+	public void setBusinessComment(String comment) {
+		if (comment != null) {
+			this.comment = comment;
+		}
+	}
+
+	public void setBusinessMetaData(String metadata) {
+		if (metadata != null) {
+			this.metaData = metadata;
+		}
 	}
 }
