@@ -137,11 +137,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				docEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
 			}
 			entity = documentEntryRepository.create(docEntry);
-
 			owner.getEntries().add(entity);
-			accountRepository.update(owner);
-
-
 		} catch (BusinessException e) {
 			logger.error("Could not add  " + fileName + " to user " + owner.getLsUuid() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "couldn't register the file in the database");
