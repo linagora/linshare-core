@@ -55,7 +55,7 @@ public interface DocumentFacade extends GenericFacade {
 	Long getAvailableSize() throws BusinessException;
 
 	DocumentDto create(InputStream fi, String fileName,
-			String description) throws BusinessException;
+			String description, String metadata) throws BusinessException;
 
 	InputStream getDocumentStream(String docEntryUuid)
 			throws BusinessException;

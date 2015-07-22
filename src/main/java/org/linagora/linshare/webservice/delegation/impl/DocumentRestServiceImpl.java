@@ -96,7 +96,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The given attachment datas.", required = true) MultipartBody body)
 			throws BusinessException {
 		String fileName;
-		String comment = (description == null) ? "" : description;
 		if (givenFileName == null || givenFileName.isEmpty()) {
 			// parameter givenFileName is optional
 			// so need to search this information in the header of the
@@ -106,7 +105,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		} else {
 			fileName = givenFileName;
 		}
-		return documentFacade.create(ownerUuid, theFile, comment, fileName);
+		return documentFacade.create(ownerUuid, theFile, description, fileName);
 	}
 
 	@Path("/{uuid}")

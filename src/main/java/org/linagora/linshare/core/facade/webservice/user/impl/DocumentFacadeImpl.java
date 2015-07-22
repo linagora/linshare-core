@@ -98,7 +98,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 
 	@Override
 	public DocumentDto create(InputStream fi, String description,
-			String fileName) throws BusinessException {
+			String fileName, String metadata) throws BusinessException {
 		Validate.notNull(fi,
 				"Missing required file (check parameter named file)");
 		User actor = checkAuthentication();
@@ -106,10 +106,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		DocumentEntry res = documentEntryService.create(actor, actor, fi,
-				fileName);
-
-		documentEntryService.updateFileProperties(actor, actor, res.getUuid(),
-				res.getName(), description, null);
+				fileName, description, metadata);
 		return new DocumentDto(res);
 	}
 
@@ -121,14 +118,10 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 			DataHandler dh = doca.getDocument();
 			InputStream in = dh.getInputStream();
 			String fileName = doca.getFilename();
-			DocumentEntry res = documentEntryService.create(actor, actor, in,
-					fileName);
-			// mandatory ?
 			String comment = (doca.getComment() == null) ? "" : doca
 					.getComment();
-
-			documentEntryService.updateFileProperties(actor, actor,
-					res.getUuid(), res.getName(), comment, res.getMetaData());
+			DocumentEntry res = documentEntryService.create(actor, actor, in,
+					fileName, comment, null);
 			return new DocumentDto(res);
 		} catch (IOException e) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,

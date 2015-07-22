@@ -189,7 +189,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		InputStream stream = getStream(actor,
 				owner, share.getUuid());
 		DocumentEntry newDocumentEntry = documentEntryService.create(actor,
-				owner, stream, share.getName(), false);
+				owner, stream, share.getName(), share.getComment(), false, null);
 
 		// step4 : remove the share
 		ShareLogEntry logEntry = new ShareLogEntry(owner, share,

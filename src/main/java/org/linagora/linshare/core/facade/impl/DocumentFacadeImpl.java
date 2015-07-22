@@ -107,7 +107,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 	public DocumentVo insertFile(InputStream in, String fileName, UserVo owner) throws BusinessException {
 		logger.debug("insert files for document entries");
 		User actor = getActor(owner);
-		DocumentEntry createDocumentEntry = documentEntryService.create(actor, actor, in, fileName);
+		DocumentEntry createDocumentEntry = documentEntryService.create(actor, actor, in, fileName, null, null);
 		return documentEntryTransformer.disassemble(createDocumentEntry);
 	}
 

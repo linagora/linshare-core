@@ -166,12 +166,15 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	}
 
 	@Override
-	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName) throws BusinessException {
-		return create(actor, owner, stream, fileName, false);
+	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, String comment, String metadata) throws BusinessException {
+		return create(actor, owner, stream, fileName, comment, false, metadata);
 	}
 
 	@Override
-	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, boolean forceAntivirusOff) throws BusinessException {
+	public DocumentEntry create(Account actor, Account owner,
+			InputStream stream, String fileName, String comment,
+			boolean forceAntivirusOff, String metadata)
+			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(fileName, "fileName is required.");
 		checkCreatePermission(actor, owner, DocumentEntry.class,
@@ -179,20 +182,22 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		fileName = sanitizeFileName(fileName); // throws
 		DocumentUtils util = new DocumentUtils();
 		File tempFile = util.getTempFile(stream, fileName);
-		Long size = tempFile.length(); 
+		Long size = tempFile.length();
 		DocumentEntry docEntry = null;
 		try {
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 			checkSpace(size, fileName, owner);
 
 			// check if the file MimeType is allowed
-			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
+			AbstractDomain domain = abstractDomainService.retrieveDomain(actor
+					.getDomain().getIdentifier());
 			if (mimeTypeFilteringStatus(actor)) {
 				mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
 			}
 
 			if (!forceAntivirusOff) {
-				Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
+				Functionality antivirusFunctionality = functionalityReadOnlyService
+						.getAntivirusFunctionality(domain);
 				if (antivirusFunctionality.getActivationPolicy().getStatus()) {
 					checkVirus(fileName, owner, tempFile, size);
 				}
@@ -200,19 +205,28 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
-			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService.getTimeStampingFunctionality(domain);
+			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService
+					.getTimeStampingFunctionality(domain);
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
 				timeStampingUrl = timeStampingFunctionality.getValue();
 			}
 
-			Functionality enciphermentFunctionality = functionalityReadOnlyService.getEnciphermentFunctionality(domain);
-			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
+			Functionality enciphermentFunctionality = functionalityReadOnlyService
+					.getEnciphermentFunctionality(domain);
+			Boolean checkIfIsCiphered = enciphermentFunctionality
+					.getActivationPolicy().getStatus();
 
 			// We need to set an expiration date in case of file cleaner
 			// activation.
-			docEntry = documentEntryBusinessService.createDocumentEntry(owner, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, getDocumentExpirationDate(domain));
+			docEntry = documentEntryBusinessService.createDocumentEntry(owner,
+					tempFile, size, fileName, comment, checkIfIsCiphered,
+					timeStampingUrl, mimeType,
+					getDocumentExpirationDate(domain), metadata);
 
-			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_UPLOAD, "Creation of a file", docEntry.getName(), docEntry.getDocument().getSize(), docEntry.getDocument().getType());
+			FileLogEntry logEntry = new FileLogEntry(owner,
+					LogAction.FILE_UPLOAD, "Creation of a file",
+					docEntry.getName(), docEntry.getDocument().getSize(),
+					docEntry.getDocument().getType());
 			logEntryService.create(logEntry);
 
 			addDocSizeToGlobalUsedQuota(docEntry.getDocument(), domain);
@@ -243,7 +257,9 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	}
 
 	@Override
-	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, InputStream stream, String fileName) throws BusinessException {
+	public DocumentEntry update(Account actor, Account owner,
+			String docEntryUuid, InputStream stream, String fileName)
+			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(docEntryUuid, "document entry uuid is required.");
 		DocumentEntry originalEntry = find(actor, owner, docEntryUuid);
@@ -262,34 +278,43 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		try {
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 
-			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
+			AbstractDomain domain = abstractDomainService.retrieveDomain(owner
+					.getDomain().getIdentifier());
 
 			long oldDocSize = originalEntry.getDocument().getSize();
 			checkSpace(size, fileName, owner);
 
 			// check if the file MimeType is allowed
-			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
+			Functionality mimeFunctionality = functionalityReadOnlyService
+					.getMimeTypeFunctionality(domain);
 			if (mimeFunctionality.getActivationPolicy().getStatus()) {
 				mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
 			}
 
-			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
+			Functionality antivirusFunctionality = functionalityReadOnlyService
+					.getAntivirusFunctionality(domain);
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
 				checkVirus(fileName, owner, tempFile, size);
 			}
 
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
-			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService.getTimeStampingFunctionality(domain);
+			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService
+					.getTimeStampingFunctionality(domain);
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
 				timeStampingUrl = timeStampingFunctionality.getValue();
 			}
 
-			Functionality enciphermentFunctionality = functionalityReadOnlyService.getEnciphermentFunctionality(domain);
-			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
+			Functionality enciphermentFunctionality = functionalityReadOnlyService
+					.getEnciphermentFunctionality(domain);
+			Boolean checkIfIsCiphered = enciphermentFunctionality
+					.getActivationPolicy().getStatus();
 
-			// We need to set an expiration date in case of file cleaner activation.
-			documentEntry = documentEntryBusinessService.updateDocumentEntry(owner, originalEntry, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType,
+			// We need to set an expiration date in case of file cleaner
+			// activation.
+			documentEntry = documentEntryBusinessService.updateDocumentEntry(
+					owner, originalEntry, tempFile, size, fileName,
+					checkIfIsCiphered, timeStampingUrl, mimeType,
 					getDocumentExpirationDate(domain));
 
 			// put new file name in log
@@ -300,20 +325,28 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 				logText = documentEntry.getName() + " [" + logText + "]";
 			}
 
-			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_UPDATE, "Update of a file", logText, documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
+			FileLogEntry logEntry = new FileLogEntry(owner,
+					LogAction.FILE_UPDATE, "Update of a file", logText,
+					documentEntry.getDocument().getSize(), documentEntry
+							.getDocument().getType());
 			logEntryService.create(logEntry);
 
 			removeDocSizeFromGlobalUsedQuota(oldDocSize, domain);
 			addDocSizeToGlobalUsedQuota(documentEntry.getDocument(), domain);
 
-			if(documentEntry.isShared()){
-				//send email, file has been replaced ....
+			if (documentEntry.isShared()) {
+				// send email, file has been replaced ....
 				List<MailContainerWithRecipient> mails = Lists.newArrayList();
-				for (AnonymousShareEntry anonymousShareEntry : documentEntry.getAnonymousShareEntries()) {
-					mails.add(mailBuildingService.buildSharedDocUpdated(anonymousShareEntry, originalFileName, documentEntry.getDocument().getSize()));
+				for (AnonymousShareEntry anonymousShareEntry : documentEntry
+						.getAnonymousShareEntries()) {
+					mails.add(mailBuildingService.buildSharedDocUpdated(
+							anonymousShareEntry, originalFileName,
+							documentEntry.getDocument().getSize()));
 				}
 				for (ShareEntry shareEntry : documentEntry.getShareEntries()) {
-					mails.add(mailBuildingService.buildSharedDocUpdated(shareEntry, originalFileName, documentEntry.getDocument().getSize()));
+					mails.add(mailBuildingService.buildSharedDocUpdated(
+							shareEntry, originalFileName, documentEntry
+									.getDocument().getSize()));
 				}
 				notifierService.sendNotification(mails);
 			}

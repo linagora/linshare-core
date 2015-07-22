@@ -164,4 +164,26 @@ public abstract class Entry {
 			return false;
 		return true;
 	}
+
+/**
+ * Business setters.
+ */
+
+	public void setBusinessName(String name) {
+		if (name != null) {
+			this.name = name;
+		}
+	}
+
+	public void setBusinessComment(String comment) {
+		if (comment != null) {
+			this.comment = comment;
+		}
+	}
+
+	public void setBusinessMetaData(String metadata) {
+		if (metadata != null) {
+			this.metaData = metadata;
+		}
+	}
 }

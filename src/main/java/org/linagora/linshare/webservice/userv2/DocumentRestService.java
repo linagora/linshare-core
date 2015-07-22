@@ -46,7 +46,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 public interface DocumentRestService {
 
 	DocumentDto create(InputStream theFile,
-			String description, String givenFileName, MultipartBody body)
+			String description, String givenFileName, String metadata, MultipartBody body)
 			throws BusinessException;
 
 	DocumentDto find(String uuid) throws BusinessException;
