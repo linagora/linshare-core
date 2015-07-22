@@ -121,16 +121,21 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException {
-
+	public DocumentEntry createDocumentEntry(Account owner, File myFile,
+			Long size, String fileName, String comment,
+			Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType,
+			Calendar expirationDate, String metadata) throws BusinessException {
 		// add an entry for the file in DB
 		DocumentEntry entity = null;
 		try {
 			Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType);
 
-			DocumentEntry docEntry = new DocumentEntry(owner, fileName, document);
+			if (comment == null)
+				comment = "";
+			DocumentEntry docEntry = new DocumentEntry(owner, fileName, comment, document);
 			// We need to set an expiration date in case of file cleaner activation.
 			docEntry.setExpirationDate(expirationDate);
+			docEntry.setMetaData(metadata);
 
 			//aes encrypt ? check headers
 			if(checkIfIsCiphered) {
@@ -144,7 +149,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 		return entity;
 	}
-
 
 	@Override
 	public byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException {
@@ -246,21 +250,24 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public DocumentEntry updateFileProperties(DocumentEntry entry, String newName, String fileComment, String meta) throws BusinessException {
 		String uuid = entry.getDocument().getUuid();
 		fileSystemDao.renameFile(uuid, newName);
-		entry.setName(newName);
-		entry.setComment(fileComment);
-		entry.setMetaData(meta);
+		entry.setBusinessName(newName);
+		entry.setBusinessComment(fileComment);
+		entry.setBusinessMetaData(meta);
 		return documentEntryRepository.update(entry);
 	}
 
 	@Override
 	public ThreadEntry updateFileProperties(ThreadEntry entry, String fileComment, String metaData) throws BusinessException {
-		entry.setComment(fileComment);
-		entry.setMetaData(metaData);
+		entry.setBusinessComment(fileComment);
+		entry.setBusinessMetaData(metaData);
 		return threadEntryRepository.update(entry);
 	}
 
 	@Override
-	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException {
+	public DocumentEntry updateDocumentEntry(Account owner,
+			DocumentEntry docEntry, File myFile, Long size, String fileName,
+			Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType,
+			Calendar expirationDate) throws BusinessException {
 
 		//create and insert the thumbnail into the JCR
 		String uuidThmb = generateThumbnailIntoJCR(fileName, owner.getLsUuid(), myFile, mimeType);

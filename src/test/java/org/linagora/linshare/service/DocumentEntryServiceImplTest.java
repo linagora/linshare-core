@@ -124,6 +124,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
 	private final Long size = (long) 1000;
 	private final String fileName = "linshare-default.properties";
+	private final String comment = "file description";
 	private DocumentEntry aDocumentEntry;
 
 	private LoadingServiceTestDatas datas;
@@ -152,7 +153,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		createFunctionalities();
 
 		Account actor = jane;
-		aDocumentEntry = documentEntryService.create(actor, actor, stream, fileName);
+		aDocumentEntry = documentEntryService.create(actor, actor, stream, fileName, comment, null);
 		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
 
 		Document aDocument = aDocumentEntry.getDocument();
@@ -273,7 +274,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Account actor = jane;
 		User owner = jane;
 		createFunctionalities();
-		aDocumentEntry = documentEntryService.create(actor, actor, stream, fileName);
+		aDocumentEntry = documentEntryService.create(actor, actor, stream, fileName, comment, null);
 		List<DocumentEntry> documents = documentEntryService.findAll(actor, owner);
 		Assert.assertTrue(documents.contains(aDocumentEntry));
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -284,7 +285,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		createFunctionalities();
-		aDocumentEntry = documentEntryService.create(actor, actor, stream, fileName);
+		aDocumentEntry = documentEntryService.create(actor, actor, stream, fileName, comment, null);
 		aDocumentEntry.getDocument().setSignatures(new HashSet<Signature>());
 		documentEntryService.delete(actor, actor, aDocumentEntry.getUuid());
 		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) == null);

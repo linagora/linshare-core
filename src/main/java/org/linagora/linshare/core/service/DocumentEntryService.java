@@ -43,9 +43,9 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DocumentEntryService {
 
-	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, boolean forceAntivirusOff) throws BusinessException;
+	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, String comment, boolean forceAntivirusOff, String metadata) throws BusinessException;
 
-	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName) throws BusinessException;
+	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, String comment, String metadata) throws BusinessException;
 
 	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, InputStream stream, String fileName) throws BusinessException ;
 

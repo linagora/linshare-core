@@ -99,9 +99,9 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Signature file stream.", required = false) @Multipart(value = "signaturefile", required = false) InputStream theSignatureFile,
 			@ApiParam(value = "The given file name of the signature uploaded file.", required = false) @Multipart(value = "signatureFileName", required = false) String signatureFileName,
 			@ApiParam(value = "X509 Certificate entity.", required = false) @Multipart(value = "x509cert", required = false) InputStream x509certificate,
+			@ApiParam(value = "The given metadata of the uploaded file.", required = false) @Multipart(value = "metadata", required = false) String metaData,
 			MultipartBody body) throws BusinessException {
-		String fileName = null;
-		String comment = (description == null) ? "" : description;
+		String fileName;
 		if (givenFileName == null || givenFileName.isEmpty()) {
 			// parameter givenFileName is optional
 			// so need to search this information in the header of the
@@ -118,10 +118,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		}
 		if(theSignatureFile != null) {
 			return documentFacade.createWithSignature(theFile, fileName,
-					comment, theSignatureFile, signatureFileName,
+					description, theSignatureFile, signatureFileName,
 					x509certificate);
 		}
-		return documentFacade.create(theFile, fileName, comment);
+		return documentFacade.create(theFile, fileName, description, metaData);
 	}
 
 	@Path("/{uuid}")
@@ -203,6 +203,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream theFile,
 			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
+//			TODO: check why?
 			MultipartBody body)
 			throws BusinessException {
 		return documentFacade.updateFile(theFile, givenFileName, uuid);
