@@ -216,6 +216,14 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			logEntryService.create(logEntry);
 
 			addDocSizeToGlobalUsedQuota(docEntry.getDocument(), domain);
+			// Extra check to avoid over quota when we authorize multiple upload for fineuploader
+			long availableSize = getAvailableSize(owner);
+			logger.debug("availableSize :" + availableSize);
+			if (availableSize < 0) {
+				logger.error("The file  " + fileName + " is too large to fit in " + owner.getAccountReprentation() + " user's space.");
+				String[] extras = { fileName };
+				throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE, "The file is too large to fit in user's space.", extras);
+			}
 		} finally {
 			try{
 				logger.debug("deleting temp file : " + tempFile.getName());
@@ -525,7 +533,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			String[] extras = { fileName };
 			throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE, "The file is larger than user's max file size.", extras);
 		}
-		if (getAvailableSize(owner) < size) {
+		long availableSize = getAvailableSize(owner);
+		if (availableSize < size) {
 			logger.info("The file  " + fileName + " is too large to fit in " + owner.getLsUuid() + " user's space.");
 			String[] extras = { fileName };
 			throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE, "The file is too large to fit in user's space.", extras);
