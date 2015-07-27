@@ -110,7 +110,9 @@ public abstract class EntryResourceAccessControlImpl<R, E extends Entry>
 			StringBuilder sb = getActorStringBuilder(actor);
 			sb.append(" is trying to access to unauthorized resource named ");
 			sb.append(clazz.toString());
-			appendOwner(sb, entry, opt);
+			if (entry != null) {
+				appendOwner(sb, entry, opt);
+			}
 			logger.error(sb.toString());
 		}
 		return false;
