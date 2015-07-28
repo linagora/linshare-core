@@ -141,6 +141,8 @@ public interface UserFacade {
 	 */
 	public void updateUserExternalMailLocale(UserVo user, Language externalMailLocale) throws BusinessException;
 
+	public void updateUserLocale(UserVo user, String locale,Language currentExternalMailLocale, String cmisLocale) throws BusinessException;
+
     /** Load a User.
      * If the user doesn't exist in database, search informations in LDAP and create a user entry before returning it.
      * @param login user login.

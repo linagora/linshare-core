@@ -54,12 +54,9 @@ public class ShareDocumentVo extends DocumentVo {
 	/** is the document has been downloaded */
 	private final Boolean downloaded;
 
-
-
-
 	public ShareDocumentVo(String identifier, String name, String fileComment, Calendar creationDate, Calendar expirationDate, String type,
 			String ownerLogin, Boolean encrypted, Boolean shared,
-			Long size, UserVo sender, UserVo receiver, Calendar shareExpirationDate, Calendar sharingDate, Boolean downloaded, boolean hasThumbnail) {
+			       Long size, UserVo sender, UserVo receiver, Calendar shareExpirationDate, Calendar sharingDate, Boolean downloaded, boolean hasThumbnail, Boolean cmisSync) {
 		super(identifier, name, fileComment, creationDate, expirationDate, type, ownerLogin, encrypted, shared, size);
 		this.sender = sender;
 		this.receiver = receiver;
@@ -67,8 +64,8 @@ public class ShareDocumentVo extends DocumentVo {
 		this.sharingDate = sharingDate;
 		this.downloaded = downloaded;
 		this.hasThumbnail = hasThumbnail;
+		this.setCmisSync(cmisSync);
 	}
-
 
 	public ShareDocumentVo(DocumentVo doc, UserVo sender, UserVo receiver) {
 
@@ -81,6 +78,7 @@ public class ShareDocumentVo extends DocumentVo {
 		this.downloaded = null;
 		this.sharingDate = null;
 		this.hasThumbnail = doc.hasThumbnail();
+		this.setCmisSync(doc.getCmisSync());
 	}
 
 	public UserVo getSender() {

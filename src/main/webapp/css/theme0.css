@@ -3267,8 +3267,13 @@ div#fileEditFormComponent ul{
 }
 
 div#fileEditFormComponent li textarea{
-	
+
 	min-width:243px;
+	vertical-align:top;
+}
+
+div#fileEditFormComponent li textfield{
+	width:243px;
 	vertical-align:top;
 }
 

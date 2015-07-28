@@ -13,6 +13,10 @@
 					<hr />
 						<ul>
 							<li>
+								<t:label for="newName" class="edit-form-label">${message:component.fileEditForm.newName}</t:label>
+								<t:textfield t:id="newName" validate="required" class="edit-form-field"/>
+							</li>
+							<li>
 								<t:label for="fileComment" class="edit-form-label">${message:component.fileEditForm.fileComment}</t:label> :
 	           					<t:textarea t:id="fileComment" class="edit-form-field"/>
 							</li>

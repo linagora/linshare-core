@@ -107,7 +107,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 	public DocumentVo insertFile(InputStream in, String fileName, UserVo owner) throws BusinessException {
 		logger.debug("insert files for document entries");
 		User actor = getActor(owner);
-		DocumentEntry createDocumentEntry = documentEntryService.create(actor, actor, in, fileName, null, null);
+		DocumentEntry createDocumentEntry = documentEntryService.create(actor, actor, in, fileName, null, false, null);
 		return documentEntryTransformer.disassemble(createDocumentEntry);
 	}
 
@@ -136,7 +136,7 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		Account actor = getActor(ownerVo);
 		DocumentEntry documentEntry = documentEntryService.find(actor, actor, documentVo.getIdentifier());
 		signatureService.createSignature(actor, documentEntry.getDocument(), file, fileName, signerCertificate);
-		}
+	}
 
 	@Override
 	public List<SignatureVo> getAllSignatures(UserVo userVo, DocumentVo documentVo){
@@ -324,6 +324,21 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 			logger.error("Can't get document thumbnail : " + docEntryUuid + " : " + e.getMessage());
 		}
 		return null;
+	}
+
+	@Override
+	public void updateFileProperties(String lsUuid, String docEntryUuid,
+			String fileName, String fileComment, boolean cmisSync) {
+		Account actor = accountService.findByLsUuid(lsUuid);
+		if(fileComment == null) {
+			fileComment = "";
+		}
+        try {
+			documentEntryService.updateFileProperties(actor, docEntryUuid, fileName, fileComment,cmisSync);
+		} catch (BusinessException e) {
+			logger.error("Can't update file properties document : " + docEntryUuid + " : " + e.getMessage());
+		}
+		
 	}
 
 	@Override

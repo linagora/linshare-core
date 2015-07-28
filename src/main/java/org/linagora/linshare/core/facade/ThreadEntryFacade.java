@@ -111,7 +111,7 @@ public interface ThreadEntryFacade {
 			throws BusinessException;
 
 	public void updateFileProperties(String lsUid, String threadEntryUuid,
-			String fileComment) throws BusinessException;
+			String fileComment, String newName) throws BusinessException;
 
 	public ThreadEntryVo getThreadEntry(UserVo actorVo, String threadEntryUuid) throws BusinessException;
 

@@ -111,6 +111,10 @@ public class RecipientFavouriteRepositoryImplTest extends AbstractTransactionalJ
 		user2.setLocale(userGuestDomain.getDefaultTapestryLocale());
 		user3.setLocale(userGuestDomain.getDefaultTapestryLocale());
 
+		user1.setCmisLocale(userGuestDomain.getDefaultTapestryLocale().toString());
+		user2.setCmisLocale(userGuestDomain.getDefaultTapestryLocale().toString());
+		user3.setCmisLocale(userGuestDomain.getDefaultTapestryLocale().toString());
+
 		user1.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.topDomainName));
 		user2.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1));
 		user3.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.guestDomainName1));

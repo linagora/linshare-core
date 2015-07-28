@@ -227,6 +227,6 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 
 		return new ThreadEntryDto(threadEntryService.updateFileProperties(
 				actor, threadEntryUuid, threadEntryDto.getDescription(),
-				threadEntryDto.getMetaData()));
+				threadEntryDto.getMetaData(), threadEntryDto.getName()));
 	}
 }

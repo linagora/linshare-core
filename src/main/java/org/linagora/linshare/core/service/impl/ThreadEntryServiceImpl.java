@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -192,15 +193,24 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	}
 
 	@Override
-	public void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException {
-		Thread owner = (Thread)threadEntry.getEntryOwner();
+	public void deleteInconsistentThreadEntry(SystemAccount actor,
+			ThreadEntry threadEntry) throws BusinessException {
+		Thread owner = (Thread) threadEntry.getEntryOwner();
 		try {
-			ThreadLogEntry log = new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_REMOVE_INCONSISTENCY_ENTRY, "Deleting an inconsistent thread entry.");
+			ThreadLogEntry log = new ThreadLogEntry(actor, threadEntry,
+					LogAction.THREAD_REMOVE_INCONSISTENCY_ENTRY,
+					"Deleting an inconsistent thread entry.");
 			logEntryService.create(LogEntryService.WARN, log);
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
 		} catch (IllegalArgumentException e) {
-			logger.error("Could not delete thread entry " + threadEntry.getUuid() + " in thread " + owner.getLsUuid() + " by account " + actor.getLsUuid()+ ", reason : ", e);
-			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
+			logger.error(
+					"Could not delete thread entry " + threadEntry.getUuid()
+							+ " in thread " + owner.getLsUuid()
+							+ " by account " + actor.getLsUuid()
+							+ ", reason : ", e);
+			throw new TechnicalException(
+					TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT,
+					"Could not delete document");
 		}
 	}
 
@@ -269,16 +279,28 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	}
 
 	@Override
-	public ThreadEntry updateFileProperties(Account actor, String threadEntryUuid, String fileComment, String metaData) throws BusinessException {
-		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(threadEntryUuid);
-		// Avoid overwritting metadata in database to null when update threadEntry from interface.
+	public ThreadEntry updateFileProperties(Account actor,
+			String threadEntryUuid, String fileComment, String metaData,
+			String newName) throws BusinessException {
+		ThreadEntry threadEntry = documentEntryBusinessService
+				.findThreadEntryById(threadEntryUuid);
+		// Avoid overwritting metadata in database to null when update
+		// threadEntry from interface.
 		if (metaData == null) {
 			metaData = threadEntry.getMetaData();
 		}
-		if (!this.canUpload((Thread) threadEntry.getEntryOwner(), (User) actor)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to update this document.");
+		if (newName == null) {
+			newName = threadEntry.getName();
 		}
-		return documentEntryBusinessService.updateFileProperties(threadEntry, fileComment, metaData);
+		if (fileComment == null) {
+			fileComment = threadEntry.getComment();
+		}
+		if (!this.canUpload((Thread) threadEntry.getEntryOwner(), (User) actor)) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					"You are not authorized to update this document.");
+		}
+		return documentEntryBusinessService.updateFileProperties(threadEntry,
+				fileComment, metaData, sanitizeFileName(newName));
 	}
 
 	private String sanitizeFileName(String fileName) throws BusinessException {
@@ -328,13 +350,20 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		return threadMember != null;
 	}
 
-	private boolean isAdmin(Thread thread, User user) {
-		ThreadMember threadMember = threadMemberRepository.findUserThreadMember(thread, user);
-		return threadMember.getAdmin();
-	}
-
 	private boolean canUpload(Thread thread, User user) {
 		ThreadMember threadMember = threadMemberRepository.findUserThreadMember(thread, user);
 		return threadMember.getCanUpload();
+	}
+
+	@Override
+	public List<ThreadEntry> findMoreRecentByName(Account actor, Thread thread)
+			throws BusinessException {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(thread, "Thread must be set.");
+		if (!isThreadMember(thread, (User) actor)) {
+			throw new BusinessException(BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, "The actor is not member of the thread.");
+		}
+
+		return documentEntryBusinessService.findMoreRecentByName(thread);
 	}
 }

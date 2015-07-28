@@ -149,6 +149,10 @@ public interface FunctionalityReadOnlyService {
 	 */
 	String getCustomNotificationURLInRootDomain() throws BusinessException;
 
+//	CMIS
+	Functionality getCmisFunctionality(AbstractDomain domain);
+	Functionality getCmisDocumentsFunctionality(AbstractDomain domain);
+	Functionality getCmisThreadsFunctionality(AbstractDomain domain);
 	/**
 	 * Return the status of the upload request entry URL functionality in root domain
 	 * @return the status

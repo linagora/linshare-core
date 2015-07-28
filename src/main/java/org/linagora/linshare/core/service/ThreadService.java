@@ -91,5 +91,4 @@ public interface ThreadService {
 	List<Thread> searchByMembers(User actor, String pattern);
 
 	Thread findByLsUuidUnprotected(String uuid);
-
 }

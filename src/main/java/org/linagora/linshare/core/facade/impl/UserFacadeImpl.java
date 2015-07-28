@@ -268,6 +268,14 @@ public class UserFacadeImpl implements UserFacade {
 				user.getMail(), externalMailLocale);
 	}
 
+	@Override
+	public void updateUserLocale(UserVo user, String locale,
+			Language externalMailLocale, String cmisLocale)
+			throws BusinessException {
+		userService.updateUserLocale(user.getDomainIdentifier(),
+				user.getMail(), SupportedLanguage.fromTapestryLocale(locale), externalMailLocale, cmisLocale);
+	}
+
 	/**
 	 * Load a User. If the user doesn't exist in database, search informations
 	 * in LDAP and create a user entry before returning it.

@@ -39,6 +39,7 @@ import java.util.UUID;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -63,12 +64,6 @@ public class ThreadEntryRepositoryImpl extends
 		return det;
 	}
 
-	/**
-	 * Find a document using its id.
-	 * 
-	 * @param id
-	 * @return found document (null if no document found).
-	 */
 	@Override
 	public ThreadEntry findByUuid(String uuid) {
 		DetachedCriteria det = DetachedCriteria.forClass(ThreadEntry.class);
@@ -126,4 +121,14 @@ public class ThreadEntryRepositoryImpl extends
 		return res;
 	}
 
+	@Override
+	public List<ThreadEntry> findAllDistinctEntries(Thread thread) {
+		List<ThreadEntry> res = null;
+		DetachedCriteria crit = DetachedCriteria.forClass(ThreadEntry.class);
+		crit.add(Restrictions.eq("entryOwner", thread));
+		crit.addOrder(Order.desc("creationDate"));
+		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		res = findByCriteria(crit);
+		return res;
+	}
 }

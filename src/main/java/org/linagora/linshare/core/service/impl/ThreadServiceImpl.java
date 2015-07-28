@@ -41,6 +41,7 @@ import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadLogEntry;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
@@ -68,31 +69,31 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
-	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-
 	private final LogEntryService logEntryService;
 
 	private final ThreadMemberResourceAccessControl threadMemberAC;
 
 	private final UserRepository<User> userRepository;
 
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+
 	public ThreadServiceImpl(
 			ThreadRepository threadRepository,
 			ThreadMemberRepository threadMemberRepository,
 			DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
-			FunctionalityReadOnlyService functionalityService,
 			ThreadResourceAccessControl rac,
 			ThreadMemberResourceAccessControl threadMemberResourceAccessControl,
-			UserRepository<User> userRepository) {
+			UserRepository<User> userRepository,
+			FunctionalityReadOnlyService functionalityReadOnlyService) {
 		super(rac);
 		this.threadRepository = threadRepository;
 		this.threadMemberRepository = threadMemberRepository;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
-		this.functionalityReadOnlyService = functionalityService;
 		this.threadMemberAC = threadMemberResourceAccessControl;
 		this.userRepository = userRepository;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
 	@Override
@@ -134,6 +135,12 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 	@Override
 	public Thread create(Account actor, Account owner, String name) throws BusinessException {
+		Functionality threadFunc = functionalityReadOnlyService.getThreadTabFunctionality(owner.getDomain());
+		Functionality threadCreation = functionalityReadOnlyService.getThreadCreationPermission(owner.getDomain());
+		if (!threadFunc.getActivationPolicy().getStatus()
+				|| !threadCreation.getActivationPolicy().getStatus()) {
+			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbideen.");
+		}
 		checkCreatePermission(actor, owner, Thread.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, null);
 		Thread thread = null;

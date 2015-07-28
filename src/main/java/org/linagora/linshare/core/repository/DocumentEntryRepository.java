@@ -53,6 +53,10 @@ public interface DocumentEntryRepository extends
 
 	List<DocumentEntry> findAllMyDocumentEntries(Account owner);
 
+	DocumentEntry findMoreRecentByName(Account owner, String fileName);
+
+	List<DocumentEntry> findAllMySyncEntries(Account owner);
+
 	long getRelatedEntriesCount(DocumentEntry documentEntry);
 
 	List<DocumentEntry> findAllExpiredEntries();
@@ -61,4 +65,6 @@ public interface DocumentEntryRepository extends
 			final SearchDocumentCriterion searchDocumentCriterion);
 
 	long getUsedSpace(Account owner) throws BusinessException;
+
+	void syncUniqueDocument(Account owner, String fileName) throws BusinessException;
 }

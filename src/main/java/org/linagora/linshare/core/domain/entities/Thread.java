@@ -54,6 +54,7 @@ public class Thread extends Account {
 		this.enable = true;
 		this.destroyed = false;
 		this.locale = owner.locale;
+		this.cmisLocale=owner.cmisLocale;
 		this.externalMailLocale = owner.externalMailLocale;
 	}
 

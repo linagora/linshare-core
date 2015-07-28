@@ -341,4 +341,15 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 		return requestAttributes.getSessionId();
 	}
+
+	@Override
+	public boolean isEnableDocCmisSync(String domainIdentifier) {
+		AbstractDomain domain = abstractDomainService.findById(domainIdentifier);
+		Functionality cmisSync = functionalityReadOnlyService.getCmisFunctionality(domain);
+		if (cmisSync.getActivationPolicy().getStatus()) {
+			Functionality documentSync = functionalityReadOnlyService.getCmisDocumentsFunctionality(domain);
+			return documentSync.getActivationPolicy().getStatus();
+		}
+		return false;
+	}
 }

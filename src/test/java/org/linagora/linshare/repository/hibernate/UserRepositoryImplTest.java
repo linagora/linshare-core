@@ -95,12 +95,14 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 		if (!flag) {
 			User u1=new Guest(FIRST_NAME2, LAST_NAME2, MAIL2,encpassword, true, "comment");
 			u1.setLocale(domain.getDefaultTapestryLocale());
+			u1.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 			u1.setDomain(domain);
 			userRepository.create(u1);
 			
 		
 			User u2=new Guest(FIRST_NAME3, LAST_NAME3, MAIL3,encpassword, true, "comment");
 			u2.setLocale(domain.getDefaultTapestryLocale());
+			u2.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 			u2.setDomain(domain);
 			userRepository.create(u2);
 			flag = true;
@@ -115,6 +117,7 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 		
 		User u = new Guest( FIRST_NAME, LAST_NAME, MAIL, encpassword, true, "comment");
 		u.setLocale(domain.getDefaultTapestryLocale());
+		u.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		u.setDomain(domain);
 	
 		u = userRepository.create(u);
@@ -127,6 +130,7 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 	public void testfindUser() throws BusinessException{
 		User u = new Internal( FIRST_NAME, LAST_NAME, MAIL, null);
 		u.setLocale(domain.getDefaultTapestryLocale());
+		u.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		u.setDomain(domain);
 		
 		userRepository.create(u);

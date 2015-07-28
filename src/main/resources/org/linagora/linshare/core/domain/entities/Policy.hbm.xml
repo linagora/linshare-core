@@ -7,6 +7,7 @@
     <param name="valueOfMethod">fromInt</param>
   </typedef>
   <class name="Policy" table="policy">
+    <!--<cache usage="read-write" />-->
     <id name="persistenceId" type="long">
     	<column name="id" not-null="true" index="index_policy_id"/>
       <generator class="native"/>

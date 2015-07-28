@@ -8,6 +8,7 @@
 		<param name="valueOfMethod">fromTapestryLocale</param>
 	</typedef>
   <class name="Functionality" table="functionality" >
+    <cache usage="read-write" />
     <id name="id" type="long">
       <column name="id" not-null="true" index="index_functionality_id"/>
       <generator class="native"/>

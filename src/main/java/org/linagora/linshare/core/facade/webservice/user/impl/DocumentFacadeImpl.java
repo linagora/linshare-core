@@ -115,7 +115,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		DocumentEntry res = documentEntryService.create(actor, actor, fi,
-				fileName, description, metadata);
+				fileName, description, false, metadata);
 		return new DocumentDto(res);
 	}
 
@@ -130,7 +130,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 			String comment = (doca.getComment() == null) ? "" : doca
 					.getComment();
 			DocumentEntry res = documentEntryService.create(actor, actor, in,
-					fileName, comment, null);
+					fileName, comment, false, null);
 			return new DocumentDto(res);
 		} catch (IOException e) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
@@ -237,7 +237,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		DocumentEntry res = documentEntryService.create(actor, actor, fi,
-				fileName, description, null);
+				fileName, description, false, null);
 		if(signatureFile != null) {
 			X509Certificate x509certificate = null;
 			try {

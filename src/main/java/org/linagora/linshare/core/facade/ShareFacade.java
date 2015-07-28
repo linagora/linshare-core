@@ -127,8 +127,6 @@ public interface ShareFacade {
 
 	public boolean getDefaultAcknowledgementCheckBox(String domainIdentifier) throws BusinessException;
 
-	public void updateShareComment(UserVo actorVo, String uuid, String comment) throws IllegalArgumentException, BusinessException ;
-
 	public InputStream getShareThumbnailStream(UserVo actorVo, String shareEntryUuid) throws BusinessException;
 
 	public InputStream getShareStream(UserVo actorVo, String shareEntryUuid) throws BusinessException;
@@ -149,5 +147,8 @@ public interface ShareFacade {
 	boolean isVisibleShareExpiration(String domainId);
 
 	Date getDefaultShareExpirationValue(String domainId);
+
+	public void updateShareComment(UserVo userLoggedIn,
+			String editShareWithUuid, String shareComment) throws BusinessException;
 }
 

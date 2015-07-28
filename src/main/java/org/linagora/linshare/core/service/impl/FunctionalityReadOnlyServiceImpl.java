@@ -35,11 +35,13 @@ package org.linagora.linshare.core.service.impl;
 
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
+import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
+import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
@@ -407,6 +409,38 @@ public class FunctionalityReadOnlyServiceImpl implements
 		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		Functionality funcUREU = getUploadRequestEntryUrlPasswordFunctionality(domain);
 		return funcUREU.getActivationPolicy().getStatus();
+	}
+
+	@Override
+	public Functionality getCmisFunctionality(AbstractDomain domain) {
+		Functionality functionality = _getFunctionality(domain, FunctionalityNames.CMIS);
+		functionality = getForbiddenFunctionnality(functionality);
+		return functionality;
+	}
+
+	@Override
+	public Functionality getCmisDocumentsFunctionality(AbstractDomain domain) {
+		Functionality functionality = _getFunctionality(domain, FunctionalityNames.CMIS);
+		functionality = getForbiddenFunctionnality(functionality);
+		return functionality;
+	}
+
+	@Override
+	public Functionality getCmisThreadsFunctionality(AbstractDomain domain) {
+		Functionality functionality = _getFunctionality(domain, FunctionalityNames.CMIS);
+		functionality = getForbiddenFunctionnality(functionality);
+		return functionality;
+	}
+
+	private Functionality getForbiddenFunctionnality(Functionality functionality) {
+		if (functionality == null) {
+			Policy activation = new Policy(Policies.FORBIDDEN, false, true);
+			functionality = new Functionality();
+			functionality.setIdentifier(FunctionalityNames.CMIS.toString());
+			functionality.setActivationPolicy(activation);
+			functionality.setConfigurationPolicy(activation);
+		}
+		return functionality;
 	}
 
 	@Override

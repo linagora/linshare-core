@@ -57,6 +57,8 @@ public abstract class Entry {
 
 	protected String metaData;
 
+	protected boolean cmisSync;
+
 	public Entry() {
 	}
 
@@ -79,7 +81,7 @@ public abstract class Entry {
 	public long getId() {
 		return id;
 	}
-	
+
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -138,6 +140,14 @@ public abstract class Entry {
 
 	public void setMetaData(String metaData) {
 		this.metaData = metaData;
+	}
+
+	public boolean isCmisSync() {
+		return cmisSync;
+	}
+
+	public void setCmisSync(boolean cmisSync) {
+		this.cmisSync = cmisSync;
 	}
 
 	@Override

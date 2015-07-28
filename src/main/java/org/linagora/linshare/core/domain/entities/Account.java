@@ -60,6 +60,8 @@ public abstract class Account {
 
 	protected Language externalMailLocale;
 
+	protected String cmisLocale;
+
 	protected boolean enable;
 
 	protected String password;
@@ -299,6 +301,14 @@ public abstract class Account {
 	public void setUploadRequestTemplates(
 			Set<UploadRequestTemplate> uploadRequestTemplates) {
 		this.uploadRequestTemplates = uploadRequestTemplates;
+	}
+
+	public String getCmisLocale() {
+		return cmisLocale;
+	}
+
+	public void setCmisLocale(String cmisLocale) {
+		this.cmisLocale = cmisLocale;
 	}
 
 	/**

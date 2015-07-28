@@ -53,6 +53,7 @@ import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.DocumentFacade;
+import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linshare.view.tapestry.utils.XSSFilter;
@@ -90,8 +91,8 @@ public class FileEditForm {
 
     @Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
-
-
+    @Inject
+    private FunctionalityFacade functionalityFacade;
 	/* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
@@ -133,8 +134,13 @@ public class FileEditForm {
 
     @Property
     private String fileComment;
-
-
+    
+    @Property
+    private boolean cmisSync;
+    
+    @Property
+    private boolean isCmisFunctionalityEnabled;
+    
     private boolean reset = false;
 
 	private XSSFilter filter;
@@ -180,7 +186,7 @@ public class FileEditForm {
 		}
 		if(reset) return;
 
-        documentFacade.updateFileProperties(userLoggedIn, editFileWithUuid, fileName, fileComment);
+        documentFacade.updateFileProperties(userLoggedIn.getLsUuid(), editFileWithUuid, fileName, fileComment,cmisSync);
         shareSessionObjects.addMessage(messages.get("component.fileEditForm.action.update.confirm"));
         componentResources.triggerEvent("resetListFiles", null, null);
 	}
@@ -224,13 +230,14 @@ public class FileEditForm {
 		this.editFileWithUuid = uuid;
 		initFormToEdit();
 	}
-
     private void initFormToEdit() throws BusinessException{
 
 		if(editFileWithUuid != null){
 		    	DocumentVo doc = documentFacade.getDocument(userLoggedIn, editFileWithUuid);
 		    	fileName = doc.getFileName();
 		    	fileComment = doc.getFileComment();
+		    	cmisSync = doc.getCmisSync();
+		    	isCmisFunctionalityEnabled=functionalityFacade.isEnableDocCmisSync(userLoggedIn.getDomainIdentifier());
 		}
     }
 }

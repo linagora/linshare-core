@@ -127,6 +127,10 @@ public class LoadingServiceTestDatas {
 		user1.setLocale(userGuestDomain.getDefaultTapestryLocale());
 		user2.setLocale(userGuestDomain.getDefaultTapestryLocale());
 		user3.setLocale(userGuestDomain.getDefaultTapestryLocale());
+		
+		user1.setCmisLocale(userGuestDomain.getDefaultTapestryLocale().toString());
+		user2.setCmisLocale(userGuestDomain.getDefaultTapestryLocale().toString());
+		user3.setCmisLocale(userGuestDomain.getDefaultTapestryLocale().toString());
 
 		user1.setDomain(abstractDomainRepository.findById(topDomainName));
 		user2.setDomain(abstractDomainRepository.findById(subDomainName1));

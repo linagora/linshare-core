@@ -131,6 +131,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		guest.setOwner(owner);
 		guest.setDomain(domain);
 		guest.setLocale(domain.getDefaultTapestryLocale());
+		guest.setCmisLocale(SupportedLanguage.toLanguage(domain.getDefaultTapestryLocale()).getTapestryLocale());
 		guest.setExternalMailLocale(SupportedLanguage.toLanguage(domain
 				.getDefaultTapestryLocale()));
 		guest.setPassword(hashedPassword);

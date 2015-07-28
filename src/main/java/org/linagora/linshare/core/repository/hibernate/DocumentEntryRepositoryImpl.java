@@ -45,6 +45,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -66,18 +67,15 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 
 	private final static int ANYWHERE = 2;
 
-
 	public DocumentEntryRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
-
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(DocumentEntry entry) {
 		DetachedCriteria det = DetachedCriteria.forClass(DocumentEntry.class).add(Restrictions.eq( "uuid", entry.getUuid()));
 		return det;
 	}
-
 
 	 /** Find a document using its id.
      * @param id
@@ -95,12 +93,18 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
         }
     }
 
-
 	@Override
 	public List<DocumentEntry> findAllMyDocumentEntries(Account owner) {
 		return findByCriteria(Restrictions.eq("entryOwner", owner));
 	}
 
+	@Override
+	public List<DocumentEntry> findAllMySyncEntries(Account owner) {
+		DetachedCriteria crit = DetachedCriteria.forClass(DocumentEntry.class);
+		crit.add(Restrictions.eq("entryOwner", owner));
+		crit.add(Restrictions.eq("cmisSync", true));
+		return findByCriteria(crit);
+	}
 
 	@Override
 	public DocumentEntry create(DocumentEntry entity) throws BusinessException {
@@ -110,13 +114,11 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		return super.create(entity);
 	}
 
-
 	@Override
 	public DocumentEntry update(DocumentEntry entity) throws BusinessException {
 		entity.setModificationDate(new GregorianCalendar());
 		return super.update(entity);
 	}
-
 
 	@Override
 	public long getRelatedEntriesCount(final DocumentEntry documentEntry) {
@@ -146,8 +148,6 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 
 		return result;
 	}
-
-
 
 	@Override
 	public List<DocumentEntry> findAllExpiredEntries() {
@@ -253,7 +253,6 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		return queryParameter;
 	}
 
-
 	private String createMatchingCriteria(int matcher,String value ) {
 		switch (matcher) {
 			case BEGIN: return value+"%";
@@ -263,5 +262,27 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		return value;
 	}
 
+	@Override
+	public DocumentEntry findMoreRecentByName(Account owner, String fileName) {
+		DetachedCriteria det = DetachedCriteria.forClass(DocumentEntry.class);
+		det.add(Restrictions.eq("entryOwner", owner));
+		det.add(Restrictions.eq("name", fileName));
+		det.addOrder(Order.desc("creationDate"));
+		det.add(Restrictions.sqlRestriction("LIMIT 1"));
+		return DataAccessUtils.singleResult(findByCriteria(det));
+	}
 
+	@Override
+	public void syncUniqueDocument(final Account owner, final String fileName)
+			throws BusinessException {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session) throws HibernateException, SQLException {
+				final Query query = session.createQuery("UPDATE Entry SET cmisSync = false WHERE name = :fileName and entryOwner = :owner");
+				query.setParameter("owner", owner);
+				query.setParameter("fileName", fileName);
+				return (long) query.executeUpdate();
+			}
+		};
+		getHibernateTemplate().execute(action);
+	}
 }

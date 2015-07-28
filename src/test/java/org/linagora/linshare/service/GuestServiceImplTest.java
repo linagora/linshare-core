@@ -160,6 +160,7 @@ public class GuestServiceImplTest extends
 	public void testCreateGuest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
 		guest.setRole(Role.SUPERADMIN);
 		guest = guestService.create(owner1, owner1, guest, null);
 		Guest find = guestService.find(owner1, owner1, guest.getLsUuid());
@@ -172,6 +173,7 @@ public class GuestServiceImplTest extends
 	public void testUpdateGuest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
 		guest = guestService.create(owner1, owner1, guest, null);
 
 		guest.setFirstName("First");
@@ -192,6 +194,7 @@ public class GuestServiceImplTest extends
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
 		guest = guestService.create(owner1, owner1, guest, null);
 
 		DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -212,6 +215,7 @@ public class GuestServiceImplTest extends
 		Guest guest = new Guest("Foo", "Bar", "user3@linshare.org");
 		String oldPassword = "password222";
 		guest.setPassword(HashUtils.hashSha1withBase64(oldPassword.getBytes()));
+		guest.setCmisLocale("en");
 		guest = guestService.create(owner1, owner1, guest, null);
 		guestService.resetPassword(guest.getLsUuid());
 		Assert.assertFalse(guest.getPassword().equals(
@@ -226,6 +230,7 @@ public class GuestServiceImplTest extends
 
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 		guest.setRestricted(true);
+		guest.setCmisLocale("en");
 		List<String> restrictedContacts = Lists.newArrayList();
 		restrictedContacts.add("user3@linshare.org");
 		restrictedContacts.add("user2@linshare.org");
@@ -245,6 +250,7 @@ public class GuestServiceImplTest extends
 
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 		guest.setRestricted(true);
+		guest.setCmisLocale("en");
 		List<String> restrictedContacts = Lists.newArrayList();
 		restrictedContacts.add("user3@linshare.org");
 		restrictedContacts.add("user2@linshare.org");
@@ -266,6 +272,7 @@ public class GuestServiceImplTest extends
 
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 		guest.setRestricted(true);
+		guest.setCmisLocale("en");
 		List<String> restrictedContacts = Lists.newArrayList();
 		restrictedContacts.add("user3@linshare.org");
 		restrictedContacts.add("user2@linshare.org");
@@ -288,6 +295,7 @@ public class GuestServiceImplTest extends
 
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 		guest.setRestricted(true);
+		guest.setCmisLocale("en");
 		List<String> restrictedContacts = Lists.newArrayList();
 		restrictedContacts.add("user3@linshare.org");
 		restrictedContacts.add("user2@linshare.org");

@@ -127,8 +127,10 @@ public class ThreadEntryEditForm {
 
     @Property
     private String fileComment;
-    
-    
+
+    @Property
+    private String newName;
+
     private boolean reset = false;
     
 	private XSSFilter filter;
@@ -159,6 +161,7 @@ public class ThreadEntryEditForm {
 		filter = new XSSFilter(shareSessionObjects, editForm, antiSamyPolicy, messages);
 		try {
 			fileComment = filter.clean(fileComment);
+			newName = filter.clean(newName);
 			if (filter.hasError()) {
 				logger.debug("XSSFilter found some tags and striped them.");
 				businessMessagesManagementService.notify(filter.getWarningMessage());
@@ -167,9 +170,8 @@ public class ThreadEntryEditForm {
 			businessMessagesManagementService.notify(e);
 		}
 		if(reset) return;
-
         try {
-			threadEntryFacade.updateFileProperties(userLoggedIn.getLsUuid(), threadEntryUuid, fileComment);
+			threadEntryFacade.updateFileProperties(userLoggedIn.getLsUuid(), threadEntryUuid, fileComment, newName);
 		} catch (BusinessException e) {
 			logger.error("Couldn't update thread entry.", e.getMessage());
 		}
@@ -222,6 +224,7 @@ public class ThreadEntryEditForm {
 			try {
 				doc = threadEntryFacade.getThreadEntry(userLoggedIn, threadEntryUuid);
 				fileComment = doc.getFileComment();
+				newName = doc.getFileName();
 			} catch (BusinessException e) {
 				logger.error("Could not get thread entry.", e.getMessage());
 			}

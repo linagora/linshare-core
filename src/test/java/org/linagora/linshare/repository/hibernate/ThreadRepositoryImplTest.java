@@ -90,6 +90,7 @@ public class ThreadRepositoryImplTest extends AbstractTransactionalJUnit4SpringC
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		internal = new Internal( FIRST_NAME, LAST_NAME, MAIL, UID);
 		internal.setLocale(domain.getDefaultTapestryLocale());
+		internal.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		internal.setDomain(domain);
 		accountRepository.create(internal);
 		
@@ -111,6 +112,7 @@ public class ThreadRepositoryImplTest extends AbstractTransactionalJUnit4SpringC
 		
 		Thread t = new Thread(domain, internal, "myThread");
 		t.setLocale(domain.getDefaultTapestryLocale());
+		t.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		threadRepository.create(t);
 		
 		logger.info(LinShareTestConstants.END_TEST);
@@ -122,6 +124,7 @@ public class ThreadRepositoryImplTest extends AbstractTransactionalJUnit4SpringC
 		
 		Thread t = new Thread(domain, internal, "myThread");
 		t.setLocale(domain.getDefaultTapestryLocale());
+		t.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		threadRepository.create(t);
 		
 		ThreadMember m = new ThreadMember(true,true,internal,t);

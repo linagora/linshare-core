@@ -31,10 +31,10 @@
 		<constructor-arg ref="threadMemberRepository" />
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="logEntryService" />
-		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="threadResourceAccessControl" />
 		<constructor-arg ref="threadMemberResourceAccessControl" />
 		<constructor-arg ref="userRepository" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">

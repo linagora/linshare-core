@@ -130,6 +130,9 @@ public class UserConfig {
 	private Language currentExternalMailLocale;
 
 	@Property
+	private String cmisLocale;
+
+	@Property
 	private String oldUserPassword;
 
 	@Property
@@ -163,6 +166,12 @@ public class UserConfig {
 		if (userVo.getLocale() !=null) {
 			currentLocale = userVo.getLocale().getTapestryLocale();
 		}
+		if (userVo.getExternalMailLocale() !=null) {
+			currentExternalMailLocale = userVo.getExternalMailLocale();
+		}
+		if (userVo.getCmisLocale() !=null) {
+			cmisLocale = userVo.getCmisLocale();
+		}
 
 		if (userVo.getExternalMailLocale() !=null) {
 			currentExternalMailLocale = userVo.getExternalMailLocale();
@@ -183,6 +192,7 @@ public class UserConfig {
 	void onSuccessFromConfigUserform() throws BusinessException {
 		userFacade.updateUserLocale(userVo, SupportedLanguage.fromTapestryLocale(currentLocale));
 		userFacade.updateUserExternalMailLocale(userVo, currentExternalMailLocale);
+		userFacade.updateUserLocale(userVo,currentLocale,currentExternalMailLocale,cmisLocale);
 		userVo = userFacade.findUserByLsUuid(userVo, userVo.getLsUuid());
 		userVo = userFacade.findUserInDb(userVo.getMail(), userVo.getDomainIdentifier());
 		persistentLocale.set(LocaleUtils.toLocale(currentLocale));

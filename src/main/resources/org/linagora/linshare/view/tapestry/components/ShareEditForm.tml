@@ -16,7 +16,7 @@
 								<t:label for="shareComment" class="edit-form-label">${message:component.shareEditForm.shareComment}</t:label> :
 	           					<t:textarea t:id="shareComment" class="edit-form-field"/>
 							</li>
-						
+							<br />
 						</ul>
 
 					<hr />

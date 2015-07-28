@@ -626,8 +626,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUserExternalMailLocale(String domainId, String mail, Language externalMailLocale)
-			throws BusinessException {
+	public void updateUserExternalMailLocale(String domainId, String mail,
+			Language externalMailLocale) throws BusinessException {
 		User user = findOrCreateUser(mail, domainId);
 		if (user == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
@@ -643,7 +643,20 @@ public class UserServiceImpl implements UserService {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
 					"Couldn't save the locale " + externalMailLocale);
 		}
+	}
 
+	@Override
+	public void updateUserLocale(String domainId, String mail, SupportedLanguage locale,
+			Language externalMailLocale, String cmisLocale) throws BusinessException {
+		User user = findOrCreateUser(mail, domainId);
+		if (user == null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
+					"Couldn't find the user " + mail);
+		}
+		user.setLocale(locale);
+		user.setExternalMailLocale(externalMailLocale);
+		user.setCmisLocale(cmisLocale);
+		userRepository.update(user);
 	}
 
 	@Override
@@ -762,6 +775,7 @@ public class UserServiceImpl implements UserService {
 				// TODO : FIXME : Waiting to get default external mail local from domain.
 				Language locale = Language.fromTapestryLocale(user.getLocale().getTapestryLocale());
 				user.setExternalMailLocale(locale);
+				user.setCmisLocale(user.getDomain().getDefaultTapestryLocale().toString());
 				try {
 					return userRepository.create(user);
 				} catch (IllegalArgumentException e) {

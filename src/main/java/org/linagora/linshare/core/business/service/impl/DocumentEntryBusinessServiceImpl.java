@@ -79,9 +79,7 @@ import org.linagora.linshare.core.utils.AESCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessService {
-
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryBusinessServiceImpl.class);
 
@@ -124,7 +122,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public DocumentEntry createDocumentEntry(Account owner, File myFile,
 			Long size, String fileName, String comment,
 			Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType,
-			Calendar expirationDate, String metadata) throws BusinessException {
+			Calendar expirationDate, boolean isFromCmis, String metadata) throws BusinessException {
 		// add an entry for the file in DB
 		DocumentEntry entity = null;
 		try {
@@ -141,6 +139,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			if(checkIfIsCiphered) {
 				docEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
 			}
+			docEntry.setCmisSync(isFromCmis);
 			entity = documentEntryRepository.create(docEntry);
 			owner.getEntries().add(entity);
 		} catch (BusinessException e) {
@@ -187,7 +186,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return timestampToken ;
 	}
 
-
 	@Override
 	public InputStream getDocumentThumbnailStream(DocumentEntry entry) {
 		Document doc = documentRepository.findByUuid(entry.getDocument().getUuid());
@@ -212,7 +210,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return null;
 	}
 
-
 	@Override
 	public InputStream getDocumentStream(DocumentEntry entry) {
 		String UUID = entry.getDocument().getUuid();
@@ -224,18 +221,15 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return null;
 	}
 
-
 	@Override
 	public DocumentEntry find(String uuid) {
 		return documentEntryRepository.findById(uuid);
 	}
 
-
 	@Override
 	public List<DocumentEntry> findAllMyDocumentEntries(Account owner) {
 		return documentEntryRepository.findAllMyDocumentEntries(owner);
 	}
-
 
 	@Override
 	public void renameDocumentEntry(DocumentEntry entry, String newName) throws BusinessException {
@@ -244,7 +238,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		entry.setName(newName);
 		documentEntryRepository.update(entry);
 	}
-
 
 	@Override
 	public DocumentEntry updateFileProperties(DocumentEntry entry, String newName, String fileComment, String meta) throws BusinessException {
@@ -257,9 +250,10 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public ThreadEntry updateFileProperties(ThreadEntry entry, String fileComment, String metaData) throws BusinessException {
+	public ThreadEntry updateFileProperties(ThreadEntry entry, String fileComment, String metaData, String newName) throws BusinessException {
 		entry.setBusinessComment(fileComment);
 		entry.setBusinessMetaData(metaData);
+		entry.setBusinessName(newName);
 		return threadEntryRepository.update(entry);
 	}
 
@@ -290,7 +284,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				logger.error("Can not find document" + e.getMessage());
 			}
 			documentRepository.create(document);
-
 
 			docEntry.setName(fileName);
 			docEntry.setDocument(document);
@@ -361,12 +354,10 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return entity;
 	}
 
-
 	@Override
 	public ThreadEntry findThreadEntryById(String docEntryUuid) {
 		return threadEntryRepository.findByUuid(docEntryUuid);
 	}
-
 
 	@Override
 	public List<ThreadEntry> findAllThreadEntries(Thread owner) {
@@ -393,7 +384,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 		return null;
 	}
-
 
 	private Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType) throws BusinessException {
 		//create and insert the thumbnail into the JCR
@@ -425,9 +415,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			throw e;
 		}
 	}
-
-
-
 
 	private void deleteDocument(Document document) throws BusinessException {
 		// delete old thumbnail in JCR
@@ -463,7 +450,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		// remove old document from database
 		documentRepository.delete(document);
 	}
-
 
 	private String generateThumbnailIntoJCR(String fileName, String path, File tempFile, String mimeType) {
 		if (!thumbEnabled || (!pdfThumbEnabled && mimeType.contains("pdf"))) {
@@ -522,7 +508,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return uuidThmb;
 	}
 
-
 	private String insertIntoJCR(long size, String fileName, String mimeType, String path, File tempFile) {
 		// insert the file into JCR
 		FileInputStream fis = null;
@@ -551,7 +536,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return uuid;
 	}
 
-
 	private boolean checkIfFileIsCiphered(String fileName, File tempFile) throws BusinessException {
 		boolean testheaders = false;
 		if(fileName.endsWith(".aes")){
@@ -569,7 +553,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 		return testheaders;
 	}
-
 
 	@Override
 	public long getRelatedEntriesCount(DocumentEntry documentEntry) {
@@ -595,21 +578,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		for (Object threadEntry : setThreadEntry.toArray()) {
 			this.deleteThreadEntry((ThreadEntry) threadEntry);
 		}
-
-//		owner.getEntries().remove(setThreadEntry);
-//		accountRepository.update(owner);
-//		
-//		for (Object threadEntry : setThreadEntry.toArray()) {
-//			Document doc = ((ThreadEntry)threadEntry).getDocument();
-//			Account owner = ((ThreadEntry)threadEntry).getEntryOwner();
-//			accountRepository.update(owner);
-//			((ThreadEntry)threadEntry).setTagAssociations(null);
-//			threadEntryRepository.update(((ThreadEntry)threadEntry));
-//			threadEntryRepository.delete(((ThreadEntry)threadEntry));
-//			doc.setThreadEntry(null);
-//			documentRepository.update(doc);
-//			deleteDocument(doc);
-//		}
 	}
 
 	@Override
@@ -641,5 +609,34 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			logger.error("can not delete temp file : " + e.getMessage());
 		}
 		return hexString.toString();
+	}
+
+	@Override
+	public void update(DocumentEntry docEntry) throws BusinessException {
+		documentEntryRepository.update(docEntry);
+	}
+
+	@Override
+	public List<ThreadEntry> findMoreRecentByName(Thread thread)
+			throws BusinessException {
+		return threadEntryRepository.findAllDistinctEntries(thread);
+	}
+
+	@Override
+	public DocumentEntry findMoreRecentByName(Account owner, String fileName)
+			throws BusinessException {
+		return documentEntryRepository.findMoreRecentByName(owner, fileName);
+	}
+
+	@Override
+	public void syncUniqueDocument(Account owner, String fileName)
+			throws BusinessException {
+		documentEntryRepository.syncUniqueDocument(owner, fileName);
+	}
+
+	@Override
+	public List<DocumentEntry> findAllMySyncEntries(Account owner)
+			throws BusinessException {
+		return documentEntryRepository.findAllMySyncEntries(owner);
 	}
 }

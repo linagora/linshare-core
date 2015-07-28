@@ -43,9 +43,9 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DocumentEntryService {
 
-	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, String comment, boolean forceAntivirusOff, String metadata) throws BusinessException;
+	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, String comment, boolean forceAntivirusOff, boolean isFromCmis, String metadata) throws BusinessException;
 
-	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, String comment, String metadata) throws BusinessException;
+	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, String comment, boolean isFromCmis, String metadata) throws BusinessException;
 
 	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, InputStream stream, String fileName) throws BusinessException ;
 
@@ -143,9 +143,17 @@ public interface DocumentEntryService {
 
 	public List<DocumentEntry> findAll(Account actor, Account owner) throws BusinessException;
 
+	public List<DocumentEntry> findAllMySyncEntries(Account actor, Account owner) throws BusinessException;
+
+	public DocumentEntry findMoreRecentByName(Account actor, Account owner, String fileName) throws BusinessException;
+
 	public void renameDocumentEntry(Account actor, Account owner, String docEntryUuid, String newName) throws BusinessException ;
 
 	public boolean mimeTypeFilteringStatus(Account actor) throws BusinessException;
 
 	public DocumentEntry updateFileProperties(Account actor, Account owner, String uuid, String newName, String fileComment, String meta) throws BusinessException;
+
+	void updateFileProperties(Account actor, String docEntryUuid,
+			String newName, String fileComment, boolean cmisSync)
+			throws BusinessException;
 }

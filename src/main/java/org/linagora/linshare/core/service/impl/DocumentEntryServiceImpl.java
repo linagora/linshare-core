@@ -170,15 +170,21 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	}
 
 	@Override
-	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, String comment, String metadata) throws BusinessException {
-		return create(actor, owner, stream, fileName, comment, false, metadata);
+	public List<DocumentEntry> findAllMySyncEntries(Account actor, Account owner)
+			throws BusinessException {
+		preChecks(actor, owner);
+		checkListPermission(actor, owner, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
+		return documentEntryBusinessService.findAllMySyncEntries(owner);
 	}
 
 	@Override
-	public DocumentEntry create(Account actor, Account owner,
-			InputStream stream, String fileName, String comment,
-			boolean forceAntivirusOff, String metadata)
-			throws BusinessException {
+	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, String comment, boolean isFromCmis, String metadata) throws BusinessException {
+		return create(actor, owner, stream, fileName, comment, false, isFromCmis, metadata);
+	}
+
+	@Override
+	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, String comment, boolean forceAntivirusOff, boolean isFromCmis, String metadata) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(fileName, "fileName is required.");
 		checkCreatePermission(actor, owner, DocumentEntry.class,
@@ -225,7 +231,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			docEntry = documentEntryBusinessService.createDocumentEntry(owner,
 					tempFile, size, fileName, comment, checkIfIsCiphered,
 					timeStampingUrl, mimeType,
-					getDocumentExpirationDate(domain), metadata);
+					getDocumentExpirationDate(domain), isFromCmis, metadata);
 
 			FileLogEntry logEntry = new FileLogEntry(owner,
 					LogAction.FILE_UPLOAD, "Creation of a file",
@@ -562,6 +568,28 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		return documentEntryBusinessService.updateFileProperties(entry, newName, fileComment, meta);
 	}
 
+	@Override
+	public void updateFileProperties(Account actor, String docEntryUuid,
+			String newName, String fileComment, boolean isFromCmisSync)
+			throws BusinessException {
+		DocumentEntry entry = documentEntryBusinessService
+				.find(docEntryUuid);
+		if (!actor.hasSuperAdminRole() && !actor.hasSystemAccountRole()) {
+			if (!entry.getEntryOwner().equals(actor)) {
+				throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+						"You are not authorized to update this document.");
+			}
+		}
+		if (!isFromCmisSync)
+			entry.setCmisSync(false);
+		else {
+			documentEntryBusinessService.syncUniqueDocument(actor, newName);
+			entry.setCmisSync(true);
+		}
+		documentEntryBusinessService.updateFileProperties(entry, newName,
+				fileComment, null);
+	}
+
 	private void checkSpace(long size, String fileName, Account owner) throws BusinessException {
 		// check the user quota
 		if (size > getUserMaxFileSize(owner)) {
@@ -636,5 +664,13 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			domain.setUsedSpace(newUsedQuota);
 			domainBusinessService.update(domain);
 		}
+	}
+
+	@Override
+	public DocumentEntry findMoreRecentByName(Account actor, Account owner,
+			String fileName) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(fileName, "document entry name is required.");
+		return documentEntryBusinessService.findMoreRecentByName(owner, fileName);
 	}
 }

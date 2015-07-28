@@ -20,6 +20,7 @@
                               or execution(* org.linagora.linshare.core.facade.webservice.uploadproposition.*.*(..))
                               or execution(* org.linagora.linshare.core.facade.webservice.delegation.*.*(..))
                               or execution(* org.linagora.linshare.core.facade.auth.*.*(..))
+                              or execution(* org.linagora.linshare.cmis.facade.*.*(..))
                               or execution(* org.linagora.linshare.core.batches.*.*(..))" />
 
     <!-- added admin and user pkgs to pointcut for webservices facade -->
@@ -39,5 +40,4 @@
       <tx:method name="*" propagation="REQUIRES_NEW"/>
     </tx:attributes>
   </tx:advice>
-
 </beans>

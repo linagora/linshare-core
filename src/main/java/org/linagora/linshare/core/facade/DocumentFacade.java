@@ -232,4 +232,7 @@ public interface DocumentFacade {
 	 * @throws BusinessException
 	 */
 	public boolean isUserQuotaActive(UserVo user) throws BusinessException;
+
+	public void updateFileProperties(String lsUuid, String editFileWithUuid,
+			String fileName, String fileComment, boolean cmisSync);
 }

@@ -39,16 +39,21 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 
 public interface ThreadEntryRepository extends AbstractRepository<ThreadEntry> {
-	
-	 /** Find a ThreadEntry using its uuid.
-     * @param  uuid
-     * @return found ThreadEntry (null if no ThreadEntry found).
-     */
+
+	/**
+	 * Find a ThreadEntry using its uuid.
+	 * 
+	 * @param uuid
+	 * @return found ThreadEntry (null if no ThreadEntry found).
+	 */
 	public ThreadEntry findByUuid(String uuid);
-	
-	public List<ThreadEntry> findAllThreadEntries(Thread owner);
 
-	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names);
+	List<ThreadEntry> findAllThreadEntries(Thread owner);
 
-	public long count(Thread thread);
+	List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner,
+			String[] names);
+
+	long count(Thread thread);
+
+	List<ThreadEntry> findAllDistinctEntries(Thread thread);
 }

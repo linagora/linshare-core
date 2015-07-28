@@ -21,7 +21,13 @@
 								<t:label for="fileComment" class="edit-form-label">${message:component.fileEditForm.fileComment}</t:label> :
 	           					<t:textarea t:id="fileComment" class="edit-form-field"/>
 							</li>
-						
+							<t:If t:test="isCmisFunctionalityEnabled">
+								<li>
+									<t:label for="cmisSync">${message:component.fileEditForm.cmisSync}</t:label>
+									<t:Checkbox t:id="cmisSync" />
+								</li>
+							</t:If>
+							
 						</ul>
 
 					<hr />

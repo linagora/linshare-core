@@ -50,6 +50,7 @@ public interface FunctionalityFacade {
 	boolean isEnableUploadRequest(String domainIdentifier);
 	boolean isEnableUploadProposition(String domainIdentifier);
 
+	boolean isEnableDocCmisSync(String domainIdentifier);
 	/**
 	 * return true if the guests functionality is enabled.
 	 * @param domainIdentifier

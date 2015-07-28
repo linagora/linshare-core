@@ -67,6 +67,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 	private String comment;
 	private SupportedLanguage locale;
 	private Language externalMailLocale;
+	private String cmisLocale;
 	private boolean restricted;
 	private String domainIdentifier;
 
@@ -90,6 +91,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		this.role = account.getRole();
 		this.locale = account.getLocale();
 		this.externalMailLocale = account.getExternalMailLocale();
+		this.cmisLocale = account.getCmisLocale();
 		this.restricted = false;
 
 		if (userType.equals(AccountType.GUEST)
@@ -130,9 +132,9 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		this.upload = user.getCanUpload();
 		this.createGuest = user.getCanCreateGuest();
 		this.restricted = false;
-
 		this.locale = user.getLocale();
 		this.externalMailLocale = user.getExternalMailLocale();
+		this.cmisLocale = user.getCmisLocale();
 		if (user instanceof Guest) {
 			Guest guest = (Guest) user;
 			ownerLogin = ((User) guest.getOwner()).getMail();
@@ -159,6 +161,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		this.comment = user.getComment();
 		this.locale = user.getLocale();
 		this.externalMailLocale = user.getExternalMailLocale();
+		this.cmisLocale = user.getCmisLocale();
 		this.restricted = user.isRestricted();
 		if (user.getDomain() != null) {
 			this.domainIdentifier = user.getDomain().getIdentifier();
@@ -296,6 +299,14 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 
 	public SupportedLanguage getLocale() {
 		return locale;
+	}
+
+	public String getCmisLocale() {
+		return cmisLocale;
+	}
+
+	public void setCmisLocale(String cmisLocale) {
+		this.cmisLocale = cmisLocale;
 	}
 
 	public void setLocale(SupportedLanguage locale) {

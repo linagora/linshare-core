@@ -48,7 +48,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DocumentEntryBusinessService {
 
-	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, String comment, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate, String metadata) throws BusinessException;
+	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, String comment, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate, boolean isFromCmis, String metadata) throws BusinessException;
 
 	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException ;
 
@@ -88,7 +88,17 @@ public interface DocumentEntryBusinessService {
 
 	public void deleteSetThreadEntry(Set<Entry> setThreadEntry) throws BusinessException;
 
-	public ThreadEntry updateFileProperties(ThreadEntry entry, String fileComment, String metaData) throws BusinessException;
+	public ThreadEntry updateFileProperties(ThreadEntry entry, String fileComment, String metaData, String newName) throws BusinessException;
 
 	long getUsedSpace(Account owner) throws BusinessException;
+
+	public void update(DocumentEntry docEntry) throws BusinessException;
+
+	List<ThreadEntry> findMoreRecentByName(Thread thread) throws BusinessException;
+
+	DocumentEntry findMoreRecentByName(Account owner, String fileName) throws BusinessException;
+
+	public void syncUniqueDocument(Account owner, String fileName) throws BusinessException;
+
+	List<DocumentEntry> findAllMySyncEntries(Account owner) throws BusinessException;
 }

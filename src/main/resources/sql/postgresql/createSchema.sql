@@ -5,16 +5,17 @@ SET default_with_oids = false;
 
 CREATE SEQUENCE hibernate_sequence INCREMENT BY 1 NO MINVALUE NO MAXVALUE START WITH 1 CACHE 1;
 CREATE TABLE account (
-  id                               int8 NOT NULL,
-  domain_id                       int8 NOT NULL,
-  technical_account_permission_id int8,
-  owner_id                        int8,
-  ls_uuid                         varchar(255) NOT NULL,
-  creation_date                   timestamp NOT NULL,
-  modification_date               timestamp NOT NULL,
-  role_id                         int4 NOT NULL,
-  locale                          varchar(255) NOT NULL,
+  id                              int8 NOT NULL, 
+  domain_id                       int8 NOT NULL, 
+  technical_account_permission_id int8, 
+  owner_id                        int8, 
+  ls_uuid                         varchar(255) NOT NULL, 
+  creation_date                   timestamp(6) NOT NULL, 
+  modification_date               timestamp(6) NOT NULL, 
+  role_id                         int4 NOT NULL, 
+  locale                          varchar(255) NOT NULL, 
   external_mail_locale            varchar(255) NOT NULL,
+  cmis_locale                     varchar(255) NOT NULL,
   enable                          bool NOT NULL,
   account_type                    int4 NOT NULL,
   password                        varchar(255),
@@ -113,6 +114,7 @@ CREATE TABLE entry (
   expiration_date   timestamp,
   uuid              varchar(255) NOT NULL UNIQUE,
   meta_data         text,
+  cmis_sync         boolean not null default false,
   PRIMARY KEY (id));
 CREATE TABLE functionality (
   id                       int8 NOT NULL,

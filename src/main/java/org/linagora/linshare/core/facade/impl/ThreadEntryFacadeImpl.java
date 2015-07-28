@@ -291,11 +291,11 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 
 	@Override
 	public void updateFileProperties(String lsUid, String threadEntryUuid,
-			String fileComment) throws BusinessException {
+			String fileComment, String newName) throws BusinessException {
 		Account actor = accountService.findByLsUuid(lsUid);
 		//TODO: Add metadata field on tapestry interface, then get the value in the field.
 		threadEntryService.updateFileProperties(actor, threadEntryUuid,
-				fileComment, null);
+				fileComment, null,  newName);
 	}
 
 	@Override

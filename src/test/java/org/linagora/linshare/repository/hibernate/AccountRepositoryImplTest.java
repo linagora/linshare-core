@@ -75,6 +75,7 @@ public class AccountRepositoryImplTest extends AbstractTransactionalJUnit4Spring
 		
 		User u = new Internal(FIRST_NAME, LAST_NAME, MAIL, UID);
 		u.setLocale(domain.getDefaultTapestryLocale());
+		u.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		u.setDomain(domain);
 		accountRepository.create(u);
 	}

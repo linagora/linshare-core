@@ -90,7 +90,8 @@ public class DocumentVo implements Serializable, Comparable {
 	 * the mime type of document
 	 */
 	private final String type;
-
+	
+	private Boolean cmisSync;
 
 	private final String fileComment;
 
@@ -114,6 +115,7 @@ public class DocumentVo implements Serializable, Comparable {
 		this.size = documentEntry.getSize();
 		this.fileComment = documentEntry.getComment();
 		this.hasThumbnail = documentEntry.isHasThumbnail();
+		this.cmisSync=documentEntry.isCmisSync();
 	}
 
 	public DocumentVo(String identifier,String name, String fileComment, Calendar creationDate,
@@ -221,6 +223,14 @@ public class DocumentVo implements Serializable, Comparable {
 		return hasThumbnail;
 	}
 
+	public Boolean getCmisSync() {
+		return cmisSync;
+	}
+
+	public void setCmisSync(Boolean cmisSync) {
+		this.cmisSync = cmisSync;
+	}
+
 	@Override
 	public boolean equals(Object o){
 		if(null==o || !(o instanceof DocumentVo)){
@@ -239,5 +249,4 @@ public class DocumentVo implements Serializable, Comparable {
 	public int compareTo(Object arg0) { //DESC order
 		return -this.creationDate.compareTo(((DocumentVo)arg0).creationDate);
 	}
-
 }

@@ -76,7 +76,8 @@ public class ShareEntryTransformer implements Transformer<ShareEntry, ShareDocum
 				share.getExpirationDate(),
 				share.getCreationDate(),
 				downloaded,
-				share.hasThumbnail());
+				share.hasThumbnail(),
+				share.isCmisSync());
 	}
 
 

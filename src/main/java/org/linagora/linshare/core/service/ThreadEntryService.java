@@ -44,16 +44,17 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ThreadEntryService {
 
-	
 	ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, InputStream stream, String filename) throws BusinessException;
-	
+
 	ThreadEntry findById(Account actor, Account owner, String threadEntryUuid) throws BusinessException;
-	
+
 	void deleteThreadEntry(Account actor, Account owner, ThreadEntry threadEntry) throws BusinessException;
-	
+
 	void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException;
-	
+
 	List<ThreadEntry> findAllThreadEntries(Account actor, Account owner, Thread thread) throws BusinessException;
+
+	List<ThreadEntry> findMoreRecentByName(Account actor, Thread thread) throws BusinessException;
 
 	InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException;
 
@@ -63,5 +64,5 @@ public interface ThreadEntryService {
 
 	List<ThreadEntry> findAllThreadEntriesTaggedWith(Account actor, Thread thread, String[] names);
 
-	ThreadEntry updateFileProperties(Account actor, String threadEntryUuid, String fileComment, String metaData) throws BusinessException;
+	ThreadEntry updateFileProperties(Account actor, String threadEntryUuid, String fileComment, String metaData, String newName) throws BusinessException;
 }
