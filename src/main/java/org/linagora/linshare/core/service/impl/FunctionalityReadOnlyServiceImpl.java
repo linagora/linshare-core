@@ -194,6 +194,12 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public BooleanValueFunctionality getUndownloadedSharedDocumentsAlert(
+			AbstractDomain domain) {
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.UNDOWNLOADED_SHARED_DOCUMENTS_ALERT);
+	}
+
+	@Override
 	public BooleanValueFunctionality getAnonymousUrl(String domainIdentifier) {
 		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		return getAnonymousUrl(domain);

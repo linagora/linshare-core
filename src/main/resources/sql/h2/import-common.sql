@@ -422,6 +422,13 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (128, true
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id) VALUES(52, false, 'SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER', 126, 127, 128, 1);
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (52, true);
 
+-- Functionality : UNDOWNLOADED_SHARED_DOCUMENTS_ALERT
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (131, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (132, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (133, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id) VALUES(54, false, 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT', 131, 132, 133, 1);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (54, true);
+
 -- Functionality : END
 
 
