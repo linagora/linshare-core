@@ -33,14 +33,10 @@
  */
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
@@ -53,32 +49,17 @@ public class FunctionalityFacadeImpl extends UserGenericFacadeImp implements
 		FunctionalityFacade {
 
 	private FunctionalityService functionalityService;
-	
-	private List<String> excludes = new ArrayList<String>();
 
 	public FunctionalityFacadeImpl(AccountService accountService,
 			FunctionalityService functionalityService) {
 		super(accountService);
 		this.functionalityService = functionalityService;
-		excludes.add(FunctionalityNames.SHARE_NOTIFICATION_BEFORE_EXPIRATION.toString());
-		excludes.add(FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION.toString());
-		excludes.add(FunctionalityNames.DOMAIN__MAIL.toString());
-		excludes.add(FunctionalityNames.ANONYMOUS_URL.toString());
-		excludes.add(FunctionalityNames.ANTIVIRUS.toString());
-		excludes.add(FunctionalityNames.QUOTA_GLOBAL.toString());
-		excludes.add(FunctionalityNames.QUOTA_USER.toString());
-		excludes.add(FunctionalityNames.TIME_STAMPING.toString());
-		excludes.add(FunctionalityNames.UPDATE_FILE.toString());
 	}
 
 	@Override
 	public FunctionalityDto find(String identifier) throws BusinessException {
 		User actor = checkAuthentication();
-		Functionality functionality = functionalityService.find(
-				actor, actor.getDomainId(), identifier);
-		if (excludes.contains(functionality.getIdentifier())) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Functionality not found");
-		}
+		Functionality functionality = functionalityService.find(actor, identifier);
 		return functionality.toUserDto();
 	}
 
@@ -86,12 +67,8 @@ public class FunctionalityFacadeImpl extends UserGenericFacadeImp implements
 	public List<FunctionalityDto> findAll() throws BusinessException {
 		User actor = checkAuthentication();
 		List<FunctionalityDto> res = Lists.newArrayList();
-		Set<Functionality> functionalities = functionalityService
-				.findAll(actor, actor.getDomain());
-		for (Functionality functionality : functionalities) {
-			if (!excludes.contains(functionality.getIdentifier())) {
-				res.add(functionality.toUserDto());
-			}
+		for (Functionality functionality : functionalityService.findAll(actor)) {
+			res.add(functionality.toUserDto());
 		}
 		return res;
 	}

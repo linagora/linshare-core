@@ -75,7 +75,7 @@ public class PolicyDto {
 		this.policy = policy.getPolicy().toString();
 		this.status = policy.getStatus();
 		this.defaultStatus = policy.getDefaultStatus();
-		this.parentAllowUpdate = false;
+		this.parentAllowUpdate = policy.getParentAllowUpdate();
 		system = policy.isSystem();
 	}
 

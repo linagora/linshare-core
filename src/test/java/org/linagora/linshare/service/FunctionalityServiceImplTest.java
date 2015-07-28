@@ -63,6 +63,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
+import com.google.common.collect.ImmutableList;
+
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -74,7 +76,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 	private static Logger logger = LoggerFactory.getLogger(FunctionalityServiceImplTest.class);
 
-	private int TOTAL_COUNT_FUNC=LoadingServiceTestDatas.TOTAL_COUNT_FUNC;
+	private int TOTAL_COUNT_FUNC = LoadingServiceTestDatas.TOTAL_COUNT_FUNC;
 
 	@Autowired
 	private FunctionalityService functionalityService;
@@ -115,10 +117,10 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Assert.assertNotNull(domain);
 
 		Assert.assertEquals(TOTAL_COUNT_FUNC,domain.getFunctionalities().size());
-		Set<Functionality> list = functionalityService.findAll(actor, domain);
+		Iterable<Functionality> list = functionalityService.findAll(actor, domain.getIdentifier());
 
 		Assert.assertNotNull(list);
-		Assert.assertEquals(TOTAL_COUNT_FUNC, list.size());
+		Assert.assertEquals(TOTAL_COUNT_FUNC, ImmutableList.copyOf(list).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 
 	}
@@ -130,11 +132,11 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.topDomainName);
 		Assert.assertNotNull(domain);
 
-		Assert.assertEquals(2,domain.getFunctionalities().size());
-		Set<Functionality> list = functionalityService.findAll(actor, domain);
+		Assert.assertEquals(2, domain.getFunctionalities().size());
+		Iterable<Functionality> list = functionalityService.findAll(actor, domain.getIdentifier());
 
 		Assert.assertNotNull(list);
-		Assert.assertEquals(TOTAL_COUNT_FUNC, list.size());
+		Assert.assertEquals(TOTAL_COUNT_FUNC - 2, ImmutableList.copyOf(list).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 
 	}
@@ -146,9 +148,10 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(domain);
 		Assert.assertEquals(1,domain.getFunctionalities().size());
-		Set<Functionality> list = functionalityService.findAll(actor, domain);
+		Iterable<Functionality> list = functionalityService.findAll(actor, domain.getIdentifier());
 		Assert.assertNotNull(list);
-		Assert.assertEquals(TOTAL_COUNT_FUNC, list.size());
+		// There is two functionalities that can not be display
+		Assert.assertEquals(TOTAL_COUNT_FUNC -2, ImmutableList.copyOf(list).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 
 	}
@@ -251,7 +254,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 	@Test
 	@DirtiesContext
-	public void testUpdateActivationPolicyFunctionality1() throws BusinessException {
+	public void testUpdateActivationPolicyFunctionality1() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
 		String subDomain = LoadingServiceTestDatas.subDomainName2;
@@ -267,12 +270,16 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		// sub functionality will be reset.
 		func_parent.getActivationPolicy().setPolicy(Policies.FORBIDDEN);
 		functionalityService.update(actor, topDomain, func_parent);
-		func_child = (StringValueFunctionality)functionalityService.find(actor, subDomain, LoadingServiceTestDatas.TEST_TIME_STAMPING);
-		Assert.assertEquals(LoadingServiceTestDatas.timeStampingUrl, func_child.getValue());
-		Assert.assertNotEquals("plop", func_child.getValue());
+
+		try {
+			func_child = (StringValueFunctionality)functionalityService.find(actor, subDomain, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+			Assert.fail("should not be display");
+		} catch (BusinessException e) {
+			Assert.assertTrue("should be display", true);
+		}
 
 		// we should not be able to update a functionality in subdomain where parent do not allowed it.
-		func_child = (StringValueFunctionality)functionalityService.find(actor, subDomain, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		func_child = (StringValueFunctionality) func_parent.clone();
 		func_child.setValue("plop2");
 		try {
 			functionalityService.update(actor, subDomain, func_child);

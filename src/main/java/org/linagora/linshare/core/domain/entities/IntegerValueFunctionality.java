@@ -101,9 +101,11 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	protected FunctionalityDto getUserDto() {
+	protected FunctionalityDto getUserDto(boolean enable) {
 		FunctionalityIntegerDto f = new FunctionalityIntegerDto();
-		f.setValue(value);
+		if (enable) {
+			f.setValue(value);
+		}
 		return f;
 	}
 }

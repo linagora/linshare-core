@@ -1,0 +1,123 @@
+package org.linagora.linshare.core.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.linagora.linshare.core.business.service.DomainBusinessService;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.AbstractFunctionality;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.AbstractFunctionalityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public abstract class AbstractFunctionalityServiceImpl<T extends AbstractFunctionality> implements
+		AbstractFunctionalityService<T> {
+
+	private final Logger logger = LoggerFactory.getLogger(AbstractFunctionalityServiceImpl.class);
+
+	final protected DomainBusinessService domainBusinessService;
+
+	final protected DomainPermissionBusinessService domainPermissionBusinessService;
+
+	// Exclude some types : they won't appear outside the service.
+	protected List<String> excludes = new ArrayList<String>();
+
+	public AbstractFunctionalityServiceImpl(
+			DomainBusinessService domainBusinessService,
+			DomainPermissionBusinessService domainPermissionBusinessService) {
+		super();
+		this.domainBusinessService = domainBusinessService;
+		this.domainPermissionBusinessService = domainPermissionBusinessService;
+	}
+
+	protected boolean checkUpdateRights(Account actor, AbstractDomain domain, T functionality)
+			throws BusinessException {
+		T entity = this.find(actor, domain.getIdentifier(), functionality.getIdentifier());
+
+		// consistency checks
+		if (entity.getClass() != functionality.getClass()) {
+			String message = entity.getClass().toString() + " != " + functionality.getClass().toString();
+			throw new BusinessException(BusinessErrorCode.UPDATE_FORBIDDEN, "Same identifier, different entity types : " + message);
+		}
+		functionality.getActivationPolicy().applyConsistency();
+		functionality.getConfigurationPolicy().applyConsistency();
+		if (functionality.getDelegationPolicy() != null) {
+			functionality.getDelegationPolicy().applyConsistency();
+		}
+
+		// we check if the parent functionality allow modifications of the activation policy (AP).
+		boolean parentAllowAPUpdate = entity.getActivationPolicy().getParentAllowUpdate();
+		if(!parentAllowAPUpdate) {
+			// Modifications are not allowed.
+			if (!entity.getActivationPolicy().businessEquals(functionality.getActivationPolicy())) {
+				// AP entity is different of the input AP functionality  => FORBIDDEN
+				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the entity (AP) '" + functionality +"' in domain '" + domain +"'");
+				throw new BusinessException(BusinessErrorCode.UPDATE_FORBIDDEN, "You does not have the right to update this entity");
+			}
+			if(entity.getActivationPolicy().isForbidden()) {
+				if (!functionality.businessEquals(entity, true)) {
+					logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the entity (All) '" + functionality +"' in domain '" + domain +"'");
+					throw new BusinessException(BusinessErrorCode.UPDATE_FORBIDDEN, "You does not have the right to update this entity");
+				}
+			}
+		}
+
+		// we check if the parent functionality allow modifications of the configuration policy (CP).
+		boolean parentAllowCPUpdate = entity.getConfigurationPolicy().getParentAllowUpdate();
+		if(!parentAllowCPUpdate) {
+			// Modifications are not allowed.
+			if (!entity.getConfigurationPolicy().businessEquals(functionality.getConfigurationPolicy())) {
+				// CP entity is different of the input CP functionality  => FORBIDDEN
+				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the entity (CP) '" + functionality +"' in domain '" + domain +"'");
+				throw new BusinessException(BusinessErrorCode.UPDATE_FORBIDDEN, "You does not have the right to update this entity");
+			}
+		}
+
+		// we check if the parent functionality allow modifications of the delegation policy (DP).
+		if (entity.getDelegationPolicy() != null) {
+			boolean parentAllowDPUpdate = entity.getDelegationPolicy().getParentAllowUpdate();
+			if(!parentAllowDPUpdate) {
+				// Modifications are not allowed.
+				if (!entity.getDelegationPolicy().businessEquals(functionality.getDelegationPolicy())) {
+					// DP entity is different of the input DP functionality  => FORBIDDEN
+					logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the entity (DP) '" + functionality +"' in domain '" + domain +"'");
+					throw new BusinessException(BusinessErrorCode.UPDATE_FORBIDDEN, "You does not have the right to update this entity");
+				}
+			}
+		}
+
+		boolean parentAllowParamUpdate = entity.getParentAllowParametersUpdate();
+		if(!parentAllowParamUpdate) {
+			if (!functionality.businessEquals(entity, false)) {
+				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the entity (PARAM) '" + functionality +"' in domain '" + domain +"'");
+				throw new BusinessException(BusinessErrorCode.UPDATE_FORBIDDEN, "You does not have the right to update this entity");
+			}
+		}
+
+		// we check if there is any modifications
+		if (functionality.businessEquals(entity, true)) {
+			logger.debug("functionality " + functionality.toString() + " was not modified.");
+			return false;
+		}
+		return true;
+	}
+
+	protected AbstractDomain getDomain(Account actor, String domainId)
+			throws BusinessException {
+		AbstractDomain domain = domainBusinessService.findById(domainId);
+		if (domain == null) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST, "The input domain does not exist.");
+		}
+		if (!domainPermissionBusinessService
+				.isAdminforThisDomain(actor, domain)) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
+					"The current domain does not exist : " + domainId);
+		}
+		return domain;
+	}
+
+}

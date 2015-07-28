@@ -34,22 +34,13 @@
 
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.FunctionalityNames;
-import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.FunctionalityPermissions;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
@@ -58,35 +49,21 @@ import org.linagora.linshare.core.service.FunctionalityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
 public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		FunctionalityFacade {
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(FunctionalityFacadeImpl.class);
 
 	private FunctionalityService service;
 
-	private boolean overrideGlobalQuota;
-
-	// FIXME : HACK : Very dirty.
-	private List<String> excludes = new ArrayList<String>();
-
 	public FunctionalityFacadeImpl(final AccountService accountService,
-			final FunctionalityService functionalityService,
-			boolean overrideGlobalQuota) {
+			final FunctionalityService functionalityService) {
 		super(accountService);
 		this.service = functionalityService;
-		this.overrideGlobalQuota = overrideGlobalQuota;
-		excludes.add(FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL.toString());
-		excludes.add(FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL__EXPIRATION.toString());
-		excludes.add(FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL__PASSWORD.toString());
-		if (overrideGlobalQuota) {
-			excludes.add(FunctionalityNames.QUOTA_GLOBAL.toString());
-		}
 	}
 
 	@Override
@@ -95,29 +72,8 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
 		Validate.notEmpty(funcId, "functionality identifier must be set.");
-		Functionality func = service.find(actor,
-				domainId, funcId);
-		FunctionalityAdminDto res = transform(actor, func);
-		List<FunctionalityAdminDto> all = findAll(domainId, funcId, false, false);
-		for (FunctionalityAdminDto f: all) {
-			if (f.isDisplayable()) {
-				res.setDisplayable(true);
-				if (tree) {
-					res.addFunctionalities(f);
-				}
-			}
-		}
-		if (!res.isDisplayable()) {
-			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_ENTITY_OUT_OF_DATE, "Functionality not found : " + funcId);
-		}
-		if (overrideGlobalQuota) {
-			if (res.getIdentifier().equals(FunctionalityNames.QUOTA_GLOBAL.toString())) {
-				if (!domainId.equals(LinShareConstants.rootDomainIdentifier)) {
-					throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_NOT_FOUND, "Functionality not found : " + funcId);
-				}
-			}
-		}
-		return res;
+		Functionality func = service.find(actor, domainId, funcId, tree);
+		return FunctionalityAdminDto.toDto().apply(func);
 	}
 
 	@Override
@@ -125,77 +81,10 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
-		Set<Functionality> entities = service.findAll(actor, domainId);
-		Map<String, FunctionalityAdminDto> parents = new HashMap<String, FunctionalityAdminDto>();
-		List<FunctionalityAdminDto> subs = new ArrayList<FunctionalityAdminDto>();
-		for (Functionality f : entities) {
-			// FIXME : HACK : Very dirty.
-			if (excludes.contains(f.getIdentifier())) {
-				if (overrideGlobalQuota) {
-					if (f.equalsIdentifier(FunctionalityNames.QUOTA_GLOBAL)) {
-						if (!f.getDomain().isRootDomain()) {
-							continue;
-						}
-					} else {
-						continue;
-					}
-				} else {
-					continue;
-				}
-			}
-			FunctionalityAdminDto func = transform(actor, f);
-			// We check if this a sub functionality (a parameter)
-			if (f.isParam()) {
-				subs.add(func);
-			} else {
-				parents.put(f.getIdentifier(), func);
-			}
-		}
-
-		Map<String, List<FunctionalityAdminDto>> children = new HashMap<String, List<FunctionalityAdminDto>>();
-		for (FunctionalityAdminDto func : subs) {
-			if (parents.containsKey(func.getParentIdentifier())) {
-				// if parent contains at least one sub functionality to display, the parent must be display.
-				if (func.isDisplayable()) {
-					FunctionalityAdminDto parent = parents.get(func.getParentIdentifier());
-					// We need to display the parent functionality to display children
-					// only if the parent is not forbidden.
-					if (!parent.getActivationPolicy().getPolicy().equals(Policies.FORBIDDEN.toString())) {
-						parent.setDisplayable(true);
-					}
-				}
-				if (tree) {
-					FunctionalityAdminDto parent = parents.get(func.getParentIdentifier());
-					parent.addFunctionalities(func);
-				}
-				// storing children in maps
-				List<FunctionalityAdminDto> list = children.get(func.getParentIdentifier());
-				if (list == null) {
-					list = Lists.newArrayList();
-					children.put(func.getParentIdentifier(), list);
-				}
-				list.add(func);
-			} else {
-				logger.error("Sub functionality {} without a parent : {}", func.getIdentifier(), func.getParentIdentifier());
-			}
-		}
-		List<FunctionalityAdminDto> result = Lists.newArrayList();
-		if (parentId == null) {
-			result.addAll(parents.values());
-		} else {
-			FunctionalityNames parentIdentifier = FunctionalityNames.valueOf(parentId);
-			List<FunctionalityAdminDto> list = children.get(parentIdentifier.name());
-			if (list == null) {
-				logger.debug("Functionality {} has no children.", parentIdentifier.name());
-				return Lists.newArrayList();
-			}
-			result.addAll(list);
-		}
-		if (withSubFunctionalities) {
-			result.addAll(subs);
-		}
-		return Ordering.natural().immutableSortedCopy(
-				Iterables.filter(result, isDisplayable()));
+		Iterable<Functionality> entities = service.findAll(actor, domainId, parentId, tree, withSubFunctionalities);
+		Iterable<FunctionalityAdminDto> transform = Iterables.transform(entities, FunctionalityAdminDto.toDto());
+		// Copy is made because the transaction is closed at the end of every method in facade classes.
+		return Ordering.natural().immutableSortedCopy(transform);
 	}
 
 	@Override
@@ -206,8 +95,8 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(func.getDomain(), "domain identifier must be set.");
 		Validate.notEmpty(func.getIdentifier(),
 				"functionality identifier must be set.");
-		Functionality entity = service.find(actor,
-				func.getDomain(), func.getIdentifier());
+		Functionality entity = service.find(actor, func.getDomain(),
+				func.getIdentifier());
 
 		// copy of activation policy.
 		String ap = func.getActivationPolicy().getPolicy().trim().toUpperCase();
@@ -235,19 +124,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		entity.updateFunctionalityValuesOnlyFromDto(func);
 		Functionality update = service.update(actor,
 				func.getDomain(), entity);
-		return transform(actor, update);
-	}
-
-	private FunctionalityAdminDto transform(Account actor, Functionality update)
-			throws BusinessException {
-		FunctionalityPermissions mutable = service.isMutable(
-				actor, update, update.getDomain());
-		FunctionalityAdminDto dto = new FunctionalityAdminDto(update,
-				mutable.isParentAllowAPUpdate(),
-				mutable.isParentAllowCPUpdate(),
-				mutable.isParentAllowDPUpdate(),
-				mutable.isParentAllowParametersUpdate());
-		return dto;
+		return new FunctionalityAdminDto(update);
 	}
 
 	@Override
@@ -258,14 +135,5 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 				"functionality identifier must be set.");
 		service.delete(actor, func.getDomain(),
 				func.getIdentifier());
-	}
-
-	private Predicate<FunctionalityAdminDto> isDisplayable() {
-		return new Predicate<FunctionalityAdminDto>() {
-			@Override
-			public boolean apply(FunctionalityAdminDto input) {
-				return input.isDisplayable();
-			}
-		};
 	}
 }

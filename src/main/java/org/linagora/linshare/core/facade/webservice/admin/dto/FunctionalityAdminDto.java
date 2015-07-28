@@ -40,10 +40,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.linagora.linshare.core.domain.entities.AbstractFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.PolicyDto;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.wordnik.swagger.annotations.ApiModel;
@@ -99,11 +101,7 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 		super();
 	}
 
-	public FunctionalityAdminDto(Functionality f,
-			boolean parentAllowAPUpdate,
-			boolean parentAllowCPUpdate,
-			boolean parentAllowDPUpdate,
-			boolean parentAllowParametersUpdate) {
+	public FunctionalityAdminDto(Functionality f) {
 		super();
 		// System returned only for development purpose.
 		this.system = f.isSystem();
@@ -111,30 +109,22 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 		this.identifier = f.getIdentifier();
 		// Activation policy
 		this.activationPolicy = new PolicyDto(f.getActivationPolicy());
-		this.activationPolicy.setParentAllowUpdate(parentAllowAPUpdate);
 		// Configuration policy
 		this.configurationPolicy = new PolicyDto(f.getConfigurationPolicy());
-		this.configurationPolicy.setParentAllowUpdate(parentAllowCPUpdate);
 		// Delegation policy
 		if (f.getDelegationPolicy() != null) {
 			this.delegationPolicy = new PolicyDto(f.getDelegationPolicy());
-			this.delegationPolicy.setParentAllowUpdate(parentAllowDPUpdate);
 		}
 		// Parameters
-		this.parentAllowParametersUpdate = parentAllowParametersUpdate;
+		this.parentAllowParametersUpdate = f.getParentAllowParametersUpdate();
 		this.parameters = f.getParameters();
 		this.type = f.getType().toString();
 		this.parentIdentifier = f.getParentIdentifier();
+		this.displayable = true;
+		this.displayable = f.getDisplayable();
 		functionalities = new ArrayList<FunctionalityAdminDto>();
-		this.displayable = false;
-		if (parentAllowAPUpdate) {
-			this.displayable = true;
-		}
-		if(parentAllowCPUpdate) {
-			this.displayable = true;
-		}
-		if(parentAllowDPUpdate) {
-			this.displayable = true;
+		for (AbstractFunctionality child : f.getChildren()) {
+			functionalities.add(new FunctionalityAdminDto((Functionality)child));
 		}
 	}
 
@@ -258,5 +248,17 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 	public String toString() {
 		return "FunctionalityDto [identifier=" + identifier + ", domain="
 				+ domain + "]";
+	}
+
+	/**
+	 * Transformers
+	 */
+	public static Function<Functionality, FunctionalityAdminDto> toDto() {
+		return new Function<Functionality, FunctionalityAdminDto>() {
+			@Override
+			public FunctionalityAdminDto apply(Functionality arg0) {
+				return new FunctionalityAdminDto(arg0);
+			}
+		};
 	}
 }

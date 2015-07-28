@@ -34,17 +34,48 @@
 
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 
 public class FunctionalityBusinessServiceImpl extends
-		AbstractFunctionalityBusinessServiceImpl<Functionality> implements FunctionalityBusinessService{
+		AbstractFunctionalityBusinessServiceImpl<Functionality> implements
+		FunctionalityBusinessService {
+
+	protected List<String> exclude = new ArrayList<String>();
 
 	public FunctionalityBusinessServiceImpl(
 			FunctionalityRepository functionalityRepository,
 			AbstractDomainRepository abstractDomainRepository) {
 		super(functionalityRepository, abstractDomainRepository);
+		// A guest user can not create a guest, so guest functionalities are
+		// useless.
+		exclude.add(FunctionalityNames.GUESTS.toString());
+		exclude.add(FunctionalityNames.GUESTS__EXPIRATION.toString());
+		exclude.add(FunctionalityNames.GUESTS__EXPIRATION.toString());
+		exclude.add(FunctionalityNames.GUESTS__RESTRICTED.toString());
+		exclude.add(FunctionalityNames.GUESTS__CAN_UPLOAD.toString());
+		exclude.add(FunctionalityNames.GUESTS__EXPIRATION_ALLOW_PROLONGATION
+				.toString());
+	}
+
+	@Override
+	public Set<Functionality> getAllFunctionalities(AbstractDomain domain,
+			List<String> excludesIn) {
+		List<String> excludesTemp = new ArrayList<String>();
+		if (excludesIn != null) {
+			excludesTemp.addAll(excludesIn);
+		}
+		if (domain.isGuestDomain()) {
+			excludesTemp.addAll(exclude);
+		}
+		return super.getAllFunctionalities(domain, excludesTemp);
 	}
 }

@@ -102,9 +102,11 @@ public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 	}
 
 	@Override
-	protected FunctionalityDto getUserDto() {
+	protected FunctionalityDto getUserDto(boolean enable) {
 		FunctionalityBooleanDto f = new FunctionalityBooleanDto();
-		f.setValue(value);
+		if (enable) {
+			f.setValue(value);
+		}
 		return f;
 	}
 }

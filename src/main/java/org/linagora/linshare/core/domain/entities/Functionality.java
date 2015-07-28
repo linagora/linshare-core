@@ -113,9 +113,10 @@ public class Functionality extends AbstractFunctionality {
 
 	/**
 	 * Need to be override by every subclasses.
+	 * @param enable TODO
 	 * @return
 	 */
-	protected FunctionalityDto getUserDto() {
+	protected FunctionalityDto getUserDto(boolean enable) {
 		return new FunctionalityDto();
 	}
 
@@ -124,12 +125,15 @@ public class Functionality extends AbstractFunctionality {
 	 * @return
 	 */
 	public FunctionalityDto toUserDto() {
-		FunctionalityDto f = getUserDto();
+		boolean enable = activationPolicy.getStatus();
+		FunctionalityDto f = getUserDto(enable);
 		f.setIdentifier(identifier);
 		f.setCanOverride(null);
-		f.setEnable(activationPolicy.getStatus());
-		if (delegationPolicy != null) {
-			f.setCanOverride(delegationPolicy.getStatus());
+		f.setEnable(enable);
+		if (f.isEnable()) {
+			if (delegationPolicy != null) {
+				f.setCanOverride(delegationPolicy.getStatus());
+			}
 		}
 		return f;
 	}

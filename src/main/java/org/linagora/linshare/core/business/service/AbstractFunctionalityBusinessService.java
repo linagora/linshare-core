@@ -34,21 +34,24 @@
 
 package org.linagora.linshare.core.business.service;
 
+import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.objects.FunctionalityPermissions;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AbstractFunctionalityBusinessService<T> {
 
-	Set<T> getAllFunctionalities(AbstractDomain domain) throws BusinessException;
+	Set<T> getAllFunctionalities(AbstractDomain domain)
+			throws BusinessException;
 
-	Set<T> getAllFunctionalities(String domain) throws BusinessException;
+	Set<T> getAllFunctionalities(AbstractDomain domain, List<String> excludes)
+			throws BusinessException;
 
-	FunctionalityPermissions isMutable(T f, AbstractDomain domain);
+	void initUpdateRight(T f, AbstractDomain domain);
 
-	T getFunctionality(String domainId, String functionalityId) throws BusinessException;
+	T getFunctionality(AbstractDomain domain, String functionalityId)
+			throws BusinessException;
 
 	void delete(String domainId, String functionalityId)
 			throws IllegalArgumentException, BusinessException;

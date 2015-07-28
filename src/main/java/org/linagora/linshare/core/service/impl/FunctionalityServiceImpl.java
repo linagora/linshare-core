@@ -34,193 +34,260 @@
 
 package org.linagora.linshare.core.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.objects.FunctionalityPermissions;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FunctionalityServiceImpl implements FunctionalityService {
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<Functionality> implements FunctionalityService {
 
 	protected final Logger logger = LoggerFactory.getLogger(FunctionalityServiceImpl.class);
 
-	final private FunctionalityBusinessService functionalityBusinessService;
+	final private FunctionalityBusinessService businessService;
 
-	final private DomainBusinessService domainBusinessService;
+	protected List<String> excludesForUsers = new ArrayList<String>();
 
-	final private DomainPermissionBusinessService domainPermissionBusinessService;
+	private boolean overrideGlobalQuota;
 
 	public FunctionalityServiceImpl(
 			FunctionalityBusinessService functionalityBusinessService,
 			DomainBusinessService domainBusinessService,
-			DomainPermissionBusinessService domainPermissionBusinessService
+			DomainPermissionBusinessService domainPermissionBusinessService,
+			boolean overrideGlobalQuota
 			) {
-		super();
-		this.functionalityBusinessService = functionalityBusinessService;
-		this.domainBusinessService = domainBusinessService;
-		this.domainPermissionBusinessService = domainPermissionBusinessService;
+		super(domainBusinessService, domainPermissionBusinessService);
+		this.businessService = functionalityBusinessService;
+		this.overrideGlobalQuota = overrideGlobalQuota;
+		// HOOK : Should be removed after LinShare 1.9
+		// Admins
+		excludes.add(FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL.toString());
+		excludes.add(FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL__EXPIRATION.toString());
+		excludes.add(FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL__PASSWORD.toString());
+		// Users
+		excludesForUsers.add(FunctionalityNames.SHARE_NOTIFICATION_BEFORE_EXPIRATION.toString());
+		excludesForUsers.add(FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION.toString());
+		excludesForUsers.add(FunctionalityNames.DOMAIN__MAIL.toString());
+		excludesForUsers.add(FunctionalityNames.ANONYMOUS_URL.toString());
+		excludesForUsers.add(FunctionalityNames.ANTIVIRUS.toString());
+		excludesForUsers.add(FunctionalityNames.QUOTA_GLOBAL.toString());
+		excludesForUsers.add(FunctionalityNames.QUOTA_USER.toString());
+		excludesForUsers.add(FunctionalityNames.TIME_STAMPING.toString());
+		excludesForUsers.add(FunctionalityNames.UPDATE_FILE.toString());
 	}
 
 	@Override
-	public Set<Functionality> findAll(Account actor, AbstractDomain domain) throws BusinessException {
-		Validate.notNull(domain);
-		Validate.notEmpty(domain.getIdentifier());
-		checkDomainRights(actor, domain.getIdentifier());
-		return functionalityBusinessService.getAllFunctionalities(domain);
+	public Iterable<Functionality> findAll(Account actor, String domainId) throws BusinessException {
+		return findAll(actor, domainId, null, false, false);
 	}
 
 	@Override
-	public Set<Functionality> findAll(Account actor, String domain) throws BusinessException {
-		Validate.notEmpty(domain);
-		checkDomainRights(actor, domain);
-		return functionalityBusinessService.getAllFunctionalities(domain);
+	public Iterable<Functionality> findAll(Account actor, String domainId,
+			String parentId) throws BusinessException {
+		return findAll(actor, domainId, parentId, false, false);
 	}
 
 	@Override
-	public FunctionalityPermissions isMutable(Account actor, Functionality f,
-			AbstractDomain domain) throws BusinessException {
-		Validate.notNull(f);
-		Validate.notNull(domain);
-		return functionalityBusinessService.isMutable(f, domain);
+	public Iterable<Functionality> findAll(Account actor, String domainId,
+			String parentId, boolean tree, boolean withSubFunctionalities)
+			throws BusinessException {
+		Validate.notNull(actor);
+		Validate.isTrue(actor.hasAdminRole() || actor.hasSuperAdminRole());
+		Validate.notEmpty(domainId);
+		FunctionalityNames parentIdentifier = null;
+		if (parentId != null) {
+			// check if it is a valid parent identifier
+			parentIdentifier = FunctionalityNames.valueOf(parentId);
+		}
+		AbstractDomain domain = getDomain(actor, domainId);
+		Set<Functionality> functionalities = businessService.getAllFunctionalities(domain, excludes);
+		Map<String, Functionality> parents = Maps.newHashMap();
+		List<Functionality> subs = Lists.newArrayList();
+		for (Functionality f : functionalities) {
+			// HOOK : Temporary hook to disable global quota for all domains except root. (Dead locks)
+			if (overrideGlobalQuota) {
+				if (f.equalsIdentifier(FunctionalityNames.QUOTA_GLOBAL)) {
+					if (!f.getDomain().isRootDomain()) {
+						continue;
+					}
+				}
+			}
+			// We check if this a sub functionality (a parameter)
+			if (f.isParam()) {
+				subs.add(f);
+			} else {
+				parents.put(f.getIdentifier(), f);
+			}
+		}
+
+		Map<String, List<Functionality>> children = new HashMap<String, List<Functionality>>();
+		for (Functionality func : subs) {
+			if (parents.containsKey(func.getParentIdentifier())) {
+				// if parent contains at least one sub functionality to display, the parent must be display.
+				if (func.isDisplayable()) {
+					Functionality parent = parents.get(func.getParentIdentifier());
+					// We need to display the parent functionality to display children
+					// only if the parent is not forbidden.
+					if (!parent.getActivationPolicy().isForbidden()) {
+						parent.setDisplayable(true);
+					}
+				}
+				if (tree) {
+					parents.get(func.getParentIdentifier()).addChild(func);
+				}
+				// storing children in maps
+				List<Functionality> list = children.get(func.getParentIdentifier());
+				if (list == null) {
+					list = Lists.newArrayList();
+					children.put(func.getParentIdentifier(), list);
+				}
+				list.add(func);
+			} else {
+				logger.error("Sub functionality {} without a parent : {}", func.getIdentifier(), func.getParentIdentifier());
+			}
+		}
+		List<Functionality> result = Lists.newArrayList();
+		if (parentId == null) {
+			result.addAll(parents.values());
+		} else {
+			List<Functionality> list = children.get(parentIdentifier.toString());
+			if (list == null) {
+				logger.debug("Functionality {} has no children.", parentIdentifier.toString());
+				return Lists.newArrayList();
+			}
+			return list;
+		}
+		if (withSubFunctionalities) {
+			result.addAll(subs);
+		}
+		return Iterables.filter(result, isDisplayable());
 	}
 
 	@Override
-	public Functionality find(Account actor, String domainId, String functionalityId) throws BusinessException {
-		Validate.notNull(domainId);
-		Validate.notNull(functionalityId);
+	public Functionality find(Account actor, String domainId, String functionalityId, boolean tree) throws BusinessException {
+		Validate.notEmpty(domainId);
+		Validate.notEmpty(functionalityId);
+		Validate.notNull(actor);
+		Validate.isTrue(actor.hasAdminRole() || actor.hasSuperAdminRole());
 		logger.debug("looking for functionality : " + functionalityId + " in domain "+ domainId);
-		checkDomainRights(actor, domainId);
-		return functionalityBusinessService.getFunctionality(domainId, functionalityId);
+		AbstractDomain domain = getDomain(actor, domainId);
+		Functionality entity = businessService.getFunctionality(domain, functionalityId);
+		if (overrideGlobalQuota) {
+			if (entity.getIdentifier().equals(FunctionalityNames.QUOTA_GLOBAL.toString())) {
+				if (!domain.isRootDomain()) {
+					throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_NOT_FOUND, "Functionality not found : " + functionalityId);
+				}
+			}
+		}
+		Set<Functionality> functionalities = businessService.getAllFunctionalities(domain, excludes);
+		for (Functionality f : functionalities) {
+			if (f.isParam()) {
+				if (f.getParentIdentifier().equals(functionalityId)) {
+					// We check if children should by display
+					if (f.isDisplayable()) {
+						entity.setDisplayable(true);
+						if (tree) {
+							entity.addChild(f);
+						}
+					}
+				}
+			}
+		}
+		if (!entity.isDisplayable()) {
+			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_NOT_FOUND, "Functionality not found : " + functionalityId);
+		}
+		return entity;
+	}
+
+	@Override
+	public Functionality find(Account actor, String domainId, String identifier)
+			throws BusinessException {
+		return find(actor, domainId, identifier, false);
 	}
 
 	@Override
 	public void delete(Account actor, String domainId, String functionalityId) throws IllegalArgumentException, BusinessException {
-		checkDomainRights(actor, domainId);
-		checkDeleteRights(domainId);
-		functionalityBusinessService.delete(domainId, functionalityId);
+		Validate.notNull(actor);
+		Validate.notEmpty(domainId);
+		Validate.notEmpty(functionalityId);
+		Validate.isTrue(actor.hasAdminRole() || actor.hasSuperAdminRole());
+		AbstractDomain domain = getDomain(actor, domainId);
+		checkDeleteRights(domain);
+		businessService.delete(domainId, functionalityId);
 	}
 
 	@Override
-	public Functionality update(Account actor, String domain, Functionality functionality) throws BusinessException {
-		Validate.notNull(domain);
-		Validate.notNull(functionality.getIdentifier());
-		checkDomainRights(actor, domain);
-
+	public Functionality update(Account actor, String domainId, Functionality functionality) throws BusinessException {
+		Validate.notEmpty(domainId);
+		Validate.notNull(functionality);
+		Validate.notEmpty(functionality.getIdentifier());
+		Validate.notNull(actor);
+		Validate.isTrue(actor.hasAdminRole() || actor.hasSuperAdminRole());
+		AbstractDomain domain = getDomain(actor, domainId);
 		if (checkUpdateRights(actor, domain, functionality)) {
-			functionalityBusinessService.update(domain, functionality);
+			businessService.update(domainId, functionality);
 		}
-		return functionalityBusinessService.getFunctionality(domain, functionality.getIdentifier());
+		return businessService.getFunctionality(domain, functionality.getIdentifier());
 	}
 
-	/**
-	 * Return true if you need to update the input functionality.
-	 * @param actor
-	 * @param domain
-	 * @param functionality : new functionality.
-	 * @param entity : original functionality. 
-	 * @return
-	 * @throws BusinessException
-	 */
-	private boolean checkUpdateRights(Account actor, String domainId, Functionality functionality)
+	@Override
+	public Set<Functionality> findAll(Account actor) throws BusinessException {
+		Validate.notNull(actor);
+		Validate.isTrue(actor.hasSimpleRole());
+		Set<Functionality> functionalities = businessService
+				.getAllFunctionalities(actor.getDomain(), excludesForUsers);
+		return functionalities;
+	}
+
+	@Override
+	public Functionality find(Account actor, String functionalityId)
 			throws BusinessException {
-		Functionality entity = this.find(actor, domainId, functionality.getIdentifier());
-
-		// consistency checks
-		if (!entity.getType().equals(functionality.getType())) {
-			String message = entity.getType().toString() + " != " + entity.getType().toString();
-			throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "Same identifier, different functionality types : " + message);
-		}
-
-		functionality.getActivationPolicy().applyConsistency();
-
-		functionality.getConfigurationPolicy().applyConsistency();
-
-		if (functionality.getDelegationPolicy() != null) {
-			functionality.getDelegationPolicy().applyConsistency();
-		}
-
-		AbstractDomain domain = domainBusinessService.findById(domainId);
-		FunctionalityPermissions mutable = isMutable(actor, entity, domain);
-		// we check if the parent functionality allow modifications of the activation policy (AP).
-		boolean parentAllowAPUpdate = mutable.isParentAllowAPUpdate();
-		if(!parentAllowAPUpdate) {
-			// Modifications are not allowed.
-			if (!entity.getActivationPolicy().businessEquals(functionality.getActivationPolicy())) {
-				// AP entity is different of the input AP functionality  => FORBIDDEN
-				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (AP) '" + functionality +"' in domain '" + domain +"'");
-				throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
-			}
-			if(entity.getActivationPolicy().isForbidden()) {
-				if (!functionality.businessEquals(entity, true)) {
-					logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (All) '" + functionality +"' in domain '" + domain +"'");
-					throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
-				}
-			}
-		}
-
-		// we check if the parent functionality allow modifications of the configuration policy (CP).
-		boolean parentAllowCPUpdate = mutable.isParentAllowCPUpdate();
-		if(!parentAllowCPUpdate) {
-			// Modifications are not allowed.
-			if (!entity.getConfigurationPolicy().businessEquals(functionality.getConfigurationPolicy())) {
-				// CP entity is different of the input CP functionality  => FORBIDDEN
-				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (CP) '" + functionality +"' in domain '" + domain +"'");
-				throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
-			}
-		}
-
-		// we check if the parent functionality allow modifications of the delegation policy (DP).
-		if (entity.getDelegationPolicy() != null) {
-			boolean parentAllowDPUpdate = mutable.isParentAllowDPUpdate();
-			if(!parentAllowDPUpdate) {
-				// Modifications are not allowed.
-				if (!entity.getDelegationPolicy().businessEquals(functionality.getDelegationPolicy())) {
-					// DP entity is different of the input DP functionality  => FORBIDDEN
-					logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (DP) '" + functionality +"' in domain '" + domain +"'");
-					throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
-				}
-			}
-		}
-
-		boolean parentAllowParamUpdate = mutable.isParentAllowParametersUpdate();
-		if(!parentAllowParamUpdate) {
-			if (!functionality.businessEquals(entity, false)) {
-				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the functionnality (PARAM) '" + functionality +"' in domain '" + domain +"'");
-				throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT, "You does not have the right to update this functionality");
-			}
-		}
-
-		// we check if there is any modifications
-		if (functionality.businessEquals(entity, true)) {
-			logger.debug("functionality " + functionality.toString() + " was not modified.");
-			return false;
-		}
-		return true;
+		Validate.notNull(actor);
+		Validate.notEmpty(functionalityId);
+		Validate.isTrue(actor.hasSimpleRole());
+		Functionality functionality = businessService.getFunctionality(
+				actor.getDomain(), functionalityId);
+		return functionality;
 	}
 
-	private void checkDomainRights(Account actor, String domainId) throws BusinessException {
-		if(!domainPermissionBusinessService.isAdminforThisDomain(actor, domainId)) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,"The current domain does not exist : " + domainId);
-		}
-	}
-
-	private void checkDeleteRights(String domainId) throws BusinessException {
-		AbstractDomain domain = domainBusinessService.findById(domainId);
+	private void checkDeleteRights(AbstractDomain domain) throws BusinessException {
 		AbstractDomain rootDomain = domainBusinessService.getUniqueRootDomain();
 		if (domain.equals(rootDomain)) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_INVALID_OPERATION,
 					"You are not authorized to delete a root functionality");
 		}
+	}
+
+	private Predicate<Functionality> isDisplayable() {
+		return new Predicate<Functionality>() {
+			@Override
+			public boolean apply(Functionality input) {
+				if(input.isDisplayable()){
+					return true;
+				}
+				logger.debug("Functionality filtered: " + input.getIdentifier());
+				return false;
+			}
+		};
 	}
 }

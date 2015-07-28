@@ -158,18 +158,22 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	protected FunctionalityDto getUserDto() {
+	protected FunctionalityDto getUserDto(boolean enable) {
 		if (getUnit() instanceof FileSizeUnitClass) {
 			FunctionalitySizeDto f = new FunctionalitySizeDto();
-			FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
-			f.setUnit(sizeUnit.getUnitValue().toString());
-			f.setValue(value);
+			if (enable) {
+				FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
+				f.setUnit(sizeUnit.getUnitValue().toString());
+				f.setValue(value);
+			}
 			return f;
 		} else if (getUnit() instanceof TimeUnitClass) {
 			FunctionalityTimeDto f = new FunctionalityTimeDto();
-			TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
-			f.setUnit(timeUnit.getUnitValue().toString());
-			f.setValue(value);
+			if (enable) {
+				TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
+				f.setUnit(timeUnit.getUnitValue().toString());
+				f.setValue(value);
+			}
 			return f;
 		}
 		return null;

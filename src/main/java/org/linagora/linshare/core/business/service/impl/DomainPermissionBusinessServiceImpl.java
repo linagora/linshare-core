@@ -43,7 +43,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,13 +60,6 @@ public class DomainPermissionBusinessServiceImpl implements
 			final DomainBusinessService domainBusinessService) {
 		super();
 		this.domainBusinessService = domainBusinessService;
-	}
-
-	@Override
-	public boolean isAdminforThisDomain(Account actor, String domainId)
-			throws BusinessException {
-		AbstractDomain domain = domainBusinessService.findById(domainId);
-		return isAdminforThisDomain(actor, domain);
 	}
 
 	@Override

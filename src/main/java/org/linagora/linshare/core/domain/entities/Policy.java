@@ -57,7 +57,13 @@ public class Policy implements Cloneable {
 	 * configure if the Policy is system or not, if it should be used by the ihm
 	 */
 	private boolean system;
-	
+
+	/**
+	 * This member is not persisted into the database.
+	 * It is only used to compute update right.
+	 */
+	private Boolean parentAllowUpdate;
+
 	public Policy() {
 		super();
 	}
@@ -111,15 +117,23 @@ public class Policy implements Cloneable {
 	public void setId(long persistenceId) {
 		this.persistenceId = persistenceId;
 	}
-	
+
 	public boolean getDefaultStatus() {
 		return defaultStatus;
 	}
-	
+
 	private void setDefaultStatus(boolean defaultStatus) {
 		this.defaultStatus = defaultStatus;
 	}
-	
+
+	public Boolean getParentAllowUpdate() {
+		return parentAllowUpdate;
+	}
+
+	public void setParentAllowUpdate(Boolean parentAllowUpdate) {
+		this.parentAllowUpdate = parentAllowUpdate;
+	}
+
 	public String toString() {
 		return "Policy=" + persistenceId + ":status=" + status + ":policy=" + policy;
 	}

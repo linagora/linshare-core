@@ -204,6 +204,13 @@
 		<constructor-arg ref="functionalityBusinessService" />
 		<constructor-arg ref="domainBusinessService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg value="${linshare.override.global.quota}" />
+	</bean>
+
+	<bean name="mailActivationService" class="org.linagora.linshare.core.service.impl.MailActivationServiceImpl">
+		<constructor-arg ref="mailActivationBusinessService" />
+		<constructor-arg ref="domainBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 
 	<bean name="functionalityReadOnlyService" class="org.linagora.linshare.core.service.impl.FunctionalityReadOnlyServiceImpl">

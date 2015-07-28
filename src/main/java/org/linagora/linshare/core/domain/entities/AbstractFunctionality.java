@@ -34,6 +34,9 @@
 
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +66,16 @@ public abstract class AbstractFunctionality implements Cloneable {
 	protected Policy delegationPolicy;
 
 	protected AbstractDomain domain;
+
+	/**
+	 * This member is not persisted into the database.
+	 * It is only used to compute update right.
+	 */
+	protected Boolean displayable = null;
+
+	protected Boolean parentAllowParametersUpdate = null;
+
+	protected Set<AbstractFunctionality> children = new HashSet<AbstractFunctionality>();
 
 	/**
 	 * Logger available to subclasses.
@@ -143,12 +156,45 @@ public abstract class AbstractFunctionality implements Cloneable {
 	public void setConfigurationPolicy(Policy configurationPolicy) {
 		this.configurationPolicy = configurationPolicy;
 	}
+
 	public AbstractDomain getDomain() {
 		return domain;
 	}
 
 	public void setDomain(AbstractDomain domain) {
 		this.domain = domain;
+	}
+
+	public Boolean getDisplayable() {
+		return displayable;
+	}
+
+	public Boolean isDisplayable() {
+		return displayable;
+	}
+
+	public void setDisplayable(Boolean displayable) {
+		this.displayable = displayable;
+	}
+
+	public Boolean getParentAllowParametersUpdate() {
+		return parentAllowParametersUpdate;
+	}
+
+	public void setParentAllowParametersUpdate(Boolean parentAllowParametersUpdate) {
+		this.parentAllowParametersUpdate = parentAllowParametersUpdate;
+	}
+
+	public Set<AbstractFunctionality> getChildren() {
+		return children;
+	}
+
+	public void setChildren(Set<AbstractFunctionality> children) {
+		this.children = children;
+	}
+
+	public void addChild(AbstractFunctionality child) {
+		this.children.add(child);
 	}
 
 	public boolean businessEquals(AbstractFunctionality fonc, boolean checkPolicies) {
@@ -235,10 +281,7 @@ public abstract class AbstractFunctionality implements Cloneable {
 	}
 
 	public boolean equalsIdentifier(FunctionalityNames name) {
-		if (identifier.equals(name.toString())) {
-			return true;
-		}
-		return false;
+		return identifier.equals(name.toString());
 	}
 
 	public void updateFunctionalityFrom(AbstractFunctionality functionality) {

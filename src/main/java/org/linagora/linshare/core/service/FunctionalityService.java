@@ -36,38 +36,65 @@ package org.linagora.linshare.core.service;
 
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.objects.FunctionalityPermissions;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface FunctionalityService {
+public interface FunctionalityService extends
+		AbstractFunctionalityService<Functionality> {
 
-	Set<Functionality> findAll(Account actor, AbstractDomain domain)
+	Functionality find(Account actor, String domainId, String identifier, boolean tree)
 			throws BusinessException;
-
-	Set<Functionality> findAll(Account actor, String domain)
-			throws BusinessException;
-
-	FunctionalityPermissions isMutable(Account actor, Functionality f,
-			AbstractDomain domain) throws BusinessException;
 
 	/**
-	 * Return a clone of the original functionality store into the database.
 	 * @param actor
+	 *            : should an account with administration rights
 	 * @param domainId
-	 * @param functionalityId
-	 * @return
+	 *            : the targeted domain
+	 * @param parentId
+	 *            : if different than null, it will return a list with children
+	 *            of the functionality name 'parentId'.
+	 * @param tree
+	 *            : children will be add inside each {@link Functionality}
+	 * @param withSubFunctionalities
+	 *            : the result list will also contain children functionalities.
+	 * @return : by default, all parent functionalities will be returned
 	 * @throws BusinessException
 	 */
-	Functionality find(Account actor, String domainId, String functionalityId)
+	Iterable<Functionality> findAll(Account actor, String domainId,
+			String parentId, boolean tree, boolean withSubFunctionalities)
 			throws BusinessException;
+
+	/**
+	 * @param actor
+	 *            : should an account with administration rights
+	 * @param domainId
+	 *            : the targeted domain
+	 * @param parentId
+	 *            : if different than null, it will return a list with children
+	 *            of the functionality name 'parentId'.
+	 * @return : by default, all parent functionalities will be returned
+	 * @throws BusinessException
+	 */
+	Iterable<Functionality> findAll(Account actor, String domainId,
+			String parentId) throws BusinessException;
 
 	void delete(Account actor, String domainId, String functionalityId)
 			throws BusinessException;
 
-	Functionality update(Account actor, String domain,
-			Functionality functionality) throws BusinessException;
+	/**
+	 * @param actor : a simple user
+	 * @return
+	 * @throws BusinessException
+	 */
+	Set<Functionality> findAll(Account actor) throws BusinessException;
+
+	/**
+	 * @param actor : a simple user
+	 * @param functionalityId
+	 * @return
+	 * @throws BusinessException
+	 */
+	Functionality find(Account actor, String functionalityId) throws BusinessException;
 
 }

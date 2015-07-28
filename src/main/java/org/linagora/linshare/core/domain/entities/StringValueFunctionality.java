@@ -102,9 +102,11 @@ public class StringValueFunctionality extends OneValueFunctionality<String> {
 	}
 
 	@Override
-	protected FunctionalityDto getUserDto() {
+	protected FunctionalityDto getUserDto(boolean enable) {
 		FunctionalityStringDto f = new FunctionalityStringDto();
-		f.setValue(value);
+		if (enable) {
+			f.setValue(value);
+		}
 		return f;
 	}
 }

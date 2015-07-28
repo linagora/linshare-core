@@ -40,12 +40,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.AbstractFunctionalityBusinessService;
-import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AbstractFunctionality;
-import org.linagora.linshare.core.domain.objects.FunctionalityPermissions;
+import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -87,25 +85,21 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	 * Helper : convert InnerFunctionality list to Functionality list.
 	 * @param functionalities
 	 * @param exclude
-	 * @param clone
 	 * @param domain
 	 * @return
 	 */
-	private Set<T> convertToFunctionality(Set<InnerFunctionality> functionalities, List<String> exclude, boolean clone, AbstractDomain domain) {
+	private Set<T> convertToFunctionality(Set<InnerFunctionality> functionalities, List<String> exclude, AbstractDomain domain) {
 		Set<T> res = new HashSet<T>();
 		if (exclude == null) {
 			exclude = new ArrayList<String>();
 		}
 		for (InnerFunctionality f : functionalities) {
 			if(!exclude.contains(f.getFunctionality().getIdentifier())) {
-				if (clone) {
-					@SuppressWarnings("unchecked")
-					T functionality = (T) f.getFunctionality().clone();
-					functionality.setDomain(domain);
-					res.add(functionality);
-				} else {
-					res.add(f.getFunctionality());
-				}
+				@SuppressWarnings("unchecked")
+				T functionality = (T) f.getFunctionality().clone();
+				functionality.setDomain(domain);
+				initUpdateRight(functionality, domain);
+				res.add(functionality);
 			}
 		}
 		return res;
@@ -158,42 +152,55 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	@Override
-	public Set<T> getAllFunctionalities(AbstractDomain domain) {
-		// Check if the current argument is a real domain.
-		if (domain != null) {
-			List<String> exclude = new ArrayList<String>();
-			if(domain.getDomainType().equals(DomainType.GUESTDOMAIN)) {
-				// A guest user can not create a guest, so account expiration for guests is useless.
-				exclude.add(FunctionalityNames.GUESTS__EXPIRATION.toString());
-			}
-			return convertToFunctionality(this.getAllInnerFunctionalities(domain), exclude, true, domain);
-		}
-		return null;
+	public Set<T> getAllFunctionalities(AbstractDomain domain)
+			throws BusinessException {
+		return convertToFunctionality(this.getAllInnerFunctionalities(domain), null, domain);
 	}
 
 	@Override
-	public Set<T> getAllFunctionalities(String domain) throws BusinessException {
-		AbstractDomain abstractDomain = findDomain(domain);
-		return getAllFunctionalities(abstractDomain);
+	public Set<T> getAllFunctionalities(AbstractDomain domain, List<String> exclude) {
+		return convertToFunctionality(this.getAllInnerFunctionalities(domain), exclude, domain);
 	}
 
 	@Override
-	public FunctionalityPermissions isMutable(T functionality, AbstractDomain domain) {
+	public void initUpdateRight(T functionality, AbstractDomain domain) {
 		// ancestor functionality could be null
 		// It is loaded in advance for performance purpose
 		T ancestorFunc = getParentFunctionality(domain, functionality.getIdentifier());
-		FunctionalityPermissions mutable = null;
 		boolean parentAllowAPUpdate = activationPolicyIsMutable(functionality, domain, ancestorFunc);
+		boolean parentAllowCPUpdate = false;
+		boolean parentAllowDPUpdate = false;
+		functionality.setDisplayable(false);
+		functionality.getActivationPolicy().setParentAllowUpdate(parentAllowAPUpdate);
+		Policy delegationPolicy = functionality.getDelegationPolicy();
 		if (!parentAllowAPUpdate && functionality.getActivationPolicy().isForbidden()) {
-			parentAllowAPUpdate = false;
-			mutable = new FunctionalityPermissions(parentAllowAPUpdate, false, false, false);
+			functionality.getConfigurationPolicy().setParentAllowUpdate(false);
+			if (delegationPolicy != null) {
+				delegationPolicy.setParentAllowUpdate(false);
+			}
+			functionality.setParentAllowParametersUpdate(false);
 		} else {
-			boolean parentAllowCPUpdate = configurationPolicyIsMutable(functionality, domain, ancestorFunc);
-			boolean parentAllowDPUpdate = delegationPolicyIsMutable(functionality, domain, ancestorFunc);
+			// CP update right
+			parentAllowCPUpdate = configurationPolicyIsMutable(functionality, domain, ancestorFunc);
+			functionality.getConfigurationPolicy().setParentAllowUpdate(parentAllowCPUpdate);
+			// DP update right
+			if (delegationPolicy != null) {
+				parentAllowDPUpdate = delegationPolicyIsMutable(functionality, domain, ancestorFunc);
+				delegationPolicy.setParentAllowUpdate(parentAllowDPUpdate);
+			}
+			// Parameters update right
 			boolean parentAllowParametersUpdate = parametersAreMutable(functionality, domain, ancestorFunc);
-			mutable = new FunctionalityPermissions(parentAllowAPUpdate, parentAllowCPUpdate, parentAllowDPUpdate, parentAllowParametersUpdate);
+			functionality.setParentAllowParametersUpdate(parentAllowParametersUpdate);
 		}
-		return mutable;
+		if (parentAllowAPUpdate) {
+			functionality.setDisplayable(true);
+		}
+		if(parentAllowCPUpdate) {
+			functionality.setDisplayable(true);
+		}
+		if(parentAllowDPUpdate) {
+			functionality.setDisplayable(true);
+		}
 	}
 
 	protected boolean activationPolicyIsMutable(T functionality, AbstractDomain domain, T ancestorFunc) throws BusinessException {
@@ -330,14 +337,12 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	@Override
-	public T getFunctionality(String domainId, String functionalityId) throws BusinessException {
-		Assert.notNull(domainId);
+	public T getFunctionality(AbstractDomain domain, String functionalityId) throws BusinessException {
+		Assert.notNull(domain);
 		Assert.notNull(functionalityId);
-
-		AbstractDomain domain = findDomain(domainId);
 		T functionality = getFunctionalityEntityByIdentifiers(domain, functionalityId);
 		if (functionality == null) {
-			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_ENTITY_OUT_OF_DATE, "Functionality not found.");
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Functionality not found.");
 		}
 		// Never returns the entity when we try to modify the functionality.
 		// The current functionality returned could belong to a parent domain.
@@ -346,6 +351,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		T clone = (T)functionality.clone();
 		// Wet set the input domain to fake the out side world.
 		clone.setDomain(domain);
+		initUpdateRight(clone, domain);
 		return clone;
 	}
 
@@ -383,7 +389,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 				logger.debug("functionality " + functionality.getIdentifier()+ " was not modified.");
 			}
 		}
-		return this.getFunctionality(domainId, entity.getIdentifier());
+		return this.getFunctionality(currentDomain, entity.getIdentifier());
 	}
 
 	@Override

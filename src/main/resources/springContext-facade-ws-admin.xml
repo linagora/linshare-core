@@ -43,7 +43,6 @@
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.FunctionalityFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="functionalityService" />
-		<constructor-arg value="${linshare.override.global.quota}" />
 	</bean>
 	<bean id="wsAdminGenericFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl">
