@@ -168,7 +168,9 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 		// Creation
 		Set<Entry> entries = Sets.newHashSet();
-		entries.addAll(anonymousShareEntryService.create(actor, owner, shareContainer));
+		if (shareContainer.needAnonymousShares()) {
+			entries.addAll(anonymousShareEntryService.create(actor, owner, shareContainer));
+		}
 		entries.addAll(shareEntryService.create(actor, owner, shareContainer));
 
 		BooleanValueFunctionality groupedFunc = functionalityReadOnlyService.getAcknowledgement(actor.getDomain());
