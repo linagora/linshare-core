@@ -36,5 +36,4 @@ package org.linagora.linshare.cmis.constants;
 public enum CmisDirectory {
 
 	MY_FILES, MY_THREADS, THREAD;
-
 }

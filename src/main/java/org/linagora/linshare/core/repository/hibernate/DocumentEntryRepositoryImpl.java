@@ -267,8 +267,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		DetachedCriteria det = DetachedCriteria.forClass(DocumentEntry.class);
 		det.add(Restrictions.eq("entryOwner", owner));
 		det.add(Restrictions.eq("name", fileName));
-		det.addOrder(Order.desc("creationDate"));
-		det.add(Restrictions.sqlRestriction("LIMIT 1"));
+		det.add(Restrictions.eq("cmisSync", true));
 		return DataAccessUtils.singleResult(findByCriteria(det));
 	}
 

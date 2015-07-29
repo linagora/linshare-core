@@ -94,7 +94,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
-public class MainCmisFacadeImpl extends AbstractCmisService implements MainCmisFacade{
+public class MainCmisFacadeImpl extends AbstractCmisService implements MainCmisFacade {
 
 	private final CmisVersion cmisVersion = CmisVersion.CMIS_1_0;
 	private final AccountService accountService;
