@@ -8,16 +8,16 @@
 		</id>
 		<property name="identifier" column="identifier" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="system" column="system" type="boolean" length="1" not-null="true" lazy="false"/>
-		<many-to-one name="activationPolicy" column="activation_policy_id" class="org.linagora.linshare.core.domain.entities.Policy"
+		<many-to-one name="activationPolicy" column="policy_activation_id" class="org.linagora.linshare.core.domain.entities.Policy"
 			fetch="join" unique="true" not-null="true" lazy="proxy">
 		</many-to-one>
-		<many-to-one name="configurationPolicy" column="configuration_policy_id" class="org.linagora.linshare.core.domain.entities.Policy"
+		<many-to-one name="configurationPolicy" column="policy_configuration_id" class="org.linagora.linshare.core.domain.entities.Policy"
 			fetch="join" unique="true" not-null="true" lazy="proxy">
 		</many-to-one>
-		<many-to-one name="delegationPolicy" column="delegation_policy_id" class="org.linagora.linshare.core.domain.entities.Policy"
+		<many-to-one name="delegationPolicy" column="policy_delegation_id" class="org.linagora.linshare.core.domain.entities.Policy"
 			fetch="join" unique="true" not-null="true" lazy="proxy">
 		</many-to-one>
-		<many-to-one name="domain" cascade="lock" column="domain_abstract_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain"
+		<many-to-one name="domain" cascade="lock" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain"
 		not-null="true" lazy="proxy">
 		</many-to-one>
 		<property name="value" column="value" type="boolean" length="1" not-null="true" lazy="false"/>

@@ -655,7 +655,7 @@ CREATE TABLE share_entry_group (
   id                 int8 NOT NULL,
   account_id        int8 NOT NULL,
   uuid              varchar(255) NOT NULL UNIQUE,
-  subject           text NOT NULL,
+  subject           text,
   expiration_date   timestamp,
   creation_date     timestamp NOT NULL,
   modification_date timestamp NOT NULL,
@@ -664,10 +664,10 @@ CREATE TABLE mail_activation (
   id                       int8 NOT NULL,
   identifier              varchar(255) NOT NULL,
   system                  bool NOT NULL,
-  activation_policy_id    int8 NOT NULL,
-  configuration_policy_id int8 NOT NULL,
-  delegation_policy_id    int8 NOT NULL,
-  domain_abstract_id      int8 NOT NULL,
+  policy_activation_id    int8 NOT NULL,
+  policy_configuration_id int8 NOT NULL,
+  policy_delegation_id    int8 NOT NULL,
+  domain_id               int8 NOT NULL,
   value                   bool NOT NULL,
   PRIMARY KEY (id));
 CREATE UNIQUE INDEX account_lsuid_index
@@ -842,7 +842,8 @@ ALTER TABLE domain_abstract ADD CONSTRAINT use_customisation FOREIGN KEY (welcom
 ALTER TABLE welcome_messages ADD CONSTRAINT own_welcome_messages FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
 ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_708340 FOREIGN KEY (share_entry_group_id) REFERENCES share_entry_group (id);
 ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr137514 FOREIGN KEY (share_entry_group_id) REFERENCES share_entry_group (id);
-ALTER TABLE mail_activation ADD CONSTRAINT FKmail_activ832873 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mail_activation ADD CONSTRAINT activation FOREIGN KEY (activation_policy_id) REFERENCES policy (id);
-ALTER TABLE mail_activation ADD CONSTRAINT configuration FOREIGN KEY (configuration_policy_id) REFERENCES policy (id);
-ALTER TABLE mail_activation ADD CONSTRAINT delegation FOREIGN KEY (delegation_policy_id) REFERENCES policy (id);
+ALTER TABLE mail_activation ADD CONSTRAINT FKmail_activ188698 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_activation ADD CONSTRAINT activation FOREIGN KEY (policy_activation_id) REFERENCES policy (id);
+ALTER TABLE mail_activation ADD CONSTRAINT configuration FOREIGN KEY (policy_configuration_id) REFERENCES policy (id);
+ALTER TABLE mail_activation ADD CONSTRAINT delegation FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
+ALTER TABLE share_entry_group ADD CONSTRAINT shareEntryGroup FOREIGN KEY (account_id) REFERENCES account (id);
