@@ -34,9 +34,14 @@
 
 package org.linagora.linshare.core.business.service;
 
+import org.linagora.linshare.core.domain.constants.MailActivationType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailActivation;
+import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailActivationBusinessService extends
 		AbstractFunctionalityBusinessService<MailActivation> {
 
+	MailActivation findForInternalUsage(AbstractDomain recipientDomain,
+			MailActivationType identifier) throws BusinessException;
 }

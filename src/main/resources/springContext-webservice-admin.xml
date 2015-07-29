@@ -120,6 +120,10 @@
 		<constructor-arg ref="wsAdminGenericFacade" />
 	</bean>
 
+	<bean id="adminMailActivationRestService" class="org.linagora.linshare.webservice.admin.impl.MailActivationRestServiceImpl">
+		<constructor-arg ref="wsAdminMailActivationFacade" />
+	</bean>
+
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">
 		<jaxrs:serviceBeans>
 			<ref bean="adminAuthenticationRestService" />
@@ -148,6 +152,7 @@
 			<ref bean="adminUploadPropositionFilterRestService" />
 			<ref bean="adminWelcomeMessagesRestService" />
 			<ref bean="adminSystemConfigurationRestService" />
+			<ref bean="adminMailActivationRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

@@ -34,23 +34,27 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.text.DateFormat;
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.linagora.linshare.core.business.service.MailActivationBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.MailActivation;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.MailFooter;
@@ -92,6 +96,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	private final MailConfigRepository mailConfigRepository;
+
+	private final MailActivationBusinessService mailActivationBusinessService;
 
 	private static final String LINSHARE_LOGO = "<img src='cid:image.part.1@linshare.org' /><br/><br/>";
 
@@ -240,6 +246,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	public MailBuildingServiceImpl(boolean displayLogo,
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
+			final MailActivationBusinessService mailActivationBusinessService,
 			final MailConfigRepository mailConfigRepository,
 			boolean insertLicenceTerm) throws BusinessException {
 		this.displayLogo = displayLogo;
@@ -247,6 +254,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		this.insertLicenceTerm = insertLicenceTerm;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mailConfigRepository = mailConfigRepository;
+		this.mailActivationBusinessService = mailActivationBusinessService;
 	}
 
 	private String formatCreationDate(Account account, Entry entry) {
@@ -288,6 +296,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	public MailContainerWithRecipient buildAnonymousDownload(
 			AnonymousShareEntry shareEntry) throws BusinessException {
 		User sender = (User) shareEntry.getEntryOwner();
+		if (isDisable(sender, MailActivationType.ANONYMOUS_DOWNLOAD)) {
+			return null;
+		}
 		String documentName = shareEntry.getDocumentEntry().getName();
 		String email = shareEntry.getAnonymousUrl().getContact().getMail();
 		String actorRepresentation = new ContactRepresentation(email)
@@ -318,6 +329,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	public MailContainerWithRecipient buildRegisteredDownload(
 			ShareEntry shareEntry) throws BusinessException {
 		User sender = (User) shareEntry.getEntryOwner();
+		if (isDisable(sender, MailActivationType.REGISTERED_DOWNLOAD)) {
+			return null;
+		}
 		String documentName = shareEntry.getDocumentEntry().getName();
 		String actorRepresentation = new ContactRepresentation(shareEntry.getRecipient())
 				.getContactRepresentation();
@@ -346,6 +360,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildNewGuest(Account s,
 			User recipient, String password) throws BusinessException {
+		if (isDisable(recipient, MailActivationType.NEW_GUEST)) {
+			return null;
+		}
 		User recipientUser = (User)recipient;
 		User sender = (User) s;
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
@@ -373,6 +390,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildResetPassword(Guest recipient,
 			String password) throws BusinessException {
+		if (isDisable(recipient, MailActivationType.RESET_PASSWORD)) {
+			return null;
+		}
 		MailConfig cfg = recipient.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				recipient.getExternalMailLocale());
@@ -405,6 +425,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		Language locale;
 		if (shareEntry instanceof AnonymousShareEntry) {
 			AnonymousShareEntry e = (AnonymousShareEntry) shareEntry;
+			if (isDisable(e.getAnonymousUrl().getContact(), sender, MailActivationType.SHARED_DOC_UPDATED)) {
+				return null;
+			}
 			url = e.getAnonymousUrl()
 					.getFullUrl(getLinShareUrlForAContactRecipient(sender));
 			recipient = e.getAnonymousUrl().getContact().getMail();
@@ -415,6 +438,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			fileName = e.getDocumentEntry().getName();
 		} else {
 			ShareEntry e = (ShareEntry) shareEntry;
+			if (isDisable(e.getRecipient(), MailActivationType.SHARED_DOC_UPDATED)) {
+				return null;
+			}
 			url = getLinShareUrlForAUserRecipient(
 					e.getRecipient());
 			recipient = e.getRecipient().getMail();
@@ -456,7 +482,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	public MailContainerWithRecipient buildSharedDocDeleted(Account actor,
 			Entry shareEntry) throws BusinessException {
 		/*
-		 * XXX ugly
+		 * XXX very very ugly
 		 */
 		User sender = (User) shareEntry.getEntryOwner();
 		String actorRepresentation = new ContactRepresentation(sender)
@@ -466,6 +492,10 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		if (shareEntry instanceof AnonymousShareEntry) {
 			AnonymousShareEntry e = (AnonymousShareEntry) shareEntry;
 			recipient = e.getAnonymousUrl().getContact().getMail();
+			if (isDisable(e.getAnonymousUrl().getContact(), sender,
+					MailActivationType.SHARED_DOC_DELETED)) {
+				return null;
+			}
 			locale = sender.getExternalMailLocale();
 			firstName = "";
 			lastName = recipient;
@@ -473,6 +503,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		} else {
 			ShareEntry e = (ShareEntry) shareEntry;
 			recipient = e.getRecipient().getMail();
+			if (isDisable(e.getRecipient(), MailActivationType.SHARED_DOC_DELETED)) {
+				return null;
+			}
 			locale = e.getRecipient().getExternalMailLocale();
 			firstName = e.getRecipient().getFirstName();
 			lastName = e.getRecipient().getLastName();
@@ -504,7 +537,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	public MailContainerWithRecipient buildSharedDocUpcomingOutdated(
 			Entry shareEntry, Integer days) throws BusinessException {
 		/*
-		 * XXX ugly
+		 * XXX very very ugly
 		 */
 		User sender = (User) shareEntry.getEntryOwner();
 		String actorRepresentation = new ContactRepresentation(sender)
@@ -513,15 +546,22 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		Language locale;
 		if (shareEntry instanceof AnonymousShareEntry) {
 			AnonymousShareEntry e = (AnonymousShareEntry) shareEntry;
+			recipient = e.getAnonymousUrl().getContact().getMail();
+			if (isDisable(e.getAnonymousUrl().getContact(), sender,
+					MailActivationType.SHARED_DOC_UPCOMING_OUTDATED)) {
+				return null;
+			}
 			url = e.getAnonymousUrl()
 					.getFullUrl(getLinShareUrlForAContactRecipient(sender));
-			recipient = e.getAnonymousUrl().getContact().getMail();;
 			locale = sender.getExternalMailLocale();
 			firstName = "";
 			lastName = recipient;
 			fileName = e.getDocumentEntry().getName();
 		} else {
 			ShareEntry e = (ShareEntry) shareEntry;
+			if (isDisable(e.getRecipient(), MailActivationType.SHARED_DOC_UPCOMING_OUTDATED)) {
+				return null;
+			}
 			url = getLinShareUrlForAUserRecipient(
 					e.getRecipient());
 			recipient = e.getRecipient().getMail();
@@ -560,6 +600,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	public MailContainerWithRecipient buildDocUpcomingOutdated(
 			DocumentEntry document, Integer days) throws BusinessException {
 		User owner = (User) document.getEntryOwner();
+		if (isDisable(owner, MailActivationType.DOC_UPCOMING_OUTDATED)) {
+			return null;
+		}
 		String actorRepresentation = new ContactRepresentation(owner)
 				.getContactRepresentation();
 		String url = getLinShareUrlForAUserRecipient(owner);
@@ -592,6 +635,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	public MailContainerWithRecipient buildNewSharing(User sender,
 			MailContainer input, User recipient,
 			Set<ShareEntry> shares) throws BusinessException {
+		if (isDisable(recipient, MailActivationType.NEW_SHARING)) {
+			return null;
+		}
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
 		String url = getLinShareUrlForAUserRecipient(recipient);
@@ -637,12 +683,13 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 	private MailContainerWithRecipient buildNewAnonymousSharing(User sender, MailContainer input,
 			AnonymousUrl anonUrl, MailContentType mailContentType) throws BusinessException {
+		if (isDisable(anonUrl.getContact(), sender, MailActivationType.NEW_SHARING)) {
+			return null;
+		}
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
 		String url = anonUrl
 				.getFullUrl(getLinShareUrlForAContactRecipient(sender));
-		String email = anonUrl.getContact().getMail();
-
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				sender.getExternalMailLocale());
@@ -656,7 +703,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("actorRepresentation", actorRepresentation);
 		builder.getGreetingsChain()
 				.add("firstName", "")
-				.add("lastName", email);
+				.add("lastName", anonUrl.getContact().getMail());
 		builder.getBodyChain()
 				.add("firstName", sender.getFirstName())
 				.add("lastName", sender.getLastName())
@@ -667,7 +714,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("url", url)
 				.add("urlparam", "");
 		container.setSubject(input.getSubject());
-		container.setRecipient(email);
+		container.setRecipient(anonUrl.getContact());
 		container.setFrom(getFromMailAddress(sender));
 		container.setReplyTo(sender.getMail());
 
@@ -705,11 +752,14 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				MailContentType.NEW_SHARING_CYPHERED_PROTECTED);
 	}
 
+	// TODO:FMA : To be removed
 	@Override
 	public MailContainerWithRecipient buildNewUploadRequestEntryUrl(
 			User owner, UploadRequestUrl request, UploadRequestEntryUrl uREUrl)
 			throws BusinessException {
-
+		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_ENTRY_URL)) {
+			return null;
+		}
 		String url = uREUrl
 				.getFullUrl(getLinShareUrlForAContactRecipient(owner));
 		String actorRepresentation = request.getContact().getMail();
@@ -747,6 +797,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	public MailContainerWithRecipient buildNewSharingCyphered(User sender,
 			MailContainer input, User recipient,
 			Set<ShareEntry> shares) throws BusinessException {
+		if (isDisable(recipient, MailActivationType.NEW_SHARING)) {
+			return null;
+		}
 		String actorRepresentation = new ContactRepresentation(sender)
 				.getContactRepresentation();
 		String url = getLinShareUrlForAUserRecipient(recipient);
@@ -794,6 +847,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadProposition proposition)
 			throws BusinessException {
+		if (isDisable(recipient, MailActivationType.UPLOAD_PROPOSITION_CREATED)) {
+			return null;
+		}
 		MailConfig cfg = recipient.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				recipient.getExternalMailLocale());
@@ -822,6 +878,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildRejectUploadProposition(User sender, UploadProposition proposition)
 			throws BusinessException {
+		if (isDisable(sender, MailActivationType.UPLOAD_PROPOSITION_REJECTED)) {
+			return null;
+		}
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				sender.getExternalMailLocale());
@@ -850,6 +909,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildUpdateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
+		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_UPDATED)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -866,7 +928,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("lastName", owner.getLastName())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody());
-		container.setRecipient(request.getContact().getMail());
+		container.setRecipient(request.getContact());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
 
@@ -876,6 +938,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildActivateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
+		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_ACTIVATED)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -884,9 +949,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		builder.getSubjectChain()
 				.add("actorRepresentation", new ContactRepresentation(owner).getContactRepresentation())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
-		String contact = request.getContact().getMail();
 		builder.getGreetingsChain()
-				.add("firstName", contact)
+				.add("firstName", request.getContact().getMail())
 				.add("lastName", "");
 		//  Why first name and last name ?
 		builder.getBodyChain()
@@ -901,7 +965,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("ownerMail", owner.getMail())
 				.add("maxFileCount", request.getUploadRequest().getMaxFileCount().toString())
 				.add("password", request.getTemporaryPlainTextPassword());
-		container.setRecipient(contact);
+		container.setRecipient(request.getContact());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
 		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_ACTIVATED, builder);
@@ -911,9 +975,13 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		return abstractDomainService.getDomainMail(owner.getDomain());
 	}
 
+	// TODO : to be used ?
 	@Override
 	public MailContainerWithRecipient buildFilterUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
+		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_AUTO_FILTER)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -937,6 +1005,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildCreateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
+		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_CREATED)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -959,7 +1030,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("ownerMail", owner.getMail())
 				.add("maxFileCount", request.getUploadRequest().getMaxFileCount().toString())
 				.add("activationDate", formatActivationDate(owner, request.getUploadRequest()));
-		container.setRecipient(request.getContact().getMail());
+		container.setRecipient(request.getContact());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
 
@@ -970,6 +1041,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildAckUploadRequest(User owner, UploadRequestUrl request, UploadRequestEntry entry)
 			throws BusinessException {
+		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_ACKNOWLEDGMENT)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -999,6 +1073,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildAckDeleteFileUploadRequest(User owner, UploadRequestUrl request, UploadRequestEntry entry)
 			throws BusinessException {
+		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_FILE_DELETED_BY_SENDER)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -1028,6 +1105,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildRemindUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
+		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_REMINDER)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -1056,6 +1136,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnOwner(User owner, UploadRequest request)
 			throws BusinessException {
+		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_WARN_OWNER_BEFORE_EXPIRY)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -1087,6 +1170,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnRecipient(User owner, UploadRequestUrl request)
 			throws BusinessException {
+		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -1107,7 +1193,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("expirationDate", formatExpirationDate(owner, request.getUploadRequest()))
 				.add("creationDate", formatCreationDate(owner, request.getUploadRequest()))
 				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(owner)));
-		container.setRecipient(request.getContact().getMail());
+		container.setRecipient(request.getContact());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
 		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY, builder);
@@ -1116,6 +1202,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildUploadRequestExpiryWarnOwner(User owner, UploadRequest request)
 			throws BusinessException {
+		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_WARN_OWNER_EXPIRY)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -1148,6 +1237,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildUploadRequestExpiryWarnRecipient(User owner, UploadRequestUrl request)
 			throws BusinessException {
+		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_WARN_RECIPIENT_EXPIRY)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -1169,7 +1261,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("expirationDate", formatExpirationDate(owner, request.getUploadRequest()))
 				.add("creationDate", formatCreationDate(owner, request.getUploadRequest()))
 				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(owner)));
-		container.setRecipient(request.getContact().getMail());
+		container.setRecipient(request.getContact());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
 
@@ -1179,6 +1271,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildCloseUploadRequestByRecipient(User owner, UploadRequestUrl request)
 			throws BusinessException {
+		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_CLOSED_BY_RECIPIENT)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -1223,6 +1318,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildCloseUploadRequestByOwner(User owner, UploadRequestUrl request)
 			throws BusinessException {
+		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_CLOSED_BY_OWNER)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -1250,6 +1348,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildDeleteUploadRequestByOwner(User owner, UploadRequestUrl request)
 			throws BusinessException {
+		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_DELETED_BY_OWNER)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -1277,6 +1378,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildErrorUploadRequestNoSpaceLeft(User owner, UploadRequestUrl request)
 			throws BusinessException {
+		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_NO_SPACE_LEFT)) {
+			return null;
+		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				request.getLocale());
@@ -1424,9 +1528,33 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		return container;
 	}
 
+	private boolean isDisable(Contact contact, Account sender, MailActivationType type) {
+		AbstractDomain recipientDomain = abstractDomainService
+				.getGuestDomain(sender.getDomainId());
+		// guest domain could be inexistent into the database.
+		if (recipientDomain == null) {
+			recipientDomain = sender.getDomain();
+		}
+		MailActivation mailActivation = mailActivationBusinessService
+				.findForInternalUsage(recipientDomain, type);
+		boolean enable = mailActivation.isEnable();
+		return !enable;
+	}
+
+	private boolean isDisable(Account recipient, MailActivationType type) {
+		MailActivation mailActivation = mailActivationBusinessService
+				.findForInternalUsage(recipient.getDomain(), type);
+		boolean enable = mailActivation.isEnable();
+		return !enable;
+	}
+
 	@Override
 	public MailContainerWithRecipient buildNewSharingPersonnalNotification(
 			User sender, ShareContainer container, Set<Entry> entries) throws BusinessException {
+		if (isDisable(sender,
+				MailActivationType.SHARE_CREATION_ACKNOWLEDGMENT_FOR_OWNER)) {
+			return null;
+		}
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(
 				sender.getExternalMailLocale());

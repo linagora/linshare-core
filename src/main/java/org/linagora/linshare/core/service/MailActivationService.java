@@ -34,8 +34,13 @@
 
 package org.linagora.linshare.core.service;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailActivation;
+import org.linagora.linshare.core.exception.BusinessException;
 
-public interface MailActivationService extends AbstractFunctionalityService<MailActivation> {
+public interface MailActivationService extends
+		AbstractFunctionalityService<MailActivation> {
 
+	void delete(Account actor, String domainId, String mailActivationId)
+			throws BusinessException;
 }

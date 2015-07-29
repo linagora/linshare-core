@@ -56,14 +56,14 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 
 	private final static Logger logger = LoggerFactory.getLogger(AbstractFunctionalityBusinessServiceImpl.class);
 
-	protected AbstractFunctionalityRepository<T> functionalityRepository;
+	protected AbstractFunctionalityRepository<T> repository;
 
 	protected AbstractDomainRepository abstractDomainRepository;
 
 	public AbstractFunctionalityBusinessServiceImpl(AbstractFunctionalityRepository<T> functionalityRepository,
 			AbstractDomainRepository abstractDomainRepository) {
 		super();
-		this.functionalityRepository = functionalityRepository;
+		this.repository = functionalityRepository;
 		this.abstractDomainRepository = abstractDomainRepository;
 	}
 
@@ -121,7 +121,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		Set<InnerFunctionality> res = new HashSet<InnerFunctionality>();
 
 		// Copy all functionalities from this domain to result list
-		res.addAll(convertToInnerFunctionality(functionalityRepository.findAll(domain)));
+		res.addAll(convertToInnerFunctionality(repository.findAll(domain)));
 
 		if (domain.getParentDomain() != null) {
 			// get parent functionalities using recursive call
@@ -142,7 +142,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		T res = null;
 		AbstractDomain parentDomain = domain.getParentDomain();
 		if (parentDomain != null) {
-			res = functionalityRepository.findByDomain(parentDomain, functionalityIdentifier);
+			res = repository.findByDomain(parentDomain, functionalityIdentifier);
 			// no functionality was found in the current parentDomain. Trying parentDomain of parentDomain, using recursive call.
 			if (res == null) {
 				res = getParentFunctionality(parentDomain, functionalityIdentifier);
@@ -326,10 +326,10 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		return false;
 	}
 
-	private  T getFunctionalityEntityByIdentifiers(AbstractDomain domain, String functionalityId) {
+	protected  T getFunctionalityEntityByIdentifiers(AbstractDomain domain, String functionalityId) {
 		Assert.notNull(domain);
 		Assert.notNull(functionalityId);
-		T fonc = functionalityRepository.findByDomain(domain, functionalityId);
+		T fonc = repository.findByDomain(domain, functionalityId);
 		if (fonc == null && domain.getParentDomain() != null) {
 			fonc = getFunctionalityEntityByIdentifiers(domain.getParentDomain(), functionalityId);
 		}
@@ -365,7 +365,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			// This functionality belongs to the current domain.
 			logger.debug("this functionality belongs to the current domain");
 			entity.updateFunctionalityFrom(functionality);
-			functionalityRepository.update(entity);
+			repository.update(entity);
 			permissionPropagationForActivationPolicy(entity);
 			permissionPropagationForConfigurationPolicy(entity);
 			if (entity.getDelegationPolicy() != null) {
@@ -377,8 +377,8 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			if (!functionality.businessEquals(entity, true)) {
 				// This functionality is different, it needs to be persist.
 				functionality.setDomain(currentDomain);
-				if (functionalityRepository.findByDomain(currentDomain, functionality.getIdentifier()) == null) {
-					functionalityRepository.create(functionality);
+				if (repository.findByDomain(currentDomain, functionality.getIdentifier()) == null) {
+					repository.create(functionality);
 					logger.info("Update by creation of a new functionality for : " + functionality.getIdentifier() + " link to domain : " + currentDomain.getIdentifier());
 				} else {
 					// TODO : to be check : This could really happen ? odd !
@@ -403,8 +403,8 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		// The functionality belong to the current domain. We can delete it.
 		if (functionality.getDomain().getIdentifier().equals(domainId)){
 			logger.debug("suppression of the functionality : " + domainId + " : " + functionalityId);
-			T rawFunc = functionalityRepository.findByDomain(domain, functionalityId);
-			functionalityRepository.delete(rawFunc);
+			T rawFunc = repository.findByDomain(domain, functionalityId);
+			repository.delete(rawFunc);
 			domain.getFunctionalities().remove(rawFunc);
 			abstractDomainRepository.update(domain);
 		} else {
@@ -415,10 +415,10 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	private void deleteFunctionalityRecursivly(AbstractDomain domain, String functionalityIdentifier) throws IllegalArgumentException, BusinessException {
 		if(domain != null ) {
 			for (AbstractDomain subDomain : domain.getSubdomain()) {
-				Set<T> functionalities = functionalityRepository.findAll(subDomain);
+				Set<T> functionalities = repository.findAll(subDomain);
 				for (T functionality : functionalities) {
 					if(functionality.getIdentifier().equals(functionalityIdentifier)) {
-						functionalityRepository.delete(functionality);
+						repository.delete(functionality);
 						functionalities.remove(functionality);
 						break;
 					}
@@ -431,10 +431,10 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	private void updateActivationPolicyRecursivly(AbstractDomain domain, T functionality) throws IllegalArgumentException, BusinessException {
 		if(domain != null ) {
 			for (AbstractDomain subDomain : domain.getSubdomain()) {
-				for (T f : functionalityRepository.findAll(subDomain)) {
+				for (T f : repository.findAll(subDomain)) {
 					if(f.getIdentifier().equals(functionality.getIdentifier())) {
 						f.getActivationPolicy().updatePolicyFrom(functionality.getActivationPolicy());
-						functionalityRepository.update(f);
+						repository.update(f);
 						break;
 					}
 				}
@@ -446,13 +446,13 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	private void updateConfigurationPolicyRecursivly(AbstractDomain domain, T functionality, boolean copyContent) throws IllegalArgumentException, BusinessException {
 		if(domain != null ) {
 			for (AbstractDomain subDomain : domain.getSubdomain()) {
-				for (T f : functionalityRepository.findAll(subDomain)) {
+				for (T f : repository.findAll(subDomain)) {
 					if(f.getIdentifier().equals(functionality.getIdentifier())) {
 						f.getConfigurationPolicy().updatePolicyFrom(functionality.getConfigurationPolicy());
 						if(copyContent) {
 							f.updateFunctionalityValuesOnlyFrom(functionality);
 						}
-						functionalityRepository.update(f);
+						repository.update(f);
 						break;
 					}
 				}
@@ -464,10 +464,10 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	private void updateDelegationPolicyRecursivly(AbstractDomain domain, T functionality) throws IllegalArgumentException, BusinessException {
 		if(domain != null ) {
 			for (AbstractDomain subDomain : domain.getSubdomain()) {
-				for (T f : functionalityRepository.findAll(subDomain)) {
+				for (T f : repository.findAll(subDomain)) {
 					if(f.getIdentifier().equals(functionality.getIdentifier())) {
 						f.getDelegationPolicy().updatePolicyFrom(functionality.getDelegationPolicy());
-						functionalityRepository.update(f);
+						repository.update(f);
 						break;
 					}
 				}

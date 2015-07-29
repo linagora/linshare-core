@@ -35,7 +35,10 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
+import org.linagora.linshare.core.domain.constants.MailActivationType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailActivation;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AbstractFunctionalityRepository;
 
@@ -49,4 +52,11 @@ public class MailActivationBusinessServiceImpl extends
 		super(functionalityRepository, abstractDomainRepository);
 	}
 
+	@Override
+	public MailActivation findForInternalUsage(AbstractDomain recipientDomain,
+			MailActivationType identifier) throws BusinessException {
+		MailActivation functionality = getFunctionalityEntityByIdentifiers(
+				recipientDomain, identifier.name());
+		return functionality;
+	}
 }

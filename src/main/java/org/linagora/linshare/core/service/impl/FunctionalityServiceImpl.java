@@ -269,15 +269,6 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 		return functionality;
 	}
 
-	private void checkDeleteRights(AbstractDomain domain) throws BusinessException {
-		AbstractDomain rootDomain = domainBusinessService.getUniqueRootDomain();
-		if (domain.equals(rootDomain)) {
-			throw new BusinessException(
-					BusinessErrorCode.DOMAIN_INVALID_OPERATION,
-					"You are not authorized to delete a root functionality");
-		}
-	}
-
 	private Predicate<Functionality> isDisplayable() {
 		return new Predicate<Functionality>() {
 			@Override

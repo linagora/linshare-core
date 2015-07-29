@@ -313,6 +313,9 @@ public class MailNotifierServiceImpl implements NotifierService {
 		if(CollectionUtils.isNotEmpty(mailContainerWithRecipient)) {
 			List<String> unknownRecipients = Lists.newArrayList();
 			for (MailContainerWithRecipient mailContainer : mailContainerWithRecipient) {
+				if (mailContainer == null) {
+					continue;
+				}
 				try {
 					if (mailContainer.getRecipient() == null) {
 						logger.error("can not send mails, no recipient");

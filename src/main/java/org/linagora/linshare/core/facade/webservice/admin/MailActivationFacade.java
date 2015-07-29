@@ -31,32 +31,24 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
 
-public class MailActivation extends AbstractFunctionality {
+package org.linagora.linshare.core.facade.webservice.admin;
 
-	protected boolean enable;
+import java.util.List;
 
-	public MailActivation() {
-		super();
-	}
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailActivationAdminDto;
 
-	public MailActivation(boolean enable) {
-		super();
-		this.enable = enable;
-	}
+public interface MailActivationFacade extends AdminGenericFacade {
 
-	public boolean isEnable() {
-		return enable;
-	}
+	List<MailActivationAdminDto> findAll(String domainId)
+			throws BusinessException;
 
-	@Override
-	public String toString() {
-		return "MailActivation [enable=" + enable + ", identifier="
-				+ identifier + ", domain=" + domain + "]";
-	}
+	MailActivationAdminDto find(String domainId, String mailActivationId)
+			throws BusinessException;
 
-	public void setEnable(boolean enable) {
-		this.enable = enable;
-	}
+	MailActivationAdminDto update(MailActivationAdminDto mailActivation)
+			throws BusinessException;
+
+	void delete(MailActivationAdminDto mailActivation) throws BusinessException;
 }

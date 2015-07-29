@@ -40,9 +40,11 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AbstractFunctionalityService<T extends AbstractFunctionality> {
 
-	Iterable<T> findAll(Account actor, String domainId) throws BusinessException;
+	Iterable<T> findAll(Account actor, String domainId)
+			throws BusinessException;
 
-	T find(Account actor, String domainId, String identifier) throws BusinessException;
+	T find(Account actor, String domainId, String identifier)
+			throws BusinessException;
 
 	T update(Account actor, String domainId, T f) throws BusinessException;
 }

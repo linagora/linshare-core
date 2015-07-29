@@ -50,9 +50,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-public class MailActivationServiceImpl extends AbstractFunctionalityServiceImpl<MailActivation> implements MailActivationService {
+public class MailActivationServiceImpl extends
+		AbstractFunctionalityServiceImpl<MailActivation> implements
+		MailActivationService {
 
-	protected final Logger logger = LoggerFactory.getLogger(MailActivationServiceImpl.class);
+	protected final Logger logger = LoggerFactory
+			.getLogger(MailActivationServiceImpl.class);
 
 	final private MailActivationBusinessService businessService;
 
@@ -77,13 +80,14 @@ public class MailActivationServiceImpl extends AbstractFunctionalityServiceImpl<
 	}
 
 	@Override
-	public MailActivation find(Account actor, String domainId, String mailActivationId)
-			throws BusinessException {
+	public MailActivation find(Account actor, String domainId,
+			String mailActivationId) throws BusinessException {
 		Validate.notEmpty(domainId);
 		Validate.notEmpty(mailActivationId);
 		Validate.notNull(actor);
 		Validate.isTrue(actor.hasAdminRole() || actor.hasSuperAdminRole());
-		logger.debug("looking for mailActivation : " + mailActivationId + " in domain "+ domainId);
+		logger.debug("looking for mailActivation : " + mailActivationId
+				+ " in domain " + domainId);
 		AbstractDomain domain = getDomain(actor, domainId);
 		return businessService.getFunctionality(domain, mailActivationId);
 	}
@@ -99,6 +103,19 @@ public class MailActivationServiceImpl extends AbstractFunctionalityServiceImpl<
 		if (checkUpdateRights(actor, domain, mailActivation)) {
 			businessService.update(domainId, mailActivation);
 		}
-		return businessService.getFunctionality(domain, mailActivation.getIdentifier());
+		return businessService.getFunctionality(domain,
+				mailActivation.getIdentifier());
+	}
+
+	@Override
+	public void delete(Account actor, String domainId, String mailActivationId)
+			throws BusinessException {
+		Validate.notNull(actor);
+		Validate.notEmpty(domainId);
+		Validate.notEmpty(mailActivationId);
+		Validate.isTrue(actor.hasAdminRole() || actor.hasSuperAdminRole());
+		AbstractDomain domain = getDomain(actor, domainId);
+		checkDeleteRights(domain);
+		businessService.delete(domainId, mailActivationId);
 	}
 }

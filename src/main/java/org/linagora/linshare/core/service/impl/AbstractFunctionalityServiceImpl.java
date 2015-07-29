@@ -154,4 +154,12 @@ public abstract class AbstractFunctionalityServiceImpl<T extends AbstractFunctio
 		return domain;
 	}
 
+	protected void checkDeleteRights(AbstractDomain domain) throws BusinessException {
+		AbstractDomain rootDomain = domainBusinessService.getUniqueRootDomain();
+		if (domain.equals(rootDomain)) {
+			throw new BusinessException(
+					BusinessErrorCode.DOMAIN_INVALID_OPERATION,
+					"You are not authorized to delete a root functionality");
+		}
+	}
 }

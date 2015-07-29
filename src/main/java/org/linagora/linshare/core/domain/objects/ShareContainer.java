@@ -358,7 +358,6 @@ public class ShareContainer {
 
 
 	public void addMailContainer(MailContainerWithRecipient mailContainer) {
-		Validate.notNull(mailContainer, "mailContainer must not be null.");
 		this.mailContainers.add(mailContainer);
 	}
 
