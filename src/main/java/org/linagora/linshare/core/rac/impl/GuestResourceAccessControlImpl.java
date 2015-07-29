@@ -80,14 +80,7 @@ public class GuestResourceAccessControlImpl extends
 		if (actor.hasDelegationRole())
 			return hasPermission(actor, TechnicalAccountPermissionType.GUESTS_GET);
 		if (actor.isInternal() || actor.isGuest()) {
-			if (actor.equals(owner)) {
-				if (entry.getOwner().equals(owner)) {
-					return true;
-				}
-			}
-			if (entry.getDomain().isManagedBy(actor)) {
-				return true;
-			}
+			return true;
 		}
 		return false;
 	}
