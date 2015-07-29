@@ -100,7 +100,8 @@ public class AnonymousShareEntryResourceAccessControlImpl extends
 			Functionality anonymousUrl = functionalityService.getAnonymousUrl(owner.getDomain());
 			if (anonymousUrl.getActivationPolicy().getStatus()) {
 				return true;
-			}
+			} else
+				logger.debug("Functionality: ANONYMOUS URL not enable.");
 		}
 		return false;
 	}
