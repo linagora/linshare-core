@@ -35,22 +35,22 @@ package org.linagora.linshare.core.domain.entities;
 
 public class MailActivation extends AbstractFunctionality {
 
-	protected boolean value;
+	protected boolean enable;
 
 	public MailActivation() {
 		super();
 	}
 
-	public MailActivation(boolean value) {
+	public MailActivation(boolean enable) {
 		super();
-		this.value = value;
+		this.enable = enable;
 	}
 
-	public boolean isValue() {
-		return value;
+	public boolean isEnable() {
+		return enable;
 	}
 
-	public void setValue(boolean value) {
-		this.value = value;
+	public void setEnable(boolean enable) {
+		this.enable = enable;
 	}
 }

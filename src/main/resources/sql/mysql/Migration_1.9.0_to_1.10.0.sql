@@ -5,12 +5,126 @@ SET CHARACTER SET UTF8;
 SET AUTOCOMMIT=0;
 START TRANSACTION;
 
+
+-- TODO check what happen if bit value was null.
+
+ALTER TABLE account MODIFY destroyed TINYINT(1);
+ALTER TABLE account MODIFY enable TINYINT(1);
+
+ALTER TABLE document MODIFY check_mime_type TINYINT(1);
+
+ALTER TABLE document_entry MODIFY ciphered TINYINT(1);
+ALTER TABLE document_entry MODIFY has_thumbnail TINYINT(1);
+
+ALTER TABLE entry MODIFY cmis_sync TINYINT(1);
+
+ALTER TABLE domain_abstract MODIFY enable TINYINT(1);
+ALTER TABLE domain_abstract MODIFY template TINYINT(1);
+
+ALTER TABLE functionality MODIFY system TINYINT(1);
+ALTER TABLE functionality MODIFY param TINYINT(1);
+
+ALTER TABLE policy MODIFY status TINYINT(1);
+ALTER TABLE policy MODIFY default_status TINYINT(1);
+ALTER TABLE policy MODIFY system TINYINT(1);
+
+ALTER TABLE ldap_attribute MODIFY sync TINYINT(1);
+ALTER TABLE ldap_attribute MODIFY system TINYINT(1);
+ALTER TABLE ldap_attribute MODIFY enable TINYINT(1);
+ALTER TABLE ldap_attribute MODIFY completion TINYINT(1);
+
+ALTER TABLE thread_entry MODIFY ciphered TINYINT(1);
+ALTER TABLE thread_entry MODIFY has_thumbnail TINYINT(1);
+
+ALTER TABLE thread_member MODIFY admin TINYINT(1);
+ALTER TABLE thread_member MODIFY can_upload TINYINT(1);
+
+ALTER TABLE users MODIFY can_upload TINYINT(1);
+ALTER TABLE users MODIFY restricted TINYINT(1);
+ALTER TABLE users MODIFY can_create_guest TINYINT(1);
+
+ALTER TABLE mail_activation MODIFY system TINYINT(1);
+
+ALTER TABLE mail_config MODIFY visible TINYINT(1);
+
+ALTER TABLE mail_layout MODIFY visible TINYINT(1);
+ALTER TABLE mail_layout MODIFY plaintext TINYINT(1);
+
+ALTER TABLE mail_footer MODIFY visible TINYINT(1);
+ALTER TABLE mail_footer MODIFY plaintext TINYINT(1);
+
+ALTER TABLE mail_content MODIFY visible TINYINT(1);
+ALTER TABLE mail_content MODIFY plaintext TINYINT(1);
+ALTER TABLE mail_content MODIFY enable_as TINYINT(1);
+
+ALTER TABLE upload_request MODIFY can_delete TINYINT(1);
+ALTER TABLE upload_request MODIFY can_close TINYINT(1);
+ALTER TABLE upload_request MODIFY can_edit_expiry_date TINYINT(1);
+ALTER TABLE upload_request MODIFY secured TINYINT(1);
+
+ALTER TABLE upload_request_history MODIFY status_updated TINYINT(1);
+ALTER TABLE upload_request_history MODIFY can_delete TINYINT(1);
+ALTER TABLE upload_request_history MODIFY can_close TINYINT(1);
+ALTER TABLE upload_request_history MODIFY can_edit_expiry_date TINYINT(1);
+ALTER TABLE upload_request_history MODIFY secured TINYINT(1);
+
+ALTER TABLE upload_proposition_filter MODIFY enable TINYINT(1);
+ALTER TABLE mailing_list MODIFY is_public TINYINT(1);
+
+ALTER TABLE upload_request_template MODIFY group_mode TINYINT(1);
+ALTER TABLE upload_request_template MODIFY deposit_mode TINYINT(1);
+ALTER TABLE upload_request_template MODIFY secured TINYINT(1);
+ALTER TABLE upload_request_template MODIFY prolongation_mode TINYINT(1);
+
+ALTER TABLE mime_type MODIFY enable TINYINT(1);
+ALTER TABLE mime_type MODIFY displayable TINYINT(1);
+
+ALTER TABLE functionality_boolean MODIFY boolean_value TINYINT(1);
+
+ALTER TABLE ldap_pattern MODIFY system TINYINT(1);
+
+
+
+
+
 UPDATE mail_content SET language = 1 where id = 80;
 
 UPDATE mail_content set body = 'Vous avez partagé ${fileNumber} document(s), le ${creationDate}, expirant le ${expirationDate}, avec : <ul>${recipientNames}</ul><br/>Voici la liste des documents partagés : <ul>${documentNames}</ul>' where id = 82;
 
 UPDATE mail_content set body = 'Vous avez partagé ${fileNumber} document(s), le ${creationDate}, expirant le ${expirationDate}, avec : <ul>${recipientNames}</ul>Votre message original est le suivant :<br/><i>${message}</i><br/><br/>Voici la liste des documents partagés :<br/><ul>${documentNames}</ul>' where id = 83;
 
+
+
+
+CREATE TABLE share_entry_group (
+  id                bigint(8) NOT NULL AUTO_INCREMENT,
+  account_id        bigint(8) NOT NULL,
+  uuid              varchar(255) NOT NULL UNIQUE,
+  subject           text,
+  notification_date datetime NULL,
+  creation_date     datetime NOT NULL,
+  modification_date datetime NOT NULL,
+  notified          tinyint(1) DEFAULT false NOT NULL,
+  processed         tinyint(1) DEFAULT false NOT NULL,
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
+CREATE TABLE mail_activation (
+  id                      bigint(8) NOT NULL AUTO_INCREMENT,
+  identifier              varchar(255) NOT NULL,
+  system                  tinyint(1) NOT NULL,
+  policy_activation_id    bigint(8) NOT NULL,
+  policy_configuration_id bigint(8) NOT NULL,
+  policy_delegation_id    bigint(8) NOT NULL,
+  domain_id               bigint(8) NOT NULL,
+  enable                  tinyint(1) NOT NULL,
+  PRIMARY KEY (id)) CHARACTER SET UTF8;
+ALTER TABLE anonymous_share_entry ADD INDEX FKanonymous_708340 (share_entry_group_id), ADD CONSTRAINT FKanonymous_708340 FOREIGN KEY (share_entry_group_id) REFERENCES share_entry_group (id);
+ALTER TABLE share_entry ADD INDEX FKshare_entr137514 (share_entry_group_id), ADD CONSTRAINT FKshare_entr137514 FOREIGN KEY (share_entry_group_id) REFERENCES share_entry_group (id);
+ALTER TABLE share_entry_group ADD INDEX shareEntryGroup (account_id), ADD CONSTRAINT shareEntryGroup FOREIGN KEY (account_id) REFERENCES account (id);
+
+ALTER TABLE mail_activation ADD INDEX FKmail_activ188698 (domain_id), ADD CONSTRAINT FKmail_activ188698 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_activation ADD INDEX activation (policy_activation_id), ADD CONSTRAINT activation FOREIGN KEY (policy_activation_id) REFERENCES policy (id);
+ALTER TABLE mail_activation ADD INDEX configuration (policy_configuration_id), ADD CONSTRAINT configuration FOREIGN KEY (policy_configuration_id) REFERENCES policy (id);
+ALTER TABLE mail_activation ADD INDEX delegation (policy_delegation_id), ADD CONSTRAINT delegation FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
 
 -- Functionality : UNDOWNLOADED_SHARED_DOCUMENTS_ALERT
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (131, true, true, 1, false);
@@ -26,8 +140,15 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (135, true
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (136, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
  VALUES(55, false, 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION', 134, 135, 136, 1, 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT', true);
-INSERT INTO unit(id, unit_type, unit_value) VALUES (13, 0, 0);
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (55, 3, 13);
+INSERT INTO functionality_integer(functionality_id, integer_value) VALUES (55, 3);
+
+-- Functionality : ANONYMOUS_URL__NOTIFICATION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (224, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (225, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (226, false, false, 2, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(56, false, 'ANONYMOUS_URL__NOTIFICATION', 224, 225, 226, 1, 'ANONYMOUS_URL', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (56, true);
 
 
 
@@ -230,6 +351,14 @@ INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy
  VALUES(28, false, 'SHARE_CREATION_ACKNOWLEDGMENT_FOR_OWNER', 218, 219, 220, 1, true);
 
 -- MailActivation : END
+
+
+-- Fix Migration 1.8 to 1.9
+UPDATE document_entry
+	SET shared = (SELECT COUNT(document_entry_id)
+	FROM (SELECT entry_id, document_entry_id FROM share_entry UNION ALL SELECT entry_id, document_entry_id FROM anonymous_share_entry) as all_shared
+	WHERE all_shared.document_entry_id = document_entry.entry_id);
+
 
 -- LinShare version
 INSERT INTO version (version) VALUES ('1.10.0');

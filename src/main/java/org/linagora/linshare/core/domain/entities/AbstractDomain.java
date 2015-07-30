@@ -112,7 +112,7 @@ public abstract class AbstractDomain {
 	protected AbstractDomain(String identifier, String label) {
 		this.identifier = identifier;
 		this.label = label;
-		this.description = null;
+		this.description = "";
 		this.functionalities = new HashSet<Functionality>();
 		this.domainAccessRules = new HashSet<DomainAccessRule>();
 		this.parentDomain = null;
@@ -150,6 +150,9 @@ public abstract class AbstractDomain {
 		this.shareExpiryRules = new ArrayList<ShareExpiryRule>();
 		this.policy = null;
 		this.authShowOrder = d.getAuthShowOrder();
+		if (description == null) {
+			this.description = "";
+		}
 	}
 
 	public AbstractDomain(DomainDto domainDto, AbstractDomain parent) {
@@ -168,6 +171,9 @@ public abstract class AbstractDomain {
 		this.externalMailLocale = domainDto.getExternalMailLocale();
 		this.authShowOrder = domainDto.getAuthShowOrder();
 //		TODO this.mimePolicy = new MimePolicy();
+		if (description == null) {
+			this.description = "";
+		}
 	}
 
 	public void updateDomainWith(AbstractDomain d) {
@@ -179,6 +185,9 @@ public abstract class AbstractDomain {
 		this.enable = d.isEnable();
 		this.authShowOrder = d.getAuthShowOrder();
 		this.currentWelcomeMessage = d.getCurrentWelcomeMessage();
+		if (description == null) {
+			this.description = "";
+		}
 	}
 
 	public SupportedLanguage getDefaultTapestryLocale() {

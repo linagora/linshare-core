@@ -11,6 +11,37 @@ UPDATE mail_content set body = 'Vous avez partagé ${fileNumber} document(s), le
 
 UPDATE mail_content set body = 'Vous avez partagé ${fileNumber} document(s), le ${creationDate}, expirant le ${expirationDate}, avec : <ul>${recipientNames}</ul>Votre message original est le suivant :<br/><i>${message}</i><br/><br/>Voici la liste des documents partagés :<br/><ul>${documentNames}</ul>' where id = 83;
 
+
+CREATE TABLE share_entry_group (
+  id                 int8 NOT NULL,
+  account_id        int8 NOT NULL,
+  uuid              varchar(255) NOT NULL UNIQUE,
+  subject           text,
+  notification_date timestamp,
+  creation_date     timestamp NOT NULL,
+  modification_date timestamp NOT NULL,
+  notified          bool DEFAULT 'false' NOT NULL,
+  processed         bool DEFAULT 'false' NOT NULL,
+  PRIMARY KEY (id));
+CREATE TABLE mail_activation (
+  id                       int8 NOT NULL,
+  identifier              varchar(255) NOT NULL,
+  system                  bool NOT NULL,
+  policy_activation_id    int8 NOT NULL,
+  policy_configuration_id int8 NOT NULL,
+  policy_delegation_id    int8 NOT NULL,
+  domain_id               int8 NOT NULL,
+  enable                  bool NOT NULL,
+  PRIMARY KEY (id));
+ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_708340 FOREIGN KEY (share_entry_group_id) REFERENCES share_entry_group (id);
+ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr137514 FOREIGN KEY (share_entry_group_id) REFERENCES share_entry_group (id);
+ALTER TABLE share_entry_group ADD CONSTRAINT shareEntryGroup FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE mail_activation ADD CONSTRAINT FKmail_activ188698 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_activation ADD CONSTRAINT activation FOREIGN KEY (policy_activation_id) REFERENCES policy (id);
+ALTER TABLE mail_activation ADD CONSTRAINT configuration FOREIGN KEY (policy_configuration_id) REFERENCES policy (id);
+ALTER TABLE mail_activation ADD CONSTRAINT delegation FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
+
+
 -- Functionality : UNDOWNLOADED_SHARED_DOCUMENTS_ALERT
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (131, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (132, true, true, 1, false);
@@ -25,8 +56,39 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (135, true
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (136, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
  VALUES(55, false, 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION', 134, 135, 136, 1, 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT', true);
-INSERT INTO unit(id, unit_type, unit_value) VALUES (13, 0, 0);
+INSERT INTO functionality_integer(functionality_id, integer_value) VALUES (55, 3);
+
+-- Functionality : ANONYMOUS_URL__NOTIFICATION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (224, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (225, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (226, false, false, 2, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(56, false, 'ANONYMOUS_URL__NOTIFICATION', 224, 225, 226, 1, 'ANONYMOUS_URL', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (56, true);
+
+
+-- MailActivation : BEGIN
+
+-- MailActivation : ANONYMOUS_DOWNLOAD
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (137, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (138, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (139, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, value)
+ VALUES(1, false, 'ANONYMOUS_DOWNLOAD', 137, 138, 139, 1, true);
+
+-- MailActivation : REGISTERED_DOWNLOAD
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (140, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (141, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (142, false, false, 2, true);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (55, 3, 13);
+
+-- Functionality : ANONYMOUS_URL__NOTIFICATION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (224, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (225, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (226, false, false, 2, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(56, false, 'ANONYMOUS_URL__NOTIFICATION', 224, 225, 226, 1, 'ANONYMOUS_URL', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (56, true);
 
 
 -- MailActivation : BEGIN
@@ -162,30 +224,6 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (191, true
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (192, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (193, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, value)
- VALUES(19, false, 'UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY', 191, 192, 193, 1, true);
-
--- MailActivation : UPLOAD_REQUEST_WARN_OWNER_EXPIRY
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (194, true, true, 0, true);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (195, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (196, false, false, 2, true);
-INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, value)
- VALUES(20, false, 'UPLOAD_REQUEST_WARN_OWNER_EXPIRY', 194, 195, 196, 1, true);
-
--- MailActivation : UPLOAD_REQUEST_WARN_RECIPIENT_EXPIRY
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (197, true, true, 0, true);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (198, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (199, false, false, 2, true);
-INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, value)
- VALUES(21, false, 'UPLOAD_REQUEST_WARN_RECIPIENT_EXPIRY', 197, 198, 199, 1, true);
-
--- MailActivation : UPLOAD_REQUEST_CLOSED_BY_RECIPIENT
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (200, true, true, 0, true);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (201, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (202, false, false, 2, true);
-INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, value)
- VALUES(22, false, 'UPLOAD_REQUEST_CLOSED_BY_RECIPIENT', 200, 201, 202, 1, true);
-
--- MailActivation : UPLOAD_REQUEST_CLOSED_BY_OWNER
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (203, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (204, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (205, false, false, 2, true);

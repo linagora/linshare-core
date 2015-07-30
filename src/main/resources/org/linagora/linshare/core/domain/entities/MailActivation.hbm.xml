@@ -9,17 +9,17 @@
 		<property name="identifier" column="identifier" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="system" column="system" type="boolean" length="1" not-null="true" lazy="false"/>
 		<many-to-one name="activationPolicy" column="policy_activation_id" class="org.linagora.linshare.core.domain.entities.Policy"
-			fetch="join" unique="true" not-null="true" lazy="proxy">
+			fetch="join" unique="true" not-null="true" lazy="proxy" cascade="all" >
 		</many-to-one>
 		<many-to-one name="configurationPolicy" column="policy_configuration_id" class="org.linagora.linshare.core.domain.entities.Policy"
-			fetch="join" unique="true" not-null="true" lazy="proxy">
+			fetch="join" unique="true" not-null="true" lazy="proxy" cascade="all" >
 		</many-to-one>
 		<many-to-one name="delegationPolicy" column="policy_delegation_id" class="org.linagora.linshare.core.domain.entities.Policy"
-			fetch="join" unique="true" not-null="true" lazy="proxy">
+			fetch="join" unique="true" not-null="true" lazy="proxy" cascade="all" >
 		</many-to-one>
 		<many-to-one name="domain" cascade="lock" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain"
 		not-null="true" lazy="proxy">
 		</many-to-one>
-		<property name="value" column="value" type="boolean" length="1" not-null="true" lazy="false"/>
+		<property name="enable" column="enable" type="boolean" length="1" not-null="true" lazy="false"/>
 	</class>
 </hibernate-mapping>

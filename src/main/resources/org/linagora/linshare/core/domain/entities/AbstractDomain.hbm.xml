@@ -31,7 +31,7 @@
 		<property access="field" column="label" name="label" not-null="true" />
 		<property access="field" column="enable" name="enable" not-null="true" />
 		<property access="field" column="template" name="template" not-null="true" />
-		<property access="field" column="description" name="description" />
+		<property access="field" column="description" name="description" type="text" not-null="true" lazy="false"/>
 		<property access="field" column="default_role" name="defaultRole" type="roleEnumType" />
 		<property access="field" column="default_locale" name="defaultTapestryLocale" type="supportedLanguageType"/>
 		<property access="field" column="default_mail_locale" name="externalMailLocale" type="languageType"/>

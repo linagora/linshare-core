@@ -34,7 +34,11 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class ShareEntryGroup {
 
@@ -46,15 +50,28 @@ public class ShareEntryGroup {
 
 	protected String subject;
 
-	protected Date expirationDate;
+	protected Date notificationDate;
 
 	protected Date creationDate;
 
 	protected Date modificationDate;
 
+	protected Boolean notified = false;
+
+	protected Boolean processed = false;
+
 	protected Set<AnonymousShareEntry> anonymousShareEntries;
 
 	protected Set<ShareEntry> shareEntries;
+
+	/**
+	 * Temporary members. Not persisted.
+	 */
+	protected Boolean tmpNeedNotification;
+
+	protected Map<DocumentEntry, Set<Entry>> tmpDocuments;
+
+	protected Map<DocumentEntry, Boolean> tmpDocumentsWasDownloaded;
 
 	public ShareEntryGroup() {
 		super();
@@ -92,12 +109,12 @@ public class ShareEntryGroup {
 		this.subject = subject;
 	}
 
-	public Date getExpirationDate() {
-		return expirationDate;
+	public Date getNotificationDate() {
+		return notificationDate;
 	}
 
-	public void setExpirationDate(Date expirationDate) {
-		this.expirationDate = expirationDate;
+	public void setNotificationDate(Date notificationDate) {
+		this.notificationDate = notificationDate;
 	}
 
 	public Date getCreationDate() {
@@ -131,5 +148,72 @@ public class ShareEntryGroup {
 
 	public void setShareEntries(Set<ShareEntry> shareEntries) {
 		this.shareEntries = shareEntries;
+	}
+
+	public Boolean getNotified() {
+		return notified;
+	}
+
+	public void setNotified(Boolean notified) {
+		this.notified = notified;
+	}
+
+	public Boolean getProcessed() {
+		return processed;
+	}
+
+	public void setProcessed(Boolean processed) {
+		this.processed = processed;
+	}
+
+	public boolean needNotification() {
+		if (tmpNeedNotification != null) {
+			return tmpNeedNotification;
+		}
+		tmpDocuments = Maps.newHashMap();
+		tmpDocumentsWasDownloaded = Maps.newHashMap();
+		for (ShareEntry shareEntry : getShareEntries()) {
+			DocumentEntry documentEntry = shareEntry.getDocumentEntry();
+			Set<Entry> set = tmpDocuments.get(documentEntry);
+			if (set == null) {
+				set = Sets.newHashSet();
+			}
+			set.add(shareEntry);
+			tmpDocuments.put(documentEntry, set);
+			if (shareEntry.getDownloaded() > 0) {
+				tmpDocumentsWasDownloaded.put(documentEntry, true);
+			}
+		}
+		for (AnonymousShareEntry anonymousShareEntry : getAnonymousShareEntries()) {
+			DocumentEntry documentEntry = anonymousShareEntry
+					.getDocumentEntry();
+			Set<Entry> set = tmpDocuments.get(documentEntry);
+			if (set == null) {
+				set = Sets.newHashSet();
+			}
+			set.add(anonymousShareEntry);
+			tmpDocuments.put(documentEntry, set);
+			if (anonymousShareEntry.getDownloaded() > 0) {
+				tmpDocumentsWasDownloaded.put(documentEntry, true);
+			}
+		}
+		if (tmpDocuments.size() == tmpDocumentsWasDownloaded.size()) {
+			tmpNeedNotification = false;
+		} else {
+			tmpNeedNotification = true;
+		}
+		return tmpNeedNotification;
+	}
+
+	public Boolean getTmpNeedNotification() {
+		return tmpNeedNotification;
+	}
+
+	public Map<DocumentEntry, Set<Entry>> getTmpDocuments() {
+		return tmpDocuments;
+	}
+
+	public Map<DocumentEntry, Boolean> getTmpDocumentsWasDownloaded() {
+		return tmpDocumentsWasDownloaded;
 	}
 }
