@@ -132,7 +132,7 @@
 		*****************************************
 	-->
 
-	<!-- CMIS -->
+	<!-- CMIS
 	<servlet>
 	  <display-name> CmisAtomPubServlet </display-name>
 	  <servlet-name>CmisAtomPubServlet</servlet-name>
@@ -149,7 +149,7 @@
 	  <servlet-name>CXFServlet</servlet-name>
 	  <url-pattern>/webservice/*</url-pattern>
 	</servlet-mapping>
-
+	-->
 	<listener>
 		<listener-class>
 			org.springframework.web.context.ContextLoaderListener
