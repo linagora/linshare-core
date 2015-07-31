@@ -155,6 +155,10 @@ public class Index {
 	@Persist
 	private boolean finishForwarding;
 
+	@Inject @Symbol("linshare.index.upload.button.display")
+	@Property
+	private boolean displayUploadButton;
+
 	/* ***********************************************************
 	 * Event handlers&processing
 	 * ***********************************************************
