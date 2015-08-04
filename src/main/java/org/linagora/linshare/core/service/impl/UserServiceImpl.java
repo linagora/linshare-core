@@ -128,12 +128,6 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findByMailAndDomain(domain, mail);
 	}
 
-	@Deprecated
-	@Override
-	public User findUnkownUserInDB(String mail) {
-		return userRepository.findByMail(mail);
-	}
-
 	@Override
 	public User findByLsUuid(String lsUuid) {
 		Validate.notEmpty(lsUuid, "User uuid must be set.");
@@ -583,7 +577,7 @@ public class UserServiceImpl implements UserService {
 			logger.debug("User "
 					+ mail
 					+ " was not found in the database. Searching in directories ...");
-			user = searchAndCreateUserEntityFromDirectory(domain, mail);
+			user = findOrCreateUser(domain, mail);
 		}
 		if (user == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
@@ -907,31 +901,6 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		return user;
-	}
-
-	@Deprecated
-	@Override
-	public User searchAndCreateUserEntityFromDirectory(String domainIdentifier,
-			String mail) throws BusinessException {
-
-		logger.debug("domainIdentifier : " + domainIdentifier);
-		logger.debug("mail : " + mail);
-		// search user mail in in specific directory and all its SubDomain
-		User userFound = abstractDomainService
-				.searchOneUserRecursivelyWithoutRestriction(domainIdentifier,
-						mail);
-
-		if (userFound != null) {
-			logger.debug("User '" + mail + "'found in domain : "
-					+ userFound.getDomainId());
-			saveOrUpdateUser(userFound);
-			return userFound;
-		} else if (logger.isDebugEnabled()) {
-			logger.error("Impossible to create an user entity from domain : "
-					+ domainIdentifier
-					+ ". The searchUserRecursivelyWithoutRestriction method returns null.");
-		}
-		return null;
 	}
 
 	/**

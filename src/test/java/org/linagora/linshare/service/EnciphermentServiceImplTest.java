@@ -133,7 +133,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
+		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		jane = datas.getUser2();
 		Integer value = 1;
@@ -267,7 +267,6 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		userRepository.update(jane);
 		fileRepository.removeFileByUUID(aDocument.getUuid());
 		documentRepository.delete(aDocument);
-		datas.deleteUsers();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	

@@ -255,7 +255,7 @@ public class GuestServiceImplTest extends
 		restrictedContacts.add("user3@linshare.org");
 		restrictedContacts.add("user2@linshare.org");
 		// This one is not an internal or a guest user.So it will be skip.
-		restrictedContacts.add("user4@linshare.org");
+		restrictedContacts.add("user-do-not-exist@linshare.org");
 		guest = guestService.create(owner1, owner1, guest, restrictedContacts);
 		Assert.assertTrue(guest.isRestricted());
 		Assert.assertTrue(guest.isGuest());

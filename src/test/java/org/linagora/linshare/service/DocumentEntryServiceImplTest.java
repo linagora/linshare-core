@@ -132,7 +132,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
+		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		jane = datas.getUser2();		
 
@@ -142,7 +142,6 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		datas.deleteUsers();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 

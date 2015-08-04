@@ -37,87 +37,56 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.DomainPolicyRepository;
-import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.util.Assert;
 
-@ContextConfiguration(locations = { 
-		"classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
-		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
-		"classpath:springContext-business-service.xml",
-		"classpath:springContext-facade.xml",
-		"classpath:springContext-rac.xml",
-		"classpath:springContext-startopendj.xml",
-		"classpath:springContext-jackRabbit.xml",
-		"classpath:springContext-test.xml"
-		})
-public class LoadingServiceTestDatasTest extends AbstractTransactionalJUnit4SpringContextTests {
-	
-	private static Logger logger = LoggerFactory.getLogger(LoadingServiceTestDatasTest.class);
-	
-	@Autowired
-	private FunctionalityRepository functionalityRepository;
-	
-	@Autowired
-	private AbstractDomainRepository abstractDomainRepository;
-	
-	@Autowired
-	private DomainPolicyRepository domainPolicyRepository;
-	
+		"classpath:springContext-test.xml" })
+public class LoadingServiceTestDatasTest extends
+		AbstractTransactionalJUnit4SpringContextTests {
+
+	private static Logger logger = LoggerFactory
+			.getLogger(LoadingServiceTestDatasTest.class);
+
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
-	
-	@Autowired
-	private UserService userService;
-	
+
 	private LoadingServiceTestDatas datas;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		
+
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		
+
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
-	
-//	@Test
-//	public  void test() throws BusinessException {
-//		logger.info(LinShareTestConstants.BEGIN_TEST);
-//		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
-//		datas.loadDatas();
-//		datas.deleteDatas();
-//		logger.debug(LinShareTestConstants.END_TEST);
-//	}
-	
-	
+
 	@Test
-	public  void testUser() throws BusinessException {
+	public void testUser() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
+		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
-		datas.deleteUsers();
+		Account a = datas.getUser1();
+		Assert.notNull(a);
+		Account b = datas.getUser2();
+		Assert.notNull(b);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
-	
-	
 }

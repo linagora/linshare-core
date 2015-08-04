@@ -189,9 +189,6 @@ public interface UserService {
 	 */
 	public User findOrCreateUserWithDomainPolicies(String domainId, String mail, String actorDomainId) throws BusinessException ;
 
-	@Deprecated
-	public User findUnkownUserInDB(String mail);
-
 	public User findByLsUuid(String lsUuid);
 
 	boolean exist(String lsUuid);
@@ -199,14 +196,6 @@ public interface UserService {
 	public User findUserInDB(String domain, String mail);
 
 	public List<User> findUsersInDB(String domain);
-
-	/**
-	 * This method is designed to search in a specific domain, and create an user entity in the database if it was a successful research(got one only hit)
-	 * This method is used by the authentication process to guess where a user is stored from his login. 
-	 * @param mail : the mail and domain couple should be unique
-	 * @return User entity
-	 */
-	public User searchAndCreateUserEntityFromDirectory(String domainIdentifier, String mail) throws BusinessException;
 
 	/**
 	 * Check if the actor is authorized to manage the second user (userToManage).

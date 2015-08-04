@@ -21,10 +21,10 @@ When the Jetty server have started you can access LinShare using a web explorer 
 
 You can use the followings accounts:
 
-mail: user1@linpki.org
+mail: user1@linshare.org
 userPassword: password1
 
-mail: user2@linpki.org
+mail: user2@linshare.org
 userPassword: password2
 
 You can also use the default administrator account to configure LinShare:

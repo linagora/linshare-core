@@ -33,18 +33,10 @@
  */
 package org.linagora.linshare.service;
 
-import org.linagora.linshare.core.domain.constants.LinShareConstants;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.RootDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.DomainPolicyRepository;
-import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,11 +44,6 @@ public class LoadingServiceTestDatas {
 	
 	protected Logger logger = LoggerFactory.getLogger(LoadingServiceTestDatas.class);
 	
-	private FunctionalityRepository functionalityRepository;
-	private AbstractDomainRepository abstractDomainRepository;
-	private DomainPolicyRepository domainPolicyRepository;
-	
-	private UserService userService;
 	private UserRepository<User> userRepository;
 	
 	public static String rootDomainName = "TEST_Domain-0";
@@ -88,61 +75,23 @@ public class LoadingServiceTestDatas {
 	public static int TOTAL_COUNT_FUNC=10;
 	public static String timeStampingUrl = "http://server/service";
 
-	private RootDomain rootDomain;
-
 	private User user1;  /* John Doe */
 	private User user2;	 /* Jane Smith */
 	private User user3;	 /* Foo Bar */
-	
-	private Guest guest1;
+	private Account root;
 	
 
 	public LoadingServiceTestDatas(
-			FunctionalityRepository functionalityRepository,
-			AbstractDomainRepository abstractDomainRepository,
-			DomainPolicyRepository domainPolicyRepository, 
-			UserRepository<User> userRepository,
-			UserService userService) {
+			UserRepository<User> userRepository) {
 		super();
-		this.functionalityRepository = functionalityRepository;
-		this.abstractDomainRepository = abstractDomainRepository;
-		this.domainPolicyRepository = domainPolicyRepository;
 		this.userRepository = userRepository;
-		this.userService = userService;
-	}
-
-	public  void deleteUsers() throws BusinessException {
-		User root = userService.findOrCreateUser("root@localhost.localdomain", LinShareConstants.rootDomainIdentifier);
-		userService.deleteUser(root, getUser1().getLsUuid());
-		userService.deleteUser(root, getUser2().getLsUuid());
-		userService.deleteUser(root, getUser3().getLsUuid());
 	}
 
 	public  void loadUsers() throws BusinessException {
-		user1 = new Internal("John","Doe","user1@linshare.org", null);
-		user2 = new Internal("Jane","Smith","user2@linshare.org", null);
-		user3 = new Internal("Foo","Bar","user3@linshare.org", null); 
-
-		AbstractDomain userGuestDomain = abstractDomainRepository.findById(guestDomainName1);
-		user1.setLocale(userGuestDomain.getDefaultTapestryLocale());
-		user2.setLocale(userGuestDomain.getDefaultTapestryLocale());
-		user3.setLocale(userGuestDomain.getDefaultTapestryLocale());
-		
-		user1.setCmisLocale(userGuestDomain.getDefaultTapestryLocale().toString());
-		user2.setCmisLocale(userGuestDomain.getDefaultTapestryLocale().toString());
-		user3.setCmisLocale(userGuestDomain.getDefaultTapestryLocale().toString());
-
-		user1.setDomain(abstractDomainRepository.findById(topDomainName));
-		user2.setDomain(abstractDomainRepository.findById(subDomainName1));
-		user3.setDomain(abstractDomainRepository.findById(guestDomainName1));
-
-		user1 = userRepository.create(user1);		
-		user2 = userRepository.create(user2);
-		user3 = userRepository.create(user3);
-	}
-
-	public Guest getGuest1() {
-		return guest1;
+		root = userRepository.findByMailAndDomain(rootDomainName, "root@localhost.localdomain@test");
+		user1 = userRepository.findByMail("user1@linshare.org");
+		user2 = userRepository.findByMail("user2@linshare.org");
+		user3 = userRepository.findByMail("user3@linshare.org");
 	}
 
 	public User getUser1() {
@@ -155,6 +104,10 @@ public class LoadingServiceTestDatas {
 
 	public User getUser3() {
 		return user3;
+	}
+
+	public Account getRoot() {
+		return root;
 	}
 
 	public int getAvailableFunctionalitiesForTopDomain2() {

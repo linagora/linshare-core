@@ -524,62 +524,6 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	}
 
 	@Deprecated
-	@Override
-	public List<ThreadVo> getListOfThreadFromSearchByUser(UserVo userVo,
-			String criteriaOnSearch, String recipientsSearchUser)
-			throws BusinessException {
-		List<UserVo> users = new ArrayList<UserVo>();
-		List<ThreadVo> preList = new ArrayList<ThreadVo>();
-		List<ThreadVo> threads = new ArrayList<ThreadVo>();
-
-		if (recipientsSearchUser.startsWith("\"")
-				&& recipientsSearchUser.endsWith(">")) {
-			UserVo alterUser = MailCompletionService
-					.getUserFromDisplay(recipientsSearchUser);
-			users.add(new UserVo(userService.findUnkownUserInDB(alterUser
-					.getMail())));
-		} else {
-			users = searchAmongUsers(userVo, recipientsSearchUser);
-		}
-
-		for (UserVo current : users) {
-			User user = userService.findOrCreateUser(current.getMail(),
-					current.getDomainIdentifier());
-			UserVo currentUser = new UserVo(user);
-
-			if (criteriaOnSearch.equals("admin")) {
-				preList.addAll(getAllMyThreadWhereAdmin(currentUser));
-			} else if (criteriaOnSearch.equals("simple")) {
-				List<ThreadVo> threadSimple = getAllMyThreadWhereCanUpload(currentUser);
-
-				for (ThreadVo currentThread : threadSimple) {
-					if (!(userIsAdmin(currentUser, currentThread))) {
-						preList.add(currentThread);
-					}
-				}
-			} else if (criteriaOnSearch.equals("restricted")) {
-				List<ThreadVo> threadRestricted = getAllMyThread(currentUser);
-
-				for (ThreadVo currentThread : threadRestricted) {
-					if (!(userIsAdmin(currentUser, currentThread))
-							&& !(userCanUpload(currentUser, currentThread))) {
-						preList.add(currentThread);
-					}
-				}
-			} else {
-				preList.addAll(getAllMyThread(currentUser));
-			}
-		}
-
-		for (ThreadVo current : preList) {
-			if (!(threads.contains(current))) {
-				threads.add(current);
-			}
-		}
-		return threads;
-	}
-
-	@Deprecated
 	private List<User> performSearch(User actor, String pattern)
 			throws BusinessException {
 		String firstName_ = null;

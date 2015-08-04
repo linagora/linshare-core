@@ -33,32 +33,19 @@
  */
 package org.linagora.linshare.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.linagora.linshare.core.domain.constants.FileSizeUnit;
-import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.constants.Policies;
-import org.linagora.linshare.core.domain.constants.TimeUnit;
-import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
-import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.Policy;
-import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
-import org.linagora.linshare.core.domain.entities.TimeUnitClass;
-import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.DomainPolicyRepository;
-import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
@@ -75,156 +62,46 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
-		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-startopendj.xml",
 		"classpath:springContext-jackRabbit.xml",
-		"classpath:springContext-test.xml"
+		"classpath:springContext-test2.xml"
 		})
 public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
-	private static Logger logger = LoggerFactory.getLogger(ThreadEntryServiceImplTest.class);
-	
+	private static Logger logger = LoggerFactory
+			.getLogger(ThreadEntryServiceImplTest.class);
+
 	private static final String THREAD_1 = "TEST_THREAD_1";
 	private static final String THREAD_2 = "TEST_THREAD_2";
-	
+
 	private LoadingServiceTestDatas datas;
-	
-	@Autowired
-	private FunctionalityRepository functionalityRepository;
-	
-	@Autowired
-	private AbstractDomainRepository abstractDomainRepository;
-	
-	@Autowired
-	private DomainPolicyRepository domainPolicyRepository;
-	
+
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private ThreadService threadService;
-	
+
 	private List<Thread> threads;
-	
+
 	private User jane;
 	private User john;
-	
-	
-	
+	private Account root;
+
 	@Before
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
-		datas = new LoadingServiceTestDatas(functionalityRepository, abstractDomainRepository, domainPolicyRepository, userRepository, userService);
+		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		john = datas.getUser1();
 		jane = datas.getUser2();
-		Integer value = 1;
-		
-		ArrayList<Functionality> functionalities = new ArrayList<Functionality>();
-		functionalities.add(
-			new UnitValueFunctionality(FunctionalityNames.QUOTA_GLOBAL.toString(),
-				true,
-				new Policy(Policies.ALLOWED, false),
-				new Policy(Policies.ALLOWED, false),
-				john.getDomain(),
-				value,
-				new FileSizeUnitClass(FileSizeUnit.GIGA)
-			)
-		);
-		
-		functionalities.add(
-			new UnitValueFunctionality(FunctionalityNames.QUOTA_USER.toString(),
-				true,
-				new Policy(Policies.ALLOWED, false),
-				new Policy(Policies.ALLOWED, false),
-				john.getDomain(),
-				value,
-				new FileSizeUnitClass(FileSizeUnit.GIGA)
-			)
-		);
-		
-		functionalities.add(
-				new Functionality(FunctionalityNames.MIME_TYPE.toString(),
-					true,
-					new Policy(Policies.ALLOWED, false),
-					new Policy(Policies.ALLOWED, false),
-					john.getDomain()
-				)
-		);
-		
-		functionalities.add(
-				new Functionality(FunctionalityNames.ANTIVIRUS.toString(),
-					true,
-					new Policy(Policies.ALLOWED, false),
-					new Policy(Policies.ALLOWED, false),
-					john.getDomain()
-				)
-		);
-		
-		functionalities.add(
-				new Functionality(FunctionalityNames.ENCIPHERMENT.toString(),
-					true,
-					new Policy(Policies.ALLOWED, true),
-					new Policy(Policies.ALLOWED, true),
-					john.getDomain()
-				)
-		);
-		
-		functionalities.add(
-				new StringValueFunctionality(FunctionalityNames.TIME_STAMPING.toString(),
-					true,
-					new Policy(Policies.ALLOWED, false),
-					new Policy(Policies.ALLOWED, false),
-					john.getDomain(),
-					""
-				)
-		);
-		
-		functionalities.add(
-				new UnitValueFunctionality(FunctionalityNames.FILE_EXPIRATION.toString(),
-					true,
-					new Policy(Policies.ALLOWED, false),
-					new Policy(Policies.ALLOWED, false),
-					john.getDomain(),
-					value,
-					new TimeUnitClass(TimeUnit.DAY)
-				)
-		);
-		
-		functionalities.add(
-				new UnitValueFunctionality(FunctionalityNames.FILESIZE_MAX.toString(),
-					true,
-					new Policy(Policies.ALLOWED, true),
-					new Policy(Policies.ALLOWED, true),
-					john.getDomain(),
-					5,
-					new FileSizeUnitClass(FileSizeUnit.GIGA)
-				)
-		);
-		
-		functionalities.add(
-				new Functionality(FunctionalityNames.TAB_THREAD__CREATE_PERMISSION.toString(),
-					false,
-					new Policy(Policies.ALLOWED, true),
-					new Policy(Policies.ALLOWED, true),
-					john.getDomain()					
-				)
-		);
-		
-		for (Functionality functionality : functionalities) {
-			functionalityRepository.create(functionality);
-//			jane.getDomain().addFunctionality(functionality);
-			john.getDomain().addFunctionality(functionality);
-		}
-		
+		root= datas.getRoot();
 		this.createAllThreads();
-		User root = userService.findOrCreateUser("root@localhost.localdomain",
-				LinShareConstants.rootDomainIdentifier);
 		threads = threadService.findAll(root, root);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -232,10 +109,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		
 		this.deleteAllThreads();
-		datas.deleteUsers();
-		
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -263,7 +137,6 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	/*
 	 * Tests
 	 */
-
 	@Test
 	public void testFindAllThread() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);

@@ -52,6 +52,18 @@ cn: Foo, Bar
 userPassword: password3
 mail: user3@linshare.org
 
+dn: uid=user4,ou=People,dc=linshare,dc=org
+uid: user4
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Foo2
+givenName: Bar2
+cn: Foo2, Bar2
+userPassword: password4
+mail: user4@linshare.org
+
 dn: uid=test1,ou=People,dc=linshare,dc=org
 uid: test1
 objectClass: inetOrgPerson

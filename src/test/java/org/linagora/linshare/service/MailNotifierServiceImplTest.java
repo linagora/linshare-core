@@ -62,14 +62,7 @@ import org.subethamail.wiser.WiserMessage;
 
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
-		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
-		"classpath:springContext-business-service.xml",
-		"classpath:springContext-facade.xml",
-		"classpath:springContext-rac.xml",
-		"classpath:springContext-startopendj.xml",
-		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
 		})
 public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {

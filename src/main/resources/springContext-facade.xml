@@ -118,11 +118,6 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
-	<bean name="antiSamyPolicy" class="org.owasp.validator.html.Policy" factory-method="getInstance">
-		<!-- type needed because there is also a getInstance(String) method -->
-		<constructor-arg value="classpath:antisamy-strict.xml" type="java.io.InputStream" />
-	</bean>
-
 	<bean id="mailingListFacade" class="org.linagora.linshare.core.facade.impl.MailingListFacadeImpl">
 		<constructor-arg ref="mailingListService" />
 		<constructor-arg ref="userService" />

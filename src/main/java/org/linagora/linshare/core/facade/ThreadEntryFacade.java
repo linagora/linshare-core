@@ -199,20 +199,6 @@ public interface ThreadEntryFacade {
 			throws BusinessException;
 
 	/**
-	 * return list of threads
-	 * 
-	 * @param threads
-	 * @param userVo
-	 * @param criteriaOnSearch
-	 * @param recipientsSearchUser
-	 * @return
-	 */
-    @Deprecated
-	public List<ThreadVo> getListOfThreadFromSearchByUser(UserVo userVo,
-			String criteriaOnSearch, String recipientsSearchUser)
-			throws BusinessException;
-
-	/**
 	 * Provide completion for search thread
 	 * 
 	 * @param actor

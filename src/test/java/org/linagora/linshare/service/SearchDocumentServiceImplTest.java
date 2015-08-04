@@ -152,9 +152,7 @@ AbstractTransactionalJUnit4SpringContextTests {
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 
-		datas = new LoadingServiceTestDatas(functionalityRepository,
-				abstractDomainRepository, domainPolicyRepository,
-				userRepository, userService);
+		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 
 		John = datas.getUser1();
@@ -244,14 +242,11 @@ AbstractTransactionalJUnit4SpringContextTests {
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
-
 		documentEntryRepository.delete(aDocumentEntry);
 		Jane.getEntries().clear();
 		userRepository.update(Jane);
 		fileRepository.removeFileByUUID(aDocument.getUuid());
 		documentRepository.delete(aDocument);
-		datas.deleteUsers();
-
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
