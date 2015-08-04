@@ -70,7 +70,6 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.MailConfigRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MailBuildingService;
@@ -94,8 +93,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	private final AbstractDomainService abstractDomainService;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-
-	private final MailConfigRepository mailConfigRepository;
 
 	private final MailActivationBusinessService mailActivationBusinessService;
 
@@ -247,13 +244,11 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final MailActivationBusinessService mailActivationBusinessService,
-			final MailConfigRepository mailConfigRepository,
 			boolean insertLicenceTerm) throws BusinessException {
 		this.displayLogo = displayLogo;
 		this.abstractDomainService = abstractDomainService;
 		this.insertLicenceTerm = insertLicenceTerm;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
-		this.mailConfigRepository = mailConfigRepository;
 		this.mailActivationBusinessService = mailActivationBusinessService;
 	}
 

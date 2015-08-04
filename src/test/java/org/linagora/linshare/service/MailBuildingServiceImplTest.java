@@ -33,39 +33,16 @@
  */
 package org.linagora.linshare.service;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
-import org.linagora.linshare.core.dao.FileSystemDao;
-import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.FileInfo;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.DocumentEntryRepository;
-import org.linagora.linshare.core.repository.DocumentRepository;
-import org.linagora.linshare.core.repository.DomainPolicyRepository;
-import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
-import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,166 +50,66 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-@Ignore
-@ContextConfiguration(locations = { 
-		"classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
-		"classpath:springContext-facade.xml",
-		"classpath:springContext-startopends.xml",
+		"classpath:springContext-rac.xml",
+		"classpath:springContext-startopendj.xml",
 		"classpath:springContext-jackRabbit.xml",
-		"classpath:springContext-test.xml"
-		})
-public class MailBuildingServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
-	
-	private static Logger logger = LoggerFactory.getLogger(MailBuildingServiceImplTest.class);
-	
-	@Autowired
-	private AbstractDomainService abstractDomainService;
-	
-	@Autowired
-	private GuestRepository guestRepository;
+		"classpath:springContext-test2.xml" })
+public class MailBuildingServiceImplTest extends
+		AbstractTransactionalJUnit4SpringContextTests {
 
-	@Autowired
-	private AbstractDomainRepository abstractDomainRepository;
-	
-	@Autowired
-	private DomainPolicyRepository domainPolicyRepository;
-	
+	private static Logger logger = LoggerFactory
+			.getLogger(MailBuildingServiceImplTest.class);
+
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
-	
-	@Autowired
-	private UserService userService;
-	
+
 	@Autowired
 	private MailBuildingService mailBuildingService;
-	
-	@Autowired
-	private AnonymousShareEntryService anonymousShareEntryService;
-	
-	@Autowired
-	private AnonymousShareEntryBusinessService anonymousShareEntryBusinessService;
-	
-	@Autowired
-	private DocumentRepository documentRepository;
 
-	@Autowired
-	private DocumentEntryRepository documentEntryRepository;
-	
-	@Autowired
-	private FileSystemDao fileRepository;
-	
 	private LoadingServiceTestDatas datas;
-	
-	private InputStream inputStream;
-	
-	private String inputStreamUuid;
-	
-	private User john;
-	
-	private User jane;
-	
-	
-	private Document aDocument;
-	
-	private DocumentEntry aDocumentEntry;
-	
-	@Before
-	public void setUp() throws Exception {
-		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		
-		john = userService.findOrCreateUser("user1@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
-		try  {
-			jane = userService.findOrCreateUser("user2@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
-		} catch (BusinessException e) {
-			jane = userService.findOrCreateUser("user2@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
-		}
-		
-		
-		jane = userService.findOrCreateUser("user2@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
-		
-		
-		
-		inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
-		inputStreamUuid = fileRepository.insertFile(john.getLogin(), inputStream, 10000, "linshare-default.properties", "text/plain");
-				
-		FileInfo inputStreamInfo = fileRepository.getFileInfoByUUID(inputStreamUuid);
-		
-		Calendar lastModifiedLin = inputStreamInfo.getLastModified();
-		Calendar exp=inputStreamInfo.getLastModified();
-		exp.add(Calendar.HOUR, 4);
-		
-		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, john,false,false,new Long(10000));
-		Set<Signature> signatures = new HashSet<Signature>();
-		aDocument.setSignatures(signatures);
-		aDocumentEntry = new DocumentEntry(john, "new document", aDocument);
 
-		try {
-			documentRepository.create(aDocument);
-			documentEntryRepository.create(aDocumentEntry);
-			john.getEntries().add(aDocumentEntry);
-			userRepository.update(john);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			Assert.fail();
-		} catch (BusinessException e) {
-			e.printStackTrace();
-			Assert.fail();
-		}
-		
+	private User john;
+
+	private User jane;
+
+	@Before
+	public void setUpTest() throws Exception {
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		datas = new LoadingServiceTestDatas(userRepository);
+		datas.loadUsers();
+		john = datas.getUser1();
+		jane = datas.getUser2();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
-	
+
 	@After
-	public void tearDown() throws Exception {
+	public void tearDownTest() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		
-		john.getEntries().clear();
-		userRepository.update(john);
-		
-		documentEntryRepository.delete(aDocumentEntry);
-		documentRepository.delete(aDocument);
-		fileRepository.removeFileByUUID(aDocument.getUuid());
-		
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
-	
-	private void testMailGenerate(MailContainer mailContainer){
+
+	private void testMailGenerate(MailContainer mailContainer) {
 		Assert.assertNotNull(mailContainer);
 		Assert.assertNotNull(mailContainer.getSubject());
 		Assert.assertNotNull(mailContainer.getContentHTML());
 		Assert.assertNotNull(mailContainer.getContentTXT());
-		
 		Assert.assertFalse(mailContainer.getSubject().contains("${"));
 		Assert.assertFalse(mailContainer.getContentHTML().contains("${"));
 		Assert.assertFalse(mailContainer.getContentTXT().contains("${"));
 	}
 
-	
 	@Test
-	public void testBuildMailNewGuest() throws BusinessException{
+	public void testBuildMailNewGuest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		User actor = john;
-		MailContainer mailContainer = new MailContainer(Language.ENGLISH,"contentTxt","contentHTML");
-		mailContainer.setLanguage(Language.FRENCH);
-		List<Document> docs = new ArrayList<Document>();
-		docs.add(aDocument);
-		
-		String email = john.getMail();
-		User recipient = jane;
-		
-		// buildMailNewGuest
-		MailContainer mailContainerBuild =  mailBuildingService.buildNewGuest(actor, recipient, "password");
+		MailContainer mailContainerBuild = mailBuildingService.buildNewGuest(
+				john, jane, "password");
 		testMailGenerate(mailContainerBuild);
-
-		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
-	
 }
