@@ -85,6 +85,7 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 			logger.debug("Creation of a new share between sender " + sender.getMail() + " and recipient " + recipient.getMail());
 			ShareEntry share= new ShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), recipient, documentEntry, expiryCal);
 			shareEntity = shareEntryRepository.create(share);
+			documentEntry.incrementShared();
 		} else {
 			// if it does, we update the expiration date
 			logger.debug("The share (" + documentEntry.getUuid() +") between sender " + sender.getMail() + " and recipient " + recipient.getMail() + " already exists. Just updating expiration date.");
@@ -95,8 +96,6 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 
 		// If the current document was previously shared, we need to rest its expiration date
 		documentEntry.setExpirationDate(null);
-		documentEntry.incrementShared();
-
 		documentEntry.getShareEntries().add(shareEntity);
 		recipient.getShareEntries().add(shareEntity);
 		sender.getEntries().add(shareEntity);
