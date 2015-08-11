@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.job.quartz;
 
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.batches.generics.GenericBatch;
 import org.linagora.linshare.core.exception.BatchBusinessException;
@@ -45,33 +44,41 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
-public abstract class LinShareJobBean<T> extends QuartzJobBean {
+public class LinShareJobBean extends QuartzJobBean {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(LinShareJobBean.class);
 
-	protected List<GenericBatch<T>> batchs;
+	protected List<GenericBatch> batchs;
 
-	public void setBatch(List<GenericBatch<T>> batchs) {
+	public LinShareJobBean() {
+		super();
+	}
+
+	public void setBatch(List<GenericBatch> batchs) {
 		this.batchs = batchs;
 	}
 
 	@Override
 	protected void executeInternal(JobExecutionContext context)
 			throws JobExecutionException {
+		executeExternal();
+	}
+
+	public boolean executeExternal()
+			throws JobExecutionException {
 		logger.debug("number of batches : " + batchs.size());
-		for (GenericBatch<T> batch : batchs) {
-			Set<T> all = batch.getAll();
+		boolean finalResult = true;
+		for (GenericBatch batch : batchs) {
+			List<String> all = batch.getAll();
 			long position = 1;
 			long errors = 0;
 			long unhandled_errors = 0;
 			long total = all.size();
-			for (T resource : all) {
+			for (String resource : all) {
 				try {
-					logDebug(total, position, "processing resource ...");
-					Context c = new ResourceContext<T>(resource);
-					BatchResultContext<T> batchResult = batch.execute(
-							c, total, position);
+					batch.logDebug(total, position, "processing resource '" + resource + "' ...");
+					Context batchResult = batch.execute(resource, total, position);
 					batch.notify(batchResult, total, position);
 				} catch (BatchBusinessException ex) {
 					errors++;
@@ -79,23 +86,15 @@ public abstract class LinShareJobBean<T> extends QuartzJobBean {
 				} catch (BusinessException ex) {
 					unhandled_errors++;
 					logger.error("Unhandled business exception in batches !");
-					logger.error(ex.getMessage());
-					logger.debug(ex.getStackTrace().toString());
-					logger.error("Cannot process resource '{}' ");
+					logger.error(ex.getMessage(), ex);
+					logger.error("Cannot process resource '{}' ", resource);
+					finalResult = false;
 				}
-				logDebug(total, position, "resource processed.");
+				batch.logDebug(total, position, "resource processed.");
 				position++;
 			}
 			batch.terminate(all, errors, unhandled_errors, total);
 		}
+		return finalResult;
 	}
-
-	protected void logDebug(long total, long position, String message) {
-		logger.debug(getStringPosition(total, position) + message);
-	}
-
-	protected String getStringPosition(long total, long position) {
-		return position + "/" + total + ":";
-	}
-
 }

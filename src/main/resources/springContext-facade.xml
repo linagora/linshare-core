@@ -7,6 +7,9 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
 	default-autowire="no">
 
+	<bean id="templating" class="org.linagora.linshare.view.tapestry.services.impl.MailTemplating">
+	</bean>
+
 	<bean name="authentificationFacade" class="org.linagora.linshare.core.facade.auth.impl.AuthentificationFacadeImpl">
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="logEntryService" />

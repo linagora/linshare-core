@@ -33,31 +33,22 @@
  */
 package org.linagora.linshare.core.batches.impl;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import org.linagora.linshare.core.batches.PurgeUserBatch;
 import org.linagora.linshare.core.batches.generics.impl.GenericBatchImpl;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.BatchResultContext;
+import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
 import org.linagora.linshare.core.job.quartz.Context;
-import org.linagora.linshare.core.job.quartz.ResourceContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.google.common.collect.Sets;
 
-public class PurgeUserBatchImpl extends GenericBatchImpl<User> implements
-		PurgeUserBatch {
+public class PurgeUserBatchImpl extends GenericBatchImpl {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(PurgeUserBatchImpl.class);
-
-	private final UserService service;
+	protected final UserService service;
 
 	public PurgeUserBatchImpl(final UserService userService,
 			AccountRepository<Account> accountRepository) {
@@ -66,23 +57,22 @@ public class PurgeUserBatchImpl extends GenericBatchImpl<User> implements
 	}
 
 	@Override
-	public Set<User> getAll() {
+	public List<String> getAll() {
 		logger.info("PurgeUserBatchImpl job starting ...");
-		HashSet<User> allUsers = Sets.newHashSet();
-		allUsers.addAll(service.findAllAccountsReadyToPurge());
+		List<String> allUsers = service.findAllAccountsReadyToPurge();
 		logger.info(allUsers.size() + " user(s) have been found to be purged");
 		return allUsers;
 	}
 
 	@Override
-	public BatchResultContext<User> execute(Context c, long total,
-			long position) throws BatchBusinessException, BusinessException {
-		User resource = getResource(c);
-		BatchResultContext<User> context = new BatchResultContext<User>(
-				resource);
+	public Context execute(String identifier, long total, long position)
+			throws BatchBusinessException, BusinessException {
+		SystemAccount actor = getSystemAccount();
+		User resource = service.findAccountsReadyToPurge(actor, identifier);
+		Context context = new AccountBatchResultContext(resource);
 		try {
 			logInfo(total, position, "processing user : " + resource.getAccountReprentation());
-			service.purge(getSystemAccount(), resource.getLsUuid());
+			service.purge(actor, resource.getLsUuid());
 			logger.info("Deleted user " + resource.getAccountReprentation()
 					+ " has been purged.");
 		} catch (BusinessException businessException) {
@@ -99,29 +89,32 @@ public class PurgeUserBatchImpl extends GenericBatchImpl<User> implements
 	}
 
 	@Override
-	public void notify(BatchResultContext<User> context, long total,
-			long position) {
+	public void notify(Context context, long total, long position) {
+		AccountBatchResultContext guestContext = (AccountBatchResultContext) context;
+		Account user = guestContext.getResource();
 		logInfo(total, position, "The User "
-				+ context.getResource().getAccountReprentation()
+				+ user.getAccountReprentation()
 				+ " has been successfully purged ");
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, User resource,
-			long total, long position) {
+	public void notifyError(BatchBusinessException exception,
+			String identifier, long total, long position) {
+		AccountBatchResultContext context = (AccountBatchResultContext) exception.getContext();
+		Account user = context.getResource();
 		logError(
 				total,
 				position,
 				"Purging User has failed : "
-						+ resource.getAccountReprentation());
+						+ user.getAccountReprentation());
 		logger.error(
 				"Error occured while purging user "
-						+ resource.getAccountReprentation()
+						+ user.getAccountReprentation()
 						+ ". BatchBusinessException ", exception);
 	}
 
 	@Override
-	public void terminate(Set<User> all, long errors, long unhandled_errors,
+	public void terminate(List<String> all, long errors, long unhandled_errors,
 			long total) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success
@@ -136,20 +129,4 @@ public class PurgeUserBatchImpl extends GenericBatchImpl<User> implements
 		}
 		logger.info("PurgeUserBatchImpl job terminated.");
 	}
-
-	/*
-	 * Helpers
-	 */
-
-	/**
-	 * Workaround to get the resource without using generic
-		because Spring AOP does not support to create transaction with generic parameters.
-	 */
-	@Override
-	public User getResource(Context c) {
-		@SuppressWarnings("unchecked")
-		ResourceContext<User> rc = (ResourceContext<User>)c;
-		return rc.getRessource();
-	}
-
 }

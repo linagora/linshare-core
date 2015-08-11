@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
@@ -70,7 +71,6 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.utils.DocumentUtils;
@@ -90,7 +90,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 	private final boolean insertLicenceTerm;
 
-	private final AbstractDomainService abstractDomainService;
+	private final DomainBusinessService domainBusinessService;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
@@ -241,12 +241,12 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	public MailBuildingServiceImpl(boolean displayLogo,
-			final AbstractDomainService abstractDomainService,
+			final DomainBusinessService domainBusinessService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final MailActivationBusinessService mailActivationBusinessService,
 			boolean insertLicenceTerm) throws BusinessException {
 		this.displayLogo = displayLogo;
-		this.abstractDomainService = abstractDomainService;
+		this.domainBusinessService = domainBusinessService;
 		this.insertLicenceTerm = insertLicenceTerm;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mailActivationBusinessService = mailActivationBusinessService;
@@ -865,7 +865,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("uploadPropositionUrl", getUploadPropositionUrl(recipient));
 		container.setRecipient(recipient.getMail());
 		container.setFrom(getFromMailAddress(recipient));
-		container.setFrom(abstractDomainService.getDomainMail(recipient.getDomain()));
 
 		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_PROPOSITION_CREATED, builder);
 	}
@@ -967,7 +966,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	private String getFromMailAddress(User owner) {
-		return abstractDomainService.getDomainMail(owner.getDomain());
+		String fromMail = functionalityReadOnlyService
+				.getDomainMailFunctionality(owner.getDomain()).getValue();
+		return fromMail;
 	}
 
 	// TODO : to be used ?
@@ -1427,8 +1428,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	private String getLinShareUrlForAContactRecipient(Account sender) {
-		AbstractDomain senderDomain = abstractDomainService
-				.getGuestDomain(sender.getDomainId());
+		AbstractDomain senderDomain = domainBusinessService.findGuestDomain(sender.getDomain());
 		// guest domain could be inexistent into the database.
 		if (senderDomain == null) {
 			senderDomain = sender.getDomain();
@@ -1524,8 +1524,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	private boolean isDisable(Contact contact, Account sender, MailActivationType type) {
-		AbstractDomain recipientDomain = abstractDomainService
-				.getGuestDomain(sender.getDomainId());
+		AbstractDomain recipientDomain = domainBusinessService.findGuestDomain(sender.getDomain());
 		// guest domain could be inexistent into the database.
 		if (recipientDomain == null) {
 			recipientDomain = sender.getDomain();

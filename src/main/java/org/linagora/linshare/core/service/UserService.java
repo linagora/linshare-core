@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -232,11 +233,15 @@ public interface UserService {
 	 *
 	 * @throws BusinessException
 	 */
-	List<User> findAllAccountsReadyToPurge() throws BusinessException;
+	List<String> findAllAccountsReadyToPurge() throws BusinessException;
 
-	List<User> findAllDeletedAccountsToPurge(Date limit) throws BusinessException;
+	List<String> findAllDeletedAccountsToPurge(Date limit) throws BusinessException;
 
 	void purge(Account actor, String lsUuid) throws BusinessException;
 
 	void markToPurge(Account actor, String lsUuid) throws BusinessException;
+
+	User findAccountsReadyToPurge(SystemAccount actor, String uuid);
+
+	User findDeleted(SystemAccount actor, String uuid);
 }

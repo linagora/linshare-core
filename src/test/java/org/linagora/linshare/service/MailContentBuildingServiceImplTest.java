@@ -73,7 +73,6 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
-import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,11 +86,13 @@ import com.google.common.collect.Sets;
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
+		"classpath:springContext-ldap.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
-		"classpath:springContext-facade.xml",
-		"classpath:springContext-startopendj.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-rac.xml",
+		"classpath:springContext-service.xml",
+//		"classpath:springContext-facade.xml",
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
 		})
@@ -115,8 +116,6 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	@Autowired
 	private UserRepository<User> userRepository;
 	
-	@Autowired
-	private UserService userService;
 	
 	@Autowired
 	private MailBuildingService mailBuildingService;
@@ -136,8 +135,6 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	@Autowired
 	private FileSystemDao fileRepository;
 	
-	private LoadingServiceTestDatas datas;
-	
 	private InputStream inputStream;
 	
 	private String inputStreamUuid;
@@ -155,17 +152,8 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
-		john = userService.findOrCreateUser("user1@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
-		try  {
-			jane = userService.findOrCreateUser("user2@linshare.org", LoadingServiceTestDatas.sqlSubDomain);			
-		} catch (BusinessException e) {
-			jane = userService.findOrCreateUser("user2@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
-		}
-		
-		
-		jane = userService.findOrCreateUser("user2@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
-		
-		
+		john = userRepository.findByMail("user1@linshare.org");
+		jane = userRepository.findByMail("user2@linshare.org");
 		
 		inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
 		inputStreamUuid = fileRepository.insertFile(john.getLogin(), inputStream, 10000, "linshare-default.properties", "text/plain");

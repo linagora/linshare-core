@@ -36,11 +36,11 @@ package org.linagora.linshare.core.service.impl;
 import java.util.Calendar;
 import java.util.List;
 
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.LogEntryRepository;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 import org.slf4j.Logger;
@@ -54,13 +54,13 @@ public class LogEntryServiceImpl implements LogEntryService {
 
 	private final LogEntryRepository logEntryRepository;
 
-	private final AbstractDomainService abstractDomainService;
+	private final DomainBusinessService domainBusinessService;
 
 	public LogEntryServiceImpl(final LogEntryRepository logEntryRepository,
-			final AbstractDomainService abstractDomainService) {
+			final DomainBusinessService domainBusinessService) {
 		super();
 		this.logEntryRepository = logEntryRepository;
-		this.abstractDomainService = abstractDomainService;
+		this.domainBusinessService = domainBusinessService;
 	}
 
 	@Override
@@ -93,9 +93,8 @@ public class LogEntryServiceImpl implements LogEntryService {
 	@Override
 	public List<LogEntry> findByCriteria(User actor, LogCriteriaBean criteria) {
 		List<LogEntry> list = Lists.newArrayList();
-
-		List<String> allMyDomainIdentifiers = abstractDomainService
-				.getAllMyDomainIdentifiers(actor.getDomain().getIdentifier());
+		List<String> allMyDomainIdentifiers = domainBusinessService
+				.getAllMyDomainIdentifiers(actor.getDomain());
 		for (String domain : allMyDomainIdentifiers) {
 			list.addAll(logEntryRepository.findByCriteria(criteria, domain));
 		}

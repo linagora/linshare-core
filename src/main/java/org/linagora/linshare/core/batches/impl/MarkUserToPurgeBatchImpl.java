@@ -34,33 +34,24 @@
 package org.linagora.linshare.core.batches.impl;
 
 import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import org.linagora.linshare.core.batches.MarkUserToPurgeBatch;
 import org.linagora.linshare.core.batches.generics.impl.GenericBatchImpl;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.BatchResultContext;
+import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
 import org.linagora.linshare.core.job.quartz.Context;
-import org.linagora.linshare.core.job.quartz.ResourceContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.google.common.collect.Sets;
 
-public class MarkUserToPurgeBatchImpl extends GenericBatchImpl<User>
-		implements MarkUserToPurgeBatch {
+public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(MarkUserToPurgeBatchImpl.class);
+	protected final UserService service;
 
-	private final UserService service;
-
-	private final Integer cron;// 7 for 7 days
+	protected final Integer cron;// 7 for 7 days
 
 	public MarkUserToPurgeBatchImpl(final UserService userService,
 			AccountRepository<Account> accountRepository,
@@ -71,27 +62,25 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl<User>
 	}
 
 	@Override
-	public Set<User> getAll() {
+	public List<String> getAll() {
 		logger.info("MarkUserToDeleteBatchImpl job starting ...");
 		Calendar expiryLimit = Calendar.getInstance();
 		expiryLimit.add(Calendar.DAY_OF_YEAR, -cron);
-		HashSet<User> allUsers = Sets.newHashSet();
-		allUsers.addAll(service.findAllDeletedAccountsToPurge(expiryLimit
-				.getTime()));
+		List<String> allUsers = service.findAllDeletedAccountsToPurge(expiryLimit.getTime());
 		logger.info(allUsers.size()
 				+ " destroyed user(s) have been found. If any, they will be moved into users to purge");
 		return allUsers;
 	}
 
 	@Override
-	public BatchResultContext<User> execute(Context c, long total,
+	public Context execute(String identifier, long total,
 			long position) throws BatchBusinessException, BusinessException {
-		User resource = getResource(c);
-		BatchResultContext<User> context = new BatchResultContext<User>(
-				resource);
+		SystemAccount actor = getSystemAccount();
+		User resource = service.findDeleted(actor, identifier);
+		Context context = new AccountBatchResultContext(resource);
 		try {
 			logInfo(total, position, "processing user : " + resource.getAccountReprentation());
-			service.markToPurge(getSystemAccount(), resource.getLsUuid());
+			service.markToPurge(actor, resource.getLsUuid());
 			logger.info("expired user set to purge (purge_step to 1) : "
 					+ resource.getAccountReprentation());
 		} catch (BusinessException businessException) {
@@ -108,29 +97,33 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl<User>
 	}
 
 	@Override
-	public void notify(BatchResultContext<User> context, long total,
+	public void notify(Context context, long total,
 			long position) {
+		AccountBatchResultContext guestContext = (AccountBatchResultContext) context;
+		Account user = guestContext.getResource();
 		logInfo(total, position, "The User "
-				+ context.getResource().getAccountReprentation()
+				+ user.getAccountReprentation()
 				+ " has been successfully placed into users to purge ");
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, User resource,
+	public void notifyError(BatchBusinessException exception, String resource,
 			long total, long position) {
+		AccountBatchResultContext context = (AccountBatchResultContext) exception.getContext();
+		Account user = context.getResource();
 		logError(
 				total,
 				position,
 				"cleaning User has failed : "
-						+ resource.getAccountReprentation());
+						+ user.getAccountReprentation());
 		logger.error(
 				"Error occured while cleaning outdated user "
-						+ resource.getAccountReprentation()
+						+ user.getAccountReprentation()
 						+ ". BatchBusinessException ", exception);
 	}
 
 	@Override
-	public void terminate(Set<User> all, long errors, long unhandled_errors,
+	public void terminate(List<String> all, long errors, long unhandled_errors,
 			long total) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success
@@ -145,20 +138,4 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl<User>
 		}
 		logger.info("MarkUserToPurgeBatchImpl job terminated.");
 	}
-
-	/*
-	 * Helpers
-	 */
-
-	/**
-	 * Workaround to get the resource without using generic
-		because Spring AOP does not support to create transaction with generic parameters.
-	 */
-	@Override
-	public User getResource(Context c) {
-		@SuppressWarnings("unchecked")
-		ResourceContext<User> rc = (ResourceContext<User>)c;
-		return rc.getRessource();
-	}
-
 }

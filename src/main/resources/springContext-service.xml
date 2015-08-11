@@ -8,24 +8,6 @@
 	default-autowire="no">
 
 
-	<!-- =============================================================================================================== Other services 
-		=============================================================================================================== -->
-
-	<bean id="templating" class="org.linagora.linshare.view.tapestry.services.impl.MailTemplating">
-	</bean>
-
-	<bean id="logEntryService" class="org.linagora.linshare.core.service.impl.LogEntryServiceImpl">
-		<constructor-arg ref="logEntryRepository" />
-		<constructor-arg ref="abstractDomainService" />
-	</bean>
-
-	<bean name="passwordService" class="org.linagora.linshare.core.service.impl.PasswordServiceImpl">
-	</bean>
-
-	<bean name="accountService" class="org.linagora.linshare.core.service.impl.AccountServiceImpl">
-		<constructor-arg ref="accountRepository" />
-	</bean>
-
 	<bean name="threadService" class="org.linagora.linshare.core.service.impl.ThreadServiceImpl">
 		<constructor-arg ref="threadRepository" />
 		<constructor-arg ref="threadMemberRepository" />
@@ -52,30 +34,6 @@
 	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">
 		<constructor-arg ref="internalRepository" />
 		<constructor-arg ref="abstractDomainService" />
-	</bean>
-
-	<bean id="antiSamyService" class="org.linagora.linshare.core.service.impl.AntiSamyServiceImpl">
-		<constructor-arg ref="antiSamyPolicy" />
-	</bean>
-
-	<bean id="clamavVirusScannerService" class="org.linagora.linshare.core.service.impl.ClamavVirusScannerServiceImpl">
-		<constructor-arg index="0" value="${virusscanner.clamav.host}" />
-		<constructor-arg index="1" value="${virusscanner.clamav.port}" />
-	</bean>
-
-	<bean id="timeStampingService" class="org.linagora.linshare.core.service.impl.TimeStampingServiceImpl">
-	</bean>
-
-	<bean id="mimeTypeService" class="org.linagora.linshare.core.service.impl.MimeTypeServiceImpl">
-		<constructor-arg ref="mimeTypeBusinessService" />
-		<constructor-arg ref="mimePolicyBusinessService" />
-		<constructor-arg ref="domainPermissionBusinessService" />
-	</bean>
-	<bean id="mimePolicyService" class="org.linagora.linshare.core.service.impl.MimePolicyServiceImpl">
-		<constructor-arg ref="mimePolicyBusinessService" />
-		<constructor-arg ref="mimeTypeBusinessService" />
-		<constructor-arg ref="domainPermissionBusinessService" />
-		<constructor-arg ref="domainBusinessService" />
 	</bean>
 
 	<bean id="documentEntryService" class="org.linagora.linshare.core.service.impl.DocumentEntryServiceImpl">
@@ -169,48 +127,6 @@
 		<constructor-arg ref="logEntryRepository" />
 	</bean>
 
-	<bean name="mailBuildingService" class="org.linagora.linshare.core.service.impl.MailBuildingServiceImpl">
-		<constructor-arg value="${linshare.logo.mails.visible}" />
-		<constructor-arg ref="abstractDomainService" />
-		<constructor-arg ref="functionalityReadOnlyService" />
-		<constructor-arg ref="mailActivationBusinessService" />
-		<constructor-arg value="${linshare.display.licenceTerm}" />	
-	</bean>
-
-	<bean name="userProviderService" class="org.linagora.linshare.core.service.impl.UserProviderServiceImpl">
-		<constructor-arg ref="domainPatternRepository" />
-		<constructor-arg ref="ldapQueryService" />
-		<constructor-arg ref="userProviderRepository" />
-		<constructor-arg ref="ldapUserProviderRepository" />
-	</bean>
-
-	<bean name="ldapConnectionService" class="org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl">
-		<constructor-arg ref="ldapConnectionRepository" />
-	</bean>
-
-	<bean name="functionalityService" class="org.linagora.linshare.core.service.impl.FunctionalityServiceImpl">
-		<constructor-arg ref="functionalityBusinessService" />
-		<constructor-arg ref="domainBusinessService" />
-		<constructor-arg ref="domainPermissionBusinessService" />
-		<constructor-arg value="${linshare.override.global.quota}" />
-	</bean>
-
-	<bean name="mailActivationService" class="org.linagora.linshare.core.service.impl.MailActivationServiceImpl">
-		<constructor-arg ref="mailActivationBusinessService" />
-		<constructor-arg ref="domainBusinessService" />
-		<constructor-arg ref="domainPermissionBusinessService" />
-	</bean>
-
-	<bean name="functionalityReadOnlyService" class="org.linagora.linshare.core.service.impl.FunctionalityReadOnlyServiceImpl">
-		<constructor-arg ref="functionalityRepository" />
-		<constructor-arg ref="domainBusinessService" />
-		<constructor-arg value="${linshare.override.global.quota}" />
-	</bean>
-
-	<bean name="domainPolicyService" class="org.linagora.linshare.core.service.impl.DomainPolicyServiceImpl">
-		<constructor-arg ref="domainPolicyBusinessService" />
-	</bean>
-
 	<bean name="abstractDomainService" class="org.linagora.linshare.core.service.impl.AbstractDomainServiceImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="abstractDomainRepository" />
@@ -237,15 +153,6 @@
 	<bean name="mailingListService" class="org.linagora.linshare.core.service.impl.MailingListServiceImpl">
 		<constructor-arg ref="mailingListBusinessService" />
 		<constructor-arg ref="userService" />
-	</bean>
-
-	<bean name="mailConfigService" class="org.linagora.linshare.core.service.impl.MailConfigServiceImpl">
-		<constructor-arg ref="abstractDomainService" />
-		<constructor-arg ref="mailConfigBusinessService" />
-		<constructor-arg ref="mailContentBusinessService" />
-		<constructor-arg ref="mailFooterBusinessService" />
-		<constructor-arg ref="mailLayoutBusinessService" />
-		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 
 	<bean name="uploadRequestService" class="org.linagora.linshare.core.service.impl.UploadRequestServiceImpl">
@@ -320,9 +227,5 @@
 		<constructor-arg ref="entryBusinessService" />
 		<constructor-arg ref="shareEntryResourceAccessControl" />
 		<constructor-arg ref="mailBuildingService" />
-	</bean>
-	<bean id="welcomeMessagesService" class="org.linagora.linshare.core.service.impl.WelcomeMessagesServiceImpl">
-		<constructor-arg ref="welcomeMessagesBusinessService" />
-		<constructor-arg ref="domainBusinessService" />
 	</bean>
 </beans>

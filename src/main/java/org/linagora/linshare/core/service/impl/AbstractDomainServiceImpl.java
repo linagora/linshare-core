@@ -298,27 +298,10 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		return abstractDomainRepository.findAllDomainIdentifiers();
 	}
 
-	private List<AbstractDomain> getMyDomainRecursively(AbstractDomain domain) {
-		List<AbstractDomain> domains = new ArrayList<AbstractDomain>();
-		if (domain != null) {
-			domains.add(domain);
-			if (domain.getSubdomain() != null) {
-				for (AbstractDomain d : domain.getSubdomain()) {
-					domains.addAll(getMyDomainRecursively(d));
-				}
-			}
-		}
-		return domains;
-	}
-
 	@Override
 	public List<String> getAllMyDomainIdentifiers(String personalDomainIdentifer) {
-		List<String> domains = new ArrayList<String>();
-		AbstractDomain domain = retrieveDomain(personalDomainIdentifer);
-		for (AbstractDomain abstractDomain : getMyDomainRecursively(domain)) {
-			domains.add(abstractDomain.getIdentifier());
-		}
-		return domains;
+		AbstractDomain domain = domainBusinessService.find(personalDomainIdentifer);
+		return domainBusinessService.getAllMyDomainIdentifiers(domain);
 	}
 
 	@Override
@@ -694,14 +677,13 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			Functionality func = functionalityReadOnlyService
 					.getGuests(domain);
 			if (func.getActivationPolicy().getStatus()) {
-				AbstractDomain guestDomain = findGuestDomain(domain);
-				// if we found an existing GuestDomain, it means we can create
-				// guests.
-				if (guestDomain != null) {
+				try {
+					domainBusinessService.findGuestDomain(domain);
 					return true;
-				} else {
-					logger.debug("Guest functionality is enable, but no guest domain found for domain : "
+				} catch (BusinessException e) {
+					logger.error("Guest functionality is enable, but no guest domain found for domain : "
 							+ domain.getIdentifier());
+					return false;
 				}
 			} else {
 				logger.debug("Guest functionality is disable.");
@@ -731,34 +713,14 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		return false;
 	}
 
-	private AbstractDomain findGuestDomain(AbstractDomain domain) {
-
-		// search GuestDomain among subdomains
-		if (domain.getSubdomain() != null) {
-			for (AbstractDomain d : domain.getSubdomain()) {
-				if (d.getDomainType().equals(DomainType.GUESTDOMAIN)) {
-					return d;
-				}
-			}
-		}
-
-		// search among siblings
-		if (domain.getParentDomain() != null) {
-			return findGuestDomain(domain.getParentDomain());
-		}
-
-		return null;
-	}
-
 	@Override
-	public AbstractDomain getGuestDomain(String topDomainIdentifier) {
-		AbstractDomain top;
-		top = retrieveDomain(topDomainIdentifier);
-		if (top == null) {
-			logger.debug("No TopDomain found.");
-			return null;
+	public AbstractDomain getGuestDomain(String identifier) {
+		AbstractDomain domain = domainBusinessService.find(identifier);
+		if (domain == null) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
+					"The current domain does not exist : " + identifier);
 		}
-		return findGuestDomain(top);
+		return domainBusinessService.findGuestDomain(domain);
 	}
 
 	@Override

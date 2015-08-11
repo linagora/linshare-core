@@ -41,10 +41,9 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class GenericBatchImpl<T> implements GenericBatch<T> {
+public abstract class GenericBatchImpl implements GenericBatch {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(GenericBatchImpl.class);
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	protected final AccountRepository<Account> accountRepository;
 
@@ -57,7 +56,8 @@ public abstract class GenericBatchImpl<T> implements GenericBatch<T> {
 		return position + "/" + total + ":";
 	}
 
-	protected void logDebug(long total, long position, String message) {
+	@Override
+	public void logDebug(long total, long position, String message) {
 		logger.debug(getStringPosition(total, position) + message);
 	}
 

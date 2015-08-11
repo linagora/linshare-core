@@ -40,6 +40,11 @@ import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DomainBusinessService {
+
+	AbstractDomain find(String identifier) throws BusinessException;
+
+	// TODO this method should never raise an exception.
+	// This check should be in the service.
 	AbstractDomain findById(String identifier) throws BusinessException;
 
 	AbstractDomain update(AbstractDomain domain) throws BusinessException;
@@ -56,4 +61,9 @@ public interface DomainBusinessService {
 			throws BusinessException;
 
 	long getTotalUsedSpace() throws BusinessException;
+
+	AbstractDomain findGuestDomain(AbstractDomain domain) throws BusinessException;
+
+	List<String> getAllMyDomainIdentifiers(AbstractDomain domain);
+
 }

@@ -50,7 +50,7 @@ public interface UploadRequestEntryUrlService {
 	UploadRequestEntryUrl create(UploadRequestEntry requestEntry,
 			boolean secured) throws BusinessException;
 
-	void deleteUploadRequestEntryUrl(Account actor, UploadRequestEntryUrl url)
+	void delete(Account actor, String uuid)
 			throws BusinessException;
 
 	boolean exists(String uuid, String urlPath);
@@ -68,5 +68,12 @@ public interface UploadRequestEntryUrlService {
 	UploadRequestEntry getUploadRequestEntry(String uploadRequestUrlUuid,
 			String password) throws BusinessException;
 
+	/**
+	 * For batches only.
+	 */
+
 	Set<UploadRequestEntryUrl> findAllExpired(Account actor);
+
+	UploadRequestEntryUrl find(Account actor, String uuid)
+			throws BusinessException;
 }

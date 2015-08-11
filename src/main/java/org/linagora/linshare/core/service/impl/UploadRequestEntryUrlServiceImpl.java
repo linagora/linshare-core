@@ -218,16 +218,16 @@ public class UploadRequestEntryUrlServiceImpl implements
 	}
 
 	@Override
-	public void deleteUploadRequestEntryUrl(
-			Account actor, UploadRequestEntryUrl uploadRequestEntryUrl)
+	public void delete(
+			Account actor, String uuid)
 			throws BusinessException {
 		Validate.notNull(actor);
-		Validate.notNull(uploadRequestEntryUrl);
+		Validate.notEmpty(uuid);
 		if( !actor.hasSuperAdminRole() )
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-					"the actor has not the right to delete this upload request entry url"
-							+ uploadRequestEntryUrl.getUuid());
-		uploadRequestEntryUrlBusinessService.delete(uploadRequestEntryUrl);
+					"the actor has not the right to delete this upload request entry url" + uuid);
+		UploadRequestEntryUrl entry= uploadRequestEntryUrlBusinessService.findByUuid(uuid);
+		uploadRequestEntryUrlBusinessService.delete(entry);
 	}
 
 	@Override
@@ -248,6 +248,17 @@ public class UploadRequestEntryUrlServiceImpl implements
 		Validate.notNull(actor);
 		if (actor.hasSuperAdminRole() || actor.hasSystemAccountRole()) {
 			return uploadRequestEntryUrlBusinessService.findAllExpired();
+		}
+		throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+			"Actor role must be super admin or system account");
+	}
+
+	@Override
+	public UploadRequestEntryUrl find(Account actor, String uuid)
+			throws BusinessException {
+		Validate.notNull(actor);
+		if (actor.hasSuperAdminRole() || actor.hasSystemAccountRole()) {
+			return uploadRequestEntryUrlBusinessService.findByUuid(uuid);
 		}
 		throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 			"Actor role must be super admin or system account");

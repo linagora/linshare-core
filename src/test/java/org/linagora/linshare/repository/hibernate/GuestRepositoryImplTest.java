@@ -276,24 +276,22 @@ public class GuestRepositoryImplTest extends
 	}
 
 	@Test
-	public void testFindOutdatedGuests() throws BusinessException {
+	public void testFindOutdatedGuestIdentifiers() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-
-		List<Guest> results = null;
 
 		Guest u = new Guest(FIRST_NAME, LAST_NAME, MAIL);
 		u.setExpirationDate(new Date(0));
 		u.setDomain(domain);
 		u.setLocale(domain.getDefaultTapestryLocale());
 		u.setCmisLocale(domain.getDefaultTapestryLocale().toString());
-
 		guestRepository.create(u);
 
-		results = guestRepository.findOutdatedGuests();
+		List<String> results = guestRepository.findOutdatedGuestIdentifiers();
+		logger.debug("results : " + results.toString());
 		assertNotNull(results);
 		assertFalse(results.isEmpty());
 		assertEquals(results.size(), 1);
-
+		assertEquals(u.getLsUuid(), results.get(0));
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

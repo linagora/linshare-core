@@ -42,6 +42,7 @@ import java.util.HashSet;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.EntryType;
@@ -69,7 +70,6 @@ import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.EnciphermentService;
-import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,18 +77,19 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-
+@Ignore
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
+		"classpath:springContext-ldap.xml",
 		"classpath:springContext-business-service.xml",
+		"classpath:springContext-service.xml",
+		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-startopendj.xml",
 		"classpath:springContext-jackRabbit.xml",
-		"classpath:springContext-test.xml"
+		"classpath:springContext-test2.xml"
 		})
 public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
 
@@ -118,9 +119,6 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 	
 	@Autowired
 	private EnciphermentService enciphermentService;
-	
-	@Autowired
-	private UserService userService;
 	
 	private InputStream inputStream;
 	private String uuid;

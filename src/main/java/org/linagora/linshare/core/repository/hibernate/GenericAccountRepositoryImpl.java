@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.AccountPurgeStepEnum;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -182,25 +183,40 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 				.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
 		criteria.add(Restrictions.eq("destroyed", true));
-		return DataAccessUtils.singleResult(findByCriteria(criteria));
+		return DataAccessUtils.requiredSingleResult(findByCriteria(criteria));
 	}
 
 	@Override
-	public List<U> findAllAccountsReadyToPurge() {
+	public U findAccountsReadyToPurge(String lsUuid) {
+		Assert.notNull(lsUuid);
 		DetachedCriteria criteria = DetachedCriteria
 				.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("purgeStep", AccountPurgeStepEnum.WAIT_FOR_PURGE));
 		criteria.add(Restrictions.eq("destroyed", true));
-		return findByCriteria(criteria);
+		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
+		return DataAccessUtils.requiredSingleResult(findByCriteria(criteria));
 	}
 
 	@Override
-	public List<U> findAllDeletedAccountsToPurge(Date limit){
-		DetachedCriteria criteria = DetachedCriteria
-				.forClass(getPersistentClass());
+	public List<String> findAllAccountsReadyToPurge() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("lsUuid"));
+		criteria.add(Restrictions.eq("purgeStep", AccountPurgeStepEnum.WAIT_FOR_PURGE));
+		criteria.add(Restrictions.eq("destroyed", true));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
+	}
+
+	@Override
+	public List<String> findAllDeletedAccountsToPurge(Date limit){
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("lsUuid"));
 		criteria.add(Restrictions.lt("modificationDate", limit));
 		criteria.add(Restrictions.eq("purgeStep", AccountPurgeStepEnum.IN_USE));
 		criteria.add(Restrictions.eq("destroyed", true));
-		return findByCriteria(criteria);
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
 	}
 }

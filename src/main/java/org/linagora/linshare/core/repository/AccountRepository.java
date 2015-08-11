@@ -58,7 +58,9 @@ public interface AccountRepository<U extends Account> extends
 
 	void purge(U entity);
 
-	List<U> findAllAccountsReadyToPurge();
+	U findAccountsReadyToPurge(String lsUuid);
 
-	List<U> findAllDeletedAccountsToPurge(Date limit);
+	List<String> findAllAccountsReadyToPurge();
+
+	List<String> findAllDeletedAccountsToPurge(Date limit);
 }

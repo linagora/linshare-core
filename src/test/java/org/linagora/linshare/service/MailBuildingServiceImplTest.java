@@ -51,14 +51,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
-		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
+		"classpath:springContext-ldap.xml",
+		"classpath:springContext-repository.xml",
+		"classpath:springContext-jackRabbit-mock.xml",
 		"classpath:springContext-business-service.xml",
-		"classpath:springContext-rac.xml",
-		"classpath:springContext-startopendj.xml",
-		"classpath:springContext-jackRabbit.xml",
-		"classpath:springContext-test2.xml" })
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-test.xml" })
 public class MailBuildingServiceImplTest extends
 		AbstractTransactionalJUnit4SpringContextTests {
 

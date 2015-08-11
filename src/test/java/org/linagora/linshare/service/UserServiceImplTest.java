@@ -33,13 +33,8 @@
  */
 package org.linagora.linshare.service;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -90,12 +85,14 @@ import com.google.common.collect.Lists;
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
+		"classpath:springContext-ldap.xml",
 		"classpath:springContext-business-service.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-startopendj.xml",
-		"classpath:springContext-jackRabbit.xml",
+		"classpath:springContext-jackRabbit-mock.xml",
 		"classpath:springContext-test.xml" })
 public class UserServiceImplTest extends
 		AbstractTransactionalJUnit4SpringContextTests {
@@ -325,44 +322,6 @@ public class UserServiceImplTest extends
 	}
 
 	@Test
-	public void testCleanExpiredGuestAcccounts()
-			throws IllegalArgumentException, BusinessException, ParseException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain domain = abstractDomainRepository
-				.findById(LoadingServiceTestDatas.sqlSubDomain);
-
-		Functionality fonc = new Functionality(FunctionalityNames.GUESTS,
-				false, new Policy(Policies.ALLOWED, true), new Policy(
-						Policies.ALLOWED, true), domain);
-
-		functionalityRepository.create(fonc);
-		domain.addFunctionality(fonc);
-
-		Internal user = new Internal("John", "Doe", "user1@linshare.org", null);
-		user.setDomain(domain);
-		user.setCanCreateGuest(true);
-		user.setCmisLocale("en");
-		userService.saveOrUpdateUser(user);
-
-		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
-		guest.setCmisLocale("en");
-		List <String> restricted = new ArrayList<>();
-		guestService.create(user, user, guest, restricted);
-		Assert.assertNotNull(userRepository.findByMail("guest1@linshare.org"));
-
-		DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		dfm.setTimeZone(TimeZone.getTimeZone("Europe/Zurich"));
-		Date date = dfm.parse("2007-02-26 20:15:00");
-
-		guest.setExpirationDate(date);
-
-		guestService.cleanExpiredGuests(userRepository.getBatchSystemAccount());
-		Assert.assertNull(userRepository.findByMail("guest1@linshare.org"));
-
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	@Test
 	public void testSearchUser() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
@@ -404,8 +363,6 @@ public class UserServiceImplTest extends
 		user2.setRole(Role.SYSTEM);
 		user2.setCmisLocale("en");
 		user2 = userService.saveOrUpdateUser(user2);
-
-		UserVo userVo2 = new UserVo(user2);
 
 		AbstractDomain guestDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain);

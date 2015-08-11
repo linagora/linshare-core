@@ -297,28 +297,18 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public void cleanExpiredGuests(SystemAccount systemAccount) {
-		List<Guest> guests = guestBusinessService.findOutdatedGuests();
-		logger.info(guests.size() + " guest(s) have been found to be removed");
-		for (User guest : guests) {
-			try {
-				userService.deleteUser(systemAccount, guest.getLsUuid());
-				logger.info("Removed expired user : "
-						+ guest.getAccountReprentation());
-			} catch (BusinessException ex) {
-				logger.warn("Unable to remove expired user : "
-						+ guest.getAccountReprentation() + "\n" + ex.toString());
-			}
-		}
+	public List<String> findOudatedGuests(SystemAccount systemAccount)
+			throws BusinessException {
+		Validate.notNull(systemAccount);
+		return guestBusinessService.findOutdatedGuestIdentifiers();
 	}
 
 	@Override
-	public List<Guest> findOudatedGuests(Account actor)
+	public Guest findOudatedGuest(SystemAccount systemAccount, String uuid)
 			throws BusinessException {
-		if (actor.hasSuperAdminRole())
-			return guestBusinessService.findOutdatedGuests();
-		throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-				"the actor's role must be SUPERADMIN");
+		Validate.notNull(systemAccount);
+		Validate.notEmpty(uuid);
+		return guestBusinessService.findByLsUuid(uuid);
 	}
 
 	@Override

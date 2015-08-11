@@ -69,12 +69,13 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
+		"classpath:springContext-ldap.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
+		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-startopendj.xml",
-		"classpath:springContext-jackRabbit.xml",
+		"classpath:springContext-jackRabbit-mock.xml",
 		"classpath:springContext-test.xml"
 		})
 public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
@@ -83,6 +84,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 
 	public static String topDomaineName = "TEST_ADST_Domain_0_1";
 
+	@SuppressWarnings("unused")
 	private static String baseDn = "dc=nodomain,dc=com";
 	private static String identifier= "ID_ADST_LDAP_DE_TEST";
 	private static String identifierP = "ID_ADST_PARAM_DE_TEST";

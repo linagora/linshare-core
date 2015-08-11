@@ -40,6 +40,7 @@ import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -104,6 +105,17 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		criteria.add(Restrictions.lt("expirationDate", new Date()));
 		criteria.add(Restrictions.eq("destroyed", false));
 		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<String> findOutdatedGuestIdentifiers() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("lsUuid"));
+		criteria.add(Restrictions.lt("expirationDate", new Date()));
+		criteria.add(Restrictions.eq("destroyed", false));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
 	}
 
 	/**

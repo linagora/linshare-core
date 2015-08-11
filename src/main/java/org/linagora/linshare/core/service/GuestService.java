@@ -48,13 +48,13 @@ public interface GuestService {
 
 	/**
 	 * Find a guest by is lsUuid
-	 * @param actor TODO
+	 * @param actor who trigger the action
 	 * @param owner
-	 *            who trigger the action
+	 *            for who trigger the action
 	 * @param lsUuid
 	 *            guest lsUuid
 	 * 
-	 * @return guest found otherwise return null
+	 * @return guest found otherwise throws business exception
 	 * @throws BusinessException
 	 */
 	Guest find(Account actor, Account owner, String lsUuid) throws BusinessException;
@@ -66,7 +66,7 @@ public interface GuestService {
 	List<Guest> findAllMyGuests(Account actor, Account owner) throws BusinessException;
 
 	/**
-	 * 
+	 * Test if a guest exists
 	 * @param lsUuid
 	 * @return
 	 * @throws BusinessException
@@ -75,9 +75,9 @@ public interface GuestService {
 
 	/**
 	 * Create a guest
-	 * @param actor TODO
+	 * @param actor who triggered the action
 	 * @param owner
-	 *            who triggered the action
+	 *            for who triggered the action
 	 * @param guest
 	 *            guest to create
 	 * @param restrictedMails TODO
@@ -101,61 +101,14 @@ public interface GuestService {
 
 	/**
 	 * 
-	 * @param actor TODO
+	 * @param actor who triggered the action
 	 * @param owner
-	 *            who triggered the action
+	 *            for who triggered the action
 	 * @param lsUuid
 	 *            guest lsUuid
 	 * @throws BusinessException
 	 */
 	void delete(Account actor, User owner, String lsUuid) throws BusinessException;
-
-	/**
-	 * Clean outdated guest accounts
-	 * 
-	 * @param systemAccount
-	 */
-	void cleanExpiredGuests(SystemAccount systemAccount);
-
-//	/**
-//	 * Add a contact for a restricted guest
-//	 * 
-//	 * @param actor
-//	 *            who trigger the action
-//	 * @param lsUuid
-//	 *            guest lsUuid
-//	 * @param contactLsUuid
-//	 * @throws BusinessException
-//	 */
-//	void addRestrictedContact(User actor, String lsUuid, String contactLsUuid)
-//			throws BusinessException;
-//
-//	/**
-//	 * Reset all restricted contacts of a guest
-//	 * 
-//	 * @param actor
-//	 *            who trigger the action
-//	 * @param lsUuid
-//	 *            guest lsUuid
-//	 * @param mailContacts
-//	 *            new contact mail list
-//	 * @throws BusinessException
-//	 */
-//	void resetContactRestrictions(User actor, String lsUuid,
-//			List<String> mailContacts) throws BusinessException;
-//
-//	/**
-//	 * Get all restricted contacts of a guest
-//	 * 
-//	 * @param actor
-//	 *            who trigger the action
-//	 * @param lsUuid
-//	 *            guest lsUuid
-//	 * @return contacts
-//	 * @throws BusinessException
-//	 */
-//	List<AllowedContact> getRestrictedContacts(User actor, String lsUuid)
-//			throws BusinessException;
 
 	/**
 	 * Reset guest password
@@ -166,22 +119,11 @@ public interface GuestService {
 	 */
 	void resetPassword(String lsUuid) throws BusinessException;
 
-	List<Guest> findOudatedGuests(Account actor) throws BusinessException;
+	List<String> findOudatedGuests(SystemAccount systemAccount) throws BusinessException;
+
+	Guest findOudatedGuest(SystemAccount systemAccount, String uuid) throws BusinessException;
 
 	void deleteUser(SystemAccount systemAccount, String uuid) throws BusinessException;
 
-//	/**
-//	 * Remove restriction on contacts for a guest and delete all his contacts
-//	 * 
-//	 * @param actor
-//	 *            who trigger the action
-//	 * @param lsUuid
-//	 *            guest lsUuid
-//	 * @return updated guest
-//	 * @throws BusinessException
-//	 */
-//	Guest removeContactRestriction(User actor, String lsUuid)
-//			throws BusinessException;
-
-	public Date getGuestExpirationDate(Account actor, Date currentGuestExpirationDate) throws BusinessException;
+	Date getGuestExpirationDate(Account actor, Date currentGuestExpirationDate) throws BusinessException;
 }

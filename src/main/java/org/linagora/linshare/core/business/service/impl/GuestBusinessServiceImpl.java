@@ -112,14 +112,8 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public List<Guest> findOutdatedGuests() {
-		List<Guest> outdatedGuests = guestRepository.findOutdatedGuests();
-		for (Guest guest : outdatedGuests) {
-			if (guest.isRestricted()) {
-				guest.addContacts(allowedContactRepository.findByOwner(guest));
-			}
-		}
-		return outdatedGuests;
+	public List<String> findOutdatedGuestIdentifiers() {
+		return guestRepository.findOutdatedGuestIdentifiers();
 	}
 
 	@Override

@@ -67,7 +67,6 @@ import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,11 +79,12 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
+		"classpath:springContext-ldap.xml",
 		"classpath:springContext-business-service.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-startopendj.xml",
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
 		})
@@ -115,14 +115,10 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	private DocumentEntryRepository documentEntryRepository;
 
 	@Autowired
-	private UserService userService;
-
-	@Autowired
 	private DocumentEntryService documentEntryService;
 
 	private User jane;
 	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
-	private final Long size = (long) 1000;
 	private final String fileName = "linshare-default.properties";
 	private final String comment = "file description";
 	private DocumentEntry aDocumentEntry;

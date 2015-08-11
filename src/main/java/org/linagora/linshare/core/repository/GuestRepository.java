@@ -50,10 +50,12 @@ public interface GuestRepository extends UserRepository<Guest> {
      */
     List<Guest> searchGuest(Account owner, String mail, String firstName, String lastName);
 
-    /** Find outdated guest accounts.
-     * @return a list of outdated guests (null if no one found).
-     */
-    List<Guest> findOutdatedGuests();
+	/**
+	 * Find outdated guest account identifiers.
+	 * 
+	 * @return a list of outdated guest identifiers
+	 */
+	List<String> findOutdatedGuestIdentifiers();
 
 
 	 /** Search some guests.

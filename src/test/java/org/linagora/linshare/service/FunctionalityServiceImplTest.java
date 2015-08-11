@@ -65,13 +65,14 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import com.google.common.collect.ImmutableList;
 
-@ContextConfiguration(locations = { 
-		"classpath:springContext-datasource.xml",
-		"classpath:springContext-repository.xml",
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-service-test-funcs.xml",
-		"classpath:springContext-test.xml"
-		})
+		"classpath:springContext-ldap.xml",
+		"classpath:springContext-repository.xml",
+		"classpath:springContext-jackRabbit-mock.xml",
+		"classpath:springContext-business-service.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-test.xml" })
 public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
 
 	private static Logger logger = LoggerFactory.getLogger(FunctionalityServiceImplTest.class);

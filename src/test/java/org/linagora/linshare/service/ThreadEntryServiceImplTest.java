@@ -48,7 +48,6 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.ThreadService;
-import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,11 +59,12 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
+		"classpath:springContext-ldap.xml",
 		"classpath:springContext-business-service.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-service.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-startopendj.xml",
-		"classpath:springContext-jackRabbit.xml",
+		"classpath:springContext-jackRabbit-mock.xml",
 		"classpath:springContext-test2.xml"
 		})
 public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
@@ -79,9 +79,6 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private ThreadService threadService;
@@ -146,8 +143,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		for (count = threads.size(); count < 10; ++count) {
 			threadService.create(john, john, ThreadEntryServiceImplTest.THREAD_1 + "_" + count);
 		}
-		User root = userService.findOrCreateUser("root@localhost.localdomain",
-				LinShareConstants.rootDomainIdentifier);
+		User root = userRepository.findByMailAndDomain(LinShareConstants.rootDomainIdentifier, "root@localhost.localdomain");
 		threads = threadService.findAll(root, root);
 		Assert.assertEquals(threads.size(), count);
 		

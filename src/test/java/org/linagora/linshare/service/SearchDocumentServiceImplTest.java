@@ -86,13 +86,14 @@ import org.subethamail.wiser.Wiser;
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
+		"classpath:springContext-ldap.xml",
 		"classpath:springContext-business-service.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-startopendj.xml",
 		"classpath:springContext-jackRabbit.xml",
-"classpath:springContext-test.xml" })
+"classpath:springContext-test2.xml" })
 public class SearchDocumentServiceImplTest extends
 AbstractTransactionalJUnit4SpringContextTests {
 
@@ -111,9 +112,6 @@ AbstractTransactionalJUnit4SpringContextTests {
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private DocumentRepository documentRepository;

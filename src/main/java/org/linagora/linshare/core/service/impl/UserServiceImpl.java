@@ -51,6 +51,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -126,6 +127,18 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User findUserInDB(String domain, String mail) {
 		return userRepository.findByMailAndDomain(domain, mail);
+	}
+
+	@Override
+	public User findAccountsReadyToPurge(SystemAccount actor, String uuid) {
+		Validate.notEmpty(uuid, "User uuid must be set.");
+		return userRepository.findAccountsReadyToPurge(uuid);
+	}
+
+	@Override
+	public User findDeleted(SystemAccount actor, String uuid) {
+		Validate.notEmpty(uuid, "User uuid must be set.");
+		return userRepository.findDeleted(uuid);
 	}
 
 	@Override
@@ -972,13 +985,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<User> findAllAccountsReadyToPurge()
+	public List<String> findAllAccountsReadyToPurge()
 			throws BusinessException {
 		return userRepository.findAllAccountsReadyToPurge();
 	}
 
 	@Override
-	public List<User> findAllDeletedAccountsToPurge(Date limit)
+	public List<String> findAllDeletedAccountsToPurge(Date limit)
 			throws BusinessException {
 		return userRepository.findAllDeletedAccountsToPurge(limit);
 	}

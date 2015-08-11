@@ -36,4 +36,13 @@ package org.linagora.linshare.core.job.quartz;
 
 public abstract class Context {
 
+	String identifier;
+
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
 }

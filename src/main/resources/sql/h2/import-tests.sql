@@ -30,6 +30,13 @@ INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date,
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (12, 'Foo', 'Bar', 'user3@linshare.org', true, '', false, true);
 
 
+UPDATE policy SET status = true where id=27;
+
+
+
+
+
+
 
 
 -- TESTS

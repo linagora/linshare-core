@@ -34,12 +34,7 @@
 
 package org.linagora.linshare.service;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -74,12 +69,14 @@ import com.google.common.collect.Lists;
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
+		"classpath:springContext-ldap.xml",
 		"classpath:springContext-business-service.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-startopendj.xml",
-		"classpath:springContext-jackRabbit.xml",
+		"classpath:springContext-jackRabbit-mock.xml",
 		"classpath:springContext-test.xml" })
 public class GuestServiceImplTest extends
 		AbstractTransactionalJUnit4SpringContextTests {
@@ -184,26 +181,6 @@ public class GuestServiceImplTest extends
 		Assert.assertEquals(Role.SIMPLE, update.getRole());
 		Assert.assertEquals("First", update.getFirstName());
 		Assert.assertEquals("Last", update.getLastName());
-
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	@Test
-	public void testCleanExpiredGuestAcccounts()
-			throws IllegalArgumentException, BusinessException, ParseException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-
-		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
-		guest.setCmisLocale("en");
-		guest = guestService.create(owner1, owner1, guest, null);
-
-		DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		dfm.setTimeZone(TimeZone.getTimeZone("Europe/Zurich"));
-		Date date = dfm.parse("2007-02-26 20:15:00");
-
-		guest.setExpirationDate(date);
-		guestService.cleanExpiredGuests(userRepository.getBatchSystemAccount());
-		Assert.assertNull(userRepository.findByMail("guest1@linshare.org"));
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

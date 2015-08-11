@@ -41,11 +41,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.RootUserRepository;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
 import org.slf4j.Logger;
@@ -56,14 +54,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
-		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
+		"classpath:springContext-ldap.xml",
+		"classpath:springContext-repository.xml",
+		"classpath:springContext-jackRabbit-mock.xml",
 		"classpath:springContext-business-service.xml",
-		"classpath:springContext-facade.xml",
-		"classpath:springContext-rac.xml",
-		"classpath:springContext-startopendj.xml",
-		"classpath:springContext-jackRabbit.xml",
+		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml" })
 public class WelcomeMessagesServiceImplTest extends
 		AbstractTransactionalJUnit4SpringContextTests {
@@ -72,12 +68,7 @@ public class WelcomeMessagesServiceImplTest extends
 			.getLogger(WelcomeMessagesServiceImplTest.class);
 
 	@Autowired
-	private AbstractDomainRepository abstractDomainRepository;
-
-	@Autowired
 	private WelcomeMessagesService welcomeService;
-
-	private AbstractDomain rootDomain;
 
 	private User actor;
 
@@ -88,8 +79,6 @@ public class WelcomeMessagesServiceImplTest extends
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		try {
-			rootDomain = abstractDomainRepository
-					.findById(LoadingServiceTestDatas.rootDomainName);
 			actor = rootUserRepository
 					.findByLsUuid("root@localhost.localdomain");
 		} catch (Exception e) {

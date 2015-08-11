@@ -33,9 +33,11 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.DomainBusinessService;
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -55,6 +57,8 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 		return repository.getUniqueRootDomain();
 	}
 
+	// TODO this method should never raise an exception.
+	// This check should be in the service.
 	@Override
 	public AbstractDomain findById(String identifier) throws BusinessException {
 		AbstractDomain domain = repository.findById(identifier);
@@ -63,6 +67,11 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 					"The current domain does not exist : " + identifier);
 		}
 		return domain;
+	}
+
+	@Override
+	public AbstractDomain find(String identifier) throws BusinessException {
+		return repository.findById(identifier);
 	}
 
 	@Override
@@ -81,4 +90,47 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 	public long getTotalUsedSpace() throws BusinessException {
 		return repository.getTotalUsedSpace();
 	}
+
+	@Override
+	public AbstractDomain findGuestDomain(AbstractDomain domain)  throws BusinessException {
+		if (domain.isRootDomain()) {
+			throw new BusinessException(BusinessErrorCode.GUEST_FORBIDDEN, "No guest domain for root domain");
+		}
+		// search GuestDomain among subdomains
+		if (domain.getSubdomain() != null) {
+			for (AbstractDomain d : domain.getSubdomain()) {
+				if (d.getDomainType().equals(DomainType.GUESTDOMAIN)) {
+					return d;
+				}
+			}
+		}
+		// search among siblings
+		if (domain.getParentDomain() != null) {
+			return findGuestDomain(domain.getParentDomain());
+		}
+		throw new BusinessException(BusinessErrorCode.GUEST_FORBIDDEN, "No guest domain found");
+	}
+
+	private List<AbstractDomain> getMyDomainRecursively(AbstractDomain domain) {
+		List<AbstractDomain> domains = new ArrayList<AbstractDomain>();
+		if (domain != null) {
+			domains.add(domain);
+			if (domain.getSubdomain() != null) {
+				for (AbstractDomain d : domain.getSubdomain()) {
+					domains.addAll(getMyDomainRecursively(d));
+				}
+			}
+		}
+		return domains;
+	}
+
+	@Override
+	public List<String> getAllMyDomainIdentifiers(AbstractDomain domain) {
+		List<String> domains = new ArrayList<String>();
+		for (AbstractDomain abstractDomain : getMyDomainRecursively(domain)) {
+			domains.add(abstractDomain.getIdentifier());
+		}
+		return domains;
+	}
+
 }

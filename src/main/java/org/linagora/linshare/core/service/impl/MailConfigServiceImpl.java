@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.business.service.MailContentBusinessService;
@@ -52,14 +53,13 @@ import org.linagora.linshare.core.domain.entities.MailLayout;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.MailConfigService;
 
 import com.google.common.collect.Lists;
 
 public class MailConfigServiceImpl implements MailConfigService {
 
-	private final AbstractDomainService abstractDomainService;
+	private final DomainBusinessService domainBusinessService;
 
 	private final MailConfigBusinessService mailConfigBusinessService;
 
@@ -72,14 +72,14 @@ public class MailConfigServiceImpl implements MailConfigService {
 	private final DomainPermissionBusinessService permissionService;
 
 	public MailConfigServiceImpl(
-			final AbstractDomainService abstractDomainService,
+			final DomainBusinessService domainBusinessService,
 			final MailConfigBusinessService mailConfigBusinessService,
 			final MailContentBusinessService mailContentBusinessService,
 			final MailFooterBusinessService mailFooterBusinessService,
 			final MailLayoutBusinessService mailLayoutBusinessService,
 			final DomainPermissionBusinessService domainPermissionBusinessService) {
 		super();
-		this.abstractDomainService = abstractDomainService;
+		this.domainBusinessService = domainBusinessService;
 		this.mailConfigBusinessService = mailConfigBusinessService;
 		this.mailContentBusinessService = mailContentBusinessService;
 		this.mailFooterBusinessService = mailFooterBusinessService;
@@ -491,8 +491,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 
 	private List<AbstractDomain> getParentDomains(String id)
 			throws BusinessException {
-		AbstractDomain domain = abstractDomainService.retrieveDomain(id);
-
+		AbstractDomain domain = domainBusinessService.find(id);
 		if (domain == null)
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Invalid domain identifier.");
@@ -508,10 +507,5 @@ public class MailConfigServiceImpl implements MailConfigService {
 			parent = parent.getParentDomain();
 		}
 		return parents;
-	}
-
-	private boolean isInParentDomains(AbstractDomain haystack,
-			AbstractDomain needle) {
-		return getParentDomains(haystack).contains(needle);
 	}
 }

@@ -56,7 +56,7 @@ public interface GuestBusinessService {
 
 	List<Guest> findAllMyGuests(Account owner);
 
-	List<Guest> findOutdatedGuests();
+	List<String> findOutdatedGuestIdentifiers();
 
 	GuestWithMetadata create(Account owner, Guest guest, AbstractDomain domain,
 			List<User> allowedContacts)

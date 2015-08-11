@@ -58,18 +58,14 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import com.google.common.collect.ImmutableSet;
 
-@ContextConfiguration(locations = {
-		"classpath:springContext-datasource.xml",
-		"classpath:springContext-repository.xml",
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
+		"classpath:springContext-ldap.xml",
+		"classpath:springContext-repository.xml",
+		"classpath:springContext-jackRabbit-mock.xml",
 		"classpath:springContext-business-service.xml",
-		"classpath:springContext-facade.xml",
-		"classpath:springContext-rac.xml",
-		"classpath:springContext-startopendj.xml",
-		"classpath:springContext-jackRabbit.xml",
-		"classpath:springContext-test.xml"
-		})
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-test.xml" })
 public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	private static Logger logger = LoggerFactory
@@ -150,16 +146,16 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 
 	@Test
 	public void testCreateMailConfig() {
-		// TODO
+		// TODO implement tests
 	}
 
 	@Test
 	public void testUpdateMailConfig() {
-		// TODO
+		// TODO implement tests
 	}
 
 	@Test
 	public void testDeleteMailConfig() {
-		// TODO
+		// TODO implement tests
 	}
 }
