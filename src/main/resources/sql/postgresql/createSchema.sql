@@ -587,16 +587,6 @@ CREATE TABLE functionality_boolean (
   functionality_id int8 NOT NULL,
   boolean_value    bool NOT NULL,
   PRIMARY KEY (functionality_id));
-CREATE TABLE upload_request_entry_url (
-  id                       int8 NOT NULL,
-  upload_request_entry_id int8 NOT NULL,
-  uuid                    varchar(255) NOT NULL,
-  path                    varchar(255) NOT NULL,
-  password                varchar(255),
-  creation_date           timestamp NOT NULL,
-  modification_date       timestamp NOT NULL,
-  expiry_date             timestamp NOT NULL,
-  PRIMARY KEY (id));
 CREATE TABLE contact_provider (
   id                  int8 NOT NULL,
   uuid               varchar(255) NOT NULL UNIQUE,
@@ -831,7 +821,6 @@ ALTER TABLE upload_request ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain
 ALTER TABLE upload_proposition_filter ADD CONSTRAINT FKupload_pro316142 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE functionality_enum_lang ADD CONSTRAINT FKfunctional140416 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
-ALTER TABLE upload_request_entry_url ADD CONSTRAINT FKupload_req784409 FOREIGN KEY (upload_request_entry_id) REFERENCES upload_request_entry (entry_id);
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr166740 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr806790 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs163989 FOREIGN KEY (user_provider_id) REFERENCES user_provider (id);

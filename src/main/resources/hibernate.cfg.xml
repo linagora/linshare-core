@@ -60,7 +60,6 @@
 		<mapping resource="org/linagora/linshare/core/domain/entities/UploadRequestHistory.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/UploadRequestTemplate.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/UploadRequestUrl.hbm.xml"/>
-		<mapping resource="org/linagora/linshare/core/domain/entities/UploadRequestEntryUrl.hbm.xml"/>
 
 		<mapping resource="org/linagora/linshare/core/domain/entities/UploadProposition.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/UploadPropositionAction.hbm.xml"/>

@@ -78,11 +78,6 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 		super(domainBusinessService, domainPermissionBusinessService);
 		this.businessService = functionalityBusinessService;
 		this.overrideGlobalQuota = overrideGlobalQuota;
-		// HOOK : Should be removed after LinShare 1.9
-		// Admins
-		excludes.add(FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL.toString());
-		excludes.add(FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL__EXPIRATION.toString());
-		excludes.add(FunctionalityNames.UPLOAD_REQUEST_ENTRY_URL__PASSWORD.toString());
 		// Users
 		excludesForUsers.add(FunctionalityNames.SHARE_NOTIFICATION_BEFORE_EXPIRATION.toString());
 		excludesForUsers.add(FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION.toString());

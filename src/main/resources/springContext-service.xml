@@ -191,13 +191,6 @@
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
-		<constructor-arg ref="uploadRequestEntryUrlBusinessService" />
-		<constructor-arg ref="uploadRequestEntryUrlService" />
-		<constructor-arg ref="functionalityReadOnlyService" />
-	</bean>
-	<bean name="uploadRequestEntryUrlService" class="org.linagora.linshare.core.service.impl.UploadRequestEntryUrlServiceImpl">
-		<constructor-arg ref="uploadRequestEntryUrlBusinessService" />
-		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 	<bean name="uploadPropositionService" class="org.linagora.linshare.core.service.impl.UploadPropositionServiceImpl">

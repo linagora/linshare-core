@@ -112,15 +112,6 @@ public interface FunctionalityReadOnlyService {
 	// UPLOAD PROPOSITION
 	Functionality getUploadPropositionFunctionality(AbstractDomain domain);
 
-	// UPLOAD REQUEST ENTRY ULR
-	Functionality getUploadRequestEntryUrlFunctionality(AbstractDomain domain);
-
-	Functionality getUploadRequestEntryUrlPasswordFunctionality(
-			AbstractDomain domain);
-
-	TimeUnitValueFunctionality getUploadRequestEntryUrlExpiryTimeFunctionality(
-			AbstractDomain domain);
-
 	/**
 	 * Return the status of the custom logo  in root domain
 	 * @return the status
@@ -155,17 +146,5 @@ public interface FunctionalityReadOnlyService {
 	Functionality getCmisFunctionality(AbstractDomain domain);
 	Functionality getCmisDocumentsFunctionality(AbstractDomain domain);
 	Functionality getCmisThreadsFunctionality(AbstractDomain domain);
-	/**
-	 * Return the status of the upload request entry URL functionality in root domain
-	 * @return the status
-	 */
-	boolean isEnableUploadRequestEntryUrl(String domainIdentifier)
-			throws BusinessException;
 
-	/**
-	 * Return the status of the upload request entry URL password functionality in root domain
-	 * @return the status
-	 */
-	boolean isEnableUploadRequestEntryUrlPassword(String domainIdentifier)
-			throws BusinessException;
 }

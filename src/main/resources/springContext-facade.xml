@@ -136,10 +136,6 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
-	<bean id="uploadRequestEntryUrlFacade" class="org.linagora.linshare.core.facade.impl.UploadRequestEntryUrlFacadeImpl">
-		<constructor-arg ref="uploadRequestEntryUrlService" />
-	</bean>
-
 	<bean id="uploadPropositionFacade" class="org.linagora.linshare.core.facade.impl.UploadPropositionFacadeImpl">
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="uploadPropositionService" />
