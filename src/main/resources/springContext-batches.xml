@@ -26,4 +26,17 @@
 		<constructor-arg ref="accountRepository" />
 	</bean>
 
+	<bean name="undownloadedSharedDocumentsBatch"
+		class="org.linagora.linshare.core.batches.impl.UndownloadedSharedDocumentsBatchImpl">
+		<constructor-arg ref="shareEntryGroupService" />
+		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="accountRepository" />
+	</bean>
+
+	<bean name="deleteShareEntryGroupBatch"
+		class="org.linagora.linshare.core.batches.impl.DeleteShareEntryGroupBatchImpl">
+		<constructor-arg ref="shareEntryGroupService" />
+		<constructor-arg ref="accountRepository" />
+	</bean>
 </beans>

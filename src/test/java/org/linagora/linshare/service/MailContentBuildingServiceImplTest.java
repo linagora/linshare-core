@@ -329,5 +329,21 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
+	@Test
+	public void testBuildMailNoDocumentHasBeenDownloaded() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+
+		User actor = john;
+		ShareEntryGroup shareEntryGroup = new ShareEntryGroup(actor, "test", new Date());
+		Set<ShareEntry> shares = Sets.newHashSet();
+		shares.add(new ShareEntry(john, aDocumentEntry.getName(), "", jane, aDocumentEntry, Calendar.getInstance(), shareEntryGroup));
+
+		MailContainerWithRecipient mailContainerWithRecipientBuild = mailBuildingService.buildNoDocumentHasBeenDownloadedAcknowledgment(shareEntryGroup);
+
+		testMailGenerate(mailContainerWithRecipientBuild);
+		Assert.assertTrue(mailContainerWithRecipientBuild.getRecipient().equals(john.getMail()));
+
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 }

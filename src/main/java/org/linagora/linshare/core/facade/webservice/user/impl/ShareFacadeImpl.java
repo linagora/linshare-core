@@ -193,6 +193,8 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		sc.setAcknowledgement(createDto.isCreationAcknowledgement());
 		sc.setExpiryDate(createDto.getExpirationDate());
 		sc.addGenericUserDto(createDto.getRecipients());
+		sc.setEnableUSDA(createDto.isEnableUSDA());
+		sc.setNotificationDateForUSDA(createDto.getNotificationDateForUSDA());
 		Set<Entry> shares = shareService.create(actor, actor, sc);
 		Set<ShareDto> sharesDto = Sets.newHashSet();
 		for (Entry entry : shares) {

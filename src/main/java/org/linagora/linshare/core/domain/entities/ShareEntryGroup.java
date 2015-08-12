@@ -77,15 +77,12 @@ public class ShareEntryGroup {
 		super();
 	}
 
-	public ShareEntryGroup(Account owner, String subject, Date notificationDate,
-			Set<AnonymousShareEntry> anonymousShareEntries,
-			Set<ShareEntry> shareEntries) {
+	public ShareEntryGroup(Account owner, String subject,
+			Date notificationDate) {
 		super();
 		this.owner = owner;
 		this.subject = subject;
 		this.notificationDate = notificationDate;
-		this.anonymousShareEntries = anonymousShareEntries;
-		this.shareEntries = shareEntries;
 	}
 
 	public long getId() {

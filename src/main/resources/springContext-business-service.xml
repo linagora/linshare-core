@@ -34,7 +34,7 @@
 	</bean>
 
 
-	<bean id="shareEntrygroupBusinessService" class="org.linagora.linshare.core.business.service.impl.ShareEntryGroupBusinessServiceImpl">
+	<bean id="shareEntryGroupBusinessService" class="org.linagora.linshare.core.business.service.impl.ShareEntryGroupBusinessServiceImpl">
 		<constructor-arg ref="shareEntryGroupRepository" />
 	</bean>
 

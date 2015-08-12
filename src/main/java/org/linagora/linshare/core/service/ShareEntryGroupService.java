@@ -31,86 +31,25 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
 
-import java.util.Calendar;
+package org.linagora.linshare.core.service;
 
-import org.linagora.linshare.core.domain.constants.EntryType;
+import java.util.List;
 
-/**
- * @author fred
- */
-public class AnonymousShareEntry extends Entry{
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 
-	protected Long downloaded;
+public interface ShareEntryGroupService {
 
-	protected DocumentEntry documentEntry;
+	ShareEntryGroup create(Account actor, ShareEntryGroup entity);
 
-	protected AnonymousUrl anonymousUrl;
+	void delete(Account actor, ShareEntryGroup entity);
 
-	protected ShareEntryGroup shareEntryGroup;
+	ShareEntryGroup findByUuid(Account actor, String uuid);
 
-	public AnonymousShareEntry() {
-		super();
-	}
+	ShareEntryGroup update(Account actor, ShareEntryGroup shareEntryGroup);
 
-	public AnonymousShareEntry(Account entryOwner, String name, String comment, DocumentEntry documentEntry, AnonymousUrl anonymousUrl, Calendar expirationDate, ShareEntryGroup shareEntryGroup) {
-		super(entryOwner, name, comment);
-		this.documentEntry = documentEntry;
-		this.anonymousUrl = anonymousUrl;
-		this.downloaded = new Long(0);
-		this.expirationDate = expirationDate;
-		this.shareEntryGroup = shareEntryGroup;
-	}
+	List<String> findUndownloadedSharedDocToAlert(Account actor);
 
-	@Override
-	public EntryType getEntryType() {
-		return EntryType.ANONYMOUS_SHARE;
-	}
-
-	public Long getDownloaded() {
-		return downloaded;
-	}
-
-	public void setDownloaded(Long downloaded) {
-		this.downloaded = downloaded;
-	}
-	
-	public void incrementDownload() {
-		downloaded+=1;
-	}
-
-	public DocumentEntry getDocumentEntry() {
-		return documentEntry;
-	}
-
-	public void setDocumentEntry(DocumentEntry documentEntry) {
-		this.documentEntry = documentEntry;
-	}
-
-	public AnonymousUrl getAnonymousUrl() {
-		return anonymousUrl;
-	}
-
-	public void setAnonymousUrl(AnonymousUrl anonymousUrl) {
-		this.anonymousUrl = anonymousUrl;
-	}
-
-	public ShareEntryGroup getShareEntryGroup() {
-		return shareEntryGroup;
-	}
-
-	public void setShareEntryGroup(ShareEntryGroup shareEntryGroup) {
-		this.shareEntryGroup = shareEntryGroup;
-	}
-
-	/* usefull getters */
-	public long getSize() {
-		return documentEntry.getSize();
-	}
-	
-	public String getType() {
-		return documentEntry.getType();
-	}
-	
+	List<String> findAllToPurge(Account actor);
 }

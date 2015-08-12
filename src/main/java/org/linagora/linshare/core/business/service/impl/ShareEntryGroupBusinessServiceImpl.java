@@ -1,3 +1,37 @@
+/*
+ * LinShare is an open source filesharing software, part of the LinPKI software
+ * suite, developed by Linagora.
+ * 
+ * Copyright (C) 2015 LINAGORA
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version, provided you comply with the Additional Terms applicable for
+ * LinShare software by Linagora pursuant to Section 7 of the GNU Affero General
+ * Public License, subsections (b), (c), and (e), pursuant to which you must
+ * notably (i) retain the display of the “LinShare™” trademark/logo at the top
+ * of the interface window, the display of the “You are using the Open Source
+ * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
+ * e-mails sent with the Program, (ii) retain all hypertext links between
+ * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
+ * refrain from infringing Linagora intellectual property rights over its
+ * trademarks and commercial brands. Other Additional Terms apply, see
+ * <http://www.linagora.com/licenses/> for more details.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License and
+ * its applicable Additional Terms for LinShare along with this program. If not,
+ * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
+ * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
+ * applicable to LinShare software.
+ */
+
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.ArrayList;
@@ -16,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class ShareEntryGroupBusinessServiceImpl
 		implements ShareEntryGroupBusinessService {
 
-	private final ShareEntryGroupRepository shareEntryGroupRepository;
+	private final ShareEntryGroupRepository repository;
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(ShareEntryGroupBusinessServiceImpl.class);
@@ -24,42 +58,43 @@ public class ShareEntryGroupBusinessServiceImpl
 	public ShareEntryGroupBusinessServiceImpl(
 			ShareEntryGroupRepository shareEntryGroupRepository) {
 		super();
-		this.shareEntryGroupRepository = shareEntryGroupRepository;
+		this.repository = shareEntryGroupRepository;
 	}
 
 	@Override
 	public ShareEntryGroup create(ShareEntryGroup entity)
 			throws BusinessException {
-		return shareEntryGroupRepository.create(entity);
+		return repository.create(entity);
 	}
 
 	@Override
 	public void delete(ShareEntryGroup shareEntryGroup)
 			throws BusinessException {
-		shareEntryGroupRepository.delete(shareEntryGroup);
+		repository.delete(shareEntryGroup);
 	}
 
 	@Override
-	public ShareEntryGroup findById(long id) throws BusinessException {
-		return shareEntryGroupRepository.findById(id);
+	public ShareEntryGroup findByUuid(String uuid) throws BusinessException {
+		return repository.findByUuid(uuid);
 	}
 
 	@Override
 	public ShareEntryGroup update(ShareEntryGroup shareEntryGroup)
 			throws BusinessException {
-		return shareEntryGroupRepository.update(shareEntryGroup);
+		return repository.update(shareEntryGroup);
 	}
 
+	// TODO refactoring
 	@Override
-	public List<ShareEntryGroup> findUndownloadedSharedDocToAlert() {
-		List<ShareEntryGroup> all = shareEntryGroupRepository.findAllToNotify();
-		List<ShareEntryGroup> undownloadedShareEntryGroup = new ArrayList<ShareEntryGroup>();
+	public List<String> findUndownloadedSharedDocToAlert() {
+		List<ShareEntryGroup> all = repository.findAllToNotify();
+		List<String> undownloadedShareEntryGroup = new ArrayList<String>();
 		for (ShareEntryGroup shareEntryGroup : all) {
 			Iterator<ShareEntry> shareEntriesIterator = shareEntryGroup
 					.getShareEntries().iterator();
 			while (shareEntriesIterator.hasNext()) {
 				if (shareEntriesIterator.next().getDownloaded() == 0) {
-					undownloadedShareEntryGroup.add(shareEntryGroup);
+					undownloadedShareEntryGroup.add(shareEntryGroup.getUuid());
 					break;
 				}
 			}
@@ -67,12 +102,17 @@ public class ShareEntryGroupBusinessServiceImpl
 					.getAnonymousShareEntries().iterator();
 			while (anonymousShareEntriesIterator.hasNext()) {
 				if (anonymousShareEntriesIterator.next().getDownloaded() == 0) {
-					undownloadedShareEntryGroup.add(shareEntryGroup);
+					undownloadedShareEntryGroup.add(shareEntryGroup.getUuid());
 					break;
 				}
 			}
 		}
 		return undownloadedShareEntryGroup;
+	}
+
+	@Override
+	public List<String> findAllToPurge() {
+		return repository.findAllToPurge();
 	}
 
 }

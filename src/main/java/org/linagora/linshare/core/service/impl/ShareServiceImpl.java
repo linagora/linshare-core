@@ -42,7 +42,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
-import org.linagora.linshare.core.business.service.ShareEntryGroupBusinessService;
+import org.linagora.linshare.core.service.ShareEntryGroupService;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -99,7 +99,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 	private final MailBuildingService mailBuildingService;
 
-	private final ShareEntryGroupBusinessService shareEntryGroupBusinessService;
+	private final ShareEntryGroupService shareEntryGroupService;
 
 	public ShareServiceImpl(
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
@@ -112,7 +112,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			final EntryBusinessService entryBusinessService,
 			final ShareEntryResourceAccessControl rac,
 			final MailBuildingService mailBuildingService,
-			final ShareEntryGroupBusinessService shareEntryGroupBusinessService) {
+			final ShareEntryGroupService shareEntryGroupService) {
 		super(rac);
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.documentEntryService = documentEntryService;
@@ -123,7 +123,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		this.notifierService = notifierService;
 		this.entryBusinessService = entryBusinessService;
 		this.mailBuildingService = mailBuildingService;
-		this.shareEntryGroupBusinessService = shareEntryGroupBusinessService;
+		this.shareEntryGroupService = shareEntryGroupService;
 	}
 
 	// TODO FMA - Refactoring shares
@@ -173,13 +173,34 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		shareContainer.updateEncryptedStatus();
 
 		// Creation
-		ShareEntryGroup shareEntryGroup = new ShareEntryGroup();
-		shareEntryGroup.setOwner(owner);
-		shareEntryGroup.setSubject(shareContainer.getSubject());
-		shareEntryGroup.setNotificationDate(shareContainer.getNotificationDate());
-		ShareEntryGroup createdShareEntryGroup = shareEntryGroupBusinessService
-				.create(shareEntryGroup);
+		ShareEntryGroup shareEntryGroup = new ShareEntryGroup(owner,
+				shareContainer.getSubject(),
+				shareContainer.getNotificationDateForUSDA());
 		
+		BooleanValueFunctionality notifFunc = functionalityReadOnlyService
+				.getUndownloadedSharedDocumentsAlert(actor.getDomain());
+		if (notifFunc.getActivationPolicy().getStatus()) {
+			if (notifFunc.getDelegationPolicy().getStatus()) {
+				if (shareContainer.getEnableUSDA() == false) {
+					shareEntryGroup.setNotificationDate(null);
+				}
+			} else {
+				Calendar c = Calendar.getInstance();
+				c.setTime(new Date());
+				c.add(Calendar.DATE,
+						functionalityReadOnlyService
+								.getUndownloadedSharedDocumentsAlertDuration(
+										actor.getDomain())
+								.getValue());
+				shareEntryGroup.setNotificationDate(c.getTime());
+			}
+		} else {
+			shareEntryGroup.setNotificationDate(null);
+		}
+
+		ShareEntryGroup createdShareEntryGroup = shareEntryGroupService
+				.create(actor, shareEntryGroup);
+
 		Set<Entry> entries = Sets.newHashSet();
 		if (shareContainer.needAnonymousShares()) {
 			entries.addAll(anonymousShareEntryService.create(actor, owner, shareContainer, createdShareEntryGroup));

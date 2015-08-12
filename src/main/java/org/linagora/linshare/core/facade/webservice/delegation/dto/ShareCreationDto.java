@@ -64,6 +64,12 @@ public class ShareCreationDto {
 	@ApiModelProperty(value = "Message")
 	protected String message;
 
+	@ApiModelProperty(value = "notificationDateForUSDA")
+	protected Date notificationDateForUSDA;
+
+	@ApiModelProperty(value = "enableUSDA")
+	protected boolean enableUSDA;
+
 	public List<GenericUserDto> getRecipients() {
 		return recipients;
 	}
@@ -110,6 +116,22 @@ public class ShareCreationDto {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public Date getNotificationDateForUSDA() {
+		return notificationDateForUSDA;
+	}
+
+	public void setNotificationDateForUSDA(Date notificationDateForUSDA) {
+		this.notificationDateForUSDA = notificationDateForUSDA;
+	}
+
+	public boolean isEnableUSDA() {
+		return enableUSDA;
+	}
+
+	public void setEnableUSDA(boolean enableUSDA) {
+		this.enableUSDA = enableUSDA;
 	}
 
 	public void setCreationAcknowledgement(Boolean creationAcknowkedgement) {

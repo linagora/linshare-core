@@ -139,9 +139,21 @@ public interface ShareFacade {
 
 	public List<SignatureVo> getAllSignatures(UserVo actorVo, ShareDocumentVo documentVo);
 
+	/**
+	 * This is the share process method
+	 * @param actorVo
+	 * @param documentVos
+	 * @param recipientsEmail
+	 * @param secured
+	 * @param mailContainer
+	 * @param acknowledgement
+	 * @param shareExpiryDate
+	 * @param enableUSDA : enableUndownloadedSharedDocumentsAlert
+	 * @throws BusinessException
+	 */
 	public void share(UserVo actorVo, List<DocumentVo> documentVos,
 			List<String> recipientsEmail,
-			boolean secured, MailContainer mailContainer, boolean acknowledgement, Date shareExpiryDate, boolean enableUndownloadedSharedDocumentsAlert)
+			boolean secured, MailContainer mailContainer, boolean acknowledgement, Date shareExpiryDate, boolean enableUSDA, Date notificationDateForUSDA)
 			throws BusinessException;
 
 	boolean isVisibleShareExpiration(String domainId);
@@ -154,5 +166,7 @@ public interface ShareFacade {
 	boolean isVisibleUndownloadedSharedDocumentsAlert(String domainId);
 
 	boolean getDefaultUndownloadedSharedDocumentsAlert(String domainId);
+
+	Date getUndownloadedSharedDocumentsAlertDefaultValue(String domainId);
 }
 

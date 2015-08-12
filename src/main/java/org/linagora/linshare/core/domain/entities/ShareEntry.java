@@ -57,13 +57,13 @@ public class ShareEntry extends Entry {
 
 	public ShareEntry(Account entryOwner, String name, String comment,
 			User recipient, DocumentEntry documentEntry,
-			Calendar expirationDate, ShareEntryGroup shareEntryGroupId) {
+			Calendar expirationDate, ShareEntryGroup shareEntryGroup) {
 		super(entryOwner, name, comment);
 		this.recipient = recipient;
 		this.documentEntry = documentEntry;
 		this.downloaded = new Long(0);
 		this.expirationDate = expirationDate;
-		this.shareEntryGroup = shareEntryGroupId;
+		this.shareEntryGroup = shareEntryGroup;
 	}
 
 	@Override

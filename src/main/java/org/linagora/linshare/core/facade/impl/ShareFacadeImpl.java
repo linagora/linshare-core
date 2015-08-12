@@ -363,7 +363,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	public void share(UserVo actorVo, List<DocumentVo> documentVos,
 			List<String> recipientsEmail, boolean secured,
 			MailContainer mailContainer, boolean creationAcknowledgement,
-			Date shareExpiryDate, boolean enableUndownloadedSharedDocumentsAlert) throws BusinessException {
+			Date shareExpiryDate, boolean enableUSDA, Date notificationDateForUSDA) throws BusinessException {
 		User actor = getActor(actorVo);
 		ShareContainer sc = new ShareContainer(mailContainer.getSubject(),
 				mailContainer.getPersonalMessage(), secured,
@@ -372,12 +372,8 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		sc.setExpiryDate(shareExpiryDate);
 		sc.addDocumentVos(documentVos);
 		sc.addMail(recipientsEmail);
-		if(enableUndownloadedSharedDocumentsAlert){
-			Calendar c = Calendar.getInstance();
-			c.setTime(new Date());
-			c.add(Calendar.DATE, getUndownloadedSharedDocumentsAlertDefaultValue(actor.getDomainId()));
-			sc.setNotificationDate(c.getTime());
-		}
+		sc.setNotificationDateForUSDA(notificationDateForUSDA);
+		sc.setEnableUSDA(enableUSDA);
 		shareService.create(actor, actor, sc);
 	}
 
@@ -442,8 +438,16 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		return false;
 	}
 
-	public Integer getUndownloadedSharedDocumentsAlertDefaultValue(String domainId) {
+	@Override
+	public Date getUndownloadedSharedDocumentsAlertDefaultValue(
+			String domainId) {
 		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
-		return functionalityReadOnlyService.getUndownloadedSharedDocumentsAlertDuration(domain).getValue();
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		c.add(Calendar.DATE,
+				functionalityReadOnlyService
+						.getUndownloadedSharedDocumentsAlertDuration(domain)
+						.getValue());
+		return c.getTime();
 	}
 }

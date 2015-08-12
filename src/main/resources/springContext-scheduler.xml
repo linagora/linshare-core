@@ -118,6 +118,38 @@
         <property name="cronExpression" value="${job.uploadrequest.cron.expression}"/>
     </bean>
 
+	<bean id="notifyUndownloadedSharedDocumentsJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="batch" value-ref="undownloadedSharedDocumentsBatch" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="nofifyUndownloadedSharedDocumentsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="notifyUndownloadedSharedDocumentsJob" />
+		<property name="cronExpression"
+			value="${job.shares.undownloaded.notification.cron.expression}" />
+	</bean>
+
+	<bean id="deleteShareEntryGroupsJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="batch" value-ref="deleteShareEntryGroupBatch" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="deleteShareEntryGroupsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="deleteShareEntryGroupsJob" />
+		<property name="cronExpression"
+			value="${job.shares.deleteshareentrygroup.cron.expression}" />
+	</bean>
+
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
@@ -129,6 +161,8 @@
                 <ref bean="cleanJcrUnusedFilesJobTrigger"/>
                 <ref bean="cleanOutdatedDocumentsJobTrigger"/>
                 <ref bean="updateUploadRequestJobTrigger"/>
+                <ref bean="nofifyUndownloadedSharedDocumentsJobTrigger"/>
+                <ref bean="deleteShareEntryGroupsJobTrigger"/>
             </list>
         </property>
     </bean>

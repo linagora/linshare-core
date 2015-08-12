@@ -31,86 +31,71 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
 
-import java.util.Calendar;
+package org.linagora.linshare.core.service.impl;
 
-import org.linagora.linshare.core.domain.constants.EntryType;
+import java.util.List;
 
-/**
- * @author fred
- */
-public class AnonymousShareEntry extends Entry{
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.ShareEntryGroupBusinessService;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
+import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.ShareEntryGroupService;
 
-	protected Long downloaded;
+public class ShareEntryGroupServiceImpl implements ShareEntryGroupService {
 
-	protected DocumentEntry documentEntry;
+	private ShareEntryGroupBusinessService businessService;
 
-	protected AnonymousUrl anonymousUrl;
+	private LogEntryService logEntryService;
 
-	protected ShareEntryGroup shareEntryGroup;
-
-	public AnonymousShareEntry() {
+	public ShareEntryGroupServiceImpl(
+			ShareEntryGroupBusinessService shareEntryGroupBusinessService,
+			LogEntryService logEntryService) {
 		super();
-	}
-
-	public AnonymousShareEntry(Account entryOwner, String name, String comment, DocumentEntry documentEntry, AnonymousUrl anonymousUrl, Calendar expirationDate, ShareEntryGroup shareEntryGroup) {
-		super(entryOwner, name, comment);
-		this.documentEntry = documentEntry;
-		this.anonymousUrl = anonymousUrl;
-		this.downloaded = new Long(0);
-		this.expirationDate = expirationDate;
-		this.shareEntryGroup = shareEntryGroup;
+		this.businessService = shareEntryGroupBusinessService;
+		this.logEntryService = logEntryService;
 	}
 
 	@Override
-	public EntryType getEntryType() {
-		return EntryType.ANONYMOUS_SHARE;
+	public ShareEntryGroup create(Account actor, ShareEntryGroup entity) {
+		Validate.notNull(actor);
+		Validate.notNull(entity);
+		return businessService.create(entity);
 	}
 
-	public Long getDownloaded() {
-		return downloaded;
+	@Override
+	public void delete(Account actor, ShareEntryGroup entity) {
+		Validate.notNull(actor);
+		Validate.notNull(entity);
+		businessService.delete(entity);
 	}
 
-	public void setDownloaded(Long downloaded) {
-		this.downloaded = downloaded;
-	}
-	
-	public void incrementDownload() {
-		downloaded+=1;
-	}
-
-	public DocumentEntry getDocumentEntry() {
-		return documentEntry;
+	@Override
+	public ShareEntryGroup findByUuid(Account actor, String uuid) {
+		Validate.notNull(actor);
+		Validate.notEmpty(uuid);
+		return businessService.findByUuid(uuid);
 	}
 
-	public void setDocumentEntry(DocumentEntry documentEntry) {
-		this.documentEntry = documentEntry;
+	@Override
+	public ShareEntryGroup update(Account actor, ShareEntryGroup shareEntryGroup) {
+		Validate.notNull(actor);
+		Validate.notNull(shareEntryGroup);
+		return businessService.update(shareEntryGroup);
 	}
 
-	public AnonymousUrl getAnonymousUrl() {
-		return anonymousUrl;
+	@Override
+	public List<String> findUndownloadedSharedDocToAlert(Account actor) {
+		Validate.notNull(actor);
+		return businessService
+				.findUndownloadedSharedDocToAlert();
 	}
 
-	public void setAnonymousUrl(AnonymousUrl anonymousUrl) {
-		this.anonymousUrl = anonymousUrl;
+	@Override
+	public List<String> findAllToPurge(Account actor) {
+		Validate.notNull(actor);
+		return businessService.findAllToPurge();
 	}
 
-	public ShareEntryGroup getShareEntryGroup() {
-		return shareEntryGroup;
-	}
-
-	public void setShareEntryGroup(ShareEntryGroup shareEntryGroup) {
-		this.shareEntryGroup = shareEntryGroup;
-	}
-
-	/* usefull getters */
-	public long getSize() {
-		return documentEntry.getSize();
-	}
-	
-	public String getType() {
-		return documentEntry.getType();
-	}
-	
 }

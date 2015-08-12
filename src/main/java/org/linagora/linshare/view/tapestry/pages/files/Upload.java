@@ -175,7 +175,13 @@ public class Upload {
 	private Date shareExpiryDate;
 
 	@Property
+	private Date notificationDate;
+
+	@Property
 	private String maxLocalizedExpirationDate;
+
+	@Property
+	private String maxLocalizedNotificationDate;
 
 	@Inject @Symbol("linshare.tapestry.fineuploader.maxconnections")
 	@Property
@@ -263,6 +269,13 @@ public class Upload {
 			maxLocalizedExpirationDate = DateFormat.getDateInstance(
 					DateFormat.SHORT, persistentLocale.get()).format(
 					shareExpiryDate);
+		}
+		if (showUndownloadedSharedDocumentsAlertCheckbox) {
+			notificationDate = shareFacade
+					.getUndownloadedSharedDocumentsAlertDefaultValue(domainId);
+			maxLocalizedNotificationDate = DateFormat.getDateInstance(
+					DateFormat.SHORT, persistentLocale.get()).format(
+							shareExpiryDate);
 		}
 	}
 
@@ -363,7 +376,7 @@ public class Upload {
 			try {
 				MailContainer mailContainer = new MailContainer(
 						userVo.getExternalMailLocale(), textAreaValue, textAreaSubjectValue);
-				shareFacade.share(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer, creationAcknowledgement, shareExpiryDate, enableUndownloadedSharedDocumentsAlert);
+				shareFacade.share(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer, creationAcknowledgement, shareExpiryDate, enableUndownloadedSharedDocumentsAlert, notificationDate);
 			} catch (BusinessException ex) {
 
 				// IF RELAY IS DISABLE ON SMTP SERVER

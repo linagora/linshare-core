@@ -192,7 +192,13 @@ public class Share {
 	private Date shareExpiryDate;
 
 	@Property
+	private Date notificationDate;
+
+	@Property
 	private String maxLocalizedExpirationDate;
+
+	@Property
+	private String maxLocalizedNotificationDate;
 
 	public Object onActivate() {
 		if (documents == null || documents.isEmpty())
@@ -225,6 +231,13 @@ public class Share {
 		if (showShareExpirationDate) {
 			shareExpiryDate = shareFacade.getDefaultShareExpirationValue(domainId);
 			maxLocalizedExpirationDate = DateFormat.getDateInstance(
+					DateFormat.SHORT, persistentLocale.get()).format(
+							shareExpiryDate);
+		}
+		if (showUndownloadedSharedDocumentsAlertCheckbox) {
+			notificationDate = shareFacade
+					.getUndownloadedSharedDocumentsAlertDefaultValue(domainId);
+			maxLocalizedNotificationDate = DateFormat.getDateInstance(
 					DateFormat.SHORT, persistentLocale.get()).format(
 							shareExpiryDate);
 		}
@@ -332,7 +345,7 @@ public class Share {
 			try {
 				MailContainer mailContainer = new MailContainer(
 						userVo.getExternalMailLocale(), textAreaValue, textAreaSubjectValue);
-				shareFacade.share(userVo, documents, recipientsEmail, secureSharing, mailContainer, creationAcknowledgement, shareExpiryDate, enableUndownloadedSharedDocumentsAlert);
+				shareFacade.share(userVo, documents, recipientsEmail, secureSharing, mailContainer, creationAcknowledgement, shareExpiryDate, enableUndownloadedSharedDocumentsAlert, notificationDate);
 			} catch (BusinessException ex) {
 
 				// IF RELAY IS DISABLE ON SMTP SERVER

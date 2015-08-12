@@ -680,7 +680,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildNoDocumentHasBeenDownloadedAcknowledgment(
 			ShareEntryGroup shareEntryGroup) throws BusinessException {
-
+		if (isDisable(shareEntryGroup.getOwner(), MailActivationType.UNDOWNLOADED_SHARED_DOCUMENTS_ALERT)) {
+			return null;
+		}
 		User owner = (User) shareEntryGroup.getOwner();
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
@@ -1080,7 +1082,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildAckUploadRequest(User owner, UploadRequestUrl request, UploadRequestEntry entry)
 			throws BusinessException {
-		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_ACKNOWLEDGMENT)) {
+		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_ACKNOWLEDGEMENT)) {
 			return null;
 		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
@@ -1589,7 +1591,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	public MailContainerWithRecipient buildNewSharingPersonnalNotification(
 			User sender, ShareContainer container, Set<Entry> entries) throws BusinessException {
 		if (isDisable(sender,
-				MailActivationType.SHARE_CREATION_ACKNOWLEDGMENT_FOR_OWNER)) {
+				MailActivationType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER)) {
 			return null;
 		}
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();

@@ -81,7 +81,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                     </t:if>
                 </div>
 
-				<div class="control-group">
+                <div class="control-group">
                     <t:if test="showAcknowledgementCheckBox">
                         <t:label for="creationAcknowledgement" class="control-label">
                         ${message:pages.files.upload.creationAcknowledgement}</t:label>
@@ -108,6 +108,18 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                         </div>
                     </t:if>
                 </div>
+                <div class="control-group">
+                    <t:if test="showUndownloadedSharedDocumentsAlertCheckbox">
+                             <t:label for="notificationDate" class="control-label">
+                                ${message:pages.files.upload.notificationDate}</t:label>
+                             <div class="controls">
+                                <t:datefield t:id="notificationDate" t:value="notificationDate" t:validate="required" />
+                                <span class="help-inline">
+                                    ${message:pages.files.upload.message.notificationDate.help}  ${maxLocalizedNotificationDate}
+                                </span>
+                             </div>
+                    </t:if>
+               </div>
 
                 <div class="accordion" id="accordionMessage">
                     <div class="accordion-group">

@@ -74,7 +74,7 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 	}
 
 	@Override
-	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Date expirationDate, ShareEntryGroup shareEntryGroupId) throws BusinessException {
+	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Date expirationDate, ShareEntryGroup shareEntryGroup) throws BusinessException {
 		ShareEntry shareEntity;
 		ShareEntry current_share = shareEntryRepository.getShareEntry(documentEntry, sender, recipient);
 		// FIXME : Calendar hack : temporary hack on expiry date
@@ -84,7 +84,7 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		if(current_share == null) {
 			// if not, we create one
 			logger.debug("Creation of a new share between sender " + sender.getMail() + " and recipient " + recipient.getMail());
-			ShareEntry share= new ShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), recipient, documentEntry, expiryCal, shareEntryGroupId);
+			ShareEntry share= new ShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), recipient, documentEntry, expiryCal, shareEntryGroup);
 			shareEntity = shareEntryRepository.create(share);
 			documentEntry.incrementShared();
 		} else {

@@ -73,7 +73,12 @@ public class ShareContainer {
 
 	protected Date expiryDate;
 
-	protected Date notificationDate;
+	/**
+	 * This is the notification date for ShareEntryGroup
+	 */
+	protected Date notificationDateForUSDA;
+
+	protected Boolean enableUSDA;
 
 
 	/**
@@ -216,12 +221,20 @@ public class ShareContainer {
 		this.expiryDate = expiryDate;
 	}
 
-	public Date getNotificationDate() {
-		return notificationDate;
+	public Date getNotificationDateForUSDA() {
+		return notificationDateForUSDA;
 	}
 
-	public void setNotificationDate(Date notificationDate) {
-		this.notificationDate = notificationDate;
+	public void setNotificationDateForUSDA(Date notificationDate) {
+		this.notificationDateForUSDA = notificationDate;
+	}
+
+	public Boolean getEnableUSDA() {
+		return enableUSDA;
+	}
+
+	public void setEnableUSDA(Boolean enableUSDA) {
+		this.enableUSDA = enableUSDA;
 	}
 
 	public Set<User> getShareRecipients() {
