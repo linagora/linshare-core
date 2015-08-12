@@ -858,6 +858,8 @@ INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_t
 -- SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (31, '01e0ac2e-f7ba-11e4-901b-08002722e7b1', 1, 0, 30, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Share creation acknowledgement', '[SHARE ACKNOWLEDGEMENT] Shared on ${date}.', 'You just shared ${fileNumber} file(s), on the ${creationDate}, expiring the ${expirationDate}, with :<br/><ul>${recipientNames}</ul><br/>The list of your files is : <ul>${documentNames}</ul><br/>', false);
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (32, '2209b038-e1e7-11e4-8d2d-3b2a506425c0', 1, 0, 31, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Share creation acknowledgement', '[SHARE ACKNOWLEDGEMENT] ${subject}. Shared on ${date}.', 'You just shared ${fileNumber} file(s), on the ${creationDate}, expiring the ${expirationDate}, with :<br/><ul>${recipientNames}</ul><br/>Your original message was:<br/><i>${message}</i><br/><br/>The list of your files is : <ul>${documentNames}</ul><br/>', false);
+-- UNDOWNLOADED_SHARED_DOCUMENT_ALERT
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (33, 'eb291876-53fc-419b-831b-53a480399f7c', 1, 0, 32, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Accusé de non téléchargement de fichiers', '[Accusé de Non Télécharchement] ${subject}. Partagé le ${date}.', 'A ce jour, aucun des ${number} fichier(s) que vous avez mis en partage na été téléchargé par les destinataires. &nbsp;Liste des destinataires: <ul>${recipientNames}</ul><br/>Liste des documents :<ul>${documentNames}</ul><br/>');
 
 -- LANGUAGE FRENCH 1
 
@@ -924,7 +926,8 @@ INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_t
 -- SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (82, '5f705812-e351-11e4-b752-08002722e7b1', 1, 1, 30, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Accusé de réception de création de partag', '[Accusé de Réception]  Partagé le ${date}.', 'Vous avez partagé ${fileNumber} document(s), le ${creationDate}, expirant le ${expirationDate}, avec : <ul>${recipientNames}</ul><br/>Voici la liste des documents partagés : <ul>${documentNames}</ul>', false);
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body, enable_as) VALUES  (83, 'edd4eba0-f7b9-11e4-95cc-08002722e7b1', 1, 1, 31, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Accusé de réception de création de partag', '[Accusé de Réception] ${subject}. Partagé le ${date}.', 'Vous avez partagé ${fileNumber} document(s), le ${creationDate}, expirant le ${expirationDate}, avec : <ul>${recipientNames}</ul>Votre message original est le suivant :<br/><i>${message}</i><br/><br/>Voici la liste des documents partagés :<br/><ul>${documentNames}</ul>', false);
-
+-- UNDOWNLOADED_SHARED_DOCUMENT_ALERT
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (84, 'f2cc5735-a3fe-43e8-ae9c-bace74195af0', 1, 1, 32, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Accusé de non téléchargement de fichiers', '[Accusé de Non Télécharchement] ${subject}. Partagé le ${date}.', 'A ce jour, aucun des ${number} fichier(s) que vous avez mis en partage na été téléchargé par les destinataires. &nbsp;Liste des destinataires: <ul>${recipientNames}</ul><br/>Liste des documents :<ul>${documentNames}</ul><br/>');
 
 INSERT INTO mail_config (id, name, domain_abstract_id, visible, mail_layout_html_id, mail_layout_text_id, modification_date, creation_date, uuid) VALUES (1, 'Default mail config', 1, true, 1, 2, now(), now(), '946b190d-4c95-485f-bfe6-d288a2de1edd');
 
@@ -963,6 +966,7 @@ INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mai
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (30, 1, 0, 30, 29, 'ec270da7-e9cb-11e4-b6b4-5404a6202d2c');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (31, 1, 0, 31, 30, '447217e4-e1ee-11e4-8a45-fb8c68777bdf');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (32, 1, 0, 32, 31, '1837a6f0-e8c7-11e4-b36a-08002722e7b1');
+INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (33, 1, 0, 33, 32, 'bfcced12-7325-49df-bf84-65ed90ff7f59');
 
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (51, 1, 1, 51, 0, 'd0af96a7-6a9c-4c3f-8b8c-7c8e2d0449e1');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (52, 1, 1, 52, 1, '28e5855a-c0e7-40fc-8401-9cf25eb53f03');
@@ -996,11 +1000,12 @@ INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mai
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (81, 1, 1, 81, 29, 'd6e18c3b-e9cb-11e4-b6b4-5404a6202d2c');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (82, 1, 1, 82, 30, '8f579a8a-e352-11e4-99b3-08002722e7b1');
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (83, 1, 1, 83, 31, '2d3a0e80-e8c7-11e4-8349-08002722e7b1');
+INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (84, 1, 1, 84, 32, 'fa7a23cb-f545-45b4-b9dc-c39586cb2398');
 
 UPDATE domain_abstract SET mailconfig_id = 1;
 
 -- LinShare version
-INSERT INTO version (id,version) VALUES (1,'1.9.0');
+INSERT INTO version (id,version) VALUES (1,'1.10.0');
 
 -- Alias
 CREATE VIEW alias_func_list_all  AS SELECT

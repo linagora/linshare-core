@@ -60,6 +60,7 @@ import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
@@ -674,6 +675,48 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		return buildMailContainer(cfg, container,
 				input.getPersonalMessage(), MailContentType.NEW_SHARING,
 				builder);
+	}
+
+	@Override
+	public MailContainerWithRecipient buildNoDocumentHasBeenDownloadedAcknowledgment(
+			ShareEntryGroup shareEntryGroup) throws BusinessException {
+
+		User owner = (User) shareEntryGroup.getOwner();
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
+		MailContainerWithRecipient container = new MailContainerWithRecipient(
+				owner.getExternalMailLocale());
+		MailContainerBuilder builder = new MailContainerBuilder();
+
+		DateFormat df = DateFormat.getDateInstance(DateFormat.FULL,
+				Locale.forLanguageTag(
+						owner.getExternalMailLocale().getTapestryLocale()));
+		String creationDate = df.format(shareEntryGroup.getCreationDate());
+		StringBuffer documentNames = new StringBuffer();
+		StringBuffer recipientNames = new StringBuffer();
+		long shareSize = 0;
+		for (ShareEntry share : shareEntryGroup.getShareEntries()) {
+			if (owner.getLsUuid().equals(share.getEntryOwner().getLsUuid())) {
+				shareSize += 1;
+				documentNames.append(
+						"<li><a href='" + "'>" + share.getName() + "</a></li>");
+				recipientNames.append(
+						"<li>" + share.getRecipient().getMail() + "</li>");
+			}
+		}
+
+		builder.getSubjectChain().add("subject", shareEntryGroup.getSubject())
+				.add("date", creationDate);
+		builder.getGreetingsChain().add("firstName", owner.getFirstName())
+				.add("lastName", owner.getLastName());
+		builder.getBodyChain().add("number", "" + shareSize)
+				.add("recipientNames", recipientNames.toString())
+				.add("documentNames", documentNames.toString());
+		container.setSubject(shareEntryGroup.getSubject());
+		container.setRecipient(owner.getMail());
+		container.setFrom(getFromMailAddress((User) owner));
+
+		return buildMailContainer(cfg, container, "",
+				MailContentType.UNDOWNLOADED_SHARED_DOCUMENT_ALERT, builder);
 	}
 
 	private MailContainerWithRecipient buildNewAnonymousSharing(User sender, MailContainer input,

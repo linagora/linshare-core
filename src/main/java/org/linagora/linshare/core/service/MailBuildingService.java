@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
@@ -160,4 +161,8 @@ public interface MailBuildingService {
 
 	MailContainerWithRecipient buildNewSharingPersonnalNotification(
 			User sender, ShareContainer container, Set<Entry> entries) throws BusinessException;
+
+	MailContainerWithRecipient buildNoDocumentHasBeenDownloadedAcknowledgment(
+			ShareEntryGroup shareEntryGroup)
+					throws BusinessException;
 }
