@@ -56,6 +56,10 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
+	<bean name="shareEntryGroupRepository" class="org.linagora.linshare.core.repository.hibernate.ShareEntryGroupRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
 	<bean name="anonymousShareEntryRepository" class="org.linagora.linshare.core.repository.hibernate.AnonymousShareEntryRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
