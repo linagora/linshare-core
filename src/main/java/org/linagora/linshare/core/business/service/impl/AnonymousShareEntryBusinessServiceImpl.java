@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -96,10 +97,10 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		return shareEntry;
 	}
 
-	private AnonymousShareEntry createAnonymousShare(DocumentEntry documentEntry, AnonymousUrl anonymousUrl, User sender, Contact contact, Calendar expirationDate) throws BusinessException {
+	private AnonymousShareEntry createAnonymousShare(DocumentEntry documentEntry, AnonymousUrl anonymousUrl, User sender, Contact contact, Calendar expirationDate, ShareEntryGroup shareEntryGroup) throws BusinessException {
 
 		logger.debug("Creation of a new anonymous share between sender " + sender.getMail() + " and recipient " + contact.getMail());
-		AnonymousShareEntry share= new AnonymousShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), documentEntry, anonymousUrl , expirationDate);
+		AnonymousShareEntry share= new AnonymousShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), documentEntry, anonymousUrl , expirationDate, shareEntryGroup);
 		AnonymousShareEntry anonymousShare = anonymousShareEntryRepository.create(share);
 
 		// If the current document was previously shared, we need to rest its expiration date
@@ -116,7 +117,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 
 	@Deprecated
 	@Override
-	public AnonymousUrl createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected) throws BusinessException {
+	public AnonymousUrl createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup) throws BusinessException {
 
 		Contact contact = contactRepository.find(recipient);
 		if(contact == null) {
@@ -126,7 +127,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		AnonymousUrl anonymousUrl = businessService.create(passwordProtected, contact);
 
 		for (DocumentEntry documentEntry : documentEntries) {
-			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expirationDate);
+			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expirationDate, shareEntryGroup);
 			anonymousUrl.getAnonymousShareEntries().add(anonymousShareEntry);
 		}
 		businessService.update(anonymousUrl);
@@ -140,7 +141,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 			Recipient recipient,
 			Set<DocumentEntry> documentEntries,
 			Date expirationDate,
-			Boolean passwordProtected) throws BusinessException {
+			Boolean passwordProtected, ShareEntryGroup shareEntryGroup) throws BusinessException {
 
 		Contact someContact = new Contact(recipient.getMail());
 		Contact contact = contactRepository.find(someContact);
@@ -152,7 +153,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 			// FIXME : Calendar hack : temporary hack on expiry date
 			Calendar expiryCal = Calendar.getInstance();
 			expiryCal.setTime(expirationDate);
-			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expiryCal);
+			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expiryCal, shareEntryGroup);
 			anonymousUrl.getAnonymousShareEntries().add(anonymousShareEntry);
 		}
 		businessService.update(anonymousUrl);

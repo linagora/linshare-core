@@ -41,6 +41,7 @@ import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -73,7 +74,7 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 	}
 
 	@Override
-	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Date expirationDate) throws BusinessException {
+	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Date expirationDate, ShareEntryGroup shareEntryGroupId) throws BusinessException {
 		ShareEntry shareEntity;
 		ShareEntry current_share = shareEntryRepository.getShareEntry(documentEntry, sender, recipient);
 		// FIXME : Calendar hack : temporary hack on expiry date
@@ -83,7 +84,7 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		if(current_share == null) {
 			// if not, we create one
 			logger.debug("Creation of a new share between sender " + sender.getMail() + " and recipient " + recipient.getMail());
-			ShareEntry share= new ShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), recipient, documentEntry, expiryCal);
+			ShareEntry share= new ShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), recipient, documentEntry, expiryCal, shareEntryGroupId);
 			shareEntity = shareEntryRepository.create(share);
 			documentEntry.incrementShared();
 		} else {

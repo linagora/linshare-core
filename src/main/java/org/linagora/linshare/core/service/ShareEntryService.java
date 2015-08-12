@@ -40,6 +40,7 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -60,6 +61,6 @@ public interface ShareEntryService {
 
 	List<ShareEntry> findAllMyRecievedShareEntries(Account actor, Account owner);
 
-	Set<ShareEntry> create(Account actor, User owner, ShareContainer shareContainer);
+	Set<ShareEntry> create(Account actor, User owner, ShareContainer shareContainer, ShareEntryGroup shareEntryGroup);
 
 }

@@ -42,6 +42,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
+import org.linagora.linshare.core.business.service.ShareEntryGroupBusinessService;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -52,6 +53,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
@@ -97,6 +99,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 	private final MailBuildingService mailBuildingService;
 
+	private final ShareEntryGroupBusinessService shareEntryGroupBusinessService;
+
 	public ShareServiceImpl(
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final DocumentEntryService documentEntryService,
@@ -107,7 +111,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			final NotifierService notifierService,
 			final EntryBusinessService entryBusinessService,
 			final ShareEntryResourceAccessControl rac,
-			final MailBuildingService mailBuildingService) {
+			final MailBuildingService mailBuildingService,
+			final ShareEntryGroupBusinessService shareEntryGroupBusinessService) {
 		super(rac);
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.documentEntryService = documentEntryService;
@@ -118,6 +123,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		this.notifierService = notifierService;
 		this.entryBusinessService = entryBusinessService;
 		this.mailBuildingService = mailBuildingService;
+		this.shareEntryGroupBusinessService = shareEntryGroupBusinessService;
 	}
 
 	// TODO FMA - Refactoring shares
@@ -167,11 +173,18 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		shareContainer.updateEncryptedStatus();
 
 		// Creation
+		ShareEntryGroup shareEntryGroup = new ShareEntryGroup();
+		shareEntryGroup.setOwner(owner);
+		shareEntryGroup.setSubject(shareContainer.getSubject());
+		shareEntryGroup.setNotificationDate(shareContainer.getNotificationDate());
+		ShareEntryGroup createdShareEntryGroup = shareEntryGroupBusinessService
+				.create(shareEntryGroup);
+		
 		Set<Entry> entries = Sets.newHashSet();
 		if (shareContainer.needAnonymousShares()) {
-			entries.addAll(anonymousShareEntryService.create(actor, owner, shareContainer));
+			entries.addAll(anonymousShareEntryService.create(actor, owner, shareContainer, createdShareEntryGroup));
 		}
-		entries.addAll(shareEntryService.create(actor, owner, shareContainer));
+		entries.addAll(shareEntryService.create(actor, owner, shareContainer, createdShareEntryGroup));
 
 		BooleanValueFunctionality groupedFunc = functionalityReadOnlyService.getAcknowledgement(actor.getDomain());
 		boolean groupedModeLocal = groupedFunc.getValue();

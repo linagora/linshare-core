@@ -58,6 +58,7 @@ import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.FileInfo;
@@ -248,7 +249,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		docs.add(aDocumentEntry);
 
 		// buildMailAnonymousDownload
-		AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService.createAnonymousShare(docs, actor, recipient, Calendar.getInstance(), true);
+		AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService.createAnonymousShare(docs, actor, recipient, Calendar.getInstance(), true, new ShareEntryGroup());
 		List<AnonymousShareEntry> shareEntries = new ArrayList<AnonymousShareEntry>(anonymousUrl.getAnonymousShareEntries());
 		
 		MailContainer mailContainerBuild =  mailBuildingService.buildAnonymousDownload(shareEntries.get(0));
@@ -317,7 +318,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		mailContainer.setLanguage(Language.FRENCH);
 		
 		Set<ShareEntry> shares = Sets.newHashSet();
-		shares.add(new ShareEntry(john, aDocumentEntry.getName(), "", jane, aDocumentEntry, Calendar.getInstance()));
+		shares.add(new ShareEntry(john, aDocumentEntry.getName(), "", jane, aDocumentEntry, Calendar.getInstance(), new ShareEntryGroup()));
 		
 		
 		MailContainerWithRecipient mailContainerWithRecipientBuild =  mailBuildingService.buildNewSharing(actor, mailContainer, jane, shares);

@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
@@ -271,7 +272,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	}
 
 	@Override
-	public Set<ShareEntry> create(Account actor, User owner, ShareContainer sc) {
+	public Set<ShareEntry> create(Account actor, User owner, ShareContainer sc, ShareEntryGroup shareEntryGroup) {
 		preChecks(actor, owner);
 		Validate.notNull(sc);
 
@@ -290,8 +291,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			Set<ShareEntry> shares = Sets.newHashSet();
 			for (DocumentEntry documentEntry : sc.getDocuments()) {
 				ShareEntry createShare = shareEntryBusinessService.create(
-						documentEntry, owner, recipient, expiryDate);
-				updateGuestExpiryDate(recipient, (User) recipient.getOwner());
+						documentEntry, owner, recipient, expiryDate, shareEntryGroup);
+				updateGuestExpiryDate(recipient,  (User) recipient.getOwner());
 				shares.add(createShare);
 				recipientFavouriteRepository.incAndCreate(owner,
 						recipient.getMail());

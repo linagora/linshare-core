@@ -209,6 +209,12 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public TimeUnitValueFunctionality getUndownloadedSharedDocumentsAlertDuration(AbstractDomain domain) {
+		TimeUnitValueFunctionality test = new TimeUnitValueFunctionality((UnitValueFunctionality) _getFunctionality(domain, FunctionalityNames.UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION));
+		return new TimeUnitValueFunctionality((UnitValueFunctionality) _getFunctionality(domain, FunctionalityNames.UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION));
+	}
+
+	@Override
 	public BooleanValueFunctionality getAnonymousUrl(String domainIdentifier) {
 		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		return getAnonymousUrl(domain);

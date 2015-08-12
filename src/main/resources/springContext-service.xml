@@ -227,5 +227,6 @@
 		<constructor-arg ref="entryBusinessService" />
 		<constructor-arg ref="shareEntryResourceAccessControl" />
 		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="shareEntrygroupBusinessService" />
 	</bean>
 </beans>

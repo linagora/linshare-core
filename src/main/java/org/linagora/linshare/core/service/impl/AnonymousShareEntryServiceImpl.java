@@ -49,6 +49,7 @@ import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
@@ -134,7 +135,7 @@ public class AnonymousShareEntryServiceImpl extends
 
 	// TODO FMA - Refactoring shares
 	@Override
-	public Set<AnonymousShareEntry> create(Account actor, User targetedAccount, ShareContainer sc)
+	public Set<AnonymousShareEntry> create(Account actor, User targetedAccount, ShareContainer sc, ShareEntryGroup shareEntryGroup)
 			throws BusinessException {
 		preChecks(actor, targetedAccount);
 		Validate.notNull(sc, "Share container is required.");
@@ -165,7 +166,7 @@ public class AnonymousShareEntryServiceImpl extends
 					mailLocale, sc.getMessage(), sc.getSubject());
 			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService
 					.create(targetedAccount, recipient, sc.getDocuments(), expiryDate,
-							passwordProtected);
+							passwordProtected, shareEntryGroup);
 			// logs.
 			for (DocumentEntry documentEntry : sc.getDocuments()) {
 				ShareLogEntry logEntry = new ShareLogEntry(targetedAccount, documentEntry,

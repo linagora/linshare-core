@@ -139,6 +139,10 @@ public class Upload {
 	@Property
 	private boolean creationAcknowledgement;
 
+	@Persist(PersistenceConstants.FLASH)
+	@Property
+	private boolean enableUndownloadedSharedDocumentsAlert;
+
 	@Property
 	private String textAreaValue;
 
@@ -156,6 +160,10 @@ public class Upload {
 	@Persist
 	@Property
 	private boolean showShareExpirationDate;
+
+	@Persist
+	@Property
+	private boolean showUndownloadedSharedDocumentsAlertCheckbox;
 
 	@Property
 	private int autocompleteMin;
@@ -236,6 +244,11 @@ public class Upload {
 				.isVisibleAcknowledgementCheckBox(domainId);
 		showShareExpirationDate = shareFacade
 				.isVisibleShareExpiration(domainId);
+		showUndownloadedSharedDocumentsAlertCheckbox = shareFacade.isVisibleUndownloadedSharedDocumentsAlert(domainId);
+		if (showUndownloadedSharedDocumentsAlertCheckbox) {
+			enableUndownloadedSharedDocumentsAlert = shareFacade
+					.getDefaultUndownloadedSharedDocumentsAlert(domainId);
+		}
 		if (showSecureSharingCheckBox) {
 			secureSharing = shareFacade
 					.getDefaultSecuredAnonymousUrlCheckBoxValue(domainId);
@@ -350,7 +363,7 @@ public class Upload {
 			try {
 				MailContainer mailContainer = new MailContainer(
 						userVo.getExternalMailLocale(), textAreaValue, textAreaSubjectValue);
-				shareFacade.share(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer, creationAcknowledgement, shareExpiryDate);
+				shareFacade.share(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer, creationAcknowledgement, shareExpiryDate, enableUndownloadedSharedDocumentsAlert);
 			} catch (BusinessException ex) {
 
 				// IF RELAY IS DISABLE ON SMTP SERVER

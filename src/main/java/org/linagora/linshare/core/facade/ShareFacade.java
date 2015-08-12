@@ -141,7 +141,7 @@ public interface ShareFacade {
 
 	public void share(UserVo actorVo, List<DocumentVo> documentVos,
 			List<String> recipientsEmail,
-			boolean secured, MailContainer mailContainer, boolean acknowledgement, Date shareExpiryDate)
+			boolean secured, MailContainer mailContainer, boolean acknowledgement, Date shareExpiryDate, boolean enableUndownloadedSharedDocumentsAlert)
 			throws BusinessException;
 
 	boolean isVisibleShareExpiration(String domainId);
@@ -150,5 +150,9 @@ public interface ShareFacade {
 
 	public void updateShareComment(UserVo userLoggedIn,
 			String editShareWithUuid, String shareComment) throws BusinessException;
+
+	boolean isVisibleUndownloadedSharedDocumentsAlert(String domainId);
+
+	boolean getDefaultUndownloadedSharedDocumentsAlert(String domainId);
 }
 

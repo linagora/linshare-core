@@ -84,6 +84,7 @@ public interface FunctionalityReadOnlyService {
 	BooleanValueFunctionality getAcknowledgement(String domainIdentifier);
 	BooleanValueFunctionality getAcknowledgement(AbstractDomain domain);
 	BooleanValueFunctionality getUndownloadedSharedDocumentsAlert(AbstractDomain domain);
+	TimeUnitValueFunctionality getUndownloadedSharedDocumentsAlertDuration(AbstractDomain domain);
 
 	IntegerValueFunctionality getCompletionFunctionality(AbstractDomain domain);
 	Functionality getUserTabFunctionality(AbstractDomain domain);

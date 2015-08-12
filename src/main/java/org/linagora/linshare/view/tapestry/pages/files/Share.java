@@ -113,6 +113,10 @@ public class Share {
 	@Property
 	private boolean creationAcknowledgement;
 
+	@Persist(PersistenceConstants.FLASH)
+	@Property
+	private boolean enableUndownloadedSharedDocumentsAlert;
+
 	@Property
 	private String textAreaValue;
 
@@ -130,6 +134,10 @@ public class Share {
 	@Persist
 	@Property
 	private boolean showShareExpirationDate;
+
+	@Persist
+	@Property
+	private boolean showUndownloadedSharedDocumentsAlertCheckbox;
 
 	@Persist
 	@Property
@@ -201,6 +209,11 @@ public class Share {
 		showAcknowledgementCheckBox = shareFacade
 				.isVisibleAcknowledgementCheckBox(domainId);
 		showShareExpirationDate = shareFacade.isVisibleShareExpiration(domainId);
+		showUndownloadedSharedDocumentsAlertCheckbox = shareFacade.isVisibleUndownloadedSharedDocumentsAlert(domainId);
+		if (showUndownloadedSharedDocumentsAlertCheckbox) {
+			enableUndownloadedSharedDocumentsAlert = shareFacade
+					.getDefaultUndownloadedSharedDocumentsAlert(domainId);
+		}
 		if (showSecureSharingCheckBox) {
 			secureSharing = shareFacade
 					.getDefaultSecuredAnonymousUrlCheckBoxValue(domainId);
@@ -319,7 +332,7 @@ public class Share {
 			try {
 				MailContainer mailContainer = new MailContainer(
 						userVo.getExternalMailLocale(), textAreaValue, textAreaSubjectValue);
-				shareFacade.share(userVo, documents, recipientsEmail, secureSharing, mailContainer, creationAcknowledgement, shareExpiryDate);
+				shareFacade.share(userVo, documents, recipientsEmail, secureSharing, mailContainer, creationAcknowledgement, shareExpiryDate, enableUndownloadedSharedDocumentsAlert);
 			} catch (BusinessException ex) {
 
 				// IF RELAY IS DISABLE ON SMTP SERVER

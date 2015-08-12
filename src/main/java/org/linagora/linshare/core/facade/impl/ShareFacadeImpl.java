@@ -363,7 +363,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	public void share(UserVo actorVo, List<DocumentVo> documentVos,
 			List<String> recipientsEmail, boolean secured,
 			MailContainer mailContainer, boolean creationAcknowledgement,
-			Date shareExpiryDate) throws BusinessException {
+			Date shareExpiryDate, boolean enableUndownloadedSharedDocumentsAlert) throws BusinessException {
 		User actor = getActor(actorVo);
 		ShareContainer sc = new ShareContainer(mailContainer.getSubject(),
 				mailContainer.getPersonalMessage(), secured,
@@ -372,6 +372,12 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		sc.setExpiryDate(shareExpiryDate);
 		sc.addDocumentVos(documentVos);
 		sc.addMail(recipientsEmail);
+		if(enableUndownloadedSharedDocumentsAlert){
+			Calendar c = Calendar.getInstance();
+			c.setTime(new Date());
+			c.add(Calendar.DATE, getUndownloadedSharedDocumentsAlertDefaultValue(actor.getDomainId()));
+			sc.setNotificationDate(c.getTime());
+		}
 		shareService.create(actor, actor, sc);
 	}
 
@@ -403,5 +409,41 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 			logger.debug(e.toString());
 		}
 		return false;
+	}
+
+	@Override
+	public boolean isVisibleUndownloadedSharedDocumentsAlert(String domainId) {
+		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
+		try {
+			BooleanValueFunctionality undownloadedSharedFunc = functionalityReadOnlyService
+					.getUndownloadedSharedDocumentsAlert(domain);
+			if (undownloadedSharedFunc.getActivationPolicy().getStatus()) {
+				return undownloadedSharedFunc.getDelegationPolicy().getStatus();
+			}
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+		}
+		return false;
+	}
+
+	@Override
+	public boolean getDefaultUndownloadedSharedDocumentsAlert(String domainId) {
+		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
+		try {
+			BooleanValueFunctionality alert = functionalityReadOnlyService.getUndownloadedSharedDocumentsAlert(domain);
+			if (alert.getActivationPolicy().getStatus()) {
+				return alert.getValue();
+			}
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+		}
+		return false;
+	}
+
+	public Integer getUndownloadedSharedDocumentsAlertDefaultValue(String domainId) {
+		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
+		return functionalityReadOnlyService.getUndownloadedSharedDocumentsAlertDuration(domain).getValue();
 	}
 }

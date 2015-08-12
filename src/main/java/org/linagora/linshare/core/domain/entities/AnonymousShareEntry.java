@@ -43,22 +43,24 @@ import org.linagora.linshare.core.domain.constants.EntryType;
 public class AnonymousShareEntry extends Entry{
 
 	private Long downloaded;
-	
+
 	private DocumentEntry documentEntry;
-	
+
 	private AnonymousUrl anonymousUrl;
-	
-	
+
+	private ShareEntryGroup shareEntryGroup;
+
 	public AnonymousShareEntry() {
 		super();
 	}
 
-	public AnonymousShareEntry(Account entryOwner, String name, String comment, DocumentEntry documentEntry, AnonymousUrl anonymousUrl, Calendar expirationDate) {
+	public AnonymousShareEntry(Account entryOwner, String name, String comment, DocumentEntry documentEntry, AnonymousUrl anonymousUrl, Calendar expirationDate, ShareEntryGroup shareEntryGroup) {
 		super(entryOwner, name, comment);
 		this.documentEntry = documentEntry;
 		this.anonymousUrl = anonymousUrl;
 		this.downloaded = new Long(0);
 		this.expirationDate = expirationDate;
+		this.shareEntryGroup = shareEntryGroup;
 	}
 
 	@Override
@@ -92,6 +94,14 @@ public class AnonymousShareEntry extends Entry{
 
 	public void setAnonymousUrl(AnonymousUrl anonymousUrl) {
 		this.anonymousUrl = anonymousUrl;
+	}
+
+	public ShareEntryGroup getShareEntryGroup() {
+		return shareEntryGroup;
+	}
+
+	public void setShareEntryGroup(ShareEntryGroup shareEntryGroup) {
+		this.shareEntryGroup = shareEntryGroup;
 	}
 
 	/* usefull getters */

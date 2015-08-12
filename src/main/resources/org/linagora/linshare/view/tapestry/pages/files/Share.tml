@@ -94,6 +94,20 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                         </div>
                     </t:if>
                 </div>
+                
+                <div class="control-group">
+                    <t:if test="showUndownloadedSharedDocumentsAlertCheckbox">
+                        <t:label for="enableUndownloadedSharedDocumentsAlert" class="control-label">
+                        ${message:pages.files.upload.enableUndownloadedSharedDocumentsAlert}</t:label>
+                        <div class="controls">
+                            <label class="checkbox">
+                                <t:checkbox t:id="enableUndownloadedSharedDocumentsAlert" />
+                                <span class="help-inline">
+                                ${message:pages.files.upload.enableUndownloadedSharedDocumentsAlert.description}</span>
+                            </label>
+                        </div>
+                    </t:if>
+                </div>
 
                 <div class="accordion" id="accordionMessage">
                     <div class="accordion-group">

@@ -73,6 +73,9 @@ public class ShareContainer {
 
 	protected Date expiryDate;
 
+	protected Date notificationDate;
+
+
 	/**
 	 * True if at least one document is encrypted. It will be used by
 	 * notification service to add a link towards the Applet used to decrypt the
@@ -211,6 +214,14 @@ public class ShareContainer {
 
 	public void setExpiryDate(Date expiryDate) {
 		this.expiryDate = expiryDate;
+	}
+
+	public Date getNotificationDate() {
+		return notificationDate;
+	}
+
+	public void setNotificationDate(Date notificationDate) {
+		this.notificationDate = notificationDate;
 	}
 
 	public Set<User> getShareRecipients() {

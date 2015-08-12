@@ -38,13 +38,14 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ShareEntryBusinessService {
 
 	public ShareEntry create(DocumentEntry documentEntry, User sender,
-			User recipient, Date expirationDate) throws BusinessException;
+			User recipient, Date expirationDate, ShareEntryGroup shareEntryGroupId) throws BusinessException;
 
 	public void delete(ShareEntry share) throws BusinessException;
 

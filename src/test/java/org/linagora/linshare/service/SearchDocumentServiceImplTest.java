@@ -436,7 +436,7 @@ AbstractTransactionalJUnit4SpringContextTests {
 
 		for (DocumentEntry documentEntry : shareDocuments) {
 			shares.add(shareEntryBusinessService.create(documentEntry,
-					John, Jane, cldr.getTime()));
+					John, Jane, cldr.getTime(), null));
 		}
 
 		try {
@@ -485,7 +485,7 @@ AbstractTransactionalJUnit4SpringContextTests {
 
 		for (DocumentEntry documentEntry : shareDocuments) {
 			shares.add(shareEntryBusinessService.create(documentEntry,
-					John, Jane, cldr.getTime()));
+					John, Jane, cldr.getTime(), null));
 		}
 
 		try {
