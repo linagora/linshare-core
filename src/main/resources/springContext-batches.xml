@@ -31,6 +31,7 @@
 		<constructor-arg ref="shareEntryGroupService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="accountRepository" />
 	</bean>
 

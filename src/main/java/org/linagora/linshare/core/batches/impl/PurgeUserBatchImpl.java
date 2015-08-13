@@ -35,7 +35,6 @@ package org.linagora.linshare.core.batches.impl;
 
 import java.util.List;
 
-import org.linagora.linshare.core.batches.generics.impl.GenericBatchImpl;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;

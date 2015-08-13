@@ -36,7 +36,6 @@ package org.linagora.linshare.core.batches.impl;
 
 import java.util.List;
 
-import org.linagora.linshare.core.batches.generics.impl.GenericBatchImpl;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -50,9 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(DeleteShareEntryGroupBatchImpl.class);
 
 	private final ShareEntryGroupService service;
 

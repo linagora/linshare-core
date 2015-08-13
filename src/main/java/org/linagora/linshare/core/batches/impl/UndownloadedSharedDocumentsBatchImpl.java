@@ -35,9 +35,12 @@ package org.linagora.linshare.core.batches.impl;
 
 import java.util.List;
 
-import org.linagora.linshare.core.batches.generics.impl.GenericBatchImpl;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
+import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BatchBusinessException;
@@ -45,6 +48,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryGroupService;
@@ -53,24 +57,25 @@ import org.slf4j.LoggerFactory;
 
 public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(UndownloadedSharedDocumentsBatchImpl.class);
-
 	private final ShareEntryGroupService service;
 
 	private final MailBuildingService mailService;
 
 	private final NotifierService notifierService;
 
+	private final LogEntryService logService;
+
 	public UndownloadedSharedDocumentsBatchImpl(
 			final ShareEntryGroupService service,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
+			final LogEntryService logService,
 			AccountRepository<Account> accountRepository) {
 		super(accountRepository);
 		this.service = service;
 		this.mailService = mailBuildingService;
 		this.notifierService = notifierService;
+		this.logService = logService;
 	}
 
 	@Override
@@ -88,9 +93,7 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 			throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
 		ShareEntryGroup shareEntryGroup = service.findByUuid(actor, identifier);
-
-		Context context = new BatchResultContext<ShareEntryGroup>(
-				shareEntryGroup);
+		Context context = new BatchResultContext<ShareEntryGroup>(shareEntryGroup);
 		try {
 			logInfo(total, position, "processing shareEntryGroup : "
 					+ shareEntryGroup.getUuid());
@@ -99,7 +102,15 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 							shareEntryGroup);
 			notifierService.sendNotification(mail);
 			shareEntryGroup.setNotified(true);
-			service.update(null, shareEntryGroup);
+			service.update(actor, shareEntryGroup);
+			for (ShareEntry share : shareEntryGroup.getShareEntries()){
+				ShareLogEntry logEntry = new ShareLogEntry(shareEntryGroup.getOwner(), share, LogAction.SHARE_NOT_DOWNLOADED, "description");
+				logService.create(logEntry);
+			}
+			for (AnonymousShareEntry anonymousShare : shareEntryGroup.getAnonymousShareEntries()){
+				ShareLogEntry logEntry = new ShareLogEntry(shareEntryGroup.getOwner(), anonymousShare, LogAction.SHARE_NOT_DOWNLOADED, "description");
+				logService.create(logEntry);
+			}
 		} catch (BusinessException businessException) {
 			logError(total, position,
 					"Error while trying to send a notification for undownloaded shared documents");

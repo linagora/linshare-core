@@ -35,9 +35,10 @@ package org.linagora.linshare.core.job.quartz;
 
 import java.util.List;
 
-import org.linagora.linshare.core.batches.generics.GenericBatch;
+import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.exception.TechnicalException;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -83,6 +84,14 @@ public class LinShareJobBean extends QuartzJobBean {
 				} catch (BatchBusinessException ex) {
 					errors++;
 					batch.notifyError(ex, resource, total, position);
+				} catch (TechnicalException ex) {
+					unhandled_errors++;
+					logger.error("Unhandled TechnicalException in batches !");
+					logger.error(ex.getMessage(), ex);
+					logger.error("Cannot process resource '{}' ", resource);
+					logger.error("CRITICAL ERROR : Batch stopped !");
+					finalResult = false;
+					break;
 				} catch (BusinessException ex) {
 					unhandled_errors++;
 					logger.error("Unhandled business exception in batches !");

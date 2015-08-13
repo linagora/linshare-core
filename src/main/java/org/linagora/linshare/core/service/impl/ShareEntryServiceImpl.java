@@ -296,8 +296,13 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				shares.add(createShare);
 				recipientFavouriteRepository.incAndCreate(owner,
 						recipient.getMail());
-				logEntryService.create(new ShareLogEntry(owner, createShare,
-						LogAction.FILE_SHARE, "Sharing of a file"));
+				ShareLogEntry logEntry = new ShareLogEntry(owner, createShare,
+						LogAction.FILE_SHARE, "Sharing of a file");
+				if(sc.getEnableUSDA()){
+					logEntry = new ShareLogEntry(owner, createShare,
+							LogAction.FILE_SHARE_WITH_ALERT_FOR_USD, "Anonymous sharing of a file");
+				}
+				logEntryService.create(logEntry);
 				logEntryService.create(new ShareLogEntry(recipient,
 						LogAction.SHARE_RECEIVED, "Receiving a shared file",
 						createShare, owner));

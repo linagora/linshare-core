@@ -34,10 +34,16 @@
 
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -45,9 +51,10 @@ import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ShareEntryGroupRepository;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class ShareEntryGroupRepositoryImpl extends AbstractRepositoryImpl<ShareEntryGroup>
 		implements ShareEntryGroupRepository {
@@ -58,7 +65,7 @@ public class ShareEntryGroupRepositoryImpl extends AbstractRepositoryImpl<ShareE
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(ShareEntryGroup entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(ShareEntryGroup.class)
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass())
 				.add(Restrictions.eq("id", entity.getId()));
 		return det;
 	}
@@ -86,24 +93,64 @@ public class ShareEntryGroupRepositoryImpl extends AbstractRepositoryImpl<ShareE
 	}
 
 	@Override
-	public List<ShareEntryGroup> findAllToNotify(){
+	public List<String> findAllAnonymousShareEntriesAboutToBeNotified(Date dt) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("notified", false));
+		det.add(Restrictions.lt("notificationDate", dt));
+		// only identifier instead of entity
+		det.setProjection(Projections.property("uuid"));
+		det.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		// join
+		det.createAlias("anonymousShareEntries", "ase");
+		// restrict
+		det.add(Restrictions.eq("ase.downloaded", new Long(0)));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(det);
+		return list;
+	}
+
+	@Override
+	public List<String> findAllShareEntriesAboutToBeNotified(Date dt) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("notified", false));
+		det.add(Restrictions.lt("notificationDate", dt));
+		// only identifier instead of entity
+		det.setProjection(Projections.property("uuid"));
+		det.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		// join
+		det.createAlias("shareEntries", "se");
+		// restrict
+		det.add(Restrictions.eq("se.downloaded", new Long(0)));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(det);
+		return list;
+	}
+
+	@Override
+	public Set<String> findAllAboutToBeNotified(){
 		Date dt = new Date();
-		List<ShareEntryGroup> shareEntriesGroup = findByCriteria(
-				Restrictions.lt("notificationDate", dt), Restrictions.eq("notified", false));
-		if (shareEntriesGroup == null) {
-			logger.info("No shareEntryGroup has an expired notification date");
-			return Lists.newArrayList();
-		}
-		return shareEntriesGroup;
+		Set<String> res = Sets.newHashSet();
+		// no way to do this using the actual database schema.
+		// TODO : merge share entries and anonymous share entries into the same table.
+		res.addAll(findAllShareEntriesAboutToBeNotified(dt));
+		res.addAll(findAllAnonymousShareEntriesAboutToBeNotified(dt));
+		return res;
 	}
 
 	@Override
 	public List<String> findAllToPurge() {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.setProjection(Projections.property("uuid"));
-		criteria.add(Restrictions.eq("notified", true));
-		@SuppressWarnings("unchecked")
-		List<String> list = listByCriteria(criteria);
-		return list;
+		HibernateCallback<List<String>> action = new HibernateCallback<List<String>>() {
+			@SuppressWarnings("unchecked")
+			public List<String> doInHibernate(final Session session) throws HibernateException, SQLException {
+				StringBuilder sb = new StringBuilder();
+				sb.append("select seg.uuid from ShareEntryGroup seg");
+				sb.append(" left outer join seg.shareEntries se ");
+				sb.append(" left outer join seg.anonymousShareEntries ase ");
+				sb.append(" where ase is null and se is null");
+				final Query query = session.createQuery(sb.toString());
+				return 	query.list();
+			}
+		};
+		return getHibernateTemplate().execute(action);
 	}
 }

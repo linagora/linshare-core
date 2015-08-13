@@ -32,28 +32,44 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.batches.generics;
+package org.linagora.linshare.core.batches.impl;
 
-import java.util.List;
+import org.linagora.linshare.core.batches.GenericBatch;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.repository.AccountRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.linagora.linshare.core.exception.BatchBusinessException;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+public abstract class GenericBatchImpl implements GenericBatch {
 
-public interface GenericBatch {
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	List<String> getAll();
+	protected final AccountRepository<Account> accountRepository;
 
-	Context execute(String identifier, long total, long position)
-			throws BatchBusinessException, BusinessException;
+	public GenericBatchImpl(AccountRepository<Account> accountRepository) {
+		super();
+		this.accountRepository = accountRepository;
+	}
 
-	void notify(Context context, long total, long position);
+	protected String getStringPosition(long total, long position) {
+		return position + "/" + total + ":";
+	}
 
-	void notifyError(BatchBusinessException exception, String identifier,
-			long total, long position);
+	@Override
+	public void logDebug(long total, long position, String message) {
+		logger.debug(getStringPosition(total, position) + message);
+	}
 
-	void terminate(List<String> all, long errors, long unhandled_errors,
-			long total);
+	protected void logInfo(long total, long position, String message) {
+		logger.info(getStringPosition(total, position) + message);
+	}
 
-	void logDebug(long total, long position, String message);
+	protected void logError(long total, long position, String message) {
+		logger.error(getStringPosition(total, position) + message);
+	}
+
+	protected SystemAccount getSystemAccount() {
+		return accountRepository.getBatchSystemAccount();
+	}
 }

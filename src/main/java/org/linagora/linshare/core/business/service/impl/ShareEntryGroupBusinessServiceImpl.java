@@ -34,24 +34,23 @@
 
 package org.linagora.linshare.core.business.service.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.ShareEntryGroupBusinessService;
-import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
-import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ShareEntryGroupRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 public class ShareEntryGroupBusinessServiceImpl
 		implements ShareEntryGroupBusinessService {
 
 	private final ShareEntryGroupRepository repository;
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory
 			.getLogger(ShareEntryGroupBusinessServiceImpl.class);
 
@@ -84,30 +83,11 @@ public class ShareEntryGroupBusinessServiceImpl
 		return repository.update(shareEntryGroup);
 	}
 
-	// TODO refactoring
 	@Override
 	public List<String> findUndownloadedSharedDocToAlert() {
-		List<ShareEntryGroup> all = repository.findAllToNotify();
-		List<String> undownloadedShareEntryGroup = new ArrayList<String>();
-		for (ShareEntryGroup shareEntryGroup : all) {
-			Iterator<ShareEntry> shareEntriesIterator = shareEntryGroup
-					.getShareEntries().iterator();
-			while (shareEntriesIterator.hasNext()) {
-				if (shareEntriesIterator.next().getDownloaded() == 0) {
-					undownloadedShareEntryGroup.add(shareEntryGroup.getUuid());
-					break;
-				}
-			}
-			Iterator<AnonymousShareEntry> anonymousShareEntriesIterator = shareEntryGroup
-					.getAnonymousShareEntries().iterator();
-			while (anonymousShareEntriesIterator.hasNext()) {
-				if (anonymousShareEntriesIterator.next().getDownloaded() == 0) {
-					undownloadedShareEntryGroup.add(shareEntryGroup.getUuid());
-					break;
-				}
-			}
-		}
-		return undownloadedShareEntryGroup;
+		List<String> all= Lists.newArrayList();
+		all.addAll(repository.findAllAboutToBeNotified());
+		return all;
 	}
 
 	@Override

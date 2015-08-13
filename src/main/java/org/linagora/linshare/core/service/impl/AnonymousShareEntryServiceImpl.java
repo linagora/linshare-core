@@ -172,6 +172,11 @@ public class AnonymousShareEntryServiceImpl extends
 				ShareLogEntry logEntry = new ShareLogEntry(targetedAccount, documentEntry,
 						LogAction.FILE_SHARE, "Anonymous sharing of a file",
 						expiryDate, recipient);
+				if(sc.getEnableUSDA()){
+					logEntry = new ShareLogEntry(targetedAccount, documentEntry,
+							LogAction.FILE_SHARE_WITH_ALERT_FOR_USD, "Anonymous sharing of a file with a undownloaded shared document alert",
+							expiryDate, recipient);
+				}
 				logEntryService.create(logEntry);
 			}
 			// Notifications

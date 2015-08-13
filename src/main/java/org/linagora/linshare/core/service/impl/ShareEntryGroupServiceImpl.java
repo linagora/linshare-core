@@ -68,6 +68,7 @@ public class ShareEntryGroupServiceImpl implements ShareEntryGroupService {
 	public void delete(Account actor, ShareEntryGroup entity) {
 		Validate.notNull(actor);
 		Validate.notNull(entity);
+		// TODO : Add check not null and throws exception.
 		businessService.delete(entity);
 	}
 
@@ -75,6 +76,7 @@ public class ShareEntryGroupServiceImpl implements ShareEntryGroupService {
 	public ShareEntryGroup findByUuid(Account actor, String uuid) {
 		Validate.notNull(actor);
 		Validate.notEmpty(uuid);
+		// TODO : Add check not null and throws exception.
 		return businessService.findByUuid(uuid);
 	}
 

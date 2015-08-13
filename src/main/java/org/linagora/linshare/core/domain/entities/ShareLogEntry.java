@@ -63,7 +63,7 @@ public class ShareLogEntry extends FileLogEntry {
 	}
 
 
-	public ShareLogEntry(Account actor, ShareEntry share,	LogAction logAction, String description) {
+	public ShareLogEntry(Account actor, ShareEntry share, LogAction logAction, String description) {
 
 		super(actor, logAction, description, share.getName(), share.getSize(), share.getType());
 

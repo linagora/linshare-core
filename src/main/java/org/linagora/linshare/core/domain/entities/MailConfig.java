@@ -39,6 +39,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.exception.TechnicalException;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -172,7 +173,7 @@ public class MailConfig {
 		MailFooterLang f = mailFooters.get(lang.toInt());
 
 		if (f == null)
-			throw new IllegalArgumentException(
+			throw new TechnicalException(
 					"No MailFooter matching the language: " + lang);
 		return f.getMailFooter();
 	}
@@ -192,7 +193,7 @@ public class MailConfig {
 			if (mcl.businessEquals(needle))
 				return mcl.getMailContent();
 		}
-		throw new IllegalArgumentException(
+		throw new TechnicalException(
 				"No MailContent matching the [Language,MailContentType] pair: ["
 						+ lang + "," + type + "]");
 	}

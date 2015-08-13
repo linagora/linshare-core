@@ -32,27 +32,20 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
-public class LinShareJobBeanTest extends
-		AbstractTransactionalJUnit4SpringContextTests {
+public class UndownloadedSharedDocumentsBatchImplTest extends
+AbstractTransactionalJUnit4SpringContextTests {
 
 	private static Logger logger = LoggerFactory
-			.getLogger(LinShareJobBeanTest.class);
-
-	@Qualifier("deleteGuestBatch")
+			.getLogger(UndownloadedSharedDocumentsBatchImplTest.class);
+	
+	@Qualifier("undownloadedSharedDocumentsBatch")
 	@Autowired
-	private GenericBatch deleteGuestBatch;
-
-	@Qualifier("markUserToPurgeBatch")
-	@Autowired
-	private GenericBatch markUserToPurgeBatch;
-
-	@Qualifier("purgeUserBatch")
-	@Autowired
-	private GenericBatch purgeUserBatch;
+	private GenericBatch undownloadedSharedDocumentsBatch;
+	
 
 	private Wiser wiser;
 
-	public LinShareJobBeanTest() {
+	public UndownloadedSharedDocumentsBatchImplTest() {
 		super();
 		wiser = new Wiser(2525);
 	}
@@ -60,10 +53,7 @@ public class LinShareJobBeanTest extends
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		int countBefore = this.countRowsInTable("users");
-		this.executeSqlScript("import-tests-batches-accounts.sql", false);
-		int countAfter = this.countRowsInTable("users");
-		Assert.assertEquals(3, countAfter - countBefore);
+		this.executeSqlScript("import-tests-share-entry-group-setup.sql", false);
 		wiser.start();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -76,13 +66,11 @@ public class LinShareJobBeanTest extends
 	}
 
 	@Test
-	public void testAccountCleaning() throws BusinessException,
+	public void test1() throws BusinessException,
 			JobExecutionException {
 		LinShareJobBean job = new LinShareJobBean();
 		List<GenericBatch> batches = Lists.newArrayList();
-		batches.add(deleteGuestBatch);
-		batches.add(markUserToPurgeBatch);
-		batches.add(purgeUserBatch);
+		batches.add(undownloadedSharedDocumentsBatch);
 		job.setBatch(batches);
 		Assert.assertTrue("At least one batch failed.", job.executeExternal());
 	}

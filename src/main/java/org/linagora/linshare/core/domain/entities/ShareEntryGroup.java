@@ -85,6 +85,12 @@ public class ShareEntryGroup {
 		this.notificationDate = notificationDate;
 	}
 
+	@Override
+	public String toString() {
+		return "ShareEntryGroup [id=" + id + ", uuid=" + uuid + ", subject="
+				+ subject + "]";
+	}
+
 	public long getId() {
 		return id;
 	}

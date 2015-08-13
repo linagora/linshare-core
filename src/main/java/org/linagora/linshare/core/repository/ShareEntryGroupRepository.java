@@ -34,15 +34,22 @@
 
 package org.linagora.linshare.core.repository;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 
-public interface ShareEntryGroupRepository extends AbstractRepository<ShareEntryGroup>{
+public interface ShareEntryGroupRepository extends
+		AbstractRepository<ShareEntryGroup> {
 
 	ShareEntryGroup findByUuid(String uuid);
 
-	List<ShareEntryGroup> findAllToNotify();
+	List<String> findAllAnonymousShareEntriesAboutToBeNotified(Date dt);
+
+	List<String> findAllShareEntriesAboutToBeNotified(Date dt);
 
 	List<String> findAllToPurge();
+
+	Set<String> findAllAboutToBeNotified();
 }
