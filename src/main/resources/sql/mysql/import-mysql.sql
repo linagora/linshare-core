@@ -530,7 +530,7 @@ INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (47, f
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (123, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (124, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (125, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, polidy_delegation_id, domain_id, parent_identifier, param) VALUES(51, false, 'GUESTS__EXPIRATION_ALLOW_PROLONGATION', 123, 124, 125, 1, 'GUESTS', true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES(51, false, 'GUESTS__EXPIRATION_ALLOW_PROLONGATION', 123, 124, 125, 1, 'GUESTS', true);
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (51, true);
 
 -- Functionality : UPLOAD_REQUEST_ENABLE_TEMPLATE
@@ -546,7 +546,7 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (128, true
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id) VALUES(52, false, 'SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER', 126, 127, 128, 1);
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (52, true);
 
---Functionality: END
+-- Functionality: END
 
 -- %{image}    <img src="cid:image.part.1@linshare.org" /><br/><br/>
 
