@@ -70,6 +70,7 @@ public interface FunctionalityReadOnlyService {
 	Functionality getEnciphermentFunctionality(AbstractDomain domain);
 	Functionality getAntivirusFunctionality(AbstractDomain domain);
 	BooleanValueFunctionality getAnonymousUrl(AbstractDomain domain);
+	BooleanValueFunctionality getAnonymousUrlNotification(AbstractDomain domain);
 	BooleanValueFunctionality getAnonymousUrl(String domainIdentifier);
 	Functionality getRestrictedGuestFunctionality(AbstractDomain domain);
 	Functionality getSignatureFunctionality(AbstractDomain domain);

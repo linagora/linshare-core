@@ -191,6 +191,13 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public BooleanValueFunctionality getAnonymousUrlNotification(
+			AbstractDomain domain) {
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.ANONYMOUS_URL__NOTIFICATION);
+	}
+
+
+	@Override
 	public BooleanValueFunctionality getAcknowledgement(AbstractDomain domain) {
 		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER);
 	}

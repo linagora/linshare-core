@@ -235,9 +235,13 @@ public class AnonymousShareEntryServiceImpl extends
 						+ " downloaded a file");
 		logEntryService.create(logEntry);
 		// send a notification by mail to the owner
-		MailContainerWithRecipient mail = mailBuildingService
-				.buildAnonymousDownload(shareEntry);
-		notifierService.sendNotification(mail);
+		Boolean send = functionalityService.getAnonymousUrlNotification(
+				shareEntry.getEntryOwner().getDomain()).getValue();
+		if (send) {
+			MailContainerWithRecipient mail = mailBuildingService
+					.buildAnonymousDownload(shareEntry);
+			notifierService.sendNotification(mail);
+		}
 		return documentEntryBusinessService.getDocumentStream(shareEntry
 				.getDocumentEntry());
 	}
