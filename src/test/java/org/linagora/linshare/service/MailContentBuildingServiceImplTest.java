@@ -335,7 +335,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
 		User actor = john;
-		ShareEntryGroup shareEntryGroup = new ShareEntryGroup(actor, "test", new Date());
+		ShareEntryGroup shareEntryGroup = new ShareEntryGroup(actor, "test");
 		Set<ShareEntry> shares = Sets.newHashSet();
 		shares.add(new ShareEntry(john, aDocumentEntry.getName(), "", jane, aDocumentEntry, Calendar.getInstance(), shareEntryGroup));
 

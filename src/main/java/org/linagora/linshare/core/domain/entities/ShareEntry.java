@@ -107,6 +107,12 @@ public class ShareEntry extends Entry {
 		++downloaded;
 	}
 
+	@Override
+	public String toString() {
+		return "ShareEntry [downloaded=" + downloaded + ", name=" + name
+				+ ", uuid=" + uuid + "]";
+	}
+
 	/* useful getters */
 	public long getSize() {
 		return documentEntry.getSize();

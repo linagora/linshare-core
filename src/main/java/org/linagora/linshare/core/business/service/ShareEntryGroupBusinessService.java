@@ -51,7 +51,7 @@ public interface ShareEntryGroupBusinessService {
 	ShareEntryGroup update(ShareEntryGroup shareEntryGroup)
 			throws BusinessException;
 
-	List<String> findUndownloadedSharedDocToAlert();
+	List<String> findAllAboutToBeNotified();
 
 	List<String> findAllToPurge();
 }

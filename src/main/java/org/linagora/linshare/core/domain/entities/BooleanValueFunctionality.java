@@ -109,4 +109,27 @@ public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 		}
 		return f;
 	}
+
+	/**
+	 * Check activation policy, delegation policy if exists and user value if
+	 * defined
+	 * 
+	 * @param userValue
+	 *            : false, true, or null if user have not defined a value.
+	 * @return true or false
+	 */
+	@Override
+	public Boolean getFinalValue(Boolean userValue) {
+		boolean result = getValue();
+		if (getActivationPolicy().getStatus()) {
+			if (getDelegationPolicy() != null && getDelegationPolicy().getStatus()) {
+				if (userValue != null) {
+					result = userValue;
+				}
+			}
+		} else {
+			result = false;
+		}
+		return result;
+	}
 }

@@ -81,7 +81,7 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 	@Override
 	public List<String> getAll() {
 		logger.info("UndownloadedSharedDocumentsBatchImpl job starting ...");
-		List<String> allUuids = service.findUndownloadedSharedDocToAlert(
+		List<String> allUuids = service.findAllAboutToBeNotified(
 				getSystemAccount());
 		logger.info(allUuids.size()
 				+ " shareEntryGroup with undownloaded documents");
@@ -93,23 +93,25 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 			throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
 		ShareEntryGroup shareEntryGroup = service.findByUuid(actor, identifier);
+
 		Context context = new BatchResultContext<ShareEntryGroup>(shareEntryGroup);
+		MailContainerWithRecipient mail = null;
 		try {
+			// No more info ?
 			logInfo(total, position, "processing shareEntryGroup : "
 					+ shareEntryGroup.getUuid());
-			MailContainerWithRecipient mail = mailService
-					.buildNoDocumentHasBeenDownloadedAcknowledgment(
-							shareEntryGroup);
-			notifierService.sendNotification(mail);
-			shareEntryGroup.setNotified(true);
-			service.update(actor, shareEntryGroup);
-			for (ShareEntry share : shareEntryGroup.getShareEntries()){
-				ShareLogEntry logEntry = new ShareLogEntry(shareEntryGroup.getOwner(), share, LogAction.SHARE_NOT_DOWNLOADED, "description");
-				logService.create(logEntry);
-			}
-			for (AnonymousShareEntry anonymousShare : shareEntryGroup.getAnonymousShareEntries()){
-				ShareLogEntry logEntry = new ShareLogEntry(shareEntryGroup.getOwner(), anonymousShare, LogAction.SHARE_NOT_DOWNLOADED, "description");
-				logService.create(logEntry);
+			logger.info("needNotification : " + shareEntryGroup.needNotification());
+			if (shareEntryGroup.needNotification()) {
+				// log action and notification
+				mail = mailService.buildNoDocumentHasBeenDownloadedAcknowledgment(shareEntryGroup);
+				shareEntryGroup.setNotified(true);
+				service.update(actor, shareEntryGroup);
+				logActions(shareEntryGroup, LogAction.SHARE_WITH_USD_NOT_DOWNLOADED);
+			} else {
+				// only log action
+				logActions(shareEntryGroup, LogAction.SHARE_WITH_USD_DOWNLOADED);
+				// Nothing to do ? set notified to true ? or set expiration to null ? 
+				// How to exclude them from finders ?
 			}
 		} catch (BusinessException businessException) {
 			logError(total, position,
@@ -122,7 +124,20 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 			exception.setBusinessException(businessException);
 			throw exception;
 		}
+		// Once every thing is ok, transaction is about to be committed, we can send the notification.
+		notifierService.sendNotification(mail);
 		return context;
+	}
+
+	private void logActions(ShareEntryGroup shareEntryGroup, LogAction logAction) {
+		for (ShareEntry share : shareEntryGroup.getShareEntries()){
+			ShareLogEntry logEntry = new ShareLogEntry(shareEntryGroup.getOwner(), share, logAction, "");
+			logService.create(logEntry);
+		}
+		for (AnonymousShareEntry anonymousShare : shareEntryGroup.getAnonymousShareEntries()){
+			ShareLogEntry logEntry = new ShareLogEntry(shareEntryGroup.getOwner(), anonymousShare, logAction, "");
+			logService.create(logEntry);
+		}
 	}
 
 	@Override

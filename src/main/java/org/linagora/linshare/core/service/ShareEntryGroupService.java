@@ -49,7 +49,7 @@ public interface ShareEntryGroupService {
 
 	ShareEntryGroup update(Account actor, ShareEntryGroup shareEntryGroup);
 
-	List<String> findUndownloadedSharedDocToAlert(Account actor);
+	List<String> findAllAboutToBeNotified(Account actor);
 
 	List<String> findAllToPurge(Account actor);
 }

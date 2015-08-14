@@ -77,18 +77,19 @@ public class ShareEntryGroup {
 		super();
 	}
 
-	public ShareEntryGroup(Account owner, String subject,
-			Date notificationDate) {
+	public ShareEntryGroup(Account owner, String subject) {
 		super();
 		this.owner = owner;
 		this.subject = subject;
-		this.notificationDate = notificationDate;
+		this.notificationDate = null;
+		this.notified = false;
+		this.processed = false;
 	}
 
 	@Override
 	public String toString() {
-		return "ShareEntryGroup [id=" + id + ", uuid=" + uuid + ", subject="
-				+ subject + "]";
+		return "ShareEntryGroup [uuid=" + uuid + ", subject=" + subject
+				+ ", tmpNeedNotification=" + tmpNeedNotification + "]";
 	}
 
 	public long getId() {

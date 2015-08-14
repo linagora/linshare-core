@@ -23,14 +23,15 @@ INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment
 	VALUES (1, 10, now(), now(), 'DE test doc entry name 1', '', 'bfaf3fea-c64a-4ee0-bae8-b1482f1f6401', false);
 INSERT INTO document_entry (entry_id, document_id, ciphered, type, size, sha256sum, has_thumbnail, shared)
 	VALUES (1, 1, false, 'data', 1024, 'plop', false, 2);
+-- DE
 INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, uuid, cmis_sync)
 	VALUES (12, 10, now(), now(), 'DE test doc entry name 4', '', 'fd87394a-41ab-11e5-b191-080027b8274b', false);
 INSERT INTO document_entry (entry_id, document_id, ciphered, type, size, sha256sum, has_thumbnail, shared)
 	VALUES (12, 4, false, 'data', 1024, 'plop', false, 1);
 
 -- SEG
-INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified)
-	VALUES (1, 10, 'c96d778e-b09b-4557-b785-ff5124bd2b8d', 'subject 1', now(), now(), now(), false);
+INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed)
+	VALUES (1, 10, 'c96d778e-b09b-4557-b785-ff5124bd2b8d', 'subject 1', now(), now(), now(), false, false);
 
 -- SE
 INSERT INTO entry (id, owner_id, creation_date, modification_date, expiration_date, name, comment, uuid, cmis_sync)
@@ -67,8 +68,8 @@ INSERT INTO document_entry (entry_id, document_id, ciphered, type, size, sha256s
 	VALUES (4, 2, false, 'data', 1024, 'plop', false, 2);
 
 -- SEG
-INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified)
-	VALUES (2, 10, '61eae04b-9496-4cb1-900e-eda8caac6703', 'subject 2', now(), now(), now(), false);
+INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed)
+	VALUES (2, 10, '61eae04b-9496-4cb1-900e-eda8caac6703', 'subject 2', now(), now(), now(), false, false);
 
 -- SE
 INSERT INTO entry (id, owner_id, creation_date, modification_date, expiration_date, name, comment, uuid, cmis_sync)
@@ -91,8 +92,8 @@ INSERT INTO document_entry (entry_id, document_id, ciphered, type, size, sha256s
 	VALUES (7, 3, false, 'data', 1024, 'plop', false, 2);
 
 -- SEG
-INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified)
-	VALUES (3, 10, 'c8a54434-7898-472d-93c0-b98e1b526062', 'subject 3', now(), now(), now(), false);
+INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed)
+	VALUES (3, 10, 'c8a54434-7898-472d-93c0-b98e1b526062', 'subject 3', now(), now(), now(), false, false);
 
 -- SE
 INSERT INTO entry (id, owner_id, creation_date, modification_date, expiration_date, name, comment, uuid, cmis_sync)
@@ -109,25 +110,31 @@ INSERT INTO share_entry (entry_id, document_entry_id, downloaded, recipient_id, 
 
 -- Share 4 - notified : 0/0
 -- SEG
-INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified)
-	VALUES (4, 10, '421a2bc5-d41c-4b83-8e94-cd87aa2964c3', 'subject 4', now(), now(), now(), true);
+INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed)
+	VALUES (4, 10, '421a2bc5-d41c-4b83-8e94-cd87aa2964c3', 'subject 4', now(), now(), now(), true, false);
 
 
--- Share 5 - only ASE, no download : 0/1
+-- Share 5 - 1 SE, 1 ASE, one download : 1/2
 -- SEG
-INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified)
-	VALUES (5, 10, '6588844c-3891-44bf-af14-b2b85ca47de4', 'subject 5', now(), now(), now(), false);
+INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed)
+	VALUES (5, 10, '6588844c-3891-44bf-af14-b2b85ca47de4', 'subject 5', now(), now(), now(), false, false);
 
 -- ASE
 INSERT INTO anonymous_url (id, url_path, uuid, contact_id) VALUES (2, 'download', 'd7587b25-6545-45d9-b465-679e3fb585e4', 2);
 INSERT INTO entry (id, owner_id, creation_date, modification_date, expiration_date, name, comment, uuid, cmis_sync)
 	VALUES (11, 10, now(), now(), now(), 'ASE test doc entry name 3', '', 'a11fb104-a695-4aea-bc8e-56fb8bdf24e5', false);
 INSERT INTO anonymous_share_entry (entry_id, downloaded, document_entry_id, anonymous_url_id, share_entry_group_id)
-    VALUES (11, 0, 7, 2, 5);
+	VALUES (11, 0, 7, 2, 5);
+
+-- SE
+INSERT INTO entry (id, owner_id, creation_date, modification_date, expiration_date, name, comment, uuid, cmis_sync)
+	VALUES (14, 10, now(), now(), now(), 'SE test doc entry name 3', '', '7a167dce-4277-11e5-84ee-0800271467bb', false);
+INSERT INTO share_entry (entry_id, document_entry_id, downloaded, recipient_id, share_entry_group_id)
+	VALUES (14, 7, 1, 11, 5);
 
 
 -- Share 6 - notified : 0/0
 -- SEG
-INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified)
-	VALUES (6, 10, '027599d8-3433-4e07-9b7c-e8be82fed4a9', 'subject 6', now(), now(), now(), false);
+INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed)
+	VALUES (6, 10, '027599d8-3433-4e07-9b7c-e8be82fed4a9', 'subject 6', now(), now(), now(), false, false);
 

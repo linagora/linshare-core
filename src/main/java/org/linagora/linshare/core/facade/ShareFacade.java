@@ -163,10 +163,10 @@ public interface ShareFacade {
 	public void updateShareComment(UserVo userLoggedIn,
 			String editShareWithUuid, String shareComment) throws BusinessException;
 
-	boolean isVisibleUndownloadedSharedDocumentsAlert(String domainId);
+	boolean isVisibleUndownloadedSharedDocumentsAlert(UserVo actorVo);
 
-	boolean getDefaultUndownloadedSharedDocumentsAlert(String domainId);
+	boolean getDefaultUndownloadedSharedDocumentsAlert(UserVo actorVo);
 
-	Date getUndownloadedSharedDocumentsAlertDefaultValue(String domainId);
+	Date getUndownloadedSharedDocumentsAlertDefaultValue(UserVo actorVo);
 }
 

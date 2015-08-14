@@ -66,7 +66,6 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
-import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,8 +83,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 
 	private final ShareEntryBusinessService shareEntryBusinessService;
 
-	private final ShareExpiryDateService shareExpiryDateService;
-
 	private final LogEntryService logEntryService;
 
 	private final DocumentEntryService documentEntryService;
@@ -102,7 +99,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			GuestRepository guestRepository,
 			FunctionalityReadOnlyService functionalityService,
 			ShareEntryBusinessService shareEntryBusinessService,
-			ShareExpiryDateService shareExpiryDateService,
 			LogEntryService logEntryService,
 			DocumentEntryService documentEntryService,
 			DocumentEntryBusinessService documentEntryBusinessService,
@@ -114,7 +110,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		this.guestRepository = guestRepository;
 		this.functionalityService = functionalityService;
 		this.shareEntryBusinessService = shareEntryBusinessService;
-		this.shareExpiryDateService = shareExpiryDateService;
 		this.logEntryService = logEntryService;
 		this.documentEntryService = documentEntryService;
 		this.documentEntryBusinessService = documentEntryBusinessService;
@@ -280,10 +275,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, null);
 
 		Date expiryDate = sc.getExpiryDate();
-		if (expiryDate == null) {
-			expiryDate = shareExpiryDateService
-					.computeMinShareExpiryDateOfList(sc.getDocuments(), owner);
-		}
 		Set<ShareEntry> entries = Sets.newHashSet();
 		for (User recipient : sc.getShareRecipients()) {
 			MailContainer mailContainer = new MailContainer(

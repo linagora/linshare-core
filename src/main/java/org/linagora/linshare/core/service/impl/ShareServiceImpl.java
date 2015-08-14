@@ -42,7 +42,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
-import org.linagora.linshare.core.service.ShareEntryGroupService;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -52,9 +51,11 @@ import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
@@ -67,7 +68,9 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.ShareEntryGroupService;
 import org.linagora.linshare.core.service.ShareEntryService;
+import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
@@ -81,7 +84,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 	private static final Logger logger = LoggerFactory
 			.getLogger(ShareServiceImpl.class);
 
-	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+	private final FunctionalityReadOnlyService funcService;
 
 	private final DocumentEntryService documentEntryService;
 
@@ -99,6 +102,10 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 	private final MailBuildingService mailBuildingService;
 
+	// TODO : To be fix one day.
+	@SuppressWarnings("unused")
+	private final ShareExpiryDateService shareExpiryDateService;
+
 	private final ShareEntryGroupService shareEntryGroupService;
 
 	public ShareServiceImpl(
@@ -112,9 +119,10 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			final EntryBusinessService entryBusinessService,
 			final ShareEntryResourceAccessControl rac,
 			final MailBuildingService mailBuildingService,
+			final ShareExpiryDateService shareExpiryDateService,
 			final ShareEntryGroupService shareEntryGroupService) {
 		super(rac);
-		this.functionalityReadOnlyService = functionalityReadOnlyService;
+		this.funcService = functionalityReadOnlyService;
 		this.documentEntryService = documentEntryService;
 		this.userService = userService;
 		this.guestService = guestService;
@@ -123,6 +131,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		this.notifierService = notifierService;
 		this.entryBusinessService = entryBusinessService;
 		this.mailBuildingService = mailBuildingService;
+		this.shareExpiryDateService = shareExpiryDateService;
 		this.shareEntryGroupService = shareEntryGroupService;
 	}
 
@@ -153,84 +162,108 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 					"Can not share documents, missing recipients.");
 		}
 
-		Date expiryDate = shareContainer.getExpiryDate();
-		if (expiryDate != null) {
+		// Check documents
+		transformDocuments(actor, owner, shareContainer);
+
+		// Check expiry date.
+		Date defaultShareExpiryDate = getDefaultShareExpiryDate(owner.getDomain());
+		if (shareContainer.getExpiryDate() != null) {
+			Date expiryDate = shareContainer.getExpiryDate();
 			if (expiryDate.before(new Date())) {
 				throw new BusinessException(
 						BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_BEFORE,
 						"Can not share documents, expiry date is before today.");
 			}
-			if (shareContainer.getExpiryDate().after(
-					getDefaultShareExpiryDate(owner.getDomain()))) {
+			if (expiryDate.after(
+					defaultShareExpiryDate)) {
 				throw new BusinessException(
 						BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_AFTER,
 						"Can not share documents, expiry date is after the max date.");
 			}
+		} else {
+			shareContainer.setExpiryDate(defaultShareExpiryDate);
 		}
 
-		// Check documents
-		transformDocuments(actor, owner, shareContainer);
 		shareContainer.updateEncryptedStatus();
 
 		// Creation
-		ShareEntryGroup shareEntryGroup = new ShareEntryGroup(owner,
-				shareContainer.getSubject(),
-				shareContainer.getNotificationDateForUSDA());
-		
-		BooleanValueFunctionality notifFunc = functionalityReadOnlyService
+		ShareEntryGroup shareEntryGroup = new ShareEntryGroup(owner, shareContainer.getSubject());
+		BooleanValueFunctionality usdaFunc = funcService
 				.getUndownloadedSharedDocumentsAlert(actor.getDomain());
-		if (notifFunc.getActivationPolicy().getStatus()) {
-			if (notifFunc.getDelegationPolicy().getStatus()) {
-				if (shareContainer.getEnableUSDA() == false) {
-					shareEntryGroup.setNotificationDate(null);
-				}
-			} else {
-				Calendar c = Calendar.getInstance();
-				c.setTime(new Date());
-				c.add(Calendar.DATE,
-						functionalityReadOnlyService
-								.getUndownloadedSharedDocumentsAlertDuration(
-										actor.getDomain())
-								.getValue());
-				shareEntryGroup.setNotificationDate(c.getTime());
-			}
-		} else {
-			shareEntryGroup.setNotificationDate(null);
+		if (usdaFunc.getFinalValue(shareContainer.getEnableUSDA())) {
+			Date duration = getUndownloadedSharedDocumentsAlertDuration(
+					actor,
+					shareContainer.getNotificationDateForUSDA(),
+					shareContainer.getExpiryDate());
+			shareEntryGroup.setNotificationDate(duration);
 		}
 
-		ShareEntryGroup createdShareEntryGroup = shareEntryGroupService
-				.create(actor, shareEntryGroup);
+		shareEntryGroup = shareEntryGroupService.create(actor, shareEntryGroup);
 
 		Set<Entry> entries = Sets.newHashSet();
 		if (shareContainer.needAnonymousShares()) {
-			entries.addAll(anonymousShareEntryService.create(actor, owner, shareContainer, createdShareEntryGroup));
+			entries.addAll(anonymousShareEntryService.create(actor, owner, shareContainer, shareEntryGroup));
 		}
-		entries.addAll(shareEntryService.create(actor, owner, shareContainer, createdShareEntryGroup));
+		entries.addAll(shareEntryService.create(actor, owner, shareContainer, shareEntryGroup));
 
-		BooleanValueFunctionality groupedFunc = functionalityReadOnlyService.getAcknowledgement(actor.getDomain());
-		boolean groupedModeLocal = groupedFunc.getValue();
-		if (groupedFunc.getActivationPolicy().getStatus()) {
-			if (groupedFunc.getDelegationPolicy().getStatus()) {
-				if (shareContainer.isAcknowledgement() != null) {
-					groupedModeLocal = shareContainer.isAcknowledgement();
-				}
-			}
-		} else {
-			groupedModeLocal = false;
-		}
-
-		if (groupedModeLocal) {
-			notifierService.sendNotification(mailBuildingService.buildNewSharingPersonnalNotification(owner, shareContainer, entries));
+		BooleanValueFunctionality acknowledgementFunc = funcService
+				.getAcknowledgement(actor.getDomain());
+		if (acknowledgementFunc.getFinalValue(shareContainer.isAcknowledgement())) {
+			MailContainerWithRecipient mail = mailBuildingService
+					.buildNewSharingPersonnalNotification(owner,shareContainer, entries);
+			notifierService.sendNotification(mail);
 		}
 		// Notification
 		notifierService.sendNotification(shareContainer.getMailContainers());
 		return entries;
 	}
 
+	@Override
+	public Date getUndownloadedSharedDocumentsAlertDuration(Account actor) {
+		return getUndownloadedSharedDocumentsAlertDuration(actor, null, null);
+	}
+
+	/**
+	 *
+	 * @param owner
+	 * @param userInput : user date
+	 * @param expiryDate : should be a valid expiration date.
+	 * @return
+	 */
+	private Date getUndownloadedSharedDocumentsAlertDuration(Account owner, Date userInput, Date expiryDate) {
+		Date res = null;
+		IntegerValueFunctionality usdaDurationFunc = funcService
+				.getUndownloadedSharedDocumentsAlertDuration(owner.getDomain());
+		Integer usdaDuration = usdaDurationFunc.getValue();
+		Calendar c = Calendar.getInstance();
+		int day = c.get(Calendar.DAY_OF_WEEK);
+		int nbWeek = (day -2 + usdaDuration) / 5;
+		int finalamount = usdaDuration + nbWeek * 2;
+		c.add(Calendar.DATE, finalamount);
+		res = c.getTime();
+		if (usdaDurationFunc.getDelegationPolicy().getStatus()) {
+			if (userInput != null) {
+				if (userInput.before(new Date())) {
+					throw new BusinessException(
+							BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_BEFORE,
+							"Can not share documents, notification date for USDA is before today.");
+				}
+				if (userInput.after(
+						getDefaultShareExpiryDate(owner.getDomain()))) {
+					throw new BusinessException(
+							BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_AFTER,
+							"Can not share documents, expiry date is after the max date.");
+				}
+				res = userInput;
+			}
+		}
+		return res;
+	}
+
 	private boolean hasRightsToShareWithExternals(User sender) {
 		AbstractDomain domain = sender.getDomain();
 		if (domain != null) {
-			Functionality func = functionalityReadOnlyService
+			Functionality func = funcService
 					.getAnonymousUrl(domain);
 			return func.getActivationPolicy().getStatus();
 		}
@@ -332,7 +365,10 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 	}
 
 	private Date getDefaultShareExpiryDate(AbstractDomain domain) {
-		TimeUnitValueFunctionality shareExpiration = functionalityReadOnlyService
+		// FIXME : One day it was used and working, but when ?
+//		expiryDate = shareExpiryDateService
+//				.computeMinShareExpiryDateOfList(shareContainer.getDocuments(), owner);
+		TimeUnitValueFunctionality shareExpiration = funcService
 				.getDefaultShareExpiryTimeFunctionality(domain);
 		Calendar defaultExpiration = GregorianCalendar.getInstance();
 		defaultExpiration.add(shareExpiration.toCalendarValue(),

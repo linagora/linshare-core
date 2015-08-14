@@ -215,10 +215,10 @@ public class Share {
 		showAcknowledgementCheckBox = shareFacade
 				.isVisibleAcknowledgementCheckBox(domainId);
 		showShareExpirationDate = shareFacade.isVisibleShareExpiration(domainId);
-		showUndownloadedSharedDocumentsAlertCheckbox = shareFacade.isVisibleUndownloadedSharedDocumentsAlert(domainId);
+		showUndownloadedSharedDocumentsAlertCheckbox = shareFacade.isVisibleUndownloadedSharedDocumentsAlert(userVo);
 		if (showUndownloadedSharedDocumentsAlertCheckbox) {
 			enableUndownloadedSharedDocumentsAlert = shareFacade
-					.getDefaultUndownloadedSharedDocumentsAlert(domainId);
+					.getDefaultUndownloadedSharedDocumentsAlert(userVo);
 		}
 		if (showSecureSharingCheckBox) {
 			secureSharing = shareFacade
@@ -236,7 +236,7 @@ public class Share {
 		}
 		if (showUndownloadedSharedDocumentsAlertCheckbox) {
 			notificationDate = shareFacade
-					.getUndownloadedSharedDocumentsAlertDefaultValue(domainId);
+					.getUndownloadedSharedDocumentsAlertDefaultValue(userVo);
 			maxLocalizedNotificationDate = DateFormat.getDateInstance(
 					DateFormat.SHORT, persistentLocale.get()).format(
 							shareExpiryDate);

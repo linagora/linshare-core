@@ -83,7 +83,6 @@
 		<constructor-arg ref="guestRepository" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="shareEntryBusinessService" />
-		<constructor-arg ref="shareExpiryDateService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="notifierService" />
@@ -93,15 +92,9 @@
 		<constructor-arg ref="shareEntryResourceAccessControl" />
 	</bean>
 
-	<bean id="shareEntryGroupService" class="org.linagora.linshare.core.service.impl.ShareEntryGroupServiceImpl">
-		<constructor-arg ref="shareEntryGroupBusinessService" />
-		<constructor-arg ref="logEntryService" />
-	</bean>
-
 	<bean id="anonymousShareEntryService" class="org.linagora.linshare.core.service.impl.AnonymousShareEntryServiceImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="anonymousShareEntryBusinessService" />
-		<constructor-arg ref="shareExpiryDateService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="mailBuildingService" />
@@ -233,5 +226,10 @@
 		<constructor-arg ref="shareEntryResourceAccessControl" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="shareEntryGroupService" />
+		<constructor-arg ref="shareExpiryDateService" />
+	</bean>
+	<bean id="shareEntryGroupService" class="org.linagora.linshare.core.service.impl.ShareEntryGroupServiceImpl">
+		<constructor-arg ref="shareEntryGroupBusinessService" />
+		<constructor-arg ref="logEntryService" />
 	</bean>
 </beans>

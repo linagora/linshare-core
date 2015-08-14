@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ShareEntryGroupRepository;
+import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
@@ -55,10 +56,16 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 public class ShareEntryGroupRepositoryImplTest extends
 		AbstractTransactionalJUnit4SpringContextTests {
 
+	private static final String IMPORT_LOCAL_TEST_SEG_UUID_1 = "c96d778e-b09b-4557-b785-ff5124bd2b8d";
+	private static final String IMPORT_LOCAL_TEST_SEG_UUID_2 = "61eae04b-9496-4cb1-900e-eda8caac6703";
+	private static final String IMPORT_LOCAL_TEST_SEG_UUID_4 = "421a2bc5-d41c-4b83-8e94-cd87aa2964c3";
+	private static final String IMPORT_LOCAL_TEST_SEG_UUID_5 = "6588844c-3891-44bf-af14-b2b85ca47de4";
+	private static final String IMPORT_LOCAL_TEST_SEG_UUID_6 = "027599d8-3433-4e07-9b7c-e8be82fed4a9";
 	private static int countdocs = 4;
-	private static int countEntries = 13;
+	private static int countEntries = 14;
 	private static int countdocEntries = 4;
-	private static int countShareEntries = 6;
+	private static int countShareEntries = 7;
+	private static int countAnonymousShareEntries = 3;
 	private static int countShareEntryGroup = 6;
 
 	@Autowired
@@ -69,6 +76,7 @@ public class ShareEntryGroupRepositoryImplTest extends
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		int entries = this.countRowsInTable("entry");
 		int shares = this.countRowsInTable("share_entry");
+		int ashares = this.countRowsInTable("anonymous_share_entry");
 		int docEntries = this.countRowsInTable("document_entry");
 		int docs = this.countRowsInTable("document");
 		this.executeSqlScript("import-tests-share-entry-group-setup.sql", false);
@@ -76,6 +84,8 @@ public class ShareEntryGroupRepositoryImplTest extends
 				this.countRowsInTable("entry"));
 		Assert.assertEquals(countShareEntries + shares,
 				this.countRowsInTable("share_entry"));
+		Assert.assertEquals(countAnonymousShareEntries + ashares,
+				this.countRowsInTable("anonymous_share_entry"));
 		Assert.assertEquals(countdocEntries + docEntries,
 				this.countRowsInTable("document_entry"));
 		Assert.assertEquals(countdocs + docs, this.countRowsInTable("document"));
@@ -103,9 +113,9 @@ public class ShareEntryGroupRepositoryImplTest extends
 			Assert.fail("Should not happend");
 		}
 		logger.debug("findAllShareEntriesAboutToBeNotified : " + list);
-		Assert.assertEquals(countShareEntryGroup - 4, list.size());
-		Assert.assertTrue(list.contains("c96d778e-b09b-4557-b785-ff5124bd2b8d"));
-		Assert.assertTrue(list.contains("61eae04b-9496-4cb1-900e-eda8caac6703"));
+		Assert.assertEquals(2, list.size());
+		Assert.assertTrue(list.contains(IMPORT_LOCAL_TEST_SEG_UUID_1));
+		Assert.assertTrue(list.contains(IMPORT_LOCAL_TEST_SEG_UUID_2));
 		logger.debug("End testFindAllShareEntriesAboutToBeNotified");
 	}
 
@@ -122,9 +132,9 @@ public class ShareEntryGroupRepositoryImplTest extends
 			Assert.fail("Should not happend");
 		}
 		logger.debug("findAllAnonymousShareEntriesAboutToBeNotified : " + list);
-		Assert.assertEquals(countShareEntryGroup - 4, list.size());
-		Assert.assertTrue(list.contains("c96d778e-b09b-4557-b785-ff5124bd2b8d"));
-		Assert.assertTrue(list.contains("6588844c-3891-44bf-af14-b2b85ca47de4"));
+		Assert.assertEquals(2, list.size());
+		Assert.assertTrue(list.contains(IMPORT_LOCAL_TEST_SEG_UUID_1));
+		Assert.assertTrue(list.contains(IMPORT_LOCAL_TEST_SEG_UUID_5));
 		logger.debug("End testFindAllAnonymousShareEntriesAboutToBeNotified");
 	}
 
@@ -144,11 +154,11 @@ public class ShareEntryGroupRepositoryImplTest extends
 		logger.debug("findAllToNotify : " + findAllToNotify);
 		Assert.assertEquals(countShareEntryGroup - 3, findAllToNotify.size());
 		Assert.assertTrue(findAllToNotify
-				.contains("c96d778e-b09b-4557-b785-ff5124bd2b8d"));
+				.contains(IMPORT_LOCAL_TEST_SEG_UUID_1));
 		Assert.assertTrue(findAllToNotify
-				.contains("61eae04b-9496-4cb1-900e-eda8caac6703"));
+				.contains(IMPORT_LOCAL_TEST_SEG_UUID_2));
 		Assert.assertTrue(findAllToNotify
-				.contains("6588844c-3891-44bf-af14-b2b85ca47de4"));
+				.contains(IMPORT_LOCAL_TEST_SEG_UUID_5));
 		logger.debug("End testFindAllAboutToBeNotified");
 	}
 
@@ -164,13 +174,34 @@ public class ShareEntryGroupRepositoryImplTest extends
 			}
 			Assert.assertEquals(2, findAllToPurge.size());
 			Assert.assertTrue(findAllToPurge
-					.contains("421a2bc5-d41c-4b83-8e94-cd87aa2964c3"));
+					.contains(IMPORT_LOCAL_TEST_SEG_UUID_4));
 			Assert.assertTrue(findAllToPurge
-					.contains("027599d8-3433-4e07-9b7c-e8be82fed4a9"));
+					.contains(IMPORT_LOCAL_TEST_SEG_UUID_6));
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail("Should not happend");
 		}
 		logger.debug("End testFindAllToPurge");
+	}
+
+	@Test
+	public void testNeedNotification() throws BusinessException,
+			JobExecutionException {
+		Set<String> allUuids = repository.findAllAboutToBeNotified();
+		Assert.assertEquals(3, allUuids.size());
+
+		ShareEntryGroup shareEntryGroup = null;
+
+		shareEntryGroup = repository
+				.findByUuid(IMPORT_LOCAL_TEST_SEG_UUID_5);
+		Assert.assertFalse(shareEntryGroup.needNotification());
+
+		shareEntryGroup = repository
+				.findByUuid(IMPORT_LOCAL_TEST_SEG_UUID_1);
+		Assert.assertTrue(shareEntryGroup.needNotification());
+
+		shareEntryGroup = repository
+				.findByUuid(IMPORT_LOCAL_TEST_SEG_UUID_2);
+		Assert.assertTrue(shareEntryGroup.needNotification());
 	}
 }

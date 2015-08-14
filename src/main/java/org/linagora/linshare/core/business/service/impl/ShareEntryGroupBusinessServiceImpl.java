@@ -84,7 +84,7 @@ public class ShareEntryGroupBusinessServiceImpl
 	}
 
 	@Override
-	public List<String> findUndownloadedSharedDocToAlert() {
+	public List<String> findAllAboutToBeNotified() {
 		List<String> all= Lists.newArrayList();
 		all.addAll(repository.findAllAboutToBeNotified());
 		return all;

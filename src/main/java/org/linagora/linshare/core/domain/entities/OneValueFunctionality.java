@@ -60,4 +60,22 @@ public abstract class OneValueFunctionality<U> extends Functionality {
 	public void setValue(U value) {
 		this.value = value;
 	}
+
+	/**
+	 * Check activation policy, delegation policy if exists and user value if
+	 * defined
+	 * 
+	 * @param userValue
+	 *            : false, true, or null if user have not defined a value.
+	 * @return integer
+	 */
+	public U getFinalValue(U userValue) {
+		U result = getValue();
+		if (getDelegationPolicy() != null && getDelegationPolicy().getStatus()) {
+			if (userValue != null) {
+				result = userValue;
+			}
+		}
+		return result;
+	}
 }

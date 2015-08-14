@@ -408,11 +408,11 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	}
 
 	@Override
-	public boolean isVisibleUndownloadedSharedDocumentsAlert(String domainId) {
-		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
+	public boolean isVisibleUndownloadedSharedDocumentsAlert(UserVo actorVo) {
+		User actor = getActor(actorVo);
 		try {
 			BooleanValueFunctionality undownloadedSharedFunc = functionalityReadOnlyService
-					.getUndownloadedSharedDocumentsAlert(domain);
+					.getUndownloadedSharedDocumentsAlert(actor.getDomain());
 			if (undownloadedSharedFunc.getActivationPolicy().getStatus()) {
 				return undownloadedSharedFunc.getDelegationPolicy().getStatus();
 			}
@@ -424,10 +424,10 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	}
 
 	@Override
-	public boolean getDefaultUndownloadedSharedDocumentsAlert(String domainId) {
-		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
+	public boolean getDefaultUndownloadedSharedDocumentsAlert(UserVo actorVo) {
+		User actor = getActor(actorVo);
 		try {
-			BooleanValueFunctionality alert = functionalityReadOnlyService.getUndownloadedSharedDocumentsAlert(domain);
+			BooleanValueFunctionality alert = functionalityReadOnlyService.getUndownloadedSharedDocumentsAlert(actor.getDomain());
 			if (alert.getActivationPolicy().getStatus()) {
 				return alert.getValue();
 			}
@@ -440,14 +440,9 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 
 	@Override
 	public Date getUndownloadedSharedDocumentsAlertDefaultValue(
-			String domainId) {
-		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
-		Calendar c = Calendar.getInstance();
-		c.setTime(new Date());
-		c.add(Calendar.DATE,
-				functionalityReadOnlyService
-						.getUndownloadedSharedDocumentsAlertDuration(domain)
-						.getValue());
-		return c.getTime();
+			UserVo actorVo) {
+		User actor = getActor(actorVo);
+		Date duration = shareService.getUndownloadedSharedDocumentsAlertDuration(actor);
+		return duration;
 	}
 }

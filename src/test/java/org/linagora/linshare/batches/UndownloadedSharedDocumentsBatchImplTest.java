@@ -22,8 +22,7 @@ import org.subethamail.wiser.Wiser;
 import com.google.common.collect.Lists;
 
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
-		"classpath:springContext-dao.xml",
-		"classpath:springContext-ldap.xml",
+		"classpath:springContext-dao.xml", "classpath:springContext-ldap.xml",
 		"classpath:springContext-jackRabbit-mock.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-business-service.xml",
@@ -33,15 +32,14 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
 public class UndownloadedSharedDocumentsBatchImplTest extends
-AbstractTransactionalJUnit4SpringContextTests {
+		AbstractTransactionalJUnit4SpringContextTests {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(UndownloadedSharedDocumentsBatchImplTest.class);
-	
+
 	@Qualifier("undownloadedSharedDocumentsBatch")
 	@Autowired
 	private GenericBatch undownloadedSharedDocumentsBatch;
-	
 
 	private Wiser wiser;
 
@@ -66,8 +64,7 @@ AbstractTransactionalJUnit4SpringContextTests {
 	}
 
 	@Test
-	public void test1() throws BusinessException,
-			JobExecutionException {
+	public void testBatch() throws BusinessException, JobExecutionException {
 		LinShareJobBean job = new LinShareJobBean();
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(undownloadedSharedDocumentsBatch);

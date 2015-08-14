@@ -104,6 +104,12 @@ public class AnonymousShareEntry extends Entry{
 		this.shareEntryGroup = shareEntryGroup;
 	}
 
+	@Override
+	public String toString() {
+		return "AnonymousShareEntry [downloaded=" + downloaded + ", name="
+				+ name + ", uuid=" + uuid + "]";
+	}
+
 	/* usefull getters */
 	public long getSize() {
 		return documentEntry.getSize();

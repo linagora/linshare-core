@@ -65,7 +65,6 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,8 +77,6 @@ public class AnonymousShareEntryServiceImpl extends
 	private final FunctionalityReadOnlyService functionalityService;
 
 	private final AnonymousShareEntryBusinessService anonymousShareEntryBusinessService;
-
-	private final ShareExpiryDateService shareExpiryDateService;
 
 	private final LogEntryService logEntryService;
 
@@ -97,7 +94,6 @@ public class AnonymousShareEntryServiceImpl extends
 	public AnonymousShareEntryServiceImpl(
 			final FunctionalityReadOnlyService functionalityService,
 			final AnonymousShareEntryBusinessService anonymousShareEntryBusinessService,
-			final ShareExpiryDateService shareExpiryDateService,
 			final LogEntryService logEntryService,
 			NotifierService notifierService,
 			final MailBuildingService mailBuildingService,
@@ -107,7 +103,6 @@ public class AnonymousShareEntryServiceImpl extends
 		super(rac);
 		this.functionalityService = functionalityService;
 		this.anonymousShareEntryBusinessService = anonymousShareEntryBusinessService;
-		this.shareExpiryDateService = shareExpiryDateService;
 		this.logEntryService = logEntryService;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
@@ -153,10 +148,6 @@ public class AnonymousShareEntryServiceImpl extends
 			passwordProtected = anonymousUrlFunc.getValue();
 		}
 		sc.setSecured(passwordProtected);
-		if (expiryDate == null) {
-			expiryDate = shareExpiryDateService
-					.computeMinShareExpiryDateOfList(sc.getDocuments(), targetedAccount);
-		}
 		for (Recipient recipient : sc.getAnonymousShareRecipients()) {
 			Language mailLocale = recipient.getLocale();
 			if (mailLocale == null){

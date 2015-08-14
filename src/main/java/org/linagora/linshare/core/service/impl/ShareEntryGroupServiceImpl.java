@@ -47,6 +47,7 @@ public class ShareEntryGroupServiceImpl implements ShareEntryGroupService {
 
 	private ShareEntryGroupBusinessService businessService;
 
+	@SuppressWarnings("unused")
 	private LogEntryService logEntryService;
 
 	public ShareEntryGroupServiceImpl(
@@ -88,10 +89,10 @@ public class ShareEntryGroupServiceImpl implements ShareEntryGroupService {
 	}
 
 	@Override
-	public List<String> findUndownloadedSharedDocToAlert(Account actor) {
+	public List<String> findAllAboutToBeNotified(Account actor) {
 		Validate.notNull(actor);
 		return businessService
-				.findUndownloadedSharedDocToAlert();
+				.findAllAboutToBeNotified();
 	}
 
 	@Override

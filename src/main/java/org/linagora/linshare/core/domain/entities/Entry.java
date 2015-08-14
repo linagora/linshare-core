@@ -151,6 +151,11 @@ public abstract class Entry {
 	}
 
 	@Override
+	public String toString() {
+		return "Entry [name=" + name + ", uuid=" + uuid + "]";
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

@@ -172,4 +172,9 @@ public class DocumentEntry extends Entry implements Serializable {
 		shared --;
 	}
 
+	@Override
+	public String toString() {
+		return "DocumentEntry [name=" + name + ", uuid=" + uuid + "]";
+	}
+
 }
