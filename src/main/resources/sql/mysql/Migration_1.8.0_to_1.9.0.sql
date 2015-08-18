@@ -509,7 +509,7 @@ UPDATE document_entry, document SET document_entry.has_thumbnail = (SELECT docum
 UPDATE document_entry
 	SET shared = (SELECT COUNT(document_entry_id)
 	FROM (SELECT entry_id, document_entry_id FROM share_entry UNION ALL SELECT entry_id, document_entry_id FROM anonymous_share_entry) as all_shared 
-	WHERE all_shared.document_entry_id = document_entry.document_id);
+	WHERE all_shared.document_entry_id = document_entry.entry_id);
 
 ALTER TABLE document_entry
 	MODIFY type varchar(255) NOT NULL,
