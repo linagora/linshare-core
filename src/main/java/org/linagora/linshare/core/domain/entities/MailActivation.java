@@ -59,4 +59,34 @@ public class MailActivation extends AbstractFunctionality {
 	public void setEnable(boolean enable) {
 		this.enable = enable;
 	}
+
+	@Override
+	public boolean hasSomeParam() {
+		return true;
+	}
+
+	@Override
+	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
+		MailActivation f = (MailActivation) functionality;
+		this.enable = f.isEnable();
+	}
+
+	@Override
+	public void updateFunctionalityFrom(AbstractFunctionality functionality) {
+		super.updateFunctionalityFrom(functionality);
+		this.updateFunctionalityValuesOnlyFrom(functionality);
+	}
+
+	@Override
+	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
+		if(super.businessEquals(obj, checkPolicies)) {
+			MailActivation ma = (MailActivation)obj;
+			if(ma.isEnable() == enable) {
+				logger.debug("MailActivation : " + this.toString() + " is equal to MailActivation " + obj.toString());
+				return true;
+			}
+		}
+		logger.debug("MailActivation : " + this.toString() + " is not equal to MailActivation " + obj.toString());
+		return false;
+	}
 }
