@@ -49,15 +49,14 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AnonymousShareEntryBusinessService {
 
-	public AnonymousShareEntry findByUuid(String uuid);
-
-	public AnonymousShareEntry findByUuidForDownload(String uuid) throws BusinessException;
+	AnonymousShareEntry findByUuid(String uuid);
 
 	@Deprecated
-	public AnonymousUrl createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup) throws BusinessException;
+	AnonymousUrl createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup) throws BusinessException;
 
-	public AnonymousUrl create(User sender, Recipient recipient, Set<DocumentEntry> documentEntries, Date expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup) throws BusinessException;
+	AnonymousUrl create(User sender, Recipient recipient, Set<DocumentEntry> documentEntries, Date expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup) throws BusinessException;
 
-	public void delete(AnonymousShareEntry anonymousShare) throws BusinessException;
+	void delete(AnonymousShareEntry anonymousShare) throws BusinessException;
 
+	AnonymousShareEntry updateDownloadCounter(AnonymousShareEntry entry) throws BusinessException;
 }
