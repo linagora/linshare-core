@@ -332,7 +332,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 				throw new BusinessException(BusinessErrorCode.RELAY_HOST_NOT_ENABLE, "Address Unreachable", unknownRecipients);
 			}
 		} else {
-			logger.error("can not send mails, input list empty");
+			logger.debug("can not send mails, input list empty");
 		} 
 	}	
 	
