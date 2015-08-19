@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
@@ -74,24 +73,20 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 	}
 
 	@Override
-	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Date expirationDate, ShareEntryGroup shareEntryGroup) throws BusinessException {
+	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate, ShareEntryGroup shareEntryGroup) throws BusinessException {
 		ShareEntry shareEntity;
 		ShareEntry current_share = shareEntryRepository.getShareEntry(documentEntry, sender, recipient);
-		// FIXME : Calendar hack : temporary hack on expiry date
-		Calendar expiryCal = Calendar.getInstance();
-		expiryCal.setTime(expirationDate);
-
 		if(current_share == null) {
 			// if not, we create one
 			logger.debug("Creation of a new share between sender " + sender.getMail() + " and recipient " + recipient.getMail());
-			ShareEntry share= new ShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), recipient, documentEntry, expiryCal, shareEntryGroup);
+			ShareEntry share= new ShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), recipient, documentEntry, expirationDate, shareEntryGroup);
 			shareEntity = shareEntryRepository.create(share);
 			documentEntry.incrementShared();
 		} else {
 			// if it does, we update the expiration date
 			logger.debug("The share (" + documentEntry.getUuid() +") between sender " + sender.getMail() + " and recipient " + recipient.getMail() + " already exists. Just updating expiration date.");
 			shareEntity = current_share;
-			shareEntity.setExpirationDate(expiryCal);
+			shareEntity.setExpirationDate(expirationDate);
 			shareEntryRepository.update(shareEntity);
 		}
 

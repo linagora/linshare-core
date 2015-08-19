@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.core.business.service;
 
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -44,18 +44,18 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ShareEntryBusinessService {
 
-	public ShareEntry create(DocumentEntry documentEntry, User sender,
-			User recipient, Date expirationDate, ShareEntryGroup shareEntryGroup) throws BusinessException;
-
-	public void delete(ShareEntry share) throws BusinessException;
-
-	public ShareEntry find(String uuid);
-
-	public ShareEntry update(ShareEntry entry) throws BusinessException;
-
-	public List<ShareEntry> findAllMyRecievedShareEntries(User owner);
-
-	public ShareEntry updateDownloadCounter(String uuid)
+	ShareEntry create(DocumentEntry documentEntry, User sender, User recipient,
+			Calendar expirationDate, ShareEntryGroup shareEntryGroup)
 			throws BusinessException;
+
+	void delete(ShareEntry share) throws BusinessException;
+
+	ShareEntry find(String uuid);
+
+	ShareEntry update(ShareEntry entry) throws BusinessException;
+
+	List<ShareEntry> findAllMyRecievedShareEntries(User owner);
+
+	ShareEntry updateDownloadCounter(String uuid) throws BusinessException;
 
 }

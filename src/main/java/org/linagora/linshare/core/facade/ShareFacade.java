@@ -158,7 +158,7 @@ public interface ShareFacade {
 
 	boolean isVisibleShareExpiration(String domainId);
 
-	Date getDefaultShareExpirationValue(String domainId);
+	Date getDefaultShareExpirationValue(UserVo actorVo);
 
 	public void updateShareComment(UserVo userLoggedIn,
 			String editShareWithUuid, String shareComment) throws BusinessException;

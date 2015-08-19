@@ -36,7 +36,6 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
@@ -165,24 +164,9 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		// Check documents
 		transformDocuments(actor, owner, shareContainer);
 
-		// Check expiry date.
-		Date defaultShareExpiryDate = getDefaultShareExpiryDate(owner.getDomain());
-		if (shareContainer.getExpiryDate() != null) {
-			Date expiryDate = shareContainer.getExpiryDate();
-			if (expiryDate.before(new Date())) {
-				throw new BusinessException(
-						BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_BEFORE,
-						"Can not share documents, expiry date is before today.");
-			}
-			if (expiryDate.after(
-					defaultShareExpiryDate)) {
-				throw new BusinessException(
-						BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_AFTER,
-						"Can not share documents, expiry date is after the max date.");
-			}
-		} else {
-			shareContainer.setExpiryDate(defaultShareExpiryDate);
-		}
+		// Check expiration date.
+		shareContainer.setExpiryDate(getFinalShareExpiryDate(owner,
+				shareContainer.getExpiryDate()));
 
 		shareContainer.updateEncryptedStatus();
 
@@ -227,7 +211,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 	 *
 	 * @param owner
 	 * @param userInput : user date
-	 * @param expiryDate : should be a valid expiration date.
+	 * @param expiryDate : could be null
 	 * @return
 	 */
 	private Date getUndownloadedSharedDocumentsAlertDuration(Account owner, Date userInput, Date expiryDate) {
@@ -248,8 +232,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 							BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_BEFORE,
 							"Can not share documents, notification date for USDA is before today.");
 				}
-				if (userInput.after(
-						getDefaultShareExpiryDate(owner.getDomain()))) {
+				if (expiryDate != null && userInput.after(expiryDate)) {
 					throw new BusinessException(
 							BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_AFTER,
 							"Can not share documents, expiry date is after the max date.");
@@ -364,16 +347,42 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		return false;
 	}
 
-	private Date getDefaultShareExpiryDate(AbstractDomain domain) {
+	/**
+	 * 
+	 * @param actor
+	 * @param userExpiryDate
+	 * @return
+	 */
+	@Override
+	public Date getFinalShareExpiryDate(Account actor,
+			Date userExpiryDate) {
 		// FIXME : One day it was used and working, but when ?
-//		expiryDate = shareExpiryDateService
-//				.computeMinShareExpiryDateOfList(shareContainer.getDocuments(), owner);
+		// expiryDate = shareExpiryDateService.computeMinShareExpiryDateOfList(shareContainer.getDocuments(), owner);
 		TimeUnitValueFunctionality shareExpiration = funcService
-				.getDefaultShareExpiryTimeFunctionality(domain);
-		Calendar defaultExpiration = GregorianCalendar.getInstance();
-		defaultExpiration.add(shareExpiration.toCalendarValue(),
+				.getDefaultShareExpiryTimeFunctionality(actor.getDomain());
+		if (!shareExpiration.getActivationPolicy().getStatus()) {
+			return null;
+		}
+		Calendar expirationDate = Calendar.getInstance();
+		expirationDate.add(shareExpiration.toCalendarValue(),
 				shareExpiration.getValue());
-		return defaultExpiration.getTime();
+		Date result = expirationDate.getTime();
+		if (shareExpiration.getDelegationPolicy().getStatus()) {
+			if (userExpiryDate != null) {
+				if (userExpiryDate.before(new Date())) {
+					throw new BusinessException(
+							BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_BEFORE,
+							"Can not share documents, expiry date is before today.");
+				}
+				if (userExpiryDate.after(result)) {
+					throw new BusinessException(
+							BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_AFTER,
+							"Can not share documents, expiry date is after the max date.");
+				}
+				result = userExpiryDate;
+			}
+		}
+		return result;
 	}
 
 	protected void transformDocuments(Account actor, User owner,

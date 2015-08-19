@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <t:MyBorderLayout t:title="message:pages.files.upload.title" t:identifier="upload" t:currentHighlight="files"
-xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
 
     <script type="text/template" id="qq-template">
         <div class="qq-uploader-selector qq-uploader">
@@ -313,7 +313,12 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                             <div class="controls">
                                 <t:datefield t:id="notificationDate" t:value="notificationDate" t:validate="required" />
                                 <span class="help-inline">
-                                    ${message:pages.files.upload.message.notificationDate.help}  ${maxLocalizedNotificationDate}
+                                    <t:if test="${maxLocalizedNotificationDate}">
+                                        ${message:pages.files.upload.message.notificationDate.help} ${maxLocalizedNotificationDate}
+                                        <p:else>
+                                            ${message:pages.files.upload.message.notificationDate.help2}
+                                        </p:else>
+                                    </t:if>
                                 </span>
                             </div>
                     </t:if>

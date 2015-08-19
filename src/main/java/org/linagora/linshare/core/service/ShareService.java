@@ -55,4 +55,6 @@ public interface ShareService {
 	public void delete(Account actor, Account owner, String entryUuid) throws BusinessException;
 
 	Date getUndownloadedSharedDocumentsAlertDuration(Account actor);
+
+	Date getFinalShareExpiryDate(Account actor, Date userExpiryDate);
 }

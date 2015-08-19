@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -124,7 +123,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 			User sender,
 			Recipient recipient,
 			Set<DocumentEntry> documentEntries,
-			Date expirationDate,
+			Calendar expirationCalendar,
 			Boolean passwordProtected, ShareEntryGroup shareEntryGroup) throws BusinessException {
 
 		Contact someContact = new Contact(recipient.getMail());
@@ -134,10 +133,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		}
 		AnonymousUrl anonymousUrl = businessService.create(passwordProtected, contact);
 		for (DocumentEntry documentEntry : documentEntries) {
-			// FIXME : Calendar hack : temporary hack on expiry date
-			Calendar expiryCal = Calendar.getInstance();
-			expiryCal.setTime(expirationDate);
-			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expiryCal, shareEntryGroup);
+			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expirationCalendar, shareEntryGroup);
 			anonymousUrl.getAnonymousShareEntries().add(anonymousShareEntry);
 		}
 		businessService.update(anonymousUrl);

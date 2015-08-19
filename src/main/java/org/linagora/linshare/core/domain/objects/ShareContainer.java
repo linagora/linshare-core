@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.domain.objects;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -215,6 +216,15 @@ public class ShareContainer {
 
 	public Date getExpiryDate() {
 		return expiryDate;
+	}
+
+	public Calendar getExpiryCalendar() {
+		if (expiryDate != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(expiryDate);
+			return cal;
+		}
+		return null;
 	}
 
 	public void setExpiryDate(Date expiryDate) {

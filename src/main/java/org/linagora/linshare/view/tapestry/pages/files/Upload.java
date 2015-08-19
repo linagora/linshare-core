@@ -265,7 +265,7 @@ public class Upload {
 		}
 		if (showShareExpirationDate) {
 			shareExpiryDate = shareFacade
-					.getDefaultShareExpirationValue(domainId);
+					.getDefaultShareExpirationValue(userVo);
 			maxLocalizedExpirationDate = DateFormat.getDateInstance(
 					DateFormat.SHORT, persistentLocale.get()).format(
 					shareExpiryDate);
@@ -273,9 +273,11 @@ public class Upload {
 		if (showUndownloadedSharedDocumentsAlertCheckbox) {
 			notificationDate = shareFacade
 					.getUndownloadedSharedDocumentsAlertDefaultValue(userVo);
-			maxLocalizedNotificationDate = DateFormat.getDateInstance(
-					DateFormat.SHORT, persistentLocale.get()).format(
-							shareExpiryDate);
+			if (shareExpiryDate != null) {
+				maxLocalizedNotificationDate = DateFormat.getDateInstance(
+						DateFormat.SHORT, persistentLocale.get()).format(
+								shareExpiryDate);
+			}
 		}
 	}
 
@@ -398,8 +400,7 @@ public class Upload {
 							BusinessUserMessageType.QUICKSHARE_NOMAIL,
 							MessageSeverity.ERROR));
 				} else if (ex.equalErrCode(BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_AFTER)) {
-					String domainId = userVo.getDomainIdentifier();
-					Date max = shareFacade.getDefaultShareExpirationValue(domainId);
+					Date max = shareFacade.getDefaultShareExpirationValue(userVo);
 					String localizedExpirationDate = DateFormat
 							.getDateInstance(DateFormat.SHORT,
 									persistentLocale.get()).format(
@@ -433,8 +434,7 @@ public class Upload {
 
 	@Log
 	public void onValidateFromShareExpiryDate(Date toValidate) throws BusinessException {
-		String domainId = userVo.getDomainIdentifier();
-		Date max = shareFacade.getDefaultShareExpirationValue(domainId);
+		Date max = shareFacade.getDefaultShareExpirationValue(userVo);
 		if (toValidate.after(max)) {
 			String localizedExpirationDate = DateFormat.getDateInstance(DateFormat.SHORT, persistentLocale.get()).format(max);
 			uploaderForm.recordError(messages.format("pages.files.validation.expiryDateTooLate", localizedExpirationDate));

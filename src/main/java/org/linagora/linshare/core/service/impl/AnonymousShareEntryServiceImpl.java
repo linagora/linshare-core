@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.InputStream;
-import java.util.Date;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -137,7 +136,6 @@ public class AnonymousShareEntryServiceImpl extends
 		checkCreatePermission(actor, targetedAccount, AnonymousShareEntry.class,
 				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, null);
 		Set<AnonymousShareEntry> entries = Sets.newHashSet();
-		Date expiryDate = sc.getExpiryDate();
 		BooleanValueFunctionality anonymousUrlFunc = functionalityService.getAnonymousUrl(targetedAccount.getDomain());
 		Boolean passwordProtected = sc.getSecured();
 		if (passwordProtected == null) {
@@ -156,17 +154,17 @@ public class AnonymousShareEntryServiceImpl extends
 			MailContainer mailContainer = new MailContainer(
 					mailLocale, sc.getMessage(), sc.getSubject());
 			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService
-					.create(targetedAccount, recipient, sc.getDocuments(), expiryDate,
+					.create(targetedAccount, recipient, sc.getDocuments(), sc.getExpiryCalendar(),
 							passwordProtected, shareEntryGroup);
 			// logs.
 			for (DocumentEntry documentEntry : sc.getDocuments()) {
 				ShareLogEntry logEntry = new ShareLogEntry(targetedAccount, documentEntry,
 						LogAction.FILE_SHARE, "Anonymous sharing of a file",
-						expiryDate, recipient);
+						sc.getExpiryCalendar(), recipient);
 				if(sc.getEnableUSDA()){
 					logEntry = new ShareLogEntry(targetedAccount, documentEntry,
 							LogAction.FILE_SHARE_WITH_ALERT_FOR_USD, "Anonymous sharing of a file with a undownloaded shared document alert",
-							expiryDate, recipient);
+							sc.getExpiryCalendar(), recipient);
 				}
 				logEntryService.create(logEntry);
 			}

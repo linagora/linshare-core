@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -1558,10 +1559,12 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		StringBuffer creationDate = new StringBuffer();
-		StringBuffer expirationDate = new StringBuffer();
-		creationDate.append(formater.format(entries.iterator().next().getCreationDate().getTime()));
-		expirationDate.append(formater.format(entries.iterator().next().getExpirationDate().getTime()));
+		String creationDate = formater.format(entries.iterator().next().getCreationDate().getTime());
+		Calendar tempExpirationDate = entries.iterator().next().getExpirationDate();
+		String expirationDate = "None";
+		if (tempExpirationDate != null) {
+			expirationDate = formater.format(tempExpirationDate.getTime());
+		}
 
 		long count = 0;
 		StringBuffer docNames = new StringBuffer();
@@ -1592,9 +1595,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("message", container.getMessage())
 				.add("documentNames", docNames.toString())
 				.add("creationDate", creationDate.toString())
-				.add("expirationDate", expirationDate.toString())
+				.add("expirationDate", expirationDate)
 //				FIX: 1.9.0
-				.add("expirationdate", expirationDate.toString())
+				.add("expirationdate", expirationDate)
 				.add("fileNumber", "" + count)
 				.add("recipientNames", recipientNames.toString());
 		mailContainer.setSubject(container.getSubject());

@@ -71,7 +71,6 @@ import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.SearchDocumentService;
-import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -436,7 +435,7 @@ AbstractTransactionalJUnit4SpringContextTests {
 
 		for (DocumentEntry documentEntry : shareDocuments) {
 			shares.add(shareEntryBusinessService.create(documentEntry,
-					John, Jane, cldr.getTime(), null));
+					John, Jane, cldr, null));
 		}
 
 		try {
@@ -485,7 +484,7 @@ AbstractTransactionalJUnit4SpringContextTests {
 
 		for (DocumentEntry documentEntry : shareDocuments) {
 			shares.add(shareEntryBusinessService.create(documentEntry,
-					John, Jane, cldr.getTime(), null));
+					John, Jane, cldr, null));
 		}
 
 		try {

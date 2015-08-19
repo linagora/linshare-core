@@ -216,13 +216,9 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	}
 
 	@Override
-	public Date getDefaultShareExpirationValue(String domainId) {
-		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
-		TimeUnitValueFunctionality shareExpiration = functionalityReadOnlyService
-				.getDefaultShareExpiryTimeFunctionality(domain);
-		Calendar defaultExpiration = GregorianCalendar.getInstance();
-		defaultExpiration.add(shareExpiration.toCalendarValue(), shareExpiration.getValue());
-		return defaultExpiration.getTime();
+	public Date getDefaultShareExpirationValue(UserVo actorVo) {
+		User actor = getActor(actorVo);
+		return shareService.getFinalShareExpiryDate(actor, null);
 	}
 
 	@Override

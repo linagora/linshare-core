@@ -385,12 +385,20 @@ public class ListDocument {
 					Map<String, Calendar> securedUrls = shareFacade.getAnonymousSharingsByUserAndFile(user, docVo);
 					for (ShareDocumentVo share : shares) {
 						UserVo receiver = share.getReceiver();
-						fillRowParams(templateRowParams, receiver.getFirstName(), receiver.getLastName(), receiver.getMail(), formatter.format(share.getShareExpirationDate().getTime()));
+						String expirationDate = "";
+						if (share.getShareExpirationDate() != null) {
+							expirationDate = formatter.format(share.getShareExpirationDate().getTime());
+						}
+						fillRowParams(templateRowParams, receiver.getFirstName(), receiver.getLastName(), receiver.getMail(), expirationDate);
 						tempBuf.append(templating.getMessage(templateRow, templateRowParams));
 					}
 					Set<Entry<String, Calendar>> set = securedUrls.entrySet();
 					for (Entry<String, Calendar> entry : set) {
-						fillRowParams(templateRowParams, " ", " ", entry.getKey(), formatter.format(entry.getValue().getTime()));
+						String expirationDate = "";
+						if (entry.getValue() != null) {
+							expirationDate = formatter.format(entry.getValue().getTime());
+						}
+						fillRowParams(templateRowParams, " ", " ", entry.getKey(), expirationDate);
 						tempBuf.append(templating.getMessage(templateRow, templateRowParams));
 					}
 					templateParams.put("${rows}", tempBuf.toString());

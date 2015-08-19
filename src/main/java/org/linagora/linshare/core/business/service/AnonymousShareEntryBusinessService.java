@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.business.service;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -54,7 +53,7 @@ public interface AnonymousShareEntryBusinessService {
 	@Deprecated
 	AnonymousUrl createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup) throws BusinessException;
 
-	AnonymousUrl create(User sender, Recipient recipient, Set<DocumentEntry> documentEntries, Date expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup) throws BusinessException;
+	AnonymousUrl create(User sender, Recipient recipient, Set<DocumentEntry> documentEntries, Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup) throws BusinessException;
 
 	void delete(AnonymousShareEntry anonymousShare) throws BusinessException;
 
