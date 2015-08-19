@@ -1502,7 +1502,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		String footer = formatFooter(f.getFooter(), lang);
 		String layout = cfg.getMailLayoutHtml().getLayout();
 
-		logger.info("Building mail content: " + type);
+		logger.debug("Building mail content: " + type);
 		pm = formatPersonalMessage(pm, lang);
 		String subject = builder.getSubjectChain().build(subjectTemplate);
 		greetings = builder.getGreetingsChain().build(greetings);
