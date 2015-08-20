@@ -62,6 +62,8 @@ public abstract class User extends Account {
 
 	protected boolean canUpload;
 
+	protected Boolean inconsistent;
+
 	/** If the user is allowed to create guest */
 	protected boolean canCreateGuest;
 
@@ -223,6 +225,14 @@ public abstract class User extends Account {
 
 	public void setCanCreateGuest(Boolean canCreateGuest) {
 		this.canCreateGuest = canCreateGuest;
+	}
+
+	public Boolean isInconsistent() {
+		return inconsistent;
+	}
+
+	public void setInconsistent(Boolean inconsistent) {
+		this.inconsistent = inconsistent;
 	}
 
 	/*

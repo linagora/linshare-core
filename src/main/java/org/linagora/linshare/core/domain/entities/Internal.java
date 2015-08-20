@@ -52,6 +52,7 @@ public class Internal extends User {
 	public Internal() {
 		super();
 		lsUuid = UUID.randomUUID().toString();
+		this.inconsistent = false;
 	}
 
 	/**
@@ -70,6 +71,7 @@ public class Internal extends User {
 		super(firstName, lastName, mail);
 		this.ldapUid = ldapUid;
 		this.lsUuid = UUID.randomUUID().toString();
+		this.inconsistent = false;
 	}
 
 	public Internal(UserDto userDto) {

@@ -37,7 +37,7 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_patt
 
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step) VALUES (1, 6, 'root@localhost.localdomain', current_date(), current_date(), 3, 'en', 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1, 'IN_USE');
-INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (1, 'Administrator', 'LinShare', 'root@localhost.localdomain', false, '', false, false);
+INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent) VALUES (1, 'Administrator', 'LinShare', 'root@localhost.localdomain', false, '', false, false, false);
 
 -- system account :
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, destroyed, domain_id, purge_step) VALUES (2, 7, 'system', current_date(), current_date(), 3, 'en', 'en', 'en', true, false, 1, 'IN_USE');

@@ -5,6 +5,8 @@ SET CHARACTER SET UTF8;
 SET AUTOCOMMIT=0;
 START TRANSACTION;
 
+ALTER TABLE users ADD COLUMN inconsistent tinyint(1) DEFAULT False,
+
 
 -- TODO check what happen if bit value was null.
 

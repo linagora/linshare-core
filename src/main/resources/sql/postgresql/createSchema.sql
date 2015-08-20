@@ -287,6 +287,7 @@ CREATE TABLE users (
   expiration_date       timestamp,
   ldap_uid              varchar(255),
   can_create_guest      bool NOT NULL,
+  inconsistent          bool DEFAULT 'False',
   CONSTRAINT user_pkey
     PRIMARY KEY (account_id));
 CREATE TABLE version (

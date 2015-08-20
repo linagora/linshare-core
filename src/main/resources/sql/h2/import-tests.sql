@@ -23,11 +23,11 @@ UPDATE domain_abstract SET mailconfig_id = 1;
 
 
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step) VALUES (10, 2, 'aebe1b64-39c0-11e5-9fa8-080027b8274b', now(), now(), 0, 'en', 'en', 'en', true, null, false, 2, 'IN_USE');
-INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (10, 'John', 'Do', 'user1@linshare.org', true, '', false, true);
+INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent) VALUES (10, 'John', 'Do', 'user1@linshare.org', true, '', false, true, false);
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step) VALUES (11, 2, 'd896140a-39c0-11e5-b7f9-080027b8274b', now(), now(), 0, 'en', 'en', 'en', true, null, false, 2, 'IN_USE');
-INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (11, 'Jane', 'Simth', 'user2@linshare.org', true, '', false, true);
+INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent) VALUES (11, 'Jane', 'Simth', 'user2@linshare.org', true, '', false, true, false);
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step) VALUES (12, 2, 'e524e1ba-39c0-11e5-b704-080027b8274b', now(), now(), 0, 'en', 'en', 'en', true, null, false, 2, 'IN_USE');
-INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (12, 'Foo', 'Bar', 'user3@linshare.org', true, '', false, true);
+INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent) VALUES (12, 'Foo', 'Bar', 'user3@linshare.org', true, '', false, true, false);
 
 
 UPDATE policy SET status = true where id=27;
@@ -79,7 +79,7 @@ UPDATE domain_abstract SET mime_policy_id=1 WHERE id >= 100001;
 
 
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step) VALUES (100001, 6, 'root@localhost.localdomain@test', current_date(), current_date(), 3, 'en', 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 100001, 'IN_USE');
-INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (100001, 'Administrator', 'LinShare', 'root@localhost.localdomain@test', false, '', false, false);
+INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent) VALUES (100001, 'Administrator', 'LinShare', 'root@localhost.localdomain@test', false, '', false, false, false);
 
 
 -- root domain de test
