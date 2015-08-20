@@ -43,8 +43,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class GenericBatchImpl<T> implements GenericBatch<T> {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(GenericBatchImpl.class);
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	protected final AccountRepository<Account> accountRepository;
 

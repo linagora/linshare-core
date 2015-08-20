@@ -47,8 +47,6 @@ import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.job.quartz.ResourceContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.GuestService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -57,9 +55,6 @@ import com.google.common.collect.Sets;
  */
 public class DeleteGuestBatchImpl extends GenericBatchImpl<Guest> implements
 		DeleteGuestBatch {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(DeleteGuestBatchImpl.class);
 
 	private final GuestService service;
 

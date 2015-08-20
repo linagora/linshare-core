@@ -48,15 +48,11 @@ import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.job.quartz.ResourceContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Sets;
 
 public class MarkUserToPurgeBatchImpl extends GenericBatchImpl<User>
 		implements MarkUserToPurgeBatch {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(MarkUserToPurgeBatchImpl.class);
 
 	private final UserService service;
 

@@ -47,15 +47,10 @@ import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.job.quartz.ResourceContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UploadRequestEntryUrlService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UploadRequestEntryUrlBatchImpl extends
 		GenericBatchImpl<UploadRequestEntryUrl> implements
 		UploadRequestEntryUrlBatch {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(UploadRequestEntryUrlBatch.class);
 
 	protected UploadRequestEntryUrlService service;
 

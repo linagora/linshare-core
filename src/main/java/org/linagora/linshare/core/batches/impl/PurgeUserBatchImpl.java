@@ -47,15 +47,11 @@ import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.job.quartz.ResourceContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Sets;
 
 public class PurgeUserBatchImpl extends GenericBatchImpl<User> implements
 		PurgeUserBatch {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(PurgeUserBatchImpl.class);
 
 	private final UserService service;
 
