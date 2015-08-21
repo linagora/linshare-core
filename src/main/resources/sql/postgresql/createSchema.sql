@@ -650,6 +650,7 @@ CREATE TABLE share_entry_group (
   notification_date timestamp,
   creation_date     timestamp NOT NULL,
   modification_date timestamp NOT NULL,
+  expiration_date   timestamp NULL,
   notified          bool DEFAULT 'false' NOT NULL,
   processed         bool DEFAULT 'false' NOT NULL,
   PRIMARY KEY (id));

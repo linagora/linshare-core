@@ -106,6 +106,7 @@ CREATE TABLE share_entry_group (
   notification_date datetime NULL,
   creation_date     datetime NOT NULL,
   modification_date datetime NOT NULL,
+  expiration_date   datetime NULL,
   notified          tinyint(1) DEFAULT false NOT NULL,
   processed         tinyint(1) DEFAULT false NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;

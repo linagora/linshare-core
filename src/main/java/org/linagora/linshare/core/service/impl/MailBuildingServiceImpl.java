@@ -81,6 +81,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 public class MailBuildingServiceImpl implements MailBuildingService {
 
@@ -98,6 +99,14 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	private final MailActivationBusinessService mailActivationBusinessService;
 
 	private static final String LINSHARE_LOGO = "<img src='cid:image.part.1@linshare.org' /><br/><br/>";
+
+	private final Map<Language, String> downloaded = Maps.newHashMap();
+
+	private final Map<Language, String> notDownloaded = Maps.newHashMap();
+
+	private final Map<Language, String> shareWith = Maps.newHashMap();
+
+	private final Map<Language, String> anonymouslySharedWith = Maps.newHashMap();
 
 	private class FileRepresentation {
 
@@ -251,6 +260,14 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		this.insertLicenceTerm = insertLicenceTerm;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mailActivationBusinessService = mailActivationBusinessService;
+		this.downloaded.put(Language.ENGLISH, "DOWNLOADED");
+		this.notDownloaded.put(Language.ENGLISH, "NOT DOWNLOADED");
+		this.shareWith.put(Language.ENGLISH, "Shared with");
+		this.anonymouslySharedWith.put(Language.ENGLISH, "Anonymously shared with");
+		this.downloaded.put(Language.FRENCH, "TÉLÉCHARGÉ");
+		this.notDownloaded.put(Language.FRENCH, "NON TÉLÉCHARGÉ");
+		this.shareWith.put(Language.FRENCH, "Partagé avec");
+		this.anonymouslySharedWith.put(Language.FRENCH, "Partagé anonymement avec");
 	}
 
 	private String formatCreationDate(Account account, Entry entry) {
@@ -680,7 +697,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildNoDocumentHasBeenDownloadedAcknowledgment(
 			ShareEntryGroup shareEntryGroup) throws BusinessException {
-		if (isDisable(shareEntryGroup.getOwner(), MailActivationType.UNDOWNLOADED_SHARED_DOCUMENTS_ALERT)) {
+		if (isDisable(shareEntryGroup.getOwner(),
+				MailActivationType.UNDOWNLOADED_SHARED_DOCUMENTS_ALERT)) {
 			return null;
 		}
 		User owner = (User) shareEntryGroup.getOwner();
@@ -688,37 +706,110 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
-
+		Language userLocale = owner.getExternalMailLocale();
 		DateFormat df = DateFormat.getDateInstance(DateFormat.FULL,
-				Locale.forLanguageTag(
-						owner.getExternalMailLocale().getTapestryLocale()));
+				Locale.forLanguageTag(userLocale.getTapestryLocale()));
 		String creationDate = df.format(shareEntryGroup.getCreationDate());
-		StringBuffer documentNames = new StringBuffer();
-		StringBuffer recipientNames = new StringBuffer();
-		long shareSize = 0;
-		for (ShareEntry share : shareEntryGroup.getShareEntries()) {
-			if (owner.getLsUuid().equals(share.getEntryOwner().getLsUuid())) {
-				shareSize += 1;
-				documentNames.append(
-						"<li><a href='" + "'>" + share.getName() + "</a></li>");
-				recipientNames.append(
-						"<li>" + share.getRecipient().getMail() + "</li>");
+		String expirationDate = "";
+		if (shareEntryGroup.getExpirationDate() != null) {
+			expirationDate = df.format(shareEntryGroup.getExpirationDate());
+		}
+		StringBuffer shareInfoBuffer = new StringBuffer();
+
+		Map<DocumentEntry, Set<Entry>> tmpDocuments = shareEntryGroup
+				.getTmpDocuments();
+		for (Map.Entry<DocumentEntry, Set<Entry>> tmpDocument : tmpDocuments
+				.entrySet()) {
+
+			DocumentEntry documentEntry = tmpDocument.getKey();
+
+			Map<DocumentEntry, Boolean> allDocuments = shareEntryGroup
+					.getTmpDocumentsWasDownloaded();
+			String buildDownloadedStateString = "";
+			Boolean documentHasBeenDownloaded = false;
+			if (allDocuments.size() > 0) {
+				documentHasBeenDownloaded = allDocuments.get(documentEntry);
+				buildDownloadedStateString = downloadOrUndownloadedDocumentUSDA(documentHasBeenDownloaded, userLocale);
+			}
+			shareInfoBuffer
+					.append("<tr style='border-bottom: 1px solid black;'><td style='padding-top: .7em;'><a style='text-decoration: none;' href='")
+					.append(getOwnerDocumentLink(owner,
+							documentEntry.getUuid()))
+					.append("'>").append(documentEntry.getName())
+					.append("</a> : </td><td style='padding-top: .7em; padding-left: 10px;'>")
+					.append(buildDownloadedStateString).append("</td>")
+					.append("</tr>");
+
+			for (Entry entry : tmpDocuments.get(documentEntry)) {
+				shareInfoBuffer.append(
+						buildStringBufferForMailActivationTemplate(entry,
+								userLocale, documentHasBeenDownloaded));
 			}
 		}
-
 		builder.getSubjectChain().add("subject", shareEntryGroup.getSubject())
 				.add("date", creationDate);
 		builder.getGreetingsChain().add("firstName", owner.getFirstName())
 				.add("lastName", owner.getLastName());
-		builder.getBodyChain().add("number", "" + shareSize)
-				.add("recipientNames", recipientNames.toString())
-				.add("documentNames", documentNames.toString());
+		builder.getBodyChain().add("creationDate", creationDate)
+				.add("expirationDate", expirationDate)
+				.add("shareInfo", shareInfoBuffer.toString());
 		container.setSubject(shareEntryGroup.getSubject());
 		container.setRecipient(owner.getMail());
 		container.setFrom(getFromMailAddress((User) owner));
 
 		return buildMailContainer(cfg, container, "",
 				MailContentType.UNDOWNLOADED_SHARED_DOCUMENT_ALERT, builder);
+	}
+
+	private StringBuffer buildStringBufferForMailActivationTemplate(Entry entry,
+			Language userLocale, Boolean documentHasBeenDownloaded) {
+		StringBuffer shareInfoBuffer = new StringBuffer();
+		shareInfoBuffer.append("<tr>");
+		shareInfoBuffer.append("<td style='padding-left: 10px;'>");
+
+		if (entry instanceof ShareEntry) {
+			ShareEntry share = (ShareEntry) entry;
+			shareInfoBuffer.append(shareWith.get(userLocale)).append(" : <b>")
+					.append(share.getRecipient().getFullName())
+					.append("</b>  (")
+					.append(share.getRecipient().getMail() + ")")
+					.append("</td><td style='padding-left: 10px;'>")
+					.append(downloadOrUndownloadedForEachUserUSDA(
+							documentHasBeenDownloaded,
+							share.getDownloaded() > 0,
+							downloaded.get(userLocale)));
+		} else {
+			AnonymousShareEntry aShare = (AnonymousShareEntry) entry;
+			shareInfoBuffer.append(anonymouslySharedWith.get(userLocale))
+					.append(" : <b>")
+
+			.append(aShare.getAnonymousUrl().getContact().getMail() + "</b>")
+					.append("</td><td style='padding-left: 10px;'>")
+					.append(downloadOrUndownloadedForEachUserUSDA(
+							documentHasBeenDownloaded,
+							aShare.getDownloaded() > 0,
+							downloaded.get(userLocale)));
+		}
+		shareInfoBuffer.append("</td></tr>");
+		return shareInfoBuffer;
+	}
+
+	private String downloadOrUndownloadedForEachUserUSDA(Boolean documentIsDownloaded,
+			Boolean userHasDownloaded, String downloadedLocale) {
+		if (documentIsDownloaded != null && documentIsDownloaded == true) {
+			return userHasDownloaded
+					? "<h5 style='display: inline; color:white; padding:0px 17px 0px 17px; background-color: green'>"
+							+ downloadedLocale + "</h5>"
+					: "";
+		}
+		return "";
+	}
+
+	private String downloadOrUndownloadedDocumentUSDA(Boolean documentHasBeenDownloaded,
+			Language userLocale) {
+		return documentHasBeenDownloaded != null && documentHasBeenDownloaded == true? ""
+				: "<h5 style='display: inline; color:white; padding:0px 5px 0px 5px; background-color: red'>"
+						+ notDownloaded.get(userLocale) + "</h5>";
 	}
 
 	private MailContainerWithRecipient buildNewAnonymousSharing(User sender, MailContainer input,
@@ -1446,6 +1537,13 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		String sep = path.endsWith("/") ? "" : "/";
 		String dl = path + sep + "index.listshareddocument.download/";
 		return dl + share.getUuid();
+	}
+
+	private String getOwnerDocumentLink(User owner, String documentUuid) {
+		String path = getLinShareUrlForAUserRecipient(owner);
+		String sep = path.endsWith("/") ? "" : "/";
+		String dl = path + sep + "files.listdocument.download/";
+		return dl + documentUuid;
 	}
 
 	private String getJwsEncryptUrlString(String rootUrl) {

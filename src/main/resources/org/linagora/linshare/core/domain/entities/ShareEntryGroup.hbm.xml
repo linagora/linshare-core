@@ -10,6 +10,7 @@
 		<property name="subject" column="subject" type="text" lazy="false"/>
 		<property name="notificationDate" column="notification_date" type="timestamp" not-null="false" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
+		<property name="expirationDate" column="expiration_date" type="timestamp" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="notified" column="notified" type="boolean" length="1" not-null="true" lazy="false"/>
 				<property name="processed" column="processed" type="boolean" length="1" not-null="true" lazy="false"/>

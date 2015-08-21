@@ -172,6 +172,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 		// Creation
 		ShareEntryGroup shareEntryGroup = new ShareEntryGroup(owner, shareContainer.getSubject());
+		shareEntryGroup.setExpirationDate(shareContainer.getExpiryDate());
+
 		BooleanValueFunctionality usdaFunc = funcService
 				.getUndownloadedSharedDocumentsAlert(actor.getDomain());
 		if (usdaFunc.getFinalValue(shareContainer.getEnableUSDA())) {

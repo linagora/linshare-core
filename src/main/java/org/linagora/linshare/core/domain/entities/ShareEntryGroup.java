@@ -60,6 +60,8 @@ public class ShareEntryGroup {
 
 	protected Boolean processed = false;
 
+	protected Date expirationDate;
+
 	protected Set<AnonymousShareEntry> anonymousShareEntries;
 
 	protected Set<ShareEntry> shareEntries;
@@ -179,6 +181,14 @@ public class ShareEntryGroup {
 
 	public void setProcessed(Boolean processed) {
 		this.processed = processed;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
 	}
 
 	public boolean needNotification() {
