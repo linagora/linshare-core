@@ -53,7 +53,7 @@ public interface GenericBatch {
 			long total, long position);
 
 	void terminate(List<String> all, long errors, long unhandled_errors,
-			long total);
+			long total, long processed);
 
 	void logDebug(long total, long position, String message);
 }

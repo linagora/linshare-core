@@ -36,7 +36,9 @@ package org.linagora.linshare.core.job.quartz;
 
 public abstract class Context {
 
-	String identifier;
+	protected String identifier;
+
+	protected Boolean processed;
 
 	public String getIdentifier() {
 		return identifier;
@@ -44,5 +46,13 @@ public abstract class Context {
 
 	public void setIdentifier(String identifier) {
 		this.identifier = identifier;
+	}
+
+	public Boolean getProcessed() {
+		return processed;
+	}
+
+	public void setProcessed(Boolean processed) {
+		this.processed = processed;
 	}
 }

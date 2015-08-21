@@ -169,7 +169,7 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 
 	@Override
 	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total) {
+			long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " notification have been sent.");
 		if (errors > 0) {

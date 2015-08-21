@@ -121,7 +121,7 @@ public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
 
 	@Override
 	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total) {
+			long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " ShareEntryGroup have been deleted");
 		if (errors > 0) {

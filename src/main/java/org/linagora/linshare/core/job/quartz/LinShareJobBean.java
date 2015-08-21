@@ -74,12 +74,18 @@ public class LinShareJobBean extends QuartzJobBean {
 			List<String> all = batch.getAll();
 			long position = 1;
 			long errors = 0;
+			long processed = 0;
 			long unhandled_errors = 0;
 			long total = all.size();
 			for (String resource : all) {
 				try {
 					batch.logDebug(total, position, "processing resource '" + resource + "' ...");
 					Context batchResult = batch.execute(resource, total, position);
+					if (batchResult.getProcessed() != null) {
+						if (batchResult.getProcessed().equals(true)) {
+							processed ++;
+						}
+					}
 					batch.notify(batchResult, total, position);
 				} catch (BatchBusinessException ex) {
 					errors++;
@@ -102,7 +108,7 @@ public class LinShareJobBean extends QuartzJobBean {
 				batch.logDebug(total, position, "resource processed.");
 				position++;
 			}
-			batch.terminate(all, errors, unhandled_errors, total);
+			batch.terminate(all, errors, unhandled_errors, total, processed);
 		}
 		return finalResult;
 	}
