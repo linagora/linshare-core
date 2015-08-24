@@ -530,7 +530,7 @@ INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (47, f
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (123, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (124, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (125, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, polidy_delegation_id, domain_id, parent_identifier, param) VALUES(51, false, 'GUESTS__EXPIRATION_ALLOW_PROLONGATION', 123, 124, 125, 1, 'GUESTS', true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES(51, false, 'GUESTS__EXPIRATION_ALLOW_PROLONGATION', 123, 124, 125, 1, 'GUESTS', true);
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (51, true);
 
 -- Functionality : UPLOAD_REQUEST_ENABLE_TEMPLATE
@@ -563,7 +563,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO unit(id, unit_type, unit_value) VALUES (13, 0, 0);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (55, 3, 13);
 
---Functionality: END
+-- Functionality: END
 
 
 -- MailActivation : BEGIN
