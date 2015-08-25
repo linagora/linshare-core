@@ -1607,11 +1607,11 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		if (container.getMessage() == null) {
 			return buildMailContainer(cfg, mailContainer,
-					null, MailContentType.SHARE_CREATION_ACKNOWLEDGMENT_FOR_OWNER,
+					null, MailContentType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER,
 					builder);
 		} else {
 			return buildMailContainer(cfg, mailContainer,
-					null, MailContentType.SHARE_CREATION_ACKNOWLEDGMENT_WITH_SPECIAL_MESSAGE_FOR_OWNER,
+					null, MailContentType.SHARE_CREATION_ACKNOWLEDGEMENT_WITH_SPECIAL_MESSAGE_FOR_OWNER,
 					builder);
 		}
 	}
