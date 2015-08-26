@@ -110,7 +110,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 		
 		ShareEntry createShare = shareEntryBusinessService.createShare(documentEntry, sender, recipient, expirationDate);
 		if (recipient.getAccountType().equals(AccountType.GUEST)) {
-			updateGuestExpirationDate(recipient, sender);
+			updateGuestExpirationDate(recipient, (User) recipient.getOwner());
 		}
 		
 		logEntryService.create(new ShareLogEntry(sender, createShare, LogAction.FILE_SHARE, "Sharing of a file"));
