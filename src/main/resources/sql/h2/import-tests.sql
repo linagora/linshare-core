@@ -1,3 +1,6 @@
+-- h2 dedicated sequence
+CREATE SEQUENCE IF NOT EXISTS h2_sequence INCREMENT BY 100000 START WITH 1 CACHE 1;
+
 -- ldap connection 
 INSERT INTO ldap_connection(id, uuid, label, provider_url, security_auth, security_principal, security_credentials, creation_date, modification_date) VALUES (50, 'a9b2058f-811f-44b7-8fe5-7a51961eb098', 'baseLDAP', 'ldap://localhost:33389', 'simple', '', '', now(), now());
 
@@ -28,6 +31,13 @@ INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date,
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent) VALUES (11, 'Jane', 'Simth', 'user2@linshare.org', true, '', false, true, false);
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step) VALUES (12, 2, 'e524e1ba-39c0-11e5-b704-080027b8274b', now(), now(), 0, 'en', 'en', 'en', true, null, false, 2, 'IN_USE');
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent) VALUES (12, 'Foo', 'Bar', 'user3@linshare.org', true, '', false, true, false);
+
+SET @john_do_id = SELECT 10;
+SET @jane_simth_id = SELECT 11;
+
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step) VALUES (13, 3, '46455499-f703-46a2-9659-24ed0fa0d63c', now(), now(), 0, 'en', 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 4, 'IN_USE');
+INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent) VALUES (13, 'Guest', 'Test', 'guest@linshare.org', true, '', false, true, false);
+SET @guest1_id = SELECT 13;
 
 
 UPDATE policy SET status = true where id=27;
