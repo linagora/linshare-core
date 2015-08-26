@@ -274,9 +274,9 @@ public class UserFacadeImpl implements UserFacade {
 		return null;
 	}
 	
-	public void updateUserDomain(String mail, AbstractDomainVo selectedDomain,
+	public void updateUserDomain(String uuid, AbstractDomainVo selectedDomain,
 			UserVo userLoggedIn) throws BusinessException {
-		userService.updateUserDomain(mail, selectedDomain.getIdentifier(), userLoggedIn);
+		userService.updateUserDomain(uuid, selectedDomain.getIdentifier(), userLoggedIn);
 	}
 	
 	public List<UserVo> searchAllBreakedUsers(UserVo userLoggedIn) {

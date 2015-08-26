@@ -373,8 +373,7 @@ public class UserSearchResults {
     
     public Object onSubmitFromUpdateDomain() throws BusinessException {
     	try {
-    		UserVo selectedUserVo = getUserFromLogin(selectedLogin);
-    		userFacade.updateUserDomain(selectedUserVo.getLogin(), selectedDomain, userLoggedIn);
+			userFacade.updateUserDomain(selectedLogin, selectedDomain, userLoggedIn);
     	} catch (BusinessException e) {
     		logger.error(e.getMessage());
 			logger.debug(e.toString());

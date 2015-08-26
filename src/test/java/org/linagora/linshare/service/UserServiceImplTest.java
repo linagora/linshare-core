@@ -694,7 +694,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		userService.saveOrUpdateUser(user2);
 		
-		userService.updateUserDomain(user2.getMail(), LoadingServiceTestDatas.sqlGuestDomain, userVo);
+		userService.updateUserDomain(user2.getLsUuid(), LoadingServiceTestDatas.sqlGuestDomain, userVo);
 		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

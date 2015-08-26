@@ -183,7 +183,7 @@ public interface UserFacade {
 	 */
 	List<UserVo> fetchGuestContacts(String login) throws BusinessException;
 
-	void updateUserDomain(String mail, AbstractDomainVo selectedDomain,
+	void updateUserDomain(String uuid, AbstractDomainVo selectedDomain,
 			UserVo userLoggedIn) throws BusinessException;
 
 	/**

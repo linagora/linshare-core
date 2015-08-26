@@ -831,15 +831,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUserDomain(String mail, String selectedDomain, UserVo ownerVo) throws BusinessException {
+	public void updateUserDomain(String uuid, String selectedDomain, UserVo ownerVo) throws BusinessException {
 		if (!ownerVo.isSuperAdmin()) {
-			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER, "The user " + mail + " cannot be moved to " + selectedDomain + " domain, " + ownerVo.getMail() + " is not a superadmin");
+			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER, "The user " + uuid + " cannot be moved to " + selectedDomain + " domain, " + ownerVo.getMail() + " is not a superadmin");
 		}
 		User user = null;
 		// Seek user in base. If not found, try again but in directories
-		if ((user = userRepository.findByMail(mail)) == null) {
+		if ((user = userRepository.findByLsUuid(uuid)) == null) {
 			try {
-				user = findOrCreateUser(mail, ownerVo.getDomainIdentifier());
+				user = findOrCreateUser(uuid, ownerVo.getDomainIdentifier());
 			} catch (BusinessException e) {
 				logger.error(e.toString());
 				throw e;

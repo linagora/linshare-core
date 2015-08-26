@@ -188,7 +188,7 @@ public interface UserService {
 
 	public List<String> getGuestEmailContacts(String uuid) throws BusinessException;
 
-	void updateUserDomain(String mail, String selectedDomain, UserVo actor) throws BusinessException;
+	void updateUserDomain(String uuid, String selectedDomain, UserVo actor) throws BusinessException;
 
 	/**
 	 * Search user that are internal and in the DB but not in domains (=removed from ldap).
