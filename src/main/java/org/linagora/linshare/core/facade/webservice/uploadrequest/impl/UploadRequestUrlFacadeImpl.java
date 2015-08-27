@@ -120,23 +120,23 @@ public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 	 */
 
 	private UploadRequestDto transform(UploadRequestUrl requestUrl) throws BusinessException {
-		if (requestUrl==null)
+		if (requestUrl==null) {
 			return null;
+		}
 		UploadRequestDto dto = new UploadRequestDto(requestUrl);
 		Account owner = requestUrl.getUploadRequest().getOwner();
 		Functionality functionality = functionalityReadOnlyService.getMimeTypeFunctionality(owner.getDomain());
-		Set<MimeType> mimeTypes = mimePolicyService.findAllMyMimeTypes(owner);
-		for (MimeType mimeType : mimeTypes) {
-			String extension = mimeType.getExtensions();
-			if (functionality.getActivationPolicy().getStatus()) {
+		if (functionality.getActivationPolicy().getStatus()) {
+			Set<MimeType> mimeTypes = mimePolicyService.findAllMyMimeTypes(owner);
+			for (MimeType mimeType : mimeTypes) {
+				String extension = mimeType.getExtensions();
 				if (mimeType.getEnable()) {
 					if (!extension.isEmpty()) {
 						dto.addExtensions(extension.substring(1));
 					}
-				}
-			} else {
-				if (!extension.isEmpty()) {
-					dto.addExtensions(extension.substring(1));
+					if (extension.equals(".jpg")) {
+						dto.addExtensions("jpeg");
+					}
 				}
 			}
 		}
