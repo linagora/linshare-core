@@ -72,6 +72,12 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		})
 public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
 	
+	private static final String IMPORT_LOCAL_TEST_SEG_UUID = "7d0ba756-ac50-4803-ba4f-c5bea7f46f5c";
+
+	private static final String IMPORT_LOCAL_TEST_ASE_UUID = "3a2a4d4e-9939-4d12-8c72-6b4b5180cd87";
+
+	private static final String IMPORT_TEST_GUEST_UUID = "46455499-f703-46a2-9659-24ed0fa0d63c";
+
 	private static Logger logger = LoggerFactory.getLogger(MailContentBuildingServiceImplTest.class);
 	
 	@Autowired
@@ -140,31 +146,40 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	public void testBuildMailAnonymousDownload() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AnonymousShareEntry anonymousShareEntry = anonymousShareEntryRepository
-				.findById("3a2a4d4e-9939-4d12-8c72-6b4b5180cd87");
-		MailContainerWithRecipient mail = mailBuildingService
-				.buildAnonymousDownload(anonymousShareEntry);
-		testMailGenerate(mail);
-		sendMail(mail);
+				.findById(IMPORT_LOCAL_TEST_ASE_UUID);
+		for (Language lang : Language.values()) {
+			john.setExternalMailLocale(lang);
+			MailContainerWithRecipient mail = mailBuildingService
+					.buildAnonymousDownload(anonymousShareEntry);
+			testMailGenerate(mail);
+			sendMail(mail);
+		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void testBuildMailNewGuest() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Guest guest = guestRepository.findByLsUuid("46455499-f703-46a2-9659-24ed0fa0d63c");
-		MailContainerWithRecipient mail =  mailBuildingService.buildNewGuest(john, guest, "password");
-		testMailGenerate(mail);
-		sendMail(mail);
+		Guest guest = guestRepository.findByLsUuid(IMPORT_TEST_GUEST_UUID);
+		for (Language lang : Language.values()) {
+			john.setExternalMailLocale(lang);
+			MailContainerWithRecipient mail =  mailBuildingService.buildNewGuest(john, guest, "password");
+			testMailGenerate(mail);
+			sendMail(mail);
+		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void testBuildMailResetPassword() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Guest guest = guestRepository.findByLsUuid("46455499-f703-46a2-9659-24ed0fa0d63c");
-		MailContainerWithRecipient mail =  mailBuildingService.buildResetPassword(guest, "password");
-		testMailGenerate(mail);
-		sendMail(mail);
+		Guest guest = guestRepository.findByLsUuid(IMPORT_TEST_GUEST_UUID);
+		for (Language lang : Language.values()) {
+			john.setExternalMailLocale(lang);
+			MailContainerWithRecipient mail =  mailBuildingService.buildResetPassword(guest, "password");
+			testMailGenerate(mail);
+			sendMail(mail);
+		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -172,10 +187,13 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	public void testBuildMailNewSharing() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		MailContainer mailContainer = new MailContainer(Language.ENGLISH);
-		MailContainerWithRecipient mail = mailBuildingService.buildNewSharing(
-				john, mailContainer, jane, getSeg().getShareEntries());
-		testMailGenerate(mail);
-		sendMail(mail);
+		for (Language lang : Language.values()) {
+			john.setExternalMailLocale(lang);
+			MailContainerWithRecipient mail = mailBuildingService.buildNewSharing(
+					john, mailContainer, jane, getSeg().getShareEntries());
+			testMailGenerate(mail);
+			sendMail(mail);
+		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -186,16 +204,19 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		ShareEntryGroup seg = getSeg();
 		// Force initialization of tmp* members.
 		seg.needNotification();
-		MailContainerWithRecipient mail = mailBuildingService
-				.buildNoDocumentHasBeenDownloadedAcknowledgment(seg);
-		testMailGenerate(mail);
-		sendMail(mail);
+		for (Language lang : Language.values()) {
+			john.setExternalMailLocale(lang);
+			MailContainerWithRecipient mail = mailBuildingService
+					.buildNoDocumentHasBeenDownloadedAcknowledgement(seg);
+			testMailGenerate(mail);
+			sendMail(mail);
+		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	private ShareEntryGroup getSeg() {
 		ShareEntryGroup seg = shareEntryGroupRepository
-				.findByUuid("7d0ba756-ac50-4803-ba4f-c5bea7f46f5c");
+				.findByUuid(IMPORT_LOCAL_TEST_SEG_UUID);
 		Assert.assertNotNull(seg);
 		return seg;
 	}

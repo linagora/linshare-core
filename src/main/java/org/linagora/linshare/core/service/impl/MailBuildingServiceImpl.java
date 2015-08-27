@@ -38,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -695,7 +696,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	@Override
-	public MailContainerWithRecipient buildNoDocumentHasBeenDownloadedAcknowledgment(
+	public MailContainerWithRecipient buildNoDocumentHasBeenDownloadedAcknowledgement(
 			ShareEntryGroup shareEntryGroup) throws BusinessException {
 		if (isDisable(shareEntryGroup.getOwner(),
 				MailActivationType.UNDOWNLOADED_SHARED_DOCUMENTS_ALERT)) {
@@ -715,36 +716,31 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			expirationDate = df.format(shareEntryGroup.getExpirationDate());
 		}
 		StringBuffer shareInfoBuffer = new StringBuffer();
-
-		Map<DocumentEntry, Set<Entry>> tmpDocuments = shareEntryGroup
+		Map<DocumentEntry, List<Entry>> tmpDocuments = shareEntryGroup
 				.getTmpDocuments();
-		for (Map.Entry<DocumentEntry, Set<Entry>> tmpDocument : tmpDocuments
+		for (Map.Entry<DocumentEntry, List<Entry>> tmpDocument : tmpDocuments
 				.entrySet()) {
-
 			DocumentEntry documentEntry = tmpDocument.getKey();
-
-			Map<DocumentEntry, Boolean> allDocuments = shareEntryGroup
-					.getTmpDocumentsWasDownloaded();
-			String buildDownloadedStateString = "";
-			Boolean documentHasBeenDownloaded = false;
-			if (allDocuments.size() > 0) {
-				documentHasBeenDownloaded = allDocuments.get(documentEntry);
-				buildDownloadedStateString = downloadOrUndownloadedDocumentUSDA(documentHasBeenDownloaded, userLocale);
-			}
+			boolean oneShareWasDownloaded = oneShareWasDownloaded(documentEntry, shareEntryGroup);
+			boolean allSharesWereDownloaded = allSharesWereDownloaded(documentEntry, shareEntryGroup);
 			shareInfoBuffer
-					.append("<tr style='border-bottom: 1px solid black;'><td style='padding-top: .7em;'><a style='text-decoration: none;' href='")
-					.append(getOwnerDocumentLink(owner,
-							documentEntry.getUuid()))
-					.append("'>").append(documentEntry.getName())
-					.append("</a> : </td><td style='padding-top: .7em; padding-left: 10px;'>")
-					.append(buildDownloadedStateString).append("</td>")
+					.append("<tr style='height: 10px;' ></tr>")
+					.append("<tr style='border-bottom: 1px solid black;'>")
+					.append("<td style='margin-bottom: 5px; padding-bottom: 3px; padding-top: 10px;'>")
+					.append("<a style='text-decoration: none; font-size: 13px;' href='")
+					.append(getOwnerDocumentLink(owner, documentEntry))
+					.append("'>")
+					.append(documentEntry.getName())
+					.append("</a> :")
+					.append("</td>")
+					.append("<td style='padding: 5px 0px; width: 130px;'>")
+					.append(flagDocumentDownloadedOrNotForUSDA(userLocale, oneShareWasDownloaded, allSharesWereDownloaded, false))
+					.append("</td>")
 					.append("</tr>");
-
 			for (Entry entry : tmpDocuments.get(documentEntry)) {
-				shareInfoBuffer.append(
-						buildStringBufferForMailActivationTemplate(entry,
-								userLocale, documentHasBeenDownloaded));
+				shareInfoBuffer.append(flagShareRowOrNotForUSDA(entry, userLocale, oneShareWasDownloaded, allSharesWereDownloaded));
 			}
+				shareInfoBuffer.append("<tr style='height: 5px;' ></tr>");
 		}
 		builder.getSubjectChain().add("subject", shareEntryGroup.getSubject())
 				.add("date", creationDate);
@@ -761,55 +757,130 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				MailContentType.UNDOWNLOADED_SHARED_DOCUMENT_ALERT, builder);
 	}
 
-	private StringBuffer buildStringBufferForMailActivationTemplate(Entry entry,
-			Language userLocale, Boolean documentHasBeenDownloaded) {
-		StringBuffer shareInfoBuffer = new StringBuffer();
-		shareInfoBuffer.append("<tr>");
-		shareInfoBuffer.append("<td style='padding-left: 10px;'>");
+	private boolean allSharesWereDownloaded(DocumentEntry documentEntry,
+			ShareEntryGroup shareEntryGroup) {
+		Map<DocumentEntry, Boolean> map = shareEntryGroup
+				.getTmpAllSharesWereNotDownloaded();
+		boolean allSharesWereDownloaded = false;
+		if (map.get(documentEntry) == null) {
+			allSharesWereDownloaded = true;
+		}
+		return allSharesWereDownloaded;
+	}
 
+	private Boolean oneShareWasDownloaded(DocumentEntry documentEntry,
+			ShareEntryGroup shareEntryGroup) {
+		Boolean wasDownloaded = false;
+		Map<DocumentEntry, Boolean> map = shareEntryGroup
+				.getTmpDocumentsWereDownloaded();
+		if (map.size() > 0) {
+			wasDownloaded = map.get(documentEntry);
+			if (wasDownloaded == null) {
+				wasDownloaded = false;
+			}
+		}
+		return wasDownloaded;
+	}
+
+	private String flagShareRowOrNotForUSDA(Entry entry, Language userLocale, boolean oneShareWasDownloaded, boolean allSharesWereDownloaded) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<tr>");
+		sb.append("<td style='padding: 5px 40px 5px 10px;'>");
 		if (entry instanceof ShareEntry) {
 			ShareEntry share = (ShareEntry) entry;
-			shareInfoBuffer.append(shareWith.get(userLocale)).append(" : <b>")
-					.append(share.getRecipient().getFullName())
-					.append("</b>  (")
-					.append(share.getRecipient().getMail() + ")")
-					.append("</td><td style='padding-left: 10px;'>")
-					.append(downloadOrUndownloadedForEachUserUSDA(
-							documentHasBeenDownloaded,
-							share.getDownloaded() > 0,
-							downloaded.get(userLocale)));
+			boolean shareDownloaded = share.getDownloaded() > 0;
+			sb.append(shareWith.get(userLocale))
+			.append(" : <b>")
+			.append(share.getRecipient().getFullName())
+			.append("</b>  (")
+			.append(share.getRecipient().getMail() + ")")
+			.append("</td>")
+			.append("<td>")
+			.append(flagShareDownloadedOrNotForUSDA(oneShareWasDownloaded, shareDownloaded, userLocale, allSharesWereDownloaded));
 		} else {
 			AnonymousShareEntry aShare = (AnonymousShareEntry) entry;
-			shareInfoBuffer.append(anonymouslySharedWith.get(userLocale))
-					.append(" : <b>")
-
-			.append(aShare.getAnonymousUrl().getContact().getMail() + "</b>")
-					.append("</td><td style='padding-left: 10px;'>")
-					.append(downloadOrUndownloadedForEachUserUSDA(
-							documentHasBeenDownloaded,
-							aShare.getDownloaded() > 0,
-							downloaded.get(userLocale)));
+			boolean shareDownloaded = aShare.getDownloaded() > 0;
+			sb.append(anonymouslySharedWith.get(userLocale))
+			.append(" : <b>")
+			.append(aShare.getAnonymousUrl().getContact().getMail())
+			.append("</b>")
+			.append("</td>")
+			.append("<td>")
+			.append(flagShareDownloadedOrNotForUSDA(oneShareWasDownloaded, shareDownloaded, userLocale, allSharesWereDownloaded));
 		}
-		shareInfoBuffer.append("</td></tr>");
-		return shareInfoBuffer;
+		sb.append("</td>");
+		sb.append("</tr>");
+		return sb.toString();
 	}
 
-	private String downloadOrUndownloadedForEachUserUSDA(Boolean documentIsDownloaded,
-			Boolean userHasDownloaded, String downloadedLocale) {
-		if (documentIsDownloaded != null && documentIsDownloaded == true) {
-			return userHasDownloaded
-					? "<h5 style='display: inline; color:white; padding:0px 17px 0px 17px; background-color: green'>"
-							+ downloadedLocale + "</h5>"
-					: "";
+	private String flagShareDownloadedOrNotForUSDA(
+			boolean oneShareWasDownloaded, boolean shareDownloaded,
+			Language userLocale, boolean allSharesWereDownloaded) {
+		String res = "";
+		if (!allSharesWereDownloaded) {
+			// check if there is at least one download
+			if (oneShareWasDownloaded) {
+				if (shareDownloaded) {
+					res = downloadedFlag(userLocale);
+				} else {
+					res = unDownloadedFlag(userLocale, true);
+				}
+			}
 		}
-		return "";
+		return res;
 	}
 
-	private String downloadOrUndownloadedDocumentUSDA(Boolean documentHasBeenDownloaded,
-			Language userLocale) {
-		return documentHasBeenDownloaded != null && documentHasBeenDownloaded == true? ""
-				: "<h5 style='display: inline; color:white; padding:0px 5px 0px 5px; background-color: red'>"
-						+ notDownloaded.get(userLocale) + "</h5>";
+	private String flagDocumentDownloadedOrNotForUSDA(Language userLocale,
+			boolean oneShareWasDownloaded, boolean allSharesWereDownloaded,
+			boolean warning) {
+		String res = "";
+		if (allSharesWereDownloaded) {
+			res = downloadedFlag(userLocale);
+		} else {
+			if (!oneShareWasDownloaded) {
+				// No download at all.
+				res = unDownloadedFlag(userLocale, false);
+			}
+		}
+		return res;
+	}
+
+
+
+	private String unDownloadedFlag(Language userLocale, boolean warning) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<h5 ")
+			.append("style='")
+			.append(" display: inline-block; color: white;")
+			.append(" padding: 3px 0px;")
+			.append(" margin: 0px; width: 100%; text-align: center;");
+			if (warning) {
+				// Orange
+				sb.append(" background-color: #FF8C00;");
+				sb.append("' >");
+				sb.append(notDownloaded.get(userLocale));
+			} else {
+				// Red
+				sb.append(" background-color: #EE0037;");
+				sb.append("' >");
+				sb.append(notDownloaded.get(userLocale));
+			}
+		sb.append("</h5>");
+		return sb.toString();
+	}
+
+	private String downloadedFlag(Language userLocale) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<h5 ")
+			.append("style='")
+			.append(" display: inline-block; color: white;")
+			.append(" padding: 3px 0px;")
+			.append(" background-color: #00A114;")
+			.append(" margin: 0px; width: 100%; text-align: center;")
+			.append("' >")
+			.append(downloaded.get(userLocale))
+			.append("</h5>");
+		return sb.toString();
 	}
 
 	private MailContainerWithRecipient buildNewAnonymousSharing(User sender, MailContainer input,
@@ -1517,9 +1588,13 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	private String getLinShareUrlForAUserRecipient(Account recipient) {
-		return functionalityReadOnlyService
+		String value = functionalityReadOnlyService
 				.getCustomNotificationUrlFunctionality(recipient.getDomain())
 				.getValue();
+		if (!value.endsWith("/")) {
+			return value + "/";
+		}
+		return value;
 	}
 
 	private String getLinShareUrlForAContactRecipient(Account sender) {
@@ -1539,11 +1614,12 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		return dl + share.getUuid();
 	}
 
-	private String getOwnerDocumentLink(User owner, String documentUuid) {
-		String path = getLinShareUrlForAUserRecipient(owner);
-		String sep = path.endsWith("/") ? "" : "/";
-		String dl = path + sep + "files.listdocument.download/";
-		return dl + documentUuid;
+	private String getOwnerDocumentLink(User owner, DocumentEntry doc) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(getLinShareUrlForAUserRecipient(owner));
+		sb.append("files.listdocument.download/");
+		sb.append(doc.getUuid());
+		return sb.toString();
 	}
 
 	private String getJwsEncryptUrlString(String rootUrl) {

@@ -34,11 +34,12 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 public class ShareEntryGroup {
 
@@ -71,9 +72,10 @@ public class ShareEntryGroup {
 	 */
 	protected Boolean tmpNeedNotification;
 
-	protected Map<DocumentEntry, Set<Entry>> tmpDocuments;
+	protected Map<DocumentEntry, List<Entry>> tmpDocuments;
 
-	protected Map<DocumentEntry, Boolean> tmpDocumentsWasDownloaded;
+	protected Map<DocumentEntry, Boolean> tmpDocumentsWereDownloaded;
+	protected Map<DocumentEntry, Boolean> tmpAllSharesWereNotDownloaded;
 
 	public ShareEntryGroup() {
 		super();
@@ -196,33 +198,38 @@ public class ShareEntryGroup {
 			return tmpNeedNotification;
 		}
 		tmpDocuments = Maps.newHashMap();
-		tmpDocumentsWasDownloaded = Maps.newHashMap();
+		tmpDocumentsWereDownloaded = Maps.newHashMap();
+		tmpAllSharesWereNotDownloaded = Maps.newHashMap();
 		for (ShareEntry shareEntry : getShareEntries()) {
 			DocumentEntry documentEntry = shareEntry.getDocumentEntry();
-			Set<Entry> set = tmpDocuments.get(documentEntry);
-			if (set == null) {
-				set = Sets.newHashSet();
+			List<Entry> list = tmpDocuments.get(documentEntry);
+			if (list == null) {
+				list = Lists.newArrayList();
 			}
-			set.add(shareEntry);
-			tmpDocuments.put(documentEntry, set);
+			list.add(shareEntry);
+			tmpDocuments.put(documentEntry, list);
 			if (shareEntry.getDownloaded() > 0) {
-				tmpDocumentsWasDownloaded.put(documentEntry, true);
+				tmpDocumentsWereDownloaded.put(documentEntry, true);
+			} else {
+				tmpAllSharesWereNotDownloaded.put(documentEntry, true);
 			}
 		}
 		for (AnonymousShareEntry anonymousShareEntry : getAnonymousShareEntries()) {
 			DocumentEntry documentEntry = anonymousShareEntry
 					.getDocumentEntry();
-			Set<Entry> set = tmpDocuments.get(documentEntry);
-			if (set == null) {
-				set = Sets.newHashSet();
+			List<Entry> list = tmpDocuments.get(documentEntry);
+			if (list == null) {
+				list = Lists.newArrayList();
 			}
-			set.add(anonymousShareEntry);
-			tmpDocuments.put(documentEntry, set);
+			list.add(anonymousShareEntry);
+			tmpDocuments.put(documentEntry, list);
 			if (anonymousShareEntry.getDownloaded() > 0) {
-				tmpDocumentsWasDownloaded.put(documentEntry, true);
+				tmpDocumentsWereDownloaded.put(documentEntry, true);
+			} else {
+				tmpAllSharesWereNotDownloaded.put(documentEntry, true);
 			}
 		}
-		if (tmpDocuments.size() == tmpDocumentsWasDownloaded.size()) {
+		if (tmpDocuments.size() == tmpDocumentsWereDownloaded.size()) {
 			tmpNeedNotification = false;
 		} else {
 			tmpNeedNotification = true;
@@ -234,11 +241,15 @@ public class ShareEntryGroup {
 		return tmpNeedNotification;
 	}
 
-	public Map<DocumentEntry, Set<Entry>> getTmpDocuments() {
+	public Map<DocumentEntry, List<Entry>> getTmpDocuments() {
 		return tmpDocuments;
 	}
 
-	public Map<DocumentEntry, Boolean> getTmpDocumentsWasDownloaded() {
-		return tmpDocumentsWasDownloaded;
+	public Map<DocumentEntry, Boolean> getTmpDocumentsWereDownloaded() {
+		return tmpDocumentsWereDownloaded;
+	}
+
+	public Map<DocumentEntry, Boolean> getTmpAllSharesWereNotDownloaded() {
+		return tmpAllSharesWereNotDownloaded;
 	}
 }

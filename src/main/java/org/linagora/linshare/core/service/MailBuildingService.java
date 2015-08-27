@@ -157,7 +157,7 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildNewSharingPersonnalNotification(
 			User sender, ShareContainer container, Set<Entry> entries) throws BusinessException;
 
-	MailContainerWithRecipient buildNoDocumentHasBeenDownloadedAcknowledgment(
+	MailContainerWithRecipient buildNoDocumentHasBeenDownloadedAcknowledgement(
 			ShareEntryGroup shareEntryGroup)
 					throws BusinessException;
 }

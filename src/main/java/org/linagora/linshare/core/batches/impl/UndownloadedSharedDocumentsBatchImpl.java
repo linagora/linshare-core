@@ -103,7 +103,7 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 			logger.info("needNotification : " + shareEntryGroup.needNotification());
 			if (shareEntryGroup.needNotification()) {
 				// log action and notification
-				mail = mailService.buildNoDocumentHasBeenDownloadedAcknowledgment(shareEntryGroup);
+				mail = mailService.buildNoDocumentHasBeenDownloadedAcknowledgement(shareEntryGroup);
 				shareEntryGroup.setNotified(true);
 				service.update(actor, shareEntryGroup);
 				logActions(shareEntryGroup, LogAction.SHARE_WITH_USD_NOT_DOWNLOADED);
@@ -116,7 +116,7 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 		} catch (BusinessException businessException) {
 			logError(total, position,
 					"Error while trying to send a notification for undownloaded shared documents");
-			logger.info("Error occured while sending notification ",
+			logger.error("Error occured while sending notification ",
 					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
 					context,
