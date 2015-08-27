@@ -294,7 +294,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			for (DocumentEntry documentEntry : sc.getDocuments()) {
 				ShareEntry createShare = shareEntryBusinessService.create(
 						documentEntry, owner, recipient, expiryDate);
-				updateGuestExpiryDate(recipient, owner);
+				updateGuestExpiryDate(recipient, (User) recipient.getOwner());
 				shares.add(createShare);
 				recipientFavouriteRepository.incAndCreate(owner,
 						recipient.getMail());
@@ -318,14 +318,14 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		return entries;
 	}
 
-	private void updateGuestExpiryDate(User recipient, User sender) {
+	private void updateGuestExpiryDate(User recipient, User recipientOwner) {
 		// update guest account expiry date
 		if (recipient.isGuest()) {
 
 			// get new guest expiry date
 			Calendar guestExpiryDate = Calendar.getInstance();
 			TimeUnitValueFunctionality guestFunctionality = functionalityService
-					.getGuestAccountExpiryTimeFunctionality(sender.getDomain());
+					.getGuestAccountExpiryTimeFunctionality(recipientOwner.getDomain());
 			guestExpiryDate.add(guestFunctionality.toCalendarUnitValue(),
 					guestFunctionality.getValue());
 
