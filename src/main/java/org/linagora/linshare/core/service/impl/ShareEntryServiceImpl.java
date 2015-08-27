@@ -110,7 +110,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 		
 		ShareEntry createShare = shareEntryBusinessService.createShare(documentEntry, sender, recipient, expirationDate);
 		if (recipient.getAccountType().equals(AccountType.GUEST)) {
-			updateGuestExpirationDate(recipient, sender);
+			updateGuestExpirationDate(recipient, (User) recipient.getOwner());
 		}
 		
 		logEntryService.create(new ShareLogEntry(sender, createShare, LogAction.FILE_SHARE, "Sharing of a file"));
@@ -120,13 +120,13 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	}
 
 	
-	private void updateGuestExpirationDate(User recipient, User sender) {
+	private void updateGuestExpirationDate(User recipient, User recipientOwner) {
 		// update guest account expiry date
 		if (recipient.getAccountType().equals(AccountType.GUEST)) {
 			
 			// get new guest expiry date
 			Calendar guestExpiryDate = Calendar.getInstance();
-			TimeUnitValueFunctionality guestFunctionality = functionalityService.getGuestAccountExpiryTimeFunctionality(sender.getDomain());
+			TimeUnitValueFunctionality guestFunctionality = functionalityService.getGuestAccountExpiryTimeFunctionality(recipientOwner.getDomain());
 	        guestExpiryDate.add(guestFunctionality.toCalendarUnitValue(), guestFunctionality.getValue());
 	        
 			Guest guest = guestRepository.findByMail(recipient.getLogin());
