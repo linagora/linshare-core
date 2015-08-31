@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.TechnicalAccountBusinessService;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -86,6 +87,7 @@ public class TechnicalAccountBusinessServiceImpl implements
 		AbstractDomain domain = abstractDomainRepository.findById(domainId);
 		account.setPassword(HashUtils.hashSha1withBase64(account.getPassword()
 				.getBytes()));
+		account.setCmisLocale(SupportedLanguage.toLanguage(domain.getDefaultTapestryLocale()).getTapestryLocale());
 		return this.create(domain, account);
 	}
 
