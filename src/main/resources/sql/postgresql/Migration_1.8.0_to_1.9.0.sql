@@ -121,7 +121,7 @@ ALTER TABLE domain_abstract
 
 -- UPLOAD REQUEST ENTRY URL
 CREATE TABLE upload_request_entry_url (
-  id                 int8 NOT NULL,
+  id                 int8 NOT NULL AUTO_INCREMENT,
   upload_request_entry_id int8 NOT NULL,
   uuid              varchar(255) NOT NULL UNIQUE,
   path              varchar(255) NOT NULL,
@@ -409,7 +409,7 @@ ALTER TABLE technical_account_permission
 	ALTER COLUMN modification_date TYPE timestamp;
 
 CREATE TABLE contact_provider (
-	id                 int8 NOT NULL,
+	id                 int8 NOT NULL AUTO_INCREMENT,
 	uuid               varchar(255) NOT NULL UNIQUE,
 	provider_type      varchar(255) NOT NULL,
 	base_dn            varchar(255),
@@ -494,7 +494,7 @@ ALTER TABLE ldap_pattern
 
 -- WELCOME MESSAGES CREATE TABLE AND INSERT MESSAGES
 CREATE TABLE welcome_messages (
-	id                int8 NOT NULL,
+	id                int8 NOT NULL AUTO_INCREMENT,
 	uuid              varchar(255) NOT NULL UNIQUE,
 	name              varchar(255) NOT NULL,
 	description       text NOT NULL,
@@ -504,7 +504,7 @@ CREATE TABLE welcome_messages (
 	PRIMARY KEY (id));
 CREATE UNIQUE INDEX welcome_messages_uuid ON welcome_messages(uuid);
 CREATE TABLE welcome_messages_entry (
-	id          int8 NOT NULL,
+	id          int8 NOT NULL AUTO_INCREMENT,
 	lang        varchar(255) NOT NULL,
 	value       varchar(255) NOT NULL,
 	welcome_messages_id  int8 NOT NULL,
