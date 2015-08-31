@@ -672,12 +672,12 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (181, fals
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
  VALUES(15, false, 'UPLOAD_REQUEST_CREATED', 179, 180, 181, 1, true);
 
--- MailActivation : UPLOAD_REQUEST_ACKNOWLEDGMENT
+-- MailActivation : UPLOAD_REQUEST_ACKNOWLEDGEMENT
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (182, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (183, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (184, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
- VALUES(16, false, 'UPLOAD_REQUEST_ACKNOWLEDGMENT', 182, 183, 184, 1, true);
+ VALUES(16, false, 'UPLOAD_REQUEST_ACKNOWLEDGEMENT', 182, 183, 184, 1, true);
 
 -- MailActivation : UPLOAD_REQUEST_REMINDER
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (185, true, true, 0, true);
@@ -749,12 +749,12 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (217, fals
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
  VALUES(27, false, 'UPLOAD_REQUEST_FILE_DELETED_BY_SENDER', 215, 216, 217, 1, true);
 
--- MailActivation : SHARE_CREATION_ACKNOWLEDGMENT_FOR_OWNER
+-- MailActivation : SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (218, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (219, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (220, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
- VALUES(28, false, 'SHARE_CREATION_ACKNOWLEDGMENT_FOR_OWNER', 218, 219, 220, 1, true);
+ VALUES(28, false, 'SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER', 218, 219, 220, 1, true);
 
 -- MailActivation : UNDOWNLOADED_SHARED_DOCUMENTS_ALERT
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (221, true, true, 0, true);
@@ -819,8 +819,8 @@ INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_t
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (17, 'd692674c-e797-49f1-a415-1df7ea5c8fee', 1, 0, 16, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload proposition filtered', E'An upload proposition has been filtered: ${subject}', E'A new upload proposition has been filtered.<br/>Subject: ${subject}<br/>${body}<br/><br/>');
 -- UPLOAD_REQUEST_CREATED
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (18, '40a74e4e-a663-4ad2-98ef-1e5d70d3536c', 1, 0, 17, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request created', E'A user ${actorRepresentation} has created upload request: ${subject}', E'<strong>${firstName} ${lastName}</strong> has just made you an upload request: ${subject}.<br/>${body}<br/>It will be activated ${activationDate}<br/><br/>');
--- UPLOAD_REQUEST_ACKNOWLEDGMENT
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (19, '5ea27e5b-9260-4ce1-b1bd-27372c5b653d', 1, 0, 18, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request acknowledgment', E'A user ${actorRepresentation} has upload a file for upload request: ${subject}', E'<strong>${firstName} ${lastName}</strong> has upload a file.<br/>File name: ${fileName}<br/>Deposit date: ${depositDate}<br/>File size: ${fileSize}<br/><br/>');
+-- UPLOAD_REQUEST_ACKNOWLEDGEMENT
+INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (19, '5ea27e5b-9260-4ce1-b1bd-27372c5b653d', 1, 0, 18, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request acknowledgement', E'A user ${actorRepresentation} has upload a file for upload request: ${subject}', E'<strong>${firstName} ${lastName}</strong> has upload a file.<br/>File name: ${fileName}<br/>Deposit date: ${depositDate}<br/>File size: ${fileSize}<br/><br/>');
 -- UPLOAD_REQUEST_REMINDER
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (20, '0d87e08d-d102-42b9-8ced-4d49c21ce126', 1, 0, 19, true, false, now(), now(), E'Hello ${firstName} ${lastName},<br/><br/>', E'Upload request reminder', E'A user ${actorRepresentation} reminds you have an upload request: ${subject}', E'<strong>${firstName} ${lastName}</strong> reminds you have got an upload request : ${subject}.<br/>${body}<br/>To upload files, simply click on the following link or copy/paste it into your favorite browser: <a href="${url}">${url}</a><br/><p>Upload request may be <b>encrypted</b>, use <em>password</em>: <code>${password}</code><br/><br/><br/><br/>');
 -- UPLOAD_REQUEST_WARN_OWNER_BEFORE_EXPIRY
@@ -885,7 +885,7 @@ INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_t
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (67, 'aac3fd67-043c-46b2-9fe6-7aa89d12c099', 1, 1, 16, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Invitation de dépôt filtrée', E'Une invitation de dépôt a été filtrée: ${subject}', E'Une nouvelle demande d’invitation de dépôt à été filtrée.<br/>Subject: ${subject}<br/>${body}<br/><br/>');
 -- UPLOAD_REQUEST_CREATED
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (68, '6d821746-e481-4eb1-84f8-0d64a0b8f526', 1, 1, 17, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Nouvelle invitation de dépôt', E'${actorRepresentation} a créé une invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> a créé l’invitation de dépôt: ${subject}<br/>${body}<br/>Elle sera active le ${activationDate}<br/><br/>');
--- UPLOAD_REQUEST_ACKNOWLEDGMENT
+-- UPLOAD_REQUEST_ACKNOWLEDGEMENT
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (69, '879ea2d3-68e4-465b-b6ce-4ee58998e441', 1, 1, 18, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Accusé de reception d’invitation de dépôt', E'${actorRepresentation} a déposé un fichier pour l’invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> a déposé un fichier.<br/>Nom du fichier: ${fileName}<br/>Date de dépôt: ${depositDate}<br/>Taille du fichier: ${fileSize}<br/><br/>');
 -- UPLOAD_REQUEST_REMINDER
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (70, '7a1baafb-1db3-4e9b-b39f-2f770d9e848b', 1, 1, 19, true, false, now(), now(), E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Rappel d’invitation de dépôt', E'${actorRepresentation} vous rappelle l’invitation de dépôt: ${subject}', E'<strong>${firstName} ${lastName}</strong> vous rappelle l’invitation de dépôt: ${subject}<br/>${body}<br/>Pour déposer des fichiers, cliquer sur le lien suivant ou copier/coller ce dernier dans votre navigateur favoris: <a href="${url}">${url}</a><br/>L’invitation de dépôt peu être <b>protégée</b>, utiliser le <em>nouveau mot de passe</em> suivant: <code>${password}</code><br/><br/>');

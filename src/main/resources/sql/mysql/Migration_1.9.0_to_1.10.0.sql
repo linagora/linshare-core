@@ -271,12 +271,12 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (181, fals
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
  VALUES(15, false, 'UPLOAD_REQUEST_CREATED', 179, 180, 181, 1, true);
 
--- MailActivation : UPLOAD_REQUEST_ACKNOWLEDGMENT
+-- MailActivation : UPLOAD_REQUEST_ACKNOWLEDGEMENT
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (182, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (183, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (184, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
- VALUES(16, false, 'UPLOAD_REQUEST_ACKNOWLEDGMENT', 182, 183, 184, 1, true);
+ VALUES(16, false, 'UPLOAD_REQUEST_ACKNOWLEDGEMENT', 182, 183, 184, 1, true);
 
 -- MailActivation : UPLOAD_REQUEST_REMINDER
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (185, true, true, 0, true);
@@ -348,12 +348,12 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (214, fals
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
  VALUES(26, false, 'UPLOAD_REQUEST_FILE_DELETED_BY_SENDER', 212, 213, 214, 1, true);
 
--- MailActivation : SHARE_CREATION_ACKNOWLEDGMENT_FOR_OWNER
+-- MailActivation : SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (215, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (216, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (217, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
- VALUES(27, false, 'SHARE_CREATION_ACKNOWLEDGMENT_FOR_OWNER', 215, 216, 217, 1, true);
+ VALUES(27, false, 'SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER', 215, 216, 217, 1, true);
 
 -- MailActivation : UNDOWNLOADED_SHARED_DOCUMENTS_ALERT
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (218, true, true, 0, true);
@@ -370,6 +370,10 @@ INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy
  VALUES(29, false, 'ANONYMOUS_URL__NOTIFICATION', 221, 222, 223, 1, true);
 
 -- MailActivation : END
+
+-- UPDATE FUNCTIONALITIES THAT CONTAINS ACKNOWLEDGMENT INSTEAD OF ACKNOWLEDGMENT
+UPDATE functionality SET identifier = 'SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER' WHERE idenditifier = 'SHARE_CREATION_ACKNOWLEDGMENT_FOR_OWNER';
+UPDATE functionality SET identifier = 'UPLOAD_REQUEST_ACKNOWLEDGEMENT' WHERE identifier = 'UPLOAD_REQUEST_ACKNOWLEDGMENT';
 
 -- UNDOWNLOADED SHARED DOCUMENTS ALERT MAIL CONTENT ENGLISH
 INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (33, 'eb291876-53fc-419b-831b-53a480399f7c', 1, 0, 32, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Undownloaded shared documents alert', '[Undownloaded shared documents alert] ${subject} Shared on ${date}.', 'Please find below the resume of the share you made on ${creationDate} with initial expiration date on ${expirationDate}.<br /> List of documents : <br /><table style="border-collapse: collapse;">${shareInfo}</table><br/>');
