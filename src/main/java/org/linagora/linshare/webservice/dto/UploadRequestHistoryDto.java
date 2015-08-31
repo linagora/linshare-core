@@ -68,25 +68,25 @@ public class UploadRequestHistoryDto {
 	private Date notificationDate;
 
 	@ApiModelProperty(value = "Max deposit size")
-	private long maxDepositSize;
+	private Long maxDepositSize;
 
 	@ApiModelProperty(value = "Max file count")
-	private int maxFileCount;
+	private Integer maxFileCount;
 
 	@ApiModelProperty(value = "Max file size")
-	private long maxFileSize;
+	private Long maxFileSize;
 
 	@ApiModelProperty(value = "Upload proposition request uuid")
 	private String uploadPropositionRequestUuid;
 
 	@ApiModelProperty(value = "Can delete")
-	private boolean canDelete;
+	private Boolean canDelete;
 
 	@ApiModelProperty(value = "Can close")
-	private boolean canClose;
+	private Boolean canClose;
 
 	@ApiModelProperty(value = "Can expiry date")
-	private boolean canEditExpiryDate;
+	private Boolean canEditExpiryDate;
 
 	@ApiModelProperty(value = "Locale")
 	private String locale;
@@ -184,27 +184,27 @@ public class UploadRequestHistoryDto {
 		this.notificationDate = notificationDate;
 	}
 
-	public long getMaxDepositSize() {
+	public Long getMaxDepositSize() {
 		return maxDepositSize;
 	}
 
-	public void setMaxDepositSize(long maxDepositSize) {
+	public void setMaxDepositSize(Long maxDepositSize) {
 		this.maxDepositSize = maxDepositSize;
 	}
 
-	public int getMaxFileCount() {
+	public Integer getMaxFileCount() {
 		return maxFileCount;
 	}
 
-	public void setMaxFileCount(int maxFileCount) {
+	public void setMaxFileCount(Integer maxFileCount) {
 		this.maxFileCount = maxFileCount;
 	}
 
-	public long getMaxFileSize() {
+	public Long getMaxFileSize() {
 		return maxFileSize;
 	}
 
-	public void setMaxFileSize(long maxFileSize) {
+	public void setMaxFileSize(Long maxFileSize) {
 		this.maxFileSize = maxFileSize;
 	}
 
@@ -216,27 +216,27 @@ public class UploadRequestHistoryDto {
 		this.uploadPropositionRequestUuid = uploadPropositionRequestUuid;
 	}
 
-	public boolean isCanDelete() {
+	public Boolean isCanDelete() {
 		return canDelete;
 	}
 
-	public void setCanDelete(boolean canDelete) {
+	public void setCanDelete(Boolean canDelete) {
 		this.canDelete = canDelete;
 	}
 
-	public boolean isCanClose() {
+	public Boolean isCanClose() {
 		return canClose;
 	}
 
-	public void setCanClose(boolean canClose) {
+	public void setCanClose(Boolean canClose) {
 		this.canClose = canClose;
 	}
 
-	public boolean isCanEditExpiryDate() {
+	public Boolean isCanEditExpiryDate() {
 		return canEditExpiryDate;
 	}
 
-	public void setCanEditExpiryDate(boolean canEditExpiryDate) {
+	public void setCanEditExpiryDate(Boolean canEditExpiryDate) {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
 
