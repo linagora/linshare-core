@@ -334,7 +334,7 @@ ALTER TABLE domain_abstract MODIFY default_locale varchar(255) NOT NULL;
 
 -- UPLOAD REQUEST ENTRY URL
 CREATE TABLE upload_request_entry_url (
-  id                bigint(8) NOT NULL,
+  id                bigint(8) NOT NULL AUTO_INCREMENT,
   upload_request_entry_id bigint(8) NOT NULL,
   uuid              varchar(255) NOT NULL UNIQUE,
   path              varchar(255) NOT NULL,
@@ -530,7 +530,7 @@ ALTER TABLE functionality_unit
 
 -- LDAP_CONNECTION RENAME TABLE AND ADD NEW COLUMNS
 call ls_drop_constraint_if_exists("user_provider_ldap", "fk409cafb23834018");
-ALTER TABLE ldap_connection CHANGE ldap_connection_id id bigint(8);
+ALTER TABLE ldap_connection CHANGE ldap_connection_id id bigint(8) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE ldap_connection CHANGE identifier label varchar(255);
 ALTER TABLE ldap_connection
@@ -583,7 +583,7 @@ ALTER TABLE technical_account_permission
 	MODIFY modification_date timestamp;
 
 CREATE TABLE contact_provider (
-	id                 int8 NOT NULL,
+	id                 int8 NOT NULL AUTO_INCREMENT,
 	uuid               varchar(255) NOT NULL UNIQUE,
 	provider_type      varchar(255) NOT NULL,
 	base_dn            varchar(255),
@@ -646,7 +646,7 @@ ALTER TABLE ldap_pattern
 
 -- WELCOME MESSAGES CREATE TABLE AND INSERT MESSAGES
 CREATE TABLE welcome_messages (
-	id                int8 NOT NULL,
+	id                int8 NOT NULL AUTO_INCREMENT,
 	uuid              varchar(255) NOT NULL,
 	name              varchar(255) NOT NULL,
 	description       text NOT NULL,
@@ -656,7 +656,7 @@ CREATE TABLE welcome_messages (
 	PRIMARY KEY (id));
 CREATE UNIQUE INDEX welcome_messages_uuid ON welcome_messages(uuid);
 CREATE TABLE welcome_messages_entry (
-	id          int8 NOT NULL,
+	id          int8 NOT NULL AUTO_INCREMENT,
 	lang        varchar(255) NOT NULL,
 	value       varchar(255) NOT NULL,
 	welcome_messages_id  int8 NOT NULL,
