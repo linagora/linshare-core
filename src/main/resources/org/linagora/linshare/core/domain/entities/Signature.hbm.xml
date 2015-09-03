@@ -16,7 +16,7 @@
 		<property name="creationDate" column="creation_date" type="calendar" length="29" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="calendar" length="29" not-null="true" lazy="false"/>
 		<property name="type" column="type" type="string" length="255" not-null="false" lazy="false"/>
-		<property name="size" column="size" type="long" not-null="false" lazy="false"/>
+		<property name="size" column="ls_size" type="long" not-null="false" lazy="false"/>
 		<property name="certSubjectDn" column="cert_subject_dn" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="certIssuerDn" column="cert_issuer_dn" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="certNotAfter" column="cert_not_after" type="timestamp" length="29" not-null="false" lazy="false"/>

@@ -16,7 +16,7 @@
 		<many-to-one name="domain" cascade="lock" column="domain_abstract_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true">
 		</many-to-one>
 		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>
-		<property name="match" column="match" type="uploadPropositionMatchType" not-null="true" lazy="false"/>
+		<property name="match" column="ls_match" type="uploadPropositionMatchType" not-null="true" lazy="false"/>
 		<property name="enable" column="enable" type="boolean" not-null="true" lazy="false"/>
 		<property name="order" column="sort_order" type="int" not-null="true" lazy="false"/>
 		<set name="rules" lazy="false" cascade="lock" inverse="true">

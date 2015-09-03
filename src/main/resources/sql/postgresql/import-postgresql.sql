@@ -5,7 +5,7 @@ SET client_min_messages = warning;
 BEGIN;
 -- default domain policy
 INSERT INTO domain_access_policy(id) VALUES (1);
-INSERT INTO domain_access_rule(id, domain_access_rule_type, regexp, domain_id, domain_access_policy_id, rule_index) VALUES (1, 0, '', null, 1,0);
+INSERT INTO domain_access_rule(id, domain_access_rule_type, ls_regexp, domain_id, domain_access_policy_id, rule_index) VALUES (1, 0, '', null, 1,0);
 INSERT INTO domain_policy(id, identifier, domain_access_policy_id) VALUES (1, 'DefaultDomainPolicy', 1);
 
 

@@ -372,7 +372,7 @@ INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy
 -- MailActivation : END
 
 -- UPDATE FUNCTIONALITIES THAT CONTAINS ACKNOWLEDGMENT INSTEAD OF ACKNOWLEDGMENT
-UPDATE functionality SET identifier = 'SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER' WHERE idenditifier = 'SHARE_CREATION_ACKNOWLEDGMENT_FOR_OWNER';
+UPDATE functionality SET identifier = 'SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER' WHERE identifier = 'SHARE_CREATION_ACKNOWLEDGMENT_FOR_OWNER';
 UPDATE functionality SET identifier = 'UPLOAD_REQUEST_ACKNOWLEDGEMENT' WHERE identifier = 'UPLOAD_REQUEST_ACKNOWLEDGMENT';
 
 -- UNDOWNLOADED SHARED DOCUMENTS ALERT MAIL CONTENT ENGLISH
@@ -432,6 +432,15 @@ DROP TABLE IF EXISTS upload_request_entry_url;
 DELETE FROM mail_content_lang WHERE mail_content_type = 28;
 DELETE FROM mail_content WHERE mail_content_type = 28;
 
+-- Fix: schema
+ALTER TABLE document CHANGE `size` ls_size bigint(8) NOT NULL;
+ALTER TABLE document_entry CHANGE `size` ls_size bigint(8) NOT NULL;
+ALTER TABLE domain_access_rule CHANGE `regexp` ls_regexp VARCHAR(255);
+ALTER TABLE signature CHANGE `size` ls_size bigint(8);
+ALTER TABLE thread_entry CHANGE `size` ls_size bigint(8) NOT NULL;
+ALTER TABLE upload_request_entry CHANGE `size` ls_size bigint(8) NOT NULL;
+ALTER TABLE upload_proposition_filter CHANGE `match` ls_match VARCHAR(255) NOT NULL;
+ALTER TABLE mail_content MODIFY enable_as TINYINT(1) DEFAULT False NOT NULL;
 
 -- LinShare version
 INSERT INTO version (version) VALUES ('1.10.0');
