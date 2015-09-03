@@ -199,15 +199,19 @@ ALTER TABLE entry MODIFY creation_date datetime NOT NULL;
 ALTER TABLE entry MODIFY modification_date datetime NOT NULL;
 ALTER TABLE entry MODIFY expiration_date datetime;
 
-ALTER TABLE log_entry MODIFY action_date timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL;
+ALTER TABLE log_entry MODIFY action_date datetime NOT NULL;
 ALTER TABLE log_entry MODIFY expiration_date datetime;
 
 ALTER TABLE signature MODIFY creation_date datetime NOT NULL;
 ALTER TABLE signature MODIFY modification_date datetime NOT NULL;
-ALTER TABLE signature MODIFY cert_not_after datetime  NULL;
+ALTER TABLE signature MODIFY cert_not_after timestamp;
 
 ALTER TABLE thread_member MODIFY creation_date datetime NOT NULL;
 ALTER TABLE thread_member MODIFY modification_date datetime NOT NULL;
+
+ALTER TABLE technical_account_permission
+	MODIFY creation_date datetime NOT NULL,
+	MODIFY modification_date datetime NOT NULL;
 
 ALTER TABLE users MODIFY not_after datetime NULL;
 ALTER TABLE users MODIFY not_before datetime NULL;
@@ -242,7 +246,6 @@ ALTER TABLE mailing_list MODIFY modification_date datetime NOT NULL;
 
 ALTER TABLE mailing_list_contact MODIFY creation_date datetime NOT NULL;
 ALTER TABLE mailing_list_contact MODIFY modification_date datetime NOT NULL;
-
 
 -- schema upgrade - begin
 -- step 1 : delete subclass functionality
@@ -334,14 +337,14 @@ ALTER TABLE domain_abstract MODIFY default_locale varchar(255) NOT NULL;
 
 -- UPLOAD REQUEST ENTRY URL
 CREATE TABLE upload_request_entry_url (
-  id                bigint(8) NOT NULL,
+  id                bigint(8) NOT NULL AUTO_INCREMENT,
   upload_request_entry_id bigint(8) NOT NULL,
   uuid              varchar(255) NOT NULL UNIQUE,
   path              varchar(255) NOT NULL,
   password          varchar(255),
-  creation_date     timestamp NOT NULL,
-  modification_date timestamp NOT NULL,
-  expiry_date   timestamp NOT NULL,
+  creation_date     datetime NOT NULL,
+  modification_date datetime NOT NULL,
+  expiry_date   datetime NOT NULL,
   PRIMARY KEY (id));
 
 ALTER TABLE upload_request_entry_url ADD CONSTRAINT FKupload_req784409 FOREIGN KEY (upload_request_entry_id) REFERENCES upload_request_entry (entry_id);
@@ -492,10 +495,6 @@ UPDATE functionality SET policy_delegation_id = (SELECT ls_return_last_insert())
 UPDATE functionality SET policy_delegation_id = (SELECT ls_return_last_insert()) WHERE identifier = 'ANONYMOUS_URL';
 UPDATE functionality SET policy_delegation_id = (SELECT ls_return_last_insert()) WHERE identifier = 'SHARE_EXPIRATION';
 
-ALTER TABLE cookie MODIFY last_use timestamp;
-
-ALTER TABLE document MODIFY creation_date timestamp;
-
 ALTER TABLE document_entry
 	ADD COLUMN type varchar(255),
 	ADD COLUMN size bigint(8),
@@ -519,18 +518,13 @@ ALTER TABLE document_entry
 
 DROP TABLE IF EXISTS mail_subjects, mail_templates, welcome_texts, messages_configuration, functionality_unit_boolean;
 
-ALTER TABLE entry
-	MODIFY creation_date timestamp,
-	MODIFY modification_date timestamp,
-	MODIFY expiration_date timestamp;
-
 ALTER TABLE functionality_unit
 	MODIFY integer_value int(4) NOT NULL,
 	MODIFY unit_id bigint(8) NOT NULL;
 
 -- LDAP_CONNECTION RENAME TABLE AND ADD NEW COLUMNS
 call ls_drop_constraint_if_exists("user_provider_ldap", "fk409cafb23834018");
-ALTER TABLE ldap_connection CHANGE ldap_connection_id id bigint(8);
+ALTER TABLE ldap_connection CHANGE ldap_connection_id id bigint(8) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE ldap_connection CHANGE identifier label varchar(255);
 ALTER TABLE ldap_connection
@@ -545,11 +539,6 @@ ALTER TABLE ldap_connection
 	MODIFY uuid varchar(255) NOT NULL,
 	MODIFY creation_date datetime NOT NULL,
 	MODIFY modification_date datetime NOT NULL;
-
-ALTER TABLE signature
-	MODIFY creation_date timestamp,
-	MODIFY modification_date timestamp,
-	MODIFY cert_not_after timestamp;
 
 call ls_drop_constraint_if_exists("ldap_attribute", "FKldap_attri687153");
 ALTER TABLE ldap_attribute CHANGE domain_pattern_id ldap_pattern_id BIGINT(8) NOT NULL;
@@ -574,21 +563,13 @@ ALTER TABLE thread_entry
 	MODIFY size bigint(8) NOT NULL,
 	MODIFY has_thumbnail boolean NOT NULL;
 
-ALTER TABLE thread_member
-	MODIFY creation_date timestamp,
-	MODIFY modification_date timestamp;
-
-ALTER TABLE technical_account_permission
-	MODIFY creation_date timestamp,
-	MODIFY modification_date timestamp;
-
 CREATE TABLE contact_provider (
-	id                 int8 NOT NULL,
+	id                 int8 NOT NULL AUTO_INCREMENT,
 	uuid               varchar(255) NOT NULL UNIQUE,
 	provider_type      varchar(255) NOT NULL,
 	base_dn            varchar(255),
-	creation_date      timestamp NOT NULL,
-	modification_date  timestamp NOT NULL,
+	creation_date      datetime NOT NULL,
+	modification_date  datetime NOT NULL,
 	domain_abstract_id int8 NOT NULL,
 	ldap_pattern_id    int8 NOT NULL,
 	ldap_connection_id int8 NOT NULL,
@@ -602,20 +583,16 @@ ALTER TABLE user_provider CHANGE domain_pattern_id ldap_pattern_id bigint(8);
 
 ALTER TABLE user_provider
 	ADD COLUMN uuid varchar(255) UNIQUE,
-	ADD COLUMN creation_date timestamp,
-	ADD COLUMN modification_date timestamp,
+	ADD COLUMN creation_date datetime NOT NULL,
+	ADD COLUMN modification_date datetime NOT NULL,
 	ADD COLUMN provider_type varchar(255),
 	MODIFY base_dn varchar(255); -- DROP NOT NULL;
+
 UPDATE user_provider
 	SET uuid = UUID(),
 		creation_date = now(),
 		modification_date = now(),
 		provider_type = 'LDAP_PROVIDER';
-ALTER TABLE user_provider
-	MODIFY uuid varchar(255) NOT NULL,
-	MODIFY creation_date timestamp NOT NULL,
-	MODIFY modification_date timestamp NOT NULL,
-	MODIFY provider_type varchar(255) NOT NULL;
 
 RENAME TABLE domain_pattern TO ldap_pattern;
 ALTER TABLE ldap_pattern CHANGE domain_pattern_id id bigint(8);
@@ -631,8 +608,8 @@ ALTER TABLE ldap_pattern
 	MODIFY search_size_limit int(4),
 	MODIFY completion_page_size int(4),
 	MODIFY completion_size_limit int(4),
-	ADD COLUMN creation_date timestamp,
-	ADD COLUMN modification_date timestamp;
+	ADD COLUMN creation_date datetime NOT NULL,
+	ADD COLUMN modification_date datetime NOT NULL;
 UPDATE ldap_pattern
 	SET uuid = UUID(),
 		pattern_type = 'USER_LDAP_PATTERN',
@@ -641,22 +618,23 @@ UPDATE ldap_pattern
 ALTER TABLE ldap_pattern
 	MODIFY pattern_type varchar(255) NOT NULL,
 	MODIFY uuid varchar(255) NOT NULL,
-	MODIFY creation_date timestamp NOT NULL,
-	MODIFY modification_date timestamp NOT NULL;
+	MODIFY creation_date datetime NOT NULL,
+	MODIFY modification_date datetime NOT NULL,
+	MODIFY id bigint(8) NOT NULL AUTO_INCREMENT;
 
 -- WELCOME MESSAGES CREATE TABLE AND INSERT MESSAGES
 CREATE TABLE welcome_messages (
-	id                int8 NOT NULL,
+	id                int8 NOT NULL AUTO_INCREMENT,
 	uuid              varchar(255) NOT NULL,
 	name              varchar(255) NOT NULL,
 	description       text NOT NULL,
-	creation_date     timestamp NOT NULL,
-	modification_date timestamp NOT NULL,
+	creation_date     datetime NOT NULL,
+	modification_date datetime NOT NULL,
 	domain_id         int8 NOT NULL,
 	PRIMARY KEY (id));
 CREATE UNIQUE INDEX welcome_messages_uuid ON welcome_messages(uuid);
 CREATE TABLE welcome_messages_entry (
-	id          int8 NOT NULL,
+	id          int8 NOT NULL AUTO_INCREMENT,
 	lang        varchar(255) NOT NULL,
 	value       varchar(255) NOT NULL,
 	welcome_messages_id  int8 NOT NULL,

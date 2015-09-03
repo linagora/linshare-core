@@ -351,7 +351,6 @@ DELETE FROM mail_content_lang WHERE mail_content_type = 28;
 DELETE FROM mail_content WHERE mail_content_type = 28;
 
 
--- Fix: schema
 ALTER TABLE document RENAME COLUMN "size" to ls_size;
 ALTER TABLE document_entry RENAME COLUMN "size" to ls_size;
 ALTER TABLE domain_access_rule RENAME COLUMN "regexp" to ls_regexp;
