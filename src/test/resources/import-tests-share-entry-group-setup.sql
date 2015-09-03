@@ -4,16 +4,16 @@
 
 
 INSERT INTO contact(id, mail) VALUES (2, 'yoda@linshare.org');
-INSERT INTO document (id, uuid, creation_date, type, size, check_mime_type)
+INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type)
 	VALUES (1, '92ce81a8-3e87-413b-82c6-8ae9940aae9e', now(), 'data', 1024, false);
 
-INSERT INTO document (id, uuid, creation_date, type, size, check_mime_type)
+INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type)
 	VALUES (2, '7ea9644c-7870-4c85-abfe-7adefa7207ba', now(), 'data', 1024, false);
 
-INSERT INTO document (id, uuid, creation_date, type, size, check_mime_type)
+INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type)
 	VALUES (3, '113c7cc6-3ddc-4c17-bdbf-9254ad4e0f4f', now(), 'data', 1024, false);
 
-INSERT INTO document (id, uuid, creation_date, type, size, check_mime_type)
+INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type)
 	VALUES (4, 'b82ff544-41ab-11e5-9e6f-080027b8274b', now(), 'data', 1024, false);
 
 
@@ -21,12 +21,12 @@ INSERT INTO document (id, uuid, creation_date, type, size, check_mime_type)
 -- DE
 INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, uuid, cmis_sync)
 	VALUES (1, 10, now(), now(), 'DE test doc entry name 1', '', 'bfaf3fea-c64a-4ee0-bae8-b1482f1f6401', false);
-INSERT INTO document_entry (entry_id, document_id, ciphered, type, size, sha256sum, has_thumbnail, shared)
+INSERT INTO document_entry (entry_id, document_id, ciphered, type, ls_size, sha256sum, has_thumbnail, shared)
 	VALUES (1, 1, false, 'data', 1024, 'plop', false, 2);
 -- DE
 INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, uuid, cmis_sync)
 	VALUES (12, 10, now(), now(), 'DE test doc entry name 4', '', 'fd87394a-41ab-11e5-b191-080027b8274b', false);
-INSERT INTO document_entry (entry_id, document_id, ciphered, type, size, sha256sum, has_thumbnail, shared)
+INSERT INTO document_entry (entry_id, document_id, ciphered, type, ls_size, sha256sum, has_thumbnail, shared)
 	VALUES (12, 4, false, 'data', 1024, 'plop', false, 1);
 
 -- SEG
@@ -64,7 +64,7 @@ INSERT INTO anonymous_share_entry (entry_id, downloaded, document_entry_id, anon
 -- DE
 INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, uuid, cmis_sync)
 	VALUES (4, 10, now(), now(), 'DE test doc entry name 2', '', '64911715-ae51-4d76-bec4-b4d88c24cba0', false);
-INSERT INTO document_entry (entry_id, document_id, ciphered, type, size, sha256sum, has_thumbnail, shared)
+INSERT INTO document_entry (entry_id, document_id, ciphered, type, ls_size, sha256sum, has_thumbnail, shared)
 	VALUES (4, 2, false, 'data', 1024, 'plop', false, 2);
 
 -- SEG
@@ -88,7 +88,7 @@ INSERT INTO share_entry (entry_id, document_entry_id, downloaded, recipient_id, 
 -- DE
 INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, uuid, cmis_sync)
 	VALUES (7, 10, now(), now(), 'DE test doc entry name 3', '', 'd8a572c3-4673-4bed-939b-709de62f0ebe', false);
-INSERT INTO document_entry (entry_id, document_id, ciphered, type, size, sha256sum, has_thumbnail, shared)
+INSERT INTO document_entry (entry_id, document_id, ciphered, type, ls_size, sha256sum, has_thumbnail, shared)
 	VALUES (7, 3, false, 'data', 1024, 'plop', false, 2);
 
 -- SEG

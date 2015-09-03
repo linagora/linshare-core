@@ -8,11 +8,11 @@ INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, mod
 	VALUES (@share_entry_group_id, @john_do_id, '7d0ba756-ac50-4803-ba4f-c5bea7f46f5c', 'subject seg', now(), now(), now(), false, false);
 
 -- DE
-INSERT INTO document (id, uuid, creation_date, type, size, check_mime_type)
+INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type)
 	VALUES (@document_id, '7a2efea4-ddb0-4ae2-9a39-403779b569c7', now(), 'data', 1024, false);
 INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, uuid, cmis_sync)
 	VALUES (@document_entry_id, @john_do_id, now(), now(), 'doc entry name', '', '028bed54-885f-457b-8d89-32987a83ed06', false);
-INSERT INTO document_entry (entry_id, document_id, ciphered, type, size, sha256sum, has_thumbnail, shared)
+INSERT INTO document_entry (entry_id, document_id, ciphered, type, ls_size, sha256sum, has_thumbnail, shared)
 	VALUES (@document_entry_id, @document_id, false, 'data', 1024, 'plop', false, 0);
 
 -- SE
@@ -48,11 +48,11 @@ SET @document_id = SELECT nextVal('h2_sequence');
 SET @document_entry_id = SELECT nextVal('h2_sequence');
 
 -- DE 2
-INSERT INTO document (id, uuid, creation_date, type, size, check_mime_type)
+INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type)
 	VALUES (@document_id, '7a2efea4-ddb0-4ae2-9a39-403779b569c8', now(), 'data', 1024, false);
 INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, uuid, cmis_sync)
 	VALUES (@document_entry_id, @john_do_id, now(), now(), 'doc entry name 2', '', '028bed54-885f-457b-8d89-32987a83ed07', false);
-INSERT INTO document_entry (entry_id, document_id, ciphered, type, size, sha256sum, has_thumbnail, shared)
+INSERT INTO document_entry (entry_id, document_id, ciphered, type, ls_size, sha256sum, has_thumbnail, shared)
 	VALUES (@document_entry_id, @document_id, false, 'data', 1024, 'plop', false, 0);
 
 -- SE
@@ -86,11 +86,11 @@ SET @document_id = SELECT nextVal('h2_sequence');
 SET @document_entry_id = SELECT nextVal('h2_sequence');
 
 -- DE 3
-INSERT INTO document (id, uuid, creation_date, type, size, check_mime_type)
+INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type)
 	VALUES (@document_id, '7a2efea4-ddb0-4ae2-9a39-403779b569c9', now(), 'data', 1024, false);
 INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, uuid, cmis_sync)
 	VALUES (@document_entry_id, @john_do_id, now(), now(), 'doc entry name 3', '', '028bed54-885f-457b-8d89-32987a83ed08', false);
-INSERT INTO document_entry (entry_id, document_id, ciphered, type, size, sha256sum, has_thumbnail, shared)
+INSERT INTO document_entry (entry_id, document_id, ciphered, type, ls_size, sha256sum, has_thumbnail, shared)
 	VALUES (@document_entry_id, @document_id, false, 'data', 1024, 'plop', false, 0);
 
 -- SE
