@@ -40,6 +40,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -515,8 +516,12 @@ public class ListSharedDocument {
 	 * @return creation date the date in localized format.
 	 */
 	public String getExpirationDate(){
-	   SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
-	   return formatter.format(shareDocument.getShareExpirationDate().getTime());
+		Calendar shareExpirationDate = shareDocument.getShareExpirationDate();
+		if (shareExpirationDate != null) {
+			SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+			return formatter.format(shareExpirationDate.getTime());
+		}
+		return "";
 	}
 
 	public String getSharingDate(){
