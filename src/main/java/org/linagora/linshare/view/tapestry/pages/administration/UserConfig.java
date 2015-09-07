@@ -57,6 +57,7 @@ import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
+import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
@@ -133,6 +134,9 @@ public class UserConfig {
 	private String cmisLocale;
 
 	@Property
+	private boolean isCmisActivated;
+
+	@Property
 	private String oldUserPassword;
 
 	@Property
@@ -149,6 +153,9 @@ public class UserConfig {
 	@Property
 	private EnumSelectModel externalMailModel;
 
+	@Inject
+	private FunctionalityFacade functionalityFacade;
+
 	/* ***********************************************************
 	 *                       Phase processing
 	 ************************************************************ */
@@ -163,18 +170,16 @@ public class UserConfig {
 			}
 		}
 
-		if (userVo.getLocale() !=null) {
+		isCmisActivated = functionalityFacade.isCmisSyncActivate(userVo.getDomainIdentifier());
+
+		if (userVo.getLocale() != null) {
 			currentLocale = userVo.getLocale().getTapestryLocale();
 		}
-		if (userVo.getExternalMailLocale() !=null) {
+		if (userVo.getExternalMailLocale() != null) {
 			currentExternalMailLocale = userVo.getExternalMailLocale();
 		}
-		if (userVo.getCmisLocale() !=null) {
+		if (userVo.getCmisLocale() != null) {
 			cmisLocale = userVo.getCmisLocale();
-		}
-
-		if (userVo.getExternalMailLocale() !=null) {
-			currentExternalMailLocale = userVo.getExternalMailLocale();
 		}
 
 		model = new SimpleSelectModel<String>(locales, messages, "pages.administration.userconfig.select");
@@ -190,9 +195,7 @@ public class UserConfig {
 	 ************************************************************ */
 
 	void onSuccessFromConfigUserform() throws BusinessException {
-		userFacade.updateUserLocale(userVo, SupportedLanguage.fromTapestryLocale(currentLocale));
-		userFacade.updateUserExternalMailLocale(userVo, currentExternalMailLocale);
-		userFacade.updateUserLocale(userVo,currentLocale,currentExternalMailLocale,cmisLocale);
+		userFacade.updateUserLocale(userVo, currentLocale, currentExternalMailLocale, cmisLocale);
 		userVo = userFacade.findUserByLsUuid(userVo, userVo.getLsUuid());
 		userVo = userFacade.findUserInDb(userVo.getMail(), userVo.getDomainIdentifier());
 		persistentLocale.set(LocaleUtils.toLocale(currentLocale));

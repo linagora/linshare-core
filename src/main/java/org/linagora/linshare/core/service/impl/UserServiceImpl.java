@@ -662,7 +662,9 @@ public class UserServiceImpl implements UserService {
 		}
 		user.setLocale(locale);
 		user.setExternalMailLocale(externalMailLocale);
-		user.setCmisLocale(cmisLocale);
+		if (cmisLocale != null) {
+			user.setCmisLocale(cmisLocale);
+		}
 		userRepository.update(user);
 	}
 

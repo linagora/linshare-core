@@ -92,4 +92,6 @@ public interface FunctionalityFacade {
 	String getCustomNotificationURLInRootDomain() throws BusinessException;
 
 	String getSessionId() throws BusinessException;
+
+	boolean isCmisSyncActivate(String domainIdentifier) throws BusinessException;
 }

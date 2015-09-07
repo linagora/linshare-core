@@ -35,6 +35,7 @@
                         <t:select t:model="externalMailModel" t:id="currentExternalMailLocale" t:value="currentExternalMailLocale" blankoption="never"/>
                     </td>
                 </tr>
+                <t:if test="isCmisActivated">
                     <tr>
                         <td class="field_langage">
                             <t:label for="cmisLocale">${message:pages.administration.userconfig.currentCmisLocale}</t:label>
@@ -42,7 +43,8 @@
                         <td class="field_form">
                             <t:select t:model="model" t:id="cmisLocale" t:value="cmisLocale" blankoption="never"/>
                         </td>
-                </tr>
+                    </tr>
+                </t:if>
             </table>
             <br/>
             <t:linkSubmit class="button">

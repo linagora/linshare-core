@@ -352,4 +352,12 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean isCmisSyncActivate(String domainIdentifier)
+			throws BusinessException {
+		AbstractDomain domain = abstractDomainService.findById(domainIdentifier);
+		Functionality cmisSync = functionalityReadOnlyService.getCmisFunctionality(domain);
+		return cmisSync.getActivationPolicy().getStatus();
+	}
 }
