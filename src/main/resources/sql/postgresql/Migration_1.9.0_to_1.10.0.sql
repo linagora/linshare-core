@@ -306,7 +306,7 @@ INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy
 -- MailActivation : END
 
 -- UPDATE FUNCTIONALITIES THAT CONTAINS ACKNOWLEDGMENT INSTEAD OF ACKNOWLEDGMENT
-UPDATE functionality SET identifier = 'SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER' WHERE idenditifier = 'SHARE_CREATION_ACKNOWLEDGMENT_FOR_OWNER';
+UPDATE functionality SET identifier = 'SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER' WHERE identifier = 'SHARE_CREATION_ACKNOWLEDGMENT_FOR_OWNER';
 UPDATE functionality SET identifier = 'UPLOAD_REQUEST_ACKNOWLEDGEMENT' WHERE identifier = 'UPLOAD_REQUEST_ACKNOWLEDGMENT';
 
 -- step 1 : delete subclass functionality
