@@ -45,6 +45,7 @@
         <constructor-arg ref="accountRepository"/>
         <constructor-arg ref="jackRabbitRepository"/>
         <constructor-arg value="${job.document.cleaner.activation}" />
+        <constructor-arg value="${job.jackrabbit.keep.alive.activation}" />
         <constructor-arg ref="notifierService" />
         <constructor-arg ref="mailBuildingService" />
         <constructor-arg ref="functionalityReadOnlyService" />
