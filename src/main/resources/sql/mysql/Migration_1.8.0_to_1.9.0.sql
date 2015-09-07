@@ -86,10 +86,10 @@ END$$
 
 CREATE FUNCTION ls_return_last_insert() RETURNS bigint(8)
 BEGIN
-	DECLARE result bigint(8);
-	INSERT INTO policy (status, default_status, policy, system) VALUES (true, true, 1, false);
-	SET result = last_insert_id();
-	return result;
+    DECLARE result bigint(8);
+    INSERT INTO policy (status, default_status, policy, system) VALUES (true, true, 1, false);
+    SET result = last_insert_id();
+    return result;
 END$$
 
 delimiter ';'
@@ -139,17 +139,17 @@ ALTER TABLE mime_type ADD CONSTRAINT unicity_type_and_policy UNIQUE (mime_policy
 
 -- system account for upload-request:
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id)
-	SELECT 3, 7, 'system-account-uploadrequest', now(),now(), 3, 'en', 'en', true, false, 1 FROM account
-	WHERE NOT EXISTS (SELECT id FROM account WHERE id=3) LIMIT 1;
+    SELECT 3, 7, 'system-account-uploadrequest', now(),now(), 3, 'en', 'en', true, false, 1 FROM account
+    WHERE NOT EXISTS (SELECT id FROM account WHERE id=3) LIMIT 1;
 
 -- system account for upload-proposition
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id)
-	SELECT 4, 4, '89877610-574a-4e79-aeef-5606b96bde35', now(),now(), 5, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1 FROM account
-	WHERE NOT EXISTS (SELECT id FROM account WHERE id=4) LIMIT 1;
+    SELECT 4, 4, '89877610-574a-4e79-aeef-5606b96bde35', now(),now(), 5, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1 FROM account
+    WHERE NOT EXISTS (SELECT id FROM account WHERE id=4) LIMIT 1;
 
 INSERT INTO users(account_id, first_name, last_name, mail, can_upload, comment, restricted, can_create_guest)
-	SELECT 4, null, 'Technical Account for upload proposition', 'linshare-noreply@linagora.com', false, '', false, false from users
-	WHERE NOT EXISTS (SELECT account_id FROM users WHERE account_id=4) LIMIT 1;
+    SELECT 4, null, 'Technical Account for upload proposition', 'linshare-noreply@linagora.com', false, '', false, false from users
+    WHERE NOT EXISTS (SELECT account_id FROM users WHERE account_id=4) LIMIT 1;
 UPDATE users SET mail ='linshare-noreply@linagora.com' WHERE account_id=4 and mail = 'bart.simpson@int1.linshare.dev';
 
 
@@ -210,8 +210,8 @@ ALTER TABLE thread_member MODIFY creation_date datetime NOT NULL;
 ALTER TABLE thread_member MODIFY modification_date datetime NOT NULL;
 
 ALTER TABLE technical_account_permission
-	MODIFY creation_date datetime NOT NULL,
-	MODIFY modification_date datetime NOT NULL;
+    MODIFY creation_date datetime NOT NULL,
+    MODIFY modification_date datetime NOT NULL;
 
 ALTER TABLE users MODIFY not_after datetime NULL;
 ALTER TABLE users MODIFY not_before datetime NULL;
@@ -271,33 +271,34 @@ CREATE TABLE functionality_enum_lang (
 
 -- step 6 : insert new functionality
 -- Functionality : UPLOAD_REQUEST__NOTIFICATION_LANGUAGE
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (83, true, true, 1, true);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (84, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (85, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
- VALUES(38, false, 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE', 83, 84, 85, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO functionality_enum_lang(functionality_id, lang_value) VALUES (38, 'en');
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+    VALUES(false, 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE', last_insert_id() - 2, last_insert_id() - 1, last_insert_id(), 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_enum_lang(functionality_id, lang_value) VALUES (last_insert_id(), 'en');
 
 -- Functionality : GUEST__EXPIRATION_ALLOW_PROLONGATION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (123, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (124, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (125, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
- VALUES(51, false, 'GUESTS__EXPIRATION_ALLOW_PROLONGATION', 123, 124, 125, 1, 'GUESTS', true);
-INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (51, true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+    VALUES(false, 'GUESTS__EXPIRATION_ALLOW_PROLONGATION', last_insert_id() - 2, last_insert_id() - 1, last_insert_id(), 1, 'GUESTS', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (last_insert_id(), true);
 
 -- Functionality : SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (126, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (127, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (128, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id) VALUES(52, false, 'SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER', 126, 127, 128, 1);
-INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (52, true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id)
+VALUES(false, 'SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER', last_insert_id() - 2, last_insert_id() - 1, last_insert_id(), 1);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (last_insert_id(), true);
 
 -- Functionality : UPLOAD_REQUEST_ENABLE_TEMPLATE
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (129, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (130, true, true, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, param)
- VALUES(53, false, 'UPLOAD_REQUEST_ENABLE_TEMPLATE', 129, 130, 1, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 1, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, true);
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, domain_id, param)
+VALUES(false, 'UPLOAD_REQUEST_ENABLE_TEMPLATE', last_insert_id() - 1, last_insert_id(), 1, false);
 
 ALTER TABLE mime_type CHANGE mime_type mime_type varchar(255) NOT NULL;
 ALTER TABLE mime_type CHANGE extensions extensions varchar(255) NOT NULL;
@@ -349,37 +350,35 @@ CREATE TABLE upload_request_entry_url (
 
 ALTER TABLE upload_request_entry_url ADD CONSTRAINT FKupload_req784409 FOREIGN KEY (upload_request_entry_id) REFERENCES upload_request_entry (entry_id);
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (104, false, false, 2, true);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (105, true, true, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, param)
- VALUES(45, false, 'UPLOAD_REQUEST_ENTRY_URL', 104, 105, 1, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 2, true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, true);
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, domain_id, param)
+    VALUES(false, 'UPLOAD_REQUEST_ENTRY_URL', last_insert_id() - 1, last_insert_id(), 1, false);
 
 -- TABLE Functionality : add new functionality 'DOMAIN'
-INSERT INTO policy(id, status, default_status, policy, system)
-			VALUES (118, true, true, 0, true);
-INSERT INTO policy(id, status, default_status, policy, system)
-			VALUES (119, false, false, 2, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id)
-	VALUES(49, false, 'DOMAIN', 118, 119, 1);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 0, true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 2, true);
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, domain_id)
+    VALUES(false, 'DOMAIN', last_insert_id() - 1, last_insert_id(), 1);
 
 -- Functionality GUESTS_EXPIRATION
 CREATE TEMPORARY TABLE temp_1000 (id bigint(8));
 INSERT INTO temp_1000 SELECT id FROM functionality WHERE identifier = 'ACCOUNT_EXPIRATION';
 UPDATE functionality
-	SET identifier = 'GUESTS__EXPIRATION',
-		parent_identifier = 'GUESTS',
-		param = true
-	WHERE id in (SELECT id FROM temp_1000);
+    SET identifier = 'GUESTS__EXPIRATION',
+        parent_identifier = 'GUESTS',
+        param = true
+    WHERE id in (SELECT id FROM temp_1000);
 
 
 -- Functionality GUESTS_RESTRICTED
 CREATE TEMPORARY TABLE temp_1001 (id bigint(8));
 INSERT INTO temp_1001 SELECT id FROM functionality WHERE identifier = 'RESTRICTED_GUEST';
 UPDATE functionality
-	SET identifier = 'GUESTS__RESTRICTED',
-		parent_identifier = 'GUESTS',
-		param = true
-	WHERE id in (SELECT id FROM temp_1001);
+    SET identifier = 'GUESTS__RESTRICTED',
+        parent_identifier = 'GUESTS',
+        param = true
+    WHERE id in (SELECT id FROM temp_1001);
 
 UPDATE policy
     SET system = false,
@@ -390,16 +389,16 @@ UPDATE policy
 
 -- Functionality : ANONYMOUS_URL
 UPDATE policy
-	SET status = true,
-		default_status = true,
-		policy = 1,
-		system = false
-	WHERE id = 26;
+    SET status = true,
+        default_status = true,
+        policy = 1,
+        system = false
+    WHERE id = 26;
 CREATE TEMPORARY TABLE temp_1002 (id bigint(8));
 INSERT INTO temp_1002 SELECT id FROM functionality WHERE identifier = 'ANONYMOUS_URL';
 UPDATE functionality
-	SET system = false
-	WHERE id IN (SELECT id FROM temp_1002);
+    SET system = false
+    WHERE id IN (SELECT id FROM temp_1002);
 
 INSERT INTO functionality_boolean(functionality_id, boolean_value) SELECT id, true as bool_value FROM functionality WHERE identifier = 'ANONYMOUS_URL';
 
@@ -414,80 +413,83 @@ DELETE FROM policy WHERE id IN (SELECT id FROM temp_1010);
 CREATE TEMPORARY TABLE temp_1003 (id bigint(8));
 INSERT INTO temp_1003 SELECT id FROM functionality WHERE identifier = 'USER_CAN_UPLOAD';
 UPDATE functionality
-	SET identifier = 'INTERNAL_CAN_UPLOAD'
-	WHERE id IN (SELECT id FROM temp_1003);
+    SET identifier = 'INTERNAL_CAN_UPLOAD'
+    WHERE id IN (SELECT id FROM temp_1003);
 -- Functionality : CUSTOM_LOGO__LINK
 CREATE TEMPORARY TABLE temp_1004 (id bigint(8));
 INSERT INTO temp_1004 SELECT id FROM functionality WHERE identifier = 'LINK_LOGO';
 UPDATE functionality
-	SET identifier = 'CUSTOM_LOGO__LINK',
-		parent_identifier = 'CUSTOM_LOGO',
-		param = true
-	WHERE id IN (SELECT id FROM temp_1004);
+    SET identifier = 'CUSTOM_LOGO__LINK',
+        parent_identifier = 'CUSTOM_LOGO',
+        param = true
+    WHERE id IN (SELECT id FROM temp_1004);
 
 -- Functionality : TAB_THREAD__CREATE_PERMISSION
 CREATE TEMPORARY TABLE temp_1005 (id bigint(8));
 INSERT INTO temp_1005 SELECT id FROM functionality WHERE identifier = 'CREATE_THREAD_PERMISSION';
 UPDATE functionality
-	SET identifier = 'TAB_THREAD__CREATE_PERMISSION',
-		parent_identifier = 'TAB_THREAD',
-		param = true
-	WHERE id in (SELECT id FROM temp_1005);
+    SET identifier = 'TAB_THREAD__CREATE_PERMISSION',
+        parent_identifier = 'TAB_THREAD',
+        param = true
+    WHERE id in (SELECT id FROM temp_1005);
 
 -- Functionality : DOMAIN__NOTIFICATION_URL
 CREATE TEMPORARY TABLE temp_1006 (id bigint(8));
 INSERT INTO temp_1006 SELECT id FROM functionality WHERE identifier = 'NOTIFICATION_URL';
 UPDATE functionality
-	SET identifier = 'DOMAIN__NOTIFICATION_URL',
-		parent_identifier = 'DOMAIN',
-		param = true
-	WHERE id in (SELECT id FROM temp_1006);
+    SET identifier = 'DOMAIN__NOTIFICATION_URL',
+        parent_identifier = 'DOMAIN',
+        param = true
+    WHERE id in (SELECT id FROM temp_1006);
 UPDATE policy SET system = true WHERE id IN (SELECT policy_activation_id FROM functionality WHERE identifier = 'DOMAIN__NOTIFICATION_URL');
 
 -- Functionality : DOMAIN__MAIL
 CREATE TEMPORARY TABLE temp_1007 (id bigint(8));
 INSERT INTO temp_1007 SELECT id FROM functionality WHERE identifier = 'DOMAIN_MAIL';
 UPDATE functionality
-	SET identifier = 'DOMAIN__MAIL',
-		parent_identifier = 'DOMAIN',
-		param = true
-	WHERE id in (SELECT id FROM temp_1007);
+    SET identifier = 'DOMAIN__MAIL',
+        parent_identifier = 'DOMAIN',
+        param = true
+    WHERE id in (SELECT id FROM temp_1007);
 
 INSERT INTO functionality_boolean(functionality_id, boolean_value) SELECT id, true as bool_value FROM functionality WHERE identifier = 'GUESTS__RESTRICTED';
 
 -- Functionality : add new functionality GUESTS__CAN_UPLOAD
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (113, true, true, 0, true);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (114, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (115, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
-			VALUES (48, false, 'GUESTS__CAN_UPLOAD', 113, 114, 115, 1, 'GUESTS', true);
-INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (48, true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 0, true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+    VALUES (false, 'GUESTS__CAN_UPLOAD',  last_insert_id() - 2, last_insert_id() - 1, last_insert_id(), 1, 'GUESTS', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (last_insert_id(), true);
 
 -- Functionality : SHARE_EXPIRATION
 INSERT INTO functionality_unit (SELECT functionality_id, integer_value, unit_id FROM functionality_unit_boolean);
 
 -- Functionality : SHARE_EXPIRATION__DELETE_FILE_ON_EXPIRATION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (120, true, true, 0, true);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (121, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES (50, false, 'SHARE_EXPIRATION__DELETE_FILE_ON_EXPIRATION', 120, 121, 1, 'SHARE_EXPIRATION', true);
-INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (50, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 0, true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
+    VALUES (false, 'SHARE_EXPIRATION__DELETE_FILE_ON_EXPIRATION', last_insert_id() - 1, last_insert_id(), 1, 'SHARE_EXPIRATION', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (last_insert_id(), false);
 
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL__EXPIRATION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (106, false, false, 2, true);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (107, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
- VALUES(46, false, 'UPLOAD_REQUEST_ENTRY_URL__EXPIRATION', 106, 107, 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 2, true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
+    VALUES(false, 'UPLOAD_REQUEST_ENTRY_URL__EXPIRATION', last_insert_id() - 1, last_insert_id(), 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
 -- time unit : day
-INSERT INTO unit(id, unit_type, unit_value) VALUES (12, 0, 0);
+INSERT INTO unit(unit_type, unit_value) VALUES (0, 0);
 -- time : 7 days
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (46, 7, 12);
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (last_insert_id() - 1, 7, last_insert_id());
 
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL__PASSWORD
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (109, false, false, 2, true);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (110, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
- VALUES(47, false, 'UPLOAD_REQUEST_ENTRY_URL__PASSWORD', 109, 110, 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
-INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (47, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 2, true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
+    VALUES(false, 'UPLOAD_REQUEST_ENTRY_URL__PASSWORD', last_insert_id() - 1, last_insert_id(), 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (last_insert_id(), false);
+
+
 
 -- insert into policy and update policy_delegation_id column in functionality table.
 UPDATE functionality SET policy_delegation_id = (SELECT ls_return_last_insert()) WHERE identifier = 'GUESTS__EXPIRATION';
@@ -496,31 +498,27 @@ UPDATE functionality SET policy_delegation_id = (SELECT ls_return_last_insert())
 UPDATE functionality SET policy_delegation_id = (SELECT ls_return_last_insert()) WHERE identifier = 'SHARE_EXPIRATION';
 
 ALTER TABLE document_entry
-	ADD COLUMN type varchar(255),
-	ADD COLUMN size bigint(8),
-	ADD COLUMN sha256sum varchar(255),
-	ADD COLUMN has_thumbnail bool,
-	ADD COLUMN shared bigint(8);
+    ADD COLUMN type varchar(255),
+    ADD COLUMN size bigint(8),
+    ADD COLUMN sha256sum varchar(255),
+    ADD COLUMN has_thumbnail bool,
+    ADD COLUMN shared bigint(8);
 UPDATE document_entry, document SET document_entry.type = document.type WHERE document_entry.document_id = document.id;
 UPDATE document_entry, document SET document_entry.size = document.size WHERE document_entry.document_id = document.id;
 UPDATE document_entry, document SET document_entry.sha256sum = document.sha256sum WHERE document_entry.document_id = document.id;
 UPDATE document_entry, document SET document_entry.has_thumbnail = (SELECT document.thmb_uuid IS NOT NULL) WHERE document_entry.document_id = document.id;
 UPDATE document_entry
-	SET shared = (SELECT COUNT(document_entry_id)
-	FROM (SELECT entry_id, document_entry_id FROM share_entry UNION ALL SELECT entry_id, document_entry_id FROM anonymous_share_entry) as all_shared 
-	WHERE all_shared.document_entry_id = document_entry.entry_id);
+    SET shared = (SELECT COUNT(document_entry_id)
+    FROM (SELECT entry_id, document_entry_id FROM share_entry UNION ALL SELECT entry_id, document_entry_id FROM anonymous_share_entry) as all_shared 
+    WHERE all_shared.document_entry_id = document_entry.entry_id);
 
 ALTER TABLE document_entry
-	MODIFY type varchar(255) NOT NULL,
-	MODIFY size bigint(8) NOT NULL,
-	MODIFY has_thumbnail bool NOT NULL,
-	MODIFY shared bigint(8) NOT NULL;
+    MODIFY type varchar(255) NOT NULL,
+    MODIFY size bigint(8) NOT NULL,
+    MODIFY has_thumbnail bool NOT NULL,
+    MODIFY shared bigint(8) NOT NULL;
 
 DROP TABLE IF EXISTS mail_subjects, mail_templates, welcome_texts, messages_configuration, functionality_unit_boolean;
-
-ALTER TABLE functionality_unit
-	MODIFY integer_value int(4) NOT NULL,
-	MODIFY unit_id bigint(8) NOT NULL;
 
 -- LDAP_CONNECTION RENAME TABLE AND ADD NEW COLUMNS
 call ls_drop_constraint_if_exists("user_provider_ldap", "fk409cafb23834018");
@@ -528,17 +526,17 @@ ALTER TABLE ldap_connection CHANGE ldap_connection_id id bigint(8) NOT NULL AUTO
 
 ALTER TABLE ldap_connection CHANGE identifier label varchar(255);
 ALTER TABLE ldap_connection
-	ADD COLUMN uuid varchar(255) UNIQUE,
-	ADD COLUMN creation_date datetime,
-	ADD COLUMN modification_date datetime;
+    ADD COLUMN uuid varchar(255) UNIQUE,
+    ADD COLUMN creation_date datetime,
+    ADD COLUMN modification_date datetime;
 UPDATE ldap_connection
-	SET uuid = UUID(),
-		creation_date = now(),
-		modification_date = now();
+    SET uuid = UUID(),
+        creation_date = now(),
+        modification_date = now();
 ALTER TABLE ldap_connection
-	MODIFY uuid varchar(255) NOT NULL,
-	MODIFY creation_date datetime NOT NULL,
-	MODIFY modification_date datetime NOT NULL;
+    MODIFY uuid varchar(255) NOT NULL,
+    MODIFY creation_date datetime NOT NULL,
+    MODIFY modification_date datetime NOT NULL;
 
 call ls_drop_constraint_if_exists("ldap_attribute", "FKldap_attri687153");
 ALTER TABLE ldap_attribute CHANGE domain_pattern_id ldap_pattern_id BIGINT(8) NOT NULL;
@@ -546,34 +544,34 @@ ALTER TABLE ldap_attribute CHANGE domain_pattern_id ldap_pattern_id BIGINT(8) NO
 -- ALTER TABLE ldap_attribute ALTER COLUMN ldap_pattern_id SET NOT NULL;
 
 ALTER TABLE thread_entry
-	ADD COLUMN type varchar(255),
-	ADD COLUMN size bigint(8),
-	ADD COLUMN sha256sum varchar(255),
-	ADD COLUMN has_thumbnail boolean;
+    ADD COLUMN type varchar(255),
+    ADD COLUMN size bigint(8),
+    ADD COLUMN sha256sum varchar(255),
+    ADD COLUMN has_thumbnail boolean;
 UPDATE thread_entry, document
-	SET thread_entry.type = document.type WHERE thread_entry.document_id = document.id;
+    SET thread_entry.type = document.type WHERE thread_entry.document_id = document.id;
 UPDATE thread_entry, document
-	SET thread_entry.size = document.size WHERE thread_entry.document_id = document.id;
+    SET thread_entry.size = document.size WHERE thread_entry.document_id = document.id;
 UPDATE thread_entry, document
-	SET thread_entry.sha256sum = document.sha256sum WHERE thread_entry.document_id = document.id;
+    SET thread_entry.sha256sum = document.sha256sum WHERE thread_entry.document_id = document.id;
 UPDATE thread_entry, document
-	SET thread_entry.has_thumbnail = (SELECT document.thmb_uuid IS NOT NULL) WHERE thread_entry.document_id = document.id;
+    SET thread_entry.has_thumbnail = (SELECT document.thmb_uuid IS NOT NULL) WHERE thread_entry.document_id = document.id;
 ALTER TABLE thread_entry
-	MODIFY type varchar(255) NOT NULL,
-	MODIFY size bigint(8) NOT NULL,
-	MODIFY has_thumbnail boolean NOT NULL;
+    MODIFY type varchar(255) NOT NULL,
+    MODIFY size bigint(8) NOT NULL,
+    MODIFY has_thumbnail boolean NOT NULL;
 
 CREATE TABLE contact_provider (
-	id                 int8 NOT NULL AUTO_INCREMENT,
-	uuid               varchar(255) NOT NULL UNIQUE,
-	provider_type      varchar(255) NOT NULL,
-	base_dn            varchar(255),
-	creation_date      datetime NOT NULL,
-	modification_date  datetime NOT NULL,
-	domain_abstract_id int8 NOT NULL,
-	ldap_pattern_id    int8 NOT NULL,
-	ldap_connection_id int8 NOT NULL,
-	PRIMARY KEY (id));
+    id                 int8 NOT NULL AUTO_INCREMENT,
+    uuid               varchar(255) NOT NULL UNIQUE,
+    provider_type      varchar(255) NOT NULL,
+    base_dn            varchar(255),
+    creation_date      datetime NOT NULL,
+    modification_date  datetime NOT NULL,
+    domain_abstract_id int8 NOT NULL,
+    ldap_pattern_id    int8 NOT NULL,
+    ldap_connection_id int8 NOT NULL,
+    PRIMARY KEY (id));
 
 -- USER PROVIDER RENAME TABLE AND ADD NEW COLUMNS
 RENAME TABLE user_provider_ldap TO user_provider;
@@ -582,63 +580,63 @@ call ls_drop_constraint_if_exists("user_provider", "fk409cafb2372a0802");
 ALTER TABLE user_provider CHANGE domain_pattern_id ldap_pattern_id bigint(8);
 
 ALTER TABLE user_provider
-	ADD COLUMN uuid varchar(255) UNIQUE,
-	ADD COLUMN creation_date datetime NOT NULL,
-	ADD COLUMN modification_date datetime NOT NULL,
-	ADD COLUMN provider_type varchar(255),
-	MODIFY base_dn varchar(255); -- DROP NOT NULL;
+    ADD COLUMN uuid varchar(255) UNIQUE,
+    ADD COLUMN creation_date datetime NOT NULL,
+    ADD COLUMN modification_date datetime NOT NULL,
+    ADD COLUMN provider_type varchar(255),
+    MODIFY base_dn varchar(255); -- DROP NOT NULL;
 
 UPDATE user_provider
-	SET uuid = UUID(),
-		creation_date = now(),
-		modification_date = now(),
-		provider_type = 'LDAP_PROVIDER';
+    SET uuid = UUID(),
+        creation_date = now(),
+        modification_date = now(),
+        provider_type = 'LDAP_PROVIDER';
 
 RENAME TABLE domain_pattern TO ldap_pattern;
 ALTER TABLE ldap_pattern CHANGE domain_pattern_id id bigint(8);
 ALTER TABLE ldap_pattern CHANGE identifier label varchar(255);
 ALTER TABLE ldap_pattern
-	ADD COLUMN pattern_type varchar(255),
-	ADD COLUMN uuid varchar(255) UNIQUE,
-	MODIFY auth_command text,
-	MODIFY search_user_command text,
-	MODIFY auto_complete_command_on_first_and_last_name text,
-	MODIFY auto_complete_command_on_all_attributes text,
-	MODIFY search_page_size int(4),
-	MODIFY search_size_limit int(4),
-	MODIFY completion_page_size int(4),
-	MODIFY completion_size_limit int(4),
-	ADD COLUMN creation_date datetime NOT NULL,
-	ADD COLUMN modification_date datetime NOT NULL;
+    ADD COLUMN pattern_type varchar(255),
+    ADD COLUMN uuid varchar(255) UNIQUE,
+    MODIFY auth_command text,
+    MODIFY search_user_command text,
+    MODIFY auto_complete_command_on_first_and_last_name text,
+    MODIFY auto_complete_command_on_all_attributes text,
+    MODIFY search_page_size int(4),
+    MODIFY search_size_limit int(4),
+    MODIFY completion_page_size int(4),
+    MODIFY completion_size_limit int(4),
+    ADD COLUMN creation_date datetime NOT NULL,
+    ADD COLUMN modification_date datetime NOT NULL;
 UPDATE ldap_pattern
-	SET uuid = UUID(),
-		pattern_type = 'USER_LDAP_PATTERN',
-		creation_date = now(),
-		modification_date = now();
+    SET uuid = UUID(),
+        pattern_type = 'USER_LDAP_PATTERN',
+        creation_date = now(),
+        modification_date = now();
 ALTER TABLE ldap_pattern
-	MODIFY pattern_type varchar(255) NOT NULL,
-	MODIFY uuid varchar(255) NOT NULL,
-	MODIFY creation_date datetime NOT NULL,
-	MODIFY modification_date datetime NOT NULL,
-	MODIFY id bigint(8) NOT NULL AUTO_INCREMENT;
+    MODIFY pattern_type varchar(255) NOT NULL,
+    MODIFY uuid varchar(255) NOT NULL,
+    MODIFY creation_date datetime NOT NULL,
+    MODIFY modification_date datetime NOT NULL,
+    MODIFY id bigint(8) NOT NULL AUTO_INCREMENT;
 
 -- WELCOME MESSAGES CREATE TABLE AND INSERT MESSAGES
 CREATE TABLE welcome_messages (
-	id                int8 NOT NULL AUTO_INCREMENT,
-	uuid              varchar(255) NOT NULL,
-	name              varchar(255) NOT NULL,
-	description       text NOT NULL,
-	creation_date     datetime NOT NULL,
-	modification_date datetime NOT NULL,
-	domain_id         int8 NOT NULL,
-	PRIMARY KEY (id));
+    id                int8 NOT NULL AUTO_INCREMENT,
+    uuid              varchar(255) NOT NULL,
+    name              varchar(255) NOT NULL,
+    description       text NOT NULL,
+    creation_date     datetime NOT NULL,
+    modification_date datetime NOT NULL,
+    domain_id         int8 NOT NULL,
+    PRIMARY KEY (id));
 CREATE UNIQUE INDEX welcome_messages_uuid ON welcome_messages(uuid);
 CREATE TABLE welcome_messages_entry (
-	id          int8 NOT NULL AUTO_INCREMENT,
-	lang        varchar(255) NOT NULL,
-	value       varchar(255) NOT NULL,
-	welcome_messages_id  int8 NOT NULL,
-	PRIMARY KEY (id));
+    id          int8 NOT NULL AUTO_INCREMENT,
+    lang        varchar(255) NOT NULL,
+    value       varchar(255) NOT NULL,
+    welcome_messages_id  int8 NOT NULL,
+    PRIMARY KEY (id));
 
 -- Drop constraint foreign key
 call ls_drop_constraint_if_exists("domain_abstract", "fk449bc2ec4e302e7");
@@ -668,14 +666,14 @@ INSERT INTO welcome_messages_entry(id, lang, value, welcome_messages_id) VALUES 
 UPDATE domain_abstract SET welcome_messages_id = 1;
 
 -- upload request entry url
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (29, 'aa74f9b1-471d-4588-9551-4fb985def2c7', 1, 0, 28, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload Request Entry Url', 'A user ${actorRepresentation} has uploaded a file you', '<strong>${firstName} ${lastName}</strong> has uploaded a file &nbsp;:<ul>${documentNames}</ul>To download the file, follow this link &nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a><br/>The password to use is&nbsp;: <code>${password}</code><br/><br/>That link will not be available after ${expiryDate}<br/>');
-INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (80, '6f8096ec-36e7-4ec7-a82f-c37b2eac094e', 1, 0, 28, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Upload Request Entry Url', '${actorRepresentation} vient de déposer un fichier', '<strong>${firstName} ${lastName}</strong> a déposé un fichier à votre attention&nbsp;:<ul>${documentNames}</ul>Pour télécharger le fichier, cliquez sur le lien ou copiez-le dans votre navigateur&nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a><br/>Le mot de passe à utiliser est&nbsp;: <code>${password}</code><br/><br/>Ce lien ne sera plus valide après le  ${expiryDate}<br/>');
-INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (29, 1, 0, 29, 28, 'b9c6779b-e8ef-4678-b81c-e37ed79e9ed7');
-INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (80, 1, 1, 80, 28, 'cd65cae1-4946-4675-a356-addd722a5c6c');
+-- INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (29, 'aa74f9b1-471d-4588-9551-4fb985def2c7', 1, 0, 28, true, false, now(), now(), 'Hello ${firstName} ${lastName},<br/><br/>', 'Upload Request Entry Url', 'A user ${actorRepresentation} has uploaded a file you', '<strong>${firstName} ${lastName}</strong> has uploaded a file &nbsp;:<ul>${documentNames}</ul>To download the file, follow this link &nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a><br/>The password to use is&nbsp;: <code>${password}</code><br/><br/>That link will not be available after ${expiryDate}<br/>');
+-- INSERT INTO mail_content (id, uuid, domain_abstract_id, language, mail_content_type, visible, plaintext, modification_date, creation_date, greetings, name, subject, body) VALUES  (80, '6f8096ec-36e7-4ec7-a82f-c37b2eac094e', 1, 0, 28, true, false, now(), now(), 'Bonjour ${firstName} ${lastName},<br/><br/>', 'Upload Request Entry Url', '${actorRepresentation} vient de déposer un fichier', '<strong>${firstName} ${lastName}</strong> a déposé un fichier à votre attention&nbsp;:<ul>${documentNames}</ul>Pour télécharger le fichier, cliquez sur le lien ou copiez-le dans votre navigateur&nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a><br/>Le mot de passe à utiliser est&nbsp;: <code>${password}</code><br/><br/>Ce lien ne sera plus valide après le  ${expiryDate}<br/>');
+-- INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (29, 1, 0, 29, 28, 'b9c6779b-e8ef-4678-b81c-e37ed79e9ed7');
+-- INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (80, 1, 1, 80, 28, 'cd65cae1-4946-4675-a356-addd722a5c6c');
 
 -- new template for UPLOAD REQUEST ENTRY URL
-INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 0, 29, 28, UUID() FROM mail_config AS config WHERE id <> 1);
-INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 1, 80, 28, UUID() FROM mail_config AS config WHERE id <> 1);
+-- INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 0, 29, 28, UUID() FROM mail_config AS config WHERE id <> 1);
+-- INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 1, 80, 28, UUID() FROM mail_config AS config WHERE id <> 1);
 -- new template UPLOAD REQUEST FILE DELETED
 INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 0, 30, 29, UUID() FROM mail_config AS config WHERE id <> 1);
 INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 1, 81, 29, UUID() FROM mail_config AS config WHERE id <> 1);
