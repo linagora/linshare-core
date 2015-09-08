@@ -477,10 +477,11 @@ INSERT INTO policy(status, default_status, policy, system) VALUES (false, false,
 INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
 INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
     VALUES(false, 'UPLOAD_REQUEST_ENTRY_URL__EXPIRATION', last_insert_id() - 1, last_insert_id(), 1, 'UPLOAD_REQUEST_ENTRY_URL', true);
+SET @functionality_id = last_insert_id();
 -- time unit : day
 INSERT INTO unit(unit_type, unit_value) VALUES (0, 0);
 -- time : 7 days
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (last_insert_id() - 1, 7, last_insert_id());
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (@functionality_id, 7, last_insert_id());
 
 -- Functionality : UPLOAD_REQUEST_ENTRY_URL__PASSWORD
 INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 2, true);
