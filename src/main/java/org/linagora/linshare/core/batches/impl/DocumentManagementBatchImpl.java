@@ -282,39 +282,44 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 
 	@Override
 	public void jackRabbitKeepAlive() {
-		logger.debug("ping jackRabbit - begin");
+		logger.debug("jackRabbitKeepAlive - begin");
 		if (cronJackRabbitKeepAlive) {
 			SystemAccount actor = accountRepository.getBatchSystemAccount();
 			List<DocumentEntry> findAllMyDocumentEntries = documentEntryRepository.findAllMyDocumentEntries(actor);
-			if (findAllMyDocumentEntries.size() == 0) {
-				logger.debug("initialisation...");
-				InputStream inputStream = java.lang.Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
-				String uuid = fileSystemDao.insertFile(actor.getLsUuid(), inputStream, 8206, "inputStream test", "test/plain");
-				Document document = new Document(uuid, "text/plain", new Long(8206));
-				inputStream = java.lang.Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
-				document.setSha256sum(documentEntryBusinessService.SHACheckSumFileStream(inputStream));
+			for (DocumentEntry documentEntry : findAllMyDocumentEntries) {
+				String uuid = documentEntry.getDocument().getUuid();
+				logger.debug("removing resource : " + uuid);
 				try {
-					inputStream.close();
-				} catch (IOException e) {
+					documentEntryBusinessService.deleteDocumentEntry(documentEntry);
+				} catch (Exception e) {
 					logger.error("exception : ", e);
-					e.printStackTrace();
-				}
-				documentRepository.create(document);
-				DocumentEntry docEntry = new DocumentEntry(actor, "inputStream test", "", document);
-				docEntry = documentEntryRepository.create(docEntry);
-				actor.getEntries().add(docEntry );
-			} else {
-				for (DocumentEntry documentEntry : findAllMyDocumentEntries) {
-					logger.debug("getting resource.");
-					FileInfo fileInfoByUUID = fileSystemDao.getFileInfoByUUID(documentEntry.getDocument().getUuid());
-					logger.debug(fileInfoByUUID.toString());
-					break;
 				}
 			}
+			uploadTestFile(actor);
 		} else {
-			logger.debug("ping jackRabbit - skip");
+			logger.debug("jackRabbitKeepAlive - skip");
 		}
-		logger.debug("ping jackRabbit - end");
+		logger.debug("jackRabbitKeepAlive - end");
+	}
+
+	private void uploadTestFile(SystemAccount actor) {
+		logger.debug("uploading file ...");
+		String filePath = "jackRabbit.properties";
+		InputStream inputStream = java.lang.Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
+		String uuid = fileSystemDao.insertFile(actor.getLsUuid(), inputStream, 561, "keep alive file", "test/plain");
+		Document document = new Document(uuid, "text/plain", new Long(561));
+		try {
+			inputStream = java.lang.Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
+			document.setSha256sum(documentEntryBusinessService.SHACheckSumFileStream(inputStream));
+			inputStream.close();
+			documentRepository.create(document);
+			DocumentEntry docEntry = new DocumentEntry(actor, "inputStream test", "", document);
+			docEntry = documentEntryRepository.create(docEntry);
+			actor.getEntries().add(docEntry );
+		} catch (IOException e) {
+			logger.error("exception : ", e);
+		}
+		logger.debug("file uploaded");
 	}
 
 }
