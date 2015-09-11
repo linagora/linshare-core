@@ -439,7 +439,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("firstName", sender.getFirstName())
 				.add("lastName", sender.getLastName())
 				.add("fileName", fileName)
-				.add("fileSize", DocumentUtils.humanReadableByteCount(size, true))
+				.add("fileSize", DocumentUtils.humanReadableByteCount(size, false, locale))
 				.add("fileOldName", oldDocName)
 				.add("mimeType", mimeType)
 				.add("url", url)
@@ -972,7 +972,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throws BusinessException {
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				request.getLocale());
+				owner.getExternalMailLocale());
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		String contact = request.getContact().getMail();
@@ -987,7 +987,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("lastName", "")
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("fileSize", DocumentUtils.humanReadableByteCount(entry.getDocumentEntry().getSize(), true))
+				.add("fileSize", DocumentUtils.humanReadableByteCount(entry.getDocumentEntry().getSize(), false, owner.getExternalMailLocale()))
 				.add("fileName", entry.getDocumentEntry().getName())
 				.add("depositDate", formatCreationDate(owner, entry));
 		container.setRecipient(owner.getMail());
@@ -1016,7 +1016,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("lastName", "")
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("fileSize", DocumentUtils.humanReadableByteCount(entry.getSize(), true))
+				.add("fileSize", DocumentUtils.humanReadableByteCount(entry.getSize(), false, owner.getExternalMailLocale()))
 				.add("fileName", entry.getName())
 				.add("deleteDate", formatDeletionDate(owner));
 		container.setRecipient(owner.getMail());

@@ -39,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.slf4j.Logger;
@@ -110,15 +111,24 @@ public class DocumentUtils {
 	 *
 	 * @param bytes Long size of file to format
 	 * @param si International unit system (if true 1Kb 1000b, if not 1Kb = 1024b)
+	 * @param locale The locale in which the size will be displayed
 	 * @return String in human readable format
 	 */
-	public static String humanReadableByteCount(long bytes, boolean si) {
+	public static String humanReadableByteCount(long bytes, boolean si, Language locale) {
 		int unit = si ? 1000 : 1024;
-		if (bytes < unit)
+		if (bytes < unit) {
+			if (locale == Language.FRENCH) {
+				return bytes + " octets";
+			}
 			return bytes + " B";
+		}
 		int exp = (int) (Math.log(bytes) / Math.log(unit));
 		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1)
 				+ (si ? "" : "i");
+		if (locale == Language.FRENCH) {
+			return String.format("%.2f %so", bytes / Math.pow(unit, exp),
+					("KMGTPE").charAt(exp - 1));
+		}
 		return String.format("%.2f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 }
