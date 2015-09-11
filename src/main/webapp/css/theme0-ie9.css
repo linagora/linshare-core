@@ -13,6 +13,17 @@
 * PAGES
 */
 
+#files #list td.fileProperties {
+	width: 630px !important;
+}
+#files #list td.fileProperties div {
+	width: 630px !important;
+}
+
+#list td.fileProperties div {
+	ms-text-overflow:ellipsis;
+}
+
 /**
  * Fix auto complete position
  */
