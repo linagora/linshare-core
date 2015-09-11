@@ -139,7 +139,7 @@ public class Document implements Serializable {
 	}
 
 	public String getHumanReadableSize(boolean si) {
-		return DocumentUtils.humanReadableByteCount(this.getSize(), si);
+		return DocumentUtils.humanReadableByteCount(this.getSize(), si, null);
 	}
 
 	@Override
