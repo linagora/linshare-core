@@ -128,6 +128,7 @@ public class Index {
 		}
 		if (inSearch == false && fromCreate == false) {
 			lists = mailingListFacade.getAllMyList(loginUser, loginUser);
+			targetLists = "*";
 		}
 		if (fromCreate == true) {
 			lists = mailingListFacade.getAllMyList(loginUser, loginUser);
