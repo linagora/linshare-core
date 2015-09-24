@@ -94,7 +94,7 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 	@Override
 	public AbstractDomain findGuestDomain(AbstractDomain domain)  throws BusinessException {
 		if (domain.isRootDomain()) {
-			throw new BusinessException(BusinessErrorCode.GUEST_FORBIDDEN, "No guest domain for root domain");
+			return null;
 		}
 		// search GuestDomain among subdomains
 		if (domain.getSubdomain() != null) {

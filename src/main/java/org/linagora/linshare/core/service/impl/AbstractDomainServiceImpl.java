@@ -678,8 +678,10 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					.getGuests(domain);
 			if (func.getActivationPolicy().getStatus()) {
 				try {
-					domainBusinessService.findGuestDomain(domain);
-					return true;
+					AbstractDomain guestDomain = domainBusinessService.findGuestDomain(domain);
+					if (guestDomain != null) {
+						return true;
+					}
 				} catch (BusinessException e) {
 					logger.error("Guest functionality is enable, but no guest domain found for domain : "
 							+ domain.getIdentifier());
