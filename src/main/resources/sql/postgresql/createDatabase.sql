@@ -6,7 +6,7 @@ DROP DATABASE IF EXISTS linshare_data;
 CREATE USER linshare WITH PASSWORD 'linshare';
 -- ALTER USER linshare WITH PASSWORD 'linshare';
 
-CREATE DATABASE linshare_next
+CREATE DATABASE linshare
   WITH OWNER = linshare
        ENCODING = 'UTF8'
        TABLESPACE = pg_default
@@ -14,7 +14,7 @@ CREATE DATABASE linshare_next
        LC_CTYPE = 'en_US.UTF-8'
        CONNECTION LIMIT = -1;
 
-CREATE DATABASE linshare_next_data
+CREATE DATABASE linshare_data
   WITH OWNER = linshare
        ENCODING = 'UTF8'
        TABLESPACE = pg_default
