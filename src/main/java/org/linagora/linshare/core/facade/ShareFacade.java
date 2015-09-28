@@ -165,6 +165,8 @@ public interface ShareFacade {
 
 	boolean isVisibleUndownloadedSharedDocumentsAlert(UserVo actorVo);
 
+	boolean isVisibleUndownloadedSharedDocumentsNotificationDatePicker(UserVo actorVo);
+
 	boolean getDefaultUndownloadedSharedDocumentsAlert(UserVo actorVo);
 
 	Date getUndownloadedSharedDocumentsAlertDefaultValue(UserVo actorVo);

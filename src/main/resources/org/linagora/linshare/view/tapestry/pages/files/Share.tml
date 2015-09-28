@@ -109,7 +109,7 @@
                     </t:if>
                 </div>
                 <div class="control-group">
-                    <t:if test="showUndownloadedSharedDocumentsAlertCheckbox">
+                    <t:if test="showUndownloadedSharedDocumentsNotificationDatePicker">
                              <t:label for="notificationDate" class="control-label">
                                 ${message:pages.files.upload.notificationDate}</t:label>
                              <div class="controls">

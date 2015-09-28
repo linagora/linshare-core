@@ -47,6 +47,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
@@ -411,6 +412,25 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 					.getUndownloadedSharedDocumentsAlert(actor.getDomain());
 			if (undownloadedSharedFunc.getActivationPolicy().getStatus()) {
 				return undownloadedSharedFunc.getDelegationPolicy().getStatus();
+			}
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isVisibleUndownloadedSharedDocumentsNotificationDatePicker(
+			UserVo actorVo) {
+		User actor = getActor(actorVo);
+		try {
+			IntegerValueFunctionality notificationDatePickerFunc = functionalityReadOnlyService
+					.getUndownloadedSharedDocumentsAlertDuration(actor
+							.getDomain());
+			if (notificationDatePickerFunc.getActivationPolicy().getStatus()) {
+				return notificationDatePickerFunc.getDelegationPolicy()
+						.getStatus();
 			}
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());

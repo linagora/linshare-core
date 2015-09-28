@@ -165,6 +165,10 @@ public class Upload {
 	@Property
 	private boolean showUndownloadedSharedDocumentsAlertCheckbox;
 
+	@Persist
+	@Property
+	private boolean showUndownloadedSharedDocumentsNotificationDatePicker;
+
 	@Property
 	private int autocompleteMin;
 
@@ -250,7 +254,10 @@ public class Upload {
 				.isVisibleAcknowledgementCheckBox(domainId);
 		showShareExpirationDate = shareFacade
 				.isVisibleShareExpiration(domainId);
-		showUndownloadedSharedDocumentsAlertCheckbox = shareFacade.isVisibleUndownloadedSharedDocumentsAlert(userVo);
+		showUndownloadedSharedDocumentsAlertCheckbox = shareFacade
+				.isVisibleUndownloadedSharedDocumentsAlert(userVo);
+		showUndownloadedSharedDocumentsNotificationDatePicker = shareFacade
+				.isVisibleUndownloadedSharedDocumentsNotificationDatePicker(userVo);
 		if (showUndownloadedSharedDocumentsAlertCheckbox) {
 			enableUndownloadedSharedDocumentsAlert = shareFacade
 					.getDefaultUndownloadedSharedDocumentsAlert(userVo);
@@ -270,7 +277,7 @@ public class Upload {
 					DateFormat.SHORT, persistentLocale.get()).format(
 					shareExpiryDate);
 		}
-		if (showUndownloadedSharedDocumentsAlertCheckbox) {
+		if (showUndownloadedSharedDocumentsNotificationDatePicker) {
 			notificationDate = shareFacade
 					.getUndownloadedSharedDocumentsAlertDefaultValue(userVo);
 			if (shareExpiryDate != null) {

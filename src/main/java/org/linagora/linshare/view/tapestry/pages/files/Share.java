@@ -141,6 +141,10 @@ public class Share {
 
 	@Persist
 	@Property
+	private boolean showUndownloadedSharedDocumentsNotificationDatePicker;
+
+	@Persist
+	@Property
 	private List<DocumentVo> documents;
 
 	@Property
@@ -215,7 +219,10 @@ public class Share {
 		showAcknowledgementCheckBox = shareFacade
 				.isVisibleAcknowledgementCheckBox(domainId);
 		showShareExpirationDate = shareFacade.isVisibleShareExpiration(domainId);
-		showUndownloadedSharedDocumentsAlertCheckbox = shareFacade.isVisibleUndownloadedSharedDocumentsAlert(userVo);
+		showUndownloadedSharedDocumentsAlertCheckbox = shareFacade
+				.isVisibleUndownloadedSharedDocumentsAlert(userVo);
+		showUndownloadedSharedDocumentsNotificationDatePicker = shareFacade
+				.isVisibleUndownloadedSharedDocumentsNotificationDatePicker(userVo);
 		if (showUndownloadedSharedDocumentsAlertCheckbox) {
 			enableUndownloadedSharedDocumentsAlert = shareFacade
 					.getDefaultUndownloadedSharedDocumentsAlert(userVo);
@@ -234,7 +241,7 @@ public class Share {
 					DateFormat.SHORT, persistentLocale.get()).format(
 							shareExpiryDate);
 		}
-		if (showUndownloadedSharedDocumentsAlertCheckbox) {
+		if (showUndownloadedSharedDocumentsNotificationDatePicker) {
 			notificationDate = shareFacade
 					.getUndownloadedSharedDocumentsAlertDefaultValue(userVo);
 			if (shareExpiryDate !=null) {
