@@ -163,6 +163,12 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	public ThreadEntry findById(Account actor, Account owner, String threadEntryUuid) throws BusinessException {
 		ThreadEntry threadEntry = documentEntryBusinessService
 				.findThreadEntryById(threadEntryUuid);
+		if (threadEntry == null) {
+			throw new BusinessException(
+					BusinessErrorCode.THREAD_ENTRY_NOT_FOUND,
+					"Thread entry with uuid : " + threadEntryUuid
+							+ " not found.");
+		}
 		checkReadPermission(actor, owner, ThreadEntry.class,
 				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, threadEntry);
 		return threadEntry;
