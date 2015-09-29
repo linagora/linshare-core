@@ -195,9 +195,15 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 
 		User actor = checkAuthentication();
 
-		return Response.ok(
-				threadEntryService.getDocumentStream(actor, actor, uuid))
-				.build();
+		ThreadEntry threadentry = threadEntryService.findById(actor, actor,
+				uuid);
+		InputStream threadEntryStream = threadEntryService.getDocumentStream(
+				actor, actor, uuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder
+				.getDocumentResponseBuilder(threadEntryStream,
+						threadentry.getName(), threadentry.getType(),
+						threadentry.getSize());
+		return response.build();
 	}
 
 	@Override
