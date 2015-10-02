@@ -388,6 +388,21 @@ public class Share {
 					businessMessagesManagementService.notify(new BusinessUserMessage(
 							BusinessUserMessageType.SHARE_BEFORE_EXPIRY_DATE,
 							MessageSeverity.ERROR));
+				} else if (ex.equalErrCode(BusinessErrorCode.SHARE_WRONG_USDA_NOTIFICATION_DATE_AFTER)) {
+					if(shareExpiryDate == null) {
+						shareExpiryDate = shareFacade.getDefaultShareExpirationValue(userVo);
+					}
+					String localizedNotificationDate = DateFormat
+							.getDateInstance(DateFormat.SHORT,
+									persistentLocale.get()).format(
+									shareExpiryDate);
+					businessMessagesManagementService.notify(new BusinessUserMessage(
+							BusinessUserMessageType.SHARE_WITH_USDA_AFTER_NOTIFICATION_DATE,
+							MessageSeverity.ERROR, localizedNotificationDate));
+				} else if (ex.equalErrCode(BusinessErrorCode.SHARE_WRONG_USDA_NOTIFICATION_DATE_BEFORE)) {
+					businessMessagesManagementService.notify(new BusinessUserMessage(
+							BusinessUserMessageType.SHARE_WITH_USDA_BEFORE_NOTIFICATION_DATE,
+							MessageSeverity.ERROR));
 				} else {
 					// TODO : Translate businessErrorCode into BusinessUserMessage.
 					logger.error("Could not create sharing, caught a BusinessException.");

@@ -181,6 +181,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 					actor,
 					shareContainer.getNotificationDateForUSDA(),
 					shareContainer.getExpiryDate());
+			shareContainer.setNotificationDateForUSDA(duration);
 			shareEntryGroup.setNotificationDate(duration);
 		}
 
@@ -212,12 +213,12 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 	/**
 	 *
 	 * @param owner
-	 * @param userInput : user date
+	 * @param userInputNotificationDate : user date
 	 * @param expiryDate : could be null
 	 * @return
 	 */
-	private Date getUndownloadedSharedDocumentsAlertDuration(Account owner, Date userInput, Date expiryDate) {
-		Date res = null;
+	private Date getUndownloadedSharedDocumentsAlertDuration(Account owner, Date userInputNotificationDate, Date expiryDate) {
+		Date defaultUsdaNotificationDate = null;
 		IntegerValueFunctionality usdaDurationFunc = funcService
 				.getUndownloadedSharedDocumentsAlertDuration(owner.getDomain());
 		Integer usdaDuration = usdaDurationFunc.getValue();
@@ -226,23 +227,24 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		int nbWeek = (day -2 + usdaDuration) / 5;
 		int finalamount = usdaDuration + nbWeek * 2;
 		c.add(Calendar.DATE, finalamount);
-		res = c.getTime();
+		defaultUsdaNotificationDate = setEndOfDayTime(c.getTime());
 		if (usdaDurationFunc.getDelegationPolicy().getStatus()) {
-			if (userInput != null) {
-				if (userInput.before(new Date())) {
+			if (userInputNotificationDate != null) {
+				userInputNotificationDate = setEndOfDayTime(userInputNotificationDate);
+				if (userInputNotificationDate.before(new Date())) {
 					throw new BusinessException(
-							BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_BEFORE,
+							BusinessErrorCode.SHARE_WRONG_USDA_NOTIFICATION_DATE_BEFORE,
 							"Can not share documents, notification date for USDA is before today.");
 				}
-				if (expiryDate != null && userInput.after(expiryDate)) {
+				if (expiryDate != null && userInputNotificationDate.after(expiryDate)) {
 					throw new BusinessException(
-							BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_AFTER,
-							"Can not share documents, expiry date is after the max date.");
+							BusinessErrorCode.SHARE_WRONG_USDA_NOTIFICATION_DATE_AFTER,
+							"Can not share documents, notification date for USDA is after the max date.");
 				}
-				res = userInput;
+				defaultUsdaNotificationDate = userInputNotificationDate;
 			}
 		}
-		return res;
+		return defaultUsdaNotificationDate;
 	}
 
 	private boolean hasRightsToShareWithExternals(User sender) {
@@ -368,9 +370,10 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		Calendar expirationDate = Calendar.getInstance();
 		expirationDate.add(shareExpiration.toCalendarValue(),
 				shareExpiration.getValue());
-		Date result = expirationDate.getTime();
+		Date result = setEndOfDayTime(expirationDate.getTime());
 		if (shareExpiration.getDelegationPolicy().getStatus()) {
 			if (userExpiryDate != null) {
+				userExpiryDate = setEndOfDayTime(userExpiryDate);
 				if (userExpiryDate.before(new Date())) {
 					throw new BusinessException(
 							BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_BEFORE,
@@ -385,6 +388,15 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			}
 		}
 		return result;
+	}
+
+	private Date setEndOfDayTime(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		return cal.getTime();
 	}
 
 	protected void transformDocuments(Account actor, User owner,

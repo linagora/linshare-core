@@ -518,7 +518,7 @@ public class ListSharedDocument {
 	public String getExpirationDate(){
 		Calendar shareExpirationDate = shareDocument.getShareExpirationDate();
 		if (shareExpirationDate != null) {
-			SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+			SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.date"));
 			return formatter.format(shareExpirationDate.getTime());
 		}
 		return "";
