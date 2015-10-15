@@ -1,9 +1,61 @@
+-- MySQL migration script : 1.9.0 to 1.10.0
+
 SET storage_engine=INNODB;
 SET NAMES UTF8 COLLATE utf8_general_ci;
 SET CHARACTER SET UTF8;
-
 SET AUTOCOMMIT=0;
 START TRANSACTION;
+
+DROP PROCEDURE IF EXISTS ls_prechecks;
+DROP PROCEDURE IF EXISTS ls_version;
+
+-- TODO: CHANGE THE VERSIONS
+SET @version_to = '1.10.0';
+SET @version_from = '1.9.0';
+
+delimiter '$$'
+CREATE PROCEDURE ls_version()
+BEGIN
+	INSERT INTO version (version) VALUES (@version_to);
+END$$
+
+CREATE PROCEDURE ls_prechecks()
+BEGIN
+	SET @start := concat('You are about to upgrade from LinShare : ', @version_from, ' to ' , @version_to);
+	SET @version_history_from := (SELECT version from version ORDER BY id DESC LIMIT 1);
+	SET @database_info = version();
+	SET @database := concat('Mysql version :', ' ', @database_info);
+	SET @error:= concat('Your database upgrade history indicates that you already upgraded to :', @version_to);
+	SET @connection_id = CONNECTION_ID();
+
+	SELECT @start AS '';
+	SELECT @version_history_from AS 'Your actual version of linShare is :';
+	SELECT version AS 'Your database history is :' from version ORDER BY id DESC;
+	SELECT @database AS 'Your database system information is :';
+
+	IF (@version_history_from <> @version_from) THEN
+		SELECT ' ';
+		SELECT concat('You must be in version : ', @version_from,' to run this script. You are actually in version: ', @version_history_from, '.') AS '__ERROR__';
+		IF EXISTS (SELECT * from version where version = @version_to) THEN
+			SELECT @error AS '__WARNING__';
+		END IF;
+		SELECT 'We are going to kill to conection in order to stop the migration script.' as ' ';
+--		DIRTY: did it to stop the process cause there is no clean way to do it, expected error code: 1317.
+		KILL @connection_id;
+	END IF;
+
+END$$
+
+delimiter ';'
+
+call ls_prechecks();
+
+DROP VIEW IF EXISTS alias_users_list_all;
+DROP VIEW IF EXISTS alias_users_list_active;
+DROP VIEW IF EXISTS alias_users_list_destroyed;
+DROP VIEW IF EXISTS alias_threads_list_all;
+DROP VIEW IF EXISTS alias_threads_list_active;
+DROP VIEW IF EXISTS alias_threads_list_destroyed;
 
 ALTER TABLE users ADD COLUMN inconsistent tinyint(1) DEFAULT False;
 
@@ -295,7 +347,26 @@ ALTER TABLE ldap_pattern MODIFY COLUMN id int8 NOT NULL AUTO_INCREMENT;
 ALTER TABLE contact_provider MODIFY COLUMN id int8 NOT NULL AUTO_INCREMENT;
 
 -- LinShare version
-INSERT INTO version (version) VALUES ('1.10.0');
+call ls_version();
+
+-- Alias for Users
+-- All users
+CREATE VIEW alias_users_list_all AS
+ SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id;
+-- All active users
+CREATE VIEW alias_users_list_active AS
+ SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id where a.destroyed = False;
+-- All destroyed users
+CREATE VIEW alias_users_list_destroyed AS
+ SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id where a.destroyed = True;
+
+-- Alias for threads
+-- All threads
+CREATE VIEW alias_threads_list_all AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id;
+-- All active threads
+CREATE VIEW alias_threads_list_active AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed = False;
+-- All destroyed threads
+CREATE VIEW alias_threads_list_destroyed AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed = True;
 
 COMMIT;
 SET AUTOCOMMIT=1;

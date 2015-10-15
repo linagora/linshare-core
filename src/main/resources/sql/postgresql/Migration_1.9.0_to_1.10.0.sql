@@ -1,9 +1,62 @@
+-- Postgresql migration script : 1.9.0 to 1.10.0
+
 BEGIN;
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
-SET client_min_messages = warning;
+SET client_min_messages = info;
 SET default_with_oids = false;
+
+CREATE OR REPLACE FUNCTION ls_version() RETURNS void AS $$
+BEGIN
+	INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence')),'1.10.0');
+END
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION ls_prechecks() RETURNS void AS $$
+BEGIN
+	-- TODO: CHANGE THE VERSIONS
+	DECLARE version_to VARCHAR := '1.10.0';
+	DECLARE version_from VARCHAR := '1.9.0';
+	DECLARE start VARCHAR := concat('You are about to upgrade from LinShare : ', version_from,  ' to ' , version_to);
+	DECLARE version_history_from VARCHAR := (SELECT version from version ORDER BY id DESC LIMIT 1);
+	DECLARE database_info VARCHAR = version();
+	DECLARE error VARCHAR := concat('Your database upgrade history indicates that you already upgraded to : ', version_to);
+	DECLARE connection_id INT := pg_backend_pid();
+	DECLARE row record;
+	BEGIN
+		RAISE NOTICE '%', start;
+		RAISE NOTICE 'Your actual version is: %', version_history_from;
+		RAISE NOTICE 'Your databse history is :';
+		FOR row IN (SELECT * FROM version ORDER BY id DESC) LOOP
+			RAISE INFO '%', row.version;
+		END LOOP;
+		RAISE NOTICE 'Your database system information is : %', database_info;
+		IF (version_from <> version_history_from) THEN
+			RAISE WARNING 'You must be in version : % to run this script. You are actually in version: %', version_from, version_history_from;
+			IF EXISTS (SELECT * from version where version = version_to) THEN
+				RAISE WARNING '%', error;
+			END IF;
+			RAISE WARNING 'We are about to abort the migration script, all the following instructions will be aborted and transaction will rollback.';
+			RAISE INFO 'You should expect the following error : "query has no destination for result data".';
+	--		DIRTY: did it to stop the process cause there is no clean way to do it.
+	--		Expected error: query has no destination for result data.
+			select error;
+		END IF;
+	END;
+END
+$$ LANGUAGE plpgsql;
+
+SELECT ls_prechecks();
+
+SET client_min_messages = warning;
+
+DROP VIEW IF EXISTS alias_users_list_all;
+DROP VIEW IF EXISTS alias_users_list_active;
+DROP VIEW IF EXISTS alias_users_list_destroyed;
+DROP VIEW IF EXISTS alias_threads_list_all;
+DROP VIEW IF EXISTS alias_threads_list_active;
+DROP VIEW IF EXISTS alias_threads_list_destroyed;
 
 UPDATE mail_content SET language = 1 where id = 80;
 
@@ -360,6 +413,9 @@ ALTER TABLE upload_request_entry RENAME COLUMN "size" to ls_size;
 ALTER TABLE upload_proposition_filter RENAME COLUMN match to ls_match;
 
 
+-- LinShare version
+SELECT ls_version();
+
 -- Alias for Users
 -- All users
 CREATE VIEW alias_users_list_all AS
@@ -371,14 +427,11 @@ CREATE VIEW alias_users_list_active AS
 CREATE VIEW alias_users_list_destroyed AS
  SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id where a.destroyed = True;
 
+-- Alias for threads
 -- All threads
 CREATE VIEW alias_threads_list_all AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id;
 -- All active threads
 CREATE VIEW alias_threads_list_active AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed = False;
 -- All destroyed threads
 CREATE VIEW alias_threads_list_destroyed AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed = True;
-
--- LinShare version
-INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence')),'1.10.0');
-
 COMMIT;
