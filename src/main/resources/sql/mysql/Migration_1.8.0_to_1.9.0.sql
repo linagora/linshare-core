@@ -3,15 +3,64 @@
 SET storage_engine=INNODB;
 SET NAMES UTF8 COLLATE utf8_general_ci;
 SET CHARACTER SET UTF8;
-
 SET AUTOCOMMIT=0;
 START TRANSACTION;
 
+DROP PROCEDURE IF EXISTS ls_prechecks;
+DROP PROCEDURE IF EXISTS ls_version;
+
+SET @version_to = '1.9.0';
+SET @version_from = '1.8.0';
+
+delimiter '$$'
+CREATE PROCEDURE ls_prechecks()
+BEGIN
+	SET @start := concat('You are about to upgrade from LinShare : ', @version_from, ' to ' , @version_to);
+	SET @version_history_from := (SELECT version from version ORDER BY id DESC LIMIT 1);
+	SET @database_info = version();
+	SET @database := concat('Mysql version :', ' ', @database_info);
+	SET @error:= concat('Your database upgrade history indicates that you already upgraded to :', @version_to);
+	SET @connection_id = CONNECTION_ID();
+
+	SELECT @start AS '';
+	SELECT @version_history_from AS 'Your actual version of linShare is :';
+	SELECT version AS 'Your database history is :' from version ORDER BY id DESC;
+	SELECT @database AS 'Your database system information is :';
+
+	IF (@version_history_from <> @version_from) THEN
+		SELECT ' ';
+		SELECT concat('You must be in version : ', @version_from,' to run this script. You are actually in version: ', @version_history_from, '.') AS '__ERROR__';
+		IF EXISTS (SELECT * from version where version = @version_to) THEN
+			SELECT @error AS '__WARNING__';
+		END IF;
+		SELECT 'We are going to kill to conection in order to stop the migration script.' as ' ';
+--		DIRTY: did it to stop the process cause there is no clean way to do it, expected error code: 1317.
+		KILL @connection_id;
+	END IF;
+
+END$$
+
+CREATE PROCEDURE ls_version()
+BEGIN
+	INSERT INTO version (version) VALUES (@version_to);
+END$$
+
+delimiter ';'
+
+call ls_prechecks();
+
+DROP VIEW IF EXISTS alias_users_list_all;
+DROP VIEW IF EXISTS alias_users_list_active;
+DROP VIEW IF EXISTS alias_users_list_destroyed;
+DROP VIEW IF EXISTS alias_threads_list_all;
+DROP VIEW IF EXISTS alias_threads_list_active;
+DROP VIEW IF EXISTS alias_threads_list_destroyed;
 
 DROP PROCEDURE IF EXISTS ls_drop_column_if_exists;
 DROP PROCEDURE IF EXISTS ls_drop_constraint_if_exists;
 DROP PROCEDURE IF EXISTS ls_drop_index_if_exists;
 DROP PROCEDURE IF EXISTS ls_drop_primarykey_if_exists;
+DROP FUNCTION IF EXISTS ls_return_last_insert;
 
 delimiter '$$'
 CREATE PROCEDURE ls_drop_column_if_exists(IN ls_table_name VARCHAR(255), IN ls_column_name VARCHAR(255))
@@ -93,7 +142,6 @@ BEGIN
 END$$
 
 delimiter ';'
-
 
 -- "ALTER TABLE functionality_boolean DROP COLUMN IF EXISTS id" not supported by mysql.
 call ls_drop_column_if_exists("functionality_boolean", "id");
@@ -708,7 +756,7 @@ INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_c
 INSERT INTO mail_content_lang (mail_config_id, language, mail_content_id, mail_content_type, uuid) (SELECT config.id, 1, 83, 31, UUID() FROM mail_config AS config WHERE id <> 1);
 
 -- LinShare version
-INSERT INTO version (version) VALUES ('1.9.0');
+call ls_version();
 
 -- Alias for Users
 -- All users
