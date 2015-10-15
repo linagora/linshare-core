@@ -42,16 +42,10 @@ import org.linagora.linshare.core.facade.webservice.uploadproposition.UploadProp
 import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UploadPropositionGenericFacadeImpl extends GenericFacadeImpl implements UploadPropositionGenericFacade {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(UploadPropositionGenericFacadeImpl.class);
-
 	private final FunctionalityReadOnlyService functionalityService;
-
 
 	public UploadPropositionGenericFacadeImpl(AccountService accountService,
 			FunctionalityReadOnlyService functionalityService) {
@@ -60,7 +54,7 @@ public class UploadPropositionGenericFacadeImpl extends GenericFacadeImpl implem
 	}
 
 	@Override
-	public User checkAuthentication() throws BusinessException {
+	protected User checkAuthentication() throws BusinessException {
 		User actor = super.checkAuthentication();
 		if (!actor.hasUploadPropositionRole()) {
 			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountReprentation());

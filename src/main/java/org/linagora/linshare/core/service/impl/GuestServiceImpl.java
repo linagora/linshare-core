@@ -67,9 +67,6 @@ import com.google.common.collect.Lists;
 public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		implements GuestService {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(GuestServiceImpl.class);
-
 	private final GuestBusinessService guestBusinessService;
 
 	private final AbstractDomainService abstractDomainService;

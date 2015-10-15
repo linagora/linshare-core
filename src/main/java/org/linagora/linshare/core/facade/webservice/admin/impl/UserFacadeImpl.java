@@ -53,17 +53,12 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.core.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		UserFacade {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(UserFacadeImpl.class);
 
 	private final UserService userService;
 

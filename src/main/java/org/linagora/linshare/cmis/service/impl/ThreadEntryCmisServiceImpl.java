@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.cmis.service.impl;
 
+import java.io.File;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.text.DateFormat;
@@ -62,7 +63,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderData
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectParentDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
-import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -80,7 +80,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 
-public class ThreadEntryCmisServiceImpl extends AbstractCmisService {
+public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 	private final ThreadEntryService threadEntryService;
 	private final CmisExceptionMappingService cmisExceptionMappingService;
 	private final ThreadService threadService;
@@ -333,14 +333,18 @@ public class ThreadEntryCmisServiceImpl extends AbstractCmisService {
 		String res = folderId;
 		if (contentStream.getFileName() != null) {
 			Thread thread = null;
+			File tempFile = null;
 			thread = threadService.find(actor, actor, helpers.getObjectUuid(folderId));
 			try {
+				tempFile = getTempFile(contentStream.getStream(), contentStream.getFileName());
 				ThreadEntry threadEntry = threadEntryService.createThreadEntry(
-						actor, actor, thread, contentStream.getStream(),
+						actor, actor, thread, tempFile,
 						contentStream.getFileName());
 				return CmisConstants.tagThreadEntry + threadEntry.getUuid();
 			} catch (BusinessException e) {
 				throw cmisExceptionMappingService.map(e);
+			} finally {
+				deleteTempFile(tempFile);
 			}
 		}
 		return res;

@@ -92,7 +92,13 @@ public enum TechnicalAccountPermissionType {
 	LISTS_GET,
 	LISTS_CREATE,
 	LISTS_UPDATE,
-	LISTS_DELETE;
+	LISTS_DELETE,
+
+	ASYNC_TASK_LIST,
+	ASYNC_TASK_GET,
+	ASYNC_TASK_CREATE,
+	ASYNC_TASK_UPDATE,
+	ASYNC_TASK_DELETE;
 
 	public static TechnicalAccountPermissionType fromString(String s) {
 		try {

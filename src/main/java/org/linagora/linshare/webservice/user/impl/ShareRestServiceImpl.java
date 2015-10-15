@@ -55,14 +55,9 @@ import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.user.ShareRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ShareRestServiceImpl extends WebserviceBase implements
 		ShareRestService {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(ShareRestServiceImpl.class);
 
 	private final ShareFacade webServiceShareFacade;
 

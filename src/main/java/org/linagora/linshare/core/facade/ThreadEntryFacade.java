@@ -45,11 +45,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ThreadEntryFacade {
 
-	public ThreadEntryVo insertFile(UserVo actorVo, ThreadVo threadVo,
-			InputStream stream, Long size, String fileName)
-			throws BusinessException;
-
-	public void copyDocinThread(UserVo actorVo, ThreadVo threadVo,
+	void copyDocinThread(UserVo actorVo, ThreadVo threadVo,
 			DocumentVo documentVo) throws BusinessException;
 
 	public void createThread(UserVo actorVo, String name)

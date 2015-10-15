@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
@@ -59,22 +60,16 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
-import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, ShareEntry>
 		implements ShareEntryService {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(ShareEntryServiceImpl.class);
 
 	private final GuestRepository guestRepository;
 
@@ -83,8 +78,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	private final ShareEntryBusinessService shareEntryBusinessService;
 
 	private final LogEntryService logEntryService;
-
-	private final DocumentEntryService documentEntryService;
 
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
@@ -99,7 +92,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			FunctionalityReadOnlyService functionalityService,
 			ShareEntryBusinessService shareEntryBusinessService,
 			LogEntryService logEntryService,
-			DocumentEntryService documentEntryService,
 			DocumentEntryBusinessService documentEntryBusinessService,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
@@ -110,7 +102,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		this.functionalityService = functionalityService;
 		this.shareEntryBusinessService = shareEntryBusinessService;
 		this.logEntryService = logEntryService;
-		this.documentEntryService = documentEntryService;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
@@ -140,7 +131,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	@Override
 	public void delete(Account actor, Account owner, String uuid)
 			throws BusinessException {
-		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
 		checkDeletePermission(actor, owner, ShareEntry.class,
@@ -162,36 +152,52 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	@Override
 	public DocumentEntry copy(Account actor, Account owner, String shareUuid)
 			throws BusinessException {
-		preChecks(actor, owner);
 		Validate.notEmpty(shareUuid, "Missing share entry uuid");
-		// step1 : find the resource
+		// step1 : find the resource, and it does the preChecks(actor, owner);
 		ShareEntry share = find(actor, owner, shareUuid);
 		checkDownloadPermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
 		/*
-		 * Already exists in DocumentEntry rac, but here to avoid to go deeper in the method.
+		 * This check already exists in DocumentEntry rac, but we do it it to avoid to go deeper in this method (performance).
 		 */
 		if (!((User) owner).getCanUpload()) {
 			throw new BusinessException(BusinessErrorCode.NO_UPLOAD_RIGHTS_FOR_ACTOR, "Actor do not have upload rights.");
 		}
-		// step2 : log the copy
-		ShareLogEntry logEntryShare = ShareLogEntry.hasCopiedAShare(owner,
-				share);
-		logEntryService.create(logEntryShare);
-
-		// step3 : copy the resource
-		InputStream stream = getStream(actor,
-				owner, share.getUuid());
-		DocumentEntry newDocumentEntry = documentEntryService.create(actor,
-				owner, stream, share.getName(), share.getComment(), false, null);
-
+		// Check if we have the right to download the specified document entry
+		InputStream stream = null;
+		DocumentEntry documentEntry = null;
+		try {
+			// step2 : copy the resource
+			stream = documentEntryBusinessService.getDocumentStream(share.getDocumentEntry());
+			Calendar expiryTime = functionalityService.getDefaultFileExpiryTime(owner.getDomain());
+			documentEntry = documentEntryBusinessService.copyFromShareEntry(owner, share, stream, expiryTime);
+			// step3 : log the copy
+			ShareLogEntry logEntryShare = ShareLogEntry.hasCopiedAShare(owner,
+					share);
+			logEntryService.create(logEntryShare);
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		}
 		// step4 : remove the share
+		// No need to send a notification to the recipient if he is the current
+		// owner.
+		if (!share.getRecipient().equals(owner)) {
+			// if (share.getDownloaded() < 1) {
+			MailContainerWithRecipient mail = mailBuildingService
+					.buildSharedDocDeleted(share.getRecipient(), share);
+			notifierService.sendNotification(mail);
+		}
 		ShareLogEntry logEntry = new ShareLogEntry(owner, share,
 				LogAction.SHARE_DELETE,
 				"Remove a received sharing (Copy of a sharing)");
 		logEntryService.create(logEntry);
 		logger.info("delete share : " + share.getUuid());
-
 		// step 5 : notification
 		if (share.getDownloaded() < 1) {
 			MailContainerWithRecipient mail = mailBuildingService
@@ -199,14 +205,13 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			notifierService.sendNotification(mail);
 		}
 		// The share is now useless. We can delete it.
-		delete(actor, owner, shareUuid);
-		return newDocumentEntry;
+		shareEntryBusinessService.delete(share);
+		return documentEntry;
 	}
 
 	@Override
 	public ShareEntry update(Account actor, Account owner, ShareEntry dto)
 			throws BusinessException {
-		preChecks(actor, owner);
 		Validate.notNull(dto, "Missing share entry");
 		String uuid = dto.getUuid();
 		Validate.notEmpty(uuid, "Missing share entry uuid");
@@ -224,7 +229,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	@Override
 	public InputStream getThumbnailStream(Account actor, Account owner,
 			String uuid) throws BusinessException {
-		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
 		checkThumbNailDownloadPermission(actor, owner, ShareEntry.class,
@@ -236,7 +240,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	@Override
 	public InputStream getStream(Account actor, Account owner, String uuid)
 			throws BusinessException {
-		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
 		checkDownloadPermission(actor, owner, ShareEntry.class,
@@ -269,10 +272,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	public Set<ShareEntry> create(Account actor, User owner, ShareContainer sc, ShareEntryGroup shareEntryGroup) {
 		preChecks(actor, owner);
 		Validate.notNull(sc);
-
 		checkCreatePermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, null);
-
 		Set<ShareEntry> entries = Sets.newHashSet();
 		for (User recipient : sc.getShareRecipients()) {
 			MailContainer mailContainer = new MailContainer(

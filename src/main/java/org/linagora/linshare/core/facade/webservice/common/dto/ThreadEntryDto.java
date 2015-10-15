@@ -38,7 +38,9 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.webservice.user.task.context.ThreadEntryTaskContext;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -77,6 +79,9 @@ public class ThreadEntryDto {
 	@ApiModelProperty(value = "Sha256sum")
 	protected String sha256sum;
 
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	protected AsyncTaskDto async;
+
 	public ThreadEntryDto(ThreadEntry te) {
 		super();
 		if (te == null) {
@@ -94,6 +99,16 @@ public class ThreadEntryDto {
 		this.sha256sum = te.getSha256sum();
 	}
 
+	public ThreadEntryDto() {
+		super();
+	}
+
+	public ThreadEntryDto(AsyncTaskDto asyncTask,
+			ThreadEntryTaskContext threadEntryTaskContext) {
+		async = asyncTask;
+		this.name = threadEntryTaskContext.getFileName();
+	}
+
 	public String getSha256sum() {
 		return sha256sum;
 	}
@@ -108,10 +123,6 @@ public class ThreadEntryDto {
 
 	public void setMetaData(String metaData) {
 		this.metaData = metaData;
-	}
-
-	public ThreadEntryDto() {
-		super();
 	}
 
 	public String getUuid() {

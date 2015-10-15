@@ -38,7 +38,7 @@ import java.util.List;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
 
-public interface ThreadFacade {
+public interface ThreadFacade extends DelegationGenericFacade {
 
 	ThreadDto find(String ownerUuid, String uuid) throws BusinessException;
 

@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.webservice.uploadrequest.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -148,10 +149,13 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			chunkedFiles.get(identifier).addChunk(chunkNumber);
 			if (isUploadFinished(identifier, chunkSize, totalSize)) {
 				logger.debug("upload finished ");
-				InputStream inputStream = Files.newInputStream(tempFile,
-						StandardOpenOption.READ);
-				uploadRequestUrlFacade.addUploadRequestEntry(
-						uploadRequestUrlUuid, password, inputStream, filename);
+				File tempFile2 = getTempFile(file, "rest-flowuploader", filename);
+				try {
+					uploadRequestUrlFacade.addUploadRequestEntry(
+							uploadRequestUrlUuid, password, tempFile2, filename);
+				} finally {
+					deleteTempFile(tempFile2);
+				}
 				ChunkedFile remove = chunkedFiles.remove(identifier);
 				Files.deleteIfExists(remove.getPath());
 				return Response.ok("upload success").build();
@@ -207,8 +211,13 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 
 		ErrorDto errorDto;
 		try {
-			uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid,
-					password, file, fileName);
+			File tempFile2 = getTempFile(file, "rest-flowuploader", fileName);
+			try {
+				uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid,
+						password, tempFile2, fileName);
+			} finally {
+				deleteTempFile(tempFile2);
+			}
 			errorDto = new ErrorDto(0, "upload success");
 		} catch (BusinessException exception) {
 			logger.error(exception.getMessage());

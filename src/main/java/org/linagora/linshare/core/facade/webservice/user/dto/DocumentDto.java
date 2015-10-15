@@ -37,7 +37,10 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
+import org.linagora.linshare.webservice.user.task.context.DocumentTaskContext;
 
 import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
@@ -85,6 +88,16 @@ public class DocumentDto {
 
 	@ApiModelProperty(value = "Shared")
 	protected Long shared;
+
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	protected AsyncTaskDto async;
+
+	public DocumentDto(AsyncTaskDto asyncTask, DocumentTaskContext documentTaskContext) {
+		async = asyncTask;
+		this.description = documentTaskContext.getDescription();
+		this.name = documentTaskContext.getFileName();
+		this.metaData = documentTaskContext.getMetaData();
+	}
 
 	public DocumentDto(DocumentEntry de) {
 		if (de == null)
@@ -226,6 +239,14 @@ public class DocumentDto {
 
 	public void setShared(Long shared) {
 		this.shared = shared;
+	}
+
+	public AsyncTaskDto getAsync() {
+		return async;
+	}
+
+	public void setAsync(AsyncTaskDto async) {
+		this.async = async;
 	}
 
 	@Override

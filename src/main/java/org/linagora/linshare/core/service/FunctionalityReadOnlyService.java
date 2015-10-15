@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.util.Calendar;
+
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -57,6 +59,7 @@ public interface FunctionalityReadOnlyService {
 	TimeUnitValueFunctionality getDefaultShareExpiryTimeFunctionality (AbstractDomain domain);
 	BooleanValueFunctionality getDefaultShareExpiryTimeDeletionFunctionality (AbstractDomain domain);
 	TimeUnitValueFunctionality getDefaultFileExpiryTimeFunctionality (AbstractDomain domain);
+	Calendar getDefaultFileExpiryTime(AbstractDomain domain);
 
 	Functionality getGuests (AbstractDomain domain);
 	TimeUnitValueFunctionality getGuestsExpiration (AbstractDomain domain);

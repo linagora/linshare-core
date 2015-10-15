@@ -33,16 +33,19 @@
  */
 package org.linagora.linshare.core.domain.constants;
 
+import org.apache.commons.lang.StringUtils;
+import org.linagora.linshare.core.exception.TechnicalErrorCode;
+import org.linagora.linshare.core.exception.TechnicalException;
+
 public enum AccountPurgeStepEnum {
 
 	IN_USE, WAIT_FOR_PURGE, PURGED;
 
-	public static AccountPurgeStepEnum fromString(String value) {
-		for (AccountPurgeStepEnum purgeStep : values()) {
-			if (purgeStep.name().equalsIgnoreCase(value)) {
-				return purgeStep;
-			}
+	public static AccountPurgeStepEnum fromString(String s) {
+		try {
+			return AccountPurgeStepEnum.valueOf(s.toUpperCase());
+		} catch (RuntimeException e) {
+			throw new TechnicalException(TechnicalErrorCode.DATABASE_INCOHERENCE, StringUtils.isEmpty(s) ? "null or empty" : s);
 		}
-		throw new IllegalArgumentException("Doesn't match any AccountPurgeStepEnum");
 	}
 }

@@ -44,8 +44,7 @@ import org.slf4j.LoggerFactory;
 
 public class GenericServiceImpl<R, E> {
 
-	protected static Logger logger = LoggerFactory
-			.getLogger(GenericServiceImpl.class);
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	protected final AbstractResourceAccessControl<Account, R, E> rac;
 

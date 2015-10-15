@@ -37,4 +37,7 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="abstractDomainService" />
 	</bean>
+	<bean name="asyncTaskResourceAccessControl" class="org.linagora.linshare.core.rac.impl.AsyncTaskResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
 </beans>

@@ -59,7 +59,7 @@ public class EntryRepositoryImpl extends AbstractRepositoryImpl<Entry>
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(Entry entry) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass()).add(
-				Restrictions.eq("uuid", entry.getUuid()));
+				Restrictions.eq("id", entry.getId()));
 		return det;
 	}
 

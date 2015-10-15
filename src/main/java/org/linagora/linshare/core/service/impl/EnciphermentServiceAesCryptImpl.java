@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+// TODO : TO be refactored, cleaned, improved !
 public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 
 	private static Logger logger = LoggerFactory.getLogger(EnciphermentServiceAesCryptImpl.class);
@@ -98,7 +98,6 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 		InputStream in =  null;
 		OutputStream out = null; 
 
-		FileInputStream inputStream = null;
 		File f = null;
 		DocumentEntry resdoc = null;
 
@@ -115,14 +114,12 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			out.flush();
 			out.close();
 
-			inputStream = new FileInputStream(f);
-
 			String finalFileName = changeDocumentExtension(documentEntry.getName());
 
-			resdoc = documentEntryService.update(actor, owner, documentEntry.getUuid(), inputStream, finalFileName);
+			resdoc = documentEntryService.update(actor, owner, documentEntry.getUuid(), f, finalFileName);
 
 			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_DECRYPT, "Decrypt file Content", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
-	        logEntryService.create(logEntry);
+			logEntryService.create(logEntry);
 
 		} catch (IOException e) {
 			logger.error(e.toString(),e);
@@ -141,13 +138,6 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			if (out != null) {
 				try {
 					out.close();
-				} catch (IOException e) {
-					logger.error(e.toString());
-				}
-			}
-			if (inputStream != null) {
-				try {
-					inputStream.close();
 				} catch (IOException e) {
 					logger.error(e.toString());
 				}
@@ -166,9 +156,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 		OutputStream out = null; 
 		DocumentEntry resdoc = null;
 
-		FileInputStream inputStream = null;
 		File f = null;
-
 		try {
 
 			in = documentEntryService.getDocumentStream(actor, owner, documentEntry.getUuid());
@@ -181,14 +169,12 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			out.flush();
 			out.close();
 
-			inputStream = new FileInputStream(f);
-
 			String finalFileName =  changeDocumentExtension(documentEntry.getName());	
 
-			resdoc = documentEntryService.update(actor, owner, documentEntry.getUuid(), inputStream, finalFileName);
+			resdoc = documentEntryService.update(actor, owner, documentEntry.getUuid(), f, finalFileName);
 
 			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_ENCRYPT, "Encrypt file Content", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
-	        logEntryService.create(logEntry);
+			logEntryService.create(logEntry);
 
 		} catch (IOException e) {
 			logger.error(e.toString(),e);
@@ -207,13 +193,6 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			if (out != null) {
 				try {
 					out.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (inputStream != null) {
-				try {
-					inputStream.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

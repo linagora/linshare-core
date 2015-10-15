@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Calendar;
+
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.Policies;
@@ -120,6 +122,14 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public TimeUnitValueFunctionality getDefaultFileExpiryTimeFunctionality(AbstractDomain domain) {
 		return new TimeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.FILE_EXPIRATION));
+	}
+
+	@Override
+	public Calendar getDefaultFileExpiryTime(AbstractDomain domain) {
+		Calendar expirationDate = Calendar.getInstance();
+		TimeUnitValueFunctionality fileExpirationTimeFunctionality = getDefaultFileExpiryTimeFunctionality(domain);
+		expirationDate.add(fileExpirationTimeFunctionality.toCalendarValue(), fileExpirationTimeFunctionality.getValue());
+		return expirationDate;
 	}
 
 	@Override

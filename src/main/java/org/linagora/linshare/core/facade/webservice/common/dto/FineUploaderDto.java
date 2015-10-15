@@ -54,11 +54,28 @@ public class FineUploaderDto {
 	@ApiModelProperty(value = "Error message")
 	private String error;
 
-	public FineUploaderDto(boolean success, String newUuid) {
+	@ApiModelProperty(value = "True if async upload is enabled")
+	private Boolean async;
+
+	@ApiModelProperty(value = "The delay between every request to ask if upload is complete.")
+	private Integer frequence;
+
+	@ApiModelProperty(value = "Filename")
+	private String filename;
+
+	public FineUploaderDto(boolean success, String newUuid, String filename) {
 		super();
 		this.success = success;
 		this.newUuid = newUuid;
 		this.error = null;
+		this.async = false;
+		this.frequence = 5;
+		this.filename = filename;
+	}
+
+	public FineUploaderDto(AsyncTaskDto asyncTaskDto) {
+		this(true, asyncTaskDto.getUuid(), asyncTaskDto.getFileName());
+		this.async = true;
 	}
 
 	public FineUploaderDto(BusinessException exception) {
@@ -66,6 +83,18 @@ public class FineUploaderDto {
 		this.success = false;
 		this.newUuid = null;
 		this.error = exception.getErrorCode().name();
+		this.async = false;
+	}
+
+	public FineUploaderDto(Exception exception) {
+		super();
+		this.success = false;
+		this.newUuid = null;
+		this.error = exception.getMessage();
+		if (exception instanceof BusinessException) {
+			this.error = ((BusinessException)exception).getErrorCode().name();
+		}
+		this.async = false;
 	}
 
 	public FineUploaderDto(String error) {
@@ -73,10 +102,12 @@ public class FineUploaderDto {
 		this.success = false;
 		this.newUuid = null;
 		this.error = error;
+		this.async = false;
 	}
 
-	public FineUploaderDto(boolean success) {
-		this(success, "");
+	public FineUploaderDto(boolean success, String filename) {
+		this(success, "", filename);
+		this.async = false;
 	}
 
 	public boolean isSuccess() {
@@ -101,5 +132,29 @@ public class FineUploaderDto {
 
 	public void setError(String error) {
 		this.error = error;
+	}
+
+	public Boolean getAsync() {
+		return async;
+	}
+
+	public void setAsync(Boolean async) {
+		this.async = async;
+	}
+
+	public Integer getFrequence() {
+		return frequence;
+	}
+
+	public void setFrequence(Integer frequence) {
+		this.frequence = frequence;
+	}
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
 	}
 }

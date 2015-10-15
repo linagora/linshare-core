@@ -62,6 +62,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public ThreadMemberDto find(Long id) throws BusinessException {
+		@SuppressWarnings("unused")
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(id, "id must be set.");
 		return new ThreadMemberDto(threadService.getThreadMemberById(id));

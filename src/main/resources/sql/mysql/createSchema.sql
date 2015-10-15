@@ -40,7 +40,7 @@ CREATE TABLE document (
   uuid            varchar(255) NOT NULL UNIQUE,
   creation_date   datetime NOT NULL,
   type            varchar(255) NOT NULL,
-  ls_size          bigint(8) NOT NULL,
+  ls_size         bigint(8) NOT NULL,
   thmb_uuid       varchar(255),
   timestamp       blob,
   check_mime_type tinyint(1) DEFAULT false NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE document_entry (
   document_id   bigint(8) NOT NULL,
   ciphered      tinyint(1) NOT NULL,
   type          varchar(255) NOT NULL,
-  ls_size        bigint(8) NOT NULL,
+  ls_size       bigint(8) NOT NULL,
   sha256sum     varchar(255) NOT NULL,
   has_thumbnail tinyint(1) NOT NULL,
   shared        bigint(8) NOT NULL,
@@ -88,7 +88,7 @@ CREATE TABLE domain_access_policy (
 CREATE TABLE domain_access_rule (
   id                      bigint(8) NOT NULL AUTO_INCREMENT,
   domain_access_rule_type int(4) NOT NULL,
-  ls_regexp                  varchar(255),
+  ls_regexp               varchar(255),
   domain_id               bigint(8),
   domain_access_policy_id bigint(8) NOT NULL,
   rule_index              int(4),
@@ -222,7 +222,7 @@ CREATE TABLE signature (
   creation_date     datetime NOT NULL,
   modification_date datetime NOT NULL,
   type              varchar(255),
-  ls_size            bigint(8),
+  ls_size           bigint(8),
   cert_subject_dn   varchar(255),
   cert_issuer_dn    varchar(255),
   cert_not_after    datetime NULL,
@@ -249,7 +249,7 @@ CREATE TABLE thread_entry (
   document_id   bigint(8) NOT NULL,
   ciphered      tinyint(1) NOT NULL,
   type          varchar(255) NOT NULL,
-  ls_size        bigint(8) NOT NULL,
+  ls_size       bigint(8) NOT NULL,
   sha256sum     varchar(255) NOT NULL,
   has_thumbnail tinyint(1) NOT NULL,
   PRIMARY KEY (entry_id),
@@ -457,14 +457,14 @@ CREATE TABLE upload_request_entry (
   entry_id                bigint(8) NOT NULL,
   document_entry_entry_id bigint(8),
   upload_request_id       bigint(8) NOT NULL,
-  ls_size                  bigint(8) NOT NULL,
+  ls_size                 bigint(8) NOT NULL,
   PRIMARY KEY (entry_id)) CHARACTER SET UTF8;
 CREATE TABLE upload_proposition_filter (
   id                 bigint(8) NOT NULL AUTO_INCREMENT,
   domain_abstract_id bigint(8) NOT NULL,
   uuid               varchar(255) NOT NULL,
   name               varchar(255) NOT NULL,
-  ls_match            varchar(255) NOT NULL,
+  ls_match           varchar(255) NOT NULL,
   enable             tinyint(1) NOT NULL,
   creation_date      datetime NOT NULL,
   modification_date  datetime NOT NULL,
@@ -604,16 +604,6 @@ CREATE TABLE functionality_boolean (
   functionality_id bigint(8) NOT NULL,
   boolean_value    tinyint(1) NOT NULL,
   PRIMARY KEY (functionality_id)) CHARACTER SET UTF8;
-CREATE TABLE upload_request_entry_url (
-  id                      bigint(8) NOT NULL AUTO_INCREMENT,
-  upload_request_entry_id bigint(8) NOT NULL,
-  uuid                    varchar(255) NOT NULL,
-  path                    varchar(255) NOT NULL,
-  password                varchar(255),
-  creation_date           datetime NOT NULL,
-  modification_date       datetime NOT NULL,
-  expiry_date             datetime NOT NULL,
-  PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE contact_provider (
   id                 bigint(8) NOT NULL AUTO_INCREMENT,
   uuid               varchar(255) NOT NULL UNIQUE,
@@ -677,9 +667,9 @@ CREATE TABLE share_entry_group (
   notification_date datetime NULL,
   creation_date     datetime NOT NULL,
   modification_date datetime NOT NULL,
-  expiration_date   datetime NULL,
   notified          tinyint(1) DEFAULT false NOT NULL,
   processed         tinyint(1) DEFAULT false NOT NULL,
+  expiration_date   datetime NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE mail_activation (
   id                      bigint(8) NOT NULL AUTO_INCREMENT,
@@ -691,6 +681,35 @@ CREATE TABLE mail_activation (
   domain_id               bigint(8) NOT NULL,
   enable                  tinyint(1) NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
+CREATE TABLE async_task (
+  id                    bigint(8) NOT NULL AUTO_INCREMENT,
+  owner_id              bigint(8) NOT NULL,
+  actor_id              bigint(8) NOT NULL,
+  domain_abstract_id    bigint(8) NOT NULL,
+  uuid                  varchar(255) NOT NULL,
+  task_type             varchar(255) NOT NULL,
+  resource_uuid         varchar(255),
+  status                varchar(255) NOT NULL,
+  creation_date         datetime NOT NULL,
+  start_processing_date datetime NULL,
+  end_processing_date   datetime NULL,
+  processing_duration   bigint(8),
+  modification_date     datetime NOT NULL,
+  error_code            int(4),
+  error_name            varchar(255),
+  error_msg             text,
+  ls_size               bigint(8),
+  file_name             text,
+  frequency             int(4),
+  transfert_duration    bigint(8),
+  waiting_duration      bigint(8),
+  meta_data             text,
+  PRIMARY KEY (id),
+  INDEX (id),
+  INDEX (owner_id),
+  INDEX (actor_id),
+  INDEX (domain_abstract_id),
+  UNIQUE INDEX (uuid)) CHARACTER SET UTF8;
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE INDEX account_account_type
@@ -867,3 +886,6 @@ ALTER TABLE mail_activation ADD INDEX activation (policy_activation_id), ADD CON
 ALTER TABLE mail_activation ADD INDEX configuration (policy_configuration_id), ADD CONSTRAINT configuration FOREIGN KEY (policy_configuration_id) REFERENCES policy (id);
 ALTER TABLE mail_activation ADD INDEX delegation (policy_delegation_id), ADD CONSTRAINT delegation FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
 ALTER TABLE share_entry_group ADD INDEX shareEntryGroup (account_id), ADD CONSTRAINT shareEntryGroup FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE async_task ADD INDEX FKasync_task548996 (domain_abstract_id), ADD CONSTRAINT FKasync_task548996 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE async_task ADD INDEX FKasync_task706276 (actor_id), ADD CONSTRAINT FKasync_task706276 FOREIGN KEY (actor_id) REFERENCES account (id);
+ALTER TABLE async_task ADD INDEX FKasync_task559470 (owner_id), ADD CONSTRAINT FKasync_task559470 FOREIGN KEY (owner_id) REFERENCES account (id);

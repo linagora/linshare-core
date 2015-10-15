@@ -116,3 +116,30 @@ linshare.multidomain.enable=false
 #****************** LinShare Logo
 linshare.logo.webapp.visible=true
 linshare.logo.mails.visible=true
+
+
+
+#****************** Upload management
+# Enable debug mode
+#linshare.tapestry.fineuploader.debug=false
+
+# Enable async mode, if false every upload will be synchronous.
+#linshare.tapestry.fineuploader.async.mode.enable=true
+# Use asynchronous mode if file size is over than default threshold.
+# NB: With IE9, this does not work because IE can not send file size.
+#	  All upload will be asynchronous using 'default.frequency' only as default frequency
+# Default : 10 Mo.
+#linshare.tapestry.fineuploader.async.mode.default.threshold=10000000
+# Number of second between each request
+#linshare.tapestry.fineuploader.async.mode.default.frequency=2
+
+# If file size is over the max threshold, we use an other frequency
+# Default : 500 Mo.
+#linshare.tapestry.fineuploader.async.mode.max.threshold=500000000
+# Number of second between each request
+#linshare.tapestry.fineuploader.async.mode.max.frequency=10
+
+#****************** Async task management
+# ThreadPoolTaskExecutor for AsyncTask like uploads.
+#linshare.ThreadPoolTaskExecutor.corePoolSize=10
+#linshare.ThreadPoolTaskExecutor.maxPoolSize=30

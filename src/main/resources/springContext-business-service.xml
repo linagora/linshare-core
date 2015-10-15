@@ -186,4 +186,9 @@
 	<bean id="welcomeMessagesBusinessService" class="org.linagora.linshare.core.business.service.impl.WelcomeMessagesBusinessServiceImpl">
 		<constructor-arg ref="welcomeMessagesRepository" />
 	</bean>
+
+	<bean id="asyncTaskBusinessService" class="org.linagora.linshare.core.business.service.impl.AsyncTaskBusinessServiceImpl">
+		<constructor-arg ref="asyncTaskRepository" />
+	</bean>
+
 </beans>

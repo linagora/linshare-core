@@ -347,8 +347,16 @@ public abstract class Account {
 	 * Account type Helpers
 	 */
 
+	public boolean isUser() {
+		return isGuest() || isInternal() || isRoot();
+	}
+
 	public boolean isGuest() {
 		return this.getAccountType().equals(AccountType.GUEST);
+	}
+
+	public boolean isRoot() {
+		return this.getAccountType().equals(AccountType.ROOT);
 	}
 
 	public boolean isInternal() {

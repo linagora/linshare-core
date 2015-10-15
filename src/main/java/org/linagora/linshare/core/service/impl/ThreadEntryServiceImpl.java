@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
@@ -68,13 +69,8 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.VirusScannerService;
-import org.linagora.linshare.core.utils.DocumentUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, ThreadEntry> implements ThreadEntryService {
-
-	private static final Logger logger = LoggerFactory.getLogger(ThreadEntryServiceImpl.class);
 
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 	private final LogEntryService logEntryService;
@@ -112,18 +108,16 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	}
 
 	@Override
-	public ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, InputStream stream, String filename) throws BusinessException {
+	public ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, File tempFile, String filename) throws BusinessException {
 		checkCreatePermission(actor, owner, ThreadEntry.class,
 				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, null, thread);
 		filename = sanitizeFileName(filename); // throws
-		DocumentUtils util = new DocumentUtils();
-		File tempFile = util.getTempFile(stream, filename);
 		Long size = tempFile.length();
 		ThreadEntry threadEntry = null;
 
 		try {
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
-			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
+			AbstractDomain domain = owner.getDomain();
 
 			// check if the file MimeType is allowed
 			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
@@ -157,6 +151,24 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			}
 		}
 
+		return threadEntry;
+	}
+
+	@Override
+	public ThreadEntry copyFromDocumentEntry(Account actor, Account member,
+			Thread thread, DocumentEntry documentEntry, InputStream stream)
+			throws BusinessException {
+		checkCreatePermission(actor, member, ThreadEntry.class,
+				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, null, thread);
+		AbstractDomain domain = member.getDomain();
+		// check if the file MimeType is allowed
+		Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
+		if (mimeFunctionality.getActivationPolicy().getStatus()) {
+			mimeTypeService.checkFileMimeType(member, documentEntry.getName(), documentEntry.getType());
+		}
+
+		ThreadEntry threadEntry = documentEntryBusinessService.copyFromDocumentEntry(thread, documentEntry, stream);
+		logEntryService.create(new ThreadLogEntry(member, threadEntry, LogAction.THREAD_UPLOAD_ENTRY, "Uploading a file in a thread."));
 		return threadEntry;
 	}
 
@@ -230,14 +242,6 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			}
 		}
 		return documentEntryBusinessService.findAllThreadEntries(thread);
-	}
-
-	@Override
-	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Account actor, Thread thread, String[] names) {
-		if (!this.isThreadMember(thread, (User) actor)) {
-			return new ArrayList<ThreadEntry>();
-		}
-		return documentEntryBusinessService.findAllThreadEntriesTaggedWith(thread, names);
 	}
 
 	@Override

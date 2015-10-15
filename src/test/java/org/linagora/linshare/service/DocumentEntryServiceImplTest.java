@@ -33,12 +33,14 @@
  */
 package org.linagora.linshare.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.cxf.helpers.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -148,7 +150,9 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		createFunctionalities();
 
 		Account actor = jane;
-		aDocumentEntry = documentEntryService.create(actor, actor, stream, fileName, comment, false, null);
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
 
 		Document aDocument = aDocumentEntry.getDocument();
@@ -269,7 +273,9 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Account actor = jane;
 		User owner = jane;
 		createFunctionalities();
-		aDocumentEntry = documentEntryService.create(actor, actor, stream, fileName, comment, false, null);
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		List<DocumentEntry> documents = documentEntryService.findAll(actor, owner);
 		Assert.assertTrue(documents.contains(aDocumentEntry));
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -280,7 +286,9 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		createFunctionalities();
-		aDocumentEntry = documentEntryService.create(actor, actor, stream, fileName, comment, false, null);
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		aDocumentEntry.getDocument().setSignatures(new HashSet<Signature>());
 		documentEntryService.delete(actor, actor, aDocumentEntry.getUuid());
 		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) == null);

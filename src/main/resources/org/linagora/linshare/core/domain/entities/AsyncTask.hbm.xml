@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
+	<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="asyncTaskStatusEnum">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.AsyncTaskStatus</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
+	<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="asyncTaskTypeEnum">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.AsyncTaskType</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
+	<class name="AsyncTask" table="async_task">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<many-to-one name="actor" column="actor_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true">
+		</many-to-one>
+		<many-to-one name="owner" column="owner_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true">
+		</many-to-one>
+		<many-to-one name="domain" column="domain_abstract_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain"
+			not-null="true" >
+		</many-to-one>
+		<property name="uuid" column="uuid" unique="true" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="taskType" column="task_type" type="asyncTaskTypeEnum" length="255" not-null="true" lazy="false"/>
+		<property name="status" column="status" type="asyncTaskStatusEnum" length="255" not-null="true" lazy="false"/>
+		<property name="resourceUuid" column="resource_uuid" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="timestamp" length="6" not-null="true" lazy="false"/>
+		<property name="startProcessingDate" column="start_processing_date" type="timestamp" length="6" not-null="false" lazy="false"/>
+		<property name="endProcessingDate" column="end_processing_date" type="timestamp" length="6" not-null="false" lazy="false"/>
+		<property name="processingDuration" column="processing_duration" type="long" not-null="false" lazy="false"/>
+		<property name="modificationDate" column="modification_date" type="timestamp" length="6" not-null="true" lazy="false"/>
+		<property name="errorCode" column="error_code" type="integer" not-null="false" lazy="false"/>
+		<property name="errorMsg" column="error_msg" type="text" not-null="false" lazy="false"/>
+		<property name="errorName" column="error_name" type="string" not-null="false" lazy="false"/>
+		<property name="size" column="ls_size" type="long" not-null="false" lazy="false"/>
+		<property name="fileName" column="file_name" type="text" not-null="false" lazy="false"/>
+		<property name="frequency" column="frequency" type="integer" not-null="false" lazy="false"/>
+		<property name="transfertDuration" column="transfert_duration" type="long" not-null="false" lazy="false"/>
+		<property name="waitingDuration" column="waiting_duration" type="long" not-null="false" lazy="false"/>
+		<property name="metaData" column="meta_data" type="text" not-null="false" lazy="false"/>
+	</class>
+</hibernate-mapping>

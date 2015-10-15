@@ -47,15 +47,6 @@ import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
 public interface DocumentFacade {
 
 	/**
-	 * Insert a file in the path identifiable by its filename.
-	 * @param file the stream content file.
-	 * @param fileName the name of the file which permits to identify it.
-	 * @return DocumentVo : the created document
-	 * @throws BusinessException  FILE_TOO_LARGE if the file is too large to fit in user's space
-	 */
-	public DocumentVo insertFile(InputStream file,String fileName, UserVo owner) throws BusinessException;
-
-	/**
 	 * Retrieve a DocumentVo given the user login and the id of the doc
 	 * @param actorVo
 	 * @param uuid

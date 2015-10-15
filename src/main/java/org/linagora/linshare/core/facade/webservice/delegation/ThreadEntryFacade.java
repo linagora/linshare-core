@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.core.facade.webservice.delegation;
 
-import java.io.InputStream;
+import java.io.File;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -42,10 +42,10 @@ import javax.ws.rs.core.Response;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
 
-public interface ThreadEntryFacade {
+public interface ThreadEntryFacade extends DelegationGenericFacade {
 
 	ThreadEntryDto create(String ownerUuid, String threadUuid,
-			InputStream theFile, String fileName) throws BusinessException;
+			File file, String fileName) throws BusinessException;
 
 	ThreadEntryDto copy(String ownerUuid, String threadUuid, String entryUuid)
 			throws BusinessException;

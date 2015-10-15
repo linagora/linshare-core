@@ -26,6 +26,9 @@
 
 	<bean id="delegationDocumentRestService" class="org.linagora.linshare.webservice.delegation.impl.DocumentRestServiceImpl">
 		<constructor-arg ref="wsDelegationDocumentFacade" />
+		<constructor-arg ref="wsDelegationAsyncTaskFacade" />
+		<constructor-arg ref="wsDocumentAsyncFacade" />
+		<constructor-arg ref="taskExecutor" />
 	</bean>
 
 	<bean id="delegationGuestRestService" class="org.linagora.linshare.webservice.delegation.impl.GuestRestServiceImpl">
@@ -38,6 +41,9 @@
 
 	<bean id="delegationThreadEntryRestService" class="org.linagora.linshare.webservice.delegation.impl.ThreadEntryRestServiceImpl">
 		<constructor-arg ref="wsDelegationThreadEntryFacade" />
+		<constructor-arg ref="wsThreadEntryAsyncFacade" />
+		<constructor-arg ref="wsDelegationAsyncTaskFacade" />
+		<constructor-arg ref="taskExecutor" />
 	</bean>
 
 	<bean id="delegationThreadMemberRestService" class="org.linagora.linshare.webservice.delegation.impl.ThreadMemberRestServiceImpl">

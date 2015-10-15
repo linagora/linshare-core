@@ -33,9 +33,12 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.io.File;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -43,11 +46,11 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DocumentEntryService {
 
-	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, String comment, boolean forceAntivirusOff, boolean isFromCmis, String metadata) throws BusinessException;
+	public DocumentEntry create(Account actor, Account owner, File tempFile, String fileName, String comment, boolean forceAntivirusOff, boolean isFromCmis, String metadata) throws BusinessException;
 
-	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, String comment, boolean isFromCmis, String metadata) throws BusinessException;
+	public DocumentEntry create(Account actor, Account owner, File tempFile, String fileName, String comment, boolean isFromCmis, String metadata) throws BusinessException;
 
-	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, InputStream stream, String fileName) throws BusinessException ;
+	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, File tempFile, String fileName) throws BusinessException ;
 
 	/**
 	 * Document suppression due to user action. 

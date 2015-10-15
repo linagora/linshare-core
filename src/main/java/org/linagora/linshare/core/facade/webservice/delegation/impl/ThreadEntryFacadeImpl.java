@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -78,17 +80,17 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 
 	@Override
 	public ThreadEntryDto create(String ownerUuid, String threadUuid,
-			InputStream theFile, String fileName) {
+			File file, String fileName) {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
-		Validate.notNull(theFile, "Missing required file");
+		Validate.notNull(file, "Missing required file");
 		Validate.notNull(fileName, "Missing required fileName");
 
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		Thread thread = threadService.find(actor, owner, threadUuid);
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
-				owner, thread, theFile, fileName);
+				owner, thread, file, fileName);
 		return new ThreadEntryDto(threadEntry);
 	}
 
@@ -98,16 +100,27 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(entryUuid, "Missing required entry uuid");
-
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
+		// Check if we have the right to access to the specified thread
 		Thread thread = threadService.find(actor, owner, threadUuid);
+		// Check if we have the right to access to the specified document entry
 		DocumentEntry doc = documentEntryService.find(actor, owner, entryUuid);
-		InputStream stream = documentEntryService.getDocumentStream(actor,
-				owner, entryUuid);
-		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
-				owner, thread, stream, doc.getName());
-		return new ThreadEntryDto(threadEntry);
+		// Check if we have the right to download the specified document entry
+		InputStream stream = null;
+		try {
+			stream = documentEntryService.getDocumentStream(actor, owner, entryUuid);
+			ThreadEntry threadEntry = threadEntryService.copyFromDocumentEntry(actor, owner, thread, doc, stream);
+			return new ThreadEntryDto(threadEntry);
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		}
 	}
 
 	@Override

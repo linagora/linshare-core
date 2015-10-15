@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.webservice.userv2.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -123,11 +124,12 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			if (FlowUploaderUtils.isUploadFinished(identifier, chunkSize,
 					totalSize, chunkedFiles)) {
 				logger.debug("upload finished ");
-				InputStream inputStream = Files.newInputStream(tempFile,
-						StandardOpenOption.READ);
-
-				documentFacade.create(inputStream, filename, "", null);
-
+				File tempFile2 = getTempFile(file, "rest-flowuploader", filename);
+				try {
+					documentFacade.create(tempFile2, filename, "", null);
+				} finally {
+					deleteTempFile(tempFile2);
+				}
 				ChunkedFile remove = chunkedFiles.remove(identifier);
 				Files.deleteIfExists(remove.getPath());
 				return Response.ok("upload success").build();
@@ -135,6 +137,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 				logger.debug("upload pending ");
 			}
 		} catch (IOException e) {
+			// FIXME : upload
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -35,7 +35,6 @@ package org.linagora.linshare.core.facade.webservice.user;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
 

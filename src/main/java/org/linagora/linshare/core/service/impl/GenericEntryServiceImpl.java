@@ -39,14 +39,9 @@ import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.EntryResourceAccessControl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class GenericEntryServiceImpl<R, E extends Entry> extends
 		GenericServiceImpl<R, E> {
-
-	protected static Logger logger = LoggerFactory
-			.getLogger(GenericEntryServiceImpl.class);
 
 	protected final EntryResourceAccessControl<R, E> rac;
 

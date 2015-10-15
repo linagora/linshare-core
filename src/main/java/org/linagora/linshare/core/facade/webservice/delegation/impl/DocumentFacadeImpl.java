@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -77,14 +78,14 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public DocumentDto create(String ownerUuid, InputStream theFile,
+	public DocumentDto create(String ownerUuid, File file,
 			String description, String givenFileName) throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
-		Validate.notNull(theFile, "Missing required file");
+		Validate.notNull(file, "Missing required file");
 
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		DocumentEntry doc = documentEntryService.create(actor, owner, theFile,
+		DocumentEntry doc = documentEntryService.create(actor, owner, file,
 				givenFileName, description, false, null);
 		return new DocumentDto(doc);
 	}
@@ -187,15 +188,15 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 
 	@Override
 	public DocumentDto updateFile(String ownerUuid, String documentUuid,
-			InputStream theFile, String givenFileName) throws BusinessException {
+			File file, String givenFileName) throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
-		Validate.notNull(theFile, "Missing required File stream");
+		Validate.notNull(file, "Missing required File stream");
 
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
 		return new DocumentDto(documentEntryService.update(actor, owner,
-				documentUuid, theFile, givenFileName));
+				documentUuid, file, givenFileName));
 	}
 }

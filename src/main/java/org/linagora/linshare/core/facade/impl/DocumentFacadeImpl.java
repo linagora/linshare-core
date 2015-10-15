@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade.impl;
 
+import java.io.File;
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -101,14 +102,6 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 		this.documentEntryTransformer = documentEntryTransformer;
 		this.signatureService = signatureService;
 		this.shareService = shareService;
-	}
-
-	@Override
-	public DocumentVo insertFile(InputStream in, String fileName, UserVo owner) throws BusinessException {
-		logger.debug("insert files for document entries");
-		User actor = getActor(owner);
-		DocumentEntry createDocumentEntry = documentEntryService.create(actor, actor, in, fileName, null, false, null);
-		return documentEntryTransformer.disassemble(createDocumentEntry);
 	}
 
 	@Override
@@ -288,7 +281,14 @@ public class DocumentFacadeImpl extends GenericTapestryFacade implements Documen
 	@Override
 	public DocumentVo updateDocument(String currentFileUUID, InputStream file, long size, String fileName, UserVo ownerVo) throws BusinessException {
 		Account actor = getActor(ownerVo);
-		DocumentEntry documentEntry = documentEntryService.update(actor, actor, currentFileUUID, file, fileName);
+		DocumentEntry documentEntry = null;
+		File tempFile = null;
+		try {
+			tempFile = getTempFile(file, "tapestry", fileName);
+			documentEntry = documentEntryService.update(actor, actor, currentFileUUID, tempFile, fileName);
+		} finally {
+			deleteTempFile(tempFile);
+		}
 		return documentEntryTransformer.disassemble(documentEntry);
 	}
 

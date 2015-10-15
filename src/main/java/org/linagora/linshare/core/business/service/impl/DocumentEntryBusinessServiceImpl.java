@@ -62,10 +62,12 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.objects.FileInfo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -330,24 +332,175 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public ThreadEntry createThreadEntry(Thread owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException {
 		// add an entry for the file in DB
 		ThreadEntry entity = null;
-		try {
-			Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType);
-			ThreadEntry docEntry = new ThreadEntry(owner, fileName, document);
+		Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType);
+		ThreadEntry docEntry = new ThreadEntry(owner, fileName, document);
 
-			//aes encrypt ? check headers
-			if (checkIfIsCiphered) {
-				docEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
-			}
-			entity = threadEntryRepository.create(docEntry);
-
-			owner.getEntries().add(entity);
-			accountRepository.update(owner);
-
-		} catch (BusinessException e) {
-			logger.error("Could not add  " + fileName + " to user " + owner.getLsUuid() + ", reason : ", e);
-			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "couldn't register the file in the database");
+		//aes encrypt ? check headers
+		if (checkIfIsCiphered) {
+			docEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
 		}
+		entity = threadEntryRepository.create(docEntry);
+		owner.getEntries().add(entity);
 		return entity;
+	}
+
+	@Override
+	public ThreadEntry copyFromDocumentEntry(Thread thread, DocumentEntry documentEntry,
+			InputStream stream)
+			throws BusinessException {
+		String uuid = null;
+		String uuidThmb = null;
+		InputStream streamThmb = null;
+		Long size = documentEntry.getSize();
+		String name = documentEntry.getName();
+		String type = documentEntry.getType();
+		String path = thread.getLsUuid();
+		try {
+			uuid = fileSystemDao.insertFile(path, stream, size, name, type);
+			String thmbUuidOld = documentEntry.getDocument().getThmbUuid();
+			if (thmbUuidOld != null) {
+				streamThmb = fileSystemDao.getFileContentByUUID(thmbUuidOld);
+				if (streamThmb != null) {
+					FileInfo info = fileSystemDao.getFileInfoByUUID(thmbUuidOld);
+					uuidThmb = fileSystemDao.insertFile(path, streamThmb, 1, info.getName(), info.getMimeType());
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			if (uuid != null) {
+				fileSystemDao.removeFileByUUID(uuid);
+			}
+			if (uuidThmb != null) {
+				fileSystemDao.removeFileByUUID(uuidThmb);
+			}
+			throw e;
+		} finally {
+			if (streamThmb != null) {
+				try {
+					streamThmb.close();
+				} catch (IOException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		}
+		Document document = new Document(uuid, type, size);
+		document.setSha256sum(documentEntry.getSha256sum());
+		document.setThmbUuid(uuidThmb);
+		document.setTimeStamp(documentEntry.getDocument().getTimeStamp());
+		document = documentRepository.create(document);
+		ThreadEntry threadEntry = new ThreadEntry(thread, name, document);
+		threadEntry.setCiphered(documentEntry.getCiphered());
+		threadEntry = threadEntryRepository.create(threadEntry);
+		thread.getEntries().add(threadEntry);
+		return threadEntry;
+	}
+
+	@Override
+	public DocumentEntry copyFromThreadEntry(Account owner,
+			ThreadEntry entry, InputStream stream, Calendar expirationDate)
+			throws BusinessException {
+		String uuid = null;
+		String uuidThmb = null;
+		InputStream streamThmb = null;
+		Long size = entry.getSize();
+		String name = entry.getName();
+		String type = entry.getType();
+		String path = owner.getLsUuid();
+		try {
+			uuid = fileSystemDao.insertFile(path, stream, size, name, type);
+			String thmbUuidOld = entry.getDocument().getThmbUuid();
+			if (thmbUuidOld != null) {
+				streamThmb = fileSystemDao.getFileContentByUUID(thmbUuidOld);
+				if (streamThmb != null) {
+					FileInfo info = fileSystemDao.getFileInfoByUUID(thmbUuidOld);
+					uuidThmb = fileSystemDao.insertFile(path, streamThmb, 1, info.getName(), info.getMimeType());
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			if (uuid != null) {
+				fileSystemDao.removeFileByUUID(uuid);
+			}
+			if (uuidThmb != null) {
+				fileSystemDao.removeFileByUUID(uuidThmb);
+			}
+			throw e;
+		} finally {
+			if (streamThmb != null) {
+				try {
+					streamThmb.close();
+				} catch (IOException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		}
+		Document document = new Document(uuid, type, size);
+		document.setSha256sum(entry.getSha256sum());
+		document.setThmbUuid(uuidThmb);
+		document.setTimeStamp(entry.getDocument().getTimeStamp());
+		document = documentRepository.create(document);
+
+		DocumentEntry docEntry = new DocumentEntry(owner, name, entry.getComment(), document);
+		// We need to set an expiration date in case of file cleaner activation.
+		docEntry.setExpirationDate(expirationDate);
+		docEntry.setMetaData(entry.getMetaData());
+		docEntry.setCiphered(entry.getCiphered());
+		docEntry = documentEntryRepository.create(docEntry);
+		owner.getEntries().add(docEntry);
+		return docEntry;
+	}
+
+	@Override
+	public DocumentEntry copyFromShareEntry(Account owner,
+			ShareEntry entry, InputStream stream, Calendar expirationDate) throws BusinessException {
+		String uuid = null;
+		String uuidThmb = null;
+		InputStream streamThmb = null;
+		Long size = entry.getSize();
+		String name = entry.getName();
+		String type = entry.getType();
+		String path = owner.getLsUuid();
+		try {
+			uuid = fileSystemDao.insertFile(path, stream, size, name, type);
+			String thmbUuidOld = entry.getDocumentEntry().getDocument().getThmbUuid();
+			if (thmbUuidOld != null) {
+				streamThmb = fileSystemDao.getFileContentByUUID(thmbUuidOld);
+				if (streamThmb != null) {
+					FileInfo info = fileSystemDao.getFileInfoByUUID(thmbUuidOld);
+					uuidThmb = fileSystemDao.insertFile(path, streamThmb, 1, info.getName(), info.getMimeType());
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			if (uuid != null) {
+				fileSystemDao.removeFileByUUID(uuid);
+			}
+			if (uuidThmb != null) {
+				fileSystemDao.removeFileByUUID(uuidThmb);
+			}
+			throw e;
+		} finally {
+			if (streamThmb != null) {
+				try {
+					streamThmb.close();
+				} catch (IOException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		}
+		Document document = new Document(uuid, type, size);
+		document.setSha256sum(entry.getDocumentEntry().getSha256sum());
+		document.setThmbUuid(uuidThmb);
+		document.setTimeStamp(entry.getDocumentEntry().getDocument().getTimeStamp());
+		document = documentRepository.create(document);
+		DocumentEntry docEntry = new DocumentEntry(owner, name, entry.getComment(), document);
+		// We need to set an expiration date in case of file cleaner activation.
+		docEntry.setExpirationDate(expirationDate);
+		docEntry.setMetaData(entry.getMetaData());
+		docEntry.setCiphered(entry.getDocumentEntry().getCiphered());
+		docEntry = documentEntryRepository.create(docEntry);
+		owner.getEntries().add(docEntry);
+		return docEntry;
 	}
 
 	@Override
@@ -358,11 +511,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public List<ThreadEntry> findAllThreadEntries(Thread owner) {
 		return threadEntryRepository.findAllThreadEntries(owner);
-	}
-
-	@Override
-	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names) {
-		return threadEntryRepository.findAllThreadEntriesTaggedWith(owner, names);
 	}
 
 	@Override
@@ -384,9 +532,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType) throws BusinessException {
 		//create and insert the thumbnail into the JCR
 		String uuidThmb = generateThumbnailIntoJCR(fileName, owner.getLsUuid(), myFile, mimeType);
-
 		String uuid = insertIntoJCR(size, fileName, mimeType, owner.getLsUuid(), myFile);
-
 		try {
 			// want a timestamp on doc ?
 			byte[] timestampToken = null;
@@ -403,9 +549,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			}
 			document.setThmbUuid(uuidThmb);
 			document.setTimeStamp(timestampToken);
-			documentRepository.create(document);
-			return document;
-		} catch (BusinessException e) {
+			return documentRepository.create(document);
+		} catch (Exception e) {
 			fileSystemDao.removeFileByUUID(uuid);
 			fileSystemDao.removeFileByUUID(uuidThmb);
 			throw e;

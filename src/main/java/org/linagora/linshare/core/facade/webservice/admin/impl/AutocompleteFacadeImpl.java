@@ -45,12 +45,8 @@ import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AutocompleteFacadeImpl extends AdminGenericFacadeImpl implements AutocompleteFacade {
-
-	final private static Logger logger = LoggerFactory.getLogger(AutocompleteFacadeImpl.class);
 
 	final private static int AUTO_COMPLETE_LIMIT = 20;
 

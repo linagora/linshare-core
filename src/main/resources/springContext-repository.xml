@@ -219,4 +219,8 @@
 	<bean name="mailActivationRepository" class="org.linagora.linshare.core.repository.hibernate.MailActivationRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
+	<bean name="asyncTaskRepository" class="org.linagora.linshare.core.repository.hibernate.AsyncTaskRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>

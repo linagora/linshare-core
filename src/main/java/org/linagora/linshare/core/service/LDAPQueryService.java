@@ -38,9 +38,9 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface LDAPQueryService {

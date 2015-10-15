@@ -39,7 +39,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
+import org.linagora.linshare.webservice.user.task.context.DocumentTaskContext;
 
 import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
@@ -61,6 +63,11 @@ public class DocumentDto extends
 
 	public DocumentDto() {
 		super();
+	}
+
+	public DocumentDto(AsyncTaskDto asyncTask,
+			DocumentTaskContext documentTaskContext) {
+		super(asyncTask, documentTaskContext);
 	}
 
 	public DocumentDto(DocumentEntry de) {

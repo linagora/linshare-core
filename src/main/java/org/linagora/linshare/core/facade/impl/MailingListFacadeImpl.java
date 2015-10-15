@@ -61,6 +61,8 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	private final MailingListService mailingListService;
 	private final UserService userService;
+
+	@SuppressWarnings("unused")
 	private final AccountService accountService;
 
 	public MailingListFacadeImpl(MailingListService mailingListService, UserService userService,

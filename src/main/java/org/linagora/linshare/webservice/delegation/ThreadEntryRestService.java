@@ -41,15 +41,16 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
 
 public interface ThreadEntryRestService {
 
 	ThreadEntryDto create(String ownerUuid, String threadUuid,
-			InputStream theFile, String description, String givenFileName,
-			MultipartBody body) throws BusinessException;
+			InputStream file, String description, String givenFileName,
+			Boolean async, MultipartBody body) throws BusinessException;
 
-	ThreadEntryDto copy(String ownerUuid, String threadUuid, String entryUuid)
+	ThreadEntryDto copy(String ownerUuid, String threadUuid, String entryUuid, Boolean async)
 			throws BusinessException;
 
 	public ThreadEntryDto find(String ownerUuid, String threadUuid, String uuid)
@@ -72,5 +73,8 @@ public interface ThreadEntryRestService {
 
 	ThreadEntryDto update(String ownerUuid, String threadUuid,
 			String threadEntryuuid, ThreadEntryDto threadEntryDto)
+			throws BusinessException;
+
+	AsyncTaskDto findAsync(String ownerUuid, String uuid)
 			throws BusinessException;
 }

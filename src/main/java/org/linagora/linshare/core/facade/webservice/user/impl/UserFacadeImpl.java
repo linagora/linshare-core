@@ -45,14 +45,9 @@ import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UserFacadeImpl extends UserGenericFacadeImp
 		implements UserFacade {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(UserFacadeImpl.class);
 
 	private final UserService userService;
 

@@ -100,27 +100,6 @@ public class ThreadEntryRepositoryImpl extends
 		return DataAccessUtils.longResult(findByCriteria(det));
 	}
 
-	@Deprecated
-	@Override
-	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner,
-			String[] names) {
-		List<ThreadEntry> res = null;
-
-		for (String name : names) {
-			DetachedCriteria criteria = DetachedCriteria
-					.forClass(ThreadEntry.class);
-			criteria.add(Restrictions.eq("entryOwner", owner));
-			criteria.createAlias("tagAssociations", "ta", Criteria.LEFT_JOIN);
-			criteria.createAlias("ta.tag", "t", Criteria.LEFT_JOIN);
-			criteria.add(Restrictions.eq("t.name", name));
-			if (res == null)
-				res = findByCriteria(criteria);
-			else
-				res.retainAll(findByCriteria(criteria));
-		}
-		return res;
-	}
-
 	@Override
 	public List<ThreadEntry> findAllDistinctEntries(Thread thread) {
 		List<ThreadEntry> res = null;

@@ -257,4 +257,11 @@ public class Document implements Serializable {
 	public void setSha256sum(String sha256sum) {
 		this.sha256sum = sha256sum;
 	}
+
+	@Override
+	public String toString() {
+		return "Document [uuid=" + uuid + ", creationDate=" + creationDate
+				+ ", type=" + type + ", size=" + size + ", sha256sum="
+				+ sha256sum + "]";
+	}
 }

@@ -81,6 +81,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	private final AbstractDomainService abstractDomainService;
 	private final UserService userService;
 	private final UploadRequestService uploadRequestService;
+	@SuppressWarnings("unused")
 	private final UploadRequestUrlService uploadRequestUrlService;
 	private final DocumentEntryService documentEntryService;
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;

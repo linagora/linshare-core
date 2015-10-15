@@ -62,8 +62,6 @@ import org.slf4j.LoggerFactory;
 
 public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> implements ThreadService {
 
-	final private static Logger logger = LoggerFactory.getLogger(ThreadServiceImpl.class);
-
 	private final ThreadRepository threadRepository;
 
 	private final ThreadMemberRepository threadMemberRepository;

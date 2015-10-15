@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.core.facade.webservice.uploadrequest.impl;
 
-import java.io.InputStream;
+import java.io.File;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -91,11 +91,11 @@ public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 
 	@Override
 	public void addUploadRequestEntry(String uploadRequestUrlUuid,
-			String password, InputStream fi, String fileName) throws BusinessException {
+			String password, File file, String fileName) throws BusinessException {
 		Validate.notEmpty(uploadRequestUrlUuid);
-		Validate.notNull(fi);
+		Validate.notNull(file);
 		Validate.notEmpty(fileName);
-		uploadRequestUrlService.createUploadRequestEntry(uploadRequestUrlUuid, fi, fileName, password);
+		uploadRequestUrlService.createUploadRequestEntry(uploadRequestUrlUuid, file, fileName, password);
 	}
 
 	@Override

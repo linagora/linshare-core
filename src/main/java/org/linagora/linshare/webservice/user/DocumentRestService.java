@@ -63,7 +63,7 @@ public interface DocumentRestService {
 
 	SimpleLongValue getUserAvailableSize() throws BusinessException;
 
-	DocumentDto uploadfile(InputStream theFile, String description, String givenFileName, MultipartBody body) throws BusinessException;
+	DocumentDto uploadfile(InputStream file, String description, String givenFileName, MultipartBody body) throws BusinessException;
 
 	DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException;
 

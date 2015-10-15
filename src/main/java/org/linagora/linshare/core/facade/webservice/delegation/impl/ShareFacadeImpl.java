@@ -48,15 +48,11 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 public class ShareFacadeImpl extends DelegationGenericFacadeImpl implements
 		ShareFacade {
-
-	private static final Logger logger = LoggerFactory.getLogger(ShareFacadeImpl.class);
 
 	private final ShareService shareService;
 

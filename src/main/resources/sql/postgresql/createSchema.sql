@@ -43,7 +43,7 @@ CREATE TABLE document (
   uuid            varchar(255) NOT NULL UNIQUE,
   creation_date   timestamp NOT NULL,
   type            varchar(255) NOT NULL,
-  ls_size          int8 NOT NULL,
+  ls_size         int8 NOT NULL,
   thmb_uuid       varchar(255),
   timestamp       bytea,
   check_mime_type bool DEFAULT 'false' NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE document_entry (
   document_id   int8 NOT NULL,
   ciphered      bool NOT NULL,
   type          varchar(255) NOT NULL,
-  ls_size        int8 NOT NULL,
+  ls_size       int8 NOT NULL,
   sha256sum     varchar(255) NOT NULL,
   has_thumbnail bool NOT NULL,
   shared        int8 NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE domain_access_policy (
 CREATE TABLE domain_access_rule (
   id                       int8 NOT NULL,
   domain_access_rule_type int4 NOT NULL,
-  ls_regexp                  varchar(255),
+  ls_regexp               varchar(255),
   domain_id               int8,
   domain_access_policy_id int8 NOT NULL,
   rule_index              int4,
@@ -225,7 +225,7 @@ CREATE TABLE signature (
   creation_date     timestamp NOT NULL,
   modification_date timestamp NOT NULL,
   type              varchar(255),
-  ls_size            int8,
+  ls_size           int8,
   cert_subject_dn   varchar(255),
   cert_issuer_dn    varchar(255),
   cert_not_after    timestamp,
@@ -252,7 +252,7 @@ CREATE TABLE thread_entry (
   document_id   int8 NOT NULL,
   ciphered      bool NOT NULL,
   type          varchar(255) NOT NULL,
-  ls_size        int8 NOT NULL,
+  ls_size       int8 NOT NULL,
   sha256sum     varchar(255) NOT NULL,
   has_thumbnail bool NOT NULL,
   PRIMARY KEY (entry_id),
@@ -460,14 +460,14 @@ CREATE TABLE upload_request_entry (
   entry_id                int8 NOT NULL,
   document_entry_entry_id int8,
   upload_request_id       int8 NOT NULL,
-  ls_size                  int8 NOT NULL,
+  ls_size                 int8 NOT NULL,
   PRIMARY KEY (entry_id));
 CREATE TABLE upload_proposition_filter (
   id                  int8 NOT NULL,
   domain_abstract_id int8 NOT NULL,
   uuid               varchar(255) NOT NULL,
   name               varchar(255) NOT NULL,
-  ls_match              varchar(255) NOT NULL,
+  ls_match           varchar(255) NOT NULL,
   enable             bool NOT NULL,
   creation_date      timestamp(6) NOT NULL,
   modification_date  timestamp(6) NOT NULL,
@@ -650,9 +650,9 @@ CREATE TABLE share_entry_group (
   notification_date timestamp,
   creation_date     timestamp NOT NULL,
   modification_date timestamp NOT NULL,
-  expiration_date   timestamp NULL,
   notified          bool DEFAULT 'false' NOT NULL,
   processed         bool DEFAULT 'false' NOT NULL,
+  expiration_date   timestamp,
   PRIMARY KEY (id));
 CREATE TABLE mail_activation (
   id                       int8 NOT NULL,
@@ -663,6 +663,30 @@ CREATE TABLE mail_activation (
   policy_delegation_id    int8 NOT NULL,
   domain_id               int8 NOT NULL,
   enable                  bool NOT NULL,
+  PRIMARY KEY (id));
+CREATE TABLE async_task (
+  id                     int8 NOT NULL,
+  owner_id              int8 NOT NULL,
+  actor_id              int8 NOT NULL,
+  domain_abstract_id    int8 NOT NULL,
+  uuid                  varchar(255) NOT NULL,
+  task_type             varchar(255) NOT NULL,
+  resource_uuid         varchar(255),
+  status                varchar(255) NOT NULL,
+  creation_date         timestamp(6) NOT NULL,
+  start_processing_date timestamp(6),
+  end_processing_date   timestamp(6),
+  processing_duration   int8,
+  modification_date     timestamp(6) NOT NULL,
+  error_code            int4,
+  error_name            varchar(255),
+  error_msg             text,
+  ls_size               int8,
+  file_name             text,
+  frequency             int4,
+  transfert_duration    int8,
+  waiting_duration      int8,
+  meta_data             text,
   PRIMARY KEY (id));
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
@@ -746,6 +770,16 @@ CREATE INDEX mailing_list_contact_index
   ON mailing_list_contact (uuid);
 CREATE UNIQUE INDEX welcome_messages_uuid
   ON welcome_messages (uuid);
+CREATE INDEX async_task_id
+  ON async_task (id);
+CREATE INDEX async_task_owner_id
+  ON async_task (owner_id);
+CREATE INDEX async_task_actor_id
+  ON async_task (actor_id);
+CREATE INDEX async_task_domain_abstract_id
+  ON async_task (domain_abstract_id);
+CREATE UNIQUE INDEX async_task_uuid
+  ON async_task (uuid);
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_access_rule ADD CONSTRAINT fkf75719ed3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
@@ -840,3 +874,6 @@ ALTER TABLE mail_activation ADD CONSTRAINT activation FOREIGN KEY (policy_activa
 ALTER TABLE mail_activation ADD CONSTRAINT configuration FOREIGN KEY (policy_configuration_id) REFERENCES policy (id);
 ALTER TABLE mail_activation ADD CONSTRAINT delegation FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
 ALTER TABLE share_entry_group ADD CONSTRAINT shareEntryGroup FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE async_task ADD CONSTRAINT FKasync_task548996 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE async_task ADD CONSTRAINT FKasync_task706276 FOREIGN KEY (actor_id) REFERENCES account (id);
+ALTER TABLE async_task ADD CONSTRAINT FKasync_task559470 FOREIGN KEY (owner_id) REFERENCES account (id);

@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.webservice.user.impl;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -48,7 +49,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -60,13 +60,9 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.user.DocumentRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Path("/documents")
 public class DocumentRestServiceImpl extends WebserviceBase implements DocumentRestService {
-
-	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
 
 	private final DocumentFacade webServiceDocumentFacade;
 
@@ -117,28 +113,20 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile,
+	public DocumentDto uploadfile(@Multipart(value = "file") InputStream file,
 			@Multipart(value = "description", required = false) String description,
 			@Multipart(value = "filename", required = false) String givenFileName, MultipartBody body) throws BusinessException {
-		String fileName;
 		String comment = (description == null) ? "" : description;
-		if (theFile == null) {
+		if (file == null) {
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
 		}
-		if (givenFileName == null || givenFileName.isEmpty()) {
-			// parameter givenFileName is optional
-			// so need to search this information in the header of the
-			// attachement (with id file)
-			fileName = body.getAttachment("file").getContentDisposition().getParameter("filename");
-		} else {
-			fileName = givenFileName;
+		String fileName = getFileName(givenFileName, body);
+		File tempFile = getTempFile(file, "rest-user", fileName);
+		try {
+			return webServiceDocumentFacade.create(tempFile, fileName, comment, null);
+		} finally {
+			deleteTempFile(tempFile);
 		}
-		if (fileName == null) {
-			logger.error("There is no multi-part attachment named 'filename'.");
-			logger.error("There is no 'filename' header in multi-Part attachment named 'file'.");
-			Validate.notNull(fileName, "File name for file attachment is required.");
-		}
-		return webServiceDocumentFacade.create(theFile, fileName, comment, null);
 	}
 
 	/**

@@ -45,16 +45,11 @@ import org.linagora.linshare.core.facade.webservice.user.ThreadMemberFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		ThreadMemberFacade {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(ThreadMemberFacadeImpl.class);
 
 	private final ThreadService threadService;
 

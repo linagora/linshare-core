@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.core.facade.webservice.user;
 
-import java.io.InputStream;
+import java.io.File;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -45,7 +45,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
 
 public interface ThreadEntryFacade extends GenericFacade {
 
-	ThreadEntryDto create(String threadUuid, InputStream fi,
+	ThreadEntryDto create(String threadUuid, File fi,
 			String filename) throws BusinessException;
 
 	ThreadEntryDto copy(String threadUuid, String entryUuid)

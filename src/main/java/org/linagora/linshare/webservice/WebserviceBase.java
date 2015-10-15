@@ -33,12 +33,24 @@
  */
 package org.linagora.linshare.webservice;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.Validate;
+import org.apache.cxf.helpers.IOUtils;
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.apache.cxf.message.Exchange;
+import org.apache.cxf.message.Message;
+import org.apache.cxf.phase.PhaseInterceptorChain;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 public class WebserviceBase {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(WebserviceBase.class);
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	// SOAP
 
@@ -92,4 +103,93 @@ public class WebserviceBase {
 			return "trunk";
 		}
 	}
+
+	protected File getTempFile(InputStream theFile, String discriminator, String fileName) {
+		if (discriminator == null)  {
+			discriminator = "";
+		}
+		// Legacy code, we need to extract extension for the dirty unstable LinThumbnail Module.
+		// I hope some day we get rid of it !
+		String extension = null;
+		if (fileName != null) {
+			int splitIdx = fileName.lastIndexOf('.');
+			if (splitIdx > -1) {
+				extension = fileName.substring(splitIdx, fileName.length());
+			}
+		}
+		File tempFile = null;
+		try {
+			tempFile = File.createTempFile("linshare-" + discriminator + "-", extension);
+			tempFile.deleteOnExit();
+			IOUtils.transferTo(theFile, tempFile);
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+			throw new BusinessException(
+					BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
+					"Can not generate temp file from input stream.");
+		}
+		return tempFile;
+	}
+
+	protected void deleteTempFile(File tempFile) {
+		if (tempFile != null) {
+			try {
+				if (tempFile.exists()) {
+					tempFile.delete();
+				}
+			} catch (Exception e) {
+				logger.warn("Can not delete temp file : "
+						+ tempFile.getAbsolutePath());
+				logger.debug(e.getMessage(), e);
+			}
+		}
+	}
+
+	protected Long getTransfertDuration() {
+		Long uploadStartTime = null;
+		Message currentMessage = PhaseInterceptorChain.getCurrentMessage();
+		Exchange exchange = currentMessage.getExchange();
+		if (exchange.containsKey("org.linagora.linshare.webservice.interceptor.start_time")) {
+			uploadStartTime = (Long) exchange.get("org.linagora.linshare.webservice.interceptor.start_time");
+			logger.debug("Upload start time : " + uploadStartTime);
+		}
+		Long transfertDuration = null;
+		if (uploadStartTime != null) {
+			Date endDate = new Date();
+			transfertDuration = endDate.getTime() - uploadStartTime;
+			if (logger.isDebugEnabled()) {
+				Date beginDate = new Date(uploadStartTime);
+				logger.debug("Upload was begining at : " + beginDate);
+				logger.debug("Upload was ending at : " + endDate);
+			}
+			logger.info("statistics:upload time:" + transfertDuration + "ms.");
+		}
+		return transfertDuration;
+	}
+
+	protected String getFileName(String givenFileName, MultipartBody body) {
+		String fileName;
+		if (givenFileName == null || givenFileName.isEmpty()) {
+			// parameter givenFileName is optional
+			// so need to search this information in the header of the
+			// attachment (with id file)
+			fileName = body.getAttachment("file").getContentDisposition()
+					.getParameter("filename");
+		} else {
+			fileName = givenFileName;
+		}
+		if (fileName == null) {
+			logger.error("There is no multi-part attachment named 'filename'.");
+			logger.error("There is no 'filename' header in multi-Part attachment named 'file'.");
+			Validate.notNull(fileName, "File name for file attachment is required.");
+		}
+		try {
+			byte[] bytes = fileName.getBytes("ISO-8859-1");
+			fileName = new String(bytes, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			logger.error("Can not encode file name " + e1.getMessage());
+		}
+		return fileName;
+	}
+
 }

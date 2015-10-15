@@ -87,9 +87,6 @@ public class AnonymousShareEntryServiceImpl extends
 
 	private final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(AnonymousShareEntryServiceImpl.class);
-
 	public AnonymousShareEntryServiceImpl(
 			final FunctionalityReadOnlyService functionalityService,
 			final AnonymousShareEntryBusinessService anonymousShareEntryBusinessService,

@@ -80,9 +80,6 @@ import com.google.common.collect.Sets;
 public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> implements
 		ShareService {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(ShareServiceImpl.class);
-
 	private final FunctionalityReadOnlyService funcService;
 
 	private final DocumentEntryService documentEntryService;

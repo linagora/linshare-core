@@ -41,12 +41,15 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 public interface DocumentRestService {
 
-	DocumentDto create(InputStream theFile, String description,
-			String givenFileName, InputStream theSignature, String signatureFileName, InputStream x509certificate, String metaData, MultipartBody body)
+	DocumentDto create(InputStream file, String description,
+			String givenFileName, InputStream theSignature,
+			String signatureFileName, InputStream x509certificate,
+			String metaData, Boolean async, MultipartBody body)
 			throws BusinessException;
 
 	DocumentDto find(String uuid) throws BusinessException;
@@ -61,7 +64,9 @@ public interface DocumentRestService {
 
 	Response thumbnail(String uuid) throws BusinessException;
 
-	DocumentDto updateFile(String uuid, InputStream theFile,
-			String givenFileName, MultipartBody body)
+	DocumentDto updateFile(String uuid, InputStream file,
+			String givenFileName, Boolean async, MultipartBody body)
 			throws BusinessException;
+
+	AsyncTaskDto findAsync(String uuid) throws BusinessException;
 }

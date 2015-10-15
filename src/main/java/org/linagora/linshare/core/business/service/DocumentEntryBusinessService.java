@@ -42,6 +42,7 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -72,11 +73,21 @@ public interface DocumentEntryBusinessService {
 
 	public ThreadEntry createThreadEntry(Thread owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException;
 
+	ThreadEntry copyFromDocumentEntry(Thread thread,
+			DocumentEntry documentEntry, InputStream stream)
+			throws BusinessException;
+
+	DocumentEntry copyFromThreadEntry(Account owner,
+			ThreadEntry threadEntry, InputStream stream, Calendar expirationDate)
+			throws BusinessException;
+
+	DocumentEntry copyFromShareEntry(Account owner,
+			ShareEntry shareEntry, InputStream stream, Calendar expirationDate)
+			throws BusinessException;
+
 	public ThreadEntry findThreadEntryById(String docEntryUuid);
 
 	public List<ThreadEntry> findAllThreadEntries(Thread owner);
-
-	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names);
 
 	public long countThreadEntries(Thread thread);
 

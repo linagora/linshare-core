@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CertificateException;
@@ -44,6 +45,7 @@ import java.util.Set;
 import javax.activation.DataHandler;
 
 import org.apache.commons.lang.Validate;
+import org.apache.cxf.helpers.IOUtils;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.User;
@@ -58,17 +60,12 @@ import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.SignatureService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 		DocumentFacade {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(DocumentFacade.class);
 
 	private final DocumentEntryService documentEntryService;
 
@@ -106,15 +103,15 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public DocumentDto create(InputStream fi, String fileName,
+	public DocumentDto create(File tempFile, String fileName,
 			String description, String metadata) throws BusinessException {
-		Validate.notNull(fi,
+		Validate.notNull(tempFile,
 				"Missing required file (check parameter named file)");
 		User actor = checkAuthentication();
 		if ((actor.isGuest() && !actor.getCanUpload()))
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
-		DocumentEntry res = documentEntryService.create(actor, actor, fi,
+		DocumentEntry res = documentEntryService.create(actor, actor, tempFile,
 				fileName, description, false, metadata);
 		return new DocumentDto(res);
 	}
@@ -122,6 +119,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 	@Override
 	public DocumentDto addDocumentXop(DocumentAttachement doca)
 			throws BusinessException {
+		File tempFile = null;
 		try {
 			User actor = checkAuthentication();
 			DataHandler dh = doca.getDocument();
@@ -129,12 +127,31 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 			String fileName = doca.getFilename();
 			String comment = (doca.getComment() == null) ? "" : doca
 					.getComment();
-			DocumentEntry res = documentEntryService.create(actor, actor, in,
+			tempFile = File.createTempFile("linshare-xop-", ".tmp");
+			IOUtils.transferTo(in, tempFile);
+			DocumentEntry res = documentEntryService.create(actor, actor, tempFile,
 					fileName, comment, false, null);
 			return new DocumentDto(res);
 		} catch (IOException e) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
-					"unable to upload", e);
+			logger.error(e.getMessage(), e);
+			deleteTempFile(tempFile);
+			throw new BusinessException(
+					BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
+					"Can not generate temp file from input stream.");
+		}
+	}
+
+	protected void deleteTempFile(File tempFile) {
+		if (tempFile != null) {
+			try {
+				if (tempFile.exists()) {
+					tempFile.delete();
+				}
+			} catch (Exception e) {
+				logger.warn("Can not delete temp file : "
+						+ tempFile.getAbsolutePath());
+				logger.debug(e.getMessage(), e);
+			}
 		}
 	}
 
@@ -214,29 +231,28 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public DocumentDto updateFile(InputStream theFile, String givenFileName,
+	public DocumentDto updateFile(File file, String givenFileName,
 			String documentUuid) throws BusinessException {
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
-		Validate.notNull(theFile, "Missing required File stream");
+		Validate.notNull(file, "Missing required File stream");
 
 		User actor = checkAuthentication();
-
 		return new DocumentDto(documentEntryService.update(actor, actor,
-				documentUuid, theFile, givenFileName));
+				documentUuid, file, givenFileName));
 	}
 
 	@Override
-	public DocumentDto createWithSignature(InputStream fi, String fileName,
+	public DocumentDto createWithSignature(File tempFile, String fileName,
 			String description, InputStream signatureFile,
 			String signatureFileName, InputStream x509)
 					throws BusinessException {
-		Validate.notNull(fi,
+		Validate.notNull(tempFile,
 				"Missing required file (check parameter named file)");
 		User actor = checkAuthentication();
 		if ((actor.isGuest() && !actor.getCanUpload()))
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
-		DocumentEntry res = documentEntryService.create(actor, actor, fi,
+		DocumentEntry res = documentEntryService.create(actor, actor, tempFile,
 				fileName, description, false, null);
 		if(signatureFile != null) {
 			X509Certificate x509certificate = null;

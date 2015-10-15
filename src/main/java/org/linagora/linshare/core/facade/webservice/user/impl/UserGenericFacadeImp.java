@@ -38,20 +38,15 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UserGenericFacadeImp extends GenericFacadeImpl {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(UserGenericFacadeImp.class);
 
 	public UserGenericFacadeImp(AccountService accountService) {
 		super(accountService);
 	}
 
 	@Override
-	public User checkAuthentication() throws BusinessException {
+	protected User checkAuthentication() throws BusinessException {
 		User actor = super.checkAuthentication();
 
 		if (!(actor.hasSimpleRole()

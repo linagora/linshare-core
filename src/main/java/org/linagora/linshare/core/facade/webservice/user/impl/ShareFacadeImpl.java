@@ -222,7 +222,6 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 			throws BusinessException {
 		Validate.notEmpty(shareEntryUuid, "Missing required share uuid");
 		Account actor = checkAuthentication();
-
 		return new DocumentDto(shareEntryService.copy(actor, actor, shareEntryUuid));
 	}
 }

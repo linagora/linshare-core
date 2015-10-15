@@ -58,7 +58,6 @@ import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
-import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -73,16 +72,10 @@ import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.VirusScannerService;
-import org.linagora.linshare.core.utils.DocumentUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, DocumentEntry> implements DocumentEntryService {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(DocumentEntryServiceImpl.class);
 
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
@@ -179,19 +172,17 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	}
 
 	@Override
-	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, String comment, boolean isFromCmis, String metadata) throws BusinessException {
-		return create(actor, owner, stream, fileName, comment, false, isFromCmis, metadata);
+	public DocumentEntry create(Account actor, Account owner, File tempFile, String fileName, String comment, boolean isFromCmis, String metadata) throws BusinessException {
+		return create(actor, owner, tempFile, fileName, comment, false, isFromCmis, metadata);
 	}
 
 	@Override
-	public DocumentEntry create(Account actor, Account owner, InputStream stream, String fileName, String comment, boolean forceAntivirusOff, boolean isFromCmis, String metadata) throws BusinessException {
+	public DocumentEntry create(Account actor, Account owner, File tempFile, String fileName, String comment, boolean forceAntivirusOff, boolean isFromCmis, String metadata) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(fileName, "fileName is required.");
 		checkCreatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
 		fileName = sanitizeFileName(fileName); // throws
-		DocumentUtils util = new DocumentUtils();
-		File tempFile = util.getTempFile(stream, fileName);
 		Long size = tempFile.length();
 		DocumentEntry docEntry = null;
 		try {
@@ -250,7 +241,9 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		} finally {
 			try{
 				logger.debug("deleting temp file : " + tempFile.getName());
-				tempFile.delete(); // remove the temporary file
+				if (tempFile.exists()) {
+					tempFile.delete(); // remove the temporary file
+				}
 			} catch (Exception e) {
 				logger.error("can not delete temp file : " + e.getMessage());
 			}
@@ -267,7 +260,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 	@Override
 	public DocumentEntry update(Account actor, Account owner,
-			String docEntryUuid, InputStream stream, String fileName)
+			String docEntryUuid, File tempFile, String fileName)
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(docEntryUuid, "document entry uuid is required.");
@@ -279,8 +272,6 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, originalEntry);
 		fileName = sanitizeFileName(fileName); // throws
-		DocumentUtils util = new DocumentUtils();
-		File tempFile = util.getTempFile(stream, fileName);
 		Long size = tempFile.length();
 		DocumentEntry documentEntry = null;
 
@@ -368,11 +359,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		return documentEntry;
 	}
 
-	private Calendar getDocumentExpirationDate(AbstractDomain domain) {
-		Calendar expirationDate = Calendar.getInstance();
-		TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityReadOnlyService.getDefaultFileExpiryTimeFunctionality(domain);
-		expirationDate.add(fileExpirationTimeFunctionality.toCalendarValue(), fileExpirationTimeFunctionality.getValue());
-		return expirationDate;
+	protected Calendar getDocumentExpirationDate(AbstractDomain domain) {
+		return functionalityReadOnlyService.getDefaultFileExpiryTime(domain);
 	}
 
 	@Override
@@ -508,7 +496,12 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		DocumentEntry entry = find(actor, owner, uuid);
 		checkDownloadPermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
-		return documentEntryBusinessService.getDocumentStream(entry);
+		try {
+			return documentEntryBusinessService.getDocumentStream(entry);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new BusinessException(BusinessErrorCode.FILE_UNREACHABLE, "no stream available.");
+		}
 	}
 
 	@Override

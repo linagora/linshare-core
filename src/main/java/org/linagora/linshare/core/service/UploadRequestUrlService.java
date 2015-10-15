@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.core.service;
 
-import java.io.InputStream;
+import java.io.File;
 
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -50,7 +50,7 @@ public interface UploadRequestUrlService {
 	UploadRequestUrl create(UploadRequest request, Contact contact) throws BusinessException;
 
 	UploadRequestEntry createUploadRequestEntry(String uploadRequestUrlUuid,
-			InputStream fi, String fileName, String password)
+			File file, String fileName, String password)
 			throws BusinessException;
 
 	void deleteUploadRequestEntry(String uploadRequestUrlUuid, String password,

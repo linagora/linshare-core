@@ -41,14 +41,9 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.AccountDto;
 import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DelegationGenericFacadeImpl extends GenericFacadeImpl implements
 		DelegationGenericFacade {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(DelegationGenericFacadeImpl.class);
 
 	protected final UserService userService;
 
@@ -60,7 +55,7 @@ public class DelegationGenericFacadeImpl extends GenericFacadeImpl implements
 	}
 
 	@Override
-	public User checkAuthentication() throws BusinessException {
+	protected User checkAuthentication() throws BusinessException {
 		User actor = super.checkAuthentication();
 		if (!actor.hasDelegationRole()) {
 			logger.error("Current actor is trying to access to a forbbiden api : "

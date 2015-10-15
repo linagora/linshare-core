@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -56,16 +58,11 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		ThreadEntryFacade {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(ThreadEntryFacadeImpl.class);
 
 	private final ThreadEntryService threadEntryService;
 	private final ThreadService threadService;
@@ -84,7 +81,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public User checkAuthentication() throws BusinessException {
+	protected User checkAuthentication() throws BusinessException {
 		User actor = super.checkAuthentication();
 		Functionality functionality = functionalityReadOnlyService
 				.getThreadTabFunctionality(actor.getDomain());
@@ -97,21 +94,20 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public ThreadEntryDto create(String threadUuid, InputStream fi,
+	public ThreadEntryDto create(String threadUuid, File tempFile,
 			String fileName) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(fileName, "Missing required file name");
-		Validate.notNull(fi, "Missing required input file stream");
+		Validate.notNull(tempFile, "Missing required input temp file");
 
 		User actor = checkAuthentication();
-
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		if (thread == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
 					"Current thread was not found : " + threadUuid);
 		}
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
-				actor, thread, fi, fileName);
+				actor, thread, tempFile, fileName);
 		return new ThreadEntryDto(threadEntry);
 	}
 
@@ -120,15 +116,26 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(entryUuid, "Missing required entry uuid");
-
 		User actor = checkAuthentication();
+		// Check if we have the right to access to the specified thread
 		Thread thread = threadService.find(actor, actor, threadUuid);
+		// Check if we have the right to access to the specified document entry
 		DocumentEntry doc = documentEntryService.find(actor, actor, entryUuid);
-		InputStream stream = documentEntryService.getDocumentStream(actor,
-				actor, entryUuid);
-		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
-				actor, thread, stream, doc.getName());
-		return new ThreadEntryDto(threadEntry);
+		// Check if we have the right to download the specified document entry
+		InputStream stream = null;
+		try {
+			stream = documentEntryService.getDocumentStream(actor, actor, entryUuid);
+			ThreadEntry threadEntry = threadEntryService.copyFromDocumentEntry(actor, actor, thread, doc, stream);
+			return new ThreadEntryDto(threadEntry);
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -138,6 +145,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(uuid, "Missing required entry uuid");
 
 		User actor = checkAuthentication();
+		@SuppressWarnings("unused")
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
 				uuid);

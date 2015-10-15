@@ -41,21 +41,15 @@ import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AdminGenericFacadeImpl extends GenericFacadeImpl implements
 		AdminGenericFacade {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(AdminGenericFacadeImpl.class);
 
 	public AdminGenericFacadeImpl(final AccountService accountService) {
 		super(accountService);
 	}
 
-	@Override
-	public User checkAuthentication(Role role) throws BusinessException {
+	protected User checkAuthentication(Role role) throws BusinessException {
 		User actor = super.checkAuthentication();
 
 		if (role != Role.SUPERADMIN && role != Role.ADMIN) {

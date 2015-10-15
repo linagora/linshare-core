@@ -34,13 +34,12 @@
 
 package org.linagora.linshare.core.facade.webservice.delegation;
 
-import java.io.InputStream;
+import java.io.File;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.DocumentDto;
 
 public interface DocumentFacade extends DelegationGenericFacade {
@@ -50,14 +49,14 @@ public interface DocumentFacade extends DelegationGenericFacade {
 	DocumentDto find(String ownerUuid, String documentUuid)
 			throws BusinessException;
 
-	DocumentDto create(String ownerUuid, InputStream theFile,
+	DocumentDto create(String ownerUuid, File file,
 			String description, String givenFileName) throws BusinessException;
 
 	DocumentDto update(String ownerUuid, String documentUuid,
 			DocumentDto documentDto) throws BusinessException;
 
 	DocumentDto updateFile(String ownerUuid, String documentUuid,
-			InputStream theFile, String givenFileName)
+			File file, String givenFileName)
 			throws BusinessException;
 
 	void delete(String ownerUuid, DocumentDto documentDto)

@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.webservice.userv2.impl;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -45,17 +46,27 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.linagora.linshare.core.domain.constants.AsyncTaskType;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
+import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
+import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
+import org.linagora.linshare.webservice.user.task.ThreadEntryUploadAsyncTask;
+import org.linagora.linshare.webservice.user.task.context.ThreadEntryTaskContext;
 import org.linagora.linshare.webservice.userv2.ThreadEntryRestService;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -74,9 +85,20 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 
 	private final ThreadEntryFacade threadEntryFacade;
 
-	public ThreadEntryRestServiceImpl(ThreadEntryFacade threadEntryFacade) {
+	private final ThreadEntryAsyncFacade threadEntryAsyncFacade ;
+
+	private final AsyncTaskFacade asyncTaskFacade;
+
+	private org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor;
+
+	public ThreadEntryRestServiceImpl(ThreadEntryFacade threadEntryFacade,
+			ThreadEntryAsyncFacade threadEntryAsyncFacade,
+			AsyncTaskFacade asyncTaskFacade, ThreadPoolTaskExecutor taskExecutor) {
 		super();
 		this.threadEntryFacade = threadEntryFacade;
+		this.threadEntryAsyncFacade = threadEntryAsyncFacade;
+		this.asyncTaskFacade = asyncTaskFacade;
+		this.taskExecutor = taskExecutor;
 	}
 
 	@Path("/")
@@ -91,25 +113,50 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 	@Override
 	public ThreadEntryDto create(
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
-			@ApiParam(value = "File stream.", required = true) InputStream theFile,
+			@ApiParam(value = "File stream.", required = true) InputStream file,
 			@ApiParam(value = "An optional description of a thread entry.") @Multipart(value = "description", required = false) String description,
 			@ApiParam(value = "The given file name of the uploaded file.", required = true) @Multipart(value = "filename", required = false) String givenFileName,
+			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async, 
 			MultipartBody body)
 					throws BusinessException {
-		String fileName;
-
-		if (theFile == null) {
+		Long transfertDuration = getTransfertDuration();
+		if (file == null) {
+			logger.error("Missing file (check parameter file)");
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
 		}
-		if (givenFileName == null || givenFileName.isEmpty()) {
-			// parameter givenFileName is optional
-			// so need to search this information in the header of the
-			// attachement (with id file)
-			fileName = body.getAttachment("file").getContentDisposition().getParameter("filename");
-		} else {
-			fileName = givenFileName;
+		String fileName = getFileName(givenFileName, body);
+		// Default mode. No user input.
+		if (async == null) {
+			async = false;
 		}
-		return threadEntryFacade.create(threadUuid, theFile, fileName);
+		File tempFile = getTempFile(file, "rest-userv2-thread-entries", fileName);
+		if (async) {
+			logger.debug("Async mode is used");
+			// Asynchronous mode
+			AccountDto actorDto = threadEntryFacade.getAuthenticatedAccountDto();
+			AsyncTaskDto asyncTask = null;
+			try {
+				asyncTask = asyncTaskFacade.create(tempFile.length(), transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
+				ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, actorDto.getUuid(), threadUuid, tempFile, fileName);
+				ThreadEntryUploadAsyncTask task = new ThreadEntryUploadAsyncTask(threadEntryAsyncFacade, threadEntryTaskContext, asyncTask);
+				taskExecutor.execute(task);
+				return new ThreadEntryDto(asyncTask, threadEntryTaskContext);
+			} catch (Exception e) {
+				logAsyncFailure(asyncTask, e);
+				throw e;
+			} finally {
+				deleteTempFile(tempFile);
+			}
+		} else {
+			// TODO : manage transfertDuration
+			// Synchronous mode
+			try {
+				logger.debug("Async mode is not used");
+				return threadEntryFacade.create(threadUuid, tempFile, fileName);
+			} finally {
+				deleteTempFile(tempFile);
+			}
+		}
 	}
 
 	@Path("/copy/{entryUuid}")
@@ -239,5 +286,23 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 
 		return threadEntryFacade.update(threadUuid, threadEntryUuid,
 				threadEntryDto);
+	}
+
+	@Path("/{uuid}/async")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public AsyncTaskDto findAsync(@PathParam("uuid") String uuid)
+			throws BusinessException {
+		Validate.notEmpty(uuid, "Missing uuid");
+		return asyncTaskFacade.find(uuid);
+	}
+
+	protected void logAsyncFailure(AsyncTaskDto asyncTask, Exception e) {
+		logger.error(e.getMessage());
+		logger.debug("Exception : ", e);
+		if (asyncTask != null) {
+			asyncTaskFacade.fail(asyncTask, e);
+		}
 	}
 }

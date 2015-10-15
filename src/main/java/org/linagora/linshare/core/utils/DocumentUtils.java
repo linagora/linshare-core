@@ -84,10 +84,12 @@ public class DocumentUtils {
             bof.flush();
 
 		} catch (IOException e) {
+			logger.error(e.getMessage());
+			logger.error("exception : ", e);
 			if (tempFile != null && tempFile.exists())
 				tempFile.delete();
 			throw new TechnicalException(TechnicalErrorCode.GENERIC,
-					"couldn't create a temporary file");
+					"couldn't create a temporary file or read input stream");
 		} finally {
 			if (stream != null) {
 				try {

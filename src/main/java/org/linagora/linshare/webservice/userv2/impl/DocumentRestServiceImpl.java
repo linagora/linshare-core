@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.webservice.userv2.impl;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -45,21 +46,32 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.linagora.linshare.core.domain.constants.AsyncTaskType;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
+import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
+import org.linagora.linshare.core.facade.webservice.user.DocumentAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.webservice.WebserviceBase;
+import org.linagora.linshare.webservice.user.task.DocumentUpdateAsyncTask;
+import org.linagora.linshare.webservice.user.task.DocumentUploadAsyncTask;
+import org.linagora.linshare.webservice.user.task.context.DocumentTaskContext;
 import org.linagora.linshare.webservice.userv2.DocumentRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -76,9 +88,21 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 
 	private final DocumentFacade documentFacade;
 
-	public DocumentRestServiceImpl(DocumentFacade documentFacade) {
+	private final DocumentAsyncFacade documentAsyncFacade;
+
+	private final AsyncTaskFacade asyncTaskFacade;
+
+	private org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor;
+
+	public DocumentRestServiceImpl(DocumentFacade documentFacade,
+			DocumentAsyncFacade documentAsyncFacade,
+			ThreadPoolTaskExecutor taskExecutor,
+			AsyncTaskFacade asyncTaskFacade) {
 		super();
 		this.documentFacade = documentFacade;
+		this.documentAsyncFacade = documentAsyncFacade;
+		this.asyncTaskFacade = asyncTaskFacade;
+		this.taskExecutor = taskExecutor;
 	}
 
 	@Path("/")
@@ -93,35 +117,58 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public DocumentDto create(
-			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream theFile,
+			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream file,
 			@ApiParam(value = "An optional description of a document.") @Multipart(value = "description", required = false) String description,
 			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
 			@ApiParam(value = "Signature file stream.", required = false) @Multipart(value = "signaturefile", required = false) InputStream theSignatureFile,
 			@ApiParam(value = "The given file name of the signature uploaded file.", required = false) @Multipart(value = "signatureFileName", required = false) String signatureFileName,
 			@ApiParam(value = "X509 Certificate entity.", required = false) @Multipart(value = "x509cert", required = false) InputStream x509certificate,
 			@ApiParam(value = "The given metadata of the uploaded file.", required = false) @Multipart(value = "metadata", required = false) String metaData,
+			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
 			MultipartBody body) throws BusinessException {
-		String fileName;
-		if (givenFileName == null || givenFileName.isEmpty()) {
-			// parameter givenFileName is optional
-			// so need to search this information in the header of the
-			// attachment (with id file)
-			fileName = body.getAttachment("file").getContentDisposition()
-					.getParameter("filename");
+		Long transfertDuration = getTransfertDuration();
+		if (file == null) {
+			logger.error("Missing file (check parameter file)");
+			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
+		}
+		String fileName = getFileName(givenFileName, body);
+		// Default mode. No user input.
+		if (async == null) {
+			async = false;
+		}
+		File tempFile = getTempFile(file, "rest-userv2-document-entries", fileName);
+		if (async) {
+			logger.debug("Async mode is used");
+			// Asynchronous mode
+			AccountDto actorDto = documentFacade.getAuthenticatedAccountDto();
+			AsyncTaskDto asyncTask = null;
+			try {
+				DocumentTaskContext documentTaskContext = new DocumentTaskContext(actorDto, actorDto.getUuid(), tempFile, fileName, metaData, description);
+				asyncTask = asyncTaskFacade.create(tempFile.length(), transfertDuration, fileName, null, AsyncTaskType.DOCUMENT_UPLOAD);
+				DocumentUploadAsyncTask task = new DocumentUploadAsyncTask(documentAsyncFacade, documentTaskContext, asyncTask);
+				taskExecutor.execute(task);
+				return new DocumentDto(asyncTask, documentTaskContext);
+			} catch (Exception e) {
+				logAsyncFailure(asyncTask, e);
+				deleteTempFile(tempFile);
+				throw e;
+			}
 		} else {
-			fileName = givenFileName;
+			// TODO : manage transfertDuration
+			// Synchronous mode
+			try {
+				logger.debug("Async mode is not used");
+				if (theSignatureFile != null) {
+					return documentFacade.createWithSignature(tempFile,
+							fileName, description, theSignatureFile,
+							signatureFileName, x509certificate);
+				}
+				return documentFacade.create(tempFile, fileName, description,
+						metaData);
+			} finally {
+				deleteTempFile(tempFile);
+			}
 		}
-		if (fileName == null) {
-			logger.error("There is no multi-part attachment named 'filename'.");
-			logger.error("There is no 'filename' header in multi-Part attachment named 'file'.");
-			Validate.notNull(fileName, "File name for file attachment is required.");
-		}
-		if(theSignatureFile != null) {
-			return documentFacade.createWithSignature(theFile, fileName,
-					description, theSignatureFile, signatureFileName,
-					x509certificate);
-		}
-		return documentFacade.create(theFile, fileName, description, metaData);
 	}
 
 	@Path("/{uuid}")
@@ -201,12 +248,48 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@Override
 	public DocumentDto updateFile(
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream theFile,
+			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream file,
 			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
-//			TODO: check why?
+			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
 			MultipartBody body)
 			throws BusinessException {
-		return documentFacade.updateFile(theFile, givenFileName, uuid);
+		Long transfertDuration = getTransfertDuration();
+		if (file == null) {
+			logger.error("Missing file (check parameter file)");
+			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
+		}
+		String fileName = getFileName(givenFileName, body);
+		// Default mode. No user input.
+		if (async == null) {
+			async = false;
+		}
+		File tempFile = getTempFile(file, "rest-userv2-document-entries", fileName);
+		if (async) {
+			logger.debug("Async mode is used");
+			// Asynchronous mode
+			AccountDto actorDto = documentFacade.getAuthenticatedAccountDto();
+			AsyncTaskDto asyncTask = null;
+			try {
+				DocumentTaskContext dtc = new DocumentTaskContext(actorDto, actorDto.getUuid(), tempFile, fileName);
+				dtc.setDocEntryUuid(uuid);
+				asyncTask = asyncTaskFacade.create(tempFile.length(), transfertDuration, fileName, null, AsyncTaskType.DOCUMENT_UPDATE);
+				DocumentUpdateAsyncTask task = new DocumentUpdateAsyncTask(documentAsyncFacade, dtc, asyncTask);
+				taskExecutor.execute(task);
+				return new DocumentDto(asyncTask, dtc);
+			} catch (Exception e) {
+				logAsyncFailure(asyncTask, e);
+				deleteTempFile(tempFile);
+				throw e;
+			}
+		} else {
+			// TODO : manage transfertDuration
+			// Synchronous mode
+			try {
+				return documentFacade.updateFile(tempFile, givenFileName, uuid);
+			} finally {
+				deleteTempFile(tempFile);
+			}
+		}
 	}
 
 	@Path("/{uuid}/download")
@@ -247,4 +330,21 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		return response.build();
 	}
 
+	@Path("/{uuid}/async")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public AsyncTaskDto findAsync(@PathParam("uuid") String uuid)
+			throws BusinessException {
+		Validate.notEmpty(uuid, "Missing uuid");
+		return asyncTaskFacade.find(uuid);
+	}
+
+	protected void logAsyncFailure(AsyncTaskDto asyncTask, Exception e) {
+		logger.error(e.getMessage());
+		logger.debug("Exception : ", e);
+		if (asyncTask != null) {
+			asyncTaskFacade.fail(asyncTask, e);
+		}
+	}
 }

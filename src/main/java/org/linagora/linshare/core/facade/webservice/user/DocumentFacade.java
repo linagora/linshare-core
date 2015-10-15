@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.user;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -54,10 +55,10 @@ public interface DocumentFacade extends GenericFacade {
 
 	Long getAvailableSize() throws BusinessException;
 
-	DocumentDto create(InputStream fi, String fileName,
+	DocumentDto create(File tempFile, String fileName,
 			String description, String metadata) throws BusinessException;
 
-	DocumentDto createWithSignature(InputStream fi, String fileName,
+	DocumentDto createWithSignature(File tempFile, String fileName,
 			String description, InputStream signatureFile, String signatureFileName, InputStream x509certificate) throws BusinessException;
 
 	InputStream getDocumentStream(String docEntryUuid)
@@ -74,6 +75,7 @@ public interface DocumentFacade extends GenericFacade {
 
 	DocumentDto update(String documentUuid, DocumentDto documentDto) throws BusinessException;
 
-	DocumentDto updateFile(InputStream theFile, String givenFileName,
+	DocumentDto updateFile(File file, String givenFileName,
 			String documentUuid) throws BusinessException;
+
 }

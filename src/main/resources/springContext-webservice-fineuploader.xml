@@ -13,17 +13,24 @@
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-
-	<!-- REST  -->
-	
-	<bean id="fineUploaderService" class="org.linagora.linshare.webservice.user.impl.FineUploaderServiceImpl">
+	<!-- REST -->
+	<bean id="fineUploaderRestService" class="org.linagora.linshare.webservice.user.impl.FineUploaderRestServiceImpl" destroy-method="destroy">
 		<constructor-arg ref="wsDocumentFacade" />
+		<constructor-arg ref="wsDocumentAsyncFacade" />
 		<constructor-arg ref="wsThreadEntryFacade" />
+		<constructor-arg ref="wsThreadEntryAsyncFacade" />
+		<constructor-arg ref="taskExecutor" />
+		<constructor-arg ref="wsAsyncTaskFacade" />
+		<constructor-arg value="${linshare.tapestry.fineuploader.async.mode.enable}" />
+		<constructor-arg value="${linshare.tapestry.fineuploader.async.mode.default.threshold}" />
+		<constructor-arg value="${linshare.tapestry.fineuploader.async.mode.default.frequency}" />
+		<constructor-arg value="${linshare.tapestry.fineuploader.async.mode.max.threshold}" />
+		<constructor-arg value="${linshare.tapestry.fineuploader.async.mode.max.frequency}" />
 	</bean>
 
 	<jaxrs:server id="fineuploaderContainer" address="/fineuploader">
 		<jaxrs:serviceBeans>
-			<ref bean="fineUploaderService" />
+			<ref bean="fineUploaderRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="text/plain" />

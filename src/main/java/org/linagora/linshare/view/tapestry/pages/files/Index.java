@@ -46,7 +46,6 @@ import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
@@ -70,7 +69,6 @@ import org.linagora.linshare.core.facade.DocumentFacade;
 import org.linagora.linshare.core.facade.SearchDocumentFacade;
 import org.linagora.linshare.core.utils.FileUtils;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.components.FileUploader;
 import org.linagora.linshare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linshare.view.tapestry.services.MyMultipartDecoder;
 import org.slf4j.Logger;
@@ -113,9 +111,6 @@ public class Index {
 	@Property
 	private UserVo userVo;
 
-	@InjectComponent
-	private FileUploader fileUploader;
-
 	/* ***********************************************************
 	 * Injected services
 	 * ***********************************************************
@@ -125,9 +120,6 @@ public class Index {
 	
 	@InjectPage
 	private Share share;
-
-	@Component(parameters = { "style=bluelighting", "show=false", "width=600", "height=250" })
-	private WindowWithEffects windowUpload;
 
 	@Inject
 	private SearchDocumentFacade searchDocumentFacade;
@@ -649,10 +641,6 @@ public class Index {
 			}
 		}
 		throw new TechnicalException(TechnicalErrorCode.DATA_INCOHERENCE, "Could not find the document");
-	}
-
-	public String getJSonId() {
-		return windowUpload.getJSONId();
 	}
 
 	public boolean isDisplayUploadButton() {

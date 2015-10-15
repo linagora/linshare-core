@@ -34,7 +34,12 @@
 
 package org.linagora.linshare.core.facade.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.commons.lang.Validate;
+import org.apache.cxf.helpers.IOUtils;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -68,5 +73,46 @@ public class GenericTapestryFacade {
 					"You are not authorized to use this facade");
 		}
 		return actor;
+	}
+
+	protected File getTempFile(InputStream file, String discriminator, String fileName) {
+		if (discriminator == null)  {
+			discriminator = "";
+		}
+		// Legacy code, we need to extract extension for the dirty unstable LinThumbnail Module.
+		// I hope some day we get rid of it !
+		String extension = null;
+		if (fileName != null) {
+			int splitIdx = fileName.lastIndexOf('.');
+			if (splitIdx > -1) {
+				extension = fileName.substring(splitIdx, fileName.length());
+			}
+		}
+		File tempFile = null;
+		try {
+			tempFile = File.createTempFile("linshare-" + discriminator + "-", extension);
+			tempFile.deleteOnExit();
+			IOUtils.transferTo(file, tempFile);
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+			throw new BusinessException(
+					BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
+					"Can not generate temp file from input stream.");
+		}
+		return tempFile;
+	}
+
+	protected void deleteTempFile(File tempFile) {
+		if (tempFile != null) {
+			try {
+				if (tempFile.exists()) {
+					tempFile.delete();
+				}
+			} catch (Exception e) {
+				logger.warn("Can not delete temp file : "
+						+ tempFile.getAbsolutePath());
+				logger.debug(e.getMessage(), e);
+			}
+		}
 	}
 }

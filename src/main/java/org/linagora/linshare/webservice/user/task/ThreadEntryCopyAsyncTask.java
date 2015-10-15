@@ -31,50 +31,34 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.user;
 
-import java.io.InputStream;
+package org.linagora.linshare.webservice.user.task;
 
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.FineUploaderDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
+import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
+import org.linagora.linshare.webservice.user.task.context.ThreadEntryTaskContext;
 
-public interface FineUploaderService {
+/**
+ * This method create an new thread entry by copying a existing document entry.
+ * 
+ * @author fred
+ *
+ */
+public class ThreadEntryCopyAsyncTask extends AsyncTask<ThreadEntryTaskContext> {
 
-	/**
-	 * Upload method contains logic for a file upload and return the correct
-	 * DocumentDto if upload was successful.
-	 * 
-	 * @param file
-	 * @param fileName
-	 * @param body
-	 * @return
-	 */
-	public FineUploaderDto upload(InputStream file, String fileName,
-			MultipartBody body) throws BusinessException;
+	protected final ThreadEntryAsyncFacade asyncFacade;
 
-	/**
-	 * Delete an existing file.
-	 * 
-	 * @param file
-	 * @param fileName
-	 * @param body
-	 * @return
-	 */
-	public FineUploaderDto delete(String uuid) throws BusinessException;
+	public ThreadEntryCopyAsyncTask(ThreadEntryAsyncFacade asyncFacade,
+			ThreadEntryTaskContext task, AsyncTaskDto asyncTaskDto) {
+		super(asyncFacade, task, asyncTaskDto);
+		this.asyncFacade = asyncFacade;
+	}
 
-	/**
-	 * Upload method contains logic for a file upload and return the correct
-	 * DocumentDto if upload was successful.
-	 * 
-	 * @param threadUuid
-	 * @param file
-	 * @param fileName
-	 * @param body
-	 * 
-	 * @return
-	 */
-	public FineUploaderDto uploadThreadEntry(String threadUuid,
-			InputStream file, String fileName, MultipartBody body)
-			throws BusinessException;
+	@Override
+	protected String runMyTask(ThreadEntryTaskContext task) {
+		ThreadEntryDto dto = asyncFacade.copy(task);
+		return dto.getUuid();
+	}
+
 }

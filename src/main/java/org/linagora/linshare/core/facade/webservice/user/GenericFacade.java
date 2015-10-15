@@ -33,11 +33,20 @@
  */
 package org.linagora.linshare.core.facade.webservice.user;
 
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 
 public interface GenericFacade {
 
-	public User checkAuthentication() throws BusinessException;
-
+	/**
+	 * This function will check if user is authenticated using
+	 * checkAuthentication, if he has the required role to grant access to the
+	 * current Facade. This function must be used for using AsyncFacade purpose
+	 * only.
+	 * 
+	 * @return It will return an AccountDto of the current authenticated
+	 *         account.
+	 * @throws BusinessException
+	 */
+	AccountDto getAuthenticatedAccountDto() throws BusinessException;
 }

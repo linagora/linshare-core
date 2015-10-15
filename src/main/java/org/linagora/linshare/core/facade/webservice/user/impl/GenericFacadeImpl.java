@@ -37,6 +37,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 import org.linagora.linshare.core.facade.webservice.user.GenericFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.slf4j.Logger;
@@ -46,8 +47,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class GenericFacadeImpl implements GenericFacade {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(GenericFacadeImpl.class);
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	protected final AccountService accountService;
 
@@ -70,8 +70,7 @@ public class GenericFacadeImpl implements GenericFacade {
 		return user;
 	}
 
-	@Override
-	public User checkAuthentication() throws BusinessException {
+	protected User checkAuthentication() throws BusinessException {
 		User actor = getAuthentication();
 
 		if (actor == null)
@@ -79,5 +78,21 @@ public class GenericFacadeImpl implements GenericFacade {
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		return actor;
+	}
+
+	/**
+	 * This function will check if user is authenticated using
+	 * checkAuthentication, if he has the required role to grant access to the
+	 * current Facade. This function must be used for using AsyncFacade purpose
+	 * only.
+	 * 
+	 * @return It will return an AccountDto of the current authenticated
+	 *         account.
+	 * @throws BusinessException
+	 */
+	@Override
+	public AccountDto getAuthenticatedAccountDto() throws BusinessException {
+		User actor = checkAuthentication();
+		return new AccountDto(actor, false);
 	}
 }

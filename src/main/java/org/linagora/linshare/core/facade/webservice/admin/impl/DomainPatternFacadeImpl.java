@@ -45,12 +45,8 @@ import org.linagora.linshare.core.facade.webservice.admin.DomainPatternFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPatternDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserProviderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements DomainPatternFacade {
-
-	private static final Logger logger = LoggerFactory.getLogger(DomainPatternFacadeImpl.class);
 
 	private final UserProviderService userProviderService;
 

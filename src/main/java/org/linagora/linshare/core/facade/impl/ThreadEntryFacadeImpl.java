@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +45,7 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
@@ -57,6 +59,7 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.ThreadEntryService;
@@ -80,6 +83,7 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 
 	private final ThreadEntryService threadEntryService;
 
+	@SuppressWarnings("unused")
 	private final ThreadEntryTransformer threadEntryTransformer;
 
 	private final DocumentEntryService documentEntryService;
@@ -100,26 +104,27 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	}
 
 	@Override
-	public ThreadEntryVo insertFile(UserVo actorVo, ThreadVo threadVo,
-			InputStream stream, Long size, String fileName)
-			throws BusinessException {
-		User actor = findUser(actorVo);
-		ThreadEntry threadEntry = threadEntryService.createThreadEntry(
-				actor, actor, findThread(threadVo), stream, fileName);
-
-		return new ThreadEntryVo(threadEntry);
-	}
-
-	@Override
 	public void copyDocinThread(UserVo actorVo, ThreadVo threadVo,
 			DocumentVo documentVo) throws BusinessException {
 		User actor = getActor(actorVo);
-		Account owner = accountService.findByLsUuid(documentVo.getOwnerLogin());
-		InputStream stream = documentEntryService.getDocumentStream(actor,
-				owner, documentVo.getIdentifier());
-
-		insertFile(actorVo, threadVo, stream, documentVo.getSize(),
-				documentVo.getFileName());
+		// Check if we have the right to access to the specified thread
+		Thread thread = threadService.find(actor, actor, threadVo.getLsUuid());
+		// Check if we have the right to access to the specified document entry
+		DocumentEntry documentEntry = documentEntryService.find(actor, actor, documentVo.getIdentifier());
+		// Check if we have the right to download the specified document entry
+		InputStream stream = null;
+		try {
+			stream = documentEntryService.getDocumentStream(actor, actor, documentVo.getIdentifier());
+			threadEntryService.copyFromDocumentEntry(actor, actor, thread, documentEntry, stream);
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -258,6 +263,7 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	public void deleteMember(UserVo actorVo, ThreadVo threadVo,
 			ThreadMemberVo memberVo) throws BusinessException {
 		Account actor = findUser(actorVo);
+		@SuppressWarnings("unused")
 		User user = findUser(memberVo.getUser());
 		threadService.deleteMember(actor, actor, threadVo.getLsUuid(),
 				memberVo.getLsUuid());
@@ -573,7 +579,6 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 
 		if (actor.isSuperAdmin()) {
 			// NOTREACHED
-			lists = lists;
 		} else {
 			try {
 				lists = this.getAllMyThread(actor);

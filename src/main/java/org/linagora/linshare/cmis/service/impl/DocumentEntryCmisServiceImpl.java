@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.cmis.service.impl;
 
+import java.io.File;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.HashSet;
@@ -63,7 +64,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectParentDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -78,7 +78,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.DocumentEntryService;
 
-public class DocumentEntryCmisServiceImpl extends AbstractCmisService {
+public class DocumentEntryCmisServiceImpl extends EntryCmisServiceImpl {
 
 	private final DocumentEntryService documentEntryService;
 	private final CmisExceptionMappingService cmisExceptionMappingService;
@@ -276,15 +276,19 @@ public class DocumentEntryCmisServiceImpl extends AbstractCmisService {
 			ExtensionsData extension) {
 		Account actor = helpers.prepare(repositoryId, false, true);
 		String res;
+		File tempFile = null;
 		if (contentStream.getFileName() == null)
 			res = CmisConstants.tagRoot;
 		try {
+			tempFile = getTempFile(contentStream.getStream(), contentStream.getFileName());
 			DocumentEntry documentEntry = documentEntryService
-					.create(actor, actor, contentStream.getStream(),
+					.create(actor, actor, tempFile,
 							contentStream.getFileName(), "", true, null);
 			res = CmisConstants.tagDocumentEntry + documentEntry.getUuid();
 		} catch (BusinessException e) {
 			throw cmisExceptionMappingService.map(e);
+		} finally {
+			deleteTempFile(tempFile);
 		}
 		return res;
 	}
@@ -294,11 +298,15 @@ public class DocumentEntryCmisServiceImpl extends AbstractCmisService {
 			Boolean overwriteFlag, Holder<String> changeToken,
 			ContentStream contentStream, ExtensionsData extension) {
 		Account actor = helpers.prepare(repositoryId, false, true);
+		File tempFile = null;
 		try {
+			tempFile = getTempFile(contentStream.getStream(), contentStream.getFileName());
 			documentEntryService.update(actor, actor, helpers.getObjectUuid(objectId.getValue()),
-					contentStream.getStream(), contentStream.getFileName());
+					tempFile, contentStream.getFileName());
 		} catch (BusinessException e) {
 			throw cmisExceptionMappingService.map(e);
+		} finally {
+			deleteTempFile(tempFile);
 		}
 	}
 

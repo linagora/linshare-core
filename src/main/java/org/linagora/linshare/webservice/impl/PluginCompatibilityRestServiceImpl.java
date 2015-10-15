@@ -33,8 +33,8 @@
  */
 package org.linagora.linshare.webservice.impl;
 
+import java.io.File;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -60,7 +60,6 @@ import org.linagora.linshare.webservice.PluginCompatibilityRestService;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.lang.Validate;
 
 public class PluginCompatibilityRestServiceImpl extends WebserviceBase implements PluginCompatibilityRestService {
 
@@ -106,30 +105,16 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile,
 			@Multipart(value = "description", required = false) String description,
 			@Multipart(value = "filename", required = false) String givenFileName, MultipartBody body) throws BusinessException {
-		String fileName;
 		String comment = (description == null) ? "" : description;
 		if (theFile == null) {
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
 		}
-		if (givenFileName == null || givenFileName.isEmpty()) {
-			// parameter givenFileName is optional
-			// so need to search this information in the header of the
-			// attachment (with id file)
-			fileName = body.getAttachment("file").getContentDisposition().getParameter("filename");
-			if (fileName == null) {
-				logger.error("There is no multi-part attachment named 'filename'.");
-				logger.error("There is no 'filename' header in multi-Part attachment named 'file'.");
-				Validate.notNull(fileName, "File name for file attachment is required.");
-			}
-			try {
-				byte[] bytes = fileName.getBytes("ISO-8859-1");
-				fileName = new String(bytes, "UTF-8");
-			} catch (UnsupportedEncodingException e1) {
-				logger.error("Can not encode file name " + e1.getMessage());
-			}
-		} else {
-			fileName = givenFileName;
+		String fileName = getFileName(givenFileName, body);
+		File tempFile = getTempFile(theFile, "rest-plugin", fileName);
+		try {
+			return webServiceDocumentFacade.create(tempFile, fileName, comment, null);
+		} finally {
+			deleteTempFile(tempFile);
 		}
-		return webServiceDocumentFacade.create(theFile, fileName, comment, null);
 	}
 }

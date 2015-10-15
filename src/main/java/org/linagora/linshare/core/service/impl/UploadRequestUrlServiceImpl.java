@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.core.service.impl;
 
-import java.io.InputStream;
+import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Set;
@@ -165,7 +165,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 
 	@Override
 	public UploadRequestEntry createUploadRequestEntry(
-			String uploadRequestUrlUuid, InputStream fi, String fileName,
+			String uploadRequestUrlUuid, File  file, String fileName,
 			String password) throws BusinessException {
 		Account actor = accountRepository.getUploadRequestSystemAccount();
 		// Retrieve upload request URL
@@ -174,7 +174,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		Account owner = requestUrl.getUploadRequest().getOwner();
 		// Store the file into the owner account.
 		DocumentEntry document = documentEntryService.create(
-				actor, owner, fi, fileName, "", false, null);
+				actor, owner, file, fileName, "", false, null);
 		createBusinessCheck(requestUrl, document);
 		// Create the link between the document and the upload request URL.
 		UploadRequestEntry uploadRequestEntry = new UploadRequestEntry(

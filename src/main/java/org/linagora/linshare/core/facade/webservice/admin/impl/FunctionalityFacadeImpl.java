@@ -46,17 +46,12 @@ import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		FunctionalityFacade {
-
-	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory.getLogger(FunctionalityFacadeImpl.class);
 
 	private FunctionalityService service;
 

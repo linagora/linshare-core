@@ -34,14 +34,11 @@
 package org.linagora.linshare.core.facade.webservice.admin;
 
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.GenericFacade;
 
 public interface AdminGenericFacade extends GenericFacade {
-
-	User checkAuthentication(Role role) throws BusinessException;
 
 	UserDto isAuthorized(Role role) throws BusinessException;
 }

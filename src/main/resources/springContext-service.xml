@@ -77,14 +77,11 @@
 		<constructor-arg ref="anonymousShareEntryService" />
 	</bean>
 
-
-
 	<bean id="shareEntryService" class="org.linagora.linshare.core.service.impl.ShareEntryServiceImpl">
 		<constructor-arg ref="guestRepository" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="shareEntryBusinessService" />
 		<constructor-arg ref="logEntryService" />
-		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="mailBuildingService" />
@@ -224,5 +221,9 @@
 	<bean id="shareEntryGroupService" class="org.linagora.linshare.core.service.impl.ShareEntryGroupServiceImpl">
 		<constructor-arg ref="shareEntryGroupBusinessService" />
 		<constructor-arg ref="logEntryService" />
+	</bean>
+	<bean id="asyncTaskService" class="org.linagora.linshare.core.service.impl.AsyncTaskServiceImpl">
+		<constructor-arg ref="asyncTaskBusinessService" />
+		<constructor-arg ref="asyncTaskResourceAccessControl" />
 	</bean>
 </beans>

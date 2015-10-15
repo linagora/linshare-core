@@ -33,10 +33,12 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
@@ -44,7 +46,11 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ThreadEntryService {
 
-	ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, InputStream stream, String filename) throws BusinessException;
+	ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, File tempFile, String filename) throws BusinessException;
+
+	ThreadEntry copyFromDocumentEntry(Account actor, Account member,
+			Thread thread, DocumentEntry documentEntry, InputStream stream)
+			throws BusinessException;
 
 	ThreadEntry findById(Account actor, Account owner, String threadEntryUuid) throws BusinessException;
 
@@ -61,8 +67,6 @@ public interface ThreadEntryService {
 	boolean documentHasThumbnail(Account actor, String identifier);
 
 	InputStream getDocumentThumbnailStream(Account owner, String uuid) throws BusinessException;
-
-	List<ThreadEntry> findAllThreadEntriesTaggedWith(Account actor, Thread thread, String[] names);
 
 	ThreadEntry updateFileProperties(Account actor, String threadEntryUuid, String fileComment, String metaData, String newName) throws BusinessException;
 }

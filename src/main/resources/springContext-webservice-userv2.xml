@@ -24,6 +24,9 @@
 
 	<bean id="userDocumentRestService" class="org.linagora.linshare.webservice.userv2.impl.DocumentRestServiceImpl">
 		<constructor-arg ref="wsDocumentFacade" />
+		<constructor-arg ref="wsDocumentAsyncFacade" />
+		<constructor-arg ref="wsAsyncTaskFacade" />
+		<constructor-arg ref="taskExecutor" />
 	</bean>
 
 	<bean id="userFlowDocumentUploaderRestService" class="org.linagora.linshare.webservice.userv2.impl.FlowDocumentUploaderRestServiceImpl">
@@ -41,6 +44,9 @@
 
 	<bean id="userThreadEntryRestService" class="org.linagora.linshare.webservice.userv2.impl.ThreadEntryRestServiceImpl">
 		<constructor-arg ref="wsThreadEntryFacade" />
+		<constructor-arg ref="wsThreadEntryAsyncFacade" />
+		<constructor-arg ref="wsAsyncTaskFacade" />
+		<constructor-arg ref="taskExecutor" />
 	</bean>
 
 	<bean id="userGuestRestService" class="org.linagora.linshare.webservice.userv2.impl.GuestRestServiceImpl">

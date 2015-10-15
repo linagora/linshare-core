@@ -82,6 +82,7 @@ public class UserFacadeImpl implements UserFacade {
 
 	private final GuestRepository guestRepository;
 
+	@SuppressWarnings("unused")
 	private final EnciphermentService enciphermentService;
 
 	private final GuestService guestService;
