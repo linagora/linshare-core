@@ -83,9 +83,9 @@ import org.slf4j.LoggerFactory;
 import se.unbound.tapestry.tagselect.LabelAwareValueEncoder;
 
 @Import(library = { "../../components/jquery/jquery-1.7.2.js",
-		"../../components/fineuploader/fineuploader-4.1.0.js",
+		"../../components/fineuploader/fineuploader-4.4.0.js",
 		"../../components/bootstrap/js/bootstrap.js" }, stylesheet = {
-		"../../components/fineuploader/fineuploader-4.1.0.css" })
+		"../../components/fineuploader/fineuploader-4.4.0.css" })
 public class Upload {
 
 	private static final Logger logger = LoggerFactory.getLogger(Upload.class);

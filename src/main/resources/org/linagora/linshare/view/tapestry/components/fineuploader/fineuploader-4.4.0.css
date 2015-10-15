@@ -3,7 +3,7 @@
 *
 * Copyright 2013, Widen Enterprises, Inc. info@fineuploader.com
 *
-* Version: 4.1.0
+* Version: 4.4.0
 *
 * Homepage: http://fineuploader.com
 *
@@ -157,6 +157,15 @@
     margin-bottom: 3px;
 }
 
+.qq-total-progress-bar {
+    height: 25px;
+    border-radius: 9px;
+}
+
+.qq-total-progress-bar-container {
+    margin: 9px;
+}
+
 INPUT.qq-edit-filename {
     position: absolute;
     opacity: 0;
@@ -202,4 +211,4 @@ INPUT.qq-edit-filename.qq-editing ~ .qq-upload-cancel {
     display: none;
 }
 
-/*! 2013-12-09 */
+/*! 2015-10-12 */
