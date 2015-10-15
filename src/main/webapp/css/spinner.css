@@ -25,7 +25,83 @@
     border-left:3px solid transparent;
     border-bottom:3px solid transparent;
     border-right:3px solid transparent;
-    border-radius:100%;
+    border-radius:70%;
+}
+
+.qq-upload-list li {
+    margin: 0;
+    padding: 9px;
+    line-height: 20px;
+    font-size: 16px;
+    background-color: #FFF0BD;
+    margin-top: 3px;
+    border-radius: 12px;
+}
+
+.qq-upload-list li.qq-upload-fail {
+    background-color: #C75B47;
+    color: #FFFFFF;
+    border-radius: 12px;
+    margin-top: 3px;
+}
+
+.qq-upload-list li.qq-upload-success {
+/*     background-color: #5DA30C; */
+    background-color: #72A578;
+    color: #FFFFFF;
+    border-radius: 12px;
+    margin-top: 3px;
+}
+
+.ls-async-processing-spinner {
+    display: inline-block;
+    background: url("../images/icons/processing.gif");
+    width: 20px;
+    height: 20px;
+    margin-left: 15px;
+    vertical-align: middle;
+}
+
+.qq-upload-list li.qq-upload-async-check {
+    background-color: #E6EFC2;
+    color: #000000;
+    border-radius: 12px;
+    margin-top: 3px;
+}
+
+.qq-upload-list li.qq-upload-async-progress {
+    background-color: #5DA30C;
+    color: #FFFFFF;
+}
+
+.qq-upload-list li.qq-upload-async-success {
+    background-color: #72A578;
+    color: #FFFFFF;
+    border-radius: 12px;
+    margin-top: 3px;
+}
+
+.btn-primary {
+    color: #FFF;
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.25);
+    background-repeat: repeat-x;
+    background-color: #427891;
+    background-image: linear-gradient(to bottom, rgb(66, 120, 145), rgb(34, 93, 121));
+    border-color: rgb(66, 120, 145);
+    background-image: none;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled] {
+    color: #FFF;
+    background-color: rgb(34, 93, 121);
+}
+
+#formShareSubmit:hover, #formShareSubmit a:focus, #formShareSubmit a:active {
+    color: #FFFFFF !important;
+}
+
+.ls-async-processing-text{
+    float: right;
 }
 
 @-webkit-keyframes rotation {

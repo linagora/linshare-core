@@ -35,6 +35,7 @@
     </script>
 
     <script type="text/javascript" language="javascript">
+        var uploader;
         var sizeAvailable = ${maxFileSize};
         var err = false;
 
@@ -43,32 +44,120 @@
             element.hide();
         }
 
+        var uuids = [];
+        var asyncXHR = function(id, intervalName, uuids) {
+            jQuery.ajax({
+                url: '${contextPath}/webservice/fineuploader/upload/receiver/' + uploader.getUuid(id),
+                type: 'GET',
+                crossDomain: false,
+                dataType: 'json',
+                xhrFields: {
+                    withCredentials: true
+                },
+                headers: {"WWW-No-Authenticate": "linshare"}
+            }).fail(function(error) {
+                qq.log("request failed to get file processing status on server");
+                intervalClear(intervalName);
+                jQuery(".qq-file-id-" + id).attr("class", "qq-file-id-" + id + " qq-upload-fail");
+                jQuery(".qq-file-id-" + id +" span").remove(".ls-async-processing-text");
+                //jQuery(".qq-upload-fail").children("span").removeClass("ls-async-processing-spinner");
+                err = true;
+                if(error.status == 401) {
+                    jQuery(".qq-file-id-" + id)
+                        .append('<span class="qq-upload-status-text-selector qq-upload-status-text">${message:pages.files.upload.fineuploader.text.failUpload.401}</span>');
+                } else {
+                    jQuery(".qq-file-id-" + id).attr("title", "${message:pages.files.upload.async.failed}");
+                }
+            }).done(function(data) {
+                    if(data.status == "SUCCESS") {
+                        //uploader.setUuid(id, data.resourceUuid);
+
+                        //Spinner manipulation
+                        jQuery(".qq-file-id-" + id +" span")
+                            .remove(".ls-async-processing-text");
+                        jQuery(".qq-file-id-" + id)
+                            .attr("class", "qq-file-id-" + id + " qq-upload-async-success");
+
+                       //Clear the setInterval
+                       intervalClear(intervalName);
+
+                       // set new value of uuids
+                       uuids.push(uploader.getUuid(id));
+
+                       //reload page
+                       if (uploader.getInProgress() == 0) {
+                           if(uploader.getUploads().length == uuids.length) {
+                               console.log("All upload are completed");
+                               if (!err)
+                                   setTimeout(function() { jQuery("#refresh")[0].click(); }, 3000);
+                           }
+                       }
+                    }
+                    if(data.status == "FAILED") {
+                        intervalClear(intervalName);
+                        jQuery(".qq-file-id-" + id).attr("class", "qq-file-id-" + id + " qq-upload-fail");
+                        jQuery(".qq-file-id-" + id +" span")
+                            .remove(".ls-async-processing-text");
+                        var asyncErrorName = ${errorCatalog}[data.errorName];
+                        jQuery(".qq-file-id-" + id)
+                            .append('<span class="qq-upload-status-text-selector qq-upload-status-text">' + asyncErrorName + '</span>');
+                    }
+            });
+        }
+
+        var intervalClear = function(intervalName) {
+            clearInterval(intervalName);
+        }
+
         jQuery(document).ready(function() {
-            var uploader = new qq.FineUploader({
+            uploader = new qq.FineUploader({
                 element: jQuery('#uploader')[0],
-                debug: true,
+                debug: ${fineUploaderDebug},
                 maxConnections: ${fineUploaderMaxConnections},
                 request: {
-                    endpoint: "${contextPath}/webservice/fineuploader/upload/threadentry/${threadUuid}"
+                    endpoint: "${contextPath}/webservice/fineuploader/upload/threadentry/${threadUuid}",
+                    customHeaders: {
+                        "WWW-No-Authenticate": "linshare"
+                    }
                 },
                 callbacks: {
-                    onError: function(id, fileName, reason) {
+                    onError: function(id, fileName, reason, xhr) {
                         qq.log("id: " + id + ", fileName: " + fileName + ", reason: " + reason);
                         err = true;
                         jQuery("#error").click();
+                        if(xhr.status == 401) {
+                            uploader._options.text.failUpload = "${message:pages.files.upload.fineuploader.text.failUpload.401}";
+                        }
                     },
                     onProgess: function(id) {
                         jQuery("#progress").attr("value", uploader.getInProgress());
                     },
                     onComplete: function(id, name, responseJSON) {
                         if (responseJSON.success) {
-                            console.log(name + "upload sucesssful");
+                            console.log(name + "upload sucessful");
+                            if (responseJSON.async) {
+                                jQuery(".qq-file-id-" + id + " a:last").remove();
+                                jQuery(".qq-file-id-" + id)
+                                        .append('<span class="ls-async-processing-text">${message:pages.files.upload.async.processing.text.spinner}<span class="ls-async-processing-spinner"></span></span>');
+                                jQuery(".qq-file-id-" + id)
+                                    .attr("class", "qq-file-id-" + id + " qq-upload-async-check");
+
+                                var intervalSet = setInterval(
+                                    function() {
+                                        asyncXHR(id, intervalSet, uuids)
+                                    }, responseJSON.frequence*1000);
+                            } else {
+                                uuids.push(uploader.getUuid(id));
+                            }
                         }
+                        qq.log("upload success ", uuids + "/" + uploader.getUploads().length);
                         jQuery("#progress").attr("value", uploader.getInProgress());
                         if (uploader.getInProgress() == 0) {
-                            console.log("All upload are completed");
-                            if (!err)
-                                setTimeout(function() { jQuery("#refresh")[0].click(); }, 3000);
+                            if(uploader.getUploads({status: qq.status.UPLOAD_SUCCESSFUL}).length == uuids.length) {
+                                console.log("All upload are completed");
+                                if (!err)
+                                    setTimeout(function() { jQuery("#refresh")[0].click(); }, 3000);
+                            }
                         }
                     }
                 },
@@ -95,8 +184,8 @@
                 }
             });
 
-            var it = uploader.__proto__._controlFailureTextDisplay;
-            uploader.__proto__._controlFailureTextDisplay = function(id, response) {
+            var it = uploader._controlFailureTextDisplay;
+            uploader._controlFailureTextDisplay = function(id, response) {
                 /* advice before */
 
                 if (response.error)

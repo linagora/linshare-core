@@ -36,8 +36,8 @@
 
     <script type="text/javascript" language="javascript">
         var uuids = [];
-	
-	var uploader;
+
+        var uploader;
 
         var sizeAvailable = ${maxFileSize};
 
@@ -45,13 +45,13 @@
             jQuery.ajax({
                 url: '${contextPath}/webservice/rest/documents/userAvailableSize',
                 type: 'GET',
-                crossDomain: true,
+                crossDomain: false,
                 dataType: 'json',
                 xhrFields: {
                     withCredentials: true
                 }
             }).fail(function() {
-                console.log("Error when updating available size");
+                qq.log("Error when updating available size");
             }).done(function(data) {
                 callback(data.value);
             });
@@ -77,26 +77,88 @@
         }
 
         var trySubmit = function() {
-            console.log("Trying to submit");
+            qq.log("Trying to submit");
             if (uuids.length + uploader.getInProgress()) {
                 if (jQuery("#is_submit").val() == 1) {
                     startSpinner();
+                    var allUploadSuccessful = uploader.getUploads({status: qq.status.UPLOAD_SUCCESSFUL});
                     if (uploader.getInProgress() == 0) {
-                        console.log("Submit sent");
-                        jQuery("#submitShare").click();
+                        if(allUploadSuccessful.length == uuids.length) {
+                            qq.log("Submit sent");
+                            jQuery("#submitShare").click();
+                        }
                     }
                 }
             }
         }
 
         var requestSubmit = function() {
-            console.log("Submit requested");
-            console.log("DEBUG: " + uuids.length);
-            console.log("DEBUG: " + uploader.getInProgress());
+            qq.log("Submit requested");
+            qq.log("DEBUG: " + uuids.length);
+            qq.log("DEBUG: " + uploader.getInProgress());
             if (uuids.length + uploader.getInProgress() != 0) {
                 jQuery("#is_submit").val(1);
                 trySubmit();
             }
+        }
+
+            var asyncXHR = function(id, intervalName, uuids) {
+                jQuery.ajax({
+                    url: '${contextPath}/webservice/fineuploader/upload/receiver/' + uploader.getUuid(id),
+                    type: 'GET',
+                    crossDomain: false,
+                    dataType: 'json',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    headers: {"WWW-No-Authenticate": "linshare"}
+                }).fail(function(error) {
+                    qq.log("request failed to get file processing status on server");
+                    intervalClear(intervalName);
+                    jQuery(".qq-file-id-" + id).attr("class", "qq-file-id-" + id + " qq-upload-fail");
+                    jQuery(".qq-file-id-" + id +" span").remove(".ls-async-processing-text");
+                    if(error.status == 401) {
+                        jQuery(".qq-file-id-" + id)
+                            .append('<span class="qq-upload-status-text-selector qq-upload-status-text">${message:pages.files.upload.fineuploader.text.failUpload.401}</span>');
+                    } else {
+                        jQuery(".qq-file-id-" + id).attr("title", "${message:pages.files.upload.async.failed}");
+                    }
+                }).done(function(data) {
+                        if(data.status == "SUCCESS") {
+                            uploader.setUuid(id, data.resourceUuid);
+
+                            //Spinner manipulation
+                            jQuery(".qq-file-id-" + id +" span")
+                                .remove(".ls-async-processing-text");
+                            jQuery(".qq-file-id-" + id)
+                                .attr("class", "qq-file-id-" + id + " qq-upload-async-success");
+                            jQuery(".qq-file-id-" + id)
+                                .append('<a class="qq-upload-delete-selector qq-upload-delete" href="#">${message:pages.files.upload.deleteButton}</a>');
+
+                            // set new value of uuids
+                            uuids.push(uploader.getUuid(id));
+                            jQuery("#uuids").attr("value", uuids.join());
+
+                           //Clear the setInterval
+                           intervalClear(intervalName);
+                           trySubmit();
+                        }
+                        if(data.status == "FAILED") {
+                            intervalClear(intervalName);
+                            jQuery(".qq-file-id-" + id).attr("class", "qq-file-id-" + id + " qq-upload-fail");
+                            jQuery(".qq-file-id-" + id +" span")
+                                .remove(".ls-async-processing-text");
+                            var asyncErrorName = ${errorCatalog}[data.errorName];
+                            jQuery(".qq-file-id-" + id)
+                                .append('<span class="qq-upload-status-text-selector qq-upload-status-text">' + asyncErrorName + '</span>');
+                        }
+                });
+
+            qq.log('my id  ' + id + ' my uuid ' + uploader.getUuid(id));
+        }
+
+        var intervalClear = function(intervalName) {
+            clearInterval(intervalName);
         }
 
         jQuery(document).ready(function() {
@@ -106,15 +168,18 @@
 
             var updateCallback = function(value) {
                 uploader._options.validation.sizeLimit = value;
-                console.log("New validation size is " + value);
+                qq.log("New validation size is " + value);
             };
 
             uploader = new qq.FineUploader({
                 element: jQuery('#uploader')[0],
-                debug: true,
+                debug: ${fineUploaderDebug},
                 maxConnections: ${fineUploaderMaxConnections},
                 request: {
-                    endpoint: "${contextPath}/webservice/fineuploader/upload/receiver"
+                    endpoint: "${contextPath}/webservice/fineuploader/upload/receiver",
+                    customHeaders: {
+                        "WWW-No-Authenticate": "linshare"
+                    }
                 },
                 /* if one would've wanted to do CORS, put this in the uploader */
                 // cors: {
@@ -122,13 +187,16 @@
                 //     sendCredentials: true
                 // },
                 callbacks: {
-                    onError: function(id, fileName, reason) {
+                    onError: function(id, fileName, reason, xhr) {
                         qq.log("id: " + id + ", fileName: " + fileName + ", reason: " + reason);
                         jQuery("#error").click();
+                        if(xhr.status == 401) {
+                            uploader._options.text.failUpload = "${message:pages.files.upload.fineuploader.text.failUpload.401}";
+                        }
                     },
                     onDelete: function(id) {
                         // remove item from list of uploaded items to share
-                        console.log(name + "delete sucesssful");
+                        qq.log(name + "delete sucesssful");
                         uuids.splice(uuids.indexOf(uploader.getUuid(id)), 1);
 
                         // set new value of uuids
@@ -141,23 +209,35 @@
                         jQuery("#progress").attr("value", uploader.getInProgress());
                     },
                     onComplete: function(id, name, responseJSON) {
-                        console.log(responseJSON);
                         if (responseJSON.success) {
-                            console.log(name + "upload sucesssful");
-                            uuids.push(uploader.getUuid(id));
+                            qq.log(name + "upload sucessful");
+                            qq.log("my uuid " + uuids);
+                            if (responseJSON.async) {
+                                jQuery(".qq-file-id-" + id + " a:last").remove();
+                                jQuery(".qq-file-id-" + id)
+                                        .append('<span class="ls-async-processing-text">${message:pages.files.upload.async.processing.text.spinner}<span class="ls-async-processing-spinner"></span></span>');
+                                jQuery(".qq-file-id-" + id)
+                                    .attr("class", "qq-file-id-" + id + " qq-upload-async-check");
+
+                                var intervalSet = setInterval(
+                                    function() {
+                                        asyncXHR(id, intervalSet, uuids)
+                                    }, responseJSON.frequence*1000);
+                            } else {
+                                uuids.push(uploader.getUuid(id));
+                            }
 
                             // update validation size
                             updateSizeAvailable(updateCallback);
                         }
                         jQuery("#progress").attr("value", uploader.getInProgress());
                         if (uploader.getInProgress() == 0) {
-                            console.log("All upload are completed: " + uuids.length);
+                            qq.log("All upload are completed: " + uuids.length);
                             jQuery("#uuids").attr("value", uuids.join());
                         }
                         trySubmit();
                     }
                 },
-                
                 failedUploadTextDisplay: {
                     mode: 'custom'
                 },
@@ -190,7 +270,6 @@
             var it = uploader._controlFailureTextDisplay;
             uploader._controlFailureTextDisplay = function(id, response) {
                 // advice before 
-
                  if (response.error){
                      if (response.error == 'FILE_TOO_LARGE')
                         response.error =  ${errorCatalog}[response.error] + ' ' + '${MyReadablesize}';

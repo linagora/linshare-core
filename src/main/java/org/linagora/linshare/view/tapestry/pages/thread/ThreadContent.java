@@ -109,6 +109,10 @@ public class ThreadContent {
 	@Property
 	private String fineUploaderMaxConnections;
 
+	@Inject @Symbol("linshare.tapestry.fineuploader.debug")
+	@Property
+	private boolean fineUploaderDebug;
+
 	/* ***********************************************************
 	 * Injected services
 	 * ***********************************************************
@@ -173,7 +177,7 @@ public class ThreadContent {
 		threadUuid = selectedThread.getLsUuid();
 	}
 
-	@Import(stylesheet = { "../../components/bootstrap/css/bootstrap.css" })
+	@Import(stylesheet = { "../../components/bootstrap/css/bootstrap.css", "context:css/spinner.css" })
 	@CleanupRender
 	void cleanupRender() {
 	}

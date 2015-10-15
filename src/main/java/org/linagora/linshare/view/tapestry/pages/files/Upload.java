@@ -85,8 +85,7 @@ import se.unbound.tapestry.tagselect.LabelAwareValueEncoder;
 @Import(library = { "../../components/jquery/jquery-1.7.2.js",
 		"../../components/fineuploader/fineuploader-4.1.0.js",
 		"../../components/bootstrap/js/bootstrap.js" }, stylesheet = {
-		"../../components/fineuploader/fineuploader-4.1.0.css",
-		"context:css/spinner.css" })
+		"../../components/fineuploader/fineuploader-4.1.0.css" })
 public class Upload {
 
 	private static final Logger logger = LoggerFactory.getLogger(Upload.class);
@@ -191,6 +190,10 @@ public class Upload {
 	@Property
 	private String fineUploaderMaxConnections;
 
+	@Inject @Symbol("linshare.tapestry.fineuploader.debug")
+	@Property
+	private boolean fineUploaderDebug;
+
 	/* ***********************************************************
 	 * Injected services
 	 * ***********************************************************
@@ -291,7 +294,7 @@ public class Upload {
 	/*
 	 * Hack: force bootstrap css to be the last stylesheet loaded
 	 */
-	@Import(stylesheet = { "../../components/bootstrap/css/bootstrap.css" })
+	@Import(stylesheet = { "../../components/bootstrap/css/bootstrap.css", "context:css/spinner.css" })
 	@CleanupRender
 	void cleanupRender() {
 	}
