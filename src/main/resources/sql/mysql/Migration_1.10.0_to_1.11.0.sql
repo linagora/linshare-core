@@ -61,7 +61,7 @@ DROP VIEW IF EXISTS alias_threads_list_destroyed;
 
 
 -- fix migration 1.9 to 1.10
-DROP TABLE upload_request_entry_url;
+DROP TABLE IF EXISTS upload_request_entry_url;
 
 CREATE TABLE async_task (
     id                    bigint(8) NOT NULL AUTO_INCREMENT,
