@@ -52,4 +52,11 @@
 	top:147px !important;
 	left:451px !important;
 }
+
+/*
+ * Upload and Share textarea
+ */
+.input-xxlarge {
+	height: 70px;
+}
 /***************************************************************************/
