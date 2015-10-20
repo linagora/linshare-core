@@ -867,7 +867,6 @@ ALTER TABLE upload_request ADD INDEX FKupload_req840249 (domain_abstract_id), AD
 ALTER TABLE upload_proposition_filter ADD INDEX FKupload_pro316142 (domain_abstract_id), ADD CONSTRAINT FKupload_pro316142 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE functionality_enum_lang ADD INDEX FKfunctional140416 (functionality_id), ADD CONSTRAINT FKfunctional140416 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE functionality_boolean ADD INDEX FKfunctional171577 (functionality_id), ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
-ALTER TABLE upload_request_entry_url ADD INDEX FKupload_req784409 (upload_request_entry_id), ADD CONSTRAINT FKupload_req784409 FOREIGN KEY (upload_request_entry_id) REFERENCES upload_request_entry (entry_id);
 ALTER TABLE contact_provider ADD INDEX FKcontact_p266833 (ldap_connection_id), ADD CONSTRAINT FKcontact_p266833 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
 ALTER TABLE contact_provider ADD INDEX FKcontact_p706697 (domain_abstract_id), ADD CONSTRAINT FKcontact_p706697 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE domain_abstract ADD INDEX FKdomain_abs163989 (user_provider_id), ADD CONSTRAINT FKdomain_abs163989 FOREIGN KEY (user_provider_id) REFERENCES user_provider (id);
