@@ -62,6 +62,7 @@ import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
@@ -333,7 +334,13 @@ public class UserSearchResults {
     public Zone onActionFromAdd(String login) {
         userAddToThreadList = new ArrayList<UserVo>();
         UserVo selectedUserVo = getUserFromLogin(login);
-        UserVo user = userFacade.loadUserDetails(selectedUserVo.getMail(), userLoggedIn.getDomainIdentifier());
+        UserVo user = null;
+        try {
+        	user = userFacade.loadUserDetails(selectedUserVo.getMail(), userLoggedIn.getDomainIdentifier());
+        } catch (BusinessException e) {
+        	shareSessionObjects.addError(messages.format("error.code.user_forbidden"));
+        	throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN, "You can not access to this user details.");
+        }
         userAddToThreadList.add(user);
         return userAddToThreadTemplateZone;
     }
