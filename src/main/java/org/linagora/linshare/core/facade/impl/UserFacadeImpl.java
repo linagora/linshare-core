@@ -49,6 +49,7 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
@@ -291,8 +292,10 @@ public class UserFacadeImpl implements UserFacade {
 			user = userService.findOrCreateUserWithDomainPolicies(login,
 					domainId);
 		} catch (BusinessException ex) {
-			throw new RuntimeException(
-					"User can't be created, please contact your administrator");
+			logger.warn(ex.getMessage());
+			logger.warn("You can not access to this user details, please check your domain inter-communication rules");
+			logger.debug(ex.getMessage(), ex);
+			throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN, "You can not access to this user details.");
 		}
 		return new UserVo(user);
 	}
