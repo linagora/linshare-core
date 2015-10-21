@@ -113,7 +113,7 @@ public class UserAddToThreadForm {
     /* ***********************************************************
      *                   Event handlers&processing
      ************************************************************ */
-    
+
     @SetupRender
     public void init() throws BusinessException {
 		threadsAllowed = new ArrayList<ThreadVo>();
@@ -164,10 +164,11 @@ public class UserAddToThreadForm {
 					}
 		    	}
 	    	}
+    		newMemberList = null;
     	}
     	readOnly = false;
 	}
-    
+
     @CleanupRender
     public void cleanupRender(){
     	userAddToThread.clearErrors();
