@@ -173,7 +173,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 		BooleanValueFunctionality usdaFunc = funcService
 				.getUndownloadedSharedDocumentsAlert(actor.getDomain());
-		if (usdaFunc.getFinalValue(shareContainer.getEnableUSDA())) {
+		shareContainer.setEnableUSDA(usdaFunc.getFinalValue(shareContainer.getEnableUSDA()));
+		if (shareContainer.getEnableUSDA()) {
 			Date duration = getUndownloadedSharedDocumentsAlertDuration(
 					actor,
 					shareContainer.getNotificationDateForUSDA(),
