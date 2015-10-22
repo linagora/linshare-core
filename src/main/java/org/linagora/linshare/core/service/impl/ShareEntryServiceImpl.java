@@ -281,7 +281,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			Set<ShareEntry> shares = Sets.newHashSet();
 			for (DocumentEntry documentEntry : sc.getDocuments()) {
 				ShareEntry createShare = shareEntryBusinessService.create(
-						documentEntry, owner, recipient, sc.getExpiryCalendar(), shareEntryGroup);
+						documentEntry, owner, recipient, sc.getExpiryCalendar(), shareEntryGroup, sc.getSharingNote());
 				updateGuestExpiryDate(recipient,  (User) recipient.getOwner());
 				shares.add(createShare);
 				recipientFavouriteRepository.incAndCreate(owner,

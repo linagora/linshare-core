@@ -97,7 +97,7 @@
 
 				<br/>
 				<t:if t:test="${shareDocument.fileComment}">
-					<div t:type="ck/Tooltip" title="${message:components.listDocument.picture.tooltip.title}" value="${formatedComment}">
+					<div t:type="ck/Tooltip" title="${message:components.listSharedDocument.picture.tooltip.title}" value="${formatedComment}">
 					<img src="${asset:context:images/icons/pin.png}" />
 					</div>
 				</t:if>

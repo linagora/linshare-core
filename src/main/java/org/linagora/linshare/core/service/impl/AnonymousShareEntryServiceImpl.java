@@ -64,8 +64,6 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -152,7 +150,7 @@ public class AnonymousShareEntryServiceImpl extends
 					mailLocale, sc.getMessage(), sc.getSubject());
 			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService
 					.create(targetedAccount, recipient, sc.getDocuments(), sc.getExpiryCalendar(),
-							passwordProtected, shareEntryGroup);
+							passwordProtected, shareEntryGroup, sc.getSharingNote());
 			// logs.
 			for (DocumentEntry documentEntry : sc.getDocuments()) {
 				ShareLogEntry logEntry = new ShareLogEntry(targetedAccount, documentEntry,

@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.view.tapestry.pages.files;
 
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +41,7 @@ import java.util.List;
 
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -51,6 +53,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.SelectModelFactory;
@@ -70,6 +73,7 @@ import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
+import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
@@ -118,10 +122,16 @@ public class Share {
 	private boolean enableUndownloadedSharedDocumentsAlert;
 
 	@Property
+	private DocumentVo document;
+
+	@Property
 	private String textAreaValue;
 
 	@Property
 	private String textAreaSubjectValue;
+
+	@Property
+	private String textAreaShareNote;
 
 	@Persist
 	@Property
@@ -149,6 +159,13 @@ public class Share {
 
 	@Property
 	private int autocompleteMin;
+
+	@Inject @Symbol("linshare.tapestry.share.sharingNote.accordeonCollapse")
+	@Property
+	private boolean sharingNoteAccordeon;
+
+	@Property
+	private String sharingNoteAccordeonClass;
 
 	/* ***********************************************************
 	 * Injected services
@@ -250,6 +267,7 @@ public class Share {
 								shareExpiryDate);
 			}
 		}
+		sharingNoteAccordeonClass = sharingNoteAccordeon ? "accordion-body collapse in": "accordion-body collapse";
 	}
 
 	/*
@@ -276,6 +294,7 @@ public class Share {
 		try {
 			textAreaSubjectValue = filter.clean(textAreaSubjectValue);
 			textAreaValue = filter.clean(textAreaValue);
+			textAreaShareNote = filter.clean(textAreaShareNote);
 			if (filter.hasError()) {
 				logger.debug("XSSFilter found some tags and striped them.");
 				businessMessagesManagementService.notify(filter
@@ -354,7 +373,10 @@ public class Share {
 			try {
 				MailContainer mailContainer = new MailContainer(
 						userVo.getExternalMailLocale(), textAreaValue, textAreaSubjectValue);
-				shareFacade.share(userVo, documents, recipientsEmail, secureSharing, mailContainer, creationAcknowledgement, shareExpiryDate, enableUndownloadedSharedDocumentsAlert, notificationDate);
+				shareFacade.share(userVo, documents, recipientsEmail,
+						secureSharing, mailContainer, creationAcknowledgement,
+						shareExpiryDate, enableUndownloadedSharedDocumentsAlert,
+						notificationDate, textAreaShareNote);
 			} catch (BusinessException ex) {
 
 				// IF RELAY IS DISABLE ON SMTP SERVER
@@ -493,5 +515,68 @@ public class Share {
 			logger.error("Failed to autocomplete user on ConfirmSharePopup", e);
 		}
 		return new ArrayList<UserVo>();
+	}
+
+	/**
+	 * remove all carriage return for chenille kit tool tip
+	 * @return
+	 */
+	public String getFormatedComment() {
+		String result = document.getFileComment().replaceAll("\r","");
+		result = result.replaceAll("\n", " ");
+		return result;
+	}
+
+	public String getTypeCSSClass() {
+		String ret = document.getType();
+		ret = ret.replace("/", "_");
+		ret = ret.replace("+", "__");
+		ret = ret.replace(".", "_-_");
+		return ret;
+	}
+
+
+	/**
+	 * Help method for use in this component. It retrieves a documentVo by it's
+	 * id.
+	 *
+	 * @param documents
+	 *            list of documents.
+	 * @param uuid
+	 *            the uuid of the document to retrieve.
+	 * @return DocumentVo concerned by the search.
+	 */
+	private DocumentVo searchDocumentVoByUUid(List<DocumentVo> documents,
+			String uuid) {
+		for (DocumentVo documentVo : documents) {
+			if (uuid.equals(documentVo.getIdentifier())) {
+				return documentVo;
+			}
+		}
+		return null;
+	}
+	/**
+	 * The action triggered when the user click on the download link on the name
+	 * of the file.
+	 */
+
+	public StreamResponse onActionFromDownload(String uuid)
+			throws BusinessException {
+		// when user has been logged out
+		if (documents == null) {
+			return null;
+		}
+
+		DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents, uuid);
+		if (null == currentDocumentVo) {
+			businessMessagesManagementService.notify(new BusinessException(
+					BusinessErrorCode.INVALID_UUID,
+					"invalid uuid for this user"));
+			return null;
+		} else {
+				InputStream stream = documentFacade.retrieveFileStream(currentDocumentVo, userVo);
+				return new FileStreamResponse(currentDocumentVo, stream);
+		}
+
 	}
 }

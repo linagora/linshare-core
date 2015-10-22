@@ -23,7 +23,22 @@
             <t:businessMessagesDisplayer />
             <t:messagePanel />
 
-        <t:grid source="documents" include="fileName">
+        <t:grid source="documents" include="fileName, creationDate" row="document">
+            <t:parameter t:name="fileNameCell">
+                <t:if t:test="${document.fileComment}">
+                    <span t:type="ck/Tooltip" title="${message:components.listDocument.picture.tooltip.title}" value="${formatedComment}">
+                        <img style="margin-right:10px;" src="${asset:context:images/icons/pin.png}" />
+                    </span>
+                </t:if>  <t:if t:test="${document.fileComment}" negate="true">
+                    <span style="margin-right:10px;">
+                        <img src="${asset:context:images/icons/pingray.png}"/>
+                    </span>
+                </t:if>
+                <t:actionLink t:id="download"
+                    t:context="${document.identifier}" t:type="${document.type}"
+                    class="fileName ${typeCSSClass}">${document.fileName}
+                </t:actionLink>
+            </t:parameter>
         </t:grid>
 
         <h2>${message:pages.files.upload.share.title}</h2>
@@ -130,10 +145,33 @@
                     <div class="accordion-group">
                         <div class="accordion-heading">
                             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionMessage"
-                            href="#collapseOne">${message:pages.files.upload.message.custom}</a>
+                            href="#collapseOne">${message:pages.files.upload.shareNote.title}</a>
+                        </div>
+                        <div id="collapseOne" class="${sharingNoteAccordeonClass}">
+                            <div class="accordion-inner">
+                                <div class="control-group">
+                                    <t:label for="textAreaShareNote" class="control-label">
+                                    ${message:pages.files.upload.shareNote.label}</t:label>
+                                    <div class="controls">
+                                        <t:textarea rows="8" t:id="textAreaShareNote" class="input-xxlarge" />
+                                    </div> <!--controls-->
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls">
+                                        <p class="help-block">${message:pages.files.upload.shareNote.description}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionMessage"
+                            href="#collapseTwo">${message:pages.files.upload.message.custom}</a>
                         </div>
 
-                        <div id="collapseOne" class="accordion-body collapse">
+                        <div id="collapseTwo" class="accordion-body collapse">
                             <div class="accordion-inner">
                                 <div class="control-group">
                                     <div class="controls">

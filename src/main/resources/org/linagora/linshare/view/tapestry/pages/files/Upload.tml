@@ -407,10 +407,33 @@
                     <div class="accordion-group">
                         <div class="accordion-heading">
                             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionMessage"
-                            href="#collapseOne">${message:pages.files.upload.message.custom}</a>
+                            href="#collapseOne">${message:pages.files.upload.shareNote.title}</a>
+                        </div>
+                        <div id="collapseOne" class="${sharingNoteAccordeonClass}">
+                            <div class="accordion-inner">
+                                <div class="control-group">
+                                    <t:label for="textAreaShareNote" class="control-label">
+                                    ${message:pages.files.upload.shareNote.label}</t:label>
+                                    <div class="controls">
+                                        <t:textarea rows="8" t:id="textAreaShareNote" class="input-xxlarge" />
+                                    </div> <!--controls-->
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls">
+                                        <p class="help-block">${message:pages.files.upload.shareNote.description}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionMessage"
+                            href="#collapseTwo">${message:pages.files.upload.message.custom}</a>
                         </div>
 
-                        <div id="collapseOne" class="accordion-body collapse">
+                        <div id="collapseTwo" class="accordion-body collapse">
                             <div class="accordion-inner">
                                 <div class="control-group">
                                     <div class="controls">

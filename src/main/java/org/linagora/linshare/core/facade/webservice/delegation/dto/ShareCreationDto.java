@@ -70,6 +70,9 @@ public class ShareCreationDto {
 	@ApiModelProperty(value = "enableUSDA")
 	protected boolean enableUSDA;
 
+	@ApiModelProperty(value = "sharingNote")
+	protected String sharingNote;
+
 	public List<GenericUserDto> getRecipients() {
 		return recipients;
 	}
@@ -132,6 +135,14 @@ public class ShareCreationDto {
 
 	public void setEnableUSDA(boolean enableUSDA) {
 		this.enableUSDA = enableUSDA;
+	}
+
+	public String getSharingNote() {
+		return sharingNote;
+	}
+
+	public void setSharingNote(String sharingNote) {
+		this.sharingNote = sharingNote;
 	}
 
 	public void setCreationAcknowledgement(Boolean creationAcknowkedgement) {

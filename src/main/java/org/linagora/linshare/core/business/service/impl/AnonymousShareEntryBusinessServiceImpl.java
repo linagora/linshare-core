@@ -80,10 +80,13 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		return anonymousShareEntryRepository.findById(uuid);
 	}
 
-	private AnonymousShareEntry createAnonymousShare(DocumentEntry documentEntry, AnonymousUrl anonymousUrl, User sender, Contact contact, Calendar expirationDate, ShareEntryGroup shareEntryGroup) throws BusinessException {
+	private AnonymousShareEntry createAnonymousShare(DocumentEntry documentEntry, AnonymousUrl anonymousUrl, User sender, Contact contact, Calendar expirationDate, ShareEntryGroup shareEntryGroup, String sharingNote) throws BusinessException {
 
 		logger.debug("Creation of a new anonymous share between sender " + sender.getMail() + " and recipient " + contact.getMail());
-		AnonymousShareEntry share= new AnonymousShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), documentEntry, anonymousUrl , expirationDate, shareEntryGroup);
+		if(sharingNote == null) {
+			sharingNote = "";
+		}
+		AnonymousShareEntry share= new AnonymousShareEntry(sender, documentEntry.getName(), sharingNote, documentEntry, anonymousUrl , expirationDate, shareEntryGroup);
 		AnonymousShareEntry anonymousShare = anonymousShareEntryRepository.create(share);
 
 		// If the current document was previously shared, we need to rest its expiration date
@@ -92,6 +95,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 
 		documentEntry.getAnonymousShareEntries().add(anonymousShare);
 		sender.getEntries().add(anonymousShare);
+		// TODO remove the two next lines for v2
 		documentEntryRepository.update(documentEntry);
 		accountService.update(sender);
 
@@ -100,7 +104,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 
 	@Deprecated
 	@Override
-	public AnonymousUrl createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup) throws BusinessException {
+	public AnonymousUrl createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup, String sharingNote) throws BusinessException {
 
 		Contact contact = contactRepository.find(recipient);
 		if(contact == null) {
@@ -110,7 +114,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		AnonymousUrl anonymousUrl = businessService.create(passwordProtected, contact);
 
 		for (DocumentEntry documentEntry : documentEntries) {
-			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expirationDate, shareEntryGroup);
+			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expirationDate, shareEntryGroup, sharingNote);
 			anonymousUrl.getAnonymousShareEntries().add(anonymousShareEntry);
 		}
 		businessService.update(anonymousUrl);
@@ -124,7 +128,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 			Recipient recipient,
 			Set<DocumentEntry> documentEntries,
 			Calendar expirationCalendar,
-			Boolean passwordProtected, ShareEntryGroup shareEntryGroup) throws BusinessException {
+			Boolean passwordProtected, ShareEntryGroup shareEntryGroup, String sharingNote) throws BusinessException {
 
 		Contact someContact = new Contact(recipient.getMail());
 		Contact contact = contactRepository.find(someContact);
@@ -133,7 +137,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		}
 		AnonymousUrl anonymousUrl = businessService.create(passwordProtected, contact);
 		for (DocumentEntry documentEntry : documentEntries) {
-			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expirationCalendar, shareEntryGroup);
+			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expirationCalendar, shareEntryGroup, sharingNote);
 			anonymousUrl.getAnonymousShareEntries().add(anonymousShareEntry);
 		}
 		businessService.update(anonymousUrl);

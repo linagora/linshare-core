@@ -45,7 +45,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface ShareEntryBusinessService {
 
 	ShareEntry create(DocumentEntry documentEntry, User sender, User recipient,
-			Calendar expirationDate, ShareEntryGroup shareEntryGroup)
+			Calendar expirationDate, ShareEntryGroup shareEntryGroup, String sharingNote)
 			throws BusinessException;
 
 	void delete(ShareEntry share) throws BusinessException;

@@ -73,13 +73,16 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 	}
 
 	@Override
-	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate, ShareEntryGroup shareEntryGroup) throws BusinessException {
+	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate, ShareEntryGroup shareEntryGroup, String sharingNote) throws BusinessException {
 		ShareEntry shareEntity;
+		if(sharingNote == null) {
+			sharingNote = "";
+		}
 		ShareEntry current_share = shareEntryRepository.getShareEntry(documentEntry, sender, recipient);
 		if(current_share == null) {
 			// if not, we create one
 			logger.debug("Creation of a new share between sender " + sender.getMail() + " and recipient " + recipient.getMail());
-			ShareEntry share= new ShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), recipient, documentEntry, expirationDate, shareEntryGroup);
+			ShareEntry share= new ShareEntry(sender, documentEntry.getName(), sharingNote, recipient, documentEntry, expirationDate, shareEntryGroup);
 			shareEntity = shareEntryRepository.create(share);
 			documentEntry.incrementShared();
 		} else {
@@ -87,6 +90,9 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 			logger.debug("The share (" + documentEntry.getUuid() +") between sender " + sender.getMail() + " and recipient " + recipient.getMail() + " already exists. Just updating expiration date.");
 			shareEntity = current_share;
 			shareEntity.setExpirationDate(expirationDate);
+			if(!sharingNote.isEmpty()) {
+				shareEntity.setComment(sharingNote);
+			}
 			shareEntryRepository.update(shareEntity);
 		}
 

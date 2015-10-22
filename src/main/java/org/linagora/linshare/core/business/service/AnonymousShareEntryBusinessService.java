@@ -51,9 +51,9 @@ public interface AnonymousShareEntryBusinessService {
 	AnonymousShareEntry findByUuid(String uuid);
 
 	@Deprecated
-	AnonymousUrl createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup) throws BusinessException;
+	AnonymousUrl createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup, String sharingNote) throws BusinessException;
 
-	AnonymousUrl create(User sender, Recipient recipient, Set<DocumentEntry> documentEntries, Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup) throws BusinessException;
+	AnonymousUrl create(User sender, Recipient recipient, Set<DocumentEntry> documentEntries, Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup, String sharingNote) throws BusinessException;
 
 	void delete(AnonymousShareEntry anonymousShare) throws BusinessException;
 
