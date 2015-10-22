@@ -149,11 +149,12 @@ public interface ShareFacade {
 	 * @param acknowledgement
 	 * @param shareExpiryDate
 	 * @param enableUSDA : enableUndownloadedSharedDocumentsAlert
+	 * @param sharingNote : a note linked to the share that the recipient of the share will see
 	 * @throws BusinessException
 	 */
 	public void share(UserVo actorVo, List<DocumentVo> documentVos,
 			List<String> recipientsEmail,
-			boolean secured, MailContainer mailContainer, boolean acknowledgement, Date shareExpiryDate, boolean enableUSDA, Date notificationDateForUSDA)
+			boolean secured, MailContainer mailContainer, boolean acknowledgement, Date shareExpiryDate, boolean enableUSDA, Date notificationDateForUSDA, String sharingNote)
 			throws BusinessException;
 
 	boolean isVisibleShareExpiration(String domainId);

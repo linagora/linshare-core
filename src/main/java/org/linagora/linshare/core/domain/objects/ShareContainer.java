@@ -74,6 +74,8 @@ public class ShareContainer {
 
 	protected Date expiryDate;
 
+	protected String sharingNote;
+
 	/**
 	 * This is the notification date for ShareEntryGroup
 	 */
@@ -229,6 +231,14 @@ public class ShareContainer {
 
 	public void setExpiryDate(Date expiryDate) {
 		this.expiryDate = expiryDate;
+	}
+
+	public String getSharingNote() {
+		return sharingNote;
+	}
+
+	public void setSharingNote(String sharingNote) {
+		this.sharingNote = sharingNote;
 	}
 
 	public Date getNotificationDateForUSDA() {

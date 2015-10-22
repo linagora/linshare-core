@@ -360,7 +360,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 	public void share(UserVo actorVo, List<DocumentVo> documentVos,
 			List<String> recipientsEmail, boolean secured,
 			MailContainer mailContainer, boolean creationAcknowledgement,
-			Date shareExpiryDate, boolean enableUSDA, Date notificationDateForUSDA) throws BusinessException {
+			Date shareExpiryDate, boolean enableUSDA, Date notificationDateForUSDA, String sharingNote) throws BusinessException {
 		User actor = getActor(actorVo);
 		ShareContainer sc = new ShareContainer(mailContainer.getSubject(),
 				mailContainer.getPersonalMessage(), secured,
@@ -371,6 +371,7 @@ public class ShareFacadeImpl extends GenericTapestryFacade implements ShareFacad
 		sc.addMail(recipientsEmail);
 		sc.setNotificationDateForUSDA(notificationDateForUSDA);
 		sc.setEnableUSDA(enableUSDA);
+		sc.setSharingNote(sharingNote);
 		shareService.create(actor, actor, sc);
 	}
 

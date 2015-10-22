@@ -149,6 +149,9 @@ public class Upload {
 	@Property
 	private String textAreaSubjectValue;
 
+	@Property
+	private String textAreaShareNote;
+
 	@Persist
 	@Property
 	private boolean showSecureSharingCheckBox;
@@ -190,6 +193,13 @@ public class Upload {
 	@Inject @Symbol("linshare.tapestry.fineuploader.maxconnections")
 	@Property
 	private String fineUploaderMaxConnections;
+
+	@Inject @Symbol("linshare.tapestry.share.sharingNote.accordeonCollapse")
+	@Property
+	private boolean sharingNoteAccordeon;
+
+	@Property
+	private String sharingNoteAccordeonClass;
 
 	/* ***********************************************************
 	 * Injected services
@@ -286,6 +296,7 @@ public class Upload {
 								shareExpiryDate);
 			}
 		}
+		sharingNoteAccordeonClass = sharingNoteAccordeon ? "accordion-body collapse in": "accordion-body collapse";
 	}
 
 	/*
@@ -322,6 +333,7 @@ public class Upload {
 			try {
 				textAreaSubjectValue = filter.clean(textAreaSubjectValue);
 				textAreaValue = filter.clean(textAreaValue);
+				textAreaShareNote = filter.clean(textAreaShareNote);
 				if (filter.hasError()) {
 					logger.debug("XSSFilter found some tags and striped them.");
 					businessMessagesManagementService.notify(filter
@@ -385,7 +397,10 @@ public class Upload {
 			try {
 				MailContainer mailContainer = new MailContainer(
 						userVo.getExternalMailLocale(), textAreaValue, textAreaSubjectValue);
-				shareFacade.share(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer, creationAcknowledgement, shareExpiryDate, enableUndownloadedSharedDocumentsAlert, notificationDate);
+				shareFacade.share(userVo, addedDocuments, recipientsEmail,
+						secureSharing, mailContainer, creationAcknowledgement,
+						shareExpiryDate, enableUndownloadedSharedDocumentsAlert,
+						notificationDate, textAreaShareNote);
 			} catch (BusinessException ex) {
 
 				// IF RELAY IS DISABLE ON SMTP SERVER

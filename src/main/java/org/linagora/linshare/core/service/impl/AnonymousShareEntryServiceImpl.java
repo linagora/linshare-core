@@ -155,7 +155,7 @@ public class AnonymousShareEntryServiceImpl extends
 					mailLocale, sc.getMessage(), sc.getSubject());
 			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService
 					.create(targetedAccount, recipient, sc.getDocuments(), sc.getExpiryCalendar(),
-							passwordProtected, shareEntryGroup);
+							passwordProtected, shareEntryGroup, sc.getSharingNote());
 			// logs.
 			for (DocumentEntry documentEntry : sc.getDocuments()) {
 				ShareLogEntry logEntry = new ShareLogEntry(targetedAccount, documentEntry,
