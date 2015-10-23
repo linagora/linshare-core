@@ -1322,9 +1322,13 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	private String getLinShareUrlForAUserRecipient(Account recipient) {
-		return functionalityReadOnlyService
+		String value = functionalityReadOnlyService
 				.getCustomNotificationUrlFunctionality(recipient.getDomain())
 				.getValue();
+		if (!value.endsWith("/")) {
+			return value + "/";
+		}
+		return value;
 	}
 
 	private String getLinShareUrlForAContactRecipient(Account sender) {
