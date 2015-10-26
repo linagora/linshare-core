@@ -60,6 +60,7 @@ DROP PROCEDURE IF EXISTS ls_drop_column_if_exists;
 DROP PROCEDURE IF EXISTS ls_drop_constraint_if_exists;
 DROP PROCEDURE IF EXISTS ls_drop_index_if_exists;
 DROP PROCEDURE IF EXISTS ls_drop_primarykey_if_exists;
+DROP PROCEDURE IF EXISTS ls_drop_id_if_exists_from_func_boolean;
 DROP FUNCTION IF EXISTS ls_return_last_insert;
 
 delimiter '$$'
@@ -86,14 +87,14 @@ BEGIN
     DECLARE local_ls_constraint_name varchar(255) DEFAULT ls_constraint_name;
     DECLARE _stmt VARCHAR(1024);
     SELECT DATABASE() INTO ls_database_name;
-    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND constraint_name = ls_constraint_name AND constraint_type <> 'UNIQUE' ) THEN
+    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND LOWER(constraint_name) = LOWER(ls_constraint_name) AND constraint_type <> 'UNIQUE' ) THEN
         SET @SQL := CONCAT('ALTER TABLE ', local_ls_table_name, ' DROP FOREIGN KEY ', local_ls_constraint_name , ";");
         select @SQL;
         PREPARE _stmt FROM @SQL;
         EXECUTE _stmt;
         DEALLOCATE PREPARE _stmt;
     END IF;
-    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND constraint_name = ls_constraint_name AND constraint_type = 'UNIQUE' ) THEN
+    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND LOWER(constraint_name) = LOWER(ls_constraint_name) AND constraint_type = 'UNIQUE' ) THEN
         SET @SQL := CONCAT('ALTER TABLE ', local_ls_table_name, ' DROP INDEX ', local_ls_constraint_name , ";");
         select @SQL;
         PREPARE _stmt FROM @SQL;
@@ -133,6 +134,23 @@ BEGIN
     END IF;
 END$$
 
+CREATE PROCEDURE ls_drop_id_if_exists_from_func_boolean(IN ls_table_name VARCHAR(255), IN ls_column_name VARCHAR(255))
+BEGIN
+    DECLARE ls_database_name varchar(255);
+    DECLARE local_ls_table_name varchar(255) DEFAULT ls_table_name;
+    DECLARE _stmt VARCHAR(1024);
+    SELECT DATABASE() INTO ls_database_name;
+       IF EXISTS (SELECT * FROM information_schema.columns WHERE table_schema = ls_database_name AND table_name = ls_table_name AND column_name = ls_column_name) THEN
+       call ls_drop_column_if_exists("functionality_boolean", "id");
+       call ls_drop_constraint_if_exists("functionality_boolean", "linshare_functionality_boolean_pkey");
+       SET @SQL := CONCAT('ALTER TABLE ', ls_table_name, ' ADD PRIMARY KEY(functionality_id);');
+       select @SQL;
+       PREPARE _stmt FROM @SQL;
+       EXECUTE _stmt;
+       DEALLOCATE PREPARE _stmt;
+    END IF;
+END$$
+
 CREATE FUNCTION ls_return_last_insert() RETURNS bigint(8)
 BEGIN
     DECLARE result bigint(8);
@@ -144,10 +162,7 @@ END$$
 delimiter ';'
 
 -- "ALTER TABLE functionality_boolean DROP COLUMN IF EXISTS id" not supported by mysql.
-call ls_drop_column_if_exists("functionality_boolean", "id");
-call ls_drop_constraint_if_exists("functionality_boolean", "functionality_boolean_pkey");
-call ls_drop_primarykey_if_exists("functionality_boolean");
-ALTER TABLE functionality_boolean ADD PRIMARY KEY (functionality_id);
+call ls_drop_id_if_exists_from_func_boolean("functionality_boolean", "id");
 
 -- TABLE functionality_boolean : "DROP CONSTRAINT IF EXISTS FKfunctional171577" not supported by mysql
 call ls_drop_constraint_if_exists("functionality_boolean", "FKfunctional171577");
