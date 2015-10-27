@@ -57,6 +57,111 @@ DROP VIEW IF EXISTS alias_threads_list_all;
 DROP VIEW IF EXISTS alias_threads_list_active;
 DROP VIEW IF EXISTS alias_threads_list_destroyed;
 
+DROP PROCEDURE IF EXISTS ls_drop_column_if_exists;
+DROP PROCEDURE IF EXISTS ls_drop_constraint_if_exists;
+DROP PROCEDURE IF EXISTS ls_drop_index_if_exists;
+DROP PROCEDURE IF EXISTS ls_drop_primarykey_if_exists;
+DROP PROCEDURE IF EXISTS ls_drop_id_if_exists_from_func_boolean;
+DROP FUNCTION IF EXISTS ls_return_last_insert;
+
+delimiter '$$'
+CREATE PROCEDURE ls_drop_column_if_exists(IN ls_table_name VARCHAR(255), IN ls_column_name VARCHAR(255))
+BEGIN
+    DECLARE ls_database_name varchar(255);
+    DECLARE local_ls_table_name varchar(255) DEFAULT ls_table_name;
+    DECLARE local_ls_column_name varchar(255) DEFAULT ls_column_name;
+    DECLARE _stmt VARCHAR(1024);
+    SELECT DATABASE() INTO ls_database_name;
+    IF EXISTS (SELECT * FROM information_schema.columns WHERE table_schema = ls_database_name AND table_name = ls_table_name AND column_name = ls_column_name) THEN
+        SET @SQL := CONCAT('ALTER TABLE ', local_ls_table_name, ' DROP COLUMN ', local_ls_column_name , ";");
+        select @SQL;
+        PREPARE _stmt FROM @SQL;
+        EXECUTE _stmt;
+        DEALLOCATE PREPARE _stmt;
+    END IF;
+END$$
+
+CREATE PROCEDURE ls_drop_constraint_if_exists(IN ls_table_name VARCHAR(255), IN ls_constraint_name VARCHAR(255))
+BEGIN
+    DECLARE ls_database_name varchar(255);
+    DECLARE local_ls_table_name varchar(255) DEFAULT ls_table_name;
+    DECLARE local_ls_constraint_name varchar(255) DEFAULT ls_constraint_name;
+    DECLARE _stmt VARCHAR(1024);
+    SELECT DATABASE() INTO ls_database_name;
+    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND LOWER(constraint_name) = LOWER(ls_constraint_name) AND constraint_type <> 'UNIQUE' ) THEN
+        SET @SQL := CONCAT('ALTER TABLE ', local_ls_table_name, ' DROP FOREIGN KEY ', local_ls_constraint_name , ";");
+        select @SQL;
+        PREPARE _stmt FROM @SQL;
+        EXECUTE _stmt;
+        DEALLOCATE PREPARE _stmt;
+    END IF;
+    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND LOWER(constraint_name) = LOWER(ls_constraint_name) AND constraint_type = 'UNIQUE' ) THEN
+        SET @SQL := CONCAT('ALTER TABLE ', local_ls_table_name, ' DROP INDEX ', local_ls_constraint_name , ";");
+        select @SQL;
+        PREPARE _stmt FROM @SQL;
+        EXECUTE _stmt;
+        DEALLOCATE PREPARE _stmt;
+    END IF;
+END$$
+
+CREATE PROCEDURE ls_drop_index_if_exists(IN ls_table_name VARCHAR(255), IN ls_index_name VARCHAR(255))
+BEGIN
+    DECLARE ls_database_name varchar(255);
+    DECLARE local_ls_table_name varchar(255) DEFAULT ls_table_name;
+    DECLARE local_ls_index_name varchar(255) DEFAULT ls_index_name;
+    DECLARE _stmt VARCHAR(1024);
+    SELECT DATABASE() INTO ls_database_name;
+    IF EXISTS (SELECT * FROM information_schema.STATISTICS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND INDEX_NAME = ls_index_name) THEN
+        SET @SQL := CONCAT('DROP INDEX ', local_ls_index_name, ' ON ', local_ls_table_name , ";");
+        select @SQL;
+        PREPARE _stmt FROM @SQL;
+        EXECUTE _stmt;
+        DEALLOCATE PREPARE _stmt;
+    END IF;
+END$$
+
+CREATE PROCEDURE ls_drop_primarykey_if_exists(IN ls_table_name VARCHAR(255))
+BEGIN
+    DECLARE ls_database_name varchar(255);
+    DECLARE local_ls_table_name varchar(255) DEFAULT ls_table_name;
+    DECLARE _stmt VARCHAR(1024);
+    SELECT DATABASE() INTO ls_database_name;
+    IF EXISTS (SELECT NULL FROM information_schema.table_constraints WHERE constraint_type = 'PRIMARY KEY' AND table_name = ls_table_name AND table_schema = ls_database_name) THEN
+        SET @SQL := CONCAT('ALTER TABLE ', local_ls_table_name, ' DROP PRIMARY KEY ', ";");
+        select @SQL;
+        PREPARE _stmt FROM @SQL;
+        EXECUTE _stmt;
+        DEALLOCATE PREPARE _stmt;
+    END IF;
+END$$
+
+CREATE PROCEDURE ls_drop_id_if_exists_from_func_boolean(IN ls_table_name VARCHAR(255), IN ls_column_name VARCHAR(255))
+BEGIN
+    DECLARE ls_database_name varchar(255);
+    DECLARE local_ls_table_name varchar(255) DEFAULT ls_table_name;
+    DECLARE _stmt VARCHAR(1024);
+    SELECT DATABASE() INTO ls_database_name;
+       IF EXISTS (SELECT * FROM information_schema.columns WHERE table_schema = ls_database_name AND table_name = ls_table_name AND column_name = ls_column_name) THEN
+       call ls_drop_column_if_exists("functionality_boolean", "id");
+       call ls_drop_constraint_if_exists("functionality_boolean", "linshare_functionality_boolean_pkey");
+       SET @SQL := CONCAT('ALTER TABLE ', ls_table_name, ' ADD PRIMARY KEY(functionality_id);');
+       select @SQL;
+       PREPARE _stmt FROM @SQL;
+       EXECUTE _stmt;
+       DEALLOCATE PREPARE _stmt;
+    END IF;
+END$$
+
+CREATE FUNCTION ls_return_last_insert() RETURNS bigint(8)
+BEGIN
+    DECLARE result bigint(8);
+    INSERT INTO policy (status, default_status, policy, system) VALUES (true, true, 1, false);
+    SET result = last_insert_id();
+    return result;
+END$$
+
+delimiter ';'
+
 -- Here you start your migration instructions.
 
 
