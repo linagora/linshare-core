@@ -20,7 +20,28 @@ CREATE TABLE functionality_boolean (
   boolean_value    bit NOT NULL, 
   CONSTRAINT linshare_functionality_boolean_pkey
     PRIMARY KEY (functionality_id)) CHARACTER SET UTF8;
-ALTER TABLE functionality_boolean DROP CONSTRAINT IF EXISTS FKfunctional171577;
+
+delimiter '$$'
+CREATE PROCEDURE ls_drop_constraint_if_exists(IN ls_table_name VARCHAR(255), IN ls_constraint_name VARCHAR(255))
+BEGIN
+    DECLARE ls_database_name varchar(255);
+    DECLARE local_ls_table_name varchar(255) DEFAULT ls_table_name;
+    DECLARE local_ls_constraint_name varchar(255) DEFAULT ls_constraint_name;
+    DECLARE _stmt VARCHAR(1024);
+    SELECT DATABASE() INTO ls_database_name;
+    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND LOWER(constraint_name) = LOWER(ls_constraint_name)) THEN
+        SET @SQL := CONCAT('ALTER TABLE ', local_ls_table_name, ' DROP FOREIGN KEY ', local_ls_constraint_name , ";");
+        select @SQL;
+        PREPARE _stmt FROM @SQL;
+        EXECUTE _stmt;
+        DEALLOCATE PREPARE _stmt;
+    END IF;
+END$$
+
+delimiter ';'
+
+-- ALTER TABLE functionality_boolean DROP CONSTRAINT IF EXISTS FKfunctional171577 not supported by mysql
+call ls_drop_constraint_if_exists("functionality_boolean", "FKfunctional171577");
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 
 CREATE TABLE account_permission (
