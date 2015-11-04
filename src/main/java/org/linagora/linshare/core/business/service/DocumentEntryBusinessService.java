@@ -101,4 +101,6 @@ public interface DocumentEntryBusinessService {
 	public void syncUniqueDocument(Account owner, String fileName) throws BusinessException;
 
 	List<DocumentEntry> findAllMySyncEntries(Account owner) throws BusinessException;
+
+	String SHACheckSumFileStream(InputStream fs);
 }

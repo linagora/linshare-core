@@ -586,7 +586,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	 * @param fileStream
 	 * @return String SHA256SUM of fileStream
 	 */
-	private String SHACheckSumFileStream(FileInputStream fs) {
+	@Override
+	public String SHACheckSumFileStream(InputStream fs) {
 		StringBuffer hexString = new StringBuffer();
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-256");

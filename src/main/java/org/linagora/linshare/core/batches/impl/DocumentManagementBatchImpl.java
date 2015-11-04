@@ -47,6 +47,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.objects.FileInfo;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -84,6 +85,8 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 
 	private final boolean cronActivated;
 
+	private final boolean cronJackRabbitKeepAlive;
+
 	private final NotifierService notifierService;
 
 	private final MailBuildingService mailBuilder;
@@ -98,7 +101,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 
 	public DocumentManagementBatchImpl(DocumentRepository documentRepository,
 			DocumentEntryRepository documentEntryRepository, DocumentEntryService documentEntryService,
-			AccountRepository<Account> accountRepository, FileSystemDao fileSystemDao, boolean cronActivated,
+			AccountRepository<Account> accountRepository, FileSystemDao fileSystemDao, boolean cronActivated, boolean cronJackRabbitKeepAlive,
 			NotifierService notifierService, MailBuildingService mailBuilder,
 			FunctionalityReadOnlyService functionalityService, EntryService entryService,
 			DocumentEntryBusinessService documentEntryBusinessService, MimeTypeMagicNumberDao mimeTypeMagicNumberDao, ThreadEntryService threadEntryService) {
@@ -116,6 +119,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.mimeTypeMagicNumberDao = mimeTypeMagicNumberDao;
 		this.threadEntryService = threadEntryService;
+		this.cronJackRabbitKeepAlive = cronJackRabbitKeepAlive;
 	}
 
 	private String getCpt(long curr, long total) {
@@ -274,6 +278,48 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		// ((User)document.getEntryOwner()).getMail());
 		// e.printStackTrace();
 		// }
+	}
+
+	@Override
+	public void jackRabbitKeepAlive() {
+		logger.debug("jackRabbitKeepAlive - begin");
+		if (cronJackRabbitKeepAlive) {
+			SystemAccount actor = accountRepository.getBatchSystemAccount();
+			List<DocumentEntry> findAllMyDocumentEntries = documentEntryRepository.findAllMyDocumentEntries(actor);
+			for (DocumentEntry documentEntry : findAllMyDocumentEntries) {
+				String uuid = documentEntry.getDocument().getUuid();
+				logger.debug("removing resource : " + uuid);
+				try {
+					documentEntryBusinessService.deleteDocumentEntry(documentEntry);
+				} catch (Exception e) {
+					logger.error("exception : ", e);
+				}
+			}
+			uploadTestFile(actor);
+		} else {
+			logger.debug("jackRabbitKeepAlive - skip");
+		}
+		logger.debug("jackRabbitKeepAlive - end");
+	}
+
+	private void uploadTestFile(SystemAccount actor) {
+		logger.debug("uploading file ...");
+		String filePath = "jackRabbit.properties";
+		InputStream inputStream = java.lang.Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
+		String uuid = fileSystemDao.insertFile(actor.getLsUuid(), inputStream, 561, "keep alive file", "test/plain");
+		Document document = new Document(uuid, "text/plain", new Long(561));
+		try {
+			inputStream = java.lang.Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
+			document.setSha256sum(documentEntryBusinessService.SHACheckSumFileStream(inputStream));
+			inputStream.close();
+			documentRepository.create(document);
+			DocumentEntry docEntry = new DocumentEntry(actor, "inputStream test", "", document);
+			docEntry = documentEntryRepository.create(docEntry);
+			actor.getEntries().add(docEntry );
+		} catch (IOException e) {
+			logger.error("exception : ", e);
+		}
+		logger.debug("file uploaded");
 	}
 
 }
