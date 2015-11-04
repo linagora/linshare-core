@@ -31,31 +31,21 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.batches;
+package org.linagora.linshare.core.job.quartz;
 
+import org.linagora.linshare.core.batches.DocumentManagementBatch;
+import org.quartz.JobExecutionContext;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 
-public interface DocumentManagementBatch {
+public class JackRabbitKeepAlive extends QuartzJobBean {
 
-    /** 
-     * Check that documents in database are also in jackrabbit repository.
-     * If the document is not present in jackrabbit repository, we must delete it in database.
-     */
-    public void removeMissingDocuments();
-    
-    
-    /**
-     * Delete old documents when strong box disallowed
-     */
-    public void cleanOldDocuments();
+	private DocumentManagementBatch documentManagementBatch;
 
+	protected void executeInternal(JobExecutionContext context) {
+		documentManagementBatch.jackRabbitKeepAlive();
+	}
 
-    /**
-     * Check documents MIME type and update it accordingly
-     */
-	public void checkDocumentsMimeType();
-
-	/**
-	 * Hack.
-	 */
-	void jackRabbitKeepAlive();
+	public void setBatch(DocumentManagementBatch documentManagementBatch) {
+		this.documentManagementBatch = documentManagementBatch;
+	}
 }

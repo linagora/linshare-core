@@ -91,7 +91,6 @@
         <property name="jobDetail" ref="cleanJcrUnusedFilesJob"/>
         <property name="cronExpression" value="${job.jcrgarbagecollector.cron.expression}"/>
     </bean>
-
     <bean id="cleanOutdatedDocumentsJob" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass" value="org.linagora.linshare.core.job.quartz.CleanOutdatedDocuments"/>
         <property name="jobDataAsMap">
@@ -104,6 +103,20 @@
         <property name="jobDetail" ref="cleanOutdatedDocumentsJob"/>
         <property name="cronExpression" value="${job.document.cleaner.cron.expression}"/>
     </bean>
+
+	<bean id="jackRabbitKeepAliveJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="org.linagora.linshare.core.job.quartz.JackRabbitKeepAlive" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="batch" value-ref="documentManagementBatch" />
+			</map>
+		</property>
+	</bean>
+	<bean id="jackRabbitKeepAliveJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="jackRabbitKeepAliveJob" />
+		<property name="cronExpression" value="${job.jackrabbit.keep.alive.cron.expression}" />
+	</bean>
 
     <bean id="updateUploadRequestJob" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass" value="org.linagora.linshare.core.job.quartz.UpdateUploadRequest"/>
@@ -163,6 +176,7 @@
                 <ref bean="updateUploadRequestJobTrigger"/>
                 <ref bean="nofifyUndownloadedSharedDocumentsJobTrigger"/>
                 <ref bean="deleteShareEntryGroupsJobTrigger"/>
+                <ref bean="jackRabbitKeepAliveJobTrigger"/>
             </list>
         </property>
     </bean>
