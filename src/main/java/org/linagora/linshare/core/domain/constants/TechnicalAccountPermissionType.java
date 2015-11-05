@@ -117,7 +117,12 @@ public enum TechnicalAccountPermissionType {
 	UPLOAD_REQUEST_TEMPLATE_UPDATE,
 	UPLOAD_REQUEST_TEMPLATE_LIST,
 
-	AUDIT_LIST;
+	AUDIT_LIST,
+	QUOTA_GET,
+	QUOTA_LIST,
+
+	STATISTIC_LIST,
+	STATISTIC_GET;
 
 	public static TechnicalAccountPermissionType fromString(String s) {
 		try {

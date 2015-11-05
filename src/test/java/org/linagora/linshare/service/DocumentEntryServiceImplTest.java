@@ -78,9 +78,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-
-@ContextConfiguration(locations = { 
-		"classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
@@ -95,7 +93,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		})
 public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
 
-	private static Logger logger = LoggerFactory.getLogger(DocumentEntryServiceImplTest.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(DocumentEntryServiceImplTest.class);
 
 	@Autowired
 	private FunctionalityRepository functionalityRepository;
@@ -123,8 +122,10 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	@Autowired
 	private DocumentEntryService documentEntryService;
 
+
 	private User jane;
 	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
+
 	private final String fileName = "linshare-default.properties";
 	private final String comment = "file description";
 	private DocumentEntry aDocumentEntry;
@@ -135,6 +136,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		datas = new LoadingServiceTestDatas(userRepository);
+
 		datas.loadUsers();
 		jane = datas.getUser2();
 
@@ -148,7 +150,8 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	}
 
 	@Test
-	public void testCreateDocumentEntry() throws BusinessException, IOException{
+	public void testCreateDocumentEntry()
+			throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
 		createFunctionalities();
@@ -172,100 +175,54 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	}
 
 	/**
-	 * We need this method because all the functionalities are check when we create a DocumentEntry
+	 * We need this method because all the functionalities are check when we
+	 * create a DocumentEntry
 	 * 
 	 * @throws IllegalArgumentException
 	 * @throws BusinessException
 	 */
-	private void createFunctionalities() throws IllegalArgumentException, BusinessException {
+	private void createFunctionalities()
+			throws IllegalArgumentException, BusinessException {
 		Integer value = 1;
 		ArrayList<Functionality> functionalities = new ArrayList<Functionality>();
-		functionalities.add(
-			new UnitValueFunctionality("QUOTA_GLOBAL",
-				true,
+		functionalities.add(new UnitValueFunctionality("QUOTA_GLOBAL", true,
 				new Policy(Policies.ALLOWED, false),
+				new Policy(Policies.ALLOWED, false), jane.getDomain(), value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA)));
+
+		functionalities.add(new UnitValueFunctionality("QUOTA_USER", true,
 				new Policy(Policies.ALLOWED, false),
-				jane.getDomain(),
-				value,
-				new FileSizeUnitClass(FileSizeUnit.GIGA)
-			)
-		);
+				new Policy(Policies.ALLOWED, false), jane.getDomain(), value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA)));
 
-		functionalities.add(
-			new UnitValueFunctionality("QUOTA_USER",
-				true,
+		functionalities.add(new UnitValueFunctionality("MIME_TYPE", true,
 				new Policy(Policies.ALLOWED, false),
+				new Policy(Policies.ALLOWED, false), jane.getDomain(), value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA)));
+
+		functionalities.add(new UnitValueFunctionality("ANTIVIRUS", true,
 				new Policy(Policies.ALLOWED, false),
-				jane.getDomain(),
-				value,
-				new FileSizeUnitClass(FileSizeUnit.GIGA)
-			)
-		);
+				new Policy(Policies.ALLOWED, false), jane.getDomain(), value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA)));
 
-		functionalities.add(
-				new UnitValueFunctionality("MIME_TYPE",
-					true,
-					new Policy(Policies.ALLOWED, false),
-					new Policy(Policies.ALLOWED, false),
-					jane.getDomain(),
-					value,
-					new FileSizeUnitClass(FileSizeUnit.GIGA)
-				)
-		);
+		functionalities.add(new UnitValueFunctionality("ENCIPHERMENT", true,
+				new Policy(Policies.ALLOWED, true),
+				new Policy(Policies.ALLOWED, true), jane.getDomain(), value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA)));
 
-		functionalities.add(
-				new UnitValueFunctionality("ANTIVIRUS",
-					true,
-					new Policy(Policies.ALLOWED, false),
-					new Policy(Policies.ALLOWED, false),
-					jane.getDomain(),
-					value,
-					new FileSizeUnitClass(FileSizeUnit.GIGA)
-				)
-		);
+		functionalities.add(new StringValueFunctionality("TIME_STAMPING", true,
+				new Policy(Policies.ALLOWED, false),
+				new Policy(Policies.ALLOWED, false), jane.getDomain(), ""));
 
-		functionalities.add(
-				new UnitValueFunctionality("ENCIPHERMENT",
-					true,
-					new Policy(Policies.ALLOWED, true),
-					new Policy(Policies.ALLOWED, true),
-					jane.getDomain(),
-					value,
-					new FileSizeUnitClass(FileSizeUnit.GIGA)
-				)
-		);
+		functionalities.add(new UnitValueFunctionality("FILE_EXPIRATION", true,
+				new Policy(Policies.ALLOWED, false),
+				new Policy(Policies.ALLOWED, false), jane.getDomain(), value,
+				new TimeUnitClass(TimeUnit.DAY)));
 
-		functionalities.add(
-				new StringValueFunctionality("TIME_STAMPING",
-					true,
-					new Policy(Policies.ALLOWED, false),
-					new Policy(Policies.ALLOWED, false),
-					jane.getDomain(),
-					""
-				)
-		);
-
-		functionalities.add(
-				new UnitValueFunctionality("FILE_EXPIRATION",
-					true,
-					new Policy(Policies.ALLOWED, false),
-					new Policy(Policies.ALLOWED, false),
-					jane.getDomain(),
-					value,
-					new TimeUnitClass(TimeUnit.DAY)
-				)
-		);
-
-		functionalities.add(
-				new UnitValueFunctionality("FILESIZE_MAX",
-					true,
-					new Policy(Policies.ALLOWED, true),
-					new Policy(Policies.ALLOWED, true),
-					jane.getDomain(),
-					5,
-					new FileSizeUnitClass(FileSizeUnit.GIGA)
-				)
-		);
+		functionalities.add(new UnitValueFunctionality("FILESIZE_MAX", true,
+				new Policy(Policies.ALLOWED, true),
+				new Policy(Policies.ALLOWED, true), jane.getDomain(), 5,
+				new FileSizeUnitClass(FileSizeUnit.GIGA)));
 
 		for (Functionality functionality : functionalities) {
 			functionalityRepository.create(functionality);
@@ -274,7 +231,8 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	}
 
 	@Test
-	public void testFindAllMyDocumentEntries() throws BusinessException, IOException{
+	public void testFindAllMyDocumentEntries()
+			throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		User owner = jane;
@@ -283,12 +241,14 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		IOUtils.transferTo(stream, tempFile);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		List<DocumentEntry> documents = documentEntryService.findAll(actor, owner);
+
 		Assert.assertTrue(documents.contains(aDocumentEntry));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testDeleteDocumentEntries() throws BusinessException, IOException{
+	public void testDeleteDocumentEntries()
+			throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		createFunctionalities();
@@ -297,7 +257,9 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		aDocumentEntry.getDocument().setSignatures(new HashSet<Signature>());
 		documentEntryService.delete(actor, actor, aDocumentEntry.getUuid());
-		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) == null);
+
+		Assert.assertTrue(documentEntryRepository
+				.findById(aDocumentEntry.getUuid()) == null);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

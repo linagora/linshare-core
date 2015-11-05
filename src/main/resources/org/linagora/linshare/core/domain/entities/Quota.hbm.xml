@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.linagora.linshare.core.domain.entities.Quota"
+		table="operation_summary_day" lazy="true" discriminator-value="0">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native"></generator>
+		</id>
+		<property name="currentValue" column="current_value" type="long"
+			not-null="true" />
+		<property name="lastValue" column="last_value" type="long"
+			not-null="true" />
+		<many-to-one name="domain" column="domain_id"
+			class="org.linagora.linshare.core.domain.entities.AbstractDomain"
+			not-null="true">
+		</many-to-one>
+		<many-to-one name="account" column="account_id"
+			class="org.linagora.linshare.core.domain.entities.Account" not-null="true">
+		</many-to-one>
+		<many-to-one name="parentDomain" column="parent_domain_id"
+			class="org.linagora.linshare.core.domain.entities.AbstractDomain">
+		</many-to-one>
+	</class>
+</hibernate-mapping>

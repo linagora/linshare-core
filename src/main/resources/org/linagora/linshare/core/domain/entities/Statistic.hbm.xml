@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="statisticType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.StatisticType</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
+	<class name="org.linagora.linshare.core.domain.entities.GenericStatistic"
+		table="statistique" lazy="true">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<discriminator column="statistique_type" type="string" />
+		<property name="statisticType" column="statistique_type"
+			type="statisticType" insert="false" update="false"/>
+		<property name="creationDate" column="creation_date" type="date" />
+		<property name="operationCount" column="operation_count"
+			type="long" not-null="true" />
+		<property name="deleteOperationCount" column="delete_operation_count"
+			type="long" />
+		<property name="addOperationCount" column="add_operation_count"
+			type="long" />
+		<property name="addOperationSum" column="add_operation_sum"
+			type="long" />
+		<property name="deleteOperationSum" column="delete_operation_sum"
+			type="long" />
+		<property name="diffOperationSum" column="diff_operation_sum"
+			type="long" />
+		<property name="actualOperationSum" column="actual_operation_sum"
+			type="long" />
+
+		<many-to-one name="domain" column="domain_id"
+			class="org.linagora.linshare.core.domain.entities.AbstractDomain">
+		</many-to-one>
+		<many-to-one name="account" column="account_id"
+			class="org.linagora.linshare.core.domain.entities.Account">
+		</many-to-one>
+		<many-to-one name="parentDomain" column="parent_domain_id"
+			class="org.linagora.linshare.core.domain.entities.AbstractDomain">
+		</many-to-one>
+		<subclass name="org.linagora.linshare.core.domain.entities.UserDailyStat" discriminator-value="USER_DAILY_STAT" lazy="true">
+		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.UserWeeklyStat" discriminator-value="USER_WEEKLY_STAT" lazy="true">
+		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.UserMonthlyStat" discriminator-value="USER_MONTHLY_STAT" lazy="true">
+		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.DomainDailyStat" discriminator-value="DOMAIN_DAILY_STAT" lazy="true">
+		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.DomainWeeklyStat" discriminator-value="DOMAIN_WEEKLY_STAT" lazy="true">
+		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.DomainMonthlyStat" discriminator-value="DOMAIN_MONTHLY_STAT" lazy="true">
+		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.ThreadDailyStat" discriminator-value="THREAD_DAILY_STAT" lazy="true">
+		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.ThreadWeeklyStat" discriminator-value="THREAD_WEEKLY_STAT" lazy="true">
+		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.ThreadMonthlyStat" discriminator-value="THREAD_MONTHLY_STAT" lazy="true">
+		</subclass>
+	</class>
+</hibernate-mapping>

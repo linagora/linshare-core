@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="operationType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum</param>
+		<param name="identifierMethod">toInt</param>
+		<param name="valueOfMethod">fromInt</param>
+	</typedef>
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="ensembleType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.EnsembleType</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
+	
+	<class name="org.linagora.linshare.core.domain.entities.OperationHistory"
+		table="operation_history" lazy="true" discriminator-value="0">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native"></generator>
+		</id>
+
+		<property name="creationDate" column="creation_date" type="date"
+			not-null="true" />
+		<property name="operationValue" column="operation_value" type="long"
+			not-null="true" />
+		<property access="field" name="operationType" column="operation_type" type="operationType"
+			not-null="true" />
+		<property access="field" name="ensembleType" column="ensemble_type" type="ensembleType"
+			not-null="true" />
+		<many-to-one name="domain" column="domain_id"
+			class="org.linagora.linshare.core.domain.entities.AbstractDomain"
+			not-null="true">
+		</many-to-one>
+		<many-to-one name="account" column="account_id"
+			class="org.linagora.linshare.core.domain.entities.Account" not-null="true">
+		</many-to-one>
+	</class>
+</hibernate-mapping>

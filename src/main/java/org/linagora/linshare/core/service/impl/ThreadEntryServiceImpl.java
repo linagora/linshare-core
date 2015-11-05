@@ -39,14 +39,18 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
+import org.linagora.linshare.core.domain.constants.EnsembleType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.LogEntry;
+import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -81,6 +85,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	private final ThreadMemberRepository threadMemberRepository;
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 	private final AntiSamyService antiSamyService;
+	private final OperationHistoryBusinessService operationHistoryBusinessService;
 
 	public ThreadEntryServiceImpl(
 			DocumentEntryBusinessService documentEntryBusinessService,
@@ -92,7 +97,8 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			ThreadMemberRepository threadMemberRepository,
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
 			AntiSamyService antiSamyService,
-			ThreadEntryResourceAccessControl rac) {
+			ThreadEntryResourceAccessControl rac,
+			OperationHistoryBusinessService operationHistoryBusinessService) {
 		super(rac);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -104,6 +110,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		this.threadMemberRepository = threadMemberRepository;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
 		this.antiSamyService = antiSamyService;
+		this.operationHistoryBusinessService = operationHistoryBusinessService;
 	}
 
 	@Override
@@ -141,6 +148,11 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 
 			threadEntry = documentEntryBusinessService.createThreadEntry(thread, tempFile, size, filename, checkIfIsCiphered, timeStampingUrl, mimeType);
 			logEntryService.create(new ThreadLogEntry(owner, threadEntry, LogAction.THREAD_UPLOAD_ENTRY, "Uploading a file in a thread."));
+
+			// add new row in operation History
+			// When we have a creation of documents operationValue=CREATE
+			OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), size, OperationHistoryTypeEnum.CREATE, EnsembleType.THREAD);
+			operationHistoryBusinessService.create(operationHistory);
 		} finally {
 			try{
 				logger.debug("deleting temp file : " + tempFile.getName());
@@ -212,6 +224,11 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 					LogAction.THREAD_REMOVE_ENTRY, "Deleting a thread entry.");
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
 			logEntryService.create(log);
+
+			// add new row in operation History
+			// When we have a delete of documents operationValue=DELETE
+			OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), -threadEntry.getSize(), OperationHistoryTypeEnum.DELETE, EnsembleType.THREAD);
+			operationHistoryBusinessService.create(operationHistory);
 		} catch (IllegalArgumentException e) {
 			logger.error(
 					"Could not delete thread entry " + threadEntry.getUuid()
@@ -234,6 +251,11 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 					"Deleting an inconsistent thread entry.");
 			logEntryService.create(LogEntryService.WARN, log);
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
+	
+			// add new row in operation History
+			// When we have a delete of documents operationValue=DELETE
+			OperationHistory operationHistory = new OperationHistory(owner, owner.getDomain(), -threadEntry.getSize(), OperationHistoryTypeEnum.DELETE, EnsembleType.THREAD);
+			operationHistoryBusinessService.create(operationHistory);
 		} catch (IllegalArgumentException e) {
 			logger.error(
 					"Could not delete thread entry " + threadEntry.getUuid()

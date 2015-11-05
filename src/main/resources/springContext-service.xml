@@ -55,6 +55,7 @@
 		<constructor-arg ref="notifierService" />
 		<constructor-arg value="${virusscanner.limit.filesize}" />
 		<constructor-arg value="${linshare.override.global.quota}" />
+		<constructor-arg ref="operationHistoryBusinessService" />
 	</bean>
 
 	<bean id="threadEntryService" class="org.linagora.linshare.core.service.impl.ThreadEntryServiceImpl">
@@ -69,6 +70,7 @@
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
 		<constructor-arg ref="antiSamyService" />
 		<constructor-arg ref="threadEntryResourceAccessControl" />
+		<constructor-arg ref="operationHistoryBusinessService" />
 	</bean>
 
 	<bean id="shareExpiryDateService" class="org.linagora.linshare.core.service.impl.ShareExpiryDateServiceImpl">
@@ -256,5 +258,9 @@
 		<constructor-arg ref="workGroupFolderMongoRepository" />
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="logEntryService" />
+	</bean>
+	<bean id="statisticService" class="org.linagora.linshare.core.service.impl.StatisticServiceImpl">
+		<constructor-arg ref="statisticBusinessService" />
+		<constructor-arg ref="statisticResourceAccessControl" />
 	</bean>
 </beans>

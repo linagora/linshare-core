@@ -6,7 +6,7 @@
 	<bean name="accountRepository" class="org.linagora.linshare.core.repository.hibernate.AccountRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-
+	
 	<bean name="threadRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
@@ -224,8 +224,51 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
-<!-- 	<bean id="auditUserMongoRepository" class="org.linagora.linshare.mongo.repository.impl.AuditUserMongoRepositoryImpl"> -->
-<!-- 		<constructor-arg ref="mongoTemplate" /> -->
-<!-- 	</bean> -->
+	<bean name="statisticRepository" class="org.linagora.linshare.core.repository.hibernate.StatisticRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 
+	<bean name="quotaRepository" class="org.linagora.linshare.core.repository.hibernate.QuotaRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="operationHistoryRepository" class="org.linagora.linshare.core.repository.hibernate.OperationHistoryRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="userDailyStatRepository" class="org.linagora.linshare.core.repository.hibernate.UserDailyStatRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="userWeeklyStatRepository" class="org.linagora.linshare.core.repository.hibernate.UserWeeklyStatRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="userMonthlyStatRepository" class="org.linagora.linshare.core.repository.hibernate.UserMonthlyStatRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="threadDailyStatRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadDailyStatRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="threadWeeklyStatRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadWeeklyStatRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="threadMonthlyStatRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadMonthlyStatRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="domainDailyStatRepository" class="org.linagora.linshare.core.repository.hibernate.DomainDailyStatRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="domainWeeklyStatRepository" class="org.linagora.linshare.core.repository.hibernate.DomainWeeklyStatRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="domainMonthlyStatRepository" class="org.linagora.linshare.core.repository.hibernate.DomainMonthlyStatRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>

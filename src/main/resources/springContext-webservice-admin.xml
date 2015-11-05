@@ -132,6 +132,10 @@
 		<constructor-arg ref="wsAuditLogEntryFacade" />
 	</bean>
 
+	<bean id="adminStatisticRestService" class="org.linagora.linshare.webservice.admin.impl.StatisticRestServiceImpl">
+		<constructor-arg ref="wsAdminStatisticFacade" />
+	</bean>
+
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">
 		<jaxrs:serviceBeans>
 			<ref bean="adminAuthenticationRestService" />
@@ -163,6 +167,7 @@
 			<ref bean="adminMailActivationRestService" />
 			<ref bean="adminTempHackRestService" />
 			<ref bean="adminAuditLogEntryRestService" />
+			<ref bean="adminStatisticRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

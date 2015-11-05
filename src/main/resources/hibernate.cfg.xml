@@ -72,5 +72,8 @@
 		<mapping resource="org/linagora/linshare/core/domain/entities/MailActivation.hbm.xml"/>
 
 		<mapping resource="org/linagora/linshare/core/domain/entities/AsyncTask.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/OperationHistory.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/Quota.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/Statistic.hbm.xml"/>
 	</session-factory>
 </hibernate-configuration>

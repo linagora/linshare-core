@@ -42,11 +42,16 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
+
 	<bean name="shareEntryGroupResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ShareEntryGroupResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
 	<bean name="mailingListResourceAccessControl" class="org.linagora.linshare.core.rac.impl.MailingListResourceAccessControlImpl">
+	        <constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
+
+	<bean name="statisticResourceAccessControl" class="org.linagora.linshare.core.rac.impl.StatisticResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 

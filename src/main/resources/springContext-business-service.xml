@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="    
 	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
 	default-autowire="no">
-
 
 	<bean id="domainBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainBusinessServiceImpl">
 		<constructor-arg ref="abstractDomainRepository" />
@@ -111,7 +111,8 @@
 		<constructor-arg ref="mailConfigRepository" />
 	</bean>
 
-	<bean id="mimeTypeBusinessService" class="org.linagora.linshare.core.business.service.impl.MimeTypeBusinessServiceImpl">
+	<bean id="mimeTypeBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.MimeTypeBusinessServiceImpl">
 		<constructor-arg ref="mimeTypeRepository" />
 	</bean>
 
@@ -192,4 +193,60 @@
 		<constructor-arg ref="asyncTaskRepository" />
 	</bean>
 
+	<bean id="operationHistoryBusinessService" class="org.linagora.linshare.core.business.service.impl.OperationHistoryBusinessServiceImpl">
+		<constructor-arg ref="operationHistoryRepository" />
+	</bean>
+	<bean id="quotaBusinessService" class="org.linagora.linshare.core.business.service.impl.QuotaBusinessServiceImpl">
+		<constructor-arg ref="quotaRepository" />
+		<constructor-arg ref="operationHistoryRepository" />
+	</bean>
+	<bean id="userDailyStatBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.UserDailyStatBusinessServiceImpl">
+		<constructor-arg ref="userDailyStatRepository" />
+		<constructor-arg ref="operationHistoryRepository" />
+	</bean>
+	<bean id="userWeeklyStatBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.UserWeeklyStatBusinessServiceImpl">
+		<constructor-arg ref="userWeeklyStatRepository" />
+		<constructor-arg ref="userDailyStatRepository" />
+	</bean>
+	<bean id="userMonthlyStatBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.UserMonthlyStatBusinessServiceImpl">
+		<constructor-arg ref="userMonthlyStatRepository" />
+		<constructor-arg ref="userWeeklyStatRepository" />
+	</bean>
+	<bean id="domainDailyStatBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.DomainDailyStatBusinessServiceImpl">
+		<constructor-arg ref="domainDailyStatRepository" />
+		<constructor-arg ref="operationHistoryRepository" />
+	</bean>
+	<bean id="domainWeeklyStatBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.DomainWeeklyStatBusinessServiceImpl">
+		<constructor-arg ref="domainWeeklyStatRepository" />
+		<constructor-arg ref="domainDailyStatRepository" />
+	</bean>
+	<bean id="domainMonthlyStatBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.DomainMonthlyStatBusinessServiceImpl">
+		<constructor-arg ref="domainMonthlyStatRepository" />
+		<constructor-arg ref="domainWeeklyStatRepository" />
+	</bean>
+	<bean id="threadDailyStatBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.ThreadDailyStatBusinessServiceImpl">
+		<constructor-arg ref="threadDailyStatRepository" />
+		<constructor-arg ref="operationHistoryRepository" />
+	</bean>
+	<bean id="threadWeeklyStatBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.ThreadWeeklyStatBusinessServiceImpl">
+		<constructor-arg ref="threadWeeklyStatRepository" />
+		<constructor-arg ref="threadDailyStatRepository" />
+	</bean>
+	<bean id="threadMonthlyStatBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.ThreadMonthlyStatBusinessServiceImpl">
+		<constructor-arg ref="threadMonthlyStatRepository" />
+		<constructor-arg ref="threadWeeklyStatRepository" />
+	</bean>
+	<bean id="statisticBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.StatisticBusinessServiceImpl">
+		<constructor-arg ref="statisticRepository" />
+	</bean>
 </beans>

@@ -156,4 +156,9 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="auditLogEntryService" />
 	</bean>
+	<bean id="wsAdminStatisticFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.StatisticFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="statisticService" />
+		<constructor-arg ref="abstractDomainService" />
+	</bean>
 </beans>
