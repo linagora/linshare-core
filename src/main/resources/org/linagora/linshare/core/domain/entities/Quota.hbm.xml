@@ -30,7 +30,7 @@
 		<subclass name="org.linagora.linshare.core.domain.entities.DomainQuota" discriminator-value="DOMAIN_QUOTA" />
 		<subclass name="org.linagora.linshare.core.domain.entities.AccountQuota" discriminator-value="ACCOUNT_QUOTA" />
 		<subclass name="org.linagora.linshare.core.domain.entities.EnsembleQuota" discriminator-value="ENSEMBLE_QUOTA" >
-			<property name="EnsembleType" column="ensemble_type" type="ensembleType"/>
+			<property name="ensembleType" column="ensemble_type" type="ensembleType"/>
 		</subclass>
 		<subclass name="org.linagora.linshare.core.domain.entities.PlatformQuota" discriminator-value="PLATFORM_QUOTA" />
 	</class>

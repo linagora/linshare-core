@@ -35,18 +35,21 @@ package org.linagora.linshare.repository.hibernate;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.linagora.linshare.core.domain.constants.LinShareConstants;
+import org.linagora.linshare.core.domain.constants.EnsembleType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
+import org.linagora.linshare.core.domain.entities.EnsembleQuota;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.repository.QuotaRepository;
+import org.linagora.linshare.core.repository.DomainQuotaRepository;
+import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
+import org.linagora.linshare.core.repository.GenericQuotaRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +69,13 @@ public class QuotaRepositoryImplTest
 	private AccountRepository<Account> accountRepository;
 
 	@Autowired
-	private QuotaRepository quotaRepository;
+	private AccountQuotaRepository accountQuotaRepository;
+
+	@Autowired
+	private DomainQuotaRepository domainQuotaRepository;
+
+	@Autowired
+	private EnsembleQuotaRepository ensembleQuotaRepository;
 
 	@Autowired
 	@Qualifier("userRepository")
@@ -77,28 +86,27 @@ public class QuotaRepositoryImplTest
 	
 	@Before
 	public void setUp(){
-		this.executeSqlScript("import-tests-operationSummaryDay.sql", false);
+		this.executeSqlScript("import-tests-quota.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
 		dates.loadUsers();
 		jane = dates.getUser2();
 	}
 
 	@Test
-	public void testCreateOperationSummaryDay() {
+	public void test() {
 		AbstractDomain domain2 = jane.getDomain();
 		AbstractDomain domain1 = domain2.getParentDomain();
 		Account account1 = jane;
-		Account account2 = accountRepository.getBatchSystemAccount();
-		Quota result = quotaRepository.findByAccount(account1);
+		Quota result = accountQuotaRepository.find(account1);
 		assertNotNull(result);
-		List<Quota> result2 = quotaRepository.findByDomain(domain1);
-		assertEquals(2, result2.size());
-		Quota entity = new Quota(account2, domain2, domain1, 0, 0);
-		quotaRepository.create(entity);
-		List<Quota> result3 = quotaRepository.findByDomain(domain2);
-		assertEquals(2, result3.size());
-		quotaRepository.delete(entity);
-		result3 = quotaRepository.findByDomain(domain2);
-		assertEquals(1, result3.size());
+		EnsembleQuota entity = new EnsembleQuota(domain2, domain1, (long) 100, (long) 90, (long) 10, (long) 40, (long) 20, EnsembleType.THREAD);
+		ensembleQuotaRepository.create(entity);
+		Quota result3 = domainQuotaRepository.find(domain2);
+		assertEquals(300, (long) result3.getCurrentValue());
+		assertEquals(1000, (long) result3.getQuota());
+		result3 = domainQuotaRepository.find(domain1);
+		assertNull(result3);
+		result3 = ensembleQuotaRepository.find(domain2, EnsembleType.THREAD);
+		assertEquals(100, (long) result3.getQuota());
 	}
 }

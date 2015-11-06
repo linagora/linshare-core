@@ -31,17 +31,56 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.repository.hibernate;
 
-public enum QuotaType {
+import java.util.List;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Quota;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.GenericQuotaRepository;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 
-	DOMAIN_QUOTA, ACCOUNT_QUOTA, ENSEMBLE_QUOTA, PLATFORM_QUOTA;
+public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends AbstractRepositoryImpl<T>
+		implements GenericQuotaRepository<T> {
 
-	public static QuotaType fromString(String s){
-		try{
-			return QuotaType.valueOf(s.toUpperCase());
-		}catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing EnsembleType");
+	public GenericQuotaRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
+	}
+
+	public T create(T entity) throws BusinessException {
+		entity.setLastValue((long) 0);
+		return super.create(entity);
+	}
+
+	@Override
+	public T find(AbstractDomain domain, Account account, EnsembleType ensembleType) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		if (domain != null) {
+			criteria.add(Restrictions.eq("domain", domain));
 		}
+		if (account != null) {
+			criteria.add(Restrictions.eq("account", account));
+		}
+		if (ensembleType != null) {
+			criteria.add(Restrictions.eq("ensembleType", ensembleType));
+		}
+		List<T> result = findByCriteria(criteria);
+		if (result == null || result.isEmpty()) {
+			return null;
+		} else if (result.size() == 1) {
+			return result.get(0);
+		} else {
+			throw new IllegalStateException("must be only one quota for any entity");
+		}
+	}
+
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(T entity) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		return criteria.add(Restrictions.eq("id", entity.getId()));
 	}
 }

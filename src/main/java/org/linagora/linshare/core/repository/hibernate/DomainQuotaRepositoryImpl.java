@@ -33,58 +33,19 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.List;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Quota;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.QuotaRepository;
-import org.springframework.dao.support.DataAccessUtils;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
+import org.linagora.linshare.core.repository.DomainQuotaRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class QuotaRepositoryImpl extends AbstractRepositoryImpl<Quota>
-		implements QuotaRepository {
+public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<DomainQuota> implements DomainQuotaRepository{
 
-	public QuotaRepositoryImpl(HibernateTemplate hibernateTemplate) {
+	public DomainQuotaRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
 
 	@Override
-	public List<Quota> findByDomain(AbstractDomain domain) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("domain", domain));
-		return findByCriteria(criteria);
-	}
-
-	@Override
-	public List<Quota> findByParentDomain(AbstractDomain parentDomain) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("parentDomain", parentDomain));
-		return findByCriteria(criteria);
-	}
-
-	@Override
-	public Quota findByAccount(Account account) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("account", account));
-		List<Quota> result = findByCriteria(criteria);
-		if (!result.equals(null)&& result.size()>0){
-			return findByCriteria(criteria).get(0);
-		}
-		return null;
-	}
-
-	public Quota create(Quota entity) throws BusinessException {
-		entity.setLastValue(0);
-		return super.create(entity);
-	}
-
-	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(Quota entity) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		return criteria.add(Restrictions.eq("id", entity.getId()));
+	public DomainQuota find(AbstractDomain domain) {
+		return super.find(domain, null, null);
 	}
 }

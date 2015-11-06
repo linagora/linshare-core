@@ -31,17 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.repository;
 
-public enum QuotaType {
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
 
-	DOMAIN_QUOTA, ACCOUNT_QUOTA, ENSEMBLE_QUOTA, PLATFORM_QUOTA;
+public interface DomainQuotaRepository extends GenericQuotaRepository<DomainQuota> {
 
-	public static QuotaType fromString(String s){
-		try{
-			return QuotaType.valueOf(s.toUpperCase());
-		}catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing EnsembleType");
-		}
-	}
+	DomainQuota find(AbstractDomain domain);
 }

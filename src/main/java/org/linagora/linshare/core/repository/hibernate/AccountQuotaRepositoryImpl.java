@@ -31,20 +31,21 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Quota;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.repository.AccountQuotaRepository;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public interface QuotaRepository
-		extends AbstractRepository<Quota> {
+public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<AccountQuota>implements AccountQuotaRepository {
 
-	List<Quota> findByDomain(AbstractDomain domain);
+	public AccountQuotaRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
+	}
 
-	List<Quota> findByParentDomain(AbstractDomain domain);
-
-	Quota findByAccount(Account account);
+	@Override
+	public AccountQuota find(Account account) {
+		return super.find(null, account, null);
+	}
 }

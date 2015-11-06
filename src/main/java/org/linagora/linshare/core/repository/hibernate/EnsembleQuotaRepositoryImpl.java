@@ -31,17 +31,22 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.repository.hibernate;
 
-public enum QuotaType {
+import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 
-	DOMAIN_QUOTA, ACCOUNT_QUOTA, ENSEMBLE_QUOTA, PLATFORM_QUOTA;
+public class EnsembleQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<EnsembleQuota>implements EnsembleQuotaRepository {
 
-	public static QuotaType fromString(String s){
-		try{
-			return QuotaType.valueOf(s.toUpperCase());
-		}catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing EnsembleType");
-		}
+	public EnsembleQuotaRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
+	}
+
+	@Override
+	public EnsembleQuota find(AbstractDomain domain, EnsembleType ensembleType) {
+		return super.find(domain, null, ensembleType);
 	}
 }

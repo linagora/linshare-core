@@ -228,10 +228,6 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
-	<bean name="quotaRepository" class="org.linagora.linshare.core.repository.hibernate.QuotaRepositoryImpl">
-		<constructor-arg ref="hibernateTemplate" />
-	</bean>
-
 	<bean name="operationHistoryRepository" class="org.linagora.linshare.core.repository.hibernate.OperationHistoryRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
@@ -269,6 +265,22 @@
 	</bean>
 
 	<bean name="domainMonthlyStatRepository" class="org.linagora.linshare.core.repository.hibernate.DomainMonthlyStatRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="domainQuotaRepository" class="org.linagora.linshare.core.repository.hibernate.DomainQuotaRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="accountQuotaRepository" class="org.linagora.linshare.core.repository.hibernate.AccountQuotaRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="ensembleQuotaRepository" class="org.linagora.linshare.core.repository.hibernate.EnsembleQuotaRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="platformQuotaRepository" class="org.linagora.linshare.core.repository.hibernate.PlatformQuotaRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 </beans>
