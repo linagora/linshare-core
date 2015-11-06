@@ -33,110 +33,27 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-public abstract class Quota {
+import org.linagora.linshare.core.domain.constants.EnsembleType;
 
-	protected Long id;
+public class EnsembleQuota extends Quota {
 
-	protected Account account;
+	private EnsembleType ensembleType;
 
-	protected AbstractDomain domain;
-
-	protected AbstractDomain parentDomain;
-
-	protected Long quota;
-
-	protected Long quotaWarning;
-
-	protected Long currentValue;
-
-	protected Long lastValue;
-
-	protected Long tailFileMax;
-
-	public Quota() {
+	public EnsembleQuota() {
+		super();
 	}
 
-	public Quota(Account account, AbstractDomain domain,
-			AbstractDomain parentDomain, Long quota, Long quotaWarning, Long tailFileMax, Long currentValue, Long lastValue) {
-		this.account = account;
-		this.domain = domain;
-		this.parentDomain = parentDomain;
-		this.currentValue = currentValue;
-		this.lastValue = lastValue;
-		this.quota = quota;
-		this.quotaWarning = quotaWarning;
-		this.tailFileMax = tailFileMax;
+	public EnsembleQuota(AbstractDomain domain, AbstractDomain parentDomain, Long quota,
+			Long quotaWarning, Long tailFileMax, Long currentValue, Long lastValue, EnsembleType ensembleType) {
+		super(null, domain, parentDomain, quota, quotaWarning, tailFileMax, currentValue, lastValue);
+		this.ensembleType = ensembleType;
 	}
 
-	public Long getId() {
-		return id;
+	public EnsembleType getEnsembleType() {
+		return ensembleType;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Account getAccount() {
-		return account;
-	}
-
-	public void setAccount(Account account) {
-		this.account = account;
-	}
-
-	public AbstractDomain getDomain() {
-		return domain;
-	}
-
-	public void setDomain(AbstractDomain domain) {
-		this.domain = domain;
-	}
-
-	public AbstractDomain getParentDomain() {
-		return parentDomain;
-	}
-
-	public void setParentDomain(AbstractDomain parentDomain) {
-		this.parentDomain = parentDomain;
-	}
-
-	public Long getCurrentValue() {
-		return currentValue;
-	}
-
-	public void setCurrentValue(Long currentValue) {
-		this.currentValue = currentValue;
-	}
-
-	public Long getLastValue() {
-		return lastValue;
-	}
-
-	public void setLastValue(Long lastValue) {
-		this.lastValue = lastValue;
-	}
-
-	public Long getQuota() {
-		return quota;
-	}
-
-	public void setQuota(Long quota) {
-		this.quota = quota;
-	}
-
-	public Long getQuotaWarning() {
-		return quotaWarning;
-	}
-
-	public void setQuotaWarning(Long quotaWarning) {
-		this.quotaWarning = quotaWarning;
-	}
-
-	public Long getTailFileMax() {
-		return tailFileMax;
-	}
-
-	public void setTailFileMax(Long tailFileMax) {
-		this.tailFileMax = tailFileMax;
+	public void setEnsembleType(EnsembleType ensembleType) {
+		this.ensembleType = ensembleType;
 	}
 }

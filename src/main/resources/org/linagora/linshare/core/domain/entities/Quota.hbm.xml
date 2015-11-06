@@ -1,24 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
+	<typedef name="ensembleType" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.EnsembleType</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
 	<class name="org.linagora.linshare.core.domain.entities.Quota"
-		table="operation_summary_day" lazy="true" discriminator-value="0">
+		table="quota" lazy="true" discriminator-value="0">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native"></generator>
 		</id>
+		<discriminator column="quota_type" type="string"/>
 		<property name="currentValue" column="current_value" type="long"
 			not-null="true" />
 		<property name="lastValue" column="last_value" type="long"
 			not-null="true" />
+		<property name="quota" column="quota"/>
+		<property name="quotaWarning" column="quota_warning"/>
+		<property name="tailFileMax" column="tail_file_max"/>
 		<many-to-one name="domain" column="domain_id"
-			class="org.linagora.linshare.core.domain.entities.AbstractDomain"
-			not-null="true">
+			class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy" >
 		</many-to-one>
 		<many-to-one name="account" column="account_id"
-			class="org.linagora.linshare.core.domain.entities.Account" not-null="true">
+			class="org.linagora.linshare.core.domain.entities.Account" lazy="proxy">
 		</many-to-one>
 		<many-to-one name="parentDomain" column="parent_domain_id"
-			class="org.linagora.linshare.core.domain.entities.AbstractDomain">
+			class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy">
 		</many-to-one>
+		<subclass name="org.linagora.linshare.core.domain.entities.DomainQuota" discriminator-value="DOMAIN_QUOTA" />
+		<subclass name="org.linagora.linshare.core.domain.entities.AccountQuota" discriminator-value="ACCOUNT_QUOTA" />
+		<subclass name="org.linagora.linshare.core.domain.entities.EnsembleQuota" discriminator-value="ENSEMBLE_QUOTA" >
+			<property name="EnsembleType" column="ensemble_type" type="ensembleType"/>
+		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.PlatformQuota" discriminator-value="PLATFORM_QUOTA" />
 	</class>
 </hibernate-mapping>
