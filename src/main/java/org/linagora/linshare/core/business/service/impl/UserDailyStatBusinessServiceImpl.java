@@ -61,11 +61,11 @@ public class UserDailyStatBusinessServiceImpl implements UserDailyStatBusinessSe
 
 	@Override
 	public UserDailyStat create(User user, Date today) {
-		Long sumOperationValue = operationHistoryRepository.sumOperationValue(user, null, today, null);
-		Long sumCreateOperationValue = operationHistoryRepository.sumOperationValue(user, null,today, OperationHistoryTypeEnum.CREATE);
-		Long sumDeleteOperationValue = operationHistoryRepository.sumOperationValue(user, null,today, OperationHistoryTypeEnum.DELETE);
-		Long countCreateOperationValue = operationHistoryRepository.countOperationValue(user, null,today, OperationHistoryTypeEnum.CREATE);
-		Long countDeleteOperationValue = operationHistoryRepository.countOperationValue(user, null,today, OperationHistoryTypeEnum.DELETE);
+		Long sumOperationValue = operationHistoryRepository.sumOperationValue(user, null, today, null, null);
+		Long sumCreateOperationValue = operationHistoryRepository.sumOperationValue(user, null,today, OperationHistoryTypeEnum.CREATE, null);
+		Long sumDeleteOperationValue = operationHistoryRepository.sumOperationValue(user, null,today, OperationHistoryTypeEnum.DELETE, null);
+		Long countCreateOperationValue = operationHistoryRepository.countOperationValue(user, null,today, OperationHistoryTypeEnum.CREATE, null);
+		Long countDeleteOperationValue = operationHistoryRepository.countOperationValue(user, null,today, OperationHistoryTypeEnum.DELETE, null);
 		Long countOperationValue = countDeleteOperationValue + countCreateOperationValue;
 		Long diffOperationValue = sumCreateOperationValue + sumDeleteOperationValue;
 		UserDailyStat entity = new UserDailyStat(user, user.getDomain(), user.getDomain().getParentDomain(),

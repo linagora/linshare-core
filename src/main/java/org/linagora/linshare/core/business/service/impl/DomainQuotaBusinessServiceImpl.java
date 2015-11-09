@@ -34,61 +34,66 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
-import java.util.List;
 
-import org.linagora.linshare.core.business.service.DomainDailyStatBusinessService;
-import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
+import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.DomainDailyStat;
-import org.linagora.linshare.core.repository.DomainDailyStatRepository;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
-import org.linagora.linshare.core.repository.StatisticRepository;
+import org.linagora.linshare.core.repository.DomainQuotaRepository;
 
-public class DomainDailyStatBusinessServiceImpl
-		implements DomainDailyStatBusinessService {
+public class DomainQuotaBusinessServiceImpl
+		implements DomainQuotaBusinessService {
 
-	private final DomainDailyStatRepository repository;
+	private final DomainQuotaRepository repository;
 	private final OperationHistoryRepository operationHistoryRepository;
 
-	public DomainDailyStatBusinessServiceImpl(final DomainDailyStatRepository repository,
-			final OperationHistoryRepository operationHistoryRepository) {
-		this.repository = repository;
+	public DomainQuotaBusinessServiceImpl(
+			final DomainQuotaRepository domainQuotaRepository, final OperationHistoryRepository operationHistoryRepository) {
+		this.repository = domainQuotaRepository;
 		this.operationHistoryRepository = operationHistoryRepository;
 	}
 
 	@Override
-	public DomainDailyStat create(AbstractDomain domain, Date date) {
-		Long actualOperationSum = operationHistoryRepository.sumOperationValue(null, domain, date, null, null);
-		Long createOperationSum = operationHistoryRepository.sumOperationValue(null, domain, date,
-				OperationHistoryTypeEnum.CREATE, null);
-		Long createOperationCount = operationHistoryRepository.countOperationValue(null, domain, date,
-				OperationHistoryTypeEnum.CREATE, null);
-		Long deleteOperationSum = operationHistoryRepository.sumOperationValue(null, domain, date,
-				OperationHistoryTypeEnum.DELETE, null);
-		Long deleteOperationCount = operationHistoryRepository.countOperationValue(null, domain, date,
-				OperationHistoryTypeEnum.DELETE, null);
-		Long operationCount = deleteOperationCount + createOperationCount;
-		Long diffOperationSum = createOperationSum + deleteOperationSum;
-		DomainDailyStat entity = new DomainDailyStat(domain, domain.getParentDomain(), operationCount,
-				deleteOperationCount, createOperationCount, createOperationSum, deleteOperationSum, diffOperationSum,
-				actualOperationSum);
-		entity = repository.create(entity);
+	public DomainQuota find(AbstractDomain domain) throws BusinessException {
+		return repository.find(domain);
+	}
+
+	@Override
+	public boolean exist(AbstractDomain domain) {
+		return find(domain) != null;
+	}
+
+	@Override
+	public DomainQuota createOrUpdate(AbstractDomain domain, Date today) {
+		long sumOperationValue = operationHistoryRepository.sumOperationValue(null, domain, today, null, null);
+		DomainQuota entity;
+		if (!exist(domain)) {
+			DomainQuota parentDomainQuota = repository.find(domain.getParentDomain());
+			Long quota = parentDomainQuota.getQuota();
+			Long quotaWarning = parentDomainQuota.getQuotaWarning();
+			Long tailFileMax = parentDomainQuota.getTailFileMax();
+			entity = new DomainQuota(domain, domain.getParentDomain(), quota, quotaWarning, tailFileMax, sumOperationValue, (long) 0);
+			entity = repository.create(entity);
+		} else {
+			entity = find(domain);
+			entity = repository.update(entity, sumOperationValue);
+		}
 		return entity;
 	}
 
 	@Override
-	public List<DomainDailyStat> findBetweenTwoDates(AbstractDomain domain, Date beginDate, Date endDate) {
-		return repository.findBetweenTwoDates(null, domain, null, beginDate, endDate, null);
+	public DomainQuota create(DomainQuota entity) throws BusinessException {
+		AbstractDomain domain = entity.getDomain();
+		if (exist(domain)) {
+			throw new BusinessException("must be only one DomainQuota for any entity");
+		}else{
+			return repository.create(entity);
+		}
 	}
 
 	@Override
-	public void deleteBeforeDate(Date date) {
-		repository.deleteBeforeDate(date);
+	public DomainQuota update(DomainQuota entity, Long sumOperationValue) throws BusinessException {
+		return repository.update(entity, sumOperationValue);
 	}
-
-	@Override
-	public List<AbstractDomain> findDomainBetweenTwoDates(Date beginDate, Date endDate) {
-		return repository.findDomainBetweenTwoDates(beginDate, endDate);
-	}
-
 }

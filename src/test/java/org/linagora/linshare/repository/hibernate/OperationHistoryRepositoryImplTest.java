@@ -130,7 +130,7 @@ public class OperationHistoryRepositoryImplTest extends AbstractTransactionalJUn
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.DAY_OF_MONTH, -10);
 		Date a = calendar.getTime();
-		long result = operationHistoryRepository.sumOperationValue(account, null, a, null);
+		long result = operationHistoryRepository.sumOperationValue(account, null, a, null, null);
 		assertNotNull(result);
 		assertEquals(200, result);
 	}
@@ -141,7 +141,7 @@ public class OperationHistoryRepositoryImplTest extends AbstractTransactionalJUn
 		calendar.add(GregorianCalendar.DAY_OF_MONTH, -20);
 		Date a = calendar.getTime();
 		Account account = jane;
-		long result = operationHistoryRepository.countOperationValue(account, null, a, null);
+		long result = operationHistoryRepository.countOperationValue(account, null, a, null, null);
 		assertNotNull(result);
 		assertEquals(3, result);
 	}
@@ -152,7 +152,7 @@ public class OperationHistoryRepositoryImplTest extends AbstractTransactionalJUn
 		calendar.add(GregorianCalendar.DAY_OF_MONTH, -9);
 		Date a = calendar.getTime();
 		Account account = jane;
-		long result = operationHistoryRepository.sumOperationValue(account, null, a, OperationHistoryTypeEnum.CREATE);
+		long result = operationHistoryRepository.sumOperationValue(account, null, a, OperationHistoryTypeEnum.CREATE, null);
 		assertNotNull(result);
 		assertEquals(800, result);
 	}
@@ -163,7 +163,7 @@ public class OperationHistoryRepositoryImplTest extends AbstractTransactionalJUn
 		calendar.add(GregorianCalendar.DAY_OF_MONTH, -9);
 		Date a = calendar.getTime();
 		Account account = jane;
-		long result = operationHistoryRepository.countOperationValue(account, null, a, OperationHistoryTypeEnum.CREATE);
+		long result = operationHistoryRepository.countOperationValue(account, null, a, OperationHistoryTypeEnum.CREATE, null);
 		assertNotNull(result);
 		assertEquals(3, result);
 	}
@@ -174,7 +174,7 @@ public class OperationHistoryRepositoryImplTest extends AbstractTransactionalJUn
 		calendar.add(GregorianCalendar.DAY_OF_MONTH, -9);
 		Date a = calendar.getTime();
 		Account account = jane;
-		long result = operationHistoryRepository.countOperationValue(account, null, a, OperationHistoryTypeEnum.DELETE);
+		long result = operationHistoryRepository.countOperationValue(account, null, a, OperationHistoryTypeEnum.DELETE, null);
 		assertNotNull(result);
 		assertEquals(2, result);
 	}

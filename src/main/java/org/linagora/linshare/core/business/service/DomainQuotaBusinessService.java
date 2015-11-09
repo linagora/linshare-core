@@ -34,30 +34,20 @@
 package org.linagora.linshare.core.business.service;
 
 import java.util.Date;
-import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Quota;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface QuotaBusinessService {
+public interface DomainQuotaBusinessService {
 
-	Quota create(Quota entity) throws BusinessException;
+	DomainQuota find(AbstractDomain domain) throws BusinessException;
 
-	Quota update(Quota entity,
-			long currentValue) throws BusinessException;
+	boolean exist(AbstractDomain domain);
 
-	Quota findByAccount(Account account)
-			throws BusinessException;
+	DomainQuota createOrUpdate(AbstractDomain domain, Date today);
 
-	List<Quota> findByDomain(AbstractDomain domain)
-			throws BusinessException;
+	DomainQuota create(DomainQuota entity) throws BusinessException;
 
-	List<Quota> findByParentDomain(AbstractDomain parentDomain)
-			throws BusinessException;
-
-	boolean exist(Account account);
-
-	Quota createOrUpdate(Account account, Date today);
+	DomainQuota update(DomainQuota entity, Long sumOperationValue) throws BusinessException;
 }

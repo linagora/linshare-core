@@ -57,15 +57,15 @@ public class ThreadDailyStatBusinessServiceImpl implements ThreadDailyStatBusine
 
 	@Override
 	public ThreadDailyStat create(Thread thread, Date date) {
-		Long actualOperationSum = operationHistoryRepository.sumOperationValue(thread, null, date, null);
+		Long actualOperationSum = operationHistoryRepository.sumOperationValue(thread, null, date, null, null);
 		Long createOperationSum = operationHistoryRepository.sumOperationValue(thread, null, date,
-				OperationHistoryTypeEnum.CREATE);
+				OperationHistoryTypeEnum.CREATE, null);
 		Long deleteOperationSum = operationHistoryRepository.sumOperationValue(thread, null, date,
-				OperationHistoryTypeEnum.DELETE);
+				OperationHistoryTypeEnum.DELETE, null);
 		Long createOperationCount = operationHistoryRepository.countOperationValue(thread, null, date,
-				OperationHistoryTypeEnum.CREATE);
+				OperationHistoryTypeEnum.CREATE, null);
 		Long deleteOperationCount = operationHistoryRepository.countOperationValue(thread, null, date,
-				OperationHistoryTypeEnum.DELETE);
+				OperationHistoryTypeEnum.DELETE, null);
 		Long operationCount = deleteOperationCount + createOperationCount;
 		Long diffOperationSum = createOperationSum + deleteOperationSum;
 		ThreadDailyStat entity = new ThreadDailyStat(thread, thread.getDomain(), thread.getDomain().getParentDomain(),

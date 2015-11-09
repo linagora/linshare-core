@@ -38,9 +38,12 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.linagora.linshare.core.batches.DailyBatch;
+import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
-import org.linagora.linshare.core.business.service.QuotaBusinessService;
+import org.linagora.linshare.core.business.service.PlatformQuotaBusinessService;
+import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
+import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ThreadDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.UserDailyStatBusinessService;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
@@ -55,17 +58,27 @@ public class DailyBatchImpl implements DailyBatch {
 	private UserDailyStatBusinessService userDailyStatBusinessService;
 	private ThreadDailyStatBusinessService threadDailyStatBusinessService;
 	private DomainDailyStatBusinessService domainDailyStatBusinessService;
-	private QuotaBusinessService quotaBusinessService;
+	private DomainQuotaBusinessService domainQuotaBusinessService;
+	private AccountQuotaBusinessService accountQuotaBusinessService;
+	private EnsembleQuotaBusinessService ensembleQuotaBusinessService;
+	private PlatformQuotaBusinessService platformQuotaBusinessService;
 
-	public DailyBatchImpl(OperationHistoryBusinessService operationHistoryBusinessService, UserDailyStatBusinessService userDailyStatBusinessService,
+	public DailyBatchImpl(OperationHistoryBusinessService operationHistoryBusinessService,
+			UserDailyStatBusinessService userDailyStatBusinessService,
 			ThreadDailyStatBusinessService threadDailyStatBusinessService,
 			DomainDailyStatBusinessService domainDailyStatBusinessService,
-			QuotaBusinessService quotaBusinessService) {
+			DomainQuotaBusinessService domainQuotaBusinessService,
+			AccountQuotaBusinessService accountQuotaBusinessService,
+			EnsembleQuotaBusinessService ensembleQuotaBusinessService,
+			PlatformQuotaBusinessService platformQuotaBusinessService) {
 		this.userDailyStatBusinessService = userDailyStatBusinessService;
 		this.threadDailyStatBusinessService = threadDailyStatBusinessService;
 		this.domainDailyStatBusinessService = domainDailyStatBusinessService;
-		this.quotaBusinessService = quotaBusinessService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
+		this.domainQuotaBusinessService = domainQuotaBusinessService;
+		this.accountQuotaBusinessService = accountQuotaBusinessService;
+		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
+		this.platformQuotaBusinessService = platformQuotaBusinessService;
 	}
 
 	@Override
@@ -77,17 +90,21 @@ public class DailyBatchImpl implements DailyBatch {
 
 		for (Account user : listUser) {
 			userDailyStatBusinessService.create((User) user, today);
-			quotaBusinessService.createOrUpdate(user, today);
+			accountQuotaBusinessService.createOrUpdate(user, today);
 		}
 
 		for (Account thread : listThread) {
 			threadDailyStatBusinessService.create((Thread) thread, today);
-			quotaBusinessService.createOrUpdate(thread, today);
+			accountQuotaBusinessService.createOrUpdate(thread, today);
 		}
 
 		for (AbstractDomain domain : listDomain) {
 			domainDailyStatBusinessService.create(domain, today);
+			domainQuotaBusinessService.createOrUpdate(domain, today);
+			ensembleQuotaBusinessService.createOrUpdate(domain, EnsembleType.USER, today);
+			ensembleQuotaBusinessService.createOrUpdate(domain, EnsembleType.THREAD, today);
 		}
+		platformQuotaBusinessService.createOrUpdate(today);
 		operationHistoryBusinessService.deleteBeforeDate(today);
 	}
 

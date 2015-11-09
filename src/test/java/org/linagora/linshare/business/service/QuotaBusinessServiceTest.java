@@ -39,7 +39,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.linagora.linshare.core.business.service.QuotaBusinessService;
+import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -75,7 +75,7 @@ public class QuotaBusinessServiceTest
 	private AccountRepository<Account> accountRepository;
 
 	@Autowired
-	private QuotaBusinessService quotaBusinessService;
+	private DomainQuotaBusinessService quotaBusinessService;
 
 	@Autowired
 	@Qualifier("userRepository")

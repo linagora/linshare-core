@@ -31,20 +31,65 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository.hibernate;
+package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Date;
+
+import org.linagora.linshare.core.business.service.PlatformQuotaBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.PlatformQuota;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.repository.DomainQuotaRepository;
+import org.linagora.linshare.core.repository.OperationHistoryRepository;
 import org.linagora.linshare.core.repository.PlatformQuotaRepository;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class PlatformQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<PlatformQuota>implements PlatformQuotaRepository {
+public class PlatformQuotaBusinessServiceImpl implements PlatformQuotaBusinessService {
 
-	public PlatformQuotaRepositoryImpl(HibernateTemplate hibernateTemplate) {
-		super(hibernateTemplate);
+	private final PlatformQuotaRepository repository;
+	private final OperationHistoryRepository operationHistoryRepository;
+
+	public PlatformQuotaBusinessServiceImpl(final PlatformQuotaRepository repository,
+			final OperationHistoryRepository operationHistoryRepository) {
+		this.repository = repository;
+		this.operationHistoryRepository = operationHistoryRepository;
 	}
 
 	@Override
-	public PlatformQuota find() {
-		return super.find(null, null, null);
+	public PlatformQuota find() throws BusinessException {
+		return repository.find();
+	}
+
+	@Override
+	public boolean exist() {
+		return find() != null;
+	}
+
+	@Override
+	public PlatformQuota createOrUpdate(Date today) throws BusinessException {
+		Long sumOperationValue = operationHistoryRepository.sumOperationValue(null, null, today, null, null);
+		PlatformQuota entity;
+		if(!exist()){
+			entity = new PlatformQuota((long) 0, (long) 0, (long) 0, sumOperationValue, (long) 0);
+			entity = repository.create(entity);
+		} else {
+			entity = find();
+			entity = repository.update(entity, sumOperationValue);
+		}
+		return entity;
+	}
+
+	@Override
+	public PlatformQuota create(PlatformQuota entity) throws BusinessException {
+		if(exist()){
+			throw new BusinessException("must be only one PlatformQuota");
+		}else {
+			return repository.create(entity);
+		}
+	}
+
+	@Override
+	public PlatformQuota update(PlatformQuota entity, Long sumOperationValue) throws BusinessException {
+		return repository.update(entity, sumOperationValue);
 	}
 }

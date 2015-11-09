@@ -31,28 +31,24 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.core.business.service;
 
 import java.util.Date;
-import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.EnsembleType;
-import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.OperationHistory;
+import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.exception.BusinessException;
 
-public interface OperationHistoryRepository extends AbstractRepository<OperationHistory> {
+public interface EnsembleQuotaBusinessService {
 
-	List<Account> findAccountBeforeDate(Date date, EnsembleType ensembleType);
+	EnsembleQuota find(AbstractDomain domain, EnsembleType ensembleType);
 
-	List<OperationHistory> find(Account account, AbstractDomain domain, EnsembleType ensembleType, Date date);
+	boolean exist(AbstractDomain domain, EnsembleType ensembleType);
 
-	Long sumOperationValue(Account account, AbstractDomain domain, Date creationDate, OperationHistoryTypeEnum operationType, EnsembleType ensembleType);
+	EnsembleQuota createOrUpdate(AbstractDomain domain, EnsembleType ensembleType, Date today) throws BusinessException;
 
-	Long countOperationValue(Account account, AbstractDomain domain, Date creationDate, OperationHistoryTypeEnum operationType, EnsembleType ensembleType);
+	EnsembleQuota create(EnsembleQuota entity) throws BusinessException;
 
-	List<AbstractDomain> findDomainBeforeDate(Date creationDate);
-
-	void deleteBeforeDate(Date creationDate);
+	EnsembleQuota update(EnsembleQuota entity, Long sumOperationValue) throws BusinessException;
 }

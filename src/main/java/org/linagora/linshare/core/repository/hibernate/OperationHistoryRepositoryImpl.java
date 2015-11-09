@@ -82,7 +82,7 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 	}
 
 	@Override
-	public Long sumOperationValue(Account account, AbstractDomain domain, Date creationDate, OperationHistoryTypeEnum operationType) {
+	public Long sumOperationValue(Account account, AbstractDomain domain, Date creationDate, OperationHistoryTypeEnum operationType, EnsembleType ensembleType) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		if(account != null){
 			criteria.add(Restrictions.eq("account", account));
@@ -95,6 +95,9 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 		}
 		if(creationDate != null){
 			criteria.add(Restrictions.lt("creationDate", creationDate));
+		}
+		if(ensembleType != null){
+			criteria.add(Restrictions.eq("ensembleType", ensembleType));
 		}
 		criteria.setProjection(Projections.sum("operationValue"));
 		List<OperationHistory> list = findByCriteria(criteria);
@@ -104,7 +107,7 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 	}
 
 	@Override
-	public Long countOperationValue(Account account, AbstractDomain domain, Date creationDate, OperationHistoryTypeEnum operationType) {
+	public Long countOperationValue(Account account, AbstractDomain domain, Date creationDate, OperationHistoryTypeEnum operationType, EnsembleType ensembleType) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		if(account != null){
 			criteria.add(Restrictions.eq("account", account));
@@ -117,6 +120,9 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 		}
 		if(operationType != null){
 			criteria.add(Restrictions.eq("operationType", operationType));
+		}
+		if(ensembleType != null){
+			criteria.add(Restrictions.eq("ensembleType", ensembleType));
 		}
 		criteria.setProjection(Projections.rowCount());
 		return DataAccessUtils.longResult(findByCriteria(criteria));

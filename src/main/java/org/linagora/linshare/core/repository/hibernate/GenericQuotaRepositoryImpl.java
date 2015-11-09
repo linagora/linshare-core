@@ -51,9 +51,17 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 		super(hibernateTemplate);
 	}
 
+	@Override
 	public T create(T entity) throws BusinessException {
 		entity.setLastValue((long) 0);
 		return super.create(entity);
+	}
+
+	@Override
+	public T update(T entity, Long curentValue) throws BusinessException{
+		entity.setLastValue(entity.getCurrentValue());
+		entity.setCurrentValue(curentValue + entity.getCurrentValue());
+		return super.update(entity);
 	}
 
 	@Override
