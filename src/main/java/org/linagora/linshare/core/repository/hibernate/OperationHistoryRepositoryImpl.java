@@ -75,7 +75,7 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 		if(ensembleType != null){
 			criteria.add(Restrictions.eq("ensembleType", ensembleType));
 		}
-		criteria.add(Restrictions.lt("creationDate", Date));
+		criteria.add(Restrictions.le("creationDate", Date));
 		criteria.setProjection(Projections.property("account"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		return (List<Account>)getHibernateTemplate().findByCriteria(criteria);
@@ -94,7 +94,7 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 			criteria.add(Restrictions.eq("operationType", operationType));
 		}
 		if(creationDate != null){
-			criteria.add(Restrictions.lt("creationDate", creationDate));
+			criteria.add(Restrictions.le("creationDate", creationDate));
 		}
 		if(ensembleType != null){
 			criteria.add(Restrictions.eq("ensembleType", ensembleType));
@@ -116,7 +116,7 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 			criteria.add(Restrictions.eq("domain", domain));
 		}
 		if(creationDate != null){
-			criteria.add(Restrictions.lt("creationDate", creationDate));
+			criteria.add(Restrictions.le("creationDate", creationDate));
 		}
 		if(operationType != null){
 			criteria.add(Restrictions.eq("operationType", operationType));
@@ -162,7 +162,7 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 		}
 
 		if(date != null){
-			criteria.add(Restrictions.lt("creationDate", date));
+			criteria.add(Restrictions.le("creationDate", date));
 		}
 		return findByCriteria(criteria);
 	}

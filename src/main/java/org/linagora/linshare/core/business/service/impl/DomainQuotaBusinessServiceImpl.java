@@ -70,11 +70,16 @@ public class DomainQuotaBusinessServiceImpl
 		DomainQuota entity;
 		if (!exist(domain)) {
 			DomainQuota parentDomainQuota = repository.find(domain.getParentDomain());
-			Long quota = parentDomainQuota.getQuota();
-			Long quotaWarning = parentDomainQuota.getQuotaWarning();
-			Long tailFileMax = parentDomainQuota.getTailFileMax();
-			entity = new DomainQuota(domain, domain.getParentDomain(), quota, quotaWarning, tailFileMax, sumOperationValue, (long) 0);
-			entity = repository.create(entity);
+			if (parentDomainQuota != null) {
+				Long quota = parentDomainQuota.getQuota();
+				Long quotaWarning = parentDomainQuota.getQuotaWarning();
+				Long tailFileMax = parentDomainQuota.getFileSizeMax();
+				entity = new DomainQuota(domain, domain.getParentDomain(), quota, quotaWarning, tailFileMax,
+						sumOperationValue, (long) 0);
+				entity = repository.create(entity);
+			} else {
+				throw new BusinessException(" parent domain of "+ domain.getIdentifier()+" does not have a quota yet");
+			}
 		} else {
 			entity = find(domain);
 			entity = repository.update(entity, sumOperationValue);

@@ -109,9 +109,9 @@ public class OperationHistoryRepositoryImplTest extends AbstractTransactionalJUn
 		List<OperationHistory> result5 = operationHistoryRepository.find(null, domain2, null, null);
 		assertEquals(5, result5.size());
 		List<OperationHistory> result6 = operationHistoryRepository.find(null, null, null, a);
-		assertEquals(11, result6.size());
+		assertEquals(14, result6.size());
 		List<OperationHistory> result7 = operationHistoryRepository.find(account1, domain1, EnsembleType.USER, a);
-		assertEquals(4, result7.size());
+		assertEquals(5, result7.size());
 	}
 
 	@Test
@@ -191,6 +191,6 @@ public class OperationHistoryRepositoryImplTest extends AbstractTransactionalJUn
 		operationHistoryRepository.deleteBeforeDate(a);
 		List<OperationHistory> result2 = operationHistoryRepository.find(account, null, null, b);
 		assertEquals(8,result1.size());
-		assertEquals(2,result2.size());
+		assertEquals(1,result2.size());
 	}
 }

@@ -17,7 +17,7 @@
 			not-null="true" />
 		<property name="quota" column="quota"/>
 		<property name="quotaWarning" column="quota_warning"/>
-		<property name="tailFileMax" column="tail_file_max"/>
+		<property name="fileSizeMax" column="file_size_max"/>
 		<many-to-one name="domain" column="domain_id"
 			class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy" >
 		</many-to-one>

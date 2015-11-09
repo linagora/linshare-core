@@ -51,13 +51,13 @@ public abstract class Quota {
 
 	protected Long lastValue;
 
-	protected Long tailFileMax;
+	protected Long fileSizeMax;
 
 	public Quota() {
 	}
 
 	public Quota(Account account, AbstractDomain domain,
-			AbstractDomain parentDomain, Long quota, Long quotaWarning, Long tailFileMax, Long currentValue, Long lastValue) {
+			AbstractDomain parentDomain, Long quota, Long quotaWarning, Long fileSizeMax, Long currentValue, Long lastValue) {
 		this.account = account;
 		this.domain = domain;
 		this.parentDomain = parentDomain;
@@ -65,7 +65,7 @@ public abstract class Quota {
 		this.lastValue = lastValue;
 		this.quota = quota;
 		this.quotaWarning = quotaWarning;
-		this.tailFileMax = tailFileMax;
+		this.fileSizeMax = fileSizeMax;
 	}
 
 	public Long getId() {
@@ -132,11 +132,11 @@ public abstract class Quota {
 		this.quotaWarning = quotaWarning;
 	}
 
-	public Long getTailFileMax() {
-		return tailFileMax;
+	public Long getFileSizeMax() {
+		return fileSizeMax;
 	}
 
-	public void setTailFileMax(Long tailFileMax) {
-		this.tailFileMax = tailFileMax;
+	public void setFileSizeMax(Long fileSizeMax) {
+		this.fileSizeMax = fileSizeMax;
 	}
 }

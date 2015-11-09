@@ -1,2 +1,2 @@
-INSERT INTO quota(id, current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, tail_file_max, ensemble_type, quota_type)
+INSERT INTO quota(id, current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type)
 VALUES (1,200,0,1,11,null, 100, 80, 5, null, 'ACCOUNT_QUOTA'), (2, 300,200,2,null,null, 1000, 800, 5, null, 'DOMAIN_QUOTA'), (3,400,0,2,null,1, 100, 80, 5, 'USER', 'ENSEMBLE_QUOTA');

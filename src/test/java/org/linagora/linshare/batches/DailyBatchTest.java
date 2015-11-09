@@ -35,6 +35,7 @@ package org.linagora.linshare.batches;
 
 import static org.junit.Assert.*;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -42,12 +43,22 @@ import org.junit.Test;
 import org.linagora.linshare.core.batches.DailyBatch;
 import org.linagora.linshare.core.business.service.UserDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.DomainDailyStatBusinessService;
+import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
+import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
+import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
+import org.linagora.linshare.core.business.service.PlatformQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ThreadDailyStatBusinessService;
+import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UserDailyStat;
 import org.linagora.linshare.core.domain.entities.DomainDailyStat;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
+import org.linagora.linshare.core.domain.entities.PlatformQuota;
+import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.domain.entities.ThreadDailyStat;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
@@ -76,6 +87,9 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 	private AccountRepository<Account> accountRepository;
 
 	@Autowired
+	private AbstractDomainRepository abstractDomainRepository;
+
+	@Autowired
 	private DailyBatch dailyBatch;
 
 	@Autowired
@@ -88,8 +102,20 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 	private DomainDailyStatBusinessService domainDailyStatBusinessService;
 
 	@Autowired
+	private DomainQuotaBusinessService domainQuotaBusinessService;
+
+	@Autowired
+	private PlatformQuotaBusinessService platformQuotaBusinessService;
+
+	@Autowired
+	private EnsembleQuotaBusinessService ensembleQuotaBusinessService;
+
+	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
+
+	@Autowired
+	private OperationHistoryBusinessService operationHistoryBusinessService;
 
 	LoadingServiceTestDatas dates;
 	private User jane;
@@ -104,6 +130,38 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 
 	@Test
 	public void test() {
+
+		AbstractDomain rootdomain = abstractDomainRepository.getUniqueRootDomain();
+		DomainQuota domainQuota = new DomainQuota(rootdomain, null, (long) 10000, (long) 8000, (long) 10, (long) 0, (long) 0);
+		PlatformQuota platformQuota = new PlatformQuota((long) 20000, (long) 15000, (long) 10, (long) 0, (long) 0);
+		domainQuotaBusinessService.create(domainQuota);
+		platformQuotaBusinessService.create(platformQuota);
+		domainQuotaBusinessService.createOrUpdate(rootdomain, new Date());
+		platformQuotaBusinessService.createOrUpdate(new Date());
+
+		List<AbstractDomain> listdomain = operationHistoryBusinessService.findDomainBeforeDate(new Date());
+
+		Quota quota = platformQuotaBusinessService.find();
+		assertNotNull(quota);
+		assertEquals(1200, (long) quota.getCurrentValue());
+		assertEquals(0, (long) quota.getLastValue());
+		assertEquals(20000, (long) quota.getQuota());
+		assertEquals(15000, (long) quota.getQuotaWarning());
+		assertEquals(10, (long) quota.getFileSizeMax());
+
+		AbstractDomain domain1 = listdomain.get(0);
+		AbstractDomain domain2 = listdomain.get(1);
+		AbstractDomain domain3 = listdomain.get(2);
+		AbstractDomain domain4 = listdomain.get(3);
+
+		quota = domainQuotaBusinessService.find(domain1);
+		assertNotNull(quota);
+		assertEquals(-100, (long) quota.getCurrentValue());
+		assertEquals(0, (long) quota.getLastValue());
+		assertEquals(10000, (long) quota.getQuota());
+		assertEquals(8000, (long) quota.getQuotaWarning());
+		assertEquals(10, (long) quota.getFileSizeMax());
+
 		dailyBatch.executeBatch();
 
 		List<UserDailyStat> listUserDailyStat = userDailyStatBusinessService.findBetweenTwoDates(null, null, null);
@@ -185,5 +243,61 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertEquals(0, (long) domainDaily.getDeleteOperationSum());
 		assertEquals(0, (long) domainDaily.getDeleteOperationCount());
 		assertEquals(400, (long) domainDaily.getDiffOperationSum());
+
+		quota = domainQuotaBusinessService.find(domain1);
+		assertNotNull(quota);
+		assertEquals(-200, (long) quota.getCurrentValue());
+		assertEquals(-100, (long) quota.getLastValue());
+		assertEquals(10000, (long) quota.getQuota());
+		assertEquals(8000, (long) quota.getQuotaWarning());
+		assertEquals(10, (long) quota.getFileSizeMax());
+
+		quota = domainQuotaBusinessService.find(domain2);
+		assertNotNull(quota);
+		assertEquals(800, (long) quota.getCurrentValue());
+		assertEquals(0, (long) quota.getLastValue());
+		assertEquals(10000, (long) quota.getQuota());
+		assertEquals(8000, (long) quota.getQuotaWarning());
+		assertEquals(10, (long) quota.getFileSizeMax());
+
+		quota = domainQuotaBusinessService.find(domain3);
+		assertNotNull(quota);
+		assertEquals(100, (long) quota.getCurrentValue());
+		assertEquals(0, (long) quota.getLastValue());
+		assertEquals(10000, (long) quota.getQuota());
+		assertEquals(8000, (long) quota.getQuotaWarning());
+		assertEquals(10, (long) quota.getFileSizeMax());
+
+		quota = domainQuotaBusinessService.find(domain4);
+		assertNotNull(quota);
+		assertEquals(400, (long) quota.getCurrentValue());
+		assertEquals(0, (long) quota.getLastValue());
+		assertEquals(10000, (long) quota.getQuota());
+		assertEquals(8000, (long) quota.getQuotaWarning());
+		assertEquals(10, (long) quota.getFileSizeMax());
+
+		quota = ensembleQuotaBusinessService.find(domain4, EnsembleType.THREAD);
+		assertNotNull(quota);
+		assertEquals(200, (long) quota.getCurrentValue());
+		assertEquals(0, (long) quota.getLastValue());
+		assertEquals(10000, (long) quota.getQuota());
+		assertEquals(8000, (long) quota.getQuotaWarning());
+		assertEquals(10, (long) quota.getFileSizeMax());
+
+		quota = ensembleQuotaBusinessService.find(domain4, EnsembleType.USER);
+		assertNotNull(quota);
+		assertEquals(200, (long) quota.getCurrentValue());
+		assertEquals(0, (long) quota.getLastValue());
+		assertEquals(10000, (long) quota.getQuota());
+		assertEquals(8000, (long) quota.getQuotaWarning());
+		assertEquals(10, (long) quota.getFileSizeMax());
+
+		quota = platformQuotaBusinessService.find();
+		assertNotNull(quota);
+		assertEquals(2400, (long) quota.getCurrentValue());
+		assertEquals(1200, (long) quota.getLastValue());
+		assertEquals(20000, (long) quota.getQuota());
+		assertEquals(15000, (long) quota.getQuotaWarning());
+		assertEquals(10, (long) quota.getFileSizeMax());
 	}
 }

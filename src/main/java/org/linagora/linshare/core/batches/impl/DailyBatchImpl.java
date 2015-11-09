@@ -88,6 +88,13 @@ public class DailyBatchImpl implements DailyBatch {
 		List<Account> listThread = operationHistoryBusinessService.findAccountBeforeDate(today, EnsembleType.THREAD);
 		List<AbstractDomain> listDomain = operationHistoryBusinessService.findDomainBeforeDate(today);
 
+		for (AbstractDomain domain : listDomain) {
+			domainDailyStatBusinessService.create(domain, today);
+			domainQuotaBusinessService.createOrUpdate(domain, today);
+			ensembleQuotaBusinessService.createOrUpdate(domain, EnsembleType.USER, today);
+			ensembleQuotaBusinessService.createOrUpdate(domain, EnsembleType.THREAD, today);
+		}
+
 		for (Account user : listUser) {
 			userDailyStatBusinessService.create((User) user, today);
 			accountQuotaBusinessService.createOrUpdate(user, today);
@@ -98,12 +105,6 @@ public class DailyBatchImpl implements DailyBatch {
 			accountQuotaBusinessService.createOrUpdate(thread, today);
 		}
 
-		for (AbstractDomain domain : listDomain) {
-			domainDailyStatBusinessService.create(domain, today);
-			domainQuotaBusinessService.createOrUpdate(domain, today);
-			ensembleQuotaBusinessService.createOrUpdate(domain, EnsembleType.USER, today);
-			ensembleQuotaBusinessService.createOrUpdate(domain, EnsembleType.THREAD, today);
-		}
 		platformQuotaBusinessService.createOrUpdate(today);
 		operationHistoryBusinessService.deleteBeforeDate(today);
 	}

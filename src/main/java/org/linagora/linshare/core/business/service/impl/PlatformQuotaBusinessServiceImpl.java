@@ -36,11 +36,8 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.Date;
 
 import org.linagora.linshare.core.business.service.PlatformQuotaBusinessService;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.PlatformQuota;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.DomainQuotaRepository;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
 import org.linagora.linshare.core.repository.PlatformQuotaRepository;
 

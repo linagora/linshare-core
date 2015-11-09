@@ -76,12 +76,17 @@ public class EnsembleQuotaBusinessServiceImpl implements EnsembleQuotaBusinessSe
 		EnsembleQuota entity;
 		if (!exist(domain, ensembleType)) {
 			DomainQuota domainQuota = domainQuotaRepository.find(domain.getParentDomain());
-			Long quota = domainQuota.getQuota();
-			Long quotaWarning = domainQuota.getQuotaWarning();
-			Long tailFileMax = domainQuota.getTailFileMax();
-			entity = new EnsembleQuota(domain, domain.getParentDomain(), quota, quotaWarning, tailFileMax,
-					sumOperationValue, (long) 0, ensembleType);
-			entity = repository.create(entity);
+			if (domainQuota != null) {
+				Long quota = domainQuota.getQuota();
+				Long quotaWarning = domainQuota.getQuotaWarning();
+				Long tailFileMax = domainQuota.getFileSizeMax();
+				entity = new EnsembleQuota(domain, domain.getParentDomain(), quota, quotaWarning, tailFileMax,
+						sumOperationValue, (long) 0, ensembleType);
+				entity = repository.create(entity);
+			} else {
+				throw new BusinessException(
+						domain.getIdentifier() + " domain does not have a quota yet");
+			}
 		} else {
 			entity = find(domain, ensembleType);
 			entity = repository.update(entity, sumOperationValue);

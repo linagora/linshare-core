@@ -35,17 +35,16 @@ package org.linagora.linshare.business.service;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
-import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
@@ -75,7 +74,10 @@ public class QuotaBusinessServiceTest
 	private AccountRepository<Account> accountRepository;
 
 	@Autowired
-	private DomainQuotaBusinessService quotaBusinessService;
+	private DomainQuotaBusinessService domainQuotaBusinessService;
+
+	@Autowired
+	private AccountQuotaBusinessService accountQuotaBusinessService;
 
 	@Autowired
 	@Qualifier("userRepository")
@@ -86,7 +88,8 @@ public class QuotaBusinessServiceTest
 
 	@Before
 	public void setUp() {
-		this.executeSqlScript("import-tests-operationSummaryDay.sql", false);
+		this.executeSqlScript("import-tests-quota.sql", false);
+		this.executeSqlScript("import-tests-operationHistory.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
 		dates.loadUsers();
 		jane = dates.getUser2();
@@ -96,9 +99,36 @@ public class QuotaBusinessServiceTest
 	public void test() {
 		Account account = jane;
 		AbstractDomain domain = jane.getDomain();
-		Quota op = quotaBusinessService.findByAccount(account);
-		assertNotNull(op);
-		List<Quota> opd = quotaBusinessService.findByDomain(domain);
-		assertEquals(1, opd.size());
+		Quota qo = domainQuotaBusinessService.find(domain);
+		assertNotNull(qo);
+		assertEquals(300, (long) qo.getCurrentValue());
+		assertEquals(200, (long) qo.getLastValue());
+		assertEquals(1000, (long) qo.getQuota());
+		assertEquals(800, (long) qo.getQuotaWarning());
+		assertEquals(5, (long) qo.getFileSizeMax());
+		domainQuotaBusinessService.createOrUpdate(domain, new Date());
+		qo= domainQuotaBusinessService.find(domain);
+		assertNotNull(qo);
+		assertEquals(1100, (long) qo.getCurrentValue());
+		assertEquals(300, (long) qo.getLastValue());
+		assertEquals(1000, (long) qo.getQuota());
+		assertEquals(800, (long) qo.getQuotaWarning());
+		assertEquals(5, (long) qo.getFileSizeMax());
+
+		qo = accountQuotaBusinessService.find(account);
+		assertNotNull(qo);
+		assertEquals(200, (long) qo.getCurrentValue());
+		assertEquals(0, (long) qo.getLastValue());
+		assertEquals(100, (long) qo.getQuota());
+		assertEquals(80, (long) qo.getQuotaWarning());
+		assertEquals(5, (long) qo.getFileSizeMax());
+		accountQuotaBusinessService.createOrUpdate(account, new Date());
+		qo = accountQuotaBusinessService.find(account);
+		assertNotNull(qo);
+		assertEquals(900, (long) qo.getCurrentValue());
+		assertEquals(200, (long) qo.getLastValue());
+		assertEquals(100, (long) qo.getQuota());
+		assertEquals(80, (long) qo.getQuotaWarning());
+		assertEquals(5, (long) qo.getFileSizeMax());
 	}
 }

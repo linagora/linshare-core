@@ -13,7 +13,10 @@
 		<constructor-arg ref="userDailyStatBusinessService" />
 		<constructor-arg ref="threadDailyStatBusinessService" />
 		<constructor-arg ref="domainDailyStatBusinessService" />
-		<constructor-arg ref="quotaBusinessService" />
+		<constructor-arg ref="domainQuotaBusinessService" />
+		<constructor-arg ref="accountQuotaBusinessService" />
+		<constructor-arg ref="ensembleQuotaBusinessService" />
+		<constructor-arg ref="platformQuotaBusinessService" />
 	</bean>
 	<bean id="weeklyBatch"
 		class="org.linagora.linshare.core.batches.impl.WeeklyBatchImpl">

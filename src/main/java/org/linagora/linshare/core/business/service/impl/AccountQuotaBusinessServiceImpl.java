@@ -74,12 +74,17 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 		AccountQuota entity;
 		if (!exist(account)) {
 			DomainQuota domainQuota = domainQuotaRepository.find(account.getDomain());
-			Long quota = domainQuota.getQuota();
-			Long quotaWarning = domainQuota.getQuotaWarning();
-			Long tailFileMax = domainQuota.getTailFileMax();
-			entity = new AccountQuota(account, account.getDomain(), account.getDomain().getParentDomain(), quota,
-					quotaWarning, tailFileMax, sumOperationValue, (long) 0);
-			entity = repository.create(entity);
+			if (domainQuota != null) {
+				Long quota = domainQuota.getQuota();
+				Long quotaWarning = domainQuota.getQuotaWarning();
+				Long tailFileMax = domainQuota.getFileSizeMax();
+				entity = new AccountQuota(account, account.getDomain(), account.getDomain().getParentDomain(), quota,
+						quotaWarning, tailFileMax, sumOperationValue, (long) 0);
+				entity = repository.create(entity);
+			}
+			else{
+				throw new BusinessException(account.getDomain().getIdentifier()+" domain does not have a quota yet");
+			}
 		} else {
 			entity = find(account);
 			entity = repository.update(entity, sumOperationValue);

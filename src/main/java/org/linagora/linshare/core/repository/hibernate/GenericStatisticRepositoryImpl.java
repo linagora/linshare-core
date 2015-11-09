@@ -209,10 +209,10 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 			Date beginDate, Date endDate, StatisticType statisticType) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		if (beginDate != null) {
-			criteria.add(Restrictions.gt("creationDate", beginDate));
+			criteria.add(Restrictions.ge("creationDate", beginDate));
 		}
 		if (endDate != null) {
-			criteria.add(Restrictions.lt("creationDate", endDate));
+			criteria.add(Restrictions.le("creationDate", endDate));
 		}
 		if (account != null) {
 			criteria.add(Restrictions.eq("account", account));
@@ -239,10 +239,10 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	public List<AbstractDomain> findDomainBetweenTwoDates(Date beginDate, Date endDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		if (beginDate != null) {
-			criteria.add(Restrictions.gt("creationDate", beginDate));
+			criteria.add(Restrictions.ge("creationDate", beginDate));
 		}
 		if (endDate != null) {
-			criteria.add(Restrictions.lt("creationDate", endDate));
+			criteria.add(Restrictions.le("creationDate", endDate));
 		}
 		criteria.setProjection(Projections.property("domain"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -253,10 +253,10 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	public List<Account> findAccountBetweenTwoDates(Date beginDate, Date endDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		if (beginDate != null) {
-			criteria.add(Restrictions.gt("creationDate", beginDate));
+			criteria.add(Restrictions.ge("creationDate", beginDate));
 		}
 		if (endDate != null) {
-			criteria.add(Restrictions.lt("creationDate", endDate));
+			criteria.add(Restrictions.le("creationDate", endDate));
 		}
 		criteria.setProjection(Projections.property("account"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);

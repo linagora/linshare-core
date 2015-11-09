@@ -196,10 +196,6 @@
 	<bean id="operationHistoryBusinessService" class="org.linagora.linshare.core.business.service.impl.OperationHistoryBusinessServiceImpl">
 		<constructor-arg ref="operationHistoryRepository" />
 	</bean>
-	<!-- bean id="quotaBusinessService" class="org.linagora.linshare.core.business.service.impl.QuotaBusinessServiceImpl">
-		<constructor-arg ref="quotaRepository" />
-		<constructor-arg ref="operationHistoryRepository" />
-	</bean-->
 	<bean id="userDailyStatBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.UserDailyStatBusinessServiceImpl">
 		<constructor-arg ref="userDailyStatRepository" />
@@ -248,5 +244,23 @@
 	<bean id="statisticBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.StatisticBusinessServiceImpl">
 		<constructor-arg ref="statisticRepository" />
+	</bean>
+	<bean id="domainQuotaBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainQuotaBusinessServiceImpl">
+		<constructor-arg ref="domainQuotaRepository" />
+		<constructor-arg ref="operationHistoryRepository" />
+	</bean>
+	<bean id="accountQuotaBusinessService" class="org.linagora.linshare.core.business.service.impl.AccountQuotaBusinessServiceImpl">
+		<constructor-arg ref="accountQuotaRepository" />
+		<constructor-arg ref="operationHistoryRepository" />
+		<constructor-arg ref="domainQuotaRepository" />
+	</bean>
+	<bean id="ensembleQuotaBusinessService" class="org.linagora.linshare.core.business.service.impl.EnsembleQuotaBusinessServiceImpl">
+		<constructor-arg ref="ensembleQuotaRepository" />
+		<constructor-arg ref="operationHistoryRepository" />
+		<constructor-arg ref="domainQuotaRepository" />
+	</bean>
+	<bean id="platformQuotaBusinessService" class="org.linagora.linshare.core.business.service.impl.PlatformQuotaBusinessServiceImpl">
+		<constructor-arg ref="platformQuotaRepository" />
+		<constructor-arg ref="operationHistoryRepository" />
 	</bean>
 </beans>
