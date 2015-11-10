@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
@@ -75,5 +76,11 @@ public class OperationHistoryBusinessServiceImpl implements OperationHistoryBusi
 	public List<OperationHistory> find(Account account, AbstractDomain domain, EnsembleType ensembleType, Date date)
 			throws BusinessException {
 		return repository.find(account, domain, ensembleType, date);
+	}
+
+	@Override
+	public Long sumOperationValue(Account account, AbstractDomain domain, Date date,
+			OperationHistoryTypeEnum operationType, EnsembleType ensembleType) throws BusinessException {
+		return repository.sumOperationValue(account, domain, date, operationType, ensembleType);
 	}
 }
