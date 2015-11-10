@@ -120,6 +120,8 @@ public enum TechnicalAccountPermissionType {
 	AUDIT_LIST,
 	QUOTA_GET,
 	QUOTA_LIST,
+	QUOTA_CREATE,
+	QUOTA_UPDATE,
 
 	STATISTIC_LIST,
 	STATISTIC_GET;

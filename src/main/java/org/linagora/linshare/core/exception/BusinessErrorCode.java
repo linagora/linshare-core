@@ -212,7 +212,8 @@ public enum BusinessErrorCode implements ErrorCode {
 
 	STATISTIC_FORBIDDEN(46401, Status.FORBIDDEN),
 
-	QUOTA_UNAUTHORIZED(45401, Status.UNAUTHORIZED);
+	QUOTA_UNAUTHORIZED(45401, Status.UNAUTHORIZED),
+	QUOTA_FORBIDDEN(45401, Status.FORBIDDEN);
 
 	private final int code;
 

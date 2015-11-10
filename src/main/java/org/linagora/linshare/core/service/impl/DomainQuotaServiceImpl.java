@@ -31,25 +31,51 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
+package org.linagora.linshare.core.service.impl;
 
-import java.util.Date;
-
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
-import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.domain.entities.Quota;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.rac.QuotaResourceAccessControl;
+import org.linagora.linshare.core.service.DomainQuotaService;
 
-public interface DomainQuotaBusinessService {
+public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota>implements DomainQuotaService {
 
-	DomainQuota find(AbstractDomain domain) throws BusinessException;
+	DomainQuotaBusinessService domainQuotaBusinessService;
 
-	boolean exist(AbstractDomain domain);
+	public DomainQuotaServiceImpl(QuotaResourceAccessControl rac,
+			DomainQuotaBusinessService domainQuotaBusinessService) {
+		super(rac);
+		this.domainQuotaBusinessService = domainQuotaBusinessService;
+	}
 
-	DomainQuota createOrUpdate(AbstractDomain domain, Date today);
+	@Override
+	public DomainQuota create(Account actor, AbstractDomain domain, DomainQuota entity) {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(domain, "Domain must be set.");
+		Validate.notNull(entity, "Entity must be set.");
+		checkCreatePermission(actor, null, DomainQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
+		return domainQuotaBusinessService.create(entity);
+	}
 
-	DomainQuota create(DomainQuota entity) throws BusinessException;
+	@Override
+	public DomainQuota update(Account actor, AbstractDomain domain, DomainQuota entity) {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(domain, "Domain must be set.");
+		Validate.notNull(entity, "Entity must be set.");
+		checkCreatePermission(actor, null, DomainQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
+		return domainQuotaBusinessService.update(entity);
+	}
 
-	DomainQuota update(DomainQuota entity, Long sumOperationValue) throws BusinessException;
-
-	DomainQuota update(DomainQuota entity) throws BusinessException;
+	@Override
+	public DomainQuota find(Account actor, AbstractDomain domain) {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(domain, "Domain must be set.");
+		checkCreatePermission(actor, null, DomainQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
+		return domainQuotaBusinessService.find(domain);
+	}
 }

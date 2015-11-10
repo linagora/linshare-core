@@ -31,25 +31,17 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
+package org.linagora.linshare.core.service;
 
-import java.util.Date;
-
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
 
-public interface AccountQuotaBusinessService {
+public interface DomainQuotaService {
 
-	AccountQuota find(Account account) throws BusinessException;
+	DomainQuota create(Account actor, AbstractDomain domain, DomainQuota entity);
 
-	boolean exist(Account account);
+	DomainQuota update(Account actor, AbstractDomain domain, DomainQuota entity);
 
-	AccountQuota createOrUpdate(Account account, Date today) throws BusinessException;
-
-	AccountQuota create(AccountQuota entity) throws BusinessException;
-
-	AccountQuota update(AccountQuota entity, Long sumOperationValue) throws BusinessException;
-
-	AccountQuota update(AccountQuota entity) throws BusinessException;
+	DomainQuota find(Account actor, AbstractDomain domain);
 }

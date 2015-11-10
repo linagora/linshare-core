@@ -64,12 +64,42 @@ public class QuotaResourceAccessControlImpl
 
 	@Override
 	protected boolean hasCreatePermission(Account actor, Account owner, Quota entry, Object... opt) {
-		return actor.hasSystemAccountRole() || actor.hasSuperAdminRole();
+		if (actor.hasDelegationRole())
+			return hasPermission(actor, TechnicalAccountPermissionType.QUOTA_CREATE);
+		if (actor.isInternal() || actor.isGuest()) {
+			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole())
+				return true;
+			if (owner != null && owner.equals(actor))
+				return true;
+			if (actor.hasAdminRole()) {
+				if (owner != null)
+					return owner.getDomain().isManagedBy(actor);
+				if (owner == null && opt != null && opt.length > 0) {
+					return ((AbstractDomain) opt[0]).isManagedBy(actor);
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account actor, Account owner, Quota entry, Object... opt) {
-		return actor.hasSystemAccountRole() || actor.hasSuperAdminRole();
+		if (actor.hasDelegationRole())
+			return hasPermission(actor, TechnicalAccountPermissionType.QUOTA_UPDATE);
+		if (actor.isInternal() || actor.isGuest()) {
+			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole())
+				return true;
+			if (owner != null && owner.equals(actor))
+				return true;
+			if (actor.hasAdminRole()) {
+				if (owner != null)
+					return owner.getDomain().isManagedBy(actor);
+				if (owner == null && opt != null && opt.length > 0) {
+					return ((AbstractDomain) opt[0]).isManagedBy(actor);
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override

@@ -31,67 +31,47 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service.impl;
+package org.linagora.linshare.core.service.impl;
 
-import java.util.Date;
-
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.PlatformQuotaBusinessService;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.PlatformQuota;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.OperationHistoryRepository;
-import org.linagora.linshare.core.repository.PlatformQuotaRepository;
+import org.linagora.linshare.core.domain.entities.Quota;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.rac.QuotaResourceAccessControl;
+import org.linagora.linshare.core.service.PlatformQuotaService;
 
-public class PlatformQuotaBusinessServiceImpl implements PlatformQuotaBusinessService {
+public class PlatformQuotaServiceImpl extends GenericServiceImpl<Account, Quota>implements PlatformQuotaService {
 
-	private final PlatformQuotaRepository repository;
-	private final OperationHistoryRepository operationHistoryRepository;
+	private PlatformQuotaBusinessService platformQuotaBusinessService;
 
-	public PlatformQuotaBusinessServiceImpl(final PlatformQuotaRepository repository,
-			final OperationHistoryRepository operationHistoryRepository) {
-		this.repository = repository;
-		this.operationHistoryRepository = operationHistoryRepository;
+	public PlatformQuotaServiceImpl(QuotaResourceAccessControl rac,
+			PlatformQuotaBusinessService platformQuotaBusinessService) {
+		super(rac);
+		this.platformQuotaBusinessService = platformQuotaBusinessService;
 	}
 
 	@Override
-	public PlatformQuota find() throws BusinessException {
-		return repository.find();
+	public PlatformQuota create(Account actor, PlatformQuota entity) {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(entity, "Entity must be set");
+		checkCreatePermission(actor, null, PlatformQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
+		return platformQuotaBusinessService.create(entity);
 	}
 
 	@Override
-	public boolean exist() {
-		return find() != null;
+	public PlatformQuota update(Account actor, PlatformQuota entity) {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(entity, "Entity must be set");
+		checkCreatePermission(actor, null, PlatformQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
+		return platformQuotaBusinessService.update(entity);
 	}
 
 	@Override
-	public PlatformQuota createOrUpdate(Date today) throws BusinessException {
-		Long sumOperationValue = operationHistoryRepository.sumOperationValue(null, null, today, null, null);
-		PlatformQuota entity;
-		if(!exist()){
-			entity = new PlatformQuota((long) 0, (long) 0, (long) 0, sumOperationValue, (long) 0);
-			entity = repository.create(entity);
-		} else {
-			entity = find();
-			entity = repository.update(entity, sumOperationValue);
-		}
-		return entity;
-	}
-
-	@Override
-	public PlatformQuota create(PlatformQuota entity) throws BusinessException {
-		if(exist()){
-			throw new BusinessException("must be only one PlatformQuota");
-		}else {
-			return repository.create(entity);
-		}
-	}
-
-	@Override
-	public PlatformQuota update(PlatformQuota entity, Long sumOperationValue) throws BusinessException {
-		return repository.update(entity, sumOperationValue);
-	}
-
-	@Override
-	public PlatformQuota update(PlatformQuota entity) throws BusinessException {
-		return repository.update(entity);
+	public PlatformQuota find(Account actor) {
+		Validate.notNull(actor, "Actor must be set.");
+		checkCreatePermission(actor, null, PlatformQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
+		return platformQuotaBusinessService.find();
 	}
 }

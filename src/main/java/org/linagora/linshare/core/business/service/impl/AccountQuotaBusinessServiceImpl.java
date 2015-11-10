@@ -64,7 +64,7 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 	}
 
 	@Override
-	public boolean exist(Account account) {
+	public boolean exist(Account account) throws BusinessException{
 		return find(account) != null;
 	}
 
@@ -83,7 +83,7 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 				entity = repository.create(entity);
 			}
 			else{
-				throw new BusinessException(account.getDomain().getIdentifier()+" domain does not have a quota yet");
+				throw new BusinessException(account.getDomain().getIdentifier() + " domain does not have a quota yet");
 			}
 		} else {
 			entity = find(account);
@@ -105,5 +105,10 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 	@Override
 	public AccountQuota update(AccountQuota entity, Long sumOperationValue) throws BusinessException {
 		return repository.update(entity, sumOperationValue);
+	}
+
+	@Override
+	public AccountQuota update(AccountQuota entity) throws BusinessException {
+		return repository.update(entity);
 	}
 }

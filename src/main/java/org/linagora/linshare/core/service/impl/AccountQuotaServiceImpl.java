@@ -31,25 +31,51 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
+package org.linagora.linshare.core.service.impl;
 
-import java.util.Date;
-
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.domain.entities.Quota;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.rac.QuotaResourceAccessControl;
+import org.linagora.linshare.core.service.AccountQuotaService;
 
-public interface AccountQuotaBusinessService {
+public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota>implements AccountQuotaService {
 
-	AccountQuota find(Account account) throws BusinessException;
+	private AccountQuotaBusinessService accountQuotaBusinessService;
 
-	boolean exist(Account account);
+	public AccountQuotaServiceImpl(QuotaResourceAccessControl rac,
+			AccountQuotaBusinessService accountQuotaBusinessService) {
+		super(rac);
+		this.accountQuotaBusinessService = accountQuotaBusinessService;
+	}
 
-	AccountQuota createOrUpdate(Account account, Date today) throws BusinessException;
+	@Override
+	public AccountQuota create(Account actor, Account owner, AccountQuota entity) {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(owner, "Owner must be set.");
+		Validate.notNull(entity, "Entity must be set.");
+		checkCreatePermission(actor, owner, AccountQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
+		return accountQuotaBusinessService.create(entity);
+	}
 
-	AccountQuota create(AccountQuota entity) throws BusinessException;
+	@Override
+	public AccountQuota update(Account actor, Account owner, AccountQuota entity) {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(owner, "Owner must be set.");
+		Validate.notNull(entity, "Entity must be set.");
+		checkUpdatePermission(actor, owner, AccountQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
+		return accountQuotaBusinessService.update(entity);
+	}
 
-	AccountQuota update(AccountQuota entity, Long sumOperationValue) throws BusinessException;
-
-	AccountQuota update(AccountQuota entity) throws BusinessException;
+	@Override
+	public AccountQuota find(Account actor, Account owner) {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(owner, "Owner must be set.");
+		Validate.notNull(owner, "Entity must be set.");
+		checkReadPermission(actor, owner, AccountQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
+		return accountQuotaBusinessService.find(owner);
+	}
 }
