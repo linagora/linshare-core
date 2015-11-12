@@ -78,7 +78,7 @@ public class DomainQuotaBusinessServiceImpl
 						sumOperationValue, (long) 0);
 				entity = repository.create(entity);
 			} else {
-				throw new BusinessException(" parent domain of "+ domain.getIdentifier()+" does not have a quota yet");
+				throw new BusinessException(" parent domain of " + domain.getIdentifier()+" does not have a quota yet");
 			}
 		} else {
 			entity = find(domain);
@@ -91,7 +91,7 @@ public class DomainQuotaBusinessServiceImpl
 	public DomainQuota create(DomainQuota entity) throws BusinessException {
 		AbstractDomain domain = entity.getDomain();
 		if (exist(domain)) {
-			throw new BusinessException("must be only one DomainQuota for any entity");
+			throw new BusinessException("It must be only one DomainQuota for any entity");
 		}else{
 			return repository.create(entity);
 		}

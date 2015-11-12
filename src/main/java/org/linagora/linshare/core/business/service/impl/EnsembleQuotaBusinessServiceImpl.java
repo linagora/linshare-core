@@ -99,7 +99,7 @@ public class EnsembleQuotaBusinessServiceImpl implements EnsembleQuotaBusinessSe
 		AbstractDomain domain = entity.getDomain();
 		EnsembleType ensembleType = entity.getEnsembleType();
 		if(exist(domain, ensembleType)){
-			throw new BusinessException("must be only one EnsembleQuota for any entity");
+			throw new BusinessException("It must be only one EnsembleQuota for any entity");
 		}else{
 			return repository.create(entity);
 		}

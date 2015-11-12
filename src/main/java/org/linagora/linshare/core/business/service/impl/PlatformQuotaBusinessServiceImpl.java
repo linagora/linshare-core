@@ -79,7 +79,7 @@ public class PlatformQuotaBusinessServiceImpl implements PlatformQuotaBusinessSe
 	@Override
 	public PlatformQuota create(PlatformQuota entity) throws BusinessException {
 		if(exist()){
-			throw new BusinessException("must be only one PlatformQuota");
+			throw new BusinessException("It must be only one PlatformQuota");
 		}else {
 			return repository.create(entity);
 		}

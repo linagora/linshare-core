@@ -62,8 +62,7 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota>implemen
 	private PlatformQuotaBusinessService platformQuotaBusinessService;
 	private OperationHistoryBusinessService operationHistoryBusinessService;
 
-	public QuotaServiceImpl(QuotaResourceAccessControl rac,
-			AccountQuotaBusinessService accountQuotaBusinessService,
+	public QuotaServiceImpl(QuotaResourceAccessControl rac, AccountQuotaBusinessService accountQuotaBusinessService,
 			DomainQuotaBusinessService domainQuotaBusinessService,
 			EnsembleQuotaBusinessService ensembleQuotaBusinessService,
 			PlatformQuotaBusinessService platformQuotaBusinessService,
@@ -77,61 +76,79 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota>implemen
 	}
 
 	@Override
-	public boolean checkIfCanAddFile(Account actor, Account owner, Long fileSize, EnsembleType ensembleType)
+	public void checkIfUserCanAddFile(Account actor, Account owner, Long fileSize, EnsembleType ensembleType)
 			throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(owner, "Owner must be set.");
 		Validate.notNull(fileSize, "FileSize must be set.");
 		Validate.notNull(ensembleType, "EnsembleType must be set.");
 		checkReadPermission(actor, owner, Quota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
-		boolean canUserAddInAccountSpace = canUserAddInAccountSpace(owner, fileSize);
-		boolean canUserAddInDomainSpace = canUserAddInDomainSpace(owner.getDomain(), fileSize);
-		boolean canUserAddInEnsembleSpace = canUserAddInEnsembleSpace(owner.getDomain(), ensembleType, fileSize);
-		boolean canUserAddInPlatformSpace = canUserAddInPlatform(fileSize);
-		return canUserAddInAccountSpace && canUserAddInDomainSpace && canUserAddInEnsembleSpace
-				&& canUserAddInPlatformSpace;
+		checkIfUserCanAddInAccountSpace(owner, fileSize);
+		checkIfUserCanAddInDomainSpace(owner.getDomain(), fileSize);
+		checkIfUserCanAddInEnsembleSpace(owner.getDomain(), ensembleType, fileSize);
+		checkIfUserCanAddInPlatform(fileSize);
 	}
 
-	private boolean canUserAddInAccountSpace(Account account, Long fileSize) throws BusinessException {
+	private void checkIfUserCanAddInAccountSpace(Account account, Long fileSize) throws BusinessException {
 		AccountQuota accountQuota = accountQuotaBusinessService.find(account);
 		Long quota = accountQuota.getQuota();
 		Long currentValue = accountQuota.getCurrentValue();
 		Long fileSizeMax = accountQuota.getFileSizeMax();
+		if (fileSize > fileSizeMax) {
+			throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED, "The file size is greater than the file quota.");
+		}
 		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(account, null, new Date(), null,
 				null);
 		Long totalConsumption = currentValue + todayConsumption + fileSize;
-		return fileSize < fileSizeMax && totalConsumption < quota;
+		if (totalConsumption > quota) {
+			throw new BusinessException(BusinessErrorCode.QUOTA_ACCOUNT_UNAUTHORIZED, "The account quota has been reached.");
+		}
 	}
 
-	private boolean canUserAddInDomainSpace(AbstractDomain domain, Long fileSize) throws BusinessException {
+	private void checkIfUserCanAddInDomainSpace(AbstractDomain domain, Long fileSize) throws BusinessException {
 		DomainQuota domainQuota = domainQuotaBusinessService.find(domain);
 		Long quota = domainQuota.getQuota();
 		Long currentValue = domainQuota.getCurrentValue();
 		Long fileSizeMax = domainQuota.getFileSizeMax();
+		if (fileSize > fileSizeMax) {
+			throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED, "The file size is greater than the file quota.");
+		}
 		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null, null);
 		Long totalConsumption = currentValue + todayConsumption + fileSize;
-		return fileSize < fileSizeMax && totalConsumption < quota;
+		if (totalConsumption > quota) {
+			throw new BusinessException(BusinessErrorCode.QUOTA_DOMAIN, "The domain quota has been reached.");
+		}
 	}
 
-	private boolean canUserAddInEnsembleSpace(AbstractDomain domain, EnsembleType ensembleType, Long fileSize)
+	private void checkIfUserCanAddInEnsembleSpace(AbstractDomain domain, EnsembleType ensembleType, Long fileSize)
 			throws BusinessException {
 		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, ensembleType);
 		Long quota = ensembleQuota.getQuota();
 		Long currentValue = ensembleQuota.getCurrentValue();
 		Long fileSizeMax = ensembleQuota.getFileSizeMax();
+		if (fileSize > fileSizeMax) {
+			throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED, "The file size is greater than the file quota.");
+		}
 		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null,
 				ensembleType);
 		Long totalConsumption = currentValue + todayConsumption + fileSize;
-		return fileSize < fileSizeMax && totalConsumption < quota;
+		if (totalConsumption > quota) {
+			throw new BusinessException(BusinessErrorCode.QUOTA_ENSEMBLE_UNAUTHORIZED, "The ensemble quota has been reached.");
+		}
 	}
 
-	private boolean canUserAddInPlatform(Long fileSize) throws BusinessException {
+	private void checkIfUserCanAddInPlatform(Long fileSize) throws BusinessException {
 		PlatformQuota platformQuota = platformQuotaBusinessService.find();
 		Long quota = platformQuota.getQuota();
 		Long currentValue = platformQuota.getCurrentValue();
 		Long fileSizeMax = platformQuota.getFileSizeMax();
+		if (fileSize > fileSizeMax) {
+			throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED, "The file size is greater than the file quota.");
+		}
 		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, null, new Date(), null, null);
 		Long totalConsumption = currentValue + todayConsumption + fileSize;
-		return fileSize < fileSizeMax && totalConsumption < quota;
+		if (totalConsumption > quota) {
+			throw new BusinessException(BusinessErrorCode.QUOTA_PLATFORM_UNAUTHORIZED, "The platforme quota has been reached.");
+		}
 	}
 }

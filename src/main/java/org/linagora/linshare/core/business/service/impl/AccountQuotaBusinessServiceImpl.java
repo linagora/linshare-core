@@ -96,7 +96,7 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 	public AccountQuota create(AccountQuota entity) throws BusinessException {
 		Account account = entity.getAccount();
 		if (exist(account)) {
-			throw new BusinessException("must be only one AccountQuota for any entity");
+			throw new BusinessException("It must be only one AccountQuota for any entity");
 		} else {
 			return repository.create(entity);
 		}

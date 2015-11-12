@@ -38,7 +38,8 @@ import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<AccountQuota>implements AccountQuotaRepository {
+public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<AccountQuota>
+		implements AccountQuotaRepository {
 
 	public AccountQuotaRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
