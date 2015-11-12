@@ -31,16 +31,36 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.facade.webservice.common.dto;
 
-public class AccountQuota extends Quota {
+import javax.xml.bind.annotation.XmlRootElement;
 
-	public AccountQuota() {
-		super();
+import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
+@XmlRootElement
+@ApiModel
+public class EnsembleQuotaDto extends QuotaDto {
+
+	@ApiModelProperty(value = "EnsembleType")
+	private  EnsembleType ensembleType;
+
+	public EnsembleQuotaDto() {
 	}
 
-	public AccountQuota(Account account, AbstractDomain domain, AbstractDomain parentDomain, Long quota,
-			Long quotaWarning, Long fileSizeMax, Long currentValue, Long lastValue) {
-		super(account, domain, parentDomain, quota, quotaWarning, fileSizeMax, currentValue, lastValue);
+	public EnsembleQuotaDto(EnsembleQuota ensembleQuota) {
+		super(ensembleQuota);
+		this.ensembleType = ensembleQuota.getEnsembleType();
+	}
+
+	public EnsembleType getEnsembleType() {
+		return ensembleType;
+	}
+
+	public void setEnsembleType(EnsembleType ensembleType) {
+		this.ensembleType = ensembleType;
 	}
 }

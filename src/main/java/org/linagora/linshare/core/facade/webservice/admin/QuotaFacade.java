@@ -31,16 +31,37 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.facade.webservice.admin;
 
-public class AccountQuota extends Quota {
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.DomainQuotaDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.EnsembleQuotaDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.PlatformQuotaDto;
 
-	public AccountQuota() {
-		super();
-	}
+public interface QuotaFacade {
 
-	public AccountQuota(Account account, AbstractDomain domain, AbstractDomain parentDomain, Long quota,
-			Long quotaWarning, Long fileSizeMax, Long currentValue, Long lastValue) {
-		super(account, domain, parentDomain, quota, quotaWarning, fileSizeMax, currentValue, lastValue);
-	}
+	AccountQuotaDto create(AccountQuotaDto entity) throws BusinessException;
+
+	DomainQuotaDto create(DomainQuotaDto entity) throws BusinessException;
+
+	EnsembleQuotaDto create(EnsembleQuotaDto entity) throws BusinessException;
+
+	PlatformQuotaDto create(PlatformQuotaDto entity) throws BusinessException;
+
+	AccountQuotaDto update(AccountQuotaDto entity) throws BusinessException;
+
+	DomainQuotaDto update(DomainQuotaDto entity) throws BusinessException;
+
+	EnsembleQuotaDto update(EnsembleQuotaDto entity) throws BusinessException;
+
+	PlatformQuotaDto update(PlatformQuotaDto entity) throws BusinessException;
+
+	AccountQuotaDto findAccountQuota(String accountUuid) throws BusinessException;
+
+	DomainQuotaDto findDomainQuota(String domain) throws BusinessException;
+
+	EnsembleQuotaDto findEnsembleQuota(String domain, String ensembleType) throws BusinessException;
+
+	PlatformQuotaDto findPlatformQuota() throws BusinessException;
 }

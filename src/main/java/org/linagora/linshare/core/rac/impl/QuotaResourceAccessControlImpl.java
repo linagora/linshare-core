@@ -69,8 +69,6 @@ public class QuotaResourceAccessControlImpl
 		if (actor.isInternal() || actor.isGuest()) {
 			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole())
 				return true;
-			if (owner != null && owner.equals(actor))
-				return true;
 			if (actor.hasAdminRole()) {
 				if (owner != null)
 					return owner.getDomain().isManagedBy(actor);
@@ -88,8 +86,6 @@ public class QuotaResourceAccessControlImpl
 			return hasPermission(actor, TechnicalAccountPermissionType.QUOTA_UPDATE);
 		if (actor.isInternal() || actor.isGuest()) {
 			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole())
-				return true;
-			if (owner != null && owner.equals(actor))
 				return true;
 			if (actor.hasAdminRole()) {
 				if (owner != null)

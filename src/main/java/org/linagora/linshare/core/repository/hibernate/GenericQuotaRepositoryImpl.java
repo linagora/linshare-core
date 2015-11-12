@@ -82,7 +82,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 		} else if (result.size() == 1) {
 			return result.get(0);
 		} else {
-			throw new IllegalStateException("must be only one quota for any entity");
+			throw new IllegalStateException("It must be only one quota for any entity");
 		}
 	}
 

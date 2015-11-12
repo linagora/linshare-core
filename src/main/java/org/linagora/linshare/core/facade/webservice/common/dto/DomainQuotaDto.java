@@ -31,16 +31,22 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.facade.webservice.common.dto;
 
-public class AccountQuota extends Quota {
+import javax.xml.bind.annotation.XmlRootElement;
 
-	public AccountQuota() {
-		super();
+import org.linagora.linshare.core.domain.entities.DomainQuota;
+
+import com.wordnik.swagger.annotations.ApiModel;
+
+@XmlRootElement
+@ApiModel
+public class DomainQuotaDto extends QuotaDto {
+
+	public DomainQuotaDto() {
 	}
 
-	public AccountQuota(Account account, AbstractDomain domain, AbstractDomain parentDomain, Long quota,
-			Long quotaWarning, Long fileSizeMax, Long currentValue, Long lastValue) {
-		super(account, domain, parentDomain, quota, quotaWarning, fileSizeMax, currentValue, lastValue);
+	public DomainQuotaDto(DomainQuota domainQuota) {
+		super(domainQuota);
 	}
 }
