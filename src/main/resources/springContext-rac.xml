@@ -64,6 +64,10 @@
 	</bean>
 
 	<bean name="uploadRequestGroupResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UploadRequestGroupResourceAccessControlImpl">
+
+	</bean>
+
+	<bean id="quotaResourceAccessControl" class="org.linagora.linshare.core.rac.impl.QuotaResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 

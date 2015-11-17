@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.business.service;
+package org.linagora.linshare.service;
 
 import static org.junit.Assert.*;
 
@@ -39,45 +39,37 @@ import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
-import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
+import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
+import org.linagora.linshare.core.domain.constants.EnsembleType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.linagora.linshare.core.service.QuotaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = {
-		"classpath:springContext-datasource.xml",
-		"classpath:springContext-repository.xml",
-		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
-		"classpath:springContext-business-service.xml",
-		"classpath:springContext-facade.xml",
-		"classpath:springContext-rac.xml",
-		"classpath:springContext-startopendj.xml",
-		"classpath:springContext-jackRabbit-mock.xml",
-		"classpath:springContext-test.xml",
-		"classpath:springContext-quota-manager.xml",
-		"classpath:springContext-service-miscellaneous.xml",
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml", "classpath:springContext-repository.xml",
+		"classpath:springContext-dao.xml", "classpath:springContext-service.xml",
+		"classpath:springContext-business-service.xml", "classpath:springContext-facade.xml",
+		"classpath:springContext-rac.xml", "classpath:springContext-startopendj.xml",
+		"classpath:springContext-jackRabbit-mock.xml", "classpath:springContext-test.xml",
+		"classpath:springContext-quota-manager.xml", "classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-public class QuotaBusinessServiceTest
-		extends AbstractTransactionalJUnit4SpringContextTests {
+public class QuotaServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+
+	@Autowired
+	QuotaService quotaService;
+
+	@Autowired
+	OperationHistoryBusinessService operationHistoryBusinessService;
+
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;
-
-	@Autowired
-	private DomainQuotaBusinessService domainQuotaBusinessService;
-
-	@Autowired
-	private AccountQuotaBusinessService accountQuotaBusinessService;
 
 	@Autowired
 	@Qualifier("userRepository")
@@ -98,37 +90,17 @@ public class QuotaBusinessServiceTest
 	@Test
 	public void test() {
 		Account account = jane;
+		Account systemAccount = accountRepository.getBatchSystemAccount();
 		AbstractDomain domain = jane.getDomain();
-		Quota qo = domainQuotaBusinessService.find(domain);
-		assertNotNull(qo);
-		assertEquals(1096, (long) qo.getCurrentValue());
-		assertEquals(500, (long) qo.getLastValue());
-		assertEquals(1900, (long) qo.getQuota());
-		assertEquals(1800, (long) qo.getQuotaWarning());
-		assertEquals(5, (long) qo.getFileSizeMax());
-		domainQuotaBusinessService.createOrUpdate(domain, new Date());
-		qo= domainQuotaBusinessService.find(domain);
-		assertNotNull(qo);
-		assertEquals(1896, (long) qo.getCurrentValue());
-		assertEquals(1096, (long) qo.getLastValue());
-		assertEquals(1900, (long) qo.getQuota());
-		assertEquals(1800, (long) qo.getQuotaWarning());
-		assertEquals(5, (long) qo.getFileSizeMax());
 
-		qo = accountQuotaBusinessService.find(account);
-		assertNotNull(qo);
-		assertEquals(700, (long) qo.getCurrentValue());
-		assertEquals(0, (long) qo.getLastValue());
-		assertEquals(1500, (long) qo.getQuota());
-		assertEquals(1480, (long) qo.getQuotaWarning());
-		assertEquals(5, (long) qo.getFileSizeMax());
-		accountQuotaBusinessService.createOrUpdate(account, new Date());
-		qo = accountQuotaBusinessService.find(account);
-		assertNotNull(qo);
-		assertEquals(1400, (long) qo.getCurrentValue());
-		assertEquals(700, (long) qo.getLastValue());
-		assertEquals(1500, (long) qo.getQuota());
-		assertEquals(1480, (long) qo.getQuotaWarning());
-		assertEquals(5, (long) qo.getFileSizeMax());
+		Long accountConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(account, null, new Date(), null, null);
+		Long domainConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null, null);
+		Long ensembleUserConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null, EnsembleType.USER);
+		Long platformConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, null, new Date(), null, null);
+		assertEquals(700, (long) accountConsumptionOfDay);
+		assertEquals(800, (long) domainConsumptionOfDay);
+		assertEquals(800, (long) ensembleUserConsumptionOfDay);
+		assertEquals(1200, (long) platformConsumptionOfDay);
+		quotaService.checkIfUserCanAddFile(systemAccount, account, (long) 4, EnsembleType.USER);
 	}
 }

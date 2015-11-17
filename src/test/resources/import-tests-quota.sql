@@ -1,2 +1,3 @@
 INSERT INTO quota(id, current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type)
-VALUES (1,200,0,1,11,null, 100, 80, 5, null, 'ACCOUNT_QUOTA'), (2, 300,200,2,null,null, 1000, 800, 5, null, 'DOMAIN_QUOTA'), (3,400,0,2,null,1, 100, 80, 5, 'USER', 'ENSEMBLE_QUOTA');
+VALUES (1,700,0,1,11,null, 1500, 1480, 5, null, 'ACCOUNT_QUOTA'), (2, 1096,500,2,null,null, 1900, 1800, 5, null, 'DOMAIN_QUOTA'), (3,496,0,2,null,1, 1300, 1900, 5, 'USER', 'ENSEMBLE_QUOTA'),
+(4,1096,100, null, null, null, 2300, 2000, 10, null, 'PLATFORM_QUOTA');
