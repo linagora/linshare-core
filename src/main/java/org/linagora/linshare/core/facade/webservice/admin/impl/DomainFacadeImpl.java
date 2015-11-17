@@ -288,4 +288,10 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		}
 		return domain;
 	}
+
+	@Override
+	public Long dataUsage(String domainId) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
+		return abstractDomainService.dataUsage(actor, domainId);
+	}
 }

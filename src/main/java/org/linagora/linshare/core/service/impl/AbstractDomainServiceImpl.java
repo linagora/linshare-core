@@ -770,4 +770,14 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 		return totalUsedSpace;
 	}
+
+	@Override
+	public Long dataUsage(Account actor, String domainId)
+			throws BusinessException {
+		if (actor.hasSuperAdminRole()) {
+			return domainBusinessService.dataUsage(domainId);
+		} else {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "actor has no rights");
+		}
+	}
 }

@@ -51,4 +51,6 @@ public interface DomainFacade extends AdminGenericFacade {
 	void delete(DomainDto domain) throws BusinessException;
 
 	void delete(String domainId) throws BusinessException;
+
+	Long dataUsage(String domainId) throws BusinessException;
 }

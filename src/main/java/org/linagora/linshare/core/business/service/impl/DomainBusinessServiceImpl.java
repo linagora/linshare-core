@@ -133,4 +133,18 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 		return domains;
 	}
 
+	@Override
+	public Long dataUsage(String domainId) {
+		if (domainId == null) {
+			return repository.getTotalUsedSpace();
+		} else {
+			AbstractDomain domain = repository.findById(domainId);
+			if (domain == null) {
+				throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
+						"The domain does not exist : " + domainId);
+			}
+			return repository.getTotalUsedSpace(domain);
+		}
+	}
+
 }

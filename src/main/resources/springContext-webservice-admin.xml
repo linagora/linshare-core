@@ -32,6 +32,10 @@
 		<constructor-arg ref="wsAdminDomainFacade" />
 	</bean>
 
+	<bean id="adminTempHackRestService" class="org.linagora.linshare.webservice.admin.impl.TempHackRestServiceImp">
+		<constructor-arg ref="wsAdminDomainFacade" />
+	</bean>
+
 	<bean id="adminFunctionalityRestService" class="org.linagora.linshare.webservice.admin.impl.FunctionalityRestServiceImpl">
 		<constructor-arg ref="wsAdminFunctionalityFacade" />
 	</bean>
@@ -153,6 +157,7 @@
 			<ref bean="adminWelcomeMessagesRestService" />
 			<ref bean="adminSystemConfigurationRestService" />
 			<ref bean="adminMailActivationRestService" />
+			<ref bean="adminTempHackRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

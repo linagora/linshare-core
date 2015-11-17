@@ -89,5 +89,7 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 
 	List<AbstractDomain> loadDomainsForAWelcomeMessage(WelcomeMessages welcomeMessage) throws BusinessException;
 
-	long getTotalUsedSpace() throws BusinessException;
+	Long getTotalUsedSpace() throws BusinessException;
+
+	Long getTotalUsedSpace(AbstractDomain domain) throws BusinessException;
 }

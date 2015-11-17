@@ -35,6 +35,7 @@ package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.List;
 
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -131,7 +132,7 @@ public class AbstractDomainRepositoryImpl extends
 	}
 
 	@Override
-	public long getTotalUsedSpace() throws BusinessException {
+	public Long getTotalUsedSpace() throws BusinessException {
 		DetachedCriteria det = DetachedCriteria.forClass(DocumentEntry.class);
 		det.createAlias("document", "doc");
 		ProjectionList columns = Projections.projectionList()
@@ -139,7 +140,23 @@ public class AbstractDomainRepositoryImpl extends
 		det.setProjection(columns);
 		List<AbstractDomain> result = findByCriteria(det);
 		if (result == null || result.isEmpty() || result.get(0) == null) {
-			return 0;
+			return new Long(0);
+		}
+		return DataAccessUtils.longResult(result);
+	}
+
+	@Override
+	public Long getTotalUsedSpace(AbstractDomain domain)
+			throws BusinessException {
+		// Dirty Mode ON
+		String queryString = "select sum(ls_size) from document_entry as d join entry as e on d.entry_id = e.id join account as a on a.id = e.owner_id join domain_abstract as dom on a.domain_id = dom.id where identifier = 'MySubDomain';";
+		queryString = "select sum(ls_size) from document_entry as d join entry as e on d.entry_id = e.id join account as a on a.id = e.owner_id join domain_abstract as dom on a.domain_id = dom.id where identifier = '" + domain.getIdentifier() + "';";
+		SQLQuery createSQLQuery = this.getCurrentSession().createSQLQuery(queryString);
+		@SuppressWarnings("rawtypes")
+		List result = createSQLQuery.list();
+		// Dirty Mode OFF
+		if (result == null || result.isEmpty() || result.get(0) == null) {
+			return new Long(0);
 		}
 		return DataAccessUtils.longResult(result);
 	}

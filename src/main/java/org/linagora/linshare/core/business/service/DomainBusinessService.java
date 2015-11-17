@@ -66,4 +66,5 @@ public interface DomainBusinessService {
 
 	List<String> getAllMyDomainIdentifiers(AbstractDomain domain);
 
+	Long dataUsage(String domainId);
 }
