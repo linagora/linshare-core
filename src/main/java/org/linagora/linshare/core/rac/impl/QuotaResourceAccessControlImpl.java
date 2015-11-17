@@ -22,8 +22,9 @@ public class QuotaResourceAccessControlImpl
 		if (actor.hasDelegationRole())
 			return hasPermission(actor, TechnicalAccountPermissionType.QUOTA_GET);
 		if (actor.isInternal() || actor.isGuest()) {
-			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole())
+			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole()) {
 				return true;
+			}
 			if (owner != null && owner.equals(actor))
 				return true;
 			if (actor.hasAdminRole()) {
@@ -42,8 +43,9 @@ public class QuotaResourceAccessControlImpl
 		if (actor.hasDelegationRole())
 			return hasPermission(actor, TechnicalAccountPermissionType.QUOTA_LIST);
 		if (actor.isInternal() || actor.isGuest()) {
-			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole())
+			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole()) {
 				return true;
+			}
 			if (owner != null && owner.equals(actor))
 				return true;
 			if (actor.hasAdminRole()) {
@@ -67,8 +69,9 @@ public class QuotaResourceAccessControlImpl
 		if (actor.hasDelegationRole())
 			return hasPermission(actor, TechnicalAccountPermissionType.QUOTA_CREATE);
 		if (actor.isInternal() || actor.isGuest()) {
-			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole())
+			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole()){
 				return true;
+			}
 			if (actor.hasAdminRole()) {
 				if (owner != null)
 					return owner.getDomain().isManagedBy(actor);
@@ -85,8 +88,9 @@ public class QuotaResourceAccessControlImpl
 		if (actor.hasDelegationRole())
 			return hasPermission(actor, TechnicalAccountPermissionType.QUOTA_UPDATE);
 		if (actor.isInternal() || actor.isGuest()) {
-			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole())
+			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole()){
 				return true;
+			}
 			if (actor.hasAdminRole()) {
 				if (owner != null)
 					return owner.getDomain().isManagedBy(actor);

@@ -103,11 +103,6 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 	}
 
 	@Override
-	public AccountQuota update(AccountQuota entity, Long sumOperationValue) throws BusinessException {
-		return repository.update(entity, sumOperationValue);
-	}
-
-	@Override
 	public AccountQuota update(AccountQuota entity) throws BusinessException {
 		return repository.update(entity);
 	}

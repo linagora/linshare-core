@@ -39,6 +39,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.PlatformQuota;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.QuotaResourceAccessControl;
 import org.linagora.linshare.core.service.PlatformQuotaService;
 
@@ -64,14 +65,22 @@ public class PlatformQuotaServiceImpl extends GenericServiceImpl<Account, Quota>
 	public PlatformQuota update(Account actor, PlatformQuota entity) {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(entity, "Entity must be set");
-		checkCreatePermission(actor, null, PlatformQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
-		return platformQuotaBusinessService.update(entity);
+		checkUpdatePermission(actor, null, PlatformQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
+		PlatformQuota platformQuota = platformQuotaBusinessService.find();
+		platformQuota.setFileSizeMax(entity.getFileSizeMax());
+		platformQuota.setQuota(entity.getQuota());
+		platformQuota.setQuotaWarning(entity.getQuotaWarning());
+		return platformQuotaBusinessService.update(platformQuota);
 	}
 
 	@Override
 	public PlatformQuota find(Account actor) {
 		Validate.notNull(actor, "Actor must be set.");
-		checkCreatePermission(actor, null, PlatformQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
-		return platformQuotaBusinessService.find();
+		checkReadPermission(actor, null, PlatformQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
+		PlatformQuota platformQuota = platformQuotaBusinessService.find();
+		if(platformQuota == null){
+			throw new BusinessException(BusinessErrorCode.PLATFORM_QUOTA_NOT_FOUND, "Can not found platform quota.");
+		}
+		return platformQuota;
 	}
 }

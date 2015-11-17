@@ -50,4 +50,11 @@ public class PlatformQuotaDto extends QuotaDto {
 		super(platformQuota);
 	}
 
+	public PlatformQuota toUserObject(){
+		PlatformQuota platformQuota = new PlatformQuota();
+		platformQuota.setFileSizeMax(getFileSizeMax());
+		platformQuota.setQuota(getQuota());
+		platformQuota.setQuotaWarning(getQuotaWarning());
+		return platformQuota;
+	}
 }

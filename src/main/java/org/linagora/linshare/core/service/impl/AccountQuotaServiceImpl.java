@@ -39,6 +39,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.QuotaResourceAccessControl;
 import org.linagora.linshare.core.service.AccountQuotaService;
 
@@ -67,15 +68,22 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota>i
 		Validate.notNull(owner, "Owner must be set.");
 		Validate.notNull(entity, "Entity must be set.");
 		checkUpdatePermission(actor, owner, AccountQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
-		return accountQuotaBusinessService.update(entity);
+		AccountQuota accountQuota = accountQuotaBusinessService.find(entity.getAccount());
+		accountQuota.setFileSizeMax(entity.getFileSizeMax());
+		accountQuota.setQuota(entity.getQuota());
+		accountQuota.setQuotaWarning(entity.getQuotaWarning());
+		return accountQuotaBusinessService.update(accountQuota);
 	}
 
 	@Override
 	public AccountQuota find(Account actor, Account owner) {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(owner, "Owner must be set.");
-		Validate.notNull(owner, "Entity must be set.");
 		checkReadPermission(actor, owner, AccountQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
-		return accountQuotaBusinessService.find(owner);
+		AccountQuota accountQuota = accountQuotaBusinessService.find(owner);
+		if(accountQuota == null){
+			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_NOT_FOUND, "Can not found account quota of the owner "+owner.getFullName());
+		}
+		return accountQuota;
 	}
 }

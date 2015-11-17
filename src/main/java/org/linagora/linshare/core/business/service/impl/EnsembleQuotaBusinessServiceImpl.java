@@ -106,11 +106,6 @@ public class EnsembleQuotaBusinessServiceImpl implements EnsembleQuotaBusinessSe
 	}
 
 	@Override
-	public EnsembleQuota update(EnsembleQuota entity, Long sumOperationValue) throws BusinessException {
-		return repository.update(entity, sumOperationValue);
-	}
-
-	@Override
 	public EnsembleQuota update(EnsembleQuota entity) throws BusinessException {
 		return repository.update(entity);
 	}

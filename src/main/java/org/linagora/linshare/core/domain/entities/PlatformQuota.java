@@ -39,7 +39,7 @@ public class PlatformQuota extends Quota {
 		super();
 	}
 
-	public PlatformQuota(Long quota, Long quotaWarning, Long tailFileMax, Long currentValue, Long lastValue) {
-		super(null, null, null, quota, quotaWarning, tailFileMax, currentValue, lastValue);
+	public PlatformQuota(Long quota, Long quotaWarning, Long filSizeeMax, Long currentValue, Long lastValue) {
+		super(null, null, null, quota, quotaWarning, filSizeeMax, currentValue, lastValue);
 	}
 }

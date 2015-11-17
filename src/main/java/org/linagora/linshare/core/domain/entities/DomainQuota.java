@@ -40,7 +40,7 @@ public class DomainQuota extends Quota {
 	}
 
 	public DomainQuota(AbstractDomain domain, AbstractDomain parentDomain, Long quota,
-			Long quotaWarning, Long tailFileMax, Long currentValue, Long lastValue) {
-		super(null, domain, parentDomain, quota, quotaWarning, tailFileMax, currentValue, lastValue);
+			Long quotaWarning, Long fileSizeMax, Long currentValue, Long lastValue) {
+		super(null, domain, parentDomain, quota, quotaWarning, fileSizeMax, currentValue, lastValue);
 	}
 }

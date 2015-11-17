@@ -98,11 +98,6 @@ public class DomainQuotaBusinessServiceImpl
 	}
 
 	@Override
-	public DomainQuota update(DomainQuota entity, Long sumOperationValue) throws BusinessException {
-		return repository.update(entity, sumOperationValue);
-	}
-
-	@Override
 	public DomainQuota update(DomainQuota entity) throws BusinessException {
 		return repository.update(entity);
 	}

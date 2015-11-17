@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.List;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
@@ -42,6 +41,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.GenericQuotaRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends AbstractRepositoryImpl<T>
@@ -76,14 +76,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 		if (ensembleType != null) {
 			criteria.add(Restrictions.eq("ensembleType", ensembleType));
 		}
-		List<T> result = findByCriteria(criteria);
-		if (result == null || result.isEmpty()) {
-			return null;
-		} else if (result.size() == 1) {
-			return result.get(0);
-		} else {
-			throw new IllegalStateException("It must be only one quota for any entity");
-		}
+		return DataAccessUtils.singleResult(findByCriteria(criteria));
 	}
 
 	@Override

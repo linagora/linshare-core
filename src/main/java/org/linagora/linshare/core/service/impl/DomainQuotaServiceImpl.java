@@ -40,6 +40,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.QuotaResourceAccessControl;
 import org.linagora.linshare.core.service.DomainQuotaService;
 
@@ -68,7 +69,11 @@ public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota>im
 		Validate.notNull(domain, "Domain must be set.");
 		Validate.notNull(entity, "Entity must be set.");
 		checkCreatePermission(actor, null, DomainQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
-		return domainQuotaBusinessService.update(entity);
+		DomainQuota domainQuota = domainQuotaBusinessService.find(entity.getDomain());
+		domainQuota.setFileSizeMax(entity.getFileSizeMax());
+		domainQuota.setQuota(entity.getQuota());
+		domainQuota.setQuotaWarning(entity.getQuotaWarning());
+		return domainQuotaBusinessService.update(domainQuota);
 	}
 
 	@Override
@@ -76,6 +81,10 @@ public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota>im
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(domain, "Domain must be set.");
 		checkCreatePermission(actor, null, DomainQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
-		return domainQuotaBusinessService.find(domain);
+		DomainQuota domainQuota =  domainQuotaBusinessService.find(domain);
+		if(domainQuota == null){
+			throw new BusinessException(BusinessErrorCode.DOMAIN_QUOTA_NOT_FOUND, "Can not found domain quota of the domain "+domain.getIdentifier());
+		}
+		return domainQuota;
 	}
 }

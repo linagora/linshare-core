@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.EnsembleQuota;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.QuotaResourceAccessControl;
 import org.linagora.linshare.core.service.EnsembleQuotaService;
 
@@ -68,8 +69,12 @@ public class EnsembleQuotaServiceImpl extends GenericServiceImpl<Account, Quota>
 		Validate.notNull(actor, "Acctor must be set.");
 		Validate.notNull(domain, "Domain must be set.");
 		Validate.notNull(entity, "Entity must be set.");
-		checkCreatePermission(actor, null, EnsembleQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
-		return ensembleQuotaBusinessService.update(entity);
+		checkUpdatePermission(actor, null, EnsembleQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
+		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(entity.getDomain(), entity.getEnsembleType());
+		ensembleQuota.setFileSizeMax(entity.getFileSizeMax());
+		ensembleQuota.setQuota(entity.getQuota());
+		ensembleQuota.setQuotaWarning(entity.getQuotaWarning());
+		return ensembleQuotaBusinessService.update(ensembleQuota);
 	}
 
 	@Override
@@ -77,8 +82,12 @@ public class EnsembleQuotaServiceImpl extends GenericServiceImpl<Account, Quota>
 		Validate.notNull(actor, "Acctor must be set.");
 		Validate.notNull(domain, "Domain must be set.");
 		Validate.notNull(ensembleType, "EnsembleType must be set.");
-		checkCreatePermission(actor, null, EnsembleQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
-		return ensembleQuotaBusinessService.find(domain, ensembleType);
+		checkReadPermission(actor, null, EnsembleQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
+		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, ensembleType);
+		if(ensembleQuota == null){
+			throw new BusinessException(BusinessErrorCode.ENSEMBLE_QUOTA_NOT_FOUND, "Can not found ensemble " + ensembleType.toString() + " quota of the domain "+domain.getIdentifier());
+		}
+		return ensembleQuota;
 	}
 
 }

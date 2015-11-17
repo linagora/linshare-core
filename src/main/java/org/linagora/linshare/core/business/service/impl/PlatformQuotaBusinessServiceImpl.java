@@ -86,11 +86,6 @@ public class PlatformQuotaBusinessServiceImpl implements PlatformQuotaBusinessSe
 	}
 
 	@Override
-	public PlatformQuota update(PlatformQuota entity, Long sumOperationValue) throws BusinessException {
-		return repository.update(entity, sumOperationValue);
-	}
-
-	@Override
 	public PlatformQuota update(PlatformQuota entity) throws BusinessException {
 		return repository.update(entity);
 	}

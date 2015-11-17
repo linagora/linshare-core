@@ -90,7 +90,7 @@ public class QuotaRepositoryImplTest
 	}
 
 	@Test
-	public void test() {
+	public void test() { 
 		AbstractDomain domain2 = jane.getDomain();
 		AbstractDomain domain1 = domain2.getParentDomain();
 		Account account1 = jane;

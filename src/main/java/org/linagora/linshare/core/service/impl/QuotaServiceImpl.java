@@ -62,7 +62,9 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 	private PlatformQuotaBusinessService platformQuotaBusinessService;
 	private OperationHistoryBusinessService operationHistoryBusinessService;
 
-	public QuotaServiceImpl(QuotaResourceAccessControl rac, AccountQuotaBusinessService accountQuotaBusinessService,
+	public QuotaServiceImpl(
+			QuotaResourceAccessControl rac,
+			AccountQuotaBusinessService accountQuotaBusinessService,
 			DomainQuotaBusinessService domainQuotaBusinessService,
 			EnsembleQuotaBusinessService ensembleQuotaBusinessService,
 			PlatformQuotaBusinessService platformQuotaBusinessService,
@@ -98,18 +100,18 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 			Long currentValue = accountQuota.getCurrentValue();
 			Long fileSizeMax = accountQuota.getFileSizeMax();
 			if (fileSize > fileSizeMax) {
-				throw new BusinessException(BusinessErrorCode.FILE_QUOTA_FORBIDDEN,
+				throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED,
 						"The file size is greater than the file quota.");
 			}
 			Long todayConsumption = operationHistoryBusinessService.sumOperationValue(account, null, new Date(), null,
 					null);
 			Long totalConsumption = currentValue + todayConsumption + fileSize;
 			if (totalConsumption > quota) {
-				throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_FORBIDDEN,
+				throw new BusinessException(BusinessErrorCode.QUOTA_ACCOUNT_UNAUTHORIZED,
 						"The account quota has been reached.");
 			}
 		} else {
-			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_FORBIDDEN,
+			throw new BusinessException(BusinessErrorCode.QUOTA_ACCOUNT_UNAUTHORIZED,
 					"The account quota is not configured yet.");
 		}
 	}
@@ -123,18 +125,18 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 			Long currentValue = domainQuota.getCurrentValue();
 			Long fileSizeMax = domainQuota.getFileSizeMax();
 			if (fileSize > fileSizeMax) {
-				throw new BusinessException(BusinessErrorCode.FILE_QUOTA_FORBIDDEN,
+				throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED,
 						"The file size is greater than the file quota.");
 			}
 			Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null,
 					null);
 			Long totalConsumption = currentValue + todayConsumption + fileSize;
 			if (totalConsumption > quota) {
-				throw new BusinessException(BusinessErrorCode.DOMAIN_QUOTA_FORBIDDEN,
+				throw new BusinessException(BusinessErrorCode.QUOTA_DOMAIN_UNAUTHORIZED,
 						"The domain quota has been reached.");
 			}
 		} else {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_QUOTA_FORBIDDEN,
+			throw new BusinessException(BusinessErrorCode.QUOTA_DOMAIN_UNAUTHORIZED,
 					"The domain quota is not configured yet.");
 		}
 	}
@@ -149,18 +151,18 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 			Long currentValue = ensembleQuota.getCurrentValue();
 			Long fileSizeMax = ensembleQuota.getFileSizeMax();
 			if (fileSize > fileSizeMax) {
-				throw new BusinessException(BusinessErrorCode.FILE_QUOTA_FORBIDDEN,
+				throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED,
 						"The file size is greater than the file quota.");
 			}
 			Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null,
 					ensembleType);
 			Long totalConsumption = currentValue + todayConsumption + fileSize;
 			if (totalConsumption > quota) {
-				throw new BusinessException(BusinessErrorCode.ENSEMBLE_QUOTA_FORBIDDEN,
+				throw new BusinessException(BusinessErrorCode.QUOTA_ENSEMBLE_UNAUTHORIZED,
 						"The ensemble quota has been reached.");
 			}
 		} else {
-			throw new BusinessException(BusinessErrorCode.ENSEMBLE_QUOTA_FORBIDDEN,
+			throw new BusinessException(BusinessErrorCode.QUOTA_ENSEMBLE_UNAUTHORIZED,
 					"The ensemble quota is not configured yet.");
 		}
 	}
@@ -173,17 +175,17 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 			Long currentValue = platformQuota.getCurrentValue();
 			Long fileSizeMax = platformQuota.getFileSizeMax();
 			if (fileSize > fileSizeMax) {
-				throw new BusinessException(BusinessErrorCode.FILE_QUOTA_FORBIDDEN,
+				throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED,
 						"The file size is greater than the file quota.");
 			}
 			Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, null, new Date(), null,
 					null);
 			Long totalConsumption = currentValue + todayConsumption + fileSize;
 			if (totalConsumption > quota) {
-				throw new BusinessException(BusinessErrorCode.PLATFORM_QUOTA, "The platforme quota has been reached.");
+				throw new BusinessException(BusinessErrorCode.QUOTA_PLATFORM_UNAUTHORIZED, "The platforme quota has been reached.");
 			}
 		} else {
-			throw new BusinessException(BusinessErrorCode.PLATFORM_QUOTA, "The platform quota is not configured yet.");
+			throw new BusinessException(BusinessErrorCode.QUOTA_PLATFORM_UNAUTHORIZED, "The platform quota is not configured yet.");
 		}
 	}
 }

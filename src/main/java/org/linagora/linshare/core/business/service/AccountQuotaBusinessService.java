@@ -49,7 +49,5 @@ public interface AccountQuotaBusinessService {
 
 	AccountQuota create(AccountQuota entity) throws BusinessException;
 
-	AccountQuota update(AccountQuota entity, Long sumOperationValue) throws BusinessException;
-
 	AccountQuota update(AccountQuota entity) throws BusinessException;
 }

@@ -49,4 +49,12 @@ public class DomainQuotaDto extends QuotaDto {
 	public DomainQuotaDto(DomainQuota domainQuota) {
 		super(domainQuota);
 	}
+
+	public DomainQuota toUserObject(){
+		DomainQuota domainQuota = new DomainQuota();
+		domainQuota.setFileSizeMax(getFileSizeMax());
+		domainQuota.setQuota(getQuota());
+		domainQuota.setQuotaWarning(getQuotaWarning());
+		return domainQuota;
+	}
 }

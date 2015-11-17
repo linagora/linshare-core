@@ -58,15 +58,15 @@ import org.linagora.linshare.core.service.PlatformQuotaService;
 
 public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFacade {
 
-	private AccountQuotaService accountQuotaService;
-	private DomainQuotaService domainQuotaService;
-	private EnsembleQuotaService ensembleQuotaService;
-	private PlatformQuotaService platformQuotaService;
-	private AbstractDomainService abstractDomainService;
+	private final AccountQuotaService accountQuotaService;
+	private final DomainQuotaService domainQuotaService;
+	private final EnsembleQuotaService ensembleQuotaService;
+	private final PlatformQuotaService platformQuotaService;
+	private final AbstractDomainService abstractDomainService;
 
-	public QuotaFacadeImpl(AccountService accountService, AccountQuotaService accountQuotaService,
-			DomainQuotaService domainQuotaService, EnsembleQuotaService ensembleQuotaService,
-			PlatformQuotaService platformQuotaService, AbstractDomainService abstractDomainService) {
+	public QuotaFacadeImpl(final AccountService accountService, final AccountQuotaService accountQuotaService,
+			final DomainQuotaService domainQuotaService, final EnsembleQuotaService ensembleQuotaService,
+			final PlatformQuotaService platformQuotaService, final AbstractDomainService abstractDomainService) {
 		super(accountService);
 		this.accountQuotaService = accountQuotaService;
 		this.domainQuotaService = domainQuotaService;
@@ -144,10 +144,8 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 		Validate.notNull(entity.getQuotaWarning(), "QuotaWarning in AccountQuotaDto must be set.");
 		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in AccountQuotaDto must be set.");
 		Account owner = accountService.findByLsUuid(entity.getAccount().getUuid());
-		AccountQuota accountQuota = accountQuotaService.find(actor, owner);
-		accountQuota.setQuota(entity.getQuota());
-		accountQuota.setQuotaWarning(entity.getQuotaWarning());
-		accountQuota.setFileSizeMax(entity.getFileSizeMax());
+		AccountQuota accountQuota = entity.toUserObject();
+		accountQuota.setAccount(owner);
 		return new AccountQuotaDto(accountQuotaService.update(actor, owner, accountQuota));
 	}
 
@@ -160,10 +158,8 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 		Validate.notNull(entity.getQuotaWarning(), "QuotaWarning in DomainQuotaDto must be set.");
 		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in DomainQuotaDto must be set.");
 		AbstractDomain domain = abstractDomainService.findById(entity.getDomain().getIdentifier());
-		DomainQuota domainQuota = domainQuotaService.find(actor, domain);
-		domainQuota.setQuota(entity.getQuota());
-		domainQuota.setQuotaWarning(entity.getQuotaWarning());
-		domainQuota.setFileSizeMax(entity.getFileSizeMax());
+		DomainQuota domainQuota = entity.toUserObject();
+		domainQuota.setDomain(domain);
 		return new DomainQuotaDto(domainQuotaService.update(actor, domain, domainQuota));
 	}
 
@@ -177,10 +173,8 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 		Validate.notNull(entity.getQuotaWarning(), "QuotaWarning in EnsembleQuotaDto must be set.");
 		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in EnsembleQuotaDto must be set.");
 		AbstractDomain domain = abstractDomainService.findById(entity.getDomain().getIdentifier());
-		EnsembleQuota ensembleQuota = ensembleQuotaService.find(actor, domain, entity.getEnsembleType());
-		ensembleQuota.setQuota(entity.getQuota());
-		ensembleQuota.setQuotaWarning(entity.getQuotaWarning());
-		ensembleQuota.setFileSizeMax(entity.getFileSizeMax());
+		EnsembleQuota ensembleQuota = entity.toUserObject();
+		ensembleQuota.setDomain(domain);
 		return new EnsembleQuotaDto(ensembleQuotaService.update(actor, domain, ensembleQuota));
 	}
 
@@ -191,10 +185,7 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 		Validate.notNull(entity.getQuota(), "Quota in PlatformQuotaDto must be set.");
 		Validate.notNull(entity.getQuotaWarning(), "QuotaWarning in PlatformQuotaDto must be set.");
 		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in PlatformQuotaDto must be set.");
-		PlatformQuota platformQuota = platformQuotaService.find(actor);
-		platformQuota.setQuota(entity.getQuota());
-		platformQuota.setQuotaWarning(entity.getQuotaWarning());
-		platformQuota.setFileSizeMax(entity.getFileSizeMax());
+		PlatformQuota platformQuota = entity.toUserObject();
 		return new PlatformQuotaDto(platformQuotaService.update(actor, platformQuota));
 	}
 

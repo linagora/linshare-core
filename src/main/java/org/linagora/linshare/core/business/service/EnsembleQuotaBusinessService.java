@@ -50,7 +50,5 @@ public interface EnsembleQuotaBusinessService {
 
 	EnsembleQuota create(EnsembleQuota entity) throws BusinessException;
 
-	EnsembleQuota update(EnsembleQuota entity, Long sumOperationValue) throws BusinessException;
-
 	EnsembleQuota update(EnsembleQuota entity) throws BusinessException;
 }

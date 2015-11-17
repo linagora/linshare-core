@@ -15,7 +15,5 @@ public interface PlatformQuotaBusinessService {
 
 	PlatformQuota create(PlatformQuota entity) throws BusinessException;
 
-	PlatformQuota update(PlatformQuota entity, Long sumOperationValue) throws BusinessException;
-
 	PlatformQuota update(PlatformQuota entity) throws BusinessException;
 }
