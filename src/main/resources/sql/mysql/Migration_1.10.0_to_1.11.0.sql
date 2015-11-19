@@ -1,4 +1,4 @@
--- MySQL migration script template
+-- MySQL migration script 1.10 to 1.11
 
 SET storage_engine=INNODB;
 SET NAMES UTF8 COLLATE utf8_general_ci;
@@ -8,6 +8,7 @@ START TRANSACTION;
 
 DROP PROCEDURE IF EXISTS ls_prechecks;
 DROP PROCEDURE IF EXISTS ls_version;
+DROP PROCEDURE IF EXISTS ls_check_user_connected;
 
 -- TODO: CHANGE THE VERSIONS
 SET @version_to = '1.11.0';
@@ -46,8 +47,21 @@ BEGIN
 
 END$$
 
+CREATE PROCEDURE ls_check_user_connected()
+BEGIN
+	SET @connection_id := CONNECTION_ID();
+	SET @database := DATABASE();
+	SET @user_connected := (SELECT `USER` FROM INFORMATION_SCHEMA.PROCESSLIST WHERE DB = @database);
+	IF (@user_connected = 'root') THEN
+		SELECT 'You are actually connected with the user "root", you should be connected with your LinShare database user, we are about to stop the migration script.' AS '__WARNING__';
+--		DIRTY: did it to stop the process cause there is no clean way to do it, expected error code: 1317.
+		KILL @connection_id;
+	END IF;
+END$$
+
 delimiter ';'
 
+call ls_check_user_connected;
 call ls_prechecks();
 
 DROP VIEW IF EXISTS alias_users_list_all;

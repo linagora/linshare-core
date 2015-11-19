@@ -1,4 +1,4 @@
--- Postgresql migration script template
+-- Postgresql migration script 1.10 to 1.11
 
 BEGIN;
 
@@ -47,6 +47,23 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION ls_check_user_connected() RETURNS void AS $$
+BEGIN
+	DECLARE database VARCHAR := (SELECT current_database());
+	DECLARE user_connected VARCHAR = (SELECT usename FROM pg_stat_activity where datname = database);
+	DECLARE error VARCHAR := ('You are actually connected with the user "postgres", you should be connected with your LinShare database user, we are about to stop the migration script.');
+	BEGIN
+		IF (user_connected = 'postgres') THEN
+			RAISE WARNING '%', error;
+		--	DIRTY: did it to stop the process cause there is no clean way to do it.
+		--	Expected error: query has no destination for result data.
+			SELECT '';
+		END IF;
+	END;
+END
+$$ LANGUAGE plpgsql;
+
+SELECT ls_check_user_connected();
 SELECT ls_prechecks();
 
 SET client_min_messages = warning;
