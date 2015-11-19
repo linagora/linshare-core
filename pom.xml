@@ -803,6 +803,13 @@
 			<artifactId>chemistry-opencmis-server-bindings</artifactId>
 			<version>0.11.0</version>
 		</dependency>
+		<!-- include jmx term inside war for easy distribution -->
+		<dependency>
+			<groupId>org.cyclopsgroup</groupId>
+			<artifactId>jmxterm</artifactId>
+			<version>1.0-alpha-4-uber</version>
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -1994,20 +2001,6 @@
 			<releases>
 				<enabled>false</enabled>
 			</releases>
-		</repository>
-		<repository>
-			<id>Codehaus snapshot</id>
-			<url>http://snapshots.repository.codehaus.org/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>Codehaumaven-compiler-plugins</id>
-			<url>http://repository.codehaus.org/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
 		</repository>
 	</repositories>
 

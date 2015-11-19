@@ -77,6 +77,19 @@ public interface NotifierService {
      */
     public void sendNotification(List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException;
     
-    public void sendNotification(MailContainerWithRecipient mailContainerWithRecipient) throws BusinessException;
-  
+
+	public void sendNotification(MailContainerWithRecipient mailContainerWithRecipient) throws BusinessException;
+
+	/**
+	 * For JMX purpose.
+	 */
+
+	String getHost();
+
+	void setHost(String host);
+
+	Integer getPort();
+
+	void setPort(Integer port) throws Exception;
+
 }

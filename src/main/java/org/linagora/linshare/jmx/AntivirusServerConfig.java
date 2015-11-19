@@ -31,40 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.jmx;
 
-import java.io.File;
-import java.io.InputStream;
+import javax.management.MXBean;
 
-import org.linagora.linshare.core.exception.TechnicalException;
-
-/**
- * Interface to VirusScanner
- */
-public interface VirusScannerService {
-	
-	/**
-	 * @return true if the virusScanner is disabled
-	 */
-	boolean isDisabled();
-	
-	/**
-	 * Check if a file is safe
-	 * @param fileToCheck a file to check
-	 * @return return true if the file is safe. return false if the file contains a virus
-	 */
-	boolean check(File fileToCheck) throws TechnicalException;
-	
-	/**
-	 * Check if a stream is safe
-	 * @param steamToCheck a stream to check
-	 * @return return true if the stream is safe. return false if the stream contains a virus
-	 */
-	boolean check(InputStream steamToCheck);
-
-	/**
-	 * For JMX purpose.
-	 */
+@MXBean
+public interface AntivirusServerConfig {
 
 	String getHost();
 

@@ -18,15 +18,26 @@
 		<property name="autodetect" value="true"/>
 		<property name="beans">
 			<map>
-				<entry key="LinshareJMXBeans:name=LinshareStatistics" value-ref="linshareStats" />
+<!-- 				<entry key="LinshareJMXBeans:name=LinshareStatistics" value-ref="linshareStats" /> -->
+				<entry key="LinshareJMXBeans:name=LinshareAntivirus" value-ref="linshareConfigAntivirus" />
+				<entry key="LinshareJMXBeans:name=LinshareEmailServer" value-ref="linshareConfigEmailServer" />
+				<entry key="LinshareJMXBeans:name=LinshareLoggers" value-ref="linshareConfigLoggers" />
 			</map>
 		</property>
 		<property name="server" ref="mbeanServer" />
 		
 	</bean>
 
-	<bean name="linshareStats" class="org.linagora.linshare.jmx.LinshareStatsImpl">
-		<constructor-arg ref="statisticsService" />
+<!-- 	<bean name="linshareStats" class="org.linagora.linshare.jmx.LinshareStatsImpl"> -->
+<!-- 		<constructor-arg ref="statisticsService" /> -->
+<!-- 	</bean> -->
+	<bean name="linshareConfigAntivirus" class="org.linagora.linshare.jmx.impl.AntivirusServerConfigImpl">
+		<constructor-arg ref="clamavVirusScannerService" />
 	</bean>
-
+	<bean name="linshareConfigEmailServer" class="org.linagora.linshare.jmx.impl.EmailServerConfigImpl">
+		<constructor-arg ref="notifierService" />
+	</bean>
+	<bean name="linshareConfigLoggers" class="org.linagora.linshare.jmx.impl.LoggersConfigImpl">
+		<constructor-arg value="${linshare.available.loggers}" />
+	</bean>
 </beans>

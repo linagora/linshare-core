@@ -77,7 +77,7 @@ import com.google.common.collect.Lists;
 public class MailNotifierServiceImpl implements NotifierService {
 
 	/** The smtpServer that will send the email. */
-	private final String smtpServer;
+	private String smtpServer;
 
 	/** The smtp user. */
 	private final String smtpUser;
@@ -86,7 +86,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	private final String smtpPassword;
 
 	/** The smtp port. */
-	private final int smtpPort;
+	private Integer smtpPort;
 
 	/** Is the server needing authentification. */
 	private final boolean needsAuth;
@@ -335,10 +335,50 @@ public class MailNotifierServiceImpl implements NotifierService {
 			logger.debug("can not send mails, input list empty");
 		} 
 	}	
-	
-	
+
 	@Override
 	public void sendNotification(MailContainerWithRecipient mailContainer) throws BusinessException {
 		this.sendNotification(Lists.newArrayList(mailContainer));
+	}
+
+	@Override
+	public String getHost() {
+		return smtpServer;
+	}
+
+	@Override
+	public void setHost(String host) {
+		logger.warn("Reconfiguring Smtp current server ...");
+		synchronized (smtpServer) {
+			try {
+				smtpServer = host;
+				logger.warn("Smtp current server reconfigured to " + smtpServer);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("Smtp reconfiguration failed ! ");
+			}
+		}
+	}
+
+	@Override
+	public Integer getPort() {
+		return smtpPort;
+	}
+
+	@Override
+	public void setPort(Integer port) throws Exception {
+		logger.warn("Reconfiguring Smtp current port ...");
+		if (port.equals(0)) {
+			throw new Exception("invalid port value : " + port);
+		}
+		synchronized (smtpPort) {
+			try {
+				smtpPort = port;
+				logger.warn("Smtp current port reconfigured to " + smtpPort);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("Smtp reconfiguration failed ! ");
+			}
+		}
 	}
 }

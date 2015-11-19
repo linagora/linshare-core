@@ -31,46 +31,71 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.jmx.impl;
 
-import java.io.File;
-import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import org.linagora.linshare.core.exception.TechnicalException;
+import org.apache.commons.lang.Validate;
+import org.apache.log4j.Level;
+import org.linagora.linshare.jmx.LoggersConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Interface to VirusScanner
- */
-public interface VirusScannerService {
-	
-	/**
-	 * @return true if the virusScanner is disabled
-	 */
-	boolean isDisabled();
-	
-	/**
-	 * Check if a file is safe
-	 * @param fileToCheck a file to check
-	 * @return return true if the file is safe. return false if the file contains a virus
-	 */
-	boolean check(File fileToCheck) throws TechnicalException;
-	
-	/**
-	 * Check if a stream is safe
-	 * @param steamToCheck a stream to check
-	 * @return return true if the stream is safe. return false if the stream contains a virus
-	 */
-	boolean check(InputStream steamToCheck);
+public class LoggersConfigImpl implements LoggersConfig {
 
-	/**
-	 * For JMX purpose.
-	 */
+	private static final Logger logger = LoggerFactory
+			.getLogger(LoggersConfigImpl.class);
 
-	String getHost();
+	private final List<String> loggers;
 
-	void setHost(String host);
+	public LoggersConfigImpl(String availableLoggers) {
+		super();
+		if (availableLoggers != null) {
+			List<String> asList = Arrays.asList(availableLoggers.split(","));
+			this.loggers = asList;
+		} else {
+			this.loggers = new ArrayList<String>();
+		}
+	}
 
-	Integer getPort();
+	@Override
+	public String level(String loggerName) {
+		Validate.notEmpty(loggerName);
+		org.apache.log4j.Logger currLogger = org.apache.log4j.LogManager
+				.getLogger(loggerName);
+		Level level = currLogger.getLevel();
+		String currLevel = null;
+		if (level != null) {
+			currLevel = currLogger.getLevel().toString();
+		}
+		return currLevel;
+	}
 
-	void setPort(Integer port) throws Exception;
+	@Override
+	public String level(String loggerName, String levelStr) {
+		Validate.notEmpty(loggerName);
+		org.apache.log4j.Logger currLogger = org.apache.log4j.LogManager
+				.getLogger(loggerName);
+		Level level = currLogger.getLevel();
+		String currLevel = null;
+		if (level != null) {
+			currLevel = currLogger.getLevel().toString();
+		}
+		if (levelStr != null) {
+			logger.warn("Trying to update log level at runtime using logger name : "
+					+ loggerName);
+			level = Level.toLevel(levelStr.toUpperCase());
+			logger.warn("Log level value : " + level);
+			currLogger.setLevel(level);
+			logger.warn("Log level updated at runtime.");
+		}
+		return currLevel;
+	}
+
+	@Override
+	public List<String> getLoggers() {
+		return loggers;
+	}
 }

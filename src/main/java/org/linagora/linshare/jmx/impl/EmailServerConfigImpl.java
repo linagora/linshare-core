@@ -31,46 +31,38 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.jmx.impl;
 
-import java.io.File;
-import java.io.InputStream;
+import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.jmx.EmailServerConfig;
 
-import org.linagora.linshare.core.exception.TechnicalException;
+public class EmailServerConfigImpl implements EmailServerConfig {
 
-/**
- * Interface to VirusScanner
- */
-public interface VirusScannerService {
-	
-	/**
-	 * @return true if the virusScanner is disabled
-	 */
-	boolean isDisabled();
-	
-	/**
-	 * Check if a file is safe
-	 * @param fileToCheck a file to check
-	 * @return return true if the file is safe. return false if the file contains a virus
-	 */
-	boolean check(File fileToCheck) throws TechnicalException;
-	
-	/**
-	 * Check if a stream is safe
-	 * @param steamToCheck a stream to check
-	 * @return return true if the stream is safe. return false if the stream contains a virus
-	 */
-	boolean check(InputStream steamToCheck);
+	private NotifierService notifier;
 
-	/**
-	 * For JMX purpose.
-	 */
+	public EmailServerConfigImpl(NotifierService virusScannerService) {
+		super();
+		this.notifier = virusScannerService;
+	}
 
-	String getHost();
+	@Override
+	public String getHost() {
+		return notifier.getHost();
+	}
 
-	void setHost(String host);
+	@Override
+	public void setHost(String host) {
+		notifier.setHost(host);
+	}
 
-	Integer getPort();
+	@Override
+	public Integer getPort() {
+		return notifier.getPort();
+	}
 
-	void setPort(Integer port) throws Exception;
+	@Override
+	public void setPort(Integer port) throws Exception {
+		notifier.setPort(port);
+	}
+
 }

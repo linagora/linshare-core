@@ -58,24 +58,27 @@ public class ClamavVirusScannerServiceImpl implements VirusScannerService {
 
 	private static final int defaultConnectionTimeout = 90;
 
-	private NetworkScanner clamavScanner;
 	private boolean disabled = false;
 
-	public ClamavVirusScannerServiceImpl(String clamdHost, int clamdPort) {
-		this(clamdHost, clamdPort, defaultConnectionTimeout);
-	}
+	private String clamdHost = "127.0.0.1";
 
-	public ClamavVirusScannerServiceImpl(String clamdHost, int clamdPort,
-			int connectionTimeout) {
+	private Integer clamdPort = 3310;
+
+	public ClamavVirusScannerServiceImpl(String clamdHost, int clamdPort) {
+		this.clamdHost = clamdHost;
+		this.clamdPort = clamdPort;
 		if (clamdHost.length() == 0) {
 			disabled = true;
-		} else {
-			clamavScanner = new NetworkScanner();
-			clamavScanner.setClamdHost(clamdHost);
-			clamavScanner.setClamdPort(clamdPort);
-			clamavScanner.setConnectionTimeout(connectionTimeout);
 		}
+	}
 
+	private NetworkScanner getNewClamavScanner(String clamdHost, int clamdPort,
+			int connectionTimeout) {
+		NetworkScanner clamavScan = new NetworkScanner();
+		clamavScan.setClamdHost(clamdHost);
+		clamavScan.setClamdPort(clamdPort);
+		clamavScan.setConnectionTimeout(connectionTimeout);
+		return clamavScan;
 	}
 
 	public boolean isDisabled() {
@@ -98,6 +101,7 @@ public class ClamavVirusScannerServiceImpl implements VirusScannerService {
 		if (disabled) 
 			throw new TechnicalException(TechnicalErrorCode.VIRUS_SCANNER_IS_DISABLED, "VirusScanner is disabled");
 		try {
+			NetworkScanner clamavScanner = getNewClamavScanner(clamdHost, clamdPort, defaultConnectionTimeout);
 			// Check if the streamToCheck contains virus
 			boolean isSafe = clamavScanner.performScan(steamToCheck);
 			// consume the messages
@@ -110,6 +114,47 @@ public class ClamavVirusScannerServiceImpl implements VirusScannerService {
 			throw new TechnicalException(
 					TechnicalErrorCode.VIRUS_SCANNER_COMMUNICATION_FAILED, e
 							.getMessage(), e.getCause());
+		}
+	}
+
+	@Override
+	public String getHost() {
+		return clamdHost;
+	}
+
+	@Override
+	public void setHost(String host) {
+		logger.warn("Reconfiguring Clamav current host ...");
+		synchronized (clamdHost) {
+			try {
+				clamdHost = host;
+				logger.warn("Clamav current host reconfigured to " + clamdHost);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("Clamav reconfiguration failed ! ");
+			}
+		}
+	}
+
+	@Override
+	public Integer getPort() {
+		return clamdPort;
+	}
+
+	@Override
+	public void setPort(Integer port) throws Exception {
+		logger.warn("Reconfiguring Clamav current port ...");
+		if (port.equals(0)) {
+			throw new Exception("invalid port value : " + port);
+		}
+		synchronized (clamdPort) {
+			try {
+				clamdPort = port;
+				logger.warn("Clamav current port reconfigured to " + clamdPort);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("Clamav reconfiguration failed ! ");
+			}
 		}
 	}
 
