@@ -36,9 +36,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
@@ -64,13 +62,6 @@ public class UserFacadeImpl extends UserGenericFacadeImp
 	@Override
 	public User checkAuthentication() throws BusinessException {
 		User actor = super.checkAuthentication();
-		Functionality functionality = functionalityReadOnlyService
-				.getUserTabFunctionality(actor.getDomain());
-		if (!functionality.getActivationPolicy().getStatus()) {
-			throw new BusinessException(
-					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
-					"You are not authorized to use this service");
-		}
 		return actor;
 	}
 
