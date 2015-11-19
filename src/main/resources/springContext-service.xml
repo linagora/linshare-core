@@ -274,6 +274,7 @@
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="guestResourceAccessControl" />
+		<constructor-arg ref="logEntryService" />
 	</bean>
 
 	<bean name="technicalAccountService" class="org.linagora.linshare.core.service.impl.TechnicalAccountServiceImpl">

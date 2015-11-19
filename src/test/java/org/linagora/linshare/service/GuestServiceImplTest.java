@@ -47,19 +47,23 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
+import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.RootUserRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
+import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.slf4j.Logger;
@@ -105,6 +109,9 @@ public class GuestServiceImplTest extends
 
 	@Autowired
 	private RootUserRepository rootUserRepository;
+
+	@Autowired
+	private LogEntryService logEntryService;
 
 	private User root;
 
@@ -163,8 +170,18 @@ public class GuestServiceImplTest extends
 		guest.setRole(Role.SUPERADMIN);
 		guest = guestService.create(owner1, owner1, guest, null);
 		Guest find = guestService.find(owner1, owner1, guest.getLsUuid());
+		List<LogEntry> logEntry = logEntryService.findByUser("guest1@linshare.org");
 		Assert.assertNotNull(find);
 		Assert.assertEquals(Role.SIMPLE, find.getRole());
+		Assert.assertEquals(1, logEntry.size());
+		for (LogEntry ule: logEntry) {
+			if (ule instanceof UserLogEntry) {
+				Assert.assertEquals(LogAction.USER_CREATE, ule.getLogAction());
+				Assert.assertEquals("guest1@linshare.org", ((UserLogEntry) ule).getTargetMail());
+			} else {
+				Assert.assertEquals(0, 1);
+			}
+		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -178,10 +195,22 @@ public class GuestServiceImplTest extends
 		guest.setLastName("Last");
 		guest.setRole(Role.SUPERADMIN);
 		Guest update = guestService.update(owner1, owner1, guest, null);
+		List<LogEntry> logEntry = logEntryService.findByUser("guest1@linshare.org");
 
 		Assert.assertEquals(Role.SIMPLE, update.getRole());
 		Assert.assertEquals("First", update.getFirstName());
 		Assert.assertEquals("Last", update.getLastName());
+		Assert.assertEquals(2, logEntry.size());
+		for (LogEntry ule: logEntry) {
+			if (ule instanceof UserLogEntry) {
+				if (ule.getLogAction() != LogAction.USER_CREATE && ule.getLogAction() != LogAction.USER_UPDATE) {
+					Assert.assertEquals(0, 1);
+				}
+				Assert.assertEquals("guest1@linshare.org", ((UserLogEntry) ule).getTargetMail());
+			} else {
+				Assert.assertEquals(0, 1);
+			}
+		}
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
