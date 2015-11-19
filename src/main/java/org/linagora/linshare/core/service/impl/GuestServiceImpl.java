@@ -41,6 +41,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.business.service.impl.GuestBusinessServiceImpl.GuestWithMetadata;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -48,6 +49,7 @@ import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -56,11 +58,10 @@ import org.linagora.linshare.core.rac.GuestResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
+import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -82,12 +83,15 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 
 	private final MailBuildingService mailBuildingService;
 
+	private final LogEntryService LogEntryService;
+
 	public GuestServiceImpl(final GuestBusinessService guestBusinessService,
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final UserService userService,
 			final NotifierService notifierService,
 			final MailBuildingService mailBuildingService,
+			final LogEntryService logEntryService,
 			final GuestResourceAccessControl rac) {
 		super(rac);
 		this.guestBusinessService = guestBusinessService;
@@ -96,6 +100,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		this.userService = userService;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
+		this.LogEntryService = logEntryService;
 	}
 
 	@Override
@@ -199,6 +204,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		MailContainerWithRecipient mail = mailBuildingService.buildNewGuest(
 				owner, create.getGuest(), create.getPassword());
 		notifierService.sendNotification(mail);
+		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_CREATE, "Creating a guest", create.getGuest());
+		LogEntryService.create(userLogEntry);
 		return create.getGuest();
 	}
 
@@ -234,8 +241,12 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		} else {
 			guest.setExpirationDate(entity.getExpirationDate());
 		}
-		return guestBusinessService.update(owner, entity, guest, guestDomain,
+		Guest result = guestBusinessService.update(owner, entity, guest, guestDomain,
 				restrictedContacts);
+		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_UPDATE, "Updating a guest", entity);
+		LogEntryService.create(userLogEntry);
+
+		return result;
 	}
 
 	private void checkDateValidity(User owner, Date oldExpiryDate,
@@ -288,6 +299,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		Guest original = find(actor, owner, lsUuid);
 		checkDeletePermission(actor, owner, Guest.class,
 				BusinessErrorCode.CANNOT_DELETE_USER, original);
+		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_DELETE, "Deleting a guest", original);
+		LogEntryService.create(userLogEntry);
 		guestBusinessService.delete(original);
 	}
 
