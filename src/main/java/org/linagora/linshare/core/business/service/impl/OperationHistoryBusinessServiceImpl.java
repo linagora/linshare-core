@@ -83,4 +83,14 @@ public class OperationHistoryBusinessServiceImpl implements OperationHistoryBusi
 			OperationHistoryTypeEnum operationType, EnsembleType ensembleType) throws BusinessException {
 		return repository.sumOperationValue(account, domain, date, operationType, ensembleType);
 	}
+
+	@Override
+	public List<String> findUuidAccountBeforeDate(Date creationDate, EnsembleType ensembleType) {
+		return repository.findUuidAccountBeforeDate(creationDate, ensembleType);
+	}
+
+	@Override
+	public void deleteBeforeDateByAccount(Date date, Account account) {
+		repository.deleteBeforeDateByAccount(date, account);
+	}
 }

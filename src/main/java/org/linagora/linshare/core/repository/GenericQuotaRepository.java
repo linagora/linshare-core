@@ -45,4 +45,6 @@ public interface GenericQuotaRepository<T extends Quota>
 	T find(AbstractDomain domain, Account account, EnsembleType ensembleType);
 
 	T update(T entity, Long curentValue) throws BusinessException;
+
+	T updateByBatch(T entity) throws BusinessException;
 }

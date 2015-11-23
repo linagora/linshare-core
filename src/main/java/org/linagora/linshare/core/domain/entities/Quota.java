@@ -33,9 +33,13 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+
 public abstract class Quota {
 
 	protected Long id;
+
+	protected String lsUuid;
 
 	protected Account account;
 
@@ -52,6 +56,12 @@ public abstract class Quota {
 	protected Long lastValue;
 
 	protected Long fileSizeMax;
+
+	protected Date creationDate;
+
+	protected Date modificationDate;
+
+	protected Date modificationDateByBatch;
 
 	public Quota() {
 	}
@@ -138,5 +148,37 @@ public abstract class Quota {
 
 	public void setFileSizeMax(Long fileSizeMax) {
 		this.fileSizeMax = fileSizeMax;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	public Date getModificationDateByBatch() {
+		return modificationDateByBatch;
+	}
+
+	public void setModificationDateByBatch(Date modificationDateByBatch) {
+		this.modificationDateByBatch = modificationDateByBatch;
+	}
+
+	public String getLsUuid() {
+		return lsUuid;
+	}
+
+	public void setLsUuid(String lsUuid) {
+		this.lsUuid = lsUuid;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 }

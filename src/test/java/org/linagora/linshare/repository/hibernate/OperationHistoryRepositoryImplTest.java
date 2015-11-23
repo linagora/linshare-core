@@ -193,4 +193,9 @@ public class OperationHistoryRepositoryImplTest extends AbstractTransactionalJUn
 		assertEquals(8,result1.size());
 		assertEquals(1,result2.size());
 	}
+
+	@Test
+	public void testFindUuid() {
+		List<String> result1 = operationHistoryRepository.findUuidAccountBeforeDate(new Date(), EnsembleType.USER);
+	}
 }

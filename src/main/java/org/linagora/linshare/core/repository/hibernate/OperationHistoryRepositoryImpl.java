@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -78,7 +79,9 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 		criteria.add(Restrictions.le("creationDate", Date));
 		criteria.setProjection(Projections.property("account"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		return (List<Account>)getHibernateTemplate().findByCriteria(criteria);
+		@SuppressWarnings("unchecked")
+		List<Account> result = getHibernateTemplate().findByCriteria(criteria);
+		return result;
 	}
 
 	@Override
@@ -134,7 +137,9 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 		criteria.add(Restrictions.lt("creationDate", creationDate));
 		criteria.setProjection(Projections.property("domain"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		return (List<AbstractDomain>)getHibernateTemplate().findByCriteria(criteria);
+		@SuppressWarnings("unchecked")
+		List<AbstractDomain> result = getHibernateTemplate().findByCriteria(criteria);
+		return result;
 	}
 
 
@@ -165,5 +170,32 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 			criteria.add(Restrictions.le("creationDate", date));
 		}
 		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<String> findUuidAccountBeforeDate(Date date, EnsembleType ensembleType) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		if(ensembleType != null){
+			criteria.add(Restrictions.eq("ensembleType", ensembleType));
+		}
+		criteria.add(Restrictions.le("creationDate", date));
+		criteria.setProjection(Projections.property("account"));
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		@SuppressWarnings("unchecked")
+		List<Account> listAccount = getHibernateTemplate().findByCriteria(criteria);
+
+		List<String> listUuid = new ArrayList<>();
+		for(Account account : listAccount){
+			listUuid.add(account.getLsUuid());
+		}
+		return listUuid;
+	}
+
+	@Override
+	public void deleteBeforeDateByAccount(Date date, Account account) {
+		List<OperationHistory> list = find(account, null, null, date);
+		for (OperationHistory entity : list) {
+			super.delete(entity);
+		}
 	}
 }

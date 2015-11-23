@@ -77,9 +77,9 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 			if (domainQuota != null) {
 				Long quota = domainQuota.getQuota();
 				Long quotaWarning = domainQuota.getQuotaWarning();
-				Long tailFileMax = domainQuota.getFileSizeMax();
+				Long fileSizeMax = domainQuota.getFileSizeMax();
 				entity = new AccountQuota(account, account.getDomain(), account.getDomain().getParentDomain(), quota,
-						quotaWarning, tailFileMax, sumOperationValue, (long) 0);
+						quotaWarning, fileSizeMax, sumOperationValue, (long) 0);
 				entity = repository.create(entity);
 			}
 			else{
@@ -87,7 +87,9 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 			}
 		} else {
 			entity = find(account);
-			entity = repository.update(entity, sumOperationValue);
+			entity.setLastValue(entity.getCurrentValue());
+			entity.setCurrentValue(sumOperationValue + entity.getCurrentValue());
+			entity = repository.updateByBatch(entity);
 		}
 		return entity;
 	}

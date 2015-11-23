@@ -58,4 +58,8 @@ public interface OperationHistoryBusinessService {
 
 	Long sumOperationValue(Account account, AbstractDomain domain, Date date, OperationHistoryTypeEnum operationType,
 			EnsembleType ensembleType) throws BusinessException;
+
+	List<String> findUuidAccountBeforeDate(Date creationDate, EnsembleType ensembleType);
+
+	void deleteBeforeDateByAccount(Date date, Account account);
 }
