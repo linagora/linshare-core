@@ -68,8 +68,8 @@ public class OperationHistoryBusinessServiceImpl implements OperationHistoryBusi
 	}
 
 	@Override
-	public void deleteBeforeDate(Date creationDate) {
-		repository.deleteBeforeDate(creationDate);
+	public void deleteBeforeDateByAccount(Account account, Date creationDate) {
+		repository.deleteBeforeDateByAccount(account, creationDate);
 	}
 
 	@Override

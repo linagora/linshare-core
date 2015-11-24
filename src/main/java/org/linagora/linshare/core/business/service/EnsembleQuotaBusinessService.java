@@ -46,9 +46,9 @@ public interface EnsembleQuotaBusinessService {
 
 	boolean exist(AbstractDomain domain, EnsembleType ensembleType);
 
-	EnsembleQuota createOrUpdate(AbstractDomain domain, EnsembleType ensembleType, Date today) throws BusinessException;
-
 	EnsembleQuota create(EnsembleQuota entity) throws BusinessException;
 
 	EnsembleQuota update(EnsembleQuota entity) throws BusinessException;
+
+	EnsembleQuota updateByBatch(EnsembleQuota entity, Date today) throws BusinessException;
 }

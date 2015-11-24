@@ -39,42 +39,42 @@ public class DailyUserBatchImpl extends GenericBatchImpl {
 	@Override
 	public List<String> getAll() {
 		logger.info("DailyUserBatchImpl job starting ...");
-		List<String> users = operationHistoryBusinessService.findUuidAccountBeforeDate(getToday(), EnsembleType.USER);
-		logger.info(users.size() + "user(s) have benn found in OperationHistory table");
+		List<String> users = operationHistoryBusinessService.findUuidAccountBeforeDate(yesterday(), EnsembleType.USER);
+		logger.info(users.size() + "user(s) have been found in OperationHistory table");
 		return users;
 	}
 
 	@Override
 	public Context execute(String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		Date todate = getToday();
+		Date yesterday = yesterday();
 		User resource = userService.findByLsUuid(identifier);
 		Context context = new AccountBatchResultContext(resource);
 		try {
 			logInfo(total, position, "processing user : " + resource.getAccountReprentation());
-			userDailyStatBusinessService.create(resource, todate);
+			userDailyStatBusinessService.create(resource, yesterday);
 		} catch (BusinessException businessException) {
 			logError(total, position, "Error while trying to create a UserDailyStat");
-			logger.info("Error occured while creating a daily statistique for an user", businessException);
+			logger.info("Error occured while creating a daily statistics for an user", businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
-					"Error while trying to create a UserDailySta");
+					"Error while trying to create a UserDailyStat");
 			exception.setBusinessException(businessException);
 			throw exception;
 		}
 		try {
 			logInfo(total, position, "processing user : " + resource.getAccountReprentation());
-			accountQuotaBusinessService.createOrUpdate(resource, todate);
+			accountQuotaBusinessService.createOrUpdate(resource, yesterday);
 		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to create a userQuota");
-			logger.info("Error occured while creating a user quota for an user", businessException);
+			logError(total, position, "Error while trying to update or create userQuota");
+			logger.info("Error occured while update or create an user quota for user", businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
-					"Error while trying to create a userQuota");
+					"Error while trying to update or create a userQuota");
 			exception.setBusinessException(businessException);
 			throw exception;
 		}
 		try {
 			logInfo(total, position, "processing user : " + resource.getAccountReprentation());
-			operationHistoryBusinessService.deleteBeforeDate(todate);
+			operationHistoryBusinessService.deleteBeforeDateByAccount(resource, yesterday);
 		} catch (BusinessException businessException) {
 			logError(total, position, "Error while trying to delete operationHistory for an user");
 			logger.info("Error occured while cleaning operation history for an user", businessException);
@@ -90,7 +90,7 @@ public class DailyUserBatchImpl extends GenericBatchImpl {
 	public void notify(Context context, long total, long position) {
 		AccountBatchResultContext userContext = (AccountBatchResultContext) context;
 		Account user = userContext.getResource();
-		logInfo(total, position, "the DailyUserStatistic and the UserQuota " + user.getAccountReprentation()
+		logInfo(total, position, "the DailyUserStatistic and the UserQuota for " + user.getAccountReprentation()
 				+ " have bean successfully created");
 	}
 
@@ -117,11 +117,12 @@ public class DailyUserBatchImpl extends GenericBatchImpl {
 		logger.info("DailyUserBatchImpl job terminated");
 	}
 
-	private Date getToday() {
+	private Date yesterday() {
 		GregorianCalendar dateCalender = new GregorianCalendar();
-		dateCalender.set(GregorianCalendar.HOUR, 0);
-		dateCalender.set(GregorianCalendar.MINUTE, 0);
-		dateCalender.set(GregorianCalendar.SECOND, 0);
+		dateCalender.add(GregorianCalendar.DATE, -1);
+		dateCalender.set(GregorianCalendar.HOUR, 23);
+		dateCalender.set(GregorianCalendar.MINUTE, 59);
+		dateCalender.set(GregorianCalendar.SECOND, 59);
 		return dateCalender.getTime();
 	}
 }

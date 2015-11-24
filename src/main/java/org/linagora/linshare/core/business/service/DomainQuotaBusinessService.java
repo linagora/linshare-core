@@ -45,9 +45,9 @@ public interface DomainQuotaBusinessService {
 
 	boolean exist(AbstractDomain domain);
 
-	DomainQuota createOrUpdate(AbstractDomain domain, Date today);
-
 	DomainQuota create(DomainQuota entity) throws BusinessException;
 
 	DomainQuota update(DomainQuota entity) throws BusinessException;
+
+	DomainQuota updateByBatch(DomainQuota entity, Date today);
 }

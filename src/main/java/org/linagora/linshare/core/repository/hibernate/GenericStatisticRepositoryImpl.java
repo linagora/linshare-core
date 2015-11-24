@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.constants.StatisticType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GenericStatistic;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.GenericStatisticRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -270,7 +271,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	}
 
 	@Override
-	public T create(T entity) {
+	public T create(T entity) throws BusinessException{
 		entity.setCreationDate(new Date());
 		return super.create(entity);
 	}

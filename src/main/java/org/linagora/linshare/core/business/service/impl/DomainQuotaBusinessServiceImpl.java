@@ -39,19 +39,19 @@ import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.OperationHistoryRepository;
 import org.linagora.linshare.core.repository.DomainQuotaRepository;
+import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
 
 public class DomainQuotaBusinessServiceImpl
 		implements DomainQuotaBusinessService {
 
 	private final DomainQuotaRepository repository;
-	private final OperationHistoryRepository operationHistoryRepository;
+	private final EnsembleQuotaRepository ensembleQuotaRepository;
 
-	public DomainQuotaBusinessServiceImpl(
-			final DomainQuotaRepository domainQuotaRepository, final OperationHistoryRepository operationHistoryRepository) {
+	public DomainQuotaBusinessServiceImpl(final DomainQuotaRepository domainQuotaRepository,
+			final EnsembleQuotaRepository ensembleQuotaRepository) {
 		this.repository = domainQuotaRepository;
-		this.operationHistoryRepository = operationHistoryRepository;
+		this.ensembleQuotaRepository = ensembleQuotaRepository;
 	}
 
 	@Override
@@ -62,29 +62,6 @@ public class DomainQuotaBusinessServiceImpl
 	@Override
 	public boolean exist(AbstractDomain domain) {
 		return find(domain) != null;
-	}
-
-	@Override
-	public DomainQuota createOrUpdate(AbstractDomain domain, Date today) {
-		long sumOperationValue = operationHistoryRepository.sumOperationValue(null, domain, today, null, null);
-		DomainQuota entity;
-		if (!exist(domain)) {
-			DomainQuota parentDomainQuota = repository.find(domain.getParentDomain());
-			if (parentDomainQuota != null) {
-				Long quota = parentDomainQuota.getQuota();
-				Long quotaWarning = parentDomainQuota.getQuotaWarning();
-				Long tailFileMax = parentDomainQuota.getFileSizeMax();
-				entity = new DomainQuota(domain, domain.getParentDomain(), quota, quotaWarning, tailFileMax,
-						sumOperationValue, (long) 0);
-				entity = repository.create(entity);
-			} else {
-				throw new BusinessException(" parent domain of " + domain.getIdentifier()+" does not have a quota yet");
-			}
-		} else {
-			entity = find(domain);
-			entity = repository.update(entity, sumOperationValue);
-		}
-		return entity;
 	}
 
 	@Override
@@ -100,5 +77,19 @@ public class DomainQuotaBusinessServiceImpl
 	@Override
 	public DomainQuota update(DomainQuota entity) throws BusinessException {
 		return repository.update(entity);
+	}
+
+	@Override
+	public DomainQuota updateByBatch(DomainQuota entity, Date date) {
+		AbstractDomain domain = entity.getDomain();
+		if (exist(domain)) {
+			Long sumCurrentValue = ensembleQuotaRepository.sumOfCurrentValue(entity, null, date);
+			entity.setLastValue(entity.getCurrentValue());
+			entity.setCurrentValue(sumCurrentValue);
+			entity = repository.updateByBatch(entity);
+		} else {
+			throw new BusinessException(domain.getIdentifier() + " does not have a quota yet");
+		}
+		return entity;
 	}
 }

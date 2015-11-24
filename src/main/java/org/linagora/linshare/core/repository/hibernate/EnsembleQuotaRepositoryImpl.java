@@ -33,10 +33,18 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.EnsembleQuota;
 import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class EnsembleQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<EnsembleQuota>implements EnsembleQuotaRepository {
@@ -48,5 +56,25 @@ public class EnsembleQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Ense
 	@Override
 	public EnsembleQuota find(AbstractDomain domain, EnsembleType ensembleType) {
 		return super.find(domain, null, ensembleType);
+	}
+
+	@Override
+	public Long sumOfCurrentValue(DomainQuota domainQuota, EnsembleType ensembleType, Date modificationDateByBatch) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+
+		if(domainQuota != null){
+			criteria.add(Restrictions.eq("domainQuota", domainQuota));
+		}
+		if(ensembleType != null){
+			criteria.add(Restrictions.eq("ensembleType", ensembleType));
+		}
+		if(modificationDateByBatch != null){
+			criteria.add(Restrictions.eq("modificationDateByBatch", modificationDateByBatch));
+		}
+		criteria.setProjection(Projections.sum("currentValue"));
+		List<EnsembleQuota> list = findByCriteria(criteria);
+		if (list.size() > 0 && list.get(0) != null)
+			return DataAccessUtils.longResult(findByCriteria(criteria));
+		return (long) 0;
 	}
 }

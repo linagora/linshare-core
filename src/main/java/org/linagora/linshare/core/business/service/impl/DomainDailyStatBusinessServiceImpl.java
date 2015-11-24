@@ -42,7 +42,6 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainDailyStat;
 import org.linagora.linshare.core.repository.DomainDailyStatRepository;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
-import org.linagora.linshare.core.repository.StatisticRepository;
 
 public class DomainDailyStatBusinessServiceImpl
 		implements DomainDailyStatBusinessService {

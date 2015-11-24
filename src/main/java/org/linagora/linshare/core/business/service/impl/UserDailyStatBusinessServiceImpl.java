@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserDailyStat;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
 import org.linagora.linshare.core.repository.UserDailyStatRepository;
 
@@ -60,12 +61,12 @@ public class UserDailyStatBusinessServiceImpl implements UserDailyStatBusinessSe
 	}
 
 	@Override
-	public UserDailyStat create(User user, Date today) {
-		Long sumOperationValue = operationHistoryRepository.sumOperationValue(user, null, today, null, null);
-		Long sumCreateOperationValue = operationHistoryRepository.sumOperationValue(user, null,today, OperationHistoryTypeEnum.CREATE, null);
-		Long sumDeleteOperationValue = operationHistoryRepository.sumOperationValue(user, null,today, OperationHistoryTypeEnum.DELETE, null);
-		Long countCreateOperationValue = operationHistoryRepository.countOperationValue(user, null,today, OperationHistoryTypeEnum.CREATE, null);
-		Long countDeleteOperationValue = operationHistoryRepository.countOperationValue(user, null,today, OperationHistoryTypeEnum.DELETE, null);
+	public UserDailyStat create(User user, Date date) throws BusinessException{
+		Long sumOperationValue = operationHistoryRepository.sumOperationValue(user, null, date, null, null);
+		Long sumCreateOperationValue = operationHistoryRepository.sumOperationValue(user, null,date, OperationHistoryTypeEnum.CREATE, null);
+		Long sumDeleteOperationValue = operationHistoryRepository.sumOperationValue(user, null,date, OperationHistoryTypeEnum.DELETE, null);
+		Long countCreateOperationValue = operationHistoryRepository.countOperationValue(user, null,date, OperationHistoryTypeEnum.CREATE, null);
+		Long countDeleteOperationValue = operationHistoryRepository.countOperationValue(user, null,date, OperationHistoryTypeEnum.DELETE, null);
 		Long countOperationValue = countDeleteOperationValue + countCreateOperationValue;
 		Long diffOperationValue = sumCreateOperationValue + sumDeleteOperationValue;
 		UserDailyStat entity = new UserDailyStat(user, user.getDomain(), user.getDomain().getParentDomain(),

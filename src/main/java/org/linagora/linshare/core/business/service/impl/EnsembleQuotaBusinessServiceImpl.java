@@ -38,25 +38,20 @@ import java.util.Date;
 import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.EnsembleQuota;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.DomainQuotaRepository;
+import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
-import org.linagora.linshare.core.repository.OperationHistoryRepository;
 
 public class EnsembleQuotaBusinessServiceImpl implements EnsembleQuotaBusinessService {
 
 	private final EnsembleQuotaRepository repository;
-	private final OperationHistoryRepository operationHistoryRepository;
-	private final DomainQuotaRepository domainQuotaRepository;
+	private final AccountQuotaRepository accountQuotaRepository;
 
 	public EnsembleQuotaBusinessServiceImpl(final EnsembleQuotaRepository repository,
-			final OperationHistoryRepository operationHistoryRepository,
-			final DomainQuotaRepository domainQuotaRepository) {
+			final AccountQuotaRepository accountQuotaRepository) {
 		this.repository = repository;
-		this.operationHistoryRepository = operationHistoryRepository;
-		this.domainQuotaRepository = domainQuotaRepository;
+		this.accountQuotaRepository = accountQuotaRepository;
 	}
 
 	@Override
@@ -70,37 +65,12 @@ public class EnsembleQuotaBusinessServiceImpl implements EnsembleQuotaBusinessSe
 	}
 
 	@Override
-	public EnsembleQuota createOrUpdate(AbstractDomain domain, EnsembleType ensembleType, Date today)
-			throws BusinessException {
-		Long sumOperationValue = operationHistoryRepository.sumOperationValue(null, domain, today, null, ensembleType);
-		EnsembleQuota entity;
-		if (!exist(domain, ensembleType)) {
-			DomainQuota domainQuota = domainQuotaRepository.find(domain.getParentDomain());
-			if (domainQuota != null) {
-				Long quota = domainQuota.getQuota();
-				Long quotaWarning = domainQuota.getQuotaWarning();
-				Long tailFileMax = domainQuota.getFileSizeMax();
-				entity = new EnsembleQuota(domain, domain.getParentDomain(), quota, quotaWarning, tailFileMax,
-						sumOperationValue, (long) 0, ensembleType);
-				entity = repository.create(entity);
-			} else {
-				throw new BusinessException(
-						domain.getIdentifier() + " domain does not have a quota yet");
-			}
-		} else {
-			entity = find(domain, ensembleType);
-			entity = repository.update(entity, sumOperationValue);
-		}
-		return entity;
-	}
-
-	@Override
 	public EnsembleQuota create(EnsembleQuota entity) throws BusinessException {
 		AbstractDomain domain = entity.getDomain();
 		EnsembleType ensembleType = entity.getEnsembleType();
-		if(exist(domain, ensembleType)){
+		if (exist(domain, ensembleType)) {
 			throw new BusinessException("It must be only one EnsembleQuota for any entity");
-		}else{
+		} else {
 			return repository.create(entity);
 		}
 	}
@@ -108,5 +78,20 @@ public class EnsembleQuotaBusinessServiceImpl implements EnsembleQuotaBusinessSe
 	@Override
 	public EnsembleQuota update(EnsembleQuota entity) throws BusinessException {
 		return repository.update(entity);
+	}
+
+	@Override
+	public EnsembleQuota updateByBatch(EnsembleQuota entity, Date date) throws BusinessException {
+		AbstractDomain domain = entity.getDomain();
+		EnsembleType ensembleType = entity.getEnsembleType();
+		if (exist(domain, ensembleType)) {
+			Long sumCurrentValue = accountQuotaRepository.sumOfCurrentValue(entity, date);
+			entity.setLastValue(entity.getCurrentValue());
+			entity.setCurrentValue(sumCurrentValue);
+			entity = repository.updateByBatch(entity);
+		} else {
+			throw new BusinessException(domain.getIdentifier() + " domain does not have an ensemble quota yet");
+		}
+		return entity;
 	}
 }

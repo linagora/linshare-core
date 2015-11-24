@@ -54,7 +54,7 @@ public interface OperationHistoryRepository extends AbstractRepository<Operation
 
 	List<AbstractDomain> findDomainBeforeDate(Date creationDate);
 
-	void deleteBeforeDate(Date creationDate);
+	void deleteBeforeDateByAccount(Account account, Date creationDate);
 
 	List<String> findUuidAccountBeforeDate(Date date, EnsembleType ensembleType);
 

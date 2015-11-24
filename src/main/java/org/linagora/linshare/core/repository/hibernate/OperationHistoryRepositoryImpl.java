@@ -144,8 +144,8 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 
 
 	@Override
-	public void deleteBeforeDate(Date creationDate) {
-		List<OperationHistory> list = find(null, null, null, creationDate);
+	public void deleteBeforeDateByAccount(Account account, Date creationDate) {
+		List<OperationHistory> list = find(account, null, null, creationDate);
 		for (OperationHistory entity : list) {
 			super.delete(entity);
 		}

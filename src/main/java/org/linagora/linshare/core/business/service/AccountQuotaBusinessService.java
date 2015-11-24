@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
@@ -50,4 +51,6 @@ public interface AccountQuotaBusinessService {
 	AccountQuota create(AccountQuota entity) throws BusinessException;
 
 	AccountQuota update(AccountQuota entity) throws BusinessException;
+
+	List<String> findDomainByBatchModificationDate(Date date);
 }

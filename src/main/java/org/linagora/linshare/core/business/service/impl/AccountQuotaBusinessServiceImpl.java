@@ -34,14 +34,19 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
+import org.linagora.linshare.core.domain.constants.EnsembleType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
+import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.linagora.linshare.core.repository.DomainQuotaRepository;
+import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
 
 public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessService {
@@ -49,13 +54,15 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 	private final AccountQuotaRepository repository;
 	private final OperationHistoryRepository operationHistoryRepository;
 	private final DomainQuotaRepository domainQuotaRepository;
+	private final EnsembleQuotaRepository ensembleQuotaRepository;
 
 	public AccountQuotaBusinessServiceImpl(final AccountQuotaRepository repository,
 			final OperationHistoryRepository operationHistoryRepository,
-			final DomainQuotaRepository domainQuotaRepository) {
+			final DomainQuotaRepository domainQuotaRepository, final EnsembleQuotaRepository ensembleQuotaRepository) {
 		this.repository = repository;
 		this.operationHistoryRepository = operationHistoryRepository;
 		this.domainQuotaRepository = domainQuotaRepository;
+		this.ensembleQuotaRepository = ensembleQuotaRepository;
 	}
 
 	@Override
@@ -69,20 +76,33 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 	}
 
 	@Override
-	public AccountQuota createOrUpdate(Account account, Date today) throws BusinessException {
-		Long sumOperationValue = operationHistoryRepository.sumOperationValue(account, null, today, null, null);
+	public AccountQuota createOrUpdate(Account account, Date date) throws BusinessException {
+		Long sumOperationValue = operationHistoryRepository.sumOperationValue(account, null, date, null, null);
 		AccountQuota entity;
 		if (!exist(account)) {
 			DomainQuota domainQuota = domainQuotaRepository.find(account.getDomain());
-			if (domainQuota != null) {
-				Long quota = domainQuota.getQuota();
-				Long quotaWarning = domainQuota.getQuotaWarning();
-				Long fileSizeMax = domainQuota.getFileSizeMax();
-				entity = new AccountQuota(account, account.getDomain(), account.getDomain().getParentDomain(), quota,
-						quotaWarning, fileSizeMax, sumOperationValue, (long) 0);
-				entity = repository.create(entity);
+			EnsembleType ensembleType;
+
+			// TODO to check
+			if (account instanceof User) {
+				ensembleType = EnsembleType.USER;
+			} else {
+				ensembleType = EnsembleType.THREAD;
 			}
-			else{
+			if (domainQuota != null) {
+				EnsembleQuota ensembleQuota = ensembleQuotaRepository.find(account.getDomain(), ensembleType);
+				if (ensembleQuota != null) {
+					Long quota = domainQuota.getQuota();
+					Long quotaWarning = domainQuota.getQuotaWarning();
+					Long fileSizeMax = domainQuota.getFileSizeMax();
+					entity = new AccountQuota(account, account.getDomain(), account.getDomain().getParentDomain(),
+							ensembleQuota, quota, quotaWarning, fileSizeMax, sumOperationValue, (long) 0);
+					entity = repository.create(entity);
+				} else {
+					throw new BusinessException(
+							account.getDomain().getIdentifier() + " domain does not have a ensemble quota yet");
+				}
+			} else {
 				throw new BusinessException(account.getDomain().getIdentifier() + " domain does not have a quota yet");
 			}
 		} else {
@@ -107,5 +127,10 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 	@Override
 	public AccountQuota update(AccountQuota entity) throws BusinessException {
 		return repository.update(entity);
+	}
+
+	@Override
+	public List<String> findDomainByBatchModificationDate(Date date) {
+		return repository.findDomainByBatchModificationDate(date);
 	}
 }
