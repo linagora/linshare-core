@@ -40,6 +40,7 @@ import org.linagora.linshare.core.business.service.UserWeeklyStatBusinessService
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserWeeklyStat;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserDailyStatRepository;
 import org.linagora.linshare.core.repository.UserWeeklyStatRepository;
 
@@ -55,7 +56,7 @@ public class UserWeeklyStatBusinessServiceImpl implements UserWeeklyStatBusiness
 	}
 
 	@Override
-	public UserWeeklyStat create(User user, Date beginDate, Date endDate) {
+	public UserWeeklyStat create(User user, Date beginDate, Date endDate) throws BusinessException{
 		Long actualOperationSum = userDailyStatRepository.sumOfActualOperationSum(null, user, beginDate, endDate);
 		Long operationCount = userDailyStatRepository.sumOfOperationCount(null, user, beginDate, endDate);
 		Long createOperationSum = userDailyStatRepository.sumOfCreateOperationSum(null, user, beginDate, endDate);

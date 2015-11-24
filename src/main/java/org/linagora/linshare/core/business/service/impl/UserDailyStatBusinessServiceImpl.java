@@ -85,4 +85,9 @@ public class UserDailyStatBusinessServiceImpl implements UserDailyStatBusinessSe
 	public List<UserDailyStat> findBetweenTwoDates(User user, Date beginDate, Date endDate) {
 		return repository.findBetweenTwoDates(user, null, null, beginDate, endDate, null);
 	}
+
+	@Override
+	public List<String> findUuidAccountBetweenTwoDates(Date beginDate, Date endDate) {
+		return repository.findUuidAccountBetweenTwoDates(beginDate, endDate);
+	}
 }

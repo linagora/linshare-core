@@ -90,4 +90,9 @@ public class ThreadDailyStatBusinessServiceImpl implements ThreadDailyStatBusine
 	public List<Account> findAccountBetweenTwoDates(Date beginDate, Date endDate) {
 		return repository.findAccountBetweenTwoDates(beginDate, endDate);
 	}
+
+	@Override
+	public List<String> findUuidAccountBetweenTwoDates(Date beginDate, Date endDate) {
+		return repository.findUuidAccountBetweenTwoDates(beginDate, endDate);
+	}
 }

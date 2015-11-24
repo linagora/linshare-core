@@ -49,4 +49,6 @@ public interface ThreadDailyStatBusinessService {
 	void deleteBeforeDate(Date date);
 
 	List<Account> findAccountBetweenTwoDates(Date beginDate, Date endDate);
+
+	List<String> findUuidAccountBetweenTwoDates(Date beginDate, Date endDate);
 }

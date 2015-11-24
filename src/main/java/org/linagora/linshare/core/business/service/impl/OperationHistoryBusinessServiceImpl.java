@@ -68,11 +68,6 @@ public class OperationHistoryBusinessServiceImpl implements OperationHistoryBusi
 	}
 
 	@Override
-	public void deleteBeforeDateByAccount(Account account, Date creationDate) {
-		repository.deleteBeforeDateByAccount(account, creationDate);
-	}
-
-	@Override
 	public List<OperationHistory> find(Account account, AbstractDomain domain, EnsembleType ensembleType, Date date)
 			throws BusinessException {
 		return repository.find(account, domain, ensembleType, date);

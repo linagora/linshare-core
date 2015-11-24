@@ -52,7 +52,7 @@ public class DailyThreadBatchImpl extends GenericBatchImpl {
 		Thread resource = threadService.findByLsUuidUnprotected(identifier);
 		Context context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(total, position, "processing user : " + resource.getAccountReprentation());
+			logInfo(total, position, "processing thread : " + resource.getAccountReprentation());
 			threadDailyStatBusinessService.create(resource, yseterday);
 		} catch (BusinessException businessException) {
 			logError(total, position, "Error while trying to create a threadDailyStat.");
@@ -63,7 +63,7 @@ public class DailyThreadBatchImpl extends GenericBatchImpl {
 			throw exception;
 		}
 		try {
-			logInfo(total, position, "processing user : " + resource.getAccountReprentation());
+			logInfo(total, position, "processing thread : " + resource.getAccountReprentation());
 			accountQuotaBusinessService.createOrUpdate(resource, yseterday);
 		} catch (BusinessException businessException) {
 			logError(total, position, "Error while trying to update or create a threadQuota.");
@@ -74,7 +74,7 @@ public class DailyThreadBatchImpl extends GenericBatchImpl {
 			throw exception;
 		}
 		try {
-			logInfo(total, position, "processing user : " + resource.getAccountReprentation());
+			logInfo(total, position, "processing thread : " + resource.getAccountReprentation());
 			operationHistoryBusinessService.deleteBeforeDateByAccount(yseterday, resource);
 		} catch (BusinessException businessException) {
 			logError(total, position, "Error while trying to delete operationHistory for a thread.");

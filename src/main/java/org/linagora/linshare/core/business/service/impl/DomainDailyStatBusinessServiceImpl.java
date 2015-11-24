@@ -85,4 +85,9 @@ public class DomainDailyStatBusinessServiceImpl
 	public List<AbstractDomain> findDomainBetweenTwoDates(Date beginDate, Date endDate) {
 		return repository.findDomainBetweenTwoDates(beginDate, endDate);
 	}
+
+	@Override
+	public List<String> findIdentifierDomainBetweenTwoDates(Date beginDate, Date endDate) {
+		return repository.findIdentifierDomainBetweenTwoDates(beginDate, endDate);
+	}
 }

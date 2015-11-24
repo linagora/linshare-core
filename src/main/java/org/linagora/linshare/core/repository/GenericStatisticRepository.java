@@ -6,7 +6,6 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.StatisticType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AccountStatistic;
 import org.linagora.linshare.core.domain.entities.GenericStatistic;
 
 public interface GenericStatisticRepository<T extends GenericStatistic> extends AbstractRepository<T> {
@@ -17,7 +16,11 @@ public interface GenericStatisticRepository<T extends GenericStatistic> extends 
 
 	List<Account> findAccountBetweenTwoDates(Date beginDate, Date endDate);
 
+	List<String> findUuidAccountBetweenTwoDates(Date beginDate, Date endDate);
+
 	List<AbstractDomain> findDomainBetweenTwoDates(Date beginDate, Date endDate);
+
+	List<String> findIdentifierDomainBetweenTwoDates(Date beginDate, Date endDate);
 
 	T create(T entity);
 

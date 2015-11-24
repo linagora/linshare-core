@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -247,7 +248,9 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		}
 		criteria.setProjection(Projections.property("domain"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		return (List<AbstractDomain>)getHibernateTemplate().findByCriteria(criteria);
+		@SuppressWarnings("unchecked")
+		List<AbstractDomain> listDomains = getHibernateTemplate().findByCriteria(criteria);
+		return  listDomains;
 	}
 
 	@Override
@@ -261,7 +264,9 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		}
 		criteria.setProjection(Projections.property("account"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		return (List<Account>)getHibernateTemplate().findByCriteria(criteria);
+		@SuppressWarnings("unchecked")
+		List<Account> listAccounts = getHibernateTemplate().findByCriteria(criteria);
+		return listAccounts;
 	}
 
 	@Override
@@ -274,5 +279,47 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	public T create(T entity) throws BusinessException{
 		entity.setCreationDate(new Date());
 		return super.create(entity);
+	}
+
+	@Override
+	public List<String> findUuidAccountBetweenTwoDates(Date beginDate, Date endDate) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		if (beginDate != null) {
+			criteria.add(Restrictions.ge("creationDate", beginDate));
+		}
+		if (endDate != null) {
+			criteria.add(Restrictions.le("creationDate", endDate));
+		}
+		criteria.setProjection(Projections.property("account"));
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		@SuppressWarnings("unchecked")
+		List<Account> listAccount = getHibernateTemplate().findByCriteria(criteria);
+
+		List<String> listUuid = new ArrayList<>();
+		for (Account acccount : listAccount) {
+			listUuid.add(acccount.getLsUuid());
+		}
+		return listUuid;
+	}
+
+	@Override
+	public List<String> findIdentifierDomainBetweenTwoDates(Date beginDate, Date endDate) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		if (beginDate != null) {
+			criteria.add(Restrictions.ge("creationDate", beginDate));
+		}
+		if (endDate != null) {
+			criteria.add(Restrictions.le("creationDate", endDate));
+		}
+		criteria.setProjection(Projections.property("domain"));
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		@SuppressWarnings("unchecked")
+		List<AbstractDomain> listDomain = getHibernateTemplate().findByCriteria(criteria);
+
+		List<String> identifiers = new ArrayList<>();
+		for (AbstractDomain domain : listDomain) {
+			identifiers.add(domain.getIdentifier());
+		}
+		return identifiers;
 	}
 }
