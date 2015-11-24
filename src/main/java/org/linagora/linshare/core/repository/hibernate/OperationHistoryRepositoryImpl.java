@@ -142,15 +142,6 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 		return result;
 	}
 
-
-	@Override
-	public void deleteBeforeDateByAccount(Account account, Date creationDate) {
-		List<OperationHistory> list = find(account, null, null, creationDate);
-		for (OperationHistory entity : list) {
-			super.delete(entity);
-		}
-	}
-
 	@Override
 	public List<OperationHistory> find(Account account, AbstractDomain domain, EnsembleType ensembleType, Date date) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());

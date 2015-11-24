@@ -37,35 +37,31 @@ import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.DomainDailyStatBusinessService;
-import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainDailyStat;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainDailyStatRepository;
-import org.linagora.linshare.core.repository.OperationHistoryRepository;
+import org.linagora.linshare.core.repository.UserDailyStatRepository;
 
 public class DomainDailyStatBusinessServiceImpl
 		implements DomainDailyStatBusinessService {
 
 	private final DomainDailyStatRepository repository;
-	private final OperationHistoryRepository operationHistoryRepository;
+	private final UserDailyStatRepository userDailyStatRepository;
 
 	public DomainDailyStatBusinessServiceImpl(final DomainDailyStatRepository repository,
-			final OperationHistoryRepository operationHistoryRepository) {
+			final UserDailyStatRepository userDailyStatRepository) {
 		this.repository = repository;
-		this.operationHistoryRepository = operationHistoryRepository;
+		this.userDailyStatRepository = userDailyStatRepository;
 	}
 
 	@Override
-	public DomainDailyStat create(AbstractDomain domain, Date date) {
-		Long actualOperationSum = operationHistoryRepository.sumOperationValue(null, domain, date, null, null);
-		Long createOperationSum = operationHistoryRepository.sumOperationValue(null, domain, date,
-				OperationHistoryTypeEnum.CREATE, null);
-		Long createOperationCount = operationHistoryRepository.countOperationValue(null, domain, date,
-				OperationHistoryTypeEnum.CREATE, null);
-		Long deleteOperationSum = operationHistoryRepository.sumOperationValue(null, domain, date,
-				OperationHistoryTypeEnum.DELETE, null);
-		Long deleteOperationCount = operationHistoryRepository.countOperationValue(null, domain, date,
-				OperationHistoryTypeEnum.DELETE, null);
+	public DomainDailyStat create(AbstractDomain domain, Date date) throws BusinessException{
+		Long actualOperationSum = userDailyStatRepository.sumOfActualOperationSum(domain, null, date, date);
+		Long createOperationSum = userDailyStatRepository.sumOfCreateOperationSum(domain, null, date, date);
+		Long createOperationCount = userDailyStatRepository.sumOfCreateOperationCount(domain, null, date, date);
+		Long deleteOperationSum = userDailyStatRepository.sumOfDeleteOperationSum(domain, null, date, date);
+		Long deleteOperationCount = userDailyStatRepository.sumOfDeleteOperationCount(domain, null, date, date);
 		Long operationCount = deleteOperationCount + createOperationCount;
 		Long diffOperationSum = createOperationSum + deleteOperationSum;
 		DomainDailyStat entity = new DomainDailyStat(domain, domain.getParentDomain(), operationCount,
@@ -89,5 +85,4 @@ public class DomainDailyStatBusinessServiceImpl
 	public List<AbstractDomain> findDomainBetweenTwoDates(Date beginDate, Date endDate) {
 		return repository.findDomainBetweenTwoDates(beginDate, endDate);
 	}
-
 }

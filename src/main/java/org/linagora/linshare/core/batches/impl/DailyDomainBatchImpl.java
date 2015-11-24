@@ -58,8 +58,7 @@ public class DailyDomainBatchImpl extends GenericBatchImpl {
 		Context context = new DomainBatchResultContext(resource);
 		try {
 			logInfo(total, position, "processing domain : " + resource.getDescription());
-			// TODO modification
-			// domainDailyStatBusinessService.create(resource, yesterday);
+			domainDailyStatBusinessService.create(resource, today);
 		} catch (BusinessException businessException) {
 			logError(total, position, "Error while trying to create DomainDailyStat");
 			logger.info("Error occured while creating daily statistics for domain", businessException);

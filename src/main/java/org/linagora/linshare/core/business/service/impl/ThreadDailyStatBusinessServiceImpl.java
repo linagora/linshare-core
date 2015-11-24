@@ -40,6 +40,7 @@ import org.linagora.linshare.core.business.service.ThreadDailyStatBusinessServic
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ThreadDailyStat;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
 import org.linagora.linshare.core.repository.ThreadDailyStatRepository;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -56,7 +57,7 @@ public class ThreadDailyStatBusinessServiceImpl implements ThreadDailyStatBusine
 	}
 
 	@Override
-	public ThreadDailyStat create(Thread thread, Date date) {
+	public ThreadDailyStat create(Thread thread, Date date) throws BusinessException{
 		Long actualOperationSum = operationHistoryRepository.sumOperationValue(thread, null, date, null, null);
 		Long createOperationSum = operationHistoryRepository.sumOperationValue(thread, null, date,
 				OperationHistoryTypeEnum.CREATE, null);
