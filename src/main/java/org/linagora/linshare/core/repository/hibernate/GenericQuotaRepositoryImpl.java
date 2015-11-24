@@ -34,8 +34,8 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
+import java.util.UUID;
 
-import org.apache.jackrabbit.uuid.UUID;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
@@ -57,10 +57,11 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 	@Override
 	public T create(T entity) throws BusinessException {
 		entity.setLastValue((long) 0);
+		entity.setCurrentValue((long) 0);
 		entity.setCreationDate(new Date());
 		entity.setModificationDate(new Date());
-		entity.setModificationDateByBatch(new Date());
-		entity.setLsUuid(UUID.randomUUID().toString());
+		entity.setBatchModificationDate(new Date());
+		entity.setUuid(UUID.randomUUID().toString());
 		return super.create(entity);
 	}
 
@@ -72,7 +73,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 
 	@Override
 	public T updateByBatch(T entity) throws BusinessException {
-		entity.setModificationDateByBatch(new Date());
+		entity.setBatchModificationDate(new Date());
 		return super.update(entity);
 	}
 

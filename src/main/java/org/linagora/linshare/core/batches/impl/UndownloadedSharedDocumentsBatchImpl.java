@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.batches.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -52,6 +53,9 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryGroupService;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 
@@ -79,10 +83,10 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 	@Override
 	public List<String> getAll() {
 		logger.info("UndownloadedSharedDocumentsBatchImpl job starting ...");
-		SystemAccount actor = getSystemAccount();
-		List<String> allUuids = service.findAllAboutToBeNotified(actor, actor);
-		logger.info(allUuids.size()
-				+ " shareEntryGroup with undownloaded documents");
+		List<String> allUuids = service.findAllAboutToBeNotified(getSystemAccount(), getSystemAccount());
+		logger.info(allUuids.size() + " shareEntryGroup with undownloaded documents");
+//		Map<String, List<String>> res = Maps.newHashMap();
+//		res.put(INPUT_LIST, allUuids);
 		return allUuids;
 	}
 
@@ -96,8 +100,7 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 		MailContainerWithRecipient mail = null;
 		try {
 			// No more info ?
-			logInfo(total, position, "processing shareEntryGroup : "
-					+ shareEntryGroup.getUuid());
+			logInfo(total, position, "processing shareEntryGroup : " + shareEntryGroup.getUuid());
 			logger.info("needNotification : " + shareEntryGroup.needNotification());
 			if (shareEntryGroup.needNotification()) {
 				// log action and notification
@@ -108,31 +111,30 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 			} else {
 				// only log action
 				logActions(shareEntryGroup, LogAction.SHARE_WITH_USD_DOWNLOADED);
-				// Nothing to do ? set notified to true ? or set expiration to null ? 
+				// Nothing to do ? set notified to true ? or set expiration to
+				// null ?
 				// How to exclude them from finders ?
 			}
 		} catch (BusinessException businessException) {
-			logError(total, position,
-					"Error while trying to send a notification for undownloaded shared documents");
-			logger.error("Error occured while sending notification ",
-					businessException);
-			BatchBusinessException exception = new BatchBusinessException(
-					context,
+			logError(total, position, "Error while trying to send a notification for undownloaded shared documents");
+			logger.error("Error occured while sending notification ", businessException);
+			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to send a notification for undownloaded shared documents");
 			exception.setBusinessException(businessException);
 			throw exception;
 		}
-		// Once every thing is ok, transaction is about to be committed, we can send the notification.
+		// Once every thing is ok, transaction is about to be committed, we can
+		// send the notification.
 		notifierService.sendNotification(mail);
 		return context;
 	}
 
 	private void logActions(ShareEntryGroup shareEntryGroup, LogAction logAction) {
-		for (ShareEntry share : shareEntryGroup.getShareEntries()){
+		for (ShareEntry share : shareEntryGroup.getShareEntries()) {
 			ShareLogEntry logEntry = new ShareLogEntry(shareEntryGroup.getOwner(), share, logAction, "");
 			logService.create(logEntry);
 		}
-		for (AnonymousShareEntry anonymousShare : shareEntryGroup.getAnonymousShareEntries()){
+		for (AnonymousShareEntry anonymousShare : shareEntryGroup.getAnonymousShareEntries()) {
 			ShareLogEntry logEntry = new ShareLogEntry(shareEntryGroup.getOwner(), anonymousShare, logAction, "");
 			logService.create(logEntry);
 		}
@@ -143,39 +145,29 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<ShareEntryGroup> shareEntryGroupContext = (BatchResultContext<ShareEntryGroup>) context;
 
-		logInfo(total, position,
-				"The notification for the shareEntryGroup "
-						+ shareEntryGroupContext.getResource().getUuid()
-						+ " has been successfully sent ");
+		logInfo(total, position, "The notification for the shareEntryGroup "
+				+ shareEntryGroupContext.getResource().getUuid() + " has been successfully sent ");
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, String identifier,
-			long total, long position) {
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
 		@SuppressWarnings("unchecked")
-		BatchResultContext<ShareEntryGroup> context = (BatchResultContext<ShareEntryGroup>) exception
-				.getContext();
+		BatchResultContext<ShareEntryGroup> context = (BatchResultContext<ShareEntryGroup>) exception.getContext();
 		logError(total, position,
-				"Sending undownload shared documents notification has failed : "
-						+ context.getResource().getUuid());
-		logger.error(
-				"Error occured while Sending undownload shared documents notification "
-						+ context.getResource().getUuid()
-						+ ". BatchBusinessException ",
-				exception);
+				"Sending undownload shared documents notification has failed : " + context.getResource().getUuid());
+		logger.error("Error occured while Sending undownload shared documents notification "
+				+ context.getResource().getUuid() + ". BatchBusinessException ", exception);
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
+	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " notification have been sent.");
 		if (errors > 0) {
 			logger.error(errors + " notifications has not been sent.");
 		}
 		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " notification failed to be sent (unhandled error).");
+			logger.error(unhandled_errors + " notification failed to be sent (unhandled error).");
 		}
 		logger.info("UndownloadedSharedDocumentsBatchImpl job terminated.");
 	}

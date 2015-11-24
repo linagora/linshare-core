@@ -41,14 +41,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.PlatformQuotaDto;
 
 public interface QuotaFacade {
 
-	AccountQuotaDto create(AccountQuotaDto entity) throws BusinessException;
-
-	DomainQuotaDto create(DomainQuotaDto entity) throws BusinessException;
-
-	EnsembleQuotaDto create(EnsembleQuotaDto entity) throws BusinessException;
-
-	PlatformQuotaDto create(PlatformQuotaDto entity) throws BusinessException;
-
 	AccountQuotaDto update(AccountQuotaDto entity) throws BusinessException;
 
 	DomainQuotaDto update(DomainQuotaDto entity) throws BusinessException;

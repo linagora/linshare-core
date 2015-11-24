@@ -11,6 +11,7 @@
 			<generator class="native"></generator>
 		</id>
 		<discriminator column="quota_type" type="string"/>
+		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
 		<property name="currentValue" column="current_value" type="long"
 			not-null="true" />
 		<property name="lastValue" column="last_value" type="long"
@@ -18,6 +19,9 @@
 		<property name="quota" column="quota"/>
 		<property name="quotaWarning" column="quota_warning"/>
 		<property name="fileSizeMax" column="file_size_max"/>
+		<property name="creationDate" column="creation_date" type = "date"/>
+		<property name="modificationDate" column="modification_date" type = "date"/>
+		<property name="batchModificationDate" column="batch_modification_date" type="date"/>
 		<many-to-one name="domain" column="domain_id"
 			class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy" >
 		</many-to-one>
@@ -28,9 +32,12 @@
 			class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy">
 		</many-to-one>
 		<subclass name="org.linagora.linshare.core.domain.entities.DomainQuota" discriminator-value="DOMAIN_QUOTA" />
-		<subclass name="org.linagora.linshare.core.domain.entities.AccountQuota" discriminator-value="ACCOUNT_QUOTA" />
+		<subclass name="org.linagora.linshare.core.domain.entities.AccountQuota" discriminator-value="ACCOUNT_QUOTA" >
+			<many-to-one name="ensembleQuota" column="ensemble_quota" class="org.linagora.linshare.core.domain.entities.EnsembleQuota" />
+		</subclass>
 		<subclass name="org.linagora.linshare.core.domain.entities.EnsembleQuota" discriminator-value="ENSEMBLE_QUOTA" >
 			<property name="ensembleType" column="ensemble_type" type="ensembleType"/>
+			<many-to-one name="domainQuota" column="domain_quota" class="org.linagora.linshare.core.domain.entities.DomainQuota"/>
 		</subclass>
 		<subclass name="org.linagora.linshare.core.domain.entities.PlatformQuota" discriminator-value="PLATFORM_QUOTA" />
 	</class>

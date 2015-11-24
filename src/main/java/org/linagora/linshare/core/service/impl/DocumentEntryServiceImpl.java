@@ -78,6 +78,7 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.mongo.entities.EventNotification;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -119,6 +120,8 @@ public class DocumentEntryServiceImpl
 
 	private final boolean overrideGlobalQuota;
 
+	private final QuotaService quotaService;
+
 	public DocumentEntryServiceImpl(
 			DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
@@ -134,7 +137,8 @@ public class DocumentEntryServiceImpl
 			NotifierService notifierService, 
 			Long virusscannerLimitFilesize,
 			boolean overrideGlobalQuota,
-			OperationHistoryBusinessService operationHistoryBusinessService) {
+			OperationHistoryBusinessService operationHistoryBusinessService,
+			QuotaService quotaService) {
 		super(rac);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
@@ -150,6 +154,7 @@ public class DocumentEntryServiceImpl
 		this.notifierService = notifierService;
 		this.virusscannerLimitFilesize = virusscannerLimitFilesize;
 		this.overrideGlobalQuota = overrideGlobalQuota;
+		this.quotaService = quotaService;
 	}
 
 	@Override
@@ -234,6 +239,9 @@ public class DocumentEntryServiceImpl
 					.getEnciphermentFunctionality(domain);
 			Boolean checkIfIsCiphered = enciphermentFunctionality
 					.getActivationPolicy().getStatus();
+
+			//check if user can add file
+			quotaService.checkIfUserCanAddFile(actor, owner, size, EnsembleType.USER);
 
 			// We need to set an expiration date in case of file cleaner
 			// activation.

@@ -45,8 +45,8 @@ public class EnsembleQuota extends Quota {
 		super();
 	}
 
-	public EnsembleQuota(AbstractDomain domain, AbstractDomain parentDomain, DomainQuota domainQuota, Long quota,
-			Long quotaWarning, Long fileSizeMax, Long currentValue, Long lastValue, EnsembleType ensembleType) {
+	public EnsembleQuota(AbstractDomain domain, AbstractDomain parentDomain, DomainQuota domainQuota, long quota,
+			long quotaWarning, long fileSizeMax, long currentValue, long lastValue, EnsembleType ensembleType) {
 		super(null, domain, parentDomain, quota, quotaWarning, fileSizeMax, currentValue, lastValue);
 		this.ensembleType = ensembleType;
 		this.domainQuota = domainQuota;

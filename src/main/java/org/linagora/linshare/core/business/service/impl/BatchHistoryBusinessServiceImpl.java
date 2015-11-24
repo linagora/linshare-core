@@ -31,9 +31,56 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.batches;
 
-public interface WeeklyBatch {
+package org.linagora.linshare.core.business.service.impl;
 
-	void executeBatch();
+import java.util.Date;
+import java.util.List;
+
+import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
+import org.linagora.linshare.core.domain.constants.BatchType;
+import org.linagora.linshare.core.domain.entities.BatchHistory;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.BatchHistoryRepository;
+
+public class BatchHistoryBusinessServiceImpl implements BatchHistoryBusinessService {
+
+	private final BatchHistoryRepository batchHistoryRepository;
+
+	public BatchHistoryBusinessServiceImpl(final BatchHistoryRepository batchHistoryRepository) {
+		super();
+		this.batchHistoryRepository = batchHistoryRepository;
+	}
+
+	@Override
+	public BatchHistory create(BatchHistory entity) throws BusinessException {
+		entity = batchHistoryRepository.create(entity);
+		return entity;
+	}
+
+	@Override
+	public BatchHistory update(BatchHistory entity) throws BusinessException {
+		entity = batchHistoryRepository.update(entity);
+		return entity;
+	}
+
+	@Override
+	public List<BatchHistory> find(Date beginDate, Date endDate, BatchType batchType, String status) {
+		return batchHistoryRepository.find(beginDate, endDate, batchType, status);
+	}
+
+	@Override
+	public boolean exist(Date beginDate, Date endDate, BatchType batchType) {
+		return batchHistoryRepository.exist(beginDate, endDate, batchType);
+	}
+
+	@Override
+	public void deleteBeforeDate(Date date) throws BusinessException {
+		batchHistoryRepository.deleteBeforeDate(date);
+	}
+
+	@Override
+	public BatchHistory findByUuid(String lsUuid) throws BusinessException {
+		return batchHistoryRepository.findByUuid(lsUuid);
+	}
 }

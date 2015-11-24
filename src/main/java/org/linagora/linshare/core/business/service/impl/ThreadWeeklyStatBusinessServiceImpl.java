@@ -40,6 +40,7 @@ import org.linagora.linshare.core.business.service.ThreadWeeklyStatBusinessServi
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadWeeklyStat;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadDailyStatRepository;
 import org.linagora.linshare.core.repository.ThreadWeeklyStatRepository;
 
@@ -55,7 +56,7 @@ public class ThreadWeeklyStatBusinessServiceImpl implements ThreadWeeklyStatBusi
 	}
 
 	@Override
-	public ThreadWeeklyStat create(Thread thread, Date beginDate, Date endDate) {
+	public ThreadWeeklyStat create(Thread thread, Date beginDate, Date endDate) throws BusinessException{
 		Long actualOperationSum = threadDailyStatRepository.sumOfActualOperationSum(null, thread, beginDate, endDate);
 		Long operationCount = threadDailyStatRepository.sumOfOperationCount(null, thread, beginDate, endDate);
 		Long createOperationSum = threadDailyStatRepository.sumOfCreateOperationSum(null, thread, beginDate, endDate);
@@ -85,6 +86,11 @@ public class ThreadWeeklyStatBusinessServiceImpl implements ThreadWeeklyStatBusi
 	@Override
 	public List<Account> findAccountBetweenTwoDates(Date beginDate, Date endDate) {
 		return repository.findAccountBetweenTwoDates(beginDate, endDate);
+	}
+
+	@Override
+	public List<String> findUuidAccountBetweenTwoDates(Date beginDate, Date endDate) {
+		return repository.findUuidAccountBetweenTwoDates(beginDate, endDate);
 	}
 
 }

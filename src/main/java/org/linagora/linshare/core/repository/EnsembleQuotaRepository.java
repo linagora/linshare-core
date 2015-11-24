@@ -44,5 +44,5 @@ public interface EnsembleQuotaRepository extends GenericQuotaRepository<Ensemble
 
 	EnsembleQuota find(AbstractDomain domain, EnsembleType ensembleType);
 
-	Long sumOfCurrentValue(DomainQuota domainQuota, EnsembleType ensembleType, Date modificationDateByBatch);
+	Long sumOfCurrentValue(DomainQuota domainQuota, Date modificationDateByBatch);
 }

@@ -119,7 +119,7 @@ public class StatRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 		result = userWeeklyStatRepository.findBetweenTwoDates(account, null, null, null, null, null);
 		assertEquals(3, result.size());
 		result = userWeeklyStatRepository.findBetweenTwoDates(null, domain, null, null, null, null);
-		assertEquals(0, result.size());
+		assertEquals(1, result.size());
 		long re = userWeeklyStatRepository.sumOfActualOperationSum(null, account, a, b);
 		assertEquals(1700, re);
 		re = userWeeklyStatRepository.sumOfCreateOperationCount(null, account, a, b);

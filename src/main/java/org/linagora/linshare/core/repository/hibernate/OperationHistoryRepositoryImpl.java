@@ -39,6 +39,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
@@ -77,10 +78,9 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 			criteria.add(Restrictions.eq("ensembleType", ensembleType));
 		}
 		criteria.add(Restrictions.le("creationDate", Date));
-		criteria.setProjection(Projections.property("account"));
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		criteria.setProjection(Projections.distinct(Projections.property("account")));
 		@SuppressWarnings("unchecked")
-		List<Account> result = getHibernateTemplate().findByCriteria(criteria);
+		List<Account> result = (List<Account>) getHibernateTemplate().findByCriteria(criteria);
 		return result;
 	}
 
@@ -135,10 +135,9 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 	public List<AbstractDomain> findDomainBeforeDate(Date creationDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.lt("creationDate", creationDate));
-		criteria.setProjection(Projections.property("domain"));
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		criteria.setProjection(Projections.distinct(Projections.property("domain")));
 		@SuppressWarnings("unchecked")
-		List<AbstractDomain> result = getHibernateTemplate().findByCriteria(criteria);
+		List<AbstractDomain> result = (List<AbstractDomain>) getHibernateTemplate().findByCriteria(criteria);
 		return result;
 	}
 
@@ -170,16 +169,11 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 			criteria.add(Restrictions.eq("ensembleType", ensembleType));
 		}
 		criteria.add(Restrictions.le("creationDate", date));
-		criteria.setProjection(Projections.property("account"));
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		criteria.createAlias("account", "ac");
+		criteria.setProjection(Projections.distinct(Projections.property("ac.lsUuid")));
 		@SuppressWarnings("unchecked")
-		List<Account> listAccount = getHibernateTemplate().findByCriteria(criteria);
-
-		List<String> listUuid = new ArrayList<>();
-		for(Account account : listAccount){
-			listUuid.add(account.getLsUuid());
-		}
-		return listUuid;
+		List<String> listlsUuid = (List<String>) getHibernateTemplate().findByCriteria(criteria);
+		return listlsUuid;
 	}
 
 	@Override

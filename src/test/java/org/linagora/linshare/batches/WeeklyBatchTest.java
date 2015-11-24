@@ -42,15 +42,17 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.business.service.UserWeeklyStatBusinessService;
-import org.linagora.linshare.core.batches.WeeklyBatch;
+import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DomainWeeklyStatBusinessService;
 import org.linagora.linshare.core.business.service.ThreadWeeklyStatBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainWeeklyStat;
+import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadWeeklyStat;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserWeeklyStat;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,8 +79,18 @@ public class WeeklyBatchTest extends AbstractTransactionalJUnit4SpringContextTes
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;
 
+	@Qualifier("statisticWeeklyUserBatch")
 	@Autowired
-	private WeeklyBatch weeklyBatch;
+	private GenericBatch weeklyUserBatch;
+
+	@Qualifier("statisticWeeklyThreadBatch")
+	@Autowired
+	private GenericBatch weeklyThreadBatch;
+
+	@Qualifier("statisticWeeklyDomainBatch")
+	@Autowired
+	private GenericBatch weeklyDomainBatch;
+
 	@Autowired
 	private UserWeeklyStatBusinessService userWeeklyStatBusinessService;
 
@@ -87,6 +99,9 @@ public class WeeklyBatchTest extends AbstractTransactionalJUnit4SpringContextTes
 
 	@Autowired
 	private DomainWeeklyStatBusinessService domainWeeklyStatBusinessService;
+
+	@Autowired
+	private ThreadRepository threadRepository;
 
 	@Autowired
 	@Qualifier("userRepository")
@@ -105,7 +120,14 @@ public class WeeklyBatchTest extends AbstractTransactionalJUnit4SpringContextTes
 
 	@Test
 	public void test() {
-		weeklyBatch.executeBatch();
+		Thread thread = threadRepository.findByLsUuid("aebe1b64-39c0-11e5-9fa8-080027b8274f");
+		weeklyUserBatch.execute(jane.getLsUuid(), 10, 1);
+		weeklyThreadBatch.execute(thread.getLsUuid(), 10, 1);
+
+		List<String> listIdentifierDomain = weeklyDomainBatch.getAll();
+		assertEquals(2, listIdentifierDomain.size());
+		weeklyDomainBatch.execute(listIdentifierDomain.get(0), 2, 1);
+		weeklyDomainBatch.execute(listIdentifierDomain.get(1), 2, 1);
 
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.DATE, -1);

@@ -90,7 +90,7 @@ public class EnsembleQuotaBusinessServiceImpl implements EnsembleQuotaBusinessSe
 			entity.setCurrentValue(sumCurrentValue);
 			entity = repository.updateByBatch(entity);
 		} else {
-			throw new BusinessException(domain.getIdentifier() + " domain does not have an ensemble quota yet");
+			throw new BusinessException(domain.getUuid() + " domain does not have an ensemble quota yet");
 		}
 		return entity;
 	}

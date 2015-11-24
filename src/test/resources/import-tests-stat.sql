@@ -12,9 +12,11 @@ VALUES (11,DATEADD('DAY',-7, NOW()),5,2,3,100,-50, 50, 50,3, null, 2, 'DOMAIN_DA
 
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step) 
 VALUES (22, 5, 'aebe1b64-39c0-11e5-9fa8-080027b8274e', now(), now(), 0, 'en', 'en', 'en', true, null, false, 2, 'IN_USE');
+INSERT INTO thread (account_id, name) VALUES (22, 'THREAD_TEST_A');
 
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step) 
 VALUES (23, 5, 'aebe1b64-39c0-11e5-9fa8-080027b8274f', now(), now(), 0, 'en', 'en', 'en', true, null, false, 2, 'IN_USE');
+INSERT INTO thread (account_id, name) VALUES (23, 'THREAD_TEST_B');
 
 INSERT INTO statistique (id, creation_date, operation_count, delete_operation_count, add_operation_count, add_operation_sum, delete_operation_sum, diff_operation_sum, actual_operation_sum, domain_id, account_id, parent_domain_id, statistique_type)
 VALUES (15,DATEADD('DAY',-30, NOW()),5,2,3,100,-50, 50, 50,2, 23, 1, 'THREAD_WEEKLY_STAT'), (16,DATEADD('DAY',-30, NOW()),4,1,3,200,-50, 150, 150,4, 22, 3, 'THREAD_WEEKLY_STAT'), (17,DATEADD('DAY',+2, NOW()),5,2,3,100,-50, 50, 50,4, 23, 3, 'THREAD_WEEKLY_STAT'), (18,DATEADD('DAY',+2, NOW()),5,2,3,100,-50, 50, 50,4, 22, 3, 'THREAD_DAILY_STAT'), (19,DATEADD('DAY',-7, NOW()),5,2,3,100,-50, 50, 50,3, 23, 2, 'THREAD_DAILY_STAT');

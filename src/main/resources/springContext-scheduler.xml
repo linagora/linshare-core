@@ -152,6 +152,33 @@
 			value="${job.shares.cron.expression}" />
 	</bean>
 
+<bean id="dailyBatchJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="batch">
+					<list>
+						<ref bean="statisticDailyUserBatch" />
+						<ref bean="statisticDailyThreadBatch" />
+						<ref bean="statisticDailyDomainBatch" />
+						<ref bean="statisticWeeklyUserBatch" />
+						<ref bean="statisticWeeklyThreadBatch" />
+						<ref bean="statisticWeeklyDomainBatch" />
+						<ref bean="statisticMonthlyUserBatch" />
+						<ref bean="statisticMonthlyThreadBatch" />
+						<ref bean="statisticMonthlyDomainBatch" />
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+    <bean id="dailyBatchJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="dailyBatchJob"/>
+        <property name="cronExpression" value="${job.updateDailyStatQuota.cron.expression}"/>
+    </bean>
+
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
@@ -161,6 +188,7 @@
                 <ref bean="nofifyUndownloadedSharedDocumentsJobTrigger"/>
                 <ref bean="jackRabbitKeepAliveJobTrigger"/>
                 <ref bean="deleteMissingDocumentsBatchJobTrigger"/>
+                <ref bean="dailyBatchJobTrigger"/>
             </list>
         </property>
     </bean>

@@ -33,23 +33,17 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
-import java.util.Date;
-
 import org.linagora.linshare.core.business.service.PlatformQuotaBusinessService;
 import org.linagora.linshare.core.domain.entities.PlatformQuota;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.OperationHistoryRepository;
 import org.linagora.linshare.core.repository.PlatformQuotaRepository;
 
 public class PlatformQuotaBusinessServiceImpl implements PlatformQuotaBusinessService {
 
 	private final PlatformQuotaRepository repository;
-	private final OperationHistoryRepository operationHistoryRepository;
 
-	public PlatformQuotaBusinessServiceImpl(final PlatformQuotaRepository repository,
-			final OperationHistoryRepository operationHistoryRepository) {
+	public PlatformQuotaBusinessServiceImpl(final PlatformQuotaRepository repository) {
 		this.repository = repository;
-		this.operationHistoryRepository = operationHistoryRepository;
 	}
 
 	@Override
@@ -63,24 +57,24 @@ public class PlatformQuotaBusinessServiceImpl implements PlatformQuotaBusinessSe
 	}
 
 	@Override
-	public PlatformQuota createOrUpdate(Date today) throws BusinessException {
-		Long sumOperationValue = operationHistoryRepository.sumOperationValue(null, null, today, null, null);
+	public PlatformQuota updateByBatch(Long addValue) throws BusinessException {
 		PlatformQuota entity;
-		if(!exist()){
-			entity = new PlatformQuota((long) 0, (long) 0, (long) 0, sumOperationValue, (long) 0);
-			entity = repository.create(entity);
-		} else {
+		if (exist()) {
 			entity = find();
-			entity = repository.update(entity, sumOperationValue);
+			entity.setLastValue(entity.getCurrentValue());
+			entity.setCurrentValue(entity.getCurrentValue() + addValue);
+			entity = repository.updateByBatch(entity);
+		} else {
+			throw new BusinessException("The plaltform does not have a quota yet.");
 		}
 		return entity;
 	}
 
 	@Override
 	public PlatformQuota create(PlatformQuota entity) throws BusinessException {
-		if(exist()){
+		if (exist()) {
 			throw new BusinessException("It must be only one PlatformQuota");
-		}else {
+		} else {
 			return repository.create(entity);
 		}
 	}

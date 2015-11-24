@@ -64,7 +64,7 @@ public class EnsembleQuotaDto extends QuotaDto {
 		this.ensembleType = ensembleType;
 	}
 
-	public EnsembleQuota toUserObject(){
+	public EnsembleQuota toObject(){
 		EnsembleQuota ensembleQuota = new EnsembleQuota();
 		ensembleQuota.setFileSizeMax(getFileSizeMax());
 		ensembleQuota.setQuota(getQuota());

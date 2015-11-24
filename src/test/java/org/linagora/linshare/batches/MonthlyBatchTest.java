@@ -41,7 +41,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.linagora.linshare.core.batches.MonthlyBatch;
+import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.UserMonthlyStatBusinessService;
 import org.linagora.linshare.core.domain.entities.DomainMonthlyStat;
 import org.linagora.linshare.core.domain.entities.ThreadMonthlyStat;
@@ -81,7 +81,16 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 	private DomainMonthlyStatBusinessService domainMonthlyStatBusinessService;
 
 	@Autowired
-	private MonthlyBatch monthlyStatBatch;
+	@Qualifier("statisticMonthlyUserBatch")
+	private GenericBatch monthlyUserBatch;
+
+	@Autowired
+	@Qualifier("statisticMonthlyThreadBatch")
+	private GenericBatch monthlyThreadBatch;
+
+	@Autowired
+	@Qualifier("statisticMonthlyDomainBatch")
+	private GenericBatch monthlyDomainBatch;
 
 	@Autowired
 	@Qualifier("userRepository")
@@ -92,7 +101,6 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 
 	@Before
 	public void setUp() throws Exception {
-		this.executeSqlScript("import-tests-operationHistory.sql", false);
 		this.executeSqlScript("import-tests-stat.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
 		dates.loadUsers();
@@ -101,13 +109,23 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 
 	@Test
 	public void test() {
-		monthlyStatBatch.executeBatch();
+		monthlyUserBatch.execute(jane.getLsUuid(), 10, 1);
+		List<String> listThreadIdentifier = monthlyThreadBatch.getAll();
+		assertEquals(2, listThreadIdentifier.size());
+		monthlyThreadBatch.execute(listThreadIdentifier.get(0), 2, 1);
+		monthlyThreadBatch.execute(listThreadIdentifier.get(1), 2, 1);
+
+		List<String> listDomainIdentifier = monthlyDomainBatch.getAll();
+		assertEquals(2, listDomainIdentifier.size());
+		monthlyDomainBatch.execute(listDomainIdentifier.get(0), 2, 1);
+		monthlyDomainBatch.execute(listDomainIdentifier.get(1), 2, 1);
 
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.DATE, -1);
 		Date a = calendar.getTime();
 		calendar.add(GregorianCalendar.DATE, +2);
 		Date b = calendar.getTime();
+
 		List<UserMonthlyStat> listUserMonthlyStat = userMonthlyStatBusinessService.findBetweenTwoDates(null, a, b);
 		List<ThreadMonthlyStat> listThreadMonthlyStat = threadMonthlyStatBusinessService.findBetweenTwoDates(null, a, b);
 		List<DomainMonthlyStat> listDomainMonthlyStat = domainMonthlyStatBusinessService.findBetweenTwoDates(null, a, b);

@@ -83,7 +83,7 @@ public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota>im
 		checkCreatePermission(actor, null, DomainQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
 		DomainQuota domainQuota =  domainQuotaBusinessService.find(domain);
 		if(domainQuota == null){
-			throw new BusinessException(BusinessErrorCode.DOMAIN_QUOTA_NOT_FOUND, "Can not found domain quota of the domain "+domain.getIdentifier());
+			throw new BusinessException(BusinessErrorCode.DOMAIN_QUOTA_NOT_FOUND, "Can not found domain quota of the domain "+domain.getUuid());
 		}
 		return domainQuota;
 	}

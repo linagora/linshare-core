@@ -37,19 +37,16 @@ import static org.junit.Assert.*;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
-import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
@@ -188,7 +185,7 @@ public class OperationHistoryRepositoryImplTest extends AbstractTransactionalJUn
 		Date b = calendar.getTime();
 		Account account = jane;
 		List<OperationHistory> result1 = operationHistoryRepository.find(account, null, null, b);
-		operationHistoryRepository.deleteBeforeDate(a);
+		operationHistoryRepository.deleteBeforeDateByAccount(a, account);
 		List<OperationHistory> result2 = operationHistoryRepository.find(account, null, null, b);
 		assertEquals(8,result1.size());
 		assertEquals(1,result2.size());
@@ -196,6 +193,10 @@ public class OperationHistoryRepositoryImplTest extends AbstractTransactionalJUn
 
 	@Test
 	public void testFindUuid() {
-		List<String> result1 = operationHistoryRepository.findUuidAccountBeforeDate(new Date(), EnsembleType.USER);
+		List<AbstractDomain> result1 = operationHistoryRepository.findDomainBeforeDate(new Date());
+		for(AbstractDomain r : result1) {
+			System.out.println(" identifier domain : " + r.getUuid());
+		}
+		assertEquals(4, result1.size());
 	}
 }

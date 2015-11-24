@@ -156,5 +156,4 @@ public class DeleteExpiredAnonymousShareEntryBatchImpl extends GenericBatchImpl 
 		}
 		logger.info(getClass().toString() + " job terminated.");
 	}
-
 }

@@ -35,12 +35,16 @@
 package org.linagora.linshare.core.batches;
 
 import java.util.List;
+import java.util.Map;
 
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.Context;
 
 public interface GenericBatch {
+
+	static String INPUT_LIST = "INPUT_LIST";
+	static String FAIL_EXCEPTION = "FAIL_EXCEPTION";
 
 	List<String> getAll();
 
@@ -56,4 +60,8 @@ public interface GenericBatch {
 			long total, long processed);
 
 	void logDebug(long total, long position, String message, Object... args);
+
+	boolean needToRun();
+
+	void fail(Map<String, List<String>> context, Exception exception);
 }

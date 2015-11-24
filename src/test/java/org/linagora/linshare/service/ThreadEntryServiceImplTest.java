@@ -41,11 +41,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.ThreadService;
 import org.slf4j.Logger;
@@ -84,6 +86,9 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@Autowired
 	private ThreadService threadService;
 
+	@Autowired
+	private AbstractDomainRepository abstractDomainRepository;
+
 	private List<Thread> threads;
 
 	private User jane;
@@ -93,6 +98,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@Before
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		this.executeSqlScript("import-tests-quota-other.sql", false);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		john = datas.getUser1();
@@ -101,6 +107,12 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		this.createAllThreads();
 		threads = threadService.findAll(root, root);
 		logger.debug(LinShareTestConstants.END_SETUP);
+		AbstractDomain domain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlDomain);
+		AbstractDomain subDomain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
+		jane.setDomain(domain);
+		john.setDomain(subDomain);
 	}
 
 	@After

@@ -71,7 +71,7 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 	}
 
 	@Override
-	public boolean exist(Account account) throws BusinessException{
+	public boolean exist(Account account) throws BusinessException {
 		return find(account) != null;
 	}
 
@@ -100,17 +100,16 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 					entity = repository.create(entity);
 				} else {
 					throw new BusinessException(
-							account.getDomain().getIdentifier() + " domain does not have a ensemble quota yet");
+							account.getDomain().getUuid() + " domain does not have a ensemble quota yet");
 				}
 			} else {
-				throw new BusinessException(account.getDomain().getIdentifier() + " domain does not have a quota yet");
+				throw new BusinessException(account.getDomain().getUuid() + " domain does not have a quota yet");
 			}
-		} else {
-			entity = find(account);
-			entity.setLastValue(entity.getCurrentValue());
-			entity.setCurrentValue(sumOperationValue + entity.getCurrentValue());
-			entity = repository.updateByBatch(entity);
 		}
+		entity = find(account);
+		entity.setLastValue(entity.getCurrentValue());
+		entity.setCurrentValue(sumOperationValue + entity.getCurrentValue());
+		entity = repository.updateByBatch(entity);
 		return entity;
 	}
 

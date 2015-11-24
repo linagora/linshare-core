@@ -882,3 +882,14 @@ ALTER TABLE share_entry_group ADD CONSTRAINT shareEntryGroup FOREIGN KEY (accoun
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task548996 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task706276 FOREIGN KEY (actor_id) REFERENCES account (id);
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task559470 FOREIGN KEY (owner_id) REFERENCES account (id);
+
+
+
+
+create table operation_history(id bigint primary key not null, creation_date date not null, operation_value bigint, operation_type int, ensemble_type varchar,domain_id bigint REFERENCES domain_abstract(id) not null , account_id bigint references account(id) not null);
+
+create table statistique(id bigint primary key not null, creation_date date not null, operation_count bigint, delete_operation_count bigint, add_operation_count bigint, add_operation_sum bigint, delete_operation_sum bigint, diff_operation_sum bigint, actual_operation_sum bigint, domain_id bigint REFERENCES domain_abstract(id), account_id bigint references account(id), parent_domain_id bigint references domain_abstract(id), statistique_type varchar);
+
+create table quota(id bigint primary key not null, quota bigint not null, quota_warning bigint, file_size_max bigint, quota_type varchar, uuid varchar not null,current_value bigint not null, last_value bigint not null, ensemble_type varchar, ensemble_quota bigint references quota(id), domain_quota bigint references quota(id),creation_date date, modification_date date, batch_modification_date date, domain_id bigint REFERENCES domain_abstract(id), account_id bigint references account(id), parent_domain_id bigint references domain_abstract(id));
+
+create table batch_history(id bigint primary key not null, uuid varchar not null, execution_date date not null, status varchar not null, batch_type varchar, errors bigint, unhandled_errors bigint);

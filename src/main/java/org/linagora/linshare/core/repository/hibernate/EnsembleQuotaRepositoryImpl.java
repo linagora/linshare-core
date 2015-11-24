@@ -59,17 +59,14 @@ public class EnsembleQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Ense
 	}
 
 	@Override
-	public Long sumOfCurrentValue(DomainQuota domainQuota, EnsembleType ensembleType, Date modificationDateByBatch) {
+	public Long sumOfCurrentValue(DomainQuota domainQuota, Date modificationDateByBatch) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 
 		if(domainQuota != null){
 			criteria.add(Restrictions.eq("domainQuota", domainQuota));
 		}
-		if(ensembleType != null){
-			criteria.add(Restrictions.eq("ensembleType", ensembleType));
-		}
 		if(modificationDateByBatch != null){
-			criteria.add(Restrictions.eq("modificationDateByBatch", modificationDateByBatch));
+			criteria.add(Restrictions.le("batchModificationDate", modificationDateByBatch));
 		}
 		criteria.setProjection(Projections.sum("currentValue"));
 		List<EnsembleQuota> list = findByCriteria(criteria);

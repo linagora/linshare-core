@@ -38,11 +38,10 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.DomainWeeklyStatBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.DomainDailyStat;
 import org.linagora.linshare.core.domain.entities.DomainWeeklyStat;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainDailyStatRepository;
 import org.linagora.linshare.core.repository.DomainWeeklyStatRepository;
-import org.linagora.linshare.core.repository.StatisticRepository;
 
 public class DomainWeeklyStatBusinessServiceImpl implements DomainWeeklyStatBusinessService {
 
@@ -56,7 +55,7 @@ public class DomainWeeklyStatBusinessServiceImpl implements DomainWeeklyStatBusi
 	}
 
 	@Override
-	public DomainWeeklyStat create(AbstractDomain domain, Date beginDate, Date endDate) {
+	public DomainWeeklyStat create(AbstractDomain domain, Date beginDate, Date endDate) throws BusinessException{
 		Long actualOperationSum = domainDailyStatRepository.sumOfActualOperationSum(domain, null, beginDate, endDate);
 		Long operationCount = domainDailyStatRepository.sumOfOperationCount(domain, null, beginDate, endDate);
 		Long createOperationSum = domainDailyStatRepository.sumOfCreateOperationSum(domain, null, beginDate, endDate);
@@ -89,4 +88,8 @@ public class DomainWeeklyStatBusinessServiceImpl implements DomainWeeklyStatBusi
 		return repository.findDomainBetweenTwoDates(beginDate, endDate);
 	}
 
+	@Override
+	public List<String> findIdentifierDomainBetweenTwoDates(Date beginDate, Date endDate) {
+		return repository.findIdentifierDomainBetweenTwoDates(beginDate, endDate);
+	}
 }

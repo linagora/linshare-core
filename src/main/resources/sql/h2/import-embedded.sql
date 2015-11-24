@@ -21,3 +21,6 @@ INSERT INTO domain_abstract(id, type , uuid, label, enable, template, descriptio
 UPDATE domain_abstract SET mime_policy_id=1 WHERE id < 100000;
 UPDATE domain_abstract SET mailconfig_id = 1;
 UPDATE domain_abstract SET welcome_messages_id = 1;
+
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, domain_quota, ensemble_quota,current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type)
+(4, '802a74ea-a30c-11e5-bcf1-5404a683a462', NOW(), NOW(), NOW(), null, null, 1096,100, null, null, null, 2300, 2000, 10, null, 'PLATFORM_QUOTA');

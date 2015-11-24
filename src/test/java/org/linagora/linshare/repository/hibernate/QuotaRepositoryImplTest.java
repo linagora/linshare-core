@@ -35,11 +35,15 @@ package org.linagora.linshare.repository.hibernate;
 
 import static org.junit.Assert.*;
 
+import java.util.Date;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.EnsembleQuota;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.domain.entities.User;
@@ -80,9 +84,10 @@ public class QuotaRepositoryImplTest
 
 	LoadingServiceTestDatas dates;
 	private User jane;
-	
+
 	@Before
 	public void setUp(){
+		this.executeSqlScript("import-tests-operationHistory.sql", false);
 		this.executeSqlScript("import-tests-quota.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
 		dates.loadUsers();
@@ -96,14 +101,16 @@ public class QuotaRepositoryImplTest
 		Account account1 = jane;
 		Quota result = accountQuotaRepository.find(account1);
 		assertNotNull(result);
-		EnsembleQuota entity = new EnsembleQuota(domain2, domain1, (long) 100, (long) 90, (long) 10, (long) 40, (long) 20, EnsembleType.THREAD);
+		DomainQuota domain2Quota = domainQuotaRepository.find(domain2);
+		EnsembleQuota entity = new EnsembleQuota(domain2, domain1, domain2Quota, 100, 90, 10, 40, 20, EnsembleType.THREAD);
 		ensembleQuotaRepository.create(entity);
 		Quota result3 = domainQuotaRepository.find(domain2);
 		assertEquals(1096, (long) result3.getCurrentValue());
 		assertEquals(1900, (long) result3.getQuota());
 		result3 = domainQuotaRepository.find(domain1);
 		assertNull(result3);
-		result3 = ensembleQuotaRepository.find(domain2, EnsembleType.THREAD);
-		assertEquals(100, (long) result3.getQuota());
+		List<String> listIdentifier = accountQuotaRepository.findDomainByBatchModificationDate(new Date());
+		assertEquals(1, listIdentifier.size());
+		logger.debug(" domain identifier : "+listIdentifier.get(0));
 	}
 }

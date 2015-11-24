@@ -7,33 +7,81 @@
 	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
 	default-autowire="no">
-	<bean id="dailyBatch"
-		class="org.linagora.linshare.core.batches.impl.DailyBatchImpl">
+	<bean id="statisticDailyUserBatch"
+		class="org.linagora.linshare.core.batches.impl.StatisticDailyUserBatchImpl">
+		<constructor-arg ref="userService" />
 		<constructor-arg ref="operationHistoryBusinessService" />
-		<constructor-arg ref="userDailyStatBusinessService" />
-		<constructor-arg ref="threadDailyStatBusinessService" />
-		<constructor-arg ref="domainDailyStatBusinessService" />
-		<constructor-arg ref="domainQuotaBusinessService" />
 		<constructor-arg ref="accountQuotaBusinessService" />
-		<constructor-arg ref="ensembleQuotaBusinessService" />
-		<constructor-arg ref="platformQuotaBusinessService" />
-	</bean>
-	<bean id="weeklyBatch"
-		class="org.linagora.linshare.core.batches.impl.WeeklyBatchImpl">
-		<constructor-arg ref="userWeeklyStatBusinessService" />
-		<constructor-arg ref="threadWeeklyStatBusinessService" />
-		<constructor-arg ref="domainWeeklyStatBusinessService" />
 		<constructor-arg ref="userDailyStatBusinessService" />
-		<constructor-arg ref="threadDailyStatBusinessService" />
-		<constructor-arg ref="domainDailyStatBusinessService" />
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="batchHistoryBusinessService" />
 	</bean>
-	<bean id="monthlyBatch"
-		class="org.linagora.linshare.core.batches.impl.MonthlyBatchImpl">
-		<constructor-arg ref="userMonthlyStatBusinessService" />
-		<constructor-arg ref="threadMonthlyStatBusinessService" />
-		<constructor-arg ref="domainMonthlyStatBusinessService" />
+	<bean id="statisticDailyDomainBatch"
+		class="org.linagora.linshare.core.batches.impl.StatisticDailyDomainBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="accountQuotaBusinessService" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="ensembleQuotaBusinessService" />
+		<constructor-arg ref="domainQuotaBusinessService" />
+		<constructor-arg ref="domainDailyStatBusinessService" />
+		<constructor-arg ref="platformQuotaBusinessService" />
+		<constructor-arg ref="batchHistoryBusinessService" />
+	</bean>
+	<bean id="statisticDailyThreadBatch"
+		class="org.linagora.linshare.core.batches.impl.StatisticDailyThreadBatchImpl">
+		<constructor-arg ref="threadService" />
+		<constructor-arg ref="operationHistoryBusinessService" />
+		<constructor-arg ref="accountQuotaBusinessService" />
+		<constructor-arg ref="threadDailyStatBusinessService" />
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="batchHistoryBusinessService" />
+	</bean>
+	<bean id="statisticWeeklyUserBatch"
+		class="org.linagora.linshare.core.batches.impl.StatisticWeeklyUserBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="userService" />
 		<constructor-arg ref="userWeeklyStatBusinessService" />
+		<constructor-arg ref="userDailyStatBusinessService" />
+		<constructor-arg ref="batchHistoryBusinessService" />
+	</bean>
+	<bean id="statisticWeeklyThreadBatch"
+		class="org.linagora.linshare.core.batches.impl.StatisticWeeklyThreadBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="threadService" />
 		<constructor-arg ref="threadWeeklyStatBusinessService" />
+		<constructor-arg ref="threadDailyStatBusinessService" />
+		<constructor-arg ref="batchHistoryBusinessService" />
+	</bean>
+	<bean id="statisticWeeklyDomainBatch"
+		class="org.linagora.linshare.core.batches.impl.StatisticWeeklyDomainBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="domainWeeklyStatBusinessService" />
+		<constructor-arg ref="domainDailyStatBusinessService" />
+		<constructor-arg ref="batchHistoryBusinessService" />
+	</bean>
+	<bean id="statisticMonthlyUserBatch"
+		class="org.linagora.linshare.core.batches.impl.StatisticMonthlyUserBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="userMonthlyStatBusinessService" />
+		<constructor-arg ref="userWeeklyStatBusinessService" />
+		<constructor-arg ref="batchHistoryBusinessService" />
+	</bean>
+	<bean id="statisticMonthlyThreadBatch"
+		class="org.linagora.linshare.core.batches.impl.StatisticMonthlyThreadBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="threadService" />
+		<constructor-arg ref="threadMonthlyStatBusinessService" />
+		<constructor-arg ref="threadWeeklyStatBusinessService" />
+		<constructor-arg ref="batchHistoryBusinessService" />
+	</bean>
+	<bean id="statisticMonthlyDomainBatch"
+		class="org.linagora.linshare.core.batches.impl.StatisticMonthlyDomainBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="domainMonthlyStatBusinessService" />
+		<constructor-arg ref="domainWeeklyStatBusinessService" />
+		<constructor-arg ref="batchHistoryBusinessService" />
 	</bean>
 </beans>

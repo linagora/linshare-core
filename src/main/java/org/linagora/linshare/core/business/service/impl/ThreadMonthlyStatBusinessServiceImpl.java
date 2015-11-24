@@ -40,8 +40,7 @@ import org.linagora.linshare.core.business.service.ThreadMonthlyStatBusinessServ
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMonthlyStat;
-import org.linagora.linshare.core.domain.entities.ThreadWeeklyStat;
-import org.linagora.linshare.core.repository.StatisticRepository;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadMonthlyStatRepository;
 import org.linagora.linshare.core.repository.ThreadWeeklyStatRepository;
 
@@ -57,7 +56,7 @@ public class ThreadMonthlyStatBusinessServiceImpl implements ThreadMonthlyStatBu
 	}
 
 	@Override
-	public ThreadMonthlyStat create(Thread thread, Date beginDate, Date endDate) {
+	public ThreadMonthlyStat create(Thread thread, Date beginDate, Date endDate) throws BusinessException {
 		Long actualOperationSum = threadWeeklyStatRepository.sumOfActualOperationSum(null, thread, beginDate, endDate);
 		Long operationCount = threadWeeklyStatRepository.sumOfOperationCount(null, thread, beginDate, endDate);
 		Long createOperationSum = threadWeeklyStatRepository.sumOfCreateOperationSum(null, thread, beginDate, endDate);

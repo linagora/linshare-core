@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.batches.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
@@ -45,6 +46,9 @@ import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.ShareEntryGroupService;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
 
@@ -65,6 +69,8 @@ public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
 				.findAllToPurge(actor, actor);
 		logger.info(allShareEntries.size()
 				+ " unconsistent shareEntryGroups to delete");
+//		Map<String, List<String>> res = Maps.newHashMap();
+//		res.put(INPUT_LIST, allShareEntries);
 		return allShareEntries;
 	}
 

@@ -86,4 +86,9 @@ public class UserWeeklyStatBusinessServiceImpl implements UserWeeklyStatBusiness
 		return repository.findAccountBetweenTwoDates(beginDate, endDate);
 	}
 
+	@Override
+	public List<String> findUuidAccountBetweenTwoDates(Date beginDate, Date endDate) {
+		return repository.findUuidAccountBetweenTwoDates(beginDate, endDate);
+	}
+
 }

@@ -40,16 +40,21 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.EnsembleType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.EnsembleQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -112,6 +117,10 @@ public class UserServiceImpl implements UserService {
 
 	private final AuditUserMongoRepository auditMongoRepository;
 
+	private final AccountQuotaBusinessService accountQuotaBusinessService;
+
+	private final EnsembleQuotaBusinessService ensembleQuotaBusinessService;
+
 	public UserServiceImpl(
 			final UserRepository<User> userRepository,
 			final LogEntryService logEntryService,
@@ -124,7 +133,9 @@ public class UserServiceImpl implements UserService {
 			final DomainPermissionBusinessService domainPermissionBusinessService,
 			final MailingListContactRepository mailingListContactRepository,
 			final RecipientFavouriteRepository recipientFavouriteRepository,
-			final AuditUserMongoRepository auditMongoRepository) {
+			final AuditUserMongoRepository auditMongoRepository,
+			final AccountQuotaBusinessService accountQuotaBusinessService,
+			final EnsembleQuotaBusinessService ensembleQuotaBusinessService) {
 		this.userRepository = userRepository;
 		this.logEntryService = logEntryService;
 		this.guestRepository = guestRepository;
@@ -137,6 +148,8 @@ public class UserServiceImpl implements UserService {
 		this.mailingListContactRepository = mailingListContactRepository;
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
 		this.auditMongoRepository = auditMongoRepository;
+		this.accountQuotaBusinessService = accountQuotaBusinessService;
+		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
 	}
 
 	@Override
@@ -702,7 +715,7 @@ public class UserServiceImpl implements UserService {
 				// update
 				logger.debug("userRepository.update(existingUser)");
 				try {
-					return userRepository.update(existingUser);
+					user = userRepository.update(existingUser);
 				} catch (IllegalArgumentException e) {
 					logger.error("Could not update the user " + user.getMail()
 							+ " in the database ", e);
@@ -734,7 +747,8 @@ public class UserServiceImpl implements UserService {
 				user.setExternalMailLocale(locale);
 				user.setCmisLocale(user.getDomain().getDefaultTapestryLocale().toString());
 				try {
-					return userRepository.create(user);
+					user = userRepository.create(user);
+					createQuotaUser(user);
 				} catch (IllegalArgumentException e) {
 					logger.error("Could not create the user " + user.getMail()
 							+ " in the database ", e);
@@ -749,6 +763,7 @@ public class UserServiceImpl implements UserService {
 							"The user could not be created in the DB " + e);
 				}
 			}
+			return user;
 		} else {
 			String msg;
 			if (user != null) {
@@ -1017,5 +1032,17 @@ public class UserServiceImpl implements UserService {
 		logger.info("updating recipient_favourite tab ...");
 		recipientFavouriteRepository.updateEmail(currentEmail, newEmail);
 		logger.info("End of updateRecipientFavourite");
+	}
+
+	private void createQuotaUser(User user) throws BusinessException {
+		try {
+			EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(user.getDomain(), EnsembleType.USER);
+			AccountQuota userQuota = new AccountQuota(user, user.getDomain(), user.getDomain().getParentDomain(),
+					ensembleQuota, ensembleQuota.getQuota(), ensembleQuota.getQuotaWarning(),
+					ensembleQuota.getFileSizeMax(), 0L, 0L);
+			accountQuotaBusinessService.create(userQuota);
+		} catch (Exception exception) {
+			throw new BusinessException(exception.getMessage());
+		}
 	}
 }

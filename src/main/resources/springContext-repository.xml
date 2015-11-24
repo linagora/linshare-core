@@ -283,4 +283,8 @@
 	<bean name="platformQuotaRepository" class="org.linagora.linshare.core.repository.hibernate.PlatformQuotaRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
+	<bean name="batchHistoryRepository" class="org.linagora.linshare.core.repository.hibernate.BatchHistoryRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>

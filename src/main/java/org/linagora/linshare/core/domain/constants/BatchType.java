@@ -31,9 +31,18 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.batches;
 
-public interface DailyBatch {
+package org.linagora.linshare.core.domain.constants;
 
-	void executeBatch();
+public enum BatchType {
+
+	DAILY_USER_BATCH, WEEKLY_USER_BATCH, MONTHLY_USER_BATCH, DAILY_THREAD_BATCH, WEEKLY_THREAD_BATCH, MONTHLY_THREAD_BATCH, DAILY_DOMAIN_BATCH, WEEKLY_DOMAIN_BATCH, MONTHLY_DOMAIN_BATCH;
+
+	public static BatchType fromString(String s) {
+		try {
+			return BatchType.valueOf(s.toUpperCase());
+		} catch (RuntimeException e) {
+			throw new IllegalArgumentException("Doesn't match an existing TriggerType");
+		}
+	}
 }

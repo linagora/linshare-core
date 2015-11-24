@@ -39,10 +39,9 @@ import java.util.List;
 import org.linagora.linshare.core.business.service.DomainMonthlyStatBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainMonthlyStat;
-import org.linagora.linshare.core.domain.entities.DomainWeeklyStat;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainMonthlyStatRepository;
 import org.linagora.linshare.core.repository.DomainWeeklyStatRepository;
-import org.linagora.linshare.core.repository.StatisticRepository;
 
 public class DomainMonthlyStatBusinessServiceImpl implements DomainMonthlyStatBusinessService {
 
@@ -56,7 +55,7 @@ public class DomainMonthlyStatBusinessServiceImpl implements DomainMonthlyStatBu
 	}
 
 	@Override
-	public DomainMonthlyStat create(AbstractDomain domain, Date beginDate, Date endDate) {
+	public DomainMonthlyStat create(AbstractDomain domain, Date beginDate, Date endDate) throws BusinessException {
 		Long actualOperationSum = domainWeeklyStatRepository.sumOfActualOperationSum(domain, null, beginDate, endDate);
 		Long operationCount = domainWeeklyStatRepository.sumOfOperationCount(domain, null, beginDate, endDate);
 		Long createOperationSum = domainWeeklyStatRepository.sumOfCreateOperationSum(domain, null, beginDate, endDate);

@@ -39,11 +39,9 @@ import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.linagora.linshare.core.business.service.DomainDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.DomainMonthlyStatBusinessService;
 import org.linagora.linshare.core.business.service.DomainWeeklyStatBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.DomainDailyStat;
 import org.linagora.linshare.core.domain.entities.DomainMonthlyStat;
 import org.linagora.linshare.core.domain.entities.DomainWeeklyStat;
 import org.linagora.linshare.core.domain.entities.User;
@@ -64,9 +62,6 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 public class DomainStatBusinessServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	@Autowired
-	private DomainDailyStatBusinessService domainDailyStatBusinessService;
-
-	@Autowired
 	private DomainWeeklyStatBusinessService domainWeeklyStatBusinessService;
 
 	@Autowired
@@ -81,7 +76,6 @@ public class DomainStatBusinessServiceTest extends AbstractTransactionalJUnit4Sp
 
 	@Before
 	public void setUp(){
-		this.executeSqlScript("import-tests-operationHistory.sql", false);
 		this.executeSqlScript("import-tests-stat.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
 		dates.loadUsers();
@@ -96,17 +90,6 @@ public class DomainStatBusinessServiceTest extends AbstractTransactionalJUnit4Sp
 		Date a = calendre.getTime();
 		calendre.add(GregorianCalendar.DATE, +2);
 		Date b = calendre.getTime();
-		domainDailyStatBusinessService.create(domain, new Date());
-		List<DomainDailyStat> listDomain = domainDailyStatBusinessService.findBetweenTwoDates(domain, a, b);
-		assertEquals(1, listDomain.size());
-		DomainDailyStat entity = listDomain.get(0);
-		assertEquals(4, (long) entity.getOperationCount());
-		assertEquals(800, (long) entity.getActualOperationSum());
-		assertEquals(4, (long) entity.getAddOperationCount());
-		assertEquals(800, (long) entity.getAddOperationSum());
-		assertEquals(0, (long) entity.getDeleteOperationCount());
-		assertEquals(0, (long) entity.getDeleteOperationSum());
-		assertEquals(800, (long) entity.getDiffOperationSum());
 
 		GregorianCalendar calendre2 = new GregorianCalendar();
 		calendre2.add(GregorianCalendar.DATE, -7);
@@ -117,13 +100,13 @@ public class DomainStatBusinessServiceTest extends AbstractTransactionalJUnit4Sp
 		List<DomainWeeklyStat> listWeekly = domainWeeklyStatBusinessService.findBetweenTwoDates(domain, a, b);
 		assertEquals(1, listWeekly.size());
 		DomainWeeklyStat entityWeekly = listWeekly.get(0);
-		assertEquals(8, (long) entityWeekly.getOperationCount());
-		assertEquals(950, (long) entityWeekly.getActualOperationSum());
-		assertEquals(7, (long) entityWeekly.getAddOperationCount());
-		assertEquals(1000, (long) entityWeekly.getAddOperationSum());
+		assertEquals(4, (long) entityWeekly.getOperationCount());
+		assertEquals(150, (long) entityWeekly.getActualOperationSum());
+		assertEquals(3, (long) entityWeekly.getAddOperationCount());
+		assertEquals(200, (long) entityWeekly.getAddOperationSum());
 		assertEquals(1, (long) entityWeekly.getDeleteOperationCount());
 		assertEquals(-50, (long) entityWeekly.getDeleteOperationSum());
-		assertEquals(950, (long) entityWeekly.getDiffOperationSum());
+		assertEquals(150, (long) entityWeekly.getDiffOperationSum());
 
 		GregorianCalendar calendre3 = new GregorianCalendar();
 		calendre3.add(GregorianCalendar.DATE, -30);
@@ -134,12 +117,12 @@ public class DomainStatBusinessServiceTest extends AbstractTransactionalJUnit4Sp
 		List<DomainMonthlyStat> listMonthly = domainMonthlyStatBusinessService.findBetweenTwoDates(domain, a, b);
 		assertEquals(1, listMonthly.size());
 		DomainMonthlyStat entityMonthly = listMonthly.get(0);
-		assertEquals(12, (long) entityMonthly.getOperationCount());
-		assertEquals(1100, (long) entityMonthly.getActualOperationSum());
-		assertEquals(10, (long) entityMonthly.getAddOperationCount());
-		assertEquals(1200, (long) entityMonthly.getAddOperationSum());
+		assertEquals(8, (long) entityMonthly.getOperationCount());
+		assertEquals(300, (long) entityMonthly.getActualOperationSum());
+		assertEquals(6, (long) entityMonthly.getAddOperationCount());
+		assertEquals(400, (long) entityMonthly.getAddOperationSum());
 		assertEquals(2, (long) entityMonthly.getDeleteOperationCount());
 		assertEquals(-100, (long) entityMonthly.getDeleteOperationSum());
-		assertEquals(1100, (long) entityMonthly.getDiffOperationSum());
+		assertEquals(300, (long) entityMonthly.getDiffOperationSum());
 	}
 }

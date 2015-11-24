@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -41,7 +40,6 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.EnsembleQuota;
@@ -64,28 +62,23 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 	@Override
 	public List<String> findDomainByBatchModificationDate(Date date) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("modificationDateByBatch", date));
-		criteria.setProjection(Projections.property("domain"));
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		criteria.add(Restrictions.eq("batchModificationDate", date));
+		criteria.createAlias("domain", "do");
+		criteria.setProjection(Projections.distinct(Projections.property("do.identifier")));
 		@SuppressWarnings("unchecked")
-		List<AbstractDomain> listDomain = getHibernateTemplate().findByCriteria(criteria);
-
-		List<String> listIdentifier = new ArrayList<>();
-		for(AbstractDomain domain : listDomain){
-			listIdentifier.add(domain.getIdentifier());
-		}
+		List<String> listIdentifier = (List<String>) getHibernateTemplate().findByCriteria(criteria);
 		return listIdentifier;
 	}
 
 	@Override
-	public Long sumOfCurrentValue(EnsembleQuota ensembleQuota, Date modificationDateByBatch) {
+	public Long sumOfCurrentValue(EnsembleQuota ensembleQuota, 	Date modificationDateByBatch) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 
 		if(ensembleQuota != null){
 			criteria.add(Restrictions.eq("ensembleQuota", ensembleQuota));
 		}
 		if(modificationDateByBatch != null){
-			criteria.add(Restrictions.eq("modificationDateByBatch", modificationDateByBatch));
+			criteria.add(Restrictions.le("batchModificationDate", modificationDateByBatch));
 		}
 		criteria.setProjection(Projections.sum("currentValue"));
 		List<AccountQuota> list = findByCriteria(criteria);

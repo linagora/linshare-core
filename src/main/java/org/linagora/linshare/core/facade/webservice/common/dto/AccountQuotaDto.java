@@ -50,7 +50,7 @@ public class AccountQuotaDto extends QuotaDto {
 		super(accountQuota);
 	}
 
-	public AccountQuota toUserObject(){
+	public AccountQuota toObject(){
 		AccountQuota accountQuota = new AccountQuota();
 		accountQuota.setFileSizeMax(getFileSizeMax());
 		accountQuota.setQuota(getQuota());

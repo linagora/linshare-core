@@ -34,6 +34,9 @@
 
 package org.linagora.linshare.core.batches.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -79,5 +82,16 @@ public abstract class GenericBatchImpl implements GenericBatch {
 
 	protected SystemAccount getSystemAccount() {
 		return accountRepository.getBatchSystemAccount();
+	}
+
+	@Override
+	public boolean needToRun() {
+		return true;
+	}
+
+	@Override
+	public void fail(Map<String, List<String>> context, Exception exception) {
+		logger.error("batch error in " + this.getClass().getName());
+		logger.error(exception.getMessage(), exception);
 	}
 }

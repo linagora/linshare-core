@@ -80,8 +80,8 @@ public class QuotaServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 
 	@Before
 	public void setUp() {
-		this.executeSqlScript("import-tests-quota.sql", false);
 		this.executeSqlScript("import-tests-operationHistory.sql", false);
+		this.executeSqlScript("import-tests-quota.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
 		dates.loadUsers();
 		jane = dates.getUser2();

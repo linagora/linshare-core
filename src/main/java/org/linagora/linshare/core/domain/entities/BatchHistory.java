@@ -31,9 +31,89 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.batches;
 
-public interface MonthlyBatch {
+package org.linagora.linshare.core.domain.entities;
 
-	void executeBatch();
+import java.util.Date;
+
+import org.linagora.linshare.core.domain.constants.BatchType;
+
+public class BatchHistory {
+
+	private long id;
+
+	private String uuid;
+
+	private Date executionDate;
+
+	private String status;
+
+	private BatchType batchType;
+
+	private Long errors;
+
+	private Long unhandledErrors;
+
+	public BatchHistory() {
+	}
+
+	public BatchHistory(BatchType batchType) {
+		this.batchType = batchType;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public BatchType getBatchType() {
+		return batchType;
+	}
+
+	public void setBatchType(BatchType batchType) {
+		this.batchType = batchType;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Date getExecutionDate() {
+		return executionDate;
+	}
+
+	public void setExecutionDate(Date executionDate) {
+		this.executionDate = executionDate;
+	}
+
+	public Long getErrors() {
+		return errors;
+	}
+
+	public void setErrors(Long errors) {
+		this.errors = errors;
+	}
+
+	public Long getUnhandledErrors() {
+		return unhandledErrors;
+	}
+
+	public void setUnhandledErrors(Long unhandledErrors) {
+		this.unhandledErrors = unhandledErrors;
+	}
 }

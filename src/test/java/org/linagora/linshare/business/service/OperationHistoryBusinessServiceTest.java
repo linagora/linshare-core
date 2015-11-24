@@ -43,13 +43,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
-import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
@@ -64,7 +62,6 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
-		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-startopendj.xml",
 		"classpath:springContext-jackRabbit-mock.xml",
@@ -118,7 +115,7 @@ public class OperationHistoryBusinessServiceTest
 		calendar.add(GregorianCalendar.DAY_OF_MONTH, +15);
 		Date b = calendar.getTime();
 		Account account = jane;
-		operationHistoryBusinessService.deleteBeforeDate(a);
+		operationHistoryBusinessService.deleteBeforeDateByAccount(a, account);
 		List<OperationHistory> result = operationHistoryBusinessService.find(account, null, null, b);
 		assertEquals(1, result.size());
 	}

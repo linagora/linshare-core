@@ -70,6 +70,7 @@ import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
+import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.VirusScannerService;
 
@@ -86,6 +87,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 	private final AntiSamyService antiSamyService;
 	private final OperationHistoryBusinessService operationHistoryBusinessService;
+	private final QuotaService quotaService;
 
 	public ThreadEntryServiceImpl(
 			DocumentEntryBusinessService documentEntryBusinessService,
@@ -98,7 +100,8 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
 			AntiSamyService antiSamyService,
 			ThreadEntryResourceAccessControl rac,
-			OperationHistoryBusinessService operationHistoryBusinessService) {
+			OperationHistoryBusinessService operationHistoryBusinessService,
+			QuotaService quotaService) {
 		super(rac);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -111,6 +114,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
 		this.antiSamyService = antiSamyService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
+		this.quotaService = quotaService;
 	}
 
 	@Override
@@ -146,6 +150,8 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			Functionality enciphermentFunctionality = functionalityReadOnlyService.getEnciphermentFunctionality(domain);
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
 
+			quotaService.checkIfUserCanAddFile(actor, owner, size, EnsembleType.THREAD);
+
 			threadEntry = documentEntryBusinessService.createThreadEntry(thread, tempFile, size, filename, checkIfIsCiphered, timeStampingUrl, mimeType);
 			logEntryService.create(new ThreadLogEntry(owner, threadEntry, LogAction.THREAD_UPLOAD_ENTRY, "Uploading a file in a thread."));
 
@@ -178,7 +184,12 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			mimeTypeService.checkFileMimeType(member, documentEntry.getName(), documentEntry.getType());
 		}
 
+		quotaService.checkIfUserCanAddFile(actor, actor, documentEntry.getSize(), EnsembleType.THREAD);
+
 		ThreadEntry threadEntry = documentEntryBusinessService.copyFromDocumentEntry(thread, documentEntry);
+		OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), documentEntry.getSize(), OperationHistoryTypeEnum.CREATE, EnsembleType.THREAD);
+		operationHistoryBusinessService.create(operationHistory);
+
 		logEntryService.create(new ThreadLogEntry(member, threadEntry, LogAction.THREAD_UPLOAD_ENTRY, "Uploading a file in a thread."));
 		return threadEntry;
 	}

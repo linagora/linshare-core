@@ -39,7 +39,7 @@ public abstract class Quota {
 
 	protected Long id;
 
-	protected String lsUuid;
+	protected String uuid;
 
 	protected Account account;
 
@@ -61,7 +61,7 @@ public abstract class Quota {
 
 	protected Date modificationDate;
 
-	protected Date modificationDateByBatch;
+	protected Date batchModificationDate;
 
 	public Quota() {
 	}
@@ -158,27 +158,27 @@ public abstract class Quota {
 		this.modificationDate = modificationDate;
 	}
 
-	public Date getModificationDateByBatch() {
-		return modificationDateByBatch;
-	}
-
-	public void setModificationDateByBatch(Date modificationDateByBatch) {
-		this.modificationDateByBatch = modificationDateByBatch;
-	}
-
-	public String getLsUuid() {
-		return lsUuid;
-	}
-
-	public void setLsUuid(String lsUuid) {
-		this.lsUuid = lsUuid;
-	}
-
 	public Date getCreationDate() {
 		return creationDate;
 	}
 
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public Date getBatchModificationDate() {
+		return batchModificationDate;
+	}
+
+	public void setBatchModificationDate(Date batchModificationDate) {
+		this.batchModificationDate = batchModificationDate;
 	}
 }

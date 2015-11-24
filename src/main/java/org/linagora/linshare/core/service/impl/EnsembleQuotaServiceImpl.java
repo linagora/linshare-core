@@ -85,7 +85,7 @@ public class EnsembleQuotaServiceImpl extends GenericServiceImpl<Account, Quota>
 		checkReadPermission(actor, null, EnsembleQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
 		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, ensembleType);
 		if(ensembleQuota == null){
-			throw new BusinessException(BusinessErrorCode.ENSEMBLE_QUOTA_NOT_FOUND, "Can not found ensemble " + ensembleType.toString() + " quota of the domain "+domain.getIdentifier());
+			throw new BusinessException(BusinessErrorCode.ENSEMBLE_QUOTA_NOT_FOUND, "Can not found ensemble " + ensembleType.toString() + " quota of the domain "+domain.getUuid());
 		}
 		return ensembleQuota;
 	}

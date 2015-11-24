@@ -18,6 +18,8 @@
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="auditUserMongoRepository" />
+		<constructor-arg ref="accountQuotaBusinessService"/>
+		<constructor-arg ref="ensembleQuotaBusinessService"/>
 	</bean>
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">
@@ -33,6 +35,8 @@
 		<constructor-arg ref="mailingListContactRepository" />
 		<constructor-arg ref="recipientFavouriteRepository" />
 		<constructor-arg ref="auditUserMongoRepository" />
+		<constructor-arg ref="accountQuotaBusinessService"/>
+		<constructor-arg ref="ensembleQuotaBusinessService"/>
 	</bean>
 
 	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">
@@ -56,6 +60,7 @@
 		<constructor-arg value="${virusscanner.limit.filesize}" />
 		<constructor-arg value="${linshare.override.global.quota}" />
 		<constructor-arg ref="operationHistoryBusinessService" />
+		<constructor-arg ref="quotaService"/>
 	</bean>
 
 	<bean id="threadEntryService" class="org.linagora.linshare.core.service.impl.ThreadEntryServiceImpl">
@@ -71,6 +76,7 @@
 		<constructor-arg ref="antiSamyService" />
 		<constructor-arg ref="threadEntryResourceAccessControl" />
 		<constructor-arg ref="operationHistoryBusinessService" />
+		<constructor-arg ref="quotaService"/>
 	</bean>
 
 	<bean id="shareExpiryDateService" class="org.linagora.linshare.core.service.impl.ShareExpiryDateServiceImpl">
@@ -136,6 +142,9 @@
 		<constructor-arg value="${linshare.override.global.quota}" />
 		<constructor-arg ref="auditAdminMongoRepository" />
 		<constructor-arg ref="domainAccessPolicyBusinessService" />
+		<constructor-arg ref="domainQuotaBusinessService" />
+		<constructor-arg ref="ensembleQuotaBusinessService"/>
+		<constructor-arg ref="platformQuotaBusinessService"/>
 	</bean>
 
 	<bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">

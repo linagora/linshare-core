@@ -80,15 +80,15 @@ public class DomainQuotaBusinessServiceImpl
 	}
 
 	@Override
-	public DomainQuota updateByBatch(DomainQuota entity, Date date) {
+	public DomainQuota updateByBatch(DomainQuota entity, Date date) throws BusinessException{
 		AbstractDomain domain = entity.getDomain();
 		if (exist(domain)) {
-			Long sumCurrentValue = ensembleQuotaRepository.sumOfCurrentValue(entity, null, date);
+			Long sumCurrentValue = ensembleQuotaRepository.sumOfCurrentValue(entity, date);
 			entity.setLastValue(entity.getCurrentValue());
 			entity.setCurrentValue(sumCurrentValue);
 			entity = repository.updateByBatch(entity);
 		} else {
-			throw new BusinessException(domain.getIdentifier() + " does not have a quota yet");
+			throw new BusinessException(domain.getUuid() + " does not have a quota yet");
 		}
 		return entity;
 	}

@@ -48,4 +48,6 @@ public interface DomainWeeklyStatBusinessService {
 	void deleteBeforeDate(Date date);
 
 	List<AbstractDomain> findDomainBetweenTwoDates(Date beginDate, Date endDate);
+
+	List<String> findIdentifierDomainBetweenTwoDates(Date beginDate, Date endDate);
 }

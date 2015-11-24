@@ -36,11 +36,16 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.EnsembleType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.domain.entities.EnsembleQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadLogEntry;
@@ -80,6 +85,10 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 	private final AuditUserMongoRepository auditMongoRepository;
 
+	private final AccountQuotaBusinessService accountQuotaBusinessService;
+
+	private final EnsembleQuotaBusinessService ensembleQuotaBusinessService;
+
 	public ThreadServiceImpl(
 			ThreadRepository threadRepository,
 			ThreadMemberRepository threadMemberRepository,
@@ -89,7 +98,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 			ThreadMemberResourceAccessControl threadMemberResourceAccessControl,
 			UserRepository<User> userRepository,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
-			AuditUserMongoRepository auditMongoRepository) {
+			AuditUserMongoRepository auditMongoRepository,
+			AccountQuotaBusinessService accountQuotaBusinessService,
+			EnsembleQuotaBusinessService ensembleQuotaBusinessService) {
 		super(rac);
 		this.threadRepository = threadRepository;
 		this.threadMemberRepository = threadMemberRepository;
@@ -99,6 +110,8 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.auditMongoRepository = auditMongoRepository;
+		this.accountQuotaBusinessService = accountQuotaBusinessService;
+		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
 	}
 
 	@Override
@@ -155,6 +168,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		logger.debug("User " + owner.getAccountRepresentation() + " trying to create new thread named " + name);
 		thread = new Thread(owner.getDomain(), owner, name);
 		threadRepository.create(thread);
+		createQuotaThread(thread);
 		logEntryService.create(new ThreadLogEntry(owner, thread, LogAction.THREAD_CREATE, "Creation of a new thread."));
 		// creator = first member = default admin
 		member = new ThreadMember(true, true, (User) owner, thread);
@@ -409,6 +423,18 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 					+ thread.getAccountRepresentation());
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"you are not authorized to perform this action on this thread.");
+		}
+	}
+
+	private void createQuotaThread(Thread thread) throws BusinessException {
+		try {
+			EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(thread.getDomain(), EnsembleType.THREAD);
+			AccountQuota threadQuota = new AccountQuota(thread, thread.getDomain(),
+					thread.getDomain().getParentDomain(), ensembleQuota, ensembleQuota.getQuota(),
+					ensembleQuota.getQuotaWarning(), ensembleQuota.getFileSizeMax(), 0L, 0L);
+			accountQuotaBusinessService.create(threadQuota);
+		} catch (Exception exception) {
+			throw new BusinessException(exception.getMessage());
 		}
 	}
 }

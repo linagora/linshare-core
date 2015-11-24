@@ -1037,3 +1037,6 @@ CREATE VIEW alias_threads_list_active AS SELECT a.id, mail, domain_id, ls_uuid, 
 -- All destroyed threads
 CREATE VIEW alias_threads_list_destroyed AS SELECT a.id, mail, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed >= 1;
 COMMIT;
+
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, domain_quota, ensemble_quota,current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type)
+VALUES (1, '2a01ac66-a279-11e5-9086-5404a683a462', NOW(), NOW(), NOW(), null, null, 0,0, null, null, null, 1000000000000, 900000000000, 10, null, 'PLATFORM_QUOTA');

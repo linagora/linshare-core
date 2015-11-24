@@ -38,7 +38,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -75,9 +74,6 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		}
 		if (domain != null) {
 			criteria.add(Restrictions.eq("domain", domain));
-			Criterion creterion = Restrictions.or(Restrictions.eq("statisticType", StatisticType.DOMAIN_DAILY_STAT),
-					Restrictions.eq("statisticType", StatisticType.DOMAIN_WEEKLY_STAT));
-			criteria.add(Restrictions.or(creterion, Restrictions.eq("statisticType", StatisticType.DOMAIN_MONTHLY_STAT)));
 		}
 		criteria.setProjection(Projections.sum("operationCount"));
 		List<T> list = findByCriteria(criteria);
@@ -95,9 +91,6 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		}
 		if (domain != null) {
 			criteria.add(Restrictions.eq("domain", domain));
-			Criterion creterion = Restrictions.or(Restrictions.eq("statisticType", StatisticType.DOMAIN_DAILY_STAT),
-					Restrictions.eq("statisticType", StatisticType.DOMAIN_WEEKLY_STAT));
-			criteria.add(Restrictions.or(creterion, Restrictions.eq("statisticType", StatisticType.DOMAIN_MONTHLY_STAT)));
 		}
 		criteria.setProjection(Projections.sum("deleteOperationCount"));
 		List<T> list = findByCriteria(criteria);
@@ -115,9 +108,6 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		}
 		if (domain != null) {
 			criteria.add(Restrictions.eq("domain", domain));
-			Criterion creterion = Restrictions.or(Restrictions.eq("statisticType", StatisticType.DOMAIN_DAILY_STAT),
-					Restrictions.eq("statisticType", StatisticType.DOMAIN_WEEKLY_STAT));
-			criteria.add(Restrictions.or(creterion, Restrictions.eq("statisticType", StatisticType.DOMAIN_MONTHLY_STAT)));
 		}
 		criteria.setProjection(Projections.sum("addOperationCount"));
 		List<T> list = findByCriteria(criteria);
@@ -135,9 +125,6 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		}
 		if (domain != null) {
 			criteria.add(Restrictions.eq("domain", domain));
-			Criterion creterion = Restrictions.or(Restrictions.eq("statisticType", StatisticType.DOMAIN_DAILY_STAT),
-					Restrictions.eq("statisticType", StatisticType.DOMAIN_WEEKLY_STAT));
-			criteria.add(Restrictions.or(creterion, Restrictions.eq("statisticType", StatisticType.DOMAIN_MONTHLY_STAT)));
 		}
 		criteria.setProjection(Projections.sum("addOperationSum"));
 		List<T> list = findByCriteria(criteria);
@@ -155,9 +142,6 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		}
 		if (domain != null) {
 			criteria.add(Restrictions.eq("domain", domain));
-			Criterion creterion = Restrictions.or(Restrictions.eq("statisticType", StatisticType.DOMAIN_DAILY_STAT),
-					Restrictions.eq("statisticType", StatisticType.DOMAIN_WEEKLY_STAT));
-			criteria.add(Restrictions.or(creterion, Restrictions.eq("statisticType", StatisticType.DOMAIN_MONTHLY_STAT)));
 		}
 		criteria.setProjection(Projections.sum("deleteOperationSum"));
 		List<T> list = findByCriteria(criteria);
@@ -175,9 +159,6 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		}
 		if (domain != null) {
 			criteria.add(Restrictions.eq("domain", domain));
-			Criterion creterion = Restrictions.or(Restrictions.eq("statisticType", StatisticType.DOMAIN_DAILY_STAT),
-					Restrictions.eq("statisticType", StatisticType.DOMAIN_WEEKLY_STAT));
-			criteria.add(Restrictions.or(creterion, Restrictions.eq("statisticType", StatisticType.DOMAIN_MONTHLY_STAT)));
 		}
 		criteria.setProjection(Projections.sum("diffOperationSum"));
 		List<T> list = findByCriteria(criteria);
@@ -195,9 +176,6 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		}
 		if (domain != null) {
 			criteria.add(Restrictions.eq("domain", domain));
-			Criterion creterion = Restrictions.or(Restrictions.eq("statisticType", StatisticType.DOMAIN_DAILY_STAT),
-					Restrictions.eq("statisticType", StatisticType.DOMAIN_WEEKLY_STAT));
-			criteria.add(Restrictions.or(creterion, Restrictions.eq("statisticType", StatisticType.DOMAIN_MONTHLY_STAT)));
 		}
 		criteria.setProjection(Projections.sum("actualOperationSum"));
 		List<T> list = findByCriteria(criteria);
@@ -222,9 +200,6 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 
 		if (domain != null) {
 			criteria.add(Restrictions.eq("domain", domain));
-			Criterion creterion = Restrictions.or(Restrictions.eq("statisticType", StatisticType.DOMAIN_DAILY_STAT),
-					Restrictions.eq("statisticType", StatisticType.DOMAIN_WEEKLY_STAT));
-			criteria.add(Restrictions.or(creterion, Restrictions.eq("statisticType", StatisticType.DOMAIN_MONTHLY_STAT)));
 		}
 
 		if (parentDomain != null) {
@@ -249,7 +224,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		criteria.setProjection(Projections.property("domain"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		@SuppressWarnings("unchecked")
-		List<AbstractDomain> listDomains = getHibernateTemplate().findByCriteria(criteria);
+		List<AbstractDomain> listDomains = (List<AbstractDomain>) getHibernateTemplate().findByCriteria(criteria);
 		return  listDomains;
 	}
 
@@ -265,7 +240,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		criteria.setProjection(Projections.property("account"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		@SuppressWarnings("unchecked")
-		List<Account> listAccounts = getHibernateTemplate().findByCriteria(criteria);
+		List<Account> listAccounts = (List<Account>) getHibernateTemplate().findByCriteria(criteria);
 		return listAccounts;
 	}
 
@@ -293,7 +268,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		criteria.setProjection(Projections.property("account"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		@SuppressWarnings("unchecked")
-		List<Account> listAccount = getHibernateTemplate().findByCriteria(criteria);
+		List<Account> listAccount = (List<Account>) getHibernateTemplate().findByCriteria(criteria);
 
 		List<String> listUuid = new ArrayList<>();
 		for (Account acccount : listAccount) {
@@ -314,11 +289,11 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		criteria.setProjection(Projections.property("domain"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		@SuppressWarnings("unchecked")
-		List<AbstractDomain> listDomain = getHibernateTemplate().findByCriteria(criteria);
+		List<AbstractDomain> listDomain = (List<AbstractDomain>) getHibernateTemplate().findByCriteria(criteria);
 
 		List<String> identifiers = new ArrayList<>();
 		for (AbstractDomain domain : listDomain) {
-			identifiers.add(domain.getIdentifier());
+			identifiers.add(domain.getUuid());
 		}
 		return identifiers;
 	}
