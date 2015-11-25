@@ -55,4 +55,8 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="functionalityService" />
 	</bean>
+	<bean id="wsAutoCompleteFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.AutoCompleteFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userService" />
+	</bean>
 </beans>

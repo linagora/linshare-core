@@ -16,59 +16,59 @@
 	<!-- REST  -->
 
 	<!-- Compatibility thunderbird -->
-	<bean id="pluginCompatibilityRestService" class="org.linagora.linshare.webservice.impl.PluginCompatibilityRestServiceImpl">
+	<bean id="pluginCompatibilityRestServiceV1" class="org.linagora.linshare.webservice.impl.PluginCompatibilityRestServiceImpl">
 		<constructor-arg ref="wsShareFacade" />
 		<constructor-arg ref="wsDocumentFacade" />
 	</bean>
 
-	<bean id="authenticationRestService" class="org.linagora.linshare.webservice.user.impl.AuthenticationRestServiceImpl">
+	<bean id="authenticationRestServiceV1" class="org.linagora.linshare.webservice.user.impl.AuthenticationRestServiceImpl">
 		<constructor-arg ref="wsUserFacade" />
 	</bean>
 
-	<bean id="documentRestService" class="org.linagora.linshare.webservice.user.impl.DocumentRestServiceImpl">
+	<bean id="documentRestServiceV1" class="org.linagora.linshare.webservice.user.impl.DocumentRestServiceImpl">
 		<constructor-arg ref="wsDocumentFacade" />
 	</bean>
 
-	<bean id="shareRestService" class="org.linagora.linshare.webservice.user.impl.ShareRestServiceImpl">
+	<bean id="shareRestServiceV1" class="org.linagora.linshare.webservice.user.impl.ShareRestServiceImpl">
 		<constructor-arg ref="wsShareFacade" />
 	</bean>
 
-	<bean id="threadRestService" class="org.linagora.linshare.webservice.user.impl.ThreadRestServiceImpl">
+	<bean id="threadRestServiceV1" class="org.linagora.linshare.webservice.user.impl.ThreadRestServiceImpl">
 		<constructor-arg ref="wsThreadFacade" />
 	</bean>
 
-	<bean id="threadMemberRestService" class="org.linagora.linshare.webservice.user.impl.ThreadMemberRestServiceImpl">
+	<bean id="threadMemberRestServiceV1" class="org.linagora.linshare.webservice.user.impl.ThreadMemberRestServiceImpl">
 		<constructor-arg ref="wsThreadFacade" />
 		<constructor-arg ref="wsThreadMemberFacade" />
 	</bean>
 
-	<bean id="userRestService" class="org.linagora.linshare.webservice.user.impl.UserRestServiceImpl">
+	<bean id="userRestServiceV1" class="org.linagora.linshare.webservice.user.impl.UserRestServiceImpl">
 		<constructor-arg ref="wsUserFacade" />
 	</bean>
 
-	<bean id="logRestService" class="org.linagora.linshare.webservice.user.impl.LogRestServiceImpl">
+	<bean id="logRestServiceV1" class="org.linagora.linshare.webservice.user.impl.LogRestServiceImpl">
 		<constructor-arg ref="wsLogEntryFacade" />
 	</bean>
 
-	<bean id="enumRestService" class="org.linagora.linshare.webservice.user.impl.EnumRestServiceImpl">
+	<bean id="enumRestServiceV1" class="org.linagora.linshare.webservice.user.impl.EnumRestServiceImpl">
 	</bean>
 
-	<bean id="guestRestService" class="org.linagora.linshare.webservice.user.impl.GuestRestServiceImpl">
+	<bean id="guestRestServiceV1" class="org.linagora.linshare.webservice.user.impl.GuestRestServiceImpl">
 		<constructor-arg ref="wsGuestFacade" />
 	</bean>
 
 	<jaxrs:server id="restContainer" address="/rest">
 		<jaxrs:serviceBeans>
-			<ref bean="authenticationRestService" />
-			<ref bean="documentRestService" />
-			<ref bean="shareRestService" />
-			<ref bean="pluginCompatibilityRestService" />
-			<ref bean="threadRestService" />
-			<ref bean="threadMemberRestService" />
-			<ref bean="userRestService" />
-			<ref bean="logRestService" />
-			<ref bean="enumRestService" />
-			<ref bean="guestRestService" />
+			<ref bean="authenticationRestServiceV1" />
+			<ref bean="documentRestServiceV1" />
+			<ref bean="shareRestServiceV1" />
+			<ref bean="pluginCompatibilityRestServiceV1" />
+			<ref bean="threadRestServiceV1" />
+			<ref bean="threadMemberRestServiceV1" />
+			<ref bean="userRestServiceV1" />
+			<ref bean="logRestServiceV1" />
+			<ref bean="enumRestServiceV1" />
+			<ref bean="guestRestServiceV1" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

@@ -59,6 +59,7 @@
 
 	<bean id="userRestService" class="org.linagora.linshare.webservice.userv2.impl.UserRestServiceImpl">
 		<constructor-arg ref="wsUserFacade" />
+		<constructor-arg ref="wsAutoCompleteFacade" />
 	</bean>	
 
 	<bean id="userReceivedShareRestService" class="org.linagora.linshare.webservice.userv2.impl.ReceivedShareRestServiceImpl">
@@ -89,7 +90,7 @@
 			<ref bean="userFunctionalityRestService" />
 			<ref bean="userFlowDocumentUploaderRestService" />
 <!--
-			<ref bean="pluginCompatibilityRestService" />
+			<ref bean="pluginCompatibilityRestServiceV2" />
 -->
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>

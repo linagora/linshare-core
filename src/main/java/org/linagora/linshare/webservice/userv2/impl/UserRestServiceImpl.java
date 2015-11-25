@@ -35,19 +35,24 @@
 package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.user.AutoCompleteFacade;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.webservice.userv2.UserRestService;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 @Path("/users")
 @Api(value = "/rest/user/users")
@@ -56,11 +61,14 @@ import com.wordnik.swagger.annotations.Api;
 public class UserRestServiceImpl implements UserRestService {
 
 	private final UserFacade webServiceUserFacade;
-	
-	public UserRestServiceImpl(final UserFacade webServiceUserFacade) {
+
+	private final AutoCompleteFacade autocompleteFacade;
+
+	public UserRestServiceImpl(final UserFacade webServiceUserFacade, final AutoCompleteFacade autocompleteFacade) {
 		this.webServiceUserFacade = webServiceUserFacade;
+		this.autocompleteFacade = autocompleteFacade;
 	}
-	
+
 	@Path("/")
 	@GET
 	@Override
@@ -68,4 +76,13 @@ public class UserRestServiceImpl implements UserRestService {
 		return webServiceUserFacade.findAll();
 	}
 
+	@Path("/autocomplete/{pattern}")
+	@GET
+	@ApiOperation(value = "Provide user autocompletion.", response = UserDto.class, responseContainer = "Set")
+	@Override
+	public Set<UserDto> autocomplete(
+			@ApiParam(value = "Pattern to complete.", required = true) @PathParam("pattern") String pattern)
+					throws BusinessException {
+		return autocompleteFacade.findUser(pattern);
+	}
 }

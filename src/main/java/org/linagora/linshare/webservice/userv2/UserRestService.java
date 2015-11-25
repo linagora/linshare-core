@@ -35,6 +35,7 @@
 package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
@@ -42,4 +43,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 public interface UserRestService {
 	
 	List<UserDto> findAll() throws BusinessException;
+
+	Set<UserDto> autocomplete(String pattern) throws BusinessException;
 }
