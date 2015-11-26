@@ -45,8 +45,6 @@ import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.ShareEntryGroupService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
 
@@ -62,8 +60,9 @@ public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
 	@Override
 	public List<String> getAll() {
 		logger.info("DeleteShareEntryGroupBatchImpl job starting ...");
+		SystemAccount actor = getSystemAccount();
 		List<String> allShareEntries = service
-				.findAllToPurge(getSystemAccount());
+				.findAllToPurge(actor, actor);
 		logger.info(allShareEntries.size()
 				+ " unconsistent shareEntryGroups to delete");
 		return allShareEntries;
@@ -73,13 +72,13 @@ public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
 	public Context execute(String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
-		ShareEntryGroup shareEntryGroup = service.findByUuid(actor, identifier);
+		ShareEntryGroup shareEntryGroup = service.find(actor, actor, identifier);
 		Context context = new BatchResultContext<ShareEntryGroup>(
 				shareEntryGroup);
 		try {
 			logInfo(total, position, "processing shareEntryGroup : "
 					+ shareEntryGroup.getUuid());
-			service.delete(accountRepository.getBatchSystemAccount(),
+			service.delete(actor, actor,
 					shareEntryGroup);
 			logger.info("shareEntryGroup " + shareEntryGroup.getUuid()
 					+ " has been deleted");

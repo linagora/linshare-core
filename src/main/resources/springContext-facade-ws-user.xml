@@ -55,8 +55,15 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="functionalityService" />
 	</bean>
+
 	<bean id="wsAutoCompleteFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.AutoCompleteFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
+	</bean>
+
+	<bean id="wsShareEntryGroupFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ShareEntryGroupFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="shareEntryGroupService" />
+
 	</bean>
 </beans>

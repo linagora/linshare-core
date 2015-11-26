@@ -47,6 +47,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ShareEntryGroupRepository;
@@ -152,5 +153,14 @@ public class ShareEntryGroupRepositoryImpl extends AbstractRepositoryImpl<ShareE
 			}
 		};
 		return getHibernateTemplate().execute(action);
+	}
+
+	@Override
+	public List<ShareEntryGroup> findAll(Account owner) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("owner", owner));
+		@SuppressWarnings("unchecked")
+		List<ShareEntryGroup> list = listByCriteria(det);
+		return list;
 	}
 }

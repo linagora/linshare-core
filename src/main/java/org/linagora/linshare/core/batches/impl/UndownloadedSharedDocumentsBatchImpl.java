@@ -52,8 +52,6 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryGroupService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 
@@ -81,8 +79,8 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 	@Override
 	public List<String> getAll() {
 		logger.info("UndownloadedSharedDocumentsBatchImpl job starting ...");
-		List<String> allUuids = service.findAllAboutToBeNotified(
-				getSystemAccount());
+		SystemAccount actor = getSystemAccount();
+		List<String> allUuids = service.findAllAboutToBeNotified(actor, actor);
 		logger.info(allUuids.size()
 				+ " shareEntryGroup with undownloaded documents");
 		return allUuids;
@@ -92,7 +90,7 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 	public Context execute(String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
-		ShareEntryGroup shareEntryGroup = service.findByUuid(actor, identifier);
+		ShareEntryGroup shareEntryGroup = service.find(actor, actor, identifier);
 
 		Context context = new BatchResultContext<ShareEntryGroup>(shareEntryGroup);
 		MailContainerWithRecipient mail = null;
@@ -105,7 +103,7 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 				// log action and notification
 				mail = mailService.buildNoDocumentHasBeenDownloadedAcknowledgement(shareEntryGroup);
 				shareEntryGroup.setNotified(true);
-				service.update(actor, shareEntryGroup);
+				service.update(actor, actor, shareEntryGroup);
 				logActions(shareEntryGroup, LogAction.SHARE_WITH_USD_NOT_DOWNLOADED);
 			} else {
 				// only log action

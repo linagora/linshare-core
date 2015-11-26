@@ -32,81 +32,61 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.business.service.impl;
+package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
 
-import org.linagora.linshare.core.business.service.ShareEntryGroupBusinessService;
-import org.linagora.linshare.core.domain.entities.Account;
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.ShareEntryGroupRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.linagora.linshare.core.facade.webservice.common.dto.ShareEntryGroupDto;
+import org.linagora.linshare.core.facade.webservice.user.ShareEntryGroupFacade;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.ShareEntryGroupService;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-public class ShareEntryGroupBusinessServiceImpl
-		implements ShareEntryGroupBusinessService {
+public class ShareEntryGroupFacadeImpl extends UserGenericFacadeImp implements ShareEntryGroupFacade {
 
-	private final ShareEntryGroupRepository repository;
+	private final ShareEntryGroupService service;
 
-	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory
-			.getLogger(ShareEntryGroupBusinessServiceImpl.class);
-
-	public ShareEntryGroupBusinessServiceImpl(
-			ShareEntryGroupRepository shareEntryGroupRepository) {
-		super();
-		this.repository = shareEntryGroupRepository;
+	public ShareEntryGroupFacadeImpl(final AccountService accountService, final ShareEntryGroupService service) {
+		super(accountService);
+		this.service = service;
 	}
 
 	@Override
-	public ShareEntryGroup create(ShareEntryGroup entity)
-			throws BusinessException {
-		return repository.create(entity);
+	public List<ShareEntryGroupDto> findAll(boolean full) {
+		User actor = checkAuthentication();
+		List<ShareEntryGroup> list = service.findAll(actor, actor);
+		return ImmutableList.copyOf(Lists.transform(list, ShareEntryGroupDto.toDto(full)));
 	}
 
 	@Override
-	public void delete(ShareEntryGroup shareEntryGroup)
-			throws BusinessException {
-		repository.delete(shareEntryGroup);
+	public ShareEntryGroupDto find(String uuid, boolean full) {
+		Validate.notEmpty(uuid, "Share entry group uuid must be set.");
+		User actor = checkAuthentication();
+		ShareEntryGroup seg = service.find(actor, actor, uuid);
+		return new ShareEntryGroupDto(seg, full);
 	}
 
 	@Override
-	public ShareEntryGroup findByUuid(String uuid) throws BusinessException {
-		return repository.findByUuid(uuid);
+	public ShareEntryGroupDto update(ShareEntryGroupDto shareEntryGroupDto) {
+		Validate.notNull(shareEntryGroupDto, "Share entry group must be set.");
+		Validate.notNull(shareEntryGroupDto.getUuid(), "Share entry group uuid must be set.");
+		User actor = checkAuthentication();
+		ShareEntryGroup seg = shareEntryGroupDto.toObject();
+		seg = service.update(actor, actor, shareEntryGroupDto.getUuid(), seg);
+		return new ShareEntryGroupDto(seg, false);
 	}
 
 	@Override
-	public ShareEntryGroup update(ShareEntryGroup shareEntryGroup, ShareEntryGroup shareEntryGroupObject)
-			throws BusinessException {
-		shareEntryGroup.setBusinessExpirationDate(shareEntryGroupObject.getExpirationDate());
-		shareEntryGroup.setBusinessNotificationDate(shareEntryGroupObject.getNotificationDate());
-		shareEntryGroup.setBusinessSubject(shareEntryGroupObject.getSubject());
-		return repository.update(shareEntryGroup);
+	public ShareEntryGroupDto delete(String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "Share entry group uuid must be set.");
+		User actor = checkAuthentication();
+		ShareEntryGroup seg = service.delete(actor, actor, uuid);
+		return new ShareEntryGroupDto(seg, false);
 	}
-
-	@Override
-	public ShareEntryGroup update(ShareEntryGroup shareEntryGroup) throws BusinessException {
-		return repository.update(shareEntryGroup);
-	}
-
-	@Override
-	public List<String> findAllAboutToBeNotified() {
-		List<String> all= Lists.newArrayList();
-		all.addAll(repository.findAllAboutToBeNotified());
-		return all;
-	}
-
-	@Override
-	public List<String> findAllToPurge() {
-		return repository.findAllToPurge();
-	}
-
-	@Override
-	public List<ShareEntryGroup> findAll(Account owner) throws BusinessException {
-		return repository.findAll(owner);
-	}
-
 }

@@ -32,81 +32,56 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.business.service.impl;
+package org.linagora.linshare.core.rac.impl;
 
-import java.util.List;
-
-import org.linagora.linshare.core.business.service.ShareEntryGroupBusinessService;
+import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.ShareEntryGroupRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.linagora.linshare.core.rac.ShareEntryGroupResourceAccessControl;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
-import com.google.common.collect.Lists;
+public class ShareEntryGroupResourceAccessControlImpl extends AbstractResourceAccessControlImpl<Account, Account, ShareEntryGroup> implements ShareEntryGroupResourceAccessControl{
 
-public class ShareEntryGroupBusinessServiceImpl
-		implements ShareEntryGroupBusinessService {
-
-	private final ShareEntryGroupRepository repository;
-
-	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory
-			.getLogger(ShareEntryGroupBusinessServiceImpl.class);
-
-	public ShareEntryGroupBusinessServiceImpl(
-			ShareEntryGroupRepository shareEntryGroupRepository) {
-		super();
-		this.repository = shareEntryGroupRepository;
+	public ShareEntryGroupResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
+		super(functionalityService);
 	}
 
 	@Override
-	public ShareEntryGroup create(ShareEntryGroup entity)
-			throws BusinessException {
-		return repository.create(entity);
+	protected boolean hasReadPermission(Account actor, Account account, ShareEntryGroup entry, Object... opt) {
+		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.SHARE_ENTRY_GROUPS_GET);
 	}
 
 	@Override
-	public void delete(ShareEntryGroup shareEntryGroup)
-			throws BusinessException {
-		repository.delete(shareEntryGroup);
+	protected boolean hasListPermission(Account actor, Account account, ShareEntryGroup entry, Object... opt) {
+		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.SHARE_ENTRY_GROUPS_LIST);
 	}
 
 	@Override
-	public ShareEntryGroup findByUuid(String uuid) throws BusinessException {
-		return repository.findByUuid(uuid);
+	protected boolean hasDeletePermission(Account actor, Account account, ShareEntryGroup entry, Object... opt) {
+		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.SHARE_ENTRY_GROUPS_DELETE);
+	}
+
+	/**
+	 * This methods returns true because the creation rights are check when you are trying to crate shares.
+	 * So if you can create a share entry, you can also create a share entry group.
+	 */
+	@Override
+	protected boolean hasCreatePermission(Account actor, Account account, ShareEntryGroup entry, Object... opt) {
+		return true;
 	}
 
 	@Override
-	public ShareEntryGroup update(ShareEntryGroup shareEntryGroup, ShareEntryGroup shareEntryGroupObject)
-			throws BusinessException {
-		shareEntryGroup.setBusinessExpirationDate(shareEntryGroupObject.getExpirationDate());
-		shareEntryGroup.setBusinessNotificationDate(shareEntryGroupObject.getNotificationDate());
-		shareEntryGroup.setBusinessSubject(shareEntryGroupObject.getSubject());
-		return repository.update(shareEntryGroup);
+	protected boolean hasUpdatePermission(Account actor, Account account, ShareEntryGroup entry, Object... opt) {
+		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.SHARE_ENTRY_GROUPS_UPDATE);
 	}
 
 	@Override
-	public ShareEntryGroup update(ShareEntryGroup shareEntryGroup) throws BusinessException {
-		return repository.update(shareEntryGroup);
+	protected String getTargetedAccountRepresentation(Account targetedAccount) {
+		return targetedAccount.getAccountReprentation();
 	}
 
 	@Override
-	public List<String> findAllAboutToBeNotified() {
-		List<String> all= Lists.newArrayList();
-		all.addAll(repository.findAllAboutToBeNotified());
-		return all;
+	protected String getEntryRepresentation(ShareEntryGroup entry) {
+		return entry.getUuid();
 	}
-
-	@Override
-	public List<String> findAllToPurge() {
-		return repository.findAllToPurge();
-	}
-
-	@Override
-	public List<ShareEntryGroup> findAll(Account owner) throws BusinessException {
-		return repository.findAll(owner);
-	}
-
 }

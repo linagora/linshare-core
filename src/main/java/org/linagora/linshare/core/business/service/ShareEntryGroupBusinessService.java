@@ -36,6 +36,7 @@ package org.linagora.linshare.core.business.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -48,10 +49,14 @@ public interface ShareEntryGroupBusinessService {
 
 	ShareEntryGroup findByUuid(String uuid) throws BusinessException;
 
-	ShareEntryGroup update(ShareEntryGroup shareEntryGroup)
+	ShareEntryGroup update(ShareEntryGroup shareEntryGroup, ShareEntryGroup shareEntryGroupObject)
 			throws BusinessException;
+
+	ShareEntryGroup update(ShareEntryGroup shareEntryGroup) throws BusinessException;
 
 	List<String> findAllAboutToBeNotified();
 
 	List<String> findAllToPurge();
+
+	List<ShareEntryGroup> findAll(Account owner) throws BusinessException;
 }

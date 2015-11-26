@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 
 public interface ShareEntryGroupRepository extends
@@ -52,4 +53,6 @@ public interface ShareEntryGroupRepository extends
 	List<String> findAllToPurge();
 
 	Set<String> findAllAboutToBeNotified();
+
+	List<ShareEntryGroup> findAll(Account owner);
 }

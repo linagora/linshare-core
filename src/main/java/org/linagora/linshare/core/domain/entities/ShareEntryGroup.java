@@ -252,4 +252,26 @@ public class ShareEntryGroup {
 	public Map<DocumentEntry, Boolean> getTmpAllSharesWereNotDownloaded() {
 		return tmpAllSharesWereNotDownloaded;
 	}
+
+	/*
+	 * Set business
+	 */
+
+	public void setBusinessExpirationDate(Date expirationDate) {
+		if (expirationDate != null) {
+			this.expirationDate = expirationDate;
+		}
+	}
+
+	public void setBusinessNotificationDate(Date notificationDate) {
+		if (notificationDate != null) {
+			this.notificationDate = notificationDate;
+		}
+	}
+
+	public void setBusinessSubject(String subject) {
+		if (subject != null && !subject.isEmpty()) {
+			this.subject = subject;
+		}
+	}
 }

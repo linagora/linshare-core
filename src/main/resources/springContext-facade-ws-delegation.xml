@@ -60,4 +60,10 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="asyncTaskService" />
 	</bean>
+
+	<bean id="wsDelegationShareEntryGroupFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.ShareEntryGroupFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="shareEntryGroupService" />
+	</bean>
 </beans>

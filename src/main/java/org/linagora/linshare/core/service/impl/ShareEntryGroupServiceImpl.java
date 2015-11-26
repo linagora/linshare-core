@@ -39,66 +39,147 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.ShareEntryGroupBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.ShareEntryGroupResourceAccessControl;
+import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ShareEntryGroupService;
+import org.linagora.linshare.core.service.ShareEntryService;
 
-public class ShareEntryGroupServiceImpl implements ShareEntryGroupService {
+public class ShareEntryGroupServiceImpl extends GenericServiceImpl<Account, ShareEntryGroup>
+		implements ShareEntryGroupService {
 
-	private ShareEntryGroupBusinessService businessService;
+	private final ShareEntryGroupBusinessService businessService;
+	private final ShareEntryService shareEntryService;
+	private final AnonymousShareEntryService anonymousShareEntryService;
 
 	@SuppressWarnings("unused")
 	private LogEntryService logEntryService;
 
 	public ShareEntryGroupServiceImpl(
-			ShareEntryGroupBusinessService shareEntryGroupBusinessService,
-			LogEntryService logEntryService) {
-		super();
+			final ShareEntryGroupBusinessService shareEntryGroupBusinessService,
+			final ShareEntryService shareEntryService,
+			final LogEntryService logEntryService,
+			final AnonymousShareEntryService anonymousShareEntryService,
+			final ShareEntryGroupResourceAccessControl rac) {
+		super(rac);
 		this.businessService = shareEntryGroupBusinessService;
 		this.logEntryService = logEntryService;
+		this.anonymousShareEntryService = anonymousShareEntryService;
+		this.shareEntryService = shareEntryService;
 	}
 
 	@Override
 	public ShareEntryGroup create(Account actor, ShareEntryGroup entity) {
-		Validate.notNull(actor);
-		Validate.notNull(entity);
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(entity, "Entity must be set.");
+
 		return businessService.create(entity);
 	}
 
 	@Override
-	public void delete(Account actor, ShareEntryGroup entity) {
-		Validate.notNull(actor);
-		Validate.notNull(entity);
-		// TODO : Add check not null and throws exception.
-		businessService.delete(entity);
+	public ShareEntryGroup delete(Account actor, Account owner, String uuid) {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "Uuid must be set.");
+
+		ShareEntryGroup seg = find(actor, owner, uuid);
+
+		if (seg == null) {
+			throw new BusinessException(BusinessErrorCode.SHARE_ENTRY_GROUP_NOT_FOUND,
+					"Share entry group with uuid :" + uuid + " was not found.");
+		}
+		checkDeletePermission(actor, seg.getOwner(), ShareEntryGroup.class,
+				BusinessErrorCode.SHARE_ENTRY_GROUP_FORBIDDEN, seg);
+		for (ShareEntry se : seg.getShareEntries()) {
+			// AKO : Remove the entry from the list first to avoid hibernate
+			// ObjectDeleted exception.
+			seg.getShareEntries().remove(se);
+			shareEntryService.delete(actor, actor, se.getUuid());
+		}
+		for (AnonymousShareEntry ase : seg.getAnonymousShareEntries()) {
+//			AKO : Remove the entry from the list first to avoid hibernate ObjectDeleted exception.
+			seg.getAnonymousShareEntries().remove(ase);
+			anonymousShareEntryService.delete(actor, actor, ase.getUuid());
+		}
+		businessService.delete(seg);
+
+		return seg;
 	}
 
 	@Override
-	public ShareEntryGroup findByUuid(Account actor, String uuid) {
-		Validate.notNull(actor);
-		Validate.notEmpty(uuid);
-		// TODO : Add check not null and throws exception.
-		return businessService.findByUuid(uuid);
+	public ShareEntryGroup delete(Account actor, Account owner, ShareEntryGroup shareEntryGroup) {
+		return delete(actor, owner, shareEntryGroup.getUuid());
 	}
 
 	@Override
-	public ShareEntryGroup update(Account actor, ShareEntryGroup shareEntryGroup) {
-		Validate.notNull(actor);
-		Validate.notNull(shareEntryGroup);
+	public ShareEntryGroup find(Account actor, Account owner, String uuid) {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "Uuid must be set.");
+
+		ShareEntryGroup seg = businessService.findByUuid(uuid);
+		if (seg == null) {
+			throw new BusinessException(BusinessErrorCode.SHARE_ENTRY_GROUP_NOT_FOUND,
+					"Share entry group with uuid :" + uuid + " was not found.");
+		}
+		checkReadPermission(actor, seg.getOwner(), ShareEntryGroup.class, BusinessErrorCode.SHARE_ENTRY_GROUP_FORBIDDEN,
+				seg);
+		return seg;
+	}
+
+	/**
+	 * This method is used to communicate with the DTO facade
+	 */
+	@Override
+	public ShareEntryGroup update(Account actor, Account owner, String uuid, ShareEntryGroup shareEntryGroupObject) {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "Share entry group uuid must be set.");
+		Validate.notNull(shareEntryGroupObject, "Share entry object must be set.");
+
+		ShareEntryGroup seg = find(actor, owner, shareEntryGroupObject.getUuid());
+		checkUpdatePermission(actor, seg.getOwner(), ShareEntryGroup.class,
+				BusinessErrorCode.SHARE_ENTRY_GROUP_FORBIDDEN, seg);
+		return businessService.update(seg, shareEntryGroupObject);
+	}
+
+	/**
+	 * This method is only used by the batch.
+	 */
+	@Override
+	public ShareEntryGroup update(Account actor, Account owner, ShareEntryGroup shareEntryGroup) {
+		preChecks(actor, owner);
+		Validate.notEmpty(shareEntryGroup.getUuid(), "Share entry group uuid must be set.");
+
+		checkUpdatePermission(actor, shareEntryGroup.getOwner(), ShareEntryGroup.class,
+				BusinessErrorCode.SHARE_ENTRY_GROUP_FORBIDDEN, shareEntryGroup);
 		return businessService.update(shareEntryGroup);
 	}
 
 	@Override
-	public List<String> findAllAboutToBeNotified(Account actor) {
-		Validate.notNull(actor);
+	public List<String> findAllAboutToBeNotified(Account actor, Account owner) {
+		preChecks(actor, owner);
+
+		checkListPermission(actor, owner, ShareEntryGroup.class, BusinessErrorCode.SHARE_ENTRY_GROUP_FORBIDDEN, null);
 		return businessService
 				.findAllAboutToBeNotified();
 	}
 
 	@Override
-	public List<String> findAllToPurge(Account actor) {
-		Validate.notNull(actor);
+	public List<String> findAllToPurge(Account actor, Account owner) {
+		preChecks(actor, owner);
+
+		checkListPermission(actor, owner, ShareEntryGroup.class, BusinessErrorCode.SHARE_ENTRY_GROUP_FORBIDDEN, null);
 		return businessService.findAllToPurge();
 	}
 
+	@Override
+	public List<ShareEntryGroup> findAll(Account actor, Account owner) {
+		preChecks(actor, owner);
+
+		checkListPermission(actor, owner, ShareEntryGroup.class, BusinessErrorCode.SHARE_ENTRY_GROUP_FORBIDDEN, null);
+		return businessService.findAll(owner);
+	}
 }

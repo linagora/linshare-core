@@ -221,7 +221,10 @@
 	</bean>
 	<bean id="shareEntryGroupService" class="org.linagora.linshare.core.service.impl.ShareEntryGroupServiceImpl">
 		<constructor-arg ref="shareEntryGroupBusinessService" />
+		<constructor-arg ref="shareEntryService" />
+		<constructor-arg ref="anonymousShareEntryService" />
 		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="shareEntryGroupResourceAccessControl" />
 	</bean>
 	<bean id="asyncTaskService" class="org.linagora.linshare.core.service.impl.AsyncTaskServiceImpl">
 		<constructor-arg ref="asyncTaskBusinessService" />

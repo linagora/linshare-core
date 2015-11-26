@@ -43,13 +43,19 @@ public interface ShareEntryGroupService {
 
 	ShareEntryGroup create(Account actor, ShareEntryGroup entity);
 
-	void delete(Account actor, ShareEntryGroup entity);
+	ShareEntryGroup delete(Account actor, Account owner, String uuid);
 
-	ShareEntryGroup findByUuid(Account actor, String uuid);
+	ShareEntryGroup delete(Account actor, Account owner, ShareEntryGroup shareEntryGroup);
 
-	ShareEntryGroup update(Account actor, ShareEntryGroup shareEntryGroup);
+	ShareEntryGroup find(Account actor, Account owner, String uuid);
 
-	List<String> findAllAboutToBeNotified(Account actor);
+	ShareEntryGroup update(Account actor, Account owner, String uuid, ShareEntryGroup shareEntryGroupObject);
 
-	List<String> findAllToPurge(Account actor);
+	ShareEntryGroup update(Account actor, Account owner, ShareEntryGroup shareEntryGroup);
+
+	List<String> findAllAboutToBeNotified(Account actor, Account owner);
+
+	List<ShareEntryGroup> findAll(Account actor, Account owner);
+
+	List<String> findAllToPurge(Account actor, Account owner);
 }

@@ -31,85 +31,23 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
 
-import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+package org.linagora.linshare.webservice.delegation;
 
-public enum TechnicalAccountPermissionType {
-	GUESTS_LIST,
-	GUESTS_GET,
-	GUESTS_CREATE,
-	GUESTS_UPDATE,
-	GUESTS_DELETE,
+import java.util.List;
 
-	DOCUMENT_ENTRIES_LIST,
-	DOCUMENT_ENTRIES_GET,
-	DOCUMENT_ENTRIES_CREATE,
-	DOCUMENT_ENTRIES_UPDATE,
-	DOCUMENT_ENTRIES_DELETE,
-	DOCUMENT_ENTRIES_DOWNLOAD,
-	DOCUMENT_ENTRIES_DOWNLOAD_THUMBNAIL,
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.ShareEntryGroupDto;
 
-	SHARE_ENTRIES_LIST,
-	SHARE_ENTRIES_GET,
-	SHARE_ENTRIES_CREATE,
-	SHARE_ENTRIES_UPDATE,
-	SHARE_ENTRIES_DELETE,
-	SHARE_ENTRIES_DOWNLOAD,
-	SHARE_ENTRIES_DOWNLOAD_THUMBNAIL,
+public interface ShareEntryGroupRestService {
 
-	ANONYMOUS_SHARE_ENTRIES_LIST,
-	ANONYMOUS_SHARE_ENTRIES_GET,
-	ANONYMOUS_SHARE_ENTRIES_CREATE,
-	ANONYMOUS_SHARE_ENTRIES_UPDATE,
-	ANONYMOUS_SHARE_ENTRIES_DELETE,
-	ANONYMOUS_SHARE_ENTRIES_DOWNLOAD,
-	ANONYMOUS_SHARE_ENTRIES_DOWNLOAD_THUMBNAIL,
+	List<ShareEntryGroupDto> findAll(String ownerUuid, boolean full) throws BusinessException;
 
-	THREADS_LIST,
-	THREADS_GET,
-	THREADS_CREATE,
-	THREADS_UPDATE,
-	THREADS_DELETE,
+	ShareEntryGroupDto find(String ownerUuid, String uuid, boolean full) throws BusinessException;
 
-	THREAD_MEMBERS_LIST,
-	THREAD_MEMBERS_GET,
-	THREAD_MEMBERS_CREATE,
-	THREAD_MEMBERS_UPDATE,
-	THREAD_MEMBERS_DELETE,
+	ShareEntryGroupDto update(String ownerUuid, ShareEntryGroupDto shareEntryGroupDto) throws BusinessException;
 
-	THREAD_ENTRIES_LIST,
-	THREAD_ENTRIES_GET,
-	THREAD_ENTRIES_CREATE,
-	THREAD_ENTRIES_UPDATE,
-	THREAD_ENTRIES_DELETE,
-	THREAD_ENTRIES_DOWNLOAD,
-	THREAD_ENTRIES_DOWNLOAD_THUMBNAIL,
+	ShareEntryGroupDto delete(String ownerUuid, String uuid) throws BusinessException;
 
-	LISTS_LIST,
-	LISTS_GET,
-	LISTS_CREATE,
-	LISTS_UPDATE,
-	LISTS_DELETE,
-
-	ASYNC_TASK_LIST,
-	ASYNC_TASK_GET,
-	ASYNC_TASK_CREATE,
-	ASYNC_TASK_UPDATE,
-	ASYNC_TASK_DELETE,
-
-	SHARE_ENTRY_GROUPS_GET,
-	SHARE_ENTRY_GROUPS_LIST,
-	SHARE_ENTRY_GROUPS_UPDATE,
-	SHARE_ENTRY_GROUPS_DELETE;
-
-	public static TechnicalAccountPermissionType fromString(String s) {
-		try {
-			return TechnicalAccountPermissionType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_TECHNICAL_PERMISSION_TYPE, StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
-	}
+	ShareEntryGroupDto delete(String ownerUuid, ShareEntryGroupDto shareEntryGroupDto) throws BusinessException;
 }
