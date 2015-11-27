@@ -119,12 +119,13 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			byte[] byteArray = IOUtils.toByteArray(file);
 			fc.write(ByteBuffer.wrap(byteArray), (chunkNumber - 1) * chunkSize);
 			fc.close();
-
 			chunkedFiles.get(identifier).addChunk(chunkNumber);
 			if (FlowUploaderUtils.isUploadFinished(identifier, chunkSize,
 					totalSize, chunkedFiles)) {
 				logger.debug("upload finished ");
-				File tempFile2 = getTempFile(file, "rest-flowuploader", filename);
+				InputStream inputStream = Files.newInputStream(tempFile,
+						StandardOpenOption.READ);
+				File tempFile2 = getTempFile(inputStream, "rest-flowuploader", filename);
 				try {
 					documentFacade.create(tempFile2, filename, "", null);
 				} finally {

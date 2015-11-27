@@ -149,7 +149,9 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			chunkedFiles.get(identifier).addChunk(chunkNumber);
 			if (isUploadFinished(identifier, chunkSize, totalSize)) {
 				logger.debug("upload finished ");
-				File tempFile2 = getTempFile(file, "rest-flowuploader", filename);
+				InputStream inputStream = Files.newInputStream(tempFile,
+						StandardOpenOption.READ);
+				File tempFile2 = getTempFile(inputStream, "rest-flowuploader", filename);
 				try {
 					uploadRequestUrlFacade.addUploadRequestEntry(
 							uploadRequestUrlUuid, password, tempFile2, filename);
