@@ -47,6 +47,7 @@ import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestHistoryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestTemplateBusinessService;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -279,8 +280,9 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 			UploadRequest req) {
 		LanguageEnumValueFunctionality func = functionalityService
 				.getUploadRequestNotificationLanguageFunctionality(domain);
-		//String checkString = checkString(func, req.getLocale());
-		req.setLocale(func.getValue().getTapestryLocale());
+		Language userLocale = Language.fromTapestryLocale(req.getLocale());
+		Language checkLanguage = checkLanguage(func, userLocale);
+		req.setLocale(checkLanguage.getTapestryLocale());
 	}
 
 	private void checkMaxFileSize(AbstractDomain domain, UploadRequest req) {
@@ -535,6 +537,42 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 						+ func.toString());
 			}
 			return false;
+		}
+	}
+
+	private Language checkLanguage(LanguageEnumValueFunctionality func, Language current) {
+		Language defaultValue = func.getValue();
+		if (func.getActivationPolicy().getStatus()) {
+			logger.debug(func.getIdentifier() + " is activated");
+			if (func.getDelegationPolicy() != null
+					&& func.getDelegationPolicy().getStatus()) {
+				logger.debug(func.getIdentifier() + " has a delegation policy");
+				if (current != null) {
+					return current;
+				}
+				return defaultValue;
+			} else {
+				// there is no delegation, the current value should be the
+				// system value or null
+				logger.debug(func.getIdentifier()
+						+ " does not have a delegation policy");
+				if (current != null) {
+					if (!current.equals(defaultValue)) {
+						logger.warn("the current value " + current.toString()
+								+ " is different than system value "
+								+ defaultValue);
+					}
+				}
+				return defaultValue;
+			}
+		} else {
+			logger.debug(func.getIdentifier() + " is not activated");
+			if (current != null) {
+				logger.warn("the current value " + current.toString()
+						+ " should be null for the functionality "
+						+ func.toString());
+			}
+			return null;
 		}
 	}
 
