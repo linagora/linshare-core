@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -94,5 +95,30 @@ public class GenericFacadeImpl implements GenericFacade {
 	public AccountDto getAuthenticatedAccountDto() throws BusinessException {
 		User actor = checkAuthentication();
 		return new AccountDto(actor, false);
+	}
+
+	protected User getOwner(String ownerUuid) {
+		User owner = (User) accountService.findByLsUuid(ownerUuid);
+		if (owner == null) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
+					"Owner not found");
+		}
+		return owner;
+	}
+
+	protected User getOwner(Account actor, String ownerUuid) {
+		if (ownerUuid != null) {
+			logger.debug("trying to find owner with uuid : " + ownerUuid);
+			User owner = (User) accountService.findByLsUuid(ownerUuid);
+			if (owner == null) {
+				logger.error("owner with uuid : " + ownerUuid + " not found.");
+				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
+						"Owner not found");
+			}
+			return owner;
+		} else {
+			logger.debug("Owner uuid null, returning the actor as owner.");
+			return (User) actor;
+		}
 	}
 }

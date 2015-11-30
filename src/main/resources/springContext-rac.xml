@@ -40,7 +40,12 @@
 	<bean name="asyncTaskResourceAccessControl" class="org.linagora.linshare.core.rac.impl.AsyncTaskResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
+
 	<bean name="shareEntryGroupResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ShareEntryGroupResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
+
+	<bean name="mailingListResourceAccessControl" class="org.linagora.linshare.core.rac.impl.MailingListResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 </beans>

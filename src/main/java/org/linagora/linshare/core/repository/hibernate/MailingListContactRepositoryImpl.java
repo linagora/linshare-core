@@ -115,4 +115,12 @@ public class MailingListContactRepositoryImpl extends
 		entity.setUuid(UUID.randomUUID().toString());
 		return super.create(entity);
 	}
+
+	@Override
+	public List<MailingListContact> findAllContacts(MailingList list) {
+		DetachedCriteria det = DetachedCriteria.forClass(MailingListContact.class);
+
+		det.add(Restrictions.eq("mailingList", list));
+		return findByCriteria(det);
+	}
 }

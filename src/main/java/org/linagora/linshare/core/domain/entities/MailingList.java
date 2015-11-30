@@ -247,4 +247,32 @@ public class MailingList {
 		setOwner(owner);
 		setDomain(owner.getDomain());
 	}
+
+	/*
+	 * SetBusiness
+	 */
+
+	public void setBusinessIdentifier(String identifier) {
+		if (identifier != null) {
+			this.identifier = identifier;
+		}
+	}
+
+	public void setBusinessDescription(String description) {
+		if (description != null) {
+			this.description = description;
+		}
+	}
+
+	public void setBusinessDomain(AbstractDomain domain) {
+		if (domain != null) {
+			this.domain = domain;
+		}
+	}
+
+	public void setBusinessOwner(User owner) {
+		if (owner != null) {
+			this.owner = owner;
+		}
+	}
 }

@@ -49,4 +49,5 @@ public interface MailingListContactRepository extends AbstractRepository<Mailing
 
 	List<String> getAllContactMails(MailingList list);
 
+	List<MailingListContact> findAllContacts(MailingList list);
 }

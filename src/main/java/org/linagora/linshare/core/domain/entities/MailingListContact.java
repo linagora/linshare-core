@@ -63,7 +63,7 @@ public class MailingListContact {
 	/**
 	 * Hibernate constructor.
 	 */
-	private MailingListContact() {
+	public MailingListContact() {
 	}
 
 	public MailingListContact(String mail, String firstName, String lastName) {

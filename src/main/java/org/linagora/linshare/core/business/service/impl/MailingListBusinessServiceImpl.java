@@ -223,7 +223,41 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 			contactRepository.create(contact);
 			listRepository.update(mailingList);
 		} else {
-			logger.debug("Concact already present : " + contact.getMail());
+			logger.debug("Contact already present : " + contact.getMail());
 		}
+	}
+
+	@Override
+	public List<MailingListContact> findAllContacts(MailingList list) {
+		return contactRepository.findAllContacts(list);
+	}
+
+	/*
+	 * Webservices methods
+	 */
+
+	@Override
+	public MailingList update(MailingList entity, MailingList object) throws BusinessException {
+		String newIdentifier = object.getIdentifier();
+		if (!entity.getIdentifier().equals(newIdentifier)) {
+			// The identifier was changed.
+			// check if new list identifier is unique (do not already exist)
+			if (listRepository.findByIdentifier(entity.getOwner(), newIdentifier) != null) {
+				String msg = "Update failed : current list identifier  already exists : " + newIdentifier;
+				logger.error(msg);
+				throw new BusinessException(BusinessErrorCode.LIST_ALDREADY_EXISTS, msg);
+			}
+		}
+		entity.setBusinessIdentifier(newIdentifier);
+		entity.setBusinessDescription(object.getDescription());
+		entity.setPublic(object.isPublic());
+		return listRepository.update(entity);
+	}
+
+	@Override
+	public MailingList delete(MailingList entity) throws BusinessException {
+		logger.debug("List to delete: " + entity.getUuid());
+		listRepository.delete(entity);
+		return entity;
 	}
 }

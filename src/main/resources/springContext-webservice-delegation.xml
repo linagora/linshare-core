@@ -58,6 +58,10 @@
 		<constructor-arg ref="wsDelegationShareEntryGroupFacade" />
 	</bean>
 
+	<bean id="delegationMailingListRestService" class="org.linagora.linshare.webservice.delegation.impl.MailingListRestServiceImpl">
+		<constructor-arg ref="wsMailingListFacade" />
+	</bean>
+
 	<jaxrs:server id="restDelegationContainer" address="/rest/delegation">
 		<jaxrs:serviceBeans>
 			<ref bean="delegationAuthenticationRestService" />
@@ -69,6 +73,7 @@
 			<ref bean="delegationThreadMemberRestService" />
 			<ref bean="delegationShareRestService" />
 			<ref bean="delegationShareEntryGroupRestService" />
+			<ref bean="delegationMailingListRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 
+import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -68,6 +69,15 @@ public class MailingListContactDto {
 		this.lastName = contact.getLastName();
 		this.firstName = contact.getFirstName();
 		this.mailingListUuid = contact.getMailingList().getUuid();
+	}
+
+	public MailingListContact toObject() {
+		MailingListContact contact = new MailingListContact();
+		contact.setUuid(getUuid());
+		contact.setMail(getMail());
+		contact.setFirstName(getFirstName());
+		contact.setLastName(getLastName());
+		return contact;
 	}
 
 	public String getMail() {
@@ -110,4 +120,15 @@ public class MailingListContactDto {
 		this.mailingListUuid = mailingListUuid;
 	}
 
+	/*
+	 * Transformers
+	 */
+	public static Function<MailingListContact, MailingListContactDto> toDto() {
+		return new Function<MailingListContact, MailingListContactDto>() {
+			@Override
+			public MailingListContactDto apply(MailingListContact arg0) {
+				return new MailingListContactDto(arg0);
+			}
+		};
+	}
 }

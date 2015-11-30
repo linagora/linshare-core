@@ -142,4 +142,13 @@ public interface MailingListBusinessService {
 
 	List<String> getAllContactMails(MailingList list);
 
+	List<MailingListContact> findAllContacts(MailingList list) throws BusinessException;
+
+	/*
+	 * Webservices methods.
+	 */
+
+	MailingList update(MailingList entity, MailingList object) throws BusinessException;
+
+	MailingList delete(MailingList entity) throws BusinessException;
 }

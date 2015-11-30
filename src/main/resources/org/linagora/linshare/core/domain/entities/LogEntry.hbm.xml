@@ -63,5 +63,9 @@
       <property access="field" name="uuid" not-null="false" type="string" column="target_lastname"/>
     </subclass>
     <subclass discriminator-value="antivirus" name="org.linagora.linshare.core.domain.entities.AntivirusLogEntry" />
+    <subclass discriminator-value="mailingList" name="org.linagora.linshare.core.domain.entities.MailingListLogEntry">
+      <property access="field" index="index_sharelog_entry_target_mail" name="identifier" not-null="false" type="string" column="target_mail" />
+      <property access="field" name="uuid" not-null="false" type="string" column="target_lastname" />
+    </subclass>
   </class>
 </hibernate-mapping>

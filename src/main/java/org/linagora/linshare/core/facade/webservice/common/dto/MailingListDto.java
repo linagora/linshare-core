@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 
+import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -84,6 +85,18 @@ public class MailingListDto {
 		for (MailingListContact current : list.getMailingListContact()) {
 			contacts.add(new MailingListContactDto(current));
 		}
+	}
+
+	public MailingList toObject() {
+		MailingList list = new MailingList();
+		list.setUuid(getUuid());
+		list.setIdentifier(getIdentifier());
+		list.setDescription(getDescription());
+		list.setPublic(isPublic());
+		for (MailingListContactDto current : getContacts()) {
+			list.getMailingListContact().add(new MailingListContact(current));
+		}
+		return list;
 	}
 
 	public String getIdentifier() {
@@ -142,4 +155,15 @@ public class MailingListDto {
 		this.domainId = domainId;
 	}
 
+	/*
+	 * Transformers
+	 */
+	public static Function<MailingList, MailingListDto> toDto() {
+		return new Function<MailingList, MailingListDto>() {
+			@Override
+			public MailingListDto apply(MailingList arg0) {
+				return new MailingListDto(arg0);
+			}
+		};
+	}
 }

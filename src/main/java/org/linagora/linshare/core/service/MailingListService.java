@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -61,7 +62,7 @@ public interface MailingListService {
 	 */
 	MailingList createList(String actorUuid, String ownerUuid, MailingList mailingList) throws BusinessException;
 
-	void deleteList(String actorUuid, String mailingListUuid) throws BusinessException;
+	MailingList deleteList(String actorUuid, String mailingListUuid) throws BusinessException;
 
 	/**
 	 * 
@@ -135,4 +136,25 @@ public interface MailingListService {
 
 	List<String> getAllContactMails(String actorUuid, String uuid) throws BusinessException;
 
+	/*
+	 * Webservice methods
+	 */
+
+	List<MailingList> findAllByUser(Account actor, Account owner) throws BusinessException;
+
+	MailingList find(Account actor, Account owner, String uuid) throws BusinessException;
+
+	MailingList create(Account actor, Account owner, MailingList list) throws BusinessException;
+
+	MailingList update(Account actor, Account owner, MailingList list) throws BusinessException;
+
+	MailingList delete(Account actor, Account owner, String uuid) throws BusinessException;
+
+	void addContact(Account actor, Account owner, String listUuid, MailingListContact contact) throws BusinessException;
+
+	void updateContact(Account actor, Account owner, MailingListContact contact) throws BusinessException;
+
+	void deleteContact(Account actor, Account owner, String contactUuid) throws BusinessException;
+
+	List<MailingListContact> findAllContacts(Account actor, Account owner, String listUuid) throws BusinessException;
 }

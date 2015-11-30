@@ -31,68 +31,36 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
 
-import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+package org.linagora.linshare.webservice.userv2;
 
+import java.util.Set;
 
-public enum LogAction {
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 
-	FILE_UPLOAD,
-	FILE_SHARE,
-	FILE_SHARE_WITH_ALERT_FOR_USD,
-	FILE_EXPIRE,
-	FILE_DELETE,
-	FILE_UPDATE,
-	FILE_INCONSISTENCY,
+public interface MailingListRestService {
 
-	SHARE_RECEIVED,
-	SHARE_EXPIRE,
-	SHARE_DOWNLOAD,
-	SHARE_DOWNLOADED,
-	SHARE_WITH_USD_NOT_DOWNLOADED,
-	SHARE_WITH_USD_DOWNLOADED,
-	SHARE_COPY,
-	SHARE_DELETE,
-	ANONYMOUS_SHARE_DOWNLOAD,
+	Set<MailingListDto> findAll() throws BusinessException;
 
-	THREAD_CREATE,
-	THREAD_DELETE,
-	THREAD_RENAME,
-	THREAD_ADD_MEMBER,
-	THREAD_REMOVE_MEMBER,
-	THREAD_UPLOAD_ENTRY,
-	THREAD_DOWNLOAD_ENTRY,
-	THREAD_REMOVE_ENTRY,
-	THREAD_REMOVE_INCONSISTENCY_ENTRY,
+	MailingListDto find(String uuid) throws BusinessException;
 
-	USER_CREATE,
-	USER_DELETE,
-	USER_EXPIRE,
-	USER_AUTH,
-	USER_AUTH_FAILED,
+	MailingListDto create(MailingListDto dto) throws BusinessException;
 
-	FILE_SIGN, 
-	USER_UPDATE, 
-	FILE_ENCRYPT,
-	FILE_DECRYPT,
-	ANTIVIRUS_SCAN_FAILED,
-	FILE_WITH_VIRUS,
+	MailingListDto update(MailingListDto dto) throws BusinessException;
 
-	LIST_CREATE,
-	LIST_DELETE,
-	LIST_UPDATE,
-	LIST_ADD_CONTACT,
-	LIST_UPDATE_CONTACT,
-	LIST_DELETE_CONTACT;
+	MailingListDto delete(MailingListDto dto) throws BusinessException;
 
-	public static LogAction fromString(String s) {
-		try {
-			return LogAction.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_LOG_ACTION, StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
-	}
+	MailingListDto delete(String uuid) throws BusinessException;
+
+	Set<MailingListContactDto> findAllContacts(String listUuid) throws BusinessException;
+
+	void createContact(String uuid, MailingListContactDto dto) throws BusinessException;
+
+	void updateContact(String uuid, MailingListContactDto dto) throws BusinessException;
+
+	void deleteContact(String uuid, MailingListContactDto dto) throws BusinessException;
+
+	void deleteContact(String uuid, String contactUuid) throws BusinessException;
 }

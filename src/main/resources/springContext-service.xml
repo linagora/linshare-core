@@ -148,6 +148,8 @@
 	<bean name="mailingListService" class="org.linagora.linshare.core.service.impl.MailingListServiceImpl">
 		<constructor-arg ref="mailingListBusinessService" />
 		<constructor-arg ref="userService" />
+		<constructor-arg ref="mailingListResourceAccessControl" />
+		<constructor-arg ref="logEntryService" />
 	</bean>
 
 	<bean name="uploadRequestService" class="org.linagora.linshare.core.service.impl.UploadRequestServiceImpl">
