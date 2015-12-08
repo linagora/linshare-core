@@ -172,6 +172,8 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		e.setActivationDate(req.getActivationDate());
 		e.setExpiryDate(req.getExpiryDate());
 		e.setLocale(req.getLocale().getTapestryLocale());
+		e.setCanClose(req.getCanClose());
+		e.setCanDelete(req.getCanDelete());
 		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
 	}
 

@@ -97,14 +97,14 @@ public class Index {
 	private boolean templatesEnable;
 
 	public Object onActivate() {
-		if (!functionalityFacade.isEnableUploadRequest(userVo
+		if (functionalityFacade.isEnableUploadRequest(userVo
 				.getDomainIdentifier())) {
 			templatesEnable = functionalityFacade
 					.isUploadRequestTemplateEnabled(userVo
 							.getDomainIdentifier());
-			return org.linagora.linshare.view.tapestry.pages.Index.class;
+			return null;
 		}
-		return null;
+		return org.linagora.linshare.view.tapestry.pages.Index.class;
 	}
 
 	@SetupRender
