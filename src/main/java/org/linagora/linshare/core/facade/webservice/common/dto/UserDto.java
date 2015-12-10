@@ -39,6 +39,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -49,6 +50,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "User")
 public class UserDto extends AccountDto {
 
@@ -65,16 +67,16 @@ public class UserDto extends AccountDto {
 	private String role;
 
 	@ApiModelProperty(value = "CanUpload")
-	private boolean canUpload;
+	private Boolean canUpload;
 
 	@ApiModelProperty(value = "CanCreateGuest")
-	private boolean canCreateGuest;
+	private Boolean canCreateGuest;
 
 	@ApiModelProperty(value = "AccountType")
 	private String accountType;
 
 	@ApiModelProperty(value = "Restricted")
-	private boolean restricted;
+	private Boolean restricted;
 
 	@ApiModelProperty(value = "Comment")
 	private String comment;
@@ -114,6 +116,13 @@ public class UserDto extends AccountDto {
 		}
 	}
 
+	protected UserDto(User u) {
+		super(u, false);
+		this.firstName = u.getFirstName();
+		this.lastName = u.getLastName();
+		this.mail = u.getMail();
+	}
+
 	public User toUserObject(boolean isGuest) {
 		if (isGuest) {
 			Guest guest = new Guest();
@@ -150,6 +159,10 @@ public class UserDto extends AccountDto {
 		return new UserDto(user, true);
 	}
 
+	public static UserDto getCompletionUser(User user) {
+		return new UserDto(user);
+	}
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -182,19 +195,19 @@ public class UserDto extends AccountDto {
 		this.role = role;
 	}
 
-	public boolean getCanUpload() {
+	public Boolean getCanUpload() {
 		return canUpload;
 	}
 
-	public void setCanUpload(boolean canUpload) {
+	public void setCanUpload(Boolean canUpload) {
 		this.canUpload = canUpload;
 	}
 
-	public boolean getCanCreateGuest() {
+	public Boolean getCanCreateGuest() {
 		return canCreateGuest;
 	}
 
-	public void setCanCreateGuest(boolean canCreateGuest) {
+	public void setCanCreateGuest(Boolean canCreateGuest) {
 		this.canCreateGuest = canCreateGuest;
 	}
 
@@ -211,11 +224,11 @@ public class UserDto extends AccountDto {
 		return AccountType.valueOf(this.accountType) == AccountType.GUEST;
 	}
 
-	public boolean isRestricted() {
+	public Boolean isRestricted() {
 		return restricted;
 	}
 
-	public void setRestricted(boolean restricted) {
+	public void setRestricted(Boolean restricted) {
 		this.restricted = restricted;
 	}
 
