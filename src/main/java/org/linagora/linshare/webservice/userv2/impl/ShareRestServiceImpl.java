@@ -40,11 +40,13 @@ import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -112,13 +114,15 @@ public class ShareRestServiceImpl extends WebserviceBase implements
 	@Path("/{uuid}/thumbnail")
 	@GET
 	@Override
-	public Response getThumbnailStream(@PathParam("uuid") String shareUuid)
-			throws BusinessException {
+	public Response getThumbnailStream(@PathParam("uuid") String shareUuid,
+			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
+					throws BusinessException {
 		ShareDto shareDto = webServiceShareFacade.getShare(shareUuid);
 		InputStream documentStream = webServiceShareFacade
 				.getThumbnailStream(shareUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getDocumentResponseBuilder(documentStream, shareDto.getName()+ "_thumb.png", "image/png", shareDto.getSize());
+				.getThumbnailResponseBuilder(documentStream,
+						shareDto.getName() + "_thumb.png", base64);
 		return response.build();
 	}
 

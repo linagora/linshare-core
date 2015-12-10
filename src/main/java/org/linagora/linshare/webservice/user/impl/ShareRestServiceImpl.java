@@ -118,7 +118,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements
 		InputStream documentStream = webServiceShareFacade
 				.getThumbnailStream(shareUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getThumbnailResponseBuilder(documentStream);
+				.getThumbnailResponseBuilder(documentStream, null, false);
 		return response.build();
 	}
 }

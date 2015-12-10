@@ -40,6 +40,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -265,9 +266,10 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 	@Override
 	public Response thumbnail(
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
-			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
+			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
-		return threadEntryFacade.thumbnail(threadUuid, uuid);
+		return threadEntryFacade.thumbnail(threadUuid, uuid, base64);
 	}
 
 	@Path("/{uuid}")

@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.webservice.utils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -40,19 +41,61 @@ import java.net.URISyntaxException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DocumentStreamReponseBuilder {
+
+	private static Logger logger = LoggerFactory.getLogger(DocumentStreamReponseBuilder.class);
 
 	public static ResponseBuilder getDocumentResponseBuilder(InputStream inputStream, String fileName, String mimeType) {
 		return getDocumentResponseBuilder(inputStream, fileName, mimeType, null);
 	}
 
-	public static ResponseBuilder getThumbnailResponseBuilder(InputStream inputStream) {
-		return getDocumentResponseBuilder(inputStream, null, "image/png", null);
+	public static ResponseBuilder getThumbnailResponseBuilder(InputStream inputStream, String fileName, boolean base64) {
+		ResponseBuilder response = null;
+		if (base64) {
+			response = getDocumentResponseBuilderBase64(inputStream, fileName,
+					"image/png", null);
+		} else {
+			response = getDocumentResponseBuilder(inputStream, fileName,
+					"image/png", null);
+		}
+		return response;
 	}
 
-	public static ResponseBuilder getDocumentResponseBuilder(InputStream inputStream, String fileName, String mimeType,
+	public static ResponseBuilder getDocumentResponseBuilder(
+			InputStream inputStream, String fileName, String mimeType,
 			Long fileSize) {
 		ResponseBuilder response = Response.ok(inputStream);
+		setHeaderToResponse(response, fileName, mimeType, fileSize);
+		return response;
+	}
+
+	public static ResponseBuilder getDocumentResponseBuilderBase64(
+			InputStream inputStream, String fileName, String mimeType,
+			Long fileSize) {
+		ResponseBuilder response = null;
+		byte[] byteArray = null;
+		try {
+			byteArray = IOUtils.toByteArray(inputStream);
+			response = Response.ok(Base64.encodeBase64(byteArray));
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+			throw new BusinessException(
+					BusinessErrorCode.BASE64_INPUTSTREAM_ENCODE_ERROR,
+					e.getMessage());
+		}
+		setHeaderToResponse(response, fileName, mimeType, fileSize);
+		return response;
+	}
+
+	private static void setHeaderToResponse(ResponseBuilder response,
+			String fileName, String mimeType, Long fileSize) {
 		if (fileName != null)
 			response.header("Content-Disposition", getContentDispositionHeader(fileName));
 		response.header("Content-Type", mimeType);
@@ -88,9 +131,8 @@ public class DocumentStreamReponseBuilder {
 		// which an entity must be checked for freshness prior to showing the
 		// user the resource.
 
-		response.header("Cache-Control", "private,must-revalidate, post-check=0, pre-check=0");
-
-		return response;
+		response.header("Cache-Control",
+				"private,must-revalidate, post-check=0, pre-check=0");
 	}
 
 	private static String getContentDispositionHeader(String fileName) {

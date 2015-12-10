@@ -62,7 +62,7 @@ public interface DocumentRestService {
 
 	Response download(String uuid) throws BusinessException;
 
-	Response thumbnail(String uuid) throws BusinessException;
+	Response thumbnail(String uuid, boolean base64) throws BusinessException;
 
 	DocumentDto updateFile(String uuid, InputStream file,
 			String givenFileName, Boolean async, MultipartBody body)

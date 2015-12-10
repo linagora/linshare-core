@@ -215,7 +215,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public Response thumbnail(String threadUuid, String uuid)
+	public Response thumbnail(String threadUuid, String uuid, boolean base64)
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(uuid, "Missing required entry uuid");
@@ -225,9 +225,8 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		InputStream documentStream = threadEntryService
 				.getDocumentThumbnailStream(actor, uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getDocumentResponseBuilder(documentStream, doc.getName()
-						+ "_thumb.png", "image/png");
-
+				.getThumbnailResponseBuilder(documentStream, doc.getName()
+						+ "_thumb.png", base64);
 		return response.build();
 	}
 
