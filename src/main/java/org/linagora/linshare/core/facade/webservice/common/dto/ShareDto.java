@@ -119,13 +119,13 @@ public class ShareDto {
 		this.name = entry.getName();
 		this.creationDate = entry.getCreationDate().getTime();
 		this.modificationDate = entry.getModificationDate().getTime();
+		this.description = entry.getComment();
 		if(entry.getExpirationDate() != null)
 			this.expirationDate = entry.getExpirationDate().getTime();
 		if (entry.getEntryType().equals(EntryType.SHARE)) {
 			ShareEntry sa = (ShareEntry) entry;
+			this.downloaded = sa.getDownloaded();
 			if (receivedShare) {
-				this.downloaded = sa.getDownloaded();
-				this.description = entry.getComment();
 				this.sender = UserDto.getSimple((User) entry.getEntryOwner());
 				this.size = sa.getDocumentEntry().getSize();
 				this.type = sa.getDocumentEntry().getType();
