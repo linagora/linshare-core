@@ -33,9 +33,13 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -44,11 +48,12 @@ import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
-import org.linagora.linshare.core.repository.FavouriteRepository;
+import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<RecipientFavourite> implements FavouriteRepository<String,User, RecipientFavourite> {
+public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<RecipientFavourite> implements RecipientFavouriteRepository {
 
 	public RecipientFavouriteRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
@@ -269,5 +274,24 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		for (RecipientFavourite recipientFavourite : recipients) {
 			delete(recipientFavourite);
 		}
+	}
+
+	@Override
+	public void updateEmail(final String currentEmail, final String newEmail)
+			throws BusinessException {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session)
+					throws HibernateException, SQLException {
+				final Query query = session.createQuery(
+						"UPDATE RecipientFavourite SET recipient_mail = :newEmail WHERE recipient_mail = :currentEmail");
+				query.setParameter("newEmail", newEmail);
+				query.setParameter("currentEmail", currentEmail);
+				long updatedCounter = (long) query.executeUpdate();
+				logger.info(updatedCounter
+						+ " RecipientFavourite have been updated.");
+				return updatedCounter;
+			}
+		};
+		getHibernateTemplate().execute(action);
 	}
 }

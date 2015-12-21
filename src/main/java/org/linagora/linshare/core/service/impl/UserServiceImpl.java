@@ -61,6 +61,8 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
+import org.linagora.linshare.core.repository.MailingListContactRepository;
+import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.EntryService;
@@ -102,6 +104,10 @@ public class UserServiceImpl implements UserService {
 
 	private final DomainPermissionBusinessService domainPermisionService;
 
+	private final MailingListContactRepository mailingListContactRepository;
+
+	private final RecipientFavouriteRepository recipientFavouriteRepository;
+
 	public UserServiceImpl(
 			final UserRepository<User> userRepository,
 			final LogEntryService logEntryService,
@@ -111,7 +117,9 @@ public class UserServiceImpl implements UserService {
 			final AbstractDomainService abstractDomainService,
 			final EntryService entryService,
 			final ThreadService threadService,
-			final DomainPermissionBusinessService domainPermissionBusinessService) {
+			final DomainPermissionBusinessService domainPermissionBusinessService,
+			final MailingListContactRepository mailingListContactRepository,
+			final RecipientFavouriteRepository recipientFavouriteRepository) {
 
 		this.userRepository = userRepository;
 		this.logEntryService = logEntryService;
@@ -122,6 +130,8 @@ public class UserServiceImpl implements UserService {
 		this.entryService = entryService;
 		this.threadService = threadService;
 		this.domainPermisionService = domainPermissionBusinessService;
+		this.mailingListContactRepository = mailingListContactRepository;
+		this.recipientFavouriteRepository = recipientFavouriteRepository;
 	}
 
 	@Override
@@ -996,5 +1006,75 @@ public class UserServiceImpl implements UserService {
 	public List<String> findAllDeletedAccountsToPurge(Date limit)
 			throws BusinessException {
 		return userRepository.findAllDeletedAccountsToPurge(limit);
+	}
+
+	@Override
+	public boolean updateUserEmail(Account actor, String currentEmail,
+			String newEmail) throws BusinessException {
+		Validate.notNull(actor);
+		if (!actor.hasSuperAdminRole()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					"Role not authorized.");
+		}
+		logger.info("finding the user by its currentmail ...");
+		User user = userRepository.findByMail(currentEmail);
+		if (user == null) {
+			logger.warn("There is no user matching the email " + currentEmail);
+			logger.info("Finding a user with the new Email ...");
+			User userWithNewEmail = userRepository.findByMail(newEmail);
+			if (userWithNewEmail == null) {
+				logger.error("No user matches the both given emails ("
+						+ currentEmail + ", " + newEmail + ")");
+			} else {
+				logger.debug(
+						"Your are trying to update a user's email which is up to date : "
+								+ newEmail);
+			}
+			return false;
+		}
+		logger.info("The user " + user.getAccountReprentation() + "has been found.");
+
+		logger.info("changing his current email: " + currentEmail
+				+ " to the new one: " + newEmail);
+		user.setMail(newEmail);
+		logger.info("updating the tab users ...");
+		userRepository.update(user);
+		return true;
+	}
+
+	@Override
+	public void updateMailingListEmail(Account actor, String currentEmail, String newEmail) {
+		Validate.notNull(actor);
+		if (!actor.hasSuperAdminRole()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					"Role not authorized.");
+		}
+		logger.info("updating mailing_list_contact tab ...");
+		mailingListContactRepository.updateEmail(currentEmail, newEmail);
+		logger.info("End of updateMailingListEmail");
+	}
+
+	@Override
+	public void updateEmailLogEntry(Account actor, String currentEmail, String newEmail) {
+		Validate.notNull(actor);
+		if (!actor.hasSuperAdminRole()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					"Role not authorized.");
+		}
+		logger.info("updating log_entry tab ...");
+		logEntryService.updateEmailLogEntry(currentEmail, newEmail);
+		logger.info("End of updateEmailLogEntry");
+	}
+
+	@Override
+	public void updateRecipientFavourite(Account actor, String currentEmail, String newEmail) {
+		Validate.notNull(actor);
+		if (!actor.hasSuperAdminRole()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					"Role not authorized.");
+		}
+		logger.info("updating recipient_favourite tab ...");
+		recipientFavouriteRepository.updateEmail(currentEmail, newEmail);
+		logger.info("End of updateRecipientFavourite");
 	}
 }

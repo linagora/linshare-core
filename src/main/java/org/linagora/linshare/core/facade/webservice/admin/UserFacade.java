@@ -64,4 +64,6 @@ public interface UserFacade extends AdminGenericFacade {
 	boolean exist(String uuid) throws BusinessException;
 
 	UserDto create(UserDto userDto) throws BusinessException;
+
+	boolean updateEmail(String currentEmail, String newEmail);
 }

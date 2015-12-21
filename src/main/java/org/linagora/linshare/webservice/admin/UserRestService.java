@@ -33,9 +33,13 @@
  */
 package org.linagora.linshare.webservice.admin;
 
+import java.io.InputStream;
 import java.util.Set;
 
+
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.dto.UpdateUsersEmailStateDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 
@@ -64,5 +68,7 @@ public interface UserRestService {
 	Set<UserDto> findAllInconsistent() throws BusinessException;
 
 	void updateInconsistent(UserDto userDto) throws BusinessException;
+
+	UpdateUsersEmailStateDto updateUsersEmail(InputStream file, String givenFileName, String csvFieldDelimiter, MultipartBody body) throws BusinessException;
 
 }

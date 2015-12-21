@@ -31,49 +31,13 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.repository;
 
-import java.util.Calendar;
-import java.util.List;
-
-import org.linagora.linshare.core.domain.entities.LogEntry;
+import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
-import org.slf4j.spi.LocationAwareLogger;
 
-public interface LogEntryService {
+public interface RecipientFavouriteRepository extends FavouriteRepository<String, User, RecipientFavourite> {
 
-	final public int INFO = LocationAwareLogger.INFO_INT;
-	final public int WARN = LocationAwareLogger.WARN_INT;
-	final public int ERROR = LocationAwareLogger.ERROR_INT;
-
-	/**
-	 * 
-	 * @param level : logger level like INFO, WARN
-	 * @param entity : to be create in the database
-	 * @return : the log statement created
-	 * @throws IllegalArgumentException
-	 * @throws BusinessException
-	 */
-	public LogEntry create(int level, LogEntry entity)
-			throws IllegalArgumentException, BusinessException;
-
-	/**
-	 * 
-	 * @param entity : to be create in the database
-	 * @return : the log statement created
-	 * @throws IllegalArgumentException
-	 * @throws BusinessException
-	 */
-	public LogEntry create(LogEntry entity) throws IllegalArgumentException,
-			BusinessException;
-
-	public List<LogEntry> findByCriteria(User actor, LogCriteriaBean criteria);
-
-	public List<LogEntry> findByUser(String mail);
-
-	public List<LogEntry> findByDate(String mail, Calendar begin, Calendar end);
-
-	public void updateEmailLogEntry(String currentEmail, String newEmail);
+	void updateEmail(String currentEmail, String newEmail) throws BusinessException;
 }

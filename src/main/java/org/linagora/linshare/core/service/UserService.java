@@ -244,4 +244,12 @@ public interface UserService {
 	User findAccountsReadyToPurge(SystemAccount actor, String uuid);
 
 	User findDeleted(SystemAccount actor, String uuid);
+
+	boolean updateUserEmail(Account actor, String currentEmail, String newEmail);
+
+	void updateMailingListEmail(Account actor, String currentEmail, String newEmail);
+
+	void updateEmailLogEntry(Account actor, String currentEmail, String newEmail);
+
+	void updateRecipientFavourite(Account actor, String currentEmail, String newEmail);
 }

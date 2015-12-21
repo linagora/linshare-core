@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailingListContactRepository extends AbstractRepository<MailingListContact> {
 
@@ -50,4 +51,6 @@ public interface MailingListContactRepository extends AbstractRepository<Mailing
 	List<String> getAllContactMails(MailingList list);
 
 	List<MailingListContact> findAllContacts(MailingList list);
+
+	void updateEmail(String currentMail, String newMail) throws BusinessException;
 }

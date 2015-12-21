@@ -34,10 +34,14 @@
 
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -46,6 +50,7 @@ import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailingListContactRepository;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class MailingListContactRepositoryImpl extends
@@ -122,5 +127,23 @@ public class MailingListContactRepositoryImpl extends
 
 		det.add(Restrictions.eq("mailingList", list));
 		return findByCriteria(det);
+	}
+
+	@Override
+	public void updateEmail(final String currentEmail, final String newEmail)
+			throws BusinessException {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session)
+					throws HibernateException, SQLException {
+				final Query query = session.createQuery(
+						"UPDATE MailingListContact SET mail = :newEmail WHERE mail = :currentEmail");
+				query.setParameter("newEmail", newEmail);
+				query.setParameter("currentEmail", currentEmail);
+				long updatedCounter = (long) query.executeUpdate();
+				logger.info(updatedCounter + " MailingListContact have been updated.");
+				return updatedCounter;
+			}
+		};
+		getHibernateTemplate().execute(action);
 	}
 }

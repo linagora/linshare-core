@@ -121,5 +121,4 @@ public class InternalRepositoryImpl extends GenericUserRepositoryImpl<Internal>
 			throw new IllegalStateException("Ldap uid must be unique");
 		}
 	}
-
 }

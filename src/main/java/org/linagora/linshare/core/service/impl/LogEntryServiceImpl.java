@@ -110,4 +110,9 @@ public class LogEntryServiceImpl implements LogEntryService {
 	public List<LogEntry> findByDate(String mail, Calendar begin, Calendar end) {
 		return logEntryRepository.findByDate(mail, begin, end);
 	}
+
+	@Override
+	public void updateEmailLogEntry(String currentEmail, String newEmail) {
+		logEntryRepository.updateMail(currentEmail, newEmail);
+	}
 }

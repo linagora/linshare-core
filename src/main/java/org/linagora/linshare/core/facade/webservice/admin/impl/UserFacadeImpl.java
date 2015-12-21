@@ -245,4 +245,23 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		User user = userService.findOrCreateUserWithDomainPolicies(domain, mail, actor.getDomainId());
 		return UserDto.getFull(user);
 	}
+
+	@Override
+	public boolean updateEmail(String currentEmail, String newEmail) {
+		User actor = checkAuthentication(Role.SUPERADMIN);
+		logger.info("Start email migration...");
+		logger.info("Step 1: Find and update user's email ...");
+		boolean hasBeenUpdated = userService.updateUserEmail(actor, currentEmail, newEmail);
+
+		if(hasBeenUpdated) {
+			logger.info("Step 2: start updateMailingListEmail ...");
+			userService.updateMailingListEmail(actor, currentEmail, newEmail);
+			logger.info("Step 3: start updateEmailLogEntry ...");
+			userService.updateEmailLogEntry(actor, currentEmail, newEmail);
+			logger.info("Step 4: start updateRecipientFavourite ...");
+			userService.updateRecipientFavourite(actor, currentEmail, newEmail);
+		}
+		logger.info("End of email migration...");
+		return hasBeenUpdated;
+	}
 }

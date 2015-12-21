@@ -31,49 +31,70 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.facade.webservice.admin.dto;
 
-import java.util.Calendar;
-import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.LogEntry;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
-import org.slf4j.spi.LocationAwareLogger;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-public interface LogEntryService {
+@XmlRootElement(name = "UpdateUsersEmailState")
+@ApiModel(value = "UpdateUsersEmailState", description = "")
+public class UpdateUsersEmailStateDto {
 
-	final public int INFO = LocationAwareLogger.INFO_INT;
-	final public int WARN = LocationAwareLogger.WARN_INT;
-	final public int ERROR = LocationAwareLogger.ERROR_INT;
+	@ApiModelProperty(value = "Total")
+	private long total;
 
-	/**
-	 * 
-	 * @param level : logger level like INFO, WARN
-	 * @param entity : to be create in the database
-	 * @return : the log statement created
-	 * @throws IllegalArgumentException
-	 * @throws BusinessException
-	 */
-	public LogEntry create(int level, LogEntry entity)
-			throws IllegalArgumentException, BusinessException;
+	@ApiModelProperty(value = "Updated")
+	private long updated;
 
-	/**
-	 * 
-	 * @param entity : to be create in the database
-	 * @return : the log statement created
-	 * @throws IllegalArgumentException
-	 * @throws BusinessException
-	 */
-	public LogEntry create(LogEntry entity) throws IllegalArgumentException,
-			BusinessException;
+	@ApiModelProperty(value = "NotUpdated")
+	private long notUpdated;
 
-	public List<LogEntry> findByCriteria(User actor, LogCriteriaBean criteria);
+	@ApiModelProperty(value = "Skipped")
+	private long skipped;
 
-	public List<LogEntry> findByUser(String mail);
+	public UpdateUsersEmailStateDto() {
+		super();
+	}
 
-	public List<LogEntry> findByDate(String mail, Calendar begin, Calendar end);
+	public UpdateUsersEmailStateDto(long total, long updated, long notUpdated, long skipped) {
+		super();
+		this.total = total;
+		this.updated = updated;
+		this.notUpdated = notUpdated;
+		this.skipped = skipped;
+	}
 
-	public void updateEmailLogEntry(String currentEmail, String newEmail);
+	public long getTotal() {
+		return total;
+	}
+
+	public void setTotal(long total) {
+		this.total = total;
+	}
+
+	public long getUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(long updated) {
+		this.updated = updated;
+	}
+
+	public long getNotUpdated() {
+		return notUpdated;
+	}
+
+	public void setNotUpdated(long notUpdated) {
+		this.notUpdated = notUpdated;
+	}
+
+	public long getSkipped() {
+		return skipped;
+	}
+
+	public void setSkipped(long skipped) {
+		this.skipped = skipped;
+	}
 }

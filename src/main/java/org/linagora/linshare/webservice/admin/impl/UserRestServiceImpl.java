@@ -33,6 +33,12 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
@@ -46,11 +52,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.UpdateUsersEmailStateDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.webservice.WebserviceBase;
@@ -64,6 +74,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
+
 
 @Api(value = "/rest/admin/users", description = "User administration service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -216,5 +227,96 @@ public class UserRestServiceImpl extends WebserviceBase implements
 
 	private boolean lessThan3Char(String s) {
 		return StringUtils.length(s) < 3;
+	}
+
+	@Path("/mail_migration")
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Update users email address.")
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "User isn't admin"),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Override
+	public UpdateUsersEmailStateDto updateUsersEmail(
+			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream file,
+			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
+			@ApiParam(value = "The given field delimiter of the csv file.", required = false) @Multipart(value = "csvFieldDelimiter", required = false) String csvFieldDelimiter,
+			MultipartBody body) throws BusinessException {
+		if (file == null) {
+			logger.error("Missing file (check parameter file)");
+			throw giveRestException(HttpStatus.SC_BAD_REQUEST,
+					"Missing file (check parameter file)");
+		}
+		String fileName = getFileName(givenFileName, body);
+		String extension = null;
+		String csvExtension = ".csv";
+		int splitIdx = fileName.lastIndexOf('.');
+		if (splitIdx > -1) {
+			extension = fileName.substring(splitIdx, fileName.length());
+		}
+		if (!extension.equals(csvExtension)) {
+			logger.error("Bad file extension");
+			throw giveRestException(HttpStatus.SC_BAD_REQUEST,
+					"bad file extension");
+		}
+		File tempFile = getTempFile(file, "emails-migration", fileName);
+		BufferedReader reader = null;
+		String csvLine = "";
+		String[] emails = null;
+		String currentEmail = "";
+		String newEmail = "";
+
+		long total = 0;
+		long updated = 0;
+		long notUpdated = 0;
+		long skipped = 0;
+
+		if(csvFieldDelimiter == null) {
+			csvFieldDelimiter = ";";
+		}
+		UpdateUsersEmailStateDto state = new UpdateUsersEmailStateDto();
+		try {
+			reader = new BufferedReader(new FileReader(tempFile));
+			while ((csvLine = reader.readLine()) != null) {
+				emails = csvLine.split(csvFieldDelimiter);
+				currentEmail = emails[0];
+				newEmail = emails[1];
+
+				if (currentEmail.equals(newEmail)) {
+					logger.debug("The former email : " + currentEmail
+							+ " is the same to new one : " + newEmail);
+					skipped++;
+					total++;
+					continue;
+				}
+
+				boolean user = userFacade.updateEmail(currentEmail, newEmail);
+				if (user) {
+					updated++;
+				}
+				total++;
+			}
+
+			notUpdated = total - (updated + skipped);
+			state.setTotal(total);
+			state.setUpdated(updated);
+			state.setNotUpdated(notUpdated);
+			state.setSkipped(skipped);
+			reader.close();
+		} catch (FileNotFoundException e) {
+			logger.error(e.getMessage(), e);
+			throw new BusinessException(BusinessErrorCode.FILE_UNREACHABLE,
+					e.getMessage());
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+			throw new BusinessException(
+					BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
+					e.getMessage());
+		} finally {
+			deleteTempFile(tempFile);
+		}
+		return state;
 	}
 }

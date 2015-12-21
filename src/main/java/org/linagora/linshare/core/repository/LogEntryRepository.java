@@ -37,6 +37,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.LogEntry;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 
 public interface LogEntryRepository extends AbstractRepository<LogEntry> {
@@ -59,5 +60,6 @@ public interface LogEntryRepository extends AbstractRepository<LogEntry> {
 	
 	
 	public List<LogEntry> findByCriteria(LogCriteriaBean criteria, String domainId);
-	
+
+	public void updateMail(String currentEmail, String newEmail) throws BusinessException;
 }

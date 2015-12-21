@@ -33,20 +33,26 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.LogEntry;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.LogEntryRepository;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 import org.linagora.linshare.view.tapestry.enums.CriterionMatchMode;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry>
@@ -189,6 +195,25 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry>
 	@SuppressWarnings("unchecked")
 	private List<LogEntry> findBy(DetachedCriteria criteria) {
 		return getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	@Override
+	public void updateMail(final String currentEmail, final String newEmail) throws BusinessException {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session) throws HibernateException, SQLException {
+				final Query query = session.createQuery("UPDATE LogEntry SET actor_mail = :newEmail WHERE actor_mail = :currentEmail");
+				final Query secondQuery =session.createQuery("UPDATE LogEntry SET target_mail = :newEmail WHERE target_mail = :currentEmail");
+				query.setParameter("newEmail", newEmail);
+				query.setParameter("currentEmail", currentEmail);
+				secondQuery.setParameter("newEmail", newEmail);
+				secondQuery.setParameter("currentEmail", currentEmail);
+				long updatedCounter = (long) query.executeUpdate();
+				updatedCounter = (long) secondQuery.executeUpdate() + updatedCounter;
+				logger.info(updatedCounter + " LogEntry have been updated.");
+				return updatedCounter;
+			}
+		};
+		getHibernateTemplate().execute(action);
 	}
 
 }
