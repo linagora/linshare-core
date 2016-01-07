@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.linagora</groupId>
 	<artifactId>linshare</artifactId>
-	<version>1.5.10</version>
+    <version>1.5.11-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>LinShare, Secure File Sharing</name>
 	<description>Specially designed to secure paperless trading companies that put privacy and traceability in the heart of their problems of exchange, Linshare provides a simple solution completely intuitive :
@@ -21,13 +20,14 @@
 		<url>https://forge.linshare.org/projects/linshare/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Hudson</system>
-		<url>http://build.linid.org/hudson/view/LinPKI/</url>
+		<system>Jenkins</system>
+		<url>https://jenkins.linshare.org/jenkins/</url>
 	</ciManagement>
 
 	<scm>
 		<connection>scm:git:git://github.com/linagora/linshare-core.git</connection>
-		<developerConnection>scm:git:git@github.com:linagora/linshare-core.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@ci-gsafe.linagora.com:8000/linshare/linshare-core.git</developerConnection>
+		<tag>HEAD</tag>
 		<url>http://github.com/linagora/linshare-core/tree/master/</url>
 	</scm>
 
@@ -797,7 +797,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -810,7 +810,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
@@ -969,38 +969,31 @@
 					</instrumentation>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changes-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>announcement-mail</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>announcement-mail</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<subject>[ANNOUNCEMENT] - ${project.name} v${project.version}
-						released</subject>
-					<toAddresses>
-						<toAddress>linshare-dev@linpki.org</toAddress>
-					</toAddresses>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changes-plugin</artifactId>
-				<configuration>
-					<issueLinkTemplate>http://linpki.org/issues/show/%ISSUE%</issueLinkTemplate>
-				</configuration>
-			</plugin>
+			<!-- maven-release-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.3</version>
 				<configuration>
-					<goals>deploy changes:announcement-mail</goals>
+					<tagNameFormat>@{project.version}</tagNameFormat>
+				</configuration>
+			</plugin>
+			<!--maven-install-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.2</version>
+				<configuration>
+                    <skip>true</skip>
+				</configuration>
+			</plugin>
+			<!--maven-deploy-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.2</version>
+				<configuration>
+					<skip>false</skip>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -1056,6 +1049,7 @@
 		</testResources>
 	</build>
 
+    <!-- FMA ? -->
 	<pluginRepositories>
 		<pluginRepository>
 			<id>bintray-central</id>
@@ -1125,13 +1119,8 @@
 								<phase>compile</phase>
 								<configuration>
 									<target name="copySpringSecurity">
-										<copy
-											file="${basedir}/src/main/resources/springContext-security.xml"
-											tofile="${project.build.outputDirectory}/DISABLEDspringContext-security.xml" />
-										<copy
-											file="${basedir}/src/main/resources/DISABLEDspringContext-securityCAS.xml"
-											tofile="${project.build.outputDirectory}/springContext-security.xml"
-											overwrite="true" />
+										<copy file="${basedir}/src/main/resources/springContext-security.xml" tofile="${project.build.outputDirectory}/DISABLEDspringContext-security.xml" />
+										<copy file="${basedir}/src/main/resources/DISABLEDspringContext-securityCAS.xml" tofile="${project.build.outputDirectory}/springContext-security.xml" overwrite="true" />
 									</target>
 								</configuration>
 								<goals>
@@ -1157,13 +1146,8 @@
 								<phase>compile</phase>
 								<configuration>
 									<target name="copySpringSecurity">
-										<copy
-											file="${basedir}/src/main/resources/springContext-security.xml"
-											tofile="${project.build.outputDirectory}/DISABLEDspringContext-security.xml" />
-										<copy
-											file="${basedir}/src/main/resources/DISABLEDspringContext-securityLLNG.xml"
-											tofile="${project.build.outputDirectory}/springContext-security.xml"
-											overwrite="true" />
+										<copy file="${basedir}/src/main/resources/springContext-security.xml" tofile="${project.build.outputDirectory}/DISABLEDspringContext-security.xml" />
+										<copy file="${basedir}/src/main/resources/DISABLEDspringContext-securityLLNG.xml" tofile="${project.build.outputDirectory}/springContext-security.xml" overwrite="true" />
 									</target>
 								</configuration>
 								<goals>
@@ -1502,6 +1486,9 @@
 
 		<!-- <repository> <id>tapestry-snapshots</id> <url>http://tapestry.formos.com/maven-snapshot-repository/</url> <snapshots> <enabled>true</enabled> 
 			</snapshots> </repository> -->
+
+<!-- now all these repositories should be useless
+
 		<repository>
 			<id>linagora</id>
 			<url>http://repo.linpki.org/nexus/content/repositories/public/</url>
@@ -1579,9 +1566,10 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+        -->
 		<repository>
-			<id>Codehaumaven-compiler-plugins</id>
-			<url>http://repository.codehaus.org/</url>
+			<id>Linagora-LinShare-Repositories</id>
+			<url>https://nexus.linagora.com/content/groups/linshare</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -1590,14 +1578,14 @@
 
 	<distributionManagement>
 		<repository>
-			<id>Linagora-Nexus-Releases</id>
-			<name>Linagora Nexus Releases</name>
-			<url>http://repo.linpki.org/nexus/content/repositories/releases/</url>
+			<id>Linagora-LinShare-Releases</id>
+			<name>Linagora LinShare Releases</name>
+			<url>https://nexus.linagora.com/content/repositories/linshare-releases</url>
 		</repository>
 		<snapshotRepository>
-			<id>Linagora-Nexus-Snapshosts</id>
-			<name>Linagora Nexus Snapshots</name>
-			<url>http://repo.linpki.org/nexus/content/repositories/snapshots/</url>
+			<id>Linagora-LinShare-Snapshots</id>
+			<name>Linagora LinShare Snapshots</name>
+			<url>https://nexus.linagora.com/content/repositories/linshare-snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 
