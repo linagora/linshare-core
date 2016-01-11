@@ -40,6 +40,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -80,7 +81,7 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 	@POST
 	@ApiOperation(value = "Create a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Owner not found."),
+					@ApiResponse(code = 404, message = "Guest not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
@@ -96,7 +97,7 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 	@GET
 	@ApiOperation(value = "Get a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner not found."),
+					@ApiResponse(code = 404, message = "Guest not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
@@ -104,13 +105,34 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 	public GuestDto get(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The guest identifier, could be uuid or mail.", required = true) @PathParam("identifier") String identifier,
-			@ApiParam(value = "Domain identifier. Restrict the search to a specific domain and its children.") @DefaultValue("false") @QueryParam("mail") Boolean isMail,
-			@ApiParam(value = "Domain identifier. Restrict the search to a specific domain and its children.") @QueryParam("domain") String domain)
+			@ApiParam(value = "Boolean value to search by domain.") @DefaultValue("false") @QueryParam("mail") Boolean isMail,
+			@ApiParam(value = "Domain identifier.") @QueryParam("domain") String domain)
 			throws BusinessException {
 		if (isMail) {
 			return guestFacade.find(ownerUuid, domain, identifier);
 		}
 		return guestFacade.find(ownerUuid, identifier);
+	}
+
+	@Path("/{identifier}")
+	@HEAD
+	@ApiOperation(value = "Get a guest.", response = GuestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "Guest not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public void head(
+			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The guest identifier, could be uuid or mail.", required = true) @PathParam("identifier") String identifier,
+			@ApiParam(value = "Boolean value to search by domain.") @DefaultValue("false") @QueryParam("mail") Boolean isMail,
+			@ApiParam(value = "Domain identifier.") @QueryParam("domain") String domain)
+			throws BusinessException {
+		if (isMail) {
+			guestFacade.find(ownerUuid, domain, identifier);
+		}
+		guestFacade.find(ownerUuid, identifier);
 	}
 
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -119,7 +141,7 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 	@GET
 	@ApiOperation(value = "Get all guests.", response = GuestDto.class, responseContainer = "Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner not found."),
+					@ApiResponse(code = 404, message = "Guest not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
@@ -133,7 +155,7 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 	@PUT
 	@ApiOperation(value = "Update a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner or guest not found."),
+					@ApiResponse(code = 404, message = "Guest or guest not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
@@ -149,7 +171,7 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 	@DELETE
 	@ApiOperation(value = "Delete a guest.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner or guest not found."),
+					@ApiResponse(code = 404, message = "Guest or guest not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
@@ -165,7 +187,7 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 	@DELETE
 	@ApiOperation(value = "Delete a guest.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner or guest not found."),
+					@ApiResponse(code = 404, message = "Guest or guest not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})

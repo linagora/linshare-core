@@ -45,6 +45,8 @@ public interface ShareEntryGroupRestService {
 
 	ShareEntryGroupDto find(String ownerUuid, String uuid, boolean full) throws BusinessException;
 
+	void head(String ownerUuid, String uuid) throws BusinessException;
+
 	ShareEntryGroupDto update(String ownerUuid, ShareEntryGroupDto shareEntryGroupDto) throws BusinessException;
 
 	ShareEntryGroupDto delete(String ownerUuid, String uuid) throws BusinessException;

@@ -40,6 +40,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -96,6 +97,21 @@ public class ShareEntryGroupRestServiceImpl implements ShareEntryGroupRestServic
 			@ApiParam(value = "Share entry group's uuid to find.", required = true) @PathParam("uuid") String uuid,
 			@QueryParam("full") @DefaultValue("false") boolean full) throws BusinessException {
 		return shareEntryGroupFacade.find(ownerUuid, uuid, full);
+	}
+
+	@Path("/{uuid}")
+	@HEAD
+	@ApiOperation(value = "Find a share entry group.", response = ShareEntryGroupDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Share entry group not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public void head(
+			@ApiParam(value = "Share entry group's owner uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "Share entry group's uuid to find.", required = true) @PathParam("uuid") String uuid)
+					throws BusinessException {
+		shareEntryGroupFacade.find(ownerUuid, uuid, false);
 	}
 
 	@Path("/{uuid}")

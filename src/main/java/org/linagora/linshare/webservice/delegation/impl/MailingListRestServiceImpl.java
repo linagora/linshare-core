@@ -34,12 +34,12 @@
 
 package org.linagora.linshare.webservice.delegation.impl;
 
-import java.security.acl.Owner;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -101,6 +101,22 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 					throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
 		return mailingListFacade.find(ownerUuid, uuid);
+	}
+
+	@Path("/{uuid}")
+	@HEAD
+	@ApiOperation(value = "Find an user mailing list.", response = MailingListDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+		@ApiResponse(code = 404, message = "Mailing list not found."),
+		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+		@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public void head(
+			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
+					throws BusinessException {
+		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
+		mailingListFacade.find(ownerUuid, uuid);
 	}
 
 	@Path("/")

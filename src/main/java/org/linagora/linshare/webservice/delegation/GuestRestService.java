@@ -45,6 +45,8 @@ public interface GuestRestService {
 
 	GuestDto get(String ownerUuid, String identifier, Boolean isMail, String domain) throws BusinessException;
 
+	void head(String ownerUuid, String identifier, Boolean isMail, String domain) throws BusinessException;
+
 	List<GuestDto> getAll(String ownerUuid) throws BusinessException;
 
 	GuestDto update(String ownerUuid, GuestDto guest) throws BusinessException;

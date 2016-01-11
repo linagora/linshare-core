@@ -56,6 +56,8 @@ public interface ThreadEntryRestService {
 	public ThreadEntryDto find(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
+	void head(String ownerUuid, String threadUuid, String uuid) throws BusinessException;
+
 	public List<ThreadEntryDto> findAll(String ownerUuid, String threadUuid)
 			throws BusinessException;
 

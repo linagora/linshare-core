@@ -41,6 +41,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -107,7 +108,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Create a document which will contain the uploaded file.", response = DocumentDto.class)
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
@@ -174,7 +175,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Get a document.", response = DocumentDto.class)
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
@@ -185,13 +186,29 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		return documentFacade.find(ownerUuid, uuid);
 	}
 
+	@Path("/{uuid}")
+	@HEAD
+	@ApiOperation(value = "Get a document.", response = DocumentDto.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Document not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public void head(
+			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
+		documentFacade.find(ownerUuid, uuid);
+	}
+
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Get all documents.", response = DocumentDto.class, responseContainer = "Set")
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
@@ -208,7 +225,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
@@ -227,7 +244,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Update the file inside the document.", response = DocumentDto.class)
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
@@ -281,7 +298,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Delete a document.")
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
@@ -298,7 +315,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Delete a document.")
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
@@ -314,7 +331,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Download a file.")
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
@@ -330,7 +347,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Download the thumbnail of a file.")
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override

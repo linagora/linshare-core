@@ -59,6 +59,8 @@ public interface DocumentRestService {
 
 	DocumentDto find(String ownerUuid, String uuid) throws BusinessException;
 
+	void head(String ownerUuid, String uuid) throws BusinessException;
+
 	List<DocumentDto> findAll(String ownerUuid) throws BusinessException;
 
 	DocumentDto update(String ownerUuid, String uuid, DocumentDto documentDto) throws BusinessException;
