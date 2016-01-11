@@ -31,61 +31,41 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin.impl;
+
+package org.linagora.linshare.webservice.userv2.impl;
+
+import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.MimeTypeFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
-import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.admin.MimeTypeRestService;
+import org.linagora.linshare.core.facade.webservice.user.MimeTypeFacade;
+import org.linagora.linshare.webservice.userv2.MimeTypeRestService;
 
 import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/mime_types")
-@Api(value = "/rest/admin/mime_types", description = "Mime types service.")
+@Api(value = "/rest/user/mime_types", description = "Mime types service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MimeTypeRestServiceImpl extends WebserviceBase implements
-	MimeTypeRestService {
+public class MimeTypeRestServiceImpl implements MimeTypeRestService {
 
-	private final MimeTypeFacade mimeTypeFacade;
+	private final MimeTypeFacade facade;
 
-	public MimeTypeRestServiceImpl (
-			final MimeTypeFacade mimeTypeFacade) {
-		this.mimeTypeFacade = mimeTypeFacade;
+	public MimeTypeRestServiceImpl(final MimeTypeFacade facade) {
+		this.facade = facade;
 	}
 
-	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a mime type.", response = MimeTypeDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
-	@Override
-	public MimeTypeDto find(
-			@ApiParam(value = "Uuid of the mime type to search for.", required = true) @PathParam("uuid") String uuid)
-			throws BusinessException {
-		return mimeTypeFacade.find(uuid);
-	}
-
 	@Path("/")
-	@PUT
-	@ApiOperation(value = "Update a mime type.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public MimeTypeDto update(
-			@ApiParam(value = "Policy to update.", required = true) MimeTypeDto policy)
-			throws BusinessException {
-		return mimeTypeFacade.update(policy);
+	public List<MimeTypeDto> find(@QueryParam("disabled") @DefaultValue("false") boolean disabled) {
+		return facade.find(null, disabled);
 	}
 }

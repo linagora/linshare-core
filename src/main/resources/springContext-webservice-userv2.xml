@@ -82,6 +82,10 @@
 		<constructor-arg ref="wsMailingListFacade" />
 	</bean>
 
+	<bean id="userMimeTypeRestService" class="org.linagora.linshare.webservice.userv2.impl.MimeTypeRestServiceImpl">
+		<constructor-arg ref="wsMimeTypeFacade" />
+	</bean>
+
 	<jaxrs:server id="userRestContainer" address="/rest/user">
 		<jaxrs:serviceBeans>
 			<ref bean="userEnumRestService" />
@@ -99,6 +103,7 @@
 			<ref bean="userFlowDocumentUploaderRestService" />
 			<ref bean="userShareEntryGroupRestService" />
 			<ref bean="userMailingListRestService" />
+			<ref bean="userMimeTypeRestService" />
 <!--
 			<ref bean="pluginCompatibilityRestServiceV2" />
 -->

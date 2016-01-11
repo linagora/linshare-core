@@ -70,4 +70,8 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="mailingListService" />
 	</bean>
+
+	<bean id="wsMimeTypeFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.MimeTypeFacadeImpl">
+		<constructor-arg ref="accountService" />
+	</bean>
 </beans>

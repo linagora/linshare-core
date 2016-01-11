@@ -37,11 +37,15 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.MimeType;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "MimeType")
 @ApiModel(value = "MimeType", description = "MimeType")
 public class MimeTypeDto {
@@ -79,7 +83,6 @@ public class MimeTypeDto {
 		this.enable = m.getEnable();
 		if (!light) {
 			this.uuid = m.getUuid();
-			this.enable = m.getEnable();
 			this.creationDate = m.getCreationDate();
 			this.modificationDate = m.getModificationDate();
 		}
@@ -137,4 +140,25 @@ public class MimeTypeDto {
 		this.modificationDate = modificationDate;
 	}
 
+	public static Function<MimeType, MimeTypeDto> toDto() {
+		return new Function<MimeType, MimeTypeDto>() {
+			@Override
+			public MimeTypeDto apply(MimeType arg0) {
+				return new MimeTypeDto(arg0, true);
+			}
+		};
+	}
+
+	public static Predicate<MimeTypeDto> isMimeTypeDisabled(final boolean isDisabled) {
+		return new Predicate<MimeTypeDto>() {
+			@Override
+			public boolean apply(MimeTypeDto arg0) {
+				if (isDisabled) {
+					return !arg0.isEnable();
+				} else {
+					return arg0.isEnable();
+				}
+			}
+		};
+	}
 }

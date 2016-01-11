@@ -91,6 +91,7 @@ public abstract class AbstractDomain {
 	private Set<MailContent> mailContents;
 
 	private MimePolicy mimePolicy;
+
 	private Set<MimePolicy> mimePolicies;
 
 	private Set<UploadPropositionFilter> uploadPropositionFilters;
