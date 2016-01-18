@@ -23,6 +23,7 @@
 		<constructor-arg ref="shareService" />
 		<constructor-arg ref="shareEntryService" />
 		<constructor-arg ref="entryBusinessService" />
+		<constructor-arg ref="mailingListService" />
 	</bean>
 	<bean id="wsThreadFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ThreadFacadeImpl">
 		<constructor-arg ref="threadService" />
@@ -59,6 +60,7 @@
 	<bean id="wsAutoCompleteFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.AutoCompleteFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
+		<constructor-arg ref="mailingListService" />
 	</bean>
 
 	<bean id="wsShareEntryGroupFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ShareEntryGroupFacadeImpl">

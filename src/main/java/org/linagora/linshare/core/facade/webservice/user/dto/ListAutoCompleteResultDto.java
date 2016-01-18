@@ -32,20 +32,60 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.user;
+package org.linagora.linshare.core.facade.webservice.user.dto;
 
-import java.util.List;
-import java.util.Set;
+import org.linagora.linshare.core.domain.entities.MailingList;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultDto;
+import com.google.common.base.Function;
 
-public interface AutoCompleteFacade {
+public class ListAutoCompleteResultDto extends AutoCompleteResultDto {
 
-	Set<UserDto> findUser(String pattern) throws BusinessException;
+	private String ownerLastName;
 
-	Set<String> getMail(String pattern) throws BusinessException;
+	private String ownerFirstName;
 
-	List<AutoCompleteResultDto> search(String pattern, String type) throws BusinessException;
+	private String ownerMail;
+
+	public ListAutoCompleteResultDto() {
+	}
+
+	public ListAutoCompleteResultDto(MailingList list) {
+		super(list.getUuid(), list.getIdentifier());
+		this.ownerFirstName = list.getOwner().getFirstName();
+		this.ownerLastName = list.getOwner().getLastName();
+		this.ownerMail = list.getOwner().getMail();
+	}
+
+	public String getOwnerLastName() {
+		return ownerLastName;
+	}
+
+	public void setOwnerLastName(String ownerLastName) {
+		this.ownerLastName = ownerLastName;
+	}
+
+	public String getOwnerFirstName() {
+		return ownerFirstName;
+	}
+
+	public void setOwnerFirstName(String ownerFirstName) {
+		this.ownerFirstName = ownerFirstName;
+	}
+
+	public String getOwnerMail() {
+		return ownerMail;
+	}
+
+	public void setOwnerMail(String ownerMail) {
+		this.ownerMail = ownerMail;
+	}
+
+	public static Function<MailingList, ListAutoCompleteResultDto> toDto() {
+		return new Function<MailingList, ListAutoCompleteResultDto>() {
+			@Override
+			public ListAutoCompleteResultDto apply(MailingList arg0) {
+				return new ListAutoCompleteResultDto(arg0);
+			}
+		};
+	}
 }

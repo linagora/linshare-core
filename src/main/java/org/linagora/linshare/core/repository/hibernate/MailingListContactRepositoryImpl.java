@@ -71,7 +71,6 @@ public class MailingListContactRepositoryImpl extends
 	public MailingListContact findById(long id) {
 		DetachedCriteria det = DetachedCriteria
 				.forClass(MailingListContact.class);
-
 		det.add(Restrictions.eq("id", id));
 		return DataAccessUtils.singleResult(findByCriteria(det));
 	}
@@ -80,7 +79,6 @@ public class MailingListContactRepositoryImpl extends
 	public MailingListContact findByUuid(String uuid) {
 		DetachedCriteria det = DetachedCriteria
 				.forClass(MailingListContact.class);
-
 		det.add(Restrictions.eq("uuid", uuid));
 		return DataAccessUtils.singleResult(findByCriteria(det));
 	}
@@ -89,7 +87,6 @@ public class MailingListContactRepositoryImpl extends
 	public MailingListContact findByMail(MailingList list, String mail) {
 		DetachedCriteria det = DetachedCriteria
 				.forClass(MailingListContact.class);
-
 		det.add(Restrictions.eq("mail", mail));
 		det.add(Restrictions.eq("mailingList", list));
 		return DataAccessUtils.singleResult(findByCriteria(det));
@@ -99,7 +96,6 @@ public class MailingListContactRepositoryImpl extends
 	@Override
 	public List<String> getAllContactMails(MailingList list) {
 		DetachedCriteria det = DetachedCriteria.forClass(MailingListContact.class);
-
 		det.add(Restrictions.eq("mailingList", list));
 		det.setProjection(Projections.property("mail"));
 		return (List<String>) listByCriteria(det);
@@ -124,7 +120,6 @@ public class MailingListContactRepositoryImpl extends
 	@Override
 	public List<MailingListContact> findAllContacts(MailingList list) {
 		DetachedCriteria det = DetachedCriteria.forClass(MailingListContact.class);
-
 		det.add(Restrictions.eq("mailingList", list));
 		return findByCriteria(det);
 	}

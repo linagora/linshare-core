@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.delegation.dto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 
@@ -72,6 +73,9 @@ public class ShareCreationDto {
 
 	@ApiModelProperty(value = "sharingNote")
 	protected String sharingNote;
+
+	@ApiModelProperty(value= "mailingListUuid")
+	private Set<String> mailingListUuid;
 
 	public List<GenericUserDto> getRecipients() {
 		return recipients;
@@ -151,5 +155,13 @@ public class ShareCreationDto {
 
 	public Boolean isCreationAcknowledgement() {
 		return creationAcknowledgement;
+	}
+
+	public Set<String> getMailingListUuid() {
+		return mailingListUuid;
+	}
+
+	public void setMailingListUuid(Set<String> mailingListUuid) {
+		this.mailingListUuid = mailingListUuid;
 	}
 }

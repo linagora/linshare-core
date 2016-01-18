@@ -32,20 +32,17 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.user;
+package org.linagora.linshare.core.domain.constants;
 
-import java.util.List;
-import java.util.Set;
+public enum SearchType {
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultDto;
+	SHARING, USERS;
 
-public interface AutoCompleteFacade {
-
-	Set<UserDto> findUser(String pattern) throws BusinessException;
-
-	Set<String> getMail(String pattern) throws BusinessException;
-
-	List<AutoCompleteResultDto> search(String pattern, String type) throws BusinessException;
+	public static SearchType fromString(String value) {
+		try {
+			return SearchType.valueOf(value);
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Doesn't match an existing SearchType");
+		}
+	}
 }

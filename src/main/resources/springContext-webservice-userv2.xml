@@ -86,6 +86,10 @@
 		<constructor-arg ref="wsMimeTypeFacade" />
 	</bean>
 
+	<bean id="userAutoCompleteRestService" class="org.linagora.linshare.webservice.userv2.impl.AutoCompleteRestServiceImpl">
+		<constructor-arg ref="wsAutoCompleteFacade" />
+	</bean>
+
 	<jaxrs:server id="userRestContainer" address="/rest/user">
 		<jaxrs:serviceBeans>
 			<ref bean="userEnumRestService" />
@@ -104,6 +108,7 @@
 			<ref bean="userShareEntryGroupRestService" />
 			<ref bean="userMailingListRestService" />
 			<ref bean="userMimeTypeRestService" />
+			<ref bean="userAutoCompleteRestService" />
 <!--
 			<ref bean="pluginCompatibilityRestServiceV2" />
 -->

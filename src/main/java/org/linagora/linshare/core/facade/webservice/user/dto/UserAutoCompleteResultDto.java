@@ -32,20 +32,52 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.user;
+package org.linagora.linshare.core.facade.webservice.user.dto;
 
-import java.util.List;
-import java.util.Set;
-
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultDto;
 
-public interface AutoCompleteFacade {
+import com.google.common.base.Function;
 
-	Set<UserDto> findUser(String pattern) throws BusinessException;
+public class UserAutoCompleteResultDto extends AutoCompleteResultDto {
 
-	Set<String> getMail(String pattern) throws BusinessException;
+	private String firstName;
 
-	List<AutoCompleteResultDto> search(String pattern, String type) throws BusinessException;
+	private String lastName;
+
+	public UserAutoCompleteResultDto() {
+	}
+
+	public UserAutoCompleteResultDto(UserDto user) {
+		super(user.getUuid(), user.getMail());
+		this.firstName = user.getFirstName();
+		this.lastName = user.getLastName();
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<UserDto, UserAutoCompleteResultDto> toDto() {
+		return new Function<UserDto, UserAutoCompleteResultDto>() {
+			@Override
+			public UserAutoCompleteResultDto apply(UserDto arg0) {
+				return new UserAutoCompleteResultDto(arg0);
+			}
+		};
+	}
 }

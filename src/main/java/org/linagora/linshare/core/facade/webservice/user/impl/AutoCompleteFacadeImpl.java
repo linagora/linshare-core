@@ -39,12 +39,22 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.SearchType;
+import org.linagora.linshare.core.domain.constants.VisibilityType;
+import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.AutoCompleteFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.ListAutoCompleteResultDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.UserAutoCompleteResultDto;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserService;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements AutoCompleteFacade {
 
@@ -52,9 +62,12 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 
 	private final UserService userService;
 
-	public AutoCompleteFacadeImpl(final AccountService accountService, final UserService userService) {
+	private final MailingListService mailingListSerice;
+
+	public AutoCompleteFacadeImpl(final AccountService accountService, final UserService userService, final MailingListService mailingListSerice) {
 		super(accountService);
 		this.userService = userService;
+		this.mailingListSerice = mailingListSerice;
 	}
 
 	@Override
@@ -91,5 +104,29 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 			res.add(user.getMail());
 		}
 		return res;
+	}
+
+	@Override
+	public List<AutoCompleteResultDto> search(String pattern, String type) throws BusinessException {
+		User actor = checkAuthentication();
+		if (pattern.length() > 2) {
+			List<AutoCompleteResultDto> result = Lists.newArrayList();
+			SearchType enumType = SearchType.fromString(type);
+			if (enumType.equals(SearchType.SHARING)) {
+				List<MailingList> list = mailingListSerice.searchListByVisibility(actor.getLsUuid(), VisibilityType.All.name(), pattern);
+				int range = (list.size() < AUTO_COMPLETE_LIMIT ? list.size() : AUTO_COMPLETE_LIMIT);
+				Set<UserDto> userList = findUser(pattern);
+				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
+				result.addAll(ImmutableList.copyOf(Lists.transform(list.subList(0, range), ListAutoCompleteResultDto.toDto())));
+			} else if (enumType.equals(SearchType.USERS)) {
+				Set<UserDto> userList = findUser(pattern);
+				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
+			} else {
+				throw new BusinessException("Unexpected type.");
+			}
+			return result;
+		} else {
+			throw new BusinessException("Pattern size must be at least tree.");
+		}
 	}
 }

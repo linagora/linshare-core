@@ -32,20 +32,49 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.user;
+package org.linagora.linshare.core.facade.webservice.user.dto;
 
-import java.util.List;
-import java.util.Set;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultDto;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-public interface AutoCompleteFacade {
+import com.wordnik.swagger.annotations.ApiModel;
 
-	Set<UserDto> findUser(String pattern) throws BusinessException;
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@XmlRootElement(name = "AutoCompleteResult")
+@XmlSeeAlso({ UserAutoCompleteResultDto.class, ListAutoCompleteResultDto.class})
+@ApiModel(value = "AutoCompleteResult", description = "Auto complete result object")
+public class AutoCompleteResultDto {
 
-	Set<String> getMail(String pattern) throws BusinessException;
+	private String identifier;
 
-	List<AutoCompleteResultDto> search(String pattern, String type) throws BusinessException;
+	private String display;
+
+	public AutoCompleteResultDto() {
+		super();
+	}
+
+	public AutoCompleteResultDto(String identifier, String display) {
+		this.identifier = identifier;
+		this.display = display;
+	}
+
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+
+	public String getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(String display) {
+		this.display = display;
+	}
 }

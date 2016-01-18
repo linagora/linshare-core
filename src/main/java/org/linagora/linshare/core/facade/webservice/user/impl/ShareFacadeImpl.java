@@ -42,6 +42,8 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
@@ -52,6 +54,7 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreation
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
 
@@ -68,15 +71,19 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 
 	private final EntryBusinessService entryBusinessService;
 
+	private final MailingListService listService;
+
 	public ShareFacadeImpl(
 			final AccountService accountService, 
 			final ShareEntryService shareEntryService,
 			final ShareService shareService,
-			final EntryBusinessService entryBusinessService) {
+			final EntryBusinessService entryBusinessService,
+			final MailingListService listService) {
 		super(accountService);
 		this.shareEntryService = shareEntryService;
 		this.shareService = shareService;
 		this.entryBusinessService = entryBusinessService;
+		this.listService = listService;
 	}
 
 	@Override
@@ -186,6 +193,14 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		ShareContainer sc = new ShareContainer();
+		if (createDto.getMailingListUuid() != null && !createDto.getMailingListUuid().isEmpty()) {
+			for (String uuid : createDto.getMailingListUuid()) {
+				MailingList list = listService.findByUuid(actor.getLsUuid(), uuid);
+				for (MailingListContact c : list.getMailingListContact()) {
+					sc.addContact(c);
+				}
+			}
+		}
 		sc.addDocumentUuid(createDto.getDocuments());
 		sc.setSubject(createDto.getSubject());
 		sc.setMessage(createDto.getMessage());

@@ -43,6 +43,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -335,6 +336,11 @@ public class ShareContainer {
 	public void addUserVo(UserVo userVo) {
 		Validate.notNull(userVo, "user must not be null.");
 		this.recipients.add(new Recipient(userVo));
+	}
+
+	public void addContact(MailingListContact contact) {
+		Validate.notNull(contact, "contact must be set.");
+		this.recipients.add(new Recipient(contact));
 	}
 
 	public void addUserVo(List<UserVo> usersVo) {

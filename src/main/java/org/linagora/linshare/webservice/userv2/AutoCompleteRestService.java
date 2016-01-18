@@ -32,20 +32,13 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.user;
+package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
-import java.util.Set;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultDto;
 
-public interface AutoCompleteFacade {
+public interface AutoCompleteRestService {
 
-	Set<UserDto> findUser(String pattern) throws BusinessException;
-
-	Set<String> getMail(String pattern) throws BusinessException;
-
-	List<AutoCompleteResultDto> search(String pattern, String type) throws BusinessException;
+	List<AutoCompleteResultDto> autoComplete(String pattern, String type);
 }
