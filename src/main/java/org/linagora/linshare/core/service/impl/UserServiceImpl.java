@@ -482,18 +482,6 @@ public class UserServiceImpl implements UserService {
 		return internals;
 	}
 
-	private User findUser(String lsUuid) throws BusinessException {
-		lsUuid = StringUtils.trim(lsUuid);
-		User user = userRepository.findByLsUuid(lsUuid);
-		if (user == null) {
-			String errMsg = "Can not find current actor : " + lsUuid;
-			logger.error(errMsg);
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
-					errMsg);
-		}
-		return user;
-	}
-
 	@Override
 	public List<User> autoCompleteUser(Account actor, String pattern)
 			throws BusinessException {

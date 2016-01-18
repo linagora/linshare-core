@@ -72,8 +72,6 @@ import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -305,8 +303,11 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 	private boolean addUserByDomainAndMail(ShareContainer shareContainer,
 			Recipient recipient, Account owner) throws BusinessException {
-		String mail = recipient.getUuid();
-		String domain = recipient.getUuid();
+		String mail = recipient.getMail();
+		String domain = null;
+		if (recipient.getDomain() != null) {
+			domain = recipient.getDomain().getIdentifier();
+		}
 		if (mail != null && domain != null) {
 			logger.debug("step2:looking into the database and the ldap using domain and mail : "
 					+ domain + " : " + mail);

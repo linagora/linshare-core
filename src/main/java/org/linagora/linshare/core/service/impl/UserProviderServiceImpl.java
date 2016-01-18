@@ -307,11 +307,23 @@ public class UserProviderServiceImpl implements UserProviderService {
 							userProvider.getLdapConnection(), userProvider.getBaseDn(),
 							userProvider.getPattern(), pattern);
 				} catch (NamingException e) {
-					throwError(userProvider.getLdapConnection(), e);
+					logger.error(
+							"Error while searching for a user with ldap connection {}",
+							userProvider.getLdapConnection().getUuid());
+					logger.error(e.getMessage());
+					logger.debug(e.toString());
 				} catch (IOException e) {
-					throwError(userProvider.getLdapConnection(), e);
+					logger.error(
+							"Error while searching for a user with ldap connection {}",
+							userProvider.getLdapConnection().getUuid());
+					logger.error(e.getMessage());
+					logger.debug(e.toString());
 				} catch (org.springframework.ldap.CommunicationException e) {
-					throwError(userProvider.getLdapConnection(), e);
+					logger.error(
+							"Error while searching for a user with ldap connection {}",
+							userProvider.getLdapConnection().getUuid());
+					logger.error(e.getMessage());
+					logger.debug(e.toString());
 				}
 				return users;
 			} else {
@@ -333,11 +345,23 @@ public class UserProviderServiceImpl implements UserProviderService {
 							userProvider.getLdapConnection(), userProvider.getBaseDn(),
 							userProvider.getPattern(), firstName, lastName);
 				} catch (NamingException e) {
-					throwError(userProvider.getLdapConnection(), e);
+					logger.error(
+							"Error while searching for a user with ldap connection {}",
+							userProvider.getLdapConnection().getUuid());
+					logger.error(e.getMessage());
+					logger.debug(e.toString());
 				} catch (IOException e) {
-					throwError(userProvider.getLdapConnection(), e);
+					logger.error(
+							"Error while searching for a user with ldap connection {}",
+							userProvider.getLdapConnection().getUuid());
+					logger.error(e.getMessage());
+					logger.debug(e.toString());
 				} catch (org.springframework.ldap.CommunicationException e) {
-					throwError(userProvider.getLdapConnection(), e);
+					logger.error(
+							"Error while searching for a user with ldap connection {}",
+							userProvider.getLdapConnection().getUuid());
+					logger.error(e.getMessage());
+					logger.debug(e.toString());
 				}
 				return users;
 			} else {
