@@ -47,6 +47,8 @@ public interface MailConfigRestService {
 
 	MailConfigDto find(String uuid) throws BusinessException;
 
+	void head(String uuid) throws BusinessException;
+
 	MailConfigDto create(MailConfigDto dto) throws BusinessException;
 
 	MailConfigDto update(MailConfigDto dto) throws BusinessException;

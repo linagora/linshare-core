@@ -37,6 +37,7 @@ package org.linagora.linshare.webservice.admin.impl;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -77,6 +78,17 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 			throws BusinessException {
 		return threadMemberFacade.find(id);
 	}
+
+	@Path("/{id}")
+	@HEAD
+	@ApiOperation(value = "Find a thread member.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public void head(@PathParam("id") Long id)
+			throws BusinessException {
+		threadMemberFacade.find(id);
+	}
+
 
 	@Path("/")
 	@POST

@@ -42,7 +42,7 @@ public interface LdapConnectionFacade extends AdminGenericFacade {
 
 	Set<LdapConnectionDto> findAll() throws BusinessException;
 
-	LdapConnectionDto find(String id) throws BusinessException;
+	LdapConnectionDto find(String uuid) throws BusinessException;
 
 	LdapConnectionDto update(LdapConnectionDto LDAPConnectionDto) throws BusinessException;
 

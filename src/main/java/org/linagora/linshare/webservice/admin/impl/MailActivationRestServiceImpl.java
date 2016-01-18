@@ -39,6 +39,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -91,6 +92,17 @@ public class MailActivationRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Mail activation identifier.", required = true) @PathParam(value = "mailActivationId") String mailActivationId)
 			throws BusinessException {
 		return facade.find(domainId, mailActivationId);
+	}
+
+	@Path("/{mailActivationId}")
+	@HEAD
+	@ApiOperation(value = "Find a domain's mail activations.")
+	@Override
+	public void head(
+			@ApiParam(value = "Domain identifier.", required = false) @QueryParam(value = "domainId") String domainId,
+			@ApiParam(value = "Mail activation identifier.", required = true) @PathParam(value = "mailActivationId") String mailActivationId)
+					throws BusinessException {
+		facade.find(domainId, mailActivationId);
 	}
 
 	@Path("/")

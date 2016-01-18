@@ -45,6 +45,8 @@ public interface UploadPropositionFilterRestService {
 
 	UploadPropositionFilterDto find(String uuid) throws BusinessException;
 
+	void head(String uuid) throws BusinessException;
+
 	UploadPropositionFilterDto create(UploadPropositionFilterDto filter) throws BusinessException;
 
 	UploadPropositionFilterDto update(UploadPropositionFilterDto filter) throws BusinessException;

@@ -42,7 +42,7 @@ public interface DomainPatternFacade extends AdminGenericFacade {
 
 	Set<DomainPatternDto> findAll() throws BusinessException;
 
-	DomainPatternDto find(String id) throws BusinessException;
+	DomainPatternDto find(String uuid) throws BusinessException;
 
 	Set<DomainPatternDto> findAllModels() throws BusinessException;
 	

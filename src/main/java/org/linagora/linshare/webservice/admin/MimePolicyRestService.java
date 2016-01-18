@@ -45,6 +45,8 @@ public interface MimePolicyRestService {
 
 	MimePolicyDto find(String uuid, boolean mimeTypes) throws BusinessException;
 
+	void head(String uuid) throws BusinessException;
+
 	MimePolicyDto create(MimePolicyDto policy) throws BusinessException;
 
 	MimePolicyDto update(MimePolicyDto policy) throws BusinessException;

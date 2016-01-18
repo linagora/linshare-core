@@ -45,6 +45,8 @@ public interface MailContentRestService {
 
 	MailContentDto find(String uuid) throws BusinessException;
 
+	void head(String uuid) throws BusinessException;
+
 	MailContentDto create(MailContentDto dto) throws BusinessException;
 
 	MailContentDto update(MailContentDto dto) throws BusinessException;

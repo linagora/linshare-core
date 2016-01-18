@@ -45,6 +45,8 @@ public interface WelcomeMessagesRestService {
 
 	WelcomeMessagesDto find(String uuid) throws BusinessException;
 
+	void head(String uuid) throws BusinessException;
+
 	WelcomeMessagesDto create(WelcomeMessagesDto customDto) throws BusinessException;
 
 	WelcomeMessagesDto update(WelcomeMessagesDto customDto) throws BusinessException;

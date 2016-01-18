@@ -44,12 +44,13 @@ public interface DomainPatternRestService {
 
 	DomainPatternDto find(String id) throws BusinessException;
 
+	void head(String id) throws BusinessException;
+
 	Set<DomainPatternDto> findAllModels() throws BusinessException;
-	
+
 	DomainPatternDto update(DomainPatternDto domainPattern) throws BusinessException;
 
 	DomainPatternDto create(DomainPatternDto domainPattern) throws BusinessException;
 
 	void delete(DomainPatternDto domainPattern) throws BusinessException;
-	
 }

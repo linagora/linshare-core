@@ -44,6 +44,8 @@ public interface MailFooterRestService {
 
 	MailFooterDto find(String uuid) throws BusinessException;
 
+	void head(String uuid) throws BusinessException;
+
 	MailFooterDto create(MailFooterDto dto) throws BusinessException;
 
 	MailFooterDto update(MailFooterDto dto) throws BusinessException;

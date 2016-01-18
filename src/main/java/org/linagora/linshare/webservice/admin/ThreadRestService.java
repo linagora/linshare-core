@@ -46,6 +46,8 @@ public interface ThreadRestService {
 
 	public ThreadDto find(String uuid) throws BusinessException;
 
+	public void head(String uuid) throws BusinessException;
+
 	public Set<ThreadMemberDto> members(String uuid)
 			throws BusinessException;
 

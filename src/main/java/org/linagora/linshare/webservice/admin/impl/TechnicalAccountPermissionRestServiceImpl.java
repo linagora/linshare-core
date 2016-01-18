@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.admin.impl;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -86,4 +87,12 @@ public class TechnicalAccountPermissionRestServiceImpl implements
 		return technicalAccountFacade.find(uuid);
 	}
 
+	@Path("/{uuid}")
+	@HEAD
+	@ApiOperation(value = "Find a technical account permission.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Override
+	public void head(@PathParam(value = "uuid") String uuid) throws BusinessException {
+		technicalAccountFacade.find(uuid);
+	}
 }

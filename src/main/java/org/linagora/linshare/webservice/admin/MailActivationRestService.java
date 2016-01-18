@@ -47,9 +47,11 @@ public interface MailActivationRestService {
 	MailActivationAdminDto find(String domainId, String mailActivationId)
 			throws BusinessException;
 
+	void head(String domainId, String mailActivationId)
+			throws BusinessException;
+
 	MailActivationAdminDto update(MailActivationAdminDto mailActivation)
 			throws BusinessException;
 
 	void delete(MailActivationAdminDto mailActivation) throws BusinessException;
-
 }

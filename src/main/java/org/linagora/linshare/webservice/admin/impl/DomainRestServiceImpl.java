@@ -39,6 +39,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -90,6 +91,16 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 			@QueryParam("parent") @DefaultValue("false") boolean parent)
 			throws BusinessException {
 		return domainFacade.find(domainId, tree, parent);
+	}
+
+	@Path("/{domainId}")
+	@HEAD
+	@ApiOperation(value = "Find a domain.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Override
+	public void head(@PathParam(value = "domainId") String domainId)
+					throws BusinessException {
+		domainFacade.find(domainId, false, false);
 	}
 
 	@Path("/")

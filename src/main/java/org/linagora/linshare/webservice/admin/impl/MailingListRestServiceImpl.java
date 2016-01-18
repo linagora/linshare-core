@@ -39,6 +39,7 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -91,6 +92,17 @@ public class MailingListRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mailingListFacade.find(uuid);
+	}
+
+	@Path("/{uuid}")
+	@HEAD
+	@ApiOperation(value = "Find a mailing list.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public void head(
+			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid)
+					throws BusinessException {
+		mailingListFacade.find(uuid);
 	}
 
 	@Path("/")

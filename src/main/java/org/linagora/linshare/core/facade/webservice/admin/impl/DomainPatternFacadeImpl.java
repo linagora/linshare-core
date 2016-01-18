@@ -67,10 +67,10 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 	}
 
 	@Override
-	public DomainPatternDto find(String id) throws BusinessException {
+	public DomainPatternDto find(String uuid) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(id, "domain pattern id must be set.");
-		return new DomainPatternDto(userProviderService.findDomainPattern(id));
+		Validate.notEmpty(uuid, "domain pattern uuid must be set.");
+		return new DomainPatternDto(userProviderService.findDomainPattern(uuid));
 	}
 
 	@Override

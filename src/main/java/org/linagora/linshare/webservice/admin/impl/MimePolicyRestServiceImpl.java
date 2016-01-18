@@ -39,6 +39,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -96,6 +97,17 @@ public class MimePolicyRestServiceImpl extends WebserviceBase implements
 			throws BusinessException {
 		MimePolicyDto find = mimePolicyFacade.find(uuid, full);
 		return find;
+	}
+
+	@Path("/{uuid}")
+	@HEAD
+	@ApiOperation(value = "Find a mime policy.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public void head(
+			@ApiParam(value = "Uuid of the mime policy to search for.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
+		mimePolicyFacade.find(uuid, false);
 	}
 
 	@Path("/")

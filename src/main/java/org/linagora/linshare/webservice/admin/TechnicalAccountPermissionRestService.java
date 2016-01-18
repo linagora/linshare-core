@@ -43,4 +43,5 @@ public interface TechnicalAccountPermissionRestService {
 
 	TechnicalAccountPermissionDto find(String uuid) throws BusinessException;
 
+	void head(String uuid) throws BusinessException;
 }

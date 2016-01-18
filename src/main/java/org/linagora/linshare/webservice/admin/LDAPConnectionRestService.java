@@ -44,6 +44,8 @@ public interface LDAPConnectionRestService {
 
 	LdapConnectionDto find(String id) throws BusinessException;
 
+	void head(String id) throws BusinessException;
+
 	LdapConnectionDto update(LdapConnectionDto ldapConnection) throws BusinessException;
 
 	LdapConnectionDto create(LdapConnectionDto ldapConnection) throws BusinessException;

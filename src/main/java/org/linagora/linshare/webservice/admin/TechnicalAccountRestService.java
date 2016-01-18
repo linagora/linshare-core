@@ -45,6 +45,8 @@ public interface TechnicalAccountRestService {
 
 	TechnicalAccountDto find(String uuid) throws BusinessException;
 
+	void head(String uuid) throws BusinessException;
+
 	TechnicalAccountDto update(TechnicalAccountDto account)
 			throws BusinessException;
 

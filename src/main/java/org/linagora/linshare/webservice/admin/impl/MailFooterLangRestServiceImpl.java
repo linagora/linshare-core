@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.admin.impl;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -77,6 +78,17 @@ public class MailFooterLangRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Mail footer lang's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mailFooterLangFacade.find(uuid);
+	}
+
+	@Path("/{uuid}")
+	@HEAD
+	@ApiOperation(value = "Find a mail footer lang.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public void head(
+			@ApiParam(value = "Mail footer lang's uuid.", required = true) @PathParam("uuid") String uuid)
+					throws BusinessException {
+		mailFooterLangFacade.find(uuid);
 	}
 
 	@Path("/")

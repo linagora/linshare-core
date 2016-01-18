@@ -38,6 +38,7 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -79,15 +80,23 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 		return ldapConnectionFacade.findAll();
 	}
 
-	@Path("/{id}")
+	@Path("/{uuid}")
 	@GET
 	@ApiOperation(value = "Find a LDAP connection.", response = LdapConnectionDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public LdapConnectionDto find(@PathParam(value = "id") String id) throws BusinessException {
-		return ldapConnectionFacade.find(id);
+	public LdapConnectionDto find(@PathParam(value = "uuid") String uuid) throws BusinessException {
+		return ldapConnectionFacade.find(uuid);
 	}
 
+	@Path("/{uuid}")
+	@HEAD
+	@ApiOperation(value = "Find a LDAP connection.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Override
+	public void head(@PathParam(value = "uuid") String uuid) throws BusinessException {
+		ldapConnectionFacade.find(uuid);
+	}
 
 	@Path("/")
 	@POST

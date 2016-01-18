@@ -39,6 +39,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -93,6 +94,16 @@ public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
 	public UploadPropositionFilterDto find(@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return uploadPropositionFilterFacade.find(uuid);
+	}
+
+	@Path("/{uuid}")
+	@HEAD
+	@ApiOperation(value = "Find a filter")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin.") })
+	@Override
+	public void head(@PathParam("uuid") String uuid)
+			throws BusinessException {
+		uploadPropositionFilterFacade.find(uuid);
 	}
 
 	@Path("/")

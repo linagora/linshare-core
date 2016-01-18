@@ -69,10 +69,10 @@ public class LdapConnectionFacadeImpl extends AdminGenericFacadeImpl implements 
 	}
 
 	@Override
-	public LdapConnectionDto find(String id) throws BusinessException {
+	public LdapConnectionDto find(String uuid) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(id, "ldap connection id must be set.");
-		return new LdapConnectionDto(ldapConnectionService.find(id));
+		Validate.notEmpty(uuid, "ldap connection id must be set.");
+		return new LdapConnectionDto(ldapConnectionService.find(uuid));
 	}
 
 	@Override

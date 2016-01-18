@@ -55,6 +55,8 @@ public interface UserRestService {
 
 	UserDto find(String uuid) throws BusinessException;
 
+	void head(String uuid) throws BusinessException;
+
 	void exist(String uuid) throws BusinessException;
 
 	UserDto create(UserDto user) throws BusinessException;

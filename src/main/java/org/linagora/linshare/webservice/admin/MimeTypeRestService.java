@@ -40,5 +40,7 @@ public interface MimeTypeRestService {
 
 	MimeTypeDto find(String uuid) throws BusinessException;
 
+	void head(String uuid) throws BusinessException;
+
 	MimeTypeDto update(MimeTypeDto dto) throws BusinessException;
 }

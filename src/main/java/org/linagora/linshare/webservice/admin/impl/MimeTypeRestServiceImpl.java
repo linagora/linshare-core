@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.admin.impl;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -76,6 +77,17 @@ public class MimeTypeRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Uuid of the mime type to search for.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mimeTypeFacade.find(uuid);
+	}
+
+	@Path("/{uuid}")
+	@HEAD
+	@ApiOperation(value = "Find a mime type.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public void head(
+			@ApiParam(value = "Uuid of the mime type to search for.", required = true) @PathParam("uuid") String uuid)
+					throws BusinessException {
+		mimeTypeFacade.find(uuid);
 	}
 
 	@Path("/")

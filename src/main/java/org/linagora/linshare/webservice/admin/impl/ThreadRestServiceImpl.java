@@ -39,6 +39,7 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -91,6 +92,16 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 	public ThreadDto find(@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return threadFacade.find(uuid);
+	}
+
+	@Path("/{uuid}")
+	@HEAD
+	@ApiOperation(value = "Find a thread")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public void head(@PathParam("uuid") String uuid)
+			throws BusinessException {
+		threadFacade.find(uuid);
 	}
 
 	@Path("/{uuid}/members")
