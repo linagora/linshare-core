@@ -42,6 +42,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -68,8 +69,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "/rest/user/shares", description = "Shares service")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class ShareRestServiceImpl extends WebserviceBase implements
-		ShareRestService {
+public class ShareRestServiceImpl extends WebserviceBase implements ShareRestService {
 
 	private final ShareFacade webServiceShareFacade;
 
@@ -83,12 +83,14 @@ public class ShareRestServiceImpl extends WebserviceBase implements
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Find all shares for an user.", response = ShareDto.class, responseContainer = "Set")
 	@Override
 	public List<ShareDto> getShares() throws BusinessException {
 		return webServiceShareFacade.getShares();
 	}
 
 	@Path("/{uuid}")
+	@ApiOperation(value = "Find a share.", response = ShareDto.class)
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
@@ -97,17 +99,23 @@ public class ShareRestServiceImpl extends WebserviceBase implements
 		return webServiceShareFacade.getShare(shareUuid);
 	}
 
+	@Path("/{uuid}")
+	@ApiOperation(value = "Find a share.")
+	@HEAD
+	@Override
+	public void head(@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String shareUuid)
+			throws BusinessException {
+		webServiceShareFacade.getShare(shareUuid);
+	}
+
 	@Path("/{uuid}/download")
 	@GET
 	@Override
-	public Response getDocumentStream(@PathParam("uuid") String shareUuid)
-			throws BusinessException {
+	public Response getDocumentStream(@PathParam("uuid") String shareUuid) throws BusinessException {
 		ShareDto shareDto = webServiceShareFacade.getReceivedShare(shareUuid);
-		InputStream documentStream = webServiceShareFacade
-				.getDocumentStream(shareUuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getDocumentResponseBuilder(documentStream, shareDto.getName(),
-						shareDto.getType(), shareDto.getSize());
+		InputStream documentStream = webServiceShareFacade.getDocumentStream(shareUuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream,
+				shareDto.getName(), shareDto.getType(), shareDto.getSize());
 		return response.build();
 	}
 
@@ -118,11 +126,9 @@ public class ShareRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
 		ShareDto shareDto = webServiceShareFacade.getShare(shareUuid);
-		InputStream documentStream = webServiceShareFacade
-				.getThumbnailStream(shareUuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getThumbnailResponseBuilder(documentStream,
-						shareDto.getName() + "_thumb.png", base64);
+		InputStream documentStream = webServiceShareFacade.getThumbnailStream(shareUuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
+				shareDto.getName() + "_thumb.png", base64);
 		return response.build();
 	}
 
@@ -130,29 +136,25 @@ public class ShareRestServiceImpl extends WebserviceBase implements
 	@POST
 	@ApiOperation(value = "Create a share.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Owner not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public Set<ShareDto> create(
-			ShareCreationDto createDto)
-					throws BusinessException {
+	public Set<ShareDto> create(ShareCreationDto createDto) throws BusinessException {
 		return webServiceShareFacade.create(createDto);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
 	@ApiOperation(value = "Delete a share document.")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Share not found."),
 			@ApiResponse(code = 400, message = "Bad request: missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public void delete(
 			@ApiParam(value = "Share's to delete uuid.", required = true) @PathParam("uuid") String shareUuid)
-			throws BusinessException {
+					throws BusinessException {
 		webServiceShareFacade.delete(shareUuid);
 	}
 }

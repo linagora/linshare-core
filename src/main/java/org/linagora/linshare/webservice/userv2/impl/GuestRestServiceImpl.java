@@ -39,6 +39,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -73,8 +74,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Path("/")
 	@GET
 	@ApiOperation(value = "Find all guests of a user.", response = GuestDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "No permission to list all guests."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to list all guests."),
 			@ApiResponse(code = 404, message = "Guests not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
@@ -86,28 +86,37 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Path("/{uuid}")
 	@GET
 	@ApiOperation(value = "Find a guest.", response = GuestDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Guest not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public GuestDto find(
-			@ApiParam(value = "Guest's uuid.", required = true) @PathParam("uuid") String uuid)
+	public GuestDto find(@ApiParam(value = "Guest's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return guestFacade.find(uuid);
+	}
+
+	@Path("/{uuid}")
+	@HEAD
+	@ApiOperation(value = "Find a guest.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Guest not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public void head(@ApiParam(value = "Guest's uuid.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
+		guestFacade.find(uuid);
 	}
 
 	@Path("/")
 	@POST
 	@ApiOperation(value = "Create a guest.", response = GuestDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "No permission to create."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to create."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public GuestDto create(
-			@ApiParam(value = "Guest to create.", required = true) GuestDto guest)
+	public GuestDto create(@ApiParam(value = "Guest to create.", required = true) GuestDto guest)
 			throws BusinessException {
 		return guestFacade.create(guest);
 	}
@@ -115,14 +124,12 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Path("/")
 	@PUT
 	@ApiOperation(value = "Update a guest.", response = GuestDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "No permission to update."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to update."),
 			@ApiResponse(code = 404, message = "Guest not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public GuestDto update(
-			@ApiParam(value = "Guest to update.", required = true) GuestDto guest)
+	public GuestDto update(@ApiParam(value = "Guest to update.", required = true) GuestDto guest)
 			throws BusinessException {
 		return guestFacade.update(guest);
 	}
@@ -130,29 +137,24 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Path("/")
 	@DELETE
 	@ApiOperation(value = "Delete a guest.")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "No permission to delete."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to delete."),
 			@ApiResponse(code = 404, message = "Guest not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public void delete(
-			@ApiParam(value = "Guest to delete.", required = true) GuestDto guest)
-			throws BusinessException {
+	public void delete(@ApiParam(value = "Guest to delete.", required = true) GuestDto guest) throws BusinessException {
 		guestFacade.delete(guest);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
 	@ApiOperation(value = "Delete a guest.")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "No permission to delete."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to delete."),
 			@ApiResponse(code = 404, message = "Guest not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public void delete(
-			@ApiParam(value = "Guest's uuid to delete.", required = true) @PathParam("uuid") String uuid)
+	public void delete(@ApiParam(value = "Guest's uuid to delete.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		guestFacade.delete(uuid);
 	}

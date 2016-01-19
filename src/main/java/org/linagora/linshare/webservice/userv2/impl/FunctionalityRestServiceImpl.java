@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.userv2.impl;
 import java.util.List;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -74,10 +75,15 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements Func
 	@GET
 	@ApiOperation(value = "Find a functionality.", response = FunctionalityDto.class)
 	@Override
-	public FunctionalityDto find(
-			@PathParam(value = "funcId") String funcId)
-			throws BusinessException {
+	public FunctionalityDto find(@PathParam(value = "funcId") String funcId) throws BusinessException {
 		return functionalityFacade.find(funcId);
 	}
 
+	@Path("/{funcId}")
+	@HEAD
+	@ApiOperation(value = "Find a functionality.")
+	@Override
+	public void head(@PathParam(value = "funcId") String identifier) throws BusinessException {
+		functionalityFacade.find(identifier);
+	}
 }

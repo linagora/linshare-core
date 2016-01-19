@@ -42,6 +42,8 @@ public interface FunctionalityRestService {
 
 	FunctionalityDto find(String identifier) throws BusinessException;
 
+	void head(String identifier)throws BusinessException;
+
 	List<FunctionalityDto> findAll() throws BusinessException;
 
 }

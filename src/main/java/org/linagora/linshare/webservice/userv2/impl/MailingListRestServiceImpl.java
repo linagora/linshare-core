@@ -39,6 +39,7 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -94,6 +95,18 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		return mailingListFacade.find(null, uuid);
+	}
+
+	@Path("/{uuid}")
+	@HEAD
+	@ApiOperation(value = "Find an user mailing list.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Mailing list not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public void head(String uuid) throws BusinessException {
+		mailingListFacade.find(null, uuid);
 	}
 
 	@Path("/")

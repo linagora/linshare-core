@@ -43,6 +43,8 @@ public interface GuestRestService {
 
 	GuestDto find(String uuid) throws BusinessException;
 
+	void head(String uuid) throws BusinessException;
+
 	List<GuestDto> findAll() throws BusinessException;
 
 	GuestDto create(GuestDto guest) throws BusinessException;

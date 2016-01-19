@@ -77,7 +77,7 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 	@POST
 	@ApiOperation(value = "Create a thread member.", response = ThreadMemberDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Owner not found."),
+					@ApiResponse(code = 404, message = "Member not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
@@ -93,7 +93,7 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 	@GET
 	@ApiOperation(value = "Get all thread members.", response = ThreadMemberDto.class, responseContainer = "Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner not found."),
+					@ApiResponse(code = 404, message = "Member not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
@@ -108,7 +108,7 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 	@PUT
 	@ApiOperation(value = "Update a thread member.", response = ThreadMemberDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner or thread member not found."),
+					@ApiResponse(code = 404, message = "Member or thread member not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
@@ -124,7 +124,7 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 	@DELETE
 	@ApiOperation(value = "Delete a thread member.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner or thread member not found."),
+					@ApiResponse(code = 404, message = "Member or thread member not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
@@ -140,7 +140,7 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 	@DELETE
 	@ApiOperation(value = "Delete a thread member.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner or thread member not found."),
+					@ApiResponse(code = 404, message = "Member or thread member not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})

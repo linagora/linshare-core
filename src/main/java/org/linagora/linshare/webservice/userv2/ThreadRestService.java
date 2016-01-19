@@ -44,6 +44,8 @@ public interface ThreadRestService {
 
 	ThreadDto find(String uuid) throws BusinessException;
 
+	void head(String uuid) throws BusinessException;
+
 	List<ThreadDto> findAll() throws BusinessException;
 
 	void delete(ThreadDto thread) throws BusinessException;

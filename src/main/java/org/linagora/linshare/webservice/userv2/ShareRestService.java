@@ -74,6 +74,8 @@ public interface ShareRestService {
 
 	ShareDto getShare(String shareUuid) throws BusinessException;
 
+	void head(String shareUuid) throws BusinessException;
+
 	Response getDocumentStream(String shareUuid) throws BusinessException;
 
 	Response getThumbnailStream(String shareUuid, boolean base64) throws BusinessException;

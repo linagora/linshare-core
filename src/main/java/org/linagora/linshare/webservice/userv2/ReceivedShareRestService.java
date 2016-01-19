@@ -48,6 +48,8 @@ public interface ReceivedShareRestService {
 
 	ShareDto getReceivedShare(String receivedShareUuid) throws BusinessException;
 
+	void head(String receivedShareUuid) throws BusinessException;
+
 	Response thumbnail(String receivedShareUuid) throws BusinessException;
 
 	void delete(String receivedShareUuid) throws BusinessException;

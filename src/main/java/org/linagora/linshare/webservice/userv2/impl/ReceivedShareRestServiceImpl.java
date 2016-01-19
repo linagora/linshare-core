@@ -40,6 +40,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -100,6 +101,19 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 			@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid)
 			throws BusinessException {
 		return shareFacade.getReceivedShare(receivedShareUuid);
+	}
+
+	@Path("/{uuid}")
+	@HEAD
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+			@ApiResponse(code = 404, message = "Received share not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@ApiOperation(value = "Find a received share entry.")
+	@Override
+	public void head(@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid) throws BusinessException {
+		shareFacade.getReceivedShare(receivedShareUuid);
 	}
 
 	@Path("/{uuid}/thumbnail")
