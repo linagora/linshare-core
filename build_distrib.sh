@@ -19,7 +19,7 @@ g_branch_or_tag="$(git rev-parse --abbrev-ref HEAD)"
 
 
 g_version=`grep -E "<version>(.*)</version>" pom.xml -o|head -n1|sed -r 's/<version>(.*)<\/version>/\1/g'`
-g_logfile=linshare.build.$$.log
+g_logfile=linshare-core.build.$$.log
 g_mvn_opts=""
 g_mvn_opts="-Dmaven.test.skip"
 g_output_dir="./target"
@@ -56,7 +56,7 @@ function distribute_jar ()
     local l_version=${g_version}
     local l_extension="jar"
     local l_extension_sha="sha256sum"
-    local l_root_name="linshare-${l_version}"
+    local l_root_name="linshare-core"
     local l_ouput_name="linshare-core-${l_version}"
 
     mv ${g_output_dir}/${l_root_name}.${l_extension} ${g_distribution_dir}/${l_ouput_name}.${l_extension}
@@ -72,7 +72,7 @@ function distribute_war ()
     local l_version=${g_version}
     local l_extension="war"
     local l_extension_sha="sha256sum"
-    local l_root_name="linshare"
+    local l_root_name="linshare-core"
     local l_ouput_name="linshare-core-${l_version}"
     if [ ${g_set_current_revision} -eq 1 ] ; then
         if [ ! -z "${g_revision}" ] ; then

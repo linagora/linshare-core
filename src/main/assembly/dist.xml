@@ -7,7 +7,7 @@
 	<formats>
 		<format>zip</format>
 	</formats>
-	<baseDirectory>linshare-${project.version}</baseDirectory>
+	<baseDirectory>linshare-core-${project.version}</baseDirectory>
 
 	<fileSets>
 		<fileSet>

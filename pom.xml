@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.linagora</groupId>
-	<artifactId>linshare</artifactId>
+	<groupId>org.linagora.linshare</groupId>
+	<artifactId>linshare-core</artifactId>
     <version>1.11.4-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>LinShare, Secure File Sharing</name>
@@ -878,7 +878,7 @@
 			</plugins>
 		</pluginManagement>
 
-		<finalName>linshare</finalName>
+		<finalName>linshare-core</finalName>
 
 		<plugins>
 			<plugin>
@@ -989,7 +989,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.0.2</version>
+				<version>2.6</version>
 				<configuration>
 					<archive>
 						<manifest>
@@ -997,6 +997,31 @@
 						</manifest>
 					</archive>
 				</configuration>
+				<executions>
+					<execution>
+						<id>default-war</id>
+						<phase>package</phase>
+						<goals>
+							<goal>war</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>war-with-sso</id>
+						<phase>package</phase>
+						<goals>
+							<goal>war</goal>
+						</goals>
+						<configuration>
+							<classifier>sso</classifier>
+							<webResources>
+								<resource>
+									<!-- this is relative to the pom.xml directory -->
+									<directory>src/main/resources-sso</directory>
+								</resource>
+							</webResources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
@@ -1097,8 +1122,7 @@
 				</configuration>
 			</execution>
 		</executions>
-        </plugin>
-
+	</plugin>
 			<!-- maven-release-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -1114,7 +1138,7 @@
 				<artifactId>maven-install-plugin</artifactId>
 				<version>2.5.2</version>
 				<configuration>
-					<skip>false</skip>
+					<skip>true</skip>
 				</configuration>
 			</plugin>
 			<!--maven-deploy-plugin -->
@@ -1188,6 +1212,103 @@
 				<project.version>${project.version}-${maven.build.timestamp}-${sources.version}</project.version>
 			</properties>
 		</profile>
+
+		<profile>
+			<id>documentation</id>
+			<activation>
+				<property>
+					<name>target</name>
+					<value>release</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.github.kongchen</groupId>
+						<artifactId>swagger-maven-plugin</artifactId>
+						<version>2.2</version>
+						<executions>
+							<execution>
+								<id>documentation-ws-api-delegation</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+								<configuration>
+									<apiSources>
+										<apiSource>
+											<locations>org.linagora.linshare.webservice.delegation</locations>
+											<apiVersion>v1</apiVersion>
+											<basePath>http://localhost:8080/linshare/webservice/rest/delegation</basePath>
+											<outputTemplate>${basedir}/src/docs/resources/delegation/strapdown.html.mustache</outputTemplate>
+											<outputPath>${project.build.directory}/generated-documentation-ws-api-delegation/index.html</outputPath>
+											<swaggerDirectory>${project.build.directory}/generated-documentation-ws-api-delegation/apidocs</swaggerDirectory>
+											<mustacheFileRoot>${basedir}/src/docs/resources/delegation/mustache/</mustacheFileRoot>
+										</apiSource>
+									</apiSources>
+								</configuration>
+							</execution>
+							<execution>
+								<id>documentation-ws-api-userv2</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+								<configuration>
+									<apiSources>
+										<apiSource>
+											<locations>org.linagora.linshare.webservice.userv2</locations>
+											<apiVersion>v1</apiVersion>
+											<basePath>http://localhost:8080/linshare/webservice/rest/user</basePath>
+											<outputTemplate>${basedir}/src/docs/resources/userv2/strapdown.html.mustache</outputTemplate>
+											<outputPath>${project.build.directory}/generated-documentation-ws-api-userv2/index.html</outputPath>
+											<swaggerDirectory>${project.build.directory}/generated-documentation-ws-api-userv2/apidocs</swaggerDirectory>
+											<mustacheFileRoot>${basedir}/src/docs/resources/userv2/mustache/</mustacheFileRoot>
+										</apiSource>
+									</apiSources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- maven-assembly-plugin -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.6</version>
+						<configuration>
+							<appendAssemblyId>true</appendAssemblyId>
+						</configuration>
+						<executions>
+							<execution>
+								<id>documentation-ws-api-delegation</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>src/assembly/swagger-delegation.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+							<execution>
+								<id>documentation-ws-api-userv2</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>src/assembly/swagger-userv2.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
 		<profile>
 			<id>CAS</id>
 			<build>
@@ -1320,8 +1441,8 @@
 									<apiVersion>v1</apiVersion>
 									<basePath>http://localhost:8080/linshare/webservice/rest/delegation</basePath>
 									<outputTemplate>${basedir}/src/docs/resources/delegation/strapdown.html.mustache</outputTemplate>
-									<outputPath>generated-delegation/index.html</outputPath>
-									<swaggerDirectory>generated-delegation/apidocs</swaggerDirectory>
+									<outputPath>${project.build.directory}/generated-delegation/index.html</outputPath>
+									<swaggerDirectory>${project.build.directory}/generated-delegation/apidocs</swaggerDirectory>
 									<mustacheFileRoot>${basedir}/src/docs/resources/delegation/mustache/</mustacheFileRoot>
 								</apiSource>
 							</apiSources>
@@ -1331,6 +1452,27 @@
 								<phase>compile</phase>
 								<goals>
 									<goal>generate</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- maven-assembly-plugin -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.6</version>
+						<configuration>
+							<appendAssemblyId>true</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/assembly/swagger-delegation.xml</descriptor>
+							</descriptors>
+						</configuration>
+						<executions>
+							<execution>
+								<id>documentation-ws-api-delegation</id>
+     								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
 								</goals>
 							</execution>
 						</executions>
@@ -1707,7 +1849,7 @@
 							<descriptor>${basedir}/src/install/install.xml</descriptor>
 							<descriptorEncoding>UTF-8</descriptorEncoding>
 							<fileExtension>jar</fileExtension>
-							<installerFile>${project.build.directory}/${project.artifactId}-${project.version}</installerFile>
+							<installerFile>${project.build.directory}/${project.artifactId}</installerFile>
 							<izpackBasedir>${project.build.directory}/${project.artifactId}-dist/${project.artifactId}-${project.version}</izpackBasedir>
 						</configuration>
 

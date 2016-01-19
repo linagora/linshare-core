@@ -7,7 +7,7 @@
 	<property environment="env" />
     
 	<property name="jetty.version" value="6.1.22" />
-	<property name="jetty.url" value="http://dist.codehaus.org/jetty/jetty-${jetty.version}/jetty-${jetty.version}.zip" />
+    <property name="jetty.url" value="https://nexus.linagora.com/service/local/repositories/thirdparty/content/org/linagora/linshare/jetty/6.1.22/jetty-6.1.22.zip" />
 	<property name="build.dir" value="${basedir}/target" />
 	<property name="build.classes.dir" value="${build.dir}/classes" />
 	<property name="misc.dir" value="${basedir}/misc" />
