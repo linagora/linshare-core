@@ -1,19 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:sec="http://www.springframework.org/schema/security"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-          http://www.springframework.org/schema/security
-          http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
+<b:beans xmlns:b="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sec="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+ 	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 
-	<bean id="springSecurityFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
+<!-- <b:beans xmlns="http://www.springframework.org/schema/beans" xmlns:sec="http://www.springframework.org/schema/security" -->
+<!-- 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" -->
+<!-- 	xsi:schemaLocation="http://www.springframework.org/schema/beans -->
+<!--            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  -->
+<!--            http://www.springframework.org/schema/security  -->
+<!--            http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">  -->
 
-		<!-- allow spring security filter to apply rules on URL parameters -->
-		<property name="stripQueryStringFromUrls" value="false" />
 
-		<sec:filter-chain-map path-type="ant">
+<!-- <b:constructor-arg> -->
+<!-- 			<b:bean class="org.springframework.security.web.DefaultSecurityFilterChain"> -->
+<!-- 			<b:constructor-arg value="#{T(org.springframework.security.web.util.matcher.AntRequestMatcher).INSTANCE}"/> -->
+<!-- 			<b:constructor-arg> -->
+
+
+
+	<b:bean id="springSecurityFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
+			<!-- allow spring security filter to apply rules on URL parameters -->
+			<!-- 		<b:property name="stripQueryStringFromUrls" value="false" /> -->
+	
+		<b:constructor-arg>
+			<b:list>
+			
+			
+
+
+<!-- 		<sec:filter-chain-map> -->
 			<sec:filter-chain pattern="/?login_error=*" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
 			<sec:filter-chain pattern="/" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
 			<sec:filter-chain pattern="/assets/**" filters="none" />
@@ -71,7 +88,6 @@
 			<sec:filter-chain pattern="/webservice/fineuploader/**"
 				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
 
-
 			<sec:filter-chain pattern="/webservice/**"
 				filters="httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
 
@@ -79,115 +95,119 @@
 			<sec:filter-chain pattern="/j_security_check" filters="httpSessionIntegrationFilter,authenticationProcessingFilter" />
 			<sec:filter-chain pattern="/**"
 				filters="httpSessionIntegrationFilter,exceptionTranslationFilter,logoutFilter,rememberMeProcessingFilter,filterSecurityInterceptor" />
-		</sec:filter-chain-map>
-
-	</bean>
-
+<!-- 		</sec:filter-chain-map> -->
+		</b:list>
+		</b:constructor-arg>
+	</b:bean>
+	
 	<!-- REMEMBER-ME SERVICE DEFINITION -->
-	<bean id="rememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
-		<property name="key" value="springRocks" />
-	</bean>
+	<b:bean id="rememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
+		<b:constructor-arg value="springRocks" />
+	</b:bean>
 
-	<bean id="rememberMeAccountProvider" class="org.linagora.linshare.auth.rememberme.RememberMeAccountProvider">
-		<constructor-arg ref="accountService" />
-	</bean>
+	<b:bean id="rememberMeAccountProvider" class="org.linagora.linshare.auth.rememberme.RememberMeAccountProvider">
+		<b:constructor-arg ref="accountService" />
+	</b:bean>
 
-	<bean id="rememberMeService" class="org.linagora.linshare.view.tapestry.services.impl.LinshareRememberMeServices">
-		<property name="key" value="springRocks" />
-		<property name="userDetailsService" ref="rememberMeAccountProvider" />
-		<property name="tokenRepository" ref="cookieRepository" />
-		<property name="alwaysRemember" value="false" />
-		<constructor-arg ref="cookieRepository" />
-	</bean>
+	<b:bean id="rememberMeService" class="org.linagora.linshare.view.tapestry.services.impl.LinshareRememberMeServices">
+		<b:constructor-arg value="springRocks" />
+		<b:constructor-arg ref="rememberMeAccountProvider" />
+		<b:constructor-arg ref="cookieRepository" />
+		<b:property name="cookieRepository" ref="cookieRepository" />
+		<b:property name="alwaysRemember" value="false" />
+	</b:bean>
 
-	<bean id="rememberMeProcessingFilter" class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
-		<property name="rememberMeServices" ref="rememberMeService" />
-		<property name="authenticationManager" ref="authenticationManager" />
-	</bean>
+	<b:bean id="rememberMeProcessingFilter" class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
+		<b:constructor-arg ref="authenticationManager" />
+		<b:constructor-arg ref="rememberMeService" />
+	</b:bean>
 
 	<!-- FILTERS DEFINITION -->
-	<bean id="httpSessionIntegrationFilter" class="org.springframework.security.web.context.HttpSessionContextIntegrationFilter" />
+	<b:bean id="httpSessionIntegrationFilter" class="org.springframework.security.web.context.SecurityContextPersistenceFilter" >
+<!-- 		<b:property name="forceEagerSessionCreation" value="true"/> -->
+	</b:bean>
 
-	<bean id="authenticationProcessingFilter" class="org.linagora.linshare.auth.DomainAuthenticationProcessingFilter">
-		<property name="domainRequestHeader" value="${sso.header.domain}" />
-		<property name="authenticationFailureHandler" ref="failureHandler" />
-		<property name="authenticationSuccessHandler" ref="successHandler" />
-		<property name="filterProcessesUrl" value="/j_security_check" />
-		<property name="usernameParameter" value="login" />
-		<property name="passwordParameter" value="password" />
-		<property name="allowSessionCreation" value="true" />
-		<property name="sessionAuthenticationStrategy" ref="sas" />
-		<property name="authenticationManager" ref="authenticationManager" />
-		<property name="rememberMeServices" ref="rememberMeService" />
+	<b:bean id="authenticationProcessingFilter" class="org.linagora.linshare.auth.DomainAuthenticationProcessingFilter">
+		<b:property name="domainRequestHeader" value="${sso.header.domain}" />
+		<b:property name="authenticationFailureHandler" ref="failureHandler" />
+		<b:property name="authenticationSuccessHandler" ref="successHandler" />
+		<b:property name="filterProcessesUrl" value="/j_security_check" />
+		<b:property name="usernameParameter" value="login" />
+		<b:property name="passwordParameter" value="password" />
+		<b:property name="allowSessionCreation" value="true" />
+		<b:property name="sessionAuthenticationStrategy" ref="sas" />
+		<b:property name="authenticationManager" ref="authenticationManager" />
+		<b:property name="rememberMeServices" ref="rememberMeService" />
 
-	</bean>
+	</b:bean>
 
-	<bean id="successHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
-		<property name="defaultTargetUrl" value="/startingPage" /> <!-- which is the default value -->
-	</bean>
+	<b:bean id="successHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+		<b:property name="defaultTargetUrl" value="/startingPage" /> <!-- which is the default value -->
+	</b:bean>
 
-	<bean id="failureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
-		<property name="defaultFailureUrl" value="/?login_error=1" />
-		<property name="exceptionMappings">
-			<props>
-				<prop key="org.linagora.linshare.auth.exceptions.BadDomainException">/?login_error=2</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="sas" class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy">
-		<property name="migrateSessionAttributes" value="true" />
-	</bean>
+	<b:bean id="failureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+		<b:property name="defaultFailureUrl" value="/?login_error=1" />
+		<b:property name="exceptionMappings">
+			<b:props>
+				<b:prop key="org.linagora.linshare.auth.exceptions.BadDomainException">/?login_error=2</b:prop>
+			</b:props>
+		</b:property>
+	</b:bean>
+	<b:bean id="sas" class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy">
+		<b:property name="migrateSessionAttributes" value="true" />
+	</b:bean>
 
-	<bean id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
-		<property name="authenticationEntryPoint" ref="authenticationEntryPoint" />
-	</bean>
+	<b:bean id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
+		<b:constructor-arg ref="authenticationEntryPoint"/>
+<!-- 		<b:constructor-arg ref="requestCache"/> -->
+	</b:bean>
 
-	<bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.AuthenticationProcessingFilterEntryPoint">
-		<property name="loginFormUrl" value="/" />
-	</bean>
+	<b:bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<b:constructor-arg value="/"/>
+	</b:bean>
 
-	<bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
-		<constructor-arg value="/" />
-		<constructor-arg>
-			<list>
-				<ref bean="rememberMeService" />
-				<bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
-			</list>
-		</constructor-arg>
-	</bean>
+	<b:bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<b:constructor-arg value="/" />
+		<b:constructor-arg>
+			<b:list>
+				<b:ref bean="rememberMeService" />
+				<b:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
 
-	<bean id="logoutFilterAdmin" class="org.springframework.security.web.authentication.logout.LogoutFilter">
-		<property name="filterProcessesUrl">
-			<value>/webservice/rest/admin/authentication/logout</value>
-		</property>
-		<constructor-arg value="/webservice/rest/admin/authentication/" />
-		<constructor-arg>
-			<list>
-				<ref bean="rememberMeService" />
-				<bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
-			</list>
-		</constructor-arg>
-	</bean>
+	<b:bean id="logoutFilterAdmin" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<b:property name="filterProcessesUrl">
+			<b:value>/webservice/rest/admin/authentication/logout</b:value>
+		</b:property>
+		<b:constructor-arg value="/webservice/rest/admin/authentication/" />
+		<b:constructor-arg>
+			<b:list>
+				<b:ref bean="rememberMeService" />
+				<b:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
 
-	<bean id="logoutFilterUser" class="org.springframework.security.web.authentication.logout.LogoutFilter">
-		<property name="filterProcessesUrl">
-			<value>/webservice/rest/user/authentication/logout</value>
-		</property>
-		<constructor-arg value="/webservice/rest/user/authentication/" />
-		<constructor-arg>
-			<list>
-				<ref bean="rememberMeService" />
-				<bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
-			</list>
-		</constructor-arg>
-	</bean>
+	<b:bean id="logoutFilterUser" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<b:property name="filterProcessesUrl">
+			<b:value>/webservice/rest/user/authentication/logout</b:value>
+		</b:property>
+		<b:constructor-arg value="/webservice/rest/user/authentication/" />
+		<b:constructor-arg>
+			<b:list>
+				<b:ref bean="rememberMeService" />
+				<b:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
 
-	<bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
-		<property name="authenticationManager" ref="authenticationManager" />
-		<property name="accessDecisionManager" ref="accessDecisionManager" />
+	<b:bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+		<b:property name="authenticationManager" ref="authenticationManager" />
+		<b:property name="accessDecisionManager" ref="accessDecisionManager" />
 
-		<property name="securityMetadataSource">
-			<sec:filter-security-metadata-source>
+		<b:property name="securityMetadataSource">
+			<sec:filter-security-metadata-source use-expressions="false" > 
 				<sec:intercept-url pattern="/**/administration/userconfig*" access="ROLE_AUTH" />
 				<sec:intercept-url pattern="/**/administration/domains/**" access="ROLE_SUPERADMIN" />
 				<sec:intercept-url pattern="/**/administration/thread/**" access="ROLE_SUPERADMIN" />
@@ -202,85 +222,80 @@
 				<sec:intercept-url pattern="/**/startingpage" access="ROLE_AUTH" />
 				<sec:intercept-url pattern="/**" access="ROLE_USER" />
 			</sec:filter-security-metadata-source>
-		</property>
-	</bean>
+		</b:property>
+	</b:bean>
 
 
 	<!-- REST part / Magic lies there -->
-	<bean id="basicProcessingFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
-		<property name="authenticationManager">
-			<ref bean="authenticationManager" />
-		</property>
-		<property name="authenticationEntryPoint">
-			<ref bean="restAuthenticationEntryPoint" />
-		</property>
-	</bean>
+	<b:bean id="basicProcessingFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+		<b:constructor-arg>
+			<b:ref bean="authenticationManager" />
+		</b:constructor-arg>
+		<b:constructor-arg>
+			<b:ref bean="restAuthenticationEntryPoint" />
+		</b:constructor-arg>
+	</b:bean>
 
-	<bean id="restAuthenticationEntryPoint" class="org.linagora.linshare.auth.LinShareBasicAuthenticationEntryPoint">
-		<property name="realmName">
-			<value>Name Of Your LinShare Realm</value>
-		</property>
-	</bean>
+	<b:bean id="restAuthenticationEntryPoint" class="org.linagora.linshare.auth.LinShareBasicAuthenticationEntryPoint">
+		<b:property name="realmName" value="Name Of Your LinShare Realm"/>
+	</b:bean>
 
-	<bean id="CORSRequestFilter" class="org.linagora.linshare.auth.CORSRequestFilter" />
+	<b:bean id="CORSRequestFilter" class="org.linagora.linshare.auth.CORSRequestFilter" />
 
-	<bean id="basicExceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
-		<property name="authenticationEntryPoint" ref="restAuthenticationEntryPoint" />
-	</bean>
+	<b:bean id="basicExceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
+		<b:constructor-arg ref="restAuthenticationEntryPoint" />
+	</b:bean>
 
 	<!-- AUTHENTICATION MANAGEMENT -->
 	<!-- Authentication manager -->
-	<bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
-		<property name="providers">
-			<list>
-				<ref bean="rememberMeAuthenticationProvider" />
-				<ref bean="databaseAuthenticationProvider" />
-				<ref bean="ldapAuthenticationProvider" />
-			</list>
-		</property>
-	</bean>
+	<b:bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
+		<b:constructor-arg>
+		<b:list>
+			<b:ref bean="rememberMeAuthenticationProvider" />
+			<b:ref bean="databaseAuthenticationProvider" />
+			<b:ref bean="ldapAuthenticationProvider" />
+		</b:list>
+		</b:constructor-arg>
+<!-- 		<b:constructor-arg ref="parent"/> -->
+	</b:bean>
 
 	<!-- DAO Authentification -->
-	<bean id="passwordEncoderFactory" class="org.linagora.linshare.auth.PasswordEncoderFactory">
-		<constructor-arg value="SHA" />
-	</bean>
+	<b:bean id="passwordEncoderFactory" class="org.linagora.linshare.auth.PasswordEncoderFactory">
+		<b:constructor-arg value="SHA" />
+	</b:bean>
 
-	<bean id="databaseUserDetailsProvider" class="org.linagora.linshare.auth.dao.DatabaseUserDetailsProvider">
-		<constructor-arg ref="authentificationFacade" />
-		<property name="userRepositories">
-			<list>
-				<ref bean="guestRepository" />
-				<ref bean="rootUserRepository" />
-				<ref bean="technicalAccountRepository" />
-			</list>
-		</property>
-	</bean>
+	<b:bean id="databaseUserDetailsProvider" class="org.linagora.linshare.auth.dao.DatabaseUserDetailsProvider">
+		<b:constructor-arg ref="authentificationFacade" />
+		<b:property name="userRepositories">
+			<b:list>
+				<b:ref bean="guestRepository" />
+				<b:ref bean="rootUserRepository" />
+				<b:ref bean="technicalAccountRepository" />
+			</b:list>
+		</b:property>
+	</b:bean>
 
 	<!-- database accounts : guests, root, technical accounts, ... -->
-	<bean id="databaseAuthenticationProvider" class="org.linagora.linshare.auth.dao.DatabaseAuthenticationProvider">
-		<constructor-arg ref="databaseUserDetailsProvider" />
-		<property name="passwordEncoder">
-			<bean factory-bean="passwordEncoderFactory" factory-method="getInstance" />
-		</property>
-	</bean>
+	<b:bean id="databaseAuthenticationProvider" class="org.linagora.linshare.auth.dao.DatabaseAuthenticationProvider">
+		<b:constructor-arg ref="databaseUserDetailsProvider" />
+		<b:property name="passwordEncoder">
+			<b:bean factory-bean="passwordEncoderFactory" factory-method="getInstance" />
+		</b:property>
+	</b:bean>
 
 	<!-- Domain Authentification -->
-	<bean id="ldapUserDetailsProvider" class="org.linagora.linshare.auth.dao.LdapUserDetailsProvider">
-		<constructor-arg ref="authentificationFacade" />
-	</bean>
+	<b:bean id="ldapUserDetailsProvider" class="org.linagora.linshare.auth.dao.LdapUserDetailsProvider">
+		<b:constructor-arg ref="authentificationFacade" />
+	</b:bean>
 
-	<bean id="ldapAuthenticationProvider" class="org.linagora.linshare.auth.dao.LdapAuthenticationProvider">
-		<constructor-arg ref="ldapUserDetailsProvider" />
-	</bean>
+	<b:bean id="ldapAuthenticationProvider" class="org.linagora.linshare.auth.dao.LdapAuthenticationProvider">
+		<b:constructor-arg ref="ldapUserDetailsProvider" />
+	</b:bean>
 
 	<!-- AUTHORIZATIONS MANAGEMENT -->
-	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
-		<property name="decisionVoters">
-			<list>
-				<ref bean="roleVoter" />
-			</list>
-		</property>
-	</bean>
+	<b:bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
+		<b:constructor-arg ref="roleVoter"/>
+	</b:bean>
 
-	<bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter" />
-</beans>
+	<b:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter" />
+</b:beans>

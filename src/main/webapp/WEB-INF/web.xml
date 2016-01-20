@@ -38,18 +38,18 @@
 <web-app>
 	<display-name>LinShare, the secure sharing application</display-name>
 
-	<context-param>
-		<!-- The only significant configuration for Tapestry 5, this informs Tapestry
-			of where to look for pages, components and mixins. -->
-		<param-name>tapestry.app-package</param-name>
-		<param-value>org.linagora.linshare.view.tapestry</param-value>
-	</context-param>
+<!-- 	<context-param> -->
+<!-- The only significant configuration for Tapestry 5, this informs Tapestry -->
+<!-- 			of where to look for pages, components and mixins. --> -->
+<!-- 		<param-name>tapestry.app-package</param-name> -->
+<!-- 		<param-value>org.linagora.linshare.view.tapestry</param-value> -->
+<!-- 	</context-param> -->
 
-    <context-param>
-		<!--  Required as migration 5.0 => 5.1 -->
-        <param-name>tapestry.use-external-spring-context</param-name>
-        <param-value>true</param-value>
-    </context-param>
+<!--     <context-param> -->
+<!-- 		 Required as migration 5.0 => 5.1 --> -->
+<!--         <param-name>tapestry.use-external-spring-context</param-name> -->
+<!--         <param-value>true</param-value> -->
+<!--     </context-param> -->
 
 	<context-param>
 		<!-- Spring configuration files -->
@@ -70,11 +70,11 @@
         <filter-name>springSecurityFilterChainProxy</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
-	<filter>
-		<filter-name>app</filter-name>
-		<!-- Special filter that adds in a T5 IoC module derived from the Spring WebApplicationContext. -->
-		<filter-class>org.apache.tapestry5.spring.TapestrySpringFilter</filter-class>
-	</filter>
+<!-- 	<filter> -->
+<!-- 		<filter-name>app</filter-name> -->
+ 		<!-- Special filter that adds in a T5 IoC module derived from the Spring WebApplicationContext. -->
+<!-- 		<filter-class>org.apache.tapestry5.spring.TapestrySpringFilter</filter-class> -->
+<!-- 	</filter> -->
 
 	<filter>
 		<filter-name>cmisProxyFilter</filter-name>
@@ -100,10 +100,10 @@
 		<filter-name>springSecurityFilterChainProxy</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	<filter-mapping>
-		<filter-name>app</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+<!-- 	<filter-mapping> -->
+<!-- 		<filter-name>app</filter-name> -->
+<!-- 		<url-pattern>/*</url-pattern> -->
+<!-- 	</filter-mapping> -->
 	<filter-mapping>
 		<filter-name>cmisProxyFilter</filter-name>
 		<url-pattern>/webservice/cmis/*</url-pattern>

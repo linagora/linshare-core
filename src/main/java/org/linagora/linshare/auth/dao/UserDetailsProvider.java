@@ -119,7 +119,7 @@ public abstract class UserDetailsProvider {
 					+ domainIdentifier);
 			logAuthError(login, domainIdentifier, "Bad domain.");
 			throw new BadDomainException("Domain '" + domainIdentifier
-					+ "' not found", domainIdentifier);
+					+ "' not found");
 		}
 		return domain;
 	}

@@ -49,21 +49,13 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
-import org.linagora.linshare.core.utils.QueryParameter;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<DocumentEntry> implements DocumentEntryRepository {
-
-	private final static int BEGIN = 0;
-
-	private final static int END = 1;
-
-	private final static int ANYWHERE = 2;
 
 	public DocumentEntryRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
@@ -157,24 +149,6 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<DocumentEntry> retrieveUserDocumentEntriesWithMatchCriterion(SearchDocumentCriterion searchDocumentCriterion) {
-		final QueryParameter queryParameter = buildQuery(searchDocumentCriterion, ANYWHERE);
-
-		return getHibernateTemplate().executeFind(new HibernateCallback<List<DocumentEntry>>() {
-			public List<DocumentEntry> doInHibernate(final Session session) throws HibernateException, SQLException {
-				StringBuilder queryString = new StringBuilder("select docEntry from DocumentEntry docEntry join docEntry.entryOwner account join docEntry.document doc ");
-				final Query query = session.createQuery(queryString.append(queryParameter.getQuery()).toString());
-				// Put the objects in the query
-				for (String key : queryParameter.getKey()) {
-					query.setParameter(key, queryParameter.getParameter(key));
-				}
-				return query.setCacheable(true).list();
-			}
-		});
-	}
-
 	@Override
 	public long getUsedSpace(Account owner) throws BusinessException {
 		DetachedCriteria det = DetachedCriteria.forClass(DocumentEntry.class);
@@ -188,76 +162,6 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 			return 0;
 		}
 		return DataAccessUtils.longResult(result);
-	}
-
-	/**
-	 * Build the search query
-	 * @param searchDocumentCriterion
-	 * @param matcher
-	 * @return
-	 */
-	private QueryParameter buildQuery(final SearchDocumentCriterion searchDocumentCriterion, final int matcher) {
-
-		QueryParameter queryParameter = new QueryParameter();
-		queryParameter.appendToQuery(" docEntry.entryOwner.lsUuid=:lsUuid " );
-		queryParameter.addParameter("lsUuid", searchDocumentCriterion.getUser().getLsUuid());
-
-		if (null != searchDocumentCriterion.getName()) {
-			queryParameter.appendToQuery(" lower(docEntry.name) like lower(:name) " );
-			queryParameter.addParameter("name", createMatchingCriteria(matcher,searchDocumentCriterion.getName()));
-		}
-
-		if (null != searchDocumentCriterion.getExtension()) {
-			queryParameter.appendToQuery(" lower(docEntry.name) like lower(:extension) " );
-			queryParameter.addParameter("extension", createMatchingCriteria(END,searchDocumentCriterion.getExtension()));
-		}
-
-		if (null != searchDocumentCriterion.isShared()) {
-			if (searchDocumentCriterion.isShared()) {
-				queryParameter.appendToQuery(" (docEntry.id IN (SELECT de.id FROM ShareEntry se, DocumentEntry de WHERE de=se.documentEntry) OR docEntry.id IN (SELECT de.id FROM AnonymousShareEntry ase, DocumentEntry de WHERE de=ase.documentEntry))");
-			} else {
-				queryParameter.appendToQuery(" docEntry.id NOT IN (SELECT de.id FROM DocumentEntry de, ShareEntry se WHERE de=se.documentEntry) ");
-				queryParameter.appendToQuery(" docEntry.id NOT IN (SELECT de.id FROM DocumentEntry de, AnonymousShareEntry ase WHERE de=ase.documentEntry) ");
-			}
-		}
-
-		if (null != searchDocumentCriterion.getType() && !"".equals(searchDocumentCriterion.getType())) {
-			queryParameter.appendToQuery(" doc.type like :type " );
-			queryParameter.addParameter("type", createMatchingCriteria(matcher,searchDocumentCriterion.getType()));
-		}
-
-		if (null != searchDocumentCriterion.getSizeMin()) {
-			queryParameter.appendToQuery(" doc.size>=:sizeMin " );
-			queryParameter.addParameter("sizeMin", searchDocumentCriterion.getSizeMin());
-		}
-
-		if (null != searchDocumentCriterion.getSizeMax()) {
-			queryParameter.appendToQuery(" doc.size<=:sizeMax " );
-			queryParameter.addParameter("sizeMax", searchDocumentCriterion.getSizeMax());
-		}
-
-		if (null != searchDocumentCriterion.getDateBegin()) {
-			queryParameter.appendToQuery(" docEntry.creationDate>=:creationDateBegin " );
-			queryParameter.addParameter("creationDateBegin", searchDocumentCriterion.getDateBegin());
-
-		}
-
-		if (null != searchDocumentCriterion.getDateEnd()) {
-			queryParameter.appendToQuery(" docEntry.creationDate<=:creationDateEnd " );
-			queryParameter.addParameter("creationDateEnd", searchDocumentCriterion.getDateEnd());
-
-		}
-
-		return queryParameter;
-	}
-
-	private String createMatchingCriteria(int matcher,String value ) {
-		switch (matcher) {
-			case BEGIN: return value+"%";
-			case END:return "%"+value ;
-			case ANYWHERE: return "%"+value+"%";
-		}
-		return value;
 	}
 
 	@Override

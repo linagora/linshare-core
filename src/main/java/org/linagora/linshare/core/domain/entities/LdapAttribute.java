@@ -74,7 +74,7 @@ public class LdapAttribute {
 		this.completion = completion;
 	}
 
-	private void setId(Long value) {
+	public void setId(Long value) {
 		this.id = value;
 	}
 

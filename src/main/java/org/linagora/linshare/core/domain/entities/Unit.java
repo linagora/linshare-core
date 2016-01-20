@@ -111,12 +111,14 @@ public abstract class Unit<U> implements Cloneable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		@SuppressWarnings("rawtypes")
 		Unit<?> other = (Unit) obj;
 		if (persistenceId != other.persistenceId)
 			return false;
 		return true;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void updateUnitFrom(Unit<?> unit) {
 		this.unitValue = (U) unit.getUnitValue();
 	}

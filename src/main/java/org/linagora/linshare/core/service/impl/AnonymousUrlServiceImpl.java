@@ -51,7 +51,6 @@ import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.AnonymousUrlService;
 import org.linagora.linshare.core.utils.ArchiveZipStream;
-import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,7 +145,7 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 
 
 	@Override
-	public FileStreamResponse retrieveArchiveZipStream(String anonymousUrlUuid, String password) throws BusinessException {
+	public InputStream retrieveArchiveZipStream(String anonymousUrlUuid, String password) throws BusinessException {
 		AnonymousUrl anonymousUrl = anonymousUrlBusinessService.getAnonymousUrl(anonymousUrlUuid);
 		if(isValid(anonymousUrl, password)) {
 			
@@ -158,9 +157,7 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 			}
 			
 			//prepare an archive zip
-			ArchiveZipStream ai = new ArchiveZipStream(map);
-			
-			return (new FileStreamResponse(ai,null));
+			return new ArchiveZipStream(map);
 		}
 		String msg = "anonymousUrlUuid not valid : " + anonymousUrlUuid;
 		logger.debug(msg);

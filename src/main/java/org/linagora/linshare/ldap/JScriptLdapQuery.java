@@ -69,6 +69,8 @@ import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
+import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
+import org.springframework.security.ldap.search.LdapUserSearch;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -577,13 +579,22 @@ public class JScriptLdapQuery {
 
 		LdapContextSource ldapContextSource = new LdapContextSource();
 		ldapContextSource.setUrl(ldapConnection.getProviderUrl());
-		ldapContextSource.setBase(baseDn);
+		String securityPrincipal = ldapConnection.getSecurityPrincipal();
+		if (securityPrincipal != null) {
+			ldapContextSource.setUserDn(securityPrincipal);
+		}
+		String securityCredentials = ldapConnection.getSecurityCredentials();
+		if (securityCredentials != null) {
+			ldapContextSource.setPassword(securityCredentials);
+		}
 		String userDn = dnResultList.get(0);
-
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDn, userPasswd);
 
 		BindAuthenticator authenticator = new BindAuthenticator(ldapContextSource);
-		authenticator.setUserDnPatterns(new String[] { "{0}" });
+		String  searchFilter= "(objectClass=*)";
+		String localBaseDn = userDn + "," + baseDn;
+		LdapUserSearch userSearch = new FilterBasedLdapUserSearch(localBaseDn, searchFilter, ldapContextSource);
+		authenticator.setUserSearch(userSearch);
 		try {
 			ldapContextSource.afterPropertiesSet();
 			authenticator.authenticate(authentication);
@@ -591,8 +602,8 @@ public class JScriptLdapQuery {
 			logger.debug("auth failed : BadCredentialsException(" + userDn + ")");
 			throw e;
 		} catch (Exception e) {
-			logger.error("auth failed for unexpected exception: " + e.getMessage());
-			return null;
+			logger.error("auth failed for unexpected exception: " + e.getMessage(), e);
+			throw e;
 		}
 		return dnToUser(userDn, false);
 	}

@@ -38,7 +38,6 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
@@ -82,15 +81,6 @@ public class Recipient {
 		this.lastName = user.getLastName();
 		this.domain = user.getDomain();
 		this.locale = user.getExternalMailLocale();
-	}
-
-	public Recipient(UserVo userVo) {
-		super();
-		this.uuid = userVo.getLsUuid();
-		this.mail = userVo.getMail();
-		this.firstName = userVo.getFirstName();
-		this.lastName = userVo.getLastName();
-		this.domainIdentifier = userVo.getDomainIdentifier();
 	}
 
 	public Recipient(UserDto userDto) {

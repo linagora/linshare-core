@@ -730,7 +730,9 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 					"Upload request history search forbidden");
 		}
 		if (afterDate == null) {
-			afterDate = DateUtils.addMonths(new Date(), -1);
+			Calendar c = Calendar.getInstance();
+			c.add(Calendar.MONTH, -1);
+			afterDate = c.getTime();
 		}
 		if (beforeDate == null) {
 			beforeDate = new Date();

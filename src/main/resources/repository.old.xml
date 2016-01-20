@@ -1,21 +1,6 @@
 <!DOCTYPE Repository
-      PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 1.5//EN"
-      "http://jackrabbit.apache.org/dtd/repository-1.5.dtd">
-<!--
-<Repository>
-  <FileSystem .../>
-  <Security .../>
-  <Workspaces .../>
-  <Workspace .../>
-  <Versioning .../>
-  <SearchIndex .../>   optional
-  <Cluster .../>       optional, available since 1.2
-  <DataStore .../>     optional, available since 1.4
-</Repository>
-
-
-
--->
+          PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 1.4//EN"
+          "http://jackrabbit.apache.org/dtd/repository-1.4.dtd">
 <Repository>
 	<!--
 		virtual file system where the repository stores global state
@@ -29,19 +14,6 @@
 	<!-- security configuration -->
 	<Security appName="Jackrabbit">
 
-	<!-- security manager: class: FQN of class implementing the JackrabbitSecurityManager
-		interface -->
-	<!--
-	<SecurityManager
-		class="org.apache.jackrabbit.core.security.simple.SimpleSecurityManager"
-		workspaceName="security">
-		workspace access: class: FQN of class implementing the WorkspaceAccessManager
-			interface
-		 <WorkspaceAccessManager class="..."/>
-		<param name="config" value="${rep.home}/security.xml"/>
-	</SecurityManager>
-	 -->
-
 		<!--
 			access manager:
 			class: FQN of class implementing the AccessManager interface
@@ -51,13 +23,16 @@
 			<!-- <param name="config" value="${rep.home}/access.xml"/> -->
 		</AccessManager>
 
-		<LoginModule class="org.apache.jackrabbit.core.security.SimpleLoginModule">
+		<LoginModule
+			class="org.apache.jackrabbit.core.security.SimpleLoginModule">
 			<!-- anonymous user name ('anonymous' is the default value) -->
 			<param name="anonymousId" value="anonymous" />
+			<!--
+				default user name to be used instead of the anonymous user
+				when no login credentials are provided (unset by default)
+			-->
 
-			<!-- administrator user id (default value if param is missing is 'admin')-->
 			<!-- <param name="defaultUserId" value="superuser"/> -->
-			<param name="adminId" value="admin"/>
 		</LoginModule>
 	</Security>
 
@@ -75,11 +50,10 @@
 			class: FQN of class implementing the FileSystem interface
 		-->
 
-		<!-- <FileSystem class="org.apache.jackrabbit.core.fs.mem.MemoryFileSystem">  for tests ? -->
-		<FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
-			<param name="path" value="${wsp.home}" />
+		<FileSystem
+			class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
+                <param name="path" value="${wsp.home}"/>
 		</FileSystem>
-
 		<!--
 			persistence manager of the workspace:
 			class: FQN of class implementing the PersistenceManager interface
@@ -120,8 +94,15 @@
 			<param name="schemaObjectPrefix" value="version_" />
 		</PersistenceManager>
 	</Versioning>
-	<DataStore class="${linshare.datastore.class}">
-		<param name="path" value="${rep.home}/repository/datastore" />
-		<param name="minRecordLength" value="100"/>
-	</DataStore>
+
+    <DataStore class="${linshare.datastore.class}">
+        <param name="url" value="jdbc:h2:${rep.home}/repository/db" />
+        <param name="path" value="${rep.home}/repository/datastore"/>
+        <param name="user" value="sa" />
+        <param name="password" value="sa" />
+        <param name="databaseType" value="h2" />
+        <param name="driver" value="org.h2.Driver"/>
+    </DataStore>
 </Repository>
+
+

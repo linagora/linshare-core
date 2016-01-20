@@ -38,12 +38,10 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalException;
 
@@ -93,16 +91,6 @@ public interface UserService {
 	void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException;
 
 	/**
-	 * update the role of a user (admin, simple)
-	 * @param userUuid 
-	 * @param mail
-	 * @param role
-	 * @param owner
-	 * @throws BusinessException
-	 */
-	public void updateUserRole(String userUuid, String domain,String mail, Role role, UserVo owner) throws BusinessException;
-
-	/**
 	 * Update a user locale
 	 * @param mail : the user email
 	 * @param locale : the new local
@@ -134,8 +122,6 @@ public interface UserService {
 	 * @throws BusinessException : AUTHENTICATION_ERROR if the password supplied is wrong
 	 */
 	public void changePassword(String uuid, String mail, String oldPassword, String newPassword) throws BusinessException;
-
-	void updateUserDomain(String mail, String selectedDomain, UserVo actor) throws BusinessException;
 
 	/**
 	 * Search user that are internal and in the DB but not in domains (=removed from ldap).

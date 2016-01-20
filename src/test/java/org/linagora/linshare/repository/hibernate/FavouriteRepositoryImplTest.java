@@ -48,9 +48,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.FavouriteRepository;
-import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.repository.GuestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
@@ -71,8 +70,7 @@ public class FavouriteRepositoryImplTest extends AbstractTransactionalJUnit4Spri
 	private FavouriteRepository<String, User, RecipientFavourite> favouriteRepository;
 	
 	@Autowired
-	@Qualifier("userRepository")
-	private UserRepository<Guest> userRepo;
+	private GuestRepository userRepo;
 	
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;

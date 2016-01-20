@@ -54,7 +54,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -257,7 +256,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	}
 
 	private boolean lessThan3Char(String s) {
-		return StringUtils.length(s) < 3;
+		return s.length() < 3;
 	}
 
 	@Path("/mail_migration")

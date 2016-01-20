@@ -45,8 +45,6 @@ import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
@@ -294,13 +292,6 @@ public class ShareContainer {
 		}
 	}
 
-	public void addDocumentVos(List<DocumentVo> documentVos) {
-		Validate.notNull(documentVos, "documentVos list must not be null.");
-		for (DocumentVo d : documentVos) {
-			this.addDocumentUuid(d.getIdentifier());
-		}
-	}
-
 	public void addDocumentDtos(Set<DocumentDto> documentDtos) {
 		Validate.notNull(documentDtos, "documentDtos list must not be null.");
 		for (DocumentDto d : documentDtos) {
@@ -333,20 +324,10 @@ public class ShareContainer {
 		this.recipients.add(new Recipient(userDto));
 	}
 
-	public void addUserVo(UserVo userVo) {
-		Validate.notNull(userVo, "user must not be null.");
-		this.recipients.add(new Recipient(userVo));
-	}
 
 	public void addContact(MailingListContact contact) {
 		Validate.notNull(contact, "contact must be set.");
 		this.recipients.add(new Recipient(contact));
-	}
-
-	public void addUserVo(List<UserVo> usersVo) {
-		for (UserVo userVo : usersVo) {
-			this.addUserVo(userVo);
-		}
 	}
 
 	public void addGenericUserDto(List<GenericUserDto> usersDto) {

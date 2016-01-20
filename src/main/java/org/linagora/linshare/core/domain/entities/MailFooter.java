@@ -60,7 +60,7 @@ public class MailFooter {
 	public MailFooter() {
 	}
 
-	private void setId(long value) {
+	public void setId(long value) {
 		this.id = value;
 	}
 

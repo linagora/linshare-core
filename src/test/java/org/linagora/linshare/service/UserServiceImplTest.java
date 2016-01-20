@@ -57,7 +57,6 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -91,7 +90,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-startopendj.xml",
+		"classpath:springContext-start-embedded-ldap.xml",
 		"classpath:springContext-jackRabbit-mock.xml",
 		"classpath:springContext-test.xml" })
 public class UserServiceImplTest extends
@@ -338,9 +337,11 @@ public class UserServiceImplTest extends
 		user2.setCmisLocale("en");
 		userService.saveOrUpdateUser(user1);
 		userService.saveOrUpdateUser(user2);
-		Assert.assertTrue(userService
+		List<User> searchUser = userService
 				.searchUser(user2.getMail(), user2.getFirstName(),
-						user2.getLastName(), AccountType.INTERNAL, user1)
+						user2.getLastName(), AccountType.INTERNAL, user1);
+		Assert.assertNotEquals(searchUser.size(), 0);
+		Assert.assertTrue(searchUser
 				.get(0).getMail().equals(user2.getMail()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -410,14 +411,11 @@ public class UserServiceImplTest extends
 		userService.saveOrUpdateUser(user1);
 		userService.saveOrUpdateUser(user2);
 
-		UserVo userVo = new UserVo(user1);
 
 		Assert.assertTrue(user2.getRole() == Role.SIMPLE);
-		userService.updateUserRole(user2.getLsUuid(),
-				LoadingServiceTestDatas.sqlSubDomain, "user2@linshare.org",
-				Role.ADMIN, userVo);
+		user2.setRole(Role.ADMIN);
+		user2 = userService.updateUser(user2, user2, user2.getDomainId());
 		Assert.assertTrue(user2.getRole() == Role.ADMIN);
-
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -738,15 +736,11 @@ public class UserServiceImplTest extends
 		user1.setRole(Role.SUPERADMIN);
 		user1.setCmisLocale("en");
 		userService.saveOrUpdateUser(user1);
-		UserVo userVo = new UserVo(user1);
 
 		Internal user2 = new Internal("Jane", "Smith", "user2@linshare.org", null);
 		user2.setDomain(subDomain);
 		user2.setCmisLocale("en");
 		userService.saveOrUpdateUser(user2);
-
-		userService.updateUserDomain(user2.getMail(),
-				LoadingServiceTestDatas.sqlSubDomain, userVo);
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

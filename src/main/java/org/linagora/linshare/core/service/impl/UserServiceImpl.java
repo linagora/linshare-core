@@ -54,7 +54,6 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
-import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -583,35 +582,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUserRole(String userUuid, String domain, String mail,
-			Role role, UserVo ownerVo) throws BusinessException {
-		User user = userRepository.findByLsUuid(userUuid);
-		if (user == null) {
-			logger.debug("User "
-					+ mail
-					+ " was not found in the database. Searching in directories ...");
-			user = findOrCreateUser(domain, mail);
-		}
-		if (user == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
-					"Couldn't find the user : " + mail + " in domain : "
-							+ domain);
-		} else {
-			logger.debug("User " + mail + " found.");
-			user.setRole(role);
-			if (!(user.getRole().equals(Role.SIMPLE) || user.getRole().equals(Role.ADMIN))) {
-				user.setRole(Role.SIMPLE);
-			}
-			userRepository.update(user);
-			User owner = userRepository.findByLsUuid(ownerVo.getLsUuid());
-			UserLogEntry logEntry = new UserLogEntry(owner,
-					LogAction.USER_UPDATE,
-					"Update of a user:" + user.getMail(), user);
-			logEntryService.create(logEntry);
-		}
-	}
-
-	@Override
 	public void updateUserLocale(String domainId, String mail, SupportedLanguage locale)
 			throws BusinessException {
 		User user = findOrCreateUser(mail, domainId);
@@ -684,31 +654,6 @@ public class UserServiceImpl implements UserService {
 		}
 
 		user.setPassword(HashUtils.hashSha1withBase64(newPassword.getBytes()));
-		userRepository.update(user);
-	}
-
-	@Override
-	public void updateUserDomain(String mail, String selectedDomain,
-			UserVo ownerVo) throws BusinessException {
-		if (!ownerVo.isSuperAdmin()) {
-			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER,
-					"The user " + mail + " cannot be moved to "
-							+ selectedDomain + " domain, " + ownerVo.getMail()
-							+ " is not a superadmin");
-		}
-		User user = null;
-		// Seek user in base. If not found, try again but in directories
-		if ((user = userRepository.findByMail(mail)) == null) {
-			try {
-				user = findOrCreateUser(mail, ownerVo.getDomainIdentifier());
-			} catch (BusinessException e) {
-				logger.error(e.toString());
-				throw e;
-			}
-		}
-		AbstractDomain newDomain = abstractDomainService
-				.retrieveDomain(selectedDomain);
-		user.setDomain(newDomain);
 		userRepository.update(user);
 	}
 

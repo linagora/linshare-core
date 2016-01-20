@@ -1,8 +1,0 @@
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-    <head>
-        <title>linShare Start Page</title>
-    </head>
-    <body>
-        <t:fileInfoDisplayer t:source="prop:fileInfo"/>
-    </body>
-</html>

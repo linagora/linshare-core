@@ -42,7 +42,6 @@ import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
-import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
 
 public abstract class AbstractDomain {
@@ -133,27 +132,6 @@ public abstract class AbstractDomain {
 		this.mailConfigs = new HashSet<MailConfig>();
 		this.mimePolicies = new HashSet<MimePolicy>();
 		this.currentWelcomeMessage = null;
-	}
-
-	public AbstractDomain(AbstractDomainVo d) {
-		this.identifier = d.getIdentifier();
-		this.label = d.getLabel();
-		this.description = d.getDomainDescription();
-		this.functionalities = new HashSet<Functionality>();
-		this.domainAccessRules = new HashSet<DomainAccessRule>();
-		this.parentDomain = null;
-		this.subdomain = new HashSet<AbstractDomain>();
-		this.defaultRole = d.getDefaultRole();
-		this.defaultTapestryLocale = d.getDefaultLocale();
-		this.enable = d.isEnable();
-		this.template = d.isTemplate();
-		this.usedSpace = d.getUsedSpace();
-		this.shareExpiryRules = new ArrayList<ShareExpiryRule>();
-		this.policy = null;
-		this.authShowOrder = d.getAuthShowOrder();
-		if (description == null) {
-			this.description = "";
-		}
 	}
 
 	public AbstractDomain(DomainDto domainDto, AbstractDomain parent) {

@@ -192,9 +192,8 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry>
 		return findBy(criteria);
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<LogEntry> findBy(DetachedCriteria criteria) {
-		return getHibernateTemplate().findByCriteria(criteria);
+		return findByCriteria(criteria);
 	}
 
 	@Override

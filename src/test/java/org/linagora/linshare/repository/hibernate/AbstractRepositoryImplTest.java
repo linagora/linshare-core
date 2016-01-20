@@ -59,14 +59,14 @@ public abstract class AbstractRepositoryImplTest<T> extends AbstractTransactiona
     @Test
     public void testCreate() throws Exception {
         entity = getCompleteEntity();
-        int count = simpleJdbcTemplate.queryForInt(getSqlQueryForEntityDataCheck());
+        int count = jdbcTemplate.queryForObject(getSqlQueryForEntityDataCheck(), Integer.class);
         assertEquals("There is already a same entity in database", 0, count);
 
         T result = getAbstractRepository().create(entity);
         SessionFactoryUtils.getSession(getSessionFactory(), false).flush();
         assertEquals(entity, result);
 
-        count = simpleJdbcTemplate.queryForInt(getSqlQueryForEntityDataCheck());
+        count = jdbcTemplate.queryForObject(getSqlQueryForEntityDataCheck(), Integer.class);
         assertEquals("The entity should now exist in database", 1, count);
     }
 
@@ -90,7 +90,7 @@ public abstract class AbstractRepositoryImplTest<T> extends AbstractTransactiona
     @Test
     public void testLoad() throws Exception {
         prepareDataSet();
-        int count = simpleJdbcTemplate.queryForInt(getSqlQueryForEntityDataCheck());
+        int count = jdbcTemplate.queryForObject(getSqlQueryForEntityDataCheck(), Integer.class);
         assertEquals(1, count);
         entity = getCompleteEntity();
         T result = getAbstractRepository().load(entity);
@@ -110,12 +110,12 @@ public abstract class AbstractRepositoryImplTest<T> extends AbstractTransactiona
     @Test
     public void testDelete() throws Exception {
         prepareDataSet();
-        int count = simpleJdbcTemplate.queryForInt(getSqlQueryForEntityDataCheck());
+        int count = jdbcTemplate.queryForObject(getSqlQueryForEntityDataCheck(), Integer.class);
         assertTrue(count == 1);
         entity = getCompleteEntity();
         getAbstractRepository().delete(entity);
         SessionFactoryUtils.getSession(getSessionFactory(), false).flush();
-        count = simpleJdbcTemplate.queryForInt(getSqlQueryForEntityDataCheck());
+        count = jdbcTemplate.queryForObject(getSqlQueryForEntityDataCheck(), Integer.class);
         assertEquals(0, count);
     }
 
@@ -127,7 +127,7 @@ public abstract class AbstractRepositoryImplTest<T> extends AbstractTransactiona
     @Test
     public void testUpdate() throws Exception {
         prepareDataSet();
-        int count = simpleJdbcTemplate.queryForInt(getSqlQueryForEntityDataCheck());
+        int count = jdbcTemplate.queryForObject(getSqlQueryForEntityDataCheck(), Integer.class);
         assertEquals(1, count);
         T loadedEntity = getAbstractRepository().load(getCompleteEntity());
         T updatedEntity = updateEntityForTest(loadedEntity);
@@ -135,7 +135,7 @@ public abstract class AbstractRepositoryImplTest<T> extends AbstractTransactiona
         getAbstractRepository().update(updatedEntity);
 
         SessionFactoryUtils.getSession(getSessionFactory(), false).flush();
-        count = simpleJdbcTemplate.queryForInt(getSqlQueryForUpdatedEntityCheck());
+        count = jdbcTemplate.queryForObject(getSqlQueryForUpdatedEntityCheck(), Integer.class);
         assertEquals(1, count);
     }
 
@@ -148,7 +148,7 @@ public abstract class AbstractRepositoryImplTest<T> extends AbstractTransactiona
     @Test
     public void testFindAll() {
         prepareDataSet();
-        int count = simpleJdbcTemplate.queryForInt(getSqlQueryForEntityDataCheck());
+        int count = jdbcTemplate.queryForObject(getSqlQueryForEntityDataCheck(), Integer.class);
         assertEquals(1, count);
 
         List<T> results = getAbstractRepository().findAll();

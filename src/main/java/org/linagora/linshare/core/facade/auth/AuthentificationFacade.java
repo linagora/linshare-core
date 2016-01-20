@@ -38,14 +38,11 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AuthentificationFacade {
 
 	User loadUserDetails(String uuid) throws BusinessException;
-
-	UserVo loadUserVoDetails(String uuid) throws BusinessException;
 
 	User findOrCreateUser(String domainIdentifier, String mail) throws BusinessException;
 

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.linagora.linshare</groupId>
 	<artifactId>linshare-core</artifactId>
-    <version>1.12.1-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>LinShare, Secure File Sharing</name>
 	<description>Specially designed to secure paperless trading companies that put privacy and traceability in the heart of their problems of exchange, Linshare provides a simple solution completely intuitive :
@@ -26,7 +26,7 @@
 
 	<scm>
 		<connection>scm:git:git://github.com/linagora/linshare-core.git</connection>
-        <developerConnection>scm:git:ssh://git@ci-gsafe.linagora.com:8000/linshare/linshare-core.git</developerConnection>
+		<developerConnection>scm:git:ssh://git@ci-gsafe.linagora.com:8000/linshare/linshare-core.git</developerConnection>
 		<tag>HEAD</tag>
 		<url>http://github.com/linagora/linshare-core/tree/master/</url>
 	</scm>
@@ -77,22 +77,6 @@
 			</roles>
 		</developer>
 	</developers>
-	<mailingLists>
-		<mailingList>
-			<name>Users List</name>
-			<subscribe>linshare-users-subscribe@linpki.org</subscribe>
-			<unsubscribe>linshare-users-unsubscribe@linpki.org</unsubscribe>
-			<post>linshare-users@linpki.org</post>
-			<archive />
-		</mailingList>
-		<mailingList>
-			<name>Developers List</name>
-			<subscribe>linshare-dev-subscribe@linpki.org</subscribe>
-			<unsubscribe>linshare-dev-unsubscribe@linpki.org</unsubscribe>
-			<post>linshare-dev@linpki.org</post>
-			<archive>http://127.0.0.1/user/</archive>
-		</mailingList>
-	</mailingLists>
 	<licenses>
 		<license>
 			<name>GNU AFFERO GENERAL PUBLIC LICENSE</name>
@@ -101,47 +85,7 @@
 	</licenses>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.apache.tapestry</groupId>
-			<artifactId>tapestry-core</artifactId>
-			<version>${tapestry-release-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tapestry</groupId>
-			<artifactId>tapestry-spring</artifactId>
-			<version>${tapestry-release-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tapestry</groupId>
-			<artifactId>tapestry-upload</artifactId>
-			<version>${tapestry-release-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.chenillekit</groupId>
-			<artifactId>chenillekit-tapestry</artifactId>
-			<version>1.3.2-r760-linagora1</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>javassist</artifactId>
-					<groupId>jboss</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>se.unbound</groupId>
-			<artifactId>tapestry-tagselect</artifactId>
-			<version>1.4-linagora1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code</groupId>
-			<artifactId>kaptcha</artifactId>
-			<version>2.3</version>
-		</dependency>
-		<dependency>
-			<groupId>com.artofsolving</groupId>
-			<artifactId>jodconverter</artifactId>
-			<version>2.2.1</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.linagora</groupId>
 			<artifactId>LinThumbnail</artifactId>
@@ -156,9 +100,16 @@
 
 		<!-- -->
 
-		<!-- A dependency on either JUnit or TestNG is required, or the surefire plugin (which runs the tests) will fail, preventing Maven 
-			from packaging the WAR. Tapestry includes a large number of testing facilities designed for use with TestNG (http://testng.org/), so 
+		<!-- A dependency on either JUnit or TestNG is required, or the surefire plugin (which runs the tests) will fail, preventing Maven
+			from packaging the WAR. Tapestry includes a large number of testing facilities designed for use with TestNG (http://testng.org/), so
 			it's recommended. -->
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -188,7 +139,21 @@
 			</exclusions>
 		</dependency>
 
+		<!-- Quartz framework -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>2.2.2</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		<!-- Spring dependencies -->
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
@@ -225,6 +190,7 @@
 			</exclusions>
 		</dependency>
 
+		<!-- spring-context-support dependency is required with Quartz integration -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
@@ -237,51 +203,17 @@
 			</exclusions>
 		</dependency>
 
+		<!-- Transaction dependency is required with Quartz integration -->
 		<dependency>
-			<groupId>org.springmodules</groupId>
-			<artifactId>spring-modules-jcr</artifactId>
-			<version>0.8a</version>
-			<exclusions>
-				<exclusion>
-					<groupId>jeceira</groupId>
-					<artifactId>jeceira</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>jsr170</groupId>
-					<artifactId>jsr170</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>jsr170</groupId>
-					<artifactId>jcr</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<!-- artefact groupId has been renamed from aparzev to com.aparzev. See below -->
-				<exclusion>
-					<groupId>aparzev</groupId>
-					<artifactId>doka</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>aparzev</groupId>
-					<artifactId>commons</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>jug</groupId>
-					<artifactId>jug-asl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring-release-version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.linid.dm</groupId>
-			<artifactId>authorization</artifactId>
-			<version>2.0.1</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring-release-version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -290,22 +222,11 @@
 			</exclusions>
 		</dependency>
 
+		<!-- spring - begin -->
 		<dependency>
 			<groupId>org.springframework.ldap</groupId>
 			<artifactId>spring-ldap-core</artifactId>
-			<version>1.3.1.RELEASE</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.ldap</groupId>
-			<artifactId>spring-ldap-core-tiger</artifactId>
-			<version>1.3.1.RELEASE</version>
+			<version>2.0.4.RELEASE</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -318,6 +239,27 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${spring-release-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- spring - end -->
+
+		<!-- spring security - begin -->
+		<!-- dependencies :
+		- spring-security-web
+		- spring-security-core
+		- spring-security-config
+		- spring-security-ldap
+		- spring-security-acl
+		 -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring-security-release-version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -338,10 +280,23 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
-			<version>3.0.6.RELEASE</version>
+			<version>${spring-security-release-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-acl</artifactId>
+			<version>${spring-security-release-version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -355,12 +310,51 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>${spring-security-release-version}</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+		<!-- spring security - end -->
 
+		<!--  LDAP Query Language integration - begin -->
+		<dependency>
+			<groupId>org.linid.dm</groupId>
+			<artifactId>authorization</artifactId>
+			<version>${linid.authorization.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.linid.dm</groupId>
+					<artifactId>core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.linid.dm</groupId>
+            <artifactId>core</artifactId>
+			<version>${linid.authorization.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.mozilla</groupId>
+			<artifactId>rhino</artifactId>
+			<version>${mozilla.rhino.version}</version>
+			<type>jar</type>
+			<optional>false</optional>
+		</dependency>
+		<!--  LQL integration - end -->
 
-
-		<!-- <dependency> <groupId>org.springframework.security</groupId> <artifactId>spring-security-core-tiger</artifactId> <version>${spring-security-release-version}</version> 
-			<exclusions> <exclusion> <groupId>commons-logging</groupId> <artifactId>commons-logging</artifactId> </exclusion> </exclusions> </dependency> -->
 		<!-- SL4J: Logger API and choose LOG4J implementation -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -410,163 +404,102 @@
 		</dependency>
 
 		<!-- Jack Rabbit dependencies -->
+		<!-- jcr -->
 		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-api</artifactId>
-			<version>${jackrabbit-release-version}</version>
+			<groupId>javax.jcr</groupId>
+			<artifactId>jcr</artifactId>
+			<version>2.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-classloader</artifactId>
-			<version>${jackrabbit-release-version}</version>
+			<groupId>org.springmodules</groupId>
+			<artifactId>spring-modules-jcr</artifactId>
+			<version>0.8a</version>
 			<exclusions>
 				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
+					<groupId>jeceira</groupId>
+					<artifactId>jeceira</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>jsr170</groupId>
+					<artifactId>jsr170</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>jsr170</groupId>
+					<artifactId>jcr</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>aparzev</groupId>
+					<artifactId>doka</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>aparzev</groupId>
+					<artifactId>commons</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>jug</groupId>
+					<artifactId>jug-asl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+		<!-- jackrabbit -->
 		<dependency>
 			<groupId>org.apache.jackrabbit</groupId>
 			<artifactId>jackrabbit-core</artifactId>
-			<version>${jackrabbit-core-version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>derby</artifactId>
-					<groupId>org.apache.derby</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>xercesImpl</artifactId>
-					<groupId>xerces</groupId>
-				</exclusion>
-			</exclusions>
+			<version>${jackrabbit.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-jca</artifactId>
-			<version>${jackrabbit-release-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-jcr-commons</artifactId>
-			<version>${jackrabbit-release-version}</version>
+			<artifactId>jackrabbit-jcr-rmi</artifactId>
+			<version>${jackrabbit.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jackrabbit</groupId>
 			<artifactId>jackrabbit-jcr-server</artifactId>
-			<version>${jackrabbit-release-version}</version>
+			<version>${jackrabbit.version}</version>
 			<exclusions>
 				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-ocm</artifactId>
-			<version>${jackrabbit-release-version}
-			</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
+					<groupId>commons-fileupload</groupId>
+					<artifactId>commons-fileupload</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-ocm-nodemanagement</artifactId>
-			<version>${jackrabbit-release-version}</version>
+			<artifactId>jackrabbit-webapp</artifactId>
+			<version>${jackrabbit.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-spi-commons</artifactId>
-			<version>${jackrabbit-release-version}</version>
+			<artifactId>jackrabbit-jca</artifactId>
+			<version>${jackrabbit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-jcr-commons</artifactId>
+			<version>${jackrabbit.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>javax.jcr</groupId>
-			<artifactId>jcr</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.safehaus.jug</groupId>
-			<artifactId>jug</artifactId>
-			<version>2.0.0</version>
-			<classifier>asl</classifier>
-		</dependency>
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>1.4</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
-			<version>1.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-core</artifactId>
-			<version>2.2.0</version>
-		</dependency>
-
+		<!--  for aspectj pointcut (ie transactions) -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 			<version>1.5.4</version>
 		</dependency>
+
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 			<version>1.4.6</version>
 		</dependency>
-		<dependency>
-			<groupId>quartz</groupId>
-			<artifactId>quartz</artifactId>
-			<version>1.5.2</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.linagora.linkit</groupId>
-			<artifactId>timeline</artifactId>
-			<version>0.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.linagora.linkit</groupId>
-			<artifactId>utils</artifactId>
-			<version>0.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.linagora.linkit</groupId>
-			<artifactId>flexUploadComponent</artifactId>
-			<version>0.9</version>
-		</dependency>
-		<!-- <dependency> <groupId>com.thoughtworks.xstream</groupId> <artifactId>xstream</artifactId> <version>1.4.3</version> </dependency>
-			<dependency> <groupId>com.sun.xml.bind</groupId> <artifactId>jaxb-impl</artifactId> <version>2.1.3</version> </dependency> -->
-		<dependency>
-			<groupId>com.sun.xml.messaging.saaj</groupId>
-			<artifactId>saaj-impl</artifactId>
-			<version>1.3.19</version>
-		</dependency>
-		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>xalan</artifactId>
-			<version>2.7.0</version>
-		</dependency>
-
 		<dependency>
 			<groupId>net.taldius</groupId>
 			<artifactId>libclamav</artifactId>
@@ -578,30 +511,24 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- <dependency> <groupId>org.linagora</groupId> <artifactId>RestMarshaller</artifactId> <version>1.0-dev-b2</version> </dependency> -->
-		<dependency>
-			<groupId>javax.annotations</groupId>
-			<artifactId>jsr250-api</artifactId>
-			<version>1.0</version>
-		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>javax.annotations</groupId> -->
+<!-- 			<artifactId>jsr250-api</artifactId> -->
+<!-- 			<version>1.0</version> -->
+<!-- 		</dependency> -->
 
-		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-			<version>2.10.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- Test dependancies -->
+
+		<!-- Test dependencies - begin -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -626,31 +553,11 @@
 			<version>1.0.2</version>
 			<scope>test</scope>
 		</dependency>
-
+		<!-- embedded LDAP server for tests (used by spring security) -->
 		<dependency>
-			<groupId>org.forgerock.opendj</groupId>
-			<artifactId>opendj-server</artifactId>
-			<version>2.4.6</version>
-			<scope>test</scope>
-			<optional>false</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.sleepycat</groupId>
-			<artifactId>je</artifactId>
-			<version>4.0.92</version>
-			<scope>test</scope>
-			<optional>false</optional>
-		</dependency>
-
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>1.3.171</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-jcr-tests</artifactId>
-			<version>${jackrabbit-release-version}</version>
+			<groupId>org.apache.directory.server</groupId>
+			<artifactId>apacheds-server-jndi</artifactId>
+			<version>${apache-directory-server.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -665,45 +572,9 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- Test dependencies - end -->
 
-		<!-- linsign CSPN JDK 6 -->
-		<dependency>
-			<groupId>org.linagora.jaxbxades</groupId>
-			<artifactId>xades</artifactId>
-			<version>1.0</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>xerces</artifactId>
-					<groupId>xercesImpl</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.linagora.linsign</groupId>
-			<artifactId>linsign</artifactId>
-			<version>1.0</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>xerces</artifactId>
-					<groupId>xercesImpl</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>linsignconfig</groupId>
-			<artifactId>linsignconfig</artifactId>
-			<version>1.0</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>xerces</artifactId>
-					<groupId>xercesImpl</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- timestamping bouncycastle last release -->
+		<!-- timestamping bouncycastle last release : timestaping and ciphering-->
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bctsp-jdk16</artifactId>
@@ -715,43 +586,36 @@
 			<version>1.45</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-cas-client</artifactId>
-			<version>${spring-security-release-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- Database drivers -->
+		<!-- Database related dependencies - begin -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>9.3-1101-jdbc41</version>
+			<version>9.4-1204-jdbc42</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.24</version>
+			<version>5.1.37</version>
 		</dependency>
-		<!-- Ldap integration -->
+		<!--  db connection pool -->
 		<dependency>
-			<groupId>rhino</groupId>
-			<artifactId>js</artifactId>
-			<version>1.7R2</version>
-			<type>jar</type>
-			<optional>false</optional>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.unboundid</groupId>
-			<artifactId>unboundid-ldapsdk</artifactId>
-			<version>1.1.4</version>
-			<type>jar</type>
-			<optional>false</optional>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.4</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<!-- Database related dependencies - begin -->
+
+		<!--  XSS filter -->
 		<dependency>
 			<groupId>org.owasp</groupId>
 			<artifactId>antisamy</artifactId>
@@ -776,6 +640,11 @@
 			<artifactId>cxf-rt-transports-http</artifactId>
 			<version>${cxf.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-client</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
 		<!-- cxf: json: want to change from jettison to jackson provider ? -->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
@@ -786,13 +655,15 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>15.0</version>
+			<version>${guava.version}</version>
 		</dependency>
+		<!-- Swagger : webservice documentation -->
 		<dependency>
 			<groupId>com.wordnik</groupId>
 			<artifactId>swagger-jaxrs_2.10</artifactId>
 			<version>1.3.12</version>
 		</dependency>
+		<!-- cmis integration -->
 		<dependency>
 			<groupId>org.apache.chemistry.opencmis</groupId>
 			<artifactId>chemistry-opencmis-server-support</artifactId>
@@ -813,92 +684,24 @@
 	</dependencies>
 
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.8.1</version>
-					<configuration>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.3.2</version>
-					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
-					</configuration>
-				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.apache.maven.plugins
-										</groupId>
-										<artifactId>
-											maven-antrun-plugin
-										</artifactId>
-										<versionRange>
-											[1.7,)
-										</versionRange>
-										<goals>
-											<goal>run</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>com.github.kongchen</groupId>
-										<artifactId>swagger-maven-plugin</artifactId>
-										<versionRange>[1.1.2,)</versionRange>
-										<goals>
-											<goal>generate</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-
 		<finalName>linshare-core</finalName>
-
 		<plugins>
+			<!-- maven-compiler-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 					<optimize>true</optimize>
 				</configuration>
 				</plugin>
+			<!-- buildnumber-maven-plugin (compute timestamp, build number, ...)-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.2</version>
-				<configuration>
-					<buildNumberPropertyName>sources.version</buildNumberPropertyName>
-					<timestampPropertyName>build.timestamp</timestampPropertyName>
-					<timestampFormat>{0,date,yyyy-MM-dd HH:mm}</timestampFormat>
-				</configuration>
+				<version>1.4</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
@@ -907,87 +710,20 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.8</version>
-				<executions>
-					<execution>
-						<id>add-test-source</id>
-						<phase>generate-test-sources</phase>
-						<inherited>false</inherited>
-						<goals>
-							<goal>add-test-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src/opendj/java</source>
-								<source>${project.basedir}/src/test/generated/cxf</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-
-			<!--generate stub client SOAP for test purpose mvn cxf-codegen:wsdl2java -->
-			<plugin>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>${cxf.version}</version>
 				<configuration>
-					<sourceRoot>${project.basedir}/src/test/generated/cxf</sourceRoot>
-					<wsdlOptions>
-						<wsdlOption>
-							<wsdl>http://localhost:8080/linshare/webservice/soap?wsdl</wsdl>
-							<extraargs>
-								<extraarg>-client</extraarg>
-								<extraarg>-verbose</extraarg>
-								<extraarg>-p</extraarg>
-								<extraarg>http://org/linagora/linshare/webservice/=org.linagora.linshare.webservice.test.soap</extraarg>
-								<extraarg>-p</extraarg>
-								<extraarg>http://webservice.linshare.linagora.org/=org.linagora.linshare.webservice.test.soap</extraarg>
-							</extraargs>
-						</wsdlOption>
-						<!-- <wsdlOption> <wsdl>http://localhost:8080/linshare/webservice/soap/share?wsdl</wsdl> <extraargs> <extraarg>-client</extraarg> 
-							<extraarg>-verbose</extraarg> <extraarg>-p</extraarg> <extraarg>http://org/linagora/linshare/webservice/=org.linagora.linshare.webservice.test.soap</extraarg> 
-							<extraarg>-p</extraarg> <extraarg>http://webservice.linshare.linagora.org/=org.linagora.linshare.webservice.test.soap</extraarg> </extraargs> 
-							</wsdlOption> -->
-					</wsdlOptions>
+					<!--  It will first check to see if you have locally modified files, and will fail if there are any.  -->
+					<!-- -Dmaven.buildNumber.doCheck=true -->
+					<doCheck>false</doCheck>
+					<!-- Update your local repository -->
+					<!-- -Dmaven.buildNumber.doUpdate=true -->
+					<doUpdate>false</doUpdate>
+					<buildNumberPropertyName>sources.version</buildNumberPropertyName>
+					<timestampPropertyName>build.timestamp</timestampPropertyName>
+					<timestampFormat>{0,date,yyyy-MM-dd HH:mm}</timestampFormat>
 				</configuration>
 			</plugin>
 
-
-	<!-- Run the application using "mvn jetty:run" -->
-	<plugin>
-		<groupId>org.mortbay.jetty</groupId>
-		<artifactId>maven-jetty-plugin</artifactId>
-		<version>6.1.9</version>
-		<configuration>
-			<!-- Log to the console. -->
-			<requestLog implementation="org.mortbay.jetty.NCSARequestLog">
-				<!-- This doesn't do anything for Jetty, but is a workaround for a Maven 
-					bug that prevents the requestLog from being set. -->
-				<append>true</append>
-			</requestLog>
-			<connectors>
-				<connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-					<port>8080</port>
-					<maxIdleTime>60000</maxIdleTime>
-					<responseBufferSize>2097152</responseBufferSize>
-				</connector>
-			</connectors>
-<!-- 			<scanIntervalSeconds>10</scanIntervalSeconds> -->
-			<contextPath>/linshare</contextPath>
-		</configuration>
-	</plugin>
-
-
-			<!-- This changes the WAR file packaging so that what would normally go into WEB-INF/classes is instead packaged as WEB-INF/lib/securedShare.jar. 
-				This is necessary for Tapestry to be able to search for page and component classes at startup. Only certain application servers require 
-				this configuration, please see the documentation at the Tapestry 5 project page (http://tapestry.apache.org/tapestry5/). -->
-
+			<!-- maven-war-plugin (packaging) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -997,6 +733,9 @@
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 						</manifest>
+						<manifestEntries>
+							<Implementation-Build>${sources.version} ${build.timestamp}</Implementation-Build>
+						</manifestEntries>
 					</archive>
 				</configuration>
 				<executions>
@@ -1025,7 +764,193 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			<!-- maven-scm-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-scm-plugin</artifactId>
+				<version>1.9.4</version>
+			</plugin>
+			<!-- maven-release-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.3</version>
+				<configuration>
+					<tagNameFormat>@{project.version}</tagNameFormat>
+					<!--During release:perform, enable the "release" profile -->
+					<!-- <releaseProfiles>release</releaseProfiles> -->
+				</configuration>
+			</plugin>
+			<!-- maven-install-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.2</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<!-- maven-deploy-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.2</version>
+				<configuration>
+                    <skip>false</skip>
+				</configuration>
+			</plugin>
+			<!-- Maven Jetty Plugin 9.x : run the application using "mvn jetty:run" -->
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>9.3.3.v20150827</version>
+				<configuration>
+					<scanIntervalSeconds>10</scanIntervalSeconds>
+					<webApp>
+						<contextPath>/linshare</contextPath>
+					</webApp>
+					<!-- -Djetty.port=8080 -->
+					<httpConnector>
+						<port>8080</port>
+					</httpConnector>
+				</configuration>
+				<!--  not supported yet
+				<requestLog implementation="org.mortbay.jetty.NCSARequestLog">
+					This doesn't do anything for Jetty, but is a workaround for a Maven
+						bug that prevents the requestLog from being set.
+					<append>true</append>
+				</requestLog>
+				-->
+			</plugin>
+			<!-- maven-dependency-plugin : copy jwsdecrypt applet -->
+			<plugin>
+				<!-- This plugin is used to get all jwsdecrypt applet from the internal maven
+					repository and copy them into the webapp video folder -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.10</version>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.linagora.linshare.aescrypt</groupId>
+									<artifactId>jwsdecrypt</artifactId>
+									<version>0.2</version>
+									<type>jar</type>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>src/main/webapp/applet/</outputDirectory>
+							<stripVersion>true</stripVersion>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- maven-dependency-plugin : copy signature-client applet -->
+			<plugin>
+				<!-- This plugin is used to get signature-client  applet from the internal maven
+					repository and copy them into the webapp applet folder -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.linagora.linshare</groupId>
+									<artifactId>signature-client</artifactId>
+									<version>1.0.3</version>
+									<type>jar</type>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>src/main/webapp/applet/</outputDirectory>
+							<stripVersion>true</stripVersion>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- cobertura (test coverage) -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<instrumentation>
+						<ignores>
+							<ignore>org.linagora.*Test*</ignore>
+						</ignores>
+						<excludes>
+							<exclude>**/*Test.class</exclude>
+						</excludes>
+					</instrumentation>
+				</configuration>
+			</plugin>
+			<!-- maven-surefire-plugin (test reports) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19</version>
+			</plugin>
+			<!-- build-helper-maven-plugin : add embedded ldap directory sources to 
+				test path -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<id>add-test-source</id>
+						<phase>generate-test-sources</phase>
+						<inherited>false</inherited>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.basedir}/src/test/generated/cxf</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!--generate stub client SOAP for test purpose mvn cxf-codegen:wsdl2java -->
+			<plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-codegen-plugin</artifactId>
+				<version>${cxf.version}</version>
+				<configuration>
+					<sourceRoot>${project.basedir}/src/test/generated/cxf</sourceRoot>
+					<wsdlOptions>
+						<wsdlOption>
+							<wsdl>http://localhost:8080/linshare/webservice/soap?wsdl</wsdl>
+							<extraargs>
+								<extraarg>-client</extraarg>
+								<extraarg>-verbose</extraarg>
+								<extraarg>-p</extraarg>
+								<extraarg>http://org/linagora/linshare/webservice/=org.linagora.linshare.webservice.test.soap</extraarg>
+								<extraarg>-p</extraarg>
+								<extraarg>http://webservice.linshare.linagora.org/=org.linagora.linshare.webservice.test.soap</extraarg>
+							</extraargs>
+						</wsdlOption>
+						<!-- <wsdlOption> <wsdl>http://localhost:8080/linshare/webservice/soap/share?wsdl</wsdl> <extraargs> <extraarg>-client</extraarg>
+							<extraarg>-verbose</extraarg> <extraarg>-p</extraarg> <extraarg>http://org/linagora/linshare/webservice/=org.linagora.linshare.webservice.test.soap</extraarg>
+							<extraarg>-p</extraarg> <extraarg>http://webservice.linshare.linagora.org/=org.linagora.linshare.webservice.test.soap</extraarg> </extraargs>
+							</wsdlOption> -->
+					</wsdlOptions>
+				</configuration>
+			</plugin>
+			<!-- hibernate tool : ?? -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>hibernate3-maven-plugin</artifactId>
@@ -1042,114 +967,10 @@
 						<update>false</update>
 						<export>false</export>
 						<format>true</format>
-						<namingstrategy>org.linagora.linshare.core.repository.hibernate.LinShareNamingStrategy</namingstrategy>
 						<configurationfile>src/main/resources/hibernate.cfg.xml</configurationfile>
 						<propertyfile>src/main/resources/reference-database.properties</propertyfile>
 						<outputfilename>createSchema.sql</outputfilename>
 					</componentProperties>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>**/selenium/*Test.java</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>selenium-maven-plugin</artifactId>
-                <version>2.3</version>
-				<configuration>
-					<port>4445</port><!-- <verifyBrowser>*firefox</verifyBrowser> -->
-				</configuration>
-				<executions>
-					<execution>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>start-server</goal>
-						</goals>
-						<configuration>
-							<background>true</background>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		<plugin>
-		<!-- This plugin is used to get all jwsdecrypt applet from the internal maven
-			repository and copy them into the webapp video folder -->
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-dependency-plugin</artifactId>
-		<version>2.3</version>
-		<executions>
-			<execution>
-				<id>copy-jwsdecrypt</id>
-				<phase>initialize</phase>
-				<goals>
-					<goal>copy</goal>
-				</goals>
-				<configuration>
-					<artifactItems>
-						<artifactItem>
-							<groupId>org.linagora.linshare.aescrypt</groupId>
-							<artifactId>jwsdecrypt</artifactId>
-							<version>0.2</version>
-							<type>jar</type>
-						</artifactItem>
-					</artifactItems>
-					<outputDirectory>src/main/webapp/applet/</outputDirectory>
-					<stripVersion>true</stripVersion>
-				</configuration>
-			</execution>
-		<!-- This plugin is used to get signature-client  applet from the internal maven
-			repository and copy them into the webapp applet folder -->
-			<execution>
-				<id>copy-signature-client</id>
-				<phase>initialize</phase>
-				<goals>
-					<goal>copy</goal>
-				</goals>
-				<configuration>
-					<artifactItems>
-						<artifactItem>
-							<groupId>org.linagora.linshare</groupId>
-							<artifactId>signature-client</artifactId>
-							<version>1.0.3</version>
-							<type>jar</type>
-						</artifactItem>
-					</artifactItems>
-					<outputDirectory>src/main/webapp/applet/</outputDirectory>
-					<stripVersion>true</stripVersion>
-				</configuration>
-			</execution>
-		</executions>
-	</plugin>
-			<!-- maven-release-plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.3</version>
-				<configuration>
-					<tagNameFormat>@{project.version}</tagNameFormat>
-				</configuration>
-			</plugin>
-			<!--maven-install-plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-install-plugin</artifactId>
-				<version>2.5.2</version>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-			<!--maven-deploy-plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.8.2</version>
-				<configuration>
-					<skip>false</skip>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -1174,10 +995,21 @@
 				<directory>src/test/resources</directory>
 			</testResource>
 			<testResource>
-				<directory>src/opendj/resources</directory>
+				<directory>src/apacheds/resources</directory>
 			</testResource>
 		</testResources>
 	</build>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>bintray-central</id>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<name>bintray-plugins</name>
+			<url>http://dl.bintray.com/kongchen/maven</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<reporting>
 		<!-- Adds a report detailing the components, mixins and base classes defined by this module. -->
@@ -1192,19 +1024,20 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>1.9</version>
 			</plugin>
-			<!-- it does not seem to work <plugin> <groupId>org.apache.tapestry</groupId> <artifactId>tapestry-component-report</artifactId> 
-				<version>${tapestry-release-version}</version> <configuration> <rootPackage>org.linagora.linshare.view.tapestry</rootPackage> </configuration> 
+			<!-- it does not seem to work <plugin> <groupId>org.apache.tapestry</groupId> <artifactId>tapestry-component-report</artifactId>
+				<version>${tapestry-release-version}</version> <configuration> <rootPackage>org.linagora.linshare.view.tapestry</rootPackage> </configuration>
 				</plugin> -->
 		</plugins>
 	</reporting>
 	<profiles>
+		<!--  profile:id=default -->
 		<profile>
 			<id>default</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
 		</profile>
-
+		<!--  profile:id=dev -->
 		<profile>
 			<id>dev</id>
 			<build>
@@ -1311,6 +1144,7 @@
 			</build>
 		</profile>
 
+		<!--  profile:id=load-integration-context -->
 		<profile>
 			<id>load-integration-context</id>
 			<build>
@@ -1336,8 +1170,7 @@
 				</plugins>
 			</build>
 		</profile>
-
-		<!--  swagger -->
+		<!--  profile:id=swagger-->
 		<profile>
 			<id>swagger</id>
 			<build>
@@ -1373,7 +1206,7 @@
 				</plugins>
 			</build>
 		</profile>
-
+		<!--  profile:id=swagger-delegation -->
 		<profile>
 			<id>swagger-delegation</id>
 			<build>
@@ -1428,7 +1261,7 @@
 				</plugins>
 			</build>
 		</profile>
-
+		<!--  profile:id=swagger-delegation2 -->
 		<profile>
 			<id>swagger-delegation2</id>
 			<build>
@@ -1462,7 +1295,7 @@
 				</plugins>
 			</build>
 		</profile>
-
+		<!--  profile:id=swagger-userv2 -->
 		<profile>
 			<id>swagger-userv2</id>
 			<build>
@@ -1496,6 +1329,7 @@
 				</plugins>
 			</build>
 		</profile>
+		<!--  profile:id=swagger-userv2-strapdown -->
 		<profile>
 			<id>swagger-userv2-strapdown</id>
 			<build>
@@ -1529,40 +1363,9 @@
 				</plugins>
 			</build>
 		</profile>
-
+		<!--  profile:id=apacheds -->
 		<profile>
-			<id>test-integration</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-						<executions>
-							<execution>
-								<phase>integration-test</phase>
-								<goals>
-									<goal>test</goal>
-								</goals>
-								<configuration>
-									<skip>false</skip>
-									<excludes>
-										<exclude>*Test.java</exclude>
-									</excludes>
-									<includes>
-										<include>**/selenium/*Test.java</include>
-									</includes>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>opendj</id>
+			<id>apacheds</id>
 			<activation>
 				<property>
 					<name>target</name>
@@ -1575,59 +1378,20 @@
 						<directory>src/main/resources</directory>
 					</resource>
 					<resource>
-						<directory>src/opendj/resources</directory>
+						<directory>src/apacheds/resources</directory>
 					</resource>
 				</resources>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>1.8</version>
-						<executions>
-							<execution>
-								<id>add-source</id>
-								<phase>generate-sources</phase>
-								<inherited>false</inherited>
-								<goals>
-									<goal>add-source</goal>
-								</goals>
-								<configuration>
-									<sources>
-										<source>src/opendj/java</source>
-									</sources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>add-test-source</id>
-								<phase>generate-test-sources</phase>
-								<inherited>false</inherited>
-								<goals>
-									<goal>add-test-source</goal>
-								</goals>
-								<configuration>
-									<sources>
-										<source>src/opendj/java</source>
-									</sources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
 			</build>
 			<dependencies>
+				<!-- embedded LDAP server for tests (used by spring security) -->
 				<dependency>
-					<groupId>org.forgerock.opendj</groupId>
-					<artifactId>opendj-server</artifactId>
-					<version>2.4.6</version>
-					<optional>false</optional>
-				</dependency>
-				<dependency>
-					<groupId>com.sleepycat</groupId>
-					<artifactId>je</artifactId>
-					<version>4.0.92</version>
+					<groupId>org.apache.directory.server</groupId>
+					<artifactId>apacheds-server-jndi</artifactId>
+					<version>${apache-directory-server.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
+		<!--  profile:id=h2 -->
 		<profile>
 			<id>h2</id>
 			<activation>
@@ -1640,11 +1404,11 @@
 				<dependency>
 					<groupId>com.h2database</groupId>
 					<artifactId>h2</artifactId>
-					<version>1.3.171</version>
+					<version>${h2.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
-
+		<!--  profile:id=local -->
 		<profile>
 			<id>local</id>
 			<activation>
@@ -1659,10 +1423,10 @@
 						<directory>src/main/resources</directory>
 					</resource>
 					<resource>
-						<directory>src/opendj/resources</directory>
+						<directory>src/subethamail/resources</directory>
 					</resource>
 					<resource>
-						<directory>src/subethamail/resources</directory>
+						<directory>src/apacheds/resources</directory>
 					</resource>
 				</resources>
 				<plugins>
@@ -1680,8 +1444,7 @@
 								</goals>
 								<configuration>
 									<sources>
-										<source>src/opendj/java</source>
-										<source>src/subethamail/java</source> 
+										<source>src/subethamail/java</source>
 									</sources>
 								</configuration>
 							</execution>
@@ -1703,21 +1466,16 @@
 				</plugins>
 			</build>
 			<dependencies>
+				<!-- embedded LDAP server for tests (used by spring security) -->
 				<dependency>
-					<groupId>org.forgerock.opendj</groupId>
-					<artifactId>opendj-server</artifactId>
-					<version>2.4.6</version>
-					<optional>false</optional>
-				</dependency>
-				<dependency>
-					<groupId>com.sleepycat</groupId>
-					<artifactId>je</artifactId>
-					<version>4.0.92</version>
+					<groupId>org.apache.directory.server</groupId>
+					<artifactId>apacheds-server-jndi</artifactId>
+					<version>${apache-directory-server.version}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.subethamail</groupId>
 					<artifactId>subethasmtp</artifactId>
-					<version>3.1.6</version>
+					<version>3.1.7</version>
 					<exclusions>
 						<exclusion>
 							<groupId>org.slf4j</groupId>
@@ -1727,7 +1485,7 @@
 				</dependency>
 			</dependencies>
 		</profile>
-
+		<!--  profile:id=distribution -->
 		<profile>
 			<id>distribution</id>
 			<activation>
@@ -1829,10 +1587,7 @@
 		<repository>
 			<id>Linagora-LinShare-Repositories</id>
 			<url>https://nexus.linagora.com/content/groups/linshare</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
+        </repository>
 	</repositories>
 
 	<distributionManagement>
@@ -1849,13 +1604,17 @@
 	</distributionManagement>
 
 	<properties>
-		<tapestry-release-version>5.2.6</tapestry-release-version>
-		<spring-release-version>3.0.5.RELEASE</spring-release-version>
-		<spring-security-release-version>3.0.5.RELEASE</spring-security-release-version>
-		<jackrabbit-release-version>1.4</jackrabbit-release-version>
-		<jackrabbit-core-version>1.4.13-LINAGORA</jackrabbit-core-version>
-		<slf4j-release-version>1.7.3</slf4j-release-version>
-		<cxf.version>2.7.11</cxf.version>
+		<spring-release-version>4.2.2.RELEASE</spring-release-version>
+		<spring-security-release-version>4.0.3.RELEASE</spring-security-release-version>
+		<hibernate.version>4.3.6.Final</hibernate.version>
+		<h2.version>1.4.190</h2.version>
+		<guava.version>18.0</guava.version>
+		<linid.authorization.version>2.1.2</linid.authorization.version>
+		<mozilla.rhino.version>1.7.7</mozilla.rhino.version>
+		<apache-directory-server.version>1.5.5</apache-directory-server.version>
+		<slf4j-release-version>1.7.12</slf4j-release-version>
+		<cxf.version>3.1.3</cxf.version>
+		<jackrabbit.version>2.11.2</jackrabbit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
 	</properties>

@@ -79,7 +79,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-startopendj.xml",
+		"classpath:springContext-start-embedded-ldap.xml",
 		"classpath:springContext-jackRabbit-mock.xml",
 		"classpath:springContext-test.xml" })
 public class GuestServiceImplTest extends

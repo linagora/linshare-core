@@ -38,8 +38,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.vo.MailingListContactVo;
-import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 
@@ -93,16 +91,6 @@ public class MailingList {
 		this.mailingListContact = list.getMailingListContact();
 		this.creationDate = list.getCreationDate();
 		this.modificationDate = list.getModificationDate();
-	}
-
-	public MailingList(MailingListVo list) {
-		this.uuid = list.getUuid();
-		this.identifier = list.getIdentifier();
-		this.description = list.getDescription();
-		this.isPublic = list.getIsPublic();
-		for (MailingListContactVo current : list.getContacts()) {
-			mailingListContact.add(new MailingListContact(current));
-		}
 	}
 
 	public MailingList(MailingListDto list) {

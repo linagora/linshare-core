@@ -73,7 +73,6 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	        }
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<U> findByDomain(String domain) {
 		Assert.notNull(domain);
@@ -81,7 +80,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		criteria.createAlias("domain", "domain");
 		criteria.add(Restrictions.eq("domain.identifier",domain));
 		criteria.add(Restrictions.eq("destroyed", 0L));
-		return getHibernateTemplate().findByCriteria(criteria);
+		return findByCriteria(criteria);
 	}
 
 

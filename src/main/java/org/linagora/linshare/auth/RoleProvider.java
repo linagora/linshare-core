@@ -39,42 +39,42 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public class RoleProvider {
 
 	public static final List<GrantedAuthority> getRoles(Account account) {
 		List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
-		grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_AUTH));
+		grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_AUTH));
 
 		if (account.hasAdminRole()) {
 			// only internal users could be admin.
 			if (account.isInternal()) {
-				grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_USER));
-				grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_ADMIN));
-				grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));
-				grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_INTERNAL));
+				grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_USER));
+				grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_ADMIN));
+				grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_UPLOAD));
+				grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_INTERNAL));
 			}
 		} else if (account.hasSuperAdminRole()) {
-			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_USER));
-			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));
-			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_ADMIN));
-			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_SUPERADMIN));
+			grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_USER));
+			grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_UPLOAD));
+			grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_ADMIN));
+			grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_SUPERADMIN));
 		} else if (account.hasSimpleRole()) {
-			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_USER));
+			grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_USER));
 			if (account.isGuest()) {
 				Guest guest =(Guest)account;
 				if(guest.getCanUpload()) {
-					grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));
+					grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_UPLOAD));
 				}
 			} else if (account.isInternal()) {
-				grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_INTERNAL));
-				grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));
+				grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_INTERNAL));
+				grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_UPLOAD));
 			}
 		} else if (account.hasDelegationRole()) {
-			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_DELEGATION));
+			grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_DELEGATION));
 		} else if (account.hasUploadPropositionRole()) {
-			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD_PROPOSTION));
+			grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_UPLOAD_PROPOSTION));
 		}
 		return grantedAuthorities;
 	}

@@ -107,11 +107,6 @@
 		<constructor-arg ref="anonymousShareEntryService" />
 	</bean>
 
-	<bean id="searchDocumentService" class="org.linagora.linshare.core.service.impl.SearchDocumentServiceImpl">
-		<constructor-arg ref="documentEntryRepository" />
-		<constructor-arg ref="shareEntryRepository" />
-	</bean>
-
 	<bean name="enciphermentService" class="org.linagora.linshare.core.service.impl.EnciphermentServiceAesCryptImpl">
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="logEntryService" />

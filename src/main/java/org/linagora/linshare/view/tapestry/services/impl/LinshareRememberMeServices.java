@@ -42,7 +42,9 @@ import org.linagora.linshare.core.domain.entities.Cookie;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.CookieRepository;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 /**
  * Service extending PersistentTokenBasedRememberMeServices to allow linshare
@@ -53,11 +55,19 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 public class LinshareRememberMeServices extends
 		PersistentTokenBasedRememberMeServices {
 
+	public LinshareRememberMeServices(String key,
+			UserDetailsService userDetailsService,
+			PersistentTokenRepository tokenRepository) {
+		super(key, userDetailsService, tokenRepository);
+	}
+
 	private CookieRepository cookieRepository;
 
-	public LinshareRememberMeServices(CookieRepository cookieRepository)
-			throws Exception {
-		super();
+	public CookieRepository getCookieRepository() {
+		return cookieRepository;
+	}
+
+	public void setCookieRepository(CookieRepository cookieRepository) {
 		this.cookieRepository = cookieRepository;
 	}
 

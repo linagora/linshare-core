@@ -112,7 +112,7 @@ public class LdapAuthenticationProvider extends
 				logger.error(message);
 				throw new BadCredentialsException(messages.getMessage(
 						"AbstractUserDetailsAuthenticationProvider.badCredentials",
-						"Bad credentials"), foundUser);
+						"Bad credentials"));
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 				throw new AuthenticationServiceException(

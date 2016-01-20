@@ -102,7 +102,7 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
         if (entity == null) {
             throw new IllegalArgumentException("Entity must not be null. ");
         }
-        List<T> results = findByCriteria(getNaturalKeyCriteria(entity));
+        List<T> results = (List<T>) findByCriteria(getNaturalKeyCriteria(entity));
         if (results.size() == 0) {
             throw new TransientObjectException("The given entity is transient so it can't be loaded.");
         } else if (results.size() == 1) {
@@ -132,7 +132,7 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
      * @return result list.
      */
     public List<T> findAll() {
-        return findByCriteria();
+        return (List<T>) findByCriteria();
     }
 
     /** Delete the provided entity.
@@ -186,22 +186,20 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
      * @param criterions search criterion(s).
      * @return search result.
      */
-    @SuppressWarnings("unchecked")
 	protected List<T> findByCriteria(final Criterion... criterions) {
         DetachedCriteria criteria = DetachedCriteria.forClass(persistentClass);
         for (Criterion criterion : criterions) {
             criteria.add(criterion);
         }
-        return hibernateTemplate.findByCriteria(criteria);
+        return (List<T>) hibernateTemplate.findByCriteria(criteria);
     }
 
     /** Find by criteria.
      * @param a detached criteria.
      * @return search result.
      */
-    @SuppressWarnings("unchecked")
 	protected List<T> findByCriteria(final DetachedCriteria criteria) {
-        return hibernateTemplate.findByCriteria(criteria);
+        return (List<T>) hibernateTemplate.findByCriteria(criteria);
     }
     
     /** Find by criteria.
@@ -209,9 +207,8 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
      * @param limit the results
      * @return search result.
      */
-    @SuppressWarnings("unchecked")
 	protected List<T> findByCriteria(final DetachedCriteria criteria, int limit) {
-        return hibernateTemplate.findByCriteria(criteria, -1, limit);
+        return (List<T>) hibernateTemplate.findByCriteria(criteria, -1, limit);
     }
     
     /** Find by criteria.

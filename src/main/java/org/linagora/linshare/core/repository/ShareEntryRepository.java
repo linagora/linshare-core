@@ -38,7 +38,6 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 
 public interface ShareEntryRepository extends AbstractRepository<ShareEntry> {
 
@@ -64,9 +63,6 @@ public interface ShareEntryRepository extends AbstractRepository<ShareEntry> {
 	List<String> findAllExpiredEntries();
 
 	List<ShareEntry> findUpcomingExpiredEntries(Integer date);
-
-	List<ShareEntry> retrieveUserShareEntriesWithMatchCriterion(
-			SearchDocumentCriterion searchDocumentCriterion);
 
 	List<ShareEntry> findAllMyShareEntries(User owner, DocumentEntry entry);
 }

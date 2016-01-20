@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
-import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 
 public abstract class DomainAccessRule {
 	/**
@@ -45,11 +44,6 @@ public abstract class DomainAccessRule {
 	private String regexp;
 
 	public DomainAccessRule() {
-	}
-
-	public DomainAccessRule(DomainAccessRuleVo d) {
-		this.regexp = d.getRegexp();
-		this.persistenceId = d.getPersistenceId();
 	}
 
 	public abstract DomainAccessRuleType getDomainAccessRuleType();

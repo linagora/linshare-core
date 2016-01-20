@@ -36,7 +36,6 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Calendar;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.vo.UserVo;
 
 /**
  * log entry for the users
@@ -72,16 +71,6 @@ public class UserLogEntry extends LogEntry {
 		this.targetMail = "";
 		this.targetFirstname = "";
 		this.targetLastname = "";
-		this.expirationDate = null;
-	}
-
-
-	public UserLogEntry(UserVo userVo, LogAction logAction, String description) {
-		super(userVo, logAction, description);
-		this.targetMail = userVo.getMail();
-		this.targetFirstname = userVo.getFirstName();
-		this.targetLastname = userVo.getLastName();
-		this.targetDomain = userVo.getDomainIdentifier();
 		this.expirationDate = null;
 	}
 

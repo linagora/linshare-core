@@ -38,25 +38,23 @@ import java.util.Date;
 public class ThreadMember {
 
 	private long id;
-	
+
 	private boolean canUpload;
-	
+
 	private boolean admin;
-	
+
 	private Date creationDate;
-	
+
 	private Date modificationDate;
-	
+
 	private User user;
-	
+
 	private Thread thread;
-	
-		
+
 	public ThreadMember() {
 		super();
 	}
 
-	
 	public ThreadMember(boolean canUpload, boolean admin, User user,
 			Thread thread) {
 		super();
@@ -68,47 +66,46 @@ public class ThreadMember {
 		setModificationDate(new Date());
 	}
 
-
-	private void setId(long value) {
+	public void setId(long value) {
 		this.id = value;
 	}
-	
+
 	public long getId() {
 		return id;
 	}
-	
+
 	public void setCanUpload(boolean value) {
 		this.canUpload = value;
 	}
-	
+
 	public boolean getCanUpload() {
 		return canUpload;
 	}
-	
+
 	public void setAdmin(boolean value) {
 		this.admin = value;
 	}
-	
+
 	public boolean getAdmin() {
 		return admin;
 	}
-	
+
 	public void setCreationDate(Date value) {
 		this.creationDate = value;
 	}
-	
+
 	public Date getCreationDate() {
 		return creationDate;
 	}
-	
+
 	public void setModificationDate(Date value) {
 		this.modificationDate = value;
 	}
-	
+
 	public Date getModificationDate() {
 		return modificationDate;
 	}
-	
+
 	public Thread getThread() {
 		return thread;
 	}
@@ -124,5 +121,5 @@ public class ThreadMember {
 	public void setThread(Thread thread) {
 		this.thread = thread;
 	}
-	
+
 }

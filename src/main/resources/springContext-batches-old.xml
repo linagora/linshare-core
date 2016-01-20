@@ -24,7 +24,7 @@
 		<constructor-arg ref="documentEntryRepository" />
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="accountRepository" />
-		<constructor-arg ref="jackRabbitRepository" />
+		<constructor-arg ref="fileDataStore" />
 	</bean>
 
     <bean name="uploadRequestBatch" class="org.linagora.linshare.core.batches.impl.UploadRequestBatchImpl">
@@ -33,12 +33,6 @@
         <constructor-arg ref="notifierService" />
         <constructor-arg ref="uploadRequestService" />
         <constructor-arg ref="accountRepository" />
-    </bean>
-
-	<!-- Don't use that with Jackrabbit 1.4 !! -->
-	<!-- https://issues.apache.org/jira/browse/JCR-2492 -->
-    <bean name="jcrGarbageCollectionBatch" class="org.linagora.linshare.core.batches.impl.JcrGarbageCollectionBatchImpl">
-        <constructor-arg ref="jcrTemplate"/>
     </bean>
 
 </beans>

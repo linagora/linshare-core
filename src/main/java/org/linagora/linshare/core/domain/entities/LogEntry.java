@@ -38,7 +38,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.vo.UserVo;
 
 /**
  * Abstract class for the log entry. Extended as FileLogEntry, UserLogEntry,
@@ -83,23 +82,6 @@ public abstract class LogEntry implements Serializable {
 		this.actorLastname = null;
 		this.logAction = null;
 		this.description = null;
-	}
-
-	/**
-	 * Constructor for authentication process
-	 * 
-	 * @param actor
-	 * @param logAction
-	 * @param description
-	 */
-	public LogEntry(UserVo actor, LogAction logAction, String description) {
-		this.actorDomain = actor.getDomainIdentifier();
-		this.actorMail = actor.getMail();
-		this.actorFirstname = actor.getFirstName();
-		this.actorLastname = actor.getLastName();
-		this.logAction = logAction;
-		this.description = description;
-		this.actionDate = new GregorianCalendar();
 	}
 
 	public LogEntry(Account actor, LogAction logAction, String description) {

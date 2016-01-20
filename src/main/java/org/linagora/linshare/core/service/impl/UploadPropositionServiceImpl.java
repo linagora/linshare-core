@@ -34,12 +34,11 @@
 
 package org.linagora.linshare.core.service.impl;
 
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
@@ -231,11 +230,10 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 					&& expiryDateFunc.getDelegationPolicy().getStatus()) {
 				logger.debug("expiryDateFunc has a delegation policy");
 			}
-			@SuppressWarnings("deprecation")
-			Date expiryDate = DateUtils.add(new Date(),
-					expiryDateFunc.toCalendarValue(),
+			Calendar c = Calendar.getInstance();
+			c.add(expiryDateFunc.toCalendarValue(),
 					expiryDateFunc.getValue());
-			req.setExpiryDate(expiryDate);
+			req.setExpiryDate(c.getTime());
 		}
 
 		SizeUnitValueFunctionality maxDepositSizeFunc = functionalityReadOnlyService

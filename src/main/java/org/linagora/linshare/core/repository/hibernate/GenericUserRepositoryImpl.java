@@ -102,15 +102,13 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<U> findByDomain(String domainId) {
-		
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
 		criteria.add(Restrictions.eq("domain.identifier",domainId));
 		criteria.add(Restrictions.eq("destroyed", 0L));
-		return getHibernateTemplate().findByCriteria(criteria);
+		return findByCriteria(criteria);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<U> findByCriteria(AccountOccupationCriteriaBean accountCriteria) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
@@ -128,7 +126,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 			criteria.createAlias("domain", "domain");
 			criteria.add(Restrictions.like("domain.identifier", accountCriteria.getActorDomain()).ignoreCase());
 		}
-		return getHibernateTemplate().findByCriteria(criteria);
+		return findByCriteria(criteria);
 	}
 	
 	@SuppressWarnings("unchecked")

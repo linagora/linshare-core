@@ -43,12 +43,8 @@ public class BadDomainException extends BadCredentialsException {
 		super(msg, t);
 	}
 
-	public BadDomainException(String msg, Object extraInformation) {
-		super(msg, extraInformation);
-	}
-	
 	public BadDomainException(String msg) {
-        super(msg);
-    }
+		super(msg);
+	}
 
 }

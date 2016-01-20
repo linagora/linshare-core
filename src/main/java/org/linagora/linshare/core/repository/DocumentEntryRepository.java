@@ -37,7 +37,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DocumentEntryRepository extends
@@ -60,9 +59,6 @@ public interface DocumentEntryRepository extends
 	long getRelatedEntriesCount(DocumentEntry documentEntry);
 
 	List<String> findAllExpiredEntries();
-
-	List<DocumentEntry> retrieveUserDocumentEntriesWithMatchCriterion(
-			final SearchDocumentCriterion searchDocumentCriterion);
 
 	long getUsedSpace(Account owner) throws BusinessException;
 

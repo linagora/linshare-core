@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-	<bean id="cleanOutdatedUsersJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean id="cleanOutdatedUsersJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
 		<property name="jobDataAsMap">
@@ -19,12 +19,13 @@
 		</property>
 	</bean>
 
-    <bean id="cleanOutdatedUsersJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail" ref="cleanOutdatedUsersJob"/>
-        <property name="cronExpression" value="${job.users.cron.expression}"/>
-    </bean>
+	<bean id="cleanOutdatedUsersJobTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="cleanOutdatedUsersJob" />
+		<property name="cronExpression" value="${job.users.cron.expression}" />
+	</bean>
 
-	<bean id="computeDocumentMimeTypeBatchJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean id="computeDocumentMimeTypeBatchJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
 		<property name="jobDataAsMap">
@@ -37,13 +38,13 @@
 			</map>
 		</property>
 	</bean>
-	<bean id="computeDocumentMimeTypeBatchJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="computeDocumentMimeTypeBatchJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail" ref="computeDocumentMimeTypeBatchJob" />
 		<property name="cronExpression" value="${job.mimetype.cron.expression}" />
 	</bean>
 
 
-    <bean id="notifyOutdatedSharesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+    <bean id="notifyOutdatedSharesJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
         <property name="jobClass" value="org.linagora.linshare.core.job.quartz.NotifyOutdatedShares"/>
         <property name="jobDataAsMap">
             <map>
@@ -51,12 +52,12 @@
             </map>
         </property>
     </bean>
-    <bean id="notifyOutdatedSharesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+    <bean id="notifyOutdatedSharesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="notifyOutdatedSharesJob"/>
         <property name="cronExpression" value="${job.outdatedshares.cron.expression}"/>
     </bean>
 
-	<bean id="deleteMissingDocumentsBatchJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean id="deleteMissingDocumentsBatchJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
 		<property name="jobDataAsMap">
@@ -70,28 +71,13 @@
 			</map>
 		</property>
 	</bean>
-	<bean id="deleteMissingDocumentsBatchJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="deleteMissingDocumentsBatchJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail" ref="deleteMissingDocumentsBatchJob" />
 		<property name="cronExpression" value="${job.consistency.cron.expression}" />
 	</bean>
 
-	<!-- Don't use that with Jackrabbit 1.4 !! -->
-	<!-- https://issues.apache.org/jira/browse/JCR-2492 -->
-    <bean id="cleanJcrUnusedFilesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
-        <property name="jobClass" value="org.linagora.linshare.core.job.quartz.CleanJcrUnusedFiles"/>
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="batch" value-ref="jcrGarbageCollectionBatch"/>
-            </map>
-        </property>
-    </bean>
-    <bean id="cleanJcrUnusedFilesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail" ref="cleanJcrUnusedFilesJob"/>
-        <property name="cronExpression" value="${job.jcrgarbagecollector.cron.expression}"/>
-    </bean>
-
 	<!-- Jackrabbit keep alive -->
-	<bean id="jackRabbitKeepAliveJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean id="jackRabbitKeepAliveJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="org.linagora.linshare.core.job.quartz.JackRabbitKeepAlive" />
 		<property name="jobDataAsMap">
@@ -100,12 +86,12 @@
 			</map>
 		</property>
 	</bean>
-	<bean id="jackRabbitKeepAliveJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="jackRabbitKeepAliveJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail" ref="jackRabbitKeepAliveJob" />
 		<property name="cronExpression" value="${job.jackrabbit.keep.alive.cron.expression}" />
 	</bean>
 
-    <bean id="updateUploadRequestJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+    <bean id="updateUploadRequestJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
         <property name="jobClass" value="org.linagora.linshare.core.job.quartz.LinShareJobBean"/>
         <property name="jobDataAsMap">
             <map>
@@ -119,12 +105,12 @@
             </map>
         </property>
     </bean>
-    <bean id="updateUploadRequestJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+    <bean id="updateUploadRequestJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="updateUploadRequestJob"/>
         <property name="cronExpression" value="${job.uploadrequest.cron.expression}"/>
     </bean>
 
-	<bean id="notifyUndownloadedSharedDocumentsJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean id="notifyUndownloadedSharedDocumentsJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
 		<property name="jobDataAsMap">
@@ -134,13 +120,13 @@
 		</property>
 	</bean>
 
-	<bean id="nofifyUndownloadedSharedDocumentsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="nofifyUndownloadedSharedDocumentsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail" ref="notifyUndownloadedSharedDocumentsJob" />
 		<property name="cronExpression"
 			value="${job.shares.undownloaded.notification.cron.expression}" />
 	</bean>
 
-	<bean id="cleaningShareEntriesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean id="cleaningShareEntriesJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
 		<property name="jobDataAsMap">
@@ -160,7 +146,7 @@
 		</property>
 	</bean>
 
-	<bean id="cleaningShareEntriesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="cleaningShareEntriesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail" ref="cleaningShareEntriesJob" />
 		<property name="cronExpression"
 			value="${job.shares.cron.expression}" />
@@ -171,7 +157,6 @@
             <list>
                 <ref bean="cleanOutdatedUsersJobTrigger"/>
                 <ref bean="notifyOutdatedSharesJobTrigger"/>
-                <ref bean="cleanJcrUnusedFilesJobTrigger"/>
                 <ref bean="updateUploadRequestJobTrigger"/>
                 <ref bean="nofifyUndownloadedSharedDocumentsJobTrigger"/>
                 <ref bean="jackRabbitKeepAliveJobTrigger"/>

@@ -138,7 +138,7 @@ public class DatabaseAuthenticationProvider extends
 				userDetailsProvider.logAuthError(account, "Bad credentials.");
 				throw new BadCredentialsException(messages.getMessage(
 						"AbstractUserDetailsAuthenticationProvider.badCredentials",
-						"Bad credentials"), account);
+						"Bad credentials"));
 			}
 
 			List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(account);

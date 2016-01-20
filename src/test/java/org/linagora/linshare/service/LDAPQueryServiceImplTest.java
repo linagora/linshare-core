@@ -46,10 +46,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.entities.UserLdapPattern;
-import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.LDAPQueryService;
 import org.slf4j.Logger;
@@ -62,7 +62,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration(locations = { "classpath:springContext-test.xml",
 		"classpath:springContext-ldap.xml", 
-		"classpath:springContext-startopendj.xml"
+		"classpath:springContext-start-embedded-ldap.xml"
 })
 public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 
@@ -99,6 +99,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		
 		ldapConn = new LdapConnection("testldap", "ldap://localhost:33389", "anonymous");
 		baseDn = "ou=People,dc=linshare,dc=org";
+		baseDn = "dc=linshare,dc=org";
 		
 		// auto complete command using first name, last name or mail attributes
 		String auto_complete_command_on_all_attributes = "ldap.search(domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*)(|(mail=\" + pattern + \")(sn=\" + pattern + \")(givenName=\" + pattern + \")))\");";
@@ -245,7 +246,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		logger.info("Result count : " + String.valueOf(user.size()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void testCompleteUser() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -256,7 +257,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		logger.info("Result count : " + String.valueOf(users.size()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void testGetUser() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -280,4 +281,5 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		Assert.assertNull(user);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+
 }

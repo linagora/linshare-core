@@ -36,7 +36,6 @@ package org.linagora.linshare.core.domain.entities;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
-import org.linagora.linshare.core.domain.vo.TopDomainVo;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
 
 public class TopDomain extends AbstractDomain {
@@ -56,10 +55,6 @@ public class TopDomain extends AbstractDomain {
 
 	public TopDomain(String identifier, String label) {
 		this(identifier,label,null);
-	}
-
-	public TopDomain(TopDomainVo topDomain) {
-		super(topDomain);
 	}
 
 	public TopDomain(DomainDto domainDto, AbstractDomain parent) {

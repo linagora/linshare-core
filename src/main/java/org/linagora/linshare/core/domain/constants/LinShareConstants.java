@@ -36,11 +36,6 @@ package org.linagora.linshare.core.domain.constants;
 public class LinShareConstants {
 
 	/**
-	 * Default prefix to use for the db tables
-	 */
-	public static final String DEFAULT_DBTABLE_PREFIX = "linshare_";
-
-	/**
 	 * Default application root domain identifier
 	 */
 	public static final String rootDomainIdentifier = "LinShareRootDomain";

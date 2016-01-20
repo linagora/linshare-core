@@ -41,7 +41,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
-import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.repository.InternalRepository;
@@ -80,11 +79,6 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	@Override
 	public User loadUserDetails(String uuid) throws BusinessException {
 		return userService.findByLsUuid(uuid);
-	}
-
-	@Override
-	public UserVo loadUserVoDetails(String uuid) throws BusinessException {
-		return new UserVo(userService.findByLsUuid(uuid));
 	}
 
 	@Override
