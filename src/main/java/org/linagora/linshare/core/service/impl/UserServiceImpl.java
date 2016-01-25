@@ -1004,29 +1004,28 @@ public class UserServiceImpl implements UserService {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"Role not authorized.");
 		}
-		logger.info("finding the user by its currentmail ...");
-		User user = userRepository.findByMail(currentEmail);
-		if (user == null) {
-			logger.warn("There is no user matching the email " + currentEmail);
-			logger.info("Finding a user with the new Email ...");
-			User userWithNewEmail = userRepository.findByMail(newEmail);
-			if (userWithNewEmail == null) {
-				logger.error("No user matches the both given emails ("
-						+ currentEmail + ", " + newEmail + ")");
-			} else {
-				logger.debug(
-						"Your are trying to update a user's email which is up to date : "
-								+ newEmail);
-			}
+		logger.info("finding if the new Email does match a user ...");
+		User userWithNewEmail = userRepository.findByMail(newEmail);
+		if (userWithNewEmail != null) {
+			logger.warn("A user has been found with the email " + newEmail);
+			logger.warn("The update will not be processed ...");
 			return false;
 		}
-		logger.info("The user " + user.getAccountReprentation() + "has been found.");
+		logger.info("finding if the current Email does match a user ...");
+		User userWithOldEmail = userRepository.findByMail(currentEmail);
+		if (userWithOldEmail == null) {
+			logger.warn("There is no user matching the email " + currentEmail);
+			return false;
+		}
+
+		logger.info("The user " + userWithOldEmail.getAccountReprentation()
+				+ "has been found.");
 
 		logger.info("changing his current email: " + currentEmail
 				+ " to the new one: " + newEmail);
-		user.setMail(newEmail);
+		userWithOldEmail.setMail(newEmail);
 		logger.info("updating the tab users ...");
-		userRepository.update(user);
+		userRepository.update(userWithOldEmail);
 		return true;
 	}
 
