@@ -82,7 +82,6 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 		excludesForUsers.add(FunctionalityNames.SHARE_NOTIFICATION_BEFORE_EXPIRATION.toString());
 		excludesForUsers.add(FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION.toString());
 		excludesForUsers.add(FunctionalityNames.DOMAIN__MAIL.toString());
-		excludesForUsers.add(FunctionalityNames.ANONYMOUS_URL.toString());
 		excludesForUsers.add(FunctionalityNames.ANTIVIRUS.toString());
 		excludesForUsers.add(FunctionalityNames.QUOTA_GLOBAL.toString());
 		excludesForUsers.add(FunctionalityNames.QUOTA_USER.toString());
