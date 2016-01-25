@@ -52,7 +52,7 @@ public interface DocumentRestService {
 			String metaData, Boolean async, MultipartBody body)
 			throws BusinessException;
 
-	DocumentDto find(String uuid) throws BusinessException;
+	DocumentDto find(String uuid, boolean withShares) throws BusinessException;
 
 	void head(String uuid) throws BusinessException;
 

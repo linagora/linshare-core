@@ -34,12 +34,14 @@
 package org.linagora.linshare.core.facade.webservice.user.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.webservice.user.task.context.DocumentTaskContext;
 
 import com.google.common.base.Function;
@@ -91,6 +93,9 @@ public class DocumentDto {
 
 	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 	protected AsyncTaskDto async;
+
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	protected List<ShareDto> shares;
 
 	public DocumentDto(AsyncTaskDto asyncTask, DocumentTaskContext documentTaskContext) {
 		async = asyncTask;
@@ -185,6 +190,14 @@ public class DocumentDto {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	public List<ShareDto> getShares() {
+		return shares;
+	}
+
+	public void setShares(List<ShareDto> shares) {
+		this.shares = shares;
 	}
 
 	public Date getExpirationDate() {

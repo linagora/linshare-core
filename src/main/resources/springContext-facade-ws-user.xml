@@ -12,6 +12,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="mimePolicyService" />
 		<constructor-arg ref="shareService" />
+		<constructor-arg ref="entryBusinessService" />
 		<constructor-arg ref="signatureService" />
 	</bean>
 	<bean id="wsLogEntryFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.LogEntryFacadeImpl">

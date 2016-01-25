@@ -74,7 +74,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@GET
 	@Override
 	public Response getDocumentStream(@PathParam("uuid") String uuid) throws BusinessException {
-		DocumentDto documentDto = webServiceDocumentFacade.find(uuid);
+		DocumentDto documentDto = webServiceDocumentFacade.find(uuid, false);
 		InputStream documentStream = webServiceDocumentFacade.getDocumentStream(uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName(),
 				documentDto.getType(), documentDto.getSize());
@@ -85,7 +85,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@GET
 	@Override
 	public Response getThumbnailStream(@PathParam("uuid") String docUuid) throws BusinessException {
-		DocumentDto documentDto = webServiceDocumentFacade.find(docUuid);
+		DocumentDto documentDto = webServiceDocumentFacade.find(docUuid, false);
 		InputStream documentStream = webServiceDocumentFacade.getThumbnailStream(docUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName() + "_thumb.png",
 				"image/png");

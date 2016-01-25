@@ -46,7 +46,7 @@ public interface DocumentFacade extends GenericFacade {
 
 	List<DocumentDto> findAll() throws BusinessException;
 
-	DocumentDto find(String uuid) throws BusinessException;
+	DocumentDto find(String uuid, boolean withShares) throws BusinessException;
 
 	DocumentDto addDocumentXop(DocumentAttachement doca)
 			throws BusinessException;

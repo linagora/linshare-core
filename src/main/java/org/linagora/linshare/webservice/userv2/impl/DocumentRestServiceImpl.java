@@ -184,9 +184,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public DocumentDto find(
-			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
+			@ApiParam(value = "If you want document shares too.", required = false) @QueryParam("withShares") @DefaultValue("false") boolean withShares)
 			throws BusinessException {
-		return documentFacade.find(uuid);
+		return documentFacade.find(uuid, withShares);
 	}
 
 	@Path("/{uuid}")
@@ -201,7 +202,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	public void head(
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		documentFacade.find(uuid);
+		documentFacade.find(uuid, false);
 	}
 
 	@Path("/")
@@ -320,7 +321,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@Override
 	public Response download(@PathParam("uuid") String uuid)
 			throws BusinessException {
-		DocumentDto documentDto = documentFacade.find(uuid);
+		DocumentDto documentDto = documentFacade.find(uuid, false);
 		InputStream documentStream = documentFacade.getDocumentStream(uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(documentStream,
@@ -341,7 +342,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	public Response thumbnail(@PathParam("uuid") String documentUuid,
 			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
-		DocumentDto documentDto = documentFacade.find(documentUuid);
+		DocumentDto documentDto = documentFacade.find(documentUuid, false);
 		InputStream documentStream = documentFacade.getThumbnailStream(documentUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getThumbnailResponseBuilder(documentStream, documentDto.getName() + "_thumb.png", base64);

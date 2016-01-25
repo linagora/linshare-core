@@ -33,10 +33,12 @@
  */
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
@@ -50,7 +52,10 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement(name = "Share")
 @ApiModel(value = "Share", description = "A document can be shared between users.")
-public class ShareDto {
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+public class ShareDto implements Serializable, Comparable<ShareDto> {
+
+	private static final long serialVersionUID = -7270170736406800055L;
 
 	/**
 	 * Share
@@ -103,9 +108,6 @@ public class ShareDto {
 	@ApiModelProperty(value = "hasThumbnail")
 	protected Boolean hasThumbnail;
 
-	/**
-	 * ???
-	 */
 	@ApiModelProperty(value = "Message")
 	protected String message;
 
@@ -114,7 +116,7 @@ public class ShareDto {
 	 * 
 	 * @param entry
 	 */
-	protected ShareDto(Entry entry, boolean receivedShare) {
+	protected ShareDto(Entry entry, boolean receivedShare, boolean withDocument) {
 		this.uuid = entry.getUuid();
 		this.name = entry.getName();
 		this.creationDate = entry.getCreationDate().getTime();
@@ -127,19 +129,25 @@ public class ShareDto {
 			this.downloaded = sa.getDownloaded();
 			if (receivedShare) {
 				this.sender = UserDto.getSimple((User) entry.getEntryOwner());
-				this.size = sa.getDocumentEntry().getSize();
-				this.type = sa.getDocumentEntry().getType();
-				this.ciphered = sa.getDocumentEntry().getCiphered();
-				this.hasThumbnail = sa.getDocumentEntry().isHasThumbnail();
+				if (withDocument) {
+					this.size = sa.getDocumentEntry().getSize();
+					this.type = sa.getDocumentEntry().getType();
+					this.ciphered = sa.getDocumentEntry().getCiphered();
+					this.hasThumbnail = sa.getDocumentEntry().isHasThumbnail();
+				}
 			} else {
 				// sent share.
-				this.document = new DocumentDto(((ShareEntry) entry).getDocumentEntry());
+				if (withDocument) {
+					this.document = new DocumentDto(((ShareEntry) entry).getDocumentEntry());
+				}
 				this.recipient = new GenericUserDto(sa.getRecipient());
 			}
 		} else if (entry.getEntryType().equals(EntryType.ANONYMOUS_SHARE)) {
 			AnonymousShareEntry a = (AnonymousShareEntry) entry;
 			this.downloaded = a.getDownloaded();
-			this.document = new DocumentDto(a.getDocumentEntry());
+			if (withDocument) {
+				this.document = new DocumentDto(a.getDocumentEntry());
+			}
 			this.recipient = new GenericUserDto(a.getAnonymousUrl().getContact());
 		}
 	}
@@ -149,11 +157,15 @@ public class ShareDto {
 	}
 
 	public static ShareDto getReceivedShare(Entry entry) {
-		return new ShareDto(entry, true);
+		return new ShareDto(entry, true, true);
+	}
+
+	public static ShareDto getSentShare(Entry entry, boolean withDocument) {
+		return new ShareDto(entry, false, withDocument);
 	}
 
 	public static ShareDto getSentShare(Entry entry) {
-		return new ShareDto(entry, false);
+		return new ShareDto(entry, false, true);
 	}
 
 	public String getUuid() {
@@ -274,6 +286,11 @@ public class ShareDto {
 
 	public void setHasThumbnail(Boolean hasThumbnail) {
 		this.hasThumbnail = hasThumbnail;
+	}
+
+	@Override
+	public int compareTo(ShareDto o) {
+		return this.modificationDate.compareTo(o.getModificationDate());
 	}
 
 	/*

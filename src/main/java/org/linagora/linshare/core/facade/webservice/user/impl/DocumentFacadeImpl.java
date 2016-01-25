@@ -46,13 +46,17 @@ import javax.activation.DataHandler;
 
 import org.apache.commons.lang.Validate;
 import org.apache.cxf.helpers.IOUtils;
+import org.linagora.linshare.core.business.service.EntryBusinessService;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MimeType;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
 import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
@@ -63,6 +67,8 @@ import org.linagora.linshare.core.service.SignatureService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 		DocumentFacade {
@@ -75,16 +81,20 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 
 	private final SignatureService signatureService;
 
+	private final EntryBusinessService entryBusinessService;
+
 	public DocumentFacadeImpl(final DocumentEntryService documentEntryService,
 			final AccountService accountService,
 			final MimePolicyService mimePolicyService,
 			final ShareService shareService,
+			final EntryBusinessService entryBusinessService,
 			final SignatureService signatureService) {
 		super(accountService);
 		this.documentEntryService = documentEntryService;
 		this.mimePolicyService = mimePolicyService;
 		this.shareService = shareService;
 		this.signatureService = signatureService;
+		this.entryBusinessService = entryBusinessService;
 	}
 
 	@Override
@@ -95,11 +105,23 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public DocumentDto find(String uuid) throws BusinessException {
+	public DocumentDto find(String uuid, boolean withShares) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing required document uuid");
 		User actor = checkAuthentication();
-		DocumentEntry doc = documentEntryService.find(actor, actor, uuid);
-		return new DocumentDto(doc);
+		DocumentEntry entry = documentEntryService.find(actor, actor, uuid);
+		DocumentDto documentDto = new DocumentDto(entry);
+		List<ShareDto> shares = Lists.newArrayList();
+		if (withShares) {
+			for (AnonymousShareEntry share: entryBusinessService.findAllMyAnonymousShareEntries(actor, entry)) {
+				shares.add(ShareDto.getSentShare(share, false));
+			}
+			for (ShareEntry share: entryBusinessService.findAllMyShareEntries(actor, entry)) {
+				shares.add(ShareDto.getSentShare(share, false));
+			}
+		}
+		Collections.sort(shares);
+		documentDto.setShares(shares);
+		return documentDto;
 	}
 
 	@Override
