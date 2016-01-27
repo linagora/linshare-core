@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.linagora</groupId>
-	<artifactId>linshare</artifactId>
+	<groupId>org.linagora.linshare</groupId>
+	<artifactId>linshare-core</artifactId>
     <version>1.5.11-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>LinShare, Secure File Sharing</name>
@@ -820,7 +820,7 @@
 			</plugins>
 		</pluginManagement>
 
-		<finalName>linshare</finalName>
+		<finalName>linshare-core</finalName>
 
 		<plugins>
 			<plugin>
@@ -922,7 +922,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.0.2</version>
+				<version>2.6</version>
 				<configuration>
 					<archive>
 						<manifest>
@@ -930,6 +930,31 @@
 						</manifest>
 					</archive>
 				</configuration>
+				<executions>
+					<execution>
+						<id>default-war</id>
+						<phase>package</phase>
+						<goals>
+							<goal>war</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>war-with-sso</id>
+						<phase>package</phase>
+						<goals>
+							<goal>war</goal>
+						</goals>
+						<configuration>
+							<classifier>sso</classifier>
+							<webResources>
+								<resource>
+									<!-- this is relative to the pom.xml directory -->
+									<directory>src/main/resources-sso</directory>
+								</resource>
+							</webResources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
@@ -1100,7 +1125,7 @@
 		<profile>
 			<id>dev</id>
 			<build>
-				<finalName>linshare-${project.version}-${maven.build.timestamp}-${sources.version}</finalName>
+				<finalName>linshare-core-${project.version}-${maven.build.timestamp}-${sources.version}</finalName>
 			</build>
 			<properties>
 				<project.version>${project.version}-${maven.build.timestamp}-${sources.version}</project.version>
