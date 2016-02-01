@@ -34,10 +34,13 @@
 
 package org.linagora.linshare.core.facade.webservice.user.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.entities.MailingList;
 
 import com.google.common.base.Function;
 
+@XmlRootElement(name = "ListAutoCompleteResult")
 public class ListAutoCompleteResultDto extends AutoCompleteResultDto {
 
 	private String ownerLastName;

@@ -107,18 +107,20 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public void delete(GuestDto guestDto) throws BusinessException {
+	public GuestDto delete(GuestDto guestDto) throws BusinessException {
 		Validate.notNull(guestDto, "guest dto is required");
 		Validate.notEmpty(guestDto.getUuid(), "guest uuid is required");
 		User actor = checkAuthentication();
-		guestService.delete(actor, actor, guestDto.getUuid());
+		Guest guest = guestService.delete(actor, actor, guestDto.getUuid());
+		return GuestDto.getSimple(guest);
 	}
 
 	@Override
-	public void delete(String uuid) throws BusinessException {
+	public GuestDto delete(String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "guest uuid is required");
 		User actor = checkAuthentication();
-		guestService.delete(actor, actor, uuid);
+		Guest guest = guestService.delete(actor, actor, uuid);
+		return GuestDto.getSimple(guest);
 	}
 
 	private List<GuestDto> toGuestDto(List<Guest> col) {

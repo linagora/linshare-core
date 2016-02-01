@@ -52,7 +52,9 @@ public interface ReceivedShareRestService {
 
 	Response thumbnail(String receivedShareUuid) throws BusinessException;
 
-	void delete(String receivedShareUuid) throws BusinessException;
+	ShareDto delete(String receivedShareUuid) throws BusinessException;
+
+	ShareDto delete(ShareDto shareDto) throws BusinessException;
 
 	DocumentDto copy(String shareEntryUuid) throws BusinessException;
 

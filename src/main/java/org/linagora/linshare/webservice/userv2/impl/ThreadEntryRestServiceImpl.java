@@ -223,34 +223,34 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a thread entry.")
+	@ApiOperation(value = "Delete a thread entry.", response = ThreadEntryDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Thread entry or thread entry not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public void delete(
+	public ThreadEntryDto delete(
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry to delete.", required = true) ThreadEntryDto threadEntry)
 					throws BusinessException {
-		threadEntryFacade.delete(threadUuid, threadEntry);
+		return threadEntryFacade.delete(threadUuid, threadEntry);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a thread entry.")
+	@ApiOperation(value = "Delete a thread entry.", response = ThreadEntryDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Thread entry or thread entry not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public void delete(
+	public ThreadEntryDto delete(
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid to delete.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		threadEntryFacade.delete(threadUuid, uuid);
+		return threadEntryFacade.delete(threadUuid, uuid);
 	}
 
 	@Path("/{uuid}/download")

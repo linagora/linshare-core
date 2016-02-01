@@ -423,7 +423,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 	}
 
 	@Override
-	public void delete(Account actor, Account owner, String entryUuid) throws BusinessException {
+	public Entry delete(Account actor, Account owner, String entryUuid) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(entryUuid);
 		// TODO : To be improved.
@@ -442,5 +442,6 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			logger.error(msg);
 			throw new BusinessException(BusinessErrorCode.SHARE_NOT_FOUND, msg);
 		}
+		return entry;
 	}
 }

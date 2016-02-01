@@ -60,7 +60,9 @@ public interface DocumentRestService {
 
 	DocumentDto update(String uuid, DocumentDto documentDto) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	DocumentDto delete(String uuid) throws BusinessException;
+
+	DocumentDto delete(DocumentDto documentDto) throws BusinessException;
 
 	Response download(String uuid) throws BusinessException;
 

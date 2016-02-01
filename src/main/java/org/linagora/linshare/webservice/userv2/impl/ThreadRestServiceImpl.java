@@ -124,28 +124,32 @@ public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestS
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a thread.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Thread or thread not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@ApiOperation(value = "Delete a thread.", response = ThreadDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "Owner or thread not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
 	@Override
-	public void delete(@ApiParam(value = "Thread to delete.", required = true) ThreadDto thread)
-			throws BusinessException {
-		threadFacade.delete(thread);
+	public ThreadDto delete(
+			@ApiParam(value = "Thread to delete.", required = true) ThreadDto thread)
+					throws BusinessException {
+		return threadFacade.delete(thread);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a thread.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Thread or thread not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@ApiOperation(value = "Delete a thread.", response = ThreadDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "Owner or thread not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
 	@Override
-	public void delete(@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
-			throws BusinessException {
-		threadFacade.delete(uuid);
+	public ThreadDto delete(
+			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
+					throws BusinessException {
+		return threadFacade.delete(uuid);
 	}
 
 	@Path("/{uuid}")

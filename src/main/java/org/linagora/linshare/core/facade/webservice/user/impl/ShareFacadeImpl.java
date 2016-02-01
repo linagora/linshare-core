@@ -220,10 +220,17 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public void delete(String shareUuid) throws BusinessException {
+	public ShareDto delete(String shareUuid, Boolean received) throws BusinessException {
 		Validate.notEmpty(shareUuid, "Missing required share uuid");
 		Account actor = checkAuthentication();
-		shareService.delete(actor, actor, shareUuid);
+		Entry entry = shareService.delete(actor, actor, shareUuid);
+		ShareDto dto;
+		if (received) {
+			dto = ShareDto.getReceivedShare(entry);
+		} else {
+			dto = ShareDto.getSentShare(entry);
+		}
+		return dto;
 	}
 
 	@Override

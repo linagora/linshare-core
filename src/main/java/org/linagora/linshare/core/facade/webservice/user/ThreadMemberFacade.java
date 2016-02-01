@@ -51,6 +51,6 @@ public interface ThreadMemberFacade extends GenericFacade {
 	ThreadMemberDto update(String threadUuid, ThreadMemberDto threadMember)
 			throws BusinessException;
 
-	void delete(String threadUuid, String userUuid)
+	ThreadMemberDto delete(String threadUuid, String userUuid)
 			throws BusinessException;
 }

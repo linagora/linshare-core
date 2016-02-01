@@ -82,6 +82,7 @@ public interface ShareRestService {
 
 	Set<ShareDto> create(ShareCreationDto createDto) throws BusinessException;
 
-	void delete(String shareUuid) throws BusinessException;
+	ShareDto delete(String shareUuid) throws BusinessException;
 
+	ShareDto delete(ShareDto shareDto) throws BusinessException;
 }

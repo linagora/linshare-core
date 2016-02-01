@@ -49,6 +49,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
@@ -77,10 +78,9 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 	@Path("/")
 	@GET
 	@ApiOperation(value = "Find all connected user received shares.", response = ShareDto.class, responseContainer = "List")
-	@ApiResponses({
-		@ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
-		@ApiResponse(code = 404, message = "Received shares not found."),
-		@ApiResponse(code = 500, message = "Internal server error."), })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+			@ApiResponse(code = 404, message = "Received shares not found."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<ShareDto> getReceivedShares() throws BusinessException {
@@ -89,8 +89,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 
 	@Path("/{uuid}")
 	@GET
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
 			@ApiResponse(code = 404, message = "Received share not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
@@ -99,7 +98,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 	@Override
 	public ShareDto getReceivedShare(
 			@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid)
-			throws BusinessException {
+					throws BusinessException {
 		return shareFacade.getReceivedShare(receivedShareUuid);
 	}
 
@@ -119,44 +118,50 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 	@Path("/{uuid}/thumbnail")
 	@GET
 	@ApiOperation(value = "Download the thumbnail of a file.", response = Response.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
 			@ApiResponse(code = 404, message = "Received share not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public Response thumbnail(@PathParam("uuid") String receivedShareUuid)
-			throws BusinessException {
-		ShareDto receivedShareDto = shareFacade
-				.getReceivedShare(receivedShareUuid);
-		InputStream receivedShareStream = shareFacade
-				.getThumbnailStream(receivedShareUuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getDocumentResponseBuilder(receivedShareStream,
-						receivedShareDto.getName() + "_thumb.png", "image/png",
-						receivedShareDto.getSize());
+	public Response thumbnail(@PathParam("uuid") String receivedShareUuid) throws BusinessException {
+		ShareDto receivedShareDto = shareFacade.getReceivedShare(receivedShareUuid);
+		InputStream receivedShareStream = shareFacade.getThumbnailStream(receivedShareUuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(receivedShareStream,
+				receivedShareDto.getName() + "_thumb.png", "image/png", receivedShareDto.getSize());
 		return response.build();
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a received share.")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+	@ApiOperation(value = "Delete a received share.", response = ShareDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
 			@ApiResponse(code = 404, message = "Received share not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public void delete(
+	public ShareDto delete(
 			@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid)
+					throws BusinessException {
+		return shareFacade.delete(receivedShareUuid, true);
+	}
+
+	@Path("/")
+	@DELETE
+	@ApiOperation(value = "Delete a received share.", response = ShareDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+			@ApiResponse(code = 404, message = "Received share not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public ShareDto delete(@ApiParam(value = "The received share to delete.", required = true) ShareDto shareDto)
 			throws BusinessException {
-		shareFacade.delete(receivedShareUuid);
+		Validate.notNull(shareDto, "Share dto must be set.");
+		return shareFacade.delete(shareDto.getUuid(), true);
 	}
 
 	@Path("/copy/{uuid}")
 	@POST
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
 			@ApiResponse(code = 404, message = "Received share not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
@@ -164,28 +169,25 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 	@Override
 	public DocumentDto copy(
 			@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String shareEntryUuid)
-			throws BusinessException {
+					throws BusinessException {
 		return shareFacade.copy(shareEntryUuid);
 	}
 
 	@Path("/{uuid}/download")
 	@GET
 	@ApiOperation(value = "Download a received share.", response = Response.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
 			@ApiResponse(code = 404, message = "Received share not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public Response download(
 			@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String uuid)
-			throws BusinessException {
+					throws BusinessException {
 		ShareDto receivedShareDto = shareFacade.getReceivedShare(uuid);
 		InputStream receivedShareStream = shareFacade.getDocumentStream(uuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getDocumentResponseBuilder(receivedShareStream,
-						receivedShareDto.getName(), receivedShareDto.getType(),
-						receivedShareDto.getSize());
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(receivedShareStream,
+				receivedShareDto.getName(), receivedShareDto.getType(), receivedShareDto.getSize());
 		return response.build();
 	}
 }

@@ -47,6 +47,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
@@ -146,6 +147,7 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	public MailingListDto delete(
 			@ApiParam(value = "The mailing list to delete.", required = true) MailingListDto dto)
 					throws BusinessException {
+		Validate.notNull(dto,  "Mailing list dto must be set.");
 		return mailingListFacade.delete(null, dto.getUuid());
 	}
 

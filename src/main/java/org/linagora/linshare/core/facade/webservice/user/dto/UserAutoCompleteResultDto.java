@@ -34,10 +34,13 @@
 
 package org.linagora.linshare.core.facade.webservice.user.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 import com.google.common.base.Function;
 
+@XmlRootElement(name = "UserAutoCompleteResult")
 public class UserAutoCompleteResultDto extends AutoCompleteResultDto {
 
 	private String firstName;

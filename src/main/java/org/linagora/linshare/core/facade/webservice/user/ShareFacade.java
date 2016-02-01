@@ -67,7 +67,7 @@ public interface ShareFacade extends GenericFacade {
 
 	Set<ShareDto> create(ShareCreationDto createDto);
 
-	void delete(String shareUuid) throws BusinessException;
+	ShareDto delete(String shareUuid, Boolean received) throws BusinessException;
 
 	DocumentDto copy(String shareEntryUuid) throws BusinessException;
 }

@@ -40,7 +40,6 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -57,8 +56,6 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ThreadService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> implements ThreadService {
 
@@ -250,7 +247,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public void deleteMember(Account actor, Account owner, String threadUuid,
+	public ThreadMember deleteMember(Account actor, Account owner, String threadUuid,
 			String userUuid) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(userUuid);
@@ -267,6 +264,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		logEntryService.create(new ThreadLogEntry(owner, member,
 				LogAction.THREAD_REMOVE_MEMBER,
 				"Deleting a member in a thread."));
+		return member;
 	}
 
 	@Override

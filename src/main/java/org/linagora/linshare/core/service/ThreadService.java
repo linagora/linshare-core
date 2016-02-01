@@ -76,7 +76,7 @@ public interface ThreadService {
 
 	ThreadMember updateMember(Account actor, Account owner, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException;
 
-	void deleteMember(Account actor, Account owner, String threadUuid, String memberUuid) throws BusinessException;
+	ThreadMember deleteMember(Account actor, Account owner, String threadUuid, String memberUuid) throws BusinessException;
 	
 	void deleteAllMembers(Account actor, Thread thread) throws BusinessException;
 

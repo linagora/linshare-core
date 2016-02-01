@@ -136,27 +136,31 @@ public class GuestRestServiceImpl implements GuestRestService {
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a guest.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to delete."),
+	@ApiOperation(value = "Delete a guest.", response = GuestDto.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "No permission to delete."),
 			@ApiResponse(code = 404, message = "Guest not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public void delete(@ApiParam(value = "Guest to delete.", required = true) GuestDto guest) throws BusinessException {
-		guestFacade.delete(guest);
+	public GuestDto delete(
+			@ApiParam(value = "Guest to delete.", required = true) GuestDto guest)
+			throws BusinessException {
+		return guestFacade.delete(guest);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a guest.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to delete."),
+	@ApiOperation(value = "Delete a guest.", response = GuestDto.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "No permission to delete."),
 			@ApiResponse(code = 404, message = "Guest not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public void delete(@ApiParam(value = "Guest's uuid to delete.", required = true) @PathParam("uuid") String uuid)
+	public GuestDto delete(
+			@ApiParam(value = "Guest's uuid to delete.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		guestFacade.delete(uuid);
+		return guestFacade.delete(uuid);
 	}
-
 }

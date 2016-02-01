@@ -52,6 +52,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
@@ -134,7 +135,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a share.")
+	@ApiOperation(value = "Create a share.", response = ShareDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Owner not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
@@ -146,15 +147,30 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a share document.")
+	@ApiOperation(value = "Delete a share document.", response = ShareDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Share not found."),
 			@ApiResponse(code = 400, message = "Bad request: missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public void delete(
+	public ShareDto delete(
 			@ApiParam(value = "Share's to delete uuid.", required = true) @PathParam("uuid") String shareUuid)
 					throws BusinessException {
-		webServiceShareFacade.delete(shareUuid);
+		return webServiceShareFacade.delete(shareUuid, false);
+	}
+
+	@Path("/")
+	@DELETE
+	@ApiOperation(value = "Delete a share document.", response = ShareDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Share not found."),
+			@ApiResponse(code = 400, message = "Bad request: missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public ShareDto delete(
+			@ApiParam(value = "Share's to delete.", required = true) ShareDto shareDto)
+					throws BusinessException {
+		Validate.notNull(shareDto, "Share dto must be set.");
+		return webServiceShareFacade.delete(shareDto.getUuid(), false);
 	}
 }

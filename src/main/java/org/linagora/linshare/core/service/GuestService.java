@@ -106,9 +106,10 @@ public interface GuestService {
 	 *            for who triggered the action
 	 * @param lsUuid
 	 *            guest lsUuid
+	 * @return the deleted object
 	 * @throws BusinessException
 	 */
-	void delete(Account actor, User owner, String lsUuid) throws BusinessException;
+	Guest delete(Account actor, User owner, String lsUuid) throws BusinessException;
 
 	/**
 	 * Reset guest password

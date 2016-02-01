@@ -289,7 +289,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public void delete(Account actor, User owner, String lsUuid)
+	public Guest delete(Account actor, User owner, String lsUuid)
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(lsUuid);
@@ -299,6 +299,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_DELETE, "Deleting a guest", original);
 		LogEntryService.create(userLogEntry);
 		guestBusinessService.delete(original);
+		return original;
 	}
 
 	@Override

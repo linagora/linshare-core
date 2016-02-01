@@ -83,8 +83,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/documents")
 @Api(value = "/rest/user/documents", basePath = "/rest/user/", description = "Documents service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
-public class DocumentRestServiceImpl extends WebserviceBase implements
-		DocumentRestService {
+public class DocumentRestServiceImpl extends WebserviceBase implements DocumentRestService {
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
 
@@ -96,7 +95,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 
 	private org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor;
 
-	public DocumentRestServiceImpl(DocumentFacade documentFacade,
+	public DocumentRestServiceImpl(
+			DocumentFacade documentFacade,
 			DocumentAsyncFacade documentAsyncFacade,
 			ThreadPoolTaskExecutor taskExecutor,
 			AsyncTaskFacade asyncTaskFacade) {
@@ -145,9 +145,12 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			AccountDto actorDto = documentFacade.getAuthenticatedAccountDto();
 			AsyncTaskDto asyncTask = null;
 			try {
-				DocumentTaskContext documentTaskContext = new DocumentTaskContext(actorDto, actorDto.getUuid(), tempFile, fileName, metaData, description);
-				asyncTask = asyncTaskFacade.create(tempFile.length(), transfertDuration, fileName, null, AsyncTaskType.DOCUMENT_UPLOAD);
-				DocumentUploadAsyncTask task = new DocumentUploadAsyncTask(documentAsyncFacade, documentTaskContext, asyncTask);
+				DocumentTaskContext documentTaskContext = new DocumentTaskContext(actorDto, actorDto.getUuid(),
+						tempFile, fileName, metaData, description);
+				asyncTask = asyncTaskFacade.create(tempFile.length(), transfertDuration, fileName, null,
+						AsyncTaskType.DOCUMENT_UPLOAD);
+				DocumentUploadAsyncTask task = new DocumentUploadAsyncTask(documentAsyncFacade, documentTaskContext,
+						asyncTask);
 				taskExecutor.execute(task);
 				return new DocumentDto(asyncTask, documentTaskContext);
 			} catch (Exception e) {
@@ -161,12 +164,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			try {
 				logger.debug("Async mode is not used");
 				if (theSignatureFile != null) {
-					return documentFacade.createWithSignature(tempFile,
-							fileName, description, theSignatureFile,
+					return documentFacade.createWithSignature(tempFile, fileName, description, theSignatureFile,
 							signatureFileName, x509certificate);
 				}
-				return documentFacade.create(tempFile, fileName, description,
-						metaData);
+				return documentFacade.create(tempFile, fileName, description, metaData);
 			} finally {
 				deleteTempFile(tempFile);
 			}
@@ -183,6 +184,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
+
 	public DocumentDto find(
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "If you want document shares too.", required = false) @QueryParam("withShares") @DefaultValue("false") boolean withShares)
@@ -230,27 +232,38 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public DocumentDto update(
-			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "The document dto.", required = true) DocumentDto documentDto)
-			throws BusinessException {
+	public DocumentDto update(@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
+			@ApiParam(value = "The document dto.", required = true) DocumentDto documentDto) throws BusinessException {
 		return documentFacade.update(uuid, documentDto);
 	}
 
 	@DELETE
 	@Path("/{uuid}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Delete a document.")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiOperation(value = "Delete a document.", response = DocumentDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public void delete(
-			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
+	public DocumentDto delete(@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		documentFacade.delete(uuid);
+		return documentFacade.delete(uuid);
+	}
+
+	@DELETE
+	@Path("/{uuid}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Delete a document.", response = DocumentDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Document not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public DocumentDto delete(@ApiParam(value = "The document.", required = true) DocumentDto documentDto)
+			throws BusinessException {
+		Validate.notNull(documentDto, "Document dto must be set.");
+		return documentFacade.delete(documentDto.getUuid());
 	}
 
 	@Path("/{uuid}/upload")
@@ -269,8 +282,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream file,
 			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
 			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
-			MultipartBody body)
-			throws BusinessException {
+			MultipartBody body) throws BusinessException {
 		Long transfertDuration = getTransfertDuration();
 		if (file == null) {
 			logger.error("Missing file (check parameter file)");
@@ -290,7 +302,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			try {
 				DocumentTaskContext dtc = new DocumentTaskContext(actorDto, actorDto.getUuid(), tempFile, fileName);
 				dtc.setDocEntryUuid(uuid);
-				asyncTask = asyncTaskFacade.create(tempFile.length(), transfertDuration, fileName, null, AsyncTaskType.DOCUMENT_UPDATE);
+				asyncTask = asyncTaskFacade.create(tempFile.length(), transfertDuration, fileName, null,
+						AsyncTaskType.DOCUMENT_UPDATE);
 				DocumentUpdateAsyncTask task = new DocumentUpdateAsyncTask(documentAsyncFacade, dtc, asyncTask);
 				taskExecutor.execute(task);
 				return new DocumentDto(asyncTask, dtc);
@@ -313,20 +326,18 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@Path("/{uuid}/download")
 	@GET
 	@ApiOperation(value = "Download a file.")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
+
 	public Response download(@PathParam("uuid") String uuid)
 			throws BusinessException {
 		DocumentDto documentDto = documentFacade.find(uuid, false);
 		InputStream documentStream = documentFacade.getDocumentStream(uuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getDocumentResponseBuilder(documentStream,
-						documentDto.getName(), documentDto.getType(),
-						documentDto.getSize());
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream,
+				documentDto.getName(), documentDto.getType(), documentDto.getSize());
 		return response.build();
 	}
 
@@ -344,8 +355,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 					throws BusinessException {
 		DocumentDto documentDto = documentFacade.find(documentUuid, false);
 		InputStream documentStream = documentFacade.getThumbnailStream(documentUuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getThumbnailResponseBuilder(documentStream, documentDto.getName() + "_thumb.png", base64);
+		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
+				documentDto.getName() + "_thumb.png", base64);
 		return response.build();
 	}
 
@@ -353,8 +364,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public AsyncTaskDto findAsync(@PathParam("uuid") String uuid)
-			throws BusinessException {
+	public AsyncTaskDto findAsync(@PathParam("uuid") String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing uuid");
 		return asyncTaskFacade.find(uuid);
 	}

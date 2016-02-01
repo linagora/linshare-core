@@ -110,9 +110,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(domainId, "Missing required domain id");
 		Validate.notEmpty(mail, "Missing required mail");
-
 		User actor = checkAuthentication();
-
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		User user = userService.findOrCreateUserWithDomainPolicies(mail,
 				domainId, actor.getDomainId());
@@ -130,26 +128,24 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public void delete(ThreadDto threadDto) throws BusinessException {
+	public ThreadDto delete(ThreadDto threadDto) throws BusinessException {
 		Validate.notNull(threadDto, "Missing required thread dto");
 		Validate.notEmpty(threadDto.getUuid(),
 				"Missing required thread dto uuid");
-
 		User actor = checkAuthentication();
 		Thread thread = threadService.find(actor, actor,
 				threadDto.getUuid());
-
 		threadService.deleteThread(actor, actor, thread);
+		return new ThreadDto(thread);
 	}
 
 	@Override
-	public void delete(String threadUuid) throws BusinessException {
+	public ThreadDto delete(String threadUuid) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
-
 		User actor = checkAuthentication();
-
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		threadService.deleteThread(actor, actor, thread);
+		return new ThreadDto(thread);
 	}
 
 	@Override

@@ -85,7 +85,6 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		User actor = super.checkAuthentication();
 		Functionality functionality = functionalityReadOnlyService
 				.getThreadTabFunctionality(actor.getDomain());
-
 		if (!functionality.getActivationPolicy().getStatus()) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
@@ -99,7 +98,6 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(fileName, "Missing required file name");
 		Validate.notNull(tempFile, "Missing required input temp file");
-
 		User actor = checkAuthentication();
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		if (thread == null) {
@@ -143,7 +141,6 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(uuid, "Missing required entry uuid");
-
 		User actor = checkAuthentication();
 		@SuppressWarnings("unused")
 		Thread thread = threadService.find(actor, actor, threadUuid);
@@ -156,10 +153,8 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 	public List<ThreadEntryDto> findAll(String threadUuid)
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
-
 		User actor = checkAuthentication();
 		List<ThreadEntryDto> res = Lists.newArrayList();
-
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		for (ThreadEntry threadEntry : threadEntryService.findAllThreadEntries(
 				actor, actor, thread)) {
@@ -169,30 +164,29 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public void delete(String threadUuid, ThreadEntryDto threadEntryDto)
+	public ThreadEntryDto delete(String threadUuid, ThreadEntryDto threadEntryDto)
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadEntryDto, "Missing required thread entry");
 		Validate.notEmpty(threadEntryDto.getUuid(),
 				"Missing required thread entry");
-
 		User actor = checkAuthentication();
 		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
 				threadEntryDto.getUuid());
 		threadEntryService.deleteThreadEntry(actor, actor, threadEntry);
+		return new ThreadEntryDto(threadEntry);
 	}
 
 	@Override
-	public void delete(String threadUuid, String threadEntryUuid)
+	public ThreadEntryDto delete(String threadUuid, String threadEntryUuid)
 			throws BusinessException {
 		Validate.notNull(threadEntryUuid, "Missing required thread uuid");
 		Validate.notEmpty(threadEntryUuid, "Missing required thread entry uuid");
-
 		User actor = checkAuthentication();
 		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
 				threadEntryUuid);
-
 		threadEntryService.deleteThreadEntry(actor, actor, threadEntry);
+		return new ThreadEntryDto(threadEntry);
 	}
 
 	@Override
@@ -200,9 +194,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(uuid, "Missing required entry uuid");
-
 		User actor = checkAuthentication();
-
 		ThreadEntry threadentry = threadEntryService.findById(actor, actor,
 				uuid);
 		InputStream threadEntryStream = threadEntryService.getDocumentStream(
@@ -219,7 +211,6 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(uuid, "Missing required entry uuid");
-
 		User actor = checkAuthentication();
 		ThreadEntry doc = threadEntryService.findById(actor, actor, uuid);
 		InputStream documentStream = threadEntryService
@@ -235,9 +226,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 			ThreadEntryDto threadEntryDto) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(threadEntryUuid, "Missing required thread entry uuid");
-
 		User actor = checkAuthentication();
-
 		return new ThreadEntryDto(threadEntryService.updateFileProperties(
 				actor, threadEntryUuid, threadEntryDto.getDescription(),
 				threadEntryDto.getMetaData(), threadEntryDto.getName()));

@@ -56,9 +56,9 @@ public interface ThreadEntryFacade extends GenericFacade {
 
 	List<ThreadEntryDto> findAll(String threadUuid) throws BusinessException;
 
-	void delete(String threadUuid, String threadEntryUuid) throws BusinessException;
-	
-	void delete(String threadUuid, ThreadEntryDto threadEntry) throws BusinessException;
+	ThreadEntryDto delete(String threadUuid, String threadEntryUuid) throws BusinessException;
+
+	ThreadEntryDto delete(String threadUuid, ThreadEntryDto threadEntry) throws BusinessException;
 
 	Response download(String threadUuid, String uuid) throws BusinessException;
 

@@ -52,7 +52,7 @@ public interface ShareService {
 	public DocumentEntry deleteAllShareEntries(Account actor, Account owner,
 			String docEntryUuid) throws BusinessException;
 
-	public void delete(Account actor, Account owner, String entryUuid) throws BusinessException;
+	public Entry delete(Account actor, Account owner, String entryUuid) throws BusinessException;
 
 	Date getUndownloadedSharedDocumentsAlertDuration(Account actor);
 

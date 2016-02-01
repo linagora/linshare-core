@@ -49,9 +49,9 @@ public interface ThreadFacade extends GenericFacade {
 
 	ThreadDto find(String uuid) throws BusinessException;
 
-	void delete(ThreadDto threadDto) throws BusinessException;
+	ThreadDto delete(ThreadDto threadDto) throws BusinessException;
 
-	void delete(String threadUuid) throws BusinessException;
+	ThreadDto delete(String threadUuid) throws BusinessException;
 
 	ThreadDto update(String threadUuid, ThreadDto threadDto)
 			throws BusinessException;
