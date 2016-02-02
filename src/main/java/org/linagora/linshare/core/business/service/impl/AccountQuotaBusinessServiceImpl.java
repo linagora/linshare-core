@@ -71,15 +71,10 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 	}
 
 	@Override
-	public boolean exist(Account account) throws BusinessException {
-		return find(account) != null;
-	}
-
-	@Override
 	public AccountQuota createOrUpdate(Account account, Date date) throws BusinessException {
 		Long sumOperationValue = operationHistoryRepository.sumOperationValue(account, null, date, null, null);
-		AccountQuota entity;
-		if (!exist(account)) {
+		AccountQuota entity = find(account);
+		if (entity == null) {
 			DomainQuota domainQuota = domainQuotaRepository.find(account.getDomain());
 			EnsembleType ensembleType;
 
@@ -106,7 +101,6 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 				throw new BusinessException(account.getDomain().getUuid() + " domain does not have a quota yet");
 			}
 		}
-		entity = find(account);
 		entity.setLastValue(entity.getCurrentValue());
 		entity.setCurrentValue(sumOperationValue + entity.getCurrentValue());
 		entity = repository.updateByBatch(entity);
@@ -115,8 +109,7 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 
 	@Override
 	public AccountQuota create(AccountQuota entity) throws BusinessException {
-		Account account = entity.getAccount();
-		if (exist(account)) {
+		if (find(entity.getAccount()) != null) {
 			throw new BusinessException("It must be only one AccountQuota for any entity");
 		} else {
 			return repository.create(entity);
@@ -129,7 +122,7 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 	}
 
 	@Override
-	public List<String> findDomainByBatchModificationDate(Date date) {
-		return repository.findDomainByBatchModificationDate(date);
+	public List<String> findDomainByBatchModificationDate(Date startRange, Date endRange) {
+		return repository.findDomainByBatchModificationDate(startRange, endRange);
 	}
 }

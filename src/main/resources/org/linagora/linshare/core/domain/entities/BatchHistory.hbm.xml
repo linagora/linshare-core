@@ -11,7 +11,8 @@
 			<generator class="native"></generator>
 		</id>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
-		<property name="executionDate" column="execution_date" type="date" not-null="true" />
+		<property name="executionDate" column="execution_date" type="timestamp" not-null="true" />
+		<property name="activeDate" column="active_date" type="timestamp" not-null="true" />
 		<property name="status" column="status" type="string" not-null="true" />
 		<property name="batchType" column="batch_type" type="batchType"/>
 		<property name="errors" column="errors"/>

@@ -36,6 +36,7 @@ package org.linagora.linshare.repository.hibernate;
 import static org.junit.Assert.*;
 
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.junit.Before;
@@ -87,6 +88,7 @@ public class QuotaRepositoryImplTest
 
 	@Before
 	public void setUp(){
+		this.executeSqlScript("import-tests-stat.sql", false);
 		this.executeSqlScript("import-tests-operationHistory.sql", false);
 		this.executeSqlScript("import-tests-quota.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
@@ -109,8 +111,17 @@ public class QuotaRepositoryImplTest
 		assertEquals(1900, (long) result3.getQuota());
 		result3 = domainQuotaRepository.find(domain1);
 		assertNull(result3);
-		List<String> listIdentifier = accountQuotaRepository.findDomainByBatchModificationDate(new Date());
+		List<String> listIdentifier = accountQuotaRepository.findDomainByBatchModificationDate(yesterday(), new Date());
 		assertEquals(1, listIdentifier.size());
 		logger.debug(" domain identifier : "+listIdentifier.get(0));
+	}
+
+	private Date yesterday() {
+		GregorianCalendar dateCalender = new GregorianCalendar();
+		dateCalender.add(GregorianCalendar.DATE, -1);
+		dateCalender.set(GregorianCalendar.HOUR_OF_DAY, 23);
+		dateCalender.set(GregorianCalendar.MINUTE, 59);
+		dateCalender.set(GregorianCalendar.SECOND, 59);
+		return dateCalender.getTime();
 	}
 }

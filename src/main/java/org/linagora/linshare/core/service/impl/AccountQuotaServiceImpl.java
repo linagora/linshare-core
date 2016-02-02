@@ -43,7 +43,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.QuotaResourceAccessControl;
 import org.linagora.linshare.core.service.AccountQuotaService;
 
-public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota>implements AccountQuotaService {
+public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> implements AccountQuotaService {
 
 	private AccountQuotaBusinessService accountQuotaBusinessService;
 
@@ -81,8 +81,9 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota>i
 		Validate.notNull(owner, "Owner must be set.");
 		checkReadPermission(actor, owner, AccountQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
 		AccountQuota accountQuota = accountQuotaBusinessService.find(owner);
-		if(accountQuota == null){
-			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_NOT_FOUND, "Can not found account quota of the owner "+owner.getFullName());
+		if (accountQuota == null) {
+			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_NOT_FOUND,
+					"Can not found account quota of the owner : " + owner.getFullName());
 		}
 		return accountQuota;
 	}

@@ -46,6 +46,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
 
 public class OperationHistoryBusinessServiceImpl implements OperationHistoryBusinessService {
+
 	private final OperationHistoryRepository repository;
 
 	public OperationHistoryBusinessServiceImpl(final OperationHistoryRepository operationHistoryRepository) {
@@ -67,10 +68,11 @@ public class OperationHistoryBusinessServiceImpl implements OperationHistoryBusi
 		return repository.findDomainBeforeDate(creationDate);
 	}
 
+//	Method only use by the tests, any other utility?
 	@Override
 	public List<OperationHistory> find(Account account, AbstractDomain domain, EnsembleType ensembleType, Date date)
 			throws BusinessException {
-		return repository.find(account, domain, ensembleType, date);
+		return repository.find(account, domain, ensembleType, date, null);
 	}
 
 	@Override

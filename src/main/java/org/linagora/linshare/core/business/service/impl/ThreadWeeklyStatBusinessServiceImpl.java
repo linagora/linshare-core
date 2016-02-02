@@ -36,27 +36,27 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.linagora.linshare.core.business.service.ThreadWeeklyStatBusinessService;
+import org.linagora.linshare.core.business.service.ThreadWeeklyStatisticBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadWeeklyStat;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.ThreadDailyStatRepository;
-import org.linagora.linshare.core.repository.ThreadWeeklyStatRepository;
+import org.linagora.linshare.core.repository.ThreadDailyStatisticRepository;
+import org.linagora.linshare.core.repository.ThreadWeeklyStatisticRepository;
 
-public class ThreadWeeklyStatBusinessServiceImpl implements ThreadWeeklyStatBusinessService {
+public class ThreadWeeklyStatBusinessServiceImpl implements ThreadWeeklyStatisticBusinessService {
 
-	private final ThreadWeeklyStatRepository repository;
-	private final ThreadDailyStatRepository threadDailyStatRepository;
+	private final ThreadWeeklyStatisticRepository repository;
+	private final ThreadDailyStatisticRepository threadDailyStatRepository;
 
-	public ThreadWeeklyStatBusinessServiceImpl(ThreadWeeklyStatRepository repository,
-			ThreadDailyStatRepository threadDailyStatBusinessService) {
+	public ThreadWeeklyStatBusinessServiceImpl(ThreadWeeklyStatisticRepository repository,
+			ThreadDailyStatisticRepository threadDailyStatBusinessService) {
 		this.repository = repository;
 		this.threadDailyStatRepository = threadDailyStatBusinessService;
 	}
 
 	@Override
-	public ThreadWeeklyStat create(Thread thread, Date beginDate, Date endDate) throws BusinessException{
+	public ThreadWeeklyStat create(Thread thread, Date beginDate, Date endDate) throws BusinessException {
 		Long actualOperationSum = threadDailyStatRepository.sumOfActualOperationSum(null, thread, beginDate, endDate);
 		Long operationCount = threadDailyStatRepository.sumOfOperationCount(null, thread, beginDate, endDate);
 		Long createOperationSum = threadDailyStatRepository.sumOfCreateOperationSum(null, thread, beginDate, endDate);
@@ -69,6 +69,7 @@ public class ThreadWeeklyStatBusinessServiceImpl implements ThreadWeeklyStatBusi
 		ThreadWeeklyStat entity = new ThreadWeeklyStat(thread, thread.getDomain(), thread.getDomain().getParentDomain(),
 				operationCount, deleteOperationCount, createOperationCount, createOperationSum, deleteOperationSum,
 				diffOperationSum, actualOperationSum);
+		entity.setActiveDate(endDate);
 		entity = repository.create(entity);
 		return entity;
 	}

@@ -51,6 +51,8 @@ public abstract class GenericStatistic {
 
 	protected Date creationDate;
 
+	protected Date activeDate;
+
 	protected Long operationCount;
 
 	protected Long deleteOperationCount;
@@ -184,5 +186,13 @@ public abstract class GenericStatistic {
 
 	public void setAccount(Account account) {
 		this.account = account;
+	}
+
+	public Date getActiveDate() {
+		return activeDate;
+	}
+
+	public void setActiveDate(Date activeDate) {
+		this.activeDate = activeDate;
 	}
 }

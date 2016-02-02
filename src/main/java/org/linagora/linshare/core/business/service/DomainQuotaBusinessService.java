@@ -43,8 +43,6 @@ public interface DomainQuotaBusinessService {
 
 	DomainQuota find(AbstractDomain domain) throws BusinessException;
 
-	boolean exist(AbstractDomain domain);
-
 	DomainQuota create(DomainQuota entity) throws BusinessException;
 
 	DomainQuota update(DomainQuota entity) throws BusinessException;

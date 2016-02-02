@@ -405,6 +405,19 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		return threadRepository.searchAmongMembers(actor, pattern);
 	}
 
+	private void createQuotaThread(Thread thread) throws BusinessException {
+		Validate.notNull(thread, "Thread must be set.");
+		try {
+			EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(thread.getDomain(), EnsembleType.THREAD);
+			AccountQuota threadQuota = new AccountQuota(thread, thread.getDomain(),
+					thread.getDomain().getParentDomain(), ensembleQuota, ensembleQuota.getQuota(),
+					ensembleQuota.getQuotaWarning(), ensembleQuota.getFileSizeMax(), 0L, 0L);
+			accountQuotaBusinessService.create(threadQuota);
+		} catch (Exception exception) {
+			throw new BusinessException(exception.getMessage());
+		}
+	}
+
     /* ***********************************************************
      *                   Helpers
      ************************************************************ */
@@ -423,18 +436,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 					+ thread.getAccountRepresentation());
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"you are not authorized to perform this action on this thread.");
-		}
-	}
-
-	private void createQuotaThread(Thread thread) throws BusinessException {
-		try {
-			EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(thread.getDomain(), EnsembleType.THREAD);
-			AccountQuota threadQuota = new AccountQuota(thread, thread.getDomain(),
-					thread.getDomain().getParentDomain(), ensembleQuota, ensembleQuota.getQuota(),
-					ensembleQuota.getQuotaWarning(), ensembleQuota.getFileSizeMax(), 0L, 0L);
-			accountQuotaBusinessService.create(threadQuota);
-		} catch (Exception exception) {
-			throw new BusinessException(exception.getMessage());
 		}
 	}
 }

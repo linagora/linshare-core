@@ -52,15 +52,9 @@ public class PlatformQuotaBusinessServiceImpl implements PlatformQuotaBusinessSe
 	}
 
 	@Override
-	public boolean exist() {
-		return find() != null;
-	}
-
-	@Override
 	public PlatformQuota updateByBatch(Long addValue) throws BusinessException {
-		PlatformQuota entity;
-		if (exist()) {
-			entity = find();
+		PlatformQuota entity = find();
+		if (entity != null) {
 			entity.setLastValue(entity.getCurrentValue());
 			entity.setCurrentValue(entity.getCurrentValue() + addValue);
 			entity = repository.updateByBatch(entity);
@@ -72,7 +66,7 @@ public class PlatformQuotaBusinessServiceImpl implements PlatformQuotaBusinessSe
 
 	@Override
 	public PlatformQuota create(PlatformQuota entity) throws BusinessException {
-		if (exist()) {
+		if (find() != null) {
 			throw new BusinessException("It must be only one PlatformQuota");
 		} else {
 			return repository.create(entity);

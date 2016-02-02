@@ -56,7 +56,7 @@ public class UserMonthlyStatBusinessServiceImpl implements UserMonthlyStatBusine
 	}
 
 	@Override
-	public UserMonthlyStat create(User user, Date beginDate, Date endDate) throws BusinessException{
+	public UserMonthlyStat create(User user, Date beginDate, Date endDate) throws BusinessException {
 		Long actualOperationSum = userWeeklyStatRepository.sumOfActualOperationSum(null, user, beginDate, endDate);
 		Long actualOperationCount = userWeeklyStatRepository.sumOfOperationCount(null, user, beginDate, endDate);
 		Long createOperationCount = userWeeklyStatRepository.sumOfCreateOperationCount(null, user, beginDate, endDate);
@@ -67,6 +67,7 @@ public class UserMonthlyStatBusinessServiceImpl implements UserMonthlyStatBusine
 		UserMonthlyStat entity = new UserMonthlyStat(user, user.getDomain(), user.getDomain().getParentDomain(),
 				actualOperationCount, deleteOperationCount, createOperationCount, createOperationSum,
 				deleteOperationSum, diffOperationSum, actualOperationSum);
+		entity.setActiveDate(endDate);
 		entity = repository.create(entity);
 		return entity;
 	}

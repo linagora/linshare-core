@@ -56,23 +56,15 @@ public class BatchHistoryRepositoryImpl extends AbstractRepositoryImpl<BatchHist
 	@Override
 	public List<BatchHistory> find(Date beginDate, Date endDate, BatchType batchType, String status) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-
 		if (beginDate != null) {
 			criteria.add(Restrictions.ge("executionDate", beginDate));
-		}
-
-		if (endDate != null) {
+		} if (endDate != null) {
 			criteria.add(Restrictions.le("executionDate", endDate));
-		}
-
-		if (batchType != null) {
+		} if (batchType != null) {
 			criteria.add(Restrictions.eq("batchType", batchType));
-		}
-
-		if (status != null) {
+		} if (status != null) {
 			criteria.add(Restrictions.eq("status", status));
 		}
-
 		return findByCriteria(criteria);
 	}
 
@@ -101,6 +93,7 @@ public class BatchHistoryRepositoryImpl extends AbstractRepositoryImpl<BatchHist
 		return criteria.add(Restrictions.eq("id", entity.getId()));
 	}
 
+//	AKO : delete an historic?!
 	@Override
 	public void deleteBeforeDate(Date date) throws BusinessException {
 		for (BatchHistory entity : find(null, date, null, null)) {

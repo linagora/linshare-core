@@ -33,13 +33,10 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
@@ -74,7 +71,7 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 	@Override
 	public List<Account> findAccountBeforeDate(Date Date, EnsembleType ensembleType) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		if(ensembleType != null){
+		if (ensembleType != null) {
 			criteria.add(Restrictions.eq("ensembleType", ensembleType));
 		}
 		criteria.add(Restrictions.le("creationDate", Date));
@@ -85,46 +82,49 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 	}
 
 	@Override
-	public Long sumOperationValue(Account account, AbstractDomain domain, Date creationDate, OperationHistoryTypeEnum operationType, EnsembleType ensembleType) {
+	public Long sumOperationValue(Account account, AbstractDomain domain, Date creationDate,
+			OperationHistoryTypeEnum operationType, EnsembleType ensembleType) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		if(account != null){
+		if (account != null) {
 			criteria.add(Restrictions.eq("account", account));
 		}
-		if(domain != null){
+		if (domain != null) {
 			criteria.add(Restrictions.eq("domain", domain));
 		}
-		if(operationType != null){
+		if (operationType != null) {
 			criteria.add(Restrictions.eq("operationType", operationType));
 		}
-		if(creationDate != null){
+		if (creationDate != null) {
 			criteria.add(Restrictions.le("creationDate", creationDate));
 		}
-		if(ensembleType != null){
+		if (ensembleType != null) {
 			criteria.add(Restrictions.eq("ensembleType", ensembleType));
 		}
 		criteria.setProjection(Projections.sum("operationValue"));
 		List<OperationHistory> list = findByCriteria(criteria);
-		if (list.size() > 0 && list.get(0) != null)
+		if (list.size() > 0 && list.get(0) != null) {
 			return DataAccessUtils.longResult(findByCriteria(criteria));
+		}
 		return (long) 0;
 	}
 
 	@Override
-	public Long countOperationValue(Account account, AbstractDomain domain, Date creationDate, OperationHistoryTypeEnum operationType, EnsembleType ensembleType) {
+	public Long countOperationValue(Account account, AbstractDomain domain, Date creationDate,
+			OperationHistoryTypeEnum operationType, EnsembleType ensembleType) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		if(account != null){
+		if (account != null) {
 			criteria.add(Restrictions.eq("account", account));
 		}
-		if(domain != null){
+		if (domain != null) {
 			criteria.add(Restrictions.eq("domain", domain));
 		}
-		if(creationDate != null){
+		if (creationDate != null) {
 			criteria.add(Restrictions.le("creationDate", creationDate));
 		}
-		if(operationType != null){
+		if (operationType != null) {
 			criteria.add(Restrictions.eq("operationType", operationType));
 		}
-		if(ensembleType != null){
+		if (ensembleType != null) {
 			criteria.add(Restrictions.eq("ensembleType", ensembleType));
 		}
 		criteria.setProjection(Projections.rowCount());
@@ -142,22 +142,22 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 	}
 
 	@Override
-	public List<OperationHistory> find(Account account, AbstractDomain domain, EnsembleType ensembleType, Date date) {
+	public List<OperationHistory> find(Account account, AbstractDomain domain, EnsembleType ensembleType, Date date, OperationHistoryTypeEnum type) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		if(account != null){
+		if (account != null) {
 			criteria.add(Restrictions.eq("account", account));
 		}
-
-		if(ensembleType != null){
+		if (ensembleType != null) {
 			criteria.add(Restrictions.eq("ensembleType", ensembleType));
 		}
-
-		if(domain != null){
+		if (domain != null) {
 			criteria.add(Restrictions.eq("domain", domain));
 		}
-
-		if(date != null){
+		if (date != null) {
 			criteria.add(Restrictions.le("creationDate", date));
+		}
+		if (type != null) {
+			criteria.add(Restrictions.eq("operationType", type));
 		}
 		return findByCriteria(criteria);
 	}
@@ -165,7 +165,7 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 	@Override
 	public List<String> findUuidAccountBeforeDate(Date date, EnsembleType ensembleType) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		if(ensembleType != null){
+		if (ensembleType != null) {
 			criteria.add(Restrictions.eq("ensembleType", ensembleType));
 		}
 		criteria.add(Restrictions.le("creationDate", date));
@@ -178,7 +178,7 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 
 	@Override
 	public void deleteBeforeDateByAccount(Date date, Account account) {
-		List<OperationHistory> list = find(account, null, null, date);
+		List<OperationHistory> list = find(account, null, null, date, null);
 		for (OperationHistory entity : list) {
 			super.delete(entity);
 		}

@@ -46,7 +46,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 public class EnsembleQuotaDto extends QuotaDto {
 
 	@ApiModelProperty(value = "EnsembleType")
-	private  EnsembleType ensembleType;
+	private EnsembleType ensembleType;
 
 	public EnsembleQuotaDto() {
 	}
@@ -64,7 +64,7 @@ public class EnsembleQuotaDto extends QuotaDto {
 		this.ensembleType = ensembleType;
 	}
 
-	public EnsembleQuota toObject(){
+	public EnsembleQuota toObject() {
 		EnsembleQuota ensembleQuota = new EnsembleQuota();
 		ensembleQuota.setFileSizeMax(getFileSizeMax());
 		ensembleQuota.setQuota(getQuota());

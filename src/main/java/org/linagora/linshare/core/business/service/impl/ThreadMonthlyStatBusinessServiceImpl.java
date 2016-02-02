@@ -42,15 +42,15 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMonthlyStat;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadMonthlyStatRepository;
-import org.linagora.linshare.core.repository.ThreadWeeklyStatRepository;
+import org.linagora.linshare.core.repository.ThreadWeeklyStatisticRepository;
 
 public class ThreadMonthlyStatBusinessServiceImpl implements ThreadMonthlyStatBusinessService {
 
 	private final ThreadMonthlyStatRepository repository;
-	private final ThreadWeeklyStatRepository threadWeeklyStatRepository;
+	private final ThreadWeeklyStatisticRepository threadWeeklyStatRepository;
 
 	public ThreadMonthlyStatBusinessServiceImpl(ThreadMonthlyStatRepository repository,
-			ThreadWeeklyStatRepository threadWeeklyStatRepository) {
+			ThreadWeeklyStatisticRepository threadWeeklyStatRepository) {
 		this.repository = repository;
 		this.threadWeeklyStatRepository = threadWeeklyStatRepository;
 	}
@@ -69,6 +69,7 @@ public class ThreadMonthlyStatBusinessServiceImpl implements ThreadMonthlyStatBu
 		ThreadMonthlyStat entity = new ThreadMonthlyStat(thread, thread.getDomain(),
 				thread.getDomain().getParentDomain(), operationCount, deleteOperationCount, createOperationCount,
 				createOperationSum, deleteOperationSum, diffOperationSum, actualOperationSum);
+		entity.setActiveDate(endDate);
 		entity = repository.create(entity);
 		return entity;
 	}

@@ -42,22 +42,22 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ThreadDailyStat;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
-import org.linagora.linshare.core.repository.ThreadDailyStatRepository;
+import org.linagora.linshare.core.repository.ThreadDailyStatisticRepository;
 import org.linagora.linshare.core.domain.entities.Thread;
 
 public class ThreadDailyStatBusinessServiceImpl implements ThreadDailyStatBusinessService {
 
-	private final ThreadDailyStatRepository repository;
+	private final ThreadDailyStatisticRepository repository;
 	private final OperationHistoryRepository operationHistoryRepository;
 
-	public ThreadDailyStatBusinessServiceImpl(final ThreadDailyStatRepository repository,
+	public ThreadDailyStatBusinessServiceImpl(final ThreadDailyStatisticRepository repository,
 			final OperationHistoryRepository operationHistoryRepository) {
 		this.repository = repository;
 		this.operationHistoryRepository = operationHistoryRepository;
 	}
 
 	@Override
-	public ThreadDailyStat create(Thread thread, Date date) throws BusinessException{
+	public ThreadDailyStat create(Thread thread, Date date) throws BusinessException {
 		Long actualOperationSum = operationHistoryRepository.sumOperationValue(thread, null, date, null, null);
 		Long createOperationSum = operationHistoryRepository.sumOperationValue(thread, null, date,
 				OperationHistoryTypeEnum.CREATE, null);
@@ -72,6 +72,7 @@ public class ThreadDailyStatBusinessServiceImpl implements ThreadDailyStatBusine
 		ThreadDailyStat entity = new ThreadDailyStat(thread, thread.getDomain(), thread.getDomain().getParentDomain(),
 				operationCount, deleteOperationCount, createOperationCount, createOperationSum, deleteOperationSum,
 				diffOperationSum, actualOperationSum);
+		entity.setActiveDate(date);;
 		entity = repository.create(entity);
 		return entity;
 	}

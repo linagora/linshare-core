@@ -187,7 +187,7 @@ public class StatisticDailyUserBatchImpl extends GenericBatchImpl {
 
 	@Override
 	public boolean needToRun() {
-		return !batchHistoryBusinessService.exist(today(), new Date(), BatchType.DAILY_USER_BATCH);
+		return !batchHistoryBusinessService.exist(today(), null, BatchType.DAILY_USER_BATCH);
 	}
 
 	private Date today() {

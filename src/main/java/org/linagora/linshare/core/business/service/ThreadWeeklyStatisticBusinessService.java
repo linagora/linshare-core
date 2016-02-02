@@ -40,7 +40,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadWeeklyStat;
 
-public interface ThreadWeeklyStatBusinessService {
+public interface ThreadWeeklyStatisticBusinessService {
 
 	ThreadWeeklyStat create(Thread thread, Date beginDate, Date endDate);
 

@@ -39,14 +39,12 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
 import org.linagora.linshare.core.business.service.ThreadDailyStatBusinessService;
-import org.linagora.linshare.core.business.service.ThreadWeeklyStatBusinessService;
+import org.linagora.linshare.core.business.service.ThreadWeeklyStatisticBusinessService;
 import org.linagora.linshare.core.domain.constants.BatchType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.BatchHistory;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -55,20 +53,17 @@ import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.ThreadService;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 
 	private final ThreadDailyStatBusinessService threadDailyStatBusinessService;
-	private final ThreadWeeklyStatBusinessService threadWeeklyStatBusinessService;
+	private final ThreadWeeklyStatisticBusinessService threadWeeklyStatBusinessService;
 	private final ThreadService threadService;
 	private final BatchHistoryBusinessService batchHistoryBusinessService;
 
 	private static final String BATCH_HISTORY_UUID = "BatchHistoryUuid";
 
 	public StatisticWeeklyThreadBatchImpl(final ThreadDailyStatBusinessService threadDailyStatBusinessService,
-			final ThreadWeeklyStatBusinessService threadWeeklyStatBusinessService, final ThreadService threadService,
+			final ThreadWeeklyStatisticBusinessService threadWeeklyStatBusinessService, final ThreadService threadService,
 			AccountRepository<Account> accountRepository, BatchHistoryBusinessService batchHistoryBusinessService) {
 		super(accountRepository);
 		this.threadDailyStatBusinessService = threadDailyStatBusinessService;
@@ -169,9 +164,9 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 		dateCalendar.setTime(firstDate);
 		int today = dateCalendar.get(GregorianCalendar.DAY_OF_MONTH);
 		dateCalendar.set(GregorianCalendar.DAY_OF_MONTH, today + 6);
-		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
-		dateCalendar.set(GregorianCalendar.MINUTE, 0);
-		dateCalendar.set(GregorianCalendar.SECOND, 0);
+		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
+		dateCalendar.set(GregorianCalendar.MINUTE, 59);
+		dateCalendar.set(GregorianCalendar.SECOND, 59);
 		return dateCalendar.getTime();
 	}
 

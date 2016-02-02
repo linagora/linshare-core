@@ -35,6 +35,7 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
@@ -60,15 +61,10 @@ public class DomainQuotaBusinessServiceImpl
 	}
 
 	@Override
-	public boolean exist(AbstractDomain domain) {
-		return find(domain) != null;
-	}
-
-	@Override
 	public DomainQuota create(DomainQuota entity) throws BusinessException {
-		AbstractDomain domain = entity.getDomain();
-		if (exist(domain)) {
-			throw new BusinessException("It must be only one DomainQuota for any entity");
+		Validate.notNull(entity, "Domain quota must be set.");
+		if (find(entity.getDomain()) != null) {
+			throw new BusinessException("Domain " + entity.getDomain() + " already has a domain quota.");
 		}else{
 			return repository.create(entity);
 		}
@@ -82,13 +78,13 @@ public class DomainQuotaBusinessServiceImpl
 	@Override
 	public DomainQuota updateByBatch(DomainQuota entity, Date date) throws BusinessException{
 		AbstractDomain domain = entity.getDomain();
-		if (exist(domain)) {
+		if (find(entity.getDomain()) != null) {
 			Long sumCurrentValue = ensembleQuotaRepository.sumOfCurrentValue(entity, date);
 			entity.setLastValue(entity.getCurrentValue());
 			entity.setCurrentValue(sumCurrentValue);
 			entity = repository.updateByBatch(entity);
 		} else {
-			throw new BusinessException(domain.getUuid() + " does not have a quota yet");
+			throw new BusinessException("Domain : " + domain.getUuid() + " does not have a quota yet.");
 		}
 		return entity;
 	}

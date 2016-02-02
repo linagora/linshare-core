@@ -50,7 +50,7 @@ public class DomainQuotaDto extends QuotaDto {
 		super(domainQuota);
 	}
 
-	public DomainQuota toObject(){
+	public DomainQuota toObject() {
 		DomainQuota domainQuota = new DomainQuota();
 		domainQuota.setFileSizeMax(getFileSizeMax());
 		domainQuota.setQuota(getQuota());

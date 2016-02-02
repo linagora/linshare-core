@@ -54,7 +54,6 @@ import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryGroupService;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {

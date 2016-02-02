@@ -44,13 +44,11 @@ public interface AccountQuotaBusinessService {
 
 	AccountQuota find(Account account) throws BusinessException;
 
-	boolean exist(Account account);
-
 	AccountQuota createOrUpdate(Account account, Date today) throws BusinessException;
 
 	AccountQuota create(AccountQuota entity) throws BusinessException;
 
 	AccountQuota update(AccountQuota entity) throws BusinessException;
 
-	List<String> findDomainByBatchModificationDate(Date date);
+	List<String> findDomainByBatchModificationDate(Date startRange, Date endRange);
 }

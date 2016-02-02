@@ -33,16 +33,17 @@
  */
 package org.linagora.linshare.business.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -82,41 +83,53 @@ public class OperationHistoryBusinessServiceTest
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas dates;
+	LoadingServiceTestDatas dataes;
 	private User jane;
 
 	@Before
 	public void setUp() throws Exception {
-		this.executeSqlScript("import-tests-operationHistory.sql", false);
-		dates = new LoadingServiceTestDatas(userRepository);
-		dates.loadUsers();
-		jane = dates.getUser2();
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		this.executeSqlScript("import-tests-stat.sql", false);
+		dataes = new LoadingServiceTestDatas(userRepository);
+		dataes.loadUsers();
+		jane = dataes.getUser2();
+		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@Test
-	public void testCreateOperationHistoryBusinessService() {
-		GregorianCalendar calendar = new GregorianCalendar();
-		calendar.add(GregorianCalendar.DAY_OF_MONTH, +1);
-		Date a = calendar.getTime();
+	public void testCreateOperationHistory() {
+		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		Account account = jane;
 		AbstractDomain domain = jane.getDomain();
 		OperationHistory entity = new OperationHistory(account, domain, (long) 50, OperationHistoryTypeEnum.CREATE,
 				EnsembleType.USER);
 		operationHistoryBusinessService.create(entity);
-		List<OperationHistory> result = operationHistoryBusinessService.find(account, null, null, a);
-		assertEquals(8, result.size());
+		List<OperationHistory> result = operationHistoryBusinessService.find(account, null, null, null);
+		assertEquals(1, result.size());
+		result = operationHistoryBusinessService.find(account, null, null, new Date());
+		assertEquals(1, result.size());
+		entity = result.get(0);
+		assertEquals(jane, entity.getAccount());
+		assertEquals(domain, entity.getDomain());
+		assertEquals(50, (long) entity.getOperationValue());
+		assertEquals(OperationHistoryTypeEnum.CREATE, entity.getOperationType());
+		assertEquals(EnsembleType.USER, entity.getEnsembleType());
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testDeleteOperationHistoryBusinessService() {
-		GregorianCalendar calendar = new GregorianCalendar();
-		calendar.add(GregorianCalendar.DAY_OF_MONTH, +1);
-		Date a = calendar.getTime();
-		calendar.add(GregorianCalendar.DAY_OF_MONTH, +15);
-		Date b = calendar.getTime();
+	public void testDeleteOperationHistory() {
+		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		Account account = jane;
-		operationHistoryBusinessService.deleteBeforeDateByAccount(a, account);
-		List<OperationHistory> result = operationHistoryBusinessService.find(account, null, null, b);
+		AbstractDomain domain = jane.getDomain();
+		OperationHistory entity = new OperationHistory(account, domain, (long) 50, OperationHistoryTypeEnum.CREATE,
+				EnsembleType.USER);
+		operationHistoryBusinessService.create(entity);
+		List<OperationHistory> result = operationHistoryBusinessService.find(account, null, null, null);
 		assertEquals(1, result.size());
+		operationHistoryBusinessService.deleteBeforeDateByAccount(new Date(), account);
+		result = operationHistoryBusinessService.find(account, null, null, null);
+		assertEquals(0, result.size());
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

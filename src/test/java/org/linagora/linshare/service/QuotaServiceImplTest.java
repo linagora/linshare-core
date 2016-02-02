@@ -33,14 +33,15 @@
  */
 package org.linagora.linshare.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
@@ -75,32 +76,34 @@ public class QuotaServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas dates;
+	LoadingServiceTestDatas datas;
 	private User jane;
 
 	@Before
 	public void setUp() {
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		this.executeSqlScript("import-tests-stat.sql", false);
 		this.executeSqlScript("import-tests-operationHistory.sql", false);
 		this.executeSqlScript("import-tests-quota.sql", false);
-		dates = new LoadingServiceTestDatas(userRepository);
-		dates.loadUsers();
-		jane = dates.getUser2();
+		datas = new LoadingServiceTestDatas(userRepository);
+		datas.loadUsers();
+		jane = datas.getUser2();
+		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@Test
 	public void test() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account account = jane;
-		Account systemAccount = accountRepository.getBatchSystemAccount();
 		AbstractDomain domain = jane.getDomain();
-
-		Long accountConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(account, null, new Date(), null, null);
-		Long domainConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null, null);
-		Long ensembleUserConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null, EnsembleType.USER);
-		Long platformConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, null, new Date(), null, null);
-		assertEquals(700, (long) accountConsumptionOfDay);
-		assertEquals(800, (long) domainConsumptionOfDay);
-		assertEquals(800, (long) ensembleUserConsumptionOfDay);
-		assertEquals(1200, (long) platformConsumptionOfDay);
-		quotaService.checkIfUserCanAddFile(systemAccount, account, (long) 4, EnsembleType.USER);
+		Long accountConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(account, null, new GregorianCalendar(2042, 9, 16, 00, 00).getTime(), null, null);
+		Long domainConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, domain, new GregorianCalendar(2042, 9, 16, 00, 00).getTime(), null, null);
+		Long ensembleUserConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, domain, new GregorianCalendar(2042, 9, 16, 00, 00).getTime(), null, EnsembleType.USER);
+		Long platformConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, null, new GregorianCalendar(2042, 9, 16, 00, 00).getTime(), null, null);
+		assertEquals(1100, (long) accountConsumptionOfDay);
+		assertEquals(2101, (long) domainConsumptionOfDay);
+		assertEquals(2101, (long) ensembleUserConsumptionOfDay);
+		assertEquals(3851, (long) platformConsumptionOfDay);
+		logger.info(LinShareTestConstants.END_TEST);
 	}
 }

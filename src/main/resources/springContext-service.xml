@@ -66,10 +66,8 @@
 	<bean id="threadEntryService" class="org.linagora.linshare.core.service.impl.ThreadEntryServiceImpl">
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="logEntryService" />
-		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="mimeTypeService" />
-		<constructor-arg ref="accountService" />
 		<constructor-arg ref="clamavVirusScannerService" />
 		<constructor-arg ref="threadMemberRepository" />
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
@@ -191,7 +189,12 @@
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="guestResourceAccessControl" />
 		<constructor-arg ref="logEntryService" />
+<<<<<<< 3c26ad66fd2c446cecae29c9a824bf2c035a1bc4
 		<constructor-arg ref="auditUserMongoRepository" />
+=======
+		<constructor-arg ref="ensembleQuotaBusinessService"/>
+		<constructor-arg ref="accountQuotaBusinessService"/>
+>>>>>>> Cleaning quota branch.
 	</bean>
 
 	<bean name="technicalAccountService" class="org.linagora.linshare.core.service.impl.TechnicalAccountServiceImpl">

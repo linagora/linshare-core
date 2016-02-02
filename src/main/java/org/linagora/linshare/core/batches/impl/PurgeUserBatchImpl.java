@@ -45,6 +45,7 @@ import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UserService;
 
+
 public class PurgeUserBatchImpl extends GenericBatchImpl {
 
 	protected final UserService service;

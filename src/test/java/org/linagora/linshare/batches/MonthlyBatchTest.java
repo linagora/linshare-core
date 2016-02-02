@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.batches;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -42,13 +42,16 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.batches.GenericBatch;
+import org.linagora.linshare.core.business.service.DomainMonthlyStatBusinessService;
+import org.linagora.linshare.core.business.service.DomainWeeklyStatBusinessService;
+import org.linagora.linshare.core.business.service.ThreadMonthlyStatBusinessService;
+import org.linagora.linshare.core.business.service.ThreadWeeklyStatisticBusinessService;
 import org.linagora.linshare.core.business.service.UserMonthlyStatBusinessService;
 import org.linagora.linshare.core.domain.entities.DomainMonthlyStat;
 import org.linagora.linshare.core.domain.entities.ThreadMonthlyStat;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserMonthlyStat;
-import org.linagora.linshare.core.business.service.DomainMonthlyStatBusinessService;
-import org.linagora.linshare.core.business.service.ThreadMonthlyStatBusinessService;
+import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +59,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = {
-		"classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-service.xml",
@@ -81,6 +83,12 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 	private DomainMonthlyStatBusinessService domainMonthlyStatBusinessService;
 
 	@Autowired
+	private ThreadWeeklyStatisticBusinessService threadWeeklyBusinessService;
+
+	@Autowired
+	private DomainWeeklyStatBusinessService domainWeeklyStatBusinessService;
+
+	@Autowired
 	@Qualifier("statisticMonthlyUserBatch")
 	private GenericBatch monthlyUserBatch;
 
@@ -91,6 +99,9 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 	@Autowired
 	@Qualifier("statisticMonthlyDomainBatch")
 	private GenericBatch monthlyDomainBatch;
+
+	@Autowired
+	private ThreadRepository threadRepository;
 
 	@Autowired
 	@Qualifier("userRepository")
@@ -110,29 +121,35 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 	@Test
 	public void test() {
 		monthlyUserBatch.execute(jane.getLsUuid(), 10, 1);
-		List<String> listThreadIdentifier = monthlyThreadBatch.getAll();
+		userMonthlyStatBusinessService.create(jane, new GregorianCalendar(2042, 8, 1, 00, 00).getTime(), new GregorianCalendar(2042, 8, 30, 00, 00).getTime());
+		List<String> listThreadIdentifier = threadWeeklyBusinessService.findUuidAccountBetweenTwoDates(
+				new GregorianCalendar(2042, 10, 1, 00, 00).getTime(),
+				new GregorianCalendar(2042, 10, 30, 00, 00).getTime());
 		assertEquals(2, listThreadIdentifier.size());
-		monthlyThreadBatch.execute(listThreadIdentifier.get(0), 2, 1);
-		monthlyThreadBatch.execute(listThreadIdentifier.get(1), 2, 1);
+		threadMonthlyStatBusinessService.create(threadRepository.findByLsUuid(listThreadIdentifier.get(0)), new GregorianCalendar(2042, 10, 1, 00, 00).getTime(), new GregorianCalendar(2042, 10, 30, 23, 59).getTime());
+//		monthlyThreadBatch.execute(listThreadIdentifier.get(0), 2, 1);
+//		monthlyThreadBatch.execute(listThreadIdentifier.get(1), 2, 1);
 
-		List<String> listDomainIdentifier = monthlyDomainBatch.getAll();
-		assertEquals(2, listDomainIdentifier.size());
-		monthlyDomainBatch.execute(listDomainIdentifier.get(0), 2, 1);
-		monthlyDomainBatch.execute(listDomainIdentifier.get(1), 2, 1);
+		List<String> listDomainIdentifier = domainWeeklyStatBusinessService.findIdentifierDomainBetweenTwoDates(
+				new GregorianCalendar(2042, 8, 1, 00, 00).getTime(),
+				new GregorianCalendar(2042, 8, 30, 00, 00).getTime());
+		assertEquals(1, listDomainIdentifier.size());
+		domainMonthlyStatBusinessService.create(jane.getDomain(), new GregorianCalendar(2042, 8, 1, 00, 00).getTime(), new GregorianCalendar(2042, 8, 30, 00, 00).getTime());
+//		monthlyDomainBatch.execute(listDomainIdentifier.get(0), 1, 0);
 
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.DATE, -1);
 		Date a = calendar.getTime();
-		calendar.add(GregorianCalendar.DATE, +2);
-		Date b = calendar.getTime();
 
-		List<UserMonthlyStat> listUserMonthlyStat = userMonthlyStatBusinessService.findBetweenTwoDates(null, a, b);
-		List<ThreadMonthlyStat> listThreadMonthlyStat = threadMonthlyStatBusinessService.findBetweenTwoDates(null, a, b);
-		List<DomainMonthlyStat> listDomainMonthlyStat = domainMonthlyStatBusinessService.findBetweenTwoDates(null, a, b);
+		List<UserMonthlyStat> listUserMonthlyStat = userMonthlyStatBusinessService.findBetweenTwoDates(null, a, new GregorianCalendar(2042, 9, 30, 23, 59).getTime());
+		List<ThreadMonthlyStat> listThreadMonthlyStat = threadMonthlyStatBusinessService.findBetweenTwoDates(null, a,
+				new GregorianCalendar(2042, 11, 1, 00, 00).getTime());
+		List<DomainMonthlyStat> listDomainMonthlyStat = domainMonthlyStatBusinessService.findBetweenTwoDates(null, a,
+				new GregorianCalendar(2042, 9, 1, 00, 00).getTime());
 
 		assertEquals(1, listUserMonthlyStat.size());
-		assertEquals(2, listThreadMonthlyStat.size());
-		assertEquals(2, listDomainMonthlyStat.size());
+		assertEquals(1, listThreadMonthlyStat.size());
+		assertEquals(1, listDomainMonthlyStat.size());
 
 		UserMonthlyStat userMonthlyStat = listUserMonthlyStat.get(0);
 		assertEquals(1200, (long) userMonthlyStat.getActualOperationSum());
@@ -144,39 +161,21 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 		assertEquals(1200, (long) userMonthlyStat.getDiffOperationSum());
 
 		ThreadMonthlyStat threadMonthlyStat = listThreadMonthlyStat.get(0);
-		assertEquals(50, (long) threadMonthlyStat.getActualOperationSum());
-		assertEquals(5, (long) threadMonthlyStat.getOperationCount());
-		assertEquals(100, (long) threadMonthlyStat.getAddOperationSum());
-		assertEquals(3, (long) threadMonthlyStat.getAddOperationCount());
-		assertEquals(-50, (long) threadMonthlyStat.getDeleteOperationSum());
-		assertEquals(2, (long) threadMonthlyStat.getDeleteOperationCount());
-		assertEquals(50, (long) threadMonthlyStat.getDiffOperationSum());
-
-		threadMonthlyStat = listThreadMonthlyStat.get(1);
-		assertEquals(150, (long) threadMonthlyStat.getActualOperationSum());
-		assertEquals(4, (long) threadMonthlyStat.getOperationCount());
+		assertEquals(100, (long) threadMonthlyStat.getActualOperationSum());
+		assertEquals(10, (long) threadMonthlyStat.getOperationCount());
 		assertEquals(200, (long) threadMonthlyStat.getAddOperationSum());
-		assertEquals(3, (long) threadMonthlyStat.getAddOperationCount());
-		assertEquals(-50, (long) threadMonthlyStat.getDeleteOperationSum());
-		assertEquals(1, (long) threadMonthlyStat.getDeleteOperationCount());
-		assertEquals(150, (long) threadMonthlyStat.getDiffOperationSum());
+		assertEquals(6, (long) threadMonthlyStat.getAddOperationCount());
+		assertEquals(-100, (long) threadMonthlyStat.getDeleteOperationSum());
+		assertEquals(4, (long) threadMonthlyStat.getDeleteOperationCount());
+		assertEquals(100, (long) threadMonthlyStat.getDiffOperationSum());
 
 		DomainMonthlyStat domainMonthlyStat = listDomainMonthlyStat.get(0);
-		assertEquals(100, (long) domainMonthlyStat.getActualOperationSum());
-		assertEquals(10, (long) domainMonthlyStat.getOperationCount());
-		assertEquals(200, (long) domainMonthlyStat.getAddOperationSum());
-		assertEquals(6, (long) domainMonthlyStat.getAddOperationCount());
-		assertEquals(-100, (long) domainMonthlyStat.getDeleteOperationSum());
-		assertEquals(4, (long) domainMonthlyStat.getDeleteOperationCount());
-		assertEquals(100, (long) domainMonthlyStat.getDiffOperationSum());
-
-		domainMonthlyStat = listDomainMonthlyStat.get(1);
-		assertEquals(150, (long) domainMonthlyStat.getActualOperationSum());
-		assertEquals(4, (long) domainMonthlyStat.getOperationCount());
-		assertEquals(200, (long) domainMonthlyStat.getAddOperationSum());
+		assertEquals(50, (long) domainMonthlyStat.getActualOperationSum());
+		assertEquals(5, (long) domainMonthlyStat.getOperationCount());
+		assertEquals(100, (long) domainMonthlyStat.getAddOperationSum());
 		assertEquals(3, (long) domainMonthlyStat.getAddOperationCount());
 		assertEquals(-50, (long) domainMonthlyStat.getDeleteOperationSum());
-		assertEquals(1, (long) domainMonthlyStat.getDeleteOperationCount());
-		assertEquals(150, (long) domainMonthlyStat.getDiffOperationSum());
+		assertEquals(2, (long) domainMonthlyStat.getDeleteOperationCount());
+		assertEquals(50, (long) domainMonthlyStat.getDiffOperationSum());
 	}
 }

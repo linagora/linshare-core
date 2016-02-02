@@ -693,6 +693,66 @@ CREATE TABLE async_task (
   waiting_duration      int8,
   meta_data             text,
   PRIMARY KEY (id));
+<<<<<<< 3c26ad66fd2c446cecae29c9a824bf2c035a1bc4
+=======
+ALTER TABLE account ADD CONSTRAINT account_unique_mail_domain_destroyed UNIQUE (mail, domain_id, destroyed);
+
+CREATE TABLE operation_history (
+  id                    int8 NOT NULL,
+  creation_date         timestamp(6) NOT NULL,
+  operation_value       int8,
+  operation_type        int4,
+  ensemble_type         VARCHAR(255),
+  domain_id             int8 NOT NULL REFERENCES domain_abstract(id),
+  account_id            int8 references account(id) NOT NULL,
+  PRIMARY KEY (id));
+CREATE TABLE statistic (
+  id                      int8 NOT NULL,
+  creation_date           timestamp(6) NOT NULL,
+  active_date             timestamp(6) NOT NULL,
+  operation_count         int8,
+  delete_operation_count  int8,
+  add_operation_count     int8,
+  add_operation_sum       int8,
+  delete_operation_sum    int8,
+  diff_operation_sum      int8,
+  actual_operation_sum    int8,
+  domain_id               int8 REFERENCES domain_abstract(id),
+  account_id              int8 references account(id),
+  parent_domain_id        int8 references domain_abstract(id),
+  statistic_type        VARCHAR(255),
+  PRIMARY KEY (id));
+CREATE TABLE quota (
+  id                      int8 NOT NULL,
+  quota                   int8 NOT NULL,
+  quota_warning           int8,
+  file_size_max           int8,
+  quota_type              VARCHAR(255),
+  uuid                    VARCHAR(255) NOT NULL,
+  current_value           int8 NOT NULL,
+  last_value              int8 NOT NULL,
+  ensemble_type           VARCHAR(255),
+  ensemble_quota          int8 references quota(id),
+  domain_quota            int8 references quota(id),
+  creation_date           timestamp(6),
+  modification_date       timestamp(6),
+  batch_modification_date timestamp(6),
+  domain_id               int8 REFERENCES domain_abstract(id),
+  account_id              int8 references account(id),
+  parent_domain_id int8   references domain_abstract(id),
+  PRIMARY KEY (id));
+CREATE TABLE batch_history (
+  id                      int8 NOT NULL,
+  uuid                    VARCHAR(255) NOT NULL,
+  execution_date          timestamp(6) NOT NULL,
+  active_date             timestamp(6) NOT NULL,
+  status                  VARCHAR(255) NOT NULL,
+  batch_type              VARCHAR(255),
+  errors                  int8,
+  unhandled_errors        int8,
+  PRIMARY KEY (id));
+
+>>>>>>> Cleaning quota branch.
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid
@@ -882,14 +942,3 @@ ALTER TABLE share_entry_group ADD CONSTRAINT shareEntryGroup FOREIGN KEY (accoun
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task548996 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task706276 FOREIGN KEY (actor_id) REFERENCES account (id);
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task559470 FOREIGN KEY (owner_id) REFERENCES account (id);
-
-
-
-
-create table operation_history(id bigint primary key not null, creation_date date not null, operation_value bigint, operation_type int, ensemble_type varchar,domain_id bigint REFERENCES domain_abstract(id) not null , account_id bigint references account(id) not null);
-
-create table statistique(id bigint primary key not null, creation_date date not null, operation_count bigint, delete_operation_count bigint, add_operation_count bigint, add_operation_sum bigint, delete_operation_sum bigint, diff_operation_sum bigint, actual_operation_sum bigint, domain_id bigint REFERENCES domain_abstract(id), account_id bigint references account(id), parent_domain_id bigint references domain_abstract(id), statistique_type varchar);
-
-create table quota(id bigint primary key not null, quota bigint not null, quota_warning bigint, file_size_max bigint, quota_type varchar, uuid varchar not null,current_value bigint not null, last_value bigint not null, ensemble_type varchar, ensemble_quota bigint references quota(id), domain_quota bigint references quota(id),creation_date date, modification_date date, batch_modification_date date, domain_id bigint REFERENCES domain_abstract(id), account_id bigint references account(id), parent_domain_id bigint references domain_abstract(id));
-
-create table batch_history(id bigint primary key not null, uuid varchar not null, execution_date date not null, status varchar not null, batch_type varchar, errors bigint, unhandled_errors bigint);

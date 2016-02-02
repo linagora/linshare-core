@@ -44,7 +44,7 @@ public interface AccountQuotaRepository extends GenericQuotaRepository<AccountQu
 
 	AccountQuota find(Account account);
 
-	List<String> findDomainByBatchModificationDate(Date date);
+	List<String> findDomainByBatchModificationDate(Date startRange, Date endRange);
 
 	Long sumOfCurrentValue(EnsembleQuota ensembleQuota, Date modificationDateByBatch);
 }

@@ -41,56 +41,53 @@ import org.linagora.linshare.core.business.service.DomainDailyStatBusinessServic
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainDailyStat;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.DomainDailyStatRepository;
-import org.linagora.linshare.core.repository.ThreadDailyStatRepository;
+import org.linagora.linshare.core.repository.DomainDailyStatisticRepository;
+import org.linagora.linshare.core.repository.ThreadDailyStatisticRepository;
 import org.linagora.linshare.core.repository.UserDailyStatRepository;
 
-public class DomainDailyStatBusinessServiceImpl
-		implements DomainDailyStatBusinessService {
+public class DomainDailyStatBusinessServiceImpl implements DomainDailyStatBusinessService {
 
-	private final DomainDailyStatRepository repository;
+	private final DomainDailyStatisticRepository repository;
 	private final UserDailyStatRepository userDailyStatRepository;
-	private final ThreadDailyStatRepository threadDailyStatRepository;
+	private final ThreadDailyStatisticRepository threadDailyStatRepository;
 
-	public DomainDailyStatBusinessServiceImpl(final DomainDailyStatRepository repository,
-			final UserDailyStatRepository userDailyStatRepository, final ThreadDailyStatRepository threadDailyStatRepository) {
+	public DomainDailyStatBusinessServiceImpl(final DomainDailyStatisticRepository repository,
+			final UserDailyStatRepository userDailyStatRepository,
+			final ThreadDailyStatisticRepository threadDailyStatRepository) {
 		this.repository = repository;
 		this.userDailyStatRepository = userDailyStatRepository;
 		this.threadDailyStatRepository = threadDailyStatRepository;
 	}
 
 	@Override
-	public DomainDailyStat create(AbstractDomain domain, Date date) throws BusinessException{
+	public DomainDailyStat create(AbstractDomain domain, Date date) throws BusinessException {
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
-		
-		calendar.set(GregorianCalendar.HOUR, 0);
-		calendar.set(GregorianCalendar.MINUTE, 0);
-		calendar.set(GregorianCalendar.SECOND, 0);
-		Date beginDate = calendar.getTime();
 		calendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
 		calendar.set(GregorianCalendar.MINUTE, 59);
 		calendar.set(GregorianCalendar.SECOND, 59);
 		Date endDate = calendar.getTime();
 
-		Long actualOperationSumUsers = userDailyStatRepository.sumOfActualOperationSum(domain, null, beginDate, endDate);
-		Long actualOperationSumThreads = threadDailyStatRepository.sumOfActualOperationSum(domain, null, beginDate, endDate);
+		Long actualOperationSumUsers = userDailyStatRepository.sumOfActualOperationSum(domain, null, date, endDate);
+		Long actualOperationSumThreads = threadDailyStatRepository.sumOfActualOperationSum(domain, null, date, endDate);
 		Long actualOperationSum = actualOperationSumUsers + actualOperationSumThreads;
 
-		Long createOperationSumUsers = userDailyStatRepository.sumOfCreateOperationSum(domain, null, beginDate, endDate);
-		Long createOperationSumThreads = threadDailyStatRepository.sumOfCreateOperationSum(domain, null, beginDate, endDate);
+		Long createOperationSumUsers = userDailyStatRepository.sumOfCreateOperationSum(domain, null, date, endDate);
+		Long createOperationSumThreads = threadDailyStatRepository.sumOfCreateOperationSum(domain, null, date, endDate);
 		Long createOperationSum = createOperationSumUsers + createOperationSumThreads;
 
-		Long createOperationCountUsers = userDailyStatRepository.sumOfCreateOperationCount(domain, null, beginDate, endDate);
-		Long createOperationCountThreads = threadDailyStatRepository.sumOfCreateOperationCount(domain, null, beginDate, endDate);
+		Long createOperationCountUsers = userDailyStatRepository.sumOfCreateOperationCount(domain, null, date, endDate);
+		Long createOperationCountThreads = threadDailyStatRepository.sumOfCreateOperationCount(domain, null, date,
+				endDate);
 		Long createOperationCount = createOperationCountUsers + createOperationCountThreads;
 
-		Long deleteOperationSumUsers = userDailyStatRepository.sumOfDeleteOperationSum(domain, null, beginDate, endDate);
-		Long deleteOperationSumThreads = threadDailyStatRepository.sumOfDeleteOperationSum(domain, null, beginDate, endDate);
+		Long deleteOperationSumUsers = userDailyStatRepository.sumOfDeleteOperationSum(domain, null, date, endDate);
+		Long deleteOperationSumThreads = threadDailyStatRepository.sumOfDeleteOperationSum(domain, null, date, endDate);
 		Long deleteOperationSum = deleteOperationSumUsers + deleteOperationSumThreads;
 
-		Long deleteOperationCountUsers = userDailyStatRepository.sumOfDeleteOperationCount(domain, null, beginDate, endDate);
-		Long deleteOperationCountThreads = threadDailyStatRepository.sumOfDeleteOperationCount(domain, null, beginDate, endDate);
+		Long deleteOperationCountUsers = userDailyStatRepository.sumOfDeleteOperationCount(domain, null, date, endDate);
+		Long deleteOperationCountThreads = threadDailyStatRepository.sumOfDeleteOperationCount(domain, null, date,
+				endDate);
 		Long deleteOperationCount = deleteOperationCountUsers + deleteOperationCountThreads;
 
 		Long operationCount = deleteOperationCount + createOperationCount;
@@ -98,6 +95,7 @@ public class DomainDailyStatBusinessServiceImpl
 		DomainDailyStat entity = new DomainDailyStat(domain, domain.getParentDomain(), operationCount,
 				deleteOperationCount, createOperationCount, createOperationSum, deleteOperationSum, diffOperationSum,
 				actualOperationSum);
+		entity.setActiveDate(date);
 		entity = repository.create(entity);
 		return entity;
 	}

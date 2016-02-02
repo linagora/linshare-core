@@ -41,8 +41,6 @@ public interface PlatformQuotaBusinessService {
 
 	PlatformQuota find() throws BusinessException;
 
-	boolean exist();
-
 	PlatformQuota updateByBatch(Long addValue) throws BusinessException;
 
 	PlatformQuota create(PlatformQuota entity) throws BusinessException;

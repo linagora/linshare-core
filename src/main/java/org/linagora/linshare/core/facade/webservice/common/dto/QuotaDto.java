@@ -71,7 +71,7 @@ public class QuotaDto {
 	public QuotaDto() {
 	}
 
-	public QuotaDto(Quota quota){
+	public QuotaDto(Quota quota) {
 		this.account = new AccountDto(quota.getAccount(), true);
 		this.domain = new DomainLightDto(quota.getDomain());
 		this.parentDomain = new DomainLightDto(quota.getParentDomain());

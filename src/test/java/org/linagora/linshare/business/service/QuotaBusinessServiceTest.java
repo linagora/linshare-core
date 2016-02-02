@@ -36,6 +36,7 @@ package org.linagora.linshare.business.service;
 import static org.junit.Assert.*;
 
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.junit.Before;
@@ -44,6 +45,7 @@ import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
@@ -58,22 +60,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = {
-		"classpath:springContext-datasource.xml",
-		"classpath:springContext-repository.xml",
-		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
-		"classpath:springContext-business-service.xml",
-		"classpath:springContext-facade.xml",
-		"classpath:springContext-rac.xml",
-		"classpath:springContext-startopendj.xml",
-		"classpath:springContext-jackRabbit-mock.xml",
-		"classpath:springContext-test.xml",
-		"classpath:springContext-quota-manager.xml",
-		"classpath:springContext-service-miscellaneous.xml",
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml", "classpath:springContext-repository.xml",
+		"classpath:springContext-dao.xml", "classpath:springContext-service.xml",
+		"classpath:springContext-business-service.xml", "classpath:springContext-facade.xml",
+		"classpath:springContext-rac.xml", "classpath:springContext-startopendj.xml",
+		"classpath:springContext-jackRabbit-mock.xml", "classpath:springContext-test.xml",
+		"classpath:springContext-quota-manager.xml", "classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-public class QuotaBusinessServiceTest
-		extends AbstractTransactionalJUnit4SpringContextTests {
+public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;
@@ -91,26 +85,28 @@ public class QuotaBusinessServiceTest
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas dates;
+	LoadingServiceTestDatas datas;
 	private User jane;
 
 	@Before
 	public void setUp() {
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		this.executeSqlScript("import-tests-stat.sql", false);
 		this.executeSqlScript("import-tests-operationHistory.sql", false);
 		this.executeSqlScript("import-tests-quota.sql", false);
-		dates = new LoadingServiceTestDatas(userRepository);
-		dates.loadUsers();
-		jane = dates.getUser2();
+		datas = new LoadingServiceTestDatas(userRepository);
+		datas.loadUsers();
+		jane = datas.getUser2();
+		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@Test
 	public void test() {
+		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		Account account = jane;
 		AbstractDomain domain = jane.getDomain();
+
 		DomainQuota domainQuota = domainQuotaBusinessService.find(domain);
-		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, EnsembleType.USER);
-		EnsembleQuota threadEnsembleQuota = ensembleQuotaBusinessService.find(domain, EnsembleType.THREAD);
-	
 		assertNotNull(domainQuota);
 		assertEquals(1096, (long) domainQuota.getCurrentValue());
 		assertEquals(500, (long) domainQuota.getLastValue());
@@ -119,13 +115,10 @@ public class QuotaBusinessServiceTest
 		assertEquals(5, (long) domainQuota.getFileSizeMax());
 		domainQuotaBusinessService.updateByBatch(domainQuota, new Date());
 		domainQuota = domainQuotaBusinessService.find(domain);
-
 		assertEquals(1396, (long) domainQuota.getCurrentValue());
 		assertEquals(1096, (long) domainQuota.getLastValue());
-		assertEquals(1900, (long) domainQuota.getQuota());
-		assertEquals(1800, (long) domainQuota.getQuotaWarning());
-		assertEquals(5, (long) domainQuota.getFileSizeMax());
 
+		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, EnsembleType.USER);
 		assertNotNull(ensembleQuota);
 		assertEquals(496, (long) ensembleQuota.getCurrentValue());
 		assertEquals(0, (long) ensembleQuota.getLastValue());
@@ -134,13 +127,10 @@ public class QuotaBusinessServiceTest
 		assertEquals(5, (long) ensembleQuota.getFileSizeMax());
 		ensembleQuotaBusinessService.updateByBatch(ensembleQuota, new Date());
 		ensembleQuota = ensembleQuotaBusinessService.find(domain, EnsembleType.USER);
-
 		assertEquals(1700, (long) ensembleQuota.getCurrentValue());
 		assertEquals(496, (long) ensembleQuota.getLastValue());
-		assertEquals(1900, (long) ensembleQuota.getQuota());
-		assertEquals(1300, (long) ensembleQuota.getQuotaWarning());
-		assertEquals(5, (long) ensembleQuota.getFileSizeMax());
 
+		EnsembleQuota threadEnsembleQuota = ensembleQuotaBusinessService.find(domain, EnsembleType.THREAD);
 		assertNotNull(threadEnsembleQuota);
 		assertEquals(900, (long) threadEnsembleQuota.getCurrentValue());
 		assertEquals(200, (long) threadEnsembleQuota.getLastValue());
@@ -148,22 +138,9 @@ public class QuotaBusinessServiceTest
 		assertEquals(1500, (long) threadEnsembleQuota.getQuotaWarning());
 		assertEquals(5, (long) threadEnsembleQuota.getFileSizeMax());
 		ensembleQuotaBusinessService.updateByBatch(threadEnsembleQuota, new Date());
-		ensembleQuota = ensembleQuotaBusinessService.find(domain, EnsembleType.THREAD);
-
-		assertEquals(1200, (long) ensembleQuota.getCurrentValue());
-		assertEquals(900, (long) ensembleQuota.getLastValue());
-		assertEquals(2000, (long) ensembleQuota.getQuota());
-		assertEquals(1500, (long) ensembleQuota.getQuotaWarning());
-		assertEquals(5, (long) ensembleQuota.getFileSizeMax());
-
-		domainQuotaBusinessService.updateByBatch(domainQuota, new Date());
-		domainQuota = domainQuotaBusinessService.find(domain);
-
-		assertEquals(2900, (long) domainQuota.getCurrentValue());
-		assertEquals(1396, (long) domainQuota.getLastValue());
-		assertEquals(1900, (long) domainQuota.getQuota());
-		assertEquals(1800, (long) domainQuota.getQuotaWarning());
-		assertEquals(5, (long) domainQuota.getFileSizeMax());
+		threadEnsembleQuota = ensembleQuotaBusinessService.find(domain, EnsembleType.THREAD);
+		assertEquals(1200, (long) threadEnsembleQuota.getCurrentValue());
+		assertEquals(900, (long) threadEnsembleQuota.getLastValue());
 
 		Quota qo = accountQuotaBusinessService.find(account);
 		assertNotNull(qo);
@@ -172,16 +149,24 @@ public class QuotaBusinessServiceTest
 		assertEquals(1600, (long) qo.getQuota());
 		assertEquals(1480, (long) qo.getQuotaWarning());
 		assertEquals(5, (long) qo.getFileSizeMax());
-		accountQuotaBusinessService.createOrUpdate(account, new Date());
+		accountQuotaBusinessService.createOrUpdate(account, new GregorianCalendar(2042, 10, 11, 00, 00).getTime());
 		qo = accountQuotaBusinessService.find(account);
 		assertNotNull(qo);
-		assertEquals(1500, (long) qo.getCurrentValue());
+		assertEquals(1700, (long) qo.getCurrentValue());
 		assertEquals(800, (long) qo.getLastValue());
-		assertEquals(1600, (long) qo.getQuota());
-		assertEquals(1480, (long) qo.getQuotaWarning());
-		assertEquals(5, (long) qo.getFileSizeMax());
 
-		List<String> listDomain = accountQuotaBusinessService.findDomainByBatchModificationDate(new Date());
+		List<String> listDomain = accountQuotaBusinessService.findDomainByBatchModificationDate(yesterday(),
+				new Date());
 		assertEquals(1, listDomain.size());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	private Date yesterday() {
+		GregorianCalendar dateCalender = new GregorianCalendar();
+		dateCalender.add(GregorianCalendar.DATE, -1);
+		dateCalender.set(GregorianCalendar.HOUR_OF_DAY, 23);
+		dateCalender.set(GregorianCalendar.MINUTE, 59);
+		dateCalender.set(GregorianCalendar.SECOND, 59);
+		return dateCalender.getTime();
 	}
 }

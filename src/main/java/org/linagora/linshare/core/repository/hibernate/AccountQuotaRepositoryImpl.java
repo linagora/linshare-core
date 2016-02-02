@@ -36,7 +36,6 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -60,9 +59,10 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 	}
 
 	@Override
-	public List<String> findDomainByBatchModificationDate(Date date) {
+	public List<String> findDomainByBatchModificationDate(Date startRange, Date endRange) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("batchModificationDate", date));
+		criteria.add(Restrictions.ge("batchModificationDate", startRange));
+		criteria.add(Restrictions.le("batchModificationDate", endRange));
 		criteria.createAlias("domain", "do");
 		criteria.setProjection(Projections.distinct(Projections.property("do.identifier")));
 		@SuppressWarnings("unchecked")
@@ -71,19 +71,19 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 	}
 
 	@Override
-	public Long sumOfCurrentValue(EnsembleQuota ensembleQuota, 	Date modificationDateByBatch) {
+	public Long sumOfCurrentValue(EnsembleQuota ensembleQuota, Date modificationDateByBatch) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-
-		if(ensembleQuota != null){
+		if (ensembleQuota != null) {
 			criteria.add(Restrictions.eq("ensembleQuota", ensembleQuota));
 		}
-		if(modificationDateByBatch != null){
+		if (modificationDateByBatch != null) {
 			criteria.add(Restrictions.le("batchModificationDate", modificationDateByBatch));
 		}
 		criteria.setProjection(Projections.sum("currentValue"));
 		List<AccountQuota> list = findByCriteria(criteria);
-		if (list.size() > 0 && list.get(0) != null)
+		if (list.size() > 0 && list.get(0) != null) {
 			return DataAccessUtils.longResult(findByCriteria(criteria));
+		}
 		return (long) 0;
 	}
 }

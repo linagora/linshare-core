@@ -37,11 +37,11 @@ public enum QuotaType {
 
 	DOMAIN_QUOTA, ACCOUNT_QUOTA, ENSEMBLE_QUOTA, PLATFORM_QUOTA;
 
-	public static QuotaType fromString(String s){
-		try{
+	public static QuotaType fromString(String s) {
+		try {
 			return QuotaType.valueOf(s.toUpperCase());
-		}catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing EnsembleType");
+		} catch (RuntimeException e) {
+			throw new IllegalArgumentException(s + " doesn't match an existing EnsembleType");
 		}
 	}
 }

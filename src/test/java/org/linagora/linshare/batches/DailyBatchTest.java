@@ -33,33 +33,34 @@
  */
 package org.linagora.linshare.batches;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.batches.GenericBatch;
-import org.linagora.linshare.core.business.service.UserDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
-import org.linagora.linshare.core.business.service.DomainDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.PlatformQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ThreadDailyStatBusinessService;
+import org.linagora.linshare.core.business.service.UserDailyStatBusinessService;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.UserDailyStat;
-import org.linagora.linshare.core.domain.entities.DomainDailyStat;
 import org.linagora.linshare.core.domain.entities.EnsembleQuota;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadDailyStat;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.UserDailyStat;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
@@ -97,9 +98,6 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 
 	@Autowired
 	private UserDailyStatBusinessService userdailyStatBusinessService;
-
-	@Autowired
-	private DomainDailyStatBusinessService domaindailyStatBusinessService;
 
 	@Autowired
 	private AccountQuotaBusinessService accountQuotaBusinessService;
@@ -153,29 +151,31 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		Thread thread2 = (Thread) accountRepository.findByLsUuid(listThreadIdentifier.get(1));
 
 		List<OperationHistory> listOperationHistory = operationHistoryBusinessService.find(thread1, null, null, new Date());
-		assertNotEquals(0, listOperationHistory.size());
+		assertEquals(3, listOperationHistory.size());
 
 		listOperationHistory = operationHistoryBusinessService.find(thread2, null, null, new Date());
-		assertNotEquals(0, listOperationHistory.size());
+		assertEquals(2, listOperationHistory.size());
 
-		dailyThreadBatch.execute(thread1.getLsUuid(), listThreadIdentifier.size(), 1);
+		dailyThreadBatch.execute(thread1.getLsUuid(), listThreadIdentifier.size(), 0);
 
-		List<ThreadDailyStat> listThreaddailyStat = threadDailyStatBusinessService.findBetweenTwoDates(thread1, new Date(), new Date());
+		Calendar d = Calendar.getInstance();
+		d.add(Calendar.DATE, -1);
+		List<ThreadDailyStat> listThreaddailyStat = threadDailyStatBusinessService.findBetweenTwoDates(thread1, d.getTime(), new Date());
 
 		assertEquals(1, listThreaddailyStat.size());
 		ThreadDailyStat threadDailyStat = listThreaddailyStat.get(0);
 		assertEquals(thread1, threadDailyStat.getAccount());
-		assertEquals(2, (long) threadDailyStat.getOperationCount());
-		assertEquals(100, (long) threadDailyStat.getActualOperationSum());
-		assertEquals(1, (long) threadDailyStat.getAddOperationCount());
-		assertEquals(400, (long) threadDailyStat.getAddOperationSum());
+		assertEquals(3, (long) threadDailyStat.getOperationCount());
+		assertEquals(300, (long) threadDailyStat.getActualOperationSum());
+		assertEquals(2, (long) threadDailyStat.getAddOperationCount());
+		assertEquals(600, (long) threadDailyStat.getAddOperationSum());
 		assertEquals(1, (long) threadDailyStat.getDeleteOperationCount());
 		assertEquals(-300, (long) threadDailyStat.getDeleteOperationSum());
-		assertEquals(100, (long) threadDailyStat.getDiffOperationSum());
+		assertEquals(300, (long) threadDailyStat.getDiffOperationSum());
 
 		Quota quota = accountQuotaBusinessService.find(thread1);
 		assertNotNull(quota);
-		assertEquals(800, (long) quota.getCurrentValue());
+		assertEquals(1000, (long) quota.getCurrentValue());
 		assertEquals(700, (long) quota.getLastValue());
 		assertEquals(1000, (long) quota.getQuota());
 		assertEquals(800, (long) quota.getQuotaWarning());
@@ -185,22 +185,22 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 
 		batchHistoryBusinessService.findByUuid(thread2.getLsUuid());
 
-		listThreaddailyStat = threadDailyStatBusinessService.findBetweenTwoDates(thread2, new Date(), new Date());
+		listThreaddailyStat = threadDailyStatBusinessService.findBetweenTwoDates(thread2, d.getTime(), new Date());
 
 		assertEquals(1, listThreaddailyStat.size());
 		threadDailyStat = listThreaddailyStat.get(0);
 		assertEquals(thread2, threadDailyStat.getAccount());
-		assertEquals(1, (long) threadDailyStat.getOperationCount());
-		assertEquals(200, (long) threadDailyStat.getActualOperationSum());
-		assertEquals(1, (long) threadDailyStat.getAddOperationCount());
-		assertEquals(200, (long) threadDailyStat.getAddOperationSum());
+		assertEquals(2, (long) threadDailyStat.getOperationCount());
+		assertEquals(400, (long) threadDailyStat.getActualOperationSum());
+		assertEquals(2, (long) threadDailyStat.getAddOperationCount());
+		assertEquals(400, (long) threadDailyStat.getAddOperationSum());
 		assertEquals(0, (long) threadDailyStat.getDeleteOperationCount());
 		assertEquals(0, (long) threadDailyStat.getDeleteOperationSum());
-		assertEquals(200, (long) threadDailyStat.getDiffOperationSum());
+		assertEquals(400, (long) threadDailyStat.getDiffOperationSum());
 
 		quota = accountQuotaBusinessService.find(thread2);
 		assertNotNull(quota);
-		assertEquals(700, (long) quota.getCurrentValue());
+		assertEquals(900, (long) quota.getCurrentValue());
 		assertEquals(500, (long) quota.getLastValue());
 		assertEquals(1300, (long) quota.getQuota());
 		assertEquals(1000, (long) quota.getQuotaWarning());
@@ -211,22 +211,22 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 
 		dailyUserBatch.execute(jane.getLsUuid(), 10, 1);
 
-		List<UserDailyStat> listUserdailyStat = userdailyStatBusinessService.findBetweenTwoDates(jane, new Date(), new Date());
+		List<UserDailyStat> listUserdailyStat = userdailyStatBusinessService.findBetweenTwoDates(jane, d.getTime(), new Date());
 
 		assertEquals(1, listUserdailyStat.size());
 		UserDailyStat userDailyStat = listUserdailyStat.get(0);
 		assertEquals(jane, userDailyStat.getAccount());
-		assertEquals(7, (long) userDailyStat.getOperationCount());
-		assertEquals(700, (long) userDailyStat.getActualOperationSum());
-		assertEquals(5, (long) userDailyStat.getAddOperationCount());
-		assertEquals(1200, (long) userDailyStat.getAddOperationSum());
-		assertEquals(2, (long) userDailyStat.getDeleteOperationCount());
-		assertEquals(-500, (long) userDailyStat.getDeleteOperationSum());
-		assertEquals(700, (long) userDailyStat.getDiffOperationSum());
+		assertEquals(3, (long) userDailyStat.getOperationCount());
+		assertEquals(300, (long) userDailyStat.getActualOperationSum());
+		assertEquals(2, (long) userDailyStat.getAddOperationCount());
+		assertEquals(600, (long) userDailyStat.getAddOperationSum());
+		assertEquals(1, (long) userDailyStat.getDeleteOperationCount());
+		assertEquals(-300, (long) userDailyStat.getDeleteOperationSum());
+		assertEquals(300, (long) userDailyStat.getDiffOperationSum());
 
 		quota = accountQuotaBusinessService.find(jane);
 		assertNotNull(quota);
-		assertEquals(1500, (long) quota.getCurrentValue());
+		assertEquals(1100, (long) quota.getCurrentValue());
 		assertEquals(800, (long) quota.getLastValue());
 		assertEquals(1600, (long) quota.getQuota());
 		assertEquals(1480, (long) quota.getQuotaWarning());
@@ -239,7 +239,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 
 		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(jane.getDomain(), EnsembleType.USER);
 		assertNotNull(ensembleQuota);
-		assertEquals(2400, (long) ensembleQuota.getCurrentValue());
+		assertEquals(0, (long) ensembleQuota.getCurrentValue());
 		assertEquals(496, (long) ensembleQuota.getLastValue());
 		assertEquals(1900, (long) ensembleQuota.getQuota());
 		assertEquals(1300, (long) ensembleQuota.getQuotaWarning());
@@ -247,28 +247,15 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 
 		ensembleQuota = ensembleQuotaBusinessService.find(jane.getDomain(), EnsembleType.THREAD);
 		assertNotNull(ensembleQuota);
-		assertEquals(1500, (long) ensembleQuota.getCurrentValue());
+		assertEquals(0, (long) ensembleQuota.getCurrentValue());
 		assertEquals(900, (long) ensembleQuota.getLastValue());
 		assertEquals(2000, (long) ensembleQuota.getQuota());
 		assertEquals(1500, (long) ensembleQuota.getQuotaWarning());
 		assertEquals(5, (long) ensembleQuota.getFileSizeMax());
 
-		List<DomainDailyStat> listDomaindailyStat = domaindailyStatBusinessService.findBetweenTwoDates(jane.getDomain(), new Date(), new Date());
-
-		assertEquals(1, listDomaindailyStat.size());
-		DomainDailyStat domainDailyStat = listDomaindailyStat.get(0);
-		assertEquals(jane.getDomain(), domainDailyStat.getDomain());
-		assertEquals(10, (long) domainDailyStat.getOperationCount());
-		assertEquals(1000, (long) domainDailyStat.getActualOperationSum());
-		assertEquals(7, (long) domainDailyStat.getAddOperationCount());
-		assertEquals(1800, (long) domainDailyStat.getAddOperationSum());
-		assertEquals(3, (long) domainDailyStat.getDeleteOperationCount());
-		assertEquals(-800, (long) domainDailyStat.getDeleteOperationSum());
-		assertEquals(1000, (long) domainDailyStat.getDiffOperationSum());
-
 		quota = domainQuotaBusinessService.find(jane.getDomain());
 		assertNotNull(quota);
-		assertEquals(3900, (long) quota.getCurrentValue());
+		assertEquals(0, (long) quota.getCurrentValue());
 		assertEquals(1096, (long) quota.getLastValue());
 		assertEquals(1900, (long) quota.getQuota());
 		assertEquals(1800, (long) quota.getQuotaWarning());
@@ -276,7 +263,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 
 		quota = platformQuotaBusinessService.find();
 		assertNotNull(quota);
-		assertEquals(3900, (long) quota.getCurrentValue());
+		assertEquals(0, (long) quota.getCurrentValue());
 		assertEquals(1096, (long) quota.getLastValue());
 		assertEquals(2300, (long) quota.getQuota());
 		assertEquals(2000, (long) quota.getQuotaWarning());

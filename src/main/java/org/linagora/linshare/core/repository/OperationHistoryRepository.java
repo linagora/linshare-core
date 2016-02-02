@@ -46,7 +46,7 @@ public interface OperationHistoryRepository extends AbstractRepository<Operation
 
 	List<Account> findAccountBeforeDate(Date date, EnsembleType ensembleType);
 
-	List<OperationHistory> find(Account account, AbstractDomain domain, EnsembleType ensembleType, Date date);
+	List<OperationHistory> find(Account account, AbstractDomain domain, EnsembleType ensembleType, Date date, OperationHistoryTypeEnum type);
 
 	Long sumOperationValue(Account account, AbstractDomain domain, Date creationDate, OperationHistoryTypeEnum operationType, EnsembleType ensembleType);
 

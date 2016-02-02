@@ -163,9 +163,9 @@ public class StatisticMonthlyUserBatchImpl extends GenericBatchImpl {
 		dateCalendar.add(GregorianCalendar.MONTH, -1);
 		int nbDay = dateCalendar.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
 		dateCalendar.set(GregorianCalendar.DATE, nbDay);
-		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
-		dateCalendar.set(GregorianCalendar.MINUTE, 0);
-		dateCalendar.set(GregorianCalendar.SECOND, 0);
+		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
+		dateCalendar.set(GregorianCalendar.MINUTE, 59);
+		dateCalendar.set(GregorianCalendar.SECOND, 59);
 		return dateCalendar.getTime();
 	}
 

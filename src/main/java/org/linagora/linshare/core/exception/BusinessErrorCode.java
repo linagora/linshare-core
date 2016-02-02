@@ -38,6 +38,7 @@ import javax.ws.rs.core.Response.Status;
 /** Exception error code.
  */
 public enum BusinessErrorCode implements ErrorCode {
+
 	UNKNOWN(1000, Status.INTERNAL_SERVER_ERROR),
 	AUTHENTICATION_ERROR(2000),
 	DATABASE_INCOHERENCE_NO_ROOT_DOMAIN(2001, Status.INTERNAL_SERVER_ERROR),

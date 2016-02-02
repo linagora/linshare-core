@@ -43,7 +43,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.QuotaResourceAccessControl;
 import org.linagora.linshare.core.service.PlatformQuotaService;
 
-public class PlatformQuotaServiceImpl extends GenericServiceImpl<Account, Quota>implements PlatformQuotaService {
+public class PlatformQuotaServiceImpl extends GenericServiceImpl<Account, Quota> implements PlatformQuotaService {
 
 	private PlatformQuotaBusinessService platformQuotaBusinessService;
 
@@ -78,7 +78,7 @@ public class PlatformQuotaServiceImpl extends GenericServiceImpl<Account, Quota>
 		Validate.notNull(actor, "Actor must be set.");
 		checkReadPermission(actor, null, PlatformQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
 		PlatformQuota platformQuota = platformQuotaBusinessService.find();
-		if(platformQuota == null){
+		if (platformQuota == null) {
 			throw new BusinessException(BusinessErrorCode.PLATFORM_QUOTA_NOT_FOUND, "Can not found platform quota.");
 		}
 		return platformQuota;

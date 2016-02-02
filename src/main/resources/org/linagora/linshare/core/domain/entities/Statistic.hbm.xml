@@ -8,15 +8,16 @@
 		<param name="valueOfMethod">fromString</param>
 	</typedef>
 	<class name="org.linagora.linshare.core.domain.entities.GenericStatistic"
-		table="statistique" lazy="true">
+		table="statistic" lazy="true">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>
 		</id>
-		<discriminator column="statistique_type" type="string" />
-		<property name="statisticType" column="statistique_type"
+		<discriminator column="statistic_type" type="string" />
+		<property name="statisticType" column="statistic_type"
 			type="statisticType" insert="false" update="false"/>
-		<property name="creationDate" column="creation_date" type="date" />
+		<property name="creationDate" column="creation_date" type="timestamp" />
+		<property name="activeDate" column="active_date" type="timestamp" />
 		<property name="operationCount" column="operation_count"
 			type="long" not-null="true" />
 		<property name="deleteOperationCount" column="delete_operation_count"

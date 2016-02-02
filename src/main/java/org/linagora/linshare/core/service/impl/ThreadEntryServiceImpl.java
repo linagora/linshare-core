@@ -64,8 +64,6 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.rac.ThreadEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
-import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -74,14 +72,13 @@ import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.VirusScannerService;
 
-public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, ThreadEntry> implements ThreadEntryService {
+public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, ThreadEntry>
+		implements ThreadEntryService {
 
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 	private final LogEntryService logEntryService;
-	private final AbstractDomainService abstractDomainService;
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 	private final MimeTypeService mimeTypeService;
-	private final AccountService accountService;
 	private final VirusScannerService virusScannerService;
 	private final ThreadMemberRepository threadMemberRepository;
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
@@ -89,26 +86,17 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	private final OperationHistoryBusinessService operationHistoryBusinessService;
 	private final QuotaService quotaService;
 
-	public ThreadEntryServiceImpl(
-			DocumentEntryBusinessService documentEntryBusinessService,
-			LogEntryService logEntryService,
-			AbstractDomainService abstractDomainService,
-			FunctionalityReadOnlyService functionalityReadOnlyService,
-			MimeTypeService mimeTypeService, AccountService accountService,
-			VirusScannerService virusScannerService,
-			ThreadMemberRepository threadMemberRepository,
-			MimeTypeMagicNumberDao mimeTypeIdentifier,
-			AntiSamyService antiSamyService,
-			ThreadEntryResourceAccessControl rac,
-			OperationHistoryBusinessService operationHistoryBusinessService,
-			QuotaService quotaService) {
+	public ThreadEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService,
+			LogEntryService logEntryService, FunctionalityReadOnlyService functionalityReadOnlyService,
+			MimeTypeService mimeTypeService, VirusScannerService virusScannerService,
+			ThreadMemberRepository threadMemberRepository, MimeTypeMagicNumberDao mimeTypeIdentifier,
+			AntiSamyService antiSamyService, ThreadEntryResourceAccessControl rac,
+			OperationHistoryBusinessService operationHistoryBusinessService, QuotaService quotaService) {
 		super(rac);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
-		this.abstractDomainService = abstractDomainService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mimeTypeService = mimeTypeService;
-		this.accountService = accountService;
 		this.virusScannerService = virusScannerService;
 		this.threadMemberRepository = threadMemberRepository;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
@@ -118,9 +106,9 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	}
 
 	@Override
-	public ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, File tempFile, String filename) throws BusinessException {
-		checkCreatePermission(actor, owner, ThreadEntry.class,
-				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, null, thread);
+	public ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, File tempFile, String filename)
+			throws BusinessException {
+		checkCreatePermission(actor, owner, ThreadEntry.class, BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, null, thread);
 		filename = sanitizeFileName(filename); // throws
 		Long size = tempFile.length();
 		ThreadEntry threadEntry = null;
@@ -137,12 +125,13 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 
 			Functionality antivirusFunctionality = functionalityReadOnlyService.getAntivirusFunctionality(domain);
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-				 checkVirus(filename, owner, tempFile);
+				checkVirus(filename, owner, tempFile);
 			}
 
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
-			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService.getTimeStampingFunctionality(domain);
+			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService
+					.getTimeStampingFunctionality(domain);
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
 				timeStampingUrl = timeStampingFunctionality.getValue();
 			}
@@ -152,15 +141,18 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 
 			quotaService.checkIfUserCanAddFile(actor, owner, size, EnsembleType.THREAD);
 
-			threadEntry = documentEntryBusinessService.createThreadEntry(thread, tempFile, size, filename, checkIfIsCiphered, timeStampingUrl, mimeType);
-			logEntryService.create(new ThreadLogEntry(owner, threadEntry, LogAction.THREAD_UPLOAD_ENTRY, "Uploading a file in a thread."));
+			threadEntry = documentEntryBusinessService.createThreadEntry(thread, tempFile, size, filename,
+					checkIfIsCiphered, timeStampingUrl, mimeType);
+			logEntryService.create(new ThreadLogEntry(owner, threadEntry, LogAction.THREAD_UPLOAD_ENTRY,
+					"Uploading a file in a thread."));
 
 			// add new row in operation History
 			// When we have a creation of documents operationValue=CREATE
-			OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), size, OperationHistoryTypeEnum.CREATE, EnsembleType.THREAD);
+			OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), size,
+					OperationHistoryTypeEnum.CREATE, EnsembleType.THREAD);
 			operationHistoryBusinessService.create(operationHistory);
 		} finally {
-			try{
+			try {
 				logger.debug("deleting temp file : " + tempFile.getName());
 				tempFile.delete(); // remove the temporary file
 			} catch (Exception e) {
@@ -190,7 +182,8 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), documentEntry.getSize(), OperationHistoryTypeEnum.CREATE, EnsembleType.THREAD);
 		operationHistoryBusinessService.create(operationHistory);
 
-		logEntryService.create(new ThreadLogEntry(member, threadEntry, LogAction.THREAD_UPLOAD_ENTRY, "Uploading a file in a thread."));
+		logEntryService.create(new ThreadLogEntry(member, threadEntry, LogAction.THREAD_UPLOAD_ENTRY,
+				"Uploading a file in a thread."));
 		return threadEntry;
 	}
 
@@ -214,13 +207,10 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		ThreadEntry threadEntry = documentEntryBusinessService
 				.findThreadEntryById(threadEntryUuid);
 		if (threadEntry == null) {
-			throw new BusinessException(
-					BusinessErrorCode.THREAD_ENTRY_NOT_FOUND,
-					"Thread entry with uuid : " + threadEntryUuid
-							+ " not found.");
+			throw new BusinessException(BusinessErrorCode.THREAD_ENTRY_NOT_FOUND,
+					"Thread entry with uuid : " + threadEntryUuid + " not found.");
 		}
-		checkReadPermission(actor, owner, ThreadEntry.class,
-				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, threadEntry);
+		checkReadPermission(actor, owner, ThreadEntry.class, BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, threadEntry);
 		return threadEntry;
 	}
 
@@ -228,54 +218,43 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	public void deleteThreadEntry(Account actor, Account owner, ThreadEntry threadEntry) throws BusinessException {
 		Thread thread = (Thread) threadEntry.getEntryOwner();
 		try {
-			checkDeletePermission(actor, owner, ThreadEntry.class,
-					BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, threadEntry,
-					thread);
-			ThreadLogEntry log = new ThreadLogEntry(owner, threadEntry,
-					LogAction.THREAD_REMOVE_ENTRY, "Deleting a thread entry.");
+			checkDeletePermission(actor, owner, ThreadEntry.class, BusinessErrorCode.THREAD_ENTRY_FORBIDDEN,
+					threadEntry, thread);
+			ThreadLogEntry log = new ThreadLogEntry(owner, threadEntry, LogAction.THREAD_REMOVE_ENTRY,
+					"Deleting a thread entry.");
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
 			logEntryService.create(log);
 
 			// add new row in operation History
 			// When we have a delete of documents operationValue=DELETE
-			OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), -threadEntry.getSize(), OperationHistoryTypeEnum.DELETE, EnsembleType.THREAD);
+			OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), -threadEntry.getSize(),
+					OperationHistoryTypeEnum.DELETE, EnsembleType.THREAD);
 			operationHistoryBusinessService.create(operationHistory);
 		} catch (IllegalArgumentException e) {
-			logger.error(
-					"Could not delete thread entry " + threadEntry.getUuid()
-							+ " in thread " + thread.getLsUuid()
-							+ " by account " + owner.getLsUuid()
-							+ ", reason : ", e);
-			throw new TechnicalException(
-					TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT,
-					"Could not delete document");
+			logger.error("Could not delete thread entry " + threadEntry.getUuid() + " in thread " + thread.getLsUuid()
+					+ " by account " + owner.getLsUuid() + ", reason : ", e);
+			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
 		}
 	}
 
 	@Override
-	public void deleteInconsistentThreadEntry(SystemAccount actor,
-			ThreadEntry threadEntry) throws BusinessException {
+	public void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException {
 		Thread owner = (Thread) threadEntry.getEntryOwner();
 		try {
-			ThreadLogEntry log = new ThreadLogEntry(actor, threadEntry,
-					LogAction.THREAD_REMOVE_INCONSISTENCY_ENTRY,
+			ThreadLogEntry log = new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_REMOVE_INCONSISTENCY_ENTRY,
 					"Deleting an inconsistent thread entry.");
 			logEntryService.create(LogEntryService.WARN, log);
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
-	
+
 			// add new row in operation History
 			// When we have a delete of documents operationValue=DELETE
-			OperationHistory operationHistory = new OperationHistory(owner, owner.getDomain(), -threadEntry.getSize(), OperationHistoryTypeEnum.DELETE, EnsembleType.THREAD);
+			OperationHistory operationHistory = new OperationHistory(owner, owner.getDomain(), -threadEntry.getSize(),
+					OperationHistoryTypeEnum.DELETE, EnsembleType.THREAD);
 			operationHistoryBusinessService.create(operationHistory);
 		} catch (IllegalArgumentException e) {
-			logger.error(
-					"Could not delete thread entry " + threadEntry.getUuid()
-							+ " in thread " + owner.getLsUuid()
-							+ " by account " + actor.getLsUuid()
-							+ ", reason : ", e);
-			throw new TechnicalException(
-					TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT,
-					"Could not delete document");
+			logger.error("Could not delete thread entry " + threadEntry.getUuid() + " in thread " + owner.getLsUuid()
+					+ " by account " + actor.getLsUuid() + ", reason : ", e);
+			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
 		}
 	}
 
@@ -283,6 +262,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	public List<ThreadEntry> findAllThreadEntries(Account actor, Account owner, Thread thread) throws BusinessException {
 		checkListPermission(actor, owner, ThreadEntry.class,
 				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, null, thread);
+		checkListPermission(actor, owner, ThreadEntry.class, BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, null, thread);
 		return documentEntryBusinessService.findAllThreadEntries(thread);
 	}
 
@@ -322,8 +302,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	public ThreadEntry updateFileProperties(Account actor, Account owner,
 			String threadEntryUuid, String fileComment, String metaData,
 			String newName) throws BusinessException {
-		ThreadEntry threadEntry = documentEntryBusinessService
-				.findThreadEntryById(threadEntryUuid);
+		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(threadEntryUuid);
 		// Avoid overwritting metadata in database to null when update
 		// threadEntry from interface.
 		if (metaData == null) {
@@ -339,8 +318,8 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"You are not authorized to update this document.");
 		}
-		return documentEntryBusinessService.updateFileProperties(threadEntry,
-				fileComment, metaData, sanitizeFileName(newName));
+		return documentEntryBusinessService.updateFileProperties(threadEntry, fileComment, metaData,
+				sanitizeFileName(newName));
 	}
 
 	private String sanitizeFileName(String fileName) throws BusinessException {
@@ -348,8 +327,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		fileName = fileName.replace(":", "_");
 		fileName = antiSamyService.clean(fileName);
 		if (fileName.isEmpty()) {
-			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME,
-					"fileName is empty after the xss filter");
+			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "fileName is empty after the xss filter");
 		}
 		return fileName;
 	}
@@ -381,6 +359,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		}
 		return checkStatus;
 	}
+
 	/**
 	 * PERMISSIONS
 	 */
@@ -396,12 +375,12 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	}
 
 	@Override
-	public List<ThreadEntry> findMoreRecentByName(Account actor, Thread thread)
-			throws BusinessException {
+	public List<ThreadEntry> findMoreRecentByName(Account actor, Thread thread) throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(thread, "Thread must be set.");
 		if (!isThreadMember(thread, (User) actor)) {
-			throw new BusinessException(BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, "The actor is not member of the thread.");
+			throw new BusinessException(BusinessErrorCode.THREAD_ENTRY_FORBIDDEN,
+					"The actor is not member of the thread.");
 		}
 
 		return documentEntryBusinessService.findMoreRecentByName(thread);

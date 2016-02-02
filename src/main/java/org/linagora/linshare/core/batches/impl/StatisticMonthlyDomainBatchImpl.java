@@ -38,7 +38,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
 import org.linagora.linshare.core.business.service.DomainMonthlyStatBusinessService;
@@ -46,16 +45,12 @@ import org.linagora.linshare.core.business.service.DomainWeeklyStatBusinessServi
 import org.linagora.linshare.core.domain.constants.BatchType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.BatchHistory;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.job.quartz.DomainBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class StatisticMonthlyDomainBatchImpl extends GenericBatchImpl {
 
@@ -104,8 +99,8 @@ public class StatisticMonthlyDomainBatchImpl extends GenericBatchImpl {
 			calendar.add(GregorianCalendar.MONTH, -1);
 			logError(total, position,
 					"Error while trying to create a DomainMonthlyStat for domain" + resource.getDescription()
-							+ " in the month "
-							+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US));
+							+ " in the month " + calendar.getTime().toString());
+//							+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US));
 			logger.info(
 					"Error occurred while creating a monthly statistics for domain " + resource.getDescription()
 							+ " in the month "
@@ -124,7 +119,7 @@ public class StatisticMonthlyDomainBatchImpl extends GenericBatchImpl {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) context;
 		AbstractDomain domain = domainContext.getResource();
 		logInfo(total, position,
-				"the MonthlyDomainStat for " + domain.getDescription() + "has been successfully created.");
+				"the MonthlyDomainStat for " + domain.getUuid() + "has been successfully created.");
 	}
 
 	@Override
@@ -167,9 +162,9 @@ public class StatisticMonthlyDomainBatchImpl extends GenericBatchImpl {
 		dateCalendar.add(GregorianCalendar.MONTH, -1);
 		int nbDay = dateCalendar.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
 		dateCalendar.set(GregorianCalendar.DATE, nbDay);
-		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
-		dateCalendar.set(GregorianCalendar.MINUTE, 0);
-		dateCalendar.set(GregorianCalendar.SECOND, 0);
+		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
+		dateCalendar.set(GregorianCalendar.MINUTE, 59);
+		dateCalendar.set(GregorianCalendar.SECOND, 59);
 		return dateCalendar.getTime();
 	}
 

@@ -49,7 +49,6 @@ import org.linagora.linshare.core.domain.constants.BatchType;
 import org.linagora.linshare.core.domain.constants.EnsembleType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.BatchHistory;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.EnsembleQuota;
 import org.linagora.linshare.core.exception.BatchBusinessException;
@@ -59,7 +58,6 @@ import org.linagora.linshare.core.job.quartz.DomainBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
@@ -96,7 +94,7 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 	public List<String> getAll() {
 		logger.info("DailyDomainBatchImpl job starting ...");
 		Map<String, List<String>> res = Maps.newHashMap();
-		List<String> domains = accountQuotaBusinessService.findDomainByBatchModificationDate(today());
+		List<String> domains = accountQuotaBusinessService.findDomainByBatchModificationDate(yesterday(), new Date());
 		logger.info(domains.size() + " domain(s) have been found in accountQuota table and modified by batch today");
 //		BatchHistory batchHistory = new BatchHistory(BatchType.DAILY_DOMAIN_BATCH);
 //		batchHistory = batchHistoryBusinessService.create(batchHistory);
@@ -144,7 +142,6 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 			exception.setBusinessException(businessException);
 			throw exception;
 		}
-
 		try {
 			DomainQuota domainQuota = domainQuotaBusinessService.find(resource);
 			domainQuota = domainQuotaBusinessService.updateByBatch(domainQuota, today);
@@ -165,7 +162,7 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) context;
 		AbstractDomain domain = domainContext.getResource();
 		logInfo(total, position, "DailyDomainStatistics, EnsembleQuota and DomainQuota of the domain : "
-				+ domain.getDescription() + " have been successfully created");
+				+ domain.getUuid() + " have been successfully created");
 	}
 
 	@Override
@@ -174,9 +171,9 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 		AbstractDomain domain = context.getResource();
 		logError(total, position,
 				"creating DailyDomainStatistic, EnsembleQuota and DomainQuota have failed for the domain : "
-						+ domain.getDescription());
+						+ domain.getUuid());
 		logger.error("Error occured while creating DailyDomainStatistics, EnsembleQuota and DomainQuota for a domain "
-				+ domain.getDescription() + ". BatchBusinessException ", exception);
+				+ domain.getUuid() + ". BatchBusinessException ", exception);
 	}
 
 	@Override
@@ -210,8 +207,17 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 		return dateCalender.getTime();
 	}
 
+	private Date yesterday() {
+		GregorianCalendar dateCalender = new GregorianCalendar();
+		dateCalender.add(GregorianCalendar.DATE, -1);
+		dateCalender.set(GregorianCalendar.HOUR_OF_DAY, 23);
+		dateCalender.set(GregorianCalendar.MINUTE, 59);
+		dateCalender.set(GregorianCalendar.SECOND, 59);
+		return dateCalender.getTime();
+	}
+
 	@Override
 	public boolean needToRun() {
-		return !batchHistoryBusinessService.exist(today(), new Date(), BatchType.DAILY_DOMAIN_BATCH);
+		return !batchHistoryBusinessService.exist(today(), null, BatchType.DAILY_DOMAIN_BATCH);
 	}
 }

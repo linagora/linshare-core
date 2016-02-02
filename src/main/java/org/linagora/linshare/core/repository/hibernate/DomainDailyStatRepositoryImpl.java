@@ -34,11 +34,11 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import org.linagora.linshare.core.domain.entities.DomainDailyStat;
-import org.linagora.linshare.core.repository.DomainDailyStatRepository;
+import org.linagora.linshare.core.repository.DomainDailyStatisticRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class DomainDailyStatRepositoryImpl extends GenericStatisticRepositoryImpl<DomainDailyStat>
-		implements DomainDailyStatRepository {
+		implements DomainDailyStatisticRepository {
 
 	public DomainDailyStatRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);

@@ -91,7 +91,7 @@ public abstract class GenericBatchImpl implements GenericBatch {
 
 	@Override
 	public void fail(Map<String, List<String>> context, Exception exception) {
-		logger.error("batch error in " + this.getClass().getName());
+		logger.error("Batch error in " + this.getClass().getName());
 		logger.error(exception.getMessage(), exception);
 	}
 }

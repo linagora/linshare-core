@@ -45,7 +45,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.QuotaResourceAccessControl;
 import org.linagora.linshare.core.service.EnsembleQuotaService;
 
-public class EnsembleQuotaServiceImpl extends GenericServiceImpl<Account, Quota>implements EnsembleQuotaService {
+public class EnsembleQuotaServiceImpl extends GenericServiceImpl<Account, Quota> implements EnsembleQuotaService {
 
 	private EnsembleQuotaBusinessService ensembleQuotaBusinessService;
 
@@ -89,5 +89,4 @@ public class EnsembleQuotaServiceImpl extends GenericServiceImpl<Account, Quota>
 		}
 		return ensembleQuota;
 	}
-
 }

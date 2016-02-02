@@ -77,66 +77,66 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 
 	@Override
 	public AccountQuotaDto update(AccountQuotaDto entity) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notNull(entity, "AccountQuotaDto must be set.");
 		Validate.notNull(entity.getAccount(), "Account in AccountQuotaDto must be set.");
 		Validate.notNull(entity.getQuota(), "Quota in AccountQuotaDto must be set.");
 		Validate.notNull(entity.getQuotaWarning(), "QuotaWarning in AccountQuotaDto must be set.");
 		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in AccountQuotaDto must be set.");
+		User actor = checkAuthentication(Role.ADMIN);
 		Account owner = accountService.findByLsUuid(entity.getAccount().getUuid());
 		AccountQuota accountQuota = entity.toObject();
 		accountQuota.setAccount(owner);
-		AccountQuotaDto accountQuotaDto = new AccountQuotaDto(accountQuotaService.update(actor, owner, accountQuota));
-		return accountQuotaDto;
+		accountQuota = accountQuotaService.update(actor, owner, accountQuota);
+		return new AccountQuotaDto(accountQuota);
 	}
 
 	@Override
 	public DomainQuotaDto update(DomainQuotaDto entity) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notNull(entity, "DomainQuotaDto must be set.");
 		Validate.notNull(entity.getDomain(), "Domain in DomainQuotaDto must be set.");
 		Validate.notNull(entity.getQuota(), "Quota in DomainQuotaDto must be set.");
 		Validate.notNull(entity.getQuotaWarning(), "QuotaWarning in DomainQuotaDto must be set.");
 		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in DomainQuotaDto must be set.");
+		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain domain = abstractDomainService.findById(entity.getDomain().getIdentifier());
 		DomainQuota domainQuota = entity.toObject();
 		domainQuota.setDomain(domain);
-		DomainQuotaDto domainQuotaDto = new DomainQuotaDto(domainQuotaService.update(actor, domain, domainQuota));
-		return domainQuotaDto;
+		domainQuota = domainQuotaService.update(actor, domain, domainQuota);
+		return new DomainQuotaDto(domainQuota);
 	}
 
 	@Override
 	public EnsembleQuotaDto update(EnsembleQuotaDto entity) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notNull(entity, "EnsembleQuotaDto must be set.");
 		Validate.notNull(entity.getEnsembleType(), "EnsembleType in EnsembleQuotaDto must be set.");
 		Validate.notNull(entity.getDomain(), "Domain in EnsembleQuotaDto must be set.");
 		Validate.notNull(entity.getQuota(), "Quota in EnsembleQuotaDto must be set.");
 		Validate.notNull(entity.getQuotaWarning(), "QuotaWarning in EnsembleQuotaDto must be set.");
 		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in EnsembleQuotaDto must be set.");
+		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain domain = abstractDomainService.findById(entity.getDomain().getIdentifier());
 		EnsembleQuota ensembleQuota = entity.toObject();
 		ensembleQuota.setDomain(domain);
-		EnsembleQuotaDto ensembleQuotaDto = new EnsembleQuotaDto(ensembleQuotaService.update(actor, domain, ensembleQuota));
-		return ensembleQuotaDto;
+		ensembleQuota = ensembleQuotaService.update(actor, domain, ensembleQuota);
+		return new EnsembleQuotaDto(ensembleQuota);
 	}
 
 	@Override
 	public PlatformQuotaDto update(PlatformQuotaDto entity) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(entity, "PlatformQuotaDto must be set.");
 		Validate.notNull(entity.getQuota(), "Quota in PlatformQuotaDto must be set.");
 		Validate.notNull(entity.getQuotaWarning(), "QuotaWarning in PlatformQuotaDto must be set.");
 		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in PlatformQuotaDto must be set.");
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		PlatformQuota platformQuota = entity.toUserObject();
-		PlatformQuotaDto platformQuotaDto = new PlatformQuotaDto(platformQuotaService.update(actor, platformQuota));
-		return platformQuotaDto;
+		platformQuota = platformQuotaService.update(actor, platformQuota);
+		return new PlatformQuotaDto();
 	}
 
 	@Override
 	public AccountQuotaDto findAccountQuota(String accountUuid) throws BusinessException {
+		Validate.notEmpty(accountUuid, "accountUuid must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
-		Validate.notNull(accountUuid, "accountUuid must be set.");
 		Account owner = accountService.findByLsUuid(accountUuid);
 		AccountQuota accountQuota = accountQuotaService.find(actor, owner);
 		AccountQuotaDto accountQuotaDto = new AccountQuotaDto(accountQuota);
@@ -145,8 +145,8 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 
 	@Override
 	public DomainQuotaDto findDomainQuota(String domain) throws BusinessException {
+		Validate.notEmpty(domain, "domain identifier must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
-		Validate.notNull(domain, "domain identifier must be set.");
 		AbstractDomain abstractDomain = abstractDomainService.findById(domain);
 		DomainQuota domainQuota = domainQuotaService.find(actor, abstractDomain);
 		DomainQuotaDto domainQuotaDto = new DomainQuotaDto(domainQuota);
@@ -155,9 +155,9 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 
 	@Override
 	public EnsembleQuotaDto findEnsembleQuota(String domain, String ensembleType) throws BusinessException {
+		Validate.notEmpty(domain, "domain identifier must be set.");
+		Validate.notEmpty(ensembleType, "ensembleType must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
-		Validate.notNull(domain, "domain identifier must be set.");
-		Validate.notNull(ensembleType, "ensembleType must be set.");
 		AbstractDomain abstractDomain = abstractDomainService.findById(domain);
 		EnsembleType ensembleTypeObject = EnsembleType.fromString(ensembleType);
 		EnsembleQuota ensembleQuota = ensembleQuotaService.find(actor, abstractDomain, ensembleTypeObject);

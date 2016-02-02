@@ -39,14 +39,19 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
+import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.business.service.impl.GuestBusinessServiceImpl.GuestWithMetadata;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.EnsembleType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.EnsembleQuota;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -88,6 +93,10 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 
 	private final AuditUserMongoRepository auditMongoRepository;
 
+	private final EnsembleQuotaBusinessService ensembleQuotaBusinessService;
+
+	private final AccountQuotaBusinessService accountQuotaBusinessService;
+
 	public GuestServiceImpl(final GuestBusinessService guestBusinessService,
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
@@ -96,7 +105,9 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			final MailBuildingService mailBuildingService,
 			final LogEntryService logEntryService,
 			final AuditUserMongoRepository auditMongoRepository,
-			final GuestResourceAccessControl rac) {
+			final GuestResourceAccessControl rac,
+			final EnsembleQuotaBusinessService ensembleQuotaBusinessService,
+			final AccountQuotaBusinessService accountQuotaBusinessService) {
 		super(rac);
 		this.guestBusinessService = guestBusinessService;
 		this.abstractDomainService = abstractDomainService;
@@ -106,6 +117,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		this.mailBuildingService = mailBuildingService;
 		this.LogEntryService = logEntryService;
 		this.auditMongoRepository = auditMongoRepository;
+		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
+		this.accountQuotaBusinessService = accountQuotaBusinessService;
 	}
 
 	@Override
@@ -179,6 +192,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		if (guest.isRestricted()) {
 			Validate.notNull(restrictedMails,
 					"A restricted guest must have a restricted list of contacts (mails)");
+//			AKO : not empty already check if the object is null.
 			Validate.notEmpty(restrictedMails,
 					"A restricted guest must have a restricted list of contacts (mails)");
 		}
@@ -215,6 +229,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		}
 		GuestWithMetadata create = guestBusinessService.create(owner, guest,
 				guestDomain, restrictedContacts);
+		createQuotaGuest(guest);
 		MailContainerWithRecipient mail = mailBuildingService.buildNewGuest(
 				owner, create.getGuest(), create.getPassword());
 		notifierService.sendNotification(mail);
@@ -432,5 +447,18 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	public Date getGuestExpirationDate(Account actor,
 			Date currentGuestExpirationDate) throws BusinessException {
 		return calculateUserExpiryDate(actor, currentGuestExpirationDate);
+	}
+
+	private void createQuotaGuest(Guest guest) throws BusinessException {
+		Validate.notNull(guest);
+		Validate.notNull(guest.getDomain());
+		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(guest.getDomain(), EnsembleType.USER);
+		if (ensembleQuota == null) {
+			throw new BusinessException(BusinessErrorCode.ENSEMBLE_QUOTA_NOT_FOUND, "No ensemble quota found for the domain : " + guest.getDomainId());
+		}
+		AccountQuota userQuota = new AccountQuota(guest, guest.getDomain(), guest.getDomain().getParentDomain(),
+				ensembleQuota, ensembleQuota.getQuota(), ensembleQuota.getQuotaWarning(),
+				ensembleQuota.getFileSizeMax(), 0L, 0L);
+		accountQuotaBusinessService.create(userQuota);
 	}
 }

@@ -56,14 +56,14 @@ public class StatisticResourceAccessControlImpl extends AbstractResourceAccessCo
 			return hasPermission(actor, TechnicalAccountPermissionType.STATISTIC_GET);
 		}
 		if (actor.isInternal() || actor.isGuest()) {
-			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole()){
+			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole()) {
 				return true;
 			}
-			if (owner != null && owner.equals(actor)){
+			if (owner != null && owner.equals(actor)) {
 				return true;
 			}
 			if (actor.hasAdminRole()) {
-				if (owner != null){
+				if (owner != null) {
 					return owner.getDomain().isManagedBy(actor);
 				}
 				if (owner == null && opt != null && opt.length > 0) {
@@ -80,14 +80,14 @@ public class StatisticResourceAccessControlImpl extends AbstractResourceAccessCo
 			return hasPermission(actor, TechnicalAccountPermissionType.STATISTIC_LIST);
 		}
 		if (actor.isInternal() || actor.isGuest()) {
-			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole()){
+			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole()) {
 				return true;
 			}
-			if (owner != null && owner.equals(actor)){
+			if (owner != null && owner.equals(actor)) {
 				return true;
 			}
 			if (actor.hasAdminRole()) {
-				if (owner != null){
+				if (owner != null) {
 					return owner.getDomain().isManagedBy(actor);
 				}
 				if (owner == null && opt != null && opt.length > 0) {
@@ -123,29 +123,29 @@ public class StatisticResourceAccessControlImpl extends AbstractResourceAccessCo
 		return "";
 	}
 
-	protected boolean isAuthorized(Account actor, Account targetedAccount, PermissionType permission,
-			Statistic entry, Class<?> clazz, Object... opt) {
+	protected boolean isAuthorized(Account actor, Account targetedAccount, PermissionType permission, Statistic entry,
+			Class<?> clazz, Object... opt) {
 		Validate.notNull(actor);
 		Validate.notNull(permission);
 		if (actor.hasAllRights())
 			return true;
 		if (permission.equals(PermissionType.GET)) {
-			if (hasReadPermission(actor, targetedAccount, entry, opt)){
+			if (hasReadPermission(actor, targetedAccount, entry, opt)) {
 				return true;
 			}
 		} else if (permission.equals(PermissionType.LIST)) {
 			if (hasListPermission(actor, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.CREATE)) {
-			if (hasCreatePermission(actor, targetedAccount, entry, opt)){
+			if (hasCreatePermission(actor, targetedAccount, entry, opt)) {
 				return true;
 			}
 		} else if (permission.equals(PermissionType.UPDATE)) {
-			if (hasUpdatePermission(actor, targetedAccount, entry, opt)){
+			if (hasUpdatePermission(actor, targetedAccount, entry, opt)) {
 				return true;
 			}
 		} else if (permission.equals(PermissionType.DELETE)) {
-			if (hasDeletePermission(actor, targetedAccount, entry, opt)){
+			if (hasDeletePermission(actor, targetedAccount, entry, opt)) {
 				return true;
 			}
 		}

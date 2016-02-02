@@ -64,10 +64,8 @@ import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
-import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
@@ -98,12 +96,6 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 	@Autowired
 	private FunctionalityRepository functionalityRepository;
-
-	@Autowired
-	private AbstractDomainRepository abstractDomainRepository;
-
-	@Autowired
-	private DomainPolicyRepository domainPolicyRepository;
 
 	@Qualifier("userRepository")
 	@Autowired
@@ -137,10 +129,9 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		this.executeSqlScript("import-tests-quota-other.sql", false);
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		datas = new LoadingServiceTestDatas(userRepository);
-
 		datas.loadUsers();
 		jane = datas.getUser2();
-
+		createFunctionalities();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -154,15 +145,11 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	public void testCreateDocumentEntry()
 			throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-
-		createFunctionalities();
-
 		Account actor = jane;
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
-
 		Document aDocument = aDocumentEntry.getDocument();
 		documentEntryRepository.delete(aDocumentEntry);
 		jane.getEntries().clear();
@@ -171,7 +158,6 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		metadata.setUuid(aDocument.getUuid());
 		fileDataStore.remove(metadata);
 		documentRepository.delete(aDocument);
-
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -237,12 +223,10 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		User owner = jane;
-		createFunctionalities();
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		List<DocumentEntry> documents = documentEntryService.findAll(actor, owner);
-
 		Assert.assertTrue(documents.contains(aDocumentEntry));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -252,13 +236,11 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 			throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
-		createFunctionalities();
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		aDocumentEntry.getDocument().setSignatures(new HashSet<Signature>());
 		documentEntryService.delete(actor, actor, aDocumentEntry.getUuid());
-
 		Assert.assertTrue(documentEntryRepository
 				.findById(aDocumentEntry.getUuid()) == null);
 		logger.debug(LinShareTestConstants.END_TEST);

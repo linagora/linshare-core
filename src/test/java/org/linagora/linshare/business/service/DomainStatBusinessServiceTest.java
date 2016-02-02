@@ -33,15 +33,19 @@
  */
 package org.linagora.linshare.business.service;
 
-import java.util.Date;
+import static org.junit.Assert.assertEquals;
+
 import java.util.GregorianCalendar;
 import java.util.List;
-import static org.junit.Assert.*;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linshare.core.business.service.DomainDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.DomainMonthlyStatBusinessService;
 import org.linagora.linshare.core.business.service.DomainWeeklyStatBusinessService;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.DomainDailyStat;
 import org.linagora.linshare.core.domain.entities.DomainMonthlyStat;
 import org.linagora.linshare.core.domain.entities.DomainWeeklyStat;
 import org.linagora.linshare.core.domain.entities.User;
@@ -68,6 +72,9 @@ public class DomainStatBusinessServiceTest extends AbstractTransactionalJUnit4Sp
 	private DomainMonthlyStatBusinessService domainMonthlyStatBusinessService;
 
 	@Autowired
+	private DomainDailyStatBusinessService domainDailyStatBusinessService;
+
+	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
@@ -76,53 +83,48 @@ public class DomainStatBusinessServiceTest extends AbstractTransactionalJUnit4Sp
 
 	@Before
 	public void setUp(){
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		this.executeSqlScript("import-tests-stat.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
 		dates.loadUsers();
 		jane = dates.getUser2();
+		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@Test
 	public void test(){
+		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain domain = jane.getDomain();
-		GregorianCalendar calendre = new GregorianCalendar();
-		calendre.add(GregorianCalendar.DATE, -1);
-		Date a = calendre.getTime();
-		calendre.add(GregorianCalendar.DATE, +2);
-		Date b = calendre.getTime();
 
-		GregorianCalendar calendre2 = new GregorianCalendar();
-		calendre2.add(GregorianCalendar.DATE, -7);
-		Date lastWeekBegin = calendre2.getTime();
-		calendre2.add(GregorianCalendar.DATE, +14);
-		Date lastWeekEnd = calendre2.getTime();
-		domainWeeklyStatBusinessService.create(domain, lastWeekBegin, lastWeekEnd);
-		List<DomainWeeklyStat> listWeekly = domainWeeklyStatBusinessService.findBetweenTwoDates(domain, a, b);
-		assertEquals(1, listWeekly.size());
-		DomainWeeklyStat entityWeekly = listWeekly.get(0);
-		assertEquals(4, (long) entityWeekly.getOperationCount());
-		assertEquals(150, (long) entityWeekly.getActualOperationSum());
-		assertEquals(3, (long) entityWeekly.getAddOperationCount());
-		assertEquals(200, (long) entityWeekly.getAddOperationSum());
-		assertEquals(1, (long) entityWeekly.getDeleteOperationCount());
-		assertEquals(-50, (long) entityWeekly.getDeleteOperationSum());
-		assertEquals(150, (long) entityWeekly.getDiffOperationSum());
+		List<DomainDailyStat> listDaily = domainDailyStatBusinessService.findBetweenTwoDates(domain, null, null);
+		assertEquals(4, listDaily.size());
+		domainWeeklyStatBusinessService.create(domain, new GregorianCalendar(2042, 10, 8, 00, 00).getTime(),
+				new GregorianCalendar(2042, 10, 15, 00, 00).getTime());
+		List<DomainWeeklyStat> listWeekly = domainWeeklyStatBusinessService.findBetweenTwoDates(domain, new GregorianCalendar(2042, 10, 8, 00, 00).getTime(),
+				new GregorianCalendar(2042, 10, 16, 00, 00).getTime());
+		assertEquals(2, listWeekly.size());
+		DomainWeeklyStat entityWeekly = listWeekly.get(1);
+		assertEquals(9, (long) entityWeekly.getOperationCount());
+		assertEquals(200, (long) entityWeekly.getActualOperationSum());
+		assertEquals(6, (long) entityWeekly.getAddOperationCount());
+		assertEquals(300, (long) entityWeekly.getAddOperationSum());
+		assertEquals(3, (long) entityWeekly.getDeleteOperationCount());
+		assertEquals(-100, (long) entityWeekly.getDeleteOperationSum());
+		assertEquals(200, (long) entityWeekly.getDiffOperationSum());
+		listWeekly = domainWeeklyStatBusinessService.findBetweenTwoDates(domain, null, null);
+		assertEquals(6, listWeekly.size());
 
-		GregorianCalendar calendre3 = new GregorianCalendar();
-		calendre3.add(GregorianCalendar.DATE, -30);
-		Date lastMonthBegin = calendre3.getTime();
-		calendre3.add(GregorianCalendar.DATE, +60);
-		Date lastMonthEnd = calendre3.getTime();
-		domainMonthlyStatBusinessService.create(domain, lastMonthBegin, lastMonthEnd);
-		List<DomainMonthlyStat> listMonthly = domainMonthlyStatBusinessService.findBetweenTwoDates(domain, a, b);
+		domainMonthlyStatBusinessService.create(domain, new GregorianCalendar(2042, 10, 1, 00, 00).getTime(), new GregorianCalendar(2042, 10, 30, 00, 00).getTime());
+		List<DomainMonthlyStat> listMonthly = domainMonthlyStatBusinessService.findBetweenTwoDates(domain, new GregorianCalendar(2042, 10, 29, 00, 00).getTime(), new GregorianCalendar(2042, 11, 1, 00, 00).getTime());
 		assertEquals(1, listMonthly.size());
 		DomainMonthlyStat entityMonthly = listMonthly.get(0);
-		assertEquals(8, (long) entityMonthly.getOperationCount());
-		assertEquals(300, (long) entityMonthly.getActualOperationSum());
-		assertEquals(6, (long) entityMonthly.getAddOperationCount());
+		assertEquals(14, (long) entityMonthly.getOperationCount());
+		assertEquals(250, (long) entityMonthly.getActualOperationSum());
+		assertEquals(9, (long) entityMonthly.getAddOperationCount());
 		assertEquals(400, (long) entityMonthly.getAddOperationSum());
-		assertEquals(2, (long) entityMonthly.getDeleteOperationCount());
-		assertEquals(-100, (long) entityMonthly.getDeleteOperationSum());
-		assertEquals(300, (long) entityMonthly.getDiffOperationSum());
+		assertEquals(5, (long) entityMonthly.getDeleteOperationCount());
+		assertEquals(-150, (long) entityMonthly.getDeleteOperationSum());
+		assertEquals(250, (long) entityMonthly.getDiffOperationSum());
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

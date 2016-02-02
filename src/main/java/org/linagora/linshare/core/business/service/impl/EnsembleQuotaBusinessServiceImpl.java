@@ -60,15 +60,10 @@ public class EnsembleQuotaBusinessServiceImpl implements EnsembleQuotaBusinessSe
 	}
 
 	@Override
-	public boolean exist(AbstractDomain domain, EnsembleType ensembleType) {
-		return find(domain, ensembleType) != null;
-	}
-
-	@Override
 	public EnsembleQuota create(EnsembleQuota entity) throws BusinessException {
 		AbstractDomain domain = entity.getDomain();
 		EnsembleType ensembleType = entity.getEnsembleType();
-		if (exist(domain, ensembleType)) {
+		if (find(domain, ensembleType) != null) {
 			throw new BusinessException("It must be only one EnsembleQuota for any entity");
 		} else {
 			return repository.create(entity);
@@ -84,13 +79,13 @@ public class EnsembleQuotaBusinessServiceImpl implements EnsembleQuotaBusinessSe
 	public EnsembleQuota updateByBatch(EnsembleQuota entity, Date date) throws BusinessException {
 		AbstractDomain domain = entity.getDomain();
 		EnsembleType ensembleType = entity.getEnsembleType();
-		if (exist(domain, ensembleType)) {
+		if (find(domain, ensembleType) != null) {
 			Long sumCurrentValue = accountQuotaRepository.sumOfCurrentValue(entity, date);
 			entity.setLastValue(entity.getCurrentValue());
 			entity.setCurrentValue(sumCurrentValue);
 			entity = repository.updateByBatch(entity);
 		} else {
-			throw new BusinessException(domain.getUuid() + " domain does not have an ensemble quota yet");
+			throw new BusinessException("Domain with identifier : " + domain.getUuid() + " does not have an ensemble quota yet.");
 		}
 		return entity;
 	}

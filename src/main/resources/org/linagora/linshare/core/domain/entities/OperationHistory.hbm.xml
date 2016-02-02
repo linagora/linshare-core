@@ -18,8 +18,7 @@
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native"></generator>
 		</id>
-
-		<property name="creationDate" column="creation_date" type="date"
+		<property name="creationDate" column="creation_date" type="timestamp"
 			not-null="true" />
 		<property name="operationValue" column="operation_value" type="long"
 			not-null="true" />

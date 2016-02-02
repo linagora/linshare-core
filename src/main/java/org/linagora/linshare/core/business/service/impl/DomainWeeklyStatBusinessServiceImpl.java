@@ -40,22 +40,22 @@ import org.linagora.linshare.core.business.service.DomainWeeklyStatBusinessServi
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainWeeklyStat;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.DomainDailyStatRepository;
+import org.linagora.linshare.core.repository.DomainDailyStatisticRepository;
 import org.linagora.linshare.core.repository.DomainWeeklyStatRepository;
 
 public class DomainWeeklyStatBusinessServiceImpl implements DomainWeeklyStatBusinessService {
 
 	private final DomainWeeklyStatRepository repository;
-	private final DomainDailyStatRepository domainDailyStatRepository;
+	private final DomainDailyStatisticRepository domainDailyStatRepository;
 
 	public DomainWeeklyStatBusinessServiceImpl(final DomainWeeklyStatRepository repository,
-			final DomainDailyStatRepository domainDailyStatRepository) {
+			final DomainDailyStatisticRepository domainDailyStatRepository) {
 		this.repository = repository;
 		this.domainDailyStatRepository = domainDailyStatRepository;
 	}
 
 	@Override
-	public DomainWeeklyStat create(AbstractDomain domain, Date beginDate, Date endDate) throws BusinessException{
+	public DomainWeeklyStat create(AbstractDomain domain, Date beginDate, Date endDate) throws BusinessException {
 		Long actualOperationSum = domainDailyStatRepository.sumOfActualOperationSum(domain, null, beginDate, endDate);
 		Long operationCount = domainDailyStatRepository.sumOfOperationCount(domain, null, beginDate, endDate);
 		Long createOperationSum = domainDailyStatRepository.sumOfCreateOperationSum(domain, null, beginDate, endDate);
@@ -68,6 +68,7 @@ public class DomainWeeklyStatBusinessServiceImpl implements DomainWeeklyStatBusi
 		DomainWeeklyStat entity = new DomainWeeklyStat(domain, domain.getParentDomain(), operationCount,
 				deleteOperationCount, createOperationCount, createOperationSum, deleteOperationSum, diffOperationSum,
 				actualOperationSum);
+		entity.setActiveDate(endDate);
 		entity = repository.create(entity);
 		return entity;
 	}

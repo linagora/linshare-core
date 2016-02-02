@@ -1035,14 +1035,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void createQuotaUser(User user) throws BusinessException {
-		try {
-			EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(user.getDomain(), EnsembleType.USER);
-			AccountQuota userQuota = new AccountQuota(user, user.getDomain(), user.getDomain().getParentDomain(),
-					ensembleQuota, ensembleQuota.getQuota(), ensembleQuota.getQuotaWarning(),
-					ensembleQuota.getFileSizeMax(), 0L, 0L);
-			accountQuotaBusinessService.create(userQuota);
-		} catch (Exception exception) {
-			throw new BusinessException(exception.getMessage());
+		Validate.notNull(user);
+		Validate.notNull(user.getDomain());
+		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(user.getDomain(), EnsembleType.USER);
+		if (ensembleQuota == null) {
+			throw new BusinessException(BusinessErrorCode.ENSEMBLE_QUOTA_NOT_FOUND, "No ensemble quota found for the domain : " + user.getDomainId());
 		}
+		AccountQuota userQuota = new AccountQuota(user, user.getDomain(), user.getDomain().getParentDomain(),
+				ensembleQuota, ensembleQuota.getQuota(), ensembleQuota.getQuotaWarning(),
+				ensembleQuota.getFileSizeMax(), 0L, 0L);
+		accountQuotaBusinessService.create(userQuota);
 	}
 }

@@ -33,8 +33,8 @@
  */
 package org.linagora.linshare.core.repository;
 
-import org.linagora.linshare.core.domain.entities.DomainDailyStat;
+import org.linagora.linshare.core.domain.entities.ThreadWeeklyStat;
 
-public interface DomainDailyStatRepository extends GenericStatisticRepository<DomainDailyStat> {
+public interface ThreadWeeklyStatisticRepository extends GenericStatisticRepository<ThreadWeeklyStat> {
 
 }

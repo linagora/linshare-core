@@ -45,12 +45,13 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
 import org.linagora.linshare.core.repository.UserDailyStatRepository;
 
-public class UserDailyStatBusinessServiceImpl implements UserDailyStatBusinessService{
+public class UserDailyStatBusinessServiceImpl implements UserDailyStatBusinessService {
 
 	private final UserDailyStatRepository repository;
 	private final OperationHistoryRepository operationHistoryRepository;
 
-	public UserDailyStatBusinessServiceImpl(final UserDailyStatRepository repository, final OperationHistoryRepository operationHistoryRepository) {
+	public UserDailyStatBusinessServiceImpl(final UserDailyStatRepository repository,
+			final OperationHistoryRepository operationHistoryRepository) {
 		this.repository = repository;
 		this.operationHistoryRepository = operationHistoryRepository;
 	}
@@ -61,17 +62,22 @@ public class UserDailyStatBusinessServiceImpl implements UserDailyStatBusinessSe
 	}
 
 	@Override
-	public UserDailyStat create(User user, Date date) throws BusinessException{
+	public UserDailyStat create(User user, Date date) throws BusinessException {
 		Long sumOperationValue = operationHistoryRepository.sumOperationValue(user, null, date, null, null);
-		Long sumCreateOperationValue = operationHistoryRepository.sumOperationValue(user, null,date, OperationHistoryTypeEnum.CREATE, null);
-		Long sumDeleteOperationValue = operationHistoryRepository.sumOperationValue(user, null,date, OperationHistoryTypeEnum.DELETE, null);
-		Long countCreateOperationValue = operationHistoryRepository.countOperationValue(user, null,date, OperationHistoryTypeEnum.CREATE, null);
-		Long countDeleteOperationValue = operationHistoryRepository.countOperationValue(user, null,date, OperationHistoryTypeEnum.DELETE, null);
+		Long sumCreateOperationValue = operationHistoryRepository.sumOperationValue(user, null, date,
+				OperationHistoryTypeEnum.CREATE, null);
+		Long sumDeleteOperationValue = operationHistoryRepository.sumOperationValue(user, null, date,
+				OperationHistoryTypeEnum.DELETE, null);
+		Long countCreateOperationValue = operationHistoryRepository.countOperationValue(user, null, date,
+				OperationHistoryTypeEnum.CREATE, null);
+		Long countDeleteOperationValue = operationHistoryRepository.countOperationValue(user, null, date,
+				OperationHistoryTypeEnum.DELETE, null);
 		Long countOperationValue = countDeleteOperationValue + countCreateOperationValue;
 		Long diffOperationValue = sumCreateOperationValue + sumDeleteOperationValue;
 		UserDailyStat entity = new UserDailyStat(user, user.getDomain(), user.getDomain().getParentDomain(),
 				countOperationValue, countDeleteOperationValue, countCreateOperationValue, sumCreateOperationValue,
 				sumDeleteOperationValue, diffOperationValue, sumOperationValue);
+		entity.setActiveDate(date);
 		entity = repository.create(entity);
 		return entity;
 	}

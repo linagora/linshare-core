@@ -44,7 +44,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.QuotaResourceAccessControl;
 import org.linagora.linshare.core.service.DomainQuotaService;
 
-public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota>implements DomainQuotaService {
+public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota> implements DomainQuotaService {
 
 	DomainQuotaBusinessService domainQuotaBusinessService;
 

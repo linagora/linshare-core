@@ -47,7 +47,8 @@ import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class EnsembleQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<EnsembleQuota>implements EnsembleQuotaRepository {
+public class EnsembleQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<EnsembleQuota>
+		implements EnsembleQuotaRepository {
 
 	public EnsembleQuotaRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
@@ -61,17 +62,17 @@ public class EnsembleQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Ense
 	@Override
 	public Long sumOfCurrentValue(DomainQuota domainQuota, Date modificationDateByBatch) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-
-		if(domainQuota != null){
+		if (domainQuota != null) {
 			criteria.add(Restrictions.eq("domainQuota", domainQuota));
 		}
-		if(modificationDateByBatch != null){
+		if (modificationDateByBatch != null) {
 			criteria.add(Restrictions.le("batchModificationDate", modificationDateByBatch));
 		}
 		criteria.setProjection(Projections.sum("currentValue"));
 		List<EnsembleQuota> list = findByCriteria(criteria);
-		if (list.size() > 0 && list.get(0) != null)
+		if (list.size() > 0 && list.get(0) != null) {
 			return DataAccessUtils.longResult(findByCriteria(criteria));
+		}
 		return (long) 0;
 	}
 }

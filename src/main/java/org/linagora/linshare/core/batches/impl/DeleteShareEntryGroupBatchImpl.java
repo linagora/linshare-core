@@ -47,7 +47,6 @@ import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.ShareEntryGroupService;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {

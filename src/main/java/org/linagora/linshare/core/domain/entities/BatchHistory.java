@@ -46,6 +46,8 @@ public class BatchHistory {
 
 	private Date executionDate;
 
+	private Date activeDate;
+
 	private String status;
 
 	private BatchType batchType;
@@ -115,5 +117,13 @@ public class BatchHistory {
 
 	public void setUnhandledErrors(Long unhandledErrors) {
 		this.unhandledErrors = unhandledErrors;
+	}
+
+	public Date getActiveDate() {
+		return activeDate;
+	}
+
+	public void setActiveDate(Date activeDate) {
+		this.activeDate = activeDate;
 	}
 }

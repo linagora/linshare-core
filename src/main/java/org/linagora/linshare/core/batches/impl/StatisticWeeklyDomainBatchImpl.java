@@ -126,7 +126,7 @@ public class StatisticWeeklyDomainBatchImpl extends GenericBatchImpl {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) context;
 		AbstractDomain domain = domainContext.getResource();
 		logInfo(total, position,
-				"the WeeklyDomainStat for " + domain.getDescription() + "has been successfully created.");
+				"the WeeklyDomainStat for " + domain.getUuid() + "has been successfully created.");
 	}
 
 	@Override
@@ -171,9 +171,9 @@ public class StatisticWeeklyDomainBatchImpl extends GenericBatchImpl {
 		dateCalendar.setTime(firstDate);
 		int today = dateCalendar.get(GregorianCalendar.DAY_OF_MONTH);
 		dateCalendar.set(GregorianCalendar.DAY_OF_MONTH, today + 6);
-		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
-		dateCalendar.set(GregorianCalendar.MINUTE, 0);
-		dateCalendar.set(GregorianCalendar.SECOND, 0);
+		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
+		dateCalendar.set(GregorianCalendar.MINUTE, 59);
+		dateCalendar.set(GregorianCalendar.SECOND, 59);
 		return dateCalendar.getTime();
 	}
 

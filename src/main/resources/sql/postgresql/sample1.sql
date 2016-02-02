@@ -125,7 +125,30 @@ INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modi
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (4, 54, true, true, current_timestamp(3), current_timestamp(3), 50); 
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (5, 54, false, true, current_timestamp(3), current_timestamp(3), 53); 
 
+-- MyDomain QUOTA
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, domain_quota, ensemble_quota,current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type) VALUES (2, '164783e8-b9d1-11e5-87e9-bfc0aac925c2', NOW(), NOW(), NOW(), null, null, 0,0, 2, null, 1, 1000000000000, 900000000000, 1000000, null, 'DOMAIN_QUOTA');
 
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, domain_quota, ensemble_quota,current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type) VALUES (3, '37226d66-b9d2-11e5-b4d8-f7b730449724', NOW(), NOW(), NOW(), 2, null, 0,0, 2, null, 1, 1000000000000, 900000000000, 1000000, 'USER', 'ENSEMBLE_QUOTA');
+
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, domain_quota, ensemble_quota,current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type) VALUES (4, '6a442450-b9d2-11e5-8c67-5b2367500fc4', NOW(), NOW(), NOW(), 2, null, 0,0, 2, null, 1, 1000000000000, 900000000000, 1000000, 'THREAD', 'ENSEMBLE_QUOTA');
+
+-- MySubDomain QUOTA
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, domain_quota, ensemble_quota,current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type) VALUES (5, 'b69b9d1a-b9d2-11e5-aab9-e337a9ab2b58', NOW(), NOW(), NOW(), null, null, 0,0, 3, null, 2, 1000000000000, 900000000000, 1000000, null, 'DOMAIN_QUOTA');
+
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, domain_quota, ensemble_quota,current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type) VALUES (6, 'f8733bd0-b9d2-11e5-a247-2b9505cfdddf', NOW(), NOW(), NOW(), 5, null, 0,0, 3, null, 2, 1000000000000, 900000000000, 1000000, 'USER', 'ENSEMBLE_QUOTA');
+
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, domain_quota, ensemble_quota,current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type) VALUES (7, '002310d0-b9d3-11e5-9413-d3f63c53e650', NOW(), NOW(), NOW(), 5, null, 0,0, 3, null, 2, 1000000000000, 900000000000, 1000000, 'THREAD', 'ENSEMBLE_QUOTA');
+
+-- GuestDomain QUOTA
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, domain_quota, ensemble_quota,current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type) VALUES (8, '0b866494-b9d4-11e5-be35-afca154efca0', NOW(), NOW(), NOW(), null, null, 0,0, 4, null, 2, 1000000000000, 900000000000, 1000000, null, 'DOMAIN_QUOTA');
+
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, domain_quota, ensemble_quota,current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type) VALUES (9, '1515e6e2-b9d4-11e5-997e-0b5792ea886a', NOW(), NOW(), NOW(), 8, null, 0,0, 4, null, 2, 1000000000000, 900000000000, 1000000, 'USER', 'ENSEMBLE_QUOTA');
+
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, domain_quota, ensemble_quota,current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type) VALUES (10, '1f468522-b9d4-11e5-916d-a713a67dd225', NOW(), NOW(), NOW(), 8, null, 0,0, 4, null, 2, 1000000000000, 900000000000, 1000000, 'THREAD', 'ENSEMBLE_QUOTA');
+
+-- Bart ACCOUNT QUOTA
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, domain_quota, ensemble_quota,current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type)
+VALUES (43, '1f468522-b9d4-11e5-916d-a713a67dd226', NOW(), NOW(), NOW(), null, 6, 0,0, 3, 50, 2, 1000000000000, 900000000000, 100000000000, null, 'ACCOUNT_QUOTA');
 
 -- -- thread-entry-1-no-dl
 -- INSERT INTO document (id, uuid, creation_date, type, size, thmb_uuid, timestamp) VALUES (1, 'a09e6bea-edcb-11e1-86e7-5404a6202d2c', current_timestamp(3), 'image/png', 49105, null, null);

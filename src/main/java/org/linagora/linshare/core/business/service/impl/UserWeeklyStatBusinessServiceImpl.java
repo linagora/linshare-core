@@ -56,7 +56,7 @@ public class UserWeeklyStatBusinessServiceImpl implements UserWeeklyStatBusiness
 	}
 
 	@Override
-	public UserWeeklyStat create(User user, Date beginDate, Date endDate) throws BusinessException{
+	public UserWeeklyStat create(User user, Date beginDate, Date endDate) throws BusinessException {
 		Long actualOperationSum = userDailyStatRepository.sumOfActualOperationSum(null, user, beginDate, endDate);
 		Long operationCount = userDailyStatRepository.sumOfOperationCount(null, user, beginDate, endDate);
 		Long createOperationSum = userDailyStatRepository.sumOfCreateOperationSum(null, user, beginDate, endDate);
@@ -65,8 +65,9 @@ public class UserWeeklyStatBusinessServiceImpl implements UserWeeklyStatBusiness
 		Long deleteOperationCount = userDailyStatRepository.sumOfDeleteOperationCount(null, user, beginDate, endDate);
 		Long diffOperationSum = userDailyStatRepository.sumOfDiffOperationSum(null, user, beginDate, endDate);
 		UserWeeklyStat entity = new UserWeeklyStat(user, user.getDomain(), user.getDomain().getParentDomain(),
-				operationCount, deleteOperationCount, createOperationCount, createOperationSum,
-				deleteOperationSum, diffOperationSum, actualOperationSum);
+				operationCount, deleteOperationCount, createOperationCount, createOperationSum, deleteOperationSum,
+				diffOperationSum, actualOperationSum);
+		entity.setActiveDate(endDate);
 		entity = repository.create(entity);
 		return entity;
 	}

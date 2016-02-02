@@ -19,9 +19,9 @@
 		<property name="quota" column="quota"/>
 		<property name="quotaWarning" column="quota_warning"/>
 		<property name="fileSizeMax" column="file_size_max"/>
-		<property name="creationDate" column="creation_date" type = "date"/>
-		<property name="modificationDate" column="modification_date" type = "date"/>
-		<property name="batchModificationDate" column="batch_modification_date" type="date"/>
+		<property name="creationDate" column="creation_date" type = "timestamp"/>
+		<property name="modificationDate" column="modification_date" type = "timestamp"/>
+		<property name="batchModificationDate" column="batch_modification_date" type="timestamp"/>
 		<many-to-one name="domain" column="domain_id"
 			class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy" >
 		</many-to-one>

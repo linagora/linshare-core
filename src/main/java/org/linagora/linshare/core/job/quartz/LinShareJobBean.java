@@ -47,8 +47,7 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 
 public class LinShareJobBean extends QuartzJobBean {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(LinShareJobBean.class);
+	private static final Logger logger = LoggerFactory.getLogger(LinShareJobBean.class);
 
 	protected List<GenericBatch> batchs;
 
@@ -61,8 +60,7 @@ public class LinShareJobBean extends QuartzJobBean {
 	}
 
 	@Override
-	protected void executeInternal(JobExecutionContext context)
-			throws JobExecutionException {
+	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
 		executeExternal();
 	}
 
