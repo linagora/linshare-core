@@ -295,35 +295,35 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@DELETE
 	@Path("/{uuid}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Delete a document.")
+	@ApiOperation(value = "Delete a document.", response = DocumentDto.class)
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public void delete(
+	public DocumentDto delete(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		documentFacade.delete(ownerUuid, uuid);
+		return documentFacade.delete(ownerUuid, uuid);
 	}
 
 	@DELETE
 	@Path("/")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Delete a document.")
+	@ApiOperation(value = "Delete a document.", response = DocumentDto.class)
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public void delete(
+	public DocumentDto delete(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The document to delete.", required = true) DocumentDto documentDto)
 			throws BusinessException {
-		documentFacade.delete(ownerUuid, documentDto);
+		return documentFacade.delete(ownerUuid, documentDto);
 	}
 
 	@Path("/{uuid}/download")

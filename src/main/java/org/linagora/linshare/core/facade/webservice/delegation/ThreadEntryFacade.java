@@ -56,10 +56,10 @@ public interface ThreadEntryFacade extends DelegationGenericFacade {
 	List<ThreadEntryDto> findAll(String ownerUuid, String threadUuid)
 			throws BusinessException;
 
-	void delete(String ownerUuid, String threadUuid, ThreadEntryDto threadEntry)
+	ThreadEntryDto delete(String ownerUuid, String threadUuid, ThreadEntryDto threadEntry)
 			throws BusinessException;
 
-	void delete(String ownerUuid, String threadUuid, String uuid)
+	ThreadEntryDto delete(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
 	Response download(String ownerUuid, String threadUuid, String uuid)

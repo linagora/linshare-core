@@ -65,7 +65,7 @@ public interface DocumentRestService {
 
 	DocumentDto update(String ownerUuid, String uuid, DocumentDto documentDto) throws BusinessException;
 
-	void delete(String ownerUuid, String uuid) throws BusinessException;
+	DocumentDto delete(String ownerUuid, String uuid) throws BusinessException;
 
 	Response download(String ownerUuid, String uuid) throws BusinessException;
 
@@ -75,7 +75,7 @@ public interface DocumentRestService {
 			String givenFileName, Boolean async, MultipartBody body)
 					throws BusinessException;
 
-	void delete(String ownerUuid, DocumentDto documentDto)
+	DocumentDto delete(String ownerUuid, DocumentDto documentDto)
 			throws BusinessException;
 
 	AsyncTaskDto findAsync(String ownerUuid, String uuid) throws BusinessException;

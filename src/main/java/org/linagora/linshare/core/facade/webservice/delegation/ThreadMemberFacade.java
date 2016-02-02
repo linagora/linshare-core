@@ -51,7 +51,7 @@ public interface ThreadMemberFacade extends DelegationGenericFacade {
 	ThreadMemberDto update(String ownerUuid, String threadUuid,
 			ThreadMemberDto threadMember);
 
-	void delete(String ownerUuid, String threadUuid, String userUuid)
+	ThreadMemberDto delete(String ownerUuid, String threadUuid, String userUuid)
 			throws BusinessException;
 
 }

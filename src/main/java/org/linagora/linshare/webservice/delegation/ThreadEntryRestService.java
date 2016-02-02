@@ -61,10 +61,10 @@ public interface ThreadEntryRestService {
 	public List<ThreadEntryDto> findAll(String ownerUuid, String threadUuid)
 			throws BusinessException;
 
-	public void delete(String ownerUuid, String threadUuid,
+	public ThreadEntryDto delete(String ownerUuid, String threadUuid,
 			ThreadEntryDto threadEntry) throws BusinessException;
 
-	public void delete(String ownerUuid, String threadUuid, String uuid)
+	public ThreadEntryDto delete(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
 	Response download(String ownerUuid, String threadUuid, String uuid)

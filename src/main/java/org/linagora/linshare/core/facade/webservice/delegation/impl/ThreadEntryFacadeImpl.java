@@ -154,24 +154,23 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 	}
 
 	@Override
-	public void delete(String ownerUuid, String threadUuid,
+	public ThreadEntryDto delete(String ownerUuid, String threadUuid,
 			ThreadEntryDto threadEntry) throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(threadUuid, "Missing required entry uuid");
-		
-		delete(ownerUuid, threadUuid, threadEntry.getUuid());
+		return delete(ownerUuid, threadUuid, threadEntry.getUuid());
 	}
 
 	@Override
-	public void delete(String ownerUuid, String threadUuid, String uuid)
+	public ThreadEntryDto delete(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(uuid, "Missing required entry uuid");
-
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		ThreadEntry threadEntry = threadEntryService.findById(actor, actor, uuid);
 		threadEntryService.deleteThreadEntry(actor, owner, threadEntry);
+		return new ThreadEntryDto(threadEntry);
 	}
 
 	@Override
@@ -180,7 +179,6 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(entryUuid, "Missing required entry uuid");
-
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
@@ -191,7 +189,6 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(stream, threadEntry.getName(),
 						threadEntry.getType(), threadEntry.getSize());
-
 		return response.build();
 	}
 

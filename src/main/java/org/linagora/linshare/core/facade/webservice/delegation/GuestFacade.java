@@ -59,8 +59,8 @@ public interface GuestFacade extends DelegationGenericFacade {
 
 	GuestDto update(String ownerUuid, GuestDto guest) throws BusinessException;
 
-	void delete(String ownerUuid, GuestDto guest) throws BusinessException;
+	GuestDto delete(String ownerUuid, GuestDto guest) throws BusinessException;
 
-	void delete(String ownerUuid, String uuid) throws BusinessException;
+	GuestDto delete(String ownerUuid, String uuid) throws BusinessException;
 
 }

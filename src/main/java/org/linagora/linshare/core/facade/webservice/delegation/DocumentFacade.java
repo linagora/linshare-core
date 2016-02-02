@@ -59,10 +59,10 @@ public interface DocumentFacade extends DelegationGenericFacade {
 			File file, String givenFileName)
 			throws BusinessException;
 
-	void delete(String ownerUuid, DocumentDto documentDto)
+	DocumentDto delete(String ownerUuid, DocumentDto documentDto)
 			throws BusinessException;
 
-	void delete(String ownerUuid, String documentUuid) throws BusinessException;
+	DocumentDto delete(String ownerUuid, String documentUuid) throws BusinessException;
 
 	Response download(String ownerUuid, String documentUuuid)
 			throws BusinessException;

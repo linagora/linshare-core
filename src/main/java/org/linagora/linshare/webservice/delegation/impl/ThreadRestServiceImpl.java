@@ -138,41 +138,41 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a thread.")
+	@ApiOperation(value = "Delete a thread.", response = ThreadDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Thread or thread not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public void delete(
+	public ThreadDto delete(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "Thread to delete.", required = true) ThreadDto thread)
 					throws BusinessException {
-		threadFacade.delete(ownerUuid, thread);
+		return threadFacade.delete(ownerUuid, thread);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a thread.")
+	@ApiOperation(value = "Delete a thread.", response = ThreadDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Thread or thread not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public void delete(
+	public ThreadDto delete(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		ThreadDto tmp = new ThreadDto();
 		tmp.setUuid(uuid);
-		threadFacade.delete(ownerUuid, tmp);
+		return threadFacade.delete(ownerUuid, tmp);
 	}
 
 	@Path("/{uuid}")
 	@PUT
-	@ApiOperation(value = "Update a thread.")
+	@ApiOperation(value = "Update a thread.", response = ThreadDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Thread or thread not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),

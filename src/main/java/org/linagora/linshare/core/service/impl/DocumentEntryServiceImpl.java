@@ -412,7 +412,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	}
 
 	@Override
-	public void delete(Account actor, Account owner, String documentUuid) throws BusinessException {
+	public DocumentEntry delete(Account actor, Account owner, String documentUuid) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(documentUuid, "documentUuid is required.");
 		logger.debug("Actor: " + actor.getAccountReprentation() + " is trying to delete document entry: " + documentUuid);
@@ -424,10 +424,10 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		}
 		AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
 		removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
-
 		FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_DELETE, "Deletion of a file", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
 		logEntryService.create(LogEntryService.INFO, logEntry);
 		documentEntryBusinessService.deleteDocumentEntry(documentEntry);
+		return documentEntry;
 	}
 
 	@Override

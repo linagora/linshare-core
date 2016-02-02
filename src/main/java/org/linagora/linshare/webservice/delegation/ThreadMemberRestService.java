@@ -50,9 +50,9 @@ public interface ThreadMemberRestService {
 	public ThreadMemberDto update(String ownerUuid, String threadUuid, ThreadMemberDto threadMember)
 			throws BusinessException;
 
-	public void delete(String ownerUuid, String threadUuid, ThreadMemberDto threadMember)
+	public ThreadMemberDto delete(String ownerUuid, String threadUuid, ThreadMemberDto threadMember)
 			throws BusinessException;
 
-	public void delete(String ownerUuid, String threadUuid, String uuid)
+	public ThreadMemberDto delete(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
 }

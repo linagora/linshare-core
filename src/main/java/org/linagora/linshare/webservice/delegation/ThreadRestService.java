@@ -49,9 +49,9 @@ public interface ThreadRestService {
 
 	List<ThreadDto> findAll(String ownerUuid) throws BusinessException;
 
-	void delete(String ownerUuid, ThreadDto thread) throws BusinessException;
+	ThreadDto delete(String ownerUuid, ThreadDto thread) throws BusinessException;
 
-	void delete(String ownerUuid, String uuid) throws BusinessException;
+	ThreadDto delete(String ownerUuid, String uuid) throws BusinessException;
 
 	ThreadDto update(String ownerUuid, String threadUuid, ThreadDto threadDto)
 			throws BusinessException;

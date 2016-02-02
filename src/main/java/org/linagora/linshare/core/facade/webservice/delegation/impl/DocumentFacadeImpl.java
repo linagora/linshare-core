@@ -104,31 +104,27 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public void delete(String ownerUuid, DocumentDto documentDto)
+	public DocumentDto delete(String ownerUuid, DocumentDto documentDto)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notNull(documentDto, "Missing required documentDto");
 		Validate.notEmpty(documentDto.getUuid(),
 				"Missing required document uuid");
-
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-
-		documentEntryService.delete(actor, owner, documentDto.getUuid());
-
+		DocumentEntry doc = documentEntryService.delete(actor, owner, documentDto.getUuid());
+		return new DocumentDto(doc);
 	}
 
 	@Override
-	public void delete(String ownerUuid, String documentUuid)
+	public DocumentDto delete(String ownerUuid, String documentUuid)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
-
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-
-		documentEntryService.delete(actor, owner, documentUuid);
-
+		DocumentEntry doc = documentEntryService.delete(actor, owner, documentUuid);
+		return new DocumentDto(doc);
 	}
 
 	@Override

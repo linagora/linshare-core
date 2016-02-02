@@ -134,23 +134,23 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public void delete(String ownerUuid, GuestDto guestDto)
+	public GuestDto delete(String ownerUuid, GuestDto guestDto)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notNull(guestDto, "Missing required guest dto");
 		Validate.notEmpty(guestDto.getUuid(), "Missing required guest dto uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		guestService.delete(actor, owner, guestDto.getUuid());
+		return GuestDto.getFull(guestService.delete(actor, owner, guestDto.getUuid()));
 	}
 
 	@Override
-	public void delete(String ownerUuid, String uuid) throws BusinessException {
+	public GuestDto delete(String ownerUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(uuid, "Missing required guest uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		guestService.delete(actor, owner, uuid);
+		return GuestDto.getFull(guestService.delete(actor, owner, uuid));
 	}
 
 }

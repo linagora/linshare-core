@@ -113,13 +113,14 @@ public class ThreadMemberFacadeImpl extends DelegationGenericFacadeImpl
 	}
 
 	@Override
-	public void delete(String ownerUuid, String threadUuid, String userUuid)
+	public ThreadMemberDto delete(String ownerUuid, String threadUuid, String userUuid)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(userUuid, "Missing required user uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		threadService.deleteMember(actor, owner, threadUuid, userUuid);
+		ThreadMember member = threadService.deleteMember(actor, owner, threadUuid, userUuid);
+		return new ThreadMemberDto(member);
 	}
 
 }

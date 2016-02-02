@@ -125,36 +125,36 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a thread member.")
+	@ApiOperation(value = "Delete a thread member.", response = ThreadMemberDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Member or thread member not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public void delete(
+	public ThreadMemberDto delete(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread member to delete.", required = true) ThreadMemberDto threadMember)
 					throws BusinessException {
-		threadMemberFacade.delete(ownerUuid, threadUuid, threadMember.getUserUuid());
+		return threadMemberFacade.delete(ownerUuid, threadUuid, threadMember.getUserUuid());
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a thread member.")
+	@ApiOperation(value = "Delete a thread member.", response = ThreadMemberDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Member or thread member not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public void delete(
+	public ThreadMemberDto delete(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The user uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		threadMemberFacade.delete(ownerUuid, threadUuid, uuid);
+		return threadMemberFacade.delete(ownerUuid, threadUuid, uuid);
 	}
 
 }

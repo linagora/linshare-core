@@ -169,34 +169,34 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a guest.")
+	@ApiOperation(value = "Delete a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Guest or guest not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public void delete(
+	public GuestDto delete(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "Guest to delete.", required = true) GuestDto guest)
 					throws BusinessException {
-		guestFacade.delete(ownerUuid, guest);
+		return guestFacade.delete(ownerUuid, guest);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a guest.")
+	@ApiOperation(value = "Delete a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Guest or guest not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public void delete(
+	public GuestDto delete(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid, 
 			@ApiParam(value = "The guest uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		guestFacade.delete(ownerUuid, uuid);
+		return guestFacade.delete(ownerUuid, uuid);
 	}
 
 }

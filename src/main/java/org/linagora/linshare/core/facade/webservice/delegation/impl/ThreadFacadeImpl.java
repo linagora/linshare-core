@@ -96,7 +96,7 @@ public class ThreadFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public void delete(String ownerUuid, ThreadDto threadDto)
+	public ThreadDto delete(String ownerUuid, ThreadDto threadDto)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notNull(threadDto, "Missing required thread dto");
@@ -105,6 +105,7 @@ public class ThreadFacadeImpl extends DelegationGenericFacadeImpl implements
 		User owner = getOwner(ownerUuid);
 		Thread thread = threadService.find(actor, owner, threadDto.getUuid());
 		threadService.deleteThread(actor, owner, thread);
+		return new ThreadDto(thread);
 	}
 
 	@Override
