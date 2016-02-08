@@ -746,22 +746,6 @@
 							<goal>war</goal>
 						</goals>
 					</execution>
-					<execution>
-						<id>war-with-sso</id>
-						<phase>package</phase>
-						<goals>
-							<goal>war</goal>
-						</goals>
-						<configuration>
-							<classifier>sso</classifier>
-							<webResources>
-								<resource>
-									<!-- this is relative to the pom.xml directory -->
-									<directory>src/main/resources-sso</directory>
-								</resource>
-							</webResources>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 			<!-- maven-scm-plugin -->
@@ -822,16 +806,16 @@
 				</requestLog>
 				-->
 			</plugin>
-			<!-- maven-dependency-plugin : copy jwsdecrypt applet -->
+			<!-- maven-dependency-plugin : copy jwsdecrypt and signature applet -->
 			<plugin>
-				<!-- This plugin is used to get all jwsdecrypt applet from the internal maven
-					repository and copy them into the webapp video folder -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>2.10</version>
 				<executions>
 					<execution>
-						<id>copy</id>
+						<!-- This plugin is used to get all jwsdecrypt applet from the internal
+							maven repository and copy them into the webapp video folder -->
+						<id>copy-applet-jwsdecrypt</id>
 						<phase>initialize</phase>
 						<goals>
 							<goal>copy</goal>
@@ -849,18 +833,10 @@
 							<stripVersion>true</stripVersion>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<!-- maven-dependency-plugin : copy signature-client applet -->
-			<plugin>
-				<!-- This plugin is used to get signature-client  applet from the internal maven
-					repository and copy them into the webapp applet folder -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.3</version>
-				<executions>
 					<execution>
-						<id>copy</id>
+						<!-- This plugin is used to get signature-client applet from the internal
+							maven repository and copy them into the webapp applet folder -->
+						<id>copy-applet-signature</id>
 						<phase>initialize</phase>
 						<goals>
 							<goal>copy</goal>

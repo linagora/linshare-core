@@ -2,24 +2,10 @@
 <b:beans xmlns:b="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sec="http://www.springframework.org/schema/security"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
-	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd"
-	profile="default">
+ 	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd"
+ 	profile="sso">
 
-
-<!-- <b:beans xmlns="http://www.springframework.org/schema/beans" xmlns:sec="http://www.springframework.org/schema/security" -->
-<!-- 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" -->
-<!-- 	xsi:schemaLocation="http://www.springframework.org/schema/beans -->
-<!--            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  -->
-<!--            http://www.springframework.org/schema/security  -->
-<!--            http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">  -->
-
-
-<!-- <b:constructor-arg> -->
-<!-- 			<b:bean class="org.springframework.security.web.DefaultSecurityFilterChain"> -->
-<!-- 			<b:constructor-arg value="#{T(org.springframework.security.web.util.matcher.AntRequestMatcher).INSTANCE}"/> -->
-<!-- 			<b:constructor-arg> -->
-
-
+<!--           http://www.springframework.org/schema/security/spring-security-3.0.3.xsd" -->
 
 	<b:bean id="springSecurityFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
 			<!-- allow spring security filter to apply rules on URL parameters -->
@@ -30,7 +16,7 @@
 
 <!-- 		<sec:filter-chain-map> -->
 			<sec:filter-chain pattern="/?login_error=*" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
-			<sec:filter-chain pattern="/" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
+			<sec:filter-chain pattern="/" filters="httpSessionIntegrationFilter,lemonLDAPFilter,rememberMeProcessingFilter" />
 			<sec:filter-chain pattern="/assets/**" filters="none" />
 			<sec:filter-chain pattern="/applet/**" filters="none" />
 			<sec:filter-chain pattern="/css/**" filters="none" />
@@ -43,11 +29,10 @@
 			<sec:filter-chain pattern="/**/*.css" filters="none" />
 			<sec:filter-chain pattern="/**/*.swf" filters="none" />
 
-			<sec:filter-chain pattern="/**/en" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
-			<sec:filter-chain pattern="/**/fr" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
-			<sec:filter-chain pattern="/**/nl" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
-			<sec:filter-chain pattern="/**/vi" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
-			<sec:filter-chain pattern="/**/mq" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
+			<sec:filter-chain pattern="/**/en" filters="httpSessionIntegrationFilter,lemonLDAPFilter,rememberMeProcessingFilter" />
+			<sec:filter-chain pattern="/**/fr" filters="httpSessionIntegrationFilter,lemonLDAPFilter,rememberMeProcessingFilter" />
+			<sec:filter-chain pattern="/**/nl" filters="httpSessionIntegrationFilter,lemonLDAPFilter,rememberMeProcessingFilter" />
+			<sec:filter-chain pattern="/**/vi" filters="httpSessionIntegrationFilter,lemonLDAPFilter,rememberMeProcessingFilter" />
 
 			<sec:filter-chain pattern="/download/**" filters="none" />
 			<sec:filter-chain pattern="/**/download.passwordpopup.formpassword" filters="none" />
@@ -81,18 +66,18 @@
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/**"
-				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor, logoutFilterAdmin, logoutFilterUser" />
+				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor,logoutFilterAdmin, logoutFilterAdmin" />
 
 			<sec:filter-chain pattern="/webservice/fineuploader/**"
-				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
+				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
 
 			<sec:filter-chain pattern="/webservice/**"
-				filters="httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
+				filters="httpSessionIntegrationFilter, lemonLDAPFilter, basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor" />
 
 			<sec:filter-chain pattern="/index.form" filters="httpSessionIntegrationFilter" />
 			<sec:filter-chain pattern="/j_security_check" filters="httpSessionIntegrationFilter,authenticationProcessingFilter" />
 			<sec:filter-chain pattern="/**"
-				filters="httpSessionIntegrationFilter,exceptionTranslationFilter,logoutFilter,rememberMeProcessingFilter,filterSecurityInterceptor" />
+				filters="httpSessionIntegrationFilter,lemonLDAPFilter,exceptionTranslationFilter,logoutFilter,rememberMeProcessingFilter,filterSecurityInterceptor" />
 <!-- 		</sec:filter-chain-map> -->
 		</b:list>
 		</b:constructor-arg>
@@ -165,7 +150,7 @@
 	</b:bean>
 
 	<b:bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
-		<b:constructor-arg value="/" />
+		<b:constructor-arg value="/LogoutSso" />
 		<b:constructor-arg>
 			<b:list>
 				<b:ref bean="rememberMeService" />
@@ -249,6 +234,7 @@
 	<b:bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
 		<b:constructor-arg>
 		<b:list>
+			<b:ref bean="ssoAuthenticationProvider" />
 			<b:ref bean="rememberMeAuthenticationProvider" />
 			<b:ref bean="databaseAuthenticationProvider" />
 			<b:ref bean="ldapAuthenticationProvider" />
@@ -290,10 +276,24 @@
 		<b:constructor-arg ref="ldapUserDetailsProvider" />
 	</b:bean>
 
+	<!-- SSO PreAuthentification -->
+	<b:bean id="ssoAuthenticationProvider" class="org.linagora.linshare.auth.sso.SSOAuthenticationProvider">
+		<b:property name="authentificationFacade" ref="authentificationFacade" />
+	</b:bean>
+
 	<!-- AUTHORIZATIONS MANAGEMENT -->
 	<b:bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
 		<b:constructor-arg ref="roleVoter"/>
 	</b:bean>
 
 	<b:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter" />
+
+	<b:bean id="lemonLDAPFilter" class="org.linagora.linshare.auth.sso.PreAuthenticationHeader">
+		<b:constructor-arg value="${sso.header.allowfrom}" />
+		<b:property name="principalRequestHeader" value="${sso.header.user}" />
+		<b:property name="domainRequestHeader" value="${sso.header.domain}" />
+		<b:property name="authenticationManager" ref="authenticationManager" />
+		<b:property name="rootUserRepository" ref="rootUserRepository" />
+		<b:property name="userDetailsProvider" ref="ldapUserDetailsProvider" />
+	</b:bean>
 </b:beans>
