@@ -35,9 +35,10 @@ package org.linagora.linshare.webservice.user;
 
 import java.io.InputStream;
 
+import javax.ws.rs.core.Response;
+
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.FineUploaderDto;
 
 public interface FineUploaderRestService {
@@ -53,7 +54,7 @@ public interface FineUploaderRestService {
 	 */
 	public FineUploaderDto upload(InputStream file, Long size, String fileName, MultipartBody body) throws BusinessException;
 
-	public AsyncTaskDto status(String uuid) throws BusinessException;
+	public Response status(String uuid) throws BusinessException;
 
 	/**
 	 * Delete an existing file.

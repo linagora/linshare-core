@@ -44,7 +44,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.Validate;
@@ -137,9 +140,15 @@ public class FineUploaderRestServiceImpl extends WebserviceBase implements
 	@Path("/receiver/{uuid}")
 	@Produces(MediaType.TEXT_PLAIN)
 	@Override
-	public AsyncTaskDto status(@PathParam("uuid") String uuid) throws BusinessException {
+	public Response status(@PathParam("uuid") String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing uuid");
-		return asyncTaskFacade.find(uuid);
+		AsyncTaskDto dto = asyncTaskFacade.find(uuid);
+		// Fixing IE cache issue.
+		CacheControl cc = new CacheControl();
+		cc.setNoCache(true);
+		ResponseBuilder builder = Response.ok(dto);
+		builder.cacheControl(cc);
+		return builder.build();
 	}
 
 	@Path("/receiver")

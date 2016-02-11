@@ -44,6 +44,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -147,26 +148,40 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Path("/userMaxFileSize")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public SimpleLongValue getUserMaxFileSize() throws BusinessException {
-		return new SimpleLongValue(webServiceDocumentFacade.getUserMaxFileSize());
+	public Response getUserMaxFileSize() throws BusinessException {
+		SimpleLongValue value = new SimpleLongValue(webServiceDocumentFacade.getUserMaxFileSize());
+		return toResponseWithoutCache(value);
 	}
 
 	@GET
 	@Path("/availableSize")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public SimpleLongValue getAvailableSize() throws BusinessException {
-		return new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
+	public Response getAvailableSize() throws BusinessException {
+		SimpleLongValue value = new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
+		return toResponseWithoutCache(value);
 	}
 
 	@GET
 	@Path("/userAvailableSize")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public SimpleLongValue getUserAvailableSize() throws BusinessException {
-		return new SimpleLongValue(Math.min(
+	public Response getUserAvailableSize() throws BusinessException {
+		SimpleLongValue value = new SimpleLongValue(Math.min(
 				webServiceDocumentFacade.getUserMaxFileSize(),
 				webServiceDocumentFacade.getAvailableSize()));
+		return toResponseWithoutCache(value);
+	}
+
+	private Response toResponseWithoutCache(SimpleLongValue value) {
+		// All methods calling this one are used by Tapestry (Front User)
+		// through Firefox or IE browsers ... IE  browers do caching for every text or json data
+		// where there is no cache headers. To avoid cache issue we disable it.
+		CacheControl cc = new CacheControl();
+		cc.setNoCache(true);
+		ResponseBuilder builder = Response.ok(value);
+		builder.cacheControl(cc);
+		return builder.build();
 	}
 
 	@DELETE

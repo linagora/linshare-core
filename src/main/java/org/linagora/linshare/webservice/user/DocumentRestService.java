@@ -42,7 +42,6 @@ import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
 import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.SimpleLongValue;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 /**
@@ -53,15 +52,15 @@ public interface DocumentRestService {
 
 	List<DocumentDto> getDocuments() throws BusinessException;
 
-	SimpleLongValue getUserMaxFileSize() throws BusinessException;
+	Response getUserMaxFileSize() throws BusinessException;
 
-	SimpleLongValue getAvailableSize() throws BusinessException;
+	Response getAvailableSize() throws BusinessException;
 
 	List<MimeTypeDto> getMimeTypes() throws BusinessException;
 
 	Boolean getMimeTypeStatus() throws BusinessException;
 
-	SimpleLongValue getUserAvailableSize() throws BusinessException;
+	Response getUserAvailableSize() throws BusinessException;
 
 	DocumentDto uploadfile(InputStream file, String description, String givenFileName, MultipartBody body) throws BusinessException;
 
