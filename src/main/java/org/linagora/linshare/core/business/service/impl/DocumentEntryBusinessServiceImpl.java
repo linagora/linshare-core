@@ -743,12 +743,13 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				md.update(dataBytes, 0, nread);
 			}
 			byte[] mdbytes = md.digest();
-
+			// convert the byte to hex format
 			for (int i = 0; i < mdbytes.length; i++) {
-				hexString.append(Integer.toHexString(0xFF & mdbytes[i]));
+				hexString.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16)
+						.substring(1));
 			}
 		} catch (Exception e) {
-			logger.error("can not delete temp file : " + e.getMessage());
+			logger.error("can not compute sha256 hash file : " + e.getMessage());
 		}
 		return hexString.toString();
 	}
