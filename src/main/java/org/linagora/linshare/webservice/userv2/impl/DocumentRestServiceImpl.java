@@ -66,6 +66,7 @@ import org.linagora.linshare.core.facade.webservice.user.DocumentAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.webservice.WebserviceBase;
+import org.linagora.linshare.webservice.annotations.NoCache;
 import org.linagora.linshare.webservice.user.task.DocumentUpdateAsyncTask;
 import org.linagora.linshare.webservice.user.task.DocumentUploadAsyncTask;
 import org.linagora.linshare.webservice.user.task.context.DocumentTaskContext;
@@ -207,6 +208,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		documentFacade.find(uuid, false);
 	}
 
+	@NoCache
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
