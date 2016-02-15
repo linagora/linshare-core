@@ -336,7 +336,7 @@ public class UserSearchResults {
         UserVo selectedUserVo = getUserFromLogin(login);
         UserVo user = null;
         try {
-        	user = userFacade.loadUserDetails(selectedUserVo.getMail(), userLoggedIn.getDomainIdentifier());
+        	user = userFacade.loadUserDetails(selectedUserVo.getMail(), userLoggedIn.getDomainIdentifier(), userLoggedIn.getDomainIdentifier());
         } catch (BusinessException e) {
         	shareSessionObjects.addError(messages.format("error.code.user_forbidden"));
         	throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN, "You can not access to this user details.");

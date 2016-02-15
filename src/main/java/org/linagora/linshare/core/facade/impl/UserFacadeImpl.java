@@ -286,11 +286,11 @@ public class UserFacadeImpl implements UserFacade {
 	 *            user login.
 	 * @return user details or null if user is neither in database or LDAP.
 	 */
-	public UserVo loadUserDetails(String login, String domainId) {
+	public UserVo loadUserDetails(String login, String domainId, String actorDomainId) {
 		User user = null;
 		try {
-			user = userService.findOrCreateUserWithDomainPolicies(login,
-					domainId);
+			user = userService.findOrCreateUserWithDomainPolicies(domainId,
+					login, actorDomainId);
 		} catch (BusinessException ex) {
 			logger.warn(ex.getMessage());
 			logger.warn("You can not access to this user details, please check your domain inter-communication rules");

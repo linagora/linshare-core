@@ -252,7 +252,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	}
 
 	@DELETE
-	@Path("/{uuid}")
+	@Path("/")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Delete a document.", response = DocumentDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),

@@ -148,7 +148,7 @@ public interface UserFacade {
      * @param login user login.
      * @return user details or null if user is neither in database or LDAP.
      */
-    UserVo loadUserDetails(String login, String domainId);
+    UserVo loadUserDetails(String login, String domainId, String actorDomainId);
 
     /** Get user password.
      * @param login user login.

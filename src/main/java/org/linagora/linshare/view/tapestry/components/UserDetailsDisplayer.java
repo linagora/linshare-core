@@ -79,7 +79,7 @@ public class UserDetailsDisplayer {
      ************************************************************ */
     public Zone getShowUser(String mail) throws BusinessException {
 //        detailedUser = userFacade.findUserFromAuthorizedDomainOnly(userLoggedIn.getDomainIdentifier(), mail);
-        detailedUser = userFacade.loadUserDetails(mail, userLoggedIn.getDomainIdentifier());
+        detailedUser = userFacade.loadUserDetails(mail, userLoggedIn.getDomainIdentifier(), userLoggedIn.getDomainIdentifier());
 //        detailedUser = userFacade.searchUser(mail, "", "", userLoggedIn);
         return userDetailsTemplateZone;
     }

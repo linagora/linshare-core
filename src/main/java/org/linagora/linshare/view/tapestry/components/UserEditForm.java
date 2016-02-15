@@ -235,7 +235,7 @@ public class UserEditForm {
 
 			for (UserVo oneUser : users) {
 				if(oneUser.getLsUuid().equals(editUserWithMail)) {
-					currentUser = userFacade.loadUserDetails(oneUser.getMail(), oneUser.getDomainIdentifier());
+					currentUser = userFacade.loadUserDetails(oneUser.getMail(), oneUser.getDomainIdentifier(), userLoggedIn.getDomainIdentifier());
 					break;
 				}
 			}

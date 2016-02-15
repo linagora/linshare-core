@@ -164,7 +164,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		Guest update = guestRepository.update(entity);
 		if (wasRestricted == guest.isRestricted()) {
 			if (allowedContacts != null) {
-				if (allowedContacts.isEmpty()) {
+				if ((allowedContacts.isEmpty() && entity.isRestricted())) {
 					throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT, "You can not update a restricted guest without a list of contacts.");
 				}
 				// update
