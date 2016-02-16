@@ -46,26 +46,12 @@ linshare.db.hbm2ddl.auto=validate
 
 
 #******************** GENERAL PROPERTIES
-#set to true in tapestry production environnement
-linshare.productionMode=true
 #local work directory to encrypt/decrypt data
 linshare.encipherment.tmp.dir=/var/lib/linshare/tmp
 #local work directory to sign data
 linshare.signature.tmp.dir=/var/lib/linshare/tmp/linSignDocuments
 #directory used to store shared files
 linshare.files.directory=/var/lib/linshare/repository
-
-# internal user see all other internal user by default in the Users tab ?
-linshare.users.internal.defaultView.showAll=false
-
-# Externalized translations
-# 1. create an empty file in the following directory for every WEB-INF/app*.properties files.
-# 2. create another empty file named app_en.properties
-# NB:
-# - You just need to add the keys you want to override to these files.
-# - All key presents in app.properties will be global for every language.
-# Uncomment this key to specify the directory where are stored the app files.
-# linshare.translations.file=/etc/linshare
 
 # webservice
 webservice.attachment-memory-threshold=4000000
@@ -106,8 +92,6 @@ job.document.cleaner.cron.expression=0 0 0 1 1 ?
 
 
 #******** Domain
-# If true, the user must select a domain from a combo box before authentication.
-linshare.domain.visible=false
 # If true, we can search an user during authentication process using his uid or his mail (as a login).
 # By default, false, only the mail is used.
 # Be careful if you have multiples directories, login must be unique !!!
@@ -115,30 +99,8 @@ linshare.multidomain.enable=false
 
 
 #****************** LinShare Logo
-linshare.logo.webapp.visible=true
 linshare.logo.mails.visible=true
 
-
-
-#****************** Upload management
-# Enable debug mode
-#linshare.tapestry.fineuploader.debug=false
-
-# Enable async mode, if false every upload will be synchronous.
-#linshare.tapestry.fineuploader.async.mode.enable=true
-# Use asynchronous mode if file size is over than default threshold.
-# NB: With IE9, this does not work because IE can not send file size.
-#	  All upload will be asynchronous using 'default.frequency' only as default frequency
-# Default : 10 Mo.
-#linshare.tapestry.fineuploader.async.mode.default.threshold=10000000
-# Number of second between each request
-#linshare.tapestry.fineuploader.async.mode.default.frequency=2
-
-# If file size is over the max threshold, we use an other frequency
-# Default : 500 Mo.
-#linshare.tapestry.fineuploader.async.mode.max.threshold=500000000
-# Number of second between each request
-#linshare.tapestry.fineuploader.async.mode.max.frequency=10
 
 #****************** Async task management
 # ThreadPoolTaskExecutor for AsyncTask like uploads.
