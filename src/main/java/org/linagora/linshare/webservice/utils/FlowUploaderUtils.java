@@ -37,7 +37,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.Validate;
@@ -57,7 +59,12 @@ public class FlowUploaderUtils {
 				&& chunkedFiles.get(identifier).hasChunk(chunkNumber)) {
 			return Response.ok().build();
 		}
-		return Response.status(Status.NO_CONTENT).build();
+		ResponseBuilder builder = Response.status(Status.NO_CONTENT);
+		// Fixing IE cache issue.
+		CacheControl cc = new CacheControl();
+		cc.setNoCache(true);
+		builder.cacheControl(cc);
+		return builder.build();
 	}
 
 	private static String cleanIdentifier(String identifier) {
