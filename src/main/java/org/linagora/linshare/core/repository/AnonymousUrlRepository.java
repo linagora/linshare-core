@@ -43,4 +43,5 @@ public interface AnonymousUrlRepository extends AbstractRepository<AnonymousUrl>
 	
 	public List<AnonymousUrl> getAllExpiredUrl();
 	
+	long countAllExpiredEntries();
 }

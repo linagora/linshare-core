@@ -33,28 +33,29 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
-import org.springframework.orm.hibernate3.HibernateCallback;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class AnonymousUrlRepositoryImpl extends AbstractRepositoryImpl<AnonymousUrl> implements AnonymousUrlRepository {
 
-	public AnonymousUrlRepositoryImpl(HibernateTemplate hibernateTemplate) {
+	private final int expiredSharesLimit;
+
+	public AnonymousUrlRepositoryImpl(HibernateTemplate hibernateTemplate,
+			int expiredSharesLimit) {
 		super(hibernateTemplate);
+		this.expiredSharesLimit = expiredSharesLimit;
 	}
-	
-	
+
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(AnonymousUrl anonymousUrl) {
 		DetachedCriteria det = DetachedCriteria.forClass(AnonymousUrl.class).add(Restrictions.eq("uuid", anonymousUrl.getUuid()));
@@ -83,21 +84,30 @@ public class AnonymousUrlRepositoryImpl extends AbstractRepositoryImpl<Anonymous
 		return super.create(entity);
 	}
 
-
 	@Override
 	public List<AnonymousUrl> getAllExpiredUrl() {
-		
-		HibernateCallback<List<AnonymousUrl>> action = new HibernateCallback<List<AnonymousUrl>>() {
-			@SuppressWarnings("unchecked")
-			public List<AnonymousUrl> doInHibernate(final Session session) throws HibernateException, SQLException {
-				final Query query = session.createQuery("SELECT a from AnonymousUrl as a where not exists " +
-						"(SELECT b from AnonymousUrl as b , AnonymousShareEntry as entry where entry.anonymousUrl.id = a.id)");
-				return 	query.list();
-			}
-		};
-		
-		return getHibernateTemplate().execute(action);
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(getPersistentClass());
+		criteria.createAlias("anonymousShareEntries", "ase",
+				CriteriaSpecification.LEFT_JOIN);
+		criteria.add(Restrictions.isNull("ase.anonymousUrl"));
+		if (expiredSharesLimit != 0) {
+			criteria.getExecutableCriteria(getCurrentSession()).setMaxResults(
+					expiredSharesLimit);
+		}
+		@SuppressWarnings("unchecked")
+		List<AnonymousUrl> list = listByCriteria(criteria);
+		return list;
 	}
 
-	
+	@Override
+	public long countAllExpiredEntries() {
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(getPersistentClass());
+		criteria.createAlias("anonymousShareEntries", "ase",
+				CriteriaSpecification.LEFT_JOIN);
+		criteria.add(Restrictions.isNull("ase.anonymousUrl"));
+		criteria.setProjection(Projections.rowCount());
+		return DataAccessUtils.longResult(findByCriteria(criteria));
+	}
 }

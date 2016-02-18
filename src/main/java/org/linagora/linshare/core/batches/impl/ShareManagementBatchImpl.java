@@ -101,22 +101,13 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		this.anonymousUrlRepository = anonymousUrlRepository;
 	}
 
-
 	@Override
-	public void cleanOutdatedShares() {
-		logger.info("Begin clean outdated shares");
-		removeAllExpiredShareEntries();
-		removeAllExpiredAnonymousShareEntries();
-		removeAllExpiredAnonymousUrl();
-		logger.info("End clean outdated shares");
-    }
-    
-
-	private void removeAllExpiredAnonymousShareEntries() {
+	public void removeAllExpiredAnonymousShareEntries() {
+		logger.info("Begin clean outdated anonymous shares");
+		logger.info(anonymousShareEntryRepository.countAllExpiredEntries() + " expired anonymous share(s) found.");
 		SystemAccount systemAccount = accountRepository.getSystemAccount();
-		
 		List<AnonymousShareEntry> expiredEntries = anonymousShareEntryRepository.findAllExpiredEntries();
-		logger.info(expiredEntries.size() + " expired anonymous share(s) found to be delete.");
+		logger.info(expiredEntries.size() + " expired anonymous share(s) will be deleted.");
 		for (AnonymousShareEntry shareEntry : expiredEntries) {
 			AbstractDomain domain = shareEntry.getEntryOwner().getDomain();
 			
@@ -139,6 +130,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 				}
 			}
 		}
+		logger.info("End clean outdated anonymous shares");
 	}
 
 
@@ -181,11 +173,13 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 	}
 	
 
-	private void removeAllExpiredShareEntries() {
+	@Override
+	public void removeAllExpiredShareEntries() {
+		logger.info("Begin clean outdated shares");
 		SystemAccount systemAccount = accountRepository.getSystemAccount();
-		
+		logger.info(shareEntryRepository.countAllExpiredEntries() + " expired share(s) found.");
 		List<ShareEntry> expiredEntries = shareEntryRepository.findAllExpiredEntries();
-		logger.info(expiredEntries.size() + " expired share(s) found to be delete.");
+		logger.info(expiredEntries.size() + " expired share(s) will be deleted.");
 		for (ShareEntry shareEntry : expiredEntries) {
 			AbstractDomain domain = shareEntry.getEntryOwner().getDomain();
 			
@@ -206,12 +200,16 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 				}
 			}
 		}
+		logger.info("End clean outdated shares");
 	}
 	
 	
-	private void removeAllExpiredAnonymousUrl() {
+	@Override
+	public void removeAllExpiredAnonymousUrl() {
+		logger.info("Begin clean outdated anonymous urls");
+		logger.info(anonymousUrlRepository.countAllExpiredEntries() + " expired anonymous url(s) found.");
 		List<AnonymousUrl> allExpiredUrl = anonymousUrlRepository.getAllExpiredUrl();
-		logger.info(allExpiredUrl.size() + " expired anonymous url(s) found to be delete.");
+		logger.info(allExpiredUrl.size() + " expired anonymous url(s) will be deleted.");
 		for (AnonymousUrl anonymousUrl : allExpiredUrl) {
 			try {
 				anonymousUrlRepository.delete(anonymousUrl);
@@ -223,6 +221,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 				logger.debug(e.toString());
 			}
 		}
+		logger.info("End clean outdated anonymous urls");
 	}
 	
 	

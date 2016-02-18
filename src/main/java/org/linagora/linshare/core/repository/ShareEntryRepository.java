@@ -63,9 +63,11 @@ public interface ShareEntryRepository extends AbstractRepository<ShareEntry>{
 	public List<ShareEntry> findAllMyShareEntries(User owner);
 	
 	public List<ShareEntry> findAllExpiredEntries();
-	
+
+	long countAllExpiredEntries();
+
 	public List<ShareEntry> findUpcomingExpiredEntries(Integer date);
-	
+
 	public List<ShareEntry> retrieveUserShareEntriesWithMatchCriterion(SearchDocumentCriterion searchDocumentCriterion);
 	
 }

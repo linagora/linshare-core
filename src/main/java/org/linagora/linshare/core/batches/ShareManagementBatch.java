@@ -33,13 +33,27 @@
  */
 package org.linagora.linshare.core.batches;
 
+import java.util.List;
+
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.AnonymousUrl;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
+import org.linagora.linshare.core.exception.BusinessException;
+
 /** This class provides shares management methods.
  */
 public interface ShareManagementBatch {
     
-    /** Clean all outdated shares. */
-    void cleanOutdatedShares();
-    
     /** Notify the upcoming outdated share. */
     void notifyUpcomingOutdatedShares();
+
+	void removeAllExpiredAnonymousUrl();
+
+	void removeAllExpiredShareEntries();
+
+	void removeAllExpiredAnonymousShareEntries();
 }

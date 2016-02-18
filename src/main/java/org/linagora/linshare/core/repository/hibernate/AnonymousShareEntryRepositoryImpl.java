@@ -33,23 +33,28 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<AnonymousShareEntry>implements AnonymousShareEntryRepository {
 
-	public AnonymousShareEntryRepositoryImpl(HibernateTemplate hibernateTemplate) {
+	private final int expiredSharesLimit;
+
+	public AnonymousShareEntryRepositoryImpl(HibernateTemplate hibernateTemplate,
+			int expiredSharesLimit) {
 		super(hibernateTemplate);
+		this.expiredSharesLimit = expiredSharesLimit;
 	}
 
 	@Override
@@ -85,17 +90,28 @@ public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<An
 		return super.update(entity);
 	}
 
-	
 	@Override
 	public List<AnonymousShareEntry> findAllExpiredEntries() {
-		List<AnonymousShareEntry> entries = findByCriteria(Restrictions.lt("expirationDate", Calendar.getInstance()));
-        if (entries == null) {
-        	logger.error("the result is null ! this should not happen.");
-            return new ArrayList<AnonymousShareEntry>();
-        } 
-        return entries;
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(getPersistentClass());
+		criteria.add(Restrictions.lt("expirationDate", Calendar.getInstance()));
+		if (expiredSharesLimit != 0) {
+			criteria.getExecutableCriteria(getCurrentSession()).setMaxResults(
+					expiredSharesLimit);
+		}
+		@SuppressWarnings("unchecked")
+		List<AnonymousShareEntry> list = listByCriteria(criteria);
+		return list;
 	}
-	
+
+	@Override
+	public long countAllExpiredEntries() {
+		DetachedCriteria det = DetachedCriteria
+				.forClass(AnonymousShareEntry.class);
+		det.add(Restrictions.lt("expirationDate", Calendar.getInstance()));
+		det.setProjection(Projections.rowCount());
+		return DataAccessUtils.longResult(findByCriteria(det));
+	}
 
 	@Override
 	public List<AnonymousShareEntry> findUpcomingExpiredEntries(Integer date) {

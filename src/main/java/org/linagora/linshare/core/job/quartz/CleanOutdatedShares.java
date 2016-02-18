@@ -41,9 +41,11 @@ public class CleanOutdatedShares extends QuartzJobBean {
 
     private ShareManagementBatch batch;
 
-    protected void executeInternal(JobExecutionContext context) {
-        batch.cleanOutdatedShares();
-    }
+	protected void executeInternal(JobExecutionContext context) {
+		batch.removeAllExpiredShareEntries();
+		batch.removeAllExpiredAnonymousShareEntries();
+		batch.removeAllExpiredAnonymousUrl();
+	}
 
     public void setBatch(ShareManagementBatch batch) {
         this.batch = batch;

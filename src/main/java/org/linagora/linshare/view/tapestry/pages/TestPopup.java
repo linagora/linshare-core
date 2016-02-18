@@ -64,7 +64,6 @@ import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl;
 import org.linagora.linshare.view.tapestry.components.PasswordPopup;
 import org.linagora.linshare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
@@ -172,7 +171,9 @@ public class TestPopup {
 	void onActionFromCleanOutDatedShares()
 	{
 		logger.debug("begin method onActionFromCleanOutDatedShares");
-		shareManagementBatch.cleanOutdatedShares();
+		shareManagementBatch.removeAllExpiredShareEntries();
+		shareManagementBatch.removeAllExpiredAnonymousShareEntries();
+		shareManagementBatch.removeAllExpiredAnonymousUrl();
 		logger.debug("endmethod onActionFromCleanOutDatedShares");
 	}
 

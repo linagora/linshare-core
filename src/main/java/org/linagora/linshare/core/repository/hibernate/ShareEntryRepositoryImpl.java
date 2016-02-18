@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -44,6 +43,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
@@ -52,13 +52,18 @@ import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ShareEntryRepository;
 import org.linagora.linshare.core.utils.QueryParameter;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class ShareEntryRepositoryImpl extends AbstractRepositoryImpl<ShareEntry> implements ShareEntryRepository  {
 
-	public ShareEntryRepositoryImpl(HibernateTemplate hibernateTemplate) {
+	private final int expiredSharesLimit;
+
+	public ShareEntryRepositoryImpl(HibernateTemplate hibernateTemplate,
+			int expiredSharesLimit) {
 		super(hibernateTemplate);
+		this.expiredSharesLimit = expiredSharesLimit;
 	}
 	
 	@Override
@@ -125,15 +130,26 @@ public class ShareEntryRepositoryImpl extends AbstractRepositoryImpl<ShareEntry>
 
 	@Override
 	public List<ShareEntry> findAllExpiredEntries() {
-		List<ShareEntry> entries = findByCriteria(Restrictions.lt("expirationDate", Calendar.getInstance()));
-        if (entries == null) {
-        	logger.error("the result is null ! this should not happen.");
-            return new ArrayList<ShareEntry>();
-        }
-        return entries;
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(getPersistentClass());
+		criteria.add(Restrictions.lt("expirationDate", Calendar.getInstance()));
+		if (expiredSharesLimit != 0) {
+			criteria.getExecutableCriteria(getCurrentSession()).setMaxResults(
+					expiredSharesLimit);
+		}
+		@SuppressWarnings("unchecked")
+		List<ShareEntry> list = listByCriteria(criteria);
+		return list;
 	}
-	
-	
+
+	@Override
+	public long countAllExpiredEntries() {
+		DetachedCriteria det = DetachedCriteria.forClass(ShareEntry.class);
+		det.add(Restrictions.lt("expirationDate", Calendar.getInstance()));
+		det.setProjection(Projections.rowCount());
+		return DataAccessUtils.longResult(findByCriteria(det));
+	}
+
 	@Override
 	public List<ShareEntry> findUpcomingExpiredEntries(Integer date) {
 		Calendar calMin = Calendar.getInstance();

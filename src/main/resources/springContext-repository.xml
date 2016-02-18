@@ -58,14 +58,17 @@
 
 	<bean name="shareEntryRepository" class="org.linagora.linshare.core.repository.hibernate.ShareEntryRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
+		<constructor-arg value="${job.shares.cron.limit}" />
 	</bean>
 
 	<bean name="anonymousShareEntryRepository" class="org.linagora.linshare.core.repository.hibernate.AnonymousShareEntryRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
+		<constructor-arg value="${job.shares.cron.limit}" />
 	</bean>
 
 	<bean name="anonymousUrlRepository" class="org.linagora.linshare.core.repository.hibernate.AnonymousUrlRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
+		<constructor-arg value="${job.shares.cron.limit}" />
 	</bean>
 
 	<bean name="allowedMimeTypeRepository" class="org.linagora.linshare.core.repository.hibernate.AllowedMimeTypeRepositoryImpl">
