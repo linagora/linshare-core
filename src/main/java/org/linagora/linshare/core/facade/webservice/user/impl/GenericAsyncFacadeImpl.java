@@ -80,7 +80,7 @@ public abstract class GenericAsyncFacadeImpl implements
 					"You are not authorized to use this service");
 		if (!(owner.hasSimpleRole() || owner.hasAdminRole() || owner.hasSuperAdminRole())) {
 			logger.error("Current owner is trying to access to a forbbiden api : "
-					+ owner.getAccountReprentation());
+					+ owner.getAccountRepresentation());
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		}
@@ -96,7 +96,7 @@ public abstract class GenericAsyncFacadeImpl implements
 					"You are not authorized to use this service");
 		if (!(actor.hasSimpleRole() || actor.hasAdminRole() || actor.hasSuperAdminRole()) || actor.hasDelegationRole()) {
 			logger.error("Current actor is trying to access to a forbbiden api : "
-					+ actor.getAccountReprentation());
+					+ actor.getAccountRepresentation());
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		}

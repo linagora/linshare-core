@@ -86,7 +86,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	private String baseDn;
 
 	private void logUser(User user) {
-		logger.debug(user.getAccountReprentation());
+		logger.debug(user.getAccountRepresentation());
 		// logger.debug(user.getMail());
 		// logger.debug(user.getFirstName());
 		// logger.debug(user.getLastName());

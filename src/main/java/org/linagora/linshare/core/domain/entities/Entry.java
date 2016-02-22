@@ -201,4 +201,8 @@ public abstract class Entry {
 			this.metaData = metadata;
 		}
 	}
+
+	public String getRepresentation() {
+		return this.uuid + " " + "(" + name + ")";
+	}
 }

@@ -78,10 +78,10 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 		User resource = service.findDeleted(actor, identifier);
 		Context context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(total, position, "processing user : " + resource.getAccountReprentation());
+			logInfo(total, position, "processing user : " + resource.getAccountRepresentation());
 			service.markToPurge(actor, resource.getLsUuid());
 			logger.info("expired user set to purge (purge_step to 1) : "
-					+ resource.getAccountReprentation());
+					+ resource.getAccountRepresentation());
 		} catch (BusinessException businessException) {
 			logError(total, position,
 					"Error while trying to mark expired users to purge");
@@ -101,7 +101,7 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 		AccountBatchResultContext guestContext = (AccountBatchResultContext) context;
 		Account user = guestContext.getResource();
 		logInfo(total, position, "The User "
-				+ user.getAccountReprentation()
+				+ user.getAccountRepresentation()
 				+ " has been successfully placed into users to purge ");
 	}
 
@@ -114,10 +114,10 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 				total,
 				position,
 				"cleaning User has failed : "
-						+ user.getAccountReprentation());
+						+ user.getAccountRepresentation());
 		logger.error(
 				"Error occured while cleaning outdated user "
-						+ user.getAccountReprentation()
+						+ user.getAccountRepresentation()
 						+ ". BatchBusinessException ", exception);
 	}
 

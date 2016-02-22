@@ -185,7 +185,7 @@ public class UserServiceImpl implements UserService {
 						BusinessErrorCode.CANNOT_DELETE_USER, "The user "
 								+ lsUuid
 								+ " cannot be deleted, he is not a guest, or "
-								+ actor.getAccountReprentation()
+								+ actor.getAccountRepresentation()
 								+ " is not an admin");
 			} else {
 				setUserToDestroy(actor, user);
@@ -233,11 +233,11 @@ public class UserServiceImpl implements UserService {
 		} catch (IllegalArgumentException e) {
 			logger.error(
 					"Couldn't find the user "
-							+ userToDelete.getAccountReprentation()
+							+ userToDelete.getAccountRepresentation()
 							+ " to be deleted", e);
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
 					"Couldn't find the user "
-							+ userToDelete.getAccountReprentation()
+							+ userToDelete.getAccountRepresentation()
 							+ " to be deleted");
 		}
 
@@ -260,7 +260,7 @@ public class UserServiceImpl implements UserService {
 					BusinessErrorCode.CANNOT_DELETE_USER, "The user "
 							+ lsUuid
 							+ " cannot be deleted, he is not a guest, or "
-							+ actor.getAccountReprentation()
+							+ actor.getAccountRepresentation()
 							+ " is not an admin");
 		} else {
 			userRepository.markToPurge(user);
@@ -301,11 +301,11 @@ public class UserServiceImpl implements UserService {
 		} catch (IllegalArgumentException e) {
 			logger.error(
 					"Couldn't find the user "
-							+ userToDelete.getAccountReprentation()
+							+ userToDelete.getAccountRepresentation()
 							+ " to be deleted", e);
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
 					"Couldn't find the user "
-							+ userToDelete.getAccountReprentation()
+							+ userToDelete.getAccountRepresentation()
 							+ " to be deleted");
 		}
 	}
@@ -1020,7 +1020,7 @@ public class UserServiceImpl implements UserService {
 			return false;
 		}
 
-		logger.info("The user " + userWithOldEmail.getAccountReprentation()
+		logger.info("The user " + userWithOldEmail.getAccountRepresentation()
 				+ "has been found.");
 
 		logger.info("changing his current email: " + currentEmail

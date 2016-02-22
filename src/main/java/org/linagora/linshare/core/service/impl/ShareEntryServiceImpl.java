@@ -116,9 +116,9 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 
 		ShareEntry entry = shareEntryBusinessService.find(uuid);
 		if (entry == null) {
-			logger.error("Current actor " + actor.getAccountReprentation()
+			logger.error("Current actor " + actor.getAccountRepresentation()
 					+ " is looking for a misssing share entry (" + uuid
-					+ ") owned by : " + owner.getAccountReprentation());
+					+ ") owned by : " + owner.getAccountRepresentation());
 			String message = "Can not find share entry with uuid : " + uuid;
 			throw new BusinessException(
 					BusinessErrorCode.SHARE_ENTRY_NOT_FOUND, message);
@@ -328,11 +328,21 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				guestRepository.update(guest);
 			} catch (IllegalArgumentException e) {
 				logger.error("Can't update expiration date of guest : "
-						+ guest.getAccountReprentation() + ":" + e.getMessage());
+						+ guest.getAccountRepresentation() + ":" + e.getMessage());
 			} catch (BusinessException e) {
 				logger.error("Can't update expiration date of guest : "
-						+ guest.getAccountReprentation() + ":" + e.getMessage());
+						+ guest.getAccountRepresentation() + ":" + e.getMessage());
 			}
 		}
 	}
+
+	@Override
+	public List<String> findAllExpiredEntries(Account actor, Account owner) {
+		preChecks(actor, owner);
+		if (!actor.hasAllRights()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
+		}
+		return shareEntryBusinessService.findAllExpiredEntries();
+	}
+
 }

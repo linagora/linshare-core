@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -74,13 +73,22 @@ public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> imp
     }
 
 	@Override
-	public List<Document> findAllMimeTypeCheckNeededDocuments() {
-		List<Document> docs = findByCriteria(Restrictions.eq("checkMimeType", Boolean.TRUE));
-		if (docs == null) {
-			logger.error("the result is null ! this should not happen.");
-			return new ArrayList<Document>();
-		}
-		return docs;
+	public List<String> findAllDocumentWithMimeTypeCheckEnabled() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("uuid"));
+		criteria.add(Restrictions.eq("checkMimeType", Boolean.TRUE));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
+	}
+
+	@Override
+	public List<String> findAllIdentifiers() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("uuid"));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
 	}
 
 	@Override

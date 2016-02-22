@@ -123,7 +123,7 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 
 		if (!domainPermissionService.isAdminforThisDomain(actor, mimeType
 				.getMimePolicy().getDomain())) {
-			String msg = "The current actor " + actor.getAccountReprentation()
+			String msg = "The current actor " + actor.getAccountRepresentation()
 					+ " does not have the right to update this MimeType.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}

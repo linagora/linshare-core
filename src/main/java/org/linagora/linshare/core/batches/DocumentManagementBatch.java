@@ -36,24 +36,6 @@ package org.linagora.linshare.core.batches;
 
 public interface DocumentManagementBatch {
 
-    /** 
-     * Check that documents in database are also in jackrabbit repository.
-     * If the document is not present in jackrabbit repository, we must delete it in database.
-     */
-    public void removeMissingDocuments();
-    
-    
-    /**
-     * Delete old documents when strong box disallowed
-     */
-    public void cleanOldDocuments();
-
-
-    /**
-     * Check documents MIME type and update it accordingly
-     */
-	public void checkDocumentsMimeType();
-
 	/**
 	 * Hack.
 	 */

@@ -49,7 +49,7 @@ public class SystemAccount extends Account {
 	}
 
 	@Override
-	public String getAccountReprentation() {
+	public String getAccountRepresentation() {
 		return this.lsUuid;
 	}
 

@@ -550,7 +550,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 	}
 
-	private void deleteDocument(Document document) throws BusinessException {
+	@Override
+	public void deleteDocument(Document document) throws BusinessException {
 		// delete old thumbnail in JCR
 		String oldThumbUuid = document.getThmbUuid(); 
 		if (oldThumbUuid != null && oldThumbUuid.length() > 0) {
@@ -825,5 +826,10 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public List<DocumentEntry> findAllMySyncEntries(Account owner)
 			throws BusinessException {
 		return documentEntryRepository.findAllMySyncEntries(owner);
+	}
+
+	@Override
+	public List<String> findAllExpiredEntries() {
+		return documentEntryRepository.findAllExpiredEntries();
 	}
 }

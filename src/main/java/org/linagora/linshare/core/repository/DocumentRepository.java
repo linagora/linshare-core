@@ -51,10 +51,11 @@ public interface DocumentRepository extends AbstractRepository<Document>{
      * @param id
      * @return found document (null if no document found).
      */
-	public Document findByUuid(String identifier);
-	
-	
-	public List<Document> findAllMimeTypeCheckNeededDocuments();
+	Document findByUuid(String identifier);
+
+	List<String> findAllDocumentWithMimeTypeCheckEnabled();
+
+	List<String> findAllIdentifiers();
 
 	public List<String> findAllSha256CheckNeededDocuments();
 

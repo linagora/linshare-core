@@ -82,7 +82,7 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 				logger.debug("Guest found during ldap authentification process.");
 				logAuthError(foundUser, domainIdentifier, "User not found.");
 				String message = "Guest found : "
-						+ foundUser.getAccountReprentation() + " in domain : '"
+						+ foundUser.getAccountRepresentation() + " in domain : '"
 						+ domainIdentifier + "'";
 				logAuthError(login, domainIdentifier, message);
 				throw new UsernameNotFoundException(message);
@@ -149,7 +149,7 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 			throw new UsernameNotFoundException(message);
 		} else {
 			logger.debug("User found in ldap : "
-					+ foundUser.getAccountReprentation() + " (domain:"
+					+ foundUser.getAccountRepresentation() + " (domain:"
 					+ foundUser.getDomainId() + ")");
 		}
 		return foundUser;
@@ -188,7 +188,7 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 					+ message);
 		} else {
 			logger.debug("User found in ldap : "
-					+ foundUser.getAccountReprentation() + " (domain:"
+					+ foundUser.getAccountRepresentation() + " (domain:"
 					+ foundUser.getDomainId() + ")");
 		}
 
@@ -198,14 +198,14 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 	private User checkStillInLdap(String login, User foundUser) throws BusinessException {
 		// The user was found in the database, we just need to test if he still exists in the LDAP directory
 		logger.debug("User found in DB : "
-				+ foundUser.getAccountReprentation());
+				+ foundUser.getAccountRepresentation());
 		logger.debug("The user domain stored in DB was : "
 				+ foundUser.getDomainId());
 		if(authentificationFacade.ldapSearchForAuth(
 				foundUser.getDomainId(), login) == null) {
 			// The previous user found into the database does not exists anymore into the LDAP directory.
 			// We must not use him.
-			logger.warn("authentication process : the current user does not exist anymore into the LDAP directory : " + foundUser.getAccountReprentation());
+			logger.warn("authentication process : the current user does not exist anymore into the LDAP directory : " + foundUser.getAccountRepresentation());
 			foundUser = null;
 		}
 		return foundUser;

@@ -108,17 +108,21 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"> -->
   <br/>
   <br/>
   
-	<t:actionlink t:id="cleanOutDatedShares">clean old share entries : cleanOutDatedShares</t:actionlink>
+	<t:actionlink t:id="removeAllExpiredShares">Remove all expired shares (Share entries, Anonymous, URL,...)</t:actionlink>
 	<br/>
-	<t:actionlink t:id="removeMissingDocuments">removeMissingDocuments</t:actionlink>
+	<t:actionlink t:id="removeExpiredDocuments">RemoveExpiredDocuments</t:actionlink>
 	<br/>
-	<t:actionlink t:id="removeOldDocuments">Remove old documents</t:actionlink>
+	<t:actionlink t:id="deleteMissingDocuments">DeleteMissingDocuments</t:actionlink>
 	<br/>
 	<t:actionlink t:id="checkDocumentsMimeType">checkDocumentsMimeType</t:actionlink>
 	<br/>
 	<t:actionlink t:id="uploadRequestUpdateStatus">uploadRequestUpdateStatus</t:actionlink>
 	<br/>
-	
+	<t:actionlink t:id="cleanUsers">cleanUsers</t:actionlink>
+	<br/>
+	<t:actionlink t:id="launchAllBatches">launchAllBatches</t:actionlink>
+	<br/>
+
     <t:form t:id="dateTest">
         <t:datefield t:id="date" />       
     </t:form>

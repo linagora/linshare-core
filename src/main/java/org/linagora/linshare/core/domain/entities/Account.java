@@ -250,7 +250,7 @@ public abstract class Account {
 
 	public abstract AccountType getAccountType();
 
-	public abstract String getAccountReprentation();
+	public abstract String getAccountRepresentation();
 
 	public abstract String getFullName();
 
@@ -385,6 +385,6 @@ public abstract class Account {
 
 	@Override
 	public String toString() {
-		return getAccountReprentation();
+		return getAccountRepresentation();
 	}
 }

@@ -58,4 +58,6 @@ public interface AnonymousShareEntryBusinessService {
 	void delete(AnonymousShareEntry anonymousShare) throws BusinessException;
 
 	AnonymousShareEntry updateDownloadCounter(AnonymousShareEntry entry) throws BusinessException;
+
+	List<String> findAllExpiredEntries();
 }

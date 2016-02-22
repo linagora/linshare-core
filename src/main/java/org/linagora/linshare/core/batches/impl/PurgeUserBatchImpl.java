@@ -70,9 +70,9 @@ public class PurgeUserBatchImpl extends GenericBatchImpl {
 		User resource = service.findAccountsReadyToPurge(actor, identifier);
 		Context context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(total, position, "processing user : " + resource.getAccountReprentation());
+			logInfo(total, position, "processing user : " + resource.getAccountRepresentation());
 			service.purge(actor, resource.getLsUuid());
-			logger.info("Deleted user " + resource.getAccountReprentation()
+			logger.info("Deleted user " + resource.getAccountRepresentation()
 					+ " has been purged.");
 		} catch (BusinessException businessException) {
 			logError(total, position,
@@ -92,7 +92,7 @@ public class PurgeUserBatchImpl extends GenericBatchImpl {
 		AccountBatchResultContext guestContext = (AccountBatchResultContext) context;
 		Account user = guestContext.getResource();
 		logInfo(total, position, "The User "
-				+ user.getAccountReprentation()
+				+ user.getAccountRepresentation()
 				+ " has been successfully purged ");
 	}
 
@@ -105,10 +105,10 @@ public class PurgeUserBatchImpl extends GenericBatchImpl {
 				total,
 				position,
 				"Purging User has failed : "
-						+ user.getAccountReprentation());
+						+ user.getAccountRepresentation());
 		logger.error(
 				"Error occured while purging user "
-						+ user.getAccountReprentation()
+						+ user.getAccountRepresentation()
 						+ ". BatchBusinessException ", exception);
 	}
 

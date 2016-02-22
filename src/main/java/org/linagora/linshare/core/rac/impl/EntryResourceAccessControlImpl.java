@@ -75,12 +75,12 @@ public abstract class EntryResourceAccessControlImpl<R, E extends Entry>
 
 	@Override
 	protected String getOwnerRepresentation(Account owner) {
-		return owner.getAccountReprentation();
+		return owner.getAccountRepresentation();
 	}
 
 	@Override
 	protected String getTargetedAccountRepresentation(Account targetedAccount) {
-		return targetedAccount.getAccountReprentation();
+		return targetedAccount.getAccountRepresentation();
 	}
 
 	@Override

@@ -9,35 +9,23 @@
        default-autowire="no">
 
 	<bean name="shareManagementBatch" class="org.linagora.linshare.core.batches.impl.ShareManagementBatchImpl">
-		<constructor-arg ref="shareEntryService"/>
-		<constructor-arg ref="anonymousShareEntryService"/>
 		<constructor-arg ref="shareEntryRepository"/>
 		<constructor-arg ref="anonymousShareEntryRepository"/>
-		<constructor-arg ref="documentEntryRepository"/>
 		<constructor-arg ref="accountRepository"/>
 		<constructor-arg ref="functionalityReadOnlyService"/>
-		<constructor-arg ref="documentEntryService"/>
-		<constructor-arg ref="anonymousUrlRepository"/>
 		<constructor-arg ref="notifierService"/>
 		<constructor-arg ref="mailBuildingService"/>
 	</bean>
 
-    <bean name="documentManagementBatch" class="org.linagora.linshare.core.batches.impl.DocumentManagementBatchImpl">
-        <constructor-arg ref="documentRepository"/>
-        <constructor-arg ref="documentEntryRepository"/>
-        <constructor-arg ref="documentEntryService"/>
-        <constructor-arg ref="accountRepository"/>
-        <constructor-arg ref="jackRabbitRepository"/>
-        <constructor-arg value="${job.document.cleaner.activation}" />
-        <constructor-arg value="${job.jackrabbit.keep.alive.activation}" />
-        <constructor-arg ref="notifierService" />
-        <constructor-arg ref="mailBuildingService" />
-        <constructor-arg ref="functionalityReadOnlyService" />
-        <constructor-arg ref="entryService" />
-        <constructor-arg ref="documentEntryBusinessService" />
-        <constructor-arg ref="mimeTypeMagicNumberDao" />
-        <constructor-arg ref="threadEntryService" />
-    </bean>
+	<bean name="documentManagementBatch"
+		class="org.linagora.linshare.core.batches.impl.DocumentManagementBatchImpl">
+		<constructor-arg value="${job.jackrabbit.keep.alive.activation}" />
+		<constructor-arg ref="documentRepository" />
+		<constructor-arg ref="documentEntryRepository" />
+		<constructor-arg ref="documentEntryBusinessService" />
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="jackRabbitRepository" />
+	</bean>
 
     <bean name="uploadRequestBatch" class="org.linagora.linshare.core.batches.impl.UploadRequestBatchImpl">
         <constructor-arg ref="uploadRequestRepository" />

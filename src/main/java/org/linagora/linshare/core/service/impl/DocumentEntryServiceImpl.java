@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
@@ -58,6 +59,7 @@ import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -141,9 +143,9 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		Validate.notEmpty(uuid, "Missing document entry uuid");
 		DocumentEntry entry = documentEntryBusinessService.find(uuid);
 		if (entry == null) {
-			logger.error("Current actor " + actor.getAccountReprentation()
+			logger.error("Current actor " + actor.getAccountRepresentation()
 					+ " is looking for a misssing document entry (" + uuid
-					+ ") owned by : " + owner.getAccountReprentation());
+					+ ") owned by : " + owner.getAccountRepresentation());
 			String message = "Can not find document entry with uuid : " + uuid;
 			throw new BusinessException(
 					BusinessErrorCode.DOCUMENT_ENTRY_NOT_FOUND, message);
@@ -234,7 +236,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			long availableSize = getAvailableSize(owner);
 			logger.debug("availableSize :" + availableSize);
 			if (availableSize < 0) {
-				logger.error("The file  " + fileName + " is too large to fit in " + owner.getAccountReprentation() + " user's space.");
+				logger.error("The file  " + fileName + " is too large to fit in " + owner.getAccountRepresentation() + " user's space.");
 				String[] extras = { fileName };
 				throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE, "The file is too large to fit in user's space.", extras);
 			}
@@ -415,7 +417,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	public DocumentEntry delete(Account actor, Account owner, String documentUuid) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(documentUuid, "documentUuid is required.");
-		logger.debug("Actor: " + actor.getAccountReprentation() + " is trying to delete document entry: " + documentUuid);
+		logger.debug("Actor: " + actor.getAccountRepresentation() + " is trying to delete document entry: " + documentUuid);
 		DocumentEntry documentEntry = find(actor, owner, documentUuid);
 		checkDeletePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, documentEntry);
@@ -665,5 +667,40 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		preChecks(actor, owner);
 		Validate.notEmpty(fileName, "document entry name is required.");
 		return documentEntryBusinessService.findMoreRecentByName(owner, fileName);
+	}
+
+	@Override
+	public long getRelatedEntriesCount(Account actor, Account owner,
+			DocumentEntry documentEntry) {
+		preChecks(actor, owner);
+		return documentEntryBusinessService.getRelatedEntriesCount(documentEntry);
+	}
+
+	@Override
+	public void deleteOrComputeExpiryDate(SystemAccount actor,
+			AbstractDomain domain, DocumentEntry documentEntry) {
+			if (documentEntry.getShared() <= 0 ) {
+				BooleanValueFunctionality deleteShareFunc= functionalityReadOnlyService.getDefaultShareExpiryTimeDeletionFunctionality(domain);
+				// Test if we have to remove the document now.
+				if (deleteShareFunc.getValue()) {
+					logger.debug("Current document entry " + documentEntry.getRepresentation() + " need to be deleted.");
+					deleteExpiredDocumentEntry(actor, documentEntry);
+				} else {
+					TimeUnitValueFunctionality fileExpirationFunc = functionalityReadOnlyService.getDefaultFileExpiryTimeFunctionality(domain);
+					Calendar deletionDate = Calendar.getInstance();
+					deletionDate.add(fileExpirationFunc.toCalendarValue(), fileExpirationFunc.getValue());
+					documentEntry.setExpirationDate(deletionDate);
+					documentEntryBusinessService.update(documentEntry);
+				}
+			}
+	}
+
+	@Override
+	public List<String> findAllExpiredEntries(Account actor, Account owner) {
+		preChecks(actor, owner);
+		if (!actor.hasAllRights()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
+		}
+		return documentEntryBusinessService.findAllExpiredEntries();
 	}
 }

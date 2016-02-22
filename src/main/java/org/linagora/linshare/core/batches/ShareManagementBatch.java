@@ -33,13 +33,11 @@
  */
 package org.linagora.linshare.core.batches;
 
-/** This class provides shares management methods.
+/**
+ * This class provides shares management methods.
  */
 public interface ShareManagementBatch {
-    
-    /** Clean all outdated shares. */
-    void cleanOutdatedShares();
-    
-    /** Notify the upcoming outdated share. */
-    void notifyUpcomingOutdatedShares();
+
+	/** Notify the upcoming outdated share. */
+	void notifyUpcomingOutdatedShares();
 }

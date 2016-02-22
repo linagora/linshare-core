@@ -169,4 +169,8 @@ public class AnonymousUrl {
 	public boolean isPasswordProtected() {
 		return getPassword() != null;
 	}
+
+	public String getReprentation() {
+		return this.uuid;
+	}
 }

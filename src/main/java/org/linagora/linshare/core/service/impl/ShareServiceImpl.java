@@ -293,7 +293,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			User user = userService.findByLsUuid(uuid);
 			if (user != null) {
 				logger.debug("step1:user found : "
-						+ user.getAccountReprentation());
+						+ user.getAccountRepresentation());
 				shareContainer.addShareRecipient(user);
 				return true;
 			}
@@ -315,7 +315,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 				User user = userService.findOrCreateUserWithDomainPolicies(
 						domain, mail, owner.getDomainId());
 				logger.debug("step2:user found : "
-						+ user.getAccountReprentation());
+						+ user.getAccountRepresentation());
 				shareContainer.addShareRecipient(user);
 				return true;
 			} catch (BusinessException e) {
@@ -338,7 +338,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 				User user = userService.findOrCreateUserWithDomainPolicies(
 						mail, owner.getDomainId());
 				logger.debug("step3:user found : "
-						+ user.getAccountReprentation());
+						+ user.getAccountRepresentation());
 				shareContainer.addShareRecipient(user);
 				return true;
 			} catch (BusinessException e) {

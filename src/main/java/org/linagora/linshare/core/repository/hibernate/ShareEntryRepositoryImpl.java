@@ -44,6 +44,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
@@ -123,14 +124,13 @@ public class ShareEntryRepositoryImpl extends
 	}
 
 	@Override
-	public List<ShareEntry> findAllExpiredEntries() {
-		List<ShareEntry> entries = findByCriteria(Restrictions.lt(
-				"expirationDate", Calendar.getInstance()));
-		if (entries == null) {
-			logger.error("the result is null ! this should never happen.");
-			return new ArrayList<ShareEntry>();
-		}
-		return entries;
+	public List<String> findAllExpiredEntries() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("uuid"));
+		criteria.add(Restrictions.lt("expirationDate", Calendar.getInstance()));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
 	}
 
 	@Override

@@ -24,31 +24,23 @@
         <property name="cronExpression" value="${job.users.cron.expression}"/>
     </bean>
 
-    <bean id="cleanOutdatedSharesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
-        <property name="jobClass" value="org.linagora.linshare.core.job.quartz.CleanOutdatedShares"/>
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="batch" value-ref="shareManagementBatch"/>
-            </map>
-        </property>
-    </bean>
-    <bean id="cleanOutdatediSharesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail" ref="cleanOutdatedSharesJob"/>
-        <property name="cronExpression" value="${job.shares.cron.expression}"/>
-    </bean>
-
-    <bean id="checkDocumentsMimeTypeJob" class="org.springframework.scheduling.quartz.JobDetailBean">
-        <property name="jobClass" value="org.linagora.linshare.core.job.quartz.CheckDocumentsMimeType"/>
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="batch" value-ref="documentManagementBatch"/>
-            </map>
-        </property>
-    </bean>
-    <bean id="checkDocumentsMimeTypeJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail" ref="checkDocumentsMimeTypeJob"/>
-        <property name="cronExpression" value="${job.mimetype.cron.expression}"/>
-    </bean>
+	<bean id="computeDocumentMimeTypeBatchJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="batch">
+					<list value-type="org.linagora.linshare.core.job.quartz.LinShareJobBean">
+						<ref bean="computeDocumentMimeTypeBatch" />
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	<bean id="computeDocumentMimeTypeBatchJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="computeDocumentMimeTypeBatchJob" />
+		<property name="cronExpression" value="${job.mimetype.cron.expression}" />
+	</bean>
 
 
     <bean id="notifyOutdatedSharesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
@@ -64,18 +56,23 @@
         <property name="cronExpression" value="${job.outdatedshares.cron.expression}"/>
     </bean>
 
-    <bean id="cleanInconsistentDocumentEntriesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
-        <property name="jobClass" value="org.linagora.linshare.core.job.quartz.CleanInconsistentDocumentEntries"/>
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="batch" value-ref="documentManagementBatch"/>
-            </map>
-        </property>
-    </bean>
-    <bean id="cleanInconsistentDocumentEntriesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail" ref="cleanInconsistentDocumentEntriesJob"/>
-        <property name="cronExpression" value="${job.consistency.cron.expression}"/>
-    </bean>
+	<bean id="deleteMissingDocumentsBatchJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="batch">
+					<list value-type="org.linagora.linshare.core.job.quartz.LinShareJobBean">
+						<ref bean="deleteMissingDocumentsBatch" />
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	<bean id="deleteMissingDocumentsBatchJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="deleteMissingDocumentsBatchJob" />
+		<property name="cronExpression" value="${job.consistency.cron.expression}" />
+	</bean>
 
 	<!-- Don't use that with Jackrabbit 1.4 !! -->
 	<!-- https://issues.apache.org/jira/browse/JCR-2492 -->
@@ -91,19 +88,8 @@
         <property name="jobDetail" ref="cleanJcrUnusedFilesJob"/>
         <property name="cronExpression" value="${job.jcrgarbagecollector.cron.expression}"/>
     </bean>
-    <bean id="cleanOutdatedDocumentsJob" class="org.springframework.scheduling.quartz.JobDetailBean">
-        <property name="jobClass" value="org.linagora.linshare.core.job.quartz.CleanOutdatedDocuments"/>
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="batch" value-ref="documentManagementBatch"/>
-            </map>
-        </property>
-    </bean>
-    <bean id="cleanOutdatedDocumentsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail" ref="cleanOutdatedDocumentsJob"/>
-        <property name="cronExpression" value="${job.document.cleaner.cron.expression}"/>
-    </bean>
 
+	<!-- Jackrabbit keep alive -->
 	<bean id="jackRabbitKeepAliveJob" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass"
 			value="org.linagora.linshare.core.job.quartz.JackRabbitKeepAlive" />
@@ -147,20 +133,29 @@
 			value="${job.shares.undownloaded.notification.cron.expression}" />
 	</bean>
 
-	<bean id="deleteShareEntryGroupsJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean id="cleaningShareEntriesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass"
 			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
 		<property name="jobDataAsMap">
 			<map>
-				<entry key="batch" value-ref="deleteShareEntryGroupBatch" />
+				<entry key="batch">
+					<list value-type="org.linagora.linshare.core.job.quartz.LinShareJobBean">
+						<ref bean="deleteExpiredShareEntryBatch" />
+						<ref bean="deleteExpiredAnonymousShareEntryBatch" />
+						<ref bean="deleteExpiredAnonymousUrlBatch" />
+						<ref bean="deleteShareEntryGroupBatch" />
+						<ref bean="deleteExpiredDocumentEntryBatch" />
+						<ref bean="deleteMissingDocumentsBatch" />
+					</list>
+				</entry>
 			</map>
 		</property>
 	</bean>
 
-	<bean id="deleteShareEntryGroupsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail" ref="deleteShareEntryGroupsJob" />
+	<bean id="cleaningShareEntriesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="cleaningShareEntriesJob" />
 		<property name="cronExpression"
-			value="${job.shares.deleteshareentrygroup.cron.expression}" />
+			value="${job.shares.cron.expression}" />
 	</bean>
 
 	<bean id="shaSumJob" class="org.springframework.scheduling.quartz.JobDetailBean">

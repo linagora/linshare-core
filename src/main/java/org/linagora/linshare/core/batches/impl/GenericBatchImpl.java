@@ -57,16 +57,24 @@ public abstract class GenericBatchImpl implements GenericBatch {
 	}
 
 	@Override
-	public void logDebug(long total, long position, String message) {
-		logger.debug(getStringPosition(total, position) + message);
+	public void logDebug(long total, long position, String message,
+			Object... args) {
+		logger.debug(getStringPosition(total, position) + message, args);
 	}
 
-	protected void logInfo(long total, long position, String message) {
-		logger.info(getStringPosition(total, position) + message);
+	protected void logInfo(long total, long position, String message,
+			Object... args) {
+		logger.info(getStringPosition(total, position) + message, args);
 	}
 
-	protected void logError(long total, long position, String message) {
-		logger.error(getStringPosition(total, position) + message);
+	protected void logWarn(long total, long position, String message,
+			Object... args) {
+		logger.warn(getStringPosition(total, position) + message, args);
+	}
+
+	protected void logError(long total, long position, String message,
+			Object... args) {
+		logger.error(getStringPosition(total, position) + message, args);
 	}
 
 	protected SystemAccount getSystemAccount() {

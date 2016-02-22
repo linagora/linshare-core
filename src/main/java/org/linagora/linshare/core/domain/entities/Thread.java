@@ -72,8 +72,8 @@ public class Thread extends Account {
 	}
 
 	@Override
-	public String getAccountReprentation() {
-		return "Thread name : " + getName() + "(" + lsUuid + ")";
+	public String getAccountRepresentation() {
+		return "Thread name : " + name + "(" + lsUuid + ")";
 	}
 
 	@Override

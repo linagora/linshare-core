@@ -89,7 +89,7 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 		AbstractDomain domain = domainBusinessService.findById(domainId);
 		// check actor is admin of mimePolicy.getDomain();
 		if (!domain.isManagedBy(actor)) {
-			String msg = "The current actor " + actor.getAccountReprentation()
+			String msg = "The current actor " + actor.getAccountRepresentation()
 					+ " does not have the right to create a MimePolicy.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
@@ -108,7 +108,7 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 		Validate.notNull(mimePolicy, "MimePolicy must be set.");
 		Validate.notEmpty(mimePolicy.getUuid(), "MimePolicy uuid must be set");
 		if (!isAdminFor(actor, mimePolicy.getUuid())) {
-			String msg = "The current actor " + actor.getAccountReprentation()
+			String msg = "The current actor " + actor.getAccountRepresentation()
 					+ " does not have the right to delete this MimePolicy.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
@@ -121,7 +121,7 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notEmpty(uuid, "MimePolicy uuid must be set.");
 		if (!isAdminFor(actor, uuid)) {
-			String msg = "The current actor " + actor.getAccountReprentation()
+			String msg = "The current actor " + actor.getAccountRepresentation()
 					+ " does not have the right to get this MimePolicy.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
@@ -149,7 +149,7 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 		AbstractDomain domain = domainBusinessService
 				.findById(domainIdentifier);
 		if (!domainPermissionService.isAdminforThisDomain(actor, domain)) {
-			String msg = "The current actor " + actor.getAccountReprentation()
+			String msg = "The current actor " + actor.getAccountRepresentation()
 					+ " does not have the right to get all MimePolicies.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
@@ -179,7 +179,7 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 		Validate.notEmpty(mimePolicyDto.getName(),
 				"MimePolicy name must be set.");
 		if (!isAdminFor(actor, mimePolicyDto.getUuid())) {
-			String msg = "The current actor " + actor.getAccountReprentation()
+			String msg = "The current actor " + actor.getAccountRepresentation()
 					+ " does not have the right to update this MimePolicy.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
@@ -206,7 +206,7 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 		Validate.notEmpty(uuid, "MimePolicy uuid must be set.");
 		MimePolicy mimePolicy = mimePolicyBusinessService.find(uuid);
 		if (!isAdminFor(actor, mimePolicy)) {
-			String msg = "The current actor " + actor.getAccountReprentation()
+			String msg = "The current actor " + actor.getAccountRepresentation()
 					+ " does not have the right to update this MimePolicy.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
@@ -221,7 +221,7 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 		Validate.notEmpty(uuid, "MimePolicy uuid must be set.");
 		MimePolicy mimePolicy = mimePolicyBusinessService.find(uuid);
 		if (!isAdminFor(actor, mimePolicy)) {
-			String msg = "The current actor " + actor.getAccountReprentation()
+			String msg = "The current actor " + actor.getAccountRepresentation()
 					+ " does not have the right to update this MimePolicy.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}

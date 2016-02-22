@@ -59,7 +59,7 @@ public interface DocumentEntryRepository extends
 
 	long getRelatedEntriesCount(DocumentEntry documentEntry);
 
-	List<DocumentEntry> findAllExpiredEntries();
+	List<String> findAllExpiredEntries();
 
 	List<DocumentEntry> retrieveUserDocumentEntriesWithMatchCriterion(
 			final SearchDocumentCriterion searchDocumentCriterion);

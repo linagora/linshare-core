@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -221,7 +222,7 @@ public class AnonymousShareEntryServiceImpl extends
 		ShareLogEntry logEntry = new ShareLogEntry(shareEntry.getEntryOwner(),
 				shareEntry, LogAction.ANONYMOUS_SHARE_DOWNLOAD,
 				"Anonymous user "
-						+ shareEntry.getEntryOwner().getAccountReprentation()
+						+ shareEntry.getEntryOwner().getAccountRepresentation()
 						+ " downloaded a file");
 		logEntryService.create(logEntry);
 		MailContainerWithRecipient mail = null;
@@ -240,5 +241,14 @@ public class AnonymousShareEntryServiceImpl extends
 		shareEntry = anonymousShareEntryBusinessService.updateDownloadCounter(shareEntry);
 		return documentEntryBusinessService.getDocumentStream(shareEntry
 				.getDocumentEntry());
+	}
+
+	@Override
+	public List<String> findAllExpiredEntries(Account actor, Account owner) {
+		preChecks(actor, owner);
+		if (!actor.hasAllRights()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
+		}
+		return anonymousShareEntryBusinessService.findAllExpiredEntries();
 	}
 }

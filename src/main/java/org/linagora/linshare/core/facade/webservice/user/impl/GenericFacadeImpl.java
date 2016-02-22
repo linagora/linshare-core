@@ -67,7 +67,7 @@ public class GenericFacadeImpl implements GenericFacade {
 		if (name == null)
 			return null;
 		User user = (User) accountService.findByLsUuid(name);
-		logger.debug("Authenticated user : " + user.getAccountReprentation());
+		logger.debug("Authenticated user : " + user.getAccountRepresentation());
 		return user;
 	}
 

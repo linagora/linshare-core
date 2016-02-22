@@ -35,7 +35,6 @@ package org.linagora.linshare.core.service;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -160,4 +159,12 @@ public interface DocumentEntryService {
 	void updateFileProperties(Account actor, String docEntryUuid,
 			String newName, String fileComment, boolean cmisSync)
 			throws BusinessException;
+
+	long getRelatedEntriesCount(Account actor, Account owner, DocumentEntry documentEntry);
+
+	void deleteOrComputeExpiryDate(SystemAccount actor,
+			AbstractDomain domain, DocumentEntry documentEntry);
+
+	List<String> findAllExpiredEntries(Account actor, Account owner);
+
 }

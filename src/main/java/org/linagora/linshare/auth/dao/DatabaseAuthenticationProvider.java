@@ -111,7 +111,7 @@ public class DatabaseAuthenticationProvider extends
 			account = userDetailsProvider.retrieveUser(domainIdentifier, username);
 
 			if (account != null) {
-				logger.debug("Account in database found : " + account.getAccountReprentation());
+				logger.debug("Account in database found : " + account.getAccountRepresentation());
 				password = account.getPassword();
 				if (password != null && password.equals(""))	password = null;
 

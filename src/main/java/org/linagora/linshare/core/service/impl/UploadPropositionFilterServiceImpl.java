@@ -68,7 +68,7 @@ public class UploadPropositionFilterServiceImpl implements UploadPropositionFilt
 		Validate.notEmpty(uuid, "filter uuid is required");
 		UploadPropositionFilter filter = businessService.find(uuid);
 		if (filter ==null) {
-			logger.error(actor.getAccountReprentation() + " is looking for missing filter uuid : " + uuid);
+			logger.error(actor.getAccountRepresentation() + " is looking for missing filter uuid : " + uuid);
 			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_FILTER_NOT_FOUND, "filter with uuid : " + uuid + " not found.");
 		}
 		return filter;

@@ -55,5 +55,5 @@ public interface GenericBatch {
 	void terminate(List<String> all, long errors, long unhandled_errors,
 			long total, long processed);
 
-	void logDebug(long total, long position, String message);
+	void logDebug(long total, long position, String message, Object... args);
 }

@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
@@ -56,4 +57,6 @@ public interface AnonymousShareEntryService {
 
 	InputStream getAnonymousShareEntryStream(Account actor, String shareUuid)
 			throws BusinessException;
+
+	List<String> findAllExpiredEntries(Account actor, Account owner);
 }

@@ -172,7 +172,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notEmpty(mail, "Mail must be set.");
 		if (!actor.hasUploadPropositionRole()) {
-			logger.equals(actor.getAccountReprentation()
+			logger.equals(actor.getAccountRepresentation()
 					+ " is using an unauthorized api");
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"You are not authorized to use this method.");

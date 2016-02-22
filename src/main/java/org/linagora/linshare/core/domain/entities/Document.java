@@ -261,4 +261,10 @@ public class Document implements Serializable {
 				+ ", type=" + type + ", size=" + size + ", sha256sum="
 				+ sha256sum + "]";
 	}
+
+	public String getRepresentation() {
+		return "Document [uuid=" + uuid
+				+ ", type=" + type + ", size=" + size + ", sha256sum="
+				+ sha256sum + "]";
+	}
 }

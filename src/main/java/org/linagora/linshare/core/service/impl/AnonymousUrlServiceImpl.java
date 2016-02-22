@@ -41,9 +41,11 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.business.service.AnonymousUrlBusinessService;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
@@ -164,5 +166,30 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 		logger.debug(msg);
 		throw new LinShareNotSuchElementException(msg);
 	}
-	
+
+	@Override
+	public List<String> findAllExpiredEntries(Account actor, Account owner) {
+		if (!actor.hasAllRights()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
+		}
+		return anonymousUrlBusinessService.findAllExpiredEntries();
+	}
+
+	@Override
+	public AnonymousUrl find(Account actor, Account owner, String uuid) {
+		if (!actor.hasAllRights()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
+		}
+		return anonymousUrlBusinessService.findByUuid(uuid);
+	}
+
+	@Override
+	public AnonymousUrl delete(Account actor, Account owner, String uuid) {
+		if (!actor.hasAllRights()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
+		}
+		AnonymousUrl anonymousUrl = anonymousUrlBusinessService.findByUuid(uuid);
+		anonymousUrlBusinessService.delete(anonymousUrl);
+		return anonymousUrl;
+	}
 }

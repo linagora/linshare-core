@@ -165,4 +165,9 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		entry.incrementDownloaded();
 		return anonymousShareEntryRepository.update(entry);
 	}
+
+	@Override
+	public List<String> findAllExpiredEntries() {
+		return anonymousShareEntryRepository.findAllExpiredEntries();
+	}
 }

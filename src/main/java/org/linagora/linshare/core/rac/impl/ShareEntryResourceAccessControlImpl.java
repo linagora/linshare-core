@@ -67,7 +67,7 @@ public class ShareEntryResourceAccessControlImpl extends
 
 	@Override
 	protected String getOwnerRepresentation(Account owner) {
-		return owner.getAccountReprentation();
+		return owner.getAccountRepresentation();
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class ShareEntryResourceAccessControlImpl extends
 	@Override
 	protected String getRecipientRepresentation(ShareEntry entry) {
 		User recipient = entry.getRecipient();
-		return recipient.getAccountReprentation();
+		return recipient.getAccountRepresentation();
 	}
 
 	@Override

@@ -34,33 +34,22 @@
 package org.linagora.linshare.core.batches.impl;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.batches.ShareManagementBatch;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
-import org.linagora.linshare.core.domain.entities.AnonymousUrl;
-import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
-import org.linagora.linshare.core.repository.AnonymousUrlRepository;
-import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.ShareEntryRepository;
-import org.linagora.linshare.core.service.AnonymousShareEntryService;
-import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.core.service.ShareEntryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,170 +60,31 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 	private static final Logger logger = LoggerFactory
 			.getLogger(ShareManagementBatchImpl.class);
 
-	private final ShareEntryService shareEntryService;
-
-	private final AnonymousShareEntryService anonymousShareEntryService;
-
 	private final ShareEntryRepository shareEntryRepository;
 
 	private final AnonymousShareEntryRepository anonymousShareEntryRepository;
-
-	private final DocumentEntryRepository documentEntryRepository;
 
 	private final AccountRepository<Account> accountRepository;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	private final DocumentEntryService documentEntryService;
-
-	private final AnonymousUrlRepository anonymousUrlRepository;
-
 	private final NotifierService notifierService;
 
 	private final MailBuildingService mailBuildingService;
 
-	public ShareManagementBatchImpl(ShareEntryService shareEntryService,
-			AnonymousShareEntryService anonymousShareEntryService,
-			ShareEntryRepository shareEntryRepository,
+	public ShareManagementBatchImpl(ShareEntryRepository shareEntryRepository,
 			AnonymousShareEntryRepository anonymousShareEntryRepository,
-			DocumentEntryRepository documentEntryRepository,
 			AccountRepository<Account> accountRepository,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
-			DocumentEntryService documentEntryService,
-			AnonymousUrlRepository anonymousUrlRepository,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService) {
 		super();
-		this.shareEntryService = shareEntryService;
-		this.anonymousShareEntryService = anonymousShareEntryService;
 		this.shareEntryRepository = shareEntryRepository;
 		this.anonymousShareEntryRepository = anonymousShareEntryRepository;
-		this.documentEntryRepository = documentEntryRepository;
 		this.accountRepository = accountRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
-		this.documentEntryService = documentEntryService;
-		this.anonymousUrlRepository = anonymousUrlRepository;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
-	}
-
-	@Override
-	public void cleanOutdatedShares() {
-		logger.info("Begin clean outdated shares");
-		removeAllExpiredShareEntries();
-		removeAllExpiredAnonymousShareEntries();
-		removeAllExpiredAnonymousUrl();
-		logger.info("End clean outdated shares");
-	}
-
-	private void removeAllExpiredAnonymousShareEntries() {
-		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
-
-		List<AnonymousShareEntry> expiredEntries = anonymousShareEntryRepository.findAllExpiredEntries();
-		logger.info(expiredEntries.size() + " expired anonymous share(s) found to be delete.");
-		for (AnonymousShareEntry shareEntry : expiredEntries) {
-			AbstractDomain domain = shareEntry.getEntryOwner().getDomain();
-
-			TimeUnitValueFunctionality shareExpiryTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(domain);
-			// test if this functionality is enable for the current domain.
-			if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
-				try {
-					DocumentEntry documentEntry = shareEntry.getDocumentEntry();
-					boolean doDeleteDoc = documentSuppressionIsNeeded(documentEntry);
-					anonymousShareEntryService.delete(systemAccount, shareEntry.getEntryOwner(), shareEntry.getUuid());
-					if(doDeleteDoc) {
-						documentEntryService.deleteExpiredDocumentEntry(systemAccount, documentEntry);
-					}
-
-				} catch (BusinessException e) {
-					logger.error("Can't delete expired anonymous share : " + shareEntry.getUuid()  + " : " + e.getMessage() );
-					logger.debug(e.toString());
-				}
-			}
-		}
-	}
-
-	private boolean documentSuppressionIsNeeded(DocumentEntry documentEntry) {
-		boolean doDeleteDoc = false;
-		AbstractDomain domain = documentEntry.getEntryOwner().getDomain();
-		long sum = documentEntryRepository.getRelatedEntriesCount(documentEntry);
-		TimeUnitValueFunctionality shareExpiryTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(domain);
-		BooleanValueFunctionality deleteShareFunc= functionalityReadOnlyService.getDefaultShareExpiryTimeDeletionFunctionality(domain);
-
-		if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
-			// we check if the current share is the last related entry to the document
-			if(sum -1 <= 0) {
-				// if this field is set, we must delete the document entry when the share entry is expired.
-				if(deleteShareFunc.getValue()) {
-					doDeleteDoc = true;
-					logger.debug("current document " + documentEntry.getUuid() + " need to be deleted.");
-				} else {
-
-					TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityReadOnlyService.getDefaultFileExpiryTimeFunctionality(domain);
-
-					Calendar deletionDate = Calendar.getInstance();
-					deletionDate.add(fileExpirationTimeFunctionality.toCalendarValue(), fileExpirationTimeFunctionality.getValue());
-					documentEntry.setExpirationDate(deletionDate);
-
-					try {
-						documentEntryRepository.update(documentEntry);
-					} catch (IllegalArgumentException e) {
-						logger.error("current document " + documentEntry.getUuid() + " can't not be updated." + e.getMessage());
-						logger.debug("exception:" + e.toString());
-					} catch (BusinessException e) {
-						logger.error("current document " + documentEntry.getUuid() + " can't not be updated." + e.getMessage());
-						logger.debug("exception:" + e.toString());
-					}
-				}
-			}
-		} else {
-			logger.warn("Share expiration is not enable.");
-		}
-		return doDeleteDoc;
-	}
-
-
-	private void removeAllExpiredShareEntries() {
-		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
-
-		List<ShareEntry> expiredEntries = shareEntryRepository.findAllExpiredEntries();
-		logger.info(expiredEntries.size() + " expired share(s) found to be delete.");
-		for (ShareEntry shareEntry : expiredEntries) {
-			AbstractDomain domain = shareEntry.getEntryOwner().getDomain();
-
-			TimeUnitValueFunctionality shareExpiryTimeFunctionality = functionalityReadOnlyService.getDefaultShareExpiryTimeFunctionality(domain);
-			// test if this functionality is enable for the current domain.
-			if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
-				try {
-					DocumentEntry documentEntry = shareEntry.getDocumentEntry();
-					boolean doDeleteDoc = documentSuppressionIsNeeded(documentEntry);
-
-					shareEntryService.delete(systemAccount, shareEntry.getRecipient(), shareEntry.getUuid());
-					if(doDeleteDoc) {
-						documentEntryService.deleteExpiredDocumentEntry(systemAccount, documentEntry);
-					}
-				} catch (BusinessException e) {
-					logger.error("Can't delete expired share : " + shareEntry.getUuid()  + " : " + e.getMessage() );
-					logger.debug(e.toString());
-				}
-			}
-		}
-	}
-
-	private void removeAllExpiredAnonymousUrl() {
-		List<AnonymousUrl> allExpiredUrl = anonymousUrlRepository.getAllExpiredUrl();
-		logger.info(allExpiredUrl.size() + " expired anonymous url(s) found to be delete.");
-		for (AnonymousUrl anonymousUrl : allExpiredUrl) {
-			try {
-				anonymousUrlRepository.delete(anonymousUrl);
-			} catch (IllegalArgumentException e) {
-				logger.error("Can't delete expired anonymous url : " + anonymousUrl.getUuid() + " : " + e.getMessage() );
-				logger.debug(e.toString());
-			} catch (BusinessException e) {
-				logger.error("Can't delete expired anonymous url : " + anonymousUrl.getUuid() + " : " + e.getMessage() );
-				logger.debug(e.toString());
-			}
-		}
 	}
 
 	@Override

@@ -69,7 +69,7 @@ public class RememberMeAccountProvider implements UserDetailsService {
 
 		if (account != null) {
 			logger.debug("Account in database found : "
-					+ account.getAccountReprentation());
+					+ account.getAccountRepresentation());
 		}
 		if (account == null || Role.SYSTEM.equals(account.getRole())) {
 			logger.debug("throw UsernameNotFoundException: Account not found");

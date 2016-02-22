@@ -100,9 +100,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 		if (thread == null) {
 			logger.error("Can't find thread  : " + uuid);
-			logger.error("Current actor " + actor.getAccountReprentation()
+			logger.error("Current actor " + actor.getAccountRepresentation()
 					+ " is looking for a misssing thread (" + uuid
-					+ ") owned by : " + owner.getAccountReprentation());
+					+ ") owned by : " + owner.getAccountRepresentation());
 			String message = "Can not find thread with uuid : " + uuid;
 			throw new BusinessException(
 					BusinessErrorCode.THREAD_NOT_FOUND, message);
@@ -140,7 +140,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 				BusinessErrorCode.THREAD_FORBIDDEN, null);
 		Thread thread = null;
 		ThreadMember member = null;
-		logger.debug("User " + owner.getAccountReprentation() + " trying to create new thread named " + name);
+		logger.debug("User " + owner.getAccountRepresentation() + " trying to create new thread named " + name);
 		thread = new Thread(owner.getDomain(), owner, name);
 		threadRepository.create(thread);
 		logEntryService.create(new ThreadLogEntry(owner, thread, LogAction.THREAD_CREATE, "Creation of a new thread."));
@@ -214,9 +214,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		threadMemberAC.checkCreatePermission(actor, owner, ThreadMember.class,
 				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member);
 		if (getMemberFromUser(thread, user) != null) {
-			logger.warn("The current " + user.getAccountReprentation()
+			logger.warn("The current " + user.getAccountRepresentation()
 					+ " user is already member of the thread : "
-					+ thread.getAccountReprentation());
+					+ thread.getAccountRepresentation());
 			throw new BusinessException(
 					"You are not authorized to add member to this thread. Already exists.");
 		}
@@ -225,7 +225,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		logEntryService.create(new ThreadLogEntry(owner, member,
 				LogAction.THREAD_ADD_MEMBER,
 				"Adding a new member to a thread : "
-						+ member.getUser().getAccountReprentation()));
+						+ member.getUser().getAccountRepresentation()));
 		return member;
 	}
 
@@ -350,8 +350,8 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 			return; // superadmin or system accounts have all rights
 		}
 		if (!isUserAdmin((User) actor, thread)) {
-			logger.error("Actor: " + actor.getAccountReprentation() + " isn't admin of the Thread: "
-					+ thread.getAccountReprentation());
+			logger.error("Actor: " + actor.getAccountRepresentation() + " isn't admin of the Thread: "
+					+ thread.getAccountRepresentation());
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"you are not authorized to perform this action on this thread.");
 		}

@@ -59,7 +59,7 @@ public class DelegationGenericFacadeImpl extends GenericFacadeImpl implements
 		User actor = super.checkAuthentication();
 		if (!actor.hasDelegationRole()) {
 			logger.error("Current actor is trying to access to a forbbiden api : "
-					+ actor.getAccountReprentation());
+					+ actor.getAccountRepresentation());
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		}

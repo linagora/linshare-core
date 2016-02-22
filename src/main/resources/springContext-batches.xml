@@ -47,6 +47,54 @@
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="jackRabbitRepository" />
+
+	<bean name="deleteExpiredShareEntryBatch"
+		class="org.linagora.linshare.core.batches.impl.DeleteExpiredShareEntryBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="shareEntryService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="documentEntryService" />
+	</bean>
+
+	<bean name="deleteExpiredAnonymousShareEntryBatch"
+		class="org.linagora.linshare.core.batches.impl.DeleteExpiredAnonymousShareEntryBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="anonymousShareEntryService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="documentEntryService" />
+	</bean>
+
+	<bean name="deleteExpiredAnonymousUrlBatch"
+		class="org.linagora.linshare.core.batches.impl.DeleteExpiredAnonymousUrlBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="anonymousUrlService" />
+	</bean>
+
+	<bean name="deleteExpiredDocumentEntryBatch"
+		class="org.linagora.linshare.core.batches.impl.DeleteExpiredDocumentEntryBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="documentEntryService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg value="${job.document.cleaner.activation}" />
+	</bean>
+
+	<bean name="deleteMissingDocumentsBatch"
+		class="org.linagora.linshare.core.batches.impl.DeleteMissingDocumentsBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="documentRepository" />
+		<constructor-arg ref="documentEntryBusinessService" />
+		<constructor-arg ref="documentEntryService" />
+		<constructor-arg ref="threadEntryService" />
+		<constructor-arg ref="shareService" />
+		<constructor-arg ref="jackRabbitRepository" />
+	</bean>
+
+	<bean name="computeDocumentMimeTypeBatch"
+		class="org.linagora.linshare.core.batches.impl.ComputeDocumentMimeTypeBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="documentRepository" />
+		<constructor-arg ref="jackRabbitRepository" />
+		<constructor-arg ref="mimeTypeMagicNumberDao" />
 	</bean>
 
 </beans>

@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.business.service;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -56,5 +58,9 @@ public interface AnonymousUrlBusinessService {
 	boolean isExpired(AnonymousUrl anonymousUrl);
 
 	SystemAccount getAnonymousURLAccount();
+
+	List<String> findAllExpiredEntries();
+
+	void delete(AnonymousUrl anonymousUrl);
 
 }

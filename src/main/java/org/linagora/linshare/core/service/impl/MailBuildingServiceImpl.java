@@ -153,7 +153,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		@SuppressWarnings("unused")
 		public ContactRepresentation(Account account) {
 			this.mail = StringUtils
-					.trimToNull(account.getAccountReprentation());
+					.trimToNull(account.getAccountRepresentation());
 			if (account instanceof User) {
 				User user = (User) account;
 				this.firstName = StringUtils.trimToNull(user.getFirstName());

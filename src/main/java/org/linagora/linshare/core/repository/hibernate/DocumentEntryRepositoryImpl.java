@@ -35,7 +35,6 @@ package org.linagora.linshare.core.repository.hibernate;
 
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -45,7 +44,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -150,13 +148,13 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 	}
 
 	@Override
-	public List<DocumentEntry> findAllExpiredEntries() {
-		List<DocumentEntry> entries = findByCriteria(Restrictions.lt("expirationDate", Calendar.getInstance()));
-        if (entries == null) {
-        	logger.error("the result is null ! this should not happen.");
-            return new ArrayList<DocumentEntry>();
-        }
-        return entries;
+	public List<String> findAllExpiredEntries() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("uuid"));
+		criteria.add(Restrictions.lt("expirationDate", Calendar.getInstance()));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
 	}
 
 	@SuppressWarnings("unchecked")

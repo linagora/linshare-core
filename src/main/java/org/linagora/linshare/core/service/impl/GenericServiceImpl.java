@@ -66,9 +66,9 @@ public class GenericServiceImpl<R, E> {
 			Validate.notEmpty(owner.getLsUuid(), "Missing owner uuid");
 		}
 		if (logger.isDebugEnabled()) {
-			logger.debug("Current actor " + actor.getAccountReprentation());
+			logger.debug("Current actor " + actor.getAccountRepresentation());
 			if (!dontCheckOwner) {
-				logger.debug("Current owner " + owner.getAccountReprentation());
+				logger.debug("Current owner " + owner.getAccountRepresentation());
 			}
 		}
 	}

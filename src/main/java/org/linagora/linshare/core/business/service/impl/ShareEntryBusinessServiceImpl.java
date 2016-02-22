@@ -153,4 +153,10 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		shareEntry.incrementDownloaded();
 		return shareEntryRepository.update(shareEntry);
 	}
+
+	@Override
+	public List<String> findAllExpiredEntries() {
+		return shareEntryRepository.findAllExpiredEntries();
+	}
+
 }

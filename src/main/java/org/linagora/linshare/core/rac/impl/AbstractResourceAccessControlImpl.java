@@ -111,7 +111,7 @@ public abstract class AbstractResourceAccessControlImpl<A, R, E> implements
 
 	protected StringBuilder getActorStringBuilder(Account actor) {
 		StringBuilder sb = new StringBuilder("Actor ");
-		sb.append(actor.getAccountReprentation());
+		sb.append(actor.getAccountRepresentation());
 		return sb;
 	}
 

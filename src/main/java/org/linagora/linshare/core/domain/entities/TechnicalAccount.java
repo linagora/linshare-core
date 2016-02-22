@@ -65,7 +65,7 @@ public class TechnicalAccount extends User {
 	}
 
 	@Override
-	public String getAccountReprentation() {
+	public String getAccountRepresentation() {
 		return this.lastName + "(" + lsUuid + ")";
 	}
 }

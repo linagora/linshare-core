@@ -33,19 +33,16 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
-import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class AnonymousUrlRepositoryImpl extends AbstractRepositoryImpl<AnonymousUrl> implements AnonymousUrlRepository {
@@ -53,15 +50,13 @@ public class AnonymousUrlRepositoryImpl extends AbstractRepositoryImpl<Anonymous
 	public AnonymousUrlRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
-	
-	
+
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(AnonymousUrl anonymousUrl) {
 		DetachedCriteria det = DetachedCriteria.forClass(AnonymousUrl.class).add(Restrictions.eq("uuid", anonymousUrl.getUuid()));
 		return det;
 	}
 
-	
 	@Override
 	public AnonymousUrl findByUuid(String uuid) {
 		DetachedCriteria det = DetachedCriteria.forClass(AnonymousUrl.class).add(Restrictions.eq("uuid", uuid));
@@ -76,28 +71,21 @@ public class AnonymousUrlRepositoryImpl extends AbstractRepositoryImpl<Anonymous
 		}
 	}
 
-
 	@Override
 	public AnonymousUrl create(AnonymousUrl entity) throws BusinessException {
 		entity.setUuid(UUID.randomUUID().toString());
 		return super.create(entity);
 	}
 
-
 	@Override
-	public List<AnonymousUrl> getAllExpiredUrl() {
-		
-		HibernateCallback<List<AnonymousUrl>> action = new HibernateCallback<List<AnonymousUrl>>() {
-			@SuppressWarnings("unchecked")
-			public List<AnonymousUrl> doInHibernate(final Session session) throws HibernateException, SQLException {
-				final Query query = session.createQuery("SELECT a from AnonymousUrl as a where not exists " +
-						"(SELECT b from AnonymousUrl as b , AnonymousShareEntry as entry where entry.anonymousUrl.id = a.id)");
-				return 	query.list();
-			}
-		};
-		
-		return getHibernateTemplate().execute(action);
+	public List<String> findAllExpiredEntries() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("uuid"));
+		criteria.createAlias("anonymousShareEntries", "ase", CriteriaSpecification.LEFT_JOIN);
+		criteria.add(Restrictions.isNull("ase.anonymousUrl"));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
 	}
 
-	
 }

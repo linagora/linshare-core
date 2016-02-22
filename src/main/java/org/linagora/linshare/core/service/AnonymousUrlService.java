@@ -36,7 +36,9 @@ package org.linagora.linshare.core.service;
 import java.io.InputStream;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
@@ -55,5 +57,10 @@ public interface AnonymousUrlService {
 	public InputStream retrieveFileStream(String anonymousUrlUuid, String anonymousShareEntryUuid, String password) throws BusinessException ;
 	
 	public FileStreamResponse retrieveArchiveZipStream(String anonymousUrlUuid, String password) throws BusinessException ;
-	
+
+	List<String> findAllExpiredEntries(Account actor, Account owner);
+
+	AnonymousUrl find(Account actor, Account owner, String uuid);
+
+	AnonymousUrl delete(Account actor, Account owner, String uuid);
 }

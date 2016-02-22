@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
@@ -121,4 +122,9 @@ public interface DocumentEntryBusinessService {
 	String SHA256CheckSumFileStream(InputStream fs) throws IOException;
 
 	String SHA1CheckSumFileStream(InputStream fs) throws IOException;
+
+	List<String> findAllExpiredEntries();
+
+	void deleteDocument(Document document)
+			throws BusinessException;
 }

@@ -67,7 +67,7 @@ public class ThreadEntryResourceAccessControlImpl extends
 
 	@Override
 	protected String getOwnerRepresentation(Account owner) {
-		return owner.getAccountReprentation();
+		return owner.getAccountRepresentation();
 	}
 
 	@Override

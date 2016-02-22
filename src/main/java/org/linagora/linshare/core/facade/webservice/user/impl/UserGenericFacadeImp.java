@@ -53,7 +53,7 @@ public class UserGenericFacadeImp extends GenericFacadeImpl {
 				|| actor.hasAdminRole()
 				|| actor.hasSuperAdminRole()
 				)) {
-			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountReprentation());
+			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountRepresentation());
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");

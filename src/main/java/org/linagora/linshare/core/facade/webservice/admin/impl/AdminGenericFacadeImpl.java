@@ -58,14 +58,14 @@ public class AdminGenericFacadeImpl extends GenericFacadeImpl implements
 					"role must be either SUPERADMIN or ADMIN");
 		}
 		if (!(actor.hasAdminRole() || actor.hasSuperAdminRole())) {
-			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountReprentation());
+			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountRepresentation());
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		}
 		if (role.equals(Role.SUPERADMIN)) {
 			if (!(actor.hasSuperAdminRole())) {
-				logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountReprentation());
+				logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountRepresentation());
 				throw new BusinessException(
 						BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 						"You are not authorized to use this service");

@@ -90,20 +90,28 @@ public class LinShareJobBean extends QuartzJobBean {
 				} catch (BatchBusinessException ex) {
 					errors++;
 					batch.notifyError(ex, resource, total, position);
+				} catch (BusinessException ex) {
+					unhandled_errors++;
+					logger.error("Unhandled BusinessException in batch : {}", batch);
+					logger.error(ex.getMessage(), ex);
+					logger.error("Cannot process resource '{}' ", resource);
+					finalResult = false;
 				} catch (TechnicalException ex) {
 					unhandled_errors++;
-					logger.error("Unhandled TechnicalException in batches !");
+					logger.error("Unhandled TechnicalException in batch : {}", batch);
 					logger.error(ex.getMessage(), ex);
 					logger.error("Cannot process resource '{}' ", resource);
 					logger.error("CRITICAL ERROR : Batch stopped !");
 					finalResult = false;
 					break;
-				} catch (BusinessException ex) {
+				} catch (Exception ex) {
 					unhandled_errors++;
-					logger.error("Unhandled business exception in batches !");
+					logger.error("Unhandled Exception in batch : {}", batch);
 					logger.error(ex.getMessage(), ex);
 					logger.error("Cannot process resource '{}' ", resource);
+					logger.error("CRITICAL ERROR : Batch stopped !");
 					finalResult = false;
+					break;
 				}
 				batch.logDebug(total, position, "resource processed.");
 				position++;

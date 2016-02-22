@@ -1,9 +1,9 @@
 /*
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
- *
+ * 
  * Copyright (C) 2015 LINAGORA
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,72 +19,75 @@
  * refrain from infringing Linagora intellectual property rights over its
  * trademarks and commercial brands. Other Additional Terms apply, see
  * <http://www.linagora.com/licenses/> for more details.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+
 package org.linagora.linshare.core.batches.impl;
 
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
+import org.linagora.linshare.core.job.quartz.AnonymousUrlBatchResultContext;
 import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.service.GuestService;
+import org.linagora.linshare.core.service.AnonymousUrlService;
 
-/**
- * Batch to closed expired  guests accounts .
- */
-public class DeleteGuestBatchImpl extends GenericBatchImpl {
+public class DeleteExpiredAnonymousUrlBatchImpl extends GenericBatchImpl {
 
-	protected final GuestService service;
+	private final AnonymousUrlService service;
 
-	public DeleteGuestBatchImpl(final GuestService guestService,
-			AccountRepository<Account> accountRepository) {
+	public DeleteExpiredAnonymousUrlBatchImpl(
+			final AccountRepository<Account> accountRepository,
+			final AnonymousUrlService anonymousUrlService) {
 		super(accountRepository);
-		this.service = guestService;
+		this.service = anonymousUrlService;
 	}
 
 	@Override
 	public List<String> getAll() {
-		logger.info("DeleteGuestBatchImpl job starting ...");
-		List<String> guests = service.findOudatedGuests(getSystemAccount());
-		logger.info(guests.size() + " guest(s) have been found to be removed");
-		return guests;
+		logger.info(getClass().toString() + " job starting ...");
+		SystemAccount actor = getSystemAccount();
+		List<String> allExpiredUrl = service
+				.findAllExpiredEntries(actor, actor);
+		logger.info(allExpiredUrl.size()
+				+ " anonymous url(s) have been found to be deleted");
+		return allExpiredUrl;
 	}
 
 	@Override
 	public Context execute(String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
-		Guest resource = service.findOudatedGuest(actor, identifier);
-		Context context = new AccountBatchResultContext(resource);
+		AnonymousUrl resource = service.find(actor, actor, identifier);
+		Context context = new AnonymousUrlBatchResultContext(resource);
 		try {
 			logInfo(total, position,
-					"processing guest : " + resource.getAccountRepresentation());
-			service.deleteUser(actor, resource.getLsUuid());
-			logger.info("Removed expired user : "
-					+ resource.getAccountRepresentation());
+					"processing anonymous url : " + resource.getReprentation());
+			service.delete(actor, actor, identifier);
+			logger.info("Expired anonymous url was deleted : "
+					+ resource.getReprentation());
 		} catch (BusinessException businessException) {
 			logError(total, position,
-					"Error while trying to delete expired guest ");
-			logger.info("Error occured while cleaning outdated guests ",
+					"Error while trying to delete expired anonymous url");
+			logger.info("Error occured while cleaning expired anonymous url",
 					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
-					context, "Error while trying to delete expired guest");
+					context,
+					"Error while trying to delete expired anonymous url.");
 			exception.setBusinessException(businessException);
 			throw exception;
 		}
@@ -93,43 +96,37 @@ public class DeleteGuestBatchImpl extends GenericBatchImpl {
 
 	@Override
 	public void notify(Context context, long total, long position) {
-		AccountBatchResultContext guestContext = (AccountBatchResultContext) context;
-		Account guest = guestContext.getResource();
-		logInfo(total, position, "The Guest "
-				+ guest.getAccountRepresentation()
-				+ " has been successfully removed ");
+		AnonymousUrlBatchResultContext auContext = (AnonymousUrlBatchResultContext) context;
+		AnonymousUrl url = auContext.getResource();
+		logInfo(total, position, "The anonymous url " + url.getReprentation()
+				+ " has been successfully deleted.");
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception,
 			String identifier, long total, long position) {
-		AccountBatchResultContext context = (AccountBatchResultContext) exception.getContext();
-		Account guest = context.getResource();
-		logError(
-				total,
-				position,
-				"cleaning Guest has failed : "
-						+ guest.getAccountRepresentation());
-		logger.error(
-				"Error occured while cleaning outdated guest "
-						+ guest.getAccountRepresentation()
-						+ ". BatchBusinessException ", exception);
+		AnonymousUrlBatchResultContext auContext = (AnonymousUrlBatchResultContext) exception
+				.getContext();
+		AnonymousUrl url = auContext.getResource();
+		logError(total, position,
+				"cleaning anonymous url has failed : " + url.getReprentation());
+		logger.error("Error occured while cleaning expired anonymous url "
+				+ url.getReprentation() + ". BatchBusinessException ",
+				exception);
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors,
-			long unhandled_errors, long total, long processed) {
+	public void terminate(List<String> all, long errors, long unhandled_errors,
+			long total, long processed) {
 		long success = total - errors - unhandled_errors;
-		logger.info(success
-				+ " guest(s) have been removed.");
+		logger.info(success + " anonymous url(s) have been deleted.");
 		if (errors > 0) {
-			logger.error(errors
-					+ " guest(s) failed to be removed.");
+			logger.error(errors + " anonymous url(s) failed to be deleted.");
 		}
 		if (unhandled_errors > 0) {
 			logger.error(unhandled_errors
-					+ " guest(s) failed to be removed (unhandled error).");
+					+ " anonymous url(s) failed to be deleted (unhandled error).");
 		}
-		logger.info("DeleteGuestBatchImpl job terminated.");
+		logger.info(getClass().toString() + " job terminated.");
 	}
 }

@@ -57,7 +57,7 @@ public class UploadPropositionGenericFacadeImpl extends GenericFacadeImpl implem
 	protected User checkAuthentication() throws BusinessException {
 		User actor = super.checkAuthentication();
 		if (!actor.hasUploadPropositionRole()) {
-			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountReprentation());
+			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountRepresentation());
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");

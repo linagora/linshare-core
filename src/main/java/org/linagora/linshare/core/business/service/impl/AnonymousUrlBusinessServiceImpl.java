@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.List;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.linagora.linshare.core.business.service.AnonymousUrlBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -104,7 +106,6 @@ public class AnonymousUrlBusinessServiceImpl implements AnonymousUrlBusinessServ
 		return anonymousUrl;
 	}
 
-
 	@Override
 	public boolean isValidPassword(AnonymousUrl anonymousUrl, String password) {
 		if (anonymousUrl == null) throw new IllegalArgumentException("anonymousUrl url cannot be null");
@@ -117,11 +118,20 @@ public class AnonymousUrlBusinessServiceImpl implements AnonymousUrlBusinessServ
 		return true;
 	}
 
-
 	@Override
 	public boolean isExpired(AnonymousUrl anonymousUrl) {
 		if (anonymousUrl == null)
 			throw new IllegalArgumentException("anonymousUrl url cannot be null");
 		return CollectionUtils.isEmpty(anonymousUrl.getAnonymousShareEntries());
+	}
+
+	@Override
+	public List<String> findAllExpiredEntries() {
+		return anonymousUrlRepository.findAllExpiredEntries();
+	}
+
+	@Override
+	public void delete(AnonymousUrl anonymousUrl) {
+		anonymousUrlRepository.delete(anonymousUrl);
 	}
 }

@@ -167,7 +167,7 @@ public class ShareLogEntry extends FileLogEntry {
 
 	public static ShareLogEntry hasDownloadedAShare(Account actor, ShareEntry share) {
 		Account target = share.getEntryOwner();
-		ShareLogEntry res = new ShareLogEntry(actor, LogAction.SHARE_DOWNLOAD, "Download of a sharing, shared by " + target.getAccountReprentation(), share);
+		ShareLogEntry res = new ShareLogEntry(actor, LogAction.SHARE_DOWNLOAD, "Download of a sharing, shared by " + target.getAccountRepresentation(), share);
 		res.targetDomain = target.getDomainId();
 		if(isUser(target)) {
 			User user = (User)target;
@@ -183,7 +183,7 @@ public class ShareLogEntry extends FileLogEntry {
 	}
 
 	public static ShareLogEntry aShareWasDownloaded(Account actor, ShareEntry share) {
-		ShareLogEntry res = new ShareLogEntry(share.getEntryOwner(), LogAction.SHARE_DOWNLOADED, "Share was downloaded by " + actor.getAccountReprentation(), share);
+		ShareLogEntry res = new ShareLogEntry(share.getEntryOwner(), LogAction.SHARE_DOWNLOADED, "Share was downloaded by " + actor.getAccountRepresentation(), share);
 		res.targetDomain = actor.getDomainId();
 		if(isUser(actor)) {
 			User user = (User)actor;

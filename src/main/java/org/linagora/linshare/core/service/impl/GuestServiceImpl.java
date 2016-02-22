@@ -106,7 +106,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		preChecks(actor, owner);
 		Guest guest = guestBusinessService.findByLsUuid(lsUuid);
 		if (guest == null) {
-			logger.error("Current actor " + owner.getAccountReprentation()
+			logger.error("Current actor " + owner.getAccountRepresentation()
 					+ " is looking for a misssing guest : " + lsUuid);
 			String message = "Can not find guest with uuid : " + lsUuid;
 			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND,

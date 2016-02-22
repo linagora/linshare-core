@@ -45,6 +45,7 @@ import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.Service;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.Zone;
@@ -61,16 +62,21 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.UserFacade;
+import org.linagora.linshare.core.job.quartz.LinShareJobBean;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.view.tapestry.components.PasswordPopup;
 import org.linagora.linshare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
+import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import se.unbound.tapestry.tagselect.LabelAwareValueEncoder;
+
+import com.google.common.collect.Lists;
 
 /**
  * Test showing how to use the PasswordPopup
@@ -161,47 +167,115 @@ public class TestPopup {
 
 	@Inject
 	private ShareManagementBatch shareManagementBatch;
-	
+
 	@Inject
 	private AnonymousUrlRepository anonymousUrlRepository;
-	
+
 	@Inject
 	private DocumentEntryRepository documentEntryRepository;
-	
-	@Inject
-	private GenericBatch deleteGuestBatch;
-	
+
 	@Inject
 	private DocumentManagementBatch documentManagementBatch;
-	
+
+	// Shares
+	@Service("deleteShareEntryGroupBatch")
+	@Inject
+	private GenericBatch deleteShareEntryGroupBatch;
+
+	@Service("deleteExpiredShareEntryBatch")
+	@Inject
+	private GenericBatch deleteExpiredShareEntryBatch;
+
+	@Service("undownloadedSharedDocumentsBatch")
+	@Inject
+	private GenericBatch undownloadedSharedDocumentsBatch;
+
+	@Service("deleteExpiredAnonymousShareEntryBatch")
+	@Inject
+	private GenericBatch deleteExpiredAnonymousShareEntryBatch;
+
+	@Service("deleteExpiredAnonymousUrlBatch")
+	@Inject
+	private GenericBatch deleteExpiredAnonymousUrlBatch;
+
+
+	// Documents
+	@Service("deleteExpiredDocumentEntryBatch")
+	@Inject
+	private GenericBatch deleteExpiredDocumentEntryBatch;
+
+	@Service("deleteMissingDocumentsBatch")
+	@Inject
+	private GenericBatch deleteMissingDocumentsBatch;
+
+
+	// Users
+	@Service("deleteGuestBatch")
+	@Inject
+	private GenericBatch deleteGuestBatch;
+
+	@Service("markUserToPurgeBatch")
+	@Inject
+	private GenericBatch markUserToPurgeBatch;
+
+	@Service("purgeUserBatch")
+	@Inject
+	private GenericBatch purgeUserBatch;
+
+
+	@Inject
+	private ApplicationContext context;
+
 	@Inject
 	private UploadRequestBatch uploadRequestBatch;
 
-	void onActionFromCleanOutDatedShares()
+	void onActionFromLaunchAllBatches()
 	{
-		logger.debug("begin method onActionFromCleanOutDatedShares");
-		shareManagementBatch.cleanOutdatedShares();
-		logger.debug("endmethod onActionFromCleanOutDatedShares");
+		runBatchByNames("deleteGuestBatch",
+			"markUserToPurgeBatch",
+			"purgeUserBatch",
+			"undownloadedSharedDocumentsBatch",
+			"deleteShareEntryGroupBatch",
+			"deleteExpiredShareEntryBatch",
+			"deleteExpiredAnonymousShareEntryBatch",
+			"deleteExpiredAnonymousUrlBatch",
+			"deleteExpiredDocumentEntryBatch",
+			"deleteMissingDocumentsBatch");
 	}
 
-	void onActionFromRemoveMissingDocuments()
+	void onActionFromRemoveAllExpiredShares()
 	{
-		logger.debug("begin method onActionFromRemoveMissingDocuments");
-		documentManagementBatch.removeMissingDocuments();
-		logger.debug("endmethod onActionFromRemoveMissingDocuments");
+		logger.debug("begin method onActionFromRemoveAllExpiredShares");
+		runBatch(deleteExpiredAnonymousShareEntryBatch,
+				deleteExpiredShareEntryBatch, deleteExpiredAnonymousUrlBatch, deleteShareEntryGroupBatch);
+		logger.debug("endmethod onActionFromRemoveAllExpiredShares");
 	}
 
-	void onActionFromRemoveOldDocuments()
+	void onActionFromCleanUsers()
 	{
-		logger.debug("begin method onActionFromRemoveOldDocuments");
-		documentManagementBatch.cleanOldDocuments();
-		logger.debug("endmethod onActionFromRemoveOldDocuments");
+		logger.debug("begin method onActionFromCleanUsers");
+		runBatch(deleteGuestBatch, markUserToPurgeBatch, purgeUserBatch);
+		logger.debug("endmethod onActionFromCleanUsers");
+	}
+
+	void onActionFromDeleteMissingDocuments()
+	{
+		logger.debug("begin method onActionFromDeleteMissingDocuments");
+		runBatch(deleteMissingDocumentsBatch);
+		logger.debug("endmethod onActionFromDeleteMissingDocuments");
+	}
+
+	void onActionFromRemoveExpiredDocuments() throws JobExecutionException
+	{
+		logger.debug("begin method onActionFromRemoveExpiredDocuments");
+		runBatch(deleteExpiredDocumentEntryBatch);
+		logger.debug("endmethod onActionFromRemoveExpiredDocuments");
 	}
 
 	void onActionFromCheckDocumentsMimeType()
 	{
 		logger.debug("begin method onActionFromCheckDocumentsMimeType");
-		documentManagementBatch.checkDocumentsMimeType();
+		runBatchByNames("computeDocumentMimeTypeBatch");
 		logger.debug("endmethod onActionFromCheckDocumentsMimeType");
 	}
 
@@ -212,6 +286,40 @@ public class TestPopup {
 		logger.debug("endmethod onActionFromUploadRequestUpdateStatus");
 	}
 
+	private void runBatch(GenericBatch... batch) {
+		logger.debug("begin method runBatch");
+		try {
+			LinShareJobBean job = new LinShareJobBean();
+			List<GenericBatch> batches = Lists.newArrayList();
+			for (GenericBatch genericBatch : batch) {
+				batches.add(genericBatch);
+			}
+			job.setBatch(batches);
+			job.executeExternal();
+		} catch (JobExecutionException e) {
+			logger.error("Unexpected errror : ", e);
+			e.printStackTrace();
+		}
+		logger.debug("endmethod runBatch");
+	}
+
+	private void runBatchByNames(String... list) {
+		logger.debug("begin method runBatch");
+		try {
+			LinShareJobBean job = new LinShareJobBean();
+			List<GenericBatch> batches = Lists.newArrayList();
+			for (String name : list) {
+				Object bean = context.getBean(name);
+				batches.add((GenericBatch)bean);
+			}
+			job.setBatch(batches);
+			job.executeExternal();
+		} catch (JobExecutionException e) {
+			logger.error("Unexpected errror : ", e);
+			e.printStackTrace();
+		}
+		logger.debug("endmethod runBatch");
+	}
 	/**
 	 * Testing tapestry-tagselect
 	 */

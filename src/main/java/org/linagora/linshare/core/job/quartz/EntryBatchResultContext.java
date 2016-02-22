@@ -31,22 +31,16 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+
 package org.linagora.linshare.core.job.quartz;
 
-import org.linagora.linshare.core.batches.ShareManagementBatch;
-import org.quartz.JobExecutionContext;
-import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.linagora.linshare.core.domain.entities.Entry;
 
-public class CleanOutdatedShares extends QuartzJobBean {
+public class EntryBatchResultContext extends BatchResultContext<Entry> {
 
-    private ShareManagementBatch batch;
-
-    protected void executeInternal(JobExecutionContext context) {
-        batch.cleanOutdatedShares();
-    }
-
-    public void setBatch(ShareManagementBatch batch) {
-        this.batch = batch;
-    }
+	public EntryBatchResultContext(Entry resource) {
+		super(resource);
+		this.identifier = resource.getUuid();
+	}
 
 }

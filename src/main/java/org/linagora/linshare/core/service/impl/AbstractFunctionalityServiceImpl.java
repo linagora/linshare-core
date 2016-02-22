@@ -89,12 +89,12 @@ public abstract class AbstractFunctionalityServiceImpl<T extends AbstractFunctio
 			// Modifications are not allowed.
 			if (!entity.getActivationPolicy().businessEquals(functionality.getActivationPolicy())) {
 				// AP entity is different of the input AP functionality  => FORBIDDEN
-				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the entity (AP) '" + functionality +"' in domain '" + domain +"'");
+				logger.error("current actor '" + actor.getAccountRepresentation() + "' does not have the right to update the entity (AP) '" + functionality +"' in domain '" + domain +"'");
 				throw new BusinessException(BusinessErrorCode.UPDATE_FORBIDDEN, "You does not have the right to update this entity");
 			}
 			if(entity.getActivationPolicy().isForbidden()) {
 				if (!functionality.businessEquals(entity, true)) {
-					logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the entity (All) '" + functionality +"' in domain '" + domain +"'");
+					logger.error("current actor '" + actor.getAccountRepresentation() + "' does not have the right to update the entity (All) '" + functionality +"' in domain '" + domain +"'");
 					throw new BusinessException(BusinessErrorCode.UPDATE_FORBIDDEN, "You does not have the right to update this entity");
 				}
 			}
@@ -106,7 +106,7 @@ public abstract class AbstractFunctionalityServiceImpl<T extends AbstractFunctio
 			// Modifications are not allowed.
 			if (!entity.getConfigurationPolicy().businessEquals(functionality.getConfigurationPolicy())) {
 				// CP entity is different of the input CP functionality  => FORBIDDEN
-				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the entity (CP) '" + functionality +"' in domain '" + domain +"'");
+				logger.error("current actor '" + actor.getAccountRepresentation() + "' does not have the right to update the entity (CP) '" + functionality +"' in domain '" + domain +"'");
 				throw new BusinessException(BusinessErrorCode.UPDATE_FORBIDDEN, "You does not have the right to update this entity");
 			}
 		}
@@ -118,7 +118,7 @@ public abstract class AbstractFunctionalityServiceImpl<T extends AbstractFunctio
 				// Modifications are not allowed.
 				if (!entity.getDelegationPolicy().businessEquals(functionality.getDelegationPolicy())) {
 					// DP entity is different of the input DP functionality  => FORBIDDEN
-					logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the entity (DP) '" + functionality +"' in domain '" + domain +"'");
+					logger.error("current actor '" + actor.getAccountRepresentation() + "' does not have the right to update the entity (DP) '" + functionality +"' in domain '" + domain +"'");
 					throw new BusinessException(BusinessErrorCode.UPDATE_FORBIDDEN, "You does not have the right to update this entity");
 				}
 			}
@@ -127,7 +127,7 @@ public abstract class AbstractFunctionalityServiceImpl<T extends AbstractFunctio
 		boolean parentAllowParamUpdate = entity.getParentAllowParametersUpdate();
 		if(!parentAllowParamUpdate) {
 			if (!functionality.businessEquals(entity, false)) {
-				logger.error("current actor '" + actor.getAccountReprentation() + "' does not have the right to update the entity (PARAM) '" + functionality +"' in domain '" + domain +"'");
+				logger.error("current actor '" + actor.getAccountRepresentation() + "' does not have the right to update the entity (PARAM) '" + functionality +"' in domain '" + domain +"'");
 				throw new BusinessException(BusinessErrorCode.UPDATE_FORBIDDEN, "You does not have the right to update this entity");
 			}
 		}

@@ -90,7 +90,7 @@ public class Internal extends User {
 	}
 
 	@Override
-	public String getAccountReprentation() {
+	public String getAccountRepresentation() {
 		return this.firstName + " " + this.lastName + "(" + lsUuid + ", "
 				+ this.ldapUid + ")";
 	}

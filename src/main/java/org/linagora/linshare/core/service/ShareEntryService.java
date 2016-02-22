@@ -63,4 +63,6 @@ public interface ShareEntryService {
 
 	Set<ShareEntry> create(Account actor, User owner, ShareContainer shareContainer, ShareEntryGroup shareEntryGroup);
 
+	List<String> findAllExpiredEntries(Account actor, Account owner);
+
 }

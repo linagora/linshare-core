@@ -31,24 +31,16 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+
 package org.linagora.linshare.core.job.quartz;
 
-import org.linagora.linshare.core.batches.DocumentManagementBatch;
-import org.quartz.JobExecutionContext;
-import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 
-/** This job verifies that documents in database are also available
- *
- */
-public class CleanOutdatedDocuments extends QuartzJobBean {
+public class AnonymousUrlBatchResultContext extends BatchResultContext<AnonymousUrl> {
 
-    private DocumentManagementBatch documentManagementBatch;
+	public AnonymousUrlBatchResultContext(AnonymousUrl resource) {
+		super(resource);
+		this.identifier = resource.getUuid();
+	}
 
-    protected void executeInternal(JobExecutionContext context) {
-        documentManagementBatch.cleanOldDocuments();
-    }
-
-    public void setBatch(DocumentManagementBatch documentManagementBatch) {
-        this.documentManagementBatch = documentManagementBatch;
-    }
 }

@@ -50,7 +50,7 @@ public interface AnonymousShareEntryRepository extends
 	 */
 	AnonymousShareEntry findById(String uuid);
 
-	List<AnonymousShareEntry> findAllExpiredEntries();
+	List<String> findAllExpiredEntries();
 
 	List<AnonymousShareEntry> findUpcomingExpiredEntries(Integer date);
 

@@ -58,4 +58,6 @@ public interface ShareEntryBusinessService {
 
 	ShareEntry updateDownloadCounter(String uuid) throws BusinessException;
 
+	List<String> findAllExpiredEntries();
+
 }
