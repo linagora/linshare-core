@@ -253,8 +253,12 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		Validate.notEmpty(userUuid);
 		Validate.notEmpty(threadUuid);
 		Thread thread = find(actor, owner, threadUuid);
+		User user = userRepository.findByLsUuid(userUuid);
+		if (user == null) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Can not find user with uuid : " + userUuid);
+		}
 		ThreadMember member = getMemberFromUser(thread,
-				userRepository.findByLsUuid(userUuid));
+				user);
 		threadMemberAC.checkDeletePermission(actor, owner, ThreadMember.class,
 				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member);
 		thread.getMyMembers().remove(member);
