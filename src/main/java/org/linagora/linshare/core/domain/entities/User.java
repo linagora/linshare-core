@@ -58,12 +58,12 @@ public abstract class User extends Account {
 
 	protected String ldapUid;
 
-	protected boolean canUpload;
+	protected Boolean canUpload;
 
 	protected Boolean inconsistent;
 
 	/** If the user is allowed to create guest */
-	protected boolean canCreateGuest;
+	protected Boolean canCreateGuest;
 
 	public User() {
 		this.firstName = null;
@@ -183,11 +183,11 @@ public abstract class User extends Account {
 		this.ldapUid = ldapUid;
 	}
 
-	public void setCanUpload(boolean value) {
+	public void setCanUpload(Boolean value) {
 		this.canUpload = value;
 	}
 
-	public boolean getCanUpload() {
+	public Boolean getCanUpload() {
 		return canUpload;
 	}
 
@@ -203,7 +203,7 @@ public abstract class User extends Account {
 		this.myThreads = myThreads;
 	}
 
-	public boolean getCanCreateGuest() {
+	public Boolean getCanCreateGuest() {
 		return canCreateGuest;
 	}
 
