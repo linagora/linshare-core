@@ -52,6 +52,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
@@ -104,30 +105,25 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	@Override
 	public List<UploadRequestVo> findAllVisibles(UserVo actorVo)
 			throws BusinessException {
-		return findAll(actorVo, UploadRequestStatus.STATUS_CREATED,
-				UploadRequestStatus.STATUS_ENABLED,
-				UploadRequestStatus.STATUS_CLOSED);
+		List<UploadRequestStatus> list = Lists.newArrayList(UploadRequestStatus.STATUS_CREATED,
+				UploadRequestStatus.STATUS_ENABLED, UploadRequestStatus.STATUS_CLOSED);
+		return findAll(actorVo, list);
 	}
 
 	@Override
 	public List<UploadRequestVo> findAllNotDeleted(UserVo actorVo)
 			throws BusinessException {
-		return findAll(actorVo, UploadRequestStatus.STATUS_CREATED,
-				UploadRequestStatus.STATUS_ENABLED,
-				UploadRequestStatus.STATUS_CLOSED,
-				UploadRequestStatus.STATUS_CANCELED,
-				UploadRequestStatus.STATUS_ARCHIVED);
+		List<UploadRequestStatus> list = Lists.newArrayList(UploadRequestStatus.STATUS_CREATED,
+				UploadRequestStatus.STATUS_ENABLED, UploadRequestStatus.STATUS_CLOSED,
+				UploadRequestStatus.STATUS_CANCELED, UploadRequestStatus.STATUS_ARCHIVED);
+		return findAll(actorVo, list);
 	}
 
-	private List<UploadRequestVo> findAll(UserVo actorVo,
-			UploadRequestStatus... include) throws BusinessException {
+	private List<UploadRequestVo> findAll(UserVo actorVo, List<UploadRequestStatus> statusList) throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		List<UploadRequestVo> ret = Lists.newArrayList();
-
-		for (UploadRequest req : uploadRequestService.findAllRequest(actor)) {
-			if (Lists.newArrayList(include).contains(req.getStatus())) {
-				ret.add(new UploadRequestVo(req));
-			}
+		for (UploadRequest req : uploadRequestService.findAllRequest(actor, actor, statusList)) {
+			ret.add(new UploadRequestVo(req));
 		}
 		return ret;
 	}
@@ -138,7 +134,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 
 		return new UploadRequestVo(uploadRequestService.findRequestByUuid(
-				actor, uuid));
+				actor, actor, uuid));
 	}
 
 	@Override
@@ -163,7 +159,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	public UploadRequestVo updateRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		UploadRequest e = uploadRequestService.findRequestByUuid(actor,
+		UploadRequest e = uploadRequestService.findRequestByUuid(actor, actor,
 				req.getUuid());
 
 		e.setMaxFileCount(req.getMaxFileCount());
@@ -174,52 +170,48 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		e.setLocale(req.getLocale().getTapestryLocale());
 		e.setCanClose(req.getCanClose());
 		e.setCanDelete(req.getCanDelete());
-		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
+		return new UploadRequestVo(uploadRequestService.updateRequest(actor, actor, e));
 	}
 
 	@Override
 	public UploadRequestVo deleteRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		UploadRequest e = uploadRequestService.findRequestByUuid(actor,
-				req.getUuid());
-
-		e.updateStatus(UploadRequestStatus.STATUS_DELETED);
-		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
+		UploadRequest e = uploadRequestService.updateStatus(actor, actor, req.getUuid(),
+				UploadRequestStatus.STATUS_DELETED);
+		return new UploadRequestVo(e);
 	}
 
 	@Override
 	public UploadRequestVo closeRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		UploadRequest e = uploadRequestService.findRequestByUuid(actor,
-				req.getUuid());
-
-		e.updateStatus(UploadRequestStatus.STATUS_CLOSED);
-		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
+		UploadRequest e = uploadRequestService.updateStatus(actor, actor, req.getUuid(),
+				UploadRequestStatus.STATUS_CLOSED);
+		return new UploadRequestVo(e);
 	}
 
 	@Override
 	public UploadRequestVo archiveRequest(UserVo actorVo, UploadRequestVo req)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-
-		UploadRequest e = uploadRequestService.findRequestByUuid(actor,
-				req.getUuid());
-		e.updateStatus(UploadRequestStatus.STATUS_ARCHIVED);
-		return new UploadRequestVo(uploadRequestService.updateRequest(actor, e));
+		UploadRequest e = uploadRequestService.updateStatus(actor, actor, req.getUuid(),
+				UploadRequestStatus.STATUS_ARCHIVED);
+		return new UploadRequestVo(e);
 	}
 
 	@Override
 	public List<UploadRequestEntryVo> findAllEntries(UserVo actorVo,
 			UploadRequestVo req) throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		UploadRequest e = uploadRequestService.findRequestByUuid(actor,
+		UploadRequest e = uploadRequestService.findRequestByUuid(actor, actor,
 				req.getUuid());
 		List<UploadRequestEntryVo> ret = Lists.newArrayList();
 
-		for (UploadRequestEntry ent : e.getUploadRequestEntries()) {
-			ret.add(new UploadRequestEntryVo(ent));
+		for (UploadRequestUrl uru : e.getUploadRequestURLs()) {
+			for (UploadRequestEntry ent : uru.getUploadRequestEntries()) {
+				ret.add(new UploadRequestEntryVo(ent));
+			}
 		}
 		return ret;
 	}
@@ -231,7 +223,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		List<UploadRequestHistoryVo> ret = Lists.newArrayList();
 
 		for (UploadRequestHistory h : uploadRequestService
-				.findAllRequestHistory(actor, req.getUuid())) {
+				.findAllRequestHistory(actor, actor, req.getUuid())) {
 			ret.add(new UploadRequestHistoryVo(h));
 		}
 		return ret;
@@ -510,28 +502,24 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 	public UploadRequestTemplateVo findTemplateByUuid(UserVo actorVo,
 			String uuid) throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-
-		return new UploadRequestTemplateVo(
-				uploadRequestService.findTemplateByUuid(actor, uuid));
+		UploadRequestTemplate template = uploadRequestService.findTemplateByUuid(actor, actor, uuid);
+		return new UploadRequestTemplateVo(template);
 	}
 
 	@Override
 	public UploadRequestTemplateVo createTemplate(UserVo actorVo,
 			UploadRequestTemplateVo vo) throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-
-		return new UploadRequestTemplateVo(uploadRequestService.createTemplate(
-				actor, vo.toEntity()));
+		UploadRequestTemplate template = uploadRequestService.createTemplate(actor, actor, vo.toEntity());
+			return new UploadRequestTemplateVo(template);
 	}
 
 	@Override
 	public UploadRequestTemplateVo updateTemplate(UserVo actorVo,
 			UploadRequestTemplateVo vo) throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		UploadRequestTemplate e = uploadRequestService.findTemplateByUuid(
-				actor, vo.getUuid());
-
-		return new UploadRequestTemplateVo(uploadRequestService.updateTemplate(
-				actor, vo.toEntity(e)));
+		UploadRequestTemplate template = vo.toEntity();
+		template = uploadRequestService.updateTemplate(actor, actor, vo.getUuid(), template);
+		return new UploadRequestTemplateVo(template);
 	}
 }

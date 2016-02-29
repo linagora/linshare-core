@@ -63,8 +63,23 @@ public class UploadRequestTemplateBusinessServiceImpl implements
 	}
 
 	@Override
-	public UploadRequestTemplate update(UploadRequestTemplate template)
+	public UploadRequestTemplate update(UploadRequestTemplate template, UploadRequestTemplate object)
 			throws BusinessException {
+		template.setBusinessDayBeforeNotification(object.getDayBeforeNotification());
+		template.setBusinessDepositMode(object.getDepositMode());
+		template.setBusinessDescription(object.getDescription());
+		template.setBusinessDurationBeforeActivation(object.getDurationBeforeActivation());
+		template.setBusinessDurationBeforeExpiry(object.getDurationBeforeExpiry());
+		template.setBusinessLocale(object.getLocale());
+		template.setBusinessMaxDepositSize(object.getMaxDepositSize());
+		template.setBusinessMaxFile(object.getMaxFile());
+		template.setBusinessMaxFileSize(object.getMaxFileSize());
+		template.setBusinessUnitBeforeActivation(object.getUnitBeforeActivation());
+		template.setBusinessUnitBeforeExpiry(object.getUnitBeforeExpiry());
+		template.setBusinessName(object.getName());
+		template.setBusinessSecured(object.getSecured());
+		template.setBusinessProlongationMode(object.getProlongationMode());
+		template.setBusinessGroupMode(object.getGroupMode());
 		return uploadRequestTemplateRepository.update(template);
 	}
 

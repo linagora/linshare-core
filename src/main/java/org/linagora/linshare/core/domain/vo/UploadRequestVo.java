@@ -114,7 +114,6 @@ public class UploadRequestVo implements Serializable, Cloneable {
 		uuid = req.getUuid();
 		subject = req.getUploadRequestGroup().getSubject();
 		body = req.getUploadRequestGroup().getBody();
-		size = req.getUploadRequestEntries().size();
 		maxFileCount = req.getMaxFileCount();
 		maxDepositSize = req.getMaxDepositSize();
 		maxFileSize = req.getMaxFileSize();
@@ -131,10 +130,12 @@ public class UploadRequestVo implements Serializable, Cloneable {
 		locale = Language.fromTapestryLocale(req.getLocale());
 		secured = req.isSecured();
 		owner = new UserVo(req.getOwner());
-
+		Integer s = 0;
 		for (UploadRequestUrl u: req.getUploadRequestURLs()) {
 			recipients.add(new Contact(u.getContact().getMail()));
+			s = s + u.getUploadRequestEntries().size();
 		}
+		size = s;
 	}
 
 	@NonVisual

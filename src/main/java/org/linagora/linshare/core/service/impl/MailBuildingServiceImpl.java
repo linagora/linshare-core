@@ -1315,13 +1315,13 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("subject", request.getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequestGroup().getBody())
 				.add("expirationDate", formatExpirationDate(owner, request))
-				.add("creationDate", formatCreationDate(owner, request))
-				.add("files", getFileNames(request));
+				.add("creationDate", formatCreationDate(owner, request));
 		for (UploadRequestUrl uru : request.getUploadRequestURLs()) {
 			builder.getBodyChain().add(
 					"recipientMail",
 					uru.getContact().getMail()
-			);
+			)
+			.add("files", getFileNames(uru));
 		}
 		container.setRecipient(owner.getMail());
 		container.setFrom(getFromMailAddress(owner));
@@ -1347,7 +1347,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		builder.getBodyChain()
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("files", getFileNames(request.getUploadRequest()))
+				.add("files", getFileNames(request))
 				.add("ownerFirstName",owner.getFirstName())
 				.add("ownerLastName",owner.getLastName())
 				.add("ownerMail",owner.getMail())
@@ -1381,13 +1381,13 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("subject", request.getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequestGroup().getBody())
 				.add("expirationDate", formatExpirationDate(owner, request))
-				.add("creationDate", formatCreationDate(owner, request))
-				.add("files", getFileNames(request));
+				.add("creationDate", formatCreationDate(owner, request));
 		for (UploadRequestUrl uru : request.getUploadRequestURLs()) {
 			builder.getBodyChain().add(
 					"recipientMail",
 					uru.getContact().getMail()
-			);
+			)
+			.add("files", getFileNames(uru));
 		}
 		container.setRecipient(owner.getMail());
 		container.setFrom(getFromMailAddress(owner));
@@ -1415,7 +1415,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		builder.getBodyChain()
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("files", getFileNames(request.getUploadRequest()))
+				.add("files", getFileNames(request))
 				.add("ownerFirstName",owner.getFirstName())
 				.add("ownerLastName",owner.getLastName())
 				.add("ownerMail",owner.getMail())
@@ -1452,7 +1452,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("lastName", "")
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("files", getFileNames(request.getUploadRequest()));
+				.add("files", getFileNames(request));
 		container.setRecipient(owner);
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(request.getContact());
@@ -1461,9 +1461,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	private String getFileNames(
-			UploadRequest request) {
+			UploadRequestUrl requestUrl) {
 		ImmutableSet<FileRepresentation> files = FluentIterable
-				.from(request.getUploadRequestEntries())
+				.from(requestUrl.getUploadRequestEntries())
 				.transform(new Function<UploadRequestEntry, FileRepresentation>() {
 					@Override
 					public FileRepresentation apply(UploadRequestEntry ure) {
@@ -1499,7 +1499,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("lastName", owner.getLastName())
 				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
 				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("files", getFileNames(request.getUploadRequest()));
+				.add("files", getFileNames(request));
 		container.setRecipient(request.getContact());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);

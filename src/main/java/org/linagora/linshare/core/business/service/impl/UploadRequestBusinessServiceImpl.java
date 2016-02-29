@@ -56,10 +56,11 @@ public class UploadRequestBusinessServiceImpl implements
 	}
 
 	@Override
-	public List<UploadRequest> findAll(User owner) {
-		return uploadRequestRepository.findByOwner(owner);
+	public List<UploadRequest> findAll(User owner, List<UploadRequestStatus> statusList) {
+		return uploadRequestRepository.findByOwner(owner, statusList);
 	}
 
+//	AKO: method unused.
 	@Override
 	public List<UploadRequest> findAll(UploadRequestStatus... status) {
 		return uploadRequestRepository.findByStatus(status);
@@ -78,6 +79,11 @@ public class UploadRequestBusinessServiceImpl implements
 	}
 
 	@Override
+	public List<UploadRequest> findRequestsByGroup(String uuid) throws BusinessException {
+		return uploadRequestRepository.findRequestsByGroup(uuid);
+	}
+
+	@Override
 	public UploadRequest create(UploadRequest req) throws BusinessException {
 		req.setStatus(UploadRequestStatus.STATUS_CREATED);
 		return uploadRequestRepository.create(req);
@@ -85,6 +91,19 @@ public class UploadRequestBusinessServiceImpl implements
 
 	@Override
 	public UploadRequest update(UploadRequest req) throws BusinessException {
+		return uploadRequestRepository.update(req);
+	}
+
+	@Override
+	public UploadRequest update(UploadRequest req, UploadRequest object) throws BusinessException {
+		req.setBusinessMaxFileCount(object.getMaxFileCount());
+		req.setBusinessMaxFileSize(object.getMaxFileSize());
+		req.setBusinessMaxDepositSize(object.getMaxDepositSize());
+		req.setBusinessActivationDate(object.getActivationDate());
+		req.setBusinessExpiryDate(object.getExpiryDate());
+		req.setBusinessLocale(object.getLocale());
+		req.setBusinessCanClose(object.isCanClose());
+		req.setBusinessCanDelete(object.isCanDelete());
 		return uploadRequestRepository.update(req);
 	}
 

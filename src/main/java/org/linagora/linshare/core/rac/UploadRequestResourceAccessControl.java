@@ -31,65 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
 
-import java.io.Serializable;
+package org.linagora.linshare.core.rac;
 
-import org.linagora.linshare.core.domain.constants.EntryType;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 
-public class UploadRequestEntry extends Entry implements Serializable {
+public interface UploadRequestResourceAccessControl extends AbstractResourceAccessControl<Account, Account, UploadRequest> {
 
-	private static final long serialVersionUID = 54638444450061115L;
-
-	private DocumentEntry documentEntry;
-
-	private UploadRequestUrl uploadRequestUrl;
-
-	private long size;
-
-	public UploadRequestEntry() {
-		super();
-	}
-
-	public UploadRequestEntry(DocumentEntry documentEntry,
-			UploadRequestUrl requestUrl) {
-		super(documentEntry.getEntryOwner(), documentEntry.getName(),
-				documentEntry.getComment());
-		this.documentEntry = documentEntry;
-		this.uploadRequestUrl = requestUrl;
-		this.size = documentEntry.getSize();
-	}
-
-	public DocumentEntry getDocumentEntry() {
-		return documentEntry;
-	}
-
-	public void setDocumentEntry(DocumentEntry documentEntry) {
-		this.documentEntry = documentEntry;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	@Override
-	public EntryType getEntryType() {
-		return EntryType.UPLOAD_REQUEST;
-	}
-
-	public long getSize() {
-		return size;
-	}
-
-	public void setSize(long size) {
-		this.size = size;
-	}
-
-	public UploadRequestUrl getUploadRequestUrl() {
-		return uploadRequestUrl;
-	}
-
-	public void setUploadRequestUrl(UploadRequestUrl uploadRequestUrl) {
-		this.uploadRequestUrl = uploadRequestUrl;
-	}
 }

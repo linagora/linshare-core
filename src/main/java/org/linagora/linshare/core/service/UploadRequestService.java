@@ -50,53 +50,58 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestService {
 
-	List<UploadRequest> findAllRequest(User actor);
+	List<UploadRequest> findAllRequest(Account actor, Account owner, List<UploadRequestStatus> statusList);
 
-	UploadRequest findRequestByUuid(Account actor, String uuid) throws BusinessException;
+	List<UploadRequestGroup> findAllGroupRequest(Account actor, Account owner) throws BusinessException;
 
-	List<UploadRequest> createRequest(Account actor, User owner, UploadRequest req, Contact contact, String subject, String body, Boolean groupedMode) throws BusinessException;
+	UploadRequest findRequestByUuid(Account actor, Account owner, String uuid) throws BusinessException;
 
-	List<UploadRequest> createRequest(Account actor, User owner, UploadRequest req, List<Contact> contacts, String subject, String body, Boolean groupedMode)
+	List<UploadRequest> findRequestsByGroup(Account actor, Account owner, String uuid) throws BusinessException;
+
+	List<UploadRequest> createRequest(Account actor, User owner, UploadRequest req, Contact contact, String subject,
+			String body, Boolean groupedMode) throws BusinessException;
+
+	List<UploadRequest> createRequest(Account actor, User owner, UploadRequest req, List<Contact> contacts,
+			String subject, String body, Boolean groupedMode) throws BusinessException;
+
+	UploadRequest updateRequest(Account actor, Account owner, UploadRequest req) throws BusinessException;
+
+	UploadRequest updateStatus(Account actor, Account owner, String uuid, UploadRequestStatus status)
 			throws BusinessException;
 
-	UploadRequest updateRequest(Account actor, UploadRequest req)
-			throws BusinessException;
+	UploadRequest update(Account actor, Account owner, String uuid, UploadRequest object) throws BusinessException;;
 
 	UploadRequest closeRequestByRecipient(UploadRequestUrl url) throws BusinessException;
 
-	void deleteRequest(Account actor, UploadRequest req) throws BusinessException;
+	UploadRequest deleteRequest(Account actor, Account owner, String uuid) throws BusinessException;
 
-	UploadRequestGroup findRequestGroupByUuid(Account actor, String uuid);
+	UploadRequestGroup findRequestGroupByUuid(Account actor, Account owner, String uuid);
 
-	UploadRequestGroup updateRequestGroup(Account actor, UploadRequestGroup group)
-			throws BusinessException;
+	UploadRequestGroup updateRequestGroup(Account actor, Account owner, UploadRequestGroup group) throws BusinessException;
 
-	void deleteRequestGroup(Account actor, UploadRequestGroup group)
-			throws BusinessException;
+	void deleteRequestGroup(Account actor, Account owner, UploadRequestGroup group) throws BusinessException;
 
 	UploadRequestHistory findRequestHistoryByUuid(Account actor, String uuid);
 
-	UploadRequestHistory createRequestHistory(Account actor,
-											  UploadRequestHistory history) throws BusinessException;
+	UploadRequestHistory createRequestHistory(Account actor, UploadRequestHistory history) throws BusinessException;
 
-	UploadRequestHistory updateRequestHistory(Account actor,
-											  UploadRequestHistory history) throws BusinessException;
+	UploadRequestHistory updateRequestHistory(Account actor, UploadRequestHistory history) throws BusinessException;
 
-	void deleteRequestHistory(Account actor, UploadRequestHistory history)
+	void deleteRequestHistory(Account actor, UploadRequestHistory history) throws BusinessException;
+
+	UploadRequestTemplate findTemplateByUuid(Account actor, Account owner, String uuid) throws BusinessException;
+
+	UploadRequestTemplate createTemplate(Account actor, Account owner, UploadRequestTemplate template)
 			throws BusinessException;
 
-	UploadRequestTemplate findTemplateByUuid(Account actor, String uuid) throws BusinessException;
-
-	UploadRequestTemplate createTemplate(Account actor,
-												UploadRequestTemplate template) throws BusinessException;
-
-	UploadRequestTemplate updateTemplate(Account actor,
-												UploadRequestTemplate template) throws BusinessException;
-
-	void deleteTemplate(Account actor, UploadRequestTemplate template)
+	UploadRequestTemplate updateTemplate(Account actor, Account owner, String uuid, UploadRequestTemplate template)
 			throws BusinessException;
 
-	Set<UploadRequestHistory> findAllRequestHistory(Account actor, String uploadRequestUuid) throws BusinessException;
+	UploadRequestTemplate deleteTemplate(Account actor, Account owner, String uuid) throws BusinessException;
 
-	Set<UploadRequest> findAll(Account actor, List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException;
+	Set<UploadRequestHistory> findAllRequestHistory(Account actor, Account owner, String uploadRequestUuid)
+			throws BusinessException;
+
+	Set<UploadRequest> findAll(Account actor, List<UploadRequestStatus> status, Date afterDate, Date beforeDate)
+			throws BusinessException;
 }

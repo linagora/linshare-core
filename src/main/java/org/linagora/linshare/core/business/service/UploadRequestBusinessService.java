@@ -44,18 +44,22 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestBusinessService {
 
-	List<UploadRequest> findAll(User owner);
+	List<UploadRequest> findAll(User owner, List<UploadRequestStatus> statusList);
 
 	List<UploadRequest> findAll(UploadRequestStatus... status);
 
 	List<UploadRequest> findAll(List<AbstractDomain> domains,
 			List<UploadRequestStatus> status, Date afterDate, Date beforeDate);
 
+	List<UploadRequest> findRequestsByGroup(String uuid) throws BusinessException;
+
 	UploadRequest findByUuid(String uuid);
 
 	UploadRequest create(UploadRequest req) throws BusinessException;
 
 	UploadRequest update(UploadRequest req) throws BusinessException;
+
+	UploadRequest update(UploadRequest req, UploadRequest object) throws BusinessException;
 
 	void delete(UploadRequest req) throws BusinessException;
 }

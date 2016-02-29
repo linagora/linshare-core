@@ -34,10 +34,15 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestGroupRepository;
@@ -50,6 +55,15 @@ public class UploadRequestGroupRepositoryImpl extends
 
 	public UploadRequestGroupRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
+	}
+
+	@Override
+	public List<UploadRequestGroup> findAllByOwner(Account owner) {
+		DetachedCriteria cri = DetachedCriteria.forClass(UploadRequest.class);
+		cri.add(Restrictions.eq("owner", owner));
+		cri.setProjection(Projections.property("uploadRequestGroup"));
+		cri.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return findByCriteria(cri);
 	}
 
 	@Override

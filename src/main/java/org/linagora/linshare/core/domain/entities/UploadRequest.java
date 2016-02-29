@@ -83,8 +83,6 @@ public class UploadRequest implements Cloneable {
 
 	private Set<UploadRequestUrl> uploadRequestURLs = Sets.newHashSet();
 
-	private Set<UploadRequestEntry> uploadRequestEntries = Sets.newHashSet();
-
 	private Set<UploadRequestHistory> uploadRequestHistory = Sets.newHashSet();
 
 	private Account owner;
@@ -204,15 +202,6 @@ public class UploadRequest implements Cloneable {
 		this.uploadRequestURLs = uploadRequestURLs;
 	}
 
-	public Set<UploadRequestEntry> getUploadRequestEntries() {
-		return uploadRequestEntries;
-	}
-
-	public void setUploadRequestEntries(
-			Set<UploadRequestEntry> uploadRequestEntries) {
-		this.uploadRequestEntries = uploadRequestEntries;
-	}
-
 	public Set<UploadRequestHistory> getUploadRequestHistory() {
 		return uploadRequestHistory;
 	}
@@ -306,4 +295,61 @@ public class UploadRequest implements Cloneable {
 		return req;
 	}
 
+	/*
+	 * Business setters
+	 */
+
+	public void setBusinessActivationDate(Date date) {
+		if (date != null) {
+			this.activationDate = date;
+		}
+	}
+
+	public void setBusinessCanClose(Boolean canClose) {
+		if (canClose != null) {
+			this.canClose = canClose;
+		}
+	}
+
+	public void setBusinessCanDelete(Boolean canDelete) {
+		if (canDelete != null) {
+			this.canDelete = canDelete;
+		}
+	}
+
+	public void setBusinessSecured(Boolean secured) {
+		if (secured != null) {
+			this.secured = secured;
+		}
+	}
+
+	public void setBusinessMaxDepositSize(Long size) {
+		if (size != null) {
+			this.maxDepositSize = size;
+		}
+	}
+
+	public void setBusinessMaxFileSize(Long size) {
+		if (size != null) {
+			this.maxFileSize = size;
+		}
+	}
+
+	public void setBusinessMaxFileCount(Integer size) {
+		if (size != null) {
+			this.maxFileCount = size;
+		}
+	}
+
+	public void setBusinessLocale(String locale) {
+		if (locale != null && !locale.isEmpty()) {
+			this.locale = locale;
+		}
+	}
+
+	public void setBusinessExpiryDate(Date date) {
+		if (date != null) {
+			this.expiryDate = date;
+		}
+	}
 }

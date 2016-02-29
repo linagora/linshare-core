@@ -31,65 +31,47 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
 
-import java.io.Serializable;
+package org.linagora.linshare.webservice.userv2;
 
-import org.linagora.linshare.core.domain.constants.EntryType;
+import java.util.List;
 
-public class UploadRequestEntry extends Entry implements Serializable {
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestGroupDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestTemplateDto;
 
-	private static final long serialVersionUID = 54638444450061115L;
+public interface UploadRequestRestService {
 
-	private DocumentEntry documentEntry;
+	List<UploadRequestDto> findAll();
 
-	private UploadRequestUrl uploadRequestUrl;
+	UploadRequestDto find(String uuid);
 
-	private long size;
+	List<UploadRequestDto> findByGroup(String uuid);
 
-	public UploadRequestEntry() {
-		super();
-	}
+	List<UploadRequestTemplateDto> findAllTemplates() throws BusinessException;
 
-	public UploadRequestEntry(DocumentEntry documentEntry,
-			UploadRequestUrl requestUrl) {
-		super(documentEntry.getEntryOwner(), documentEntry.getName(),
-				documentEntry.getComment());
-		this.documentEntry = documentEntry;
-		this.uploadRequestUrl = requestUrl;
-		this.size = documentEntry.getSize();
-	}
+	List<UploadRequestGroupDto> findAllGroups() throws BusinessException;
 
-	public DocumentEntry getDocumentEntry() {
-		return documentEntry;
-	}
+	UploadRequestTemplateDto findTemplate(String uuid) throws BusinessException;
 
-	public void setDocumentEntry(DocumentEntry documentEntry) {
-		this.documentEntry = documentEntry;
-	}
+	UploadRequestGroupDto findGroup(String uuid) throws BusinessException;
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
+	List<UploadRequestDto> create(UploadRequestDto uploadRequestDto, Boolean groupMode);
 
-	@Override
-	public EntryType getEntryType() {
-		return EntryType.UPLOAD_REQUEST;
-	}
+	UploadRequestDto update(String uuid, UploadRequestDto uploadRequestDto);
 
-	public long getSize() {
-		return size;
-	}
+	UploadRequestDto updateStatus(String uuid, String status) throws BusinessException;
 
-	public void setSize(long size) {
-		this.size = size;
-	}
+	UploadRequestDto delete(String uuid);
 
-	public UploadRequestUrl getUploadRequestUrl() {
-		return uploadRequestUrl;
-	}
+	UploadRequestDto delete(UploadRequestDto uploadRequestDto);
 
-	public void setUploadRequestUrl(UploadRequestUrl uploadRequestUrl) {
-		this.uploadRequestUrl = uploadRequestUrl;
-	}
+	UploadRequestTemplateDto createTemplate(UploadRequestTemplateDto templateDto) throws BusinessException;
+
+	UploadRequestTemplateDto updateTemplate(String uuid, UploadRequestTemplateDto templateDto) throws BusinessException;
+
+	UploadRequestTemplateDto deleteTemplate(String uuid) throws BusinessException;
+
+	UploadRequestTemplateDto deleteTemplate(UploadRequestTemplateDto dto) throws BusinessException;
 }

@@ -33,7 +33,10 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.List;
+
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestGroupRepository;
@@ -47,6 +50,11 @@ public class UploadRequestGroupBusinessServiceImpl implements
 			final UploadRequestGroupRepository uploadRequestGroupRepository) {
 		super();
 		this.uploadRequestGroupRepository = uploadRequestGroupRepository;
+	}
+
+	@Override
+	public List<UploadRequestGroup> findAll(Account owner) {
+		return uploadRequestGroupRepository.findAllByOwner(owner);
 	}
 
 	@Override

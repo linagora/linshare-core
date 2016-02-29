@@ -165,6 +165,9 @@
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="uploadRequestResourceAccessControl" />
+		<constructor-arg ref="uploadRequestTemplateResourceAccessControl" />
+		<constructor-arg ref="uploadRequestGroupResourceAccessControl" />
 	</bean>
 
 	<bean name="guestService" class="org.linagora.linshare.core.service.impl.GuestServiceImpl">

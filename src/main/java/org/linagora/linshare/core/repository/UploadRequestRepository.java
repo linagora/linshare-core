@@ -56,9 +56,10 @@ public interface UploadRequestRepository extends
 	 * Find uploadRequests using their owner.
 	 * 
 	 * @param owner
+	 * @param statusList List of status.
 	 * @return found uploadRequests otherwise null.
 	 */
-	List<UploadRequest> findByOwner(User owner);
+	List<UploadRequest> findByOwner(User owner, List<UploadRequestStatus> statusList);
 
 	/**
 	 * Find uploadRequests using their status.
@@ -78,4 +79,11 @@ public interface UploadRequestRepository extends
 	 * @return found uploadRequests otherwise null.
 	 */
 	List<UploadRequest> findByDomainsAndStatus(List<AbstractDomain> domains, List<UploadRequestStatus> status, Date after, Date before);
+
+	/**Find all upload requests linked to an upload request group
+	 * 
+	 * @param uuid
+	 * @return found requests.
+	 */
+	List<UploadRequest> findRequestsByGroup(String uuid);
 }

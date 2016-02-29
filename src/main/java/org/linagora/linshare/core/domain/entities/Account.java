@@ -359,6 +359,10 @@ public abstract class Account {
 		return this.getRole().equals(Role.UPLOAD_PROPOSITION);
 	}
 
+	public boolean hasUploadRequestRole() {
+		return this.getRole().equals(Role.UPLOAD_REQUEST);
+	}
+
 	/**
 	 * Account type Helpers
 	 */

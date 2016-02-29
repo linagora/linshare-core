@@ -116,9 +116,11 @@ public class UploadRequestDto {
 			this.canDeleteDocument = false;
 			this.canClose = false;
 		}
-		for (UploadRequestEntry entry : entity.getUploadRequestEntries()) {
-			entries.add(new EntryDto(entry));
-			this.usedSpace += entry.getSize();
+		for (UploadRequestUrl uru : entity.getUploadRequestURLs()) {
+			for (UploadRequestEntry entry : uru.getUploadRequestEntries()) {
+				entries.add(new EntryDto(entry));
+				this.usedSpace += entry.getSize();
+			}
 		}
 		this.protectedByPassword = false;
 		this.locale = entity.getLocale();
@@ -129,6 +131,19 @@ public class UploadRequestDto {
 		this.uuid = requestUrl.getUuid();
 		this.recipient = new ContactDto(requestUrl.getContact());
 		this.protectedByPassword = requestUrl.isProtectedByPassword();
+	}
+
+	public UploadRequest toObject() {
+		UploadRequest e = new UploadRequest();
+		e.setActivationDate(getActivationDate());
+		e.setCanClose(isCanClose());
+		e.setCanDelete(isCanDeleteDocument());
+		e.setSecured(isProtectedByPassword());
+		e.setMaxDepositSize(getMaxDepositSize());
+		e.setMaxFileCount(getMaxFileCount());
+		e.setLocale(getLocale());
+		e.setExpiryDate(getExpiryDate());
+		return e;
 	}
 
 	public String getUuid() {

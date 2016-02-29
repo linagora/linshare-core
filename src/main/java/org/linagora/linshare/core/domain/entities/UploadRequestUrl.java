@@ -34,6 +34,9 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 public class UploadRequestUrl {
 
@@ -54,6 +57,8 @@ public class UploadRequestUrl {
 	private Date creationDate;
 
 	private Date modificationDate;
+
+	private Set<UploadRequestEntry> uploadRequestEntries = Sets.newHashSet();
 
 	public UploadRequestUrl() {
 		super();
@@ -138,6 +143,15 @@ public class UploadRequestUrl {
 
 	public String getTemporaryPlainTextPassword() {
 		return temporaryPlainTextPassword;
+	}
+
+	public Set<UploadRequestEntry> getUploadRequestEntries() {
+		return uploadRequestEntries;
+	}
+
+	public void setUploadRequestEntries(
+			Set<UploadRequestEntry> uploadRequestEntries) {
+		this.uploadRequestEntries = uploadRequestEntries;
 	}
 
 	public void setTemporaryPlainTextPassword(String temporaryPlainTextPassword) {

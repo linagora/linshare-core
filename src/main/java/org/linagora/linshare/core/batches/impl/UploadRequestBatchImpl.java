@@ -88,7 +88,7 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 			if (r.getActivationDate().before(new Date())) {
 				try {
 					r.updateStatus(UploadRequestStatus.STATUS_ENABLED);
-					r = uploadRequestService.updateRequest(systemAccount, r);
+					r = uploadRequestService.updateRequest(systemAccount, systemAccount, r);
 					for (UploadRequestUrl u: r.getUploadRequestURLs()) {
 						notifications.add(mailBuildingService.buildActivateUploadRequest((User) r.getOwner(), u));
 					}
@@ -112,7 +112,7 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 			if (r.getExpiryDate().before(new Date())) {
 				try {
 					r.updateStatus(UploadRequestStatus.STATUS_CLOSED);
-					r = uploadRequestService.updateRequest(systemAccount, r);
+					r = uploadRequestService.updateRequest(systemAccount, systemAccount, r);
 					for (UploadRequestUrl u: r.getUploadRequestURLs()) {
 						notifications.add(mailBuildingService.buildUploadRequestExpiryWarnRecipient((User) r.getOwner(), u));
 					}

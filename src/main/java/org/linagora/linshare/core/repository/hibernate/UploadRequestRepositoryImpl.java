@@ -71,8 +71,13 @@ public class UploadRequestRepositoryImpl extends
 	}
 
 	@Override
-	public List<UploadRequest> findByOwner(User owner) {
-		return findByCriteria(Restrictions.eq("owner", owner));
+	public List<UploadRequest> findByOwner(User owner, List<UploadRequestStatus> statusList) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("owner", owner));
+		if (statusList != null && !statusList.isEmpty()) {
+			det.add(Restrictions.in("status", statusList));
+		}
+		return findByCriteria(det);
 	}
 
 	@Override
@@ -105,5 +110,13 @@ public class UploadRequestRepositoryImpl extends
 	public UploadRequest update(UploadRequest entity) throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
+	}
+
+	@Override
+	public List<UploadRequest> findRequestsByGroup(String uuid) {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
+		crit.createAlias("uploadRequestGroup", "upg");
+		crit.add(Restrictions.eq("upg.uuid", uuid));
+		return findByCriteria(crit);
 	}
 }

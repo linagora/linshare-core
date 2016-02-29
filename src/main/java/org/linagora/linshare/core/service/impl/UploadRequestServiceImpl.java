@@ -38,9 +38,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
@@ -69,6 +71,9 @@ import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
+import org.linagora.linshare.core.rac.UploadRequestResourceAccessControl;
+import org.linagora.linshare.core.rac.UploadRequestTemplateResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MailBuildingService;
@@ -80,7 +85,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-public class UploadRequestServiceImpl implements UploadRequestService {
+public class UploadRequestServiceImpl extends GenericServiceImpl<Account, UploadRequest> implements UploadRequestService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(UploadRequestServiceImpl.class);
@@ -95,6 +100,8 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	private final MailBuildingService mailBuildingService;
 	private final NotifierService notifierService;
 	private final FunctionalityReadOnlyService functionalityService;
+	private final UploadRequestTemplateResourceAccessControl templateRac;
+	private final UploadRequestGroupResourceAccessControl groupRac;
 
 	public UploadRequestServiceImpl(
 			final AccountRepository<Account> accountRepository,
@@ -106,7 +113,11 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 			final DomainPermissionBusinessService domainPermissionBusinessService,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
-			final FunctionalityReadOnlyService functionalityReadOnlyService) {
+			final FunctionalityReadOnlyService functionalityReadOnlyService,
+			final UploadRequestResourceAccessControl rac,
+			final UploadRequestTemplateResourceAccessControl templateRac,
+			final UploadRequestGroupResourceAccessControl groupRac) {
+		super(rac);
 		this.accountRepository = accountRepository;
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
 		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
@@ -117,24 +128,43 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.functionalityService = functionalityReadOnlyService;
+		this.templateRac = templateRac;
+		this.groupRac = groupRac;
 	}
 
 	@Override
-	public List<UploadRequest> findAllRequest(User actor) {
-		return uploadRequestBusinessService.findAll(actor);
+	public List<UploadRequest> findAllRequest(Account actor, Account owner, List<UploadRequestStatus> statusList) {
+		preChecks(actor, owner);
+		checkListPermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
+		return uploadRequestBusinessService.findAll((User) owner, statusList);
 	}
 
 	@Override
-	public UploadRequest findRequestByUuid(Account actor, String uuid)
+	public List<UploadRequestGroup> findAllGroupRequest(Account actor, Account owner) throws BusinessException {
+		preChecks(actor, owner);
+		groupRac.checkListPermission(actor, owner, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
+		return uploadRequestGroupBusinessService.findAll(owner);
+	}
+
+	@Override
+	public UploadRequest findRequestByUuid(Account actor, Account owner, String uuid)
 			throws BusinessException {
 		UploadRequest ret = uploadRequestBusinessService.findByUuid(uuid);
-
 		if (ret == null) {
-			throw new BusinessException(
-					BusinessErrorCode.UPLOAD_REQUEST_NOT_FOUND,
-					"Upload request not found. Uuid: " + uuid);
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_NOT_FOUND, "Can not find upload request with uuid : " + uuid);
 		}
+		if (owner == null) {
+			owner = ret.getOwner();
+		}
+		checkReadPermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, ret);
 		return ret;
+	}
+
+	@Override
+	public List<UploadRequest> findRequestsByGroup(Account actor, Account owner, String uuid) throws BusinessException {
+		preChecks(actor, owner);
+		checkListPermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
+		return uploadRequestBusinessService.findRequestsByGroup(uuid);
 	}
 
 	@Override
@@ -149,6 +179,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	public List<UploadRequest> createRequest(Account actor, User owner,
 			UploadRequest inputRequest, List<Contact> contacts, String subject,
 			String body, Boolean groupedMode) throws BusinessException {
+		checkCreatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
 		AbstractDomain domain = owner.getDomain();
 		BooleanValueFunctionality groupedFunc = functionalityService.getUploadRequestGroupedFunctionality(domain);
 		boolean groupedModeLocal = groupedFunc.getValue();
@@ -170,6 +201,9 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 					contacts, subject, body, group));
 		} else {
 			for (Contact contact : contacts) {
+//				AKO: the request is modified by the function below, so the clone is bugged.
+//					It results that if you have 5 contacts, the first will receive 5 mails,
+//					the second 4 mails, etc...
 				UploadRequest clone = req.clone();
 				requests.addAll(createRequestGrouped(actor, owner, clone,
 						 Lists.newArrayList(contact), subject, body, group));
@@ -200,9 +234,11 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 		if (req.getActivationDate().before(new Date())) {
 			try {
 				req.updateStatus(UploadRequestStatus.STATUS_ENABLED);
-				updateRequest(actor, req);
+				updateRequest(actor, owner, req);
 				for (UploadRequestUrl u: req.getUploadRequestURLs()) {
-					mails.add(mailBuildingService.buildActivateUploadRequest((User) req.getOwner(), u));
+					if (u.getContact().equals(contacts.get(0))) {
+						mails.add(mailBuildingService.buildActivateUploadRequest((User) req.getOwner(), u));
+					}
 				}
 				notifierService.sendNotification(mails);
 			} catch (BusinessException e) {
@@ -577,8 +613,40 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequest updateRequest(Account actor, UploadRequest req)
+	public UploadRequest updateStatus(Account actor, Account owner, String uuid, UploadRequestStatus status)
 			throws BusinessException {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(owner, "Owner must be set.");
+		Validate.notEmpty(uuid, "Uuid must be set.");
+		Validate.notNull(status, "Status must be set.");
+		UploadRequest req = findRequestByUuid(actor, owner, uuid);
+		req.setStatus(status);
+		return updateRequest(actor, owner, req);
+	}
+
+	@Override
+	public UploadRequest update(Account actor, Account owner, String uuid, UploadRequest object)
+			throws BusinessException {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(owner, "Owner must be set.");
+		Validate.notEmpty(uuid, "Uuid must be set.");
+		Validate.notNull(object, "Object must be set.");
+		UploadRequest e = findRequestByUuid(actor, owner, uuid);
+		checkUpdatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, e);
+		e = setHistory(e);
+		e = uploadRequestBusinessService.update(e, object);
+		return e;
+	}
+
+	@Override
+	public UploadRequest updateRequest(Account actor, Account owner, UploadRequest req)
+			throws BusinessException {
+		req = setHistory(req);
+		checkUpdatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
+		return uploadRequestBusinessService.update(req);
+	}
+
+	private UploadRequest setHistory(UploadRequest req) {
 		if(req.getUploadRequestHistory() != null && Lists.newArrayList(req
 				.getUploadRequestHistory()) != null && ! Lists.newArrayList(req
 						.getUploadRequestHistory()).isEmpty()) {
@@ -595,7 +663,7 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 					false);
 			req.getUploadRequestHistory().add(hist);
 		}
-		return uploadRequestBusinessService.update(req);
+		return req;
 	}
 
 	@Override
@@ -608,14 +676,9 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 					"Closing an already closed upload request url : "
 							+ req.getUuid());
 		}
-		if (!domainPermissionBusinessService.isAdminForThisUploadRequest(actor,
-				req)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-					"you do not have the right to close this upload request url : "
-							+ req.getUuid());
-		}
+		checkUpdatePermission(actor, req.getOwner(), UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
 		req.updateStatus(UploadRequestStatus.STATUS_CLOSED);
-		UploadRequest update = updateRequest(actor, req);
+		UploadRequest update = updateRequest(actor, actor, req);
 		MailContainerWithRecipient mail = mailBuildingService
 				.buildCloseUploadRequestByRecipient((User) req.getOwner(), url);
 		notifierService.sendNotification(mail);
@@ -623,33 +686,39 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public void deleteRequest(Account actor, UploadRequest req)
+	public UploadRequest deleteRequest(Account actor, Account owner, String uuid)
 			throws BusinessException {
-		uploadRequestBusinessService.delete(req);
+		return updateStatus(actor, owner, uuid, UploadRequestStatus.STATUS_DELETED);
 	}
 
 	@Override
-	public UploadRequestGroup findRequestGroupByUuid(Account actor, String uuid) {
-		return uploadRequestGroupBusinessService.findByUuid(uuid);
+	public UploadRequestGroup findRequestGroupByUuid(Account actor, Account owner, String uuid) {
+		preChecks(actor, owner);
+		UploadRequestGroup req = uploadRequestGroupBusinessService.findByUuid(uuid);
+		groupRac.checkReadPermission(actor, req.getUploadRequests().iterator().next().getOwner(), UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
+		return req;
 	}
 
 	@Override
 	public UploadRequestGroup updateRequestGroup(Account actor,
-			UploadRequestGroup group) throws BusinessException {
+			Account owner, UploadRequestGroup group) throws BusinessException {
+		preChecks(actor, owner);
+		groupRac.checkUpdatePermission(actor, group.getUploadRequests().iterator().next().getOwner(), UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, group);
 		return uploadRequestGroupBusinessService.update(group);
 	}
 
 	@Override
-	public void deleteRequestGroup(Account actor, UploadRequestGroup group)
+	public void deleteRequestGroup(Account actor, Account owner, UploadRequestGroup group)
 			throws BusinessException {
+		preChecks(actor, owner);
+		groupRac.checkDeletePermission(actor, group.getUploadRequests().iterator().next().getOwner(), UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, group);
 		uploadRequestGroupBusinessService.delete(group);
 	}
 
 	@Override
-	public Set<UploadRequestHistory> findAllRequestHistory(Account actor,
+	public Set<UploadRequestHistory> findAllRequestHistory(Account actor, Account owner,
 			String uploadRequestUuid) throws BusinessException {
-		UploadRequest request = findRequestByUuid(actor, uploadRequestUuid);
-
+		UploadRequest request = findRequestByUuid(actor, owner, uploadRequestUuid);
 		if (!domainPermissionBusinessService.isAdminForThisUploadRequest(actor,
 				request)) {
 			throw new BusinessException(
@@ -709,31 +778,43 @@ public class UploadRequestServiceImpl implements UploadRequestService {
 	}
 
 	@Override
-	public UploadRequestTemplate findTemplateByUuid(Account actor,
+	public UploadRequestTemplate findTemplateByUuid(Account actor, Account owner,
 			String uuid) throws BusinessException {
-		UploadRequestTemplate ret = uploadRequestTemplateBusinessService
-				.findByUuid(uuid);
+		Validate.notEmpty(uuid, "Template uuid must be set.");
+		preChecks(actor, owner);
+		UploadRequestTemplate ret = uploadRequestTemplateBusinessService.findByUuid(uuid);
 		if (ret == null) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
-					"UploadRequestTemplate with uuid: " + uuid);
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "UploadRequestTemplate with uuid: " + uuid + " not found.");
 		}
+		templateRac.checkCreatePermission(actor, ret.getOwner(), UploadRequestTemplate.class,
+				BusinessErrorCode.UPLOAD_REQUEST_TEMPLATE_FORBIDDEN, ret);
 		return ret;
 	}
 
 	@Override
-	public UploadRequestTemplate createTemplate(Account actor,
+	public UploadRequestTemplate createTemplate(Account actor, Account owner,
 			UploadRequestTemplate template) throws BusinessException {
-		return uploadRequestTemplateBusinessService.create(actor, template);
+		UploadRequestTemplate temp = uploadRequestTemplateBusinessService.create(actor, template);
+		templateRac.checkCreatePermission(actor, temp.getOwner(), UploadRequestTemplate.class, BusinessErrorCode.UPLOAD_REQUEST_TEMPLATE_FORBIDDEN, temp);
+		return temp;
 	}
 
 	@Override
-	public UploadRequestTemplate updateTemplate(Account actor,
+	public UploadRequestTemplate updateTemplate(Account actor, Account owner, String uuid,
 			UploadRequestTemplate template) throws BusinessException {
-		return uploadRequestTemplateBusinessService.update(template);
+		Validate.notEmpty(uuid, "Template uuid must be set.");
+		Validate.notNull(template, "Template must be set.");
+		UploadRequestTemplate temp = findTemplateByUuid(actor, owner, uuid);
+		templateRac.checkUpdatePermission(actor, temp.getOwner(), UploadRequestTemplate.class, BusinessErrorCode.UPLOAD_REQUEST_TEMPLATE_FORBIDDEN, temp);
+		return uploadRequestTemplateBusinessService.update(temp, template);
 	}
 
 	@Override
-	public void deleteTemplate(Account actor, UploadRequestTemplate template) throws BusinessException {
+	public UploadRequestTemplate deleteTemplate(Account actor, Account owner, String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "Template uuid must be set.");
+		UploadRequestTemplate template = findTemplateByUuid(actor, owner, uuid);
+		templateRac.checkDeletePermission(actor, template.getOwner(), UploadRequestTemplate.class, BusinessErrorCode.UPLOAD_REQUEST_TEMPLATE_FORBIDDEN, template);
 		uploadRequestTemplateBusinessService.delete(template);
+		return template;
 	}
 }

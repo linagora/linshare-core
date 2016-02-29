@@ -86,7 +86,7 @@
 			<many-to-one name="documentEntry" column="document_entry_entry_id" class="org.linagora.linshare.core.domain.entities.DocumentEntry"
 				cascade="lock" unique="true" not-null="false" lazy="proxy">
 			</many-to-one>
-			<many-to-one name="uploadRequest" cascade="lock" column="upload_request_id" class="org.linagora.linshare.core.domain.entities.UploadRequest"
+			<many-to-one name="uploadRequestUrl" cascade="lock" column="upload_request_url_id" class="org.linagora.linshare.core.domain.entities.UploadRequestUrl"
 				not-null="true" lazy="proxy">
 			</many-to-one>
 		</joined-subclass>

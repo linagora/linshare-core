@@ -126,8 +126,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 			String password, String entryUuid) throws BusinessException {
 		UploadRequestUrl requestUrl = find(uploadRequestUrlUuid, password);
 		deleteBusinessCheck(requestUrl);
-		Set<UploadRequestEntry> entries = requestUrl.getUploadRequest()
-				.getUploadRequestEntries();
+		Set<UploadRequestEntry> entries = requestUrl.getUploadRequestEntries();
 		UploadRequestEntry found = null;
 		for (UploadRequestEntry entry : entries) {
 			if (entry.getUuid().equals(entryUuid)) {
@@ -178,7 +177,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		createBusinessCheck(requestUrl, document);
 		// Create the link between the document and the upload request URL.
 		UploadRequestEntry uploadRequestEntry = new UploadRequestEntry(
-				document, requestUrl.getUploadRequest());
+				document, requestUrl);
 		UploadRequestEntry requestEntry = uploadRequestEntryBusinessService
 				.create(uploadRequestEntry);
 		MailContainerWithRecipient mail = null;
@@ -256,7 +255,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		}
 		if (request.getMaxFileCount() != null) {
 			// already reach the limit
-			if (request.getUploadRequestEntries().size() >= request
+			if (requestUrl.getUploadRequestEntries().size() >= request
 					.getMaxFileCount()) {
 				throw new BusinessException(
 						BusinessErrorCode.UPLOAD_REQUEST_TOO_MANY_FILES,
@@ -265,7 +264,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		}
 		if (request.getMaxDepositSize() != null) {
 			long totalSize = 0;
-			for (UploadRequestEntry entry : request.getUploadRequestEntries()) {
+			for (UploadRequestEntry entry : requestUrl.getUploadRequestEntries()) {
 				totalSize += entry.getSize();
 			}
 			totalSize += document.getSize();

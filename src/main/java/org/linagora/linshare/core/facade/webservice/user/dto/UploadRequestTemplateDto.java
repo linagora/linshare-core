@@ -31,15 +31,20 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+
+package org.linagora.linshare.core.facade.webservice.user.dto;
 
 import java.util.Date;
 
-import org.linagora.linshare.core.domain.constants.TimeUnit;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public class UploadRequestTemplate {
+import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 
-	private long id;
+import com.google.common.base.Function;
+
+@XmlRootElement(name = "UploadRequestTemplate")
+public class UploadRequestTemplateDto {
 
 	private String name;
 
@@ -77,18 +82,60 @@ public class UploadRequestTemplate {
 
 	private Date creationDate;
 
-	private Account owner;
+	private AccountDto owner;
 
-	public UploadRequestTemplate() {
+	public UploadRequestTemplateDto() {
 		super();
 	}
 
-	public long getId() {
-		return id;
+	public UploadRequestTemplateDto(UploadRequestTemplate template) {
+		this.name = template.getName();
+		this.uuid = template.getUuid();
+		this.description = template.getDescription();
+		this.unitBeforeActivation = template.getUnitBeforeActivation();
+		this.durationBeforeActivation = template.getDurationBeforeActivation();
+		this.unitBeforeExpiry = template.getUnitBeforeExpiry();
+		this.durationBeforeExpiry = template.getDurationBeforeExpiry();
+		this.maxDepositSize = template.getMaxDepositSize();
+		this.groupMode = template.getGroupMode();
+		this.depositMode = template.getDepositMode();
+		this.maxFile = template.getMaxFile();
+		this.maxFileSize = template.getMaxFileSize();
+		this.locale = template.getLocale();
+		this.secured = template.getSecured();
+		this.dayBeforeNotification = template.getDayBeforeNotification();
+		this.prolongationMode = template.getProlongationMode();
+		this.modificationDate = template.getModificationDate();
+		this.creationDate = template.getCreationDate();
+		this.owner = new AccountDto(template.getOwner(), false);
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public UploadRequestTemplate toObject() {
+		UploadRequestTemplate ret = new UploadRequestTemplate();
+		ret.setName(name);
+		ret.setDescription(description);
+		ret.setDurationBeforeActivation(durationBeforeActivation);
+		ret.setDurationBeforeExpiry(durationBeforeExpiry);
+		ret.setUnitBeforeActivation(unitBeforeActivation);
+		ret.setUnitBeforeExpiry(unitBeforeExpiry);
+		ret.setMaxDepositSize(maxDepositSize);
+		ret.setMaxFile(maxFile);
+		ret.setMaxFileSize(maxFileSize);
+		ret.setLocale(locale);
+		ret.setGroupMode(groupMode);
+		ret.setDepositMode(depositMode);
+		ret.setSecured(secured);
+		ret.setDayBeforeNotification(dayBeforeNotification);
+		ret.setProlongationMode(prolongationMode);
+		return ret;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getName() {
@@ -211,14 +258,6 @@ public class UploadRequestTemplate {
 		this.prolongationMode = prolongationMode;
 	}
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
 	public Date getModificationDate() {
 		return modificationDate;
 	}
@@ -227,117 +266,32 @@ public class UploadRequestTemplate {
 		this.modificationDate = modificationDate;
 	}
 
-	public String getUuid() {
-		return uuid;
+	public Date getCreationDate() {
+		return creationDate;
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
-	public Account getOwner() {
+	public AccountDto getOwner() {
 		return owner;
 	}
 
-	public void setOwner(Account owner) {
+	public void setOwner(AccountDto owner) {
 		this.owner = owner;
 	}
 
 	/*
-	 * Business setters
+	 * Transformer
 	 */
 
-	public void setBusinessDurationBeforeActivation(Long duration) {
-		if (duration != null) {
-			this.durationBeforeActivation = duration;
-		}
-	}
-
-	public void setBusinessName(String name) {
-		if (name != null && !name.isEmpty()) {
-			this.name = name;
-		}
-	}
-
-	public void setBusinessDescription(String description) {
-		if (description != null && !description.isEmpty()) {
-			this.description = description;
-		}
-	}
-
-	public void setBusinessUnitBeforeExpiry(Long unit) {
-		if (unit != null) {
-//			AKO : Hack, to avoid setting value non convertible in time int value. This to avoid tapestry crash
-			TimeUnit.fromInt(unit);
-			this.unitBeforeExpiry = unit;
-		}
-	}
-
-	public void setBusinessSecured(Boolean secured) {
-		if (secured != null) {
-			this.secured = secured;
-		}
-	}
-
-	public void setBusinessMaxDepositSize(Long size) {
-		if (size != null) {
-			this.maxDepositSize = size;
-		}
-	}
-
-	public void setBusinessMaxFileSize(Long size) {
-		if (size != null) {
-			this.maxFileSize = size;
-		}
-	}
-
-	public void setBusinessDurationBeforeExpiry(Long duration) {
-		if (duration != null) {
-			this.durationBeforeExpiry = duration;
-		}
-	}
-
-	public void setBusinessLocale(String locale) {
-		if (locale != null && !locale.isEmpty()) {
-			this.locale = locale;
-		}
-	}
-
-	public void setBusinessUnitBeforeActivation(Long unit) {
-		if (unit != null) {
-//			AKO : Hack, to avoid setting value non convertible in time int value. This to avoid tapestry crash
-			TimeUnit.fromInt(unit);
-			this.unitBeforeActivation = unit;
-		}
-	}
-
-	public void setBusinessDayBeforeNotification(Long unit) {
-		if (unit != null) {
-			this.dayBeforeNotification = unit;
-		}
-	}
-
-	public void setBusinessDepositMode(Boolean depositMode) {
-		if (depositMode != null) {
-			this.depositMode = depositMode;
-		}
-	}
-
-	public void setBusinessProlongationMode(Boolean prolongMode) {
-		if (prolongMode != null) {
-			this.prolongationMode = prolongMode;
-		}
-	}
-
-	public void setBusinessMaxFile(Long duration) {
-		if (duration != null) {
-			this.maxFile = duration;
-		}
-	}
-
-	public void setBusinessGroupMode(Boolean groupMode) {
-		if (groupMode != null) {
-			this.groupMode = groupMode;
-		}
+	public static Function<UploadRequestTemplate, UploadRequestTemplateDto> toDto() {
+		return new Function<UploadRequestTemplate, UploadRequestTemplateDto>() {
+			@Override
+			public UploadRequestTemplateDto apply(UploadRequestTemplate arg0) {
+				return new UploadRequestTemplateDto(arg0);
+			}
+		};
 	}
 }

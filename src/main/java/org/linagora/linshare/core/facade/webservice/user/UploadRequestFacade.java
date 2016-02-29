@@ -31,65 +31,45 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
 
-import java.io.Serializable;
+package org.linagora.linshare.core.facade.webservice.user;
 
-import org.linagora.linshare.core.domain.constants.EntryType;
+import java.util.List;
 
-public class UploadRequestEntry extends Entry implements Serializable {
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestGroupDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestTemplateDto;
 
-	private static final long serialVersionUID = 54638444450061115L;
+public interface UploadRequestFacade {
 
-	private DocumentEntry documentEntry;
+	List<UploadRequestDto> findAll(String ownerUuid) throws BusinessException;
 
-	private UploadRequestUrl uploadRequestUrl;
+	UploadRequestDto find(String ownerUuid, String uuid) throws BusinessException;
 
-	private long size;
+	List<UploadRequestDto> findByGroup(String ownerUuid, String uuid) throws BusinessException;
 
-	public UploadRequestEntry() {
-		super();
-	}
+	List<UploadRequestDto> create(String ownerUuid, UploadRequestDto uploadRequestDto, Boolean groupMode) throws BusinessException;
 
-	public UploadRequestEntry(DocumentEntry documentEntry,
-			UploadRequestUrl requestUrl) {
-		super(documentEntry.getEntryOwner(), documentEntry.getName(),
-				documentEntry.getComment());
-		this.documentEntry = documentEntry;
-		this.uploadRequestUrl = requestUrl;
-		this.size = documentEntry.getSize();
-	}
+	UploadRequestDto update(String ownerUuid, String uuid, UploadRequestDto uploadRequestDto) throws BusinessException;
 
-	public DocumentEntry getDocumentEntry() {
-		return documentEntry;
-	}
+	UploadRequestDto updateStatus(String ownerUuid, String uuid, String status) throws BusinessException;
 
-	public void setDocumentEntry(DocumentEntry documentEntry) {
-		this.documentEntry = documentEntry;
-	}
+	UploadRequestDto delete(String ownerUuid, String uuid) throws BusinessException;
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
+	UploadRequestDto delete(String ownerUuid, UploadRequestDto uploadRequestDto) throws BusinessException;
 
-	@Override
-	public EntryType getEntryType() {
-		return EntryType.UPLOAD_REQUEST;
-	}
+	List<UploadRequestTemplateDto> findAllTemplates(String ownerUuid) throws BusinessException;
 
-	public long getSize() {
-		return size;
-	}
+	List<UploadRequestGroupDto> findAllGroups(String ownerUuid) throws BusinessException;
 
-	public void setSize(long size) {
-		this.size = size;
-	}
+	UploadRequestTemplateDto findTemplate(String ownerUuid, String uuid) throws BusinessException;
 
-	public UploadRequestUrl getUploadRequestUrl() {
-		return uploadRequestUrl;
-	}
+	UploadRequestGroupDto findGroup(String ownerUuid, String uuid) throws BusinessException;
 
-	public void setUploadRequestUrl(UploadRequestUrl uploadRequestUrl) {
-		this.uploadRequestUrl = uploadRequestUrl;
-	}
+	UploadRequestTemplateDto createTemplate(String ownerUuid, UploadRequestTemplateDto dto) throws BusinessException;
+
+	UploadRequestTemplateDto updateTemplate(String ownerUuid, String uuid, UploadRequestTemplateDto dto) throws BusinessException;
+
+	UploadRequestTemplateDto deleteTemplate(String ownerUuid, String uuid) throws BusinessException;
 }

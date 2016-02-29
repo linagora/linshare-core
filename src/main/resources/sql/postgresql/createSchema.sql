@@ -459,7 +459,7 @@ CREATE TABLE upload_request_history (
 CREATE TABLE upload_request_entry (
   entry_id                int8 NOT NULL,
   document_entry_entry_id int8,
-  upload_request_id       int8 NOT NULL,
+  upload_request_url_id   int8 NOT NULL,
   ls_size                 int8 NOT NULL,
   PRIMARY KEY (entry_id));
 CREATE TABLE upload_proposition_filter (
@@ -837,7 +837,7 @@ ALTER TABLE upload_request_url ADD CONSTRAINT FKupload_req833645 FOREIGN KEY (up
 ALTER TABLE upload_request ADD CONSTRAINT FKupload_req916400 FOREIGN KEY (upload_request_group_id) REFERENCES upload_request_group (id);
 ALTER TABLE upload_request_url ADD CONSTRAINT FKupload_req601912 FOREIGN KEY (contact_id) REFERENCES contact (id);
 ALTER TABLE upload_request_history ADD CONSTRAINT FKupload_req678768 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
-ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req220981 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
+ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req220981 FOREIGN KEY (upload_request_url_id) REFERENCES upload_request_url (id);
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req254795 FOREIGN KEY (entry_id) REFERENCES entry (id);
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req11781 FOREIGN KEY (document_entry_entry_id) REFERENCES document_entry (entry_id);
 ALTER TABLE upload_proposition_rule ADD CONSTRAINT FKupload_pro672390 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);

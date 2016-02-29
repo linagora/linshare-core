@@ -71,7 +71,6 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 
 	private final UploadRequestUrlFacade uploadRequestUrlFacade;
 
-
 	public UploadRequestRestServiceImpl(
 			UploadRequestUrlFacade uploadRequestUrlFacade) {
 		super();
@@ -130,5 +129,4 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			throws BusinessException {
 		uploadRequestUrlFacade.deleteUploadRequestEntry(requestUrlUuid, password, entry);
 	}
-
 }

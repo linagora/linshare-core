@@ -64,7 +64,7 @@ public class UploadRequestFacadeImpl extends AdminGenericFacadeImpl implements U
 	public Set<UploadRequestHistoryDto> findAllHistory(String uploadRequestUuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Set<UploadRequestHistoryDto> dtos = Sets.newHashSet();
-		Set<UploadRequestHistory> res = uploadRequestService.findAllRequestHistory(actor, uploadRequestUuid);
+		Set<UploadRequestHistory> res = uploadRequestService.findAllRequestHistory(actor, null, uploadRequestUuid);
 		for (UploadRequestHistory u: res) {
 			dtos.add(new UploadRequestHistoryDto(u));
 		}
@@ -77,7 +77,7 @@ public class UploadRequestFacadeImpl extends AdminGenericFacadeImpl implements U
 		Set<UploadRequestDto> dtos = Sets.newHashSet();
 		Set<UploadRequest> res = uploadRequestService.findAll(actor, status, afterDate, beforeDate);
 		for (UploadRequest u: res) {
-			dtos.add(new UploadRequestDto(u));
+			dtos.add(new UploadRequestDto(u, false));
 		}
 		return dtos;
 	}

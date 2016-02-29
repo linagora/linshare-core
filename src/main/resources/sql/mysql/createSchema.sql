@@ -456,7 +456,7 @@ CREATE TABLE upload_request_history (
 CREATE TABLE upload_request_entry (
   entry_id                bigint(8) NOT NULL,
   document_entry_entry_id bigint(8),
-  upload_request_id       bigint(8) NOT NULL,
+  upload_request_url_id       bigint(8) NOT NULL,
   ls_size                 bigint(8) NOT NULL,
   PRIMARY KEY (entry_id)) CHARACTER SET UTF8;
 CREATE TABLE upload_proposition_filter (
@@ -789,7 +789,7 @@ CREATE UNIQUE INDEX signature_i
   ON signature (uuid);
 CREATE INDEX unit_index
   ON unit (id);
-  CREATE UNIQUE INDEX welcome_messages_uuid 
+  CREATE UNIQUE INDEX welcome_messages_uuid
   ON welcome_messages (uuid);
 ALTER TABLE domain_abstract ADD INDEX fk449bc2ec59e1e332 (domain_policy_id), ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD INDEX fk449bc2ec9083e725 (parent_id), ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
@@ -847,7 +847,7 @@ ALTER TABLE upload_request_url ADD INDEX FKupload_req833645 (upload_request_id),
 ALTER TABLE upload_request ADD INDEX FKupload_req916400 (upload_request_group_id), ADD CONSTRAINT FKupload_req916400 FOREIGN KEY (upload_request_group_id) REFERENCES upload_request_group (id);
 ALTER TABLE upload_request_url ADD INDEX FKupload_req601912 (contact_id), ADD CONSTRAINT FKupload_req601912 FOREIGN KEY (contact_id) REFERENCES contact (id);
 ALTER TABLE upload_request_history ADD INDEX FKupload_req678768 (upload_request_id), ADD CONSTRAINT FKupload_req678768 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
-ALTER TABLE upload_request_entry ADD INDEX FKupload_req220981 (upload_request_id), ADD CONSTRAINT FKupload_req220981 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
+ALTER TABLE upload_request_entry ADD INDEX FKupload_req220981 (upload_request_url_id), ADD CONSTRAINT FKupload_req220981 FOREIGN KEY (upload_request_url_id) REFERENCES upload_request_url (id);
 ALTER TABLE upload_request_entry ADD INDEX FKupload_req254795 (entry_id), ADD CONSTRAINT FKupload_req254795 FOREIGN KEY (entry_id) REFERENCES entry (id);
 ALTER TABLE upload_request_entry ADD INDEX FKupload_req11781 (document_entry_entry_id), ADD CONSTRAINT FKupload_req11781 FOREIGN KEY (document_entry_entry_id) REFERENCES document_entry (entry_id);
 ALTER TABLE upload_proposition_rule ADD INDEX FKupload_pro672390 (upload_proposition_filter_id), ADD CONSTRAINT FKupload_pro672390 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);

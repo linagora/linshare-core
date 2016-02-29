@@ -31,21 +31,47 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
 
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
+package org.linagora.linshare.webservice.delegation;
+
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestGroupDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestTemplateDto;
 
-public interface UploadRequestTemplateBusinessService {
+public interface UploadRequestRestService {
 
-	UploadRequestTemplate findByUuid(String uuid);
+	List<UploadRequestDto> findAll(String ownerUuid) throws BusinessException;
 
-	UploadRequestTemplate create(Account actor, UploadRequestTemplate template)
-			throws BusinessException;
+	UploadRequestDto find(String ownerUuid, String uuid) throws BusinessException;
 
-	UploadRequestTemplate update(UploadRequestTemplate template, UploadRequestTemplate object)
-			throws BusinessException;
+	List<UploadRequestDto> findByGroup(String ownerUuid, String uuid);
 
-	void delete(UploadRequestTemplate template) throws BusinessException;
+	List<UploadRequestGroupDto> findAllGroups(String ownerUuid) throws BusinessException;
+
+	List<UploadRequestTemplateDto> findAllTemplates(String ownerUuid) throws BusinessException;
+
+	UploadRequestTemplateDto findTemplate(String ownerUuid, String uuid) throws BusinessException;
+
+	UploadRequestGroupDto findGroup(String uuid, String ownerUuid) throws BusinessException;
+
+	List<UploadRequestDto> create(String ownerUuid, UploadRequestDto uploadRequestDto, Boolean groupMode) throws BusinessException;
+
+	UploadRequestDto update(String ownerUuid, String uuid, UploadRequestDto uploadRequestDto) throws BusinessException;
+
+	UploadRequestDto updateStatus(String ownerUuid, String uuid, String status) throws BusinessException;
+
+	UploadRequestDto delete(String ownerUuid, String uuid) throws BusinessException;
+
+	UploadRequestDto delete(String ownerUuid, UploadRequestDto uploadRequestDto) throws BusinessException;
+
+	UploadRequestTemplateDto createTemplate(String ownerUuid, UploadRequestTemplateDto templateDto) throws BusinessException;
+
+	UploadRequestTemplateDto updateTemplate(String ownerUuid, String uuid, UploadRequestTemplateDto templateDto) throws BusinessException;
+
+	UploadRequestTemplateDto deleteTemplate(String ownerUuid, String uuid) throws BusinessException;
+
+	UploadRequestTemplateDto deleteTemplate(String ownerUuid, UploadRequestTemplateDto dto) throws BusinessException;
 }

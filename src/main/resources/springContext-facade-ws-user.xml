@@ -63,18 +63,21 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="mailingListService" />
 	</bean>
-
 	<bean id="wsShareEntryGroupFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ShareEntryGroupFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="shareEntryGroupService" />
 	</bean>
-
 	<bean id="wsMailingListFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.MailingListFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="mailingListService" />
 	</bean>
 
 	<bean id="wsMimeTypeFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.MimeTypeFacadeImpl">
+	  <constructor-arg ref="accountService" />
+	</bean>
+
+	<bean id="wsUploadRequestFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UploadRequestFacadeImpl">
 		<constructor-arg ref="accountService" />
+		<constructor-arg ref="uploadRequestService" />
 	</bean>
 </beans>

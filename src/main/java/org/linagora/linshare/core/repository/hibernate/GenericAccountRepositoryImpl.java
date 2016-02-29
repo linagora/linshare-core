@@ -62,7 +62,6 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
 		criteria.add(Restrictions.eq("destroyed", 0L));
-
 		 List<U> users = findByCriteria(criteria);
 	        if (users == null || users.isEmpty()) {
 	            return null;
@@ -109,7 +108,6 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		criteria.add(Restrictions.eq("destroyed", 0L));
 		List<U> accounts = null;
 		accounts = findByCriteria(criteria);
-
 		if (accounts == null || accounts.isEmpty()) {
 			return false;
 		} else if (accounts.size() == 1) {
@@ -129,7 +127,6 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	public SystemAccount getBatchSystemAccount() {
 		DetachedCriteria det = DetachedCriteria.forClass(SystemAccount.class)
 				.add(Restrictions.eq("lsUuid", "system"));
-
 		List<U> users = findByCriteria(det);
 		if (users == null || users.isEmpty()) {
 			return null;
@@ -144,7 +141,6 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	public SystemAccount getUploadRequestSystemAccount() {
 		DetachedCriteria det = DetachedCriteria.forClass(SystemAccount.class)
 				.add(Restrictions.eq("lsUuid", "system-account-uploadrequest"));
-
 		return (SystemAccount) DataAccessUtils
 				.singleResult(findByCriteria(det));
 	}
@@ -202,7 +198,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	}
 
 	@Override
-	public List<String> findAllDeletedAccountsToPurge(Date limit){
+	public List<String> findAllDeletedAccountsToPurge(Date limit) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.setProjection(Projections.property("lsUuid"));
 		criteria.add(Restrictions.lt("modificationDate", limit));
