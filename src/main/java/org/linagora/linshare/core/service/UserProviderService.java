@@ -49,7 +49,7 @@ public interface UserProviderService {
 	List<UserLdapPattern> findAllSystemDomainPattern() throws BusinessException;
 	UserLdapPattern createDomainPattern(UserLdapPattern domainPattern) throws BusinessException;
 	UserLdapPattern updateDomainPattern(UserLdapPattern domainPattern) throws BusinessException;
-	void deletePattern(String patternToDelete) throws BusinessException;
+	UserLdapPattern deletePattern(String patternToDelete) throws BusinessException;
 
 	LdapUserProvider find(String uuid) throws BusinessException;
 	boolean exists(String uuid);

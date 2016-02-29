@@ -91,7 +91,7 @@ public class DomainPolicyBusinessServiceImpl implements
 	}
 
 	@Override
-	public void delete(String identifier) throws BusinessException {
+	public DomainPolicy delete(String identifier) throws BusinessException {
 		if (!policyIsDeletable(identifier)) {
 			throw new BusinessException(
 					"Cannot delete policy because still used by domains");
@@ -101,6 +101,7 @@ public class DomainPolicyBusinessServiceImpl implements
 		DomainAccessPolicy domainAccessPolicy = entity.getDomainAccessPolicy();
 		domainPolicyRepository.delete(entity);
 		domainAccessPolicyRepository.delete(domainAccessPolicy);
+		return entity;
 	}
 
 	@Override

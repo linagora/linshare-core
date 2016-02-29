@@ -109,9 +109,10 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void delete(String uuid) throws BusinessException {
+	public MailingListDto delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		mailingListService.deleteList(actor.getLsUuid(), uuid);
+		MailingList list = mailingListService.deleteList(actor.getLsUuid(), uuid);
+		return new MailingListDto(list);
 	}
 
 	@Override

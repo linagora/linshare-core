@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -54,7 +55,8 @@ public interface UserAndDomainMultiService {
      * Delete a all users from a domain (and all the related data )
      * @param actor
      * @param domainIdentifier 
+     * @return TODO
      * @throws BusinessException 
      */
-	void deleteDomainAndUsers(User actor, String domainIdentifier) throws BusinessException;
+	AbstractDomain deleteDomainAndUsers(User actor, String domainIdentifier) throws BusinessException;
 }

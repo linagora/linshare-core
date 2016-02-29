@@ -109,7 +109,7 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a domain policy.")
+	@ApiOperation(value = "Create a domain policy.", response = DomainPolicyDto.class)
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "User isn't superadmin."),
 			@ApiResponse(code = 400, message = "Invalid domain policy.") })
@@ -122,7 +122,7 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a domain policy.")
+	@ApiOperation(value = "Update a domain policy.", response = DomainPolicyDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
 	@Override
 	public DomainPolicyDto update(
@@ -133,23 +133,23 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{policyId}")
 	@DELETE
-	@ApiOperation(value = "Delete a domain policy.")
+	@ApiOperation(value = "Delete a domain policy.", response = DomainPolicyDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
 	@Override
-	public void delete(
+	public DomainPolicyDto delete(
 			@ApiParam(value = "Identifier of the domain policy to delete.", required = true) @PathParam("policyId") String policyId)
 			throws BusinessException {
-		domainPolicyFacade.delete(policyId);
+		return domainPolicyFacade.delete(policyId);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a domain policy.")
+	@ApiOperation(value = "Delete a domain policy.", response = DomainPolicyDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
 	@Override
-	public void delete(
+	public DomainPolicyDto delete(
 			@ApiParam(value = "Policy to delete.", required = true) DomainPolicyDto policy)
 			throws BusinessException {
-		domainPolicyFacade.delete(policy.getIdentifier());
+		return domainPolicyFacade.delete(policy.getIdentifier());
 	}
 }

@@ -51,7 +51,7 @@ public interface DomainPolicyBusinessService {
 
 	public List<DomainPolicy> findAll();
 
-	public void delete(String policyToDelete) throws BusinessException;
+	public DomainPolicy delete(String policyToDelete) throws BusinessException;
 
 	public boolean policyIsDeletable(String policyToDelete);
 }

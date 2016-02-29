@@ -55,7 +55,7 @@ public interface MimePolicyRestService {
 
 	MimePolicyDto disableAllMimeTypes(String uuid) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	MimePolicyDto delete(String uuid) throws BusinessException;
 
-	void delete(MimePolicyDto policy) throws BusinessException;
+	MimePolicyDto delete(MimePolicyDto policy) throws BusinessException;
 }

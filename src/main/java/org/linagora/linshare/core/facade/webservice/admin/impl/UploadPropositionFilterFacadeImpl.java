@@ -93,9 +93,10 @@ public class UploadPropositionFilterFacadeImpl extends AdminGenericFacadeImpl
 	}
 
 	@Override
-	public void delete(String uuid) throws BusinessException {
+	public UploadPropositionFilterDto delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
-		service.delete(actor, uuid);
+		UploadPropositionFilter filter = service.delete(actor, uuid);
+		return new UploadPropositionFilterDto(filter);
 	}
 
 }

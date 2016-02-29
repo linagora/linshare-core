@@ -59,7 +59,7 @@ public class UserAndDomainMultiServiceImpl implements UserAndDomainMultiService 
 	}
 
 	@Override
-	public void deleteDomainAndUsers(User actor, String domainIdentifier) throws BusinessException {
+	public AbstractDomain deleteDomainAndUsers(User actor, String domainIdentifier) throws BusinessException {
 		logger.debug("deleteDomainAndUsers: begin");
 
 		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
@@ -84,6 +84,7 @@ public class UserAndDomainMultiServiceImpl implements UserAndDomainMultiService 
 					+ " and his subdomains");
 		abstractDomainService.deleteDomain(actor, domainIdentifier);
 		logger.debug("deleteDomainAndUsers: end");
+		return domain;
 	}
 
 	@Override

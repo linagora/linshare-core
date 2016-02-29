@@ -53,7 +53,7 @@ public interface MailConfigRestService {
 
 	MailConfigDto update(MailConfigDto dto) throws BusinessException;
 
-	void delete(MailConfigDto dto) throws BusinessException;
+	MailConfigDto delete(MailConfigDto dto) throws BusinessException;
 
 	Set<MailFooterDto> findAllFooters(String mailConfigUuid, String language)
 			throws BusinessException;

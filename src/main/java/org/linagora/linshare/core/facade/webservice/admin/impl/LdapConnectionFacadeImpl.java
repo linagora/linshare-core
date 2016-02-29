@@ -88,8 +88,9 @@ public class LdapConnectionFacadeImpl extends AdminGenericFacadeImpl implements 
 	}
 
 	@Override
-	public void delete(LdapConnectionDto ldapConnectionDto) throws BusinessException {
+	public LdapConnectionDto delete(LdapConnectionDto ldapConnectionDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		ldapConnectionService.delete(ldapConnectionDto.getUuid());
+		LdapConnection conn = ldapConnectionService.delete(ldapConnectionDto.getUuid());
+		return new LdapConnectionDto(conn);
 	}
 }

@@ -109,7 +109,7 @@ public class MailFooterRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a mail footer.")
+	@ApiOperation(value = "Create a mail footer.", response = MailFooterDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public MailFooterDto create(
@@ -120,7 +120,7 @@ public class MailFooterRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a mail footer.")
+	@ApiOperation(value = "Update a mail footer.", response = MailFooterDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public MailFooterDto update(
@@ -131,12 +131,12 @@ public class MailFooterRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete an unused mail footer.")
+	@ApiOperation(value = "Delete an unused mail footer.", response = MailFooterDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void delete(
+	public MailFooterDto delete(
 			@ApiParam(value = "Mail footer to delete.", required = true) MailFooterDto dto)
 			throws BusinessException {
-		mailFooterFacade.delete(dto.getUuid());
+		return mailFooterFacade.delete(dto.getUuid());
 	}
 }

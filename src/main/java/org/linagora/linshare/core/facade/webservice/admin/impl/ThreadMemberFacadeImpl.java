@@ -106,11 +106,11 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void delete(ThreadMemberDto dto) throws BusinessException {
+	public ThreadMemberDto delete(ThreadMemberDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notNull(dto.getId(), "thread member id must be set.");
-
-		this.threadService.deleteMember(actor, actor, dto.getThreadUuid(), dto.getUserUuid());
+		ThreadMember member = this.threadService.deleteMember(actor, actor, dto.getThreadUuid(), dto.getUserUuid());
+		return new ThreadMemberDto(member);
 	}
 }

@@ -48,9 +48,9 @@ public interface DomainPolicyRestService {
 
 	DomainPolicyDto update(DomainPolicyDto policy) throws BusinessException;
 
-	void delete(String policyId) throws BusinessException;
+	DomainPolicyDto delete(String policyId) throws BusinessException;
 
-	void delete(DomainPolicyDto policy) throws BusinessException;
+	DomainPolicyDto delete(DomainPolicyDto policy) throws BusinessException;
 
 	void head(String policyId) throws BusinessException;
 }

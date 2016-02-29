@@ -109,7 +109,7 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a domain pattern.")
+	@ApiOperation(value = "Create a domain pattern.", response = DomainPatternDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public DomainPatternDto create(DomainPatternDto domainPattern)
@@ -119,7 +119,7 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a domain pattern.")
+	@ApiOperation(value = "Update a domain pattern.", response = DomainPatternDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public DomainPatternDto update(DomainPatternDto domainPattern)
@@ -129,11 +129,11 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a domain pattern.")
+	@ApiOperation(value = "Delete a domain pattern.", response = DomainPatternDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void delete(DomainPatternDto domainPattern)
+	public DomainPatternDto delete(DomainPatternDto domainPattern)
 			throws BusinessException {
-		domainPatternFacade.delete(domainPattern);
+		return domainPatternFacade.delete(domainPattern);
 	}
 }

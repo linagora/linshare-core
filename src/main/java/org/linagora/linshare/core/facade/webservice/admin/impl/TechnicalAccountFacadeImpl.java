@@ -72,20 +72,22 @@ public class TechnicalAccountFacadeImpl extends AdminGenericFacadeImpl
 	}
 
 	@Override
-	public void delete(String uuid) throws BusinessException {
+	public TechnicalAccountDto delete(String uuid) throws BusinessException {
 		User actor = checkAuth();
 		Validate.notEmpty(uuid, "uuid must be set.");
 		TechnicalAccount account = technicalAccountService.find(actor, uuid);
 		technicalAccountService.delete(actor, account);
+		return new TechnicalAccountDto(account);
 	}
 
 	@Override
-	public void delete(TechnicalAccountDto dto) throws BusinessException {
+	public TechnicalAccountDto delete(TechnicalAccountDto dto) throws BusinessException {
 		User actor = checkAuth();
 		Validate.notNull(dto, "dto must be set.");
 		Validate.notEmpty(dto.getUuid(), "uuid must be set.");
 		TechnicalAccount account = technicalAccountService.find(actor, dto.getUuid());
 		technicalAccountService.delete(actor, account);
+		return new TechnicalAccountDto(account);
 	}
 
 	@Override

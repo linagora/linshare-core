@@ -138,13 +138,14 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void deleteConfig(User actor, String uuid) throws BusinessException {
+	public MailConfig deleteConfig(User actor, String uuid) throws BusinessException {
 		MailConfig config = mailConfigBusinessService.findByUuid(uuid);
 		if (!permissionService.isAdminforThisDomain(actor, config.getDomain()))
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot delete a mail config in this domain "
 					+ actor.getDomainId());
 		mailConfigBusinessService.delete(config);
+		return config;
 	}
 
 	@Override
@@ -210,13 +211,14 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void deleteContent(User actor, String uuid) throws BusinessException {
+	public MailContent deleteContent(User actor, String uuid) throws BusinessException {
 		MailContent val = mailContentBusinessService.findByUuid(uuid);
 		if (!permissionService.isAdminforThisDomain(actor, val.getDomain()))
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot delete a mail content in this domain "
 					+ actor.getDomainId());
 		mailContentBusinessService.delete(val);
+		return val;
 	}
 
 	@Override
@@ -321,7 +323,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void deleteFooter(User actor, String uuid) throws BusinessException {
+	public MailFooter deleteFooter(User actor, String uuid) throws BusinessException {
 		MailFooter val = mailFooterBusinessService.findByUuid(uuid);
 
 		if (!permissionService.isAdminforThisDomain(actor, val.getDomain()))
@@ -329,6 +331,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 					+ actor + " cannot delete a mail footer in this domain "
 					+ actor.getDomainId());
 		mailFooterBusinessService.delete(val);
+		return val;
 	}
 
 	@Override
@@ -433,7 +436,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public void deleteLayout(User actor, String uuid) throws BusinessException {
+	public MailLayout deleteLayout(User actor, String uuid) throws BusinessException {
 		MailLayout val = mailLayoutBusinessService.findByUuid(uuid);
 
 		if (!permissionService.isAdminforThisDomain(actor, val.getDomain()))
@@ -441,6 +444,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 					+ actor + " cannot delete a mail layout in this domain "
 					+ actor.getDomainId());
 		mailLayoutBusinessService.delete(val);
+		return val;
 	}
 
 	@Override

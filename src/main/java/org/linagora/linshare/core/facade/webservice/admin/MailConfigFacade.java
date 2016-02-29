@@ -51,7 +51,7 @@ public interface MailConfigFacade extends AdminGenericFacade {
 
 	MailConfigDto update(MailConfigDto dto) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	MailConfigDto delete(String uuid) throws BusinessException;
 
 	Set<MailContentDto> findAllContents(String mailConfigUuid, String mailContentType,
 			String language) throws BusinessException;

@@ -50,5 +50,5 @@ public interface DomainPatternFacade extends AdminGenericFacade {
 
 	DomainPatternDto create(DomainPatternDto domainPatternDto) throws BusinessException;
 
-	void delete(DomainPatternDto domainPatternDto) throws BusinessException;
+	DomainPatternDto delete(DomainPatternDto domainPatternDto) throws BusinessException;
 }

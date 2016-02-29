@@ -96,7 +96,7 @@ public class MailActivationRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{mailActivationId}")
 	@HEAD
-	@ApiOperation(value = "Find a domain's mail activations.")
+	@ApiOperation(value = "Find a domain's mail activations.", response = FunctionalityAdminDto.class)
 	@Override
 	public void head(
 			@ApiParam(value = "Domain identifier.", required = false) @QueryParam(value = "domainId") String domainId,
@@ -107,7 +107,7 @@ public class MailActivationRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a domain's mail activations.")
+	@ApiOperation(value = "Update a domain's mail activations.", response = FunctionalityAdminDto.class)
 	@Override
 	public MailActivationAdminDto update(MailActivationAdminDto mailActivation)
 			throws BusinessException {

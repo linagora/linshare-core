@@ -121,10 +121,11 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void delete(String uuid) throws BusinessException {
+	public ThreadDto delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
 		Thread thread = threadService.find(actor, actor, uuid);
 		threadService.deleteThread(actor, actor, thread);
+		return new ThreadDto(thread);
 	}
 }

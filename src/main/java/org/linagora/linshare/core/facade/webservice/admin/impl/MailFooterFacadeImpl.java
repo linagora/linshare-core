@@ -87,9 +87,10 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void delete(String uuid) throws BusinessException {
+	public MailFooterDto delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		mailConfigService.deleteFooter(actor, uuid);
+		MailFooter footer = mailConfigService.deleteFooter(actor, uuid);
+		return new MailFooterDto(footer);
 	}
 
 	@Override

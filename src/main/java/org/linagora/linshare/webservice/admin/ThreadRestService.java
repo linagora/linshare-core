@@ -53,5 +53,5 @@ public interface ThreadRestService {
 
 	public ThreadDto update(ThreadDto thread) throws BusinessException;
 
-	public void delete(ThreadDto thread) throws BusinessException;
+	public ThreadDto delete(ThreadDto thread) throws BusinessException;
 }

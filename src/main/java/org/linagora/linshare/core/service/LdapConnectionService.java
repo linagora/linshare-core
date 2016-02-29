@@ -52,7 +52,7 @@ public interface LdapConnectionService {
 	public LdapConnection update(LdapConnection ldapConnection)
 			throws BusinessException;
 
-	public void delete(String uuid)
+	public LdapConnection delete(String uuid)
 			throws BusinessException;
 
 	public boolean isUsed(String uuid);

@@ -150,9 +150,10 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void delete(String identifier)
+	public DomainPolicyDto delete(String identifier)
 			throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		domainPolicyService.delete(identifier);
+		DomainPolicy policy = domainPolicyService.delete(identifier);
+		return new DomainPolicyDto(policy);
 	}
 }

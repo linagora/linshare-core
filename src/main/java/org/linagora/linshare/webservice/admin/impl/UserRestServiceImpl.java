@@ -197,25 +197,24 @@ public class UserRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete an user.")
+	@ApiOperation(value = "Delete an user.", response = UserDto.class)
 	@Override
-	public void delete(
+	public UserDto delete(
 			@ApiParam(value = "User to delete.", required = true) UserDto userDto)
 			throws BusinessException {
-		userFacade.delete(userDto);
+		return userFacade.delete(userDto);
 	}
 
 	@Path("/inconsistent")
 	@DELETE
-	@ApiOperation(value = "Delete an inconsistent user.")
+	@ApiOperation(value = "Delete an inconsistent user.", response = UserDto.class)
 	@Override
-	public void deleteInconsistent(
+	public UserDto deleteInconsistent(
 			@ApiParam(value = "User to delete.", required = true) UserDto userDto)
 			throws BusinessException {
-		userFacade.delete(userDto);
+		return userFacade.delete(userDto);
 	}
 
-	
 	@Path("/inconsistent")
 	@GET
 	@ApiOperation(value = "Find all inconsistent users.", response = UserDto.class, responseContainer = "Set")

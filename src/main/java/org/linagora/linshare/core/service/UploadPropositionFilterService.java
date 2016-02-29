@@ -52,6 +52,6 @@ public interface UploadPropositionFilterService {
 
 	UploadPropositionFilter update(Account actor, UploadPropositionFilter dto) throws BusinessException;
 
-	void delete(Account actor, String uuid) throws BusinessException;
+	UploadPropositionFilter delete(Account actor, String uuid) throws BusinessException;
 
 }

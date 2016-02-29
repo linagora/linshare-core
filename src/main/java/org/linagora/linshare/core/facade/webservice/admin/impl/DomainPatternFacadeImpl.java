@@ -99,10 +99,11 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 	}
 
 	@Override
-	public void delete(DomainPatternDto domainPatternDto) throws BusinessException {
+	public DomainPatternDto delete(DomainPatternDto domainPatternDto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainPatternDto.getUuid(), "domain pattern uuid must be set.");
-		userProviderService.deletePattern(domainPatternDto.getUuid());
+		UserLdapPattern pattern = userProviderService.deletePattern(domainPatternDto.getUuid());
+		return new DomainPatternDto(pattern);
 	}
 
 }

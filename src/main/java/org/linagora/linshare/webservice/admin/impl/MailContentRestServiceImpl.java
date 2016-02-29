@@ -109,7 +109,7 @@ public class MailContentRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a mail content.")
+	@ApiOperation(value = "Create a mail content.", response = MailContentDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public MailContentDto create(
@@ -120,7 +120,7 @@ public class MailContentRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a mail content.")
+	@ApiOperation(value = "Update a mail content.", response = MailContentDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public MailContentDto update(
@@ -131,12 +131,12 @@ public class MailContentRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete an unused mail content.")
+	@ApiOperation(value = "Delete an unused mail content.", response = MailContentDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void delete(
+	public MailContentDto delete(
 			@ApiParam(value = "Mail content to delete.", required = true) MailContentDto dto)
 			throws BusinessException {
-		mailContentFacade.delete(dto.getUuid());
+		return mailContentFacade.delete(dto.getUuid());
 	}
 }

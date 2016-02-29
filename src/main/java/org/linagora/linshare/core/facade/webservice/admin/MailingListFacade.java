@@ -50,7 +50,7 @@ public interface MailingListFacade extends AdminGenericFacade {
 
 	MailingListDto update(MailingListDto dto) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	MailingListDto delete(String uuid) throws BusinessException;
 
 	void addContact(String listUuid, MailingListContactDto dto)
 			throws BusinessException;

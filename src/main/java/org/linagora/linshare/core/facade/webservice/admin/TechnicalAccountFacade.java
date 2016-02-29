@@ -51,9 +51,9 @@ public interface TechnicalAccountFacade extends AdminGenericFacade {
 	TechnicalAccountDto update(TechnicalAccountDto dto)
 			throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	TechnicalAccountDto delete(String uuid) throws BusinessException;
 
-	void delete(TechnicalAccountDto dto) throws BusinessException;
+	TechnicalAccountDto delete(TechnicalAccountDto dto) throws BusinessException;
 
 	void changePassword(String uuid, PasswordDto password)
 			throws BusinessException;

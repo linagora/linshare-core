@@ -112,7 +112,7 @@ public class MimePolicyRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a mime policy.")
+	@ApiOperation(value = "Create a mime policy.", response = MimePolicyDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin."),
 			@ApiResponse(code = 400, message = "Invalid mime policy.") })
 	@Override
@@ -124,7 +124,7 @@ public class MimePolicyRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a mime policy.")
+	@ApiOperation(value = "Update a mime policy.", response = MimePolicyDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public MimePolicyDto update(
@@ -135,7 +135,7 @@ public class MimePolicyRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}/enable_all")
 	@PUT
-	@ApiOperation(value = "Set all mime types to enable for the current mime policy.")
+	@ApiOperation(value = "Set all mime types to enable for the current mime policy.", response = MimePolicyDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public MimePolicyDto enableAllMimeTypes(
@@ -146,7 +146,7 @@ public class MimePolicyRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}/disable_all")
 	@PUT
-	@ApiOperation(value = "Set all mime types to disable for the current mime policy.")
+	@ApiOperation(value = "Set all mime types to disable for the current mime policy.", response = MimePolicyDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public MimePolicyDto disableAllMimeTypes(
@@ -157,23 +157,23 @@ public class MimePolicyRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a mime policy.")
+	@ApiOperation(value = "Delete a mime policy.", response = MimePolicyDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void delete(
+	public MimePolicyDto delete(
 			@ApiParam(value = "Identifier of the mime policy to delete.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		mimePolicyFacade.delete(uuid);
+		return mimePolicyFacade.delete(uuid);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a mime policy.")
+	@ApiOperation(value = "Delete a mime policy.", response = MimePolicyDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void delete(
+	public MimePolicyDto delete(
 			@ApiParam(value = "Policy to delete.", required = true) MimePolicyDto policy)
 			throws BusinessException {
-		mimePolicyFacade.delete(policy.getUuid());
+		return mimePolicyFacade.delete(policy.getUuid());
 	}
 }

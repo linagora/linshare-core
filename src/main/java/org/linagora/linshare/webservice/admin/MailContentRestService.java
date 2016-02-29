@@ -51,5 +51,5 @@ public interface MailContentRestService {
 
 	MailContentDto update(MailContentDto dto) throws BusinessException;
 
-	void delete(MailContentDto dto) throws BusinessException;
+	MailContentDto delete(MailContentDto dto) throws BusinessException;
 }

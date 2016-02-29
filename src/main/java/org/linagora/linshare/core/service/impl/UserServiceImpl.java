@@ -171,7 +171,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void deleteUser(Account actor, String lsUuid)
+	public User deleteUser(Account actor, String lsUuid)
 			throws BusinessException {
 		User user = userRepository.findByLsUuid(lsUuid);
 
@@ -190,8 +190,10 @@ public class UserServiceImpl implements UserService {
 			} else {
 				setUserToDestroy(actor, user);
 			}
+			return user;
 		} else {
 			logger.debug("User not found in DB : " + lsUuid);
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "User not found in DB : " + lsUuid);
 		}
 	}
 

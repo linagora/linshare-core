@@ -109,7 +109,7 @@ public class MailLayoutRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a mail layout.")
+	@ApiOperation(value = "Create a mail layout.", response = MailLayoutDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public MailLayoutDto create(
@@ -120,7 +120,7 @@ public class MailLayoutRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a mail layout.")
+	@ApiOperation(value = "Update a mail layout.", response = MailLayoutDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public MailLayoutDto update(
@@ -131,12 +131,12 @@ public class MailLayoutRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete an unused mail layout.")
+	@ApiOperation(value = "Delete an unused mail layout.", response = MailLayoutDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void delete(
+	public MailLayoutDto delete(
 			@ApiParam(value = "Mail layout to delete.", required = true) MailLayoutDto dto)
 			throws BusinessException {
-		mailLayoutFacade.delete(dto.getUuid());
+		return mailLayoutFacade.delete(dto.getUuid());
 	}
 }

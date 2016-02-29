@@ -113,11 +113,12 @@ public class UploadPropositionFilterServiceImpl implements UploadPropositionFilt
 	}
 
 	@Override
-	public void delete(Account actor, String uuid) throws BusinessException {
+	public UploadPropositionFilter delete(Account actor, String uuid) throws BusinessException {
 		preChecks(actor);
 		Validate.notEmpty(uuid, "filter uuid is required");
 		UploadPropositionFilter entity = find(actor, uuid);
 		businessService.delete(entity);
+		return entity;
 	}
 
 	void preChecks(Account actor) {

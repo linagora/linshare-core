@@ -107,7 +107,7 @@ public class MailingListRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a mailing list.")
+	@ApiOperation(value = "Create a mailing list.", response = MailingListDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public MailingListDto create(
@@ -118,7 +118,7 @@ public class MailingListRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a mailing list.")
+	@ApiOperation(value = "Update a mailing list.", response = MailingListDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public MailingListDto update(
@@ -129,23 +129,23 @@ public class MailingListRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a mailing list.")
+	@ApiOperation(value = "Delete a mailing list.", response = MailingListDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void delete(@PathParam(value = "Mailing list to delete.") String uuid)
+	public MailingListDto delete(@PathParam(value = "Mailing list to delete.") String uuid)
 			throws BusinessException {
-		mailingListFacade.delete(uuid);
+		return mailingListFacade.delete(uuid);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a mailing list.")
+	@ApiOperation(value = "Delete a mailing list.", response = MailingListDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void delete(
+	public MailingListDto delete(
 			@ApiParam(value = "Mailing list to delete.", required = true) MailingListDto dto)
 			throws BusinessException {
-		mailingListFacade.delete(dto.getUuid());
+		return mailingListFacade.delete(dto.getUuid());
 	}
 
 	@Path("/{uuid}/contacts")

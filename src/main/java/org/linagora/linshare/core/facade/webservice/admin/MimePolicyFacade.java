@@ -42,7 +42,7 @@ public interface MimePolicyFacade extends AdminGenericFacade {
 
 	MimePolicyDto create(MimePolicyDto dto) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	MimePolicyDto delete(String uuid) throws BusinessException;
 
 	MimePolicyDto find(String uuid, boolean full) throws BusinessException;
 

@@ -108,7 +108,7 @@ public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a filter.")
+	@ApiOperation(value = "Create a filter.", response = UploadPropositionFilterDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin.") })
 	@Override
 	public UploadPropositionFilterDto create(UploadPropositionFilterDto filter)
@@ -118,7 +118,7 @@ public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a filter.")
+	@ApiOperation(value = "Update a filter.", response = UploadPropositionFilterDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin.") })
 	@Override
 	public UploadPropositionFilterDto update(UploadPropositionFilterDto filter)
@@ -128,10 +128,11 @@ public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a filter.")
+	@ApiOperation(value = "Delete a filter.", response = UploadPropositionFilterDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void delete(UploadPropositionFilterDto filter) throws BusinessException {
-		uploadPropositionFilterFacade.delete(filter.getUuid());
+	public UploadPropositionFilterDto delete(UploadPropositionFilterDto filter) throws BusinessException {
+		UploadPropositionFilterDto ret = uploadPropositionFilterFacade.delete(filter.getUuid());
+		return ret;
 	}
 }

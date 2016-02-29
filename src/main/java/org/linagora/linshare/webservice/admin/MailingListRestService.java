@@ -52,9 +52,9 @@ public interface MailingListRestService {
 
 	MailingListDto update(MailingListDto dto) throws BusinessException;
 
-	void delete(MailingListDto dto) throws BusinessException;
+	MailingListDto delete(MailingListDto dto) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	MailingListDto delete(String uuid) throws BusinessException;
 
 	void createContact(String uuid, MailingListContactDto dto)
 			throws BusinessException;

@@ -79,9 +79,10 @@ public interface UserService {
 	 * @param uuid
 	 * @param checkOwnership : if true, check that the owner is the creator of the user
 	 * 			useful for the batch
+	 * @return TODO
 	 * @throws BusinessException 
 	 */
-	void deleteUser(Account actor, String uuid) throws BusinessException;
+	User deleteUser(Account actor, String uuid) throws BusinessException;
 
 	/**
 	 * Delete all users from domain (and all the related data )

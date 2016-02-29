@@ -98,7 +98,7 @@ public class LdapConnectionServiceImpl implements LdapConnectionService {
 	}
 
 	@Override
-	public void delete(String uuid) throws BusinessException {
+	public LdapConnection delete(String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Ldap connection uuid must be set.");
 		LdapConnection ldapConnection = find(uuid);
 		if (ldapConnectionRepository.isUsed(ldapConnection)) {
@@ -106,13 +106,9 @@ public class LdapConnectionServiceImpl implements LdapConnectionService {
 					BusinessErrorCode.LDAP_CONNECTION_STILL_IN_USE,
 					"Cannot delete connection because still used by domains");
 		}
-		LdapConnection conn = find(uuid);
-		if (conn == null) {
-			logger.error("Ldap connexion not found: " + uuid);
-		} else {
-			logger.debug("delete ldap connexion : " + uuid);
-			ldapConnectionRepository.delete(conn);
-		}
+		logger.debug("delete ldap connexion : " + uuid);
+		ldapConnectionRepository.delete(ldapConnection);
+		return ldapConnection;
 	}
 
 	@Override

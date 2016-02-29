@@ -125,7 +125,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 	}
 
 	@Override
-	public void deletePattern(String patternToDelete) throws BusinessException {
+	public UserLdapPattern deletePattern(String patternToDelete) throws BusinessException {
 		UserLdapPattern pattern = findDomainPattern(patternToDelete);
 		if (isUsed(pattern)) {
 			throw new BusinessException(
@@ -133,6 +133,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 					"Cannot delete pattern because still used by domains");
 		}
 		domainPatternRepository.delete(pattern);
+		return pattern;
 	}
 
 	public boolean isUsed(UserLdapPattern pattern) {

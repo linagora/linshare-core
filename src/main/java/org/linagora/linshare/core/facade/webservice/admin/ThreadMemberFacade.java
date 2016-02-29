@@ -45,5 +45,5 @@ public interface ThreadMemberFacade extends AdminGenericFacade {
 
 	ThreadMemberDto update(ThreadMemberDto dto) throws BusinessException;
 
-	void delete(ThreadMemberDto dto) throws BusinessException;
+	ThreadMemberDto delete(ThreadMemberDto dto) throws BusinessException;
 }

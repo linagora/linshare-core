@@ -50,5 +50,5 @@ public interface LDAPConnectionRestService {
 
 	LdapConnectionDto create(LdapConnectionDto ldapConnection) throws BusinessException;
 
-	void delete(LdapConnectionDto ldapConnection) throws BusinessException;
+	LdapConnectionDto delete(LdapConnectionDto ldapConnection) throws BusinessException;
 }

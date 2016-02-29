@@ -56,8 +56,8 @@ public interface TechnicalAccountRestService {
 	void changePassword(String uuid, PasswordDto password)
 			throws BusinessException;
 
-	void delete(TechnicalAccountDto account) throws BusinessException;
+	TechnicalAccountDto delete(TechnicalAccountDto account) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	TechnicalAccountDto delete(String uuid) throws BusinessException;
 
 }

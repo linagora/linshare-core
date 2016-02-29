@@ -49,5 +49,5 @@ public interface UploadPropositionFilterFacade extends AdminGenericFacade {
 
 	UploadPropositionFilterDto update(UploadPropositionFilterDto filter) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	UploadPropositionFilterDto delete(String uuid) throws BusinessException;
 }

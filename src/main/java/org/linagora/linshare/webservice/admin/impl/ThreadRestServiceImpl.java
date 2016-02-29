@@ -116,7 +116,7 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a thread.")
+	@ApiOperation(value = "Update a thread.", response = ThreadDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
 	public ThreadDto update(ThreadDto thread) throws BusinessException {
@@ -125,10 +125,10 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a thread.")
+	@ApiOperation(value = "Delete a thread.", response = ThreadDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public void delete(ThreadDto thread) throws BusinessException {
-		threadFacade.delete(thread.getUuid());
+	public ThreadDto delete(ThreadDto thread) throws BusinessException {
+		return threadFacade.delete(thread.getUuid());
 	}
 }

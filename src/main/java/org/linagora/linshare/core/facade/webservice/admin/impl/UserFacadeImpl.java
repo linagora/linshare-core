@@ -173,11 +173,12 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void delete(UserDto userDto) throws BusinessException {
+	public UserDto delete(UserDto userDto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		String uuid = userDto.getUuid();
 		Validate.notEmpty(uuid, "user unique identifier must be set.");
-		userService.deleteUser(actor, uuid);
+		User user = userService.deleteUser(actor, uuid);
+		return UserDto.getFull(user);
 	}
 
 	@Override

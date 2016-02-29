@@ -48,5 +48,5 @@ public interface LdapConnectionFacade extends AdminGenericFacade {
 
 	LdapConnectionDto create(LdapConnectionDto LDAPConnectionDto) throws BusinessException;
 
-	void delete(LdapConnectionDto LDAPConnectionDto) throws BusinessException;
+	LdapConnectionDto delete(LdapConnectionDto LDAPConnectionDto) throws BusinessException;
 }

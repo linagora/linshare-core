@@ -51,6 +51,6 @@ public interface UploadPropositionFilterRestService {
 
 	UploadPropositionFilterDto update(UploadPropositionFilterDto filter) throws BusinessException;
 
-	void delete(UploadPropositionFilterDto filter) throws BusinessException;
+	UploadPropositionFilterDto delete(UploadPropositionFilterDto filter) throws BusinessException;
 
 }

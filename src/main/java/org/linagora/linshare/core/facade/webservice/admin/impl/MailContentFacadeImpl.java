@@ -89,9 +89,10 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void delete(String uuid) throws BusinessException {
+	public MailContentDto delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		mailConfigService.deleteContent(actor, uuid);
+		MailContent content = mailConfigService.deleteContent(actor, uuid);
+		return new MailContentDto(content);
 	}
 
 	@Override

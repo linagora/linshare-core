@@ -105,7 +105,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a domain.")
+	@ApiOperation(value = "Create a domain.", response = DomainDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
 	public DomainDto create(DomainDto domain) throws BusinessException {
@@ -114,7 +114,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a domain.")
+	@ApiOperation(value = "Update a domain.", response = DomainDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
 	public DomainDto update(DomainDto domain) throws BusinessException {
@@ -123,20 +123,20 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a domain.")
+	@ApiOperation(value = "Delete a domain.", response = DomainDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void delete(DomainDto domain) throws BusinessException {
-		domainFacade.delete(domain);
+	public DomainDto delete(DomainDto domain) throws BusinessException {
+		return domainFacade.delete(domain);
 	}
 
 	@Path("/{domainId}")
 	@DELETE
-	@ApiOperation(value = "Delete a domain.")
+	@ApiOperation(value = "Delete a domain.", response = DomainDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void delete(@PathParam(value = "domainId") String domainId) throws BusinessException {
-		domainFacade.delete(domainId);
+	public DomainDto delete(@PathParam(value = "domainId") String domainId) throws BusinessException {
+		return domainFacade.delete(domainId);
 	}
 
 }

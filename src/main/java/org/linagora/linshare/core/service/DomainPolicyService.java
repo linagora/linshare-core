@@ -49,7 +49,7 @@ public interface DomainPolicyService {
 
 	public List<DomainPolicy> findAll() throws BusinessException;
 
-	public void delete(String policyToDelete) throws BusinessException;
+	public DomainPolicy delete(String policyToDelete) throws BusinessException;
 
 	public boolean policyIsDeletable(String policyToDelete);
 

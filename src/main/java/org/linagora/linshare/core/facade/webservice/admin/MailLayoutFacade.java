@@ -46,7 +46,7 @@ public interface MailLayoutFacade {
 
 	MailLayoutDto update(MailLayoutDto dto) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	MailLayoutDto delete(String uuid) throws BusinessException;
 
 	Set<MailLayoutDto> findAll(String domainIdentifier, boolean only) throws BusinessException;
 }

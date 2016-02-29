@@ -408,7 +408,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			domain.getFunctionalities().remove(rawFunc);
 			abstractDomainRepository.update(domain);
 		} else {
-			logger.warn("You are trying to delete the functionality "  + domainId + " : " + functionalityId + " which does not belong to the current domain : " + functionality.getDomain().getIdentifier());
+			logger.warn("You are currently in the domain : " + domainId + ". The functionaliy : " + functionalityId + ", you are trying to delete, belongs to the domain : " + functionality.getDomain().getIdentifier() + ".");
 		}
 	}
 

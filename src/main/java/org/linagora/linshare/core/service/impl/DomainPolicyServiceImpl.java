@@ -65,8 +65,8 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	}
 
 	@Override
-	public void delete(String policyToDelete) throws BusinessException {
-		domainPolicyBusinessService.delete(policyToDelete);
+	public DomainPolicy delete(String policyToDelete) throws BusinessException {
+		return domainPolicyBusinessService.delete(policyToDelete);
 	}
 
 	@Override

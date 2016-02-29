@@ -95,9 +95,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
+	 * @return TODO
 	 * @throws BusinessException
 	 */
-	void deleteConfig(User actor, String uuid) throws BusinessException;
+	MailConfig deleteConfig(User actor, String uuid) throws BusinessException;
 
 	/**
 	 * Find all mail contents visible by this domain.
@@ -159,9 +160,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
+	 * @return TODO
 	 * @throws BusinessException
 	 */
-	void deleteContent(User actor, String uuid) throws BusinessException;
+	MailContent deleteContent(User actor, String uuid) throws BusinessException;
 
 	/**
 	 * Find a mail content lang.
@@ -247,9 +249,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
+	 * @return TODO
 	 * @throws BusinessException
 	 */
-	void deleteFooter(User actor, String uuid) throws BusinessException;
+	MailFooter deleteFooter(User actor, String uuid) throws BusinessException;
 
 	/**
 	 * Find a mail footer lang.
@@ -334,9 +337,10 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
+	 * @return TODO
 	 * @throws BusinessException
 	 */
-	void deleteLayout(User actor, String uuid) throws BusinessException;
+	MailLayout deleteLayout(User actor, String uuid) throws BusinessException;
 
 	/**
 	 * Check permissions for this user on a mail configuration.

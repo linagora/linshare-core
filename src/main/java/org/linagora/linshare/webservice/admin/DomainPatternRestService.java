@@ -52,5 +52,5 @@ public interface DomainPatternRestService {
 
 	DomainPatternDto create(DomainPatternDto domainPattern) throws BusinessException;
 
-	void delete(DomainPatternDto domainPattern) throws BusinessException;
+	DomainPatternDto delete(DomainPatternDto domainPattern) throws BusinessException;
 }

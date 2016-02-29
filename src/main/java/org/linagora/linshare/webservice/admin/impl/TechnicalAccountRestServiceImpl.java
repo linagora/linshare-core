@@ -102,7 +102,7 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a technical account.")
+	@ApiOperation(value = "Update a technical account.", response = TechnicalAccountDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
 	public TechnicalAccountDto update(TechnicalAccountDto account)
@@ -112,7 +112,7 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a technical account.")
+	@ApiOperation(value = "Create a technical account.", response = TechnicalAccountDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
 	public TechnicalAccountDto create(TechnicalAccountDto account)
@@ -122,7 +122,7 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}/change_password")
 	@POST
-	@ApiOperation(value = "Change the password of a technical account.")
+	@ApiOperation(value = "Change the password of a technical account.", response = TechnicalAccountDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
 	public void changePassword(@PathParam(value = "uuid") String uuid, PasswordDto password) throws BusinessException {
@@ -131,19 +131,19 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a technical account.")
+	@ApiOperation(value = "Delete a technical account.", response = TechnicalAccountDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void delete(TechnicalAccountDto account) throws BusinessException {
-		technicalAccountFacade.delete(account);
+	public TechnicalAccountDto delete(TechnicalAccountDto account) throws BusinessException {
+		return technicalAccountFacade.delete(account);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a technical account.")
+	@ApiOperation(value = "Delete a technical account.", response = TechnicalAccountDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void delete(@PathParam(value = "uuid") String uuid) throws BusinessException {
-		technicalAccountFacade.delete(uuid);
+	public TechnicalAccountDto delete(@PathParam(value = "uuid") String uuid) throws BusinessException {
+		return technicalAccountFacade.delete(uuid);
 	}
 }

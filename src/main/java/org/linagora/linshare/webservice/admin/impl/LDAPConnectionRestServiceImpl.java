@@ -110,7 +110,7 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a LDAP connection.")
+	@ApiOperation(value = "Update a LDAP connection.", response = LdapConnectionDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
 	public LdapConnectionDto update(LdapConnectionDto LDAPConnection)
@@ -120,11 +120,11 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a LDAP connection.")
+	@ApiOperation(value = "Delete a LDAP connection.", response = LdapConnectionDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public void delete(LdapConnectionDto LDAPConnection)
+	public LdapConnectionDto delete(LdapConnectionDto LDAPConnection)
 			throws BusinessException {
-		ldapConnectionFacade.delete(LDAPConnection);
+		return ldapConnectionFacade.delete(LDAPConnection);
 	}
 }

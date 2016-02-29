@@ -50,5 +50,5 @@ public interface MailLayoutRestService {
 
 	MailLayoutDto update(MailLayoutDto dto) throws BusinessException;
 
-	void delete(MailLayoutDto dto) throws BusinessException;
+	MailLayoutDto delete(MailLayoutDto dto) throws BusinessException;
 }

@@ -235,19 +235,21 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void delete(DomainDto domainDto) throws BusinessException {
+	public DomainDto delete(DomainDto domainDto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainDto.getIdentifier(),
 				"domain identifier must be set.");
-		userAndDomainMultiService.deleteDomainAndUsers(actor, domainDto.getIdentifier());
+		AbstractDomain domain = userAndDomainMultiService.deleteDomainAndUsers(actor, domainDto.getIdentifier());
+		return DomainDto.getFull(domain);
 	}
 
 	@Override
-	public void delete(String domainId) throws BusinessException {
+	public DomainDto delete(String domainId) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainId,
 				"domain identifier must be set.");
-		userAndDomainMultiService.deleteDomainAndUsers(actor, domainId);
+		AbstractDomain domain = userAndDomainMultiService.deleteDomainAndUsers(actor, domainId);
+		return DomainDto.getFull(domain);
 	}
 
 	private AbstractDomain getDomain(DomainDto domainDto)

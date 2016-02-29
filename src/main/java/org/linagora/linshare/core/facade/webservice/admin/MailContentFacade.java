@@ -46,7 +46,7 @@ public interface MailContentFacade {
 
 	MailContentDto update(MailContentDto dto) throws BusinessException;
 
-	void delete(String uuid) throws BusinessException;
+	MailContentDto delete(String uuid) throws BusinessException;
 
 	Set<MailContentDto> findAll(String domainIdentifier, boolean only) throws BusinessException;
 }
