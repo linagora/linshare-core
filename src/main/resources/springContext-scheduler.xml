@@ -108,7 +108,9 @@
         <property name="jobClass" value="org.linagora.linshare.core.job.quartz.UpdateUploadRequest"/>
         <property name="jobDataAsMap">
             <map>
-                <entry key="batch" value-ref="uploadRequestBatch"/>
+                <entry key="batch" value-ref="enableUploadRequestBatch"/>
+                <entry key="batch" value-ref="closeExpiredUploadRequestBatch"/>
+                <entry key="batch" value-ref="notifyBeforeExpirationUploadRequestBatch"/>
             </map>
         </property>
     </bean>

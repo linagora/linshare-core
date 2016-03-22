@@ -34,11 +34,13 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -110,5 +112,48 @@ public class UploadRequestRepositoryImpl extends
 	public UploadRequest update(UploadRequest entity) throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
+	}
+
+	@Override
+	public List<String> findOutdatedRequests() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
+		crit.add(Restrictions.lt("expiryDate", new Date()));
+		crit.add(Restrictions.eq("status", UploadRequestStatus.STATUS_ENABLED));
+		crit.setProjection(Projections.property("uuid"));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(crit);
+		return list;
+	}
+
+	@Override
+	public List<String> findUnabledRequests() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
+		crit.add(Restrictions.lt("activationDate", new Date()));
+		crit.add(Restrictions.eq("status", UploadRequestStatus.STATUS_CREATED));
+		crit.setProjection(Projections.property("uuid"));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(crit);
+		return list;
+	}
+
+	@Override
+	public List<String> findAllRequestsToBeNotified() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.set(GregorianCalendar.HOUR_OF_DAY, 0);
+		gc.set(GregorianCalendar.MINUTE, 0);
+		gc.set(GregorianCalendar.SECOND, 0);
+		gc.set(GregorianCalendar.MILLISECOND, 0);
+		Date before = gc.getTime();
+		gc.add(GregorianCalendar.DAY_OF_MONTH, 1);
+		Date after = gc.getTime();
+		crit.add(Restrictions.lt("notificationDate", after));
+		crit.add(Restrictions.gt("notificationDate", before));
+		crit.add(Restrictions.ltProperty("notificationDate", "expiryDate"));
+		crit.add(Restrictions.eq("status", UploadRequestStatus.STATUS_ENABLED));
+		crit.setProjection(Projections.property("uuid"));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(crit);
+		return list;
 	}
 }

@@ -222,6 +222,17 @@ public class TestPopup {
 	@Inject
 	private GenericBatch purgeUserBatch;
 
+	@Service("enableUploadRequestBatch")
+	@Inject
+	private GenericBatch enableUploadRequestBatch;
+
+	@Service("closeExpiredUploadRequestBatch")
+	@Inject
+	private GenericBatch closeExpiredUploadRequestBatch;
+
+	@Service("notifyBeforeExpirationUploadRequestBatch")
+	@Inject
+	private GenericBatch notifyBeforeExpirationUploadRequestBatch;
 
 	@Inject
 	private ApplicationContext context;
@@ -240,7 +251,10 @@ public class TestPopup {
 			"deleteExpiredAnonymousShareEntryBatch",
 			"deleteExpiredAnonymousUrlBatch",
 			"deleteExpiredDocumentEntryBatch",
-			"deleteMissingDocumentsBatch");
+			"deleteMissingDocumentsBatch",
+			"enableUploadRequestBatch",
+			"closeExpiredUploadRequestBatch",
+			"notifyBeforeExpirationUploadRequestBatch");
 	}
 
 	void onActionFromRemoveAllExpiredShares()
@@ -282,7 +296,9 @@ public class TestPopup {
 	void onActionFromUploadRequestUpdateStatus()
 	{
 		logger.debug("begin method onActionFromUploadRequestUpdateStatus");
-		uploadRequestBatch.updateStatus();
+//		uploadRequestBatch.updateStatus();
+		runBatch(closeExpiredUploadRequestBatch);
+		runBatch(enableUploadRequestBatch);
 		logger.debug("endmethod onActionFromUploadRequestUpdateStatus");
 	}
 
