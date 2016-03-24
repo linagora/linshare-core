@@ -96,8 +96,8 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		sender.getEntries().add(shareEntity);
 		
 		documentEntryRepository.update(documentEntry);
-		accountService.update(recipient);
-		accountService.update(sender);
+//		accountService.update(recipient);
+//		accountService.update(sender);
 		
 		
 		return shareEntity;
@@ -119,8 +119,8 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		sender.getEntries().remove(share);
 		
 		documentEntryRepository.update(documentEntry);
-		accountService.update(recipient);
-		accountService.update(sender);
+//		accountService.update(recipient);
+//		accountService.update(sender);
 	}
 
 

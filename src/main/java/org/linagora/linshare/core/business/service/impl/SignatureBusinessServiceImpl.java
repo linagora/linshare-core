@@ -96,10 +96,10 @@ public class SignatureBusinessServiceImpl implements SignatureBusinessService {
 			signatureRepository.create(entity);
 			
 			document.getSignatures().add(entity);
-			documentRepository.update(document);
+//			documentRepository.update(document);
 			
 			owner.getSignatures().add(entity);
-			accountRepository.update(owner);
+//			accountRepository.update(owner);
 			
 
 		} catch (BusinessException e) {

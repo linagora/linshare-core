@@ -110,7 +110,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		documentEntry.getAnonymousShareEntries().add(anonymousShare);
 		sender.getEntries().add(anonymousShare);
 		documentEntryRepository.update(documentEntry);
-		accountService.update(sender);
+//		accountService.update(sender);
 		
 		return anonymousShare;
 	}
@@ -147,7 +147,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		sender.getEntries().remove(anonymousShare);
 		
 		documentEntryRepository.update(documentEntry);
-		accountService.update(sender);
+//		accountService.update(sender);
 	}
 
 	

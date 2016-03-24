@@ -127,7 +127,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			entity = documentEntryRepository.create(docEntry);
 			
 			owner.getEntries().add(entity);
-			accountRepository.update(owner);
+//			accountRepository.update(owner);
 			
 
 		} catch (BusinessException e) {
@@ -325,8 +325,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		logger.debug("Deleting document entry: " + documentEntry.getUuid());
 		Account owner = documentEntry.getEntryOwner();
 		owner.getEntries().remove(documentEntry);
-		accountRepository.update(owner);
-
+//		accountRepository.update(owner);
 		Document doc = documentEntry.getDocument(); 
 		documentEntryRepository.delete(documentEntry);
 		doc.setDocumentEntry(null);
@@ -350,7 +349,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			entity = threadEntryRepository.create(docEntry);
 			
 			owner.getEntries().add(entity);
-			accountRepository.update(owner);
+//			accountRepository.update(owner);
 			
 
 		} catch (BusinessException e) {
