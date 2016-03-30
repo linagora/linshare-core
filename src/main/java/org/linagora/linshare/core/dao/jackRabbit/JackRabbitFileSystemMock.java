@@ -37,6 +37,7 @@ package org.linagora.linshare.core.dao.jackRabbit;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.jcr.NodeIterator;
 

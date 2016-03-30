@@ -106,4 +106,19 @@ public class UploadRequestBusinessServiceImpl implements
 	public void delete(UploadRequest req) throws BusinessException {
 		uploadRequestRepository.delete(req);
 	}
+
+	@Override
+	public List<String> findOutdatedRequests() throws BusinessException {
+		return uploadRequestRepository.findOutdatedRequests();
+	}
+
+	@Override
+	public List<String> findUnabledRequests() throws BusinessException {
+		return uploadRequestRepository.findUnabledRequests();
+	}
+
+	@Override
+	public List<String> findAllRequestsToBeNotified() throws BusinessException {
+		return uploadRequestRepository.findAllRequestsToBeNotified();
+	}
 }

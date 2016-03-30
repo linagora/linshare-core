@@ -35,21 +35,14 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface InconsistentUserService {
 
-	/**
-	 * Search for users that are internals and in the DB but not in any valid
-	 * domain (=removed from ldap).
-	 * 
-	 * @param actor the actor must be superadmin
-	 * @return a list of inconsistent users
-	 * @throws BusinessException TODO
-	 */
-	List<Internal> findAll(User actor) throws BusinessException;
+	List<Internal> findAllInconsistent(User actor) throws BusinessException;
 
 	/**
 	 * Update an inconsistent user's domain.
@@ -62,4 +55,6 @@ public interface InconsistentUserService {
 	 */
 	void updateDomain(User actor, String uuid, String domain)
 			throws BusinessException;
+
+	List<String> findAllUserUuids(Account actor) throws BusinessException;
 }

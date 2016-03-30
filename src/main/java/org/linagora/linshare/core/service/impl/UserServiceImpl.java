@@ -949,7 +949,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User updateUser(User actor, User updatedUser, String domainId)
+	public User updateUser(Account actor, User updatedUser, String domainId)
 			throws BusinessException {
 		User user = find(updatedUser, domainId);
 		Assert.notNull(updatedUser.getRole());

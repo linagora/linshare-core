@@ -186,7 +186,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Set<UserDto> ret = Sets.newHashSet();
 
-		for (User user : inconsistentUserService.findAll(actor)) {
+		for (User user : inconsistentUserService.findAllInconsistent(actor)) {
 			ret.add(UserDto.getFull(user));
 		}
 		return ret;

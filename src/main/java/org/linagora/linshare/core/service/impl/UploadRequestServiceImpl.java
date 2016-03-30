@@ -809,4 +809,28 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		uploadRequestTemplateBusinessService.delete(template);
 		return template;
 	}
+
+	@Override
+	public List<String> findOutdatedRequests(Account actor) {
+		checkActorPermission(actor);
+		return uploadRequestBusinessService.findOutdatedRequests();
+	}
+
+	@Override
+	public List<String> findUnabledRequests(Account actor) {
+		checkActorPermission(actor);
+		return uploadRequestBusinessService.findUnabledRequests();
+	}
+
+	@Override
+	public List<String> findAllRequestsToBeNotified(Account actor) {
+		checkActorPermission(actor);
+		return uploadRequestBusinessService.findAllRequestsToBeNotified();
+	}
+
+	private void checkActorPermission(Account actor) {
+		if (!actor.hasAllRights()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You have no rights to access this service.");
+		}
+	}
 }

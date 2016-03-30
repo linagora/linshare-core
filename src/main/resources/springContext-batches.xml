@@ -100,7 +100,6 @@
 	<bean name="enableUploadRequestBatch"
 		class="org.linagora.linshare.core.batches.impl.EnableUploadRequestBatchImpl">
 		<constructor-arg ref="accountRepository" />
-		<constructor-arg ref="uploadRequestRepository" />
 		<constructor-arg ref="uploadRequestService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
@@ -109,7 +108,6 @@
 	<bean name="closeExpiredUploadRequestBatch"
 		class="org.linagora.linshare.core.batches.impl.CloseExpiredUploadRequestBatchImpl">
 		<constructor-arg ref="accountRepository" />
-		<constructor-arg ref="uploadRequestRepository" />
 		<constructor-arg ref="uploadRequestService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
@@ -118,9 +116,17 @@
 	<bean name="notifyBeforeExpirationUploadRequestBatch"
 		class="org.linagora.linshare.core.batches.impl.NotifyBeforeExpirationUploadRequestBatchImpl">
 		<constructor-arg ref="accountRepository" />
-		<constructor-arg ref="uploadRequestRepository" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="uploadRequestService" />
+	</bean>
+
+	<bean name="inconsistentUserBatch"
+		class="org.linagora.linshare.core.batches.impl.InconsistentUserBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="inconsistentUserService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="abstractDomainService" />
 	</bean>
 
 </beans>

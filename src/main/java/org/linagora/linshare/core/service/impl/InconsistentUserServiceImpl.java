@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -45,8 +46,6 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.InconsistentUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 public class InconsistentUserServiceImpl implements InconsistentUserService {
 
@@ -91,20 +90,17 @@ public class InconsistentUserServiceImpl implements InconsistentUserService {
 	}
 
 	@Override
-	public List<Internal> findAll(User actor) throws BusinessException {
+	public List<Internal> findAllInconsistent(User actor) throws BusinessException {
 		checkPermissions(actor);
+		return internateRepository.findAllInconsistent();
+	}
 
-		List<Internal> users = internateRepository.findAll();
-		List<Internal> ret = Lists.newArrayList();
-
-		logger.info("Searching for inconsitent users");
-		for (Internal user : users) {
-			if (!abstractDomainService.isUserExist(user.getDomain(),
-					user.getMail())) {
-				ret.add(user);
-			}
+	@Override
+	public List<String> findAllUserUuids(Account actor) throws BusinessException {
+		if (!actor.hasAllRights()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor has no rights to use this service.");
 		}
-		return ret;
+		return internateRepository.findAllUserUuids();
 	}
 
 	private void checkPermissions(User actor) throws BusinessException {

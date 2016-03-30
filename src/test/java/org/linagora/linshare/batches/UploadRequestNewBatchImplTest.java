@@ -121,7 +121,7 @@ public class UploadRequestNewBatchImplTest extends
 		l = notifyBeforeExpirationUploadResquestBatch.getAll();
 		Assert.assertEquals(l.size(), 3);
 		for (i = 0; i < l.size(); i++) {
-			c = enableUploadResquestBatch.execute(l.get(i), l.size(), i);
+			c = notifyBeforeExpirationUploadResquestBatch.execute(l.get(i), l.size(), i);
 			Assert.assertEquals(c.getIdentifier(), l.get(i));
 			u = uploadRequestRepository.findByUuid(l.get(i));
 			Assert.assertEquals(u.getUuid(), l.get(i));

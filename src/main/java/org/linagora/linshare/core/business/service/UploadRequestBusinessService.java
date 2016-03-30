@@ -60,4 +60,10 @@ public interface UploadRequestBusinessService {
 	UploadRequest update(UploadRequest req, UploadRequest object) throws BusinessException;
 
 	void delete(UploadRequest req) throws BusinessException;
+
+	List<String> findOutdatedRequests() throws BusinessException;
+
+	List<String> findUnabledRequests() throws BusinessException;
+
+	List<String> findAllRequestsToBeNotified() throws BusinessException;
 }

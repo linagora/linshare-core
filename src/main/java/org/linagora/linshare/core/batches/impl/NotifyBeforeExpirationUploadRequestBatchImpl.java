@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.batches.NotifyBeforeExpirationUploadRequestBatch;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
@@ -47,34 +48,35 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.job.quartz.UploadRequestBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.repository.UploadRequestRepository;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.UploadRequestService;
 
 import com.google.common.collect.Lists;
 
 public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchImpl
 		implements NotifyBeforeExpirationUploadRequestBatch {
 
-	private final UploadRequestRepository uploadRequestRepository;
 	private final MailBuildingService mailBuildingService;
 	private final NotifierService notifierService;
+	private final UploadRequestService service;
 
 	public NotifyBeforeExpirationUploadRequestBatchImpl(
 			AccountRepository<Account> accountRepository,
-			final UploadRequestRepository uploadRequestRepository,
 			final MailBuildingService mailBuildingService,
-			final NotifierService notifierService) {
+			final NotifierService notifierService,
+			final UploadRequestService service) {
 		super(accountRepository);
-		this.uploadRequestRepository = uploadRequestRepository;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
+		this.service  = service;
 	}
 
 	@Override
 	public List<String> getAll() {
+		SystemAccount account = getSystemAccount();
 		logger.info(getClass().toString() + " job starting ...");
-		List<String> entries = uploadRequestRepository.findAllRequestsToBeNotified();
+		List<String> entries = service.findAllRequestsToBeNotified(account);
 		logger.info(entries.size() + " Upload Request(s) have been found to be enabled");
 		return entries;
 	}
@@ -83,7 +85,7 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 	public Context execute(String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
-		UploadRequest r = uploadRequestRepository.findByUuid(identifier);
+		UploadRequest r = service.findRequestByUuid(getSystemAccount(), identifier);
 		Context context = new UploadRequestBatchResultContext(r);
 		for (UploadRequestUrl u : r.getUploadRequestURLs()) {
 			notifications.add(mailBuildingService.buildUploadRequestBeforeExpiryWarnRecipient((User) r.getOwner(), u));

@@ -34,7 +34,14 @@
 
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.Internal;
+import org.linagora.linshare.core.exception.BusinessException;
 
 public interface InternalRepository extends UserRepository<Internal> {
+
+	List<Internal> findAllInconsistent() throws BusinessException;
+
+	List<String> findAllUserUuids() throws BusinessException;
 }

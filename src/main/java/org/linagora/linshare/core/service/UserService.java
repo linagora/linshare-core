@@ -225,7 +225,7 @@ public interface UserService {
 	 * 
 	 * @throws BusinessException
 	 */
-	User updateUser(User actor, User updatedUser, String domainId) throws BusinessException;
+	User updateUser(Account actor, User updatedUser, String domainId) throws BusinessException;
 
 	/**
 	 * Find destroyed accounts

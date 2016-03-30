@@ -37,8 +37,10 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Internal;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.InternalRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
@@ -102,6 +104,25 @@ public class InternalRepositoryImpl extends GenericUserRepositoryImpl<Internal>
 			u = findByDomainAndLdapUid(domain, login);
 		}
 		return u;
+	}
+
+	@Override
+	public List<Internal> findAllInconsistent() throws BusinessException {
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("inconsistent", true));
+		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<String> findAllUserUuids() throws BusinessException {
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("lsUuid"));
+		criteria.add(Restrictions.eq("destroyed", false));
+		@SuppressWarnings("unchecked")
+		List<String> uuids = listByCriteria(criteria);
+		return uuids;
 	}
 
 	private Internal findByDomainAndLdapUid(String domain, String ldapUid) {

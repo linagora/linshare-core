@@ -49,7 +49,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.job.quartz.UploadRequestBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.repository.UploadRequestRepository;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestService;
@@ -58,19 +57,16 @@ import com.google.common.collect.Lists;
 
 public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl implements CloseExpiredUploadRequestBatch {
 
-	private final UploadRequestRepository uploadRequestRepository;
 	private final UploadRequestService uploadRequestService;
 	private final MailBuildingService mailBuildingService;
 	private final NotifierService notifierService;
 
 	public CloseExpiredUploadRequestBatchImpl(
 			AccountRepository<Account> accountRepository,
-			final UploadRequestRepository uploadRequestRepository,
 			final UploadRequestService uploadRequestService,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService) {
 		super(accountRepository);
-		this.uploadRequestRepository = uploadRequestRepository;
 		this.uploadRequestService = uploadRequestService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
@@ -78,8 +74,9 @@ public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl impleme
 
 	@Override
 	public List<String> getAll() {
+		SystemAccount account = getSystemAccount();
 		logger.info(getClass().toString() + " job starting ...");
-		List<String> entries = uploadRequestRepository.findOutdatedRequests();
+		List<String> entries = uploadRequestService.findOutdatedRequests(account);
 		logger.info(entries.size()
 				+ " Upload Request(s) have been found to be closed");
 		return entries;
@@ -90,7 +87,7 @@ public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl impleme
 			throws BatchBusinessException, BusinessException {
 		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
 		SystemAccount account = getSystemAccount();
-		UploadRequest r = uploadRequestRepository.findByUuid(identifier);
+		UploadRequest r = uploadRequestService.findRequestByUuid(account, identifier);
 		Context context = new UploadRequestBatchResultContext(r);
 		logInfo(total, position, "processing uplaod request : ", r.getUuid());
 		r.updateStatus(UploadRequestStatus.STATUS_CLOSED);
