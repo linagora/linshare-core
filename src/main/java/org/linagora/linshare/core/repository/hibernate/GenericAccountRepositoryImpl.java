@@ -35,12 +35,13 @@ package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.AccountPurgeStepEnum;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -60,7 +61,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		Assert.notNull(lsUuid);
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
-		criteria.add(Restrictions.eq("destroyed", false));
+		criteria.add(Restrictions.eq("destroyed", 0L));
 
 		 List<U> users = findByCriteria(criteria);
 	        if (users == null || users.isEmpty()) {
@@ -79,7 +80,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
 		criteria.add(Restrictions.eq("domain.identifier",domain));
-		criteria.add(Restrictions.eq("destroyed", false));
+		criteria.add(Restrictions.eq("destroyed", 0L));
 		return getHibernateTemplate().findByCriteria(criteria);
 	}
 
@@ -96,7 +97,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	@Override
 	public List<U> findAll() {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("destroyed", false));
+		criteria.add(Restrictions.eq("destroyed", 0L));
 		return findByCriteria(criteria);
 	}
 
@@ -105,7 +106,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		Assert.notNull(lsUuid);
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("lsUuid", lsUuid));
-		criteria.add(Restrictions.eq("destroyed", false));
+		criteria.add(Restrictions.eq("destroyed", 0L));
 		List<U> accounts = null;
 		accounts = findByCriteria(criteria);
 
@@ -122,14 +123,6 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	public U update(U entity) throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
-	}
-
-	@Override
-	public U create(U entity) throws BusinessException {
-		entity.setCreationDate(new Date());
-		entity.setModificationDate(new Date());
-		entity.setLsUuid(UUID.randomUUID().toString());
-		return super.create(entity);
 	}
 
 	@Override
@@ -158,7 +151,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 
 	@Override
 	public void delete(U entity) throws BusinessException, IllegalArgumentException {
-			entity.setDestroyed(true);
+		entity.setDestroyed(getUserDestroyedMaxValue(entity.getDomain(), entity.getMail()) + 1);
 		this.update(entity);
 	}
 
@@ -182,7 +175,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		DetachedCriteria criteria = DetachedCriteria
 				.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
-		criteria.add(Restrictions.eq("destroyed", true));
+		criteria.add(Restrictions.gt("destroyed", 0L));
 		return DataAccessUtils.requiredSingleResult(findByCriteria(criteria));
 	}
 
@@ -192,7 +185,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		DetachedCriteria criteria = DetachedCriteria
 				.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("purgeStep", AccountPurgeStepEnum.WAIT_FOR_PURGE));
-		criteria.add(Restrictions.eq("destroyed", true));
+		criteria.add(Restrictions.gt("destroyed", 0L));
 		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
 		return DataAccessUtils.requiredSingleResult(findByCriteria(criteria));
 	}
@@ -202,7 +195,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.setProjection(Projections.property("lsUuid"));
 		criteria.add(Restrictions.eq("purgeStep", AccountPurgeStepEnum.WAIT_FOR_PURGE));
-		criteria.add(Restrictions.eq("destroyed", true));
+		criteria.add(Restrictions.gt("destroyed", 0L));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(criteria);
 		return list;
@@ -214,9 +207,20 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		criteria.setProjection(Projections.property("lsUuid"));
 		criteria.add(Restrictions.lt("modificationDate", limit));
 		criteria.add(Restrictions.eq("purgeStep", AccountPurgeStepEnum.IN_USE));
-		criteria.add(Restrictions.eq("destroyed", true));
+		criteria.add(Restrictions.gt("destroyed", 0L));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(criteria);
 		return list;
+	}
+
+	private long getUserDestroyedMaxValue(AbstractDomain domain, String mail) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("destroyed"));
+		criteria.add(Restrictions.eq("mail", mail));
+		criteria.add(Restrictions.eq("domain", domain));
+		criteria.addOrder(Order.desc("destroyed"));
+		@SuppressWarnings("unchecked")
+		List<Long> list = listByCriteria(criteria);
+		return list.get(0);
 	}
 }

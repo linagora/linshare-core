@@ -5,6 +5,7 @@ CREATE TABLE account (
   technical_account_permission_id bigint(8),
   owner_id                        bigint(8),
   ls_uuid                         varchar(255) NOT NULL,
+  mail                            varchar(255) NOT NULL,
   creation_date                   datetime NOT NULL,
   modification_date               datetime NOT NULL,
   role_id                         int(4) NOT NULL,
@@ -13,7 +14,7 @@ CREATE TABLE account (
   enable                          tinyint(1) NOT NULL,
   account_type                    int(4) NOT NULL,
   password                        varchar(255),
-  destroyed                       tinyint(1) NOT NULL,
+  destroyed                       bigint(8) NOT NULL,
   purge_step                      varchar(255) DEFAULT 'IN_USE' NOT NULL,
   cmis_locale                     varchar(255) NOT NULL,
   CONSTRAINT account_pkey
@@ -274,7 +275,6 @@ CREATE TABLE users (
   account_id            bigint(8) NOT NULL,
   first_name            varchar(255),
   last_name             varchar(255),
-  mail                  varchar(255),
   encipherment_key_pass blob,
   not_after             datetime NULL,
   not_before            datetime NULL,
@@ -710,6 +710,7 @@ CREATE TABLE async_task (
   INDEX (actor_id),
   INDEX (domain_abstract_id),
   UNIQUE INDEX (uuid)) CHARACTER SET UTF8;
+ALTER TABLE account ADD CONSTRAINT mail_domain_dest UNIQUE (mail, domain_id, destroyed);
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE INDEX account_account_type

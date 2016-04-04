@@ -46,23 +46,23 @@ public class AccountVo implements Serializable {
 	private static final long serialVersionUID = -5114405866304880819L;
 
 	protected final String lsUuid;
-	
+
 	protected final AccountType accountType;
-	
+
 	protected final Date creationDate;
-	
+
 	protected final Date modificationDate;
-	
-	protected final boolean destroyed;
-	
+
+	protected final long destroyed;
+
 	protected final String domainIdentifier;
-	
+
 	protected String ownerLsUuid;
-	
+
 	protected Role role = Role.SIMPLE;
-	
+
 	protected SupportedLanguage locale;
-	
+
 	protected boolean enable;
 
 
@@ -73,7 +73,7 @@ public class AccountVo implements Serializable {
 		this.accountType = null;
 		this.creationDate = null;
 		this.modificationDate = null;
-		this.destroyed = false;
+		this.destroyed = 0;
 		this.domainIdentifier = null;
 		this.ownerLsUuid = null;
 		this.role = null;
@@ -89,7 +89,7 @@ public class AccountVo implements Serializable {
 		this.modificationDate = account.getModificationDate();
 		this.locale = account.getLocale();
 		this.enable = account.isEnable();
-		this.destroyed = account.isDestroyed();
+		this.destroyed = account.getDestroyed();
 		if(account.getOwner() != null) {
 			this.ownerLsUuid = account.getOwner().getLsUuid();
 		}
@@ -144,13 +144,11 @@ public class AccountVo implements Serializable {
 		return modificationDate;
 	}
 
-	public boolean isDestroyed() {
+	public long getDestroyed() {
 		return destroyed;
 	}
 
 	public String getDomainIdentifier() {
 		return domainIdentifier;
 	}
-	
-	
 }

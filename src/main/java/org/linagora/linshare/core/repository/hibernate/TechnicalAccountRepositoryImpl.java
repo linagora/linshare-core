@@ -34,16 +34,28 @@
 
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Date;
+import java.util.UUID;
+
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.TechnicalAccountRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class TechnicalAccountRepositoryImpl extends
-		GenericUserRepositoryImpl<TechnicalAccount> implements
-		TechnicalAccountRepository {
+public class TechnicalAccountRepositoryImpl extends GenericUserRepositoryImpl<TechnicalAccount>
+		implements TechnicalAccountRepository {
 
 	public TechnicalAccountRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
+	}
+
+	@Override
+	public TechnicalAccount create(TechnicalAccount entity) throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setLsUuid(UUID.randomUUID().toString());
+		entity.setMail(entity.getLsUuid());
+		return super.create(entity);
 	}
 
 	@Override
@@ -55,5 +67,4 @@ public class TechnicalAccountRepositoryImpl extends
 	public TechnicalAccount findByLoginAndDomain(String domain, String login) {
 		return super.findByLsUuid(login);
 	}
-
 }

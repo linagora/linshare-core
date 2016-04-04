@@ -24,5 +24,3 @@ CREATE DATABASE linshare_data
 
 GRANT ALL ON DATABASE linshare TO linshare;
 GRANT ALL ON DATABASE linshare_data TO linshare;
-
-

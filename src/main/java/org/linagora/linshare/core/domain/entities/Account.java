@@ -50,6 +50,8 @@ public abstract class Account {
 
 	protected String lsUuid;
 
+	protected String mail;
+
 	protected Date creationDate;
 
 	protected Date modificationDate;
@@ -66,7 +68,7 @@ public abstract class Account {
 
 	protected String password;
 
-	protected boolean destroyed;
+	protected long destroyed;
 
 	protected AccountPurgeStepEnum purgeStep = AccountPurgeStepEnum.IN_USE;
 
@@ -194,11 +196,11 @@ public abstract class Account {
 		this.password = password;
 	}
 
-	public boolean isDestroyed() {
+	public long getDestroyed() {
 		return destroyed;
 	}
 
-	public void setDestroyed(boolean destroyed) {
+	public void setDestroyed(long destroyed) {
 		this.destroyed = destroyed;
 	}
 
@@ -309,6 +311,20 @@ public abstract class Account {
 
 	public void setCmisLocale(String cmisLocale) {
 		this.cmisLocale = cmisLocale;
+	}
+
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
+
+	public void setBusinessMail(String value) {
+		if (value != null) {
+			this.setMail(value);
+		}
 	}
 
 	/**

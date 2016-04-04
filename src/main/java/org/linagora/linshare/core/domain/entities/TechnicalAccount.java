@@ -48,8 +48,8 @@ public class TechnicalAccount extends User {
 		super();
 		this.lastName = dto.getName();
 		this.lsUuid = dto.getUuid();
-		this.mail = dto.getMail();
-		this.destroyed = false;
+		this.setMail(dto.getMail());
+		this.destroyed = 0;
 		this.canUpload = false;
 		this.canCreateGuest = false;
 		this.enable = dto.isEnable();

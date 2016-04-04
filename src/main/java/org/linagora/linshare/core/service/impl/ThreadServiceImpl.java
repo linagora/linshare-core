@@ -115,7 +115,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	@Override
 	public Thread findByLsUuidUnprotected(String uuid) {
 		Thread thread = threadRepository.findByLsUuid(uuid);
-
 		if (thread == null) {
 			logger.error("Can't find thread  : " + uuid);
 		}
@@ -141,12 +140,10 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 				BusinessErrorCode.THREAD_FORBIDDEN, null);
 		Thread thread = null;
 		ThreadMember member = null;
-
 		logger.debug("User " + owner.getAccountReprentation() + " trying to create new thread named " + name);
 		thread = new Thread(owner.getDomain(), owner, name);
 		threadRepository.create(thread);
 		logEntryService.create(new ThreadLogEntry(owner, thread, LogAction.THREAD_CREATE, "Creation of a new thread."));
-
 		// creator = first member = default admin
 		member = new ThreadMember(true, true, (User) owner, thread);
 		thread.getMyMembers().add(member);
@@ -214,7 +211,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 			User user, boolean admin, boolean canUpload)
 			throws BusinessException {
 		ThreadMember member = new ThreadMember(canUpload, admin, user, thread);
-
 		threadMemberAC.checkCreatePermission(actor, owner, ThreadMember.class,
 				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member);
 		if (getMemberFromUser(thread, user) != null) {
@@ -224,10 +220,8 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 			throw new BusinessException(
 					"You are not authorized to add member to this thread. Already exists.");
 		}
-
 		thread.getMyMembers().add(member);
 		threadRepository.update(thread);
-
 		logEntryService.create(new ThreadLogEntry(owner, member,
 				LogAction.THREAD_ADD_MEMBER,
 				"Adding a new member to a thread : "
@@ -264,7 +258,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		thread.getMyMembers().remove(member);
 		threadRepository.update(thread);
 		threadMemberRepository.delete(member);
-
 		logEntryService.create(new ThreadLogEntry(owner, member,
 				LogAction.THREAD_REMOVE_MEMBER,
 				"Deleting a member in a thread."));
@@ -275,9 +268,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	public void deleteAllMembers(Account actor, Thread thread) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, thread);
-
 		Object[] myMembers = thread.getMyMembers().toArray();
-
 		for (Object threadMember : myMembers) {
 			thread.getMyMembers().remove(threadMember);
 			threadRepository.update(thread);
@@ -324,7 +315,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		String oldname = thread.getName();
 		thread.setName(threadName);
 		Thread update = threadRepository.update(thread);
-
 		logEntryService.create(new ThreadLogEntry(actor, thread,
 				LogAction.THREAD_RENAME, "Renamed thread from " + oldname
 						+ " to " + threadName));

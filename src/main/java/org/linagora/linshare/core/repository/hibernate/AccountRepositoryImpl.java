@@ -34,10 +34,13 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.TechnicalAccount;
+import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -46,6 +49,14 @@ public class AccountRepositoryImpl extends GenericAccountRepositoryImpl<Account>
 
 	public AccountRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
+	}
+
+	@Override
+	public Account create(Account entity) throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setLsUuid(UUID.randomUUID().toString());
+		return super.create(entity);
 	}
 
 	@Override

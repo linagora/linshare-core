@@ -49,21 +49,13 @@ public class Thread extends Account {
 
 	public Thread(AbstractDomain domain, Account owner, String name) {
 		super();
-		this.name = name;
+		this.setName(name);
 		this.domain = domain;
 		this.enable = true;
-		this.destroyed = false;
+		this.destroyed = 0;
 		this.locale = owner.locale;
 		this.cmisLocale=owner.cmisLocale;
 		this.externalMailLocale = owner.externalMailLocale;
-	}
-
-	public void setName(String value) {
-		this.name = value;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	@Override
@@ -81,11 +73,19 @@ public class Thread extends Account {
 
 	@Override
 	public String getAccountReprentation() {
-		return "Thread name : " + name + "(" + lsUuid + ")";
+		return "Thread name : " + getName() + "(" + lsUuid + ")";
 	}
 
 	@Override
 	public String getFullName() {
-		return this.name;
+		return this.getName();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

@@ -50,8 +50,6 @@ public abstract class User extends Account {
 
 	protected String lastName;
 
-	protected String mail;
-
 	// NOT IMPLEMENTED YET
 	protected Date notAfter;
 
@@ -70,14 +68,14 @@ public abstract class User extends Account {
 	public User() {
 		this.firstName = null;
 		this.lastName = null;
-		this.mail = null;
+		this.setMail(null);
 
 		this.lsUuid = null;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 		this.role = Role.SIMPLE;
 		this.enable = true;
-		this.destroyed = false;
+		this.destroyed = 0;
 		this.canUpload = true;
 		this.canCreateGuest = true;
 		this.externalMailLocale = Language.ENGLISH;
@@ -86,13 +84,13 @@ public abstract class User extends Account {
 	public User(String firstName, String lastName, String mail) {
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.mail = mail;
+		this.setMail(mail);
 		this.lsUuid = null;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 		this.role = Role.SIMPLE;
 		this.enable = true;
-		this.destroyed = false;
+		this.destroyed = 0;
 		this.canUpload = true;
 		this.canCreateGuest = true;
 		this.externalMailLocale = Language.ENGLISH;
@@ -102,7 +100,7 @@ public abstract class User extends Account {
 		this.lsUuid = userDto.getUuid();
 		this.firstName = userDto.getFirstName();
 		this.lastName = userDto.getLastName();
-		this.mail = userDto.getMail();
+		this.setMail(userDto.getMail());
 		this.role = Role.valueOf(userDto.getRole());
 		this.canUpload = userDto.getCanUpload();
 		this.canCreateGuest = userDto.getCanCreateGuest();
@@ -124,7 +122,7 @@ public abstract class User extends Account {
 				b.append(lastName);
 			}
 		} else {
-			b.append(mail);
+			b.append(getMail());
 		}
 		return b.toString();
 	}
@@ -157,22 +155,8 @@ public abstract class User extends Account {
 		return lastName;
 	}
 
-	public void setMail(String value) {
-		this.mail = value;
-	}
-
-	public void setBusinessMail(String value) {
-		if (value != null) {
-			this.mail = value;
-		}
-	}
-
-	public String getMail() {
-		return mail;
-	}
-
 	public String getLogin() {
-		return mail;
+		return getMail();
 	}
 
 	public void setNotAfter(Date value) {
@@ -250,7 +234,7 @@ public abstract class User extends Account {
 	@Override
 	public String toString() {
 		return "User [firstName=" + firstName + ", lastName=" + lastName
-				+ ", mail=" + mail + ", lsUuid=" + lsUuid + "]";
+				+ ", mail=" + getMail() + ", lsUuid=" + lsUuid + "]";
 	}
 
 }

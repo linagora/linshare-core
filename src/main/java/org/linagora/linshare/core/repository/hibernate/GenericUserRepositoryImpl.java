@@ -33,13 +33,16 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -50,13 +53,21 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 		super(hibernateTemplate);
 	}
 
+	@Override
+	public U create(U entity) throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setLsUuid(UUID.randomUUID().toString());
+		return super.create(entity);
+	}
+
 	/* TODO : check call hierarchy to remove research by mail only. too dangerous. */
 	@Override
 	public U findByMail(String mail) {
 		DetachedCriteria criteria = DetachedCriteria
 				.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("mail", mail).ignoreCase());
-		criteria.add(Restrictions.eq("destroyed", false));
+		criteria.add(Restrictions.eq("destroyed", 0L));
 		List<U> users = findByCriteria(criteria);
 
 		if (users == null || users.isEmpty()) {
@@ -74,7 +85,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 		criteria.createAlias("domain", "domain");
 		criteria.add(Restrictions.eq("domain.identifier",domainId));
 		criteria.add(Restrictions.eq("mail", mail).ignoreCase());
-		criteria.add(Restrictions.eq("destroyed",false));
+		criteria.add(Restrictions.eq("destroyed", 0L));
 
 		List<U> users = findByCriteria(criteria);
 		if (users == null || users.isEmpty()) {
@@ -87,7 +98,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 			throw new IllegalStateException("Mail and domain must be unique");
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<U> findByDomain(String domainId) {
@@ -95,36 +106,28 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
 		criteria.add(Restrictions.eq("domain.identifier",domainId));
-		criteria.add(Restrictions.eq("destroyed",false));
+		criteria.add(Restrictions.eq("destroyed", 0L));
 		return getHibernateTemplate().findByCriteria(criteria);
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<U> findByCriteria(AccountOccupationCriteriaBean accountCriteria) {
-		
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("destroyed",false));
-		
 		if ((accountCriteria.getActorMails()!=null) && (accountCriteria.getActorMails().size()>0)) {
 			criteria.add(Restrictions.in("mail", accountCriteria.getActorMails()));
 		}
-		
 		if ((accountCriteria.getActorFirstname()!=null) && (accountCriteria.getActorFirstname().length()>0)) {
 			criteria.add(Restrictions.like("firstName", accountCriteria.getActorFirstname(), MatchMode.START).ignoreCase());
 		}
-		
 		if ((accountCriteria.getActorLastname()!=null) && (accountCriteria.getActorLastname().length()>0)) {
 			criteria.add(Restrictions.like("lastName", accountCriteria.getActorLastname(), MatchMode.START).ignoreCase());
 		}
-		
 		if ((accountCriteria.getActorDomain()!=null) && (accountCriteria.getActorDomain().length()>0)) {
 			criteria.createAlias("domain", "domain");
 			criteria.add(Restrictions.like("domain.identifier", accountCriteria.getActorDomain()).ignoreCase());
 		}
-		
-		
 		return getHibernateTemplate().findByCriteria(criteria);
 	}
 	
@@ -133,7 +136,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	public List<String> findMails(final String beginWith) {
 		DetachedCriteria crit = DetachedCriteria.forClass(User.class)
 				.add(Restrictions.ilike("mail", beginWith, MatchMode.ANYWHERE))
-				.add(Restrictions.eq("destroyed", false))
+				.add(Restrictions.eq("destroyed", 0L))
 				.setProjection(Projections.property("mail"));
 
 		return listByCriteria(crit);

@@ -92,7 +92,6 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@Before
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		john = datas.getUser1();
@@ -102,7 +101,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		threads = threadService.findAll(root, root);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
-	
+
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
@@ -110,16 +109,15 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
-	
+
 	/*
 	 * Helpers
 	 */
-	
+
 	private void createAllThreads() throws BusinessException {
 		threadService.create(john, john, ThreadEntryServiceImplTest.THREAD_2);
 		threadService.create(jane, jane, ThreadEntryServiceImplTest.THREAD_1);
 	}
-	
 	private void deleteAllThreads() throws BusinessException {
 		for (Thread thread : threads) {
 			for (ThreadMember m : thread.getMyMembers()) {
@@ -129,15 +127,13 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 			}
 		}
 	}
-	
-	
+
 	/*
 	 * Tests
 	 */
 	@Test
 	public void testFindAllThread() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
 		int count;
 		Assert.assertEquals(threads.size(), 2);
 		for (count = threads.size(); count < 10; ++count) {
@@ -146,44 +142,37 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		User root = userRepository.findByMailAndDomain(LinShareConstants.rootDomainIdentifier, "root@localhost.localdomain");
 		threads = threadService.findAll(root, root);
 		Assert.assertEquals(threads.size(), count);
-		
 		logger.info(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void testFindThread() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
 		Thread original = threads.get(0);
 		Thread found = threadService.findByLsUuidUnprotected(original.getLsUuid());
 		Assert.assertEquals(found, original);
-		
 		logger.info(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void testFindAdmin() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-
 		Assert.assertTrue(threadService.hasAnyWhereAdmin(john));
 		Assert.assertEquals(threadService.findAllWhereAdmin(john).size(), 1);
 		threadService.create(datas.getUser1(), datas.getUser1(), ThreadEntryServiceImplTest.THREAD_1 + "_" + 1);
 		Assert.assertEquals(threadService.findAllWhereAdmin(john).size(), 2);
-
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void testFindLatest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-
 		List<Thread> latests = threadService.findLatestWhereMember(john, 10);
 		Assert.assertFalse(latests.isEmpty());
 		logger.debug("Latests :");
 		for (Thread thread : latests) {
 			logger.debug('\t' + thread.getName());
 		}
-
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 }

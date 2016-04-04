@@ -37,7 +37,6 @@ import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -172,7 +171,7 @@ public class MainCmisFacadeImpl extends AbstractCmisService implements MainCmisF
 
 		Account account = authenticate();
 		r.setId(account.getLsUuid());
-		r.setName(account.getFullName() + "_" + dateFormat.format(new Date()));
+		r.setName(account.getFullName() + "_" + dateFormat.format(account.getCreationDate()));
 		r.setRootFolder(CmisConstants.tagRoot);
 		r.setCmisVersion(cmisVersion);
 		RepositoryCapabilitiesImpl capabilities = new RepositoryCapabilitiesImpl();

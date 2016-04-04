@@ -148,11 +148,11 @@ DECLARE pol_act_id INT8;
 DECLARE pol_conf_id INT8;
 DECLARE pol_deleg_id INT8;
 BEGIN
-	pol_act_id := (SELECT MAX(id) from policy) + 1;
+	pol_act_id := (SELECT nextVal('hibernate_sequence'));
 	INSERT INTO policy(id, status, default_status, policy, system) VALUES (pol_act_id, true, true, 1, false);
-	pol_conf_id := pol_act_id + 1;
+	pol_conf_id := (SELECT nextVal('hibernate_sequence'));
 	INSERT INTO policy(id, status, default_status, policy, system) VALUES (pol_conf_id, true, true, 1, false);
-	pol_deleg_id := pol_conf_id + 1;
+	pol_deleg_id := (SELECT nextVal('hibernate_sequence'));
 	INSERT INTO policy(id, status, default_status, policy, system) VALUES (pol_deleg_id, true, true, 1, false);
 	INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id) 
  	VALUES(54, false, 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT', pol_act_id, pol_conf_id, pol_deleg_id, 1);
@@ -166,11 +166,11 @@ DECLARE pol_act_id INT8;
 DECLARE pol_conf_id INT8;
 DECLARE pol_deleg_id INT8;
 BEGIN
-	pol_act_id := (SELECT MAX(id) from policy) + 1;
+	pol_act_id := (SELECT nextVal('hibernate_sequence'));
 	INSERT INTO policy(id, status, default_status, policy, system) VALUES (pol_act_id, true, true, 0, true);
-	pol_conf_id := pol_act_id + 1;
+	pol_conf_id := (SELECT nextVal('hibernate_sequence'));
 	INSERT INTO policy(id, status, default_status, policy, system) VALUES (pol_conf_id, true, true, 1, false);
-	pol_deleg_id := pol_conf_id + 1;
+	pol_deleg_id := (SELECT nextVal('hibernate_sequence'));
 	INSERT INTO policy(id, status, default_status, policy, system) VALUES (pol_deleg_id, true, true, 1, false);
 	INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
  	VALUES(55, false, 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION', pol_act_id, pol_conf_id, pol_deleg_id, 1, 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT', true);
@@ -183,11 +183,11 @@ DECLARE pol_act_id INT8;
 DECLARE pol_conf_id INT8;
 DECLARE pol_deleg_id INT8;
 BEGIN
-	pol_act_id := (SELECT MAX(id) from policy) + 1;
+	pol_act_id := (SELECT nextVal('hibernate_sequence'));
 	INSERT INTO policy(id, status, default_status, policy, system) VALUES (pol_act_id, true, true, 0, true);
-	pol_conf_id := pol_act_id + 1;
+	pol_conf_id := (SELECT nextVal('hibernate_sequence'));
 	INSERT INTO policy(id, status, default_status, policy, system) VALUES (pol_conf_id, true, true, 1, false);
-	pol_deleg_id := pol_conf_id + 1;
+	pol_deleg_id := (SELECT nextVal('hibernate_sequence'));
 	INSERT INTO policy(id, status, default_status, policy, system) VALUES (pol_deleg_id, false, false, 2, true);
 	INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
 	 VALUES(56, false, 'ANONYMOUS_URL__NOTIFICATION', pol_act_id, pol_conf_id, pol_deleg_id, 1, 'ANONYMOUS_URL', true);
@@ -204,13 +204,13 @@ BEGIN
 	DECLARE mail_id INT8;
 	mail_name ALIAS FOR $1;
 	BEGIN
-		pol_act_id := (SELECT MAX(id) from policy) + 1;
+		pol_act_id := (SELECT nextVal('hibernate_sequence'));
 		INSERT INTO policy(id, status, default_status, policy, system) VALUES (pol_act_id, true, true, 0, true);
-		pol_conf_id := pol_act_id + 1;
+		pol_conf_id := (SELECT nextVal('hibernate_sequence'));
 		INSERT INTO policy(id, status, default_status, policy, system) VALUES (pol_conf_id, true, true, 1, false);
 		pol_deleg_id := pol_conf_id + 1;
 		INSERT INTO policy(id, status, default_status, policy, system) VALUES (pol_deleg_id, false, false, 2, true);
-		mail_id := (SELECT MAX(id) from mail_activation) + 1;
+		mail_id := (SELECT nextVal('hibernate_sequence'));
 		IF mail_id IS NULL THEN
 		   mail_id := 1;
 		END IF;
@@ -219,9 +219,11 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
+SELECT ls_mail_activation('NEW_GUEST');
 SELECT ls_mail_activation('ANONYMOUS_DOWNLOAD');
 SELECT ls_mail_activation('REGISTERED_DOWNLOAD');
 SELECT ls_mail_activation('RESET_PASSWORD');
+SELECT ls_mail_activation('SHARED_DOC_DELETED');
 SELECT ls_mail_activation('SHARED_DOC_UPDATED');
 SELECT ls_mail_activation('SHARED_DOC_UPCOMING_OUTDATED');
 SELECT ls_mail_activation('DOC_UPCOMING_OUTDATED');
@@ -231,12 +233,13 @@ SELECT ls_mail_activation('UPLOAD_PROPOSITION_REJECTED');
 SELECT ls_mail_activation('UPLOAD_REQUEST_UPDATED');
 SELECT ls_mail_activation('UPLOAD_REQUEST_ACTIVATED');
 SELECT ls_mail_activation('UPLOAD_REQUEST_AUTO_FILTER');
-SELECT ls_mail_activation('UPLOAD_REQUEST_ACKNOWLEDGEMENT');
 SELECT ls_mail_activation('UPLOAD_REQUEST_CREATED');
+SELECT ls_mail_activation('UPLOAD_REQUEST_ACKNOWLEDGEMENT');
 SELECT ls_mail_activation('UPLOAD_REQUEST_REMINDER');
 SELECT ls_mail_activation('UPLOAD_REQUEST_WARN_OWNER_BEFORE_EXPIRY');
 SELECT ls_mail_activation('UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY');
 SELECT ls_mail_activation('UPLOAD_REQUEST_WARN_OWNER_EXPIRY');
+SELECT ls_mail_activation('UPLOAD_REQUEST_WARN_RECIPIENT_EXPIRY');
 SELECT ls_mail_activation('UPLOAD_REQUEST_CLOSED_BY_RECIPIENT');
 SELECT ls_mail_activation('UPLOAD_REQUEST_CLOSED_BY_OWNER');
 SELECT ls_mail_activation('UPLOAD_REQUEST_DELETED_BY_OWNER');

@@ -68,21 +68,21 @@ UPDATE domain_abstract SET welcome_messages_id = 1;
 
 -- Users
 -- bart simpson
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, purge_step) VALUES (50, 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_date, current_date, 0, 'fr', 'en', true, false, 3, 'IN_USE');
-INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (50, 'Bart', 'Simpson', 'bart.simpson@int1.linshare.dev', true, '', false, true);
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, purge_step) VALUES (50, 'bart.simpson@int1.linshare.dev', 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_date, current_date, 0, 'fr', 'en', true, false, 3, 'IN_USE');
+INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (50, 'Bart', 'Simpson', true, '', false, true);
 -- pierre mongin : 15kn60njvhdjh
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, owner_id , password, purge_step) VALUES (53, 3, 'fa2cab19-2cd7-44f5-96f6-418455899d3e', current_date, current_date, 0, 'fr', 'fr', true, false, 4, 50 , 'OsFTxoUjd62imwHnaV/4zQfrJ5s=', 'IN_USE');
-INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, expiration_date) VALUES (53, 'Pierre', 'Mongin', 'pmongin@ratp.fr', true, '', false, false, current_date);
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, owner_id , password, purge_step) VALUES (53, 'pmongin@ratp.fr', 3, 'fa2cab19-2cd7-44f5-96f6-418455899d3e', current_date, current_date, 0, 'fr', 'fr', true, false, 4, 50 , 'OsFTxoUjd62imwHnaV/4zQfrJ5s=', 'IN_USE');
+INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, expiration_date) VALUES (53, 'Pierre', 'Mongin', true, '', false, false, current_date);
 
 
 -- Thread : projet : RATP
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, purge_step) VALUES (51, 5, '9806de10-ed0b-11e1-877a-5404a6202d2c', current_date, current_date, 0, 'fr', 'fr', true, false, 1, 'IN_USE');
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, purge_step) VALUES (51, '9806de10-ed0b-11e1-877a-5404a6202d2c', 5, '9806de10-ed0b-11e1-877a-5404a6202d2c', current_date, current_date, 0, 'fr', 'fr', true, false, 1, 'IN_USE');
 INSERT INTO thread (account_id, name) VALUES (51, 'RATP');
 -- Thread : projet : 3MI
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, purge_step) VALUES (52, 5, '34544580-f0ec-11e1-a62a-080027c0eef0', current_date, current_date, 0, 'fr', 'fr', true, false, 1, 'IN_USE');
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, purge_step) VALUES (52, '34544580-f0ec-11e1-a62a-080027c0eef0', 5, '34544580-f0ec-11e1-a62a-080027c0eef0', current_date, current_date, 0, 'fr', 'fr', true, false, 1, 'IN_USE');
 INSERT INTO thread (account_id, name) VALUES (52, 'Ministère de l''intérieur');
 -- Thread : projet : Test Thread
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, purge_step) VALUES (54, 5, 'c4570914-d004-4506-8abf-04527f342e88', current_date, current_date, 0, 'en', 'en', true, false, 1, 'IN_USE');
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, purge_step) VALUES (54, 'c4570914-d004-4506-8abf-04527f342e88', 5, 'c4570914-d004-4506-8abf-04527f342e88', current_date, current_date, 0, 'en', 'en', true, false, 1, 'IN_USE');
 INSERT INTO thread (account_id, name) VALUES (54, 'Test Thread');
 
 

@@ -81,7 +81,7 @@ public class Internal extends User {
 		this.lsUuid = userDto.getUuid();
 		this.firstName = userDto.getFirstName();
 		this.lastName = userDto.getLastName();
-		this.mail = userDto.getMail();
+		this.setMail(userDto.getMail());
 	}
 
 	@Override

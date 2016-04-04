@@ -33,7 +33,9 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
@@ -44,6 +46,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
@@ -68,20 +71,29 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	}
 
 	@Override
+	public Thread create(Thread entity) throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setLsUuid(UUID.randomUUID().toString());
+		entity.setMail(entity.getLsUuid());
+		return super.create(entity);
+	}
+
+	@Override
 	public List<Thread> findAll() {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
 
 		// filter enabled thread only.
 		det.add(Restrictions.eq("enable", true));
 		// query
-		det.add(Restrictions.eq("destroyed", false));
+		det.add(Restrictions.eq("destroyed",(long) 0));
 		return findByCriteria(det);
 	}
 
 	@Override
 	public List<Thread> findAllWhereMember(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
-		det.add(Restrictions.eq("destroyed", false));
+		det.add(Restrictions.eq("destroyed", (long) 0));
 
 		// query
 		det.createAlias("myMembers", "member");
@@ -92,7 +104,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	@Override
 	public List<Thread> findAllWhereAdmin(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
-		det.add(Restrictions.eq("destroyed", false));
+		det.add(Restrictions.eq("destroyed", (long) 0));
 
 		// query
 		det.createAlias("myMembers", "member");
@@ -104,7 +116,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	@Override
 	public List<Thread> findAllWhereCanUpload(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
-		det.add(Restrictions.eq("destroyed", false));
+		det.add(Restrictions.eq("destroyed", (long) 0));
 
 		// query
 		det.createAlias("myMembers", "member");
@@ -116,7 +128,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	@Override
 	public List<Thread> findLatestWhereMember(User actor, int limit) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
-		det.add(Restrictions.eq("destroyed", false));
+		det.add(Restrictions.eq("destroyed", (long) 0));
 
 		if (limit < 1)
 			 limit = 1;

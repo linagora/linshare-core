@@ -68,8 +68,6 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 		Validate.notNull(actor, "name must be set.");
 		Validate.notNull(account, "name must be set.");
 		Validate.notEmpty(account.getLastName(), "last name must be set.");
-		Validate.notEmpty(account.getMail(), "mail must be set.");
-		Validate.notEmpty(account.getMail(), "mail must be set.");
 		// TODO : check rights, log actions.
 		// Check role : only uploadprop or delegation
 		// mail unicity ?
