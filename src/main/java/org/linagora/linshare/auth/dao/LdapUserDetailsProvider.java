@@ -206,7 +206,13 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 			// The previous user found into the database does not exists anymore into the LDAP directory.
 			// We must not use him.
 			logger.warn("authentication process : the current user does not exist anymore into the LDAP directory : " + foundUser.getAccountRepresentation());
+			foundUser.setInconsistent(true);
+			authentificationFacade.updateUser(foundUser);
 			foundUser = null;
+		}
+		if (foundUser.isInconsistent()) {
+			foundUser.setInconsistent(false);
+			authentificationFacade.updateUser(foundUser);
 		}
 		return foundUser;
 	}

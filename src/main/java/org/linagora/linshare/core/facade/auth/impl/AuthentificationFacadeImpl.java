@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
@@ -158,5 +159,11 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 		// Ugly but needed until we find a more elegant solution :(
 		if (internal != null) internal.getDomain().getIdentifier();
 		return internal;
+	}
+
+	@Override
+	public User updateUser(User user) throws BusinessException {
+		Account system = internalRepository.getBatchSystemAccount();
+		return userService.updateUser(system, user, user.getDomainId());
 	}
 }
