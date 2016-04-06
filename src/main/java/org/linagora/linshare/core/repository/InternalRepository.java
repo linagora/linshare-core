@@ -43,5 +43,7 @@ public interface InternalRepository extends UserRepository<Internal> {
 
 	List<Internal> findAllInconsistent() throws BusinessException;
 
-	List<String> findAllUserUuids() throws BusinessException;
+	List<String> findAllUsersUuid() throws BusinessException;
+
+	List<String> findAllInconsistentsUuid() throws BusinessException;
 }

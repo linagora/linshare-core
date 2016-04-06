@@ -103,8 +103,6 @@ public interface UploadRequestService {
 	Set<UploadRequest> findAll(Account actor, List<UploadRequestStatus> status, Date afterDate, Date beforeDate)
 			throws BusinessException;
 
-	Set<UploadRequest> findAll(Account actor, List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException;
-
 	List<String> findOutdatedRequests(Account actor);
 
 	List<String> findUnabledRequests(Account actor);

@@ -39,19 +39,24 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.InconsistentSearchDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
+import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
 
 import com.google.common.collect.Lists;
@@ -66,14 +71,22 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final InconsistentUserService inconsistentUserService;
 
+	private final AbstractDomainService abstractDomainService;
+
+	private final UserProviderService userProviderService;
+
 	public UserFacadeImpl(final AccountService accountService,
 			final UserService userService,
 			final InconsistentUserService inconsistentUserService,
-			final GuestService guestService) {
+			final GuestService guestService,
+			final AbstractDomainService abstractDomainService,
+			final UserProviderService userProviderService) {
 		super(accountService);
 		this.userService = userService;
 		this.inconsistentUserService = inconsistentUserService;
 		this.guestService = guestService;
+		this.abstractDomainService = abstractDomainService;
+		this.userProviderService = userProviderService;
 	}
 
 	@Override
@@ -197,6 +210,33 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		inconsistentUserService.updateDomain(actor, userDto.getUuid(),
 				userDto.getDomain());
+	}
+
+	@Override
+	public List<InconsistentSearchDto> getUserStatusByDomain(InconsistentSearchDto searchDto) {
+		Validate.notEmpty(searchDto.getUserMail(), "User mail must not be empty");
+		User actor = checkAuthentication(Role.SUPERADMIN);
+		List<InconsistentSearchDto> res = Lists.newArrayList();
+		List<AbstractDomain> domainList = abstractDomainService.getAllDomains();
+		for (AbstractDomain d : domainList) {
+			InconsistentSearchDto dto = new InconsistentSearchDto(d, searchDto.getUserMail());
+			User user = userService.findUserInDB(d.getIdentifier(), searchDto.getUserMail());
+			if (user != null) {
+				dto.setDatabase(new Boolean(true));
+				if (d.getDomainType().equals(DomainType.GUESTDOMAIN)) {
+					dto.setGuest(new Boolean(true));
+					res.add(dto);
+				}
+			}
+			if (!dto.isGuest()) {
+				user = userProviderService.findUser(d.getUserProvider(), searchDto.getUserMail());
+				if (user != null) {
+					dto.setLdap(new Boolean(true));
+					res.add(dto);
+				}
+			}
+		}
+		return res;
 	}
 
 	@Override

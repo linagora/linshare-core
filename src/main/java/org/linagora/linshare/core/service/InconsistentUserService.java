@@ -57,4 +57,6 @@ public interface InconsistentUserService {
 			throws BusinessException;
 
 	List<String> findAllUserUuids(Account actor) throws BusinessException;
+
+	List<String> findAllIconsistentsUuid(Account actor) throws BusinessException;
 }

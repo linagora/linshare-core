@@ -70,4 +70,6 @@ public interface AuthentificationFacade {
 	public User ldapSearchForAuth(String domainIdentifier, String login) throws BusinessException;
 
 	public User updateUser(User user) throws BusinessException;
+
+	public User checkStillInLdap(User user, String login) throws BusinessException;
 }

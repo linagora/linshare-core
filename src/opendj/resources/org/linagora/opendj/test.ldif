@@ -64,6 +64,42 @@ cn: Foo2, Bar2
 userPassword: password4
 mail: user4@linshare.org
 
+dn: uid=user5,ou=People,dc=linshare,dc=org
+uid: user5
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Peter
+givenName: Parker
+cn: Peter, Parker
+userPassword: password5
+mail: user5@linshare.org
+
+dn: uid=user6,ou=People,dc=linshare,dc=org
+uid: user6
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Bruce
+givenName: Wane
+cn: Bruce, Wane
+userPassword: password6
+mail: user6@linshare.org
+
+dn: uid=user7,ou=People,dc=linshare,dc=org
+uid: user7
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Oliver
+givenName: Twist
+cn: Oliver, Twist
+userPassword: password7
+mail: user7@linshare.org
+
 dn: uid=test1,ou=People,dc=linshare,dc=org
 uid: test1
 objectClass: inetOrgPerson
@@ -73,7 +109,7 @@ objectClass: top
 sn: Test1
 cn: Test, Test1
 userPassword: password1
-
+mail: test1@linshare.org
 
 dn: uid=test2,ou=People,dc=linshare,dc=org
 uid: test2

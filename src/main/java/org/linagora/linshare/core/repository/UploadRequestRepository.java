@@ -82,7 +82,7 @@ public interface UploadRequestRepository extends
 
 	List<String> findOutdatedRequests();
 
-	List<String> findUnabledRequests();
+	List<String> findCreatedUploadRequests();
 
 	List<String> findAllRequestsToBeNotified();
 }

@@ -89,6 +89,8 @@ public class UploadRequest implements Cloneable {
 
 	private AbstractDomain abstractDomain;
 
+	private Boolean notified = new Boolean(false);
+
 	public UploadRequest() {
 		super();
 	}
@@ -281,6 +283,14 @@ public class UploadRequest implements Cloneable {
 
 	public void setSecured(boolean secured) {
 		this.secured = secured;
+	}
+
+	public Boolean isNotified() {
+		return notified;
+	}
+	
+	public void setNotified(Boolean notified) {
+		this.notified = notified;
 	}
 
 	@Override

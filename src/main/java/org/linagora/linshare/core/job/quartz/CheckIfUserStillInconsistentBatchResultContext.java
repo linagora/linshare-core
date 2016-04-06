@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -36,9 +36,11 @@ package org.linagora.linshare.core.job.quartz;
 
 import org.linagora.linshare.core.domain.entities.User;
 
-public class InconsistentUserBatchResultContext extends BatchResultContext<User> {
+public class CheckIfUserStillInconsistentBatchResultContext extends BatchResultContext<User> {
 
-	public InconsistentUserBatchResultContext(User resource) {
+	public CheckIfUserStillInconsistentBatchResultContext(User resource) {
 		super(resource);
+		this.identifier = resource.getLsUuid();
 	}
+
 }

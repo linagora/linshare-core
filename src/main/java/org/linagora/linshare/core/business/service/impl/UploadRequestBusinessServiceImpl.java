@@ -114,7 +114,7 @@ public class UploadRequestBusinessServiceImpl implements
 
 	@Override
 	public List<String> findUnabledRequests() throws BusinessException {
-		return uploadRequestRepository.findUnabledRequests();
+		return uploadRequestRepository.findCreatedUploadRequests();
 	}
 
 	@Override

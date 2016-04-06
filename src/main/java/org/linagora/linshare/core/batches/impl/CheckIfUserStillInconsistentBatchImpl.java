@@ -36,107 +36,93 @@ package org.linagora.linshare.core.batches.impl;
 
 import java.util.List;
 
-import org.linagora.linshare.core.batches.CloseExpiredUploadRequestBatch;
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.batches.CheckIfUserStillInconsistentBatch;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.job.quartz.CheckIfUserStillInconsistentBatchResultContext;
 import org.linagora.linshare.core.job.quartz.Context;
-import org.linagora.linshare.core.job.quartz.UploadRequestBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.service.MailBuildingService;
-import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.core.service.UploadRequestService;
+import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.InconsistentUserService;
+import org.linagora.linshare.core.service.UserService;
 
-import com.google.common.collect.Lists;
+public class CheckIfUserStillInconsistentBatchImpl extends GenericBatchImpl implements CheckIfUserStillInconsistentBatch {
 
-public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl implements CloseExpiredUploadRequestBatch {
+	private final InconsistentUserService internaleService;
 
-	private final UploadRequestService uploadRequestService;
-	private final MailBuildingService mailBuildingService;
-	private final NotifierService notifierService;
+	private final UserService userService;
 
-	public CloseExpiredUploadRequestBatchImpl(
-			AccountRepository<Account> accountRepository,
-			final UploadRequestService uploadRequestService,
-			final MailBuildingService mailBuildingService,
-			final NotifierService notifierService) {
+	private final AbstractDomainService abstractDomainService;
+
+	public CheckIfUserStillInconsistentBatchImpl(AccountRepository<Account> accountRepository,
+			final InconsistentUserService service,
+			final UserService userService,
+			final AbstractDomainService abstractDomainService) {
 		super(accountRepository);
-		this.uploadRequestService = uploadRequestService;
-		this.mailBuildingService = mailBuildingService;
-		this.notifierService = notifierService;
+		this.internaleService = service;
+		this.userService = userService;
+		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
 	public List<String> getAll() {
 		SystemAccount account = getSystemAccount();
 		logger.info(getClass().toString() + " job starting ...");
-		List<String> entries = uploadRequestService.findOutdatedRequests(account);
+		List<String> entries = internaleService.findAllIconsistentsUuid(account);
 		logger.info(entries.size()
-				+ " Upload Request(s) have been found to be closed");
+				+ " Inconsistent users have been found to be processed.");
 		return entries;
 	}
 
 	@Override
 	public Context execute(String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
 		SystemAccount account = getSystemAccount();
-		UploadRequest r = uploadRequestService.findRequestByUuid(account, null, identifier);
-		Context context = new UploadRequestBatchResultContext(r);
-		logInfo(total, position, "processing uplaod request : ", r.getUuid());
-		r.updateStatus(UploadRequestStatus.STATUS_CLOSED);
-		r = uploadRequestService.updateRequest(account, r.getOwner(), r);
-		for (UploadRequestUrl u : r.getUploadRequestURLs()) {
-			notifications.add(mailBuildingService.buildUploadRequestExpiryWarnRecipient((User) r.getOwner(), u));
+		User user  = userService.findByLsUuid(identifier);
+		Context c = new CheckIfUserStillInconsistentBatchResultContext(user);
+		logInfo(total,
+				position,
+				"processing internal : "
+						+ user.getAccountRepresentation());
+		c.setProcessed(false);
+		if (abstractDomainService.isUserExist(user.getDomain(), user.getMail())) {
+			user.setInconsistent(false);
+			userService.updateUser(account, user, user.getDomainId());
+			c.setProcessed(true);
 		}
-		notifications.add(mailBuildingService.buildUploadRequestExpiryWarnOwner((User) r.getOwner(), r));
-		notifierService.sendNotification(notifications);
-		return context;
+		return c;
 	}
 
 	@Override
 	public void notify(Context context, long total, long position) {
-		UploadRequestBatchResultContext uploadRequestContext = (UploadRequestBatchResultContext) context;
-		UploadRequest r = uploadRequestContext.getResource();
-		logInfo(total, position, "The Upload Request "
-				+ r.getUuid()
-				+ " has been successfully closed.");
+		CheckIfUserStillInconsistentBatchResultContext c = (CheckIfUserStillInconsistentBatchResultContext) context;
+		User u = c.getResource();
+		if (c.getProcessed()) {
+			logInfo(total, position, "The inconsistent user " + u.getLsUuid() + " has been successfully checked.");
+		}
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
-		UploadRequestBatchResultContext uploadRequestContext = (UploadRequestBatchResultContext) exception.getContext();
-		UploadRequest r = uploadRequestContext.getResource();
-		logError(
-				total,
-				position,
-				"Closing upload request has failed : "
-						+ r.getUuid());
-		logger.error(
-				"Error occured while closing outdated upload request "
-						+ r.getUuid()
-						+ ". BatchBusinessException ", exception);
+		CheckIfUserStillInconsistentBatchResultContext c = (CheckIfUserStillInconsistentBatchResultContext) exception.getContext();
+		User u = c.getResource();
+		logError(total, position, "Flaging user has failed " + u.getLsUuid() + ". BatchBusinessException ", exception);
 	}
 
 	@Override
 	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
-		logger.info(success
-				+ " upload request(s) have been closed.");
+		logger.info(success + " user(s) have been checked.");
+		logger.info(processed + " user(s) have been unflagged.");
 		if (errors > 0) {
-			logger.error(errors
-					+ " upload request(s) failed to be closed.");
+			logger.error(errors + " user(s) failed to be unflagged.");
 		}
 		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " upload request(s) failed to be closed (unhandled error).");
+			logger.error(unhandled_errors + " user(s) failed to be unflagged (unhandled error)");
 		}
-		logger.info("CloseExpiredUploadRequestBatchImpl job terminated.");
+		logger.info(getClass().toString() + " job terminated.");
 	}
 }

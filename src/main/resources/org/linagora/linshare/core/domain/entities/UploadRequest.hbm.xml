@@ -29,6 +29,8 @@
 			length="255" not-null="true" lazy="false" />
 		<property name="maxFileCount" column="max_file" type="integer"
 			lazy="false" />
+		<property name="notified" column="notified" type="boolean"
+			lazy="false" />
 		<property name="maxDepositSize" column="max_deposit_size" type="long"
 			lazy="false" />
 		<property name="maxFileSize" column="max_file_size" type="long"

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -85,9 +85,7 @@ public class ComputeDocumentMimeTypeBatchImpl extends GenericBatchImpl {
 				"processing document : " + resource.getRepresentation());
 		Context context = new BatchResultContext<Document>(resource);
 		context.setProcessed(false);
-		InputStream stream = null;
-		try {
-			stream = fileSystemDao.getFileContentByUUID(resource.getUuid());
+		try (InputStream stream = fileSystemDao.getFileContentByUUID(resource.getUuid())) {
 			if (stream != null) {
 				String type = mimeTypeMagicNumberDao.getMimeType(stream);
 				resource.setType(type);
@@ -95,19 +93,9 @@ public class ComputeDocumentMimeTypeBatchImpl extends GenericBatchImpl {
 				documentRepository.update(resource);
 				context.setProcessed(true);
 			}
-		} catch (org.springmodules.jcr.JcrSystemException e) {
+		} catch (org.springmodules.jcr.JcrSystemException | IOException e) {
+			logger.error(e.getMessage(), e);
 			logger.debug("JcrSystemException : ", e);
-		} finally {
-			try {
-				if (stream != null) {
-					stream.close();
-				}
-			} catch (IOException e) {
-				logger.debug(
-						"Error when closing document stream '{}' during consistency check ",
-						resource.getRepresentation());
-				logger.debug("IOException : ", e);
-			}
 		}
 		return context;
 	}

@@ -91,7 +91,7 @@ public class UploadRequestTemplateResourceAccessControlImpl
 
 	@Override
 	protected String getTargetedAccountRepresentation(Account targetedAccount) {
-		return targetedAccount.getAccountReprentation();
+		return targetedAccount.getAccountRepresentation();
 	}
 
 	@Override

@@ -126,7 +126,7 @@ public class UploadRequestRepositoryImpl extends
 	}
 
 	@Override
-	public List<String> findUnabledRequests() {
+	public List<String> findCreatedUploadRequests() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
 		crit.add(Restrictions.lt("activationDate", new Date()));
 		crit.add(Restrictions.eq("status", UploadRequestStatus.STATUS_CREATED));

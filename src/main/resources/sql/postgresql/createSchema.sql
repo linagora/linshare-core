@@ -393,7 +393,7 @@ CREATE TABLE mail_content_lang (
   uuid              varchar(255) NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE upload_request (
-  id                               int8 NOT NULL,
+  id                              int8 NOT NULL,
   domain_abstract_id              int8 NOT NULL,
   account_id                      int8 NOT NULL,
   upload_request_group_id         int8 NOT NULL,
@@ -411,6 +411,7 @@ CREATE TABLE upload_request (
   can_delete                      bool NOT NULL,
   can_close                       bool NOT NULL,
   can_edit_expiry_date            bool NOT NULL,
+  notified                        bool DEFAULT FALSE,
   locale                          varchar(255) NOT NULL,
   secured                         bool NOT NULL,
   mail_message_id                 varchar(255),

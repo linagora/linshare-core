@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -87,11 +87,11 @@ public class EnableUploadRequestBatchImpl extends GenericBatchImpl implements En
 			throws BatchBusinessException, BusinessException {
 		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
 		SystemAccount account = getSystemAccount();
-		UploadRequest r = uploadRequestService.findRequestByUuid(account, identifier);
+		UploadRequest r = uploadRequestService.findRequestByUuid(account, null, identifier);
 		Context context = new UploadRequestBatchResultContext(r);
 		logInfo(total, position, "processing uplaod request : ", r.getUuid());
 		r.updateStatus(UploadRequestStatus.STATUS_ENABLED);
-		r = uploadRequestService.updateRequest(account, r);
+		r = uploadRequestService.updateRequest(account, r.getOwner(), r);
 		for (UploadRequestUrl u: r.getUploadRequestURLs()) {
 			notifications.add(mailBuildingService.buildActivateUploadRequest((User) r.getOwner(), u));
 		}

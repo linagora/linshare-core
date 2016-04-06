@@ -49,8 +49,12 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AuthentificationFacadeImpl implements AuthentificationFacade {
+
+	private static final Logger logger = LoggerFactory.getLogger(AuthentificationFacadeImpl.class);
 
 	private final UserService userService;
 
@@ -165,5 +169,30 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	public User updateUser(User user) throws BusinessException {
 		Account system = internalRepository.getBatchSystemAccount();
 		return userService.updateUser(system, user, user.getDomainId());
+	}
+
+	@Override
+	public User checkStillInLdap(User user, String login) throws BusinessException {
+		logger.debug("User found in DB : "
+				+ user.getAccountRepresentation());
+		logger.debug("The user domain stored in DB was : "
+				+ user.getDomainId());
+		if(ldapSearchForAuth(
+				user.getDomainId(), login) == null) {
+			// The previous user found into the database does not exists anymore into the LDAP directory.
+			// We must not use him.
+			logger.warn("authentication process : the current user does not exist anymore into the LDAP directory : " + user.getAccountRepresentation());
+			// So week flag him as inconsistent.
+			user.setInconsistent(true);
+			updateUser(user);
+			user = null;
+		} else {
+			if (user.isInconsistent()) {
+				//The user was found and no longer inconsistent so we unflag him.
+				user.setInconsistent(false);
+				updateUser(user);
+			}
+		}
+		return user;
 	}
 }

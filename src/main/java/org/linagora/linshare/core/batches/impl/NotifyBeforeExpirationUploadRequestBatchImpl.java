@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -58,7 +58,9 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 		implements NotifyBeforeExpirationUploadRequestBatch {
 
 	private final MailBuildingService mailBuildingService;
+
 	private final NotifierService notifierService;
+
 	private final UploadRequestService service;
 
 	public NotifyBeforeExpirationUploadRequestBatchImpl(
@@ -85,13 +87,17 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 	public Context execute(String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
-		UploadRequest r = service.findRequestByUuid(getSystemAccount(), identifier);
+		UploadRequest r = service.findRequestByUuid(getSystemAccount(), null, identifier);
 		Context context = new UploadRequestBatchResultContext(r);
-		for (UploadRequestUrl u : r.getUploadRequestURLs()) {
-			notifications.add(mailBuildingService.buildUploadRequestBeforeExpiryWarnRecipient((User) r.getOwner(), u));
+		if (!r.isNotified()) {
+			for (UploadRequestUrl u : r.getUploadRequestURLs()) {
+				notifications.add(mailBuildingService.buildUploadRequestBeforeExpiryWarnRecipient((User) r.getOwner(), u));
+			}
+			notifications.add(mailBuildingService.buildUploadRequestBeforeExpiryWarnOwner((User) r.getOwner(), r));
+			r.setNotified(true);
+			service.updateRequest(getSystemAccount(), r.getOwner(), r);
+			notifierService.sendNotification(notifications);
 		}
-		notifications.add(mailBuildingService.buildUploadRequestBeforeExpiryWarnOwner((User) r.getOwner(), r));
-		notifierService.sendNotification(notifications);
 		return context;
 	}
 
@@ -99,28 +105,28 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 	public void notify(Context context, long total, long position) {
 		UploadRequestBatchResultContext uploadRequestContext = (UploadRequestBatchResultContext) context;
 		UploadRequest r = uploadRequestContext.getResource();
-		logInfo(total, position, "The Upload Request " + r.getUuid() + " has been successfully enabled.");
+		logInfo(total, position, "The Upload Request " + r.getUuid() + " has been successfully processed.");
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
 		UploadRequestBatchResultContext uploadRequestContext = (UploadRequestBatchResultContext) exception.getContext();
 		UploadRequest r = uploadRequestContext.getResource();
-		logError(total, position, "Enabling upload request has failed : " + r.getUuid());
-		logger.error("Error occured while enabling upload request " + r.getUuid() + ". BatchBusinessException ",
+		logError(total, position, "Sending notifications for upload request has failed : " + r.getUuid());
+		logger.error("Error occured while sending notification for upload request " + r.getUuid() + ". BatchBusinessException ",
 				exception);
 	}
 
 	@Override
 	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
-		logger.info(success + " upload request(s) have been enabled.");
+		logger.info(success + " upload request(s) have been processed.");
 		if (errors > 0) {
-			logger.error(errors + " upload request(s) failed to be enabled.");
+			logger.error(errors + " notification(s) failed to sent.");
 		}
 		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors + " upload request(s) failed to be enabled(unhandled error).");
+			logger.error(unhandled_errors + " notification(s) failed to sent(unhandled error).");
 		}
-		logger.info("EnableUploadRequestBatchImpl job terminated.");
+		logger.info(getClass().toString() + " job terminated.");
 	}
 }

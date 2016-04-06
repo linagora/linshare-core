@@ -100,7 +100,15 @@ public class InconsistentUserServiceImpl implements InconsistentUserService {
 		if (!actor.hasAllRights()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor has no rights to use this service.");
 		}
-		return internateRepository.findAllUserUuids();
+		return internateRepository.findAllUsersUuid();
+	}
+
+	@Override
+	public List<String> findAllIconsistentsUuid(Account actor) throws BusinessException {
+		if (!actor.hasAllRights()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor has no rights to use this service.");
+		}
+		return internateRepository.findAllInconsistentsUuid();
 	}
 
 	private void checkPermissions(User actor) throws BusinessException {

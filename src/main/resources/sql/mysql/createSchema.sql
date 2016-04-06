@@ -408,6 +408,7 @@ CREATE TABLE upload_request (
   can_delete                      tinyint(1) NOT NULL,
   can_close                       tinyint(1) NOT NULL,
   can_edit_expiry_date            tinyint(1) NOT NULL,
+  can_edit_expiry_date            tinyint(1) DEFAULT FALSE,
   locale                          varchar(255) NOT NULL,
   secured                         tinyint(1) NOT NULL,
   mail_message_id                 varchar(255),

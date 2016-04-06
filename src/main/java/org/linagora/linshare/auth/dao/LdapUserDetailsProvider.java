@@ -196,25 +196,7 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 	}
 
 	private User checkStillInLdap(String login, User foundUser) throws BusinessException {
-		// The user was found in the database, we just need to test if he still exists in the LDAP directory
-		logger.debug("User found in DB : "
-				+ foundUser.getAccountRepresentation());
-		logger.debug("The user domain stored in DB was : "
-				+ foundUser.getDomainId());
-		if(authentificationFacade.ldapSearchForAuth(
-				foundUser.getDomainId(), login) == null) {
-			// The previous user found into the database does not exists anymore into the LDAP directory.
-			// We must not use him.
-			logger.warn("authentication process : the current user does not exist anymore into the LDAP directory : " + foundUser.getAccountRepresentation());
-			foundUser.setInconsistent(true);
-			authentificationFacade.updateUser(foundUser);
-			foundUser = null;
-		}
-		if (foundUser.isInconsistent()) {
-			foundUser.setInconsistent(false);
-			authentificationFacade.updateUser(foundUser);
-		}
-		return foundUser;
+		return authentificationFacade.checkStillInLdap(foundUser, login);
 	}
 
 	public User auth(String domainIdentifier, String login,

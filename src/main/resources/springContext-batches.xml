@@ -47,6 +47,7 @@
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="jackRabbitRepository" />
+	</bean>
 
 	<bean name="deleteExpiredShareEntryBatch"
 		class="org.linagora.linshare.core.batches.impl.DeleteExpiredShareEntryBatchImpl">
@@ -123,6 +124,14 @@
 
 	<bean name="inconsistentUserBatch"
 		class="org.linagora.linshare.core.batches.impl.InconsistentUserBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="inconsistentUserService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="abstractDomainService" />
+	</bean>
+
+	<bean name="checkIfUserStillInconsistentBatch"
+		class="org.linagora.linshare.core.batches.impl.CheckIfUserStillInconsistentBatchImpl">
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="inconsistentUserService" />
 		<constructor-arg ref="userService" />

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -32,13 +32,74 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.job.quartz;
+package org.linagora.linshare.core.facade.webservice.admin.dto;
 
-import org.linagora.linshare.core.domain.entities.User;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
-public class InconsistentUserBatchResultContext extends BatchResultContext<User> {
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
-	public InconsistentUserBatchResultContext(User resource) {
-		super(resource);
+import com.wordnik.swagger.annotations.ApiModel;
+
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_EMPTY)
+@JsonIgnoreProperties({"route"})
+@XmlRootElement(name = "DomainInconsistentSearch")
+@XmlType(name="DomainInconsistentSearch")
+@ApiModel(value = "Domain", description = "A domain contains ")
+public class InconsistentSearchDto extends org.linagora.linshare.core.facade.webservice.common.dto.DomainDto {
+
+	protected String userMail;
+
+	Boolean ldap = new Boolean(false);
+
+	Boolean database  = new Boolean(false);
+
+	Boolean guest = new Boolean(false);
+
+	public InconsistentSearchDto() {
+		super();
 	}
+
+	public InconsistentSearchDto(AbstractDomain domain, String userMail) {
+		super(domain, true, false);
+		this.userMail = userMail;
+		this.setCurrentWelcomeMessages(null);
+		this.setMailConfigUuid(null);
+		this.setMimePolicyUuid(null);
+	}
+
+	public String getUserMail() {
+		return userMail;
+	}
+
+	public void setUserMail(String userMail) {
+		this.userMail = userMail;
+	}
+
+	public Boolean isInLdap() {
+		return ldap;
+	}
+
+	public void setLdap(Boolean ldap) {
+		this.ldap = ldap;
+	}
+
+	public Boolean isInDatabase() {
+		return database;
+	}
+
+	public void setDatabase(Boolean database) {
+		this.database = database;
+	}
+
+	public Boolean isGuest() {
+		return guest;
+	}
+
+	public void setGuest(Boolean guest) {
+		this.guest = guest;
+	}
+
 }

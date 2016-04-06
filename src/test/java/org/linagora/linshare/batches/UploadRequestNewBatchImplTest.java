@@ -126,6 +126,7 @@ public class UploadRequestNewBatchImplTest extends
 			u = uploadRequestRepository.findByUuid(l.get(i));
 			Assert.assertEquals(u.getUuid(), l.get(i));
 			Assert.assertEquals(u.getStatus(), UploadRequestStatus.STATUS_ENABLED);
+			Assert.assertEquals(u.isNotified(), true);
 		}
 	}
 }

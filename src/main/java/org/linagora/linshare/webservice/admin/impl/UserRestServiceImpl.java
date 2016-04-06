@@ -39,6 +39,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
@@ -50,6 +51,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.httpclient.HttpStatus;
@@ -60,6 +62,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.InconsistentSearchDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.UpdateUsersEmailStateDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
@@ -233,6 +236,15 @@ public class UserRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Inconsistent user to update.", required = true) UserDto userDto)
 			throws BusinessException {
 		userFacade.updateInconsistent(userDto);
+	}
+
+	@POST
+	@Path("/inconsistent/search")
+	@ApiOperation(value = "Generate a report on the adress userMail.", response = InconsistentSearchDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Override
+	public List<InconsistentSearchDto> search(InconsistentSearchDto dto) {
+		return userFacade.getUserStatusByDomain(dto);
 	}
 
 	private boolean lessThan3Char(String s) {

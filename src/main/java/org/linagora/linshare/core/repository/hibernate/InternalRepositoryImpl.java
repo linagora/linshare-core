@@ -85,7 +85,7 @@ public class InternalRepositoryImpl extends GenericUserRepositoryImpl<Internal>
 		DetachedCriteria criteria = DetachedCriteria
 				.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("ldapUid", ldapUid).ignoreCase());
-		criteria.add(Restrictions.eq("destroyed", false));
+		criteria.add(Restrictions.eq("destroyed", 0L));
 		List<Internal> users = findByCriteria(criteria);
 
 		if (users == null || users.isEmpty()) {
@@ -111,15 +111,29 @@ public class InternalRepositoryImpl extends GenericUserRepositoryImpl<Internal>
 		DetachedCriteria criteria = DetachedCriteria
 				.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("inconsistent", true));
+		criteria.add(Restrictions.eq("destroyed", 0L));
 		return findByCriteria(criteria);
 	}
 
 	@Override
-	public List<String> findAllUserUuids() throws BusinessException {
+	public List<String> findAllUsersUuid() throws BusinessException {
 		DetachedCriteria criteria = DetachedCriteria
 				.forClass(getPersistentClass());
 		criteria.setProjection(Projections.property("lsUuid"));
-		criteria.add(Restrictions.eq("destroyed", false));
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		criteria.add(Restrictions.eq("inconsistent", false));
+		@SuppressWarnings("unchecked")
+		List<String> uuids = listByCriteria(criteria);
+		return uuids;
+	}
+
+	@Override
+	public List<String> findAllInconsistentsUuid() throws BusinessException {
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("lsUuid"));
+		criteria.add(Restrictions.eq("inconsistent", true));
+		criteria.add(Restrictions.eq("destroyed", 0L));
 		@SuppressWarnings("unchecked")
 		List<String> uuids = listByCriteria(criteria);
 		return uuids;
@@ -131,7 +145,7 @@ public class InternalRepositoryImpl extends GenericUserRepositoryImpl<Internal>
 		criteria.createAlias("domain", "domain");
 		criteria.add(Restrictions.eq("domain.identifier", domain));
 		criteria.add(Restrictions.eq("ldapUid", ldapUid).ignoreCase());
-		criteria.add(Restrictions.eq("destroyed", false));
+		criteria.add(Restrictions.eq("destroyed", 0L));
 		List<Internal> users = findByCriteria(criteria);
 
 		if (users == null || users.isEmpty()) {

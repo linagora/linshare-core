@@ -41,7 +41,6 @@ import java.util.UUID;
 
 import javax.jcr.NodeIterator;
 
-import org.apache.jackrabbit.uuid.UUID;
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.objects.FileInfo;
 import org.slf4j.Logger;

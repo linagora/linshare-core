@@ -148,6 +148,7 @@
 						<ref bean="deleteShareEntryGroupBatch" />
 						<ref bean="deleteExpiredDocumentEntryBatch" />
 						<ref bean="deleteMissingDocumentsBatch" />
+						<ref bean="shaSumBatch" />
 					</list>
 				</entry>
 			</map>
@@ -160,37 +161,15 @@
 			value="${job.shares.cron.expression}" />
 	</bean>
 
-	<bean id="shaSumJob" class="org.springframework.scheduling.quartz.JobDetailBean">
-		<property name="jobClass"
-			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
-		<property name="jobDataAsMap">
-			<map>
-				<entry key="batch" value-ref="shaSumBatch" />
-			</map>
-		</property>
-	</bean>
-
-	<bean id="shaSumJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail" ref="deleteShareEntryGroupsJob" />
-		<property name="cronExpression"
-			value="${job.document.sha.cron.expression}" />
-	</bean>
-
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
                 <ref bean="cleanOutdatedUsersJobTrigger"/>
-                <ref bean="cleanOutdatediSharesJobTrigger"/>
-                <ref bean="checkDocumentsMimeTypeJobTrigger"/>
                 <ref bean="notifyOutdatedSharesJobTrigger"/>
-                <ref bean="cleanInconsistentDocumentEntriesJobTrigger"/>
                 <ref bean="cleanJcrUnusedFilesJobTrigger"/>
-                <ref bean="cleanOutdatedDocumentsJobTrigger"/>
                 <ref bean="updateUploadRequestJobTrigger"/>
                 <ref bean="nofifyUndownloadedSharedDocumentsJobTrigger"/>
-                <ref bean="deleteShareEntryGroupsJobTrigger"/>
                 <ref bean="jackRabbitKeepAliveJobTrigger"/>
-                <ref bean="shaSumJobTrigger"/>
             </list>
         </property>
     </bean>
