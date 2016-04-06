@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2015-2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.webservice.user.task.context.DocumentTaskContext;
 
@@ -50,13 +51,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement(name = "Document")
 @ApiModel(value = "Document", description = "A Document")
-public class DocumentDto {
-
-	@ApiModelProperty(value = "Uuid")
-	protected String uuid;
-
-	@ApiModelProperty(value = "Name")
-	protected String name;
+public class DocumentDto extends EntryDto {
 
 	@ApiModelProperty(value = "Description")
 	protected String description;
@@ -150,22 +145,6 @@ public class DocumentDto {
 
 	public void setCiphered(Boolean ciphered) {
 		this.ciphered = ciphered;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getDescription() {

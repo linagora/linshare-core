@@ -32,77 +32,46 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.user.dto;
+package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-import com.google.common.base.Function;
+@XmlRootElement(name = "Entry")
+@ApiModel(value = "Entry", description="")
+public class EntryDto {
 
-@XmlRootElement(name = "UserAutoCompleteResult")
-public class UserAutoCompleteResultDto extends AutoCompleteResultDto {
+	@ApiModelProperty(value = "Uuid")
+	protected String uuid;
 
-	private String firstName;
+	@ApiModelProperty(value = "Name")
+	protected String name;
 
-	private String lastName;
-
-	private String domain;
-
-	private String mail;
-
-	public UserAutoCompleteResultDto() {
+	public EntryDto() {
+		super();
 	}
 
-	public UserAutoCompleteResultDto(UserDto user) {
-		super(user.getUuid(), user.getMail());
-		this.firstName = user.getFirstName();
-		this.lastName = user.getLastName();
-		this.domain = user.getDomain();
-		this.mail = user.getMail();
+	public EntryDto(String uuid, String name) {
+		super();
+		this.uuid = uuid;
+		this.name = name;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
-	public String getLastName() {
-		return lastName;
+	public String getName() {
+		return name;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getDomain() {
-		return domain;
-	}
-
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
-
-	public String getMail() {
-		return mail;
-	}
-
-	public void setMail(String mail) {
-		this.mail = mail;
-	}
-
-	/*
-	 * Transformers
-	 */
-	public static Function<UserDto, UserAutoCompleteResultDto> toDto() {
-		return new Function<UserDto, UserAutoCompleteResultDto>() {
-			@Override
-			public UserAutoCompleteResultDto apply(UserDto arg0) {
-				return new UserAutoCompleteResultDto(arg0);
-			}
-		};
+	public void setName(String name) {
+		this.name = name;
 	}
 }

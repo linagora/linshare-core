@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2015-2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -49,6 +49,8 @@ public class ListAutoCompleteResultDto extends AutoCompleteResultDto {
 
 	private String ownerMail;
 
+	private String listName;
+
 	public ListAutoCompleteResultDto() {
 	}
 
@@ -57,6 +59,7 @@ public class ListAutoCompleteResultDto extends AutoCompleteResultDto {
 		this.ownerFirstName = list.getOwner().getFirstName();
 		this.ownerLastName = list.getOwner().getLastName();
 		this.ownerMail = list.getOwner().getMail();
+		this.listName = list.getIdentifier();
 	}
 
 	public String getOwnerLastName() {
@@ -81,6 +84,14 @@ public class ListAutoCompleteResultDto extends AutoCompleteResultDto {
 
 	public void setOwnerMail(String ownerMail) {
 		this.ownerMail = ownerMail;
+	}
+
+	public String getListName() {
+		return listName;
+	}
+
+	public void setListName(String listName) {
+		this.listName = listName;
 	}
 
 	public static Function<MailingList, ListAutoCompleteResultDto> toDto() {

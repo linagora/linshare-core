@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2015-2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -47,13 +47,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement(name = "ThreadEntry")
 @ApiModel(value = "ThreadEntry", description = "A file in a thread.")
-public class ThreadEntryDto {
-
-	@ApiModelProperty(value = "Uuid")
-	protected String uuid;
-
-	@ApiModelProperty(value = "Name")
-	protected String name;
+public class ThreadEntryDto extends EntryDto {
 
 	@ApiModelProperty(value = "Description")
 	protected String description;
@@ -123,22 +117,6 @@ public class ThreadEntryDto {
 
 	public void setMetaData(String metaData) {
 		this.metaData = metaData;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getDescription() {

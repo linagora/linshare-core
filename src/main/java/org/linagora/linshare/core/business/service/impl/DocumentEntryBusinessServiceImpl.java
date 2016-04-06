@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2015-2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -319,7 +319,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		logger.debug("Deleting document entry: " + documentEntry.getUuid());
 		Account owner = documentEntry.getEntryOwner();
 		owner.getEntries().remove(documentEntry);
-		accountRepository.update(owner);
 
 		Document doc = documentEntry.getDocument(); 
 		documentEntryRepository.delete(documentEntry);
