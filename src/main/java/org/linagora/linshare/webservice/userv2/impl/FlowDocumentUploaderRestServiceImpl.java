@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  *
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2015-2016 LINAGORA
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -34,7 +34,6 @@
 package org.linagora.linshare.webservice.userv2.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -55,6 +54,8 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.objects.ChunkedFile;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.EntryDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.FlowDto;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.FlowDocumentUploaderRestService;
@@ -96,7 +97,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 	@POST
 	@Consumes("multipart/form-data")
 	@Override
-	public Response uploadChunk(@Multipart(CHUNK_NUMBER) long chunkNumber,
+	public FlowDto uploadChunk(@Multipart(CHUNK_NUMBER) long chunkNumber,
 			@Multipart(TOTAL_CHUNKS) long totalChunks,
 			@Multipart(CHUNK_SIZE) long chunkSize,
 			@Multipart(TOTAL_SIZE) long totalSize,
@@ -110,6 +111,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize,
 				totalSize, identifier, filename);
 		Validate.isTrue(isValid);
+		FlowDto flow = new FlowDto(chunkNumber);
 		try {
 			logger.debug("writing chunk number : " + chunkNumber);
 			java.nio.file.Path tempFile = FlowUploaderUtils
@@ -126,23 +128,24 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 				InputStream inputStream = Files.newInputStream(tempFile,
 						StandardOpenOption.READ);
 				File tempFile2 = getTempFile(inputStream, "rest-flowuploader", filename);
+				EntryDto uploadedDocument = new EntryDto();
 				try {
-					documentFacade.create(tempFile2, filename, "", null);
+					uploadedDocument = documentFacade.create(tempFile2, filename, "", null);
+					flow.completeTransfert(uploadedDocument);
 				} finally {
 					deleteTempFile(tempFile2);
 				}
 				ChunkedFile remove = chunkedFiles.remove(identifier);
 				Files.deleteIfExists(remove.getPath());
-				return Response.ok("upload success").build();
+				return flow;
 			} else {
 				logger.debug("upload pending ");
 			}
-		} catch (IOException e) {
-			// FIXME : upload
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			logger.debug("Exception : ", e);
 		}
-		return Response.ok("upload success").build();
+		return flow;
 	}
 
 	@Path("/")
@@ -166,5 +169,4 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 	private String cleanIdentifier(String identifier) {
 		return identifier.replaceAll("[^0-9A-Za-z_-]", "");
 	}
-
 }

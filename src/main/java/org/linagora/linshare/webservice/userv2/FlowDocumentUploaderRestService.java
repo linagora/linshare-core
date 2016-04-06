@@ -39,10 +39,11 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.FlowDto;
 
 public interface FlowDocumentUploaderRestService {
 
-	Response uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
+	FlowDto uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
 			long totalSize, String identifier, String filename,
 			String relativePath, InputStream file, MultipartBody body)
 			throws BusinessException;
