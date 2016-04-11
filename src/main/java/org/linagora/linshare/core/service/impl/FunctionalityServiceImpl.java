@@ -246,7 +246,6 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 	@Override
 	public Set<Functionality> findAll(Account actor) throws BusinessException {
 		Validate.notNull(actor);
-		Validate.isTrue(actor.hasSimpleRole());
 		Set<Functionality> functionalities = businessService
 				.getAllFunctionalities(actor.getDomain(), excludesForUsers);
 		return functionalities;
