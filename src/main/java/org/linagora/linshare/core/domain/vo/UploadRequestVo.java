@@ -110,7 +110,7 @@ public class UploadRequestVo implements Serializable, Cloneable {
 		super();
 	}
 
-	public UploadRequestVo(UploadRequest req) {
+	public UploadRequestVo(UploadRequest req, Boolean loadContact) {
 		uuid = req.getUuid();
 		subject = req.getUploadRequestGroup().getSubject();
 		body = req.getUploadRequestGroup().getBody();
@@ -132,8 +132,12 @@ public class UploadRequestVo implements Serializable, Cloneable {
 		owner = new UserVo(req.getOwner());
 		Integer s = 0;
 		for (UploadRequestUrl u: req.getUploadRequestURLs()) {
-			recipients.add(new Contact(u.getContact().getMail()));
 			s = s + u.getUploadRequestEntries().size();
+		}
+		if (loadContact) {
+			for (UploadRequestUrl u: req.getUploadRequestURLs()) {
+				recipients.add(new Contact(u.getContact().getMail()));
+			}
 		}
 		size = s;
 	}

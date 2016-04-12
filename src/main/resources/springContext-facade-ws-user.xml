@@ -73,10 +73,20 @@
 	</bean>
 
 	<bean id="wsMimeTypeFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.MimeTypeFacadeImpl">
-	  <constructor-arg ref="accountService" />
+		<constructor-arg ref="accountService" />
 	</bean>
 
 	<bean id="wsUploadRequestFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UploadRequestFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="uploadRequestService" />
+	</bean>
+
+	<bean id="wsUploadRequestGroupFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UploadRequestGroupFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="uploadRequestService" />
+	</bean>
+
+	<bean id="wsUploadRequestTemplateFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UploadRequestTemplateFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="uploadRequestService" />
 	</bean>

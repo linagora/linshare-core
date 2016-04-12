@@ -79,11 +79,6 @@ public class UploadRequestBusinessServiceImpl implements
 	}
 
 	@Override
-	public List<UploadRequest> findRequestsByGroup(String uuid) throws BusinessException {
-		return uploadRequestRepository.findRequestsByGroup(uuid);
-	}
-
-	@Override
 	public UploadRequest create(UploadRequest req) throws BusinessException {
 		req.setStatus(UploadRequestStatus.STATUS_CREATED);
 		return uploadRequestRepository.create(req);

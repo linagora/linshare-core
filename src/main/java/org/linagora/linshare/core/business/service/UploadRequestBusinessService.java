@@ -51,8 +51,6 @@ public interface UploadRequestBusinessService {
 	List<UploadRequest> findAll(List<AbstractDomain> domains,
 			List<UploadRequestStatus> status, Date afterDate, Date beforeDate);
 
-	List<UploadRequest> findRequestsByGroup(String uuid) throws BusinessException;
-
 	UploadRequest findByUuid(String uuid);
 
 	UploadRequest create(UploadRequest req) throws BusinessException;

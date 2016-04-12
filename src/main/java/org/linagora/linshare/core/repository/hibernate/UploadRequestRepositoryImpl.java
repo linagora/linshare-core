@@ -111,12 +111,4 @@ public class UploadRequestRepositoryImpl extends
 		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
-
-	@Override
-	public List<UploadRequest> findRequestsByGroup(String uuid) {
-		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
-		crit.createAlias("uploadRequestGroup", "upg");
-		crit.add(Restrictions.eq("upg.uuid", uuid));
-		return findByCriteria(crit);
-	}
 }

@@ -47,12 +47,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
-import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestGroupDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestTemplateDto;
 import org.linagora.linshare.webservice.userv2.UploadRequestRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,8 +60,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/requests")
-@Api(value = "/rest/user/requests", description = "requests API")
+@Path("/upload_requests")
+@Api(value = "/rest/user/upload_requests", description = "requests API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadRequestRestServiceImpl implements UploadRequestRestService {
@@ -98,62 +95,6 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid) {
 		UploadRequestDto dto = uploadRequestFacade.find(null, uuid);
 		return dto;
-	}
-
-	@GET
-	@Path("/{uuid}/upload_requests")
-	@ApiOperation(value = "Find an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
-	@Override
-	public List<UploadRequestDto> findByGroup(
-			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid) {
-		List<UploadRequestDto> dto = uploadRequestFacade.findByGroup(null, uuid);
-		return dto;
-	}
-
-	@GET
-	@Path("/templates")
-	@ApiOperation(value = "Find an upload request.", response = UploadRequestTemplateDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
-	@Override
-	public List<UploadRequestTemplateDto> findAllTemplates() throws BusinessException {
-		return uploadRequestFacade.findAllTemplates(null);
-	}
-
-	@GET
-	@Path("/groups")
-	@ApiOperation(value = "Find an upload request.", response = UploadRequestGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
-	@Override
-	public List<UploadRequestGroupDto> findAllGroups() throws BusinessException {
-		return uploadRequestFacade.findAllGroups(null);
-	}
-
-	@GET
-	@Path("/templates/{uuid}")
-	@ApiOperation(value = "Find an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
-	@Override
-	public UploadRequestTemplateDto findTemplate(
-			@ApiParam(value = "Upload request template uuid.", required = true) @PathParam(value = "uuid") String uuid)
-					throws BusinessException {
-		return uploadRequestFacade.findTemplate(null, uuid);
-	}
-
-	@GET
-	@Path("/groups/{uuid}")
-	@ApiOperation(value = "Find an upload request.", response = UploadRequestGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
-	@Override
-	public UploadRequestGroupDto findGroup(
-			@ApiParam(value = "Upload request template uuid.", required = true) @PathParam(value = "uuid") String uuid)
-					throws BusinessException {
-		return uploadRequestFacade.findGroup(null, uuid);
 	}
 
 	@POST
@@ -216,58 +157,5 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiParam(value = "Upload request.", required = true) UploadRequestDto uploadRequestDto) {
 		UploadRequestDto dto = uploadRequestFacade.delete(null, uploadRequestDto);
 		return dto;
-	}
-
-	@POST
-	@Path("/templates")
-	@ApiOperation(value = "Create an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
-	@Override
-	public UploadRequestTemplateDto createTemplate(
-			@ApiParam(value = "Upload request.", required = true) UploadRequestTemplateDto templateDto)
-					throws BusinessException {
-		UploadRequestTemplateDto dto = uploadRequestFacade.createTemplate(null, templateDto);
-		return dto;
-	}
-
-	@PUT
-	@Path("/templates/{uuid}")
-	@ApiOperation(value = "Create an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
-	@Override
-	public UploadRequestTemplateDto updateTemplate(
-			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid,
-			@ApiParam(value = "Upload request.", required = true) UploadRequestTemplateDto templateDto)
-					throws BusinessException {
-		UploadRequestTemplateDto dto = uploadRequestFacade.updateTemplate(null, uuid, templateDto);
-		return dto;
-	}
-
-	@DELETE
-	@Path("/templates/{uuid}")
-	@ApiOperation(value = "Create an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
-	@Override
-	public UploadRequestTemplateDto deleteTemplate(
-			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid)
-					throws BusinessException {
-		UploadRequestTemplateDto dto = uploadRequestFacade.deleteTemplate(null, uuid);
-		return dto;
-	}
-
-	@DELETE
-	@Path("/templates")
-	@ApiOperation(value = "Create an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
-	@Override
-	public UploadRequestTemplateDto deleteTemplate(
-			@ApiParam(value = "Upload request.", required = true) UploadRequestTemplateDto dto)
-					throws BusinessException {
-		Validate.notNull(dto, "Template must be set.");
-		return deleteTemplate(dto.getUuid());
 	}
 }

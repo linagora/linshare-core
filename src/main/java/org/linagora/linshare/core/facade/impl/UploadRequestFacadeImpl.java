@@ -123,7 +123,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		List<UploadRequestVo> ret = Lists.newArrayList();
 		for (UploadRequest req : uploadRequestService.findAllRequest(actor, actor, statusList)) {
-			ret.add(new UploadRequestVo(req));
+			ret.add(new UploadRequestVo(req, false));
 		}
 		return ret;
 	}
@@ -134,7 +134,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 
 		return new UploadRequestVo(uploadRequestService.findRequestByUuid(
-				actor, actor, uuid));
+				actor, actor, uuid), true);
 	}
 
 	@Override
@@ -150,7 +150,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 				actor, req, contacts, reqVo.getSubject(), reqVo.getBody(), reqVo.getGroupedMode());
 		List<UploadRequestVo> requestDtos = Lists.newArrayList();
 		for (UploadRequest request : requests) {
-			requestDtos.add(new UploadRequestVo(request));
+			requestDtos.add(new UploadRequestVo(request, true));
 		}
 		return requestDtos ;
 	}
@@ -170,7 +170,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		e.setLocale(req.getLocale().getTapestryLocale());
 		e.setCanClose(req.getCanClose());
 		e.setCanDelete(req.getCanDelete());
-		return new UploadRequestVo(uploadRequestService.updateRequest(actor, actor, e));
+		return new UploadRequestVo(uploadRequestService.updateRequest(actor, actor, e), true);
 	}
 
 	@Override
@@ -179,7 +179,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		UploadRequest e = uploadRequestService.updateStatus(actor, actor, req.getUuid(),
 				UploadRequestStatus.STATUS_DELETED);
-		return new UploadRequestVo(e);
+		return new UploadRequestVo(e, false);
 	}
 
 	@Override
@@ -188,7 +188,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		UploadRequest e = uploadRequestService.updateStatus(actor, actor, req.getUuid(),
 				UploadRequestStatus.STATUS_CLOSED);
-		return new UploadRequestVo(e);
+		return new UploadRequestVo(e, false);
 	}
 
 	@Override
@@ -197,7 +197,7 @@ public class UploadRequestFacadeImpl implements UploadRequestFacade {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		UploadRequest e = uploadRequestService.updateStatus(actor, actor, req.getUuid(),
 				UploadRequestStatus.STATUS_ARCHIVED);
-		return new UploadRequestVo(e);
+		return new UploadRequestVo(e, false);
 	}
 
 	@Override

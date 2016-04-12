@@ -38,7 +38,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -158,13 +157,6 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		}
 		checkReadPermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, ret);
 		return ret;
-	}
-
-	@Override
-	public List<UploadRequest> findRequestsByGroup(Account actor, Account owner, String uuid) throws BusinessException {
-		preChecks(actor, owner);
-		checkListPermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
-		return uploadRequestBusinessService.findRequestsByGroup(uuid);
 	}
 
 	@Override

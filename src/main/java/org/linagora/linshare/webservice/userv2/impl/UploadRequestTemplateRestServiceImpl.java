@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -32,7 +32,7 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.delegation.impl;
+package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
 
@@ -44,15 +44,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
-import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
-import org.linagora.linshare.webservice.delegation.UploadRequestRestService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.linagora.linshare.core.facade.webservice.user.UploadRequestTemplateFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestTemplateDto;
+import org.linagora.linshare.webservice.userv2.UploadRequestTemplateRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -60,45 +59,38 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{ownerUuid}/upload_requests")
-@Api(value = "/rest/delegation/{ownerUuid}/upload_requests", description = "requests API")
+@Path("/upload_request_templates")
+@Api(value = "/rest/user/upload_request_templates", description = "upload request templates API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class UploadRequestRestServiceImpl implements UploadRequestRestService {
+public class UploadRequestTemplateRestServiceImpl implements UploadRequestTemplateRestService {
 
-	protected final Logger logger = LoggerFactory.getLogger(UploadRequestRestServiceImpl.class);
+	private UploadRequestTemplateFacade uploadRequestTemplateFacade;
 
-	private final UploadRequestFacade uploadRequestFacade;
-
-	public UploadRequestRestServiceImpl(UploadRequestFacade uploadRequestFacade) {
-		super();
-		this.uploadRequestFacade = uploadRequestFacade;
+	public UploadRequestTemplateRestServiceImpl(final UploadRequestTemplateFacade uploadRequestTemplateFacade) {
+		this.uploadRequestTemplateFacade = uploadRequestTemplateFacade;
 	}
 
 	@GET
 	@Path("/")
-	@ApiOperation(value = "Find a list of upload request.", response = UploadRequestDto.class)
+	@ApiOperation(value = "Find an upload request template.", response = UploadRequestTemplateDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized.") })
+			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
-	public List<UploadRequestDto> findAll(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid)
-					throws BusinessException {
-		return uploadRequestFacade.findAll(ownerUuid);
+	public List<UploadRequestTemplateDto> findAll() throws BusinessException {
+		return uploadRequestTemplateFacade.findAll(null);
 	}
 
 	@GET
 	@Path("/{uuid}")
-	@ApiOperation(value = "Find an upload request.", response = UploadRequestDto.class)
+	@ApiOperation(value = "Find an upload request template.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
-	public UploadRequestDto find(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
-			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid)
+	public UploadRequestTemplateDto find(
+			@ApiParam(value = "Upload request template uuid.", required = true) @PathParam(value = "uuid") String uuid)
 					throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.find(ownerUuid, uuid);
-		return dto;
+		return uploadRequestTemplateFacade.find(null, uuid);
 	}
 
 	@POST
@@ -107,69 +99,51 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
-	public List<UploadRequestDto> create(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
-			@ApiParam(value = "Upload request.", required = true) UploadRequestDto uploadRequestDto,
-			@ApiParam(value = "Group mode.", required = true) @QueryParam(value = "groupMode") Boolean groupMode)
+	public UploadRequestTemplateDto create(
+			@ApiParam(value = "Upload request.", required = true) UploadRequestTemplateDto templateDto)
 					throws BusinessException {
-		List<UploadRequestDto> dto = uploadRequestFacade.create(ownerUuid, uploadRequestDto, groupMode);
+		UploadRequestTemplateDto dto = uploadRequestTemplateFacade.create(null, templateDto);
 		return dto;
 	}
 
 	@PUT
-	@Path("/{uuid}")
-	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
+	@Path("/")
+	@ApiOperation(value = "Update an upload request template.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
-	public UploadRequestDto update(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
+	public UploadRequestTemplateDto update(
 			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid,
-			@ApiParam(value = "Upload request.", required = true) UploadRequestDto uploadRequestDto)
+			@ApiParam(value = "Upload request.", required = true) UploadRequestTemplateDto templateDto)
 					throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.update(ownerUuid, uuid, uploadRequestDto);
-		return dto;
-	}
-
-	@POST
-	@Path("/{uuid}")
-	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
-	@Override
-	public UploadRequestDto updateStatus(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
-			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid,
-			@QueryParam("status") String status) throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.updateStatus(ownerUuid, uuid, status);
+		UploadRequestTemplateDto dto = uploadRequestTemplateFacade.update(null, uuid, templateDto);
 		return dto;
 	}
 
 	@DELETE
 	@Path("/{uuid}")
-	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
+	@ApiOperation(value = "Delete an upload request template.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
-	public UploadRequestDto delete(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
+	public UploadRequestTemplateDto delete(
 			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid)
 					throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.delete(ownerUuid, uuid);
+		UploadRequestTemplateDto dto = uploadRequestTemplateFacade.delete(null, uuid);
 		return dto;
 	}
 
 	@DELETE
 	@Path("/")
-	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
+	@ApiOperation(value = "Delete an upload request template.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
-	public UploadRequestDto delete(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
-			@ApiParam(value = "Upload request.", required = true) UploadRequestDto uploadRequestDto)
+	public UploadRequestTemplateDto delete(
+			@ApiParam(value = "Upload request.", required = true) UploadRequestTemplateDto dto)
 					throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.delete(ownerUuid, uploadRequestDto);
-		return dto;
+		Validate.notNull(dto, "Template must be set.");
+		return delete(dto.getUuid());
 	}
+
 }

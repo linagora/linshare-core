@@ -38,24 +38,12 @@ import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestGroupDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestTemplateDto;
 
 public interface UploadRequestRestService {
 
 	List<UploadRequestDto> findAll();
 
 	UploadRequestDto find(String uuid);
-
-	List<UploadRequestDto> findByGroup(String uuid);
-
-	List<UploadRequestTemplateDto> findAllTemplates() throws BusinessException;
-
-	List<UploadRequestGroupDto> findAllGroups() throws BusinessException;
-
-	UploadRequestTemplateDto findTemplate(String uuid) throws BusinessException;
-
-	UploadRequestGroupDto findGroup(String uuid) throws BusinessException;
 
 	List<UploadRequestDto> create(UploadRequestDto uploadRequestDto, Boolean groupMode);
 
@@ -67,11 +55,4 @@ public interface UploadRequestRestService {
 
 	UploadRequestDto delete(UploadRequestDto uploadRequestDto);
 
-	UploadRequestTemplateDto createTemplate(UploadRequestTemplateDto templateDto) throws BusinessException;
-
-	UploadRequestTemplateDto updateTemplate(String uuid, UploadRequestTemplateDto templateDto) throws BusinessException;
-
-	UploadRequestTemplateDto deleteTemplate(String uuid) throws BusinessException;
-
-	UploadRequestTemplateDto deleteTemplate(UploadRequestTemplateDto dto) throws BusinessException;
 }

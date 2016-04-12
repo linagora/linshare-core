@@ -90,6 +90,9 @@ public class DocumentEntryResourceAccessControlImpl extends
 	@Override
 	protected boolean hasDeletePermission(Account actor, Account owner,
 			DocumentEntry entry, Object... opt) {
+		if (actor.hasUploadRequestRole()) {
+			return true;
+		}
 		return defaultPermissionCheck(actor, owner, entry,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_DELETE);
 	}

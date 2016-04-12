@@ -131,6 +131,7 @@ public class UploadRequestDto {
 			this.canDeleteDocument = entity.isCanDelete();
 			this.canClose = entity.isCanClose();
 			for (UploadRequestUrl uru : entity.getUploadRequestURLs()) {
+				contactList.add(new ContactDto(uru.getContact()));
 				for (UploadRequestEntry entry : uru.getUploadRequestEntries()) {
 					entries.add(new EntryDto(entry));
 					this.usedSpace += entry.getSize();
