@@ -1767,6 +1767,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.add("lastName", sender.getLastName());
 		builder.getBodyChain()
 				.add("message", container.getMessage())
+				.add("sharingNote", container.getSharingNote())
 				.add("documentNames", docNames.toString())
 				.add("creationDate", creationDate.toString())
 				.add("expirationDate", expirationDate)
