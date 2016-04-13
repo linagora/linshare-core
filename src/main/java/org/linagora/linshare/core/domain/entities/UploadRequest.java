@@ -303,9 +303,9 @@ public class UploadRequest implements Cloneable {
 			cnse.printStackTrace(System.err);
 		}
 		req.id = 0;
-		uploadRequestURLs = Sets.newHashSet();
-		uploadRequestEntries = Sets.newHashSet();
-		uploadRequestHistory = Sets.newHashSet();
+		req.uploadRequestURLs = Sets.newHashSet();
+		req.uploadRequestEntries = Sets.newHashSet();
+		req.uploadRequestHistory = Sets.newHashSet();
 		return req;
 	}
 
