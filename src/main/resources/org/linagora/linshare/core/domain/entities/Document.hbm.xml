@@ -17,6 +17,7 @@
 		<property name="thmbUuid" column="thmb_uuid" type="string" length="255" not-null="false" lazy="false" />
 		<property name="sha1sum" column="sha1sum" type="string" length="255" lazy="false"/>
 		<property name="sha256sum" column="sha256sum" type="string" length="255" lazy="false"/>
+		<property name="checkSha256Sum" column="check_sha256_sum" type="boolean" not-null="false" lazy="false" />
 		<property access="field" column="timestamp" name="timeStamp" type="binary" length="65535" />
 		<one-to-one name="threadEntry" class="org.linagora.linshare.core.domain.entities.ThreadEntry" cascade="save-update,lock"
 			property-ref="document" lazy="proxy" />

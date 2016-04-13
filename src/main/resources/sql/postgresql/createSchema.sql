@@ -48,6 +48,7 @@ CREATE TABLE document (
   thmb_uuid       varchar(255),
   timestamp       bytea,
   check_mime_type bool DEFAULT 'false' NOT NULL,
+  check_sha256_sum bool DEFAULT 'false' NOT NULL,
   sha1sum         varchar(255),
   sha256sum       varchar(255),
   CONSTRAINT linshare_document_pkey

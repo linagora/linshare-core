@@ -111,7 +111,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	private DocumentRepository documentRepository;
 
 	@Autowired
-	private FileSystemDao fileRepository;	
+	private FileSystemDao fileRepository;
 
 	@Autowired
 	private DocumentEntryRepository documentEntryRepository;
@@ -132,7 +132,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
-		jane = datas.getUser2();		
+		jane = datas.getUser2();
 
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

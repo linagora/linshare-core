@@ -47,7 +47,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.objects.FileInfo;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -310,7 +309,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		Document document = new Document(uuid, "text/plain", new Long(561));
 		try {
 			inputStream = java.lang.Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
-			document.setSha256sum(documentEntryBusinessService.SHACheckSumFileStream(inputStream));
+			document.setSha256sum(documentEntryBusinessService.SHA256CheckSumFileStream(inputStream));
 			inputStream.close();
 			documentRepository.create(document);
 			DocumentEntry docEntry = new DocumentEntry(actor, "inputStream test", "", document);

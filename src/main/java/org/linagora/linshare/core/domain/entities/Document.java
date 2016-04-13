@@ -43,59 +43,61 @@ import java.util.Set;
 import org.linagora.linshare.core.utils.DocumentUtils;
 
 public class Document implements Serializable {
-	
+
 	private static final long serialVersionUID = 2877902686906612071L;
 
 	private long id;
-	
+
 	/**
 	 * the identifier of the document.
 	 */
 	private String uuid;
-	
+
 	/**
 	 * the creation date of the document.
 	 */
 	private Calendar creationDate;
-	
+
 	/**
 	 * the document mime type.
 	 */
 	private String type;
-	
+
 	/**
 	 * technical field, used by detection mime type batch.
 	 */
 	private Boolean checkMimeType;
-	
+
+	/**
+	 * technical field, used by detection sha256 batch.
+	 */
+	private Boolean checkSha256Sum = false;
+
 	/**
 	 * the document file size
 	 */
 	private Long size;
-	
-	
+
 	private Set<Signature> signatures = new HashSet<Signature>();
-	
+
 	/**
 	 * UUID of the thumbnail file
 	 */
 	private String thmbUuid;
-	
-	
+
 	/**
 	 * timsStampresponse encoded (der)
 	 */
 	private byte[] timeStamp;
-	
+
 	private DocumentEntry documentEntry;
 
 	private ThreadEntry threadEntry;
 
 	protected String sha1sum;
-	
+
 	protected String sha256sum;
-	
-	
+
 	/* Constructors */
 	public Document(String uuid, String name, String type, Calendar creationDate,
 			Calendar expirationDate, User owner, Boolean encrypted,
@@ -108,8 +110,9 @@ public class Document implements Serializable {
 		this.timeStamp = null;
 		this.thmbUuid = null;
 		this.checkMimeType = false;
+		this.checkSha256Sum = false;
 	}
-	
+
 	/**
 	 * modifying from protected to public for using BeanUtils without construct 
 	 * a document with null in parameters
@@ -117,7 +120,7 @@ public class Document implements Serializable {
 	public Document(){
 		super();
 	}
-	
+
 	public Document(String uuid, String type, Long size) {
 		super();
 		this.uuid=uuid;
@@ -127,8 +130,9 @@ public class Document implements Serializable {
 		this.timeStamp = null;
 		this.thmbUuid = null;
 		this.checkMimeType = false;
-	}	
-	
+		this.checkSha256Sum = false;
+	}
+
 	@Override
 	public boolean equals(Object o1){
 		if(o1 instanceof Document){
@@ -256,6 +260,14 @@ public class Document implements Serializable {
 
 	public void setSha256sum(String sha256sum) {
 		this.sha256sum = sha256sum;
+	}
+
+	public Boolean getCheckSha256Sum() {
+		return checkSha256Sum;
+	}
+
+	public void setCheckSha256Sum(Boolean checkSha256) {
+		this.checkSha256Sum = checkSha256;
 	}
 
 	@Override

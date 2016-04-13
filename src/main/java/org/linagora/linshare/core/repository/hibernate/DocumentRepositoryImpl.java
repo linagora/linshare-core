@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.repository.DocumentRepository;
@@ -80,5 +81,25 @@ public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> imp
 			return new ArrayList<Document>();
 		}
 		return docs;
+	}
+
+	@Override
+	public List<String> findAllSha256CheckNeededDocuments() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
+		crit.setProjection(Projections.property("uuid"));
+		crit.add(Restrictions.eq("checkSha256Sum", Boolean.TRUE));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(crit);
+		return list;
+	}
+
+	@Override
+	public List<String> findAllSha1CheckNeededDocuments() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
+		crit.setProjection(Projections.property("uuid"));
+		crit.add(Restrictions.isNull("sha1sum"));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(crit);
+		return list;
 	}
 }

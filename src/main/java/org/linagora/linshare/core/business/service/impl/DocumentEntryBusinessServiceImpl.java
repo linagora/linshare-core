@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
@@ -280,11 +281,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			Document document = new Document(uuid, mimeType, size);
 			document.setThmbUuid(uuidThmb);
 			document.setTimeStamp(timestampToken);
-			try {
-				document.setSha256sum(SHACheckSumFileStream(new FileInputStream(myFile)));
-			} catch (FileNotFoundException e) {
-				logger.error("Can not find document" + e.getMessage());
-			}
+			document.setSha256sum(SHA256CheckSumFileStream(myFile));
 			documentRepository.create(document);
 
 			docEntry.setName(fileName);
@@ -541,11 +538,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 			// add an document for the file in DB
 			Document document = new Document(uuid, mimeType, size);
-			try {
-				document.setSha256sum(SHACheckSumFileStream(new FileInputStream(myFile)));
-			} catch (FileNotFoundException e) {
-				logger.error("Can not find document" + e.getMessage());
-			}
+			document.setSha256sum(SHA256CheckSumFileStream(myFile));
+			document.setSha1sum(SHA1CheckSumFileStream(myFile));
+			document.setCheckSha256Sum(new Boolean(false));
 			document.setThmbUuid(uuidThmb);
 			document.setTimeStamp(timestampToken);
 			return documentRepository.create(document);
@@ -714,7 +709,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 	@Override
 	public void deleteSetThreadEntry(Set<Entry> setThreadEntry) throws BusinessException {
-
 		for (Object threadEntry : setThreadEntry.toArray()) {
 			this.deleteThreadEntry((ThreadEntry) threadEntry);
 		}
@@ -725,15 +719,37 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return documentEntryRepository.getUsedSpace(owner);
 	}
 
+	@Override
+	public String SHA256CheckSumFileStream(File file) {
+		try(InputStream fs = new FileInputStream(file)) {
+			return SHA256CheckSumFileStream(fs);
+		} catch (IOException e) {
+			logger.error("Could not found the file : " + file.getName(), e);
+			throw new BusinessException(BusinessErrorCode.FILE_UNREACHABLE, "Coul not found the file " + file.getName());
+		}
+	}
+
+	@Override
+	public String SHA1CheckSumFileStream(File file) {
+		try(InputStream fs = new FileInputStream(file)) {
+			return SHA1CheckSumFileStream(fs);
+		} catch (IOException e) {
+			logger.error("Could not found the file : " + file.getName(), e);
+			throw new BusinessException(BusinessErrorCode.FILE_UNREACHABLE, "Coul not found the file " + file.getName());
+		}
+	}
+
 	/**
 	 *
 	 * @param fileStream
 	 * @return String SHA256SUM of fileStream
+	 * @throws NoSuchAlgorithmException 
+	 * @throws IOException 
 	 */
 	@Override
-	public String SHACheckSumFileStream(InputStream fs) {
-		StringBuffer hexString = new StringBuffer();
+	public String SHA256CheckSumFileStream(InputStream fs) throws IOException {
 		try {
+			StringBuffer hexString = new StringBuffer();
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			byte[] dataBytes = new byte[1024];
 
@@ -747,10 +763,35 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				hexString.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16)
 						.substring(1));
 			}
-		} catch (Exception e) {
-			logger.error("can not compute sha256 hash file : " + e.getMessage());
+			return hexString.toString();
+		} catch (NoSuchAlgorithmException e) {
+			logger.error(e.getMessage(), e);
+			throw new TechnicalException(e.getMessage());
 		}
-		return hexString.toString();
+	}
+
+	@Override
+	public String SHA1CheckSumFileStream(InputStream fs) throws IOException {
+		try {
+			StringBuffer hexString = new StringBuffer();
+			MessageDigest md = MessageDigest.getInstance("SHA-1");
+			byte[] dataBytes = new byte[1024];
+
+			int nread = 0;
+			while ((nread = fs.read(dataBytes)) != -1) {
+				md.update(dataBytes, 0, nread);
+			}
+			byte[] mdbytes = md.digest();
+			// convert the byte to hex format
+			for (int i = 0; i < mdbytes.length; i++) {
+				hexString.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16)
+						.substring(1));
+			}
+			return hexString.toString();
+		} catch (NoSuchAlgorithmException e) {
+			logger.error(e.getMessage(), e);
+			throw new TechnicalException(e.getMessage());
+		}
 	}
 
 	@Override

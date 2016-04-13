@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
@@ -113,5 +114,11 @@ public interface DocumentEntryBusinessService {
 
 	List<DocumentEntry> findAllMySyncEntries(Account owner) throws BusinessException;
 
-	String SHACheckSumFileStream(InputStream fs);
+	String SHA256CheckSumFileStream(File file);
+
+	String SHA1CheckSumFileStream(File file);
+
+	String SHA256CheckSumFileStream(InputStream fs) throws IOException;
+
+	String SHA1CheckSumFileStream(InputStream fs) throws IOException;
 }
