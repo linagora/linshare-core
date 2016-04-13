@@ -46,27 +46,43 @@ import org.linagora.linshare.core.domain.objects.FileInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Maps;
+
 public class JackRabbitFileSystemMock implements FileSystemDao {
+
+	private Map<String, String> files;
 
 	final private static Logger logger = LoggerFactory
 			.getLogger(JackRabbitFileSystemMock.class);
 
+	public JackRabbitFileSystemMock() {
+		super();
+		this.files = Maps.newConcurrentMap();
+//		files.put("fdb962e8-52b6-44e6-b977-f5e638cbcfa8", "linshare-mailContainer.properties");
+//		files.put("b5edf244-8b39-4f6a-8caa-559bec48407a", "linshare-default.properties");
+	}
+
 	@Override
 	public void removeFileByUUID(String uuid) {
 		logger.debug("mock method");
+		files.remove(uuid);
 	}
 
 	@Override
 	public String insertFile(String path, InputStream file, long size,
 			String fileName, String mimeType) {
 		logger.debug("mock method");
-		return UUID.randomUUID().toString();
+		String uuid = UUID.randomUUID().toString();
+		files.put(uuid, fileName);
+		return uuid;
 	}
 
 	@Override
-	public InputStream getContentFile(String path) {
+	public InputStream getContentFile(String uuid) {
 		logger.debug("mock method");
-		return null;
+		String name = files.get(uuid);
+		return Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream(name);
 	}
 
 	@Override
@@ -96,7 +112,9 @@ public class JackRabbitFileSystemMock implements FileSystemDao {
 	@Override
 	public InputStream getFileContentByUUID(String uuid) {
 		logger.debug("mock method");
-		return null;
+		String name = files.get(uuid);
+		return Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream(name);
 	}
 
 	@Override

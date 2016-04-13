@@ -69,11 +69,6 @@ public class Document implements Serializable {
 	private Boolean checkMimeType;
 
 	/**
-	 * technical field, used by detection sha256 batch.
-	 */
-	private Boolean checkSha256Sum = false;
-
-	/**
 	 * the document file size
 	 */
 	private Long size;
@@ -110,7 +105,6 @@ public class Document implements Serializable {
 		this.timeStamp = null;
 		this.thmbUuid = null;
 		this.checkMimeType = false;
-		this.checkSha256Sum = false;
 	}
 
 	/**
@@ -130,7 +124,6 @@ public class Document implements Serializable {
 		this.timeStamp = null;
 		this.thmbUuid = null;
 		this.checkMimeType = false;
-		this.checkSha256Sum = false;
 	}
 
 	@Override
@@ -260,14 +253,6 @@ public class Document implements Serializable {
 
 	public void setSha256sum(String sha256sum) {
 		this.sha256sum = sha256sum;
-	}
-
-	public Boolean getCheckSha256Sum() {
-		return checkSha256Sum;
-	}
-
-	public void setCheckSha256Sum(Boolean checkSha256) {
-		this.checkSha256Sum = checkSha256;
 	}
 
 	@Override

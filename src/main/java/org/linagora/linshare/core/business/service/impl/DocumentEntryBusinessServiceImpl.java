@@ -540,7 +540,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			Document document = new Document(uuid, mimeType, size);
 			document.setSha256sum(SHA256CheckSumFileStream(myFile));
 			document.setSha1sum(SHA1CheckSumFileStream(myFile));
-			document.setCheckSha256Sum(new Boolean(false));
 			document.setThmbUuid(uuidThmb);
 			document.setTimeStamp(timestampToken);
 			return documentRepository.create(document);
@@ -743,7 +742,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	 *
 	 * @param fileStream
 	 * @return String SHA256SUM of fileStream
-	 * @throws NoSuchAlgorithmException 
 	 * @throws IOException 
 	 */
 	@Override
@@ -770,6 +768,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 	}
 
+	/**
+	 *
+	 * @param fileStream
+	 * @return String SHA1SUM of fileStream
+	 * @throws IOException 
+	 */
 	@Override
 	public String SHA1CheckSumFileStream(InputStream fs) throws IOException {
 		try {

@@ -47,7 +47,7 @@ import com.google.common.collect.Lists;
 
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml", "classpath:springContext-ldap.xml",
-		"classpath:springContext-jackRabbit.xml",
+		"classpath:springContext-jackRabbit-mock.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-rac.xml",
@@ -55,10 +55,10 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
-public class shaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	private static Logger logger = LoggerFactory
-			.getLogger(shaBatchImplTest.class);
+			.getLogger(ShaBatchImplTest.class);
 
 	@Qualifier("shaSumBatch")
 	@Autowired
@@ -134,8 +134,8 @@ public class shaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 		bDocumentEntry = documentEntryService.create(actor, actor, tempFile2, fileName2, comment2, false, null);
 		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
 		Assert.assertTrue(documentEntryRepository.findById(bDocumentEntry.getUuid()) != null);
-		aDocumentEntry.getDocument().setCheckSha256Sum(true);
-		bDocumentEntry.getDocument().setCheckSha256Sum(true);
+		aDocumentEntry.getDocument().setSha256sum(null);
+		bDocumentEntry.getDocument().setSha256sum(null);
 		l = shaSumBatch.getAll();
 		Assert.assertEquals(l.size(), 2);
 	}
@@ -152,7 +152,7 @@ public class shaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 		IOUtils.transferTo(stream1, tempFile2);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName2, comment2, false, null);
 		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
-		aDocumentEntry.getDocument().setCheckSha256Sum(true);
+		aDocumentEntry.getDocument().setSha256sum(null);
 		documentRepository.update(aDocumentEntry.getDocument());
 		l = shaSumBatch.getAll();
 		int i;

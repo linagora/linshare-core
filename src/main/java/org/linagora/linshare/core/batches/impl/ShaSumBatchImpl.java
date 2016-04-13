@@ -80,11 +80,12 @@ public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 	public Context execute(String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		Document doc = documentRepository.findByUuid(identifier);
+		logInfo(total, position, "processing document : "
+				+ doc.getUuid());
 		Context context = new DocumentBatchResultContext(doc);
 		logger.debug("retrieve from JackRabbit : " + doc.getUuid());
 		try (InputStream fileContentByUUID = fileSystemDao.getFileContentByUUID(doc.getUuid())) {
 			doc.setSha256sum(docEntryBusinessService.SHA256CheckSumFileStream(fileContentByUUID));
-			doc.setCheckSha256Sum(new Boolean(false));
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			throw new BatchBusinessException(context, e.getMessage());
