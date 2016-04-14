@@ -978,6 +978,8 @@
 					<responseBufferSize>2097152</responseBufferSize>
 				</connector>
 			</connectors>
+<!-- 			<scanIntervalSeconds>10</scanIntervalSeconds> -->
+			<contextPath>/linshare</contextPath>
 		</configuration>
 	</plugin>
 
