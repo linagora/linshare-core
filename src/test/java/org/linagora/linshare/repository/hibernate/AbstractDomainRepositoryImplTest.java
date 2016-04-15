@@ -193,4 +193,10 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 		List<AbstractDomain> list = abstractDomainRepository.findAllSubDomain();
 		Assert.assertNotNull(list.size());
 	}
+
+	@Test
+	public void testFindSubDomain() throws BusinessException{
+		List<String> list = abstractDomainRepository.getAllSubDomainIdentifiers("LinShareRootDomain");
+		Assert.assertEquals(1, list.size());
+	}
 }

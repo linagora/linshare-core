@@ -57,6 +57,7 @@ public interface AbstractDomainService {
 	public void deleteDomain(Account actor, String identifier) throws BusinessException;
 	public List<String> getAllDomainIdentifiers();
 	public List<String> getAllMyDomainIdentifiers(String personalDomainIdentifer);
+	List<String> getAllSubDomainIdentifiers(String domain);
 
 
 	/**
