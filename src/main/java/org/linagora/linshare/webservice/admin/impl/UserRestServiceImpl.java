@@ -51,7 +51,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.httpclient.HttpStatus;
@@ -239,12 +238,21 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	}
 
 	@POST
-	@Path("/inconsistent/search")
+	@Path("/inconsistent/check")
 	@ApiOperation(value = "Generate a report on the adress userMail.", response = InconsistentSearchDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
-	public List<InconsistentSearchDto> search(InconsistentSearchDto dto) {
-		return userFacade.getUserStatusByDomain(dto);
+	public List<InconsistentSearchDto> check(UserSearchDto dto) {
+		return userFacade.checkInconsistentUserStatus(dto);
+	}
+
+	@POST
+	@Path("/inconsistent/autocomplete")
+	@ApiOperation(value = "Autocomplete email on every possible and available data.", response = InconsistentSearchDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Override
+	public List<String> autocompleteInconsistent(UserSearchDto dto) throws BusinessException {
+		return userFacade.autocompleteInconsistent(dto);
 	}
 
 	private boolean lessThan3Char(String s) {

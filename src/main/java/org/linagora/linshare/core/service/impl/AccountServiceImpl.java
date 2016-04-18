@@ -33,7 +33,10 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AccountService;
@@ -63,5 +66,13 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public Account update(Account account) throws BusinessException {
 		return accountRepository.update(account);
+	}
+
+	@Override
+	public List<String> findAllKnownEmails(Account actor, String pattern) {
+		if (!actor.hasAllRights()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "forbidden");
+		}
+		return accountRepository.findAllKnownEmails(pattern);
 	}
 }

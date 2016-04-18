@@ -69,5 +69,7 @@ public interface UserFacade extends AdminGenericFacade {
 
 	boolean updateEmail(String currentEmail, String newEmail);
 
-	List<InconsistentSearchDto> getUserStatusByDomain(InconsistentSearchDto dto);
+	List<InconsistentSearchDto> checkInconsistentUserStatus(UserSearchDto dto);
+
+	List<String> autocompleteInconsistent(UserSearchDto dto) throws BusinessException;
 }

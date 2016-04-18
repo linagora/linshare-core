@@ -33,19 +33,23 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AccountService {
 
-    /**
-     * 
-     * @param uid user identifier, should be lsUuid (or mail for compatibility, but this will be remove asap.)
-     * @return
-     */
-    public Account findByLsUuid(String uuid);
- 
-    public Account update(Account account) throws BusinessException;
-    
+	/**
+	 * 
+	 * @param uid
+	 *            user identifier, should be lsUuid (or mail for compatibility,
+	 *            but this will be remove asap.)
+	 * @return
+	 */
+	public Account findByLsUuid(String uuid);
+
+	public Account update(Account account) throws BusinessException;
+
+	List<String> findAllKnownEmails(Account actor, String pattern);
 }

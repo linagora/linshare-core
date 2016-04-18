@@ -39,7 +39,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -213,30 +212,54 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<InconsistentSearchDto> getUserStatusByDomain(InconsistentSearchDto searchDto) {
-		Validate.notEmpty(searchDto.getUserMail(), "User mail must not be empty");
-		User actor = checkAuthentication(Role.SUPERADMIN);
+	public List<InconsistentSearchDto> checkInconsistentUserStatus(UserSearchDto searchDto) {
+		Validate.notNull(searchDto, "searchDto must not be null");
+		String mail = searchDto.getMail();
+		Validate.notEmpty(mail, "User mail must not be empty");
+		checkAuthentication(Role.SUPERADMIN);
 		List<InconsistentSearchDto> res = Lists.newArrayList();
-		List<AbstractDomain> domainList = abstractDomainService.getAllDomains();
-		for (AbstractDomain d : domainList) {
-			InconsistentSearchDto dto = new InconsistentSearchDto(d, searchDto.getUserMail());
-			User user = userService.findUserInDB(d.getIdentifier(), searchDto.getUserMail());
+		for (AbstractDomain domain : abstractDomainService.getAllDomains()) {
+			User user = userService.findUserInDB(domain.getIdentifier(), mail);
 			if (user != null) {
-				dto.setDatabase(new Boolean(true));
-				if (d.getDomainType().equals(DomainType.GUESTDOMAIN)) {
-					dto.setGuest(new Boolean(true));
-					res.add(dto);
+				if (!(user.isGuest() || user.isInternal())) {
+					// we exclude technical users and root
+					continue;
 				}
-			}
-			if (!dto.isGuest()) {
-				user = userProviderService.findUser(d.getUserProvider(), searchDto.getUserMail());
-				if (user != null) {
-					dto.setLdap(new Boolean(true));
+				InconsistentSearchDto dto = new InconsistentSearchDto(domain, mail);
+				dto.setDatabase(true);
+				dto.setGuest(user.isGuest());
+				dto.setUuid(user.getLsUuid());
+				if (user.isInternal()) {
+					dto.setLdap(abstractDomainService.isUserExist(domain, mail));
+					if (dto.isLdap()) {
+						if (user.isInconsistent()) {
+							user.setInconsistent(false);
+							accountService.update(user);
+						}
+					} else {
+						if (!user.isInconsistent()) {
+							user.setInconsistent(true);
+							accountService.update(user);
+						}
+					}
+				}
+				res.add(dto);
+			} else {
+				if (abstractDomainService.isUserExist(domain, mail)) {
+					InconsistentSearchDto dto = new InconsistentSearchDto(domain, mail);
+					dto.setLdap(true);
 					res.add(dto);
 				}
 			}
 		}
 		return res;
+	}
+
+	@Override
+	public List<String> autocompleteInconsistent(UserSearchDto dto)
+			throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
+		return accountService.findAllKnownEmails(actor, dto.getMail());
 	}
 
 	@Override

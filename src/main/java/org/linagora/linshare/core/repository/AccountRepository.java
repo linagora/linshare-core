@@ -63,4 +63,6 @@ public interface AccountRepository<U extends Account> extends
 	List<String> findAllAccountsReadyToPurge();
 
 	List<String> findAllDeletedAccountsToPurge(Date limit);
+
+	List<String> findAllKnownEmails(String pattern);
 }

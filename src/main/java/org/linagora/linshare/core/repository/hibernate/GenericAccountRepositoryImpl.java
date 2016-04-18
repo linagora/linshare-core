@@ -36,7 +36,9 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -218,5 +220,15 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		@SuppressWarnings("unchecked")
 		List<Long> list = listByCriteria(criteria);
 		return list.get(0);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> findAllKnownEmails(String pattern) {
+		DetachedCriteria det = DetachedCriteria.forClass(Account.class);
+		det.add(Restrictions.ilike("mail", pattern, MatchMode.ANYWHERE));
+		det.setProjection(Projections.property("mail"));
+		det.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		return listByCriteria(det);
 	}
 }

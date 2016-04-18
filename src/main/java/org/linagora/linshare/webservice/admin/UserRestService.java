@@ -72,7 +72,9 @@ public interface UserRestService {
 
 	void updateInconsistent(UserDto userDto) throws BusinessException;
 
-	List<InconsistentSearchDto> search(InconsistentSearchDto dto) throws BusinessException;
+	List<InconsistentSearchDto> check(UserSearchDto dto) throws BusinessException;
+
+	List<String> autocompleteInconsistent(UserSearchDto dto) throws BusinessException;
 
 	UpdateUsersEmailStateDto updateUsersEmail(InputStream file, String givenFileName, String csvFieldDelimiter, MultipartBody body) throws BusinessException;
 
