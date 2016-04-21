@@ -127,6 +127,7 @@ public class UploadRequestTemplateDto {
 		ret.setSecured(secured);
 		ret.setDayBeforeNotification(dayBeforeNotification);
 		ret.setProlongationMode(prolongationMode);
+		ret.setUuid(uuid);
 		return ret;
 	}
 

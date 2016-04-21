@@ -107,7 +107,7 @@ public class UploadRequestTemplateRestServiceImpl implements UploadRequestTempla
 	}
 
 	@PUT
-	@Path("/")
+	@Path("/{uuid}")
 	@ApiOperation(value = "Update an upload request template.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
