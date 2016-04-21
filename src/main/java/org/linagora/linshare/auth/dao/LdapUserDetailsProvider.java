@@ -127,15 +127,15 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 				// if found we set the domain which belong the user.
 				foundUser.setDomain(domain);
 			} else {
-				Set<AbstractDomain> subdomains = domain.getSubdomain();
-				for (AbstractDomain subdomain : subdomains) {
+				List<String> subdomainIdentifiers = authentificationFacade.getAllSubDomainIdentifiers(domainIdentifier);
+				for (String subdomainIdentifier : subdomainIdentifiers) {
 					foundUser = authentificationFacade.ldapSearchForAuth(
-							subdomain.getIdentifier(), login);
+							subdomainIdentifier, login);
 					if (foundUser != null) {
 						// if found we set the domain which belong the user.
-						foundUser.setDomain(subdomain);
+						foundUser.setDomain(authentificationFacade.retrieveDomain(subdomainIdentifier));
 						logger.debug("User found and authenticated in domain "
-								+ subdomain.getIdentifier());
+								+ subdomainIdentifier);
 						break;
 					}
 				}

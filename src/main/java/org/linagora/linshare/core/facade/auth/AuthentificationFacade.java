@@ -63,6 +63,8 @@ public interface AuthentificationFacade {
 
 	public AbstractDomain retrieveDomain(String domainIdentifier);
 
+	List<String> getAllSubDomainIdentifiers(String domainIdentifier);
+
 	public List<AbstractDomain> getAllDomains();
 
 	public User ldapAuth(String domainIdentifier,	String login, String userPasswd) throws BusinessException;

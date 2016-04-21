@@ -36,7 +36,6 @@ package org.linagora.linshare.auth.dao;
 import java.util.List;
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.repository.UserRepository;
@@ -76,18 +75,18 @@ public class DatabaseUserDetailsProvider extends UserDetailsProvider {
 			}
 		} else {
 			// check if domain really exist.
-			AbstractDomain domain = retrieveDomain(login, domainIdentifier);
+			retrieveDomain(login, domainIdentifier);
 
 			// looking in database for a user.
 			account = findByLoginAndDomain(domainIdentifier, login);
 
 			if (account == null) {
-				Set<AbstractDomain> subdomains = domain.getSubdomain();
-				for (AbstractDomain subdomain : subdomains) {
-					account = findByLoginAndDomain(subdomain.getIdentifier(), login);
+				List<String> subdomainIdentifiers = authentificationFacade.getAllSubDomainIdentifiers(domainIdentifier);
+				for (String subdomainIdentifier : subdomainIdentifiers) {
+					account = findByLoginAndDomain(subdomainIdentifier, login);
 					if (account != null) {
 						logger.debug("User found and authenticated in sub domain "
-								+ subdomain.getIdentifier());
+								+ subdomainIdentifier);
 						break;
 					}
 				}

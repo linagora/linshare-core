@@ -780,4 +780,10 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "actor has no rights");
 		}
 	}
+
+	@Override
+	public List<String> getAllSubDomainIdentifiers(String domain) {
+		Validate.notEmpty(domain, "Missing domain identifier.");
+		return domainBusinessService.getAllSubDomainIdentifiers(domain);
+	}
 }

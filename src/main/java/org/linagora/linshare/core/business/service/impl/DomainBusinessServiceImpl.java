@@ -147,4 +147,9 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 		}
 	}
 
+	@Override
+	public List<String> getAllSubDomainIdentifiers(String domain) {
+		return repository.getAllSubDomainIdentifiers(domain);
+	}
+
 }

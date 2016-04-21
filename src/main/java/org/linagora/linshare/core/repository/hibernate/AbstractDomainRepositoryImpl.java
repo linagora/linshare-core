@@ -160,4 +160,14 @@ public class AbstractDomainRepositoryImpl extends
 		}
 		return DataAccessUtils.longResult(result);
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> getAllSubDomainIdentifiers(String domain) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.createAlias("parentDomain", "parent");
+		det.add(Restrictions.eq("parent.identifier", domain));
+		det.setProjection(Projections.property("identifier"));
+		return listByCriteria(det);
+	}
 }
