@@ -49,7 +49,7 @@ public interface ThreadEntryService {
 	ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, File tempFile, String filename) throws BusinessException;
 
 	ThreadEntry copyFromDocumentEntry(Account actor, Account member,
-			Thread thread, DocumentEntry documentEntry, InputStream stream)
+			Thread thread, DocumentEntry documentEntry)
 			throws BusinessException;
 
 	ThreadEntry findById(Account actor, Account owner, String threadEntryUuid) throws BusinessException;

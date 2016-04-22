@@ -167,4 +167,5 @@ public interface DocumentEntryService {
 
 	List<String> findAllExpiredEntries(Account actor, Account owner);
 
+	void checkDownloadPermission(Account actor, Account owner, String uuid);
 }

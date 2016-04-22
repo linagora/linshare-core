@@ -34,10 +34,6 @@
 package org.linagora.linshare.core.dao;
 
 import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
-import javax.jcr.NodeIterator;
 
 import org.linagora.linshare.core.domain.objects.FileInfo;
 /**
@@ -67,34 +63,6 @@ public interface FileSystemDao {
 	public String insertFile(String path,InputStream file,long size,String fileName,String mimeType);
 	
 	/**
-	 * Return the content of the file.
-	 * @param path the path where is stock the file.
-	 * @return the content of the file.
-	 */
-	public InputStream getContentFile(String path);
-	
-	/**
-	 * Return all path in the repository.
-	 * @return a list containing all paths.
-	 */
-	public List<String> getAllPath();
-	
-	/**
-	 * Return all subpath under the specified path in the repository.
-	 * @param path the path to start.
-	 * @return a list that include all path.
-	 */
-	public List<String> getAllSubPath(String path);
-	
-	/**
-	 * Return only file subpath under the specified path in the repository.
-	 * @param path the path to start.
-	 * @param type type of the resource to find.
-	 * @return a list that include all file path.
-	 */
-	public List<FileInfo> getAllFilePathInSubPath(String path);
-	
-	/**
 	 * Return information about file by his uuid
 	 * @param uuid
 	 * @return FileInfo information about the file.
@@ -107,24 +75,5 @@ public interface FileSystemDao {
 	 * @return the file content associated with the specified uuid.
 	 */
 	public InputStream getFileContentByUUID(String uuid);
-	/**
-	 * execute severals XpathQuery.
-	 * @param statements the statements. 
-	 * @return a map which contains for keys all statements and for values all nodes.
-	 */
-	public Map<String,NodeIterator> executeXPathQuery(List<String> statements);
-	
-	/**
-	 * execute severals SqlQuery.
-	 * @param statements the statements.
-	 * @return a map which contains for keys all statements and for values all nodes.
-	 */
-	public Map<String,NodeIterator> executeSqlQuery(List<String> statements);
 
-    /**
-     * Change file name.
-     * @param uuid file uuid.
-     * @param newName new name for the file.
-     */
-    void renameFile(String uuid, String newName);
 }

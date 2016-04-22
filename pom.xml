@@ -84,6 +84,26 @@
 		</license>
 	</licenses>
 
+	<dependencyManagement>
+		<dependencies>
+<!-- 			TODO: To be use -->
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.springframework</groupId> -->
+<!-- 				<artifactId>spring-framework-bom</artifactId> -->
+<!-- 				<version>${spring.version}</version> -->
+<!-- 				<scope>import</scope> -->
+<!-- 				<type>pom</type> -->
+<!-- 			</dependency> -->
+			<dependency>
+				<groupId>org.springframework.data</groupId>
+				<artifactId>spring-data-releasetrain</artifactId>
+				<version>${spring-data.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.linagora</groupId>
@@ -318,6 +338,13 @@
 		</dependency>
 		<!-- spring security - end -->
 
+		<!-- spring data - begin -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-mongodb</artifactId>
+		</dependency>
+		<!-- spring data - end -->
+
 		<!--  LDAP Query Language integration - begin -->
 		<dependency>
 			<groupId>org.linid.dm</groupId>
@@ -485,6 +512,30 @@
 			<groupId>org.apache.jackrabbit</groupId>
 			<artifactId>jackrabbit-jcr-commons</artifactId>
 			<version>${jackrabbit.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.jclouds</groupId>
+			<artifactId>jclouds-all</artifactId>
+			<version>${jclouds.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.jclouds.driver</groupId>
+			<artifactId>jclouds-slf4j</artifactId>
+			<version>${jclouds.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.jclouds.driver</groupId>
+			<artifactId>jclouds-enterprise</artifactId>
+			<version>${jclouds.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.jclouds.api</groupId>
+			<artifactId>filesystem</artifactId>
+			<version>${jclouds.version}</version>
 		</dependency>
 
 		<!--  for aspectj pointcut (ie transactions) -->
@@ -1581,6 +1632,7 @@
 	<properties>
 		<spring-release-version>4.2.4.RELEASE</spring-release-version>
 		<spring-security-release-version>4.0.3.RELEASE</spring-security-release-version>
+		<spring-data.version>Gosling-SR1</spring-data.version>
 		<hibernate.version>4.3.6.Final</hibernate.version>
 		<h2.version>1.4.191</h2.version>
 		<guava.version>19.0</guava.version>
@@ -1590,6 +1642,7 @@
 		<slf4j-release-version>1.7.16</slf4j-release-version>
 		<cxf.version>3.1.5</cxf.version>
 		<jackrabbit.version>2.11.2</jackrabbit.version>
+		<jclouds.version>1.9.2</jclouds.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
 		<sql.driver.postgresql>9.4.1208.jre7</sql.driver.postgresql>

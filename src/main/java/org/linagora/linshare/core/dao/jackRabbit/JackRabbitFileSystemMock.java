@@ -35,11 +35,8 @@
 package org.linagora.linshare.core.dao.jackRabbit;
 
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import javax.jcr.NodeIterator;
 
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.objects.FileInfo;
@@ -78,32 +75,6 @@ public class JackRabbitFileSystemMock implements FileSystemDao {
 	}
 
 	@Override
-	public InputStream getContentFile(String uuid) {
-		logger.debug("mock method");
-		String name = files.get(uuid);
-		return Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(name);
-	}
-
-	@Override
-	public List<String> getAllPath() {
-		logger.debug("mock method");
-		return null;
-	}
-
-	@Override
-	public List<String> getAllSubPath(String path) {
-		logger.debug("mock method");
-		return null;
-	}
-
-	@Override
-	public List<FileInfo> getAllFilePathInSubPath(String path) {
-		logger.debug("mock method");
-		return null;
-	}
-
-	@Override
 	public FileInfo getFileInfoByUUID(String uuid) {
 		logger.debug("mock method");
 		return null;
@@ -115,23 +86,6 @@ public class JackRabbitFileSystemMock implements FileSystemDao {
 		String name = files.get(uuid);
 		return Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream(name);
-	}
-
-	@Override
-	public Map<String, NodeIterator> executeXPathQuery(List<String> statements) {
-		logger.debug("mock method");
-		return null;
-	}
-
-	@Override
-	public Map<String, NodeIterator> executeSqlQuery(List<String> statements) {
-		logger.debug("mock method");
-		return null;
-	}
-
-	@Override
-	public void renameFile(String uuid, String newName) {
-		logger.debug("mock method");
 	}
 
 }

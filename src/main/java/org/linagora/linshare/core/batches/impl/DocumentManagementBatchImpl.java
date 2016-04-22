@@ -33,17 +33,23 @@
  */
 package org.linagora.linshare.core.batches.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.cxf.helpers.IOUtils;
 import org.linagora.linshare.core.batches.DocumentManagementBatch;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
-import org.linagora.linshare.core.dao.FileSystemDao;
+import org.linagora.linshare.core.dao.FileDataStore;
+import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
+import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -67,7 +73,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 
 	private final AccountRepository<Account> accountRepository;
 
-	private final FileSystemDao fileSystemDao;
+	private final FileDataStore fileDataStore;
 
 	private final boolean cronJackRabbitKeepAlive;
 
@@ -76,13 +82,13 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 			DocumentRepository documentRepository,
 			DocumentEntryRepository documentEntryRepository,
 			AccountRepository<Account> accountRepository,
-			FileSystemDao fileSystemDao,
+			FileDataStore fileDataStore,
 			DocumentEntryBusinessService documentEntryBusinessService) {
 		super();
 		this.documentRepository = documentRepository;
 		this.documentEntryRepository = documentEntryRepository;
 		this.accountRepository = accountRepository;
-		this.fileSystemDao = fileSystemDao;
+		this.fileDataStore = fileDataStore;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.cronJackRabbitKeepAlive = cronJackRabbitKeepAlive;
 	}
@@ -122,19 +128,29 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 					logger.error("exception : ", e);
 				}
 			}
-			uploadTestFile(actor);
+			try {
+				uploadTestFile(actor);
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
 		} else {
 			logger.debug("jackRabbitKeepAlive - skip");
 		}
 		logger.debug("jackRabbitKeepAlive - end");
 	}
 
-	private void uploadTestFile(SystemAccount actor) {
+	private void uploadTestFile(SystemAccount actor) throws Exception {
 		logger.debug("uploading file ...");
 		String filePath = "jackRabbit.properties";
 		InputStream inputStream = java.lang.Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
-		String uuid = fileSystemDao.insertFile(actor.getLsUuid(), inputStream, 561, "keep alive file", "test/plain");
-		Document document = new Document(uuid, "text/plain", new Long(561));
+		File tempFile = File.createTempFile("linshare-",".tmp");
+		try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+			tempFile.deleteOnExit();
+			IOUtils.copy(inputStream, fos);
+		}
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, "test/plain", 561L, filePath);
+		metadata = fileDataStore.add(inputStream, metadata);
+		Document document = new Document(metadata.getUuid(), "text/plain", 561L);
 		try {
 			inputStream = java.lang.Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
 			document.setSha256sum(documentEntryBusinessService.SHA256CheckSumFileStream(inputStream));

@@ -34,14 +34,15 @@
 
 package org.linagora.linshare.core.batches.impl;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.linagora.linshare.core.dao.FileSystemDao;
+import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
+import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
@@ -53,7 +54,7 @@ public class ComputeDocumentMimeTypeBatchImpl extends GenericBatchImpl {
 
 	private final DocumentRepository documentRepository;
 
-	private final FileSystemDao fileSystemDao;
+	private final FileDataStore fileDataStore;
 
 	private final MimeTypeMagicNumberDao mimeTypeMagicNumberDao;
 
@@ -61,10 +62,10 @@ public class ComputeDocumentMimeTypeBatchImpl extends GenericBatchImpl {
 			AccountRepository<Account> accountRepository,
 			DocumentRepository documentRepository,
 			MimeTypeMagicNumberDao mimeTypeMagicNumberDao,
-			FileSystemDao fileSystemDao) {
+			FileDataStore fileDataStore) {
 		super(accountRepository);
 		this.documentRepository = documentRepository;
-		this.fileSystemDao = fileSystemDao;
+		this.fileDataStore = fileDataStore;
 		this.mimeTypeMagicNumberDao = mimeTypeMagicNumberDao;
 	}
 
@@ -85,17 +86,19 @@ public class ComputeDocumentMimeTypeBatchImpl extends GenericBatchImpl {
 				"processing document : " + resource.getRepresentation());
 		Context context = new BatchResultContext<Document>(resource);
 		context.setProcessed(false);
-		try (InputStream stream = fileSystemDao.getFileContentByUUID(resource.getUuid())) {
-			if (stream != null) {
-				String type = mimeTypeMagicNumberDao.getMimeType(stream);
-				resource.setType(type);
-				resource.setCheckMimeType(false);
-				documentRepository.update(resource);
-				context.setProcessed(true);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, resource);
+		if (fileDataStore.exists(metadata)) {
+			try (InputStream stream = fileDataStore.get(metadata)) {
+				if (stream != null) {
+					String type = mimeTypeMagicNumberDao.getMimeType(stream);
+					resource.setType(type);
+					resource.setCheckMimeType(false);
+					documentRepository.update(resource);
+					context.setProcessed(true);
+				}
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
 			}
-		} catch (org.springmodules.jcr.JcrSystemException | IOException e) {
-			logger.error(e.getMessage(), e);
-			logger.debug("JcrSystemException : ", e);
 		}
 		return context;
 	}

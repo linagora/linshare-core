@@ -54,7 +54,25 @@
 
 	<context-param>
 		<param-name>spring.profiles.default</param-name>
-		<param-value>default</param-value>
+		<param-value>default,jcloud</param-value>
+		<!-- You can override this parameter using -Dspring.profiles.default=xxx -->
+		<!-- Or you can use environment variable : SPRING_PROFILES_ACTIVE -->
+		<!-- You must enable at least one authentication profile among authentication profiles
+			 and one profile among file data store profiles described below.
+
+		Available authentication profiles :
+			* default : default authentication process.
+			* sso : Enable headers injection for SSO. This profile includes default profile capabilities
+			The default profile is jcloud with filesystem for tests purpose.
+		Available file data store profiles :
+			* jcloud : Using jcloud as file data store : Amazon S3, Swift, Ceph, filesystem (test only).
+			* gridfs : Using gridfs (mongodb) as file data store.
+			* jackrabbit2 : Using jackrabbit as file data store.
+			* jackrabbit-to-jcloud : Using Jcloud as new file data store, jackrabbit as fallback file data store.
+			* jackrabbit-to-gridfs : Using Jcloud as new file data store, jackrabbit as fallback file data store.
+			Recommended profile for production is jcloud with Swift.
+			The default profile is jcloud with filesystem for tests purpose.
+		 -->
 	</context-param>
 
 	<context-param>

@@ -156,7 +156,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 
 	@Override
 	public ThreadEntry copyFromDocumentEntry(Account actor, Account member,
-			Thread thread, DocumentEntry documentEntry, InputStream stream)
+			Thread thread, DocumentEntry documentEntry)
 			throws BusinessException {
 		checkCreatePermission(actor, member, ThreadEntry.class,
 				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, null, thread);
@@ -167,7 +167,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			mimeTypeService.checkFileMimeType(member, documentEntry.getName(), documentEntry.getType());
 		}
 
-		ThreadEntry threadEntry = documentEntryBusinessService.copyFromDocumentEntry(thread, documentEntry, stream);
+		ThreadEntry threadEntry = documentEntryBusinessService.copyFromDocumentEntry(thread, documentEntry);
 		logEntryService.create(new ThreadLogEntry(member, threadEntry, LogAction.THREAD_UPLOAD_ENTRY, "Uploading a file in a thread."));
 		return threadEntry;
 	}

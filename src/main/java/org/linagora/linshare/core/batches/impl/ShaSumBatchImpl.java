@@ -40,9 +40,11 @@ import java.util.List;
 
 import org.linagora.linshare.core.batches.ShaSumBatch;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
-import org.linagora.linshare.core.dao.FileSystemDao;
+import org.linagora.linshare.core.dao.FileDataStore;
+import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.Context;
@@ -53,17 +55,17 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 
 	private final DocumentRepository documentRepository;
-	private final FileSystemDao fileSystemDao;
+	private final FileDataStore fileDataStore;
 	private final DocumentEntryBusinessService docEntryBusinessService;
 
 	public ShaSumBatchImpl(
 			AccountRepository<Account> accountRepository,
 			final DocumentRepository documentRepository,
-			final FileSystemDao fileSystemDao,
+			final FileDataStore fileDataStore,
 			final DocumentEntryBusinessService docEntryBusinessService) {
 		super(accountRepository);
 		this.documentRepository = documentRepository;
-		this.fileSystemDao = fileSystemDao;
+		this.fileDataStore = fileDataStore;
 		this.docEntryBusinessService = docEntryBusinessService;
 	}
 
@@ -84,13 +86,14 @@ public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 				+ doc.getUuid());
 		Context context = new DocumentBatchResultContext(doc);
 		logger.debug("retrieve from JackRabbit : " + doc.getUuid());
-		try (InputStream fileContentByUUID = fileSystemDao.getFileContentByUUID(doc.getUuid())) {
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, doc);
+		try (InputStream fileContentByUUID = fileDataStore.get(metadata)) {
 			doc.setSha256sum(docEntryBusinessService.SHA256CheckSumFileStream(fileContentByUUID));
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			throw new BatchBusinessException(context, e.getMessage());
 		};
-		try (InputStream fileContentByUUID = fileSystemDao.getFileContentByUUID(doc.getUuid())) {
+		try (InputStream fileContentByUUID = fileDataStore.get(metadata)) {
 			doc.setSha1sum(docEntryBusinessService.SHA1CheckSumFileStream(fileContentByUUID));
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);

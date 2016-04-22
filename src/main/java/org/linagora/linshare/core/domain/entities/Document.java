@@ -40,6 +40,7 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.utils.DocumentUtils;
 
 public class Document implements Serializable {
@@ -81,19 +82,24 @@ public class Document implements Serializable {
 	private String thmbUuid;
 
 	/**
+	 * Use by LinShare v2 as container/bucket
+	 */
+	private String bucketUuid;
+
+	/**
 	 * timsStampresponse encoded (der)
 	 */
 	private byte[] timeStamp;
 
-	private DocumentEntry documentEntry;
+	private Set<DocumentEntry> documentEntries;
 
-	private ThreadEntry threadEntry;
+	private Set<ThreadEntry> threadEntries;
 
 	protected String sha1sum;
 
 	protected String sha256sum;
 
-	/* Constructors */
+	/* Constructor for tests */
 	public Document(String uuid, String name, String type, Calendar creationDate,
 			Calendar expirationDate, User owner, Boolean encrypted,
 			Boolean shared,Long size) {
@@ -115,6 +121,19 @@ public class Document implements Serializable {
 		super();
 	}
 
+	public Document(FileMetaData metadata) {
+		super();
+		this.uuid = metadata.getUuid();
+		this.type = metadata.getMimeType();
+		this.creationDate = new GregorianCalendar();
+		this.size = metadata.getSize();
+		this.timeStamp = null;
+		this.thmbUuid = null;
+		this.checkMimeType = false;
+		this.bucketUuid = metadata.getBucketUuid();
+	}
+
+	@Deprecated
 	public Document(String uuid, String type, Long size) {
 		super();
 		this.uuid=uuid;
@@ -182,25 +201,25 @@ public class Document implements Serializable {
 			this.timeStamp = Arrays.copyOf(timeStamp,timeStamp.length);
 		}
 	}
-	
+
 	public void setSize(Long size) {
 		this.size = size;
 	}
 
-	public DocumentEntry getDocumentEntry() {
-		return documentEntry;
+	public Set<DocumentEntry> getDocumentEntries() {
+		return documentEntries;
 	}
 
-	public void setDocumentEntry(DocumentEntry documentEntry) {
-		this.documentEntry = documentEntry;
-	}
-	
-	public ThreadEntry getThreadEntry() {
-		return threadEntry;
+	public void setDocumentEntries(Set<DocumentEntry> documentEntries) {
+		this.documentEntries = documentEntries;
 	}
 
-	public void setThreadEntry(ThreadEntry threadEntry) {
-		this.threadEntry = threadEntry;
+	public Set<ThreadEntry> getThreadEntries() {
+		return threadEntries;
+	}
+
+	public void setThreadEntries(Set<ThreadEntry> threadEntries) {
+		this.threadEntries = threadEntries;
 	}
 
 	public void setUuid(String uuid) {
@@ -255,9 +274,17 @@ public class Document implements Serializable {
 		this.sha256sum = sha256sum;
 	}
 
+	public String getBucketUuid() {
+		return bucketUuid;
+	}
+
+	public void setBucketUuid(String bucketUuid) {
+		this.bucketUuid = bucketUuid;
+	}
+
 	@Override
 	public String toString() {
-		return "Document [uuid=" + uuid + ", creationDate=" + creationDate
+		return "Document [uuid=" + uuid + ", creationDate=" + creationDate.getTimeInMillis()
 				+ ", type=" + type + ", size=" + size + ", sha256sum="
 				+ sha256sum + "]";
 	}

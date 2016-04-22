@@ -76,15 +76,15 @@ public interface DocumentEntryBusinessService {
 	public ThreadEntry createThreadEntry(Thread owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException;
 
 	ThreadEntry copyFromDocumentEntry(Thread thread,
-			DocumentEntry documentEntry, InputStream stream)
+			DocumentEntry documentEntry)
 			throws BusinessException;
 
 	DocumentEntry copyFromThreadEntry(Account owner,
-			ThreadEntry threadEntry, InputStream stream, Calendar expirationDate)
+			ThreadEntry threadEntry, Calendar expirationDate)
 			throws BusinessException;
 
 	DocumentEntry copyFromShareEntry(Account owner,
-			ShareEntry shareEntry, InputStream stream, Calendar expirationDate)
+			ShareEntry shareEntry, Calendar expirationDate)
 			throws BusinessException;
 
 	public ThreadEntry findThreadEntryById(String docEntryUuid);

@@ -34,9 +34,6 @@
 
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -103,19 +100,8 @@ public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implement
 		// Check if we have the right to access to the specified document entry
 		DocumentEntry doc = documentEntryService.find(actor, owner, tetc.getDocEntryUuid());
 		// Check if we have the right to download the specified document entry
-		InputStream stream = null;
-		try {
-			stream = documentEntryService.getDocumentStream(actor, owner, tetc.getDocEntryUuid());
-			ThreadEntry threadEntry = service.copyFromDocumentEntry(actor, owner, thread, doc, stream);
-			return new ThreadEntryDto(threadEntry);
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-		}
+		documentEntryService.checkDownloadPermission(actor, owner, tetc.getDocEntryUuid());
+		ThreadEntry threadEntry = service.copyFromDocumentEntry(actor, owner, thread, doc);
+		return new ThreadEntryDto(threadEntry);
 	}
 }

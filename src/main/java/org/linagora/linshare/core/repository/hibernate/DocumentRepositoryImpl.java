@@ -37,6 +37,7 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -108,6 +109,16 @@ public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> imp
 		crit.add(Restrictions.isNull("sha1sum"));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(crit);
+		return list;
+	}
+
+	@Override
+	public List<Document> findBySha256Sum(String sha256sum) {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
+		crit.add(Restrictions.eq("sha256sum", sha256sum));
+		crit.addOrder(Order.asc("creationDate"));
+		@SuppressWarnings("unchecked")
+		List<Document> list = listByCriteria(crit);
 		return list;
 	}
 }

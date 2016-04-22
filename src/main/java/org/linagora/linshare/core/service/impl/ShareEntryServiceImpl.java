@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
@@ -164,26 +163,14 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			throw new BusinessException(BusinessErrorCode.NO_UPLOAD_RIGHTS_FOR_ACTOR, "Actor do not have upload rights.");
 		}
 		// Check if we have the right to download the specified document entry
-		InputStream stream = null;
 		DocumentEntry documentEntry = null;
-		try {
-			// step2 : copy the resource
-			stream = documentEntryBusinessService.getDocumentStream(share.getDocumentEntry());
-			Calendar expiryTime = functionalityService.getDefaultFileExpiryTime(owner.getDomain());
-			documentEntry = documentEntryBusinessService.copyFromShareEntry(owner, share, stream, expiryTime);
-			// step3 : log the copy
-			ShareLogEntry logEntryShare = ShareLogEntry.hasCopiedAShare(owner,
-					share);
-			logEntryService.create(logEntryShare);
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-		}
+		// step2 : copy the resource
+		Calendar expiryTime = functionalityService.getDefaultFileExpiryTime(owner.getDomain());
+		documentEntry = documentEntryBusinessService.copyFromShareEntry(owner, share, expiryTime);
+		// step3 : log the copy
+		ShareLogEntry logEntryShare = ShareLogEntry.hasCopiedAShare(owner,
+				share);
+		logEntryService.create(logEntryShare);
 		// step4 : remove the share
 		// No need to send a notification to the recipient if he is the current
 		// owner.

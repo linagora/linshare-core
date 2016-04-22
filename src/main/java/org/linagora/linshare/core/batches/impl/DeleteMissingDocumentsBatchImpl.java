@@ -34,16 +34,18 @@
 
 package org.linagora.linshare.core.batches.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
-import org.linagora.linshare.core.dao.FileSystemDao;
+import org.linagora.linshare.core.dao.FileDataStore;
+import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
@@ -64,7 +66,7 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 
 	private final ShareService shareService;
 
-	private final FileSystemDao fileSystemDao;
+	private final FileDataStore fileDataStore;
 
 	private final ThreadEntryService threadEntryService;
 
@@ -75,13 +77,13 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 			DocumentEntryBusinessService documentEntryBusinessService,
 			ShareService shareService,
 			ThreadEntryService threadEntryService,
-			FileSystemDao fileSystemDao) {
+			FileDataStore fileDataStore) {
 		super(accountRepository);
 		this.documentRepository = documentRepository;
 		this.documentEntryService = service;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.shareService = shareService;
-		this.fileSystemDao = fileSystemDao;
+		this.fileDataStore = fileDataStore;
 		this.threadEntryService = threadEntryService;
 	}
 
@@ -102,73 +104,49 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 		logInfo(total, position,
 				"processing document : " + resource.getRepresentation());
 		Context context = new BatchResultContext<Document>(resource);
-		if (!exists(resource)) {
-			DocumentEntry documentEntry = resource.getDocumentEntry();
-			if (documentEntry != null) {
-				logger.debug("Document entry : {}", documentEntry);
-				Account owner = documentEntry.getEntryOwner();
-				if (documentEntryService.getRelatedEntriesCount(actor, owner,
-						documentEntry) > 0) {
-					shareService.deleteAllShareEntries(actor, owner,
-							documentEntry.getUuid());
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, resource);
+		if (!fileDataStore.exists(metadata)) {
+			Set<DocumentEntry> documentEntries = resource.getDocumentEntries();
+			for (DocumentEntry documentEntry : documentEntries) {
+				if (documentEntry != null) {
+					logger.debug("Document entry : {}", documentEntry);
+					Account owner = documentEntry.getEntryOwner();
+					if (documentEntryService.getRelatedEntriesCount(actor, owner,
+							documentEntry) > 0) {
+						shareService.deleteAllShareEntries(actor, owner,
+								documentEntry.getUuid());
+					}
+					documentEntryService.deleteInconsistentDocumentEntry(actor,
+							documentEntry);
+					logWarn(total,
+							position,
+							"The inconsistent document (document entry related){} has been successfully deleted.",
+							resource.getRepresentation());
 				}
-				documentEntryService.deleteInconsistentDocumentEntry(actor,
-						documentEntry);
-				logWarn(total,
-						position,
-						"The inconsistent document (document entry related){} has been successfully deleted.",
-						resource.getRepresentation());
-			} else if (resource.getThreadEntry() != null) {
-				threadEntryService.deleteInconsistentThreadEntry(actor,
-						resource.getThreadEntry());
-				logWarn(total,
-						position,
-						"The inconsistent document (thread entry related) {} has been successfully deleted.",
-						resource.getRepresentation());
-			} else {
-				try {
-					documentEntryBusinessService.deleteDocument(resource);
-				} catch (org.springmodules.jcr.JcrSystemException e) {
-					logger.error("Probably an invalid or missing uuid : ", e);
-					documentRepository.delete(resource);
-				}
-				logWarn(total,
-						position,
-						"Removing a document unrelated to an entry  {} because of inconsistency",
-						resource.getRepresentation());
 			}
+			Set<ThreadEntry> threadEntries = resource.getThreadEntries();
+			for (ThreadEntry threadEntry : threadEntries) {
+				if (threadEntry != null) {
+					threadEntryService.deleteInconsistentThreadEntry(actor,
+							threadEntry);
+					logWarn(total,
+							position,
+							"The inconsistent document (thread entry related) {} has been successfully deleted.",
+							resource.getRepresentation());
+				}
+			}
+			try {
+				documentEntryBusinessService.deleteDocument(resource);
+			} catch (org.springmodules.jcr.JcrSystemException e) {
+				logger.error("Probably an invalid or missing uuid : ", e);
+				documentRepository.delete(resource);
+			}
+			logWarn(total,
+					position,
+					"Removing a document unrelated to an entry  {} because of inconsistency",
+					resource.getRepresentation());
 		}
 		return context;
-	}
-
-	private boolean exists(Document resource) {
-		boolean exist = false;
-		InputStream stream = null;
-		try {
-			stream = fileSystemDao.getFileContentByUUID(resource.getUuid());
-			if (stream != null) {
-				exist = true;
-			}
-		} catch (org.springmodules.jcr.JcrSystemException e) {
-			// TODO : should never happen ! need to send a notification to
-			// admins.
-			logger.warn(
-					"Document with UID = {} was not found in datastore : {}",
-					resource.getUuid(), e.getMessage());
-			logger.debug("JcrSystemException : ", e);
-		} finally {
-			try {
-				if (stream != null) {
-					stream.close();
-				}
-			} catch (IOException e) {
-				logger.debug(
-						"Error when closing document stream '{}' during consistency check ",
-						resource.getRepresentation());
-				logger.debug("IOException : ", e);
-			}
-		}
-		return exist;
 	}
 
 	@Override

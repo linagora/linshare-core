@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation=" http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="jcloudFileDataStore"
+		class="org.linagora.linshare.core.dao.impl.JcloudObjectStorageFileDataStoreImpl"
+		init-method="afterPropertiesSet" destroy-method="destroy">
+		<constructor-arg value="${linshare.documents.storage.mode}" />
+		<property name="baseDirectory" value="${linshare.documents.storage.filesystem.directory}" />
+		<property name="identity" value="${linshare.documents.storage.swift.identity}" />
+		<property name="credential" value="${linshare.documents.storage.swift.credential}" />
+		<property name="endpoint" value="${linshare.documents.storage.swift.endpoint}" />
+		<property name="bucketIdentifier" value="${linshare.documents.storage.swift.bucket}" />
+	</bean>
+
+</beans>

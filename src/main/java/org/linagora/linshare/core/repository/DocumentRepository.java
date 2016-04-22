@@ -53,6 +53,15 @@ public interface DocumentRepository extends AbstractRepository<Document>{
      */
 	Document findByUuid(String identifier);
 
+	/**
+	 * We should only have one document, but with old versions of LinShare we
+	 * could have some duplicated files/hashes.
+	 *
+	 * @param sha256sum
+	 * @return
+	 */
+	List<Document> findBySha256Sum(String sha256sum);
+
 	List<String> findAllDocumentWithMimeTypeCheckEnabled();
 
 	List<String> findAllIdentifiers();

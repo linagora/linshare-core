@@ -14,7 +14,7 @@
 	</bean>
 
 	<bean id="documentEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.DocumentEntryBusinessServiceImpl">
-		<constructor-arg ref="jackRabbitRepository" />
+		<constructor-arg ref="fileDataStore" />
 		<constructor-arg ref="timeStampingService" />
 		<constructor-arg ref="documentEntryRepository" />
 		<constructor-arg ref="documentRepository" />
@@ -57,7 +57,7 @@
 
 
 	<bean id="signatureBusinessService" class="org.linagora.linshare.core.business.service.impl.SignatureBusinessServiceImpl">
-		<constructor-arg ref="jackRabbitRepository" />
+		<constructor-arg ref="fileDataStore" />
 		<constructor-arg ref="signatureRepository" />
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="accountRepository" />

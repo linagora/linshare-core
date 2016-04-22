@@ -507,6 +507,15 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	}
 
 	@Override
+	public void checkDownloadPermission(Account actor, Account owner, String uuid) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "document entry uuid is required.");
+		DocumentEntry entry = find(actor, owner, uuid);
+		checkDownloadPermission(actor, owner, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
+	}
+
+	@Override
 	public boolean isSignatureActive(Account account) {
 		return functionalityReadOnlyService.getSignatureFunctionality(account.getDomain()).getActivationPolicy().getStatus();
 	}

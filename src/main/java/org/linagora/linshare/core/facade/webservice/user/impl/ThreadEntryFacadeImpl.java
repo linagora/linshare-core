@@ -35,7 +35,6 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -120,20 +119,9 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		// Check if we have the right to access to the specified document entry
 		DocumentEntry doc = documentEntryService.find(actor, actor, entryUuid);
 		// Check if we have the right to download the specified document entry
-		InputStream stream = null;
-		try {
-			stream = documentEntryService.getDocumentStream(actor, actor, entryUuid);
-			ThreadEntry threadEntry = threadEntryService.copyFromDocumentEntry(actor, actor, thread, doc, stream);
-			return new ThreadEntryDto(threadEntry);
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-		}
+		documentEntryService.checkDownloadPermission(actor, actor, entryUuid);
+		ThreadEntry threadEntry = threadEntryService.copyFromDocumentEntry(actor, actor, thread, doc);
+		return new ThreadEntryDto(threadEntry);
 	}
 
 	@Override

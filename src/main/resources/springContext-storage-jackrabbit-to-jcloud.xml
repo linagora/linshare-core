@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation=" http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd"
+	profile="jackrabbit-to-jcloud">
+
+	<import resource="OPTIONAL-springContext-jackRabbit.xml" />
+	<import resource="OPTIONAL-springContext-jcloud.xml" />
+
+	<bean id="jackFileDataStore"
+		class="org.linagora.linshare.core.dao.impl.JackRabbitFileDataStoreImpl">
+		<constructor-arg ref="jackRabbitRepository" />
+	</bean>
+
+	<bean id="mongoAndJcloudFileDataStore"
+		class="org.linagora.linshare.core.dao.impl.DataKindBalancerFileDataStoreImpl">
+		<constructor-arg ref="jcloudFileDataStore" />
+		<constructor-arg>
+			<bean class="org.linagora.linshare.core.dao.impl.MongoFileDataStoreImpl">
+				<constructor-arg ref="gridFsTemplateForSmallFiles" />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<bean id="fileDataStore"
+		class="org.linagora.linshare.core.dao.impl.MigrationFileDataStoreImpl">
+		<constructor-arg ref="mongoAndJcloudFileDataStore" />
+		<constructor-arg ref="jackFileDataStore" />
+	</bean>
+
+</beans>
