@@ -114,7 +114,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	@Override
 	public List<U> findByCriteria(AccountOccupationCriteriaBean accountCriteria) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("destroyed",false));
+		criteria.add(Restrictions.eq("destroyed",0L));
 		if ((accountCriteria.getActorMails()!=null) && (accountCriteria.getActorMails().size()>0)) {
 			criteria.add(Restrictions.in("mail", accountCriteria.getActorMails()));
 		}
