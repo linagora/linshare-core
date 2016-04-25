@@ -85,8 +85,6 @@ public class UserProviderServiceImpl implements UserProviderService {
 	@Override
 	public UserLdapPattern createDomainPattern(UserLdapPattern domainPattern)
 			throws BusinessException {
-		Validate.notEmpty(domainPattern.getUuid(),
-				"domain pattern identifier must be set.");
 		Validate.notEmpty(domainPattern.getLabel());
 		Validate.notEmpty(domainPattern.getAuthCommand());
 		Validate.notEmpty(domainPattern.getSearchUserCommand());
