@@ -64,6 +64,8 @@ import com.google.common.collect.Sets;
 public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		UserFacade {
 
+	final private static int AUTO_COMPLETE_LIMIT = 20;
+
 	private final UserService userService;
 
 	private final GuestService guestService;
@@ -259,7 +261,15 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	public List<String> autocompleteInconsistent(UserSearchDto dto)
 			throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
-		return accountService.findAllKnownEmails(actor, dto.getMail());
+		Set<String> res = Sets.newHashSet();
+		List<User> internals = abstractDomainService
+				.autoCompleteUserWithoutDomainPolicies(actor, dto.getMail());
+		for (User user : internals) {
+			res.add(user.getMail());
+		}
+		res.addAll(accountService.findAllKnownEmails(actor, dto.getMail()));
+		int range = (res.size() < AUTO_COMPLETE_LIMIT ? res.size() : AUTO_COMPLETE_LIMIT);
+		return Lists.newArrayList(res).subList(0, range);
 	}
 
 	@Override

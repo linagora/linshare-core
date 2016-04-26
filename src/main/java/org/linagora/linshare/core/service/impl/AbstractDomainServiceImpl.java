@@ -786,4 +786,26 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		Validate.notEmpty(domain, "Missing domain identifier.");
 		return domainBusinessService.getAllSubDomainIdentifiers(domain);
 	}
+
+	@Override
+	public List<User> autoCompleteUserWithoutDomainPolicies(
+			Account actor, String pattern) throws BusinessException {
+		if (!actor.hasAllRights()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "forbidden");
+		}
+		List<User> users = new ArrayList<User>();
+		for (AbstractDomain d : abstractDomainRepository.findAllDomain()) {
+			// if the current domain is linked to a UserProvider, we perform a
+			// search.
+			if (d.getUserProvider() != null) {
+				List<User> list = userProviderService.autoCompleteUser(
+						d.getUserProvider(), pattern);
+				users.addAll(list);
+			} else {
+				logger.debug("UserProvider is null for domain : "
+						+ d.getIdentifier());
+			}
+		}
+		return users;
+	}
 }
