@@ -45,7 +45,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 
 public interface UserFacade extends AdminGenericFacade {
 
-	Set<UserDto> search(UserSearchDto userSearchDto) throws BusinessException;
+	List<UserDto> search(UserSearchDto userSearchDto) throws BusinessException;
 
 	Set<UserDto> searchInternals(String pattern) throws BusinessException;
 

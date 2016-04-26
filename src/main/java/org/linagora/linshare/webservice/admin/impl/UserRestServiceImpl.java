@@ -70,6 +70,7 @@ import org.linagora.linshare.webservice.admin.UserRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -101,12 +102,12 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@POST
 	@ApiOperation(value = "Search all users who match with patterns.", response = UserDto.class, responseContainer = "Set")
 	@Override
-	public Set<UserDto> search(
+	public List<UserDto> search(
 			@ApiParam(value = "Patterns to search.", required = true) UserSearchDto userSearchDto)
 			throws BusinessException {
 		if (lessThan3Char(userSearchDto.getFirstName()) && lessThan3Char(userSearchDto.getLastName()) && lessThan3Char(userSearchDto.getMail())) {
 			logger.info("Search request less than 3 char");
-			return Sets.newHashSet();
+			return Lists.newArrayList();
 		}
 		return userFacade.search(userSearchDto);
 	}

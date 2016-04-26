@@ -89,7 +89,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<UserDto> search(UserSearchDto userSearchDto)
+	public List<UserDto> search(UserSearchDto userSearchDto)
 			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		return searchUsers(userSearchDto.getFirstName(),
@@ -120,11 +120,11 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	 * @return
 	 * @throws BusinessException
 	 */
-	private Set<UserDto> searchUsers(String firstName, String lastName,
+	private List<UserDto> searchUsers(String firstName, String lastName,
 			String mail, AccountType type) throws BusinessException {
 		User currentUser = super.checkAuthentication(Role.ADMIN);
 
-		Set<UserDto> usersDto = new HashSet<UserDto>();
+		List<UserDto> usersDto = Lists.newArrayList();
 		Set<User> users = new HashSet<User>();
 		users.addAll(userService.searchUser(mail, firstName, lastName, type,
 				currentUser));
