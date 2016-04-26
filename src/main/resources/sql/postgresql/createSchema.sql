@@ -23,7 +23,9 @@ CREATE TABLE account (
   purge_step                      varchar(255) DEFAULT 'IN_USE' NOT NULL,
   cmis_locale                     varchar(255) NOT NULL,
   CONSTRAINT account_pkey
-    PRIMARY KEY (id));
+    PRIMARY KEY (id),
+  CONSTRAINT account_unique_mail_domain_destroyed
+    UNIQUE (domain_id, mail, destroyed));
 CREATE TABLE anonymous_share_entry (
   entry_id             int8 NOT NULL,
   downloaded           int8 NOT NULL,
@@ -393,7 +395,7 @@ CREATE TABLE mail_content_lang (
   uuid              varchar(255) NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE upload_request (
-  id                              int8 NOT NULL,
+  id                               int8 NOT NULL,
   domain_abstract_id              int8 NOT NULL,
   account_id                      int8 NOT NULL,
   upload_request_group_id         int8 NOT NULL,
@@ -411,7 +413,7 @@ CREATE TABLE upload_request (
   can_delete                      bool NOT NULL,
   can_close                       bool NOT NULL,
   can_edit_expiry_date            bool NOT NULL,
-  notified                        bool DEFAULT FALSE,
+  notified                        bool DEFAULT 'FALSE' NOT NULL,
   locale                          varchar(255) NOT NULL,
   secured                         bool NOT NULL,
   mail_message_id                 varchar(255),
@@ -689,7 +691,6 @@ CREATE TABLE async_task (
   waiting_duration      int8,
   meta_data             text,
   PRIMARY KEY (id));
-ALTER TABLE account ADD CONSTRAINT account_unique_mail_domain_destroyed UNIQUE (mail, domain_id, destroyed);
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid

@@ -48,7 +48,7 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_patt
 
 
 
-INSERT INTO user_provider(id, uuid, provider_type, base_dn, creation_date, modification_date, ldap_connection_id, ldap_pattern_id) VALUES (1, '93fd0e8b-fa4c-495d-978f-132e157c2292', 'LDAP_PROVIDER', 'ou=users,dc=int1.linshare.dev,dc=local', current_date, current_date, 1, 50);
+INSERT INTO user_provider(id, uuid, provider_type, base_dn, creation_date, modification_date, ldap_connection_id, ldap_pattern_id) VALUES (1, '93fd0e8b-fa4c-495d-978f-132e157c2292', 'LDAP_PROVIDER', 'ou=users,dc=int6.linshare.dev,dc=local', current_date, current_date, 1, 50);
 
 
 -- Top domain (example domain)
@@ -68,8 +68,8 @@ UPDATE domain_abstract SET welcome_messages_id = 1;
 
 -- Users
 -- bart simpson
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, purge_step) VALUES (50, 'bart.simpson@int1.linshare.dev', 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_date, current_date, 0, 'fr', 'en', true, false, 3, 'IN_USE');
-INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (50, 'Bart', 'Simpson', true, '', false, true);
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, purge_step) VALUES (50, 'amy.wolsh@int6.linshare.dev', 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_date, current_date, 0, 'fr', 'en', true, false, 3, 'IN_USE');
+INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (50, 'Amy', 'Wolsh', true, '', false, true);
 -- pierre mongin : 15kn60njvhdjh
 INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id, owner_id , password, purge_step) VALUES (53, 'pmongin@ratp.fr', 3, 'fa2cab19-2cd7-44f5-96f6-418455899d3e', current_date, current_date, 0, 'fr', 'fr', true, false, 4, 50 , 'OsFTxoUjd62imwHnaV/4zQfrJ5s=', 'IN_USE');
 INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, expiration_date) VALUES (53, 'Pierre', 'Mongin', true, '', false, false, current_date);

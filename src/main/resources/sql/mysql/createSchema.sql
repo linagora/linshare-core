@@ -19,6 +19,8 @@ CREATE TABLE account (
   cmis_locale                     varchar(255) NOT NULL,
   CONSTRAINT account_pkey
     PRIMARY KEY (id),
+  CONSTRAINT account_unique_mail_domain_destroyed
+    UNIQUE (domain_id, mail, destroyed),
   UNIQUE INDEX (ls_uuid),
   INDEX (account_type)) CHARACTER SET UTF8;
 CREATE TABLE anonymous_share_entry (
@@ -408,7 +410,7 @@ CREATE TABLE upload_request (
   can_delete                      tinyint(1) NOT NULL,
   can_close                       tinyint(1) NOT NULL,
   can_edit_expiry_date            tinyint(1) NOT NULL,
-  can_edit_expiry_date            tinyint(1) DEFAULT FALSE,
+  notified                        tinyint(1) DEFAULT FALSE NOT NULL,
   locale                          varchar(255) NOT NULL,
   secured                         tinyint(1) NOT NULL,
   mail_message_id                 varchar(255),
@@ -457,7 +459,7 @@ CREATE TABLE upload_request_history (
 CREATE TABLE upload_request_entry (
   entry_id                bigint(8) NOT NULL,
   document_entry_entry_id bigint(8),
-  upload_request_url_id       bigint(8) NOT NULL,
+  upload_request_url_id   bigint(8) NOT NULL,
   ls_size                 bigint(8) NOT NULL,
   PRIMARY KEY (entry_id)) CHARACTER SET UTF8;
 CREATE TABLE upload_proposition_filter (
@@ -711,7 +713,6 @@ CREATE TABLE async_task (
   INDEX (actor_id),
   INDEX (domain_abstract_id),
   UNIQUE INDEX (uuid)) CHARACTER SET UTF8;
-ALTER TABLE account ADD CONSTRAINT mail_domain_dest UNIQUE (mail, domain_id, destroyed);
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE INDEX account_account_type
@@ -790,8 +791,8 @@ CREATE UNIQUE INDEX signature_i
   ON signature (uuid);
 CREATE INDEX unit_index
   ON unit (id);
-  CREATE UNIQUE INDEX welcome_messages_uuid
-  ON welcome_messages (uuid);
+-- To be removed
+-- CREATE UNIQUE INDEX welcome_messages_uuid ON welcome_messages (uuid);
 ALTER TABLE domain_abstract ADD INDEX fk449bc2ec59e1e332 (domain_policy_id), ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD INDEX fk449bc2ec9083e725 (parent_id), ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_access_rule ADD INDEX fkf75719ed3c036ccb (domain_id), ADD CONSTRAINT fkf75719ed3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;

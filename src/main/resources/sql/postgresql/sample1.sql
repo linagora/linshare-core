@@ -60,7 +60,7 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_patt
 
 
 INSERT INTO user_provider(id, uuid, provider_type, base_dn, creation_date, modification_date, ldap_connection_id, ldap_pattern_id)
-    VALUES (1, '93fd0e8b-fa4c-495d-978f-132e157c2292', 'LDAP_PROVIDER', 'ou=users,dc=int1.linshare.dev,dc=local', now(), now(), 1, 50);
+    VALUES (1, '93fd0e8b-fa4c-495d-978f-132e157c2292', 'LDAP_PROVIDER', 'ou=users,dc=int6.linshare.dev,dc=local', now(), now(), 1, 50);
 
 
 -- Top domain (example domain)
@@ -77,7 +77,7 @@ UPDATE domain_abstract SET welcome_messages_id = 1;
 
 
 INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, password, destroyed, domain_id)
-	VALUES (40, 'bart.simpson@int1.linshare.dev', 4, 'fff38827-490a-4654-86a6-57b61611b42d', now(),now(), 4, 'en', 'en','en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', 0, 1);
+	VALUES (40, 'amy.wolsh@int6.linshare.dev', 4, 'fff38827-490a-4654-86a6-57b61611b42d', now(),now(), 4, 'en', 'en','en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', 0, 1);
 INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST)
 	VALUES (40, null, 'Technical Account for test', false, '', false, false);
 
@@ -86,8 +86,8 @@ INSERT INTO technical_account_permission (id, uuid, creation_date, modification_
 
 -- Users
 -- bart simpson
-INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id) VALUES (50, 'bart.simpson@int1.linshare.dev', 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_timestamp(3), current_timestamp(3), 0, 'fr', 'en','fr', true, 0, 3);
-INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (50, 'Bart', 'Simpson', true, '', false, true);
+INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id) VALUES (50, 'amy.wolsh@int6.linshare.dev', 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_timestamp(3), current_timestamp(3), 0, 'fr', 'en','fr', true, 0, 3);
+INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (50, 'Amy', 'Wolsh', true, '', false, true);
 -- pierre mongin : 15kn60njvhdjh
 INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, owner_id , password ) VALUES (53, 'pmongin@ratp.fr', 3, 'fa2cab19-2cd7-44f5-96f6-418455899d3e', current_timestamp(3), current_timestamp(3), 0, 'fr', 'fr','en', true, 0, 4, 50 , 'OsFTxoUjd62imwHnaV/4zQfrJ5s=');
 INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, expiration_date) VALUES (53, 'Pierre', 'Mongin', true, '', false, false, current_timestamp(3));
