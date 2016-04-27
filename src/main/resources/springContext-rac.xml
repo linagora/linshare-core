@@ -60,4 +60,8 @@
 	<bean name="uploadRequestGroupResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UploadRequestGroupResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
+
+	<bean name="userPreferenceResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UserPreferenceResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
 </beans>

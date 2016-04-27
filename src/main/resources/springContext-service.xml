@@ -232,4 +232,8 @@
 		<constructor-arg ref="asyncTaskBusinessService" />
 		<constructor-arg ref="asyncTaskResourceAccessControl" />
 	</bean>
+	<bean id="userPreferenceService" class="org.linagora.linshare.core.service.impl.UserPreferenceServiceImpl">
+		<constructor-arg ref="userPreferenceMongoRepository" />
+		<constructor-arg ref="userPreferenceResourceAccessControl" />
+	</bean>
 </beans>

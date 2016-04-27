@@ -90,4 +90,10 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="uploadRequestService" />
 	</bean>
+
+	<bean id="wsUserPreferenceFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UserPreferenceFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userPreferenceService"/>
+	</bean>
+
 </beans>
