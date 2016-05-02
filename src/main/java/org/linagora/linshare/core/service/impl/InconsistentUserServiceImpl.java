@@ -85,6 +85,15 @@ public class InconsistentUserServiceImpl implements InconsistentUserService {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Attempt to update an user entity failed : Domain does not exist.");
 		}
+		Internal userInTargetDomain = internateRepository.findByMailAndDomain(domain, u.getMail());
+
+		if (userInTargetDomain != null) {
+			throw new BusinessException(
+					BusinessErrorCode.USER_ALREADY_EXISTS_IN_DOMAIN_TARGET,
+					"Attempt to update an user entity failed : The user : "
+							+ u.getFullName() + " is already in the Domain : "
+							+ domain);
+		}
 		u.setDomain(d);
 		internateRepository.update(u);
 	}
