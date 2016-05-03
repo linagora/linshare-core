@@ -105,12 +105,16 @@
 	</bean>
 
     <bean id="updateUploadRequestJob" class="org.springframework.scheduling.quartz.JobDetailBean">
-        <property name="jobClass" value="org.linagora.linshare.core.job.quartz.UpdateUploadRequest"/>
+        <property name="jobClass" value="org.linagora.linshare.core.job.quartz.LinShareJobBean"/>
         <property name="jobDataAsMap">
             <map>
-                <entry key="batch" value-ref="enableUploadRequestBatch"/>
-                <entry key="batch" value-ref="closeExpiredUploadRequestBatch"/>
-                <entry key="batch" value-ref="notifyBeforeExpirationUploadRequestBatch"/>
+            <entry key="batch">
+					<list value-type="org.linagora.linshare.core.job.quartz.LinShareJobBean">
+						<ref bean="enableUploadRequestBatch" />
+						<ref bean="closeExpiredUploadRequestBatch" />
+						<ref bean="notifyBeforeExpirationUploadRequestBatch" />
+					</list>
+				</entry>
             </map>
         </property>
     </bean>
