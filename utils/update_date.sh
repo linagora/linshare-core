@@ -1,5 +1,5 @@
-#!/bin/sh
-
+#!/bin/bash
+set -x
 path=$1
 
 usage() {
@@ -15,20 +15,20 @@ if [ ! -d "$path" ]; then
     usage
 fi
 
-yearfrom='2014'
-yearto='2015'
+yearfrom='2015'
+yearto='2016'
 
 # some legacy license use - instead of –
 grep -l "LinShare" --include "*.java" --include "*.properties" --include "*.tml" -R ${path} 2>/dev/null | xargs -i \
-    sed -i -r 's/\(C\) (20[0-9]{2})–(20[0-9]{2}) LINAGORA/(C) \1-\2 LINAGORA/g'
+    sed -i -r 's/\(C\) (20[0-9]{2})–(20[0-9]{2}) LINAGORA/(C) \1-\2 LINAGORA/g' {}
 
 # Match date like 2015
 grep -l "LinShare" --include "*.java" --include "*.properties" --include "*.tml" -R ${path} 2>/dev/null | xargs -i \
-    sed -i -r 's/\(C\) (20[0-9]{2}) LINAGORA/(C) \1-'${yearto}' LINAGORA/g'
+    sed -i -r 's/\(C\) (20[0-9][0-5]) LINAGORA/(C) \1-'${yearto}' LINAGORA/g' {}
 
 # Match date like 2010-2015
 grep -l "LinShare" --include "*.java" --include "*.properties" --include "*.tml" -R ${path} 2>/dev/null | xargs -i \
-    sed -i -r 's/\(C\) (20[0-9]{2}-)(20[0-9]{2}) LINAGORA/(C) \1'${yearto}' LINAGORA/g'
+    sed -i -r 's/\(C\) (20[0-9]{2}-)(20[0-9]{2}) LINAGORA/(C) \1'${yearto}' LINAGORA/g' {}
 
 
 # get original date for a file :
