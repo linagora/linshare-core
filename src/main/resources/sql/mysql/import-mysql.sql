@@ -155,17 +155,17 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_patt
 
 
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id) VALUES (1, 'root@localhost.localdomain', 6, 'root@localhost.localdomain', current_date,current_date, 3, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, password, destroyed, domain_id) VALUES (1, 'root@localhost.localdomain', 6, 'root@localhost.localdomain', current_date,current_date, 3, 'en', 'en','en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
 INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (1, 'Administrator', 'LinShare', false, '', false, false);
 
 -- system account :
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (2, 'system', 7, 'system', now(), now(), 3, 'en', 'en', true, false, 1);
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, destroyed, domain_id) VALUES (2, 'system', 7, 'system', now(), now(), 3, 'en', 'en', 'en', true, false, 1);
 -- system account for upload-request:
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (3, 'system-account-uploadrequest', 7, 'system-account-uploadrequest', now(), now(), 3, 'en', 'en', true, false, 1);
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, destroyed, domain_id) VALUES (3, 'system-account-uploadrequest', 7, 'system-account-uploadrequest', now(), now(), 3, 'en', 'en', 'en', true, false, 1);
 
 -- system account for upload-proposition
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id)
-	VALUES (4, 'linshare-noreply@linagora.com', 4, '89877610-574a-4e79-aeef-5606b96bde35', now(),now(), 5, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id)
+	VALUES (4, 'linshare-noreply@linagora.com', 4, '89877610-574a-4e79-aeef-5606b96bde35', now(),now(), 5, 'en', 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
 INSERT INTO users(account_id, first_name, last_name, can_upload, comment, restricted, can_create_guest)
 	VALUES (4, null, 'Technical Account for upload proposition', false, '', false, false);
 
