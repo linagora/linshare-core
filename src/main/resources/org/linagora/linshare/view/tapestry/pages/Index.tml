@@ -24,23 +24,22 @@
 
 
 			<!-- Action bar -->
-	
+
 			<div id="actionBar">
 				<h4>Actions</h4>
 				<ul>
-                    <li>
-                    <!-- now it is over for you, damn popup !	
-                        <t:if test="userVo.upload">
-                            <a href="#" class="button" onclick="quickShareWindow.showCenter(true);">
-                                <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/>
-                                    ${message:pages.files.quickshare.button}</span>
-                            </a>
-                        </t:if>
-                        -->
-                    </li>
+					<t:if test="displayUploadButton">
+						<li>
+							<t:pageLink page="files/upload" class="button" title="${message:pages.files.upload.addbutton}">
+								<span><img src="${asset:context:images/icons/icon-add-files.png}" alt="" /> ${message:pages.files.upload.addbutton}</span>
+							</t:pageLink>
+						</li>
+						<t:parameter name="else"><t:linkit.Comment> * KEEP IT, XHTML validation * </t:linkit.Comment>
+							<li>&nbsp;</li>
+						</t:parameter>
+					</t:if>
 				</ul>
 			</div><!-- id="actionBar" -->
-
 
 			<!-- Page content -->
 
