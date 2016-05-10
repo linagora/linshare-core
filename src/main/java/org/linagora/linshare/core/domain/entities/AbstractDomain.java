@@ -50,7 +50,7 @@ public abstract class AbstractDomain {
 	 */
 	private long persistenceId;
 
-	protected String identifier;
+	protected String uuid;
 
 	protected String label;
 
@@ -106,11 +106,11 @@ public abstract class AbstractDomain {
 	protected Set<WelcomeMessages> welcomeMessages;
 
 	protected AbstractDomain() {
-		this.identifier = null;
+		this.uuid = null;
 	}
 
-	protected AbstractDomain(String identifier, String label) {
-		this.identifier = identifier;
+	protected AbstractDomain(String uuid, String label) {
+		this.uuid = uuid;
 		this.label = label;
 		this.description = "";
 		this.functionalities = new HashSet<Functionality>();
@@ -135,7 +135,7 @@ public abstract class AbstractDomain {
 	}
 
 	public AbstractDomain(DomainDto domainDto, AbstractDomain parent) {
-		this.identifier = domainDto.getIdentifier();
+		this.uuid = domainDto.getUuid();
 		this.label = domainDto.getLabel();
 		this.description = domainDto.getDescription();
 		this.functionalities = new HashSet<Functionality>();
@@ -193,8 +193,12 @@ public abstract class AbstractDomain {
 		return functionalities;
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public long getPersistenceId() {
@@ -239,7 +243,7 @@ public abstract class AbstractDomain {
 
 	@Override
 	public String toString() {
-		return "[Domain with id: " + identifier + "]";
+		return "[Domain with id: " + uuid + "]";
 	}
 
 	public AbstractDomain getParentDomain() {
@@ -317,12 +321,12 @@ public abstract class AbstractDomain {
 		if (arg0 == null)
 			return false;
 		AbstractDomain d = (AbstractDomain) arg0;
-		return this.getIdentifier().equals(d.getIdentifier());
+		return this.getUuid().equals(d.getUuid());
 	}
 
 	@Override
 	public int hashCode() {
-		return this.getIdentifier().hashCode();
+		return this.getUuid().hashCode();
 	}
 
 	public Long getAuthShowOrder() {
@@ -338,7 +342,7 @@ public abstract class AbstractDomain {
 			return true;
 		}
 		if (account.hasAdminRole()) {
-			if (this.identifier.equals(account.getDomainId())) {
+			if (this.uuid.equals(account.getDomainId())) {
 				// You have the right to manage your own domain
 				return true;
 			} else {
@@ -360,7 +364,7 @@ public abstract class AbstractDomain {
 	private boolean checkIfManagedByParent(AbstractDomain domain, String accountDomainId) {
 		AbstractDomain d = domain.getParentDomain();
 		if (d != null) {
-			if (d .getIdentifier().equals(accountDomainId)) {
+			if (d .getUuid().equals(accountDomainId)) {
 				return true;
 			} else {
 				return checkIfManagedByParent(d, accountDomainId);

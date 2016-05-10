@@ -221,7 +221,7 @@ public abstract class Account {
 	}
 
 	public String getDomainId() {
-		return ((this.domain == null) ? null : this.domain.getIdentifier());
+		return ((this.domain == null) ? null : this.domain.getUuid());
 	}
 
 	public Set<Entry> getEntries() {

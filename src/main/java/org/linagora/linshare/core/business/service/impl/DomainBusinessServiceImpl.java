@@ -128,7 +128,7 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 	public List<String> getAllMyDomainIdentifiers(AbstractDomain domain) {
 		List<String> domains = new ArrayList<String>();
 		for (AbstractDomain abstractDomain : getMyDomainRecursively(domain)) {
-			domains.add(abstractDomain.getIdentifier());
+			domains.add(abstractDomain.getUuid());
 		}
 		return domains;
 	}

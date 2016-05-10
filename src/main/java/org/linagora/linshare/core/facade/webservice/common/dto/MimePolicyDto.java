@@ -72,7 +72,7 @@ public class MimePolicyDto {
 		this.name = m.getName();
 		this.creationDate = m.getCreationDate();
 		this.modificationDate = m.getModificationDate();
-		this.domainId = m.getDomain().getIdentifier();
+		this.domainId = m.getDomain().getUuid();
 		if (full) {
 			mimeTypes = Sets.newHashSet();
 			for (MimeType mimeType : m.getMimeTypes()) {

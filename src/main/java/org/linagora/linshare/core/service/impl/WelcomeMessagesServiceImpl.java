@@ -172,7 +172,7 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 			List<AbstractDomain> relativeDomains = domainBusinessService
 					.loadRelativeDomains(welcomeMessage);
 			for (AbstractDomain domain : relativeDomains) {
-				String domainId = domain.getIdentifier();
+				String domainId = domain.getUuid();
 				if (domainUuids.contains(domainId)) {
 					// Already affected.
 					domainUuids.remove(domainId);

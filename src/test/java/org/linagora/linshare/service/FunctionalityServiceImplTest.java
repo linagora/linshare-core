@@ -118,7 +118,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Assert.assertNotNull(domain);
 
 		Assert.assertEquals(TOTAL_COUNT_FUNC,domain.getFunctionalities().size());
-		Iterable<Functionality> list = functionalityService.findAll(actor, domain.getIdentifier());
+		Iterable<Functionality> list = functionalityService.findAll(actor, domain.getUuid());
 
 		Assert.assertNotNull(list);
 		Assert.assertEquals(TOTAL_COUNT_FUNC, ImmutableList.copyOf(list).size());
@@ -134,7 +134,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Assert.assertNotNull(domain);
 
 		Assert.assertEquals(2, domain.getFunctionalities().size());
-		Iterable<Functionality> list = functionalityService.findAll(actor, domain.getIdentifier());
+		Iterable<Functionality> list = functionalityService.findAll(actor, domain.getUuid());
 
 		Assert.assertNotNull(list);
 		Assert.assertEquals(TOTAL_COUNT_FUNC - 2, ImmutableList.copyOf(list).size());
@@ -149,7 +149,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(domain);
 		Assert.assertEquals(1,domain.getFunctionalities().size());
-		Iterable<Functionality> list = functionalityService.findAll(actor, domain.getIdentifier());
+		Iterable<Functionality> list = functionalityService.findAll(actor, domain.getUuid());
 		Assert.assertNotNull(list);
 		// There is two functionalities that can not be display
 		Assert.assertEquals(TOTAL_COUNT_FUNC -2, ImmutableList.copyOf(list).size());
@@ -167,7 +167,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		// The first functionality should be override by the current subdomain
 		Functionality func1 = functionalityService.find(actor, subdomain1, LoadingServiceTestDatas.FILESIZE_MAX);
 		Assert.assertNotNull(func1);
-		Assert.assertEquals(subdomain1, func1.getDomain().getIdentifier());
+		Assert.assertEquals(subdomain1, func1.getDomain().getUuid());
 
 		// The second functionality should be override by the top domain
 		Assert.assertEquals(3, countFunctionality(LoadingServiceTestDatas.rootDomainName, LoadingServiceTestDatas.QUOTA_USER));
@@ -200,11 +200,11 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(domain);
 
-		UnitValueFunctionality func = (UnitValueFunctionality)functionalityService.find(actor, domain.getIdentifier(), LoadingServiceTestDatas.FILESIZE_MAX);
+		UnitValueFunctionality func = (UnitValueFunctionality)functionalityService.find(actor, domain.getUuid(), LoadingServiceTestDatas.FILESIZE_MAX);
 
 		Assert.assertEquals(50,func.getValue().intValue());
 		func.setValue(25);
-		functionalityService.update(actor, domain.getIdentifier(), func);
+		functionalityService.update(actor, domain.getUuid(), func);
 
 		domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertEquals(1, domain.getFunctionalities().size());
@@ -222,10 +222,10 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(domain);
 
-		UnitValueFunctionality func = (UnitValueFunctionality)functionalityService.find(actor, domain.getIdentifier(), LoadingServiceTestDatas.FILESIZE_MAX);
+		UnitValueFunctionality func = (UnitValueFunctionality)functionalityService.find(actor, domain.getUuid(), LoadingServiceTestDatas.FILESIZE_MAX);
 
 		Assert.assertEquals(50,func.getValue().intValue());
-		functionalityService.update(actor, domain.getIdentifier(), func);
+		functionalityService.update(actor, domain.getUuid(), func);
 
 		domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertEquals(1, domain.getFunctionalities().size());
@@ -243,10 +243,10 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(domain);
 
-		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, domain.getIdentifier(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, domain.getUuid(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
 
 		Assert.assertTrue(func.getValue().equals(LoadingServiceTestDatas.timeStampingUrl));
-		functionalityService.update(actor, domain.getIdentifier(), func);
+		functionalityService.update(actor, domain.getUuid(), func);
 
 		domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertEquals(1, domain.getFunctionalities().size());
@@ -304,17 +304,17 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName2);
 		Assert.assertNotNull(domain);
 
-		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, domain.getIdentifier(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, domain.getUuid(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
 
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality
 		func.setValue("plop");
-		functionalityService.update(actor, domain.getIdentifier(), func);
+		functionalityService.update(actor, domain.getUuid(), func);
 
 		StringValueFunctionality parent = (StringValueFunctionality)functionalityService.find(actor, LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		parent.getActivationPolicy().setPolicy(Policies.FORBIDDEN);
 
 		try {
-			functionalityService.update(actor, domain.getIdentifier(), parent);
+			functionalityService.update(actor, domain.getUuid(), parent);
 			Assert.assertTrue(false);
 		} catch (BusinessException e) {
 			Assert.assertTrue(true);
@@ -330,11 +330,11 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.rootDomainName);
 		Assert.assertNotNull(domain);
 
-		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, domain.getIdentifier(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
+		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, domain.getUuid(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
 
 		func.setValue("plop");
 		func.getActivationPolicy().setPolicy(Policies.FORBIDDEN);
-		functionalityService.update(actor, domain.getIdentifier(), func);
+		functionalityService.update(actor, domain.getUuid(), func);
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -352,7 +352,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Set<Functionality> functionalities = domain.getFunctionalities();
 		for (Functionality f : functionalities) {
 			if(f.getIdentifier().equals(funcIdentifier)) {
-				logger.debug("countFunctionality:" + domain.getIdentifier());
+				logger.debug("countFunctionality:" + domain.getUuid());
 				count++;
 			}
 

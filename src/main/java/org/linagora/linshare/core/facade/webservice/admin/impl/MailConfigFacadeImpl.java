@@ -139,7 +139,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		Set<MailContentDto> ret = Sets.newHashSet();
 
 		List<MailContent> all = mailConfigService.findAllContents(actor,
-				cfg.getDomain().getIdentifier());
+				cfg.getDomain().getUuid());
 		for (MailContent mc : all) {
 			if (mc.getLanguage() == lang.toInt()
 					&& mc.getMailContentType() == type.toInt()) {
@@ -161,7 +161,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		Set<MailFooterDto> ret = Sets.newHashSet();
 
 		List<MailFooter> all = mailConfigService.findAllFooters(actor, cfg
-				.getDomain().getIdentifier());
+				.getDomain().getUuid());
 		for (MailFooter footer : all) {
 			if (footer.getLanguage() == lang.toInt()) {
 				ret.add(new MailFooterDto(footer));

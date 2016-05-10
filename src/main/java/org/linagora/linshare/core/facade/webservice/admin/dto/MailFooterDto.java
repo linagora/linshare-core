@@ -79,7 +79,7 @@ public class MailFooterDto {
 
 	public MailFooterDto(MailFooter footer) {
 		this.uuid = footer.getUuid();
-		this.domain = footer.getDomain().getIdentifier();
+		this.domain = footer.getDomain().getUuid();
 		this.name = footer.getName();
 		this.footer = footer.getFooter();
 		this.language = Language.fromInt(footer.getLanguage());

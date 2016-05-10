@@ -79,7 +79,7 @@ public class MailActivationAdminDto  implements Comparable<MailActivationAdminDt
 		super();
 		this.identifier = m.getIdentifier();
 		this.name = m.getIdentifier();
-		this.domain = m.getDomain().getIdentifier();
+		this.domain = m.getDomain().getUuid();
 		this.activationPolicy = new PolicyDto(m.getActivationPolicy());
 		this.configurationPolicy = new PolicyDto(m.getConfigurationPolicy());
 		this.delegationPolicy = new PolicyDto(m.getDelegationPolicy());

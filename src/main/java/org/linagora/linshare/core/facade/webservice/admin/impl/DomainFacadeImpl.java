@@ -226,7 +226,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public DomainDto update(DomainDto domainDto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(domainDto.getIdentifier(),
+		Validate.notEmpty(domainDto.getUuid(),
 				"domain identifier must be set.");
 		AbstractDomain domain = getDomain(domainDto);
 		LdapUserProvider ldapUserProvider = updateLdapUserProvider(domainDto);
@@ -237,9 +237,9 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public DomainDto delete(DomainDto domainDto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(domainDto.getIdentifier(),
+		Validate.notEmpty(domainDto.getUuid(),
 				"domain identifier must be set.");
-		AbstractDomain domain = userAndDomainMultiService.deleteDomainAndUsers(actor, domainDto.getIdentifier());
+		AbstractDomain domain = userAndDomainMultiService.deleteDomainAndUsers(actor, domainDto.getUuid());
 		return DomainDto.getFull(domain);
 	}
 
@@ -255,8 +255,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 	private AbstractDomain getDomain(DomainDto domainDto)
 			throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(domainDto.getIdentifier(),
-				"domain identifier must be set.");
+//		Validate.notEmpty(domainDto.getUuid(),
+//				"domain identifier must be set.");
 		Validate.notNull(domainDto.getPolicy(), "domain policy must be set.");
 		Validate.notEmpty(domainDto.getPolicy().getIdentifier(),
 				"domain policy identifier must be set.");

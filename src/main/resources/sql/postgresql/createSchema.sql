@@ -44,6 +44,7 @@ CREATE TABLE cookie (
 CREATE TABLE document (
   id               int8 NOT NULL,
   uuid            varchar(255) NOT NULL UNIQUE,
+  bucket_uuid            varchar(255),
   creation_date   timestamp NOT NULL,
   type            varchar(255) NOT NULL,
   ls_size         int8 NOT NULL,
@@ -69,7 +70,7 @@ CREATE TABLE document_entry (
 CREATE TABLE domain_abstract (
   id                   int8 NOT NULL,
   type                int4 NOT NULL,
-  identifier          varchar(255) NOT NULL,
+  uuid                varchar(255) NOT NULL,
   label               varchar(255) NOT NULL,
   enable              bool NOT NULL,
   template            bool NOT NULL,

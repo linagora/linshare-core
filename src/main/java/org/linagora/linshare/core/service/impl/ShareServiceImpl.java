@@ -41,7 +41,9 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.EntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -72,6 +74,8 @@ import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.ShareAuditLogEntry;
+import org.linagora.linshare.mongo.repository.ShareAuditMongoRepository;
 
 import com.google.common.collect.Sets;
 
@@ -96,6 +100,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 	private final MailBuildingService mailBuildingService;
 
+	private final ShareAuditMongoRepository auditMongoRepository;
+
 	// TODO : To be fix one day.
 	@SuppressWarnings("unused")
 	private final ShareExpiryDateService shareExpiryDateService;
@@ -114,7 +120,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			final ShareEntryResourceAccessControl rac,
 			final MailBuildingService mailBuildingService,
 			final ShareExpiryDateService shareExpiryDateService,
-			final ShareEntryGroupService shareEntryGroupService) {
+			final ShareEntryGroupService shareEntryGroupService,
+			final ShareAuditMongoRepository auditMongoRepository) {
 		super(rac);
 		this.funcService = functionalityReadOnlyService;
 		this.documentEntryService = documentEntryService;
@@ -127,6 +134,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		this.mailBuildingService = mailBuildingService;
 		this.shareExpiryDateService = shareExpiryDateService;
 		this.shareEntryGroupService = shareEntryGroupService;
+		this.auditMongoRepository = auditMongoRepository;
 	}
 
 	// TODO FMA - Refactoring shares
@@ -198,6 +206,11 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		}
 		// Notification
 		notifierService.sendNotification(shareContainer.getMailContainers());
+
+		// Audit
+		ShareAuditLogEntry log = new ShareAuditLogEntry(actor, entries, LogAction.SHARE_CREATE, AuditLogEntryType.SHARE,
+				shareContainer.getRecipients(), shareContainer.getAnonymousShareRecipients());
+		auditMongoRepository.insert(log);
 		return entries;
 	}
 
@@ -306,7 +319,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		String mail = recipient.getMail();
 		String domain = null;
 		if (recipient.getDomain() != null) {
-			domain = recipient.getDomain().getIdentifier();
+			domain = recipient.getDomain().getUuid();
 		}
 		if (mail != null && domain != null) {
 			logger.debug("step2:looking into the database and the ldap using domain and mail : "
@@ -442,6 +455,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			logger.error(msg);
 			throw new BusinessException(BusinessErrorCode.SHARE_NOT_FOUND, msg);
 		}
+		ShareAuditLogEntry log = new ShareAuditLogEntry(actor, Sets.newHashSet(entry), LogAction.SHARE_DELETE, AuditLogEntryType.SHARE);
+		auditMongoRepository.insert(log);
 		return entry;
 	}
 }

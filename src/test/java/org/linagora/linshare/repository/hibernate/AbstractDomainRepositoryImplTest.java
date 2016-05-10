@@ -174,8 +174,8 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 
 		List<AbstractDomain> subDomainList = new ArrayList<AbstractDomain>();
 		subDomainList.addAll(entityRootDomain.getSubdomain());
-		logger.debug(entityRootDomain.getIdentifier() + " : my son is : " + subDomainList.get(0).getIdentifier());
-		Assert.assertEquals(topDomainName, subDomainList.get(0).getIdentifier());
+		logger.debug(entityRootDomain.getUuid() + " : my son is : " + subDomainList.get(0).getUuid());
+		Assert.assertEquals(topDomainName, subDomainList.get(0).getUuid());
 
 		abstractDomainRepository.delete(rootDomain);
 		logger.debug("End testTopDomainCreation");

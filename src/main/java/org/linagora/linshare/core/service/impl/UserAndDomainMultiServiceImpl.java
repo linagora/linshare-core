@@ -74,7 +74,7 @@ public class UserAndDomainMultiServiceImpl implements UserAndDomainMultiService 
 		logger.debug("Delete all subdomains users");
 		for (AbstractDomain subDomain : domain.getSubdomain()) {
 			userService.deleteAllUsersFromDomain(actor,
-					subDomain.getIdentifier());
+					subDomain.getUuid());
 		}
 		logger.debug("Delete domain users");
 		userService.deleteAllUsersFromDomain(actor, domainIdentifier);

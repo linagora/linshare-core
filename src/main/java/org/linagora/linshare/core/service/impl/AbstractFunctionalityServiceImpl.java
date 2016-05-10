@@ -70,7 +70,7 @@ public abstract class AbstractFunctionalityServiceImpl<T extends AbstractFunctio
 
 	protected boolean checkUpdateRights(Account actor, AbstractDomain domain, T functionality)
 			throws BusinessException {
-		T entity = this.find(actor, domain.getIdentifier(), functionality.getIdentifier());
+		T entity = this.find(actor, domain.getUuid(), functionality.getIdentifier());
 
 		// consistency checks
 		if (entity.getClass() != functionality.getClass()) {

@@ -105,7 +105,7 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 		super();
 		// System returned only for development purpose.
 		this.system = f.isSystem();
-		this.domain = f.getDomain().getIdentifier();
+		this.domain = f.getDomain().getUuid();
 		this.identifier = f.getIdentifier();
 		// Activation policy
 		this.activationPolicy = new PolicyDto(f.getActivationPolicy());

@@ -285,7 +285,7 @@ public class UserServiceImplTest extends
 		try {
 			logger.info("John Doe trying to delete Jane Smith");
 			userService.deleteAllUsersFromDomain(user1,
-					subDomain.getIdentifier());
+					subDomain.getUuid());
 		} catch (BusinessException e) {
 			Assert.fail(e.getMessage());
 		}

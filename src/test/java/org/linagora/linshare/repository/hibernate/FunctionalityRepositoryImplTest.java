@@ -138,7 +138,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		StringValueFunctionality entityFonc = (StringValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_1);
 		Assert.assertTrue(entityFonc.getActivationPolicy().getStatus());
 		Assert.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getIdentifier());
+		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
 		Assert.assertEquals(value,entityFonc.getValue());
 		functionalityRepository.delete(fonc);
 	}
@@ -167,7 +167,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		UnitValueFunctionality entityFonc = (UnitValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_2);
 		Assert.assertFalse(entityFonc.getActivationPolicy().getStatus());
 		Assert.assertFalse(entityFonc.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getIdentifier());
+		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
 		Assert.assertEquals(value,entityFonc.getValue());
 		Assert.assertEquals(UnitType.SIZE, entityFonc.getUnit().getUnitType());
 		Assert.assertEquals(FileSizeUnit.GIGA, entityFonc.getUnit().getUnitValue());
@@ -193,7 +193,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		UnitValueFunctionality entityFonc = (UnitValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_2);
 		Assert.assertFalse(entityFonc.getActivationPolicy().getStatus());
 		Assert.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getIdentifier());
+		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
 		Assert.assertEquals(value,entityFonc.getValue());
 		Assert.assertEquals(UnitType.TIME, entityFonc.getUnit().getUnitType());
 		Assert.assertEquals(TimeUnit.WEEK, entityFonc.getUnit().getUnitValue());
@@ -221,7 +221,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		UnitValueFunctionality entityFonc = (UnitValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_2);
 		Assert.assertFalse(entityFonc.getActivationPolicy().getStatus());
 		Assert.assertFalse(entityFonc.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getIdentifier());
+		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
 		Assert.assertEquals(value,entityFonc.getValue());
 		Assert.assertEquals(UnitType.SIZE, entityFonc.getUnit().getUnitType());
 		Assert.assertEquals(FileSizeUnit.GIGA, entityFonc.getUnit().getUnitValue());
@@ -245,7 +245,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		UnitValueFunctionality entityFonc2 = (UnitValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_3);
 		Assert.assertFalse(entityFonc2.getActivationPolicy().getStatus());
 		Assert.assertFalse(entityFonc2.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc2.getDomain().getIdentifier());
+		Assert.assertEquals(rootDomaineName,entityFonc2.getDomain().getUuid());
 		Assert.assertEquals(value2,entityFonc2.getValue());
 		Assert.assertEquals(UnitType.TIME, entityFonc2.getUnit().getUnitType());
 		Assert.assertEquals(TimeUnit.WEEK, entityFonc2.getUnit().getUnitValue());
@@ -273,7 +273,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		StringValueFunctionality entityFonc = (StringValueFunctionality)functionalityRepository.findByDomain(currentDomain, ID_FONC_1);
 		Assert.assertTrue(entityFonc.getActivationPolicy().getStatus());
 		Assert.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getIdentifier());
+		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
 		Assert.assertEquals(value,entityFonc.getValue());
 
 
@@ -307,7 +307,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		StringValueFunctionality entityFonc2 = (StringValueFunctionality)functionalityRepository.findByDomain(currentDomain2, ID_FONC_1);
 		Assert.assertTrue(entityFonc2.getActivationPolicy().getStatus());
 		Assert.assertTrue(entityFonc2.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName2,entityFonc2.getDomain().getIdentifier());
+		Assert.assertEquals(rootDomaineName2,entityFonc2.getDomain().getUuid());
 		Assert.assertEquals(value2,entityFonc2.getValue());
 
 		functionalityRepository.delete(fonc);
@@ -336,7 +336,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		StringValueFunctionality entityFonc = (StringValueFunctionality)functionalityRepository.findByDomain(currentDomain, ID_FONC_1);
 		Assert.assertTrue(entityFonc.getActivationPolicy().getStatus());
 		Assert.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getIdentifier());
+		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
 		Assert.assertEquals(value,entityFonc.getValue());
 
 

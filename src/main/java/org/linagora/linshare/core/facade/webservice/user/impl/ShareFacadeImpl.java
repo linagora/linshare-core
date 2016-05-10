@@ -91,6 +91,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		User actor = checkAuthentication();
 		List<ShareEntry> shares = shareEntryService.findAllMyRecievedShareEntries(
 				actor, actor);
+
 		return ImmutableList.copyOf(Lists.transform(shares,
 				ShareDto.toDto()));
 	}
@@ -100,7 +101,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		User actor = checkAuthentication();
 		List<Entry> shares = entryBusinessService
 				.findAllMyShareEntries(actor);
- 		return ImmutableList.copyOf(Lists.transform(shares, ShareDto.EntrytoDto()));
+		return ImmutableList.copyOf(Lists.transform(shares, ShareDto.EntrytoDto()));
 	}
 
 	@Override
@@ -213,8 +214,10 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		sc.setSharingNote(createDto.getSharingNote());
 		Set<Entry> shares = shareService.create(actor, actor, sc);
 		Set<ShareDto> sharesDto = Sets.newHashSet();
+		List<String> uuids = Lists.newArrayList();
 		for (Entry entry : shares) {
 			sharesDto.add(ShareDto.getSentShare(entry));
+			uuids.add(entry.getUuid());
 		}
 		return sharesDto;
 	}

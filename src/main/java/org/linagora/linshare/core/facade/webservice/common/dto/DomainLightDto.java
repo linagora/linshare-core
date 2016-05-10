@@ -51,7 +51,7 @@ public class DomainLightDto {
 	public DomainLightDto(){}
 
 	public DomainLightDto(AbstractDomain domain) {
-		this.identifier = domain.getIdentifier();
+		this.identifier = domain.getUuid();
 		this.label = domain.getLabel();
 	}
 

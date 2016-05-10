@@ -64,11 +64,11 @@ INSERT INTO user_provider(id, uuid, provider_type, base_dn, creation_date, modif
 
 
 -- Top domain (example domain)
-INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, default_mail_locale, used_space, user_provider_id, domain_policy_id, parent_id, auth_show_order) VALUES (2, 1, 'MyDomain', 'MyDomain', true, false, 'a simple description', 0, 'en', 'en', 0, null, 1, 1, 2);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, default_mail_locale, used_space, user_provider_id, domain_policy_id, parent_id, auth_show_order) VALUES (2, 1, 'MyDomain', 'MyDomain', true, false, 'a simple description', 0, 'en', 'en', 0, null, 1, 1, 2);
 -- Sub domain (example domain)
-INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, default_mail_locale, used_space, user_provider_id, domain_policy_id, parent_id, auth_show_order) VALUES (3, 2, 'MySubDomain', 'MySubDomain', true, false, 'a simple description', 0, 'en','en', 0, 1, 1, 2, 3);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, default_mail_locale, used_space, user_provider_id, domain_policy_id, parent_id, auth_show_order) VALUES (3, 2, 'MySubDomain', 'MySubDomain', true, false, 'a simple description', 0, 'en','en', 0, 1, 1, 2, 3);
 -- Guest domain (example domain)
-INSERT INTO domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, default_mail_locale, used_space, user_provider_id, domain_policy_id, parent_id, auth_show_order) VALUES (4, 3, 'GuestDomain', 'GuestDomain', true, false, 'a simple description', 0, 'en', 'en',0, null, 1, 2, 4);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, default_mail_locale, used_space, user_provider_id, domain_policy_id, parent_id, auth_show_order) VALUES (4, 3, 'GuestDomain', 'GuestDomain', true, false, 'a simple description', 0, 'en', 'en',0, null, 1, 2, 4);
 
 UPDATE domain_abstract SET mailconfig_id = 1;
 UPDATE domain_abstract SET mime_policy_id=1;

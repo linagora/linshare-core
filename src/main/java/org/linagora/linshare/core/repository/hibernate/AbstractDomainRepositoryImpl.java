@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.DetachedCriteria;
@@ -65,21 +66,21 @@ public class AbstractDomainRepositoryImpl extends
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(AbstractDomain entity) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass())
-				.add(Restrictions.eq("identifier", entity.getIdentifier()));
+				.add(Restrictions.eq("uuid", entity.getUuid()));
 		return det;
 	}
 
 	@Override
 	public AbstractDomain findById(String identifier) {
 		return DataAccessUtils.singleResult(findByCriteria(
-				Restrictions.eq("identifier", identifier)));
+				Restrictions.eq("uuid", identifier)));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllDomainIdentifiers() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
-				.setProjection(Projections.property("identifier"))
+				.setProjection(Projections.property("uuid"))
 				.addOrder(Order.asc("authShowOrder"));
 
 		return listByCriteria(crit);
@@ -150,7 +151,7 @@ public class AbstractDomainRepositoryImpl extends
 			throws BusinessException {
 		// Dirty Mode ON
 		String queryString = "select sum(ls_size) from document_entry as d join entry as e on d.entry_id = e.id join account as a on a.id = e.owner_id join domain_abstract as dom on a.domain_id = dom.id where identifier = 'MySubDomain';";
-		queryString = "select sum(ls_size) from document_entry as d join entry as e on d.entry_id = e.id join account as a on a.id = e.owner_id join domain_abstract as dom on a.domain_id = dom.id where identifier = '" + domain.getIdentifier() + "';";
+		queryString = "select sum(ls_size) from document_entry as d join entry as e on d.entry_id = e.id join account as a on a.id = e.owner_id join domain_abstract as dom on a.domain_id = dom.id where identifier = '" + domain.getUuid() + "';";
 		SQLQuery createSQLQuery = this.getCurrentSession().createSQLQuery(queryString);
 		@SuppressWarnings("rawtypes")
 		List result = createSQLQuery.list();
@@ -166,8 +167,14 @@ public class AbstractDomainRepositoryImpl extends
 	public List<String> getAllSubDomainIdentifiers(String domain) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.createAlias("parentDomain", "parent");
-		det.add(Restrictions.eq("parent.identifier", domain));
-		det.setProjection(Projections.property("identifier"));
+		det.add(Restrictions.eq("parent.uuid", domain));
+		det.setProjection(Projections.property("uuid"));
 		return listByCriteria(det);
+	}
+
+	@Override
+	public AbstractDomain create(AbstractDomain entity) throws BusinessException {
+		entity.setUuid(UUID.randomUUID().toString());
+		return super.create(entity);
 	}
 }

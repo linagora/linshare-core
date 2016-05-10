@@ -59,8 +59,8 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "Domain", description = "A domain contains ")
 public class DomainDto {
 
-	@ApiModelProperty(value = "Identifier")
-	private String identifier;
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
 
 	@ApiModelProperty(value = "Label")
 	private String label;
@@ -106,7 +106,7 @@ public class DomainDto {
 
 	protected DomainDto(final AbstractDomain domain, boolean light,
 			boolean recursive) {
-		this.identifier = domain.getIdentifier();
+		this.uuid = domain.getUuid();
 		this.label = domain.getLabel();
 		this.type = domain.getDomainType().toString();
 		mimePolicyUuid = domain.getMimePolicy().getUuid();
@@ -123,14 +123,14 @@ public class DomainDto {
 				this.providers.add(domain.getUserProvider().toLDAPUserProviderDto());
 			}
 			if (domain.getParentDomain() != null) {
-				this.parent = domain.getParentDomain().getIdentifier();
+				this.parent = domain.getParentDomain().getUuid();
 			}
 		}
 		if (recursive) {
 			for (AbstractDomain child : domain.getSubdomain()) {
 				DomainDto childDto = new DomainDto(child, light, recursive);
 				this.children.add(childDto);
-				childDto.parent = this.identifier;
+				childDto.parent = this.uuid;
 			}
 		}
 	}
@@ -155,12 +155,12 @@ public class DomainDto {
 		return new DomainDto(domain, false, true);
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getLabel() {

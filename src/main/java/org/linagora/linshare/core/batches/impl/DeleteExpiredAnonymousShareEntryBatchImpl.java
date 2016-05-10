@@ -103,7 +103,7 @@ public class DeleteExpiredAnonymousShareEntryBatchImpl extends GenericBatchImpl 
 			} else {
 				logger.warn(
 						"Expiration date is set for the current anonymous share '%s' but functionnality is disabled for its domain '%s'",
-						resource.getRepresentation(), domain.getIdentifier());
+						resource.getRepresentation(), domain.getUuid());
 			}
 			logger.info("Expired anonymous share was deleted : "
 					+ resource.getRepresentation());

@@ -78,7 +78,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		Assert.notNull(domain);
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
-		criteria.add(Restrictions.eq("domain.identifier",domain));
+		criteria.add(Restrictions.eq("domain.uuid",domain));
 		criteria.add(Restrictions.eq("destroyed", 0L));
 		return findByCriteria(criteria);
 	}

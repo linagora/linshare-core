@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -32,52 +32,43 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.common.dto;
+package org.linagora.linshare.mongo.entities;
 
 import java.util.Date;
-import java.util.Set;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.AccountPermission;
-import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 
-import com.google.common.collect.Sets;
+public abstract class AuditLogEntry {
 
-public class TechnicalAccountPermissionDto {
+	protected AccountMto actor;
 
-	private String uuid;
+	private LogAction action;
 
 	private Date creationDate;
 
-	private Date modificationDate;
+	private AuditLogEntryType type;
 
-	private Set<String> permissions = Sets.newHashSet();
-
-	private Set<String> domains = Sets.newHashSet();
-
-	public TechnicalAccountPermissionDto() {
-		super();
+	public AuditLogEntry() {
 	}
 
-	public TechnicalAccountPermissionDto(TechnicalAccountPermission tap) {
-		super();
-		this.uuid = tap.getUuid();
-		this.creationDate = tap.getCreationDate();
-		this.modificationDate = tap.getModificationDate();
-		for (AccountPermission accountPermission : tap.getAccountPermissions()) {
-			permissions.add(accountPermission.getPermission().name());
-		}
-		for (AbstractDomain domain : tap.getDomains()) {
-			domains.add(domain.getUuid());
-		}
+	public AuditLogEntry(AuditLogEntry log) {
+		this.action = log.getAction();
 	}
 
-	public String getUuid() {
-		return uuid;
+	public AuditLogEntry(AccountMto actor, LogAction action, AuditLogEntryType type) {
+		this.action = action;
+		this.creationDate = new Date();
+		this.actor = actor;
+		this.type = type;
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public LogAction getAction() {
+		return action;
+	}
+
+	public void setAction(LogAction action) {
+		this.action = action;
 	}
 
 	public Date getCreationDate() {
@@ -88,27 +79,11 @@ public class TechnicalAccountPermissionDto {
 		this.creationDate = creationDate;
 	}
 
-	public Date getModificationDate() {
-		return modificationDate;
+	public AuditLogEntryType getType() {
+		return type;
 	}
 
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
-	}
-
-	public Set<String> getDomains() {
-		return domains;
-	}
-
-	public void setDomains(Set<String> domains) {
-		this.domains = domains;
-	}
-
-	public Set<String> getPermissions() {
-		return permissions;
-	}
-
-	public void setPermissions(Set<String> permissions) {
-		this.permissions = permissions;
+	public void setType(AuditLogEntryType type) {
+		this.type = type;
 	}
 }

@@ -83,7 +83,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	public U findByMailAndDomain(String domainId, String mail) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
-		criteria.add(Restrictions.eq("domain.identifier",domainId));
+		criteria.add(Restrictions.eq("domain.uuid",domainId));
 		criteria.add(Restrictions.eq("mail", mail).ignoreCase());
 		criteria.add(Restrictions.eq("destroyed", 0L));
 
@@ -104,7 +104,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	public List<U> findByDomain(String domainId) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
-		criteria.add(Restrictions.eq("domain.identifier",domainId));
+		criteria.add(Restrictions.eq("domain.uuid",domainId));
 		criteria.add(Restrictions.eq("destroyed", 0L));
 		return findByCriteria(criteria);
 	}
@@ -124,7 +124,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 		}
 		if ((accountCriteria.getActorDomain()!=null) && (accountCriteria.getActorDomain().length()>0)) {
 			criteria.createAlias("domain", "domain");
-			criteria.add(Restrictions.like("domain.identifier", accountCriteria.getActorDomain()).ignoreCase());
+			criteria.add(Restrictions.like("domain.uuid", accountCriteria.getActorDomain()).ignoreCase());
 		}
 		return findByCriteria(criteria);
 	}

@@ -75,7 +75,7 @@ public class MailLayoutDto {
 
 	public MailLayoutDto(MailLayout ml) {
 		this.uuid = ml.getUuid();
-		this.domain = ml.getDomain().getIdentifier();
+		this.domain = ml.getDomain().getUuid();
 		this.name = ml.getName();
 		this.layout = ml.getLayout();
 		this.plaintext = ml.isPlaintext();

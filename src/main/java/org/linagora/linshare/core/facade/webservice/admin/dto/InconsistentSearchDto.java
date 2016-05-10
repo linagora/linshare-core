@@ -83,7 +83,7 @@ public class InconsistentSearchDto {
 	public InconsistentSearchDto(AbstractDomain domain, String userMail) {
 		this.userMail = userMail;
 		this.label = domain.getLabel();
-		this.identifier = domain.getIdentifier();
+		this.identifier = domain.getUuid();
 		this.domainType = domain.getDomainType().toString();
 		this.uuid = UUID.randomUUID().toString();
 	}

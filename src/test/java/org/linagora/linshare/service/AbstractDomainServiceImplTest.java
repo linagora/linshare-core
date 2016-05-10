@@ -168,7 +168,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 			current = welcomeService.find((User) actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
 			topDomain.setCurrentWelcomeMessages(current);
 			abstractDomainService.createTopDomain(actor, topDomain);
-			abstractDomainService.deleteDomain(actor, topDomain.getIdentifier());
+			abstractDomainService.deleteDomain(actor, topDomain.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't create top domain.");
@@ -206,7 +206,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		}
 		
 		try {
-			abstractDomainService.deleteDomain(actor, topDomain.getIdentifier());
+			abstractDomainService.deleteDomain(actor, topDomain.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't delete top domain.");

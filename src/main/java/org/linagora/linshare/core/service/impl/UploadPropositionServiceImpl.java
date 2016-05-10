@@ -129,7 +129,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 			owner = userService.findOrCreateUser(proposition
 					.getRecipientMail(), StringUtils.defaultString(
 					proposition.getDomainSource(),
-					rootDomain.getIdentifier()));
+					rootDomain.getUuid()));
 		} catch (BusinessException e) {
 			logger.error("The recipient of the upload proposition can't be found : "
 					+ created.getUuid()

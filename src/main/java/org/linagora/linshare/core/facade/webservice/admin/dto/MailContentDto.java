@@ -95,7 +95,7 @@ public class MailContentDto {
 
 	public MailContentDto(MailContent cont) {
 		this.uuid = cont.getUuid();
-		this.domain = cont.getDomain().getIdentifier();
+		this.domain = cont.getDomain().getUuid();
 		this.name = cont.getName();
 		this.body = cont.getBody();
 		this.subject = cont.getSubject();

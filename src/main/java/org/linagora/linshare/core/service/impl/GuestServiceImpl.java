@@ -136,7 +136,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		// Ugly. getGuestDomain should check if input domain exists. if not, an
 		// exception should be throw
 		AbstractDomain domain = abstractDomainService.findById(domainId);
-		domain = abstractDomainService.getGuestDomain(domain.getIdentifier());
+		domain = abstractDomainService.getGuestDomain(domain.getUuid());
 		return guestBusinessService.find(domain, mail);
 	}
 
@@ -181,7 +181,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		}
 		AbstractDomain guestDomain = abstractDomainService.getGuestDomain(owner
 				.getDomainId());
-		if (!guestBusinessService.exist(guestDomain.getIdentifier(),
+		if (!guestBusinessService.exist(guestDomain.getUuid(),
 				guest.getMail())) {
 			throw new BusinessException(BusinessErrorCode.GUEST_ALREADY_EXISTS,
 					"Pair mail/domain already exist");

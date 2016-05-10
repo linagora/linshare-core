@@ -80,7 +80,7 @@ public class Functionality extends AbstractFunctionality {
 
 	@Override
 	public String toString() {
-		return "Functionality : " + identifier + "(" + domain.getIdentifier() + ")";
+		return "Functionality : " + identifier + "(" + domain.getUuid() + ")";
 	}
 
 	public String getParentIdentifier() {

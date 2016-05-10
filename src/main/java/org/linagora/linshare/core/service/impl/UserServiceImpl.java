@@ -368,11 +368,11 @@ public class UserServiceImpl implements UserService {
 		logger.debug("Guest found : size : " + list.size());
 
 		List<AbstractDomain> allAuthorizedDomain = abstractDomainService
-				.getAllAuthorizedDomains(actor.getDomain().getIdentifier());
+				.getAllAuthorizedDomains(actor.getDomain().getUuid());
 		List<String> allAuthorizedDomainIdentifier = new ArrayList<String>();
 
 		for (AbstractDomain d : allAuthorizedDomain) {
-			allAuthorizedDomainIdentifier.add(d.getIdentifier());
+			allAuthorizedDomainIdentifier.add(d.getUuid());
 		}
 
 		for (Guest guest : list) {
@@ -410,11 +410,11 @@ public class UserServiceImpl implements UserService {
 		logger.debug("Guest found : size : " + list.size());
 
 		List<AbstractDomain> allAuthorizedDomain = abstractDomainService
-				.getAllAuthorizedDomains(actor.getDomain().getIdentifier());
+				.getAllAuthorizedDomains(actor.getDomain().getUuid());
 		List<String> allAuthorizedDomainIdentifier = new ArrayList<String>();
 
 		for (AbstractDomain d : allAuthorizedDomain) {
-			allAuthorizedDomainIdentifier.add(d.getIdentifier());
+			allAuthorizedDomainIdentifier.add(d.getUuid());
 		}
 
 		for (Guest guest : list) {
@@ -437,11 +437,11 @@ public class UserServiceImpl implements UserService {
 		logger.debug("Guest found : size : " + list.size());
 
 		List<AbstractDomain> allAuthorizedDomain = abstractDomainService
-				.getAllAuthorizedDomains(actor.getDomain().getIdentifier());
+				.getAllAuthorizedDomains(actor.getDomain().getUuid());
 		List<String> allAuthorizedDomainIdentifier = new ArrayList<String>();
 
 		for (AbstractDomain d : allAuthorizedDomain) {
-			allAuthorizedDomainIdentifier.add(d.getIdentifier());
+			allAuthorizedDomainIdentifier.add(d.getUuid());
 		}
 
 		for (Guest guest : list) {
@@ -469,7 +469,7 @@ public class UserServiceImpl implements UserService {
 			throws BusinessException {
 		List<User> internals = abstractDomainService
 				.autoCompleteUserWithDomainPolicies(actor.getDomain()
-						.getIdentifier(), pattern);
+						.getUuid(), pattern);
 		logger.debug("result internals list : size : " + internals.size());
 		return internals;
 	}
@@ -478,7 +478,7 @@ public class UserServiceImpl implements UserService {
 			String lastName) throws BusinessException {
 		List<User> internals = abstractDomainService
 				.autoCompleteUserWithDomainPolicies(actor.getDomain()
-						.getIdentifier(), firstName, lastName);
+						.getUuid(), firstName, lastName);
 		logger.debug("result internals list : size : " + internals.size());
 		return internals;
 	}
@@ -572,7 +572,7 @@ public class UserServiceImpl implements UserService {
 		if (null == userType || userType.equals(AccountType.INTERNAL)) {
 			List<User> internals = abstractDomainService
 					.searchUserWithDomainPolicies(currentUser.getDomain()
-							.getIdentifier(), mail, firstName, lastName);
+							.getUuid(), mail, firstName, lastName);
 			logger.debug("result internals list : size : " + internals.size());
 			users.addAll(internals);
 		}
@@ -694,7 +694,7 @@ public class UserServiceImpl implements UserService {
 			logger.debug("mail:" + user.getMail());
 			logger.debug("domain id:" + user.getDomainId());
 			User existingUser = userRepository.findByMailAndDomain(user
-					.getDomain().getIdentifier(), user.getMail());
+					.getDomain().getUuid(), user.getMail());
 			if (existingUser != null) {
 				// update
 				logger.debug("userRepository.update(existingUser)");
@@ -776,7 +776,7 @@ public class UserServiceImpl implements UserService {
 			AbstractDomain abstractDomain, String mail)
 			throws BusinessException {
 		User user = userRepository.findByMailAndDomain(
-				abstractDomain.getIdentifier(), mail);
+				abstractDomain.getUuid(), mail);
 		if (user == null) {
 			// user was not found in database.
 			// looking for it in userProvider (LDAP).

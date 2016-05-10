@@ -122,7 +122,7 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 			logger.debug("Can't find the user in the DB. Searching in LDAP.");
 			// searching in LDAP
 			foundUser = authentificationFacade.ldapSearchForAuth(
-					domain.getIdentifier(), login);
+					domain.getUuid(), login);
 			if (foundUser != null) {
 				// if found we set the domain which belong the user.
 				foundUser.setDomain(domain);
@@ -171,11 +171,11 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 					.getAllDomains();
 			for (AbstractDomain loopedDomain : domains) {
 				foundUser = authentificationFacade.ldapSearchForAuth(
-						loopedDomain.getIdentifier(), login);
+						loopedDomain.getUuid(), login);
 				if (foundUser != null) {
 					foundUser.setDomain(loopedDomain);
 					logger.debug("User found in domain "
-							+ loopedDomain.getIdentifier());
+							+ loopedDomain.getUuid());
 					break;
 				}
 			}

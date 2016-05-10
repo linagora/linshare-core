@@ -93,7 +93,7 @@ public class DomainAccessRuleDto {
 		if (domain==null) {
 			return type.toString();
 		} else {
-			return type.toString() + " : " + domain.getIdentifier();
+			return type.toString() + " : " + domain.getUuid();
 		}
 	}
 

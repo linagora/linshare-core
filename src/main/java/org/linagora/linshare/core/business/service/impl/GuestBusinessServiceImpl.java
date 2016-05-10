@@ -86,7 +86,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	public Guest find(AbstractDomain domain, String mail)
 			throws BusinessException {
 		Guest guest = guestRepository.findByMailAndDomain(
-				domain.getIdentifier(), mail);
+				domain.getUuid(), mail);
 		if (guest != null) {
 			if (guest.isRestricted()) {
 				guest.addContacts(allowedContactRepository.findByOwner(guest));

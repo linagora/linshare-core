@@ -38,6 +38,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -56,6 +57,8 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.mongo.entities.ThreadAuditLogEntry;
+import org.linagora.linshare.mongo.repository.ThreadAuditMongoRepository;
 
 public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> implements ThreadService {
 
@@ -73,6 +76,8 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
+	private final ThreadAuditMongoRepository threadMongoRepository;
+
 	public ThreadServiceImpl(
 			ThreadRepository threadRepository,
 			ThreadMemberRepository threadMemberRepository,
@@ -81,7 +86,8 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 			ThreadResourceAccessControl rac,
 			ThreadMemberResourceAccessControl threadMemberResourceAccessControl,
 			UserRepository<User> userRepository,
-			FunctionalityReadOnlyService functionalityReadOnlyService) {
+			FunctionalityReadOnlyService functionalityReadOnlyService,
+			ThreadAuditMongoRepository threadMongoRepository) {
 		super(rac);
 		this.threadRepository = threadRepository;
 		this.threadMemberRepository = threadMemberRepository;
@@ -90,6 +96,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		this.threadMemberAC = threadMemberResourceAccessControl;
 		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
+		this.threadMongoRepository = threadMongoRepository;
 	}
 
 	@Override
@@ -150,6 +157,8 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		thread = threadRepository.update(thread);
 		logEntryService.create(new ThreadLogEntry(owner, member, LogAction.THREAD_ADD_MEMBER,
 				"Creating the first member of the newly created thread."));
+		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, LogAction.THREAD_CREATE, AuditLogEntryType.THREAD , thread);
+		threadMongoRepository.insert(log);
 		return thread;
 	}
 

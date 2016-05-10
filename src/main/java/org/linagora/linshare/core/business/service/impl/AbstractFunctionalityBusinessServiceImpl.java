@@ -208,7 +208,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		Assert.notNull(domain);
 
 		// Check if the current functionality belong to the current domain.
-		if (functionality.getDomain().getIdentifier().equals(domain.getIdentifier())) {
+		if (functionality.getDomain().getUuid().equals(domain.getUuid())) {
 			// The current functionality belong to the current domain.
 			// We check if the parent domain allow the current domain to
 			// modify/override activation policy configuration.
@@ -234,7 +234,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		Assert.notNull(domain);
 
 		// Check if the current functionality belong to the current domain.
-		if (functionality.getDomain().getIdentifier().equals(domain.getIdentifier())) {
+		if (functionality.getDomain().getUuid().equals(domain.getUuid())) {
 			// we have to check if we have the permission to modify the configuration status of this functionality
 			// We check if the parent domain allow the current domain to
 			// modify/override activation policy configuration.
@@ -264,7 +264,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			return false;
 		}
 		// Check if the current functionality belong to the current domain.
-		if (functionality.getDomain().getIdentifier().equals(domain.getIdentifier())) {
+		if (functionality.getDomain().getUuid().equals(domain.getUuid())) {
 			// we have to check if we have the permission to modify the configuration status of this functionality
 			// We check if the parent domain allow the current domain to
 			// modify/override activation policy configuration.
@@ -303,7 +303,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		Assert.notNull(domain);
 
 		// Check if the current functionality belong to the current domain.
-		if (functionality.getDomain().getIdentifier().equals(domain.getIdentifier())) {
+		if (functionality.getDomain().getUuid().equals(domain.getUuid())) {
 			// we have to check if we have the permission to modify the configuration status of this functionality
 			// We check if the parent domain allow the current domain to
 			// modify/override activation policy configuration.
@@ -361,7 +361,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		AbstractDomain currentDomain = findDomain(domainId);
 		T entity = getFunctionalityEntityByIdentifiers(currentDomain, functionality.getIdentifier());
 
-		if (entity.getDomain().getIdentifier().equals(functionality.getDomain().getIdentifier())) {
+		if (entity.getDomain().getUuid().equals(functionality.getDomain().getUuid())) {
 			// This functionality belongs to the current domain.
 			logger.debug("this functionality belongs to the current domain");
 			entity.updateFunctionalityFrom(functionality);
@@ -379,7 +379,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 				functionality.setDomain(currentDomain);
 				if (repository.findByDomain(currentDomain, functionality.getIdentifier()) == null) {
 					repository.create(functionality);
-					logger.info("Update by creation of a new functionality for : " + functionality.getIdentifier() + " link to domain : " + currentDomain.getIdentifier());
+					logger.info("Update by creation of a new functionality for : " + functionality.getIdentifier() + " link to domain : " + currentDomain.getUuid());
 				} else {
 					// TODO : to be check : This could really happen ? odd !
 					logger.error("This should not happen ! You does not have the right to update the functionnality (All) '" + functionality +"' in domain '" + currentDomain +"'");
@@ -401,14 +401,14 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		T functionality = getFunctionalityEntityByIdentifiers(domain, functionalityId);
 
 		// The functionality belong to the current domain. We can delete it.
-		if (functionality.getDomain().getIdentifier().equals(domainId)){
+		if (functionality.getDomain().getUuid().equals(domainId)){
 			logger.debug("suppression of the functionality : " + domainId + " : " + functionalityId);
 			T rawFunc = repository.findByDomain(domain, functionalityId);
 			repository.delete(rawFunc);
 			domain.getFunctionalities().remove(rawFunc);
 			abstractDomainRepository.update(domain);
 		} else {
-			logger.warn("You are currently in the domain : " + domainId + ". The functionaliy : " + functionalityId + ", you are trying to delete, belongs to the domain : " + functionality.getDomain().getIdentifier() + ".");
+			logger.warn("You are currently in the domain : " + domainId + ". The functionaliy : " + functionalityId + ", you are trying to delete, belongs to the domain : " + functionality.getDomain().getUuid() + ".");
 		}
 	}
 
@@ -551,7 +551,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 
 		@Override
 		public String toString() {
-			return "InnerFunctionality : " + identifier + "(" + functionality.getDomain().getIdentifier() + ")";
+			return "InnerFunctionality : " + identifier + "(" + functionality.getDomain().getUuid() + ")";
 		}
 
 	}

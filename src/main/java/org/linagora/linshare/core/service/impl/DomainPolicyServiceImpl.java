@@ -159,7 +159,7 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 
 					if (allowDomain.getDomain().equals(domain)
 							&& !includes.contains(domain)) {
-						logger.debug(" ALLOW : " + domain.getIdentifier());
+						logger.debug(" ALLOW : " + domain.getUuid());
 						includes.add(domain);
 					}
 
@@ -171,7 +171,7 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 
 					if (denyDomain.getDomain().equals(domain)
 							&& !excludes.contains(domain)) {
-						logger.debug(" DENY : " + domain.getIdentifier());
+						logger.debug(" DENY : " + domain.getUuid());
 						excludes.add(domain);
 					} else {
 						includes.add(domain);
@@ -189,11 +189,11 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 		List<AbstractDomain> result = getAuthorizedDomain(domain, domain
 				.getPolicy().getDomainAccessPolicy().getRules());
 		if (result != null && result.size() == 1) {
-			logger.debug("Domain '" + domain.getIdentifier()
+			logger.debug("Domain '" + domain.getUuid()
 					+ "' is authorized to communicate with itself.");
 			return true;
 		}
-		logger.debug("Domain '" + domain.getIdentifier()
+		logger.debug("Domain '" + domain.getUuid()
 				+ "' is not authorized to communicate with itself.");
 		logger.debug("End isAuthorizedToCommunicateWithItSelf : " + domain);
 		return false;
@@ -207,12 +207,12 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 					domain.getParentDomain(), domain.getPolicy()
 							.getDomainAccessPolicy().getRules());
 			if (result != null && result.size() == 1) {
-				logger.debug("Domain '" + domain.getIdentifier()
+				logger.debug("Domain '" + domain.getUuid()
 						+ "' is authorized to communicate with its parent.");
 				return true;
 			}
 		}
-		logger.debug("Domain '" + domain.getIdentifier()
+		logger.debug("Domain '" + domain.getUuid()
 				+ "' is not authorized to communicate with its parent.");
 		logger.debug("End isAuthorizedToCommunicateWithItsParent : " + domain);
 		return false;
@@ -233,7 +233,7 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 
 		logger.debug("domain result list size : " + result.size());
 		for (AbstractDomain abstractDomain : result) {
-			logger.debug("result : " + abstractDomain.getIdentifier());
+			logger.debug("result : " + abstractDomain.getUuid());
 		}
 		logger.debug("End public getAuthorizedSubDomain : " + domain);
 		return result;
@@ -255,7 +255,7 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 
 		logger.debug("domain result list size : " + result.size());
 		for (AbstractDomain abstractDomain : result) {
-			logger.debug("result : " + abstractDomain.getIdentifier());
+			logger.debug("result : " + abstractDomain.getUuid());
 		}
 		logger.debug("End getAuthorizedSibblingDomain : " + domain);
 		return result;
@@ -331,7 +331,7 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 
 		logger.debug("domain result list size : " + result.size());
 		for (AbstractDomain abstractDomain : result) {
-			logger.debug("result : " + abstractDomain.getIdentifier());
+			logger.debug("result : " + abstractDomain.getUuid());
 		}
 		logger.debug("End getAllAuthorizedDomain : " + domain);
 		return result;

@@ -222,7 +222,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		checkAuthentication(Role.SUPERADMIN);
 		List<InconsistentSearchDto> res = Lists.newArrayList();
 		for (AbstractDomain domain : abstractDomainService.getAllDomains()) {
-			User user = userService.findUserInDB(domain.getIdentifier(), mail);
+			User user = userService.findUserInDB(domain.getUuid(), mail);
 			if (user != null) {
 				if (!(user.isGuest() || user.isInternal())) {
 					// we exclude technical users and root

@@ -122,18 +122,18 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		if (!actor.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Only root is authorized to create domains.");
 		}
-		Validate.notEmpty(domain.getIdentifier(), "domain identifier must be set.");
-		if (!LsIdValidator.isValid(domain.getIdentifier())) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_BAD_FORMAT,
-					"This new domain identifier should only contains at least 4 characters among : "
-							+ LsIdValidator.getAllowedCharacters());
-		}
-
-		if (retrieveDomain(domain.getIdentifier()) != null) {
-			throw new BusinessException(
-					BusinessErrorCode.DOMAIN_ID_ALREADY_EXISTS,
-					"This new domain identifier already exists.");
-		}
+//		Validate.notEmpty(domain.getUuid(), "domain identifier must be set.");
+//		if (!LsIdValidator.isValid(domain.getUuid())) {
+//			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_BAD_FORMAT,
+//					"This new domain identifier should only contains at least 4 characters among : "
+//							+ LsIdValidator.getAllowedCharacters());
+//		}
+//		AKO : Can domain label can be the same?
+//		if (retrieveDomain(domain.getUuid()) != null) {
+//			throw new BusinessException(
+//					BusinessErrorCode.DOMAIN_ID_ALREADY_EXISTS,
+//					"This new domain identifier already exists.");
+//		}
 
 		if (domain.getPolicy() == null) {
 			throw new BusinessException(
@@ -210,13 +210,13 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			subDomain.setDefaultRole(Role.SIMPLE);
 		}
 		if (subDomain.getParentDomain() == null
-				|| subDomain.getParentDomain().getIdentifier() == null) {
+				|| subDomain.getParentDomain().getUuid() == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
 					"This new domain has no parent domain defined.");
 		}
 
 		AbstractDomain parentDomain = retrieveDomain(subDomain
-				.getParentDomain().getIdentifier());
+				.getParentDomain().getUuid());
 		if (parentDomain == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
 					"Parent domain not found.");
@@ -234,13 +234,13 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		logger.debug("SubDomain creation attempt : " + guestDomain.toString());
 		guestDomain.setDefaultRole(Role.SIMPLE);
 		if (guestDomain.getParentDomain() == null
-				|| guestDomain.getParentDomain().getIdentifier() == null) {
+				|| guestDomain.getParentDomain().getUuid() == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
 					"This new domain has no parent domain defined.");
 		}
 
 		AbstractDomain parentDomain = retrieveDomain(guestDomain
-				.getParentDomain().getIdentifier());
+				.getParentDomain().getUuid());
 		if (parentDomain == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
 					"Parent domain not found.");
@@ -284,7 +284,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			for (Iterator<AbstractDomain> iterator = domain.getParentDomain()
 					.getSubdomain().iterator(); iterator.hasNext();) {
 				AbstractDomain s = iterator.next();
-				if (s.getIdentifier().equals(identifier)) {
+				if (s.getUuid().equals(identifier)) {
 					iterator.remove();
 					// abstractDomainRepository.update(domain.getParentDomain());
 					break;
@@ -331,12 +331,12 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		if (!actor.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Only root is authorized to create domains.");
 		}
-		logger.debug("Update domain :" + domain.getIdentifier());
-		if (domain.getIdentifier() == null) {
+		logger.debug("Update domain :" + domain.getUuid());
+		if (domain.getUuid() == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
 					"This domain has no current identifier.");
 		}
-		AbstractDomain entity = findById(domain.getIdentifier());
+		AbstractDomain entity = findById(domain.getUuid());
 		if (domain.getPolicy() == null) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,
@@ -404,7 +404,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			}
 		} else {
 			logger.debug("UserProvider is null for domain : "
-					+ domain.getIdentifier());
+					+ domain.getUuid());
 		}
 
 		return user;
@@ -418,7 +418,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					mail);
 		} else {
 			logger.debug("UserProvider is null for domain : "
-					+ domain.getIdentifier());
+					+ domain.getUuid());
 		}
 		return false;
 	}
@@ -499,7 +499,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				users.addAll(list);
 			} else {
 				logger.debug("UserProvider is null for domain : "
-						+ domain.getIdentifier());
+						+ domain.getUuid());
 			}
 		}
 		return users;
@@ -521,7 +521,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 						d.getUserProvider(), firstName, lastName));
 			} else {
 				logger.debug("UserProvider is null for domain : "
-						+ domain.getIdentifier());
+						+ domain.getUuid());
 			}
 		}
 		return users;
@@ -626,13 +626,13 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 							d.getUserProvider(), mail, firstName, lastName);
 				} catch (BusinessException e) {
 					logger.error("can not search users from domain:"
-							+ d.getIdentifier());
+							+ d.getUuid());
 				}
 
 				// For each user, we set the domain which he came from.
 				for (User ldapUser : ldapUserList) {
 					User userDb = userRepository.findByMailAndDomain(
-							d.getIdentifier(), ldapUser.getMail());
+							d.getUuid(), ldapUser.getMail());
 					if (userDb != null) {
 						users.add(userDb);
 					} else {
@@ -647,7 +647,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				}
 			} else {
 				logger.debug("UserProvider is null for domain : "
-						+ domain.getIdentifier());
+						+ domain.getUuid());
 			}
 		}
 
@@ -684,7 +684,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					}
 				} catch (BusinessException e) {
 					logger.error("Guest functionality is enable, but no guest domain found for domain : "
-							+ domain.getIdentifier());
+							+ domain.getUuid());
 					return false;
 				}
 			} else {

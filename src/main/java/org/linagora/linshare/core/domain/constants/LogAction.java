@@ -57,6 +57,8 @@ public enum LogAction {
 	SHARE_COPY,
 	SHARE_DELETE,
 	ANONYMOUS_SHARE_DOWNLOAD,
+	SHARE_GET_ALL,
+	SHARE_CREATE,
 
 	THREAD_CREATE,
 	THREAD_DELETE,
@@ -86,7 +88,9 @@ public enum LogAction {
 	LIST_UPDATE,
 	LIST_ADD_CONTACT,
 	LIST_UPDATE_CONTACT,
-	LIST_DELETE_CONTACT;
+	LIST_DELETE_CONTACT,
+
+	GET_USER_PREFS;
 
 	public static LogAction fromString(String s) {
 		try {

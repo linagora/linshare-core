@@ -80,7 +80,7 @@ public class MailingListDto {
 		this.description = list.getDescription();
 		this.isPublic = list.isPublic();
 		this.owner = UserDto.getSimple(list.getOwner());
-		this.domainId = list.getDomain().getIdentifier();
+		this.domainId = list.getDomain().getUuid();
 
 		for (MailingListContact current : list.getMailingListContact()) {
 			contacts.add(new MailingListContactDto(current));

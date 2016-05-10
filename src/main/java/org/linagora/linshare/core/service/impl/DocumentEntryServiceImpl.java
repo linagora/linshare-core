@@ -193,7 +193,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 			// check if the file MimeType is allowed
 			AbstractDomain domain = abstractDomainService.retrieveDomain(actor
-					.getDomain().getIdentifier());
+					.getDomain().getUuid());
 			if (mimeTypeFilteringStatus(actor)) {
 				mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
 			}
@@ -255,7 +255,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 	@Override
 	public boolean mimeTypeFilteringStatus(Account actor) throws BusinessException {
-		AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
+		AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getUuid());
 		Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
 		return mimeFunctionality.getActivationPolicy().getStatus();
 	}
@@ -281,7 +281,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 
 			AbstractDomain domain = abstractDomainService.retrieveDomain(owner
-					.getDomain().getIdentifier());
+					.getDomain().getUuid());
 
 			long oldDocSize = originalEntry.getSize();
 			checkSpace(size, fileName, owner);
@@ -376,7 +376,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document. It still exists shares.");
 			}
 
-			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
+			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getUuid());
 			removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
 
 			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_INCONSISTENCY, "File removed because of inconsistence. Please contact your administrator.", documentEntry.getName(),
@@ -400,7 +400,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document. It still exists shares.");
 			}
 
-			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
+			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getUuid());
 			removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
 
 			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_EXPIRE, "Expiration of a file", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
@@ -424,7 +424,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document. There's still existing shares.");
 		}
-		AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
+		AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getUuid());
 		removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
 		FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_DELETE, "Deletion of a file", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
 		logEntryService.create(LogEntryService.INFO, logEntry);
@@ -435,7 +435,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	@Override
 	public long getUserMaxFileSize(Account account) throws BusinessException {
 		// if user is not in one domain = BOUM
-		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getIdentifier());
+		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getUuid());
 		SizeUnitValueFunctionality userMaxFileSizeFunctionality = functionalityReadOnlyService.getUserMaxFileSizeFunctionality(domain);
 		if (userMaxFileSizeFunctionality.getActivationPolicy().getStatus()) {
 			long maxSize = userMaxFileSizeFunctionality.getPlainSize();
@@ -470,7 +470,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 	@Override
 	public long getTotalSize(Account account) throws BusinessException {
-		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getIdentifier());
+		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getUuid());
 		SizeUnitValueFunctionality globalQuotaFunctionality = functionalityReadOnlyService.getGlobalQuotaFunctionality(domain);
 		SizeUnitValueFunctionality userQuotaFunctionality = functionalityReadOnlyService.getUserQuotaFunctionality(domain);
 		if (globalQuotaFunctionality.getActivationPolicy().getStatus()) {
