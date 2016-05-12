@@ -93,10 +93,13 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final AccountRepository<Account> accountRepository; 
 	private final SignatureBusinessService signatureBusinessService;
 	private final TagBusinessService tagBusinessService;
+	private final boolean thumbEnabled;
+	private final boolean pdfThumbEnabled;
+
 	
 	
 	public DocumentEntryBusinessServiceImpl(FileSystemDao fileSystemDao, TimeStampingService timeStampingService, DocumentEntryRepository documentEntryRepository, DocumentRepository documentRepository, 
-			AccountRepository<Account> accountRepository, SignatureBusinessService signatureBusinessService, ThreadEntryRepository threadEntryRepository, TagBusinessService tagBusinessService) {
+			AccountRepository<Account> accountRepository, SignatureBusinessService signatureBusinessService, ThreadEntryRepository threadEntryRepository, TagBusinessService tagBusinessService, boolean thumbEnabled, boolean pdfThumbEnabled) {
 		super();
 		this.fileSystemDao = fileSystemDao;
 		this.timeStampingService = timeStampingService;
@@ -106,6 +109,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.signatureBusinessService = signatureBusinessService;
 		this.threadEntryRepository = threadEntryRepository;
 		this.tagBusinessService = tagBusinessService;
+		this.thumbEnabled = thumbEnabled;
+		this.pdfThumbEnabled = pdfThumbEnabled;
 	}
 
 	@Override
@@ -255,7 +260,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException {
 		
 		//create and insert the thumbnail into the JCR
-		String uuidThmb = generateThumbnailIntoJCR(fileName, owner.getLsUuid(), myFile);
+		String uuidThmb = generateThumbnailIntoJCR(fileName, owner.getLsUuid(), myFile, mimeType);
 		
 		String uuid = insertIntoJCR(size, fileName, mimeType, owner.getLsUuid(), myFile);
 		
@@ -395,7 +400,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 	private Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType) throws BusinessException {
 		//create and insert the thumbnail into the JCR
-		String uuidThmb = generateThumbnailIntoJCR(fileName, owner.getLsUuid(), myFile);
+		String uuidThmb = generateThumbnailIntoJCR(fileName, owner.getLsUuid(), myFile, mimeType);
 			
 		String uuid = insertIntoJCR(size, fileName, mimeType, owner.getLsUuid(), myFile);
 			
@@ -458,7 +463,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	
-	private String generateThumbnailIntoJCR(String fileName, String path, File tempFile) {
+	private String generateThumbnailIntoJCR(String fileName, String path, File tempFile, String mimeType) {
+		if (!thumbEnabled || (!pdfThumbEnabled && mimeType.contains("pdf"))) {
+			logger.warn("Thumbnail generation is disabled.");
+			return null;
+		}
 		FileResourceFactory fileResourceFactory = FileResourceFactory.getInstance();
 		FileResource fileResource = fileResourceFactory.getFileResource(tempFile);
 		InputStream fisThmb = null;
